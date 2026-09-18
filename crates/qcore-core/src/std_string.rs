@@ -67,8 +67,10 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use crate::ownership::{self, OwnershipError, OwnershipOp};
+use crate::source_loop::LoopRefusal;
 use crate::std_buffer::{
-    BufferAccess, BufferEvaluation, BufferEvent, BufferOperand, BufferProgram,
+    BufferAccess, BufferError, BufferEvaluation, BufferEvent, BufferOperand, BufferProgram,
+    BufferRun,
 };
 use crate::std_io::{
     Level, ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line, rendered_text_line,
@@ -670,6 +672,16 @@ pub enum StringError {
     /// release, a use after release, or a rebound live name. It carries that
     /// checker's own error value rather than a re-worded copy.
     Custody { event: usize, error: OwnershipError },
+    /// `Q097`–`Q099`: a refusal the **bounded counted loop** owns, reached from
+    /// this composed route since card `LOOPS-ON-COMPOSED-ROUTES` admitted a
+    /// `for` here. Carried as [`LoopRefusal`]'s own value and reported at
+    /// that construct's own codes — the `BufferError::Loop` precedent, for the
+    /// same §L21 reason: `source.loop.v1` is a separate semantic pass, its
+    /// conditions are the loop's (a bound, a shadowing body binding), and a
+    /// second pass may not reuse a code. No condition of that band is
+    /// widened; the composed route reaches the same condition by the same
+    /// runner (`BufferRun::repeat`).
+    Loop { event: usize, refusal: LoopRefusal },
     /// `Q079`: **the static UTF-8 decision.** The bytes a `borrow_utf8` would
     /// view are not well-formed UTF-8, decided at check time from the buffer's
     /// own write history rather than trusted or deferred to a run-time scan.
@@ -683,6 +695,7 @@ pub enum StringError {
 impl StringError {
     pub fn code(&self) -> &'static str {
         match self {
+            Self::Loop { refusal, .. } => refusal.code(),
             Self::Shape { .. } => "Q068",
             Self::NotAScalar { .. } | Self::NotAString { .. } => "Q069",
             Self::Literal { .. } => "Q070",
@@ -712,6 +725,7 @@ impl StringError {
             | Self::BorrowRange { event, .. }
             | Self::BorrowExclusion { event, .. }
             | Self::Custody { event, .. }
+            | Self::Loop { event, .. }
             | Self::BufferNotUtf8 { event, .. } => *event,
         }
     }
@@ -838,6 +852,7 @@ impl fmt::Display for StringError {
                 f,
                 "the checked ownership discipline refuses this program: {error}"
             ),
+            Self::Loop { refusal, .. } => refusal.fmt(f),
             Self::BufferNotUtf8 { buffer, at, .. } => write!(
                 f,
                 "the bytes of `{buffer}` are not well-formed UTF-8 from byte {at}; \
@@ -895,14 +910,14 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
             StringEvent::Buffer(BufferEvent::Store { .. } | BufferEvent::FieldStore { .. }) => {
                 effects.insert(Effect::Mut);
             }
-            // A composed `for` (the `LOOP-V1` × `STRING-CONCAT` composition).
-            // The checker refuses one on this route (`Q077`, and the lowering
-            // refuses it earlier still), but the effect row is derived from the
-            // program **before** that refusal is reported, so this arm must
-            // still be right rather than empty. It derives the body's effects
-            // through `source.buffer.v1`'s own recursive walk, which is the
-            // fail-closed direction: under-deriving an effect would let a
-            // declared row not have to admit one the program performs.
+            // A composed `for` (the `LOOP-V1` × `STRING-CONCAT` composition,
+            // admitted since card `LOOPS-ON-COMPOSED-ROUTES`). It derives the
+            // body's effects through `source.buffer.v1`'s own recursive walk,
+            // which is the fail-closed direction: under-deriving an effect
+            // would let a declared row not have to admit one the program
+            // performs. A loop performs no effect of its own — iterating is
+            // not an effect — and is admitted only with a positive bound, so
+            // the row cannot over-report either.
             StringEvent::Buffer(repeat @ BufferEvent::Repeat { .. }) => {
                 let body = BufferProgram {
                     entry: String::new(),
@@ -992,6 +1007,41 @@ pub fn string_custody_operations(program: &StringProgram) -> Vec<OwnershipOp> {
         .collect();
     let names = |name: &String| acquired.contains(name.as_str());
 
+    /// The operations of one `for` body, **unrolled** `count` times (card
+    /// `LOOPS-ON-COMPOSED-ROUTES`) — `LOOP-V1`'s own reading, so a body store
+    /// after a release is the inherited checker's `UseAfterDrop` exactly as a
+    /// top-level one is. A body contributes accesses only: an acquisition, a
+    /// release or a lend inside a body is refused by name before this list is
+    /// decided (`LOOP-WINDOW-BODY-CUSTODY`, `LOOP-PER-ITERATION-LOAN`), and a
+    /// direct model-level caller handing one in gets no operation for it,
+    /// which cannot admit anything — a release the checker never saw leaves
+    /// the owner live at the normal exit.
+    fn unrolled(
+        body: &[BufferEvent],
+        count: u32,
+        names: &dyn Fn(&String) -> bool,
+        operations: &mut Vec<OwnershipOp>,
+    ) {
+        for _ in 0..count {
+            for event in body {
+                match event {
+                    BufferEvent::Store { name, .. } if names(name) => {
+                        operations.push(OwnershipOp::Write(name.clone()));
+                    }
+                    BufferEvent::Load { name, .. } | BufferEvent::Extent { name, .. }
+                        if names(name) =>
+                    {
+                        operations.push(OwnershipOp::Read(name.clone()));
+                    }
+                    BufferEvent::Repeat { count, body, .. } => {
+                        unrolled(body, *count, names, operations);
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+
     let mut operations = Vec::new();
     let mut next_id: ownership::ResourceId = 1;
     for event in &program.events {
@@ -1021,6 +1071,9 @@ pub fn string_custody_operations(program: &StringProgram) -> Vec<OwnershipOp> {
             }
             StringEvent::Buffer(BufferEvent::Release { name }) if names(name) => {
                 operations.push(OwnershipOp::Drop(name.clone()));
+            }
+            StringEvent::Buffer(BufferEvent::Repeat { count, body, .. }) => {
+                unrolled(body, *count, &names, &mut operations);
             }
             _ => {}
         }
@@ -1061,15 +1114,72 @@ fn view_uses(event: &StringEvent) -> Vec<&str> {
     }
 }
 
-/// The last event index at which each view name is read.
+/// Every **view name** one event reads **at any depth** (card
+/// `LOOPS-ON-COMPOSED-ROUTES`) — the window function's reader.
 ///
-/// Purely syntactic, and exact for this route because the route is one flat
-/// statement sequence: there is no branch to make a later index unreachable and
-/// no loop to make an earlier one run again.
+/// Under the runs-many-times reading an event inside a `for` body occurs at
+/// every iteration, and the loop is one top-level statement, so a view a body
+/// read would be a view the **loop's** index reads. On this route that set is
+/// **empty by construction and measured, not assumed**: a `for` body is
+/// lowered by `source.buffer.v1`'s own reader, so it holds
+/// [`BufferEvent`]s only, and no buffer event names a view — the exhaustive
+/// `match` in [`view_uses`] returns nothing for `StringEvent::Buffer`. The
+/// recursion is written anyway, so that a later widening of the body grammar
+/// that lets a view be read inside a loop lengthens the window here rather
+/// than closing it before the loop opens.
+fn view_uses_at_any_depth(event: &StringEvent) -> Vec<&str> {
+    fn buffer_view_uses<'a>(event: &'a BufferEvent, into: &mut Vec<&'a str>) {
+        match event {
+            BufferEvent::Repeat { body, .. } => {
+                for event in body {
+                    buffer_view_uses(event, into);
+                }
+            }
+            // No buffer event names a view; see above.
+            BufferEvent::Bind { .. }
+            | BufferEvent::Acquire { .. }
+            | BufferEvent::Store { .. }
+            | BufferEvent::Load { .. }
+            | BufferEvent::Extent { .. }
+            | BufferEvent::Release { .. }
+            | BufferEvent::Lend { .. }
+            | BufferEvent::Line(_)
+            | BufferEvent::Construct { .. }
+            | BufferEvent::Field { .. }
+            | BufferEvent::FieldStore { .. }
+            | BufferEvent::FieldLoad { .. }
+            | BufferEvent::FieldExtent { .. }
+            | BufferEvent::FieldRelease { .. }
+            | BufferEvent::Return => {}
+        }
+    }
+    let mut names = view_uses(event);
+    if let StringEvent::Buffer(buffer_event) = event {
+        buffer_view_uses(buffer_event, &mut names);
+    }
+    names
+}
+
+/// The last **top-level** event index at which each view name is read, at any
+/// depth — the composed route's window function (card
+/// `LOOPS-ON-COMPOSED-ROUTES`).
+///
+/// Purely syntactic. Exact over a flat sequence — there is no branch to make a
+/// later index unreachable — and, where a `for` sits inside the window, sound
+/// relative to `LOOP-V1`'s unrolling of it: every iteration of a loop at
+/// top-level index `k` is judged against the loans whose window reaches `k`,
+/// which over-approximates the unrolled program's exact windows in the
+/// refusing direction (`QCore.LoopWindows.every_use_lies_inside_the_window`).
+/// The statement that made the composed route refuse a `for` — "a store
+/// inside a body could precede, in index order, a read that happens after it
+/// in time" — is answered by *where the body is judged*, not by this map: the
+/// `Repeat` arm of [`check_string_program`] judges every body store, at every
+/// iteration, against every loan live at the loop's own index, before the
+/// body runs.
 fn last_view_uses(program: &StringProgram) -> BTreeMap<String, usize> {
     let mut last: BTreeMap<String, usize> = BTreeMap::new();
     for (index, event) in program.events.iter().enumerate() {
-        for name in view_uses(event) {
+        for name in view_uses_at_any_depth(event) {
             last.insert(name.to_owned(), index);
         }
     }
@@ -1444,6 +1554,111 @@ pub fn check_string_program(
         /// sub-extent lending existed.
         whole: bool,
     }
+
+    /// The first conflict between a `for` body and the loans live at the
+    /// loop, under the runs-many-times reading (card
+    /// `LOOPS-ON-COMPOSED-ROUTES`): the body is walked once per iteration
+    /// with the index bound, nested loops likewise, and every store is judged
+    /// against every live loan of its buffer exactly as a top-level store is
+    /// — `ranges_overlap` over `[i, i + 1)`, and a byte the lowering-visible
+    /// tier cannot resolve **not provably disjoint** from anything. That tier
+    /// is the loop index, a literal `let`, an `extent` read and the entry's
+    /// own constants; a value read out of a byte or a field is deliberately
+    /// outside it, so a store indexed by one conflicts with every live loan
+    /// of that buffer, the fail-closed direction (`WRITE-LEND-COMPUTED-INDEX`'s
+    /// shape, reached from the read side). A release inside a body conflicts
+    /// with any live loan of its buffer; it is also refused by name before
+    /// this runs, and the arm is kept so the decision is total on its own
+    /// terms.
+    fn loop_body_conflict<'a>(
+        live: &'a [LiveBorrow],
+        scalars: &BTreeMap<String, i32>,
+        extents: &BTreeMap<String, u32>,
+        variable: &str,
+        count: u32,
+        body: &[BufferEvent],
+    ) -> Option<(&'a LiveBorrow, &'static str)> {
+        fn resolve(env: &BTreeMap<String, i32>, operand: &BufferOperand) -> Option<u32> {
+            let value = match operand {
+                BufferOperand::Literal(value) => *value,
+                BufferOperand::Scalar(name) => *env.get(name)?,
+            };
+            u32::try_from(value).ok()
+        }
+        let mut env = scalars.clone();
+        for iteration in 0..count {
+            env.insert(
+                variable.to_owned(),
+                i32::try_from(iteration).expect("MAX_ITERATIONS is far inside i32"),
+            );
+            for event in body {
+                match event {
+                    BufferEvent::Store {
+                        name, index: at, ..
+                    } => {
+                        let written = resolve(&env, at);
+                        if let Some(loan) = live.iter().find(|loan| {
+                            loan.buffer == *name
+                                && written.is_none_or(|byte| {
+                                    ranges_overlap(loan.low, loan.high, byte, byte + 1)
+                                })
+                        }) {
+                            return Some((loan, "write a byte of"));
+                        }
+                    }
+                    BufferEvent::Release { name } => {
+                        if let Some(loan) = live.iter().find(|loan| loan.buffer == *name) {
+                            return Some((loan, "release"));
+                        }
+                    }
+                    BufferEvent::Bind { binding, value } => {
+                        env.insert(binding.clone(), *value);
+                    }
+                    BufferEvent::Extent { binding, name } => match extents.get(name) {
+                        Some(extent) => {
+                            env.insert(binding.clone(), *extent as i32);
+                        }
+                        Option::None => {
+                            env.remove(binding);
+                        }
+                    },
+                    // A byte or a field value is outside the tier: the binding
+                    // becomes unresolvable, so a later index through it is
+                    // judged as not provably disjoint.
+                    BufferEvent::Load { binding, .. } | BufferEvent::Field { binding, .. } => {
+                        env.remove(binding);
+                    }
+                    BufferEvent::Repeat {
+                        variable,
+                        count,
+                        body,
+                    } => {
+                        if let Some(conflict) =
+                            loop_body_conflict(live, &env, extents, variable, *count, body)
+                        {
+                            return Some(conflict);
+                        }
+                    }
+                    // Card `AGGREGATE-OWNED-FIELD`'s field-path loads bind a
+                    // name outside the tier; every record statement is refused
+                    // on this route before the body runs, so these arms are
+                    // total rather than reachable.
+                    BufferEvent::FieldLoad { binding, .. }
+                    | BufferEvent::FieldExtent { binding, .. } => {
+                        env.remove(binding);
+                    }
+                    BufferEvent::Acquire { .. }
+                    | BufferEvent::Lend { .. }
+                    | BufferEvent::Construct { .. }
+                    | BufferEvent::FieldStore { .. }
+                    | BufferEvent::FieldRelease { .. }
+                    | BufferEvent::Line(_)
+                    | BufferEvent::Return => {}
+                }
+            }
+        }
+        Option::None
+    }
     let mut live: Vec<LiveBorrow> = Vec::new();
 
     if !errors.is_empty() {
@@ -1756,6 +1971,120 @@ pub fn check_string_program(
             // live borrow should say that rather than report a byte it never
             // wrote.
             StringEvent::Buffer(buffer_event) => {
+                // Card `LOOPS-ON-COMPOSED-ROUTES`: a `for` is **admitted** on
+                // this composed route, and the statement that used to refuse
+                // it here — "a store inside a body could precede, in index
+                // order, a read that happens after it in time" — is answered
+                // by where the body is judged rather than by a window over
+                // body positions. The loop is one top-level statement at
+                // `index`; the loans live at `index` are exactly the loans
+                // still read after the loop (a body cannot read a view, see
+                // `view_uses_at_any_depth`); and under the runs-many-times
+                // reading every body store, at every iteration, is judged
+                // against every one of them **before the body runs**. That is
+                // `QCore.LoopWindows`' iteration window, which covers the
+                // unrolled program's exact one in the refusing direction.
+                //
+                // Two body shapes are refused by name first, before any
+                // decision below: a lend inside the body is a per-iteration
+                // loan (`LOOP-PER-ITERATION-LOAN`), and a body that acquires
+                // or releases would put a custody step inside an iteration
+                // where neither this route's custody list nor the buffer
+                // route's identity gate decides it
+                // (`LOOP-WINDOW-BODY-CUSTODY`).
+                if let BufferEvent::Repeat {
+                    variable,
+                    count,
+                    body,
+                } = buffer_event
+                {
+                    if buffer_event.any(&|inner| matches!(inner, BufferEvent::Lend { .. })) {
+                        errors.push(StringError::Composition {
+                            event: index,
+                            reason: "this `for` body opens a lend, which is a per-iteration loan: \
+                                     its window opens and closes inside one iteration and is not \
+                                     an interval of statement indices, so the composed \
+                                     string/buffer entry refuses it by name rather than \
+                                     approximating it (`LOOP-PER-ITERATION-LOAN`)"
+                                .to_owned(),
+                        });
+                        continue;
+                    }
+                    if buffer_event.any(&|inner| {
+                        matches!(
+                            inner,
+                            BufferEvent::Acquire { .. } | BufferEvent::Release { .. }
+                        )
+                    }) {
+                        errors.push(StringError::Composition {
+                            event: index,
+                            reason: "this `for` body acquires or releases a buffer; on the \
+                                     composed string/buffer route a loop body neither acquires \
+                                     nor releases, because a custody step inside an iteration is \
+                                     decided by neither this route's custody list nor the buffer \
+                                     route's per-iteration identity gate \
+                                     (`LOOP-WINDOW-BODY-CUSTODY`)"
+                                .to_owned(),
+                        });
+                        continue;
+                    }
+                    if let Some((loan, action)) = loop_body_conflict(
+                        &live,
+                        &evaluation.buffer.scalars,
+                        &evaluation.buffer.extents,
+                        variable,
+                        *count,
+                        body,
+                    ) {
+                        errors.push(StringError::BorrowExclusion {
+                            event: index,
+                            buffer: loan.buffer.clone(),
+                            view: loan.view.clone(),
+                            through: loan.through,
+                            action,
+                            low: loan.low,
+                            high: loan.high,
+                            whole: loan.whole,
+                        });
+                        continue;
+                    }
+                    // The body runs through `source.buffer.v1`'s **own**
+                    // runner — the one that owns the index binding, the
+                    // body-local scoping and the shadowing refusal — rather
+                    // than through a second iteration rule written here.
+                    let mut run = BufferRun::new(std::mem::take(&mut evaluation.buffer));
+                    run.repeat(variable, *count, body, index);
+                    evaluation.buffer = run.evaluation;
+                    for error in run.errors {
+                        match error {
+                            BufferError::Loop { refusal, .. } => {
+                                errors.push(StringError::Loop {
+                                    event: index,
+                                    refusal,
+                                });
+                            }
+                            other => errors.push(StringError::Composition {
+                                event: index,
+                                reason: other.to_string(),
+                            }),
+                        }
+                    }
+                    if run.returned {
+                        errors.push(StringError::Shape {
+                            event: index,
+                            reason: "a `return` inside a `for` body is an early exit, and this \
+                                     composed entry models one flat sequence ending in exactly \
+                                     one return"
+                                .to_owned(),
+                        });
+                    }
+                    acquisitions.extend(run.acquisitions);
+                    accesses.extend(run.accesses);
+                    lines.extend(run.lines);
+                    flushes += run.flushes;
+                    renderings.extend(run.renderings);
+                    continue;
+                }
                 // Card `CT07-SLICE-PERMISSIONS`: the decision is **range-wise**
                 // for a write and **whole-buffer** for a release, and the two
                 // are different because the operations are.
@@ -1821,37 +2150,11 @@ pub fn check_string_program(
                     });
                     continue;
                 }
-                // **A `for` is refused here, and refusing is the whole point**
-                // (the `LOOP-V1` × `STRING-CONCAT` composition, follow-on
-                // `STRING-CONCAT-LOOP-WINDOW`).
+                // A `for` never reaches this point: card
+                // `LOOPS-ON-COMPOSED-ROUTES` admits it in the arm above,
+                // discharging `STRING-CONCAT-LOOP-WINDOW`, whose refusal used
+                // to stand here.
                 //
-                // `source.loop.v1` admits a counted loop on `source.buffer.v1`.
-                // This composed route models **one flat statement sequence**,
-                // and its borrow window is an interval of statement indices
-                // that is exact *because* of that flatness: a loop body would
-                // make one statement index run many times, so a store inside a
-                // body could precede — in index order — a read that happens
-                // after it in time, and the window's last-use computation would
-                // no longer bound the mutation. Admitting the composition needs
-                // a window over iterations rather than over indices.
-                //
-                // Until then the answer is a refusal, which is the fail-closed
-                // direction: the loop keeps every route it already had, and the
-                // borrow keeps the exactness argument its soundness rests on.
-                // Neither card's semantics is weakened to make them compose.
-                if matches!(buffer_event, BufferEvent::Repeat { .. }) {
-                    errors.push(StringError::Composition {
-                        event: index,
-                        reason: "`source.loop.v1`'s `for` is not a statement this composed \
-                                 string/buffer entry models; a borrow's exclusion window is an \
-                                 interval of statement indices and is exact only because the \
-                                 route is one flat sequence, so a loop body writing a borrowed \
-                                 buffer would need a window over iterations rather than over \
-                                 indices (`STRING-CONCAT-LOOP-WINDOW`)"
-                            .to_owned(),
-                    });
-                    continue;
-                }
                 // **A write lend is refused here, and refusing is fail-closed**
                 // (card `SLICE-PERMISSIONS-WRITE-LEND`). This composed entry
                 // already holds `borrow_utf8`'s immutable read loans, and a

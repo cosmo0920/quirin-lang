@@ -761,11 +761,15 @@ fn a_two_bound_spelling_is_required_and_lesser_arities_refuse_by_shape() {
 // --- 5. The boundaries, each refused by name. ---
 
 #[test]
-fn a_for_beside_a_lend_refuses_because_the_window_is_an_index_interval() {
-    // `SLICE-PERMISSIONS-LOOP-WINDOW`: the same wall the read card re-measured
-    // (`STRING-CONCAT-LOOP-WINDOW`), reached from the write side. A range
-    // narrows *which* accesses conflict; it says nothing about *when* a
-    // statement runs.
+fn a_for_beside_a_lend_is_admitted_with_the_window_computed_over_iterations() {
+    // This test pinned `SLICE-PERMISSIONS-LOOP-WINDOW`'s refusal (`Q051`) until
+    // card `LOOPS-ON-COMPOSED-ROUTES` (wave 39) lifted it: the loan's window is
+    // now computed over iterations, so the `for` is admitted — its body writes
+    // byte 6, outside `left`'s `[0, 4)`, and `left`'s window closed at
+    // statement 2 anyway. The same body writing byte 2 is refused at `Q054`,
+    // and a loan used only inside the loop is live across it: both are pinned
+    // in `loops_on_composed_routes.rs`. A range narrows *which* accesses
+    // conflict; the iteration window says *when* — across the whole loop.
     let body = [
         "let store = bytes(8);",
         "let left = lend(store, 0, 4);",
@@ -776,13 +780,9 @@ fn a_for_beside_a_lend_refuses_because_the_window_is_an_index_interval() {
         "drop store;",
         "return;",
     ];
-    let source = module(&body);
-    assert_eq!(codes(&source), ["Q051"]);
-    assert!(
-        messages(&source)[0].contains("SLICE-PERMISSIONS-LOOP-WINDOW"),
-        "{:?}",
-        messages(&source)[0]
-    );
+    let module = compile(&module(&body)).expect("admitted since LOOPS-ON-COMPOSED-ROUTES");
+    let checked = module.checked.as_standard_buffer().unwrap();
+    assert_eq!(checked.certificate.lends[0].through, 2);
 }
 
 #[test]

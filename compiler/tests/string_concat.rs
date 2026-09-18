@@ -1178,19 +1178,16 @@ fn the_computed_length_is_the_length_of_the_content_it_declares() {
 // --- 9. The LOOP-V1 composition (`STRING-CONCAT-LOOP-WINDOW`). ---
 
 #[test]
-fn a_loop_in_a_composed_module_refuses_before_it_can_reach_a_borrowed_buffer() {
-    // The interaction this card's own `STRING-CONCAT-LOOP-WINDOW` follow-on
-    // predicted, measured on the merged tree. `source.loop.v1` admits `for` on
-    // `source.buffer.v1`; this composed route models **one flat statement
-    // sequence**, and its borrow window is an interval of statement indices
-    // that is exact *because* of that flatness. A loop body would make one
-    // index run many times, so the window's last-use computation would no
-    // longer bound the mutation.
-    //
-    // The refusal is the route's own flat-sequence rule at `Q068`, which fires
-    // **before** the statement is read as a buffer statement at all — so the
-    // composition is fail-closed at the earliest point rather than at the
-    // latest, and neither card's semantics is weakened to make them compose.
+fn a_loop_in_a_composed_module_is_admitted_and_the_view_borrows_what_it_wrote() {
+    // This test pinned `STRING-CONCAT-LOOP-WINDOW`'s refusal (`Q068`, the
+    // flat-sequence rule) until card `LOOPS-ON-COMPOSED-ROUTES` (wave 39)
+    // lifted it: the composed route now lowers a `for` through
+    // `source.buffer.v1`'s own loop reader, and the borrow window is decided
+    // over iterations — every body store, at every iteration, judged against
+    // every loan still read after the loop. Here no loan is live at the loop,
+    // so it fills the buffer and the view borrows the bytes it wrote. The
+    // refusing arm — a body write into a live loan's bytes — is pinned in
+    // `loops_on_composed_routes.rs` at `Q078`.
     let source = module(&[
         "let b = bytes(2);",
         "for i in 0..2 {",
@@ -1201,29 +1198,30 @@ fn a_loop_in_a_composed_module_refuses_before_it_can_reach_a_borrowed_buffer() {
         "drop b;",
         "return;",
     ]);
-    assert_eq!(codes(&source), ["Q068"]);
-    assert!(
-        messages(&source)[0].contains("one flat statement sequence"),
-        "{:?}",
-        messages(&source)[0]
+    let module = compile(&source).expect("admitted since LOOPS-ON-COMPOSED-ROUTES");
+    assert_eq!(
+        module.extern_observation.expect("a two-stream observation"),
+        ["out: aa"]
     );
 }
 
 #[test]
-fn the_models_own_loop_guard_refuses_a_repeat_this_route_cannot_model() {
-    // `STRING-CONCAT-LOOP-WINDOW`'s guard, checked through the library because
-    // no single source module reaches it: the flat-sequence rule above refuses
-    // a `for` first. Kept rather than deleted, on the `EXTERN-F1-STORE-REACH`
-    // and `STRING-SLICE-NOTASCALAR-REACH` precedent — a guard whose refusal is
-    // currently shadowed is still the thing that makes the composition safe if
-    // a later card widens the statement grammar.
+fn the_models_own_loop_arm_runs_a_repeat_through_the_buffer_routes_runner() {
+    // Until card `LOOPS-ON-COMPOSED-ROUTES` this test pinned the model's
+    // `STRING-CONCAT-LOOP-WINDOW` guard — a `Repeat` refused at `Q077` through
+    // the library, kept because the flat-sequence rule shadowed it. The guard
+    // is gone: the model runs the body through `BufferRun::repeat`, the buffer
+    // route's own runner, and publishes the body's accesses once per iteration.
     use qcore_core::std_buffer::{BufferEvent, BufferOperand};
     use qcore_core::std_string::{StringEvent, StringProgram, check_string_program};
     use qcore_core::typed_errors::EffectRow;
 
     let program = StringProgram {
         entry: "main".to_owned(),
-        declared_effects: EffectRow::default(),
+        declared_effects: EffectRow::new([
+            qcore_core::typed_errors::Effect::Alloc,
+            qcore_core::typed_errors::Effect::Mut,
+        ]),
         literals: Vec::new(),
         events: vec![
             StringEvent::Buffer(BufferEvent::Acquire {
@@ -1245,18 +1243,13 @@ fn the_models_own_loop_guard_refuses_a_repeat_this_route_cannot_model() {
             StringEvent::Return,
         ],
     };
-    let errors = check_string_program(&program).expect_err("a composed loop must be refused");
-    assert!(
-        errors.iter().any(|error| error.code() == "Q077"),
-        "the composed route refuses a loop at its own code: {:?}",
-        errors.iter().map(|e| e.code()).collect::<Vec<_>>()
-    );
-    assert!(
-        errors
-            .iter()
-            .any(|error| error.to_string().contains("STRING-CONCAT-LOOP-WINDOW")),
-        "the refusal names the follow-on that owns the missing capability"
-    );
+    let certificate = check_string_program(&program).expect("admitted since LOOPS-ON-COMPOSED-ROUTES");
+    let written: Vec<(u32, u8)> = certificate
+        .accesses
+        .iter()
+        .map(|access| (access.index, access.byte))
+        .collect();
+    assert_eq!(written, [(0, 97), (1, 97)]);
 }
 
 #[test]

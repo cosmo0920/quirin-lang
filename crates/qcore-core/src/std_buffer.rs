@@ -187,9 +187,12 @@ pub enum BufferEvent {
     /// `[LOW, HIGH)` is genuinely **transferred**: an owner access inside the
     /// range refuses, one outside it is admitted, and two live lends must
     /// cover disjoint ranges. The window runs from this statement to the last
-    /// statement naming the loan, exact for the same reason the read card's
-    /// window is: the route is one flat statement sequence, which is also why
-    /// a `for` beside a lend refuses (`SLICE-PERMISSIONS-LOOP-WINDOW`).
+    /// top-level statement naming the loan **at any depth** — since card
+    /// `LOOPS-ON-COMPOSED-ROUTES` a `for` whose body names the loan is that
+    /// statement, and the loan is live across the whole loop
+    /// ([`last_uses`], proved sound relative to `LOOP-V1`'s unrolling in
+    /// `QCore.LoopWindows`). A lend written *inside* a body is a
+    /// per-iteration loan and refuses by name (`LOOP-PER-ITERATION-LOAN`).
     ///
     /// Bounds are check-time constants of the **lowering-visible tier** — an
     /// integer literal, a literal `let`, or an `extent` binding — the same
@@ -398,9 +401,10 @@ pub struct RecordProjection {
 /// owner's authority is transferred and the footprint the loan holds (card
 /// `SLICE-PERMISSIONS-WRITE-LEND`).
 ///
-/// `through` is the index of the last event naming the loan; the window
-/// `[event, through]` is exact for the read card's reason — the route is one
-/// flat statement sequence. `low`/`high` are the owner's coordinates, so a
+/// `through` is the index of the last top-level event naming the loan at any
+/// depth; the window `[event, through]` is exact over a flat sequence and,
+/// where a `for` is the last use, covers every iteration of it (card
+/// `LOOPS-ON-COMPOSED-ROUTES`). `low`/`high` are the owner's coordinates, so a
 /// reader checks the rebasing arithmetic (`loan index i` writes owner byte
 /// `low + i`) against the published accesses rather than being told it
 /// happened.
@@ -466,9 +470,11 @@ pub struct BufferCertificate {
 /// widenings are stated in spec §L21 and in the card's report.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LendRefusal {
-    /// `Q051`: a shape the lend's window model cannot hold — a `for` in an
-    /// entry that lends, a crossed pair of windows, an acquisition inside a
-    /// window, or a lend binding shadowing a live name.
+    /// `Q051`: a shape the lend's window model cannot hold — a crossed pair of
+    /// windows, an acquisition inside a window, a lend binding shadowing a
+    /// live name, and (card `LOOPS-ON-COMPOSED-ROUTES`, which lifted the
+    /// blanket `for` refusal) a lend inside a `for` body or a `for` body that
+    /// acquires or releases in an entry that lends.
     Shape(String),
     /// `Q052`: a lend position naming something that is not an owned buffer
     /// this entry acquired — a loan (re-lending is not modelled), or a `drop`
@@ -1130,13 +1136,15 @@ pub fn custody_operations_with_gates(
 /// One write lend's window and footprint, as the custody projection states it
 /// (card `SLICE-PERMISSIONS-WRITE-LEND`).
 ///
-/// `through` is the index of the **last top-level event naming the loan** — a
-/// store, a load, an extent read, or a refused later spelling — and `event`
-/// the lend's own, so `[event, through]` is the loan's lexical window. The
-/// bounds are resolved from the lowering-visible constant tier and **clamped
-/// into `[0, extent]`** when the spelling is out of range: the value half owns
-/// that refusal (`Q053`), and the projection stays total so one fault produces
-/// one report.
+/// `through` is the index of the **last top-level event naming the loan at any
+/// depth** — a store, a load, an extent read, or a refused later spelling,
+/// whether written at the top level or inside a `for` body that top-level
+/// event contains (card `LOOPS-ON-COMPOSED-ROUTES`, [`last_uses`]) — and
+/// `event` the lend's own, so `[event, through]` is the loan's lexical window.
+/// The bounds are resolved from the lowering-visible constant tier and
+/// **clamped into `[0, extent]`** when the spelling is out of range: the value
+/// half owns that refusal (`Q053`), and the projection stays total so one fault
+/// produces one report.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LendWindow {
     pub event: usize,
@@ -1147,7 +1155,82 @@ pub struct LendWindow {
     pub through: usize,
 }
 
-/// Resolve every lend of a flat entry to its window and footprint.
+/// Every buffer or loan name one event names at a custody or access position,
+/// **at any depth** (card `LOOPS-ON-COMPOSED-ROUTES`).
+///
+/// A `Repeat` names nothing itself and contributes every name its body names,
+/// however deeply nested: under the runs-many-times reading a body event
+/// occurs at every iteration of every enclosing loop, and the loop is one
+/// top-level statement, so a name a body mentions is a name the **loop's**
+/// top-level index mentions. This is the one function the window computation
+/// reads names through, so a widening of the grammar that forgets to extend it
+/// would shorten a window — and the exhaustive `match` makes that a compile
+/// error rather than an unsoundness.
+fn custody_names_at_any_depth<'a>(event: &'a BufferEvent, into: &mut Vec<&'a str>) {
+    match event {
+        BufferEvent::Store { name, .. }
+        | BufferEvent::Load { name, .. }
+        | BufferEvent::Extent { name, .. }
+        | BufferEvent::Release { name }
+        | BufferEvent::Lend { name, .. } => into.push(name.as_str()),
+        BufferEvent::Repeat { body, .. } => {
+            for event in body {
+                custody_names_at_any_depth(event, into);
+            }
+        }
+        // Card `AGGREGATE-OWNED-FIELD`'s four field-path events address a
+        // record's field, never a loan binding, and an owned-field record
+        // beside a lend refuses by name before any window is computed
+        // (`OWNED-FIELD-LEND-WINDOW`).
+        BufferEvent::Bind { .. }
+        | BufferEvent::Acquire { .. }
+        | BufferEvent::Construct { .. }
+        | BufferEvent::Field { .. }
+        | BufferEvent::FieldStore { .. }
+        | BufferEvent::FieldLoad { .. }
+        | BufferEvent::FieldExtent { .. }
+        | BufferEvent::FieldRelease { .. }
+        | BufferEvent::Line(_)
+        | BufferEvent::Return => {}
+    }
+}
+
+/// **The window function over iterations** (card `LOOPS-ON-COMPOSED-ROUTES`):
+/// for each of `bindings`, the index of the last **top-level** event that names
+/// it at any depth.
+///
+/// Stated on its own so the theorem about it names one function. An event
+/// inside a `for` body at top-level index `k` is read as occurring at every
+/// iteration of that loop, so a loan the body touches is live across the whole
+/// loop — its window runs through `k`, and every owner access inside the
+/// body, at whatever body position, is judged against it. That is the
+/// refusing direction relative to the unrolled program, and it is exactly
+/// where the top-level-only computation this replaced was **admitting**: a
+/// loan used only inside a loop closed before the loop opened, and every
+/// owner write in the body was admitted as "outside every live loan"
+/// (`STABILITY-REEVAL-3` §4).
+///
+/// `QCore.LoopWindows.every_use_lies_inside_the_window` proves the window
+/// covers every use of the unrolled program, and
+/// `a_top_level_only_window_misses_a_body_use` that the replaced computation
+/// did not; `the_unrolling_is_loop_v1s` ties the unrolling those theorems are
+/// stated over to `QCore.SourceLoop.unroll`, `LOOP-V1`'s own.
+#[must_use]
+pub fn last_uses<'a>(events: &'a [BufferEvent], bindings: &BTreeSet<&str>) -> BTreeMap<&'a str, usize> {
+    let mut last_use = BTreeMap::new();
+    for (index, event) in events.iter().enumerate() {
+        let mut names = Vec::new();
+        custody_names_at_any_depth(event, &mut names);
+        for name in names {
+            if bindings.contains(name) {
+                last_use.insert(name, index);
+            }
+        }
+    }
+    last_use
+}
+
+/// Resolve every lend of an entry to its window and footprint.
 ///
 /// The second component collects the **tier refusals**: a bound outside the
 /// lowering-visible constant tier (a byte read, a field read) cannot be stated
@@ -1156,6 +1239,14 @@ pub struct LendWindow {
 /// buffer this entry never acquired, still receives a window — over-approximated
 /// to the buffer's whole extent, the maximally refusing direction — so the
 /// projection below is total whatever the value half goes on to say.
+///
+/// Only a **top-level** lend receives a window. A lend inside a `for` body is
+/// a per-iteration loan, a construct this revision refuses by name before this
+/// function is consulted (`LOOP-PER-ITERATION-LOAN`, `check_buffer_program`);
+/// a direct model-level caller handing one in gets no window for it, which
+/// cannot admit anything — the projection opens no borrow node for a lend it
+/// has no window for, and every later use of its binding is then an unknown
+/// name to the inherited checker.
 #[must_use]
 pub fn lend_windows(events: &[BufferEvent]) -> (Vec<LendWindow>, Vec<BufferError>) {
     let mut scalars: BTreeMap<String, i32> = BTreeMap::new();
@@ -1163,8 +1254,8 @@ pub fn lend_windows(events: &[BufferEvent]) -> (Vec<LendWindow>, Vec<BufferError
     let mut windows = Vec::new();
     let mut errors = Vec::new();
 
-    // The last top-level event naming each lend binding.
-    let mut last_use: BTreeMap<&str, usize> = BTreeMap::new();
+    // Card `LOOPS-ON-COMPOSED-ROUTES`: the last top-level event naming each
+    // lend binding **at any depth** — `last_uses` is the window function.
     let lend_bindings: BTreeSet<&str> = events
         .iter()
         .filter_map(|event| match event {
@@ -1172,21 +1263,7 @@ pub fn lend_windows(events: &[BufferEvent]) -> (Vec<LendWindow>, Vec<BufferError
             _ => None,
         })
         .collect();
-    for (index, event) in events.iter().enumerate() {
-        let names: Vec<&str> = match event {
-            BufferEvent::Store { name, .. }
-            | BufferEvent::Load { name, .. }
-            | BufferEvent::Extent { name, .. }
-            | BufferEvent::Release { name }
-            | BufferEvent::Lend { name, .. } => vec![name.as_str()],
-            _ => Vec::new(),
-        };
-        for name in names {
-            if lend_bindings.contains(name) {
-                last_use.insert(name, index);
-            }
-        }
-    }
+    let last_use = last_uses(events, &lend_bindings);
 
     for (index, event) in events.iter().enumerate() {
         match event {
@@ -1260,6 +1337,17 @@ pub fn lend_windows(events: &[BufferEvent]) -> (Vec<LendWindow>, Vec<BufferError
 /// lexical, so a crossed pair cannot be encoded as nesting; it is refused by
 /// name rather than approximated — the `SOCKET-EVENT-CROSSED-SPANS` precedent,
 /// and residual `SLICE-PERMISSIONS-CROSSED-WINDOWS`.
+///
+/// The windows are intervals of **top-level** indices, and since card
+/// `LOOPS-ON-COMPOSED-ROUTES` a `through` may be the index of a `for` whose
+/// body is the loan's last use. Two loans last used inside one loop therefore
+/// share a `through` and read as **nested**, whatever order their body uses
+/// come in: both are live across the whole loop, the enclosing borrow node
+/// holds the whole unrolled body, and the encoding is faithful for the
+/// iteration windows — which over-approximate the unrolled program's exact
+/// windows in the refusing direction (`QCore.LoopWindows`, and the IR's
+/// decision is monotone in the live loans,
+/// `QCore.LoopWindows.a_longer_live_set_refuses_no_less`).
 #[must_use]
 pub fn crossed_lend_windows(windows: &[LendWindow]) -> Option<(&LendWindow, &LendWindow)> {
     for (position, a) in windows.iter().enumerate() {
@@ -1370,114 +1458,33 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                         // node; the value half refuses the statement, and every
                         // later use of the binding is an unknown name there.
                     }
-                    BufferEvent::Store {
-                        name, index: at, ..
-                    } => {
-                        if let Some((_, lend_low, _)) = self.loans.get(name).cloned() {
-                            match self.constant(at) {
-                                // Rebased into the owner's coordinates; the IR
-                                // checks the result stays inside the lend, so
-                                // an access provably past the loan is stated
-                                // as written and refused by containment.
-                                Some(at) => operations.push(OwnershipOp::WriteRange {
-                                    place: name.clone(),
-                                    axis: BYTE_AXIS.to_owned(),
-                                    low: lend_low.saturating_add(at),
-                                    high: lend_low.saturating_add(at).saturating_add(1),
-                                }),
-                                Option::None => {
-                                    // Not resolvable by this tier: a rangeless
-                                    // write through a range lend refuses in
-                                    // the IR — fail-closed
-                                    // (`WRITE-LEND-COMPUTED-INDEX`).
-                                    operations.push(OwnershipOp::Write(name.clone()));
-                                }
-                            }
-                        } else if self.acquired.contains(name) {
-                            match self.constant(at) {
-                                Some(at) => operations.push(OwnershipOp::WriteRange {
-                                    place: name.clone(),
-                                    axis: BYTE_AXIS.to_owned(),
-                                    low: at,
-                                    high: at.saturating_add(1),
-                                }),
-                                // An owner index this tier cannot resolve is
-                                // not provably disjoint from any live lend, so
-                                // it stays rangeless and conflicts with every
-                                // one of them — the read card's own rule,
-                                // reached from the write side.
-                                Option::None => {
-                                    operations.push(OwnershipOp::Write(name.clone()));
-                                }
-                            }
-                        }
-                    }
-                    BufferEvent::Load {
-                        name, index: at, ..
-                    } => {
-                        if let Some((_, lend_low, _)) = self.loans.get(name).cloned() {
-                            match self.constant(at) {
-                                Some(at) => operations.push(OwnershipOp::ReadRange {
-                                    place: name.clone(),
-                                    axis: BYTE_AXIS.to_owned(),
-                                    low: lend_low.saturating_add(at),
-                                    high: lend_low.saturating_add(at).saturating_add(1),
-                                }),
-                                Option::None => {
-                                    operations.push(OwnershipOp::Read(name.clone()));
-                                }
-                            }
-                        } else if self.acquired.contains(name) {
-                            match self.constant(at) {
-                                Some(at) => operations.push(OwnershipOp::ReadRange {
-                                    place: name.clone(),
-                                    axis: BYTE_AXIS.to_owned(),
-                                    low: at,
-                                    high: at.saturating_add(1),
-                                }),
-                                Option::None => {
-                                    operations.push(OwnershipOp::Read(name.clone()));
-                                }
-                            }
-                        }
-                    }
-                    BufferEvent::Extent { binding, name } => {
-                        // An extent read touches no byte, so its footprint is
-                        // the empty interval — admitted beside any loan while
-                        // the binding's liveness is still checked.
-                        if let Some((_, lend_low, _)) = self.loans.get(name).cloned() {
-                            operations.push(OwnershipOp::ReadRange {
-                                place: name.clone(),
-                                axis: BYTE_AXIS.to_owned(),
-                                low: lend_low,
-                                high: lend_low,
-                            });
-                        } else if self.acquired.contains(name) {
-                            operations.push(OwnershipOp::ReadRange {
-                                place: name.clone(),
-                                axis: BYTE_AXIS.to_owned(),
-                                low: 0,
-                                high: 0,
-                            });
-                        }
-                        if let Some(extent) = self.extents.get(name).copied() {
-                            self.scalars.insert(binding.clone(), extent as i32);
-                        }
-                    }
+                    BufferEvent::Store { .. }
+                    | BufferEvent::Load { .. }
+                    | BufferEvent::Extent { .. } => self.access(event, &mut operations),
                     BufferEvent::Release { name } => {
                         if self.acquired.contains(name) {
                             operations.push(OwnershipOp::Drop(name.clone()));
                         }
                     }
-                    // Unreachable from the route: `check_buffer_program`
-                    // refuses a `for` in an entry that lends before this
-                    // projection is consulted (`SLICE-PERMISSIONS-LOOP-WINDOW`),
-                    // and — card `AGGREGATE-OWNED-FIELD` — refuses an owned-field
-                    // record beside a lend the same way (`OWNED-FIELD-LEND-WINDOW`).
-                    // A direct model-level caller gets no operation for any of
-                    // them, and the refusal it already received stands.
-                    BufferEvent::Repeat { .. }
-                    | BufferEvent::Construct { .. }
+                    // Card `LOOPS-ON-COMPOSED-ROUTES`: a `for` is projected by
+                    // **unrolling its body under the loans live here** — the
+                    // same loans map, `count` times, with the index bound —
+                    // so every body access states its footprint against every
+                    // loan whose window the loop sits inside, which is what
+                    // makes the IR's decision over this list the decision
+                    // over `LOOP-V1`'s unrolled program.
+                    BufferEvent::Repeat {
+                        variable,
+                        count,
+                        body,
+                    } => self.repeat(variable, *count, body, &mut operations),
+                    // Unreachable from the route: `check_buffer_program` —
+                    // card `AGGREGATE-OWNED-FIELD` — refuses an owned-field
+                    // record beside a lend before this projection is
+                    // consulted (`OWNED-FIELD-LEND-WINDOW`). A direct
+                    // model-level caller gets no operation for any of them,
+                    // and the refusal it already received stands.
+                    BufferEvent::Construct { .. }
                     | BufferEvent::Field { .. }
                     | BufferEvent::FieldStore { .. }
                     | BufferEvent::FieldLoad { .. }
@@ -1489,6 +1496,173 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                 index += 1;
             }
             operations
+        }
+
+        /// One byte access — a store, a load, or an extent read — as the
+        /// footprint-stating operation the IR decides, through a loan or on
+        /// the owner. Shared by the flat segment and the unrolled loop body,
+        /// so an access inside a `for` is projected by the one rule a
+        /// top-level one is.
+        fn access(&mut self, event: &BufferEvent, operations: &mut Vec<OwnershipOp>) {
+            match event {
+                BufferEvent::Store {
+                    name, index: at, ..
+                } => {
+                    if let Some((_, lend_low, _)) = self.loans.get(name).cloned() {
+                        match self.constant(at) {
+                            // Rebased into the owner's coordinates; the IR
+                            // checks the result stays inside the lend, so
+                            // an access provably past the loan is stated
+                            // as written and refused by containment.
+                            Some(at) => operations.push(OwnershipOp::WriteRange {
+                                place: name.clone(),
+                                axis: BYTE_AXIS.to_owned(),
+                                low: lend_low.saturating_add(at),
+                                high: lend_low.saturating_add(at).saturating_add(1),
+                            }),
+                            Option::None => {
+                                // Not resolvable by this tier: a rangeless
+                                // write through a range lend refuses in
+                                // the IR — fail-closed
+                                // (`WRITE-LEND-COMPUTED-INDEX`).
+                                operations.push(OwnershipOp::Write(name.clone()));
+                            }
+                        }
+                    } else if self.acquired.contains(name) {
+                        match self.constant(at) {
+                            Some(at) => operations.push(OwnershipOp::WriteRange {
+                                place: name.clone(),
+                                axis: BYTE_AXIS.to_owned(),
+                                low: at,
+                                high: at.saturating_add(1),
+                            }),
+                            // An owner index this tier cannot resolve is
+                            // not provably disjoint from any live lend, so
+                            // it stays rangeless and conflicts with every
+                            // one of them — the read card's own rule,
+                            // reached from the write side.
+                            Option::None => {
+                                operations.push(OwnershipOp::Write(name.clone()));
+                            }
+                        }
+                    }
+                }
+                BufferEvent::Load {
+                    name, index: at, ..
+                } => {
+                    if let Some((_, lend_low, _)) = self.loans.get(name).cloned() {
+                        match self.constant(at) {
+                            Some(at) => operations.push(OwnershipOp::ReadRange {
+                                place: name.clone(),
+                                axis: BYTE_AXIS.to_owned(),
+                                low: lend_low.saturating_add(at),
+                                high: lend_low.saturating_add(at).saturating_add(1),
+                            }),
+                            Option::None => {
+                                operations.push(OwnershipOp::Read(name.clone()));
+                            }
+                        }
+                    } else if self.acquired.contains(name) {
+                        match self.constant(at) {
+                            Some(at) => operations.push(OwnershipOp::ReadRange {
+                                place: name.clone(),
+                                axis: BYTE_AXIS.to_owned(),
+                                low: at,
+                                high: at.saturating_add(1),
+                            }),
+                            Option::None => {
+                                operations.push(OwnershipOp::Read(name.clone()));
+                            }
+                        }
+                    }
+                }
+                BufferEvent::Extent { binding, name } => {
+                    // An extent read touches no byte, so its footprint is
+                    // the empty interval — admitted beside any loan while
+                    // the binding's liveness is still checked.
+                    if let Some((_, lend_low, _)) = self.loans.get(name).cloned() {
+                        operations.push(OwnershipOp::ReadRange {
+                            place: name.clone(),
+                            axis: BYTE_AXIS.to_owned(),
+                            low: lend_low,
+                            high: lend_low,
+                        });
+                    } else if self.acquired.contains(name) {
+                        operations.push(OwnershipOp::ReadRange {
+                            place: name.clone(),
+                            axis: BYTE_AXIS.to_owned(),
+                            low: 0,
+                            high: 0,
+                        });
+                    }
+                    if let Some(extent) = self.extents.get(name).copied() {
+                        self.scalars.insert(binding.clone(), extent as i32);
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        /// Project one `for` by running its body `count` times under the loans
+        /// live at the loop, with `variable` bound to the iteration number in
+        /// the lowering-visible tier — so `part[i] = v` states the footprint
+        /// `low + i` of the iteration it runs in, exactly as the value half
+        /// and the emitted C decide it (card `LOOPS-ON-COMPOSED-ROUTES`).
+        ///
+        /// A body's bindings are body-local and are scoped out afterwards,
+        /// the value half's own rule. The body contributes **no custody
+        /// operation and opens no borrow node**: an acquisition, a release or
+        /// a lend inside a `for` of an entry that lends is refused by name
+        /// before this projection is consulted (`LOOP-WINDOW-BODY-CUSTODY`,
+        /// `LOOP-PER-ITERATION-LOAN`), and a direct model-level caller handing
+        /// one in gets no operation for it, which cannot admit anything — an
+        /// acquisition the checker never saw makes every later use an unknown
+        /// name, and a release it never saw leaves the owner live at the
+        /// normal exit.
+        fn repeat(
+            &mut self,
+            variable: &str,
+            count: u32,
+            body: &[BufferEvent],
+            operations: &mut Vec<OwnershipOp>,
+        ) {
+            let outer: BTreeSet<String> = self.scalars.keys().cloned().collect();
+            for iteration in 0..count {
+                self.scalars.insert(
+                    variable.to_owned(),
+                    i32::try_from(iteration).expect("MAX_ITERATIONS is far inside i32"),
+                );
+                for event in body {
+                    match event {
+                        BufferEvent::Bind { binding, value } => {
+                            self.scalars.insert(binding.clone(), *value);
+                        }
+                        BufferEvent::Store { .. }
+                        | BufferEvent::Load { .. }
+                        | BufferEvent::Extent { .. } => self.access(event, operations),
+                        BufferEvent::Repeat {
+                            variable,
+                            count,
+                            body,
+                        } => self.repeat(variable, *count, body, operations),
+                        // An owned-field statement inside a body is refused
+                        // by name before this projection runs
+                        // (`OWNED-FIELD-LOOP-BODY`, card `AGGREGATE-OWNED-FIELD`).
+                        BufferEvent::Acquire { .. }
+                        | BufferEvent::Release { .. }
+                        | BufferEvent::Lend { .. }
+                        | BufferEvent::Construct { .. }
+                        | BufferEvent::Field { .. }
+                        | BufferEvent::FieldStore { .. }
+                        | BufferEvent::FieldLoad { .. }
+                        | BufferEvent::FieldExtent { .. }
+                        | BufferEvent::FieldRelease { .. }
+                        | BufferEvent::Line(_)
+                        | BufferEvent::Return => {}
+                    }
+                }
+            }
+            self.scalars.retain(|name, _| outer.contains(name));
         }
     }
 
@@ -1640,12 +1814,14 @@ impl BufferEvaluation {
     /// [`BufferEvent::Repeat`] does the same, and for a sharper reason (the
     /// `LOOP-V1` × `STRING-CONCAT` composition). A loop is not a value-bearing
     /// event: it decides **how often** its body's events run, and running them
-    /// is [`ValueRun::repeat`]'s, which owns the index binding, the body-local
+    /// is [`BufferRun::repeat`]'s, which owns the index binding, the body-local
     /// scoping and the shadowing refusal. Deciding it here would put a second
     /// iteration rule beside that one. **A caller that cannot recurse must
     /// therefore refuse a `Repeat` rather than pass it here** — silently
     /// stepping over a loop would drop its body's writes, which is the one
-    /// fail-open shape this composition could have had.
+    /// fail-open shape this composition could have had. A caller that *can*
+    /// recurse does so through [`BufferRun`], which card
+    /// `LOOPS-ON-COMPOSED-ROUTES` published for exactly that reason.
     #[must_use]
     pub fn apply(&mut self, index: usize, event: &BufferEvent) -> BufferStep {
         let mut step = BufferStep::default();
@@ -2562,27 +2738,58 @@ pub fn check_buffer_program(
     if any_event(&program.events, |event| {
         matches!(event, BufferEvent::Lend { .. })
     }) {
-        // A lend's window is an interval of statement indices, exact because
-        // the route is one flat sequence; a `for` makes one index run many
-        // times and invalidates that premise — the same wall the read card
-        // re-measured (`STRING-CONCAT-LOOP-WINDOW`), reached from the write
-        // side (`SLICE-PERMISSIONS-LOOP-WINDOW`).
-        if let Some(position) = program
-            .events
-            .iter()
-            .position(|event| matches!(event, BufferEvent::Repeat { .. }))
-        {
-            return Err(vec![BufferError::Lend {
-                event: position,
-                refusal: LendRefusal::Shape(
-                    "`source.loop.v1`'s `for` is not a statement an entry that lends models; a \
-                     lend's window is an interval of statement indices and is exact only \
-                     because the route is one flat sequence, so a loop body writing under a \
-                     live lend would need a window over iterations rather than over indices \
-                     (`SLICE-PERMISSIONS-LOOP-WINDOW`)"
-                        .to_owned(),
-                ),
-            }]);
+        // Card `LOOPS-ON-COMPOSED-ROUTES`: a `for` in an entry that lends is
+        // admitted, with the lend's window computed **over iterations**
+        // (`last_uses`) rather than refused for being an index interval —
+        // the wall `SLICE-PERMISSIONS-LOOP-WINDOW` recorded, lifted where
+        // `QCore.LoopWindows` covers it. Two body shapes stay outside the
+        // theorem and are refused by name, **before** the window function
+        // runs, so the refusals below cannot be reordered behind it:
+        //
+        // * a lend inside a body is a **per-iteration loan** — a loan that
+        //   opens and closes inside one iteration, whose window is not an
+        //   interval of top-level indices at all (`LOOP-PER-ITERATION-LOAN`);
+        // * an acquisition or a release inside a body would put a custody
+        //   step in a loop of an entry whose projection opens borrow nodes
+        //   over top-level windows, where neither the per-iteration identity
+        //   gate nor the one-pass peak walker sees it
+        //   (`LOOP-WINDOW-BODY-CUSTODY`).
+        for (position, event) in program.events.iter().enumerate() {
+            let BufferEvent::Repeat { .. } = event else {
+                continue;
+            };
+            if event.any(&|inner| matches!(inner, BufferEvent::Lend { .. })) {
+                return Err(vec![BufferError::Lend {
+                    event: position,
+                    refusal: LendRefusal::Shape(
+                        "this `for` body opens a lend, which is a per-iteration loan: its window \
+                         opens and closes inside one iteration and is not an interval of \
+                         statement indices, so `source.buffer.v1` refuses it by name rather \
+                         than approximating it; a loan a loop body uses is opened before the \
+                         loop (`LOOP-PER-ITERATION-LOAN`)"
+                            .to_owned(),
+                    ),
+                }]);
+            }
+            if event.any(&|inner| {
+                matches!(
+                    inner,
+                    BufferEvent::Acquire { .. } | BufferEvent::Release { .. }
+                )
+            }) {
+                return Err(vec![BufferError::Lend {
+                    event: position,
+                    refusal: LendRefusal::Shape(
+                        "this `for` body acquires or releases a buffer; in an entry that lends, \
+                         a loop body neither acquires nor releases, because the lend-structured \
+                         custody projection opens its borrow nodes over top-level windows and a \
+                         custody step inside an iteration would be seen by neither the \
+                         per-iteration identity gate nor the one-pass peak walker \
+                         (`LOOP-WINDOW-BODY-CUSTODY`)"
+                            .to_owned(),
+                    ),
+                }]);
+            }
         }
         let (windows, tier_errors) = lend_windows(&program.events);
         if !tier_errors.is_empty() {
@@ -2608,12 +2815,16 @@ pub fn check_buffer_program(
         // An acquisition inside a lend's window would put a footprint step
         // inside a borrow node's body, where the one-pass peak walker cannot
         // see it; refused rather than under-measured
-        // (`WRITE-LEND-NESTED-ACQUIRE`).
+        // (`WRITE-LEND-NESTED-ACQUIRE`). Scanned **at any depth** since card
+        // `LOOPS-ON-COMPOSED-ROUTES`: a window may now contain a `for`, and
+        // an acquisition inside its body is inside the window too — already
+        // refused by name above, and kept here so the scan is total on its
+        // own terms rather than by the order the refusals happen to run in.
         for window in &windows {
             for (index, event) in program.events.iter().enumerate() {
                 if index > window.event
                     && index <= window.through
-                    && matches!(event, BufferEvent::Acquire { .. })
+                    && event.any(&|inner| matches!(inner, BufferEvent::Acquire { .. }))
                 {
                     return Err(vec![BufferError::Lend {
                         event: index,
@@ -2687,27 +2898,13 @@ pub fn check_buffer_program(
     let peak_live_bytes = ownership::peak_live_axis(&operations, BYTE_AXIS);
 
     // --- Half two: the values. ---
-    let mut run = ValueRun {
-        evaluation: BufferEvaluation {
-            record_types,
-            ..BufferEvaluation::new()
-        },
-        acquisitions: Vec::new(),
-        releases: Vec::new(),
-        moves: Vec::new(),
-        lend_windows: lend_window_by_event,
-        lends: Vec::new(),
-        accesses: Vec::new(),
-        constructions: Vec::new(),
-        projections: Vec::new(),
-        lines: Vec::new(),
-        flushes: 0,
-        renderings: BTreeSet::new(),
-        returned: false,
-        errors: Vec::new(),
-    };
+    let mut run = BufferRun::new(BufferEvaluation {
+        record_types,
+        ..BufferEvaluation::new()
+    });
+    run.lend_windows = lend_window_by_event;
     run.walk(&program.events, 0, true);
-    let ValueRun {
+    let BufferRun {
         evaluation,
         acquisitions,
         releases,
@@ -2772,27 +2969,59 @@ pub fn check_buffer_program(
 /// every one of those passes writes into the same bytes, the same scalar
 /// environment and the same published line sequence as the surrounding entry
 /// does.
-struct ValueRun {
-    evaluation: BufferEvaluation,
-    acquisitions: Vec<(String, u32)>,
-    releases: Vec<String>,
-    moves: Vec<FieldMove>,
+///
+/// **Published since card `LOOPS-ON-COMPOSED-ROUTES`**, for the one reason
+/// [`BufferEvaluation::apply`]'s header states: a caller that cannot recurse
+/// must refuse a `Repeat` rather than step over it, and the composed
+/// string/buffer route now admits one. It runs the body through **this**
+/// runner — [`BufferRun::repeat`], which owns the index binding, the
+/// body-local scoping and the shadowing refusal — rather than through a
+/// second iteration rule written beside it, so a loop body's events on that
+/// route are decided by the one implementation a loop body's events on this
+/// route are.
+pub struct BufferRun {
+    pub evaluation: BufferEvaluation,
+    pub acquisitions: Vec<(String, u32)>,
+    pub releases: Vec<String>,
+    /// Every field move this run published (card `AGGREGATE-OWNED-FIELD`).
+    pub moves: Vec<FieldMove>,
     /// Each lend's window end by its event index, precomputed by
     /// [`lend_windows`] — `through` is a whole-program fact the stepper cannot
     /// know (card `SLICE-PERMISSIONS-WRITE-LEND`).
-    lend_windows: BTreeMap<usize, usize>,
-    lends: Vec<LendRecord>,
-    accesses: Vec<BufferAccess>,
-    constructions: Vec<RecordConstruction>,
-    projections: Vec<RecordProjection>,
-    lines: Vec<ObservedLine>,
-    flushes: usize,
-    renderings: BTreeSet<Rendering>,
-    returned: bool,
-    errors: Vec<BufferError>,
+    pub lend_windows: BTreeMap<usize, usize>,
+    pub lends: Vec<LendRecord>,
+    pub accesses: Vec<BufferAccess>,
+    pub constructions: Vec<RecordConstruction>,
+    pub projections: Vec<RecordProjection>,
+    pub lines: Vec<ObservedLine>,
+    pub flushes: usize,
+    pub renderings: BTreeSet<Rendering>,
+    pub returned: bool,
+    pub errors: Vec<BufferError>,
 }
 
-impl ValueRun {
+impl BufferRun {
+    /// A run over `evaluation` that has published nothing yet.
+    #[must_use]
+    pub fn new(evaluation: BufferEvaluation) -> Self {
+        Self {
+            evaluation,
+            acquisitions: Vec::new(),
+            releases: Vec::new(),
+            moves: Vec::new(),
+            lend_windows: BTreeMap::new(),
+            lends: Vec::new(),
+            accesses: Vec::new(),
+            constructions: Vec::new(),
+            projections: Vec::new(),
+            lines: Vec::new(),
+            flushes: 0,
+            renderings: BTreeSet::new(),
+            returned: false,
+            errors: Vec::new(),
+        }
+    }
+
     /// Run `events` in order.
     ///
     /// `attributed` is the index of the **top-level** event every refusal and
@@ -2802,7 +3031,7 @@ impl ValueRun {
     /// top-level index of its own, the statement is what the reader has to
     /// change, and `LOOP-BODY-ATTRIBUTION` records the finer span as a
     /// follow-on rather than guessing one.
-    fn walk(&mut self, events: &[BufferEvent], attributed: usize, top_level: bool) {
+    pub fn walk(&mut self, events: &[BufferEvent], attributed: usize, top_level: bool) {
         for (position, event) in events.iter().enumerate() {
             let index = if top_level { position } else { attributed };
             if self.returned {
@@ -2948,7 +3177,7 @@ impl ValueRun {
     ///    name the surrounding entry already bound would leave the model and the
     ///    emitted C to agree by coincidence about which of two values survives
     ///    the loop, and a refusal is the fail-closed answer.
-    fn repeat(&mut self, variable: &str, count: u32, body: &[BufferEvent], index: usize) {
+    pub fn repeat(&mut self, variable: &str, count: u32, body: &[BufferEvent], index: usize) {
         let outer_scalars: BTreeSet<String> = self.evaluation.scalars.keys().cloned().collect();
         let outer_buffers: BTreeSet<String> = self.evaluation.extents.keys().cloned().collect();
         // Card `AGGREGATES-V1`: a record binding is body-local exactly as a
@@ -3072,8 +3301,8 @@ fn body_bindings(events: &[BufferEvent]) -> BTreeSet<String> {
                 }
                 // Card `SLICE-PERMISSIONS-WRITE-LEND`: a lend binds a name,
                 // and it is body-local exactly as every other binding is —
-                // though an entry that lends refuses a `for` before this can
-                // matter (`SLICE-PERMISSIONS-LOOP-WINDOW`).
+                // though a lend inside a body is refused by name before this
+                // can matter (`LOOP-PER-ITERATION-LOAN`).
                 BufferEvent::Lend { binding, .. } => {
                     names.insert(binding.clone());
                 }

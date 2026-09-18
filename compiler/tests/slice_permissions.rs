@@ -722,14 +722,14 @@ fn a_slice_of_a_loan_lends_the_bytes_that_slice_addresses() {
 // --- 5. The loop, measured rather than assumed. ---
 
 #[test]
-fn a_loop_beside_a_range_loan_still_refuses_and_the_range_does_not_rescue_it() {
-    // Follow-on `STRING-CONCAT-LOOP-WINDOW`, re-measured for this card: the
-    // window is an interval of **statement indices** and is exact only because
-    // the route is one flat sequence. A range narrows *which* writes conflict;
-    // it says nothing about *when* a statement runs, so a loop body writing
-    // outside a live loan is still refused — at the composed route's own
-    // flat-sequence rule, before the statement is read as a buffer statement at
-    // all.
+fn a_loop_beside_a_range_loan_is_admitted_where_its_body_writes_outside_the_range() {
+    // This test pinned `STRING-CONCAT-LOOP-WINDOW`'s refusal (`Q068`) until
+    // card `LOOPS-ON-COMPOSED-ROUTES` (wave 39) lifted it. The range still
+    // narrows *which* writes conflict, and the iteration window now says
+    // *when*: `head` is read after the loop, so it is live across it, and the
+    // body's write to byte 2 — outside `[0, 2)` — is admitted at every
+    // iteration. The same body writing byte 1 is refused at `Q078`, pinned in
+    // `loops_on_composed_routes.rs`.
     let body = [
         "let b = bytes(4);",
         "b[0] = 97;",
@@ -745,10 +745,7 @@ fn a_loop_beside_a_range_loan_still_refuses_and_the_range_does_not_rescue_it() {
         "return;",
     ];
     let source = module(&body);
-    assert_eq!(codes(&source), ["Q068"]);
-    assert!(
-        messages(&source)[0].contains("this statement opens a nested block"),
-        "{:?}",
-        messages(&source)[0]
-    );
+    let module = compile(&source).expect("admitted since LOOPS-ON-COMPOSED-ROUTES");
+    let observation = module.extern_observation.expect("a two-stream observation");
+    assert_eq!(observation, ["out: ab"]);
 }
