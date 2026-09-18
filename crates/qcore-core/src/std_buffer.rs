@@ -963,10 +963,13 @@ pub fn custody_operations_with_gates(
                     // A construction of a type declaring an owned field is a
                     // `Compose` of exactly its owned fields in declared order,
                     // each moving the named buffer in. A field supplied
-                    // something other than a name contributes no move (the
-                    // value half refuses it by name), and a record of scalars
-                    // contributes **no operation at all**, which is what keeps
-                    // every program written before the card byte-identical.
+                    // something that is not a custody name — a literal, a
+                    // scalar, a record — contributes no move, on this
+                    // function's standing rule (the checker is asked about
+                    // **resources**, and the value half refuses such a field
+                    // by name at `Q052`); and a record of scalars contributes
+                    // **no operation at all**, which is what keeps every
+                    // program written before the card byte-identical.
                     BufferEvent::Construct {
                         binding,
                         type_name,
@@ -978,15 +981,15 @@ pub fn custody_operations_with_gates(
                             let moved: Vec<(String, String)> = declared
                                 .owned_field_names()
                                 .filter_map(|owned| {
-                                    fields
-                                        .iter()
-                                        .find(|(name, _)| name == owned)
-                                        .and_then(|(_, operand)| match operand {
-                                            BufferOperand::Scalar(from) => {
+                                    fields.iter().find(|(name, _)| name == owned).and_then(
+                                        |(_, operand)| match operand {
+                                            BufferOperand::Scalar(from) if self.names(from) => {
                                                 Some((owned.to_owned(), Self::owner(renames, from)))
                                             }
-                                            BufferOperand::Literal(_) => None,
-                                        })
+                                            BufferOperand::Scalar(_)
+                                            | BufferOperand::Literal(_) => None,
+                                        },
+                                    )
                                 })
                                 .collect();
                             self.operations.push(OwnershipOp::Compose {
@@ -2013,7 +2016,8 @@ impl BufferEvaluation {
                         for field in declared.owned_field_names() {
                             if let Some(FieldValue::Bytes { moved_from }) = value.project(field) {
                                 let extent = self.extents.get(moved_from).copied().unwrap_or(0);
-                                let contents = self.contents.get(moved_from).cloned().unwrap_or_default();
+                                let contents =
+                                    self.contents.get(moved_from).cloned().unwrap_or_default();
                                 owned_fields.insert(
                                     field.to_owned(),
                                     OwnedField {
@@ -2132,9 +2136,9 @@ impl BufferEvaluation {
                 value,
             } => {
                 let spelling = format!("{record}.{field}");
-                let place = self
-                    .owned_field(index, record, field)
-                    .and_then(|owned| field_place(index, &spelling, owned.extent, self.operand(index, at)));
+                let place = self.owned_field(index, record, field).and_then(|owned| {
+                    field_place(index, &spelling, owned.extent, self.operand(index, at))
+                });
                 let value = self.operand(index, value);
                 match (place, value) {
                     (Ok(at), Ok(value)) => {
@@ -2173,10 +2177,9 @@ impl BufferEvaluation {
                 index: at,
             } => {
                 let spelling = format!("{record}.{field}");
-                match self
-                    .owned_field(index, record, field)
-                    .and_then(|owned| field_place(index, &spelling, owned.extent, self.operand(index, at)))
-                {
+                match self.owned_field(index, record, field).and_then(|owned| {
+                    field_place(index, &spelling, owned.extent, self.operand(index, at))
+                }) {
                     Ok(at) => {
                         let byte = self
                             .owned_fields

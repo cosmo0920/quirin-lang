@@ -615,10 +615,19 @@ struct RecordEnvironment {
 impl RecordEnvironment {
     /// The C expression for the member `record.field`.
     fn member(record: &str, field: &str) -> String {
-        format!("{}.{}", record_binding_name(record), record_field_name(field))
+        format!(
+            "{}.{}",
+            record_binding_name(record),
+            record_field_name(field)
+        )
     }
 
-    fn field_extent(&self, event: usize, record: &str, field: &str) -> Result<u32, BufferEmissionRefusal> {
+    fn field_extent(
+        &self,
+        event: usize,
+        record: &str,
+        field: &str,
+    ) -> Result<u32, BufferEmissionRefusal> {
         self.field_extents
             .get(&(record.to_owned(), field.to_owned()))
             .copied()
@@ -725,7 +734,12 @@ fn emit_events(
                 let declared: Vec<String> = records
                     .types
                     .get(type_name)
-                    .map(|declared| declared.owned_field_names().map(ToOwned::to_owned).collect())
+                    .map(|declared| {
+                        declared
+                            .owned_field_names()
+                            .map(ToOwned::to_owned)
+                            .collect()
+                    })
                     .unwrap_or_default();
                 let live = records.live_fields.remove(name).unwrap_or_default();
                 for field in declared {
@@ -852,7 +866,9 @@ fn emit_events(
                         // owes it from here on.
                         FieldType::Bytes => {
                             let BufferOperand::Scalar(from) = operand else {
-                                return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
+                                return Err(BufferEmissionRefusal::UnplaceableAccess {
+                                    event: index,
+                                });
                             };
                             let Some(extent) = extents.get(from).copied() else {
                                 return Err(BufferEmissionRefusal::Unbound {

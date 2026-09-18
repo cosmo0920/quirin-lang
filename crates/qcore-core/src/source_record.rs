@@ -461,7 +461,8 @@ pub fn construct(
             });
         };
         match (field_type, value) {
-            (FieldType::I32, FieldValue::Scalar(_)) | (FieldType::Bytes, FieldValue::Bytes { .. }) => {}
+            (FieldType::I32, FieldValue::Scalar(_))
+            | (FieldType::Bytes, FieldValue::Bytes { .. }) => {}
             (FieldType::Bytes, FieldValue::Scalar(_)) => {
                 return Err(RecordRefusal::FieldTakesABuffer {
                     type_name: declared.name.clone(),

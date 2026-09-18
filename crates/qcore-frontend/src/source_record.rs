@@ -71,13 +71,13 @@
 //!
 //! # What this lowering does not establish
 //!
-//! No field write (`AGGREGATE-FIELD-WRITE`), no owned or view field
-//! (`AGGREGATE-OWNED-FIELD`, `AGGREGATE-VIEW-FIELD`), no nested record
-//! (`AGGREGATE-NESTED`), no record-valued parameter or result
-//! (`AGGREGATE-ACROSS-CALL`), and no field type but `i32`
-//! (`AGGREGATE-FIELD-TYPES`). Each is a named follow-on in
-//! `docs/reports/aggregates-v1/README.md` §12 with its missing capability
-//! stated.
+//! No field write (`AGGREGATE-FIELD-WRITE`), no view field
+//! (`AGGREGATE-VIEW-FIELD`), no nested record (`AGGREGATE-NESTED`), no
+//! record-valued parameter or result (`AGGREGATE-ACROSS-CALL`), and no field
+//! type but `i32` and `bytes` (`AGGREGATE-FIELD-TYPES`). Each is a named
+//! follow-on in `docs/reports/aggregates-v1/README.md` §12 — and, for the
+//! owned field's own boundaries, `docs/reports/aggregate-owned-field/README.md`
+//! — with its missing capability stated.
 
 use crate::frontend::{DeclarationKind, SourceBlock, SourceProgram};
 use crate::lexer::{Span, Symbol, Token, TokenKind};
@@ -356,8 +356,7 @@ pub fn read_field_path_statement(window: &[&Token]) -> Option<Result<FieldPathSt
     let record = word(window, 0)?.to_owned();
     let field = word(window, 2)?.to_owned();
     // `RECORD . FIELD [ INDEX ] = VALUE ;`
-    let Some(close) = (4..window.len()).find(|at| symbol(window, *at, Symbol::RightBracket))
-    else {
+    let Some(close) = (4..window.len()).find(|at| symbol(window, *at, Symbol::RightBracket)) else {
         return Some(Err(format!(
             "`{record}.{field}[` is not closed; a store through a field is \
              `RECORD.FIELD[INDEX] = VALUE;`"

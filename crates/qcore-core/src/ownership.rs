@@ -233,7 +233,9 @@ enum Binding {
     /// [`Place::Field`] bindings `BASE.FIELD` beside it (card
     /// `AGGREGATE-OWNED-FIELD`). The aggregate itself owns no resource: each
     /// field does, and the aggregate is what a whole-record `Drop` walks.
-    Aggregate { fields: Vec<String> },
+    Aggregate {
+        fields: Vec<String>,
+    },
 }
 
 /// Reduced cycle-3 ownership IR. Borrow nodes delimit lexical loan lifetimes.

@@ -795,11 +795,8 @@ fn a_field_path_and_a_dotted_plain_name_are_different_places() {
     .unwrap_err();
     assert_eq!(error, OwnershipError::UnknownBinding("p.buf".into()));
 
-    let error = execute_ownership(&[
-        acquire(1, "b", 4),
-        OwnershipOp::ReadField(path("b", "buf")),
-    ])
-    .unwrap_err();
+    let error = execute_ownership(&[acquire(1, "b", 4), OwnershipOp::ReadField(path("b", "buf"))])
+        .unwrap_err();
     assert_eq!(error, OwnershipError::NotAnAggregate("b".into()));
 
     let error = execute_ownership(&[
