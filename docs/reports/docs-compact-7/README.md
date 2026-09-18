@@ -225,7 +225,17 @@ in bold that `WRITE-LEND-TASKS-EXERCISE` **DECIDES** it. One file, two
 statements, one wrong. The row now defers to 15n and does not restate the
 decision.
 
-### 4.4 The arbiter chain's length
+### 4.4 Cycle 19 row — a leaf split labelled as an `unsupported` split
+
+The row read "`unsupported` 49,922 → **49,753** as **183 withdrawn and 15
+added**". Those are two different measures: 183/15 is the **leaf** split (net
+−168), while `unsupported` itself moves −169, the difference being the single
+row that became an `unknown_alias`. The endpoints were right and the
+attribution was not. The compacted row now gives the diagnostics as counts and
+states the leaf movement separately as leaf movement, which is how
+`w37-corpus-contracts-4` §5 states it.
+
+### 4.5 The arbiter chain's length
 
 "All earlier archives remain frozen (constraint 21): **those seven** plus …"
 against a list of **twelve** links. The chain grew by two in wave 36 and three
