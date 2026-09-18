@@ -84,10 +84,8 @@ mutate M1-top-level-only-window "$BUFFER" \
             for event in body {
                 custody_names_at_any_depth(event, into);
             }
-        }
-        BufferEvent::Bind { .. }' \
-'        BufferEvent::Repeat { .. } => {}
-        BufferEvent::Bind { .. }' \
+        }' \
+'        BufferEvent::Repeat { .. } => {}' \
   a_loan_used_only_inside_the_loop_is_live_across_it_and_the_body_write_refuses
 
 # M2 — the composed route's body-versus-live-loans judgment removed: the

@@ -42,6 +42,12 @@ lowering entry point and the constants type it needs) and `source_std_string.rs`
 (`ownership.rs` and `std_buffer.rs`'s **record** arms are
 `AGGREGATE-OWNED-FIELD`'s and were not touched; `ownership.rs` did not move).
 
+**Rebased onto `e80b58d6`** (`AGGREGATE-OWNED-FIELD` and
+`CT07-TWO-THREAD-PROOF-LEG` merged ahead) at the integrator's request; the
+overlaps and their resolutions, file by file, are in §12 item 9, and the
+merged card's two by-name refusals are pinned against this card's windows in
+§5.
+
 ## 2. What is true today (re-derived, not inherited)
 
 Re-derived on `e878b362` before any edit.
@@ -196,6 +202,7 @@ three re-pinned suites (`write_lend.rs`, `slice_permissions.rs`,
 | Body index read out of a byte, under a live loan | refused `Q054` (not provably disjoint) | `a_body_index_read_from_a_byte_conflicts_with_every_live_loan` |
 | Lend inside a body | **refused by name** `Q051` `LOOP-PER-ITERATION-LOAN` | `a_lend_inside_a_body_is_a_per_iteration_loan_and_refuses_by_name` |
 | Acquire or release inside a body | **refused by name** `Q051` `LOOP-WINDOW-BODY-CUSTODY`; the same body in an entry with no lend keeps `LOOP-V1`'s admission | `a_body_that_acquires_or_releases_refuses_by_name_where_a_loan_is_held` |
+| (after the rebase onto `e80b58d6`) a lend whose loan a `for` uses, beside a record with an owned field; an owned-field statement in a `for` body of an entry that lends; an owned-field statement in a `for` body beside a loop over the owner | **refused by name** `Q051` — `OWNED-FIELD-LEND-WINDOW` (the merged card checks its lend premise first), `OWNED-FIELD-LEND-WINDOW`, `OWNED-FIELD-LOOP-BODY`; all three sit in that card's "half zero-and-a-quarter", before this card's lend block, so no iteration window is computed for them | `the_owned_field_refusals_survive_a_for_beside_a_loan` (24th test) |
 
 **Composed string route.**
 
@@ -264,19 +271,23 @@ and are recorded as such rather than claimed as more.
 ## 7. Emission census
 
 `emission_census.py --base measure/census/quirin-base --card target/debug/quirin`
-over every `.qcore` in the repository (527 programs; the base binary built from
-`e878b362`'s code, exit 0):
+over every `.qcore` in the repository, re-run on the tree rebased onto
+`e80b58d6` (529 programs; the base binary built from `e878b362`'s code — the
+base of this card, which predates both `AGGREGATE-OWNED-FIELD` and
+`CT07-TWO-THREAD-PROOF-LEG` — exit 0):
 
 | Verdict | Programs |
 |---|---|
 | admitted by both, C **byte-identical** | **139** |
 | admitted by both, C differing | **0** |
 | admitted by base only | **0** |
-| admitted by card only | **2** — `examples/loops/lend_fill.qcore`, `examples/strings/looped_fill.qcore` (this card's own) |
-| refused by both | 386 |
+| admitted by card only | **3** — `examples/loops/lend_fill.qcore`, `examples/strings/looped_fill.qcore` (this card's own) and `examples/records/owned_field.qcore` (`AGGREGATE-OWNED-FIELD`'s, new on main since the base) |
+| refused by both | 387 |
 
 Unrolling is unchanged and every program admitted before the card emits
-byte-identical C. Full rows in `emission-census.json`.
+byte-identical C. The pre-rebase run (527 programs, 139 / 0 / 0 / 2 / 386)
+gave the same verdict on every program it shared. Full rows in
+`emission-census.json`.
 
 ## 8. Examples and sanitized native runs
 
@@ -436,6 +447,37 @@ corpus 88; CT 46/50; full language conformance false.
    (`MUTATION-HARNESS-STALE-ARTIFACTS`) is the integrator's call — it is
    named here, not registered, because it is a finding about other cards'
    files.
+9. **Rebase onto `e80b58d6`, overlaps resolved so both cards' arms survive**
+   (one line per file):
+   * `crates/qcore-core/src/std_buffer.rs` — its record arms and
+     `FieldStore`/`FieldLoad`/`FieldExtent`/`FieldRelease` kept everywhere;
+     my `Repeat` arm in the lend projection kept beside its catch-all
+     comment; `BufferRun` carries its `moves` field; my two exhaustive
+     matches (`custody_names_at_any_depth`, the projection's body walk)
+     treat the four field-path events as naming no loan (their statements
+     refuse by name before either runs).
+   * `crates/qcore-core/src/std_string.rs` — its exhaustive-match arms kept
+     in `buffer_view_uses` and `loop_body_conflict` (a field-path load binds
+     a name outside the tier; the rest no-ops), my `Vec`-returning form kept.
+   * `crates/qcore-core/src/std_buffer_c_emit.rs` — my `buffer_loop_block`
+     initialises its two new `RecordEnvironment` fields.
+   * `compiler/tests/examples_suite.rs` — both cards' example constants kept.
+   * `docs/QCORE_SPEC_r0_3.md` — the `Q051` row is its amended row with my
+     amendment appended after it.
+   * `docs/reviews/r0_3/acceptance_matrix.json` — main's (232) taken, my
+     `register_followups.py` re-run: **234** (+3, −1), then regenerated with
+     `--gate`.
+   * `AGENTS.md` — its 15k amendment and Q-space instance kept beside my 15h
+     amendment; the followups line reads 234 with both chains; my Q-space
+     instance renumbered **seventeenth** (its `AGGREGATE-OWNED-FIELD` is the
+     sixteenth and took the first single narrowing, `Q055`; mine is the first
+     whose movements are all narrowings); the gate row rewritten from the
+     post-rebase gate.
+   * `docs/development/increments/wave-39.md` — union, this card's paragraph
+     first, then the two already on main.
+   * No admitted/refused row of §5 changed; one row was **added** (the
+     owned-field pair). `lean_audits` re-measured on disk after the rebase:
+     **140** (main's 139 + `AuditLoopWindows.lean`).
 
 ### 12.1 The 15h amendment (verbatim, as landed)
 

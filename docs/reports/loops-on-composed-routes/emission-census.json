@@ -3,12 +3,12 @@
  "base_binary": "measure/census/quirin-base",
  "card_binary": "target/debug/quirin",
  "counts": {
-  "programs": 527,
+  "programs": 529,
   "admitted_by_both_byte_identical": 139,
   "admitted_by_both_differing": 0,
   "admitted_by_base_only": 0,
-  "admitted_by_card_only": 2,
-  "refused_by_both": 386
+  "admitted_by_card_only": 3,
+  "refused_by_both": 387
  },
  "moved": [
   {
@@ -20,6 +20,17 @@
    "verdict": "admitted_by_card_only",
    "base_stderr_first_line": [
     "examples/loops/lend_fill.qcore:36:5: Q051: `source.loop.v1`'s `for` is not a statement an entry that lends models; a lend's window is an interval of statement indices and is exact only because the route is one flat sequence, so a loop body writing under a live lend would need a window over iterations rather than over indices (`SLICE-PERMISSIONS-LOOP-WINDOW`)"
+   ]
+  },
+  {
+   "program": "examples/records/owned_field.qcore",
+   "base_exit": 1,
+   "card_exit": 0,
+   "base_sha256": null,
+   "card_sha256": "8f7d3cf4d23057fe1a37686b8bf9a44aa928c4219ecedcde97cebbbe14b3c8e1",
+   "verdict": "admitted_by_card_only",
+   "base_stderr_first_line": [
+    "examples/records/owned_field.qcore:31:1: Q051: `Frame.head` is declared `bytes`, which is not a field type `source.record.v1` models; every field of this revision's record is `i32`, and a field that owns something is a custody shape this model does not carry (`AGGREGATE-OWNED-FIELD`)"
    ]
   },
   {
@@ -4079,6 +4090,17 @@
    "verdict": "refused_by_both"
   },
   {
+   "program": "examples/records/owned_field.qcore",
+   "base_exit": 1,
+   "card_exit": 0,
+   "base_sha256": null,
+   "card_sha256": "8f7d3cf4d23057fe1a37686b8bf9a44aa928c4219ecedcde97cebbbe14b3c8e1",
+   "verdict": "admitted_by_card_only",
+   "base_stderr_first_line": [
+    "examples/records/owned_field.qcore:31:1: Q051: `Frame.head` is declared `bytes`, which is not a field type `source.record.v1` models; every field of this revision's record is `i32`, and a field that owns something is a custody shape this model does not carry (`AGGREGATE-OWNED-FIELD`)"
+   ]
+  },
+  {
    "program": "examples/records/pixel_writes.qcore",
    "base_exit": 0,
    "card_exit": 0,
@@ -4224,6 +4246,14 @@
    "base_sha256": "13f1522b6edea5a2e1aa6e1ffb5ee64b04b4039ecf3b24412d5a559619c087aa",
    "card_sha256": "13f1522b6edea5a2e1aa6e1ffb5ee64b04b4039ecf3b24412d5a559619c087aa",
    "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "measure/probe_borrow_in_body.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
   },
   {
    "program": "providers/conformance/tests/fixtures/configured_boolean_source/sample.qcore",
