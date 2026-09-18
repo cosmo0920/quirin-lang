@@ -186,7 +186,12 @@ fn prepared(c: &str) -> String {
 fn reference_stdout(module: &CompiledModule) -> String {
     let script = TaskExecutionScript::default();
     let observation = if let Some(composed) = module.checked.as_composed_tasks() {
-        execute_with_source_lines(composed.tasks(), &script, &BTreeMap::new(), composed.sites())
+        execute_with_source_lines(
+            composed.tasks(),
+            &script,
+            &BTreeMap::new(),
+            composed.sites(),
+        )
     } else if let Some(tasks) = module.checked.as_scoped_tasks() {
         execute_with_source_lines(tasks, &script, &BTreeMap::new(), &[])
     } else {
@@ -576,9 +581,8 @@ fn every_subject_runs_clean_under_each_forced_schedule() {
         let c = prepared(module.c_source.as_deref().expect("the route emits C"));
         let reference = reference_stdout(&module);
         for schedule in Schedule::FORCED {
-            let run =
-                thread_sanitizer::run_scheduled(&format!("rows-{name}"), &c, true, schedule)
-                    .unwrap();
+            let run = thread_sanitizer::run_scheduled(&format!("rows-{name}"), &c, true, schedule)
+                .unwrap();
             assert_eq!(
                 run.races,
                 0,
@@ -618,7 +622,10 @@ fn every_subject_runs_clean_under_each_forced_schedule() {
 /// writer to completion before the first starts.
 #[test]
 fn overlapping_writers_are_reported_under_every_schedule() {
-    for (name, source) in [("ct07-case", CT07_CASE), ("disjoint-exercise", DISJOINT_EXERCISE)] {
+    for (name, source) in [
+        ("ct07-case", CT07_CASE),
+        ("disjoint-exercise", DISJOINT_EXERCISE),
+    ] {
         let overlapping = prepared(&with_overlapping_writers(&emitted(source)));
         for schedule in Schedule::ALL {
             let run = thread_sanitizer::run_scheduled(
@@ -663,9 +670,13 @@ fn removing_the_join_edge_is_reported_under_every_schedule() {
     for (name, source) in [("shared_readers", PUBLISHED[2].1), ("ct07-case", CT07_CASE)] {
         let unjoined = prepared(&with_join_edge_removed(&emitted(source)));
         for schedule in Schedule::ALL {
-            let run =
-                thread_sanitizer::run_scheduled(&format!("unjoined-{name}"), &unjoined, true, schedule)
-                    .unwrap();
+            let run = thread_sanitizer::run_scheduled(
+                &format!("unjoined-{name}"),
+                &unjoined,
+                true,
+                schedule,
+            )
+            .unwrap();
             assert!(
                 run.races >= 1,
                 "{name} under {}: removing the join edge should be reported:\n{}",
@@ -705,8 +716,7 @@ fn a_join_deleted_without_opening_the_gate_hides_the_race_under_forcing() {
         "the join this mutation deletes should be in the emitted C"
     );
     for schedule in Schedule::FORCED {
-        let run =
-            thread_sanitizer::run_scheduled("gate-closed", &deleted, true, schedule).unwrap();
+        let run = thread_sanitizer::run_scheduled("gate-closed", &deleted, true, schedule).unwrap();
         assert_eq!(
             run.races,
             0,
@@ -836,13 +846,22 @@ fn measure_catch_rates_for_the_report() {
     let flagship = emitted(DISJOINT_EXERCISE);
     let shared_readers = emitted(PUBLISHED[2].1);
     let mutations: Vec<(&str, String)> = vec![
-        ("overlap/ct07-case", prepared(&with_overlapping_writers(&ct07))),
-        ("overlap/disjoint-exercise", prepared(&with_overlapping_writers(&flagship))),
+        (
+            "overlap/ct07-case",
+            prepared(&with_overlapping_writers(&ct07)),
+        ),
+        (
+            "overlap/disjoint-exercise",
+            prepared(&with_overlapping_writers(&flagship)),
+        ),
         (
             "join-edge-removed/shared_readers",
             prepared(&with_join_edge_removed(&shared_readers)),
         ),
-        ("join-edge-removed/ct07-case", prepared(&with_join_edge_removed(&ct07))),
+        (
+            "join-edge-removed/ct07-case",
+            prepared(&with_join_edge_removed(&ct07)),
+        ),
         (
             "join-deleted-gate-closed/ct07-case",
             prepared(&ct07.replace(JOIN_CALL, "qcore_tsan_drop_join(record->thread, &status)")),
@@ -862,8 +881,7 @@ fn measure_catch_rates_for_the_report() {
             let mut caught = 0;
             let mut released = 0;
             for _ in 0..repeats {
-                let run =
-                    thread_sanitizer::run_scheduled("measure", text, true, schedule).unwrap();
+                let run = thread_sanitizer::run_scheduled("measure", text, true, schedule).unwrap();
                 caught += usize::from(run.races >= 1);
                 released += usize::from(!run.schedule.is_empty());
             }

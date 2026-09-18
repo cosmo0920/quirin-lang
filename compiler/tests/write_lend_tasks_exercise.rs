@@ -34,10 +34,10 @@ use qcore_core::task_execution::{
 use std::collections::BTreeMap;
 use std::process::Command;
 
-#[path = "../../tests/support/thread_sanitizer.rs"]
-mod thread_sanitizer;
 #[path = "../../tests/support/diagnostic_sink.rs"]
 mod diagnostic_sink;
+#[path = "../../tests/support/thread_sanitizer.rs"]
+mod thread_sanitizer;
 
 /// The flagship. One allocation whose payload starts at `0`, two children with
 /// disjoint write leases over the payload's two-byte halves, **each writing a
@@ -199,13 +199,23 @@ fn reference(module: &CompiledModule) -> (String, String) {
     // an unused supplied decision rejects, and the companion spawns once and
     // allocates nothing.
     let observation = if let Some(composed) = module.checked.as_composed_tasks() {
-        execute_with_source_lines(composed.tasks(), &script, &BTreeMap::new(), composed.sites())
+        execute_with_source_lines(
+            composed.tasks(),
+            &script,
+            &BTreeMap::new(),
+            composed.sites(),
+        )
     } else {
         let tasks = module
             .checked
             .as_scoped_tasks()
             .expect("a subject of this file takes the scoped or the composed task route");
-        execute_with_source_lines(tasks, &TaskExecutionScript::default(), &BTreeMap::new(), &[])
+        execute_with_source_lines(
+            tasks,
+            &TaskExecutionScript::default(),
+            &BTreeMap::new(),
+            &[],
+        )
     }
     .unwrap();
     observation.projections()
@@ -765,8 +775,7 @@ fn thread_sanitizer_cannot_run_this_routes_programs_lease_or_not() {
     // Unbound: the published thread primitive, and TSan cannot run either
     // program — at the one fault, not at any fault.
     let exercised = run_native_threads("tsan", &exercised_module, "thread", false, |c| c);
-    let lease_free =
-        run_native_threads("tsan-plain", &lease_free_module, "thread", false, |c| c);
+    let lease_free = run_native_threads("tsan-plain", &lease_free_module, "thread", false, |c| c);
     match (exercised, lease_free) {
         (Err(a), Err(b)) => {
             assert!(
@@ -809,11 +818,12 @@ fn thread_sanitizer_cannot_run_this_routes_programs_lease_or_not() {
         ("tsan-bound-plain", &lease_free_module, &in_sink),
     ];
     for (name, module, prepare) in bound {
-        let native = run_native_threads(name, module, "thread", true, prepare).unwrap_or_else(
-            |failure| {
-                panic!("{name}: the bound build must run race-free under ThreadSanitizer:\n{failure}")
-            },
-        );
+        let native =
+            run_native_threads(name, module, "thread", true, prepare).unwrap_or_else(|failure| {
+                panic!(
+                    "{name}: the bound build must run race-free under ThreadSanitizer:\n{failure}"
+                )
+            });
         // Redundant with the `Ok` above under `halt_on_error=1`, and stated
         // as such: a race would already have been a non-zero exit.
         assert!(

@@ -165,9 +165,9 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**228** entries after the wave-38 close (229 after `STABILITY-REEVAL-3`, 215
-at the wave-37 close; the close registered two and retired three, each named
-in `docs/reports/wave38-close/README.md`). Which card registered or retired which name,
+**231** entries after `TSAN-ROWS-2` (wave 39: six registered, three retired,
+each named in `docs/reports/tsan-rows-2/README.md` §8; 228 after the wave-38
+close, 229 after `STABILITY-REEVAL-3`, 215 at the wave-37 close). Which card registered or retired which name,
 and each wave's chain, is the increment records' business — read the wave
 paragraphs; the retirement discipline itself is a standing rule in `CLAUDE.md`,
 and each close's own record carries that close's arithmetic. The operative rule

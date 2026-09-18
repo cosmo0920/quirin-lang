@@ -1,0 +1,27 @@
+{
+  "card": "TSAN-ROWS-2",
+  "repeats": 20,
+  "tsan_options": "halt_on_error=1",
+  "caught": {
+    "overlap/ct07-case @ unforced": {"caught": 20, "workers_released": 0},
+    "overlap/ct07-case @ forced-together": {"caught": 20, "workers_released": 20},
+    "overlap/ct07-case @ forced-reverse": {"caught": 20, "workers_released": 20},
+    "overlap/disjoint-exercise @ unforced": {"caught": 20, "workers_released": 0},
+    "overlap/disjoint-exercise @ forced-together": {"caught": 20, "workers_released": 20},
+    "overlap/disjoint-exercise @ forced-reverse": {"caught": 20, "workers_released": 20},
+    "join-edge-removed/shared_readers @ unforced": {"caught": 20, "workers_released": 0},
+    "join-edge-removed/shared_readers @ forced-together": {"caught": 20, "workers_released": 20},
+    "join-edge-removed/shared_readers @ forced-reverse": {"caught": 20, "workers_released": 20},
+    "join-edge-removed/ct07-case @ unforced": {"caught": 20, "workers_released": 0},
+    "join-edge-removed/ct07-case @ forced-together": {"caught": 20, "workers_released": 20},
+    "join-edge-removed/ct07-case @ forced-reverse": {"caught": 20, "workers_released": 20},
+    "join-deleted-gate-closed/ct07-case @ unforced": {"caught": 20, "workers_released": 0},
+    "join-deleted-gate-closed/ct07-case @ forced-together": {"caught": 0, "workers_released": 0},
+    "join-deleted-gate-closed/ct07-case @ forced-reverse": {"caught": 0, "workers_released": 0}
+  },
+  "race_count_halt_on_error_0": {
+    "join-edge-removed/shared_readers @ unforced": 16,
+    "join-edge-removed/shared_readers @ forced-together": 6,
+    "join-edge-removed/shared_readers @ forced-reverse": 6
+  }
+}
