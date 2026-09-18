@@ -1,5 +1,6 @@
-mutations.sh — 2026-09-18T07:40:24Z — HEAD ac2a6b84
+mutations.sh — 2026-09-18T08:12:45Z — HEAD 7aff9fcf
 sha256 before: 3f542a6446518d9d  crates/qcore-core/src/std_buffer.rs;40e050ce507de858  crates/qcore-core/src/std_string.rs;49e77c407429327c  crates/qcore-frontend/src/source_std_string.rs;
+baseline (before): loops_on_composed_routes GREEN
 M1-top-level-only-window: test 'a_loan_used_only_inside_the_loop_is_live_across_it_and_the_body_write_refuses' went RED under the mutation — non-vacuous (ok)
 M1-top-level-only-window: crates/qcore-core/src/std_buffer.rs restored sha256-equal (3f542a6446518d9d)
 M2-composed-body-not-judged: test 'a_body_write_into_a_borrowed_range_refuses_on_the_composed_route' went RED under the mutation — non-vacuous (ok)
@@ -13,4 +14,5 @@ M5-composed-custody-not-unrolled: crates/qcore-core/src/std_string.rs restored s
 M6-per-iteration-borrow-unnamed: test 'a_borrow_inside_a_body_is_a_per_iteration_loan_and_refuses_by_name' went RED under the mutation — non-vacuous (ok)
 M6-per-iteration-borrow-unnamed: crates/qcore-frontend/src/source_std_string.rs restored sha256-equal (49e77c407429327c)
 sha256 after:  3f542a6446518d9d  crates/qcore-core/src/std_buffer.rs;40e050ce507de858  crates/qcore-core/src/std_string.rs;49e77c407429327c  crates/qcore-frontend/src/source_std_string.rs;
+baseline (after): loops_on_composed_routes GREEN
 RESULT: every mutation went red and every file was restored sha256-equal

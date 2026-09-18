@@ -219,10 +219,28 @@ three re-pinned suites (`write_lend.rs`, `slice_permissions.rs`,
 source mutations, one at a time, runs the named test, expects it red, restores
 the file and checks it sha256-equal. Results in `mutations.log`, summarised:
 
-Run at HEAD `ac2a6b84` (2026-09-18T07:40:24Z), exit 0 — **six of six red,
-three files restored sha256-equal** (`std_buffer.rs` `3f542a6446518d9d`,
-`std_string.rs` `40e050ce507de858`, `source_std_string.rs` `49e77c407429327c`,
-before and after):
+Run at HEAD `7aff9fcf` (2026-09-18T08:12:45Z), exit 0 — **baseline green
+before and after, six of six red, three files restored sha256-equal**
+(`std_buffer.rs` `3f542a6446518d9d`, `std_string.rs` `40e050ce507de858`,
+`source_std_string.rs` `49e77c407429327c`, before and after):
+
+**A finding about the harness itself, recorded rather than smoothed.** The
+first run (HEAD `ac2a6b84`, 07:40Z) reported the same six red rows but left
+**stale build artifacts**: it restored each file with `mv` from a backup whose
+mtime predated the mutated build, so cargo's fingerprint read the restored file
+as unchanged and kept the rlib compiled from the *last* mutation of each crate
+(`qcore-core` at M5, `qcore-frontend` at M6). The first full gate then failed
+exactly three rows of this card's own test file — no custody unrolling, and
+the composed lowering running past its by-name refusal — against those
+artifacts (`gate/run1/`, kept as evidence; the source tree was byte-identical
+to the committed one throughout). The harness now `touch`es every restored
+file and runs the whole test file **green before the first mutation and after
+the last restore**, so a stale artifact or a red baseline is reported as a
+failure of the harness and cannot pass as non-vacuity; the run recorded here is
+the corrected one. The verdicts of the first run were not wrong — each row
+did go red under its own mutation — but a harness that cannot tell that from
+a red baseline had not shown it, and earlier waves' harnesses restore the same
+way (§12 item 8).
 
 | Mutation | Arm mutated | Named test | Result |
 |---|---|---|---|
@@ -299,7 +317,55 @@ is empty; the composed route reads the loop through the buffer route's reader.
 
 ## 10. Gate
 
-<!-- gate-summary -->
+Two detached full gates (`measure/run-gate.sh`: `setsid -f`, no
+`trap '' TERM`, every step's exit to its own file, no pipe; exits copied to
+`gate/` beside this file, `gate.json` built from them by a script that reads
+only those files). Disk 207 GB free before run 1, 123 GB after run 2.
+
+**Run 2 — the figures (`gate/`, HEAD `7aff9fcf`, this card's final code;
+later commits are documentation, `gate.json` and the regeneration only).**
+Started 08:13:54Z; `git submodule update --init --recursive` exit 0; one
+uninterrupted `cargo test --workspace --no-fail-fast` of 17m33s, exit 0:
+**4,662 passed / 0 failed / 9 ignored** over 235 result summaries (224
+`Running` targets + 9 doc-test sections; the loose `^test result` grep gives
+237, the wave-38 close's two-line discrepancy reproduced); fmt 0; clippy 0;
+both probes 0;
+`scripts/check_lean_audits.py` exit 0, **138 Lean audits** (137 +
+`AuditLoopWindows.lean`); Python (`unittest discover -s scripts/tests`) **exit
+1 in the detached run, deliberately reported**: 303 run, 2 failures, both
+`D02-DIMENSIONS-FOLLOWUP-COUNT`'s tripwire against the not-yet-regenerated
+matrix (`228 != 230`) — the wave-36/37/38 closes' shape — and **303 OK, exit
+0** re-run after the regeneration with `--gate` (`gate/python-post.exit`).
+`clang --version` exit 0, `Ubuntu clang version 21.1.8 (6ubuntu1)`,
+`QCORE_CLANG` unset (`gate/clang-version.txt`). Gate ended 08:31:56Z.
+
+Constraint 16: all five named rows that live in this workspace were **green**
+under full-suite load in run 2 — `a_declared_process_limit_stops_the_fixture_from_forking`,
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets`,
+`memory_growth_beyond_the_declared_limit_is_bounded`,
+`closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
+and the unnamed `a_forced_override_never_weakens_an_execution`; a full-suite
+run on a machine carrying four sibling builds, not a quiet-host number.
+`real_packages_preserve_unknown_and_reject_mutations` lives in `providers/`
+and is not among them. Provider **122 carried, not re-measured**: nothing under
+`providers/` or `crates/qcore-schemas/` moved and `qcore-schemas` is still
+14.0.0 (constraint 18 not engaged); a Unix figure.
+
+**Run 1 (`gate/run1/`, HEAD `ac2a6b84`) — exit 101, recorded, not
+smoothed.** 4,658 passed / **4 failed** / 9 ignored: three rows of this card's
+own test file red against the stale artifacts the first mutation harness left
+(§6 — the source tree was byte-identical to the committed one, the rlibs were
+not), and one constraint-16 row, `an_admitted_path_still_works_under_confinement`
+(the confined-fixture write test, `Io(Broken pipe)` under load), red under
+the load of the sibling gates and **green in run 2** — both facts recorded.
+Every other step of run 1 was exit 0 with the same Lean and Python figures.
+
+Delta against the wave-38 close's 4,639 / 0 / 9, 137, 303: workspace **+23**
+(exactly `loops_on_composed_routes.rs`'s 23 tests; the three re-pinned tests
+in `write_lend.rs`, `slice_permissions.rs` and `string_concat.rs` are renamed,
+not added), Lean **+1**, Python **+0**, ignored unchanged. Nothing is promoted
+by this card: no corpus count, unit status or function status moves; contract
+corpus 88; CT 46/50; full language conformance false.
 
 ## 11. Residuals and retirements
 
@@ -355,6 +421,21 @@ is empty; the composed route reads the loop through the buffer route's reader.
    `SLICE-PERMISSIONS-LOOP-WINDOW`'s absence from the tracker should now be
    recorded as a retired *rule* somewhere other than 15h — I left it in 15h's
    amendment only.
+8. **A harness hazard for the integrator to decide on** (§6): a mutation
+   harness that restores a source file by `mv` from a `cp` backup leaves the
+   file with an mtime older than the mutated build, and cargo then keeps the
+   rlib compiled from the mutation. This card's first run did exactly that and
+   the first full gate measured stale artifacts (`gate/run1/`, three red rows
+   of this card's own file). Shipped harnesses of earlier waves that restore
+   the same way (the `W36-W37-MUTATION-HARNESSES-UNSHIPPED` family, and any
+   `mutations.sh` using `cp`/`mv`) would leave the same artifacts behind
+   whenever their last mutation is not followed by a `cargo clean` or a
+   touch; the fix is one `touch` after each restore plus a green baseline
+   before and after (this card's `mutations.sh`). I did not audit or edit
+   other cards' harnesses; whether to register this as a residual
+   (`MUTATION-HARNESS-STALE-ARTIFACTS`) is the integrator's call — it is
+   named here, not registered, because it is a finding about other cards'
+   files.
 
 ### 12.1 The 15h amendment (verbatim, as landed)
 

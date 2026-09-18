@@ -42,8 +42,14 @@ sha256-equal (M1 is the `STABILITY-REEVAL-3` §4 scenario admitted under the
 top-level-only window). Emission census over 527 programs: 139 admitted by
 both byte-identical, 0 moved, the 2 new admissions this card's own examples
 (`examples/loops/lend_fill.qcore`, `examples/strings/looped_fill.qcore`, each
-run sanitized on the Linux arm; no Windows or Apple run claimed). Gate:
-<!-- gate-figure -->
+run sanitized on the Linux arm; no Windows or Apple run claimed). Gate at
+`7aff9fcf`: **4,662 / 0 / 9** over 235 summaries (+23, the card's own file),
+fmt/clippy/probes clean, **138** Lean audits, Python 303 OK after the
+regeneration (red only on the followups tripwire before it), Clang present;
+a first run at `ac2a6b84` exited 101 against stale artifacts the first
+mutation harness left (restore by `mv` without a `touch`; three rows of the
+card's own file) plus one load-red constraint-16 row, both recorded and the
+harness corrected (`docs/reports/loops-on-composed-routes/gate.json`, §10).
 Evidence: `docs/reports/loops-on-composed-routes/README.md`.
 
 **`AGGREGATE-OWNED-FIELD` (2026-09-18).** An IR card before a route card, on
