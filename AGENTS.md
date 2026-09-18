@@ -1898,7 +1898,11 @@ movements are all narrowings). Constraint 1 is unchanged: a code is still
 allocated to a condition, still stable, still not reusable by a second pass.
 
 **The tally, and why it is the fragile part.** Across waves 26–39 the
-consequence ran **eighteen** times on **ten** bands, and the per-instance
+consequence ran **eighteen** times on **ten** bands, and **wave 40 added
+nothing to it** — a two-card cadence wave (`STABILITY-REEVAL-4`,
+`DOCS-COMPACT-8`) that moves no crate source, so neither card engages the rule
+and the icebox held again without being exercised (re-affirmed, not resolved,
+at the wave-40 close; the decision itself stays open). The per-instance
 enumeration is a checkpoint in the wave-40 record rather than a paragraph here.
 The ten bands are `Q020`–`Q021`, `Q051`–`Q057`, `Q068`–`Q079`, `Q080`–`Q089`,
 `Q090`–`Q096`, `Q097`–`Q099`, `Q300`/`Q302`–`Q309`, `Q600`, `Q610`–`Q627` and

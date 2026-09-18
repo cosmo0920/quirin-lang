@@ -6,6 +6,90 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`WAVE-40-CLOSE` (2026-09-19).** Wave 40 closed: a two-card cadence wave
+(`STABILITY-REEVAL-4`, `DOCS-COMPACT-8`) that moves **no crate source at all** —
+`git diff --stat 6dc484ad 0c7b0cea -- crates/ compiler/ proof/ providers/` is
+empty — so nothing is promoted, no corpus count, unit status or function status
+moves, raw units stay unpromoted, and full language conformance stays **false**.
+**48 integrator-addressed items** verdicted across four card reports: 27 are the
+wave's own two cards, and 21 are wave-39 items on two frozen reports that
+re-entered the sweep only because this close appended a dated section to each
+(constraint 21) — those carry the wave-39 close's measurement, `noted`, not this
+close's. Distribution: **19 `applied`, 24 `noted`, 3 `deferred`, 2 `declined`**,
+plus **2 `no_section`** cards. Tracker **258 → 257**: three retirements, named explicitly and
+each verified registered by id with its discharge condition read in full first —
+`CT-COMPOSED-NATIVE-ROWS` (the six stage rows `run_composed_native` backs all
+read `executed`, naming that runner and each case's own fixture, which is
+constraint 23's condition word for word), `CT-COMPOSED-NATIVE-NON-LINUX-VACUOUS-PASS`
+(discharged here by qualifying the CT row's sanitized-native count: all ten
+executed rows declare `host_gate: ["linux","macos"]`, and the entry's own
+"asserting nothing" wording is corrected in the same sentence, the gate being a
+runtime `cfg!` placed *after* the reference-run and `c_source` assertions, so
+the **emission** row is genuinely exercised elsewhere) and
+`INTEGRATION-GATE-NOT-PUBLISHED-FOR-EVERY-MERGE` (decided on its second arm: the
+rule is in `CLAUDE.md` and applied retrospectively by dated appended notes on
+`ct07-two-thread-proof-leg` and `ct42-cell-route`, each carrying the merge's
+figure, its non-ancestor tip and the in-history merge sha beside it). Two
+registrations, both measured here:
+**`CONSTRAINT-14-WORD-COUNT-CASE-FILTERED`** — constraint 14 names
+`is_reserved_source_word` as "the one place to count them" and published **112**
+where that function matches **113**, the difference being `FULL`, uppercase,
+among the grade literals; corrected with the case-sensitivity stated — and
+**`RESIDUAL-QUIET-BY-PROSE-MENTION`**, the measured property that `--residuals`
+scans the tracker's whole text, so five names the wave-39 close listed as
+untracked are silent here while still absent **by id**, each newly cited inside
+one of the reeval's 23 entries: the listing shrinks fastest exactly when the
+most work is being recorded. Six entries amended, `LEDGER-TSAN-BOUNDARY-SENTENCES-STALE`
+among them — **partially discharged and deliberately not retired**, its third
+part (two wave-39 citations of the retired `TASK-ROUTE-TSAN-SEGV`, in crate
+source and in a frozen card report) recorded as its standing discharge condition
+and not taken here either. **Two standing questions decided.**
+`RECONCILIATION-VERIFY-CLAIM-PERISHABLE`: re-running the wave-39 close's own
+command at this base fails **16 of its 57** verify claims, not one — **15**
+broken by the `DOCS-COMPACT-8` merge rewriting the very `AGENTS.md`/`CLAUDE.md`
+sentences that close had verified, **one** by the wave-opening commit, attributed
+commit by commit — and durability turns out to be a property of the **target
+file**, every claim into the matrix (17), a frozen increment record (4), the
+spec (3), crate source (2), the manifest and its fixture (2) and a frozen card
+report (1) surviving while 15 of the 27 into the two compaction-eligible files
+did not; so "quote durable text" cannot be sufficient, the rule landed in
+`CLAUDE.md` is that a `--check` is green at its own close **and only there** and
+a later red is evidence of supersession never repaired by editing a frozen
+record, and the entry's discharge narrows to the tool arm alone. And the
+**checkpoint-page split is kept** with both index links, on the measurement that
+inlining would make one 62,115-byte record page against `wave-37.md`'s 64,613.
+The merged-gate row is re-owned under this close's provenance at its own
+**in-history** tips — the row had been citing the non-ancestor `c188d3ab`
+(`INTEGRATION-TIP-CITATION-UNREACHABLE`, now seven instances with wave 40's two
+merge tips added) — and its summary arithmetic is now a **third** independent
+measurement agreeing exactly (236 targets, 238 strict, 240 loose, two doubled
+sections). `AGENTS.md` also gains a standing-gate paragraph recording that the
+`clang` gate key is a **disclosure convention and not a check**, the second arm
+of `CLANG-RECORDING-UNBOUND-TO-ITS-RUN` / `INTEGRATION-GATE-CLANG-CLAIM-BORROWED`,
+both left open on the mechanical arm. The hand sweep of merge prose — the first
+a close could act on, `UNCARDED-BLIND-TO-MERGE-PROSE` — found every arithmetic
+chain reproducing (234 + 23 − 1 = 256, 256 + 2 = 258, 258 − 3 + 2 = 257), both
+merges' integration figures **equal** to their cards' own gates so neither owed
+an integration-gate file, and **one integrator commit outside a merge**
+(`f11ccbba`, the conventional wave-opening commit, which is also what broke one
+of wave 39's verify claims). Twelve deferred decisions re-listed with grounds,
+eleven carried and one opened-and-ended (`CHECKPOINT-PAGE-SPLIT`). **Due, not
+run:** `STABILITY-REEVAL` **#5** after wave 41, `DOCS-COMPACT-9` around wave 42
+or 43, and the next implementation wave's three candidates with firing #4's §4
+conclusions attached — **`CT-PROOF-LEG-3`** (CT07's ledger pattern does *not*
+generalise; CT50 is the only remaining F02 candidate; the numerator already
+counts two binding shapes), **`CT-NATIVE-CREDIT`** (premise spent — the rows read
+`executed` and this close retired the entry for it; the platform qualifier it had
+left is landed here too, leaving the card thinner than when proposed) and
+**`TSAN-FAILURE-ARMS`** (the forcing harness breaks first on the failed-spawn
+path, so the arms need outcome hooks and a gate-closed control before a
+catch-rate row means anything). Gate: two detached full runs, the base at
+`2ba203ef` and the final at this close's tip, **identical** — 4,727 passed /
+0 failed / 10 ignored, `test result: FAILED` zero times, fmt 0, clippy 0, both
+probes 0, 141 Lean audits, 303 Python, Clang 21.1.8 run in this close's own
+worktree rather than borrowed. Evidence:
+`docs/reports/wave40-close/README.md` and its `reconciliation.json`.
+
 **`DOCS-COMPACT-8` (2026-09-19).** The eighth firing of the three-file
 compaction cadence. Measured first at `6dc484ad`, then **re-derived** — not
 rebased — at `d6a57f66` after `STABILITY-REEVAL-4` merged, which is how the
