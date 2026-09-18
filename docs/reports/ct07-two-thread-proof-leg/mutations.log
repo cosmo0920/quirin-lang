@@ -1,0 +1,56 @@
+baseline: cargo test --test ct07_proof_leg exit=0
+baseline: lake build QCore.Ct07LeaseLedger exit=0
+F1-overlapping-halves: exit=101 RED (arm is driven)
+  [0,3) beside [2,4): expected catch point = the CHECKER (OverlappingLeases), before the binding reads any artifact
+  test ct07_artifact_is_the_lean_proved_disjoint_halves_shape ... FAILED
+  test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.01s
+  thread 'ct07_artifact_is_the_lean_proved_disjoint_halves_shape' (471423) panicked at compiler/tests/ct07_proof_leg.rs:316:9:
+  catch: the checker refused the program before the binding could read it: [("Q600", "OverlappingLeases { resource: 1, requested: LeaseRange { low: 2, high: 4 }, held: LeaseRange { low: 0, high: 3 } }")]
+F2-empty-half: exit=101 RED (arm is driven)
+  [2,2): expected catch point = the CHECKER ('must cover at least one byte'), before the ledger is asked
+  test ct07_artifact_is_the_lean_proved_disjoint_halves_shape ... FAILED
+  test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.01s
+  thread 'ct07_artifact_is_the_lean_proved_disjoint_halves_shape' (471527) panicked at compiler/tests/ct07_proof_leg.rs:316:9:
+  catch: the checker refused the program before the binding could read it: [("Q600", "a write lend must cover at least one byte: [2, 2) is empty")]
+F3-single-writer: exit=101 RED (arm is driven)
+  one writer: the checker ADMITS it; expected catch point = the BINDING (the run's steps are not ct07Steps)
+  test ct07_artifact_is_the_lean_proved_disjoint_halves_shape ... FAILED
+  test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.01s
+  thread 'ct07_artifact_is_the_lean_proved_disjoint_halves_shape' (471647) panicked at compiler/tests/ct07_proof_leg.rs:499:5:
+  catch: assertion `left == right` failed
+R1-drop-the-disjointness-clause: exit=1 RED (arm is driven)
+  admitsLease without its overlap conjunct admits the overlapping mutant
+R2-drop-the-nonemptiness-clause: exit=1 RED (arm is driven)
+  admitsLease admitting an empty range admits the empty mutant
+R3-move-the-digest-pin: exit=101 RED (arm is driven)
+  the pin recomputed from the artifact is compared, not carried
+  test ct07_artifact_is_the_lean_proved_disjoint_halves_shape ... FAILED
+  test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.01s
+  thread 'ct07_artifact_is_the_lean_proved_disjoint_halves_shape' (471776) panicked at compiler/tests/ct07_proof_leg.rs:532:5:
+  catch: assertion `left == right` failed
+R4-weaken-the-shape-to-the-theorems-bound: exit=1 RED (arm is driven)
+  the shape's equality is strictly stronger than the theorem's <= 1: with <= the single writer would discharge
+R5-mislabel-the-holders: exit=101 RED (arm is driven)
+  the holders are the children's own task identities, compared, not assumed
+  test ct07_artifact_is_the_lean_proved_disjoint_halves_shape ... FAILED
+  test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.01s
+  thread 'ct07_artifact_is_the_lean_proved_disjoint_halves_shape' (471893) panicked at compiler/tests/ct07_proof_leg.rs:521:5:
+  catch: assertion `left == right` failed
+R6-skip-the-production-ledger-commit: exit=101 RED (arm is driven)
+  the production ledger's lease set is read back and compared after every step
+  test ct07_artifact_is_the_lean_proved_disjoint_halves_shape ... FAILED
+  test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.01s
+  thread 'ct07_artifact_is_the_lean_proved_disjoint_halves_shape' (471998) panicked at compiler/tests/ct07_proof_leg.rs:447:67:
+  catch: called `Result::unwrap()` on an `Err` value: UnknownTask(1)
+L1-shrink-the-right-half: lake exit=1 RED (pin is decided)
+  byte 3 under no authority: ct07_discharges_disjoint_halves and ct07_ledger_digest must fail by decide
+  error: QCore/Ct07LeaseLedger.lean:209:78: Tactic `decide` proved that the proposition
+  error: QCore/Ct07LeaseLedger.lean:228:2: Tactic `decide` proved that the proposition
+  error: build failed
+L2-move-the-digest-pin: lake exit=1 RED (pin is decided)
+  the pin is decided by the kernel
+  error: QCore/Ct07LeaseLedger.lean:209:78: Tactic `decide` proved that the proposition
+  error: build failed
+L3-let-replay-admit-overlap: REFUSED — the mutation site occurs 0 times in Ct07LeaseLedger.lean
+  editing the imported admission is out of this module's reach: the site is not in Ct07LeaseLedger.lean, so this mutation is REFUSED by the harness (no site)
+restored: sha256 EQUAL cargo exit=0 lake exit=0
