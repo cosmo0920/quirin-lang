@@ -1,0 +1,13 @@
+{
+ "note": "WAVE-39-CLOSE, 2026-09-18, INTERIM: the BASE RUN's figures, written so the matrix could be regenerated through the generator's checked keys before the final gate; REPLACED by the final run's figures below when that run completed (see the final note). BASE RUN at 0e73d600 = b6d1f101's code byte for byte plus the report skeleton (detached, setsid -f, no trap '' TERM; every exit to its own file, no pipe; worktree-private private/wave39-close/gate-base/, copied into gate/base/): 4,727 passed / 0 failed / 10 ignored over 240 result summaries (227 Running + 9 doc-test sections), test result: FAILED 0 times - reproducing the LOOPS-ON-COMPOSED-ROUTES merge's own integration figure (4727 / 0 / 10 at 4786ae4c) exactly; fmt 0; clippy 0; both probes 0; 141 Lean audits; Python 303 OK; cargo 14m18s (13:21:04Z to 13:35:22Z), gate 15m36s; Clang present, QCORE_CLANG unset, exit 0.",
+ "workspace_tests": 4727,
+ "provider_tests": 122,
+ "python_evidence_validator_tests": 303,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "pass",
+ "lean_audits": 141,
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
