@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "card": "CT-LANE-5",
+  "generated": "2026-09-18",
+  "report": "docs/reports/ct-lane-5/README.md",
+  "purpose": "Wave 37's CT mapping lane. One case RE-MAPPED (CT07, from the sequential route onto the task route) and three re-measured and left unmapped (CT42, CT10, CT41). No case was newly mapped, so the denominator does not move: mapped stays 46 of 50. This lane's work is evidence quality, not coverage (constraint 23).",
+  "derivation_rule": "Every `verified_stages` block below is the manifest's own row for that case, which `compiler/tests/ct_corpus.rs` independently rederives from its own dispatch and refuses drift on. Nothing here is a second hand-kept copy.",
+  "route": "task",
+  "what_changed_and_what_did_not": {
+    "changed": "CT07's artifact and route. Wave 30's `CT07-WRITE-REMAP` mapped the case onto two write authorities over disjoint ranges of one buffer held by ONE SEQUENTIAL ENTRY's bindings, and named the gap in its own semantic profile: `NOT two threads; the task-crossing half is residual WRITE-LEND-TASKS`. Wave 31 crossed the spawn boundary with the lease; wave 36's `WRITE-LEND-TASKS-EXERCISE` let a worker body write through it and ran two threads writing distinct bytes of one int32_t under ASan/UBSan/LSan. CT07's scenario word `independently` therefore has a two-thread artifact for the first time, and the case now rests on it: route sequential -> task, verdict mode sequential_sanitized -> native_heap_scenarios, executor run_sequential_sanitized -> run_native_heap_scenarios.",
+    "did_not_change": "Any count. CT07 was mapped before this card and is mapped after it; mapped stays 46 of 50, sanitized-native stays 10 of 46 (CT07 was already in SANITIZED_GATED_CASES and remains there, one gated case leaving the sequential runner and arriving at the heap runner), and proof stays 3 of 46. Nothing was promoted, nothing was newly mapped, and no unmapped case became mapped.",
+    "why_this_is_not_merely_a_relabel": "The two-thread reading is not a description of the same evidence. Under the sequential mapping the four stores were statements of one thread, interleaved in source order, and no thread ever ran concurrently with another; the disjointness that mattered was between two BINDINGS. Under this mapping the two write authorities are held by two OS threads created by thrd_create, live simultaneously (the observation shows QCORE_BUFFER_LEASE 1 and QCORE_BUFFER_LEASE 2 both taken before either byte is written), and the disjointness that matters is between two THREADS' footprints, decided by ownership::axes_overlap called from the scoped-task ledger. Those are different facts about different programs, and only the second one is the scenario's."
+  },
+  "fixture_inventory_change": {
+    "case_artifact_replaced": "compiler/tests/fixtures/ct/CT07/case.qcore is now the two-thread program. The program it replaced was not deleted: it is retained in the same directory as sequential_write_halves.qcore, an accept control, with only its comment changed.",
+    "added": [
+      "compiler/tests/fixtures/ct/CT07/track.h",
+      "compiler/tests/fixtures/ct/CT07/refuse_second_spawn.h",
+      "compiler/tests/fixtures/ct/CT07/overlapping_leases.qcore",
+      "compiler/tests/fixtures/ct/CT07/past_range_byte.qcore",
+      "compiler/tests/fixtures/ct/CT07/past_extent_read.qcore",
+      "compiler/tests/fixtures/ct/CT07/sequential_write_halves.qcore"
+    ],
+    "retained_from_wave_30": [
+      "compiler/tests/fixtures/ct/CT07/overlapping_lends.qcore",
+      "compiler/tests/fixtures/ct/CT07/out_of_extent_lend.qcore",
+      "compiler/tests/fixtures/ct/CT07/loan_index_out_of_extent.qcore",
+      "compiler/tests/fixtures/ct/CT07/read_loan.qcore"
+    ],
+    "deleted": [],
+    "control_set_is_a_superset": "Wave 30 published three reject controls and one accept control. This card publishes six reject controls and two accept controls, the four wave-30 ones among them, so no configuration the case used to admit or refuse stopped being checked. That mattered enough to extend the harness: NativeHeapScenarios gained `accept_controls` (CT03 and CT17 carried none, so a remap onto that mode would otherwise have silently dropped wave 30's accept control), and TaskRejectionControl gained `diagnostic_sequence`, because loan_index_out_of_extent.qcore refuses in TWO layers ([Q054, Q053]) and a head-only match would have let either layer fall silent. Both fields are serde-defaulted, so CT03's and CT17's fixtures are byte-untouched."
+  },
+  "lean_is_not_applicable": "This lane binds no theorem to a CT fixture; CT07's `proof` stage stays unassessed and the proof count is unmoved at 3. Wave 31's QCore.WriteLendTasks.no_byte_has_two_write_authorities and wave 36's QCore.WriteLendTasksExercise.no_byte_is_written_by_two_parties are about the model's authorities and writes, not about this case's artifact, so citing either as CT07's proof stage would be exactly the overstatement constraint 23 forbids. The residual is CT07-TWO-THREAD-PROOF-LEG.",
+  "sanitized_native_growth": "none; 10 of 46 before and after. CT07 was already sanitizer-gated under the sequential runner and is sanitizer-gated under the heap runner; the SANITIZED_GATED_CASES table is unchanged.",
+  "inventory": {
+    "added_mapped_ids": [],
+    "re_mapped_ids": [
+      "CT07"
+    ],
+    "mapped_before": 46,
+    "mapped_after": 46,
+    "unmapped_after": 4,
+    "total": 50
+  },
+  "executed_totals_added": {
+    "source_compilations_of_case_artifacts": 0,
+    "source_compilations_of_control_artifacts": 5,
+    "accepted_controls": 2,
+    "rejected_controls": 6,
+    "c_emissions": 1,
+    "sanitized_native_compile_and_run": 1,
+    "cases_with_proof_evidence": 0,
+    "note": "Counted as the DELTA against wave 30's CT07 row, not as this case's totals. The case artifact was compiled before and is compiled now (no change); its sanitized native runs go from one sequential run to two task-route scenario runs (+1); its controls go from four to eight (+3 rejected, +1 accepted), of which five are newly compiled artifacts."
+  },
+  "mapped_case_stage_matrix": {
+    "CT07": {
+      "supersedes": "docs/reports/ct07-write-remap/ct_stage_evidence.json",
+      "harness_verdict_mode": "native_heap_scenarios",
+      "manifest_evidence_target": "linux",
+      "measured_observation": {
+        "note": "The native run's own standard output, compared line for line by run_native_heap_scenarios against render_task_observation of the checked task IR's reference execution. Both leases are taken out before either byte is written, which is the scenario's `independently`; each worker writes its own RELATIVE byte 0 and the events name owner bytes 0 and 2, which is the rebasing law made visible rather than asserted.",
+        "stdout": [
+          "QCORE_BUFFER_ALLOC 0 1 0",
+          "QCORE_TASK_SPAWN 1 0",
+          "QCORE_BUFFER_LEASE 1 1 0 2",
+          "QCORE_TASK_SPAWN 2 0",
+          "QCORE_BUFFER_LEASE 2 1 2 4",
+          "QCORE_BUFFER_BYTE_WRITE 1 1 0 9",
+          "QCORE_TASK_RESULT 1 I32 1",
+          "QCORE_TASK_JOIN 1",
+          "QCORE_BUFFER_LEASE_RETURN 1 1",
+          "QCORE_BUFFER_BYTE_WRITE 2 1 2 9",
+          "QCORE_TASK_RESULT 2 I32 1",
+          "QCORE_TASK_JOIN 2",
+          "QCORE_BUFFER_LEASE_RETURN 2 1",
+          "QCORE_BUFFER_BYTE_READ 0 1 0 9",
+          "QCORE_BUFFER_BYTE_READ 0 1 2 9",
+          "QCORE_BUFFER_DROP 0 1",
+          "QCORE_TASK_RESULT 0 I32 9"
+        ],
+        "heap": "one allocation, one release, checked by ADDRESS through the fixture's own track.h, so `two threads, one object` is an identity claim and not a trace claim."
+      },
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1
+        },
+        "task_ledger_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 2,
+          "host_gate": [
+            "linux",
+            "macos"
+          ]
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 2,
+          "host_gate": [
+            "linux",
+            "macos",
+            "windows"
+          ]
+        },
+        "native_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 2,
+          "host_gate": [
+            "linux",
+            "macos"
+          ]
+        },
+        "native_sanitized": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 2,
+          "host_gate": [
+            "linux",
+            "macos"
+          ]
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      },
+      "controls": [
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT07/overlapping_leases.qcore",
+          "role": "disjointness",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q600], the message being the ledger's own OverlappingLeases { resource: 1, requested: LeaseRange { low: 2, high: 4 }, held: LeaseRange { low: 0, high: 3 } } and naming both ranges",
+          "isolates": "the DECIDED disjointness between two threads' write authorities: one bound moved from 2 to 3 - one shared byte, everything else identical - refuses at the second spawn site before anything is emitted, so no overlapping program ever reaches a sanitizer. The exclusivity is the ledger's, not the route's."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT07/past_range_byte.qcore",
+          "role": "bounds, layer one: the lease's own range",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q600], message `worker exercises bytes [0, 3) of its lease, which does not fit the leased range [0, 2) of extent 2`",
+          "isolates": "that an access through a lease is rebased and contained. The index it names, byte 2, is a perfectly good byte of the payload - it is in fact the byte leased to the OTHER worker - so this control refuses for the lease and not for the object."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT07/past_extent_read.qcore",
+          "role": "bounds, layer two: the payload's own extent",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q600], message `byte 4 is outside the payload's [0, 4) extent`",
+          "isolates": "the owner-side bound, which the lease bound does not imply and which is not a sanitizer observation: card WRITE-LEND-TASKS-EXERCISE measured that with the emitted guard removed, one byte past the payload lands in the buffer struct's own tail padding and AddressSanitizer is SILENT. This bound is therefore a checker refusal on purpose."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT07/overlapping_lends.qcore",
+          "role": "disjointness, sequential twin (retained from wave 30)",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q054]",
+          "isolates": "the same question one route over, so the sequential half of the family keeps its refusal after the remap."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT07/out_of_extent_lend.qcore",
+          "role": "bounds, sequential twin (retained from wave 30)",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q053], message `lend(store, 4, 9)` is not a range of `store`, whose declared extent is 8 bytes",
+          "isolates": "the sequential lend's own range bound."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT07/loan_index_out_of_extent.qcore",
+          "role": "bounds, sequential twin, two-layer (retained from wave 30)",
+          "expectation": "reject",
+          "measured": "refused, exact ORDERED cascade [Q054, Q053] - both layers, checked as a vector",
+          "isolates": "that both halves of one law refuse in the layer that owns each. This is the control that motivated the diagnostic_sequence field: pinned on its head code alone, either layer could have fallen silent without failing."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT07/sequential_write_halves.qcore",
+          "role": "accept control: the configuration wave 30's mapping rested on",
+          "expectation": "accept",
+          "measured": "checks, and is published under StandardBufferV1",
+          "isolates": "that the remap EXTENDS the family of admitted disjointness shapes rather than replacing it. A remap that quietly stopped admitting its own predecessor would be a narrowing wearing an upgrade's clothes."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT07/read_loan.qcore",
+          "role": "accept control: the configuration wave 28's mapping rested on",
+          "expectation": "accept",
+          "measured": "checks, and is published under StandardStringV1",
+          "isolates": "that two overlapping READ loans stay admitted, for the reason wave 30 kept this control - they conflict on nothing, and refusing overlap there would refuse the mechanism the borrow window itself rests on."
+        }
+      ],
+      "non_vacuity": {
+        "method": "Seven mutations of CT07's own expected.json, each breaking exactly one claim the row makes, each run through the named test. All seven were CAUGHT; none survived.",
+        "mutations": {
+          "native_byte": "the owner's read-back byte 9 -> 8. Caught, so the native run really happens and is really compared.",
+          "native_rebase": "the second worker's owner-side byte 2 -> 1. Caught, so the rebasing law is observed and not assumed.",
+          "heap_count": "heap_allocations 1 -> 2. Caught, so the heap witness is read and `two threads, one object` is checked by address.",
+          "accept_profile": "the sequential accept control's profile -> StandardStringV1. Caught, so an accept control cannot silently change route.",
+          "accept_source": "the accept control pointed at a refused program. Caught, so the accept arm really requires admission.",
+          "sequence_order": "the two-layer vector -> [Q053, Q054]. Caught, so the ORDER is checked.",
+          "sequence_extra": "a one-layer control's vector -> [Q600, Q600]. Caught, so a vector cannot claim a layer the refusal does not have."
+        }
+      },
+      "boundaries_published_not_papered_over": {
+        "no_thread_sanitizer_evidence": "There is NO race-detector evidence for this case, and none is claimed. ThreadSanitizer cannot run any program this route emits - lease or not - measured in wave 36 on three programs including a published example that holds no lease, all faulting at the identical address and pc (TASK-ROUTE-TSAN-SEGV). So `two threads write distinct memory locations and this is not a data race` is carried by C11 3.14, by the ASan/UBSan/LSan run, and by the allocation identity - and NOT by a race detector. A sibling card TASK-ROUTE-TSAN is working the residual in parallel; if it lands, the addition to this case would be a TSan row asserting silence on the flagship, which is the one direct observation the case currently lacks.",
+        "extent": "The payload is one int32_t, so BUFFER_PAYLOAD_BYTES is 4 and the two `halves` are two bytes each. The scenario says `array halves`; four bytes is a thin array. That is residual WRITE-LEND-TASKS-EXTENT, inherited unchanged from wave 31 and not closed here.",
+        "proof": "unassessed, as above (CT07-TWO-THREAD-PROOF-LEG).",
+        "platform": "Linux arm executed. The same runner compiles on macOS and the manifest's host_gate says so; no Windows or Apple run is claimed for this case (WRITE-LEND-EXERCISE-WINDOWS-RUN covers the card-side program on the same footing).",
+        "one_writer_per_worker": "Each worker writes exactly one byte, because the ledger admits at most one write lease per worker and the route admits a check-time-constant index only. The scenario's `mutated` is therefore one store per party, not a loop."
+      }
+    }
+  },
+  "cases_examined_and_left_unmapped": {
+    "CT42": {
+      "scenario": "Two descriptors share an underlying logical state",
+      "expected": "Preserve shared protocol-cell identity",
+      "re_measured_on_this_tree": "Both arms, at wave-37 base 0f6eb0a6. ARM A (the C twin, CT-CTWIN-DESCRIPTOR): the contract loader still refuses an int-typed resource identity at crates/qcore-contract/src/contract_loader.rs:757-759, `if result != ResourceReturnMode::None && !return_type.starts_with(\"ptr<\")` -> `owned result requires a pointer return type`, which is what produces the verbatim refusal wave 9, wave 17 and wave 35 all recorded. The refusal is pinned by compiler/tests/contract_loader.rs::every_abi_scalar_is_a_borrowed_only_projection, so it is load-bearing rather than incidental. ARM B (the socket cell, CT42-CELL-UNROUTED): grep for derive_socket_cells and footprint_program across crates/ and compiler/ finds callers in crates/qcore-core/tests/unit/ only - nothing in the frontend, nothing in the checker, nothing in compile_files. Unchanged from wave 35.",
+      "why_still_unmapped": "Neither arm can be mapped by a mapping lane, and each fails for its own reason. ARM A is out of this lane's scope by measurement, not by preference: discharging it starts at one line of crates/qcore-contract but cascades into qcore-schemas (ResourceReturnMode records only nullability, and a descriptor's failure value is -1, not null, so the failure arm is not expressible at all), into crates/qcore-core/src/extern_call.rs:790-801, and into crates/qcore-c-gateway/src/legacy_declared_abi.rs together with the projection's pointer-keyed identity tracking. This lane's charter forbids C gateway source changes and says to map only if every word is carried without a gateway change; by this measurement ARM A needs one. ARM B fails constraint 23 directly: the model, the Lean and the Q664 refusal all exist, but no .qcore statement asks the disjointness question and no source route reaches the deriver, so a CT42 row on that arm would name stages the harness CANNOT EXECUTE. Wiring it is a route card (new source syntax plus checker wiring), not a mapping lane.",
+      "bucket_moved": false
+    },
+    "CT10": {
+      "scenario": "Adjacent bit-fields in one memory location",
+      "expected": "Reject independent concurrent writes",
+      "re_measured_on_this_tree": "The concurrency half is present, byte-granular and source-reachable: LeaseRange / WriteLeased / OverlappingLeases in crates/qcore-core/src/scoped_tasks.rs, deciding through ownership::axes_overlap (crates/qcore-core/src/ownership.rs:145), reachable from source by the `lend NAME LOW..HIGH` capture - and this lane's own CT07 remap is that mechanism executing. The sub-byte half is representable in exactly ONE model-level module and unreachable from any program: FieldStorage::BitfieldUnit { unit, bit_offset, bit_width } (crates/qcore-core/src/disjoint_footprint.rs:99-103) is the only bit-addressed type in the workspace, and its own documentation says the declared bit range `never participates in the disjointness decision` (:214-216). FootprintExport::SharedMemoryLocation (:229-231) exists precisely so a bit-field unit cannot be exported to a concurrency checker as an interval. The module has zero callers in the frontend, the checker or compile_files. Source syntax: zero bit-field tokens anywhere in crates/qcore-frontend/, and the source record model carries no offsets or widths at all (crates/qcore-core/src/source_record.rs:107-110). C gateway: isBitfield is read at four sites purely to REFUSE, and the token reader refuses on the `:` character and discards the whole enclosing record.",
+      "why_still_unmapped": "Mapping it would be mapping half a scenario, which wave 35 already declined and this lane declines on the same measured ground. The one shortcut available is the wrong answer for the right verdict: encoding two bit-fields of one byte as two leases of that byte, which the byte-granular mechanism would then refuse - the right verdict reached by a rule that knows nothing about bits, so a program whose bit-fields lay in DIFFERENT bytes would be admitted when C11 makes them one memory location only when they share a unit, and a program whose adjacent fields are addressable would be refused when they are genuinely independent. The scenario's own word is `bit-fields`, and the floor of every footprint in this workspace is one byte: an empty lease range is refused outright, so the interval can never be narrower. Closing this needs either a bit-field declaration in .qcore so a LayoutContract can be derived rather than hand-built, or DisjointFootprintsV1 wired to a source route at all. Both are route cards.",
+      "bucket_moved": false
+    },
+    "CT41": {
+      "scenario": "`volatile` used as a completion flag",
+      "expected": "No synchronization proof",
+      "re_measured_on_this_tree": "Not re-measured. Wave 35's CT-CTWIN-LANE measured it over five shapes through the real gateway entry points and declined it on a ground that is structural rather than a gap: the producer shapes with `volatile int g_done;` and with plain `int g_done;` are BYTE-IDENTICAL in verdict, reason and diagnostic, and the consumer shape is `safe` with no diagnostic at all. Identical verdicts across the volatile twins are the definition of failing clause (b) of the wave-9 attribution rule - removing the named construct must move the verdict, and here it moves nothing.",
+      "why_still_unmapped": "This lane's charter says not to re-attempt without new capability, and there is none: the resource projection still has no synchronization model, and nothing in wave 36 or wave 37 gave it one. The briefing names a gateway-side residual for volatile's premise, GATEWAY-VOLATILE-PREMISE, from wave 37's first arbiter, as where a discharge would begin. Recorded here as a FORWARD POINTER and not as a registration this lane verified: that card had not merged at this card's base, and a grep of docs/ at the tip finds the name in this card's own files only. CT41's decline does not depend on it - it rests on wave 35's measurement, which stands on its own. Recorded so the decline is visible as a decision with a ground rather than as silence.",
+      "bucket_moved": false
+    },
+    "CT24": {
+      "scenario": "Cleanup destroys an owner before child join",
+      "expected": "Reject",
+      "re_measured_on_this_tree": "Not attempted, deliberately. CT24 has been withdrawn twice - by wave 26's lane and again by wave 30's CT24-CLEANUP-PREEMPTED - and constraint 25 makes a third attempt actively hazardous: newly_decidable_not_mapped_reasons is DERIVED from the judgment's own key set, so publishing a labelled row for CT24 would move that map's keys against a matrix this lane may not regenerate, putting Python tests red for a case nothing about which moved.",
+      "why_still_unmapped": "Out of scope by charter and by constraint. Its card T00 DECIDABLE-NOW bucket stands untouched.",
+      "bucket_moved": false
+    }
+  },
+  "unmapped_reasons_provenance": "This lane publishes NO new bucket labels and declares NO supersession of any unmapped row. CT42, CT10, CT41 and CT24 keep exactly the buckets and label sources they carried at base: re-verification reaching the same label is the record saying the label still holds, and inventing a new bucket would be label churn for cases nothing about which moved. The measurements this lane took are published above, in `cases_examined_and_left_unmapped`, which is the place for them; they narrow the reasons without moving the labels. The one supersession this record declares is CT07's MAPPED-case stage row, which replaces wave 30's ct07-write-remap record by declaration rather than by editing it (constraint 21 - that record keeps its bytes and its history stays visible).",
+  "retired_unmapped_reasons": {},
+  "retirement_note": "Empty deliberately. No unmapped row is retired here, because no case became mapped. The retirement this card DOES earn is on the follow-on side and belongs to the integrator: CT07-TWO-THREAD-REMAP, named by wave 36's WRITE-LEND-TASKS-EXERCISE section 10 item 7, whose discharge condition was `a CT-wire lane re-examines CT07 with this card's flagship as the candidate artifact and records, in its own stage-evidence record, whether the evidence improves and whether any count moves`. Both are recorded above: the evidence improves (the scenario's word `independently` gains a two-thread artifact with a sanitized native run and an allocation-identity witness behind it), and no count moves.",
+  "fixture_disclosure_sweep": {
+    "duty": "CT-SHARED-FIXTURE-DISCLOSURE (wave 33) and CT-FIXTURE-CROSS-CASE-DUPLICATES (wave 37): five shared fixture groups already exist, one of them crossing a proof case (CT37 = CT14), and a lane may not add another without disclosing it.",
+    "method": "Every one of this card's seven new CT07 files was hashed against every .qcore, .c and .h file under compiler/tests/fixtures/ct/ — 165 files, run rather than asserted.",
+    "measured_groups": [
+      "CT01/case.qcore = CT12/case.qcore = CT14/case.qcore",
+      "CT03/case.qcore = CT04/write_after_joins.qcore",
+      "CT01/owned_transfer.h = CT12/owned_transfer.h",
+      "CT14/completion_before_join.h = CT37/completion_before_join.h (the group crossing a proof case)",
+      "CT02/case.qcore = CT14/read_before_join.qcore"
+    ],
+    "result": "Exactly the five groups already on record, and this card contributes to NONE of them — measured, not assumed. In particular CT07/track.h is deliberately not byte-identical to CT03/track.h or CT17/track.h: the marker prefixes differ (LEASE_ALLOC/LEASE_FREE against SHARE_ALLOC/PAYLOAD_ALLOC), which is what lets each case's heap witness be attributed to that case when a run fails. See the report's fixture-disclosure section for the two near-misses this card deliberately did NOT make byte-identical, and for the one cross-file relationship it does create: compiler/tests/fixtures/ct/CT07/case.qcore is the plain scoped-task form of the DISJOINT_EXERCISE constant in compiler/tests/write_lend_tasks_exercise.rs - a Rust string literal, not a fixture file, so it collides with nothing the sweep ranges over, but it is disclosed here because the relationship is real and a reader comparing the two should know which differences are deliberate (no `import std.logger;`, no `log_level trace;`, so the checked artifact is a ScopedTasks module the heap runner consumes rather than a ComposedTasks one).",
+    "sequential_write_halves_is_a_deliberate_near_miss": "compiler/tests/fixtures/ct/CT07/sequential_write_halves.qcore carries wave 30's case program with a different leading comment. Its CODE is byte-identical to what CT07/case.qcore held at base 0f6eb0a6; the file is not, because the comment explains why the program is now a control. That is the same disclosure wave 30 itself made when it moved the program in from compiler/tests/fixtures/write_lend/disjoint_write_halves.qcore."
+  }
+}

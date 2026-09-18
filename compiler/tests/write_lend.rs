@@ -32,10 +32,19 @@ use qcore_core::typed_errors::EffectRow;
 /// Two write lends of disjoint halves, mutated independently while both are
 /// live — the shape CT07's missing half asks for, kept as a file so a lane can
 /// point at the program rather than at a string in a test. Card
-/// `CT07-WRITE-REMAP` (wave 30) took the lane statement up: the file now lives
-/// in CT07's own fixture directory as that case's `case.qcore`, and this test
-/// keeps running it there — the `epoch_credit_error_path.rs`/CT23 precedent.
-const DISJOINT_WRITE_HALVES: &str = include_str!("fixtures/ct/CT07/case.qcore");
+/// `CT07-WRITE-REMAP` (wave 30) took the lane statement up: the file moved into
+/// CT07's own fixture directory, and this test keeps running it there — the
+/// `epoch_credit_error_path.rs`/CT23 precedent.
+///
+/// **Card `CT07-TWO-THREAD-REMAP` (wave 37) moved which file in that directory
+/// it is.** CT07's case moved onto the two-thread range write lease, so
+/// `case.qcore` is now a *task*-route program and this card's sequential
+/// program is `sequential_write_halves.qcore`, retained there as that case's
+/// accept control. This include follows it. Pointing at `case.qcore` would
+/// silently hand this card's tests someone else's program — which is exactly
+/// what the wave-37 lane caught here, so the coupling is now named rather than
+/// implicit.
+const DISJOINT_WRITE_HALVES: &str = include_str!("fixtures/ct/CT07/sequential_write_halves.qcore");
 /// The same program with one bound of the second lend moved from 4 to 3, so
 /// the two ranges share exactly byte 3 — this card's control, now also CT07's
 /// disjointness control in the same directory.

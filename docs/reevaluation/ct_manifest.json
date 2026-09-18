@@ -606,9 +606,9 @@
       "expected": "Accept with bounds/disjointness proof",
       "spec_section": "55",
       "mapping_status": "mapped",
-      "route": "sequential",
+      "route": "task",
       "source_fixture": "compiler/tests/fixtures/ct/CT07/case.qcore",
-      "semantic_profile": "StandardBufferV1 with card SLICE-PERMISSIONS-WRITE-LEND's write lend lend(NAME, LOW, HIGH), remapped by card CT07-WRITE-REMAP (wave 30) from the read-loan program the wave-28 lane mapped: two WRITE authorities over disjoint ranges of one eight-byte owned buffer - lend(store, 0, 4) and lend(store, 4, 8) - both held by one sequential entry's bindings and live at once across four interleaved stores, each store admitted because it goes through the loan that owns its byte, the bytes read back through the loans and then by the owner after both windows close in the sanitized native run. Disjointness is decided at check time (max low < min high on the ownership IR's own u64 axis, exact because every bound is a check-time constant) and the authority genuinely MOVES: the borrow node carries the footprint fraction, so a second overlapping lend refuses and an owner access inside a live lent range refuses - the exclusivity is the custody model's, not a route rule's. Boundary, stated as narrowly as it is true: both write authorities are bindings of ONE SEQUENTIAL entry - disjoint write authority with interleaved statements, NOT two threads; the task-crossing half is residual WRITE-LEND-TASKS. Bounds are the out_of_extent_lend control's check-time Q053 refusal plus the loan_index_out_of_extent control's [Q054, Q053] two-layer refusal; disjointness is the overlapping_lends control's Q054 exclusivity refusal; the wave-28 read-loan case is retained as the read_loan accept control, so the weaker configuration stays admitted beside the stronger one.",
+      "semantic_profile": "ScopedWriteLeasesV1 with card WRITE-LEND-TASKS' range write lease and card WRITE-LEND-TASKS-EXERCISE's worker-body byte write, remapped by card CT07-TWO-THREAD-REMAP (wave 37) from the sequential write lend card CT07-WRITE-REMAP (wave 30) mapped, which had itself remapped the read-loan program the wave-28 lane mapped: two WRITE authorities over disjoint ranges of one allocation's int32_t payload - lend buffer 0..2 and lend buffer 2..4 - held by TWO THREADS, each worker writing a byte through its own lease in its own body, the owner reading both bytes back only after both joins, which is when the leases return. Each worker writes its own RELATIVE byte 0 and the events name owner bytes 0 and 2, so the rebasing law is visible in the observation rather than asserted about it. Disjointness is decided at check time by ownership::axes_overlap, called by LeaseRange::overlaps in the scoped-task ledger, and the exclusivity is the ledger's rather than a route rule's: a second overlapping lease refuses at the spawn site before anything is emitted. WHAT MOVED, and it is the scenario's own word: wave 30's two write authorities were bindings of ONE SEQUENTIAL ENTRY - 'NOT two threads', as that card's own semantic profile said, naming WRITE-LEND-TASKS as the residual; that residual's successor landed in wave 31 and was made exercisable in wave 36, so 'independently' now means two threads writing distinct bytes of one object under ASan/UBSan/LSan with the native observation compared line for line against the reference execution of the checked task IR, and the single allocation checked by address. WHAT DID NOT MOVE: no count - CT07 was mapped before this card and is mapped after it, so this is evidence quality and not coverage (constraint 23). Boundaries, stated rather than left silent: the payload is one int32_t, so the two halves are two bytes each (BUFFER_PAYLOAD_BYTES = 4; residual WRITE-LEND-TASKS-EXTENT); there is NO ThreadSanitizer evidence, because TSan cannot run any program this route emits, lease or not (residual TASK-ROUTE-TSAN-SEGV, measured on three programs in wave 36), so 'two threads write distinct memory locations without a race' is carried by C11 3.14 plus the sanitizer and allocation-identity evidence and NOT by a race detector; and proof stays unassessed, since wave 31's and wave 36's Lean theorems are about the model's authorities and writes and are not bound to this artifact by a named test (residual CT07-TWO-THREAD-PROOF-LEG). Bounds are split across the two layers that own them: past_range_byte.qcore refuses a real payload byte at the LEASE it goes through, and past_extent_read.qcore refuses a real owner access at the PAYLOAD's extent. Disjointness is overlapping_leases.qcore's OverlappingLeases refusal naming both ranges. Wave 30's sequential program is retained as the sequential_write_halves accept control and wave 28's read-loan program as the read_loan accept control, with wave 30's three sequential reject twins retained as rejection controls, so this remap is a strict superset of the evidence wave 30 published rather than a swap.",
       "stages": {
         "parse": {
           "status": "executed",
@@ -623,10 +623,16 @@
           "observations": 1
         },
         "task_lowering": {
-          "status": "not_applicable"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1
         },
         "task_ledger_check": {
-          "status": "not_applicable"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1
         },
         "mutex_lowering": {
           "status": "not_applicable"
@@ -641,32 +647,29 @@
           "status": "not_applicable"
         },
         "sequential_whole_program": {
-          "status": "executed",
-          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
-          "observations": 1
+          "status": "not_applicable"
         },
         "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
           "status": "executed",
-          "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
           "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
-          "observations": 1,
+          "observations": 2,
           "host_gate": [
             "linux",
             "macos"
           ]
-        },
-        "task_reference_execution": {
-          "status": "not_applicable"
         },
         "mutex_reference_execution": {
           "status": "not_applicable"
         },
         "c_emission": {
           "status": "executed",
-          "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
           "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
-          "observations": 1,
+          "observations": 2,
           "host_gate": [
             "linux",
             "macos",
@@ -675,9 +678,9 @@
         },
         "native_execution": {
           "status": "executed",
-          "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
           "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
-          "observations": 1,
+          "observations": 2,
           "host_gate": [
             "linux",
             "macos"
@@ -685,9 +688,9 @@
         },
         "native_sanitized": {
           "status": "executed",
-          "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+          "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
           "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
-          "observations": 1,
+          "observations": 2,
           "host_gate": [
             "linux",
             "macos"
@@ -701,7 +704,7 @@
         }
       },
       "evidence_target": "linux",
-      "harness_verdict_mode": "sequential_sanitized"
+      "harness_verdict_mode": "native_heap_scenarios"
     },
     {
       "id": "CT08",

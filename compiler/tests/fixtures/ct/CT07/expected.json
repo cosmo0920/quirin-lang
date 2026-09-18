@@ -1,6 +1,6 @@
 {
   "id": "CT07",
-  "verdict": "sequential_sanitized",
+  "verdict": "native_heap_scenarios",
   "entry": null,
   "diagnostics": [],
   "outcome": null,
@@ -8,68 +8,162 @@
   "stages_executed": [
     "parse",
     "elaborate",
-    "sequential_whole_program",
-    "sequential_reference_execution",
+    "task_lowering",
+    "task_ledger_check",
+    "task_reference_execution",
     "c_emission",
     "native_execution",
     "native_sanitized"
   ],
   "evidence_target": "linux",
-  "notes": "source.buffer.v1 with card SLICE-PERMISSIONS-WRITE-LEND's write lend lend(NAME, LOW, HIGH), remapped from the read-loan program by card CT07-WRITE-REMAP (wave 30). Two WRITE authorities over disjoint ranges of one eight-byte buffer — lend(store, 0, 4) and lend(store, 4, 8) — are live at once across four interleaved stores, each store admitted because it goes through the loan that owns its byte; the bytes are read back through the loans and then by the owner after both windows close, so the admission is visible in the observation. Disjointness is decided at check time (max low < min high on the ownership IR's own u64 axis, exact because every bound is a check-time constant) and the authority genuinely MOVES: the borrow node carries the footprint fraction, so a second overlapping lend refuses and an owner access inside a live lent range refuses — the exclusivity is the custody model's, not a route rule's. BOUNDARY, stated as the semantic profile states it: both write authorities are bindings of ONE SEQUENTIAL entry — disjoint write authority with interleaved statements, NOT two threads; the task-crossing half is residual WRITE-LEND-TASKS. The bounds half is the out_of_extent_lend control's Q053 refusal plus the loan_index_out_of_extent control's [Q054, Q053] two-layer refusal; the disjointness half is the overlapping_lends control's Q054 exclusivity refusal; the wave-28 read-loan case is retained as the read_loan accept control.",
-  "sequential_sanitized": {
-    "execution_profile": "StandardBufferV1",
+  "notes": "source.tasks.v1 (ScopedWriteLeasesV1) with card WRITE-LEND-TASKS' range write lease and card WRITE-LEND-TASKS-EXERCISE's worker-body byte write, remapped from the sequential write lend by card CT07-TWO-THREAD-REMAP (wave 37). Two WRITE authorities over disjoint ranges of one allocation's int32_t payload — lend buffer 0..2 and lend buffer 2..4 — are held by TWO THREADS, each worker writing a byte through its own lease, the owner reading both bytes back only after both joins, which is when the leases return. Each worker writes its own RELATIVE byte 0 and the events name owner bytes 0 and 2, so the rebasing law is visible in the observation rather than asserted about it. Disjointness is decided at check time by ownership::axes_overlap, called by LeaseRange::overlaps in the scoped-task ledger, and the exclusivity is the ledger's rather than a route rule's: a second overlapping lease refuses at the spawn site before anything is emitted. WHAT CHANGED FROM WAVE 30, and it is the scenario's own word: CT07-WRITE-REMAP's two write authorities were bindings of ONE SEQUENTIAL ENTRY — 'NOT two threads', as that card said in its own semantic profile, naming WRITE-LEND-TASKS as the residual. That residual's successor landed in wave 31 and was made exercisable in wave 36, so 'independently' now means two threads writing distinct bytes of one object under ASan/UBSan/LSan with the native observation compared line for line against the reference execution of the checked task IR. WHAT DID NOT CHANGE: no count moved — CT07 was mapped before this card and is mapped after it, and this is evidence quality, not coverage (constraint 23). BOUNDARIES, stated rather than left silent: the payload is one int32_t, so the two halves are two bytes each (BUFFER_PAYLOAD_BYTES = 4, residual WRITE-LEND-TASKS-EXTENT); there is NO ThreadSanitizer evidence, because TSan cannot run any program this route emits, lease or not (residual TASK-ROUTE-TSAN-SEGV, measured on three programs in wave 36) — so 'two threads write distinct memory locations without a race' is carried by C11 3.14 plus the sanitizer and allocation-identity evidence, and NOT by a race detector; and the proof stage stays unassessed, since wave 31's and wave 36's Lean theorems are about the model's authorities and writes and are not bound to this artifact by a named test (residual CT07-TWO-THREAD-PROOF-LEG). The bounds half is split across the two layers that own it: past_range_byte.qcore refuses a real payload byte at the LEASE it goes through, and past_extent_read.qcore refuses a real owner access at the PAYLOAD's extent. The disjointness half is overlapping_leases.qcore's OverlappingLeases refusal naming both ranges. Wave 30's sequential program is retained as the sequential_write_halves accept control and wave 28's read-loan program as the read_loan accept control, with wave 30's three sequential reject twins retained as rejection controls, so this remap is a strict superset of the evidence wave 30 published rather than a swap.",
+  "native_heap_scenarios": {
+    "execution_profile": "ScopedWriteLeasesV1",
+    "alloc_prefix": "LEASE_ALLOC ",
+    "free_prefix": "LEASE_FREE ",
     "sanitizer_flags": [
       "-std=c11",
+      "-pthread",
       "-Wall",
       "-Wextra",
       "-Werror",
-      "-pedantic",
       "-g",
       "-O0",
-      "-fsanitize=address,undefined",
-      "-fno-omit-frame-pointer"
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address,undefined"
     ],
-    "asan_options": "detect_leaks=1:halt_on_error=1",
     "ubsan_options": "halt_on_error=1:print_stacktrace=1",
-    "declared_stdout": [
-      "22",
-      "66",
-      "11",
-      "55"
-    ],
-    "declared_stderr": [],
-    "controls": [
+    "rejection_controls": [
+      {
+        "source": "overlapping_leases.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "OverlappingLeases"
+        },
+        "diagnostic_sequence": [
+          "Q600"
+        ]
+      },
+      {
+        "source": "past_range_byte.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "does not fit the leased range"
+        },
+        "diagnostic_sequence": [
+          "Q600"
+        ]
+      },
+      {
+        "source": "past_extent_read.qcore",
+        "diagnostic": {
+          "code": "Q600",
+          "message_contains": "outside the payload's"
+        },
+        "diagnostic_sequence": [
+          "Q600"
+        ]
+      },
       {
         "source": "overlapping_lends.qcore",
-        "expectation": "reject",
+        "diagnostic": {
+          "code": "Q054",
+          "message_contains": "the checked ownership discipline refuses this program"
+        },
         "diagnostic_sequence": [
           "Q054"
-        ],
-        "note": "Disjointness: the identical program with one bound of the second lend moved from 4 to 3, so the two ranges share exactly byte 3. Refused by the exclusivity rule between two write lends, arriving from the extended ownership IR through the inherited Q054 and naming the shared byte — so the case's admission is a decided disjointness between two WRITE authorities, not a route that admits second lends anywhere."
+        ]
       },
       {
         "source": "out_of_extent_lend.qcore",
-        "expectation": "reject",
+        "diagnostic": {
+          "code": "Q053",
+          "message_contains": "is not a range of `store`, whose declared extent is 8 bytes"
+        },
         "diagnostic_sequence": [
           "Q053"
-        ],
-        "note": "Bounds, the lend's own range: the identical program with one bound of the second lend moved from 8 to 9, one byte past the declared extent. Refused at check time by source.buffer.v1's lend-range rule — a refusal, not a run-time trap."
+        ]
       },
       {
         "source": "loan_index_out_of_extent.qcore",
-        "expectation": "reject",
+        "diagnostic": {
+          "code": "Q054",
+          "message_contains": "lies outside"
+        },
         "diagnostic_sequence": [
           "Q054",
           "Q053"
-        ],
-        "note": "Bounds, the loan's own index: the identical program with one store's index moved from 1 to 4 — one past the [4, 8) loan's own 4-byte extent. Both halves of the one law refuse: the IR's rebased containment check (AccessOutsideLendRange through Q054) and the route's own bound (Q053, reported in the loan's own coordinates), each in the layer that owns it."
+        ]
+      }
+    ],
+    "accept_controls": [
+      {
+        "source": "sequential_write_halves.qcore",
+        "execution_profile": "StandardBufferV1",
+        "note": "wave 30's own case program: two write lends over disjoint ranges of one eight-byte buffer, both held by one sequential entry's bindings. The weaker reading of `independently`, retained so the remap extends the family of admitted disjointness shapes rather than replacing it."
       },
       {
         "source": "read_loan.qcore",
-        "expectation": "accept",
-        "diagnostic_sequence": [],
         "execution_profile": "StandardStringV1",
-        "note": "The wave-28 mapping's own case, kept as the accept control: two disjoint READ loans beside the owner's retained write authority (card CT07-SLICE-PERMISSIONS) stay admitted beside the write remap, so the remap extends the family of admitted disjointness shapes rather than replacing it. Its reject twins live on as CT08's own case (the Q078 overlap) and the string route's bounds tests."
+        "note": "wave 28's own case program: two disjoint READ loans beside the owner's retained write authority. Kept for the reason wave 30 kept it — two overlapping reads conflict on nothing, and refusing them would refuse the mechanism the borrow window rests on."
+      }
+    ],
+    "scenarios": [
+      {
+        "name": "two_threads_write_disjoint_bytes_of_one_allocation",
+        "header": "track.h",
+        "defines": [],
+        "spawn_outcomes": [
+          true,
+          true
+        ],
+        "allocation_outcomes": [
+          true
+        ],
+        "detect_leaks": true,
+        "exit_code": 0,
+        "stdout_contains": [
+          "QCORE_BUFFER_LEASE 1 1 0 2\n",
+          "QCORE_BUFFER_LEASE 2 1 2 4\n",
+          "QCORE_BUFFER_BYTE_WRITE 1 1 0 9\n",
+          "QCORE_BUFFER_BYTE_WRITE 2 1 2 9\n",
+          "QCORE_BUFFER_BYTE_READ 0 1 0 9\n",
+          "QCORE_BUFFER_BYTE_READ 0 1 2 9\n"
+        ],
+        "stdout_absent": [],
+        "stdout_order": [
+          "QCORE_BUFFER_LEASE 1 1 0 2",
+          "QCORE_BUFFER_LEASE 2 1 2 4",
+          "QCORE_BUFFER_BYTE_READ 0 1 0 9",
+          "QCORE_BUFFER_BYTE_READ 0 1 2 9"
+        ],
+        "heap_allocations": 1,
+        "heap_releases": 1
+      },
+      {
+        "name": "second_lease_refuses_and_the_first_still_returns",
+        "header": "refuse_second_spawn.h",
+        "defines": [],
+        "spawn_outcomes": [
+          true,
+          false
+        ],
+        "allocation_outcomes": [
+          true
+        ],
+        "detect_leaks": true,
+        "exit_code": 0,
+        "stdout_contains": [
+          "QCORE_BUFFER_LEASE 1 1 0 2\n",
+          "QCORE_TASK_CREATE_FAILED 0\n"
+        ],
+        "stdout_absent": [
+          "QCORE_BUFFER_LEASE 2 1 2 4",
+          "QCORE_BUFFER_BYTE_WRITE 2 1 2 9"
+        ],
+        "stdout_order": [],
+        "heap_allocations": 1,
+        "heap_releases": 1
       }
     ]
   }

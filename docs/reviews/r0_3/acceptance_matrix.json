@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 197
+  "named_followups": 200
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -1026,7 +1026,8 @@
    "docs/reports/ct-composed-native/ct_stage_evidence.json",
    "docs/reports/ct-wire-lane-4/ct_stage_evidence.json",
    "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
-   "docs/reports/mutex-share-cross-emission/ct_stage_evidence.json"
+   "docs/reports/mutex-share-cross-emission/ct_stage_evidence.json",
+   "docs/reports/ct-lane-5/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
@@ -1168,12 +1169,12 @@
     "not_applicable": 3
    },
    "task_lowering": {
-    "executed": 22,
-    "not_applicable": 24
+    "executed": 23,
+    "not_applicable": 23
    },
    "task_ledger_check": {
-    "executed": 21,
-    "not_applicable": 25
+    "executed": 22,
+    "not_applicable": 24
    },
    "mutex_lowering": {
     "executed": 11,
@@ -1192,16 +1193,16 @@
     "not_applicable": 39
    },
    "sequential_whole_program": {
-    "executed": 2,
-    "not_applicable": 44
+    "executed": 1,
+    "not_applicable": 45
    },
    "sequential_reference_execution": {
-    "executed": 2,
-    "not_applicable": 44
+    "executed": 1,
+    "not_applicable": 45
    },
    "task_reference_execution": {
-    "executed": 12,
-    "not_applicable": 34
+    "executed": 13,
+    "not_applicable": 33
    },
    "mutex_reference_execution": {
     "executed": 3,
@@ -1290,7 +1291,7 @@
    "CT50": "native_execution"
   },
   "observation_counts": {
-   "c_emission": 35,
+   "c_emission": 36,
    "elaborate": 43,
    "epoch_bound_check": 7,
    "epoch_lowering": 7,
@@ -1298,15 +1299,15 @@
    "mutex_invariant_check": 11,
    "mutex_lowering": 11,
    "mutex_reference_execution": 3,
-   "native_execution": 50,
-   "native_sanitized": 31,
+   "native_execution": 51,
+   "native_sanitized": 32,
    "parse": 46,
    "proof": 3,
-   "sequential_reference_execution": 2,
-   "sequential_whole_program": 2,
-   "task_ledger_check": 21,
-   "task_lowering": 22,
-   "task_reference_execution": 27
+   "sequential_reference_execution": 1,
+   "sequential_whole_program": 1,
+   "task_ledger_check": 22,
+   "task_lowering": 23,
+   "task_reference_execution": 29
   },
   "ct_rows": [
    {
@@ -1860,8 +1861,8 @@
     "id": "CT07",
     "mapping_status": "mapped",
     "expected": "Accept with bounds/disjointness proof",
-    "route": "sequential",
-    "harness_verdict_mode": "sequential_sanitized",
+    "route": "task",
+    "harness_verdict_mode": "native_heap_scenarios",
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": null,
     "epoch_controls_executed": null,
@@ -1880,10 +1881,16 @@
       "observations": 1
      },
      "task_lowering": {
-      "status": "not_applicable"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+      "observations": 1
      },
      "task_ledger_check": {
-      "status": "not_applicable"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+      "observations": 1
      },
      "mutex_lowering": {
       "status": "not_applicable"
@@ -1898,32 +1905,29 @@
       "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "executed",
-      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
-      "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
-      "observations": 1
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
+      "status": "not_applicable"
+     },
+     "task_reference_execution": {
       "status": "executed",
-      "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
       "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
-      "observations": 1,
+      "observations": 2,
       "host_gate": [
        "linux",
        "macos"
       ]
-     },
-     "task_reference_execution": {
-      "status": "not_applicable"
      },
      "mutex_reference_execution": {
       "status": "not_applicable"
      },
      "c_emission": {
       "status": "executed",
-      "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
       "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
-      "observations": 1,
+      "observations": 2,
       "host_gate": [
        "linux",
        "macos",
@@ -1932,9 +1936,9 @@
      },
      "native_execution": {
       "status": "executed",
-      "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
       "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
-      "observations": 1,
+      "observations": 2,
       "host_gate": [
        "linux",
        "macos"
@@ -1942,9 +1946,9 @@
      },
      "native_sanitized": {
       "status": "executed",
-      "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+      "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
       "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
-      "observations": 1,
+      "observations": 2,
       "host_gate": [
        "linux",
        "macos"
@@ -1959,8 +1963,8 @@
     },
     "auxiliary_executed_stages": {},
     "deepest_executed_stage": "native_sanitized",
-    "stage_evidence_record": "docs/reports/ct07-write-remap/ct_stage_evidence.json",
-    "semantic_profile": "StandardBufferV1 with card SLICE-PERMISSIONS-WRITE-LEND's write lend lend(NAME, LOW, HIGH), remapped by card CT07-WRITE-REMAP (wave 30) from the read-loan program the wave-28 lane mapped: two WRITE authorities over disjoint ranges of one eight-byte owned buffer - lend(store, 0, 4) and lend(store, 4, 8) - both held by one sequential entry's bindings and live at once across four interleaved stores, each store admitted because it goes through the loan that owns its byte, the bytes read back through the loans and then by the owner after both windows close in the sanitized native run. Disjointness is decided at check time (max low < min high on the ownership IR's own u64 axis, exact because every bound is a check-time constant) and the authority genuinely MOVES: the borrow node carries the footprint fraction, so a second overlapping lend refuses and an owner access inside a live lent range refuses - the exclusivity is the custody model's, not a route rule's. Boundary, stated as narrowly as it is true: both write authorities are bindings of ONE SEQUENTIAL entry - disjoint write authority with interleaved statements, NOT two threads; the task-crossing half is residual WRITE-LEND-TASKS. Bounds are the out_of_extent_lend control's check-time Q053 refusal plus the loan_index_out_of_extent control's [Q054, Q053] two-layer refusal; disjointness is the overlapping_lends control's Q054 exclusivity refusal; the wave-28 read-loan case is retained as the read_loan accept control, so the weaker configuration stays admitted beside the stronger one."
+    "stage_evidence_record": "docs/reports/ct-lane-5/ct_stage_evidence.json",
+    "semantic_profile": "ScopedWriteLeasesV1 with card WRITE-LEND-TASKS' range write lease and card WRITE-LEND-TASKS-EXERCISE's worker-body byte write, remapped by card CT07-TWO-THREAD-REMAP (wave 37) from the sequential write lend card CT07-WRITE-REMAP (wave 30) mapped, which had itself remapped the read-loan program the wave-28 lane mapped: two WRITE authorities over disjoint ranges of one allocation's int32_t payload - lend buffer 0..2 and lend buffer 2..4 - held by TWO THREADS, each worker writing a byte through its own lease in its own body, the owner reading both bytes back only after both joins, which is when the leases return. Each worker writes its own RELATIVE byte 0 and the events name owner bytes 0 and 2, so the rebasing law is visible in the observation rather than asserted about it. Disjointness is decided at check time by ownership::axes_overlap, called by LeaseRange::overlaps in the scoped-task ledger, and the exclusivity is the ledger's rather than a route rule's: a second overlapping lease refuses at the spawn site before anything is emitted. WHAT MOVED, and it is the scenario's own word: wave 30's two write authorities were bindings of ONE SEQUENTIAL ENTRY - 'NOT two threads', as that card's own semantic profile said, naming WRITE-LEND-TASKS as the residual; that residual's successor landed in wave 31 and was made exercisable in wave 36, so 'independently' now means two threads writing distinct bytes of one object under ASan/UBSan/LSan with the native observation compared line for line against the reference execution of the checked task IR, and the single allocation checked by address. WHAT DID NOT MOVE: no count - CT07 was mapped before this card and is mapped after it, so this is evidence quality and not coverage (constraint 23). Boundaries, stated rather than left silent: the payload is one int32_t, so the two halves are two bytes each (BUFFER_PAYLOAD_BYTES = 4; residual WRITE-LEND-TASKS-EXTENT); there is NO ThreadSanitizer evidence, because TSan cannot run any program this route emits, lease or not (residual TASK-ROUTE-TSAN-SEGV, measured on three programs in wave 36), so 'two threads write distinct memory locations without a race' is carried by C11 3.14 plus the sanitizer and allocation-identity evidence and NOT by a race detector; and proof stays unassessed, since wave 31's and wave 36's Lean theorems are about the model's authorities and writes and are not bound to this artifact by a named test (residual CT07-TWO-THREAD-PROOF-LEG). Bounds are split across the two layers that own them: past_range_byte.qcore refuses a real payload byte at the LEASE it goes through, and past_extent_read.qcore refuses a real owner access at the PAYLOAD's extent. Disjointness is overlapping_leases.qcore's OverlappingLeases refusal naming both ranges. Wave 30's sequential program is retained as the sequential_write_halves accept control and wave 28's read-loan program as the read_loan accept control, with wave 30's three sequential reject twins retained as rejection controls, so this remap is a strict superset of the evidence wave 30 published rather than a swap."
    },
    {
     "id": "CT08",
@@ -7397,12 +7401,6 @@
    "source": "docs/reports/write-lend-tasks-exercise/README.md"
   },
   {
-   "id": "CT07-TWO-THREAD-REMAP",
-   "title": "CT07's mapping rests on one sequential entry's bindings, and a genuinely two-threaded artifact now exists",
-   "why": "Card CT07-WRITE-REMAP (wave 30) upgraded CT07's evidence onto the write-lend scenario - two write authorities over disjoint ranges of one buffer - and recorded honestly that both are held by ONE SEQUENTIAL ENTRY'S BINDINGS, NOT TWO THREADS, naming WRITE-LEND-TASKS as the residual that would fix it. That residual's successor has now landed: card WRITE-LEND-TASKS-EXERCISE (wave 36) produces an admitted program in which two THREADS hold disjoint write leases over one buffer's payload and each exercises its authority, with a sanitized native run and a byte-identical stdout comparison behind it. A CT-wire lane could therefore upgrade CT07's evidence to the scenario's actual shape. Card WRITE-LEND-TASKS-EXERCISE DELIBERATELY DID NOT REMAP THE ROW, and the ground is constraint 23 plus constraint 25: mapping is a lane's work, and publishing a labelled row from a language card would move the derived newly_decidable_not_mapped_reasons map's keys against a matrix this card may not regenerate - the measured mistake wave 26 avoided by withdrawing CT24 and CT47 rather than loosening a test. CONDITION: a CT-wire lane re-examines CT07 with wave 36's flagship as the candidate artifact and records, in its OWN stage-evidence record, whether the evidence improves and whether any count moves - noting that an evidence upgrade at unchanged coverage moves no count, as wave 30's own CT07 remap did not.",
-   "source": "docs/reports/write-lend-tasks-exercise/README.md"
-  },
-  {
    "id": "W36-COVER-HIDDEN-BLOCKER",
    "title": "A sole-blocker cover is an upper bound on function moves, never a forecast",
    "why": "A refusal reachable only after the first one is removed is invisible to a cover built from emitted leaves: it cost card W36-CORPUS-CONTRACTS-3 three of its 23 predicted function moves, the cJSON_Delete trio exchanging its decided leaf for a `nested call ... inside a modeled call` refusal that was unreachable while the outer call was uncontracted. This bounds what any future cover card may promise. DISCHARGE: a cover modelling the projection's reachability, not only its emitted leaves.",
@@ -7627,6 +7625,34 @@
    "why": "Over the 159 sweeping visits of the pinned corpus the proved bound nodes * (1 + sites + sites * names) runs min 28 / median 378 / max 17,091, against an observed maximum of 148 rounds (card JOINED-PROVENANCE-ROUND-BOUND, wave 37). For 11 of those 159 visits the proved bound is at or below the old constant of 64, so the old cap was already provably sufficient there and nobody knew. The classical tighter results for this shape - loop connectedness for a round-robin sweep in reverse postorder - do not carry to this Jacobi schedule unchanged, and none is proved here. Looseness costs nothing today because nothing approaches the loose bound; it is recorded so that a later cost question (JOINED-PROVENANCE-BOUND-COST-UNMEASURED) is not answered by tightening something nobody proved. DISCHARGE: a tighter proved bound, or a recorded decision that tightness buys nothing while nothing approaches the loose one.",
    "source": "docs/reports/joined-provenance-round-bound/README.md",
    "recorded_by": "JOINED-PROVENANCE-ROUND-BOUND"
+  },
+  {
+   "id": "CT07-TWO-THREAD-PROOF-LEG",
+   "title": "CT07's proof stage stays unassessed after the two-thread remap, though two Lean theorems are about the mechanism it now rests on",
+   "why": "Card CT-LANE-5 re-mapped CT07 onto the range write lease exercised by two threads. Two theorems are about that mechanism - wave 31's QCore.WriteLendTasks.no_byte_has_two_write_authorities and wave 36's QCore.WriteLendTasksExercise.no_byte_is_written_by_two_parties, the second being exactly the scenario's `disjointness proof` in the model. Neither is bound to CT07's artifact by a named test, so citing either as this case's proof stage would be the overstatement constraint 23 forbids, and the stage stays unassessed. This case is an unusually cheap proof leg BECAUSE the theorem already exists: the missing half is only the binding. DISCHARGE: a proof-leg card on the CT01/CT37/CT03 pattern - a named host-unconditional test lowering CT07's own fixture and checking its artifact against the Lean-proved decision procedure, plus a PROOF_GATED_CASES entry. That would move the proof numerator from 3 to 4, which is evidence about one case's artifact and never conformance.",
+   "source": "docs/reports/ct-lane-5/README.md",
+   "recorded_by": "CT-LANE-5"
+  },
+  {
+   "id": "CT07-TWO-THREAD-REPLAY-ORDER",
+   "title": "CT07's byte-identical trace comparison does not witness interleaving, because worker events are buffered privately and replayed by the parent",
+   "why": "Measured, and stated so the mapping is not read as more than it is. The emitted task runtime has every worker write its diagnostic events into its own private event array, which the parent replays at collect (constraint 15a; the array is named in diagnostic_log_c_emit.rs's own comment). So CT07's 17-line observation is deterministic BY CONSTRUCTION, and its line-for-line agreement with the reference execution is evidence about custody, values and rebasing - not about the real-time order in which two threads touched the object. The concurrency evidence for this case is elsewhere and is real: two thrd_create'd threads, the disjointness decided in the ledger before emission, one allocation checked by address, and a clean ASan/UBSan/LSan run. What no evidence in this repository supplies is an observation of the two writes actually overlapping in time. DISCHARGE: either accept this as a stated boundary of the trace mechanism (the honest default, since the buffering exists to make traces comparable at all), or land the TSan row TASK-ROUTE-TSAN-SEGV blocks, which is the one instrument that would observe the two writers as concurrent rather than as replayed.",
+   "source": "docs/reports/ct-lane-5/README.md",
+   "recorded_by": "CT-LANE-5"
+  },
+  {
+   "id": "CT10-BYTE-ENCODING-UNSOUND",
+   "title": "The tempting byte-granular encoding of CT10's bit-fields is wrong in BOTH directions, not merely coarse - measured, so it stays refused",
+   "why": "Wave 31 offered and wave 35 declined a shortcut for CT10: encode two adjacent bit-fields as two leases of the byte they share, and let the existing byte-granular exclusivity refuse them. Card CT-LANE-5 measured why that is not just `the right answer for the wrong reason` but unsound in both directions. C11 makes two bit-fields one memory location exactly when they share a storage UNIT: so a program whose bit-fields lie in different bytes of one unit would be ADMITTED by the byte rule though C11 makes them one location, and a program whose adjacent members are addressable would be REFUSED though they are genuinely independent. The floor is structural: FieldStorage::BitfieldUnit is the only bit-addressed type in the workspace and its own doc says the bit range `never participates in the disjointness decision`, while FootprintExport::SharedMemoryLocation exists precisely to stop a bit-field unit reaching a concurrency checker as an interval. DISCHARGE: give .qcore a bit-field declaration so a LayoutContract is derived rather than hand-built, or wire DisjointFootprintsV1 to a source route at all (it has zero callers outside one unit test). Both are route cards. Until one lands, CT10 must stay unmapped rather than mapped on the byte encoding.",
+   "source": "docs/reports/ct-lane-5/README.md",
+   "recorded_by": "CT-LANE-5"
+  },
+  {
+   "id": "CT-FIXTURE-EXTERNAL-READERS",
+   "title": "Eight CT fixture directories are read by include_str! from outside ct_corpus.rs, so a mapping lane can silently re-point another card's tests",
+   "why": "Card CT-LANE-5 hit this: compiler/tests/write_lend.rs include_str!'d compiler/tests/fixtures/ct/CT07/case.qcore, so re-mapping CT07 onto the two-thread artifact handed card SLICE-PERMISSIONS-WRITE-LEND's own tests a task-route program. It was caught by a stale doc comment, which is luck rather than a mechanism, so the generality was then MEASURED: eight CT directories are read from outside the CT harness - CT01 (ct01_proof_leg.rs, ct12_ct14_proof_reach.rs, f02_trace_relation.rs, owned_source_tasks.rs, windows_threads.rs), CT03 (ct03_proof_leg.rs, windows_threads.rs), CT07 (write_lend.rs), CT12 and CT14 (ct12_ct14_proof_reach.rs), CT13 (source_tasks.rs), CT17 (windows_threads.rs, both case.qcore and track.h) and CT37 (ct37_proof_leg.rs). THREE of those are the proof-gated cases CT01, CT03 and CT37, which is the worst place for it: a lane re-pointing one of those would move a proof leg's artifact with nothing in the CT harness saying so, and the proof numerator would keep reading 3. The CT harness's own fixture-inventory check cannot see this, because it ranges over the directory and the case's expected.json, not over who else compiles those bytes. DISCHARGE: a check that every include_str! of compiler/tests/fixtures/ct/ outside ct_corpus.rs is either declared in one place or refused - a close-rule or test-level check, not a card.",
+   "source": "docs/reports/ct-lane-5/README.md",
+   "recorded_by": "CT-LANE-5"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

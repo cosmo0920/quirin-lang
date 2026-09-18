@@ -132,6 +132,12 @@ EVIDENCE_FILES = [
     # stages move to executed on the case's own artifact. A superseding record
     # per constraint 21 — the ct-ctwin-lane record keeps its bytes.
     "docs/reports/mutex-share-cross-emission/ct_stage_evidence.json",
+    # Card `CT-LANE-5` (wave 37): CT07 re-mapped from the sequential write lend
+    # onto the two-thread range write lease, so the scenario's word
+    # "independently" rests on two threads for the first time. A superseding
+    # record per constraint 21 — the ct07-write-remap record keeps its bytes.
+    # It maps no new case, so no count moves.
+    "docs/reports/ct-lane-5/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"

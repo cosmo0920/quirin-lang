@@ -1,0 +1,40 @@
+// CT07's SEQUENTIAL accept control — wave 30's own case program (card
+// CT07-WRITE-REMAP), retained byte-for-byte in its code when card
+// CT07-TWO-THREAD-REMAP (wave 37) moved the case itself onto the two-thread
+// artifact. Only this comment differs from the program wave 30 mapped.
+//
+// Two WRITE authorities over disjoint ranges of one eight-byte owned buffer —
+// lend(store, 0, 4) and lend(store, 4, 8) — both held by ONE sequential entry's
+// bindings and live at once across four interleaved stores. That is the weaker
+// reading of "independently": disjoint write authority with interleaved
+// statements, and no second thread anywhere.
+//
+// It is kept as an accept control for the same reason wave 30 kept wave 28's
+// read-loan program: the remap extends the family of admitted disjointness
+// shapes rather than replacing it, and a mapping that silently stopped
+// admitting the configuration it used to rest on would be a regression hiding
+// inside an upgrade. Its own reject twins are retained beside it as this case's
+// sequential rejection controls.
+import std.buffer;
+import std.fmt;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(8);
+    let left = lend(store, 0, 4);
+    let right = lend(store, 4, 8);
+    left[0] = 11;
+    right[0] = 55;
+    left[1] = 22;
+    right[1] = 66;
+    let b = right[1];
+    let a = left[1];
+    let x = store[0];
+    let y = store[4];
+    print dec a;
+    print dec b;
+    print dec x;
+    print dec y;
+    drop store;
+    return;
+}

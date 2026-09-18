@@ -1,0 +1,55 @@
+{
+  "card": "CT-LANE-5",
+  "wave": 37,
+  "measured": "2026-09-18",
+  "base": "0f6eb0a6",
+  "note": "The standing per-change gate, run at this card's own tip in an isolated worktree. The run this file records is the SECOND: the first was launched before the card's last source edit and was killed rather than reported, because compiler/tests/write_lend.rs include_str!'d CT07's case.qcore and this card replaced that file - so the first run's binaries were built from a source state the card does not ship. Killed by PID after checking /proc/<pid>/cwd, never by pattern. `cargo fmt --all -- --check` failed on its first invocation here too, on one line of this card's own comment block, and is recorded as measured-again-after-fixing rather than as having passed the first time.",
+  "commands": {
+    "git submodule update --init --recursive": "run once at checkout; third_party/libevent at d82464a277d0f42703702c4dfd9af6af38595a83",
+    "cargo test --workspace --no-fail-fast": 0,
+    "cargo fmt --all -- --check": 0,
+    "cargo clippy --all-targets -- -D warnings": 0,
+    "cargo run -p qcore-compiler --example reevaluation_probe": 0,
+    "cargo run -p qcore-compiler --example reevaluation_followup": 0,
+    "python3 scripts/check_lean_audits.py": 0,
+    "python3 scripts/ct_stage_summary.py . --check": 0
+  },
+  "workspace_tests": {
+    "passed": 4611,
+    "failed": 0,
+    "ignored": 8,
+    "result_summaries": 231,
+    "running_lines": 220,
+    "doc_test_sections": 9,
+    "note": "Unmoved from the wave-36 close's 4,611 / 0 / 8 over 231 summaries, and that is expected rather than surprising: this card adds no test FUNCTION. It re-points an existing case at a new artifact, extends two existing runners, and adds fixture data - all of which is exercised by tests that already existed."
+  },
+  "lean_audits": 135,
+  "provider_tests": "not run; this card changes no provider manifest template and no qcore-schemas major version, so constraint 18's rebuild-and-verify trigger does not fire. Stated rather than silently omitted.",
+  "python_evidence_validator_tests": "not run as a suite by this card's gate script; scripts/ct_stage_summary.py --check (exit 0) is the Python check this card's change can affect, and the acceptance-matrix regeneration carries the standing gate numbers labelled as carried rather than claiming them as measured here.",
+  "ct_derivation": {
+    "command": "python3 scripts/ct_stage_summary.py . --check",
+    "exit": 0,
+    "mapped": 46,
+    "unmapped": 4,
+    "native_sanitized_executed": 10,
+    "proof_executed": 3,
+    "note": "No drift between the manifest, acceptance.json and the 23 archived evidence records - including the CT07 supersession this card declares, which the checker validates in both directions."
+  },
+  "card_specific": {
+    "ct_corpus_targeted_runs": "measure/ct-lane-5/ct_corpus_*.log, exits in the matching .exit files",
+    "mutations": {
+      "attempted": 7,
+      "caught": 7,
+      "survived": 0,
+      "record": "measure/ct-lane-5/mutations.json"
+    },
+    "fixture_duplication_sweep": {
+      "files_hashed": 165,
+      "groups_found": 5,
+      "groups_this_card_contributes_to": 0,
+      "record": "measure/ct-lane-5/fixture_sweep.log"
+    }
+  },
+  "disk": "82 GB free at the run; above the 60 GB floor, so the full gate applies rather than crate-scoped checks",
+  "platform": "Linux. No Windows or Apple run is claimed for this card or for CT07."
+}

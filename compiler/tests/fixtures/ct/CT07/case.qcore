@@ -1,34 +1,66 @@
-import std.buffer;
-import std.fmt;
-import std.io;
-
-// CT07's case since card CT07-WRITE-REMAP (wave 30): the program card
-// SLICE-PERMISSIONS-WRITE-LEND published as the half of CT07 the read card
-// could not reach — two parties each holding WRITE authority over their own
-// range of one buffer, mutating independently while both loans are live.
-// `left` and `right` cover [0, 4) and [4, 8): provably disjoint, decided at
-// check time, and the interleaved stores below are each admitted because each
-// goes through the loan that owns its byte. The owner reads the bytes back
-// only after both windows close, which is when its authority returns. Moved
-// here from compiler/tests/fixtures/write_lend/disjoint_write_halves.qcore
-// byte-identically (only this comment changed); compiler/tests/write_lend.rs
-// still runs it as that card's own fixture.
-fn main() -> unit effects { io, alloc, mut } {
-    let store = bytes(8);
-    let left = lend(store, 0, 4);
-    let right = lend(store, 4, 8);
-    left[0] = 11;
-    right[0] = 55;
-    left[1] = 22;
-    right[1] = 66;
-    let b = right[1];
-    let a = left[1];
-    let x = store[0];
-    let y = store[4];
-    print dec a;
-    print dec b;
-    print dec x;
-    print dec y;
-    drop store;
-    return;
+// CT07's case since card CT07-TWO-THREAD-REMAP (wave 37). The scenario is
+// "two disjoint array halves mutated independently", and this is the first
+// artifact on which "independently" means *two threads*.
+//
+// Wave 28 mapped CT07 onto two disjoint READ loans; wave 30 (CT07-WRITE-REMAP)
+// remapped it onto two WRITE authorities over disjoint ranges — but both were
+// bindings of one sequential entry, and that card named the gap itself: "NOT
+// two threads; the task-crossing half is residual WRITE-LEND-TASKS". Wave 31
+// crossed the spawn boundary with the lease and wave 36
+// (WRITE-LEND-TASKS-EXERCISE) let a worker body actually write through it.
+//
+// So: one allocation whose payload is a single int32_t; two children holding
+// write leases over its two disjoint halves, [0, 2) and [2, 4); each child
+// writing a byte through its own lease; the owner reading both bytes back only
+// after both joins, which is when the leases return. Each worker writes its own
+// RELATIVE byte 0, and the events name owner bytes 0 and 2 — so the rebasing
+// law is visible in the observation rather than asserted about it.
+//
+// Disjointness is decided by ownership::axes_overlap, called by
+// LeaseRange::overlaps in the scoped-task ledger; exclusivity is the ledger's,
+// not a route rule's. The three rejection controls take the scenario's two
+// words apart: overlapping_leases.qcore is the disjointness half, and
+// past_range_byte.qcore / past_extent_read.qcore are the bounds half in each of
+// the two layers that owns it (the lease's rebased containment, and the
+// payload's own extent).
+//
+// This program is the plain scoped-task form of the flagship pinned in
+// compiler/tests/write_lend_tasks_exercise.rs as DISJOINT_EXERCISE: it drops
+// that program's `import std.logger;` and `log_level trace;` so the checked
+// artifact is a ScopedTasks module the heap-scenario runner consumes, and it
+// keeps both of the owner's byte reads. It is not byte-identical to any other
+// fixture on disk — see the report's fixture-duplication disclosure.
+import std.concurrency;
+concurrency checked;
+fn writer(half: lend<Buffer>) -> i32 {
+  let done = qcore_buffer_write(half, 0, 9);
+  return 1;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(0)?;
+  thread scope s {
+    match spawn s writer(lend buffer 0..2) {
+      Result::Ok { value: first } => {
+        match spawn s writer(lend buffer 2..4) {
+          Result::Ok { value: second } => {
+            let a = join move first?;
+            let b = join move second?;
+            let byte0 = qcore_buffer_read(buffer, 0);
+            let byte2 = qcore_buffer_read(buffer, 2);
+            drop buffer;
+            return byte2;
+          }
+          Result::Err { error: refused } => {
+            let a = join move first?;
+            drop buffer;
+            return a;
+          }
+        }
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 0;
+      }
+    }
+  }
 }
