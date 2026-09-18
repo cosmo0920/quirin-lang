@@ -30,7 +30,7 @@ VERDICT_BEARING = ("diagnostics", "chunk-contracts")
 
 def main():
     for stem in VERDICT_BEARING:
-        measured = (M / "runs" / "before" / ARTIFACTS[stem]).read_bytes()
+        measured = (M / "runs" / "before2" / ARTIFACTS[stem]).read_bytes()
         archived = gzip.decompress((BASELINE / f"{stem}.json.gz").read_bytes())
         if measured != archived:
             print(f"REFUSING: BEFORE no longer reproduces the baseline `{stem}`", file=sys.stderr)
@@ -42,12 +42,12 @@ def main():
 
     manifest = {
         "card": "W37-CORPUS-CONTRACTS-4",
-        "base": "477b733d",
+        "base": "797661f3",
         "baseline": "docs/reports/joined-provenance-call-frames/artifacts",
         "note": (
             "Declarative card: no checker, loader, backend or any other crate source changed, "
             "so ONE audit binary served both stages and the only difference between them is the "
-            "contract manifest (27 -> 33 modules, 49 -> 59 resource-v1 declarations). AFTER is "
+            "contract manifest (27 -> 33 modules, 49 -> 59 resource-v1 declarations). The card was REBASED from 477b733d onto 797661f3 and BOTH STAGES RE-RUN there against a binary rebuilt on that tree (sha256 05011d2fa5fc789255156dabb18b787f9fb6f5d7918a279e4c7a3e4224f74cab); these archives are the REBASED runs, and they are byte-identical to the pre-rebase runs in all five artifacts, so the two gateway code arbiters beneath this card (SCALAR-ROUTE-EXIT-EDGE, JOINED-PROVENANCE-ROUND-BOUND) move nothing this corpus can see. AFTER is "
             "this card's re-pin. BEFORE reproduces the baseline byte for byte in both "
             "verdict-bearing artifacts AND in `source`; `source-effects` and `contracts` differ "
             "identically in BEFORE and AFTER (checkout root and identity digests) and are not "
@@ -57,7 +57,7 @@ def main():
         "artifacts": {},
     }
     for stem, produced in ARTIFACTS.items():
-        for stage, suffix in (("before", "-before"), ("after", "")):
+        for stage, suffix in (("before2", "-before"), ("after2", "")):
             raw = (M / "runs" / stage / produced).read_bytes()
             out = R / "artifacts" / f"{stem}{suffix}.json.gz"
             with out.open("wb") as fh:
@@ -76,14 +76,16 @@ def main():
 
     for name in ("byte-identity-before.txt", "byte-identity-after.txt", "census.txt",
                  "attribution.txt", "cover-baseline.txt", "greedy-baseline.txt",
-                 "gate-exits.txt", "gate-exits-run1.txt", "reverify.txt",
-                 "before-run.txt", "after-run.txt"):
+                 "gate-exits.txt", "gate-exits-run1.txt", "gate-exits-run2.txt",
+                 "reverify.txt", "before-run.txt", "after-run.txt",
+                 "before2-run.txt", "after2-run.txt",
+                 "byte-identity-before2.txt", "rebase-after-identity.txt"):
         src = M / "logs" / name
         if src.exists():
             shutil.copy(src, R / "logs" / name)
     for name in ("run_audit.py", "stage.sh", "byte_identity.py", "cover.py", "greedy.py",
                  "census.py", "attribution.py", "evidence.py", "gate.sh", "reverify.sh",
-                 "register.py"):
+                 "register.py", "stage_out.sh", "compare_after.py", "resolve_matrix.py"):
         src = M / name
         if src.exists():
             shutil.copy(src, R / "scripts" / name)

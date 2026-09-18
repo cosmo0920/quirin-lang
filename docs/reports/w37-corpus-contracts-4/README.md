@@ -1,12 +1,15 @@
 # W37-CORPUS-CONTRACTS-4 — ten custody-neutral declarations, and a measured ABI boundary
 
-Wave 37's **second arbiter**, chained behind `JOINED-PROVENANCE-CALL-FRAMES`.
+Wave 37's **second declarative arbiter**, chained behind
+`JOINED-PROVENANCE-ROUND-BOUND` (and, beneath it, `SCALAR-ROUTE-EXIT-EDGE` and
+`JOINED-PROVENANCE-CALL-FRAMES`) after the rebase of §1.0.
 **Declarative**: six `.qcore` contract modules and six manifest rows. No
 gateway checker, loader, backend or any other crate source changed, so **one
 audit binary served both stages** and the only difference between BEFORE and
 AFTER is which modules the manifest selects.
 
-Base `477b733d`. Baseline `docs/reports/joined-provenance-call-frames/artifacts/`.
+Base **`797661f3`** (rebased from `477b733d`; §1.0). Baseline
+`docs/reports/joined-provenance-call-frames/artifacts/`.
 
 ---
 
@@ -50,32 +53,51 @@ verdict-bearing artifact. Only `contracts` and `source-effects` differ between
 the two archives, which is the checkout-root class every re-pin in this chain
 has recorded.
 
-`origin/main` was fetched before the BEFORE run, before the AFTER run, and
-again after the gate. At the first two it stood at this card's base
-`477b733d`. **At the third it had advanced to `0f6eb0a6`** — but not to
-`SCALAR-ROUTE-EXIT-EDGE`: the new commits are the **wave-36 close**
-(`WAVE-36-CLOSE`, merged into wave 37).
+### 1.0 The card was REBASED, and both stages were re-run on the new base
 
-**The corpus baseline did not move, and that was checked rather than assumed.**
-A path-scoped diff of `477b733d..origin/main` shows the close touched exactly
-two files this card cares about, and **neither is the baseline**:
+The card was first measured at base `477b733d`. `origin/main` then advanced
+three times, and on the integrator's instruction the card was **rebased onto
+`797661f3`** and **both stages re-run there**. Three cards now sit between this
+card's original base and its new one:
 
-* `docs/reports/joined-provenance-call-frames/` — **untouched**. This card's
-  BEFORE still reproduces it byte for byte (re-verified after the gate: the
-  archiving tool refuses to write otherwise, and it wrote). **No re-run is
-  required.**
-* `contract/`, `compiler/tests/qcore_contract_corpus.rs`,
-  `compiler/tests/contract_loader.rs`,
-  `crates/qcore-c-gateway/tests/{prod_contracts,neighbours}.rs`,
-  `docs/development/increments/wave-37.md` — all **untouched** by the close, so
-  none of this card's pin edits or its increment paragraph contends with it.
-* `AGENTS.md` and `docs/reviews/r0_3/acceptance_matrix.json` — **both edited by
-  the close and by this card.** See §10 item 4 for the exact merge outcome,
-  which was measured with a read-only `git merge-tree` rather than predicted.
+| Merged | Card | Kind | Effect on the corpus |
+|---|---|---|---|
+| `c1814e3c` | `BASE-TYPE-READER-CENSUS` | measurement only | none |
+| `0b0b4ac1` | `SCALAR-ROUTE-EXIT-EDGE` | **gateway code** — a loop header's exit edge is retained | zero movement claimed |
+| `797661f3` | `JOINED-PROVENANCE-ROUND-BOUND` | **gateway code** — the 64-round cap becomes a proved per-graph bound | zero movement claimed, no archive published |
 
-**If `SCALAR-ROUTE-EXIT-EDGE` merges before this card does**, the corpus
-baseline *will* move and the integrator must then have this card's BEFORE
-re-run against it (§10 item 3). That has not happened as of `0f6eb0a6`.
+Two of the three change gateway code *beneath* this card, so their
+zero-movement claims are premises this card's own re-run can check rather than
+inherit. **The audit binary was rebuilt on the rebased tree** (sha256
+`05011d2f…`) before either stage, so both stages exercise the new gateway code.
+
+**Result: nothing moved, anywhere.**
+
+* **BEFORE, re-run on the rebased tree with this card's six modules staged off
+  disk** (82 modules present, manifest at 27), reproduces the wave-36 baseline
+  byte for byte — `diagnostics` **`a7aa3b5f9ab193a0`**, `chunk-contracts`
+  **`c4f438e4ed3dab3c`** (`logs/byte-identity-before2.txt`). Since both code
+  cards' AFTER is byte-identical to that same baseline, this one run reproduces
+  **all three** cards' AFTER at once, and it is an **independent confirmation of
+  both zero-movement claims** measured from outside those cards.
+* All **five** BEFORE artifacts are byte-identical to the pre-rebase BEFORE,
+  including the checkout-root-bearing ones (the worktree path is unchanged).
+* **AFTER, re-run on the rebased tree, is byte-identical to the archived AFTER
+  in all five artifacts** — `diagnostics` `c54ad4219fa85793`, `chunk-contracts`
+  `c4f438e4ed3dab3c`, `source` `ae38f6c93dfbe341`, `source-effects`
+  `c199353eddb00e20`, `contracts` `fe945ffb298efc2b`
+  (`logs/rebase-after-identity.txt`).
+
+So **the entire attribution in §4 and §5 stands unchanged**, every count in the
+Headline is re-measured rather than carried, and there is **no interaction** to
+name between this card's ten declarations and either the retained exit edge or
+the raised round bound. That was the one finding the re-run existed to look
+for, and it is a negative result — reported as one.
+
+The staging-out used a temporary file move into the gitignored `measure/`
+directory and `git checkout` of the manifest, never `git stash`: the stash stack
+is shared across worktrees (`CLAUDE.md`). The tree was verified restored to 88
+modules / 33 selected afterwards.
 
 ### 1.1 BEFORE reproduces the baseline byte for byte
 
@@ -102,12 +124,21 @@ contract at all.
 
 ### 1.2 One binary, both stages
 
-The card is declarative, so BEFORE and AFTER are the same executable
-(`target/release/examples/cycle19_fluent_bit_libraries_audit`, built once at
-the card's base). There is no "was it the same build?" question to answer: the
-manifest was at its 27-module form for BEFORE (the six `.qcore` files did not
-yet exist on disk) and at 33 for AFTER. BEFORE 213.9s, AFTER 465.5s, both
-exit 0.
+The card is declarative, so within each measurement BEFORE and AFTER are the
+**same executable** (`target/release/examples/cycle19_fluent_bit_libraries_audit`).
+There is no "was it the same build?" question to answer: the manifest was at its
+27-module form for BEFORE and at 33 for AFTER, and nothing else differed.
+
+The card was measured **twice**, once at each base, and each measurement used one
+binary built at *that* base — the rebase's whole point being that the second
+binary contains the two gateway code changes the first did not:
+
+| Measurement | Base | Binary sha256 | BEFORE | AFTER |
+|---|---|---|---|---|
+| first | `477b733d` | (built at that base) | 213.9s, exit 0 | 465.5s, exit 0 |
+| **rebased** | **`797661f3`** | `05011d2f…` | 228.5s, exit 0 | 263.6s, exit 0 |
+
+Both measurements agree artifact for artifact (§1.0).
 
 ---
 
@@ -334,6 +365,10 @@ beside it (constraint 12a). `logs/attribution.txt` groups them and, uniquely to
 this card, **separates a genuine addition from a same-position substitution** —
 a distinction a raw added/removed count cannot make and which turns out to
 carry the whole result.
+
+Everything in this section was **re-measured on the rebased tree** and is
+byte-identical to the pre-rebase measurement (§1.0), so no figure here is
+carried across the rebase.
 
 **Removed: 183.** 179 name one of the ten declared callees — the prediction,
 exactly. The other 4 are cascade: 1 naming `pack_cmetrics_type` (which became
@@ -602,26 +637,39 @@ ten premises alone.
 
 ## 8. Gate
 
-Disk was checked first: **120 GB free**, above the 60 GB floor, so the full gate
+Disk was checked first: **168 GB free**, above the 60 GB floor, so the full gate
 ran. Every exit code was captured to a file, never read through a pipe. The gate
-was run **twice** and both runs are published, because the first found two
-things and only one of them was noise.
+was run **three times** and all three are published, because the first found two
+things and the third is the one that counts — the rebased tree.
 
 ```
-run 1 (logs/gate-exits-run1.txt)   test=101  fmt=1  clippy=0  probe=0  followup=0  lean=0  pytests=0
-run 2 (logs/gate-exits.txt)        test=0    fmt=0  clippy=0  probe=0  followup=0  lean=0  pytests=0
+run 1, base 477b733d   (logs/gate-exits-run1.txt)  test=101  fmt=1  clippy=0  probe=0  followup=0  lean=0  pytests=0
+run 2, base 477b733d   (logs/gate-exits-run2.txt)  test=0    fmt=0  clippy=0  probe=0  followup=0  lean=0  pytests=0
+run 3, base 797661f3   (logs/gate-exits.txt)       test=0    fmt=0  clippy=0  probe=0  followup=0  lean=0  pytests=0
 ```
 
-**Run 2 is green in every step.** Measured at it:
+**Run 3 is the gate of record: green in every step, first try, on the rebased
+tree.** Measured at it:
 
-* **4,611 workspace tests passed, 0 failed, 8 ignored**, over 231 test-result
-  summaries (`cargo test --workspace --no-fail-fast`).
+* **4,628 workspace tests passed, 0 failed, 8 ignored**, over 232 test-result
+  summaries (`cargo test --workspace --no-fail-fast`). The **+17** over run 2's
+  4,611 is the two wave-37 code arbiters' own tests, which run 2 did not have.
 * `cargo fmt --all -- --check` clean; `cargo clippy --all-targets -- -D warnings`
   clean.
 * Both reevaluation examples **exit 0**, reported as the brief requires whether
   or not that is the convenient answer.
-* **135 Lean audits** passed, `AuditAll` axiom closure clean.
-* **274 Python tests** pass (`python3 -m unittest discover -s scripts/tests`).
+* **137 Lean audits** passed, `AuditAll` axiom closure clean — the figure the
+  integrator predicted, the two new audits having landed above this card.
+* **293 Python tests** pass (`python3 -m unittest discover -s scripts/tests`),
+  which includes `CommittedMatrixIsSelfConsistent` — the row that catches a
+  hand-set `named_followups` count, and the reason §10 item 4 regenerates
+  through the generator rather than editing the number.
+* Constraint 16's rows, stated because that constraint requires a gate report to
+  **say which it saw**: every one of them was **green** in run 3, including
+  `a_declared_process_limit_stops_the_fixture_from_forking`, which had failed in
+  run 1 (§8.2). This is a full-suite run on a machine carrying its own build at
+  a falling load, **not** the quiet-host isolated number
+  `HOST-ROW-STARVATION-DESCRIPTION` asks for, and it is not offered as one.
 
 ### 8.1 `fmt=1` in run 1 was mine, and it was a real finding
 
@@ -663,17 +711,18 @@ fifteen-minute load across the window: 21.2 - 21.4   (16 cores)
 ```
 
 **12 of 12 pass alone**, and the row then passed **again inside the full run-2
-gate** at a falling load (1-minute load 4.04 at completion). Both facts are
-recorded, which is what constraint 16 asks of a load-sensitive row: it failed
-once at the busy tail of a 16-core machine whose fifteen-minute load was above
-21, and passed 13 subsequent times.
+gate** and **again inside the full run-3 gate on the rebased tree**. Both facts
+are recorded, which is what constraint 16 asks of a load-sensitive row: it
+failed once at the busy tail of a 16-core machine whose fifteen-minute load was
+above 21, and passed **14 subsequent times**, twice of them inside a full
+suite.
 
 **It cannot be this card.** This card changes **no crate source at all** — six
 `.qcore` files, one manifest, four test-pin files and documentation.
 `qcore-verifier-host` depends only on `qcore-frontend` and `qcore-schemas`,
 never on the contract crate, and does not read
 `contract/cycle19-resource-contracts.json`. No claim is made here that the row
-is fixed or unfixable; the measurement says it passed 13 of 14 and failed once
+is fixed or unfixable; the measurement says it passed 14 of 15 and failed once
 under load, and nothing more.
 
 ---
@@ -722,29 +771,29 @@ finding is that the numbers get applied and the prose does not.
    4,309**; `summary_conflict` **1, unmoved**; contract corpus **82 → 88**;
    resource-v1 declarations **49 → 59**; manifest-selected **27 → 33**.
 2. **The baseline moves to `docs/reports/w37-corpus-contracts-4/artifacts/`.**
-3. **If `SCALAR-ROUTE-EXIT-EDGE` merges before this card**, this card's BEFORE
-   must be re-run against the new baseline before merging (§1). `origin/main`
-   was `477b733d` at all three checks. The AFTER is unaffected in kind, but the
-   *attribution* is only sound against a BEFORE that reproduces whatever
-   baseline is then current.
+3. **This item is DISCHARGED, not outstanding.** `SCALAR-ROUTE-EXIT-EDGE` and
+   `JOINED-PROVENANCE-ROUND-BOUND` did merge ahead of this card, and on the
+   integrator's instruction the card was rebased onto `797661f3` and **both
+   stages re-run there against a rebuilt audit binary**. BEFORE still
+   reproduces the baseline byte for byte and AFTER is byte-identical to the
+   archived AFTER in all five artifacts, so the attribution stands unchanged
+   and no count moved (§1.0). The re-run also **independently confirms both
+   code cards' zero-movement claims** from outside those cards.
 4. **Residuals ARE registered** (§9) — the change from W36's practice the brief
-   asked for — and **the one merge conflict this card creates is here, with a
-   mechanical resolution.** Measured, not predicted, with a read-only
-   `git merge-tree origin/main HEAD` at `0f6eb0a6`:
-
-   * **`AGENTS.md` auto-merges cleanly.** No conflict. All five anchors this
-     card edits survive verbatim in the post-close file, and the close's
-     additions are elsewhere in it.
-   * **`docs/reviews/r0_3/acceptance_matrix.json` conflicts**, and it is the
-     only conflicting file. Both sides **append** to `named_followups`: this
-     card took it 171 → **181** against its base, and `WAVE-36-CLOSE` took the
-     same base to **187** (registering W36's own nine, the pass W36 skipped).
-     **The resolution is to keep both sides' appended entries** — I verified
-     **zero id collisions** between this card's ten and the 187 now on `main` —
-     **and to set the `named_followups` count field to 197.** The two derived
-     count fields this card also moved (`contract_modules` 82 → **88**,
-     `named_followups` 171 → 181) are otherwise independent of the close's
-     edits; `contract_modules` should land at **88**.
+   asked for — and the registration was **applied through the generator, not by
+   hand**. `named_followups` is **197 → 207**: main reached 197 across the
+   wave-36 close and wave 37's two code arbiters, and this card's ten are
+   appended, with **zero id collisions** verified against all 197. The matrix was
+   then regenerated with
+   `build_matrix.py . --gate docs/reports/wave36-close/gate.json`, which is what
+   keeps the derived `dimensions.named_followups` in step — the wave-36 close
+   recorded that hand-setting it leaves the count stale and trips
+   `CommittedMatrixIsSelfConsistent` (`D02-DIMENSIONS-FOLLOWUP-COUNT`,
+   constraint 25), and this card followed that record rather than repeating the
+   mistake. `measurement_provenance` is therefore
+   `integrator_supplied (docs/reports/wave36-close/gate.json)`, not the
+   generator's carried-and-unmeasured warning, and `contract_modules` derives to
+   **88**.
 5. **No action — recorded so it is not re-investigated.** This card's
    `PREDICTION.md` forecast `double_release` `1 → 1`; the true value is **0** in
    both stages. The **ledger is already correct** at 0 (wave 35 withdrew the
@@ -791,36 +840,30 @@ finding is that the numbers get applied and the prose does not.
     refinement the rule would have declined this card's largest module. I have
     **not** edited W36's residual text; this is a proposed restatement for the
     integrator to apply where that residual is recorded.
-11. **The acceptance matrix: regenerated, compared, and applied MINUS one
-    field — please check this one.** The generator
-    (`docs/reports/remaining-d02/build_matrix.py`) was run to a side file and
-    diffed against the committed matrix. It would have changed exactly three
-    things: `contract_modules` 82 → **88** and `named_followups` 171 → **181**,
-    both derived and both correct, and **`validation.measurement_provenance`
-    from `integrator_supplied (docs/reports/wave35-close/gate.json)` to the
-    generator's "carried, NOT measured for this regeneration" warning**. The
-    first two were applied; the third was **deliberately not**, because that
-    block is `integrator_supplied` in `section_ownership` and is the *close's*
-    to move, not a card's (W36 took the same position on the same block). The
-    committed matrix is now **byte-identical to a full regeneration except for
-    that single field** — verified, not assumed. If the close would rather have
-    the generator's label, re-run it with `--gate` pointing at the wave-37
-    close's own measured numbers, which replaces the label *and* the numbers
-    together; regenerating without `--gate` would downgrade a true provenance
-    statement to a warning. `named_followups` is `hand_maintained`, so the ten
-    new entries are carried by the generator rather than authored by it — which
-    the side-by-side run confirms. Two derived fields remain worth a glance: `corpus.contract_modules_per_directory` and
+11. **The acceptance matrix was regenerated in place, with the close's gate.**
+    `build_matrix.py . --gate docs/reports/wave36-close/gate.json` was run on the
+    rebased tree, so the derived sections follow the corpus (`contract_modules`
+    **88**, `named_followups` **207**, `lean audits` **137**) and
+    `measurement_provenance` reads
+    `integrator_supplied (docs/reports/wave36-close/gate.json)` rather than the
+    generator's carried-and-unmeasured warning. This supersedes what an earlier
+    draft of this item said — before the rebase the card had *declined* to
+    regenerate, to avoid downgrading that provenance label; passing `--gate`,
+    as the integrator directed, resolves that properly instead of working around
+    it. `named_followups` is `hand_maintained`, so the ten new entries are
+    carried by the generator rather than authored by it. Two derived fields remain worth a glance: `corpus.contract_modules_per_directory` and
     `corpus.contract_clause_pin` come from card B00's **frozen** archive and
     describe a 59-module checkpoint beside a corpus this card takes to **88**.
     That is the already-recorded `D02-B00-LEDGER-SNAPSHOT` (constraint 25), it
     widens here, and it must be repaired by publishing provenance beside them
     and **never** by editing the archive (constraint 21).
-12. **Two "Merged gate" ledger numbers have drifted** and are the **close's** to
-    move, not this card's. `AGENTS.md` reads **4,580 passed / 0 / 8** and
-    **247 Python**, measured by the *wave-35* close at `4cf9bdf9`; this card
-    measured **4,611 passed / 0 failed / 8 ignored** over 231 result summaries
-    and **274 Python** at its own tip. **135 Lean audits** agrees exactly and
-    needs no change. Deliberately not edited here (§8).
+12. **The "Merged gate" ledger row is nearly current; one number moved.**
+    `AGENTS.md` now reads **4,611 passed / 0 / 8**, **293 Python** and **137
+    Lean audits**, measured by the wave-36 close. This card measured **293
+    Python** and **137 Lean audits** — exact agreement — and **4,628** workspace
+    tests, the **+17** being the two wave-37 code arbiters' own tests, which
+    merged after that close. Deliberately **not** edited here: the row is the
+    close's to move, and the next close will re-measure it anyway (§8).
 13. **Nothing here is a claim about upstream.** Every `Safe` is `Safe` relative
     to ten declared premises; the substituted leaves are `Unknown`-class
     evidence and not defect claims (invariant 2).

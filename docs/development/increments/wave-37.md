@@ -60,12 +60,18 @@ copies are safe to declare, `add`'s three divergent ones are not. Corpus 82 →
 rejected unchanged at 145; constraint 5's pins updated deliberately in four
 files. No Lean: a grown premise set is not a semantic change (invariant 6), the
 `W31`/`W36` position taken on the same ground. Ten residuals **registered in the
-acceptance matrix** (`named_followups` 171 → 181 against this card's base)
-rather than named in the report alone, which is the practice wave 36's close
-asked for; `WAVE-36-CLOSE` took the same base to 187 independently, with **zero
-id collisions** against this card's ten, so the merged figure is **197**. That
-one file is also this card's only merge conflict — `AGENTS.md` auto-merges
-cleanly — and the corpus baseline itself was verified **unmoved** by the close.
+acceptance matrix** rather than named in the report alone, which is the practice
+wave 36's close asked for, taking `named_followups` **197 → 207** through
+`build_matrix.py` (never by hand: the wave-36 close recorded that a hand-set count
+leaves `dimensions.named_followups` stale and trips
+`CommittedMatrixIsSelfConsistent`, constraint 25). The card was **rebased from
+`477b733d` onto `797661f3`** and **both stages re-run there against a rebuilt
+binary**, because two gateway code arbiters had merged beneath it —
+`SCALAR-ROUTE-EXIT-EDGE` and `JOINED-PROVENANCE-ROUND-BOUND`, each claiming zero
+movement. The re-run found **nothing moved anywhere**: BEFORE still reproduces
+`a7aa3b5f…`/`c4f438e4…`, and AFTER is byte-identical to the archived AFTER in all
+five artifacts, so the whole attribution stands unchanged **and both code cards'
+zero-movement claims are independently confirmed from outside those cards**.
 `docs/reports/w37-corpus-contracts-4/README.md`.
 **Wave 37 · `JOINED-PROVENANCE-ROUND-BOUND` (2026-09-18).** The
 conditional-provenance fixed point's `FIXED_POINT_ROUNDS = 64` is replaced by
