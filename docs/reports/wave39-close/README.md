@@ -314,17 +314,32 @@ silent because it lives inside `CT-CTWIN-O`'s roll-up `why`; the roll-up is
 its tracker and it was not registered twice. `HTTP-V1-WINDOWS-RUN` is still
 absent from the tracker by id (§8). Zero names were registered from any
 listing without a discharge condition; no third-party name was orphaned by
-the two retirements. The listing was re-run a third time after this report and
-the final regeneration (§7).
+the two retirements.
+
+The listing was re-run a **third** time after this report, the wave-39 record
+paragraph and the final regeneration were all in place: **56 again, empty diff
+both ways** against the after-edits listing. The names this report itself
+introduces move nothing, and the reason was measured rather than assumed — the
+two findings it registers (`GATE-SUMMARY-PARSER-OK-ONLY`,
+`INTEGRATION-GATE-CLANG-CLAIM-BORROWED`) are now tracker entries, and the
+decision names, card names and rule names it cites are each already inside some
+entry's `why` or in one of the classes above, which the whole-text scan reads
+as tracked. So the final state is the 56 classified in the table, with
+`CT46-NOTES-PREDATE-TSAN-ROW` in the discharged class in place of
+`MUTATION-HARNESS-STALE-ARTIFACTS`, and none unclassified.
 
 ## 6. Headline numbers verified against their sources
 
 Re-read from the sources, never from the ledger:
 
 * **CT row.** `scripts/ct_stage_summary.py --check` exit 0
-  (`gate/ct-stage-check.exit`): mapped 47 / unmapped 3, proof 4,
-  `native_sanitized` 8 stage rows plus the two harness-gated rows the row counts
-  as sanitized-native 10 (the manifest's authority, unchanged by this close);
+  (`gate/ct-stage-check.exit`), and the derived `stage_histogram` the
+  generator writes into `acceptance.json`'s `ct_evidence` and the matrix's
+  `ct_conformance` (recomputed in Rust by
+  `ct_corpus.rs::ct_acceptance_summary_is_derived_from_the_manifest`): mapped
+  47 / unmapped 3, `native_sanitized` executed **10** (7 not applicable, 5
+  recorded-not-gated, 25 unassessed), `proof` executed **4** (43 unassessed) —
+  the manifest's authority, unchanged by this close.
   `AGENTS.md`'s row reads exactly `47/50 mapped, 3 unmapped; sanitized-native
   10 of 47; proof 4 of 47` with both wave-39 sentences. A grep for `46/50`,
   `of 46`, `45/50`, `of 45`, `3 of 4x` and `9 of 4x` over `AGENTS.md`,
@@ -379,7 +394,36 @@ Two detached runs, each `setsid -f docs/reports/wave39-close/scripts/gate.sh
 loop on its `DONE` marker. Exits under `gate/base/` and `gate/final/`; the
 Clang recording under `gate/`; disk never below 260 GB free.
 
-GATE-TABLE-PLACEHOLDER
+| Step | Base run `0e73d600` (= `b6d1f101`'s code) | Final run `11edf7eb` (every non-documentation change of this close) |
+|---|---|---|
+| started / cargo end / end | 13:21:04Z / 13:35:22Z / 13:36:40Z (14m18s / 15m36s) | 13:38:44Z / 13:51:40Z / 13:52:02Z (12m56s / 13m18s) |
+| `git submodule update --init --recursive` | exit 0 | exit 0 |
+| `cargo test --workspace --no-fail-fast` | exit 0 · **4,727 / 0 / 10** over 240 summaries and 236 targets (227 `Running` + 9 doc-test sections; four sections print two summaries each) — **equal to the `LOOPS-ON-COMPOSED-ROUTES` merge's own integration figure at `4786ae4c`** | exit 0 · **4,727 / 0 / 10**, the same 240 / 236 · `test result: FAILED` 0 times |
+| `cargo fmt --all -- --check` | exit 0 (empty diff) | exit 0 (empty diff) |
+| `cargo clippy --all-targets -- -D warnings` | exit 0 | exit 0 |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | 0 / 0 |
+| `check_lean_audits.py` | exit 0 · 141 | exit 0 · **141** ("Passed 141 Lean audits"; `ls proof/Audit*.lean` = 141) |
+| Python (`unittest discover -s scripts/tests`) | exit 0 · 303 OK | **exit 0** · 303 OK — no tripwire fired, because the matrix had already been regenerated with the interim `gate.json` carrying the base run's figures and the two runs' figures are identical; re-run once more after the final regeneration (`gate/python-post.exit` = 0, 303 OK) |
+| Clang | present, 21.1.8, `QCORE_CLANG` unset, exit 0 | the same; the two recordings are byte-identical (`cmp`), archived as `gate/clang-version.txt` |
+| disk | 330 → 331 GB used, 260 GB free | 260 → 260 GB free |
+
+**Zero delta across three measurements** — the wave's last merge, this close's
+base and this close's tip all read 4,727 / 0 / 10, 141 Lean, 303 Python — which
+is what a documentation-and-tracker close should measure; the only code-adjacent
+edit is a Rust doc comment, which moves no test. The tenth ignored row is
+`TSAN-ROWS-2`'s `#[ignore]`d measurement harness; the ninth is the F02
+pin-agreement test, still red by design on `--ignored`. Constraint 16's rows:
+all five named rows in this workspace green in both runs, and the unnamed
+seventh `a_forced_override_never_weakens_an_execution`; a full-suite figure on a
+machine carrying its own build, not the quiet-host number. `test result: FAILED`
+appears zero times, so **no isolated re-verification was required and none is
+claimed** — unlike the proof-leg merge's integration run, whose three red rows
+are §4 item 1's subject. Provider 122 carried (§6). Other exits captured:
+`gate/regen-1.exit` and `gate/regen-2.exit` (the interim and final
+regenerations, both 0), `gate/ct-stage-check.exit` (0), `gate/register.exit`
+(0), `gate/cite_ct46.exit` (0), and the two `--check` runs under the session
+scratchpad (`check-1` exit 1 with one complaint, `check-2` exit 0; a third after
+this report, §2.1).
 
 ## 8. Deferred decisions re-listed
 
@@ -405,6 +449,18 @@ with their measurements are in `reconciliation.json`. The substance:
 | `F02-WINDOWS-PIN-RUN` | deferred | no Windows or Apple run claimed by any wave-39 card; the literals unmoved; the agreement test still `#[ignore]`d and red by design |
 | `MATRIX-RECORDED-BY-DECISION` | deferred | still exactly 67 entries without `recorded_by`; every wave-39 registration carries it |
 | **`MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION`** | **resolved (added for accounting)** | never a deferred decision; retired at `0150c904` on its own second arm, which the merge records as "a DECISION, recorded as such, that this route's native evidence stays serial by construction" — the wording now cited in both CT46 texts |
+
+## 8.1 The increment record
+
+One paragraph, newest first, in `docs/development/increments/wave-39.md` — the
+current record file the index names, created by `CT07-TWO-THREAD-PROOF-LEG` and
+unioned at each merge; **`wave-40.md` was not created** and the index pointer
+still names wave 39. The paragraph carries this close's own numbers (49 items,
+31/5/2/11, 57 re-swept, `--check` 0 with 57 claims, the uncounted Q-space
+instance, the three registrations and two retirements, 233 → 234, the two
+resolved decisions with the merge that records each, the gate's three agreeing
+measurements) and the boundary sentence. `AGENTS.md`'s headline numbers moved
+only where §6 says; `README.md` is untouched, per the sync rule.
 
 ## 9. Due, not run
 
