@@ -5650,20 +5650,26 @@ fn run_sequential_control_list(directory: &Path, id: &str, controls: &[SourceCon
     }
 }
 
-/// CT07 and CT09: the whole sequential stage stack on the case's own fixture —
+/// CT09: the whole sequential stage stack on the case's own fixture —
 /// parse, elaborate, whole-program check, the route's own per-stream
 /// observation compared exactly, C11 emission, then one binary built from that
 /// C under ASan/UBSan (and LSan on Linux) run once and compared per stream
 /// with the observation (card `CT-WIRE-LANE-2`).
 ///
 /// The observation is computed from the checked model and never reads the
-/// emitted C, which is what makes the comparison a comparison. For CT07 the
-/// load-bearing sanitizer is ASan, and since card `CT07-WRITE-REMAP` moved the
-/// case onto the write-lend program it traps the construct's worst failure
-/// mode: a write lend emits a displaced `const` pointer and every store
-/// through it is a real memory write at `owner + low + i`, so an off-by-one in
-/// the displacement, the length or the rebasing would be an out-of-bounds
-/// **write**. For CT09 the run is the executed layout
+/// emitted C, which is what makes the comparison a comparison.
+///
+/// **CT07 left this runner at card `CT07-TWO-THREAD-REMAP` (wave 37)** for
+/// `run_native_heap_scenarios`, its scenario's word "independently" having
+/// gained a two-thread artifact. The sequential write-lend program it ran here
+/// is not gone: it is retained as that case's `sequential_write_halves` accept
+/// control, so the out-of-bounds-write failure mode this runner used to trap
+/// for CT07 — a displaced `const` pointer whose every store is a real write at
+/// `owner + low + i` — is still reached, by
+/// `compiler/tests/write_lend.rs`, which has run that program as card
+/// `SLICE-PERMISSIONS-WRITE-LEND`'s own fixture since wave 29.
+///
+/// For CT09 the run is the executed layout
 /// **observation** (`AGGREGATE-CT09-LAYOUT`): that a C compiler's designated
 /// initializer and member reads agree with the model is cross-checked by the
 /// byte comparison, not proved, and the `proof` stage stays `unassessed`.
@@ -6696,7 +6702,7 @@ fn run_reordering_binary(
     )
 }
 
-/// CT03 and CT17: the whole task-route stage stack on the case's own fixture —
+/// CT03, CT07 and CT17: the whole task-route stage stack on the case's own fixture —
 /// parse, elaborate, lower, check the task IR, reference-execute it, emit C11,
 /// then compile that C under ASan/UBSan (and LSan on Linux) and run it once per fixed
 /// schedule. The reference observation is computed by
@@ -6704,6 +6710,13 @@ fn run_reordering_binary(
 /// never reads the emitted C. The included header records every Buffer
 /// allocation and release by address, so "one object, counted once" and
 /// "reclaims nothing" are identity claims rather than trace claims.
+///
+/// Card `CT07-TWO-THREAD-REMAP` (wave 37) adds the mode's accept controls and
+/// its ordered-code-vector pin, both `#[serde(default)]` so CT03's and CT17's
+/// fixtures are byte-untouched. Both exist because CT07 arrived carrying wave
+/// 30's control set, which this mode could not otherwise have kept: an accept
+/// control had nowhere to live, and one retained control refuses in *two*
+/// layers, which a head-only diagnostic match would not have noticed losing.
 fn run_native_heap_scenarios(
     directory: &Path,
     expected: &ExpectedCase,
