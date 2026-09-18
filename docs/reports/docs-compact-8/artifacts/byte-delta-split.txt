@@ -1,0 +1,20 @@
+block                                                kind                        before   after   delta
+repo map: contract corpus module count               correction                     137     186     +49
+repo map: gateway load-bearing modules               correction                    1108    1530    +422
+constraint 15o: the mutex-crossing TSan sentence     correction                     516    1066    +550
+constraint 15h: the ThreadSanitizer boundary         correction                     222    1336   +1114
+constraint 14: per-card keyword-census ledger        compaction                   19637    6073  -13564
+Q-space note                                         compaction                    6576    3406   -3170
+ledger: headline and arbiter chain                   compaction                    2671    2486    -185
+ledger: Cycle 19 raw corpus row                      compaction                    3051    2642    -409
+ledger: CT01-CT50 row                                compaction                    5256    3478   -1778
+ledger: merged gate row                              correction + re-measurement    4971    3746   -1225
+ledger: follow-on count paragraph                    compaction                    2174    1526    -648
+cadence roster and the percentage sentence           compaction                    1720    1733     +13
+platform records: the Windows open-residual family   compaction                    2193    1905    -288
+the ThreadSanitizer claim                            correction                     229     677    +448
+the conformance-corpus figures                       correction                     482     648    +166
+                              compaction total: -20029
+                              correction total: +2749
+             correction + re-measurement total: -1225
+                               accounted total: -18505
