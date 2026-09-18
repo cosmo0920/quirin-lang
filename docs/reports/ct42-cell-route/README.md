@@ -478,3 +478,35 @@ Every ledger item, as an item:
     unassessed in prose.
 11. **The `Q-NAMESPACE-DECISION` icebox** ran its consequence again: five
     conditions widened, zero codes allocated (§4.5).
+
+---
+
+## Published beside by `WAVE-40-CLOSE` (2026-09-19) — the merge's integration figure, and its in-history sha
+
+Appended, not edited: no line above this heading is changed, and this note
+archives no new run of this card's own gate (constraint 21).
+
+`INTEGRATION-GATE-NOT-PUBLISHED-FOR-EVERY-MERGE` (measured by
+`STABILITY-REEVAL-4`, wave 40) recorded that this card's merge states an
+integration figure differing from this card's own `gate.json` and publishes no
+`integration-gate.json`, so that figure lived only in a commit message. The
+wave-40 close took the residual's **second** discharge arm — state the rule and
+apply it retrospectively by a dated appended note — and the rule is now in
+`CLAUDE.md`: a merge whose stated figure differs from the card's own gate owes
+an `integration-gate.json`; one whose figure equals it does not.
+
+| | |
+|---|---|
+| Merge, **in history** | `45a33285` |
+| Tip the merge message names as measured | `ecfef946` — **a non-ancestor of `main`** (`git merge-base --is-ancestor ecfef946 <main>` exits 1), the pre-amendment commit whose successor is the merge above |
+| Figure the merge message states | 4,703 passed / 0 failed / 10 ignored, 140 Lean audits, 303 Python, all exits 0 (detached run `gate-ct42`) |
+| This card's own `gate.json` | 4,697 workspace tests, 140 Lean audits |
+| Why they differ | the merged tree carries a sibling card's tests; the merge message's own line is the only place the integration figure was written |
+
+No retrospective `integration-gate.json` is written for this merge: the run's
+log is not in the tree, so a file would assert a measurement nobody can
+reproduce. The note preserves the citation and its successor sha, which is what
+the residual's arm asks for. The merged-gate row this merge also carried was
+separately found to have had its Lean figure hand-edited under another card's
+label (`MERGED-GATE-ROW-LEAN-HAND-EDIT`), repaired by the wave-39 close at
+`24505b83`; that residual stays open and is not touched here.

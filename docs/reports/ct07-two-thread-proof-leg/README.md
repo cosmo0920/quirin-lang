@@ -397,3 +397,37 @@ wave-39 record paragraphs and the matrix's `named_followups` at the merge.
    this card (none was run beyond the standing gate's own workspace tests);
    any conformance; any change to the F02 alphabet, `reference_trace`, the
    checker or the emitter.
+
+---
+
+## Published beside by `WAVE-40-CLOSE` (2026-09-19) — the merge's integration figure, and its in-history sha
+
+Appended, not edited: no line above this heading is changed, and this note
+archives no new run of this card's own gate (constraint 21).
+
+`INTEGRATION-GATE-NOT-PUBLISHED-FOR-EVERY-MERGE` (measured by
+`STABILITY-REEVAL-4`, wave 40) recorded that this card's merge states an
+integration figure differing from this card's own `gate.json` and publishes no
+`integration-gate.json`, so that figure lived only in a commit message. The
+wave-40 close took the residual's **second** discharge arm — state the rule and
+apply it retrospectively by a dated appended note — and the rule is now in
+`CLAUDE.md`: a merge whose stated figure differs from the card's own gate owes
+an `integration-gate.json`; one whose figure equals it does not.
+
+| | |
+|---|---|
+| Merge, **in history** | `0d9e922f` |
+| Tip the merge message names as measured | `f1fcd14d` — **a non-ancestor of `main`** (`git merge-base --is-ancestor f1fcd14d <main>` exits 1), the pre-amendment commit whose successor is the merge above |
+| Figure the merge message states | 4,620 passed / 0 failed / 9 ignored, 138 Lean audits, 303 Python (detached run `gate-ct07proof`, under sibling load; the line then names three failed constraint-16 rows re-verified in isolation 12/12 and 12/12 green) |
+| This card's own `gate.json` | 4,644 workspace tests, 138 Lean audits |
+| Why they differ | the merged tree carries a sibling card's tests; the merge message's own line is the only place the integration figure was written |
+
+Two boundaries travel with this note. The merge line's "0 failed" is itself
+inaccurate while naming three failed constraint-16 rows — that is
+`GATE-SUMMARY-PARSER-OK-ONLY`, a separate registered residual about the
+integrator's summary parser, and it is **not** repaired here; the figures above
+are transcribed from the merge message as written, not re-measured. And no
+retrospective `integration-gate.json` is written for this merge: the run's log
+is not in the tree, so a file would assert a measurement nobody can reproduce.
+The note preserves the citation and its successor sha, which is what the
+residual's arm asks for.

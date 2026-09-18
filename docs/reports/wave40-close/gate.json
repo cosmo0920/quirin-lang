@@ -1,0 +1,13 @@
+{
+ "note": "WAVE-40-CLOSE, 2026-09-19, a TWO-CARD CADENCE WAVE (STABILITY-REEVAL-4, DOCS-COMPACT-8). INTERIM RECORD - the base run only; this note is rewritten with both runs after the final run completes. BASE RUN at 2ba203ef (= 0c7b0cea's tree plus this close's report skeleton, code byte for byte): 4,727 passed / 0 failed / 10 ignored over 238 strict result summaries and 236 test targets (227 Running + 9 doc-test sections; TWO of those sections print two summaries each), test result: FAILED 0 times; fmt 0; clippy 0; both probes 0; 141 Lean audits; Python 303 OK; every exit captured to its own file, no pipe. Detached (setsid -f, no trap '' TERM), polled by a bounded foreground loop on its DONE marker.",
+ "workspace_tests": 4727,
+ "provider_tests": 122,
+ "python_evidence_validator_tests": 303,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "pass",
+ "lean_audits": 141,
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
