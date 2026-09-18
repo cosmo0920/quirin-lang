@@ -1,0 +1,6 @@
+sections: 236 (Running 227, Doc-tests 9)
+summaries attributed: 238
+  2 summaries: Doc-tests qcore_core
+  2 summaries: Doc-tests qcore_verifier_host
+summaries: 238 statuses: {'ok': 238}
+{'passed': 4727, 'failed': 0, 'ignored': 10, 'measured': 0, 'filtered': 0}
