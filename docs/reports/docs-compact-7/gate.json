@@ -1,0 +1,65 @@
+{
+ "card": "DOCS-COMPACT-7",
+ "wave": 37,
+ "date": "2026-09-18",
+ "base": "2caf7369",
+ "note": "Re-run after rebasing onto 2caf7369, the final pre-close wave-37 main. This card's first pass measured at 477b733d; that measurement is superseded and not carried. The card's own commits are documentation only.",
+ "measured_at": "the card's own tip over 2caf7369",
+ "started_utc": "2026-09-18T01:50:02Z",
+ "finished_utc": "2026-09-18T02:04:26Z",
+ "cargo_test_wall": "14m24s",
+ "disk_free": "256G at start, 211G at end",
+ "gate_scope": "full standing per-change gate",
+ "output_scoping": "measure/rebase-gate/ - scoped to the run, never to fixed paths (CLAUDE.md worktree and measurement hygiene)",
+ "exit_capture": "every step's exit written to its own file; no pipe in any gate command (GATE-EXIT-SWALLOWED-BY-PIPE)",
+ "term_trap": "none - the wrapper does not trap TERM, which the wave-36 close measured turns signal-handling rows red",
+
+ "exit_submodule": 0,
+ "exit_test": 0,
+ "exit_fmt": 0,
+ "exit_clippy": 0,
+ "exit_probe": 0,
+ "exit_followup": 0,
+ "exit_lean": 0,
+ "exit_python": 0,
+
+ "workspace_tests": 4637,
+ "workspace_failed": 0,
+ "workspace_ignored": 8,
+ "workspace_result_summaries": 233,
+ "workspace_test_targets": 231,
+ "workspace_running_sections": 222,
+ "workspace_doc_test_sections": 9,
+ "workspace_failed_summaries": 0,
+ "summary_vs_target_note": "233 summaries over 231 targets because two doc-test sections print two summaries each - the wave-36 close's own accounting, reproduced here",
+
+ "lean_audits": 137,
+ "python_tests": 293,
+ "provider_tests": "carried (no change under providers/ or crates/qcore-schemas/; qcore-schemas stays 14.0.0, so constraint 18 is not engaged) and Unix-only (PROVIDER-CONFORMANCE-UNIX-ONLY)",
+
+ "constraint_16_rows_seen": {
+  "note": "constraint 16 requires a gate report to state which it saw; five named rows plus the unnamed seventh live in this workspace and all were green",
+  "a_declared_process_limit_stops_the_fixture_from_forking": "green",
+  "vp04_vp07_vp08_process_lifecycle_and_payload_budgets": "green",
+  "memory_growth_beyond_the_declared_limit_is_bounded": "green",
+  "closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request": "green",
+  "a_forced_override_never_weakens_an_execution": "green (the unnamed seventh, LOAD-SENSITIVE-ROW-UNNAMED)",
+  "confined_fixture_write": "green",
+  "real_packages_preserve_unknown_and_reject_mutations": "not in this workspace (providers/), not measured here"
+ },
+
+ "boundaries": [
+  "A gate figure is a measurement on one machine, never a property.",
+  "This is a documentation card's measurement of the wave-37 tip, not a close's; the wave-37 close should replace AGENTS.md's merged-gate row with its own --gate numbers.",
+  "Every figure in the row this card writes was produced by THIS run. That is the property the row has twice lacked: its Lean figure disagreed with the close it named in each of the last two waves (GATE-ROW-FIGURE-ATTRIBUTION-DRIFT).",
+  "The load-sensitive rows were green under full-suite load on a machine carrying its own build - NOT the quiet-host isolated number HOST-ROW-STARVATION-DESCRIPTION asks for.",
+  "Provider 122 is carried, not re-measured, and is a Unix figure.",
+  "This card changed no Rust, no proof/ and no frozen archive, so these numbers are not evidence about a code change."
+ ],
+
+ "scope": "documentation only: AGENTS.md, CLAUDE.md, README.md, docs/development/increments/wave-37.md, docs/reviews/r0_3/acceptance_matrix.json (named_followups append + regeneration), docs/reports/docs-compact-7/",
+ "vocabulary": "+0 reserved words, +0 tokens, +0 Q codes",
+ "constraints": "49 before, 49 after; same labels, same order, same group headings; 47 of 49 byte-identical, and all six the wave rewrote untouched",
+ "named_followups": "213 -> 216",
+ "standing_gate": "pass"
+}
