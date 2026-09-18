@@ -165,9 +165,14 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**232** entries after `CT07-TWO-THREAD-PROOF-LEG` (228 after the wave-38 close,
-229 after `STABILITY-REEVAL-3`, 215 at the wave-37 close; the wave-38 close
-registered two and retired three, each named in
+**234** entries after `LOOPS-ON-COMPOSED-ROUTES` (wave 39; three registered —
+`LOOP-PER-ITERATION-LOAN`, `LOOP-WINDOW-BODY-CUSTODY`,
+`LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY` — and one retired,
+`STRING-CONCAT-LOOP-WINDOW`, each named in
+`docs/reports/loops-on-composed-routes/README.md` §11; 232 after
+`CT07-TWO-THREAD-PROOF-LEG` and `AGGREGATE-OWNED-FIELD`, 228 after the wave-38
+close, 229 after `STABILITY-REEVAL-3`, 215 at the wave-37 close; the wave-38
+close registered two and retired three, each named in
 `docs/reports/wave38-close/README.md`; the proof-leg card retired two and
 registered one, each named in `docs/reports/ct07-two-thread-proof-leg/README.md`). Which card registered or retired which name,
 and each wave's chain, is the increment records' business — read the wave
@@ -1224,8 +1229,59 @@ pointer is the card that established it; read it before deviating.
     published flagship being representation-independent by construction rather
     than by luck. No Windows or Apple run is claimed
     (`WRITE-LEND-EXERCISE-WINDOWS-RUN`).
+    **Amended, card `LOOPS-ON-COMPOSED-ROUTES` (wave 39; deliberate — it
+    replaces the "one flat statement sequence" premise this constraint carried
+    from `STRING-CONCAT`, the two sentences quoted as superseded above, by a
+    theorem).** A loan's window is computed **over iterations**: on both
+    routes it runs from the loan's opening to the last **top-level** statement
+    naming the loan **at any depth** (`std_buffer::last_uses`;
+    `std_string::view_uses_at_any_depth`), so a `for` whose body names a loan
+    is that statement and the loan is **live across every iteration** of it.
+    The computation is proved sound relative to `source.loop.v1`'s own
+    unrolling in `QCore.LoopWindows`: every use in the unrolled program lies
+    inside the window (`every_use_lies_inside_the_window`), unrolled positions
+    are attributed to non-decreasing top-level indices, so everything the exact
+    unrolled window contains the iteration window contains
+    (`the_unrolled_window_lies_inside_the_iteration_window`), the unrolling is
+    `QCore.SourceLoop.unroll`'s (`the_unrolling_is_loop_v1s`), a loop-free
+    program's window is the flat one the routes always computed
+    (`the_window_is_exact_over_a_flat_program`), and the replaced top-level-only
+    computation demonstrably missed a body use
+    (`a_top_level_only_window_misses_a_body_use`). The over-approximation is in
+    the **refusing** direction because the IR's owner-access, lend-admission
+    and drop decisions are monotone in the live loans
+    (`a_longer_live_set_refuses_no_less` and siblings) — do not replace the
+    window by an exact per-position one without re-proving both halves. A
+    `for` is therefore **admitted** beside a lend (`SLICE-PERMISSIONS-LOOP-WINDOW`
+    lifted, `Q051` narrowed) and inside a composed string/buffer entry
+    (`STRING-CONCAT-LOOP-WINDOW` discharged, `Q068` and `Q077` narrowed), with
+    the body decided **under the loans live at the loop**: on the buffer route
+    the lend-structured projection unrolls the body inside the borrow node
+    with the index bound, so the IR decides every body access as it decides a
+    top-level one; on the composed route every body store, at every
+    iteration, is judged against every loan still read after the loop
+    **before the body runs** (`loop_body_conflict`), the body then running
+    through the buffer route's own `BufferRun::repeat` — the one iteration
+    rule, published for this — and the composed custody list unrolling it so a
+    body store after a release is the inherited `UseAfterDrop`. An index
+    outside the lowering-visible tier (a byte or a field read) is **not
+    provably disjoint** and conflicts with every live loan of its buffer, on
+    both routes. Three premises must survive refactors, each a refusal **by
+    name** that sits **before** the window is computed and must not be
+    reordered behind it: a lend or a `borrow_utf8` inside a body is a
+    per-iteration loan (`LOOP-PER-ITERATION-LOAN`, `Q051`/`Q077`); a body that
+    acquires or releases where a loan is held (`LOOP-WINDOW-BODY-CUSTODY`,
+    `Q051` in an entry that lends, `Q077` on the composed route); and a string
+    construct, text line, `len`-bound header or unrolling licence inside a
+    composed `for` body (`LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY`, `Q077`).
+    The release arm stays whole-buffer, the crossed-window and (now
+    depth-aware) nested-acquisition refusals stand, `WRITE-LEND-RELEND` is
+    untouched, an entry with no loan keeps `source.loop.v1`'s admission byte
+    for byte, and every program admitted before the card emits byte-identical
+    C (a 527-program census, 139 admitted, 0 moved).
     `ct07-slice-permissions`, `slice-permissions-write-lend`,
-    `write-lend-tasks`, `write-lend-tasks-exercise`.
+    `write-lend-tasks`, `write-lend-tasks-exercise`,
+    `loops-on-composed-routes`.
 15i. **A declared address is a check-time constant parsed once, and the two
     address families are disjoint.** `source.socket.v1`'s `bind NAME ADDRESS;`,
     `connect NAME ADDRESS;` and `sendto NAME ADDRESS …;` carry a literal IPv4

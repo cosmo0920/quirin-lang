@@ -24,6 +24,22 @@ say "sha256 before: $(sha256sum $BUFFER $STRING $FRONT | awk '{print substr($1,1
 
 status=0
 
+# A red row under a mutation means nothing unless the row is green without
+# it: the whole test file is run green before the first mutation and again
+# after the last restore, so a stale artifact or a red baseline is reported
+# here rather than mistaken for non-vacuity.
+baseline() {
+  local label="$1"
+  if $TESTS > "docs/reports/loops-on-composed-routes/baseline-$label.out" 2>&1; then
+    say "baseline ($label): loops_on_composed_routes GREEN"
+  else
+    say "baseline ($label): loops_on_composed_routes RED — FAIL"
+    status=1
+  fi
+  rm -f "docs/reports/loops-on-composed-routes/baseline-$label.out"
+}
+baseline before
+
 # Apply a python replacement to a file, run the test, expect red, restore.
 #   mutate NAME FILE OLD NEW TEST
 mutate() {
@@ -45,6 +61,11 @@ PY
     say "$name: test '$test' went RED under the mutation — non-vacuous (ok)"
   fi
   mv "$file.mutation-backup" "$file"
+  # The backup's mtime predates the mutated build, so without this cargo's
+  # fingerprint would read the restored file as unchanged and keep the rlib
+  # compiled from the mutation — measured in this card's first run, where the
+  # full gate then failed three rows against artifacts of M5 and M6.
+  touch "$file"
   after=$(sha256sum "$file" | cut -c1-64)
   if [ "$before" = "$after" ]; then
     say "$name: $file restored sha256-equal ($(echo "$after" | cut -c1-16))"
@@ -139,5 +160,6 @@ mutate M6-per-iteration-borrow-unnamed "$FRONT" \
   a_borrow_inside_a_body_is_a_per_iteration_loan_and_refuses_by_name
 
 say "sha256 after:  $(sha256sum $BUFFER $STRING $FRONT | awk '{print substr($1,1,16)"  "$2}' | tr '\n' ';')"
+baseline after
 if [ "$status" = 0 ]; then say "RESULT: every mutation went red and every file was restored sha256-equal"; else say "RESULT: FAIL (see above)"; fi
 exit "$status"
