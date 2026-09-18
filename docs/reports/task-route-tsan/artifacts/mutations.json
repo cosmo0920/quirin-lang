@@ -1,7 +1,10 @@
 {
   "card": "TASK-ROUTE-TSAN",
   "method": "one mutation per arm that should make it fail; file restored with mtime advanced",
-  "script": "docs/reports/task-route-tsan/artifacts/mutate.sh",
+  "script": [
+    "docs/reports/task-route-tsan/artifacts/mutate.sh",
+    "docs/reports/task-route-tsan/artifacts/mutate2.sh"
+  ],
   "verdicts": {
     "bound_clean": "RED-AS-REQUIRED",
     "ct46": "RED-AS-REQUIRED",
