@@ -3,8 +3,8 @@
   "spec_revision": "0.3",
   "integration_base_revision": "ea0e54e162a2ea16c9fc2332b9e01f8e0c3bc4a3",
   "full_conformance": false,
-  "ct_mapped": 46,
-  "ct_unmapped": 4,
+  "ct_mapped": 47,
+  "ct_unmapped": 3,
   "findings": [
     {
       "id": "R01",
@@ -276,78 +276,79 @@
       "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
       "docs/reports/mutex-share-cross-emission/ct_stage_evidence.json",
       "docs/reports/ct-lane-5/ct_stage_evidence.json",
-      "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json"
+      "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
+      "docs/reports/ct42-cell-route/ct_stage_evidence.json"
     ],
     "reporting_host": "linux",
     "stage_histogram": {
       "parse": {
-        "executed": 46
+        "executed": 47
       },
       "elaborate": {
-        "executed": 43,
+        "executed": 44,
         "not_applicable": 3
       },
       "task_lowering": {
         "executed": 23,
-        "not_applicable": 23
+        "not_applicable": 24
       },
       "task_ledger_check": {
         "executed": 22,
-        "not_applicable": 24
+        "not_applicable": 25
       },
       "mutex_lowering": {
         "executed": 11,
-        "not_applicable": 35
+        "not_applicable": 36
       },
       "mutex_invariant_check": {
         "executed": 11,
-        "not_applicable": 35
+        "not_applicable": 36
       },
       "epoch_lowering": {
         "executed": 7,
-        "not_applicable": 39
+        "not_applicable": 40
       },
       "epoch_bound_check": {
         "executed": 7,
-        "not_applicable": 39
+        "not_applicable": 40
       },
       "sequential_whole_program": {
-        "executed": 1,
+        "executed": 2,
         "not_applicable": 45
       },
       "sequential_reference_execution": {
         "executed": 1,
-        "not_applicable": 45
+        "not_applicable": 46
       },
       "task_reference_execution": {
         "executed": 13,
-        "not_applicable": 33
+        "not_applicable": 34
       },
       "mutex_reference_execution": {
         "executed": 3,
-        "not_applicable": 43
+        "not_applicable": 44
       },
       "c_emission": {
         "executed": 19,
-        "not_applicable": 27
+        "not_applicable": 28
       },
       "native_execution": {
         "executed": 19,
-        "not_applicable": 27
+        "not_applicable": 28
       },
       "native_sanitized": {
         "executed": 10,
         "not_applicable": 7,
         "recorded_not_gated": 5,
-        "unassessed": 24
+        "unassessed": 25
       },
       "legacy_c_twin": {
         "executed": 3,
-        "not_applicable": 43
+        "not_applicable": 44
       },
       "proof": {
         "executed": 4,
-        "unassessed": 42
+        "unassessed": 43
       }
     },
     "depth_profile": {
@@ -358,12 +359,13 @@
       "native_execution": 7,
       "native_sanitized": 8,
       "proof": 4,
+      "sequential_whole_program": 1,
       "task_ledger_check": 7,
       "task_lowering": 1
     },
     "observation_counts": {
       "c_emission": 36,
-      "elaborate": 43,
+      "elaborate": 44,
       "epoch_bound_check": 7,
       "epoch_lowering": 7,
       "legacy_c_twin": 4,
@@ -372,10 +374,10 @@
       "mutex_reference_execution": 3,
       "native_execution": 51,
       "native_sanitized": 32,
-      "parse": 46,
+      "parse": 47,
       "proof": 4,
       "sequential_reference_execution": 1,
-      "sequential_whole_program": 1,
+      "sequential_whole_program": 2,
       "task_ledger_check": 22,
       "task_lowering": 23,
       "task_reference_execution": 29
@@ -383,7 +385,7 @@
     "unmapped_bucket_counts": {
       "blocked-on-unimplemented-syntax": 1,
       "DECIDABLE-NOW (with a distinguishing fixture)": 1,
-      "blocked-on-gateway-expressiveness (C-twin measured)": 2
+      "blocked-on-gateway-expressiveness (C-twin measured)": 1
     },
     "newly_decidable_not_mapped": [
       "CT24"
@@ -505,6 +507,7 @@
       "CT38": "epoch_bound_check",
       "CT39": "epoch_bound_check",
       "CT40": "legacy_c_twin",
+      "CT42": "sequential_whole_program",
       "CT43": "legacy_c_twin",
       "CT44": "task_ledger_check",
       "CT45": "legacy_c_twin",
@@ -583,8 +586,7 @@
     "unmapped_label_sources": {
       "CT10": "t00-archive",
       "CT24": "t00-archive",
-      "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
-      "CT42": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
+      "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
     }
   },
   "unverified_specs_disposition": {

@@ -1,0 +1,65 @@
+{
+  "id": "CT42",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q664",
+      "message_contains": "`client` and `server` are the two custodians of one accepted connection's protocol cell"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate",
+    "sequential_whole_program"
+  ],
+  "evidence_target": null,
+  "notes": "source.socket.v1's disjoint NAME NAME; question (card CT42-CELL-ROUTE, wave 39), routing the protocol cell card CT42-PROTOCOL-CELL derived at model level. CT42's scenario is `Two descriptors share an underlying logical state`, expected `Preserve shared protocol-cell identity`. TWO DESCRIPTORS: `client` and `server`, two source names each bound to its own socket descriptor (the certificate numbers them 1 and 2), the connector and the accepted binding of one completed TCP connection. SHARE AN UNDERLYING LOGICAL STATE: the transport checker's own cross-name rules -- a send through one is decided by the other's committed stream, a close of one is refused while bytes the other committed sit unread -- which qcore_core::socket_footprint reads off the admitted program's decided connection structure as one protocol cell with two custodians, projected as DeriveDescriptorAlias events onto the unedited DisjointFootprintsV1 checker. PRESERVE SHARED PROTOCOL-CELL IDENTITY: the program asks the checker to treat the two as disjoint custodians, and the unedited checker refuses at Q664 SharedProtocolCell naming the cell; the identity is kept, not lost. The five controls separate the refusal from everything around it: the same question over the listener and an end is ADMITTED (the listener's state is not the connection's), the ends of two different connections are ADMITTED (two connections are two cells), a datagram pair is ADMITTED (the recorded decision CT42-CELL-UDP-QUEUE, re-affirmed with its ground: no connection phase, no cell), a question of a closed custodian is refused by the INHERITED ownership and transport checkers (Q083, Q082) before any cell is asked about, and a question naming a scalar is the transport checker's Q081. BOUNDARY: the two names are two descriptor slots of one program on one thread; no dup-like alias over one open description exists on any route (CT42-CELL-DUP-SOURCE), so `two descriptors` is carried by the connection-cell reading and not by the dup reading. The C-twin arm stays blocked on the contract loader (CT-CTWIN-DESCRIPTOR: an int-typed resource identity is not expressible, a descriptor's -1 failure not being null), which is the native stage's ground and is out of this card's scope. The refusal is a check-time decision over one flat statement sequence; no C is emitted for the case and nothing is executed; no native, sanitizer or proof evidence is claimed.",
+  "sequential_reject": {
+    "diagnostic_sequence": [
+      "Q664"
+    ],
+    "controls": [
+      {
+        "source": "listener_question.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "StandardSocketV1",
+        "note": "The same program asking about `client` and `listener`. Admitted, and it emits the case's C byte for byte (the question erases), so Q664 is keyed to the connection cell and not to asking about an accepted socket at all."
+      },
+      {
+        "source": "two_connections.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "StandardSocketV1",
+        "note": "Two completed connections; the cross-pair questions are admitted. Two connections are two cells, so the refusal is about ONE connection's identity."
+      },
+      {
+        "source": "datagram_pair.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "StandardSocketV1",
+        "note": "A datagram pair asked about. Admitted: the recorded decision CT42-CELL-UDP-QUEUE, re-affirmed with its ground -- a sendto appends to a queue but the two sockets share no connection phase, so they are independent custodians."
+      },
+      {
+        "source": "closed_custodian.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q083",
+          "Q082"
+        ],
+        "note": "The question after `close server;`. Refused by the inherited ownership checker's use-after-close and the transport half's closed-socket stop, before any cell is derived: both custodians must be live."
+      },
+      {
+        "source": "not_a_socket.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q081"
+        ],
+        "note": "The question naming a check-time-constant integer. The transport checker's own custody-position refusal; the cell question is never asked."
+      }
+    ]
+  }
+}

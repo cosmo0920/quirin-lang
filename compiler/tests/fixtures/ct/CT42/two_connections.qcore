@@ -1,0 +1,30 @@
+// CT42 accept control: two completed connections are two cells. The ends of
+// *different* connections share no state, so each cross-pair question is
+// admitted — which is what keeps the case's refusal a statement about one
+// connection's identity rather than about any two accepted sockets.
+import std.socket;
+
+fn main() -> unit effects { io, alloc } {
+    let listener = tcp;
+    bind listener;
+    listen listener;
+
+    let client_one = tcp;
+    connect client_one listener;
+    let server_one = accept listener;
+
+    let client_two = tcp;
+    connect client_two listener;
+    let server_two = accept listener;
+
+    // Admitted: the ends of two different connections.
+    disjoint client_one server_two;
+    disjoint server_one client_two;
+
+    close server_one;
+    close client_one;
+    close server_two;
+    close client_two;
+    close listener;
+    return;
+}

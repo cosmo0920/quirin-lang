@@ -1,0 +1,26 @@
+// CT42 accept control: the listener's own cell is not the connection's. After
+// the accept the pair's traffic never touches the listener's state, so the
+// question over `client` and `listener` is admitted and its judgement is
+// published on the cell certificate. Everything else is the case's program.
+import std.socket;
+
+fn main() -> unit effects { io, alloc } {
+    let listener = tcp;
+    bind listener;
+    listen listener;
+
+    let client = tcp;
+    connect client listener;
+    let server = accept listener;
+
+    // Admitted: a listener shares no connection cell.
+    disjoint client listener;
+
+    send client [81, 67, 111, 114, 101];
+    recv server 5;
+
+    close server;
+    close client;
+    close listener;
+    return;
+}

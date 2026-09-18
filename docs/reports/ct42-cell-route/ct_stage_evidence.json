@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "card": "CT42-CELL-ROUTE",
+  "generated": "2026-09-18",
+  "report": "docs/reports/ct42-cell-route/README.md",
+  "purpose": "Wave 39's route card for CT42's socket arm. One case NEWLY MAPPED (CT42) on the `sequential` route (the harness's name for the non-concurrent source routes; the artifact is a `source.socket.v1` program), under the `reject` verdict mode: the case asks the disjointness question of the two ends of one accepted connection and is refused by the unedited DisjointFootprintsV1 checker as SharedProtocolCell (Q664). Mapped stays a grown denominator: 46 -> 47 of 50 is mapping, not conformance (constraint 23).",
+  "derivation_rule": "Every `verified_stages` block below is the manifest's own row for that case, which `compiler/tests/ct_corpus.rs` independently rederives from its own dispatch and refuses drift on. Nothing here is a second hand-kept copy.",
+  "route": "sequential",
+  "why_this_case_maps_now": "Card CT42-PROTOCOL-CELL (wave 31) derived the protocol cell at model level and card CT-CTWIN-LANE (wave 35) measured the arm UNROUTED: derive_socket_cells and footprint_program were called from one unit test and from nothing in the frontend, the checker or compile_files, so no .qcore program could reach Q664 and a CT row would have named a stage the harness cannot execute (CT42-CELL-UNROUTED). This card routes the deriver from source: `disjoint NAME NAME;` on source.socket.v1 (one reserved word, census-clean at zero QCore source occurrences), the transport checker deciding only that both names are live sockets of the entry, and qcore_core::socket_footprint::check_socket_cells handing one DeriveDescriptorAlias per socket plus one AssertDisjoint per question to the unedited footprint checker. compile_files now reaches Q664 on the case's own fixture, which is exactly what constraint 23's `executed only where a named workspace test runs it on the case's own artifact` requires. Before routing, the two admitting fallback arms of the deriver (CT42-CELL-FALLBACK-ARM-DIRECTION) were made refusals, each shown reachable by a fixture that drives the walk directly, and the T09 checker gained the derived-alias event so a derived-cell certificate carries no DeclaredProtocolCellIdentity (CT42-CELL-DERIVED-PREMISE).",
+  "attribution": "The case's Q664 is attributed to the `disjoint client server;` statement (the harness pins the line source), under the Concurrency pass, which owns the Q650-Q667 band. The refusal message names both custodians and the cell. Five controls isolate it: a question over the listener and an end (admitted, and it emits the case's C byte for byte because the question erases), the ends of two different connections (admitted), a datagram pair (admitted; CT42-CELL-UDP-QUEUE re-affirmed with its ground), a question of a closed custodian (refused Q083 then Q082 by the inherited ownership and transport checkers, before any cell is derived), and a question naming a scalar (the transport checker's Q081).",
+  "boundaries_published_not_papered_over": {
+    "two_descriptors": "The two names are two descriptor slots of one program on one thread, the connector and the accepted binding of one completed TCP connection. No dup-like alias over one open description exists on any route (CT42-CELL-DUP-SOURCE, left open), so the scenario word `descriptors` is carried by the connection-cell reading, not the dup reading.",
+    "shared_logical_state": "Read off the transport checker's own cross-name rules (a send through one end is decided by the other's committed stream; a close of one is refused while the other's bytes sit unread). Those rules are the transport checker's measured behaviour and the derivation's documented ground; the Lean model of this card proves the DERIVATION (an accepted pair shares one cell, a fresh cell is no existing cell, the unpaired arms refuse) and the assumption narrowing, not a theorem that the transport model's coupling is the shared state (SOCKET-CELL-COUPLING-UNPROVED, registered).",
+    "native_stage": "The case is a refusal that emits nothing, so no native stage exists for the case's own artifact; the accepted controls emit C but no runner of this harness compiles or runs a sequential_reject control, so nothing is claimed for them. The C-twin arm (legacy_c_twin) stays blocked: the contract loader refuses an int-typed resource identity, and a descriptor's -1 failure value is not expressible in qcore-schemas' ResourceReturnMode (CT-CTWIN-DESCRIPTOR); that is out of this card's scope and stays unassessed in prose, not_applicable structurally on this route."
+  },
+  "what_the_mapping_does_not_claim": "No native, sanitizer or proof evidence for CT42. `native_sanitized` reads unassessed because the sequential route vocabulary carries it and no runner executes it here; `proof` reads unassessed: the Lean theorems of this card are about the model's derivation and the checker's premise set, not about this case's artifact, and citing them as the proof stage would be the overstatement constraint 23 forbids.",
+  "unmapped_reasons_provenance": "This record publishes no unmapped_reasons row: it examines no case it leaves unmapped. CT42's live lane row (docs/reports/ct-ctwin-lane/ct_stage_evidence.json, bucket `blocked-on-gateway-expressiveness (C-twin measured)`) is retired below by declaration, the mechanism card CT-LANE-RETIREMENT built in wave 17; that record keeps its bytes (constraint 21).",
+  "retired_unmapped_reasons": {
+    "CT42": {
+      "retires": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
+      "mapped_by": "docs/reports/ct42-cell-route/README.md (card CT42-CELL-ROUTE, wave 39): CT42 is mapped on the sequential route under the reject verdict mode, on the socket arm the wave-35 lane measured unreachable from source, so it has no blocker to publish. The wave-35 record keeps its row and its bytes; this declaration is what retires it, so the history stays visible instead of being edited out of an archived record (constraint 21)."
+    }
+  },
+  "lean_is_not_applicable_to_the_proof_stage": "QCore.SocketFootprint (amended: the unpaired arms refuse) and QCore.SocketCellRoute (the derived-alias projection stamps no declared-identity premise and decides exactly as the declared one) are audited, but they are about the derivation and the checker, not about this case's reference run; CT42's proof stage stays unassessed.",
+  "sanitized_native_growth": "none; 10 of 47 after (10 of 46 before). The case is a refusal and reaches no backend.",
+  "inventory": {
+    "added_mapped_ids": [
+      "CT42"
+    ],
+    "mapped_before": 46,
+    "mapped_after": 47,
+    "unmapped_after": 3,
+    "total": 50
+  },
+  "executed_totals_added": {
+    "source_compilations_of_case_artifacts": 1,
+    "source_compilations_of_control_artifacts": 5,
+    "accepted_controls": 3,
+    "rejected_controls": 2,
+    "c_emissions": 0,
+    "sanitized_native_compile_and_run": 0,
+    "cases_with_proof_evidence": 0
+  },
+  "mapped_case_stage_matrix": {
+    "CT42": {
+      "harness_verdict_mode": "reject",
+      "manifest_evidence_target": null,
+      "sequential_reject_controls_executed": 5,
+      "measured_refusal": {
+        "diagnostic_sequence": [
+          "Q664"
+        ],
+        "pass": "Concurrency",
+        "attributed_to": "disjoint client server;",
+        "message": "`client` and `server` are the two custodians of one accepted connection's protocol cell (cell 1): a send through one is decided by state the other established, so `source.socket.v1` refuses to call them disjoint (`DisjointFootprintsV1` SharedProtocolCell)"
+      },
+      "controls": [
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT42/listener_question.qcore",
+          "role": "attribution",
+          "expectation": "accept",
+          "measured": "checks, StandardSocketV1, emits C byte-identical to the case's twin without the question",
+          "isolates": "the connection cell: the same question over the listener and an end is admitted, so Q664 is not about asking after an accepted socket at all"
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT42/two_connections.qcore",
+          "role": "attribution",
+          "expectation": "accept",
+          "measured": "checks, StandardSocketV1, emits C",
+          "isolates": "ONE connection's identity: the ends of two different connections are two cells and both cross-pair questions are admitted"
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT42/datagram_pair.qcore",
+          "role": "recorded decision",
+          "expectation": "accept",
+          "measured": "checks, StandardSocketV1, emits C",
+          "isolates": "CT42-CELL-UDP-QUEUE re-affirmed with its ground: a datagram pair shares no connection phase and is admitted as two independent custodians"
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT42/closed_custodian.qcore",
+          "role": "inherited refusal",
+          "expectation": "reject",
+          "measured": "refused [Q083, Q082] by the inherited ownership checker and the transport half, both unedited",
+          "isolates": "liveness: both custodians must be live sockets, decided before any cell is derived"
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT42/not_a_socket.qcore",
+          "role": "inherited refusal",
+          "expectation": "reject",
+          "measured": "refused [Q081] by the transport checker",
+          "isolates": "the custody position: a name that is no socket never reaches the cell question"
+        }
+      ],
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
+          "observations": 1
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      }
+    }
+  }
+}
