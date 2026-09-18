@@ -1994,7 +1994,8 @@ rule and the byte spellings' kind refusals on `Q020`, and the footprint fit,
 the constant-index tier and the three authority rules on `Q600` — with the
 **arity** selecting the form on the `borrow_utf8` precedent, so it reserves no
 word and takes no code. Wave 39's `LOOPS-ON-COMPOSED-ROUTES` is the
-**sixteenth**, and the first whose movements are **narrowings** stated as
+**seventeenth** (merged after `AGGREGATE-OWNED-FIELD`, the sixteenth, below),
+and the first whose movements are **all narrowings** stated as
 such: `Q051`, `Q068` and `Q077` each lose the blanket `for` refusal (§L21
 amendments), `Q078` is reached from a body statement with its condition
 unwidened, the three shapes it refuses by name land on `Q051`/`Q077` as

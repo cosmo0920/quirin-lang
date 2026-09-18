@@ -966,6 +966,94 @@ fn a_string_construct_inside_a_body_on_the_composed_route_refuses_by_name() {
     assert!(messages(&source)[0].contains("LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY"));
 }
 
+/// Card `AGGREGATE-OWNED-FIELD`'s two window premises survive this card's
+/// admission, and in the combinations neither card's own tests spell: a lend
+/// whose loan a `for` body uses, beside a record with an owned field, still
+/// refuses `OWNED-FIELD-LEND-WINDOW`; and an owned-field statement inside a
+/// `for` body of an entry that lends still refuses `OWNED-FIELD-LOOP-BODY` —
+/// both by name, both before any iteration window is computed, because that
+/// card's "half zero-and-a-quarter" sits in front of this card's lend block.
+#[test]
+fn the_owned_field_refusals_survive_a_for_beside_a_loan() {
+    fn record_module(body: &[&str]) -> String {
+        let mut source = vec![
+            "import std.buffer;".to_owned(),
+            "import std.fmt;".to_owned(),
+            "import std.io;".to_owned(),
+            "import std.logger;".to_owned(),
+            String::new(),
+            "type Packet { tag: i32, buf: bytes }".to_owned(),
+            String::new(),
+            "fn main() -> unit effects { io, alloc, mut } {".to_owned(),
+        ];
+        source.extend(body.iter().map(|line| format!("    {line}")));
+        source.push("}".to_owned());
+        source.push(String::new());
+        source.join("\n")
+    }
+    let lend_with_loop = [
+        "let b = bytes(4);",
+        "let z = bytes(2);",
+        "let l = lend(z, 0, 1);",
+        "for i in 0..2 {",
+        "    l[0] = 1;",
+        "}",
+        "let p = Packet { tag: 1, buf: b };",
+        "drop p;",
+        "drop z;",
+        "return;",
+    ];
+    let source = record_module(&lend_with_loop);
+    assert_eq!(codes(&source), ["Q051"]);
+    assert!(
+        messages(&source)[0].contains("OWNED-FIELD-LEND-WINDOW"),
+        "{:?}",
+        messages(&source)[0]
+    );
+    let owned_field_in_body_of_a_lending_entry = [
+        "let z = bytes(2);",
+        "let l = lend(z, 0, 1);",
+        "for i in 0..2 {",
+        "    l[0] = 1;",
+        "    let b = bytes(4);",
+        "    let p = Packet { tag: i, buf: b };",
+        "    drop p;",
+        "}",
+        "drop z;",
+        "return;",
+    ];
+    // That card decides its lend premise before its loop-body premise, so an
+    // owned-field statement in the body of an entry that lends refuses under
+    // the **lend** name — still by name, still before this card's block; the
+    // loop-body name is reached in an entry with no lend, which that card's
+    // own test pins.
+    let source = record_module(&owned_field_in_body_of_a_lending_entry);
+    assert_eq!(codes(&source), ["Q051"]);
+    assert!(
+        messages(&source)[0].contains("OWNED-FIELD-LEND-WINDOW"),
+        "{:?}",
+        messages(&source)[0]
+    );
+    let owned_field_in_body_beside_a_loop_over_the_owner = [
+        "let z = bytes(2);",
+        "for i in 0..2 {",
+        "    z[0] = 1;",
+        "    let b = bytes(4);",
+        "    let p = Packet { tag: i, buf: b };",
+        "    drop p;",
+        "}",
+        "drop z;",
+        "return;",
+    ];
+    let source = record_module(&owned_field_in_body_beside_a_loop_over_the_owner);
+    assert_eq!(codes(&source), ["Q051"]);
+    assert!(
+        messages(&source)[0].contains("OWNED-FIELD-LOOP-BODY"),
+        "{:?}",
+        messages(&source)[0]
+    );
+}
+
 /// A `for` in a string module that holds **no** buffer keeps the flat-sequence
 /// refusal at `Q068`: the admission is the composition's, not the string
 /// route's.
