@@ -1070,7 +1070,8 @@ pointer is the card that established it; read it before deviating.
     which TSan does run these programs — wave 39's `TSAN-ROWS-2` runs **this
     flagship itself**
     (`fixtures/write_lend_tasks_exercise/disjoint_exercise.qcore`) clean,
-    unforced and under both forced cohort schedules, Linux only. What stands is
+    unforced and under both forced cohort schedules, Linux only, through
+    `compiler/tests/task_route_tsan.rs`. What stands is
     narrower and still load-bearing: a clean detector is evidence about the
     schedules realised and never a proof of race freedom, so this constraint's
     exclusivity claim rests on C11 3.14, on the ASan/UBSan/LSan run and on the
@@ -1457,8 +1458,16 @@ pointer is the card that established it; read it before deviating.
     sion.the_creator_performs_no_event_while_its_child_runs`, so this
     backend witnesses a real thread boundary and **nothing about contention,
     a data race or the C memory model**; no such claim may be made from it
-    (`MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION`), and no TSan row exists
-    anywhere in this repository. And the **operation/log adjacency** is
+    (`MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION`). **The ThreadSanitizer rows
+    that exist since waves 37 and 39 do not change that, and measuring why
+    sharpens it**: `TSAN-ROWS-2` runs CT46's own case as a subject and it is
+    clean, but that case is **serial by construction**, so the forcing header
+    attaches to nothing, no worker is released and the clean row witnesses
+    nothing about contention — which is the theorem above, observed. A clean
+    detector is in any event evidence about the schedules realised, never a
+    proof of race freedom, and the rows are Linux only
+    (`docs/reports/{task-route-tsan,tsan-rows-2}/README.md`). And the
+    **operation/log adjacency** is
     load-bearing evidence, not formatting: the native comparison compares
     the *logged* sequence, so deleting a real `mtx_lock` while keeping its
     log line was measured byte-identical and clean under the sanitizers —
