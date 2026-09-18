@@ -17,14 +17,18 @@ compaction cadence, from base `6dc484ad`. Every headline number was re-derived
 CT03, CT07, CT37) from `docs/reevaluation/ct_manifest.json`; the contract corpus
 (88 modules, 59 resource-v1 declarations, 33 manifest-selected) from the tree and
 `contract/cycle19-resource-contracts.json`; the crate and workspace counts,
-package versions and `named_followups` (234) from their own files; 141 Lean
+package versions and `named_followups` (234 at the base) from their own files; 141 Lean
 audits from `proof/`; and the merged-gate row from **this card's own detached
 run**, which is the second arm of its own wave-37 finding
 `GATE-ROW-FIGURE-ATTRIBUTION-DRIFT` — the row now names the run that produced it
 rather than borrowing a close's. The standing-constraint inventory is **56
 numbered entries before and after** (6 hard invariants, 50 constraints), with
-every entry the pass did not touch hashed byte-identical. **Five corrections**,
-each measured against the tree rather than inherited: `README.md`'s CT figures
+every entry the pass did not touch hashed byte-identical. **Eight corrections**,
+each measured against the tree rather than inherited, and two of them found only
+because the gate row was re-measured rather than carried: the merged-gate row's
+summary arithmetic (240 summaries and four doubled doc-test sections, where this
+run measures **238** and **two**, on identical code) and its claim that all five
+of constraint 16's named rows live in this workspace, where **four** do. Then: `README.md`'s CT figures
 (46 of 50 and 3 proof stages, stale since wave 39) and its description of CT07's
 leg, which is bound through the scoped-task ledger and not through the F02
 relation the other three use; `README.md`'s "no ThreadSanitizer row exists
@@ -42,10 +46,13 @@ band. The compaction itself fell on the blocks that had become chronicles:
 constraint 14's per-card census ledger (19,638 → 6,074 bytes, with every
 rejected spelling, contextual rule and name-resolution exclusion kept and now
 mechanically checkable against `is_reserved_source_word`'s 112 words), the
-Q-space note's eighteen-instance enumeration, four ledger blocks whose own
+Q-space note's eighteen-instance enumeration, five ledger blocks whose own
 sentences assign their narrative to the increment records, and `CLAUDE.md`'s
-Windows residual family, which stated one shape seven times. Seven blocks,
-**41,607 bytes**, moved verbatim into
+Windows residual family, which stated one shape seven times. Two names are
+registered, both about figures nothing derives:
+`GATE-ROW-SUMMARY-COUNT-UNCHECKED` and `AGENTS-MAP-FIGURES-UNDERIVED`
+(`named_followups` 234 → 236). Eight blocks,
+**46,603 bytes**, moved verbatim into
 [the wave-40 compaction checkpoints](wave-40-compaction-checkpoints.md) — a
 separate page rather than this one, because `DOCS-COMPACT-7`'s inline
 checkpoints took `wave-37.md` to 64,613 bytes and that card flagged the split as
