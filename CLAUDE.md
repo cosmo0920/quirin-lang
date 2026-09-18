@@ -42,12 +42,11 @@ the operational guidance that is in neither of those.
 - **Compact these three files every 2–3 waves.** `AGENTS.md`, `CLAUDE.md` and
   `README.md` accrete: constraints restate their card reports, sections drift
   apart, README falls behind the ledger. A recurring compaction card
-  (seven firings to date, `DOCS-COMPACT` through `DOCS-COMPACT-7`, each with
+  (eight firings to date, `DOCS-COMPACT` through `DOCS-COMPACT-8`, each with
   its own report — `docs/reports/wave16-docs-compact/` for the first,
-  `docs/reports/docs-compact-{2,3,4,5,6,7}/` for the rest; the dated roster is
-  a checkpoint in the wave-37 record. Latest `DOCS-COMPACT-7`, wave 37;
-  `DOCS-COMPACT-8` is due around wave 40 — recorded as due by the wave-39
-  close, not run) re-reads every headline
+  `docs/reports/docs-compact-{2,3,4,5,6,7,8}/` for the rest; the dated roster is
+  a checkpoint in the wave-37 record. Latest `DOCS-COMPACT-8`, wave 40; the
+  ninth is due around wave 42 or 43) re-reads every headline
   number **from its source and never from the file being compacted**,
   inventories the standing constraints before and
   after, and merges redundancy. Compaction is **not** deletion: no constraint,
@@ -55,9 +54,10 @@ the operational guidance that is in neither of those.
   in these files moves verbatim into the development history indexed by
   `DEVELOPMENT.md`, rather than disappearing. Historical copies are labelled
   as checkpoints; they do not become a second current rule authority.
-  Expect single-digit percentages: two passes in, these files are references
-  rather than chronicles, and the rule exists to bound accretion, not to
-  promise a shrinking file. **A pass may legitimately grow a file**, and
+  Expect single-digit percentages in the steady state, and a larger fall
+  whenever one block has been allowed to become a chronicle — these files are
+  references, and the rule exists to bound accretion, not to promise a
+  shrinking file. **A pass may legitimately grow a file**, and
   `DOCS-COMPACT-6` did: the defects `STABILITY-REEVAL` #1 found were
   *understatements* — a conditional theorem presented as unconditional, a
   premise list missing its two largest members, a mutation count inflated — and
@@ -316,37 +316,34 @@ requirements that are part of the gate.
     `docs/reports/socket-v1-windows-run/README.md`. Scope: native execution and
     byte agreement, **no sanitizer claim** (MSVC ships no ASan/UBSan in this
     harness).
-  - Open, each with an exact test-name discharge condition:
-    `HTTP-V1-WINDOWS-RUN` and `STRING-SLICE-IO-WINDOWS-RUN`
-    (`docs/reports/windows-native-sockets-harness/README.md`), and
-    `SOCKET-INET-WINDOWS-RUN` on the same footing — the two declared-address
-    examples' MSVC rows are written and wired through
-    `tests/support/windows_c.rs::run_msvc`, no such run has happened, so no
-    claim is made (`docs/reports/socket-inet-addresses/README.md`).
-    `SLICE-PERMISSIONS-WINDOWS-RUN` joins them (wave 27): the range-lending
-    card's one native test ran the **Linux** arm only — the emitted difference
-    is one pointer displacement inside an existing initialiser and the
-    `windows_c` path is carried unchanged, but no Windows or Apple run was
-    performed and none is claimed
-    (`docs/reports/ct07-slice-permissions/README.md`).
-    `WRITE-LEND-WINDOWS-RUN` is its wave-29 sibling on the same footing: the
-    write-lend card's native test ran the Linux arm only, the `windows_c` path
-    carried unchanged, no Windows run claimed
-    (`docs/reports/slice-permissions-write-lend/README.md` §13), and wave 30's
-    `CT07-WRITE-REMAP` left it unchanged. `WRITE-LEND-TASKS-WINDOWS-RUN`
-    (wave 31) joins the pair for the task-route range write lease, on the
-    `STRING-CONCAT-WINDOWS-RUN` precedent: the native test ran the Linux arm,
-    macOS compiles the same test file, no MSVC run has happened and none is
-    claimed (`docs/reports/write-lend-tasks/README.md` §9). `WRITE-LEND-WINDOWS-RUN`
-    and `WRITE-LEND-TASKS-WINDOWS-RUN` were the two members of this family that
-    `STD-MODULES-O`'s roll-up did not mention and that reached no tracker at
-    all; both are **registered in `named_followups`** as of `DOCS-COMPACT-6`
-    (wave 34). `OWNED-FIELD-WINDOWS-RUN` (wave 39, `AGGREGATE-OWNED-FIELD` §7)
-    joins on the same footing by the wave-39 close's decision:
-    `examples/records/owned_field.qcore` ran under ASan/UBSan/LSan on the
-    Linux arm only, no Windows or Apple run was performed and none is claimed;
-    named here and not registered, like `SLICE-PERMISSIONS-WINDOWS-RUN`
-    above, until `PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED` is decided.
+  - **Open, each with an exact test-name discharge condition.** Seven of them
+    share one shape and it is stated once here rather than seven times: the
+    card's native test ran the **Linux arm only**, the `tests/support/windows_c.rs`
+    path is carried unchanged (its MSVC rows written and wired through
+    `run_msvc`), **no such run has happened and none is claimed**. The members,
+    each with the report that owns its detail: `HTTP-V1-WINDOWS-RUN` and
+    `STRING-SLICE-IO-WINDOWS-RUN`
+    (`docs/reports/windows-native-sockets-harness/README.md`);
+    `SOCKET-INET-WINDOWS-RUN` for the two declared-address examples
+    (`docs/reports/socket-inet-addresses/README.md`);
+    `SLICE-PERMISSIONS-WINDOWS-RUN` (wave 27, where the emitted difference is
+    one pointer displacement inside an existing initialiser —
+    `docs/reports/ct07-slice-permissions/README.md`);
+    `WRITE-LEND-WINDOWS-RUN` (wave 29,
+    `docs/reports/slice-permissions-write-lend/README.md` §13, left unchanged by
+    wave 30's `CT07-WRITE-REMAP`); `WRITE-LEND-TASKS-WINDOWS-RUN` (wave 31, on
+    the `STRING-CONCAT-WINDOWS-RUN` precedent, macOS compiling the same test
+    file — `docs/reports/write-lend-tasks/README.md` §9); and
+    `OWNED-FIELD-WINDOWS-RUN` (wave 39, `AGGREGATE-OWNED-FIELD` §7, where
+    `examples/records/owned_field.qcore` ran under ASan/UBSan/LSan on Linux
+    only). **Their tracking is deliberately uneven and that is the open
+    question**: `WRITE-LEND-WINDOWS-RUN` and `WRITE-LEND-TASKS-WINDOWS-RUN`
+    were the two `STD-MODULES-O`'s roll-up did not mention and that reached no
+    tracker at all, and both are **registered in `named_followups`** as of
+    `DOCS-COMPACT-6` (wave 34); `SLICE-PERMISSIONS-WINDOWS-RUN` and
+    `OWNED-FIELD-WINDOWS-RUN` are named here and **not** registered, by the
+    wave-39 close's decision, until
+    `PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED` is decided.
   - Four tests keep `runs_sanitized` in their names while their Windows arm
     claims no sanitizer coverage (`WINDOWS-RUN-TEST-NAME-SANITIZED`).
 - **macOS:** pthread-backed C11 thread subset, Apple ASan/UBSan (LSan is
