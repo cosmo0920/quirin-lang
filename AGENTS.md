@@ -352,9 +352,14 @@ pointer is the card that established it; read it before deviating.
     `while (1)`: modelling that exactly would remove an *exit*
     edge, which is the accusing direction and needs its own Lean statement and
     re-pin (`CONSTANT-DO-WHILE-OTHER-CONSTANTS`). A pre-existing route already
-    removes the **exit** edge for `for (;;)`: `condition.is_empty()` at
-    `legacy_c.rs:3312` sets `condition_always_true`, which `legacy_c.rs:5161`
-    uses to drop `continuation` from the header's successors. It is exact
+    removes the **exit** edge for `for (;;)`: in `legacy_c.rs`,
+    `condition_always_true: condition.is_empty()` sets the flag where the
+    `for` header is read, and `self.nodes[header].successors = if
+    *condition_always_true` is where it drops `continuation` from the
+    header's successors (lines 3325 and 5177 at `c33c7640`; the wave-36
+    close's 3312 and 5161 had already been moved by `SCALAR-ROUTE-EXIT-EDGE`,
+    so the citation is by identifier and the line numbers name the commit
+    they were measured at — `DOCS-COMPACT-7` §7.3 item 5). It is exact
     (C11 §6.8.5.3) and `break` still reaches `continuation`, but it carries
     neither a Lean statement nor a pin, and it is not owned by card
     `C-GATEWAY-CONSTANT-DO-WHILE` (`FOREVER-FOR-EXIT-EDGE-UNOWNED`).
@@ -534,9 +539,10 @@ pointer is the card that established it; read it before deviating.
    as an **inline function-pointer parameter declarator**, which the reader
    does not parse — it resolves the function-pointer **typedef** form that
    card `CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF` taught it, and nothing else — so
-   the declaration is withdrawn at every call site with `abi-unreadable-
-   declaration`. The withdrawal is **leaf-neutral**: all eleven rows are same-
-   position substitutions and no function's leaf count changed. This is the
+   the declaration is withdrawn at every call site with
+   `abi-unreadable-declaration`. The withdrawal is **leaf-neutral**: all
+   eleven rows are same-position substitutions and no function's leaf count
+   changed. This is the
    gate failing closed on a *reader* boundary rather than on a disagreement,
    which is `LOADER-ABI-UNDECLARED`'s neighbour and is named
    `LOADER-ABI-INLINE-FNPTR-DECLARATOR`.
@@ -867,7 +873,27 @@ pointer is the card that established it; read it before deviating.
       source-language surface). Wave 36's **seventh**,
       `WRITE-LEND-TASKS-EXERCISE`, is **not** here: it ran a census and belongs
       in the `+0` family above, where its row stands — the
-      `MUTEX-SHARE-CROSS` distinction, applied rather than restated.
+      `MUTEX-SHARE-CROSS` distinction, applied rather than restated. And
+      **wave 37's seven of seven** — `BASE-TYPE-READER-CENSUS`,
+      `SCALAR-ROUTE-EXIT-EDGE`, `JOINED-PROVENANCE-ROUND-BOUND`, `CT-LANE-5`,
+      `TASK-ROUTE-TSAN`, `W37-CORPUS-CONTRACTS-4` and `DOCS-COMPACT-7`, the
+      first wave of this ledger with no card in the `+0` family at all: none
+      reserves a word, moves the lexer or allocates a `Q` code, and each says
+      so in its own report (`JOINED-PROVENANCE-ROUND-BOUND` §12 item 6,
+      `CT-LANE-5` §11 item 4, `TASK-ROUTE-TSAN` §6.2,
+      `W37-CORPUS-CONTRACTS-4` §10 item 8, `DOCS-COMPACT-7` §11;
+      `SCALAR-ROUTE-EXIT-EDGE` §10 item 4 states the `Q`-space half, its
+      refusal being a gateway-internal `Unsupported` description, and
+      `BASE-TYPE-READER-CENSUS` is a gateway measurement feature that states
+      neither). The wave-37 close therefore **measured** the seam rather than
+      reading the reports: `git diff --name-only 0f6eb0a6 c33c7640 --
+      crates/qcore-frontend/src/` is empty, so no wave-37 commit touched the
+      lexer, the parser or any front-end source. The wave-36 entry above was
+      re-verified the same way at that close: over `60958bf0..fa48211a` the
+      only front-end file that moved is `source_tasks.rs`, in
+      `WRITE-LEND-TASKS-EXERCISE`'s own two commits — the one card the entry
+      places in the `+0` family — and `lexer.rs` and `parser.rs` did not move
+      (`docs/reports/wave37-close/README.md` §6).
       **This bullet said "every card of waves
       32, 33 and 34" over a list that named neither `PROOF-LEG-BATCH` nor
       `DOCS-COMPACT-5` nor `MUTEX-SHARE-CROSS`, and the universal was
@@ -879,7 +905,7 @@ pointer is the card that established it; read it before deviating.
       `MUTEX-SHARE-CROSS` does **not** — it ran a census (its §9) and belongs
       in the `+0` family above, where its row now stands. Adding it here in the
       card's stead would have replaced a false universal with a false member.
-      **Waves 28 through 35 each closed at zero reserved words**, the longest
+      **Waves 28 through 37 each closed at zero reserved words**, the longest
       such run in this ledger; the source surface has not grown a global
       keyword since `LOOP-V1`.
 
@@ -1676,7 +1702,15 @@ cargo clippy --all-targets -- -D warnings
 cargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0
 cargo run -p qcore-compiler --example reevaluation_followup   # expect exit 0
 python3 scripts/check_lean_audits.py
+python3 -m unittest discover -s scripts/tests
 ```
+
+**The Python suite is listed as of the wave-37 close** (`DOCS-COMPACT-7` §7.3
+item 3): every close since wave 32 had run `scripts/tests` and published its
+count in the merged-gate row while this block omitted it, so the block now
+names what the gate measures. The suite reads the committed matrix
+(`CommittedMatrixIsSelfConsistent`), so it runs **after** any matrix
+regeneration, not before.
 
 **`--no-fail-fast` is part of the gate as of the wave-26 close (`GATE-NO-FAIL-FAST`,
 a deliberate strengthening):** cargo's default stops at the first failing binary,

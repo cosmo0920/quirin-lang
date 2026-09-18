@@ -107,7 +107,7 @@ workspace green, and the unnamed seventh
 on a machine carrying its own build, which is **not** the quiet-host isolated
 number `HOST-ROW-STARVATION-DESCRIPTION` asks for and is not offered as one.
 
-**Wave 37 · `W37-CORPUS-CONTRACTS-4` (2026-09-18).** Wave 37's second arbiter, declarative:
+**`W37-CORPUS-CONTRACTS-4` (2026-09-18).** Wave 37's second arbiter, declarative:
 six `.qcore` modules carrying **ten** declarations, six manifest rows, no crate
 source at all, so one audit binary served both stages and the only difference
 between them is which modules the manifest selects. BEFORE reproduces
@@ -290,7 +290,7 @@ first gate run was **killed rather than reported** because it predated the
 tokens, +0 `Q` codes, and no C gateway source change.
 
 
-**Wave 37 · `JOINED-PROVENANCE-ROUND-BOUND` (2026-09-18).** The
+**`JOINED-PROVENANCE-ROUND-BOUND` (2026-09-18).** The
 conditional-provenance fixed point's `FIXED_POINT_ROUNDS = 64` is replaced by
 this graph's own **proved** bound, `nodes * (1 + sites + sites * names)`
 (`QCore.JoinedProvenanceRoundBound`, 14 theorems; `a_cap_at_the_measure_settles`
@@ -333,8 +333,7 @@ visit (`rd_kafka_jwt_b64_decode_payload`, site 1, `payload`) blocked by the
 nullable premise alone. Evidence:
 `docs/reports/joined-provenance-round-bound/README.md`.
 
-## SCALAR-ROUTE-EXIT-EDGE (2026-09-18, wave 37's first arbiter)
-
+**`SCALAR-ROUTE-EXIT-EDGE` (2026-09-18, wave 37's first arbiter).**
 `STABILITY-REEVAL-2` asked whether the pre-existing value route in
 `refine_pointer_null` — original Cycle-19 code carried by no card, recorded as
 `CONSTANT-DO-WHILE-SCALAR-ROUTE-UNOWNED` — could delete a loop header's **exit**
