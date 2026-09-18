@@ -406,21 +406,27 @@ tracker edits, both listings diffed under `LC_ALL=C`
   tracker text. Recorded so no later close reads the silence as a
   registration (the wave-37 close's `W37-MPACK-FAMILY-FIRST` mechanism).
 
-After this report was written the listing was re-run (§13's final run) and
-the names this report itself introduces were classified the same way: the
-three decision names of §9 (`Q-NAMESPACE-DECISION`, `F02-WINDOWS-PIN-RUN`,
-`MATRIX-RECORDED-BY-DECISION`) are **deferred decisions**, not followups, and
-must not be registered as well; the queued card names of §14
-(`CT42-CELL-ROUTE`, `CT07-TWO-THREAD-PROOF-LEG` is a followup and tracked,
-`TSAN-ROWS-2`, `LOOPS-ON-COMPOSED-ROUTES`, `DOCS-COMPACT-8`, `STABILITY-REEVAL`)
-are **card names**; `HTTP-V1-WINDOWS-RUN` is a **platform-run residual named
-only in `CLAUDE.md`'s platform records** — the very shape
-`PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED` is about, re-listed there rather
-than registered here; the standing-rule names this report cites
+After this report and the regenerated matrix were in place the listing was
+re-run a third time (`private/wave38-close/residuals-final.names`): **45,
+identical to the after-tracker listing — empty diff both ways.** The names
+this report itself introduces move nothing, and the reason was measured
+rather than assumed (each grepped in the matrix text): the three decision
+names of §9 (`Q-NAMESPACE-DECISION`, `F02-WINDOWS-PIN-RUN`,
+`MATRIX-RECORDED-BY-DECISION`), the queued card names of §14
+(`CT42-CELL-ROUTE`, `LOOPS-ON-COMPOSED-ROUTES`), the platform-run name
+`HTTP-V1-WINDOWS-RUN` and the standing-rule names this report cites
 (`GATE-NO-FAIL-FAST`, `GATE-EXIT-SWALLOWED-BY-PIPE`,
-`MUTATION-HARNESS-MTIME-RESTORE`, `DECISION-ALSO-REGISTERED-AS-FOLLOWUP`,
-`CONSTRAINT-NAMED-BOUNDARIES-NOT-OPEN-WORK`) are tracked or are rules the
-tool itself labels. **Zero** names were registered from the listing.
+`MUTATION-HARNESS-MTIME-RESTORE`, `HOST-ROW-STARVATION-DESCRIPTION`,
+`PROVIDER-CONFORMANCE-UNIX-ONLY`) are **every one cited inside some tracker
+entry's `why`** — the deferred decisions inside the entries this close
+amended to name them — so the whole-text scan counts them as tracked: the
+"quiet for the wrong reason" mechanism, this time on names that were never
+meant to be registered (decisions must not be; card names and rules are not
+work). `DOCS-COMPACT-8` and `TSAN-ROWS-2` are already in the 45 as card
+names. So the final listing is the 44 of the base plus
+`LEAN-AUDIT-GATE-KEY-OPTIONAL`, classified as above; **zero** names were
+registered from any listing, and no third-party name was orphaned by the
+three retirements.
 
 ## 11. The integrator's own record this wave
 
@@ -464,11 +470,53 @@ this attribution. Provider 122 is carried, not re-measured (`git diff
 --name-only e69083a6 HEAD -- providers/ crates/qcore-schemas/` is empty;
 `qcore-schemas` still 14.0.0; a Unix figure).
 
-pending — filled from the final gate below.
+The row now reads **4,639 passed / 0 failed / 9 ignored, 234 result
+summaries over 232 test targets** (223 `Running` + 9 doc-test sections) ·
+**137** Lean · **303** Python · 122 provider (carried) · both probes 0 ·
+fmt/clippy clean · Clang **present** (21.1.8, recorded and checked), measured
+by the wave-38 close at `19c61952`; the tripwire sentence updated to this
+wave's `229 != 228`; the attribution sentence now names both required keys.
+Deltas against the wave-37 close's row: workspace **+2 passed** (the card's
+`proof_gated_cases_name_a_live_test_that_reads_the_cases_own_fixture`, this
+close's `both_f02_pin_sites_are_still_where_this_test_reads_them`), **+1
+ignored** (this close's, red by design), Python **+8** (the generator tests),
+Lean **+0**, one more `Running` target (the new test file). The other
+headline numbers were re-read from their sources and are unmoved: 228
+followups (matrix file and derived dimension agree after the regeneration),
+88 contract modules, CT 46/50 with 10 and 3, the corpus row.
 
 ## 13. Gate
 
-pending — filled from the final gate.
+Two detached runs, each `setsid -f … < /dev/null`, no `trap '' TERM`, every
+exit to its own file with no pipe in the command (`GATE-NO-FAIL-FAST`,
+`GATE-EXIT-SWALLOWED-BY-PIPE`), `git submodule update --init --recursive`
+first (exit 0, `third_party/libevent` at `d82464a2`). Exits under `gate/base/`
+and `gate/final/`; the Clang recording under `gate/`.
+
+| Step | Base run `78bc2c0e` (= `4f663934`'s code) | Final run `19c61952` (every code change of this close) |
+|---|---|---|
+| started / cargo end / end | 06:03:18Z / 06:17:36Z / 06:18:53Z (14m18s / 15m35s) | 06:22:39Z / 06:37:42Z / 06:38:03Z (15m03s / 15m24s) |
+| `cargo test --workspace --no-fail-fast` | exit 0 · **4,638 / 0 / 8** over 233 summaries (222 + 9; loose grep 235) — the merge's own integration figure exactly | exit 0 · **4,639 / 0 / 9** over 234 summaries (223 + 9; loose grep 236) · `test result: FAILED` 0 times |
+| `cargo fmt --all -- --check` | **exit 1** — the diff was this close's own new, unformatted `f02_windows_pin_agreement.rs` (§11); formatted, re-checked **exit 0** (`fmt-post.exit`) | exit 0 |
+| `cargo clippy --all-targets -- -D warnings` | exit 0 (the new file already present) | exit 0 |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | 0 / 0 |
+| `check_lean_audits.py` | exit 0 · 137 | exit 0 · **137** |
+| Python (`unittest discover -s scripts/tests`) | exit 0 · 303 OK (before the tracker edits) | **exit 1** · 303 run, **1 failure**: `test_each_derived_dimension_matches_the_section_it_counts`, `229 != 228` — the `D02-DIMENSIONS-FOLLOWUP-COUNT` tripwire against the not-yet-regenerated matrix, wave 36's and 37's shape; **re-run after the regeneration: 303 OK, exit 0** (`gate/python-post.exit`) |
+| Clang | present, 21.1.8, `QCORE_CLANG` unset, exit 0 | the same, recorded as `gate/clang-version.txt` and checked by the regeneration |
+| disk | 310 → 266 GB | 266 → 266 GB |
+
+The final run's cargo step was not interrupted: the wait this close had
+started on its `DONE` marker was not a tracked child of the session, and
+while checking for the process by hand this close briefly renamed the run's
+output directory (seconds; restored before any later step wrote; the log's
+open descriptor followed the inode) — recorded here because it is the kind of
+thing a gate report must say; every step's exit file was written to the
+intended directory, as the table shows. The `--check` of this close's own
+record ran three times: red (63, §2.1), then 0, then **0 again after the
+regeneration** (`gate/check-3.log`): 68 verdicts, 16 content claims verified
+across 10 files. Constraint 16's rows: all five named rows in this workspace
+green in both runs, and the unnamed seventh; a full-suite figure, not the
+quiet-host number. Provider 122 carried (§12). Nothing promoted.
 
 ## 14. Next wave, for the record
 
@@ -525,8 +573,8 @@ two waves).
 
 ```
 git submodule update --init --recursive
-setsid -f docs/reports/wave38-close/scripts/gate.sh <dir> < /dev/null       # detached, exits to files
-python3 scripts/tests/../../private/…                                         # see scripts/ for the harness
+setsid -f docs/reports/wave38-close/scripts/gate.sh <dir> < /dev/null       # detached, exits to files (edit W= to your worktree)
+python3 docs/reports/wave38-close/scripts/recorded_by_measure.py .
 python3 docs/reports/wave38-close/scripts/register.py --show                  # then without --show
 python3 docs/reports/wave38-close/scripts/mutations.py generator mutations.log
 python3 docs/reports/wave38-close/scripts/mutations.py f02 mutations.log
