@@ -324,7 +324,7 @@ untouched.
 | CT unmapped | 4 (CT10, CT24, CT41, CT42) | **4 (unchanged)** |
 | sanitized-native | 10 of 46 | **10 of 46** |
 | proof | 3 of 46 | **3 of 46** |
-| `named_followups` | 187 | **190** (three registered, §8) |
+| `named_followups` | 187 | **191** (four registered, §8) |
 | CT evidence files | 22 | **23** |
 
 CT07 was already in `SANITIZED_GATED_CASES` and remains there — one gated case
@@ -337,13 +337,51 @@ with **no drift**.
 
 ## 7. Gate
 
-See §7.1. Run at the card tip in this worktree; outputs are worktree-private
+Run at this card's own tip in an isolated worktree; outputs are worktree-private
 under `measure/ct-lane-5/`, exit codes captured to files rather than through a
-pipe, and `gate.json` beside this report carries the numbers.
+pipe. `gate.json` beside this report carries the numbers.
+
+| Step | Exit |
+|---|---|
+| `cargo test --workspace --no-fail-fast` | **0** — 4,611 passed / **0 failed** / 8 ignored, 231 result summaries |
+| `cargo fmt --all -- --check` | **0** |
+| `cargo clippy --all-targets -- -D warnings` | **0** |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | **0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | **0** |
+| `python3 scripts/check_lean_audits.py` | **0** — 135 audits |
+| `python3 scripts/ct_stage_summary.py . --check` | **0** — no drift |
+
+Three things are recorded rather than smoothed over.
+
+**The run above is the second.** The first was launched before this card's last
+source edit and was **killed rather than reported**, because it would have been a
+measurement of a source state this card does not ship —
+`compiler/tests/write_lend.rs` `include_str!`'d CT07's `case.qcore`, which this
+card replaces (§9). Killed by PID after checking `/proc/<pid>/cwd`, never by
+pattern, and never touching the sibling worktree's or the main checkout's
+processes.
+
+**`cargo fmt --check` failed on its first invocation here**, on one line of this
+card's own comment block, and is recorded as measured-again-after-fixing rather
+than as having passed the first time.
+
+**The workspace test count is unmoved** from the wave-36 close's 4,611 / 0 / 8,
+and that is expected rather than surprising: this card adds no test *function*.
+It re-points an existing case at a new artifact, extends two existing runners and
+adds fixture data — all exercised by tests that already existed. The card's own
+new evidence is the seven mutations of §2.4, which are a falsification harness
+rather than committed tests.
+
+**Not run, and stated rather than omitted:** provider tests (this card changes no
+manifest template and no `qcore-schemas` major version, so constraint 18's
+trigger does not fire) and the Python evidence-validator suite as a whole. The
+acceptance matrix is therefore regenerated **without** `--gate`, so its standing
+gate block is *carried and labelled as carried* by the generator's own mechanism
+rather than being restated here as freshly measured.
 
 ## 8. Residuals and retirements
 
-### 8.1 Registered by this card (`named_followups` 187 → 190)
+### 8.1 Registered by this card (`named_followups` 187 → 191)
 
 1. **`CT07-TWO-THREAD-PROOF-LEG`** — CT07's `proof` stage stays `unassessed`,
    though *two* Lean theorems are about the mechanism it now rests on
@@ -361,6 +399,13 @@ pipe, and `gate.json` beside this report carries the numbers.
 3. **`CT10-BYTE-ENCODING-UNSOUND`** — the byte encoding of bit-fields is wrong in
    both directions, not merely coarse (§4). *Discharge:* a bit-field declaration,
    or `DisjointFootprintsV1` wired to a source route. Both route cards.
+4. **`CT-FIXTURE-EXTERNAL-READERS`** — eight CT fixture directories are read by
+   `include_str!` from outside `ct_corpus.rs`, three of them the proof-gated
+   cases, so a mapping lane can silently re-point another card's tests. This card
+   hit exactly that and caught it by noticing a stale doc comment, which is luck
+   rather than a mechanism (item 10 of §11 carries the measured list).
+   *Discharge:* a check that every such `include_str!` is declared in one place or
+   refused.
 
 ### 8.2 Retirement this card earns — for the integrator
 
@@ -487,3 +532,45 @@ or a decision only the integrator can take.
    `TASK-ROUTE-TSAN-SEGV` this wave. If it lands, §2.5 names exactly what it adds
    to CT07 (a TSan row asserting silence on this flagship). This card makes no
    claim on its outcome and does not depend on it.
+9. **`validation.measurement_provenance` was relabelled by the regeneration, and
+   you will want to set it back at the close.** Regenerating without `--gate`
+   moved it from `integrator_supplied (docs/reports/wave36-close/gate.json)` to
+   the generator's `carried_from_previous_matrix` string. **The numbers
+   themselves did not change** — all twelve other `validation` keys are
+   byte-identical — and this card's own measured run *agrees with them exactly*
+   (4,611 / 0 / 8; 135 Lean audits), so the block is relabelled rather than
+   stale. I left it carried rather than passing `--gate`, because two of the nine
+   required gate keys (`provider_tests`, `python_evidence_validator_tests`) are
+   measurements this card did not take, and supplying them under an
+   `integrator_supplied` label would have asserted numbers I did not measure.
+   *Action:* regenerate with `--gate` at the close, which restores the label
+   correctly. Flagged because a relabel is easy to miss in a 45-line diff.
+10. **A structural hazard this card hit, measured and registered:
+    `CT-FIXTURE-EXTERNAL-READERS`.** `compiler/tests/write_lend.rs`
+    `include_str!`'d `fixtures/ct/CT07/case.qcore`, so re-pointing CT07's case
+    silently handed another card's tests a task-route program. I caught it, fixed
+    it (§9), and then **measured how general it is** rather than assuming it was
+    a one-off. It is not: **eight** CT fixture directories are read by
+    `include_str!` from outside `ct_corpus.rs` —
+
+    ```
+    CT01  ct01_proof_leg.rs, ct12_ct14_proof_reach.rs, f02_trace_relation.rs,
+          owned_source_tasks.rs, windows_threads.rs
+    CT03  ct03_proof_leg.rs, windows_threads.rs
+    CT07  write_lend.rs                       <- this card's own collision
+    CT12  ct12_ct14_proof_reach.rs
+    CT13  source_tasks.rs
+    CT14  ct12_ct14_proof_reach.rs
+    CT17  windows_threads.rs (case.qcore AND track.h)
+    CT37  ct37_proof_leg.rs
+    ```
+
+    so **three of the four proof-gated or proof-adjacent cases** (CT01, CT03,
+    CT37) are in it, which is the worst place for it: a mapping lane re-pointing
+    one of those would move a proof leg's artifact with nothing in the CT harness
+    saying so. Registered as a residual rather than left as advice, because the
+    thing that saved this card was noticing a stale doc comment, which is not a
+    mechanism. *Discharge:* a check that every `include_str!` of
+    `compiler/tests/fixtures/ct/` outside `ct_corpus.rs` is either listed in one
+    place or refused — small, and a close-rule or test-level check rather than a
+    card.
