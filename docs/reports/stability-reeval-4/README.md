@@ -667,16 +667,312 @@ docstring (`:713-717`) names as the reason verification arms get switched off.
 
 ## 4. Step 4 — what a queued card would make load-bearing
 
-(filled below)
+**A name census first, because it is the finding that frames the rest.**
+MEASURED: `rg` over the whole tree excluding `target/` finds **zero**
+occurrences of `CT-PROOF-LEG-3` and **zero** of `CT-NATIVE-CREDIT`. Both cards
+are chartered against premises that exist only outside the tree — the
+`WAVE-38-QUEUE-NAMES-UNTRACKED` shape, one wave on, and the reason two of the
+paragraphs below end in a registration rather than a line.
+
+**`STABILITY-REEVAL` #5 / `DOCS-COMPACT-8`** — cadence, as the brief says, and
+not interesting except in one respect this firing measured: §1.3 shows the
+discharge rate is governed by **brief-reach**, so the cheapest single change to
+the tracker's health is that a close write its open residuals into the next
+wave's briefs. `DOCS-COMPACT-8` is the sibling this wave and inherits four
+prose defects this card found and deliberately did not repair (§2.4, §3.5, §4's
+TSan paragraph, and the missing platform qualifier below).
+
+**`CT-PROOF-LEG-3`** — *does CT07's ledger pattern generalise?* **Measured: it
+is one case's shape.** The four legs already do **not** share a binding
+pattern: CT01, CT37 and CT03 bind through `AdmittedCausalOrder::derive` plus
+the F02 digest fold, while CT07 binds Rust `ScopedTaskLedger` states against
+Lean `QCore.Ct07LeaseLedger.Step`/`replay` (`ct07_proof_leg.rs:64-70`). So
+"proof 4 of 47" already counts **two kinds of evidence** and no manifest
+sentence says so. CT07 had three things for free no other candidate has: an
+already-audited Lean model of a *production* data structure (wave 31's
+`WriteLendTasks`), a production type to drive step for step, and a decision
+procedure already in the checker. What breaks first is the numerator's
+readability. And within the F02 pattern the measured survey is explicit that
+**CT50 is the only remaining candidate** whose default reference run both
+derives and exhibits its scenario (`docs/reports/proof-leg-batch/README.md:358-361`;
+CT12/CT13/CT15 refuse at `derive` with `UnattributableEvent { index: 1 }`,
+`:155-165`) — the single most decision-relevant sentence for this card, living
+in a report and in no tracker entry. → `CT-PROOF-FOURTH-CASE-UNTRACKED`. Beside
+it, `CT07-PROOF-LEG-F02-PREMISE-PIN` correctly warns that the leg goes **red by
+design** the day an alphabet-growing card lands; §2.9's
+`CT07-F02-PREMISE-PIN-IS-ERROR-BLIND` says why that warning is currently
+weaker than it reads.
+
+**`CT-NATIVE-CREDIT`** — **the card's premise is already spent.** MEASURED:
+`COMPOSED_NATIVE_CASES = ["CT22","CT25"]` (`ct_corpus.rs:295`), and both cases'
+`c_emission`, `native_execution` and `native_sanitized` rows in
+`docs/reevaluation/ct_manifest.json` already read `executed`, each naming
+`run_composed_native` and the case's own artifact. So the crediting happened;
+what remains load-bearing is the **platform-free reading of the count**. All
+ten sanitized-native rows carry `host_gate: ["linux","macos"]`, and
+`AGENTS.md:149` still publishes the bare "sanitized-native **10 of 47**" — a
+Unix measurement printed without a qualifier, which is exactly
+`CT-COMPOSED-NATIVE-NON-LINUX-VACUOUS-PASS`'s discharge, **still unapplied four
+firings after firing #1 registered it in wave 34**. One correction to that
+entry's own wording, measured: the runner is **runtime-`cfg!`-gated, not
+`#[cfg]`-gated** (`ct_corpus.rs:5921-5927` returns early and the test passes),
+and the early return sits *after* the reference-run assertions (`:5897-5915`)
+and after asserting `c_source` is present (`:5917-5920`) — so on Windows the
+**emission** row is genuinely exercised (its `host_gate` includes `windows`)
+and only the compile-and-run half asserts nothing. The entry's title overstates
+it slightly; the disclosure gap is real. Also measured: **`CT-COMPOSED-NATIVE-ROWS`
+is stale** — its `why` still says "three stage rows it backs still read
+`unassessed`" and all three read `executed`. Put on the integrator list rather
+than retired here (§6.5), because retiring another lane's entry out of an audit
+card, without that lane's record, is the shape invariant 1 warns about.
+
+**`TSAN-FAILURE-ARMS`** — the discharge of `TSAN-FORCED-SCHEDULE-FAILURE-ARMS`.
+The arms are a failed `qcore_buffer_new` and a failed spawn
+(`docs/reports/tsan-rows-2/README.md:419-423`): selected by an **outcome**, not
+an interleaving, so schedule forcing provably cannot reach them, and exercising
+them means composing the pthread binding with outcome hooks that can. What
+breaks first is not a sentence but the **harness**:
+`TSAN-FORCED-GATE-OPENED-BY-THE-JOIN` records that the forcing header releases
+the cohort at the creator's join, and a failed spawn is precisely a path that
+may never reach that join — so the gate-closed failure mode would fire **by
+construction rather than by mutation**, and every catch-rate row over the new
+arms would read 0 for a reason unrelated to the code under test. Second is
+`TSAN-FORCED-CATCH-POWER-EQUAL`'s "every emitted-program mutation is caught 20
+of 20 under all three schedules", a **success-path** result over cleanup and
+error-edge code no mutation has yet run over.
+
+**And a finding this paragraph turned up, which is the sharpest of §4.**
+MEASURED, two sentences in `AGENTS.md` that are **false today**, both presented
+as settled: `:1252-1253` reads "Three boundaries are **measured, not claimed**:
+ThreadSanitizer cannot run any program this route emits, lease or not
+(`TASK-ROUTE-TSAN-SEGV`)" — but `TASK-ROUTE-TSAN-SEGV` was **retired in wave
+37** against its own discharge, met word for word
+(`docs/development/increments/wave-37.md:305`; `:257` "It is not the route's"),
+is **absent** from `named_followups`, and `compiler/tests/task_route_tsan.rs`
+today runs TSan over **six** route-emitted subjects (`SUBJECTS` at `:133`,
+including the CT07 and CT46 fixtures at `:103`, `:106`) through a `-include`
+binding that changes no emitted byte. And `:1635` still reads "no TSan row
+exists anywhere in this repository". The wave-39 close corrected the manifest
+and the CT46 fixture (retiring `CT46-NOTES-PREDATE-TSAN-ROW`, itself absent
+from the tracker), so **these two instances reach no tracker at all**; wave
+39's own `compiler/tests/ct07_proof_leg.rs:58` and
+`docs/reports/ct07-two-thread-proof-leg/README.md:143` still cite the retired
+name too. → `LEDGER-TSAN-BOUNDARY-SENTENCES-STALE`. Not repaired here:
+`DOCS-COMPACT-8` owns that prose, and an audit lands no change to a standing
+constraint's meaning.
+
+**The three unmapped CT cases.** MEASURED from the manifest: mapped 47,
+unmapped **3** — CT10, CT24, CT41 — each with `route: null`,
+`source_fixture: null`, `semantic_profile: null` and **no reason field at
+all**. Every reason lives in a residual or a report, which is itself a
+disclosure gap of the shape `CT10-REASON-ROW` has carried, deferred, for six
+waves.
+
+* **CT10** (adjacent bit-fields; reject independent concurrent writes) — the
+  brief's "needs a bit-field declaration" is confirmed, **but
+  `CT10-BYTE-ENCODING-UNSOUND`'s discharge names two alternatives and one of
+  them landed in wave 39 without anyone re-measuring CT10 against it**: "wire
+  `DisjointFootprintsV1` to a source route at all (it has zero callers outside
+  one unit test)" is exactly what `CT42-CELL-ROUTE` did
+  (`crates/qcore-frontend/src/source_socket.rs:131`,
+  `crates/qcore-core/src/socket_footprint.rs:494`,
+  `crates/qcore-verification/src/driver.rs:329`). The residual's parenthetical
+  is therefore **now false**. The landing does **not** unblock CT10:
+  `FootprintExport::SharedMemoryLocation`
+  (`crates/qcore-core/src/disjoint_footprint.rs:269`) is still constructed only
+  from `crates/qcore-core/tests/unit/disjoint_footprint.rs:785` — the socket
+  route derives protocol cells, not bit-field units. *Line for the card's
+  brief:* restate the discharge as **one** arm (the bit-field declaration), and
+  say the checker is now source-reachable but from a deriver that cannot spell
+  a bit-field.
+* **CT24** (cleanup destroys an owner before child join) — "placement-free
+  region" is the lane's own word, and **the withdrawal ground still holds,
+  measurably**: `compiler/tests/ct_corpus.rs:6188-6192` still asserts
+  `row.span.end < region.span.start` for every task-ledger span, so the
+  placement rule is unchanged through wave 39, and `CT-WIRE-LANE-4` re-checked
+  the coherence half rather than assuming it
+  (`docs/reports/ct-wire-lane-4/README.md:263-280`). Constraint 25's
+  derived-key-set hazard is the third ground. *Disclosure gap:* the successor
+  name `CT24-CLEANUP-TASK-COMPOSITION` is **absent** from `named_followups`,
+  wave 35 having classified it as a prospective name rather than open work
+  (`docs/reports/wave35-close/reconciliation.json:391`) — a defensible decision,
+  but it leaves the tree's one permanently-unmappable-for-a-stated-reason case
+  with no entry. Recorded here rather than registered, because reversing that
+  classification is the integrator's, not an audit's (§6.6).
+* **CT41** (`volatile` as a completion flag) — the brief's
+  "qualifier-distinguishing rule" is **necessary but not the binding
+  obstruction**. The obstruction is upstream: clause (b) of the wave-9
+  attribution rule needs a control in which removing `volatile` *moves the
+  verdict*, and `CTWIN-PUBLISH` §5 measured the `volatile int g_done;` and
+  plain `int g_done;` producers **byte-identical** in verdict, reason and
+  diagnostic (`docs/reports/ct-lane-5/README.md:289-300`). Only then does the
+  qualifier rule bite (`typed_source.rs::c_type` refuses `volatile`, `_Atomic`
+  and `restrict` in one branch with one message —
+  `CT41-TYPED-SOURCE-UNDISCRIMINATING`). What must land is a **synchronization
+  model in the gateway's resource projection**, and the claim it puts under
+  strain is `GATEWAY-VOLATILE-PREMISE` (registered) — "the gateway's abstract
+  state assumes no asynchronous modification" — which a rule distinguishing
+  `volatile` makes load-bearing rather than convenient. Fully tracked; a line
+  for the brief, not a residual.
 
 ---
 
 ## 5. Gate
 
-(filled below)
+Run **detached** (`setsid -f`, no `trap '' TERM`) by `scripts/gate.sh`, shipped
+beside this report, at **`bd5eb8fd`** — the base `6dc484ad` plus this card's
+documentation-only skeleton — so the **cargo test** step measured `6dc484ad`'s
+code byte for byte. Every step's exit was written to its own file under the
+worktree-private `measure/gate/` (gitignored, never under `target/`), with **no
+pipe in any gate command**; the exit files and the Clang recording are copied
+into `gate/` beside this report. The runner was **polled by a bounded
+foreground loop** on its own `ALL_DONE` marker, never by waiting on a
+notification. `git submodule update --init --recursive` ran first (exit 0,
+`third_party/libevent` at `d82464a2`).
+
+| Step | Exit | Figure |
+|---|---|---|
+| `cargo test --workspace --no-fail-fast` | **0** | **4,727 passed / 0 failed / 10 ignored**; `test result: FAILED` **0** times — **reproduces the wave-39 close's figure exactly**, as it must: no Rust moved on the base |
+| the same run's summary arithmetic, re-measured | — | **236** targets (227 `Running` + 9 doc-test sections), **238** strict `^test result: ` lines, **240** loose `^test result` lines, **two** sections doubling (§3.5) |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --all-targets -- -D warnings` | 0 | clean |
+| `reevaluation_probe` | 0 | JSON emitted |
+| `reevaluation_followup` | 0 | JSON emitted |
+| `scripts/check_lean_audits.py` | 0 | **141 Lean audits** ("Passed 141 Lean audits"); `ls proof/Audit*.lean \| wc -l` = **141** |
+| `clang --version` (**run by this card in its own worktree**) | 0 | Ubuntu clang version 21.1.8 (6ubuntu1), `QCORE_CLANG` unset |
+| `python3 -m unittest discover -s scripts/tests` (base) | 0 | **`Ran 303 tests`, OK** |
+| the same, after registration and regeneration | 0 | **`Ran 303 tests`, OK** — the `D02-DIMENSIONS-FOLLOWUP-COUNT` tripwire satisfied at 256 |
+| `register.py` then `build_matrix.py --gate docs/reports/stability-reeval-4/gate.json` | 0, 0 | `named followups 234 → 256` (+23 −1); `lean audits 141`; `contract modules 88` |
+| `reconciliation_sweep.py --since e878b362 --check docs/reports/wave39-close/reconciliation.json` | **1** | two complaints; the finding of §3.6, **not** a gate step |
+
+**Constraint 16 rows, stated because a gate report must say which it saw:** all
+five named rows living in this workspace were **green**, plus the unnamed
+seventh `a_forced_override_never_weakens_an_execution` (`tests.log` lines 1940,
+5972, 5973, 6000, 6003, 6020). This is a full-suite run on a machine that also
+carried four delegated read-only sub-audits — **not** the quiet-host number
+`HOST-ROW-STARVATION-DESCRIPTION` asks for, and not offered as one.
+
+**Provider 122 is carried, not re-measured:** this card touches nothing under
+`providers/` or `crates/qcore-schemas/`, so constraint 18 is not engaged; a Unix
+figure (`PROVIDER-CONFORMANCE-UNIX-ONLY`).
+
+**This card changes no Rust and no Lean.** The workspace figure is therefore
+evidence that the base is green, not evidence about any change. **Nothing is
+promoted:** no corpus count, unit status or function status moves; raw units
+stay unpromoted; contract corpus **88**; CT **47/50** with sanitized-native
+**10** and proof **4**; full language conformance **false**.
 
 ---
 
 ## 6. Integrator reconciliation list
 
-(filled below)
+1. **RETIREMENTS — named explicitly, as the brief requires. This card retires
+   exactly one: `W36-W37-MUTATION-HARNESSES-UNSHIPPED`.** Verified registered
+   by id in the committed matrix before removal. Ground, measured at this base
+   and recorded in the retirement's own text: all four named report directories
+   carry the dated appended restatement in the discharge's own words
+   (`joined-provenance-round-bound/README.md:453,458`; `ct-lane-5:580,587`;
+   `write-lend-tasks-exercise:577,581`; `mutex-share-cross-emission:567,571`),
+   the convention line is `CLAUDE.md:219-224`, and wave 39 is additionally
+   compliant on the entry's *first* arm (all three of its code cards ship
+   harness and log). The sibling `LEASE-BOUNDARY-MUTATION-EVIDENCE-UNSHIPPED`
+   is **untouched and stays open**. It retires here rather than at a close
+   because no close document names it — which is the point of §1.3.
+2. **`LEDGER-TSAN-BOUNDARY-SENTENCES-STALE` is the one live false claim this
+   card found**, and it is in `AGENTS.md`'s standing constraints, presented as
+   "measured, not claimed" (§4). `AGENTS.md:1252-1253` and `:1635` should be
+   rewritten to the measured position — ThreadSanitizer **does** run these
+   programs under the harness's pthread binding, the route's emission unchanged
+   — and `TASK-ROUTE-TSAN` / `TSAN-ROWS-2` cited in place of the retired
+   `TASK-ROUTE-TSAN-SEGV`, in `AGENTS.md` and in wave 39's own two citations
+   (`compiler/tests/ct07_proof_leg.rs:58`,
+   `docs/reports/ct07-two-thread-proof-leg/README.md:143`, the latter by an
+   appended note under constraint 21). **Not done here:** `DOCS-COMPACT-8` owns
+   that prose this wave and an audit lands no change to a constraint's meaning.
+3. **`GATE-SUMMARY-COUNT-LOOSE-GREP-ARTIFACT`** (§3.5): `AGENTS.md`'s
+   merged-gate row publishes "240 result summaries over 236 test targets …
+   four of those sections print two summaries each". Re-measured on this card's
+   own gate log by the shipped `scripts/count_summaries.py`: **236 targets, 238
+   strict summaries, 240 loose, two doubled sections**. The row at merge
+   `45a33285` used the strict count correctly ("235 … two of those sections"),
+   so the method changed mid-wave. Publish the three numbers separately or drop
+   the parenthetical. `DOCS-COMPACT-8`'s to take.
+4. **`CT-COMPOSED-NATIVE-NON-LINUX-VACUOUS-PASS` has one sentence of discharge
+   and is four firings old.** All ten sanitized-native rows carry
+   `host_gate: ["linux","macos"]`; `AGENTS.md:149` prints "sanitized-native
+   **10 of 47**" bare. Add the qualifier. Also correct the entry's own wording:
+   the gate is a runtime `cfg!` (`ct_corpus.rs:5921-5927`), it sits *after* the
+   reference-run and `c_source` assertions, and the **emission** row is
+   genuinely exercised on Windows — so "asserting nothing" overstates it.
+5. **`CT-COMPOSED-NATIVE-ROWS` is discharged and still registered** — its `why`
+   says "three stage rows it backs still read `unassessed`" and all three read
+   `executed` in `docs/reevaluation/ct_manifest.json`, each naming
+   `run_composed_native` and the case's own artifact (constraint 23 satisfied).
+   **Deliberately not retired by this card**, and recorded as a postponement
+   with its ground: retiring another lane's entry out of an audit, without that
+   lane's record, is how an amendment gets softened while being "reconciled".
+   Retire it at the close, or amend the `why`.
+6. **Two names that should be decided, not left prospective.**
+   `CT24-CLEANUP-TASK-COMPOSITION` is absent from `named_followups` because
+   wave 35 classified it a prospective name
+   (`docs/reports/wave35-close/reconciliation.json:391`), leaving the tree's one
+   permanently-unmappable-for-a-stated-reason case with no entry; and
+   `CT46-NOTES-PREDATE-TSAN-ROW` is absent because the wave-39 close retired it,
+   which is why item 2's `AGENTS.md` instances reach no tracker. Either register
+   a successor for each or restate, in the CT ledger row, that an unmapped
+   case's reason lives only in a report — which is `CT10-REASON-ROW`'s question,
+   deferred now for six waves.
+7. **`LEASE-BOUNDARY-TRANSCRIPTION-PREMISE`'s discharge cites a mechanism that
+   does not exist.** It reads "bind the Lean term to the Rust pin by a generated
+   digest **the way CT01's proof leg binds its trace**"; measured, CT01's leg
+   does no such binding, and all four proof legs carry a bare Rust literal that
+   nothing compares with its Lean twin (§2.9). Amend the sentence, and take
+   `PROOF-LEG-DIGESTS-UNCROSSCHECKED`'s discharge — one gate script extracting
+   each `theorem ct*_digest` and comparing it with the corresponding `const`.
+   **Or** record `declined` with the ground.
+8. **`INTEGRATION-GATE-CLANG-CLAIM-BORROWED` is under-scoped** (§2.10, §3.1).
+   The reuse is disclosed in all three files' own notes; the defect is that
+   `clang_recording()` (`build_matrix.py:182-196`) ties a claim to nothing but a
+   sibling text file whose first line matches, with the `clang-version.exit` arm
+   **optional**. Either take `CLANG-RECORDING-UNBOUND-TO-ITS-RUN`'s discharge or
+   record in `AGENTS.md`'s gate section that the key is a **disclosure
+   convention, not a check**, so a green regeneration is not read as evidence
+   Clang was present.
+9. **The two integration-gate conventions** (§3.3): record the in-history merge
+   sha beside each measured tip (all five cited tips are non-ancestors of
+   `main`, `AGENTS.md`'s own row among them —
+   `INTEGRATION-TIP-CITATION-UNREACHABLE`), and decide whether a merge that
+   measures a tip must publish an `integration-gate.json` — `0d9e922f` and
+   `45a33285` did not (`INTEGRATION-GATE-NOT-PUBLISHED-FOR-EVERY-MERGE`).
+10. **Two mechanisms the close itself needs** (§3.2, §3.6):
+    `reconciliation_sweep.py --uncarded` excludes every merge by construction
+    (`:580-584`), so the integrator's own prose — where
+    `MERGED-GATE-ROW-LEAN-HAND-EDIT` lives — is invisible to the tool that
+    exists to find it; and a `verify` claim may quote a **mutable pointer**, so
+    the wave-39 close's `--check` is **red at this base**, broken by this card's
+    own conventional wave-opening commit. Fix the first with a combined-diff
+    mode or a per-merge close step; fix the second with a durable-text rule or
+    a "legitimately superseded" verdict, and reclassify the wave-39 claim under
+    whichever lands.
+11. **Lines for the queued cards' briefs** (§4): `CT-PROOF-LEG-3` — CT07's
+    pattern does **not** generalise, CT50 is the only remaining F02 candidate,
+    and the numerator already counts two binding patterns; `CT-NATIVE-CREDIT` —
+    the crediting already happened, what is left is the platform qualifier;
+    `TSAN-FAILURE-ARMS` — the forcing harness itself fails on the failed-spawn
+    path, so the arms need outcome hooks and a gate-closed control before any
+    catch-rate row means anything; **CT10** — restate the discharge as one arm;
+    **CT24** — the withdrawal ground holds, re-measured; **CT41** — the binding
+    obstruction is the attribution control, not the qualifier rule. And neither
+    `CT-PROOF-LEG-3` nor `CT-NATIVE-CREDIT` appears anywhere in the tree.
+12. **Next firing.** `STABILITY-REEVAL` #5 is due after wave 41. On this
+    firing's evidence the highest-value unexamined ground is, first, the
+    **transcription family** — `LOOPWINDOWS-LEAN-IS-A-TRANSCRIPTION`,
+    `CT42-CELL-DERIVER-LEAN-PARITY-UNBOUND` and
+    `PROOF-LEG-DIGESTS-UNCROSSCHECKED` are one defect wearing three names, and
+    a systematic census of every "proved in Lean" claim against what binds it
+    to Rust is the cheapest way to size it; and second, the **standing
+    constraints' own sentences**, since this firing found two that are simply
+    false (§4) by reading them against the tree rather than against each other.
+    §1.3's process finding stands as the operational advice: write open
+    residuals into briefs, because that — not the class of work they need — is
+    what gets them discharged.

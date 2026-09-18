@@ -165,14 +165,17 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**234** entries after the wave-39 close (233 at its base `b6d1f101`; the
-wave's chain, each step named in its card's report and merge message: 228
+**256** entries after `STABILITY-REEVAL-4` (wave 40; −1 +23 against the
+wave-39 close's **234**, the one retirement being
+`W36-W37-MUTATION-HARNESSES-UNSHIPPED`, measured discharged in full and named
+in `docs/reports/stability-reeval-4/README.md` §6). The wave-39 chain that
+produced the 234, each step named in its card's report and merge message: 228
 after the wave-38 close → 227 after `CT07-TWO-THREAD-PROOF-LEG` (−2 +1) →
 232 after `AGGREGATE-OWNED-FIELD` (−1 +6) → 234 after `TSAN-ROWS-2` (−4 +6,
 one of the four the integrator's own retirement recorded at `0150c904`) →
 231 after `CT42-CELL-ROUTE` (−5 +2) → 233 after `LOOPS-ON-COMPOSED-ROUTES`
-(−1 +3); the close retired two and registered three, each named in
-`docs/reports/wave39-close/README.md`). Which card registered or retired which name,
+(−1 +3) → 234 at the close, which retired two and registered three, each named in
+`docs/reports/wave39-close/README.md`. Which card registered or retired which name,
 and each wave's chain, is the increment records' business — read the wave
 paragraphs; the retirement discipline itself is a standing rule in `CLAUDE.md`,
 and each close's own record carries that close's arithmetic. The operative rule
