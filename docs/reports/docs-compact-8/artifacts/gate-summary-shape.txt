@@ -4,3 +4,5 @@ summaries attributed: 238
   2 summaries: Doc-tests qcore_verifier_host
 summaries: 238 statuses: {'ok': 238}
 {'passed': 4727, 'failed': 0, 'ignored': 10, 'measured': 0, 'filtered': 0}
+3012:test result_handlers_collect_siblings_before_rethrowing_exact_worker_errors ... ok
+5064:test result_arm_bindings_neither_leak_nor_resolve_their_own_scrutinee ... ok

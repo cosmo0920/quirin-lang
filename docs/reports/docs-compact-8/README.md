@@ -1,7 +1,8 @@
 # `DOCS-COMPACT-8` — the wave-40 compaction pass over `AGENTS.md`, `CLAUDE.md`, `README.md`
 
-**Base:** `6dc484ad` (confirmed equal to `origin/main` and to `main` at the
-start of the card). **Scope:** `AGENTS.md`, `CLAUDE.md`, `README.md`, plus the
+**Base:** `d6a57f66` — the card was measured first at `6dc484ad` (then
+`origin/main`), and **re-derived**, not rebased, after `STABILITY-REEVAL-4`
+merged (§10). **Scope:** `AGENTS.md`, `CLAUDE.md`, `README.md`, plus the
 verbatim checkpoints and the wave record they move into, this report, and the
 two tracker registrations this pass's own measurements produced.
 
@@ -12,21 +13,27 @@ what is compacted out is copied **verbatim** into
 labelled as a checkpoint and stated there not to be a second current rule
 authority. One current authority per rule.
 
-**Headline.** 56 numbered entries before and after, 54 of them byte-identical.
-`AGENTS.md` 191,823 → 172,076 bytes (−10.3%), and the fall is not spread thinly:
-**two blocks account for 85% of it**, constraint 14's per-card keyword-census
-ledger and the Q-space note's instance enumeration, both of which had become
-chronicles of their own cards' reports. Eight corrections, each measured against
-the tree. **Two of the eight were found only because the merged-gate row was
-re-measured rather than carried** — which is the whole point of that row's second
-arm, and this card's own wave-37 finding.
+**Headline.** 56 numbered entries before and after, **53 of them
+byte-identical**, order identical. `AGENTS.md` 192,048 → 173,072 bytes (−9.9%),
+and the fall is not spread thinly: **two blocks account for 88% of it**,
+constraint 14's per-card keyword-census ledger and the Q-space note's instance
+enumeration, both of which had become chronicles of their own cards' reports.
+**Nine corrections**, each measured against the tree. **Three of the nine were
+found only because the merged-gate row was re-measured rather than carried** —
+which is the whole point of that row's second arm, and this card's own wave-37
+finding — and **two are the discharge, in the prose this card owns, of
+`STABILITY-REEVAL-4`'s `LEDGER-TSAN-BOUNDARY-SENTENCES-STALE`** (§4.10).
 
 ---
 
 ## 1. Numbers re-derived, and the source each was read from
 
 Every figure below was read **from its source and never from the file being
-compacted**, at base `6dc484ad`.
+compacted**, and every one was **re-derived a second time at `d6a57f66`** by
+[`scripts/rederive.py`](scripts/rederive.py)
+([`artifacts/figures-rederived.txt`](artifacts/figures-rederived.txt)).
+**Exactly one moved across the rebase** — `named_followups` — and it is marked
+below.
 
 | Figure | Value found | Source, as run |
 |---|---|---|
@@ -46,7 +53,7 @@ compacted**, at base `6dc484ad`.
 | Python suite | **303**, OK | `python3 -m unittest discover -s scripts/tests`, exit 0 |
 | Lean pin | `leanprover/lean4:v4.34.0` | `proof/lean-toolchain` |
 | Example families | **12**, and the named list matches the directories exactly | `ls -d examples/*/` |
-| `named_followups` | **234** at the base (236 after this card's two registrations) | `docs/reviews/r0_3/acceptance_matrix.json`, and `dimensions.named_followups` agreeing |
+| `named_followups` | **258** — **the one figure the rebase moved** (234 → 256 by `STABILITY-REEVAL-4`'s +23 −1, then +2 here) | `docs/reviews/r0_3/acceptance_matrix.json`, carried and derived agreeing at 258 after regeneration |
 | Merged gate | §6 — **measured by this card**, not carried | `docs/reports/docs-compact-8/gate.json` |
 
 Every one of these was already correct in the ledger. **The ledger's figures are
@@ -87,15 +94,22 @@ and hashes each. Full listings:
 | — hard invariants | 6 (`INV-1`…`INV-6`) | 6 |
 | — standing constraints | 50 (1, 2, 3, 4, 5, 5a, 5b, 5c, 6–10, 10a, 10b, 11, 12, 12a, 13, 14, 15, 15a–15p, 16–28) | 50, same labels |
 | Label order | — | **identical** (`diff` of the label columns is empty) |
-| Bytes inside numbered entries | 124,953 | 111,454 |
-| Entries whose block hashes **byte-identically** | — | **54 of 56** |
+| Bytes inside numbered entries | 124,953 | 113,053 |
+| Entries whose block hashes **byte-identically** | — | **53 of 56** |
 
-The two that moved, and no others:
+The **three** that moved, and no others:
 
 | entry | before | after | why |
 |---|---|---|---|
 | `C-14` | 19,638 | 6,074 | compaction (§3.1) |
-| `C-15h` | 15,852 | 16,917 | correction (§4.4) — it **grew**, because correcting an overstated boundary costs words |
+| `C-15h` | 15,852 | 16,966 | correction (§4.4) — it **grew**, because correcting an overstated boundary costs words |
+| `C-15o` | 4,370 | 4,920 | correction (§4.9), found by the rebase — it grew for the same reason |
+
+`STABILITY-REEVAL-4` **moved no numbered entry**: hashing all 56 at `6dc484ad`
+and at `d6a57f66` gives identical digests
+(`diff` of the label/hash columns is empty), so the before column above is the
+same text at either base and this card's three are the only entries that moved
+in wave 40.
 
 **No entry was removed, renumbered or reordered, and no evidence pointer was
 dropped.** Constraint 14's trailing evidence-pointer list in fact **gained five**
@@ -217,7 +231,7 @@ every name back out of the compacted file.
 
 ---
 
-## 4. Corrections — eight, each with its evidence
+## 4. Corrections — nine, each with its evidence
 
 ### 4.1 `README.md`: the conformance corpus stood at 46 of 50
 
@@ -307,10 +321,25 @@ summaries over the same 236 sections, with exactly **two** sections printing two
 summaries each — `Doc-tests qcore_core` and `Doc-tests qcore_verifier_host`
 (`scripts/summary_shape.py`, output in
 [`artifacts/gate-summary-shape.txt`](artifacts/gate-summary-shape.txt)).
-`grep -c '^test result:'` on the log agrees at 238. The passed/failed/ignored
-triple reproduces **exactly** (4,727 / 0 / 10), which is why nothing caught this:
-the figure that drifted is the one no check covers. **Corrected, and registered**
-as `GATE-ROW-SUMMARY-COUNT-UNCHECKED` (§5).
+`grep -c '^test result:'` on the log agrees at 238, in **both** of this card's
+runs. The passed/failed/ignored triple reproduces **exactly** (4,727 / 0 / 10),
+which is why nothing caught this: the figure that drifted is the one no check
+covers. **Corrected, and registered** as `GATE-ROW-SUMMARY-COUNT-UNCHECKED` (§5).
+
+**The cause, found at the rebase (§10.2).** `STABILITY-REEVAL-4` measured the
+same log independently and reported *236 targets / 238 strict / 240 loose / two
+doubled sections*. The two cards **agree**: 238 is the number of `test result: `
+summaries and two doc-test sections emit two each. The **240 is what matching
+the prefix `test result` without its colon returns**, because it also catches two
+ordinary test names beginning with `result_` —
+`test result_handlers_collect_siblings_before_rethrowing_exact_worker_errors` and
+`test result_arm_bindings_neither_leak_nor_resolve_their_own_scrutinee`, both
+present in both runs' logs (`grep -c '^test result'` = 240 against
+`grep -c '^test result: '` = 238). `236 targets + 4 = 240` is then how "four of
+those sections print two summaries each" was inferred, so **one loose regex
+produced both wrong figures**. That is a counting rule, not a flake: it will
+reproduce until the counts are derived at the gate, which is what the registered
+residual asks for.
 
 ### 4.8 Merged-gate row: "all five named rows that live in this workspace"
 
@@ -323,6 +352,47 @@ row, `crates/qcore-verifier-host/tests/enforced_process_limits.rs`),
 `real_packages_preserve_unknown_and_reject_mutations`, is in
 `providers/conformance/tests/packages.rs`, which the row itself says in its next
 sentence. **Corrected to four**, so the row's claim and its own exclusion agree.
+
+### 4.9 Constraint 15o: "no TSan row exists anywhere in this repository"
+
+Found at the rebase, and **missed by the pre-rebase pass**, which grepped for
+`ThreadSanitizer` while this sentence spells it `TSan`. It sits in the
+mutex-crossing emission entry, after the theorem that the creator performs no
+trace event while its child runs.
+
+`TSAN-ROWS-2`'s subject table runs **CT46's own case** and it is clean. The
+sentence's purpose survives and is now stated more strongly rather than less:
+that case is **serial by construction**, so the forcing header attaches to
+nothing, no worker is released, and the clean row witnesses nothing about
+contention — *which is the theorem above, observed*. The
+`MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION` residual and the theorem's Lean name
+are untouched, and the general boundary (a clean detector is evidence about the
+schedules realised, never a proof of race freedom; Linux only) is written in.
+
+### 4.10 These two corrections discharge `LEDGER-TSAN-BOUNDARY-SENTENCES-STALE`
+— **partially**, and it should not be retired at the close
+
+`STABILITY-REEVAL-4` measured both TSan sentences false and registered them,
+deliberately leaving the repair to this card because it owns the prose. Its
+discharge condition has three parts. Two are met:
+
+1. *"rewrite both sentences to the measured position"* — §4.4 (constraint 15h)
+   and §4.9 (constraint 15o); `README.md` carried the same claim and is corrected
+   with them (§4.3).
+2. *"re-cite `TASK-ROUTE-TSAN` / `TSAN-ROWS-2` in place of the retired name … in
+   `AGENTS.md`"* — both are cited, `compiler/tests/task_route_tsan.rs` is named,
+   and `TASK-ROUTE-TSAN-SEGV` now appears only as the name of the thing wave 37
+   **retired**, which is a historical citation rather than a live one.
+
+The third is **not met and is out of this card's scope**: *"and in the two
+wave-39 citations"* — `compiler/tests/ct07_proof_leg.rs:58` and
+`docs/reports/ct07-two-thread-proof-leg/README.md:143` both still cite the
+retired name (verified still present). The first is **crate source**, which a
+documentation card must not touch; the second is a **frozen card report**
+(constraint 21). **Recommendation to the close: do not retire
+`LEDGER-TSAN-BOUNDARY-SENTENCES-STALE`.** Record it as partially discharged,
+with the ledger half done here and the two citations open, and let whoever has
+scope over `compiler/tests/` take the remainder.
 
 ---
 
@@ -346,7 +416,7 @@ either would inflate the tracker without adding a claim.
 
 ---
 
-## 6. The gate — this card's own measurement
+## 6. The gate — this card's own measurement, twice
 
 Full accounting in [`gate.json`](gate.json); per-command exit files and the
 Clang recording in [`gate/`](gate/).
@@ -360,25 +430,33 @@ Clang recording in [`gate/`](gate/).
 | `reevaluation_probe` | exit 0 |
 | `reevaluation_followup` | exit 0 |
 | `python3 scripts/check_lean_audits.py` | exit 0 — "Passed 141 Lean audits"; 141 `Audit*.lean` on disk |
-| `python3 -m unittest discover -s scripts/tests` | exit 0 — 303 tests, **before and after** this card's edits and its matrix regeneration |
+| `python3 -m unittest discover -s scripts/tests` | 303 tests. **Exit 1 first** — see §6.3 — then **exit 0** after the matrix regeneration (`gate/python-pre.exit`, `gate/python-post.exit`) |
 | `clang --version` | exit 0 — Ubuntu clang 21.1.8, **run in this worktree** and recorded at `gate/clang-version.txt` |
 
-**How it was run.** One detached run, `setsid -f measure/gate/run.sh < /dev/null`,
-**no `trap '' TERM`**; every step's exit written to its own file with **no pipe
-in the command** (`GATE-EXIT-SWALLOWED-BY-PIPE`); polled by a bounded foreground
-loop on its own `ALLDONE` marker, never by ending a turn on a notification. Logs
-are worktree-private under `measure/`, per `CLAUDE.md`'s hygiene rule; only the
-exits and the Clang recording are shipped.
+**How it was run.** **Two** detached runs — one before `STABILITY-REEVAL-4`
+merged and one on the re-derived tree — each `setsid -f measure/gate<N>/run.sh
+< /dev/null` with **no `trap '' TERM`**; every step's exit written to its own
+file with **no pipe in the command** (`GATE-EXIT-SWALLOWED-BY-PIPE`); each polled
+by a bounded foreground loop on its own `ALLDONE` marker, never by ending a turn
+on a notification; `git submodule update --init --recursive` before each, exit 0,
+`third_party/libevent` at `d82464a2`. Logs are worktree-private under `measure/`,
+per `CLAUDE.md`'s hygiene rule; only the exits and the Clang recording are
+shipped (the table above is run 2, and `gate/run1-tests.exit` is run 1's).
 
-**Why a documentation card may carry the merged-gate row.** The run started at
-`624bab70` (this report's skeleton) and finished before `c188d3ab`;
-`git diff --name-only 624bab70 c188d3ab` names **six files and all six are
-documentation**. No crate source, no fixture, no artifact, no matrix. And no test
-in this tree reads any of the three compacted files: the only `include_str!` of a
-markdown file anywhere in `crates/` or `compiler/` names an
-`examples/*/README.md`, and every `AGENTS.md` mention in a `.rs` file is a
-comment. The figures therefore hold at the card's tip, and are offered as **one
-measurement at one tip**, which is what that row says of itself.
+**The two runs agree figure for figure** — 4,727 / 0 / 10, 238 summaries, 236
+targets, two doubled sections, 141 Lean, 303 Python — **on two different trees**,
+which is this row's own corroboration and is why the summary-arithmetic
+correction (§4.7) is not a one-run artifact.
+
+**Why a documentation card may carry the merged-gate row.** Each run's tree
+differs from its predecessor in documentation only. Run 1:
+`git diff --name-only 624bab70 c188d3ab` names six files, all `.md`. Run 2:
+`git diff --name-only 0b3edede 70f1cec3` names four — three `.md` and the
+acceptance matrix. And **no test in this tree reads any of the three compacted
+files or the matrix**: the only `include_str!` of a markdown file anywhere in
+`crates/` or `compiler/` names an `examples/*/README.md`, every `AGENTS.md`
+mention in a `.rs` file is a comment, and no `.rs` file mentions
+`acceptance_matrix` at all. The figures therefore hold at the card's tip.
 
 **The summary figures were summed the safe way.** `scripts/sum_tests.py` sums
 **every** `test result:` line, `FAILED` ones included — the shape
@@ -416,16 +494,38 @@ That is the wave-38 close's required-key rule doing exactly what it was landed
 for, against this card. The recording was copied beside the gate and the
 regeneration then exited 0.
 
+### 6.3 A second check working, and recorded rather than hidden
+
+Run 2's Python step **exited 1**, on `CommittedMatrixIsSelfConsistent`:
+
+> `AssertionError: 256 != 258 : dimensions.named_followups is 256 against a
+> named_followups of 258; regenerate through
+> docs/reports/remaining-d02/build_matrix.py rather than repairing the count by
+> hand`
+
+That is `D02-DIMENSIONS-FOLLOWUP-COUNT`'s tripwire working exactly as designed:
+this card had added two entries to the carried section and had not yet
+regenerated, so carried and derived were apart. The regeneration with this
+card's `gate.json` reconciled them (both 258) and the step then exited 0.
+**Both exits are shipped** — `gate/python-pre.exit` and `gate/python-post.exit` —
+because a gate step that went red and was then made green is a fact about the
+run, not something to replace with its successor.
+
 ---
 
 ## 7. Byte counts, split compaction vs correction
 
 | File | before | after | delta |
 |---|---|---|---|
-| `AGENTS.md` | 191,823 | **172,076** | **−19,747 (−10.3%)** |
+| `AGENTS.md` | 192,048 | **173,072** | **−18,976 (−9.9%)** |
 | `CLAUDE.md` | 25,692 | **25,417** | −275 (−1.1%) |
 | `README.md` | 13,178 | **13,796** | **+618 (+4.7%)** |
-| total | 230,693 | **211,289** | −19,404 (−8.4%) |
+| total | 230,918 | **212,285** | −18,633 (−8.1%) |
+
+Against `d6a57f66`, this card's own base. `AGENTS.md` is 225 bytes larger there
+than at `6dc484ad` because `STABILITY-REEVAL-4` grew the follow-on paragraph
+this card then compacted, so the compaction figure for that block below is
+larger than the pre-rebase pass measured.
 
 Per-block, by `scripts/split_delta.py`
 ([`artifacts/byte-delta-split.txt`](artifacts/byte-delta-split.txt)):
@@ -435,25 +535,26 @@ Per-block, by `scripts/split_delta.py`
 | constraint 14, per-card census ledger | compaction | −13,564 |
 | Q-space note | compaction | −3,170 |
 | ledger: CT01–CT50 row | compaction | −1,778 |
-| ledger: follow-on count paragraph | compaction | −546 |
+| ledger: follow-on count paragraph | compaction | −648 |
 | ledger: Cycle 19 raw corpus row | compaction | −409 |
 | `CLAUDE.md` Windows residual family | compaction | −288 |
 | ledger: headline and arbiter chain | compaction | −185 |
 | `CLAUDE.md` cadence roster | compaction | +13 |
-| ledger: merged gate row | correction + re-measurement | −1,494 |
-| constraint 15h, the TSan boundary | correction | +1,065 |
+| ledger: merged gate row | correction + re-measurement | −1,225 |
+| constraint 15h, the TSan boundary | correction | +1,114 |
+| constraint 15o, the mutex-crossing TSan sentence | correction | +550 |
 | `README.md` the TSan claim | correction | +448 |
 | repo map, gateway modules | correction | +422 |
 | `README.md` conformance figures | correction | +166 |
 | repo map, contract corpus count | correction | +49 |
-| | **compaction** | **−19,927** |
-| | **correction** | **+2,150** |
-| | **gate row (both)** | **−1,494** |
+| | **compaction** | **−20,029** |
+| | **correction** | **+2,749** |
+| | **gate row (both)** | **−1,225** |
 
-Accounted −19,271 against an actual −19,404; the −133 residue is block-boundary
+Accounted −18,505 against an actual −18,633; the −128 residue is block-boundary
 newlines, the blocks being measured without their trailing separators.
 
-**The corrections cost 2,150 bytes and that is the rule working as written.**
+**The corrections cost 2,749 bytes and that is the rule working as written.**
 `CLAUDE.md` says a pass may legitimately grow a file, and `README.md` grew by
 4.7% here for exactly the reason `DOCS-COMPACT-6` recorded: correcting an
 overstatement costs words. Two of the four `README.md`/15h corrections replaced a
@@ -463,8 +564,9 @@ short false sentence with a longer true one.
 
 ## 8. What moved verbatim into the increment history
 
-Eight blocks, **46,603 bytes**, in
-[`docs/development/increments/wave-40-compaction-checkpoints.md`](../../development/increments/wave-40-compaction-checkpoints.md):
+Nine blocks, **47,344 bytes**, in
+[`docs/development/increments/wave-40-compaction-checkpoints.md`](../../development/increments/wave-40-compaction-checkpoints.md),
+every one extracted from **`d6a57f66`**, this card's actual base:
 
 | # | block | bytes |
 |---|---|---|
@@ -474,8 +576,14 @@ Eight blocks, **46,603 bytes**, in
 | 4 | `AGENTS.md` ledger, *Merged gate* row | 4,996 |
 | 5 | `AGENTS.md` ledger, *Cycle 19 raw corpus* row | 3,065 |
 | 6 | `AGENTS.md` ledger, headline and arbiter chain | 2,680 |
-| 7 | `CLAUDE.md` platform records, Windows open-residual list | 2,201 |
-| 8 | `AGENTS.md` ledger, follow-on count paragraph | 1,989 |
+| 7 | `AGENTS.md` ledger, follow-on count paragraph | 2,213 |
+| 8 | `CLAUDE.md` platform records, Windows open-residual list | 2,201 |
+| 9 | `AGENTS.md` constraint 15o, the mutex crossing's TSan sentence | 517 |
+
+Block 7 is `STABILITY-REEVAL-4`'s own rewrite of that paragraph, not the
+wave-39 text the pre-rebase pass had captured — the checkpoints are re-extracted
+at the rebase for the same reason the figures are re-derived at it. Block 9 is
+new: the sentence §4.9 corrects.
 
 The page states in terms that these are **not** a second current rule authority,
 that where a block and the current file disagree the current file wins, and that
@@ -550,11 +658,89 @@ Every item below is addressed to the close and needs a recorded verdict
    replaced by the span its own enumeration supports (§3.2) rather than
    re-derived, because nothing in the tree records which wave the decision landed
    in. If the close knows, the sentence can carry the count again.
+10. **`LEDGER-TSAN-BOUNDARY-SENTENCES-STALE` should NOT be retired** (§4.10).
+   Two of its three discharge parts are met here; the third —
+   `compiler/tests/ct07_proof_leg.rs:58` and
+   `docs/reports/ct07-two-thread-proof-leg/README.md:143` still citing the
+   retired `TASK-ROUTE-TSAN-SEGV` — is crate source and a frozen card report,
+   both out of a documentation card's scope. Record it partially discharged.
+11. **The wave-40 index row now carries two links** (record page + checkpoint
+   page). The sibling's edit is untouched; this is an addition. Remove it if the
+   convention is one link per wave (§10.6).
+12. **`GATE-ROW-SUMMARY-COUNT-UNCHECKED` now carries a mechanism, not just a
+   symptom** (§4.7, §10.2), found by comparing this card's count with
+   `STABILITY-REEVAL-4`'s. The discharge it proposes is two derived `--gate`
+   keys; that is generator work.
+13. **`W36-W37-MUTATION-HARNESSES-UNSHIPPED` was retired by the sibling**, and
+   the compacted follow-on paragraph deliberately does not name it — the
+   paragraph's own rule sends retirements to the wave record, where it is. Check
+   that reading is the one you want before the close's arithmetic.
 
 ---
 
 ## 10. What the rebase re-derivation changed
 
-_To be completed when `STABILITY-REEVAL-4` merges and main's new sha is known.
-Per the brief, every number that moved will be **re-derived from its source**
-rather than rebased, keeping this report and its scripts._
+`STABILITY-REEVAL-4` merged as `f661b2aa`, amended to **`d6a57f66`** at the push.
+This card rebased onto it and **re-derived every figure from its source**
+(`scripts/rederive.py`) rather than patching the ones that looked affected. Three
+conflicts, all in files both cards touched, all resolved by hand.
+
+### 10.1 Exactly one figure moved
+
+`named_followups` **234 → 258**: the sibling's +23 −1 (its one retirement being
+`W36-W37-MUTATION-HARNESSES-UNSHIPPED`), then this card's two on top. Everything
+else in §1 re-derived **identical** — unit and function statuses, all five
+diagnostic counts, the CT triple and its unmapped set, the contract corpus and
+its declarations, the crate/workspace/provider counts, every version, 141 Lean
+audits, the Lean pin, 12 example families, 112 reserved words.
+
+The follow-on paragraph was the one place the two cards' edits collided: the
+sibling rewrote it to carry 256 and the wave-39 chain, this card compacted it.
+**Resolved by keeping the compacted form and re-deriving the count off the
+committed file**, as the brief's "re-derive, not patch" requires. The sibling's
+one substantive fact — the retirement — is not lost: it is in the wave-40 record,
+which is exactly where the compacted sentence sends a reader for "which card
+registered or retired which name".
+
+### 10.2 What the sibling's independent measurement settled
+
+The reeval re-measured the merged-gate row's summary arithmetic and got *236
+targets / 238 strict / 240 loose / two doubled sections*, against this card's 238
+and two. **The two agree**, and putting them side by side produced something
+neither had alone: the *cause* of the stale 240 (§4.7). Two independent
+measurements plus a named mechanism is a better finding than one card's
+disagreement with a ledger row, and the registered residual now carries it.
+
+### 10.3 A ninth correction, which the pre-rebase pass had missed
+
+`LEDGER-TSAN-BOUNDARY-SENTENCES-STALE` named **two** false sentences. The
+pre-rebase pass had already corrected the constraint 15h one independently
+(§4.4) — but it had **missed** the second, in constraint 15o, because it grepped
+for `ThreadSanitizer` and that sentence spells it `TSan`. The sibling's residual
+is what surfaced it (§4.9), and it is the clearest case this wave of the two
+cards' methods being complementary rather than redundant.
+
+### 10.4 Everything else re-derived, not carried
+
+The checkpoint appendix was **re-extracted at `d6a57f66`**, so its follow-on
+block is the sibling's text rather than the wave-39 text, and constraint 15o's
+sentence joins as a ninth block. The byte-delta split, the constraint-entry
+hashes, the dropped-name check and the gate all re-ran; `AGENTS.md`'s base size
+is 192,048 at `d6a57f66` rather than 191,823, because the sibling grew the
+paragraph this card then compacted.
+
+### 10.5 None of the nine corrections was superseded by the merge
+
+Each was re-checked against the rebased tree. The sibling changed no figure any
+of them rests on, moved no numbered entry (§2), and its one AGENTS.md edit was
+the follow-on paragraph. Two of the nine (§4.4, §4.9) are now *also* the
+discharge of one of its residuals, which strengthens them rather than
+superseding them — with the caveat in §4.10 that the residual should stay open
+for its third part.
+
+### 10.6 One question for the close
+
+The increments index row for wave 40 now names the checkpoint page beside the
+record page. The sibling's index edit is untouched; this adds a second link on
+the same row. If the convention is one link per wave, remove it — the checkpoint
+page is still reachable from `wave-40.md`'s header.

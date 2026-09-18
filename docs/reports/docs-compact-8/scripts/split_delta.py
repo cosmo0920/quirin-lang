@@ -4,7 +4,7 @@ compaction or correction, by measuring the block at the base and at the tip.
 Blocks are located by a unique anchor string on each side."""
 import subprocess
 
-BASE = "6dc484ad"
+BASE = "d6a57f66"
 
 
 def at_base(path):
@@ -52,6 +52,11 @@ add("repo map: contract corpus module count", "correction",
 add("repo map: gateway load-bearing modules", "correction",
     line_with(A0, "L2 existing-C analyzer, custody summary"),
     line_with(A1, "L2 existing-C analyzer, custody summary"))
+add("constraint 15o: the mutex-crossing TSan sentence", "correction",
+    block(A0, "the admitted shape without re-deriving it. The **creator performs no",
+          "load-bearing evidence, not formatting"),
+    block(A1, "the admitted shape without re-deriving it. The **creator performs no",
+          "load-bearing evidence, not formatting"))
 add("constraint 15h: the ThreadSanitizer boundary", "correction",
     block(A0, "must not be able to choose. Three boundaries",
           "`struct qcore_buffer`'s own tail padding"),

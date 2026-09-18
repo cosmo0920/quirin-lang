@@ -1,0 +1,29 @@
+unit statuses                                {'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2}
+functions                                    4834 {'Unknown': 4537, 'Safe': 213, 'Unsafe': 84}
+diagnostic_counts                            {"leak": 272, "summary_conflict": 1, "unknown_alias": 4309, "unsupported": 49753}
+flb_input_chunk_create                       Safe
+CT mapping                                   {'mapped': 47, 'unmapped': 3}
+CT unmapped                                  ['CT10', 'CT24', 'CT41']
+CT native_sanitized executed                 10 ['CT03', 'CT07', 'CT09', 'CT17', 'CT22', 'CT25', 'CT26', 'CT34', 'CT46', 'CT49']
+CT proof executed                            4 ['CT01', 'CT03', 'CT07', 'CT37']
+contract modules                             88
+resource-v1 declarations                     59
+manifest-selected                            33
+crates/ dirs                                 9
+workspace members                            10
+providers members                            6
+version crates/qcore-schemas                 14.0.0
+version compiler                             0.4.0
+version crates/qcore-verifier-host           0.4.0
+version crates/qcore-verification            0.4.0
+ChunkIO package_version                      0.13.0
+Audit*.lean on disk                          141
+lean-toolchain                               leanprover/lean4:v4.34.0
+examples families                            12
+reserved source words                        112
+named_followups carried                      258
+named_followups derived                      258
+named_followups mine                         ['GATE-ROW-SUMMARY-COUNT-UNCHECKED', 'AGENTS-MAP-FIGURES-UNDERIVED']
+bytes AGENTS.md                              173072
+bytes CLAUDE.md                              25417
+bytes README.md                              13796
