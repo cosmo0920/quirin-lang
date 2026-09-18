@@ -1,0 +1,62 @@
+{
+ "card": "DOCS-COMPACT-7",
+ "wave": 37,
+ "date": "2026-09-18",
+ "base": "477b733d",
+ "measured_at": "the card's own tip; the card's commits are documentation only",
+ "started_utc": "2026-09-17T22:57:40Z",
+ "finished_utc": "2026-09-17T23:21:11Z",
+ "disk_free_at_gate": "258G at start, 209G at finish",
+ "gate_scope": "full standing per-change gate (disk well above the 60 GB threshold, so the Python-only subset was not used)",
+ "exit_capture": "every step's exit written to its own file under the worktree-private measure/, no pipe in any gate command (GATE-EXIT-SWALLOWED-BY-PIPE)",
+
+ "exit_submodule": 0,
+ "exit_test": 0,
+ "exit_fmt": 0,
+ "exit_clippy": 0,
+ "exit_probe": 0,
+ "exit_followup": 0,
+ "exit_lean": 0,
+ "exit_python": 0,
+
+ "workspace_tests": 4611,
+ "workspace_failed": 0,
+ "workspace_ignored": 8,
+ "workspace_result_summaries": 231,
+ "workspace_test_binaries": 220,
+ "workspace_doc_test_targets": 9,
+ "workspace_failed_summaries": 0,
+
+ "lean_audits": 135,
+ "python_tests": 274,
+ "python_rerun_after_matrix_edit": {
+  "why": "the matrix's named_followups was appended to (MAIN-GUARD-REFUSES-PACK-REFS) while the gate was running, and scripts/tests/test_build_matrix_sections.py and test_reconciliation_sweep.py read the COMMITTED matrix",
+  "python3 -m unittest discover -s scripts/tests": "Ran 274 tests, OK, exit 0",
+  "rust_unaffected": "no .rs file in the tree mentions acceptance_matrix, so the cargo test figure does not depend on it"
+ },
+ "provider_tests": "carried (no change under providers/ or crates/qcore-schemas/; qcore-schemas stays 14.0.0, so constraint 18 is not engaged) and Unix-only (PROVIDER-CONFORMANCE-UNIX-ONLY)",
+
+ "constraint_16_rows_seen": {
+  "note": "constraint 16 requires a gate report to state which it saw; five of the six rows live in this workspace and all five were green",
+  "a_declared_process_limit_stops_the_fixture_from_forking": "green",
+  "vp04_vp07_vp08_process_lifecycle_and_payload_budgets": "green",
+  "memory_growth_beyond_the_declared_limit_is_bounded": "green",
+  "closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request": "green",
+  "confined_fixture_write": "green",
+  "real_packages_preserve_unknown_and_reject_mutations": "not in this workspace (providers/), not measured here"
+ },
+
+ "boundaries": [
+  "A gate figure is a measurement on one machine, never a property.",
+  "This is a documentation card's measurement of the wave-36 integration tip, not a close's: no docs/reports/wave36-close/ exists at this card's base, and the wave-36 close should replace AGENTS.md's merged-gate row with its own --gate numbers.",
+  "closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request was green here; W36-CORPUS-CONTRACTS-3 saw it red once in-gate at load ~31-41 and green 12/12 in isolation. This is a second independent green under full-suite load, NOT the quiet-host isolated number HOST-ROW-STARVATION-DESCRIPTION still asks for.",
+  "Provider 122 is carried, not re-measured, and is a Unix figure.",
+  "This card changed no Rust, no proof/ and no frozen archive, so these numbers are not evidence about a code change."
+ ],
+
+ "scope": "documentation only: AGENTS.md, CLAUDE.md, README.md, docs/development/increments/wave-37.md, docs/reviews/r0_3/acceptance_matrix.json (named_followups append + regeneration), docs/reports/docs-compact-7/",
+ "vocabulary": "+0 reserved words, +0 tokens, +0 Q codes",
+ "constraints": "49 before, 49 after; same labels, same order, same group headings; 46 of 49 byte-identical",
+ "named_followups": "171 -> 175",
+ "standing_gate": "pass"
+}
