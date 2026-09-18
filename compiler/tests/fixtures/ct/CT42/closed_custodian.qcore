@@ -1,0 +1,26 @@
+// CT42 reject control: the question asked of a closed custodian. Both ends
+// must be live sockets of this entry — the inherited ownership checker's
+// use-after-close (`Q083`) and the transport half's own closed-socket stop
+// (`Q082`) refuse it before the cell question is ever asked, so the case's
+// `Q664` is attributable to the cell and not to any question over `server`.
+import std.socket;
+
+fn main() -> unit effects { io, alloc } {
+    let listener = tcp;
+    bind listener;
+    listen listener;
+
+    let client = tcp;
+    connect client listener;
+    let server = accept listener;
+
+    send client [81, 67, 111, 114, 101];
+    recv server 5;
+
+    close server;
+    // Refused: `server` is closed.
+    disjoint client server;
+    close client;
+    close listener;
+    return;
+}

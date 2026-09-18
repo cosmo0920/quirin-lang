@@ -307,6 +307,11 @@ pub struct CheckedStringModule {
 pub struct CheckedSocketModule {
     pub lowered: qcore_frontend::source_socket::LoweredSocketModule,
     pub certificate: std_socket::SocketCertificate,
+    /// The derived protocol cells and every `disjoint NAME NAME;` judgement,
+    /// decided by the **unedited** `DisjointFootprintsV1` checker over the
+    /// derived-alias projection (card `CT42-CELL-ROUTE`). Published for every
+    /// admitted module, question or none.
+    pub cells: qcore_core::socket_footprint::SocketCellCertificate,
 }
 
 /// A checked `source.http.v1` module (card `HTTP-QUIRIN-V1`).
@@ -319,6 +324,13 @@ pub struct CheckedSocketModule {
 pub struct CheckedHttpModule {
     pub lowered: qcore_frontend::source_http::LoweredHttpModule,
     pub certificate: std_http::HttpCertificate,
+    /// The derived protocol cells of the transport program this route lowered
+    /// to, and every `disjoint NAME NAME;` judgement over them, decided by the
+    /// **unedited** `DisjointFootprintsV1` checker (card `CT42-CELL-ROUTE`).
+    /// The HTTP reader hands every statement it does not spell to the socket
+    /// reader, so the question reaches this route too and is answered here
+    /// rather than admitted unanswered — measured, not assumed.
+    pub cells: qcore_core::socket_footprint::SocketCellCertificate,
 }
 
 /// A checked `source.event.v1` module (card `STD-EVENT`).
@@ -5450,6 +5462,46 @@ fn compile_socket_source(
         )]
     })?;
 
+    // The protocol cells (card `CT42-CELL-ROUTE`). Derived for every admitted
+    // program from its own decided connection structure, and every
+    // `disjoint NAME NAME;` question answered by the **unedited**
+    // `DisjointFootprintsV1` checker: the two ends of one accepted connection
+    // are refused there as `SharedProtocolCell`, reported under that
+    // checker's own `Q664` — the `Concurrency` pass's band, reached from this
+    // route by condition extension and allocating nothing. The derivation's
+    // own two refusals (an unpaired connect or accept, unreachable after the
+    // transport checker admitted the program) land on this route's `Q085`,
+    // whose condition they already are.
+    let cells =
+        qcore_core::socket_footprint::check_socket_cells(&lowered.program).map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| {
+                    let span = lowered
+                        .event_spans
+                        .get(error.event())
+                        .copied()
+                        .unwrap_or(lowered.scope_span);
+                    let pass = if error.is_footprint_refusal() {
+                        SemanticPass::Concurrency
+                    } else {
+                        SemanticPass::StandardSocket
+                    };
+                    map_raw_diagnostic(error.code(), pass, span, error.to_string(), ranges)
+                })
+                .collect::<Vec<_>>()
+        })?;
+    qcore_core::socket_footprint::recheck_socket_cell_certificate(&lowered.program, &cells)
+        .map_err(|failure| {
+            vec![map_raw_diagnostic(
+                "Q088",
+                SemanticPass::StandardSocket,
+                lowered.scope_span,
+                format!("the protocol-cell certificate failed its independent recheck: {failure}"),
+                ranges,
+            )]
+        })?;
+
     // The check-only arm (card `SOCKET-EVENT-COMPOSE`, inheriting
     // `source.event.v1`'s own). Both are absent together or present together: a
     // module that emits C without a reference observation, or the reverse, would
@@ -5490,6 +5542,7 @@ fn compile_socket_source(
         checked: CheckedSourceModule::StandardSocket(Box::new(CheckedSocketModule {
             lowered,
             certificate,
+            cells,
         })),
         execution_profile: SourceExecutionProfile::StandardSocketV1,
         declaration_count: typed.declarations.len(),
@@ -5568,6 +5621,84 @@ fn compile_http_source(
         )]
     })?;
 
+    // The protocol cells of the transport program (card `CT42-CELL-ROUTE`).
+    // This route's reader hands every statement it does not spell to
+    // `source.socket.v1`'s reader, so a `disjoint NAME NAME;` question lowers
+    // into the transport program; before this block it was admitted with no
+    // judgement, which the card measured with `quirin check` and closed here.
+    // The transport is re-lowered from the checked program (`lower_transport`
+    // is total on an admitted program) and its attribution map places every
+    // refusal on the HTTP statement the reader wrote. A footprint refusal
+    // keeps the footprint checker's own code and pass (`Q664`, `Concurrency`)
+    // exactly as on the socket route; the derivation's own two refusals,
+    // unreachable after the transport checker admitted the program, land on
+    // `Q095` — the condition "a socket-side checker this route inherits
+    // unedited refused, carrying its own value" — stated as a widening.
+    let transport = std_http::lower_transport(&lowered.program).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| {
+                let span = lowered
+                    .event_spans
+                    .get(error.event())
+                    .copied()
+                    .unwrap_or(lowered.scope_span);
+                map_raw_diagnostic(
+                    error.code(),
+                    SemanticPass::StandardHttp,
+                    span,
+                    error.to_string(),
+                    ranges,
+                )
+            })
+            .collect::<Vec<_>>()
+    })?;
+    let cells =
+        qcore_core::socket_footprint::check_socket_cells(&transport.program).map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| {
+                    let event = transport
+                        .attribution
+                        .get(error.event())
+                        .copied()
+                        .unwrap_or(lowered.program.statements.len());
+                    let span = lowered
+                        .event_spans
+                        .get(event)
+                        .copied()
+                        .unwrap_or(lowered.scope_span);
+                    if error.is_footprint_refusal() {
+                        map_raw_diagnostic(
+                            error.code(),
+                            SemanticPass::Concurrency,
+                            span,
+                            error.to_string(),
+                            ranges,
+                        )
+                    } else {
+                        map_raw_diagnostic(
+                            "Q095",
+                            SemanticPass::StandardHttp,
+                            span,
+                            format!("the transport's protocol-cell derivation refused: {error}"),
+                            ranges,
+                        )
+                    }
+                })
+                .collect::<Vec<_>>()
+        })?;
+    qcore_core::socket_footprint::recheck_socket_cell_certificate(&transport.program, &cells)
+        .map_err(|failure| {
+            vec![map_raw_diagnostic(
+                "Q090",
+                SemanticPass::StandardHttp,
+                lowered.scope_span,
+                format!("the protocol-cell certificate failed its independent recheck: {failure}"),
+                ranges,
+            )]
+        })?;
+
     let observation = std_http_c_emit::interpret_http_program(&lowered.program, &certificate)
         .map_err(|refusal| {
             vec![plain_diagnostic(
@@ -5595,6 +5726,7 @@ fn compile_http_source(
         checked: CheckedSourceModule::StandardHttp(Box::new(CheckedHttpModule {
             lowered,
             certificate,
+            cells,
         })),
         execution_profile: SourceExecutionProfile::StandardHttpV1,
         declaration_count: typed.declarations.len(),

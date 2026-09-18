@@ -1,0 +1,25 @@
+// CT42 accept control, and the re-affirmation of `CT42-CELL-UDP-QUEUE`: a
+// datagram pair is deliberately NOT a cell. A `sendto` appends to the
+// receiver's queue, but the two sockets share no connection phase — either
+// end closes independently, a queued datagram is discarded locally at close,
+// and no operation through one name is refused on the other's protocol
+// state. The queue is bounded coupling, not shared protocol state, so the
+// question is admitted: two datagram sockets really are independent
+// custodians.
+import std.socket;
+
+fn main() -> unit effects { io, alloc } {
+    let client = udp;
+    let server = udp;
+    bind server;
+
+    // Admitted: no connection, no cell.
+    disjoint client server;
+
+    sendto client server [7];
+    recvfrom server 1;
+
+    close client;
+    close server;
+    return;
+}

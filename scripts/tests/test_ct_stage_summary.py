@@ -678,7 +678,9 @@ class SummaryTest(unittest.TestCase):
         before_counts = summary.unmapped_bucket_counts(ROOT)
         before_sources = summary.unmapped_label_sources(ROOT)
         coverage = json.loads((ROOT / summary.TRIAGE).read_text())
-        measured = {"CT41", "CT42"}
+        # CT42 left this set in wave 39 (card `CT42-CELL-ROUTE` mapped it), so
+        # the one case still both lane-measured and unmapped is CT41.
+        measured = {"CT41"}
         touched = 0
         for case in coverage["unmapped_triage"]["cases"]:
             if case["id"] in measured:
@@ -747,7 +749,6 @@ class SummaryTest(unittest.TestCase):
             measured,
             {
                 "CT41": self.LANE35,
-                "CT42": self.LANE35,
             },
         )
         # The labels that actually moved, with the archived text retained beside
@@ -780,6 +781,12 @@ class SummaryTest(unittest.TestCase):
         # one, so the case publishes no blocker any more. This is the same round
         # trip CT40 took in wave 17 and CT22 in wave 29.
         self.assertNotIn("CT46", labels)
+        # CT42 left the set in wave 39 (card `CT42-CELL-ROUTE`), which mapped it
+        # on the `sequential` route under the `reject` verdict mode by routing
+        # the socket protocol cell from source. Its wave-35 row is retired by
+        # that card's own record, not deleted from the ct-ctwin-lane one — the
+        # round trip CT46 took in wave 35.
+        self.assertNotIn("CT42", labels)
         # CT40/CT41/CT42 used to read byte-identically to the archive, because
         # card CT-CTWIN wrote its own measurement into T00's archived audit in
         # place. Card HYGIENE-16 restored that file to its pre-CTWIN bytes
@@ -795,7 +802,7 @@ class SummaryTest(unittest.TestCase):
         # them, and wave 35 reached the wave-17 bucket again for each — so the
         # label is unchanged and its source has moved forward to the record that
         # last measured it.
-        for case in ["CT41", "CT42"]:
+        for case in ["CT41"]:
             self.assertEqual(
                 labels[case]["label"], "blocked-on-gateway-expressiveness (C-twin measured)"
             )
@@ -833,14 +840,15 @@ class SummaryTest(unittest.TestCase):
     def test_mapping_a_labelled_case_retires_its_label(self):
         """The same refusal reached from the manifest side.
 
-        A lane maps CT42 without retiring the live row for it: the derivation
+        A lane maps CT41 without retiring the live row for it: the derivation
         refuses rather than publishing a blocker for a mapped case. This read
-        CT46 until wave 35 mapped that case for real; it now uses one of the two
-        cases still carrying a live lane row.
+        CT46 until wave 35 mapped that case for real, and CT42 until wave 39
+        did (card `CT42-CELL-ROUTE`); it now uses the one case still carrying a
+        live lane row.
         """
         manifest = load_manifest()
         for case in manifest["cases"]:
-            if case["id"] == "CT42":
+            if case["id"] == "CT41":
                 case["mapping_status"] = "mapped"
         with MutableRoot() as scratch:
             scratch.write_manifest(manifest)
@@ -870,21 +878,24 @@ class SummaryTest(unittest.TestCase):
         """The admitted direction, and both ways of getting it wrong."""
         with MutableRoot() as scratch:
             data = scratch.read_evidence(self.LANE35)
-            data["unmapped_reasons"] = {
-                "CT42": {
-                    "bucket": "a later measurement",
-                    "reason": "measured again on a later tree",
-                    "measured_by": "a hypothetical wave-36 lane",
-                    "supersedes": self.WAVE17,
-                }
+            # CT41, since wave 39: CT42 is mapped and its row here is retired
+            # by card CT42-CELL-ROUTE's record, so a mutated CT42 row would be
+            # refused for that reason and not for the one this test drives.
+            # The CT42 row is kept in place for the same reason: removing it
+            # would move the record the retirement names.
+            data["unmapped_reasons"]["CT41"] = {
+                "bucket": "a later measurement",
+                "reason": "measured again on a later tree",
+                "measured_by": "a hypothetical wave-36 lane",
+                "supersedes": self.WAVE17,
             }
             scratch.write_evidence(self.LANE35, data)
             labels = summary.unmapped_labels(scratch.directory)
-            self.assertEqual(labels["CT42"]["label"], "a later measurement")
-            self.assertEqual(labels["CT42"]["label_source"], self.LANE35)
+            self.assertEqual(labels["CT41"]["label"], "a later measurement")
+            self.assertEqual(labels["CT41"]["label_source"], self.LANE35)
 
             # Stale: it names a record that does not hold the label.
-            data["unmapped_reasons"]["CT42"]["supersedes"] = self.WAVE9
+            data["unmapped_reasons"]["CT41"]["supersedes"] = self.WAVE9
             scratch.write_evidence(self.LANE35, data)
             with self.assertRaises(SystemExit):
                 summary.unmapped_labels(scratch.directory)
@@ -892,13 +903,12 @@ class SummaryTest(unittest.TestCase):
             # Vacuous: no earlier record labels CT10 at all. A lane label always
             # beats T00's archive by the resolution rule, so declaring it is not
             # a supersession of anything.
-            data["unmapped_reasons"] = {
-                "CT10": {
-                    "bucket": "ambiguous",
-                    "reason": "re-measured",
-                    "measured_by": "a hypothetical wave-36 lane",
-                    "supersedes": summary.TRIAGE,
-                }
+            del data["unmapped_reasons"]["CT41"]
+            data["unmapped_reasons"]["CT10"] = {
+                "bucket": "ambiguous",
+                "reason": "re-measured",
+                "measured_by": "a hypothetical wave-36 lane",
+                "supersedes": summary.TRIAGE,
             }
             scratch.write_evidence(self.LANE35, data)
             with self.assertRaises(SystemExit):
@@ -913,25 +923,27 @@ class SummaryTest(unittest.TestCase):
         """
         with MutableRoot() as scratch:
             data = scratch.read_evidence(self.LANE35)
-            data["unmapped_reasons"] = {
-                "CT42": {
-                    "bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
-                    "reason": "re-verified on a later tree; unchanged",
-                    "measured_by": "a hypothetical wave-36 lane",
-                }
+            # CT41 since wave 39 (CT42 is mapped; its row here stays, retired).
+            data["unmapped_reasons"]["CT41"] = {
+                "bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+                "reason": "re-verified on a later tree; unchanged",
+                "measured_by": "a hypothetical wave-36 lane",
             }
             scratch.write_evidence(self.LANE35, data)
             labels = summary.unmapped_labels(scratch.directory)
             self.assertEqual(
-                labels["CT42"]["label"], "blocked-on-gateway-expressiveness (C-twin measured)"
+                labels["CT41"]["label"], "blocked-on-gateway-expressiveness (C-twin measured)"
             )
-            self.assertEqual(labels["CT42"]["label_source"], self.LANE35)
+            self.assertEqual(labels["CT41"]["label_source"], self.LANE35)
 
     def test_a_row_missing_a_required_field_fails_closed(self):
         for field in ["bucket", "reason", "measured_by"]:
             with self.subTest(field=field), MutableRoot() as scratch:
                 data = scratch.read_evidence(self.LANE35)
-                data["unmapped_reasons"]["CT42"][field] = "   "
+                # CT41 since wave 39: a retired row (CT42's) is never read, so
+                # blanking a field of it would not fail closed and the test
+                # would be measuring nothing.
+                data["unmapped_reasons"]["CT41"][field] = "   "
                 scratch.write_evidence(self.LANE35, data)
                 with self.assertRaises(SystemExit):
                     summary.unmapped_labels(scratch.directory)
@@ -968,26 +980,30 @@ class SummaryTest(unittest.TestCase):
     def test_a_changed_lane_label_moves_the_tally_and_drifts_the_record(self):
         with MutableRoot() as scratch:
             data = scratch.read_evidence(self.LANE35)
-            data["unmapped_reasons"]["CT42"]["bucket"] = "a relabelled bucket"
-            # The wave-17 record labels CT42 too, agreeing with this one, so
+            # CT41 since wave 39, CT42 having been mapped by card
+            # `CT42-CELL-ROUTE` (its row here is retired and never read).
+            data["unmapped_reasons"]["CT41"]["bucket"] = "a relabelled bucket"
+            # The wave-17 record labels CT41 too, agreeing with this one, so
             # changing this row alone is a second claim and the derivation
             # refuses it outright. Declaring the supersession is what makes this
             # a *relabelling* rather than a conflict — which is the case this
             # test is about, and the distinction is itself worth pinning.
-            data["unmapped_reasons"]["CT42"]["supersedes"] = self.WAVE17
+            data["unmapped_reasons"]["CT41"]["supersedes"] = self.WAVE17
             scratch.write_evidence(self.LANE35, data)
             counts = summary.unmapped_bucket_counts(scratch.directory)
             self.assertIn("a relabelled bucket", counts)
-            # CT41 keeps the bucket CT42 just left, so the shared label survives
-            # with one holder instead of two. Asserting the count rather than
-            # absence is what makes this a statement about the row that moved.
-            self.assertEqual(counts["blocked-on-gateway-expressiveness (C-twin measured)"], 1)
+            # CT41 was the bucket's last holder (CT42 left it in wave 39), so
+            # the shared label leaves the tally with it. Asserting absence here
+            # is the statement about the row that moved: one holder, moved,
+            # leaves nothing behind.
+            self.assertNotIn("blocked-on-gateway-expressiveness (C-twin measured)", counts)
             # The scratch tally's sum is the unmapped count on disk: 8 until the
             # wave-31 lane mapped CT25, 7 until card `CT-WIRE-LANE-4` (wave 32)
             # mapped CT44 and CT47, 5 until card `CT-CTWIN-LANE` (wave 35) mapped
-            # CT46, 4 since. A tree fact, not a loosened assertion --
-            # relabelling one row still moves no total.
-            self.assertEqual(sum(counts.values()), 4)
+            # CT46, 4 until card `CT42-CELL-ROUTE` (wave 39) mapped CT42, 3
+            # since. A tree fact, not a loosened assertion -- relabelling one
+            # row still moves no total.
+            self.assertEqual(sum(counts.values()), 3)
             self.assertIn(
                 "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
                 summary.check_acceptance(scratch.directory),

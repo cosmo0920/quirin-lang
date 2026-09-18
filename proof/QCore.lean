@@ -173,6 +173,7 @@ import QCore.StdHttp
 import QCore.HttpComputedLength
 import QCore.SocketEventCompose
 import QCore.SocketFootprint
+import QCore.SocketCellRoute
 import QCore.ReturnCallCustody
 import QCore.ConstantDoWhile
 import QCore.ScalarRouteExitEdge

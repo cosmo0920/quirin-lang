@@ -6,6 +6,51 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`CT42-CELL-ROUTE` (2026-09-18).** The socket protocol cell is routed from
+source and CT42 is mapped — **46/50 → 47/50**, a grown denominator, which is
+mapping and not conformance (constraint 23); sanitized-native 10 of 47 and
+proof 3 of 47 unmoved. In the order the brief set: **(1) direction first** —
+the deriver's two "unreachable for an admitted program" arms, which card
+`STABILITY-REEVAL-3` measured assigning a singleton cell the unedited checker
+judges *disjoint* from the binding's real connector, are refusals
+(`SocketCellError::UnpairedAccept`/`UnpairedConnect`, `Q085` by condition
+extension), each reached by a fixture through the new
+`derive_cells_of_admitted` and shown red by mutation, the Lean `step` partial
+to match with `an_admitted_accept_takes_an_existing_cell` stating the
+direction, the corrected sentence published beside the frozen wave-31 report.
+**(2) The T09 edit taken**: `FootprintEvent::DeriveDescriptorAlias`, handled
+in the same arm as the declared alias and stamping no
+`DeclaredProtocolCellIdentity`, audited as
+`QCore.SocketCellRoute.a_derived_projection_stamps_no_declared_identity`
+beside `derived_and_declared_aliases_decide_alike`. **(3) The route**:
+`disjoint NAME NAME;` on `source.socket.v1` — one reserved word, census-clean
+at zero QCore source occurrences across 525 files — the transport checker
+deciding only liveness (`Q081`, `Q082`, `Q083` through a `Read` of each
+custodian), the question deriving nothing and **erasing from emission**
+(byte-identical C and observation with and without it), answered by the
+unedited `DisjointFootprintsV1` checker at **`Q664`** under the `Concurrency`
+pass, allocating no code and widening `Q080`/`Q081`/`Q085` (and `Q095`, see
+below). **(4) CT42 mapped** on the `sequential` route under `reject`: the
+case asks about the two ends of one accepted connection and is refused; five
+controls (listener admitted and byte-identical to the twin, two connections
+admitted, a datagram pair admitted — `CT42-CELL-UDP-QUEUE` re-affirmed with
+its ground — a closed custodian refused `Q083`,`Q082`, a scalar refused
+`Q081`); stage record `docs/reports/ct42-cell-route/ct_stage_evidence.json`
+retiring the wave-35 bucket row by declaration; native and proof stages
+`unassessed`, the C-twin arm still `CT-CTWIN-DESCRIPTOR`'s. **The finding**:
+the HTTP composition hands unknown statements to the socket reader, so before
+the card composed the cell check there `quirin check` **admitted** an HTTP
+exchange asking about its own two ends with no judgement (measured, exit 0);
+the driver now composes `check_socket_cells` over its re-lowered transport
+and the same program refuses at `Q664`, `Q095`'s condition widened and stated.
+Mutations 9 of 9 red as required and shipped. Retired: `CT42-CELL-UNROUTED`,
+`CT42-MAP`, `CT42-CELL-FALLBACK-ARM-DIRECTION`, `CT42-CELL-DERIVED-PREMISE`,
+`CT42-CELL-UDP-QUEUE`; registered: `SOCKET-CELL-COUPLING-UNPROVED`,
+`CT42-CONTROLS-NATIVE-UNRUN`; amended: `CT42-CELL-PENDING-PHASE`; one entry
+of the card's own withdrawn before merge on the superseded HTTP measurement.
+Standing constraint **15p** landed. Gate and counts in
+`docs/reports/ct42-cell-route/README.md` and its `gate.json`.
+
 **`TSAN-ROWS-2` (2026-09-18).** Contention-forcing ThreadSanitizer schedules
 on the checked task route, on the CT fixtures themselves, and the CT46
 decision — `docs/reports/tsan-rows-2/README.md`. A second `-include` header

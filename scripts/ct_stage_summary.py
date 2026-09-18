@@ -143,6 +143,12 @@ EVIDENCE_FILES = [
     # constraint 21 — the ct-lane-5 record keeps its bytes. Every other stage
     # row is carried from that record unchanged; proof is the only move.
     "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
+    # Card `CT42-CELL-ROUTE` (wave 39): CT42 mapped on the sequential route --
+    # the socket arm the wave-35 lane measured unreachable from source, now
+    # routed through `disjoint NAME NAME;` and refused by the unedited
+    # DisjointFootprintsV1 checker at Q664. It retires the ct-ctwin-lane
+    # record's CT42 bucket row by declaration; that record keeps its bytes.
+    "docs/reports/ct42-cell-route/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"

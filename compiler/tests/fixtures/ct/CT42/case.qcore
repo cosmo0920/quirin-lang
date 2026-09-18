@@ -1,0 +1,34 @@
+// CT42 — "Two descriptors share an underlying logical state";
+// expected: "Preserve shared protocol-cell identity".
+//
+// `client` and `server` are the two ends of one accepted TCP connection: a
+// send through one is decided by state the other established, a close of one
+// is refused while bytes the other committed sit unread. That shared state is
+// one protocol cell with two custodians. The `disjoint` question below asks
+// the checker to treat the two as independent custodians, and it is refused
+// by the unedited `DisjointFootprintsV1` checker as `SharedProtocolCell`
+// (`Q664`): the identity is preserved rather than lost. The same question
+// over a listener and either end, over the ends of two different connections,
+// or over a datagram pair is admitted (the controls).
+import std.socket;
+
+fn main() -> unit effects { io, alloc } {
+    let listener = tcp;
+    bind listener;
+    listen listener;
+
+    let client = tcp;
+    connect client listener;
+    let server = accept listener;
+
+    // Refused: the two custodians of one accepted connection's cell.
+    disjoint client server;
+
+    send client [81, 67, 111, 114, 101];
+    recv server 5;
+
+    close server;
+    close client;
+    close listener;
+    return;
+}

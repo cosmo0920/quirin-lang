@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 234
+  "named_followups": 231
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -1028,13 +1028,14 @@
    "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
    "docs/reports/mutex-share-cross-emission/ct_stage_evidence.json",
    "docs/reports/ct-lane-5/ct_stage_evidence.json",
-   "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json"
+   "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
+   "docs/reports/ct42-cell-route/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 46,
-   "unmapped": 4
+   "mapped": 47,
+   "unmapped": 3
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1163,73 +1164,73 @@
   ],
   "stage_histogram": {
    "parse": {
-    "executed": 46
+    "executed": 47
    },
    "elaborate": {
-    "executed": 43,
+    "executed": 44,
     "not_applicable": 3
    },
    "task_lowering": {
     "executed": 23,
-    "not_applicable": 23
+    "not_applicable": 24
    },
    "task_ledger_check": {
     "executed": 22,
-    "not_applicable": 24
+    "not_applicable": 25
    },
    "mutex_lowering": {
     "executed": 11,
-    "not_applicable": 35
+    "not_applicable": 36
    },
    "mutex_invariant_check": {
     "executed": 11,
-    "not_applicable": 35
+    "not_applicable": 36
    },
    "epoch_lowering": {
     "executed": 7,
-    "not_applicable": 39
+    "not_applicable": 40
    },
    "epoch_bound_check": {
     "executed": 7,
-    "not_applicable": 39
+    "not_applicable": 40
    },
    "sequential_whole_program": {
-    "executed": 1,
+    "executed": 2,
     "not_applicable": 45
    },
    "sequential_reference_execution": {
     "executed": 1,
-    "not_applicable": 45
+    "not_applicable": 46
    },
    "task_reference_execution": {
     "executed": 13,
-    "not_applicable": 33
+    "not_applicable": 34
    },
    "mutex_reference_execution": {
     "executed": 3,
-    "not_applicable": 43
+    "not_applicable": 44
    },
    "c_emission": {
     "executed": 19,
-    "not_applicable": 27
+    "not_applicable": 28
    },
    "native_execution": {
     "executed": 19,
-    "not_applicable": 27
+    "not_applicable": 28
    },
    "native_sanitized": {
     "executed": 10,
     "not_applicable": 7,
     "recorded_not_gated": 5,
-    "unassessed": 24
+    "unassessed": 25
    },
    "legacy_c_twin": {
     "executed": 3,
-    "not_applicable": 43
+    "not_applicable": 44
    },
    "proof": {
     "executed": 4,
-    "unassessed": 42
+    "unassessed": 43
    }
   },
   "depth_profile": {
@@ -1240,6 +1241,7 @@
    "native_execution": 7,
    "native_sanitized": 8,
    "proof": 4,
+   "sequential_whole_program": 1,
    "task_ledger_check": 7,
    "task_lowering": 1
   },
@@ -1282,6 +1284,7 @@
    "CT38": "epoch_bound_check",
    "CT39": "epoch_bound_check",
    "CT40": "legacy_c_twin",
+   "CT42": "sequential_whole_program",
    "CT43": "legacy_c_twin",
    "CT44": "task_ledger_check",
    "CT45": "legacy_c_twin",
@@ -1293,7 +1296,7 @@
   },
   "observation_counts": {
    "c_emission": 36,
-   "elaborate": 43,
+   "elaborate": 44,
    "epoch_bound_check": 7,
    "epoch_lowering": 7,
    "legacy_c_twin": 4,
@@ -1302,10 +1305,10 @@
    "mutex_reference_execution": 3,
    "native_execution": 51,
    "native_sanitized": 32,
-   "parse": 46,
+   "parse": 47,
    "proof": 4,
    "sequential_reference_execution": 1,
-   "sequential_whole_program": 1,
+   "sequential_whole_program": 2,
    "task_ledger_check": 22,
    "task_lowering": 23,
    "task_reference_execution": 29
@@ -5188,70 +5191,80 @@
    },
    {
     "id": "CT42",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Preserve shared protocol-cell identity",
-    "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
-    "current_bucket_source": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
-    "archived_bucket": "blocked-on-harness-schema (C-twin stage)",
-    "blocker": "as CT40",
-    "bucket_changed_since_batch2": false,
+    "route": "sequential",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
+      "observations": 1
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null,
-    "blocker_current": "Both arms measured. The C-twin arm is unchanged and re-verified: an int-typed resource identity is not expressible at all, the contract loader refusing `owned result requires a pointer return type`. The socket arm that card CT42-PROTOCOL-CELL landed at model level is unreachable from source -- derive_socket_cells and footprint_program are called from one unit test and from nothing in the frontend, the checker or compile_files -- so no .qcore fixture can reach the Q664 SharedProtocolCell refusal and a row on that arm would name evidence the harness cannot execute.",
-    "blocker_superseded_by": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
-    "blocker_measured_by": "docs/reports/ct-ctwin-lane/README.md (wave-35 CT lane), both arms measured on this tree; follow-ons CT-CTWIN-DESCRIPTOR, CT42-MAP and CT42-CELL-UNROUTED"
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "sequential_whole_program",
+    "stage_evidence_record": "docs/reports/ct42-cell-route/ct_stage_evidence.json",
+    "semantic_profile": "StandardSocketV1 (card QUIRIN-SOCKET-V1) composed with the derived protocol cells of card CT42-PROTOCOL-CELL through the `disjoint NAME NAME;` question card CT42-CELL-ROUTE (wave 39) routes from source. CT42's scenario is `Two descriptors share an underlying logical state`, expected `Preserve shared protocol-cell identity`, and the case is REFUSED with each word carried by a named rule. TWO DESCRIPTORS: `client` and `server`, two source names each bound to its own socket descriptor, the connector and the accepted binding of one completed TCP connection. SHARE AN UNDERLYING LOGICAL STATE: the transport checker's own cross-name rules (a send through one is decided by the other's committed stream; a close of one is refused while the other's bytes sit unread), which qcore_core::socket_footprint reads off the admitted program's decided connection structure as one protocol cell with two custodians and projects as DeriveDescriptorAlias events onto the UNEDITED DisjointFootprintsV1 checker. PRESERVE SHARED PROTOCOL-CELL IDENTITY: the program asks that the two be treated as disjoint custodians and the unedited checker refuses at Q664 SharedProtocolCell naming the cell, attributed to the question, under the Concurrency pass that owns the band -- reached by condition extension, no code allocated. Five controls separate the refusal from its surroundings: the listener and an end ADMITTED (and emitting the case's C byte for byte, the question erasing), the ends of two different connections ADMITTED, a datagram pair ADMITTED (CT42-CELL-UDP-QUEUE re-affirmed with its ground), a closed custodian refused Q083 then Q082 by the inherited checkers before any cell is derived, a scalar at the position refused Q081. BOUNDARY: no dup-like alias over one open description exists on any route (CT42-CELL-DUP-SOURCE), so `descriptors` is carried by the connection-cell reading; the C-twin arm stays blocked on the contract loader's int-typed identity (CT-CTWIN-DESCRIPTOR), out of this card's scope. The refusal is a check-time decision over one flat statement sequence; no C is emitted for the case, nothing is executed, and no native, sanitizer or proof evidence is claimed."
    },
    {
     "id": "CT43",
@@ -6028,13 +6041,12 @@
   "unmapped_bucket_counts": {
    "blocked-on-unimplemented-syntax": 1,
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
-   "blocked-on-gateway-expressiveness (C-twin measured)": 2
+   "blocked-on-gateway-expressiveness (C-twin measured)": 1
   },
   "unmapped_label_sources": {
    "CT10": "t00-archive",
    "CT24": "t00-archive",
-   "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
-   "CT42": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
+   "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
   },
   "newly_decidable_not_mapped": [
    "CT24"
@@ -6164,11 +6176,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate measured by the integrator at the merge tip 601acde6 (detached run gate-tsan2; every exit to its own file; the per-merge regeneration could not use any card's gate.json because two wave-39 cards added Lean audits and the generator refuses a figure that disagrees with the tree). Workspace figure is the merged tip's own; provider 122 carried (providers/ and crates/qcore-schemas/ unchanged since the merge base); Python figure is the re-run after this regeneration; Clang claim taken from the card's own recording beside this file (gate/clang-version.txt, same host).",
-  "workspace_tests": 4683,
+  "note": "CT42-CELL-ROUTE (wave 39), 2026-09-18, REBASED onto origin/main e80b58d6 (CT07-TWO-THREAD-PROOF-LEG and AGGREGATE-OWNED-FIELD merged ahead). ONE detached full gate on the rebased tip (setsid -f, no trap '' TERM; every exit to its own file, no pipe; worktree-private private/ct42-cell-route/gate-rebased2/, the exit files, timings and small logs copied into gate/ beside this file) at d2e6fd41, the tip carrying every code change of this card and both siblings' merges (later commits are this gate record, the regeneration and the report's gate section only). Two earlier gates -- 9bea6b1e on the pre-rebase tree (4,658/1/9, the one red row constraint 16's confined-fixture write test, green in isolation) and c13c4772 on the first rebase (4,664/0/9) -- are superseded by this run and do not count for this tip; their records stay in the worktree-private directories. CARGO TEST: 4,697 passed / 0 failed / 9 ignored over 237 result summaries and 235 test targets (226 Running + 9 doc-test sections), exit 0; test result: FAILED 0 times, so no isolated re-verification was required and none is claimed (constraint 16's five rows all green under full-suite load beside sibling builds). FMT 0 (the pre-rebase run's rustfmt diffs on this card's two files were applied before the first rebase and stay applied). CLIPPY 0. BOTH PROBES 0. LEAN 140 audits (139 at e80b58d6 + AuditSocketCellRoute.lean; AuditSocketFootprint.lean amended), recorded under the required lean_audits key and checked by the generator against proof/Audit*.lean. PYTHON: the detached run exited 1 -- DELIBERATELY REPORTED: 303 ran, 2 failed, both the regeneration tripwires doing their job against a tree whose tracker (232 -> 229 after this card's idempotent register.py on main's matrix) and audit count (139 -> 140) this card moved and had not yet regenerated (test_the_derived_facts_are_recomputed_rather_than_carried: ['14.0.0', 139] != ['14.0.0', 140]; test_each_derived_dimension_matches_the_section_it_counts: 232 != 229); the repair is the regeneration with THIS gate.json (--gate docs/reports/ct42-cell-route/gate.json), and the Python figure below is the re-run after it (gate/python-post.exit). THE UNION PROVED on the rebased tip before the gate: ct_corpus 6 passed (EVIDENCE_FILES 25 with both cards' records, PROOF_GATED_CASES CT01/CT37/CT03/CT07, MAPPED_CASES and SEQUENTIAL_REJECT_CASES with CT42, statement_heads 9), scripts/ct_stage_summary.py --check no drift (mapped 47 / unmapped 3, proof 4), and the committed-matrix tests green after the regeneration. CLANG PRESENCE RECORDED AND CHECKED: gate/clang-version.txt is `clang --version` on the gate's host with QCORE_CLANG unset, exit 0, first line under the clang key. PROVIDER 122 CARRIED, NOT RE-MEASURED: git diff --name-only e878b362 HEAD -- providers/ crates/qcore-schemas/ is empty and qcore-schemas is still 14.0.0 (constraint 18 not engaged); a Unix figure (PROVIDER-CONFORMANCE-UNIX-ONLY). Timing: start 12:06:07Z, cargo end 12:22:22Z (16m15s), gate end 12:22:58Z (16m51s); disk 165 -> 207 GB free. MUTATIONS: the shipped harness's final log (10 of 10 red as required) was run on the pre-rebase tree; every code commit of this card applied to the rebase without conflict (the conflicts were the harness tables, the ledger trio and the acceptance record), so the mutated arms are byte-identical on this tip. DELTAS against main e80b58d6's own merged figure are the integrator's to state; against the wave-38 close's 4,639 / 303 / 137 this tree carries three wave-39 cards. CT 46/50 -> 47/50 mapped by this card, a grown denominator that is mapping and not conformance; proof 4 of 47 (the proof-leg card's move, carried); sanitized-native 10 of 47; no corpus count, unit status or function status moves; raw units stay unpromoted; full language conformance FALSE. Evidence: docs/reports/ct42-cell-route/README.md sections 6-7 and mutations.log.",
+  "workspace_tests": 4697,
   "provider_tests": 122,
   "python_evidence_validator_tests": 303,
-  "lean_audits": 139,
+  "lean_audits": 140,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6278,6 +6290,7 @@
    "AuditScalarRouteExitEdge.lean",
    "AuditSingleEmissionRoute.lean",
    "AuditSlicePermissions.lean",
+   "AuditSocketCellRoute.lean",
    "AuditSocketEventCompose.lean",
    "AuditSocketFootprint.lean",
    "AuditSocketInetAddresses.lean",
@@ -6316,7 +6329,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/tsan-rows-2/integration-gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/ct42-cell-route/gate.json)"
  },
  "named_followups": [
   {
@@ -6833,13 +6846,6 @@
    "recorded_by": "CT-CTWIN-LANE"
   },
   {
-   "id": "CT42-CELL-UNROUTED",
-   "title": "CT42's socket arm landed at model level and is unreachable from any source program, so no CT fixture can execute it",
-   "why": "Card CT42-PROTOCOL-CELL (wave 31) landed the derived protocol cell in qcore_core::socket_footprint -- derive_socket_cells and footprint_program, an accepted connection becoming one cell with two custodians, refused in the unedited disjointness checker as SharedProtocolCell (Q664). Card CT-CTWIN-LANE (wave 35) measured what a mapping lane would need and found the arm UNROUTED: both functions are called from crates/qcore-core/tests/unit/socket_footprint.rs and from nothing in the frontend, the checker or compile_files, and that card's own report already states that no .qcore statement spells AssertDisjoint over sockets. A CT fixture on a source route is a program the harness compiles through the real pipeline, so a CT42 row on this arm would name a stage the harness cannot execute -- exactly what constraint 23's `executed only where a named workspace test runs it on the case's own artifact` forbids. This is why CT42 stayed unmapped in wave 35 even though its model half exists. Discharge: wire the deriver into the socket route behind source syntax that asks the disjointness question (a route card, not a mapping lane), after which CT42's socket arm becomes mappable; or record that the derived cell is model-only by design. The C-twin arm stays separately blocked on CT-CTWIN-DESCRIPTOR.",
-   "source": "docs/reports/ct-ctwin-lane/README.md",
-   "recorded_by": "CT-CTWIN-LANE"
-  },
-  {
    "id": "CT-FIXTURE-CROSS-CASE-DUPLICATES",
    "title": "Two undisclosed byte-identical CT fixture pairs, each a case's own artifact doubling as another case's control",
    "why": "Card CT-CTWIN-LANE (wave 35) hashed every one of CT46's six new fixture files against every .qcore/.c file under compiler/tests/fixtures/ct/, discharging CT-SHARED-FIXTURE-DISCLOSURE's duty not to create a second shared fixture silently. CT46 creates none. The sweep incidentally found THREE duplicate groups where only one is disclosed. Beyond the known CT01/CT12/CT14 case.qcore group: CT02/case.qcore is byte-identical to CT14/read_before_join.qcore, and CT03/case.qcore is byte-identical to CT04/write_after_joins.qcore. These are a DIFFERENT relation from the disclosed one -- not three cases sharing one artifact, but one case's own artifact doubling as another case's CONTROL -- and neither is disclosed in any report, fixture comment or harness assertion. Classified as a DISCLOSURE GAP, not a defect: a control that is another mapped case's admitted program is arguably a strong control, and both owning reports describe their control in their own terms. The hazard is concrete and one-directional -- editing CT02/case.qcore or CT03/case.qcore silently changes what CT14's and CT04's controls test, with nothing anywhere saying so. Not repaired by the finding lane: the repair touches other cases' fixtures and records, outside a mapping lane's boundary. Discharge: disclose both pairs in the owning reports (and, if the coupling is unintended, give one side its own file), or record that reusing a case artifact as another case's control is deliberate practice.",
@@ -6997,27 +7003,6 @@
    "id": "CT42-CELL-PENDING-PHASE",
    "title": "A surviving pending connect would need a pending-phase cell or a refusal, and neither is written",
    "why": "Card CT42-PROTOCOL-CELL (wave 31) §6: if a route ever admits a program with a SURVIVING PENDING CONNECT, the pending-phase {connector, listener} coupling needs a cell or a refusal. Today no route admits one, so the gap is latent rather than live - which is exactly the shape CLAUDE.md's STABILITY-REEVAL method item 4 names: a rule correct today because a construct is unreachable becomes load-bearing the moment a queued card makes it reachable. DISCHARGE: the cell or the refusal, landed together with whatever card admits the surviving pending connect.",
-   "source": "docs/reports/ct42-protocol-cell/README.md",
-   "recorded_by": "WAVE-35-CLOSE"
-  },
-  {
-   "id": "CT42-CELL-UDP-QUEUE",
-   "title": "The decision that a datagram pair is not a cell is recorded so a later card revisits it deliberately",
-   "why": "Card CT42-PROTOCOL-CELL (wave 31) §6. Registered not because it is broken but because it is a DECISION that should be reopened deliberately rather than silently - the project's standing preference for a recorded boundary over an implicit one. DISCHARGE: a later card either re-affirms the decision with its ground or lands the datagram cell, in both cases citing this entry.",
-   "source": "docs/reports/ct42-protocol-cell/README.md",
-   "recorded_by": "WAVE-35-CLOSE"
-  },
-  {
-   "id": "CT42-CELL-DERIVED-PREMISE",
-   "title": "DeclaredProtocolCellIdentity is not narrowed on the footprint certificate for derived cells",
-   "why": "Card CT42-PROTOCOL-CELL (wave 31) §6: narrowing DeclaredProtocolCellIdentity on the footprint certificate for DERIVED cells needs a deliberate T09 checker edit, which the card did not take. Constraint 28 already records DeclaredFootprintShape and its siblings as PREMISES rather than proofs; this entry names the one place a derived cell relies on that premise. DISCHARGE: the T09 checker edit, or a recorded statement that the derived case stays a declared premise.",
-   "source": "docs/reports/ct42-protocol-cell/README.md",
-   "recorded_by": "WAVE-35-CLOSE"
-  },
-  {
-   "id": "CT42-MAP",
-   "title": "CT42's mapping lane - fixture, manifest row and stage evidence on either arm - is not taken",
-   "why": "Card CT42-PROTOCOL-CELL (wave 31) §6 named the mapping lane itself as its own follow-on. Wave 35's CT-CTWIN-LANE re-measured CT42 and MAPPED IT NOT, with BOTH arms measured and the socket arm found UNREACHABLE FROM SOURCE (CT42-CELL-UNROUTED, registered by that lane): 'This lane measured WHY it is open and did not take it.' So the measurement exists and the mapping does not. DISCHARGE: a fixture, a manifest row and stage evidence on one of the two arms - which for the socket arm is blocked behind CT42-CELL-UNROUTED.",
    "source": "docs/reports/ct42-protocol-cell/README.md",
    "recorded_by": "WAVE-35-CLOSE"
   },
@@ -7764,13 +7749,6 @@
    "recorded_by": "STABILITY-REEVAL-3"
   },
   {
-   "id": "CT42-CELL-FALLBACK-ARM-DIRECTION",
-   "title": "The CT42 deriver's two unreachable arms are described as refusing more; they assign a singleton cell the checker judges disjoint",
-   "why": "MEASURED by card STABILITY-REEVAL-3 (wave 38), step 4, re-verified against the lines: crates/qcore-core/src/socket_footprint.rs derive_socket_cells has two arms 'unreachable for an admitted program' - a connect the resolution cannot target (continue, :184) and an accept with nothing queued (None => acquire(entries, binding, None), :211) - and the second gives the binding cell = its own fresh descriptor (:167). In the unedited checker (crates/qcore-core/src/disjoint_footprint.rs:714-722) two Descriptor footprints with different cells return Ok((true, ...)) - proved disjoint - and refuse SharedProtocolCell only when the cells are equal. So the fallback arm ADMITS disjointness for an accepted binding whose real connector it failed to pair. docs/reports/ct42-protocol-cell/README.md:128-132 says the opposite: 'the direction that refuses more disjointness questions than it admits'. The sentence is harmless today only because check_socket_program (:149) refuses first, which is exactly the structure CT42-CELL-ROUTE (queued) makes load-bearing: once source routes the deriver, any disagreement between its FIFO pairing and std_socket's peer assignment (CT42-CELL-PENDING-PHASE) reaches an arm that admits. DISCHARGE: publish the correction beside the frozen report (constraint 21) and make both arms return Err (or prove pairing agreement with std_socket's resolution) before any source certificate carries a derived cell; the route card's brief carries this line.",
-   "source": "docs/reports/stability-reeval-3/README.md",
-   "recorded_by": "STABILITY-REEVAL-3"
-  },
-  {
    "id": "MAIN-GUARD-PACK-REFS-UNPINNED",
    "title": "The pack-refs refusal is reproduced twice and pinned by no test, and it is two transactions not one",
    "why": "MEASURED by card STABILITY-REEVAL-3 (wave 38) through a read-only sub-audit's probe in a throwaway repository against the versioned .githooks (private log packrefs_probe.log, reproduced here: exit 128 refused-provenance from an agent worktree with and without the token; exit 128 refused-unauthorised from the MAIN checkout without the token; exit 0 with it). scripts/tests/test_main_guard_hooks.py (27 tests) drives no pack-refs, gc or maintenance shape (rg over the file: nothing); its closest row test_a_no_op_update_of_main_is_not_refused (:279) drives old == new, not null -> current. Two things MAIN-GUARD-REFUSES-PACK-REFS's own text does not carry: the refusal fires in the main checkout too whenever the token is absent, so the scope 'every delegated worktree' understates; and with the token the guard log records TWO refs/heads/main transactions per pack-refs - 0000->X (the packed write) then X->0000 (the loose ref's deletion) - the second byte-for-byte the deletion shape test_deleting_main_is_refused (:260) and the deletion-reads-as-noop mutant protect, so an exemption of 'old = null OID' alone would still refuse the second and a bare old == ZERO exemption is the same syntactic shape as a real advance. DISCHARGE: a committed test running git pack-refs --all from an agent worktree and from the main checkout that pins whichever behaviour is chosen for BOTH transactions, red by mutation; and MAIN-GUARD-REFUSES-PACK-REFS's discharge amended to name the second transaction.",
@@ -7888,6 +7866,20 @@
    "why": "Found by card TSAN-ROWS-2 (wave 39) while giving CT07's row its TSan citation. compiler/tests/fixtures/ct/CT46/expected.json's notes and the manifest's CT46 semantic_profile both read 'TSan is not run anywhere in this repository and no TSan-shaped claim is made (MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION)'. That was true at wave 36; since wave 37 the crossing has a TSan row on a CT46-shaped twin (crates/qcore-core/tests/unit/mutex_c_emit.rs) and since this card on CT46's OWN fixture lowering (ct46s_own_case_runs_clean_bound_and_the_forcing_header_finds_no_seam: dies unbound at the one fault, runs clean bound, stdout byte-identical to interpret_mutex_program's observation, and the forcing header attaches to nothing on this backend - no worker released, no schedule line). The row is serial by construction and claims no contention. Not edited by this card, which owns CT07's citation only. DISCHARGE: a citation appended to both CT46 texts on the CT07 precedent (docs/reports/tsan-rows-2/scripts/cite_ct07.py), naming the row and the recorded decision that this route's native evidence stays serial by construction.",
    "source": "docs/reports/tsan-rows-2/README.md",
    "recorded_by": "TSAN-ROWS-2"
+  },
+  {
+   "id": "SOCKET-CELL-COUPLING-UNPROVED",
+   "title": "That the transport model's cross-name coupling IS the shared logical state of a connection is measured, not proved",
+   "why": "Card CT42-CELL-ROUTE (wave 39) routes the derived protocol cell from source and audits the DERIVATION (QCore.SocketFootprint: an accepted pair shares one cell, a fresh cell is no existing cell, the three unpaired arms refuse, an admitted accept takes an existing cell) and the T09 narrowing (QCore.SocketCellRoute). What no theorem states is the ground the cell rests on: that in qcore_core::std_socket's transport model an operation through one end of a completed connection is decided by state the other end established (a send's in-flight bound read off the peer's stream; a close refused while the peer's bytes sit unread; a send refused when the peer is closed). Those are the Rust checker's measured rules, documented in socket_footprint.rs and observed by the route's tests, and QCore.StdSocket carries no theorem about peer coupling. So the sentence `the two ends of one connection share one protocol cell` is proved as a fact about the derivation and observed as a fact about the transport model. DISCHARGE: a QCore.StdSocket theorem that a connected pair's admissible operations are mutually dependent (a send's admission depends on the peer's state, a close's on the peer's committed bytes), cited from the socket_footprint module doc in place of the measured sentence.",
+   "source": "docs/reports/ct42-cell-route/README.md section 3 and section 8",
+   "recorded_by": "CT42-CELL-ROUTE"
+  },
+  {
+   "id": "CT42-CONTROLS-NATIVE-UNRUN",
+   "title": "CT42's three accepted controls emit C that no runner compiles or executes",
+   "why": "Card CT42-CELL-ROUTE (wave 39) maps CT42 as a sequential-route refusal; its three accepted controls (listener_question.qcore, two_connections.qcore, datagram_pair.qcore) are admitted and emit C - the first byte-identical to the case's twin without the question, measured by compiler/tests/socket_cell_route.rs - but run_sequential_control_list only asserts that C exists, and no runner of ct_corpus.rs compiles or runs a sequential_reject control under the sanitizers. The route's native evidence is the published examples' (tcp_echo, udp_echo), not these programs'. The question erases from emission, so what an accepted control would add natively is a run of a program that spells one; nothing is claimed for it. DISCHARGE: a named workspace test that compiles and runs listener_question.qcore's emitted C under ASan/UBSan and compares its streams with the route's observation, or a sequential-reject control runner on the CT34-SANITIZED precedent, crediting the control's own file and never the case's.",
+   "source": "docs/reports/ct42-cell-route/README.md section 5 and section 8",
+   "recorded_by": "CT42-CELL-ROUTE"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

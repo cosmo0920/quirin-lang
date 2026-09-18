@@ -7,9 +7,10 @@
 
 use super::*;
 use crate::disjoint_footprint::{
-    DisjointnessJudgement, FootprintDiagnostic, check_disjoint_footprint_program,
+    DisjointnessJudgement, FootprintAssumption, FootprintDiagnostic,
+    check_disjoint_footprint_program,
 };
-use crate::socket_address::Endpoint;
+use crate::socket_address::{Endpoint, parse_socket_address};
 use crate::std_socket::{SocketKind, SocketOperand, SocketPayload};
 use crate::typed_errors::{Effect, EffectRow};
 
@@ -294,12 +295,236 @@ fn a_refused_program_derives_no_cells() {
     // rather than deriving cells from a structure that was never admitted.
     let mut statements = stream_program().statements;
     statements.retain(|statement| !matches!(statement, SocketStatement::Close { .. }));
-    let errors = derive_socket_cells(&program(statements))
+    let error = derive_socket_cells(&program(statements))
         .expect_err("a leaking program is refused, so nothing is derived");
+    let SocketCellError::Transport(errors) = &error else {
+        panic!("a refused program's error is the transport checker's own: {error:?}");
+    };
     assert!(
         errors
             .iter()
             .any(|error| matches!(error, SocketError::Custody { .. })),
         "the refusal is the unedited ownership checker's own: {errors:?}"
     );
+}
+
+// --- Card `CT42-CELL-ROUTE` (wave 39). ---
+
+/// The direction fix (`CT42-CELL-FALLBACK-ARM-DIRECTION`), shown non-vacuous
+/// on the accept arm: an `accept` with nothing queued, driven through the walk
+/// directly because the transport checker refuses it first. Before the fix
+/// this returned a singleton cell the unedited footprint checker judged
+/// **disjoint** from the connector — the admitting direction; now it refuses.
+#[test]
+fn an_unqueued_accept_is_refused_not_given_a_singleton_cell() {
+    let program = program(vec![
+        SocketStatement::Create {
+            name: "listener".to_owned(),
+            kind: SocketKind::Tcp,
+        },
+        SocketStatement::Create {
+            name: "client".to_owned(),
+            kind: SocketKind::Tcp,
+        },
+        // No `connect`: nothing is queued when the accept runs.
+        SocketStatement::Accept {
+            binding: "server".to_owned(),
+            listener: "listener".to_owned(),
+        },
+        SocketStatement::Return,
+    ]);
+    let resolution = resolve_addresses(&program);
+    let error = derive_cells_of_admitted(&program, &resolution)
+        .expect_err("an accept with nothing queued derives no cell");
+    assert_eq!(
+        error,
+        SocketCellError::UnpairedAccept {
+            event: 2,
+            binding: "server".to_owned(),
+            listener: "listener".to_owned(),
+        }
+    );
+    assert_eq!(error.code(), "Q085");
+    assert_eq!(error.event(), 2);
+}
+
+/// The same fix on the connect arm: a `connect` whose target the shared
+/// resolution cannot name. Before the fix the walk `continue`d, so the later
+/// accept's binding got a singleton cell judged disjoint from `client`.
+#[test]
+fn an_unresolved_connect_is_refused_not_skipped() {
+    let program = program(vec![
+        SocketStatement::Create {
+            name: "listener".to_owned(),
+            kind: SocketKind::Tcp,
+        },
+        SocketStatement::Create {
+            name: "client".to_owned(),
+            kind: SocketKind::Tcp,
+        },
+        // No bind of this program declared this address, so the resolution's
+        // outcome for this connect is `NoSuchEndpoint` — the external-peer fact
+        // the transport checker refuses at `Q085` — and names no listener.
+        SocketStatement::Connect {
+            client: "client".to_owned(),
+            listener: Endpoint::Address(
+                parse_socket_address("127.0.0.1:8080").expect("a well-formed address"),
+            ),
+        },
+        SocketStatement::Accept {
+            binding: "server".to_owned(),
+            listener: "listener".to_owned(),
+        },
+        SocketStatement::Return,
+    ]);
+    let resolution = resolve_addresses(&program);
+    let error = derive_cells_of_admitted(&program, &resolution)
+        .expect_err("a connect the resolution cannot target derives no cell");
+    assert_eq!(
+        error,
+        SocketCellError::UnpairedConnect {
+            event: 2,
+            client: "client".to_owned(),
+        }
+    );
+    assert_eq!(error.code(), "Q085");
+}
+
+/// The T09 edit (`CT42-CELL-DERIVED-PREMISE`): the projection is made of
+/// derived aliases, so the footprint certificate over it carries **no**
+/// `DeclaredProtocolCellIdentity`, while the same cells declared would.
+#[test]
+fn a_derived_projection_carries_no_declared_cell_identity_premise() {
+    let cells = derive_socket_cells(&stream_program()).expect("the stream program is admitted");
+    let derived = footprint_program(&cells);
+    assert!(
+        derived
+            .events
+            .iter()
+            .all(|event| matches!(event, FootprintEvent::DeriveDescriptorAlias { .. })),
+        "every projected alias is derived"
+    );
+    let certificate =
+        check_disjoint_footprint_program(&derived).expect("the projection is admitted");
+    assert!(
+        !certificate
+            .assumptions
+            .contains(&FootprintAssumption::DeclaredProtocolCellIdentity),
+        "a derived cell stamps no declared-identity premise: {:?}",
+        certificate.assumptions
+    );
+    // The control: the same cells *declared* carry the premise, so the
+    // absence above is the variant's doing and not the checker forgetting.
+    let declared = FootprintProgram {
+        layout_contracts: Vec::new(),
+        events: cells
+            .entries
+            .iter()
+            .map(|entry| FootprintEvent::DeclareDescriptorAlias {
+                handle: entry.handle,
+                descriptor: entry.descriptor,
+                cell: entry.cell,
+            })
+            .collect(),
+    };
+    let declared_certificate =
+        check_disjoint_footprint_program(&declared).expect("the declared twin is admitted");
+    assert!(
+        declared_certificate
+            .assumptions
+            .contains(&FootprintAssumption::DeclaredProtocolCellIdentity)
+    );
+    // And the two decide identically: same cells, same footprints.
+    assert_eq!(
+        certificate.protocol_cells,
+        declared_certificate.protocol_cells
+    );
+    assert_eq!(
+        certificate.derived_footprints,
+        declared_certificate.derived_footprints
+    );
+}
+
+/// The route, end to end at model level: the question over the two ends of
+/// one accepted connection is refused at `Q664`, attributed to the statement
+/// that asked it, and the message names both custodians.
+#[test]
+fn the_question_over_a_connected_pair_is_refused_at_the_statement() {
+    let mut statements = stream_program().statements;
+    // Ask right after the accept, before the transfer.
+    statements.insert(
+        6,
+        SocketStatement::Disjoint {
+            left: "client".to_owned(),
+            right: "server".to_owned(),
+        },
+    );
+    let errors = check_socket_cells(&program(statements))
+        .expect_err("two ends of one connection are never disjoint");
+    assert_eq!(errors.len(), 1);
+    let error = &errors[0];
+    assert_eq!(error.code(), "Q664");
+    assert_eq!(error.event(), 6);
+    assert!(error.is_footprint_refusal());
+    let SocketCellError::Footprint {
+        left,
+        right,
+        diagnostic,
+        ..
+    } = error
+    else {
+        panic!("the refusal is the footprint checker's own: {error:?}");
+    };
+    assert_eq!((left.as_str(), right.as_str()), ("client", "server"));
+    assert!(matches!(
+        diagnostic,
+        FootprintDiagnostic::SharedProtocolCell { .. }
+    ));
+    let message = error.to_string();
+    assert!(
+        message.contains("`client`") && message.contains("`server`"),
+        "{message}"
+    );
+}
+
+/// The admitted side: a question over a listener and either end is decided
+/// disjoint, published as a judgement, and the cell certificate rechecks.
+#[test]
+fn the_question_over_a_listener_and_an_end_is_admitted_and_rechecks() {
+    let mut statements = stream_program().statements;
+    statements.insert(
+        6,
+        SocketStatement::Disjoint {
+            left: "client".to_owned(),
+            right: "listener".to_owned(),
+        },
+    );
+    let program = program(statements);
+    let certificate = check_socket_cells(&program).expect("a listener shares no connection cell");
+    assert_eq!(certificate.questions.len(), 1);
+    assert_eq!(certificate.questions[0].event, 6);
+    assert_eq!(certificate.footprint.admitted_disjointness.len(), 1);
+    assert!(
+        !certificate
+            .footprint
+            .assumptions
+            .contains(&FootprintAssumption::DeclaredProtocolCellIdentity)
+    );
+    recheck_socket_cell_certificate(&program, &certificate).expect("the certificate rederives");
+    // A certificate whose cells were tampered with is refused by the recheck.
+    let mut tampered = certificate.clone();
+    tampered.cells.entries[0].cell += 100;
+    assert_eq!(
+        recheck_socket_cell_certificate(&program, &tampered),
+        Err(SocketCellRecheckFailure::Cells)
+    );
+}
+
+/// A program with no question still derives and publishes its cells.
+#[test]
+fn a_program_with_no_question_still_publishes_its_cells() {
+    let certificate = check_socket_cells(&stream_program()).expect("admitted");
+    assert!(certificate.questions.is_empty());
+    assert_eq!(certificate.cells.connections.len(), 1);
+    assert_eq!(certificate.footprint.protocol_cells.len(), 3);
 }

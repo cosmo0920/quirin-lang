@@ -1,0 +1,27 @@
+// CT42 reject control: the question names something that is not a socket.
+// `count` is a check-time-constant integer, so the transport checker refuses
+// the position at `Q081` — a custody position naming no socket — and the
+// cell question is never asked.
+import std.socket;
+
+fn main() -> unit effects { io, alloc } {
+    let listener = tcp;
+    bind listener;
+    listen listener;
+
+    let client = tcp;
+    connect client listener;
+    let server = accept listener;
+    let count = 5;
+
+    // Refused: `count` is not a socket.
+    disjoint count server;
+
+    send client [81, 67, 111, 114, 101];
+    recv server 5;
+
+    close server;
+    close client;
+    close listener;
+    return;
+}

@@ -129,7 +129,7 @@ const MAPPED_CASES: &[&str] = &[
     "CT01", "CT02", "CT03", "CT04", "CT05", "CT06", "CT07", "CT08", "CT09", "CT11", "CT12", "CT13",
     "CT14", "CT15", "CT16", "CT17", "CT18", "CT19", "CT20", "CT21", "CT22", "CT23", "CT25", "CT26",
     "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35", "CT36", "CT37", "CT38",
-    "CT39", "CT40", "CT43", "CT44", "CT45", "CT46", "CT47", "CT48", "CT49", "CT50",
+    "CT39", "CT40", "CT42", "CT43", "CT44", "CT45", "CT46", "CT47", "CT48", "CT49", "CT50",
 ];
 /// The `legacy_c` route (card CT-CTWIN, extended by the wave-17 CT lane). These
 /// three cases name C constructs that
@@ -194,7 +194,13 @@ const SOURCE_REJECT_CASES: &[&str] = &["CT04", "CT05", "CT18", "CT44", "CT47"];
 /// the alias blocks the reconstruction of exclusive authority; CT06 measures
 /// that the alias's identity survives being copied into a differently named
 /// variable.
-const SEQUENTIAL_REJECT_CASES: &[&str] = &["CT06", "CT08", "CT11", "CT21"];
+///
+/// CT42 joins them in wave 39 (card `CT42-CELL-ROUTE`): a `source.socket.v1`
+/// program asking `disjoint client server;` of the two ends of one accepted
+/// connection, refused by the **unedited** `DisjointFootprintsV1` checker as
+/// `SharedProtocolCell` (`Q664`) — the socket route is a non-concurrent source
+/// route, which is what `sequential` names in this harness.
+const SEQUENTIAL_REJECT_CASES: &[&str] = &["CT06", "CT08", "CT11", "CT21", "CT42"];
 /// `sequential`-route **accept** cases whose evidence is a sanitized native run
 /// of the case's own emitted C compared per stream with the route's checked
 /// observation (card `CT-WIRE-LANE-2`, wave 28). CT09
@@ -3813,7 +3819,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 24] = [
+const EVIDENCE_FILES: [&str; 25] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3855,6 +3861,11 @@ const EVIDENCE_FILES: [&str; 24] = [
     // 21; the ct-lane-5 record keeps its bytes, and every other stage row is
     // carried from it unchanged.
     "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
+    // Card `CT42-CELL-ROUTE` (wave 39): CT42 mapped on the sequential route,
+    // the socket arm the wave-35 lane measured unreachable from source now
+    // routed through `disjoint NAME NAME;`. It retires the ct-ctwin-lane
+    // record's CT42 bucket row by declaration; that record keeps its bytes.
+    "docs/reports/ct42-cell-route/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
@@ -5516,6 +5527,9 @@ fn execution_profile(label: &str) -> qcore_compiler::SourceExecutionProfile {
         "CheckedMutexGuardsV1" => Profile::CheckedMutexGuardsV1,
         "StandardBufferV1" => Profile::StandardBufferV1,
         "StandardStringV1" => Profile::StandardStringV1,
+        // Card `CT42-CELL-ROUTE` (wave 39): CT42's accepted controls are
+        // `source.socket.v1` programs asking an admitted `disjoint` question.
+        "StandardSocketV1" => Profile::StandardSocketV1,
         "ComposedStdIoTasksV1" => Profile::ComposedStdIoTasksV1,
         "ComposedEpochTasksV1" => Profile::ComposedEpochTasksV1,
         other => panic!("unknown execution profile `{other}`"),
