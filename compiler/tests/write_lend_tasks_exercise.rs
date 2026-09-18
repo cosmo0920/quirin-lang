@@ -16,12 +16,16 @@
 //! UndefinedBehaviorSanitizer and LeakSanitizer, with the native stdout
 //! compared byte for byte against the reference execution's own rendering.
 //!
-//! **ThreadSanitizer is not part of that evidence**, and the reason is
-//! measured rather than assumed: TSan cannot run *any* program this route
-//! emits on this toolchain, the lease-free companion included, so there is no
-//! TSan row to report. See
-//! `thread_sanitizer_cannot_run_this_routes_programs_lease_or_not` and the
-//! residual `TASK-ROUTE-TSAN-SEGV`.
+//! **ThreadSanitizer was not part of that evidence when this file was written**,
+//! and the reason was measured rather than assumed: under the published
+//! `thrd_create` TSan cannot run *any* program this route emits on this
+//! toolchain, the lease-free companion included. Card `TASK-ROUTE-TSAN`
+//! (wave 37) found why — the sanitizer runtime has no `thrd_create`
+//! interceptor — and bound the two thread primitives to pthread through
+//! `-include`, changing no emitted byte; card `TSAN-ROWS-2` (wave 39) made
+//! this file's own TSan row assert both halves of that boundary, and reads the
+//! flagship from the one fixture file `task_route_tsan.rs` reads too. See
+//! `thread_sanitizer_cannot_run_this_routes_programs_lease_or_not`.
 
 use qcore_compiler::{CompileOptions, CompiledModule, SourceFile, compile_files};
 use qcore_core::task_execution::{
@@ -29,6 +33,11 @@ use qcore_core::task_execution::{
 };
 use std::collections::BTreeMap;
 use std::process::Command;
+
+#[path = "../../tests/support/thread_sanitizer.rs"]
+mod thread_sanitizer;
+#[path = "../../tests/support/diagnostic_sink.rs"]
+mod diagnostic_sink;
 
 /// The flagship. One allocation whose payload starts at `0`, two children with
 /// disjoint write leases over the payload's two-byte halves, **each writing a
@@ -42,40 +51,12 @@ use std::process::Command;
 /// index `i` and read back at index `i` is the same byte whatever the order of
 /// the four. See `WRITE-LEND-EXERCISE-BYTE-ORDER` in the card's report for the
 /// programs this does *not* cover.
-const DISJOINT_EXERCISE: &str = "import std.concurrency; import std.logger; concurrency checked;
-fn writer(half: lend<Buffer>) -> i32 {
-  let done = qcore_buffer_write(half, 0, 9);
-  return 1;
-}
-fn main() -> i32 effects { io, alloc, throws<AllocError>, spawn, join, may_block } {
-  log_level trace;
-  let buffer = qcore_buffer_new(0)?;
-  thread scope s {
-    match spawn s writer(lend buffer 0..2) {
-      Result::Ok { value: first } => {
-        match spawn s writer(lend buffer 2..4) {
-          Result::Ok { value: second } => {
-            let a = join move first?;
-            let b = join move second?;
-            let byte0 = qcore_buffer_read(buffer, 0);
-            let byte2 = qcore_buffer_read(buffer, 2);
-            drop buffer;
-            return byte2;
-          }
-          Result::Err { error: refused } => {
-            let a = join move first?;
-            drop buffer;
-            return a;
-          }
-        }
-      }
-      Result::Err { error: failure } => {
-        drop buffer;
-        return 0;
-      }
-    }
-  }
-}";
+/// Since card `TSAN-ROWS-2` (wave 39) the program is read from **one fixture
+/// file**, which `compiler/tests/task_route_tsan.rs` reads too — there is no
+/// second literal to drift, and CT07's case is pinned as this program without
+/// its logger by `ct07s_case_is_the_flagship_without_its_logger` there.
+const DISJOINT_EXERCISE: &str =
+    include_str!("fixtures/write_lend_tasks_exercise/disjoint_exercise.qcore");
 
 /// The flagship without its `log_level`, so it stays on the plain scoped-task
 /// route and its reference run is an ordinary `TaskExecutionObservation` — the
@@ -207,16 +188,25 @@ fn assert_refused(source: &str, fragment: &str) -> String {
 /// The reference execution's two stream projections, on `thread_examples.rs`'
 /// shape.
 fn reference(module: &CompiledModule) -> (String, String) {
-    let composed = module.checked.as_composed_tasks().unwrap();
-    let observation = execute_with_source_lines(
-        composed.tasks(),
-        &TaskExecutionScript {
-            spawn_outcomes: vec![true, true],
-            allocation_outcomes: vec![true],
-        },
-        &BTreeMap::new(),
-        composed.sites(),
-    )
+    let script = TaskExecutionScript {
+        spawn_outcomes: vec![true, true],
+        allocation_outcomes: vec![true],
+    };
+    // A module with no source lines (card `TSAN-ROWS-2` compares the
+    // lease-free companion too) travels the task route's own entry point,
+    // the empty site list, and produces a byte-identical observation. It
+    // takes the default script — missing decisions select success — because
+    // an unused supplied decision rejects, and the companion spawns once and
+    // allocates nothing.
+    let observation = if let Some(composed) = module.checked.as_composed_tasks() {
+        execute_with_source_lines(composed.tasks(), &script, &BTreeMap::new(), composed.sites())
+    } else {
+        let tasks = module
+            .checked
+            .as_scoped_tasks()
+            .expect("a subject of this file takes the scoped or the composed task route");
+        execute_with_source_lines(tasks, &TaskExecutionScript::default(), &BTreeMap::new(), &[])
+    }
     .unwrap();
     observation.projections()
 }
@@ -592,12 +582,29 @@ fn run_native(
     sanitizers: &str,
     mutate: impl Fn(String) -> String,
 ) -> Result<Native, String> {
+    run_native_threads(tag, module, sanitizers, false, mutate)
+}
+
+/// [`run_native`], with `bind_threads` selecting whether the pthread binding
+/// of `tests/support/thread_sanitizer.rs` is prepended through `-include`
+/// (card `TSAN-ROWS-2`). `false` is the published `thrd_create` build every
+/// other row here runs; `true` is the build ThreadSanitizer can run, and it
+/// changes no emitted byte.
+fn run_native_threads(
+    tag: &str,
+    module: &CompiledModule,
+    sanitizers: &str,
+    bind_threads: bool,
+    mutate: impl Fn(String) -> String,
+) -> Result<Native, String> {
     let directory =
         std::env::temp_dir().join(format!("qcore-wlt-exercise-{tag}-{}", std::process::id()));
     std::fs::create_dir_all(&directory).unwrap();
     let c = directory.join("module.c");
     let executable = directory.join("module");
     std::fs::write(&c, mutate(module.c_source.as_ref().unwrap().clone())).unwrap();
+    let binding = directory.join("bind.h");
+    std::fs::write(&binding, thread_sanitizer::PTHREAD_BINDING).unwrap();
     let track = directory.join("track.h");
     std::fs::write(
         &track,
@@ -629,6 +636,9 @@ static void lease_free(void *p) { fprintf(stderr, "LEASE_FREE %p\n", p); free(p)
             env!("CARGO_MANIFEST_DIR"),
             "/tests/fixtures/apple-threads"
         ));
+    }
+    if bind_threads {
+        compiler.arg("-include").arg(&binding);
     }
     let built = compiler
         .arg("-include")
@@ -730,32 +740,92 @@ fn two_threads_write_disjoint_bytes_of_one_object_sanitized() {
 /// reports what this row wanted: no race between the two disjoint byte
 /// writers, and a reported race the moment they are forced onto one byte.
 /// `TASK-ROUTE-TSAN-SEGV` is retired there.
+///
+/// **Repaired by card `TSAN-ROWS-2` (wave 39,
+/// `WLT-EXERCISE-TSAN-TEST-SILENT-ARMS`).** The row's two builds now each
+/// assert the boundary they are for. **Unbound** — the published
+/// `thrd_create`, this file's own executable — both programs must die at the
+/// `0x18` shape wave 37 pins (`SEGV on unknown address 0x000000000018`), not
+/// at any SEGV; a program that runs unbound is the day the interceptor gap
+/// closed and `TASK-ROUTE-TSAN-PTHREAD-BINDING`'s discharge is due, and the
+/// row says so by going red rather than passing silently, on either
+/// asymmetry or on both running. **Bound** — the pthread binding through
+/// `-include`, no emitted byte changed — both programs must run, with stdout
+/// byte-identical to the reference rendering. Under `halt_on_error=1` a
+/// reported race is a non-zero exit, which `run_native_threads` returns as
+/// `Err`, so the bound `Ok` **is** the race-free claim; the stderr check
+/// beside it is stated as the redundancy it is rather than as the assertion.
 #[cfg(target_os = "linux")]
 #[test]
 fn thread_sanitizer_cannot_run_this_routes_programs_lease_or_not() {
-    let exercised = run_native("tsan", &compiled(DISJOINT_EXERCISE), "thread", |c| c);
-    let lease_free = run_native("tsan-plain", &compiled(LEASE_FREE_WORKERS), "thread", |c| c);
+    const UNREGISTERED_THREAD_FAULT: &str = "SEGV on unknown address 0x000000000018";
+    let exercised_module = compiled(DISJOINT_EXERCISE);
+    let lease_free_module = compiled(LEASE_FREE_WORKERS);
+
+    // Unbound: the published thread primitive, and TSan cannot run either
+    // program — at the one fault, not at any fault.
+    let exercised = run_native_threads("tsan", &exercised_module, "thread", false, |c| c);
+    let lease_free =
+        run_native_threads("tsan-plain", &lease_free_module, "thread", false, |c| c);
     match (exercised, lease_free) {
-        // The measured state of this toolchain: both die, so the failure is
-        // the route's and the exercise adds nothing to it.
-        (Err(a), Err(b)) => assert!(
-            a.contains("SEGV") && b.contains("SEGV"),
-            "expected the recorded TASK-ROUTE-TSAN-SEGV shape from both:\n{a}\n---\n{b}"
+        (Err(a), Err(b)) => {
+            assert!(
+                a.contains(UNREGISTERED_THREAD_FAULT),
+                "the exercised program should die unbound at the 0x18 shape:\n{a}"
+            );
+            assert!(
+                b.contains(UNREGISTERED_THREAD_FAULT),
+                "the lease-free program should die unbound at the 0x18 shape:\n{b}"
+            );
+        }
+        (Ok(_), Ok(_)) => panic!(
+            "both programs ran unbound under ThreadSanitizer: the thrd_create interceptor gap \
+             has closed on this toolchain, so TASK-ROUTE-TSAN-PTHREAD-BINDING's discharge is \
+             due — re-run task_route_tsan.rs with bind_threads=false and retire the binding"
         ),
-        // A future toolchain that runs the route under TSan must run the
-        // exercised program clean: a race between two disjoint byte writers
-        // would be a finding about this card.
-        (Ok(native), Ok(_)) => assert!(
-            !native.stderr.contains("data race"),
-            "ThreadSanitizer reported a race between two disjoint byte writers:\n{}",
-            native.stderr
-        ),
-        // The one asymmetry that would be about this card.
         (Err(exercised), Ok(_)) => panic!(
-            "TSan runs this route but refuses the exercised program — that would be a \
-             finding about the byte writes:\n{exercised}"
+            "TSan runs the lease-free program unbound but not the exercised one — an asymmetry \
+             that would be about the byte writes:\n{exercised}"
         ),
-        (Ok(_), Err(_)) => {}
+        (Ok(_), Err(lease_free)) => panic!(
+            "TSan runs the exercised program unbound but not the lease-free one — an asymmetry \
+             that would be about the route's plain spawn/join:\n{lease_free}"
+        ),
+    }
+
+    // Bound: the build ThreadSanitizer can run, and both programs are
+    // race-free with the reference stdout. The lease-free companion declares
+    // no `log_level` and prints nothing at its quiet default, so it is
+    // compiled inside the CT harness's own stdout-sink wrapper — the identical
+    // call `ct_corpus.rs` makes — with the emitted bytes unchanged inside it.
+    let as_emitted = |c: String| c;
+    let in_sink = |c: String| {
+        let wrapped = diagnostic_sink::instrument(&c);
+        assert!(wrapped.contains(&c));
+        wrapped
+    };
+    let bound: [(&str, &CompiledModule, &dyn Fn(String) -> String); 2] = [
+        ("tsan-bound", &exercised_module, &as_emitted),
+        ("tsan-bound-plain", &lease_free_module, &in_sink),
+    ];
+    for (name, module, prepare) in bound {
+        let native = run_native_threads(name, module, "thread", true, prepare).unwrap_or_else(
+            |failure| {
+                panic!("{name}: the bound build must run race-free under ThreadSanitizer:\n{failure}")
+            },
+        );
+        // Redundant with the `Ok` above under `halt_on_error=1`, and stated
+        // as such: a race would already have been a non-zero exit.
+        assert!(
+            !native.stderr.contains("ThreadSanitizer:"),
+            "{name}: {}",
+            native.stderr
+        );
+        let (out, _) = reference(module);
+        assert_eq!(
+            native.stdout, out,
+            "{name}: native stdout under ThreadSanitizer and the reference rendering disagree"
+        );
     }
 }
 
