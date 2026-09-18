@@ -158,7 +158,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**171** entries after WRITE-LEND-TASKS-EXERCISE (wave 36, +7 −1; 165 after MUTEX-SHARE-CROSS-EMISSION; 161 after JOINED-PROVENANCE-CALL-FRAMES; 159 after STABILITY-REEVAL #2; 128 after CARD-SCOPE-GUARD; 121 at the wave-35 close), which registered **28** names — 27 of the
+**174** entries after TASK-ROUTE-TSAN (wave 37, +4 −1, the retirement being `TASK-ROUTE-TSAN-SEGV`, discharged by identifying the fault as ThreadSanitizer's missing `thrd_create` interceptor rather than anything QCore emits; 171 after WRITE-LEND-TASKS-EXERCISE (wave 36, +7 −1); 165 after MUTEX-SHARE-CROSS-EMISSION; 161 after JOINED-PROVENANCE-CALL-FRAMES; 159 after STABILITY-REEVAL #2; 128 after CARD-SCOPE-GUARD; 121 at the wave-35 close), which registered **28** names — 27 of the
 62 its widened sweep returned, plus `DOCS-COMPACT-4-TABLE-SYNC` — and retired
 **10** as discharged by named cards; the section is *carried*,
 `dimensions.named_followups` is
