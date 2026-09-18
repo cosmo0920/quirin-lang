@@ -165,7 +165,11 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**228** entries after the wave-38 close (229 after `STABILITY-REEVAL-3`, 215
+**233** entries after `AGGREGATE-OWNED-FIELD` (wave 39: six registered —
+`AGGREGATE-VIEW-FIELD`, `AGGREGATE-NESTED`, `AGGREGATE-TASK-CAPTURE`,
+`OWNED-FIELD-LEND-WINDOW`, `OWNED-FIELD-LOOP-BODY`,
+`OWNED-FIELD-SEQUENTIAL-UNREACHED` — and one retired, `AGGREGATE-OWNED-FIELD`
+itself; 228 after the wave-38 close, 229 after `STABILITY-REEVAL-3`, 215
 at the wave-37 close; the close registered two and retired three, each named
 in `docs/reports/wave38-close/README.md`). Which card registered or retired which name,
 and each wave's chain, is the increment records' business — read the wave

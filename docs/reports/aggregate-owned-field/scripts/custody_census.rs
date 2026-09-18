@@ -83,16 +83,17 @@ fn main() {
                         "{:?}",
                         qcore_core::std_socket::custody_operations(&checked.lowered.program)
                     )),
+                    // The sequential route's driver retains the checked
+                    // functions' final states, not the operation lists it
+                    // handed the checker; its list is built from plain-name
+                    // operations only (no arm of `whole_program.rs` was
+                    // changed but one exhaustive match), so the census
+                    // compares that route by its C and observation and says
+                    // so rather than rendering a state whose `Debug` changed
+                    // shape with the binding key.
                     CheckedSourceModule::Sequential(checked) => Some(format!(
-                        "{:?}",
-                        checked
-                            .functions
-                            .iter()
-                            .map(|function| (
-                                function.name.clone(),
-                                function.semantics.ownership_operations.clone()
-                            ))
-                            .collect::<BTreeMap<_, _>>()
+                        "(sequential: {} checked functions; operation list not retained by the driver)",
+                        checked.functions.len()
                     )),
                     _ => None,
                 };
