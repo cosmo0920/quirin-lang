@@ -83,7 +83,7 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `crates/qcore-frontend/` | L1 front end: `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration and source lowering. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas |
 | `crates/qcore-schemas/` | L0 published schema surface (Rust API **14.0.0**): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records, `reason` category vocabulary. Serde types only; a test forbids workspace dependencies |
-| `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization. Its six load-bearing modules, all under `crates/qcore-c-gateway/src/`: `legacy_c.rs` (generic unrestricted-C checker — Clang gateway, CFG, resource abstract interpretation, certificate recheck; contracts enter via `ResourceContracts`), `legacy_summary.rs` (W4 interprocedural custody summary inference: SCC-ordered derivation, validation by re-analysis, declared-contract precedence — constraint 4), `typed_source.rs` (opaque typed C path import and source def/use), and, added by the waves their constraints name, `legacy_location.rs` (wave 27, the presentation-only preprocessed → original `file:line` map — constraint 12a), `legacy_neutral.rs` (C03-NFR, the neutral-element route for undeclared recursive components — constraint 4) and `legacy_joined_provenance.rs` (wave 31, the conditional-provenance pre-pass, extended to cyclic CFGs by a greatest fixed point at wave 35 — constraint 10b) |
+| `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization. Of the 36 modules under `crates/qcore-c-gateway/src/`, **ten** are named by a standing constraint: `legacy_c.rs` (generic unrestricted-C checker — Clang gateway, CFG, resource abstract interpretation, certificate recheck; contracts enter via `ResourceContracts`), `legacy_summary.rs` (W4 interprocedural custody summary inference: SCC-ordered derivation, validation by re-analysis, declared-contract precedence — constraint 4), `typed_source.rs` (opaque typed C path import and source def/use), `legacy_location.rs` (wave 27, the presentation-only preprocessed → original `file:line` map — constraint 12a), `legacy_neutral.rs` (C03-NFR, the neutral-element route for undeclared recursive components — constraint 4), `legacy_joined_provenance.rs` (wave 31, the conditional-provenance pre-pass, extended to cyclic CFGs by a greatest fixed point at wave 35 — constraint 10b) with `provenance_rounds.rs` (wave 37, that pre-pass's proved round bound — constraint 10b), `legacy_declared_abi.rs` and `legacy_declared_modes.rs` (the two declared-contract-versus-C readers constraint 8 forbids moving), and `legacy_return_call.rs` (wave 34, the modeled call in return position — constraint 5b). This list is derived from the constraints, not from the directory: a module the constraints do not name is not thereby unimportant |
 | `crates/qcore-verifier-host/` | L2 generic registry (0.4.0), source-scope resolution, bounded process transport, execution profiles, v1/v2 firewall and composition; depends only on frontend/schemas workspace crates |
 | `crates/qcore-verification/` | Trusted adapter (0.4.0): explicit-registry source driver, generic model/source imports, core-derived obligations, lifecycle/observation witness replay and scope dispatch; depends on core/frontend/contract/schemas/gateway/host, never providers |
 | `crates/qcore-audit/` | L3 configured audit driver: compile-database ingestion, compile-task identity, source selection, per-unit projection and reports over W2 profiles/W1 contracts. Links no provider module |
@@ -91,7 +91,7 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `compiler/src/` facades | `compiler/src/verifier_plugin.rs` is the compatibility facade for the host and first-party adapters; `compiler/src/verifier_plugins/{libevent,chunkio}/` are the in-process first-party providers (Libevent/Monkey, ChunkIO); `compiler/src/external_{integration,source}.rs` are compatibility facades plus Monkey-specific composition |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
 | `providers/` | Separate six-member Cargo workspace (five `qcore-provider-*` packages plus the `conformance` harness), excluded from the core workspace. Artifact crates depend only on `qcore-schemas` and serialization; `providers/package.py` builds, verifies and archives the installable packages |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (**76 modules**); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (**88 modules** — the ledger row below is the one current figure); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `Audit*.lean` print axiom surfaces. The gateway-backing modules are **abstract rule theorems, not extraction of the Rust analyzer** and not whole-C correctness — every such module says so in its own docstring, no extraction, refinement or simulation theorem exists anywhere in `proof/`, and constraint 28 carries the two premises this leaves standing (`GATEWAY-LEAN-ABSTRACT-NOT-EXTRACTION`) |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) — one directory per card |
@@ -712,266 +712,81 @@ pointer is the card that established it; read it before deviating.
     `core-concurrency-prelude`.
 14. New keywords are a recorded compatibility hazard: every candidate is
     **censused against every fixture** before it is reserved, and the census is
-    run rather than assumed. The ledger, in card order:
-    * **Reserving cards.** T03-F **+5**; T08-EPOCH-SRC **+8** (with `work`
-      renamed `effort` rather than editing the pinned golden surface);
-      `source.extern-call.v1` **+1** (`succeeds`); STD-MODULES **+8** (`print`,
-      `log`, `flush`, `dec`, `hex`, `info`, `warn`, `fatal`); the
-      quiet-emission amendment **+2** (`trace`, `debug`) plus the explicit
-      system-trace `log_level` declaration, after a full fixture census. The
-      already-reserved `error` keyword is accepted contextually as a logger
-      level **only after `log`**; it was not removed from the global keyword set.
-    * `QUIRIN-SOCKET-V1` **+10** — `tcp`, `udp`, `bind`, `listen`, `connect`,
-      `accept`, `send`, `recv`, `sendto`, `recvfrom` — each a clause word in a
-      statement and never a reference, each measured load-bearing, all ten
-      census-clean across every `.qcore`/`.qc` fixture (412 files) and every
-      Rust string literal (41,529). `let`, `close` and `return` are reused
-      rather than respelled, which is why the release is `close NAME;`. Two
-      candidate spellings were **rejected by the census and must stay
-      rejected**: `stream` (a contract `extern fn` parameter name, shielded
-      only by the following `:`) and `socket` (it would name a transport the
-      route deliberately makes explicit at creation).
-    * `LOOP-V1` **+1** (`for`, census-clean at zero code occurrences across all
-      418 `.qcore`/`.qc` files) and **no new token**, `..` being two existing
-      `Dot` tokens. **`in` is deliberately not reserved**: the census found it
-      as a genuine reference inside the pinned contract corpus
-      (`ensures normal resource_borrowed(in);`), exactly the shape that kept
-      `len` out of the global list, so it takes that card's narrow contextual
-      rule instead. Do not promote it to the global set.
-    * `LOOP-UNROLL-BUDGET` **+0 words — a first for this family — and +1
-      token**, `#`, promoted from a lexer error on `OR-AND-LOWERING`'s
-      precedent for `^` and census-clean at **zero** code occurrences across
-      422 `.qcore`/`.qc` files. It reserves nothing because a `[| … |]` clause
-      list contributes **no referenced name** —
-      `frontend::lexical_references` returns the empty set for the attribute
-      statement — so `unroll` and `where` stay contextual and
-      `let unroll = 1;` is still a program. That matters most for `where`,
-      which the census found **eight** times in code, every one inside a
-      quantitative index type whose readable alias is spelled
-      `quant[| n where n := 5 |]` — the very brackets this attribute borrows.
-      The disambiguation therefore takes **two** tokens (a statement head is
-      `[|` *followed by* `#`), the alias's continued behaviour is
-      **re-measured** rather than asserted, and `#` is still not an identifier
-      character, so the scoped-name premise behind `c#0` survives.
-    * `NATIVE-LIBRARY-SOURCE-BINDING` **+0**: `extern library NAME;` reuses
-      `extern` and `library`, claiming only the two-word sequence at
-      declaration position, which was a `Q000` parse failure before. Its census
-      found the two whole-token-stream route selectors —
-      `module_imports::concurrency_span` and `source_tasks::has_source_tasks` —
-      and **excluded binding spans from both**, so a library named `spawn`,
-      `join`, `qcore_buffer_new`, `qcore_buffer_read`, `qcore_buffer_write` or
-      `qcore_error_payload` cannot select a route from its own spelling. **Do
-      not remove that exclusion.**
-    * `SOCKET-INET-ADDRESSES` **+0, and no lexer rule changed**: a declared
-      address (`bind S 127.0.0.1:8080;`, `connect C [::1]:8080;`) is read back
-      out of the tokens the existing lexer already produces — a dotted quad is
-      `Float Dot Float` because `127.0` is a float spelling, `::` is the
-      existing atomic `ColonColon`, and `[|` still wins over `[` by longest
-      match, so the `[| |]` and `..` golden surfaces are untouched. An address
-      position is told from a name position by the one fact that **every
-      address of this route spells a port**, so its token run carries a `:`;
-      the run's tokens must be lexically adjacent. Its one name-resolution
-      exclusion is **the address reader itself** —
-      `source_socket::address_host_span` returns the token range of a
-      statement's address *host*, deliberately leaving the **port** outside it
-      so a port name stays a genuine reference — and the census measures it
-      claiming a span in **no** `.qcore`/`.qc` file of this repository outside
-      the card's own two examples.
-    * `AGGREGATES-V1` **+0 words and +0 tokens**, and its census is the one that
-      **rejected a spelling on archived evidence**. The head is the
-      already-reserved `type`, claimed contextually at `type NAME {` — censused
-      at **zero** bare occurrences across 435 `.qcore`/`.qc` files (all eleven
-      `type NAME {` in the tree are `resource type`, which an earlier branch
-      claims) and zero in Rust string literals, so the shape was a parse failure
-      before the card, the `extern library NAME;` precedent. **`record` is
-      rejected and must stay rejected**:
-      `docs/reports/remaining-v07/probes/d02_boundary_record.qcore` is the single
-      line `record R { }` and **two archived reports pin it to `Q000`**, so
-      claiming the word at declaration position would make that file parse and
-      falsify a frozen archive (constraint 21) — the `buffer` → `bytes` and
-      `work` → `effort` shape, the syntax renamed rather than the pin edited.
-      `struct` is census-clean and was still not taken, on the ground that the
-      language already has a declaration head for a named type. The card also ran
-      the census in the **other** direction — which *existing* reserved words does
-      the construct put in a new position — and found the six whole-token-stream
-      route-selector words: a record naming `spawn`, `join` or one of the four
-      buffer/payload intrinsics refuses `Q015` declared and `Q000` constructed.
-      Both are fail-closed, so `NATIVE-LIBRARY-SOURCE-BINDING`'s span exclusion
-      was measured and **deliberately not copied** — it would retire the `Q015`
-      half and leave the `Q000` half, buying a type that declares and cannot be
-      constructed (`AGGREGATE-SELECTOR-WORDS`).
-    * **+0, exact rather than statistical:** `QUANT-REGION-SOURCE`. Every word of
-      `error region … catch (…) quant open … as …` and `discharge` is reserved
-      already (Cycle 6; `credit`/`effort` from `T08-EPOCH-SRC`) and the shape
-      already parsed, so the reservation question does not arise: before the card
-      the statement collected `R` as a referenced name and refused at `Q013`,
-      measured, so **no program in this repository could contain it at all**. The
-      `credit`/`effort` seam with the epoch route is one-way and was probed in
-      both directions rather than argued.
-    * **+0, censused not assumed:** EXTERN-MODES (`move NAME` spells all four
-      departing modes and the declaration decides which ran),
-      `SOCKET-EVENT-COMPOSE`, `STRING-CONCAT`, `HTTP-V1-COMPUTED-LENGTH`,
-      `CT-WIRE-LANE`; and in wave 27 `CT07-SLICE-PERMISSIONS` (`borrow_utf8` has
-      been contextual since `STRING-CONCAT`, `,` and `)` are existing tokens, and
-      **no `.qcore`/`.qc` file on disk spells the new three-argument arity**, so
-      no shipped program's meaning changes — with **`part` recorded as colliding**
-      in binding position in a shipped fixture, and `lend`, `range`, `low`,
-      `high`, `sub`, `window` recorded free for a later card) and
-      `CT23-CREDIT-ERROR-PATH` (whose census is **vacuous by construction**:
-      `error`, `move`, `drop`, `close` and `effort` are all already reserved, so
-      the `error(…)` row clause can stop no existing source parsing); and in
-      waves 28–29 `REGION-CREDIT-JOINS` and `REGION-JOINS-DUTIES`, vacuous by
-      construction on the same ground (every word of the composed form already
-      reserved and the shape previously refused, measured not assumed).
-    * `SLICE-PERMISSIONS-WRITE-LEND` **+0 words, one contextual clause word**:
-      `lend` — `let lend = 5; print dec lend;` is still a program (pinned),
-      route selection claims only the `lend(` call shape, and the read card's
-      census had already recorded the word free and reserved it for this card
-      (census archived with reproduction commands).
-    * `WRITE-LEND-TASKS` **+0 words, one contextual clause word reused**: the
-      wave-29 `lend` is recognised in two further positions that refused before
-      the card — immediately before `<Buffer>` in a task parameter type, and as
-      a capture's first word inside a spawn's argument list — so `lend` stays
-      contextual and no global reservation is taken.
-    * `WRITE-LEND-TASKS-EXERCISE` (wave 36) **+0 words and +0 tokens**, and the
-      census is a **pre-card** measurement taken at base `0a5c2ecc` rather than
-      a claim checked afterwards. The worker-side byte access takes **no new
-      word at all**: `qcore_buffer_write` and `qcore_buffer_read` are the
-      existing intrinsics, and the **arity** selects the lease form on the
-      `borrow_utf8` precedent (constraint 15h's own mechanism), censused at
-      **zero** occurrences of either new arity across **514** `.qcore`/`.qc`
-      fixtures, so no shipped program's meaning changes.
-    * `MUTEX-SHARE-CROSS` **+0 reserved words, +0 tokens, +0 name-resolution
-      exclusions** — the cleanest outcome in this ledger, and the card asked
-      for this row three waves before it was written
-      (`MUTEX-SHARE-CROSS-INTEGRATOR-LIST-UNLANDED`). Both clause words of
-      `thread scope NAME share PLACE under MUTEX { … }` were **already
-      globally reserved** — `share` by the scoped-task route's
-      `read PLACE share N`, `under` by card `T03-GUARD-JOIN` — so the card
-      claims only a **position**, the fourth token of a child-task header,
-      which was a parse failure before it. Censused over **490** `.qcore`/`.qc`
-      files outside `third_party/`: 33 total hits, **8** in code rather than
-      comments, **0** occurrences of `share` at any position other than the
-      read capture's clause, **0** occurrences of `under` in code anywhere, and
-      **0** occurrences of `thread scope NAME share|under` in any fixture. No
-      exclusion was carved out of `referenced_names`, unlike
-      `SOCKET-INET-ADDRESSES` and `WRITE-LEND-TASKS`, because the card claims
-      no word — and both clause **names** stay genuine references, measured
-      rather than asserted (an unbound one refuses at `Q013`).
-    * `AGGREGATE-OWNED-FIELD` (wave 39) **+0 words, +0 tokens, and no lexer
-      rule changed**: the owned field type is spelled `bytes`, the acquisition's
-      own reserved word (`STD-BUFFER`), censused in field-type position at zero
-      occurrences across every `.qcore`/`.qc` file; the four field-path
-      statements (`RECORD.FIELD[I] = V;`, `let X = RECORD.FIELD[I];`,
-      `extent(RECORD.FIELD)`, `drop RECORD.FIELD;`) reuse the `Dot`, `[`, `=`
-      and `drop` the language already has and are read by the record reader's
-      shape rule. **`Buffer` was measured and rejected** for the field type: it
-      is the task route's word for a different resource (`qcore_buffer_new`'s
-      four-byte payload) with a different model, and a field spelled one while
-      meaning the other would be a collision by design; it stays what it was
-      (a task parameter type), and `type R { f: Buffer }` refuses at `Q051`
-      naming `AGGREGATE-FIELD-TYPES`.
-    * **Cards that do not engage this constraint at all** — none reserves a
-      word or moves the lexer, and the documentation cards touch no crate
-      source: `EXAMPLES-SUITE-WIRE`, `DOCS-COMPACT-3`, `GATEWAY-C-LOCATION`;
-      waves 28–29's `EXAMPLES-AGGREGATES`, `CT47-COPY-CAPTURE`, `CT22-WIRE`,
-      `CT01-PROOF-LEG` and `W29-CORPUS-CONTRACTS`; wave 30's `DOCS-COMPACT-4`,
-      `CT24-CLEANUP-PREEMPTED`, `CT-PROOF-LEG-2`, `REGION-JOINS-LOAN`,
-      `CT07-WRITE-REMAP` and `W4-RECURSIVE-SUMMARIES`; wave 31's
-      `C-GATEWAY-WAVE`, `CT42-PROTOCOL-CELL`, `CT-WIRE-LANE-3`,
-      `W31-CORPUS-CONTRACTS-2` and `CT03-PROOF-ALPHABET`; waves 32, 33 and 34's
-      `CT-WIRE-LANE-4`, `CT-COMPOSED-NATIVE`, `TRACE-ALPHABET-LEASE-BOUNDARY`,
-      `W32-RECONCILE-SWEEP`, `PROOF-LEG-BATCH`, `DOCS-COMPACT-5`,
-      `C-GATEWAY-RETURN-POSITION`, `VERIFIER-HOST-CLOSED-INPUT-DEADLINE`,
-      the Lean proof-integrity pass, `STABILITY-REEVAL` #1,
-      `C-GATEWAY-RETURN-CALL-W4` and `DOCS-COMPACT-6`; and **wave 35's seven**
-      — `SWEEP-BLIND-SPOTS`, `WAVE-34-CLOSE`, `VERIFIER-HOST-CONTROL-BUDGET`,
-      `CT-CTWIN-LANE`, `C-GATEWAY-CONSTANT-DO-WHILE`, `MUTEX-SHARE-CROSS-ARMS`
-      and `JOINED-PROVENANCE-CYCLES`; and **wave 36's six of seven** —
-      `CARD-SCOPE-GUARD`, `W36-CORPUS-CONTRACTS-3`, `STABILITY-REEVAL` #2,
-      `C-GATEWAY-INDIRECT-CENSUS-2`, `JOINED-PROVENANCE-CALL-FRAMES` and
-      `MUTEX-SHARE-CROSS-EMISSION`, none of which reserves a word or moves the
-      lexer (the last changes only what an already-admitted program *emits*,
-      and the corpus card adds a `.qcore` contract module, which is no
-      source-language surface). Wave 36's **seventh**,
-      `WRITE-LEND-TASKS-EXERCISE`, is **not** here: it ran a census and belongs
-      in the `+0` family above, where its row stands — the
-      `MUTEX-SHARE-CROSS` distinction, applied rather than restated. And
-      **wave 37's seven of seven** — `BASE-TYPE-READER-CENSUS`,
-      `SCALAR-ROUTE-EXIT-EDGE`, `JOINED-PROVENANCE-ROUND-BOUND`, `CT-LANE-5`,
-      `TASK-ROUTE-TSAN`, `W37-CORPUS-CONTRACTS-4` and `DOCS-COMPACT-7`, the
-      first wave of this ledger with no card in the `+0` family at all: none
-      reserves a word, moves the lexer or allocates a `Q` code, and each says
-      so in its own report (`JOINED-PROVENANCE-ROUND-BOUND` §12 item 6,
-      `CT-LANE-5` §11 item 4, `TASK-ROUTE-TSAN` §6.2,
-      `W37-CORPUS-CONTRACTS-4` §10 item 8, `DOCS-COMPACT-7` §11;
-      `SCALAR-ROUTE-EXIT-EDGE` §10 item 4 states the `Q`-space half, its
-      refusal being a gateway-internal `Unsupported` description, and
-      `BASE-TYPE-READER-CENSUS` is a gateway measurement feature that states
-      neither). The wave-37 close therefore **measured** the seam rather than
-      reading the reports: `git diff --name-only 0f6eb0a6 c33c7640 --
-      crates/qcore-frontend/src/` is empty, so no wave-37 commit touched the
-      lexer, the parser or any front-end source. The wave-36 entry above was
-      re-verified the same way at that close: over `60958bf0..fa48211a` the
-      only front-end file that moved is `source_tasks.rs`, in
-      `WRITE-LEND-TASKS-EXERCISE`'s own two commits — the one card the entry
-      places in the `+0` family — and `lexer.rs` and `parser.rs` did not move
-      (`docs/reports/wave37-close/README.md` §6). **Wave 39's two of five** —
-      `CT07-TWO-THREAD-PROOF-LEG` ("+0 keywords", merge `0d9e922f`; "census:
-      +0, nothing to census", its wave-39 record paragraph) and `TSAN-ROWS-2`
-      ("+0 words", merge `0150c904`; "constraint 14 not engaged (no word, no
-      token)", its record paragraph) — neither reserves a word nor moves the
-      lexer; the wave's other three cards stand in the families above
-      (`AGGREGATE-OWNED-FIELD` +0, `LOOPS-ON-COMPOSED-ROUTES` +0,
-      `CT42-CELL-ROUTE` +1). The wave-39 close **measured** the seam the way
-      the wave-37 close did: `git diff --name-only e878b362 b6d1f101 --
-      crates/qcore-frontend/src/` names six files, and `git log --name-only`
-      over the range attributes every one to those three cards —
-      `frontend.rs` (the one reserved word) and `source_socket.rs` to
-      `CT42-CELL-ROUTE` (`2d1f8fa9`); `source_record.rs`, `whole_program.rs`
-      and `source_std_buffer.rs` to `AGGREGATE-OWNED-FIELD` (`e60ad0c1`,
-      `2f27c652`, `c960a263`); `source_std_buffer.rs` and
-      `source_std_string.rs` to `LOOPS-ON-COMPOSED-ROUTES` (`39cc9848`,
-      `6adaf1ef`) — `lexer.rs` and `parser.rs` did not move, and no commit of
-      the proof-leg or TSan card touched the front end
-      (`docs/reports/wave39-close/README.md` §6). **Wave 39 closed at one
-      reserved word** (`disjoint`), the first since `LOOP-V1`'s `for` at
-      wave 26, ending the wave-28-to-37 run as the `CT42-CELL-ROUTE` bullet
-      states.
-      **This bullet said "every card of waves
-      32, 33 and 34" over a list that named neither `PROOF-LEG-BATCH` nor
-      `DOCS-COMPACT-5` nor `MUTEX-SHARE-CROSS`, and the universal was
-      therefore false**; card `SWEEP-BLIND-SPOTS` measured that
-      (`CONSTRAINT-14-WAVE-32-CENSUS-INCOMPLETE`) and offered the integrator
-      either arm. The wave-35 close took **both**, because they are not
-      interchangeable: the quantifier is narrowed to the cards actually
-      enumerated, the two documentation-and-proof cards join this list, and
-      `MUTEX-SHARE-CROSS` does **not** — it ran a census (its §9) and belongs
-      in the `+0` family above, where its row now stands. Adding it here in the
-      card's stead would have replaced a false universal with a false member.
-      **Waves 28 through 37 each closed at zero reserved words**, the longest
-      such run in this ledger; the source surface did not grow a global
-      keyword between `LOOP-V1` and wave 39.
-    * `CT42-CELL-ROUTE` (wave 39) **+1**: `disjoint`, the disjointness
-      question `disjoint NAME NAME;` of `source.socket.v1` (also read by the
-      reactor and HTTP compositions) — a clause word at a statement head,
-      never a reference, load-bearing in the measured sense (without
-      reservation name resolution collects it and refuses at `Q013`),
-      **census-clean at zero QCore source occurrences** across 525
-      `.qcore`/`.qc` files (eleven occurrences, all inside `//` comments) and
-      thirteen Rust string literals that are test names, `expect` messages or
-      prose; the already-reserved `assert` and `footprint` were considered
-      and not taken. The first reserved word since `LOOP-V1`, ending the
-      wave-28-to-37 run deliberately and stated as such.
-    * `LOOPS-ON-COMPOSED-ROUTES` (wave 39) **+0 words, +0 tokens, and the
-      census was run rather than assumed**: the card admits an existing
-      statement (`for`) in two positions that refused before it — beside a
-      lend on the buffer route, and inside a composed string/buffer entry —
-      and spells nothing new; `git diff --stat e878b362 -- crates/qcore-frontend/src/lexer.rs crates/qcore-frontend/src/parser.rs`
-      is empty, the composed route reads the loop through
-      `source_std_buffer::lower_for_statement` (the same reader, the same
-      bound tier), and the three residual names it refuses by name are
-      diagnostic text, not words. Its report §9 states the census.
+    run rather than assumed. The word set itself is
+    `qcore_frontend::frontend::is_reserved_source_word` — **112** words at this
+    writing, which is the one place to count them — and each arm carries its own
+    card's census in a source comment, so the *per-card* ledger this constraint
+    used to keep is redundant with a more authoritative copy. That ledger, card
+    by card, is a checkpoint in the wave-40 record; what stands here is the rule,
+    the decisions a refactor could undo, and the method.
+
+    **Decisions that must survive refactors.**
+    * **Rejected spellings stay rejected, and each was rejected on evidence.**
+      `stream` (a contract `extern fn` parameter name, shielded only by the
+      following `:`) and `socket` (it would name a transport the route
+      deliberately makes explicit at creation), from `QUIRIN-SOCKET-V1`;
+      `record` from `AGGREGATES-V1`, because
+      `docs/reports/remaining-v07/probes/d02_boundary_record.qcore` is the
+      single line `record R { }` and two archived reports pin it to `Q000`, so
+      claiming the word would falsify a frozen archive (constraint 21);
+      `struct`, census-clean and still not taken, the language already having a
+      declaration head for a named type; and `Buffer` as an owned field type
+      (`AGGREGATE-OWNED-FIELD`), the task route's word for a different resource,
+      so `type R { f: Buffer }` refuses at `Q051` naming `AGGREGATE-FIELD-TYPES`.
+      All five are absent from `is_reserved_source_word` and a census can check
+      that mechanically.
+    * **`in` is deliberately not reserved.** The census found it as a genuine
+      reference inside the pinned contract corpus
+      (`ensures normal resource_borrowed(in);`) — the shape that kept `len` out
+      of the global list — so `LOOP-V1` took a narrow contextual rule in
+      `referenced_names` instead. **Do not promote it to the global set.**
+    * **Rename the syntax rather than edit the pin.** `work` → `effort`
+      (T08-EPOCH-SRC, rather than editing the pinned golden surface),
+      `buffer` → `bytes`, `record` → `type`: where a candidate spelling would
+      move a pinned expectation, the card changes its own syntax. This is
+      invariant 5 applied at the lexer.
+    * **Contextual words stay contextual.** `error` is accepted as a logger
+      level **only after `log`** and was not removed from the global set;
+      `unroll` and `where` are contextual because a `[| … |]` clause list
+      contributes no referenced name, the statement head takes **two** tokens
+      (`[|` *followed by* `#`), and `#` is still not an identifier character, so
+      the scoped-name premise behind `c#0` survives and
+      `quant[| n where n := 5 |]` still reads; `lend` is contextual in three
+      positions (the `lend(` call shape, before `<Buffer>` in a task parameter
+      type, and as a capture's first word), so `let lend = 5;` is still a
+      program; and `borrow_utf8`/`qcore_buffer_write`/`qcore_buffer_read` select
+      their form by **arity** rather than by a new word.
+    * **Three name-resolution exclusions, and one deliberate non-exclusion.**
+      `NATIVE-LIBRARY-SOURCE-BINDING` excluded binding spans from both
+      whole-token-stream route selectors (`module_imports::concurrency_span`,
+      `source_tasks::has_source_tasks`), so a library named `spawn`, `join` or
+      one of the four buffer/payload intrinsics cannot select a route from its
+      own spelling — **do not remove that exclusion**. `SOCKET-INET-ADDRESSES`
+      excluded `source_socket::address_host_span`, deliberately leaving the
+      **port** outside it so a port name stays a genuine reference. And
+      `AGGREGATES-V1` **measured that exclusion and deliberately did not copy
+      it** (`AGGREGATE-SELECTOR-WORDS`): a record naming a selector word refuses
+      `Q015` declared and `Q000` constructed, both fail-closed, and copying the
+      exclusion would retire the `Q015` half while leaving the `Q000` half —
+      buying a type that declares and cannot be constructed.
+    * `MUTEX-SHARE-CROSS` claims a **position** and no word: both clause words
+      of `thread scope NAME share PLACE under MUTEX { … }` were already
+      reserved, so no exclusion was carved out of `referenced_names` and both
+      clause **names** stay genuine references (an unbound one refuses at
+      `Q013`), measured rather than asserted.
+
+    **Method, twice corrected by its own findings.** A wave's entry is settled
+    by **measuring the seam**, not by reading the cards' reports: the wave-37
+    and wave-39 closes each ran `git diff --name-only <base> <tip> --
+    crates/qcore-frontend/src/` and attributed every moved file with
+    `git log --name-only` (`docs/reports/{wave37-close,wave39-close}/README.md`).
+    The reason is that a wave-by-wave roll call of cards that *do not* engage
+    invites a false universal: one such list once contained a card that had run
+    a census (`CONSTRAINT-14-WAVE-32-CENSUS-INCOMPLETE`), which is the same
+    shape as the Q-space note's own miscount, in the same wave, in the
+    neighbouring paragraph. Waves 28 through 37 each closed at zero reserved
+    words — the longest such run — and wave 39's `CT42-CELL-ROUTE` ended it
+    deliberately with `disjoint`, stated as such.
 
     `remaining-t03-f`, `remaining-t08-epoch-src`, `extern-call-v1`,
     `wave17-std-modules`, `remaining-extern-modes`,
@@ -980,7 +795,9 @@ pointer is the card that established it; read it before deviating.
     `loop-unroll-budget`, `http-v1-computed-length`, `aggregates-v1`,
     `quant-region-source`, `ct07-slice-permissions`, `ct23-credit-error-path`,
     `region-credit-joins`, `region-joins-duties`,
-    `slice-permissions-write-lend`, `write-lend-tasks`.
+    `slice-permissions-write-lend`, `write-lend-tasks`,
+    `mutex-share-cross`, `write-lend-tasks-exercise`, `aggregate-owned-field`,
+    `ct42-cell-route`, `loops-on-composed-routes`.
 15. Lock ranks and protection growth are **opt-in** disciplines: unranked
     modules stay byte-identical, and a rank is a declared position, not an
     assumption. `remaining-ct33-ranks`, `remaining-ct34-growth`.
@@ -1251,9 +1068,23 @@ pointer is the card that established it; read it before deviating.
     `((unsigned char *)&buffer->payload)[base + index]`, a distinct memory
     location in the sense of C11 3.14; the lease's **base** travels in the task
     value's otherwise-unused scalar field, which is the one fact the holder
-    must not be able to choose. Three boundaries are **measured, not claimed**:
-    ThreadSanitizer cannot run any program this route emits, lease or not
-    (`TASK-ROUTE-TSAN-SEGV`); a stray byte at `payload + 4` lands in
+    must not be able to choose. Three boundaries are **measured, not claimed**,
+    and the first has since been **superseded by measurement** and is stated
+    here in its current form: wave 36 measured ThreadSanitizer killing every
+    program this route emits, lease or not, and read the fault as the route's
+    (`TASK-ROUTE-TSAN-SEGV`); wave 37's `TASK-ROUTE-TSAN` measured that it is
+    **not** the route's — TSan ships no `thrd_create` interceptor, so an
+    emitted thread reaches `start_thread` unregistered — retired that residual,
+    and bound `thrd_create` to `pthread_create` through one `-include`, under
+    which TSan does run these programs — wave 39's `TSAN-ROWS-2` runs **this
+    flagship itself**
+    (`fixtures/write_lend_tasks_exercise/disjoint_exercise.qcore`) clean,
+    unforced and under both forced cohort schedules, Linux only. What stands is
+    narrower and still load-bearing: a clean detector is evidence about the
+    schedules realised and never a proof of race freedom, so this constraint's
+    exclusivity claim rests on C11 3.14, on the ASan/UBSan/LSan run and on the
+    allocation identity, with the TSan rows beside them and not in their place
+    (`docs/reports/{task-route-tsan,tsan-rows-2}/README.md`). A stray byte at `payload + 4` lands in
     `struct qcore_buffer`'s own tail padding, which the allocation owns, so no
     memory tool sees it — which is why the emitted helper carries its **own**
     extent guard rather than delegating to a sanitizer, and that guard must not

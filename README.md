@@ -83,8 +83,15 @@ reference execution by a workspace test. What that buys is bounded. The HTTP
 route is **an executed HTTP/1.1 subset with the boundary named** — not HTTP/1.1
 conformance; the socket route models loopback with both ends in one program and
 reaches no external peer. The mutex crossing witnesses a real thread boundary
-and says **nothing** about contention, a data race or the C memory model; no
-ThreadSanitizer row exists anywhere in this repository. Broader structural
+and says **nothing** about contention, a data race or the C memory model: its
+own ThreadSanitizer row is clean because that case is **serial by
+construction**, so no schedule can force contention in it. ThreadSanitizer does
+run on this route — once `thrd_create` is bound to `pthread_create`, which is
+what wave 37 measured the earlier fault to be about — and six conformance
+fixtures run clean under two forced schedules
+([`TSAN-ROWS-2`](docs/reports/tsan-rows-2/README.md)); Linux only, and a clean
+detector is evidence about the schedules realised, not a proof of race freedom.
+Broader structural
 syntax and separately checked semantic models do **not** imply complete
 source-language support, and general task/mutex composition remains open — the
 task route's own buffer still has no mutex.
@@ -114,12 +121,14 @@ cycle's fail-closed gates. A provisional `Unsafe` is never presented as an
 upstream defect. Coverage is not safety coverage, and unknowns stay in the
 denominator.
 
-The conformance-case corpus stands at **46 of 50 mapped**, with 4 unmapped.
+The conformance-case corpus stands at **47 of 50 mapped**, with 3 unmapped.
 That denominator grows by **mapping, not conformance**: a newly mapped case
-means the harness now runs it, not that anything new was proved. Of the 46
-mapped, 10 carry a sanitized native run and 3 carry a proof stage — CT01, CT37
-and CT03, each a scenario property proved in Lean of the checked artifact's
-reference run and its admitted renderings, with native execution still
+means the harness now runs it, not that anything new was proved. Of the 47
+mapped, 10 carry a sanitized native run and 4 carry a proof stage — CT01, CT03,
+CT37 and CT07. The first three are each a scenario property proved in Lean of
+the checked artifact's reference run and its admitted renderings; CT07's is a
+property of every ledger state its run reaches, bound through the scoped-task
+ledger rather than the trace relation. In all four, native execution is still
 covered by observation only.
 
 Verdict vocabulary and the hard invariants are in [`AGENTS.md`](AGENTS.md);
