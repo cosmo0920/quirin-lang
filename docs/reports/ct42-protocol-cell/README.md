@@ -230,3 +230,30 @@ arms `Err` (or prove pairing agreement with `std_socket`'s resolution) before
 any source certificate carries a derived cell; the route card's brief carries
 that line. Line numbers are as measured at `4f663934`; this note archives no
 new run and changes no code.
+
+## Published beside by `CT42-CELL-ROUTE` (2026-09-18, wave 39) — the corrected direction sentence, and the arms as they now are
+
+Appended, not edited (constraint 21): every line above the previous rule is the
+frozen card text, and the wave-38 close's note above this one archives the
+measurement. The corrected sentence for §3's last bullet reads: **inside the
+walk, the two arms that are unreachable for admitted programs — an accept with
+nothing queued, a connector without a cell — assigned a fresh singleton cell,
+which is the direction that *admits* a disjointness question the unedited
+checker should refuse: a singleton cell is judged disjoint from the binding's
+real connector (`disjoint_footprint.rs`'s `decide_disjoint` returns
+`Ok((true, …))` for two distinct cells).** Card `CT42-CELL-ROUTE` made both
+arms, and a connect the address resolution gives no listener, **refusals**
+(`SocketCellError::UnpairedAccept` / `UnpairedConnect`, reported at `Q085`),
+each driven by a fixture through `derive_cells_of_admitted` and shown red by
+mutation; the Lean model's `step` is partial to match, with
+`QCore.SocketFootprint.an_admitted_accept_takes_an_existing_cell` stating the
+direction. The same card took the T09 edit §3's third bullet left named
+(`FootprintEvent::DeriveDescriptorAlias`, stamping no
+`DeclaredProtocolCellIdentity`), routed the question from source
+(`disjoint NAME NAME;`), mapped CT42, and re-affirmed §3's datagram decision
+with its ground. Retired by it: `CT42-CELL-FALLBACK-ARM-DIRECTION`,
+`CT42-CELL-DERIVED-PREMISE`, `CT42-CELL-UNROUTED`, `CT42-MAP`,
+`CT42-CELL-UDP-QUEUE`. Left open: `CT42-CELL-DUP-SOURCE`,
+`CT42-CELL-PENDING-PHASE` (amended). Evidence:
+`docs/reports/ct42-cell-route/README.md`. This note archives no new run of
+this card's own gate and changes no line above it.

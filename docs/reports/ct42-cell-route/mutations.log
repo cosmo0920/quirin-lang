@@ -1,0 +1,13 @@
+# CT42-CELL-ROUTE mutations, 2026-09-18T07:45:44Z
+# HEAD a49ddb5538f856922504a24990244340be76c933
+M0 baseline (unmutated): core socket_footprint GREEN, socket_cell_route GREEN (as required)
+M1 deriver accept arm back to a singleton cell (the wave-31 admitting arm): RED (as required); named test failed; compile_error=False; failing tests: socket_footprint::tests::an_unqueued_accept_is_refused_not_given_a_singleton_cell; 2.4s; restored sha256-equal
+M2 deriver connect arm back to `continue` (the wave-31 admitting arm): RED (as required); named test failed; compile_error=False; failing tests: socket_footprint::tests::an_unresolved_connect_is_refused_not_skipped; 2.3s; restored sha256-equal
+M3 T09 stamps DeclaredProtocolCellIdentity for a derived alias too: RED (as required); named test failed; compile_error=False; failing tests: socket_footprint::tests::a_derived_projection_carries_no_declared_cell_identity_premise; 2.3s; restored sha256-equal
+M4 the route asks no question (AssertDisjoint never pushed): RED (as required); named test failed; compile_error=False; failing tests: the_two_ends_of_one_connection_are_refused_as_one_cell_at_q664; 3.9s; restored sha256-equal
+M5 the question reads neither custodian (no Read custody op): RED (as required); named test failed; compile_error=False; failing tests: a_question_asked_of_a_closed_socket_is_refused_by_the_inherited_checkers; 3.9s; restored sha256-equal
+M6 the question emits a line instead of erasing: RED (as required); named test failed; compile_error=False; failing tests: a_listener_and_an_end_are_admitted_and_the_question_erases_from_emission; 4.1s; restored sha256-equal
+M7 the footprint refusal reported under the socket pass, not the band's owner: RED (as required); named test failed; compile_error=False; failing tests: the_two_ends_of_one_connection_are_refused_as_one_cell_at_q664; 4.3s; restored sha256-equal
+M8 the reader admits a question with more than two names: RED (as required); named test failed; compile_error=False; failing tests: a_malformed_question_is_q080; 2.6s; restored sha256-equal
+M9 the HTTP composition checks the cells of an empty transport (the pre-fix admitting gap): RED (as required); named test failed; compile_error=False; failing tests: an_http_exchanges_two_ends_are_refused_as_one_cell_at_q664; 3.6s; restored sha256-equal
+# 10 of 10 verdicts as required

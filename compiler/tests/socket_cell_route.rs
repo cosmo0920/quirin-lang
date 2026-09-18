@@ -14,6 +14,7 @@ use qcore_core::disjoint_footprint::FootprintAssumption;
 
 const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qcore");
 const UDP_ECHO: &str = include_str!("../../examples/sockets/udp_echo.qcore");
+const HTTP_EXCHANGE: &str = include_str!("../../examples/http/exchange.qcore");
 
 fn compile(
     source: &str,
@@ -308,4 +309,101 @@ fn every_published_socket_example_still_compiles_and_publishes_its_cells() {
             "{name}"
         );
     }
+}
+
+// --- The compositions: the same reader, the same answer. ---
+
+/// The reactor composition (`SOCKET-EVENT-COMPOSE`) shares this reader, so a
+/// question over a watched socket is admitted exactly as a `send` on one is —
+/// a `Read` under the shared loan — and answered by the same checker.
+#[test]
+fn a_question_over_a_watched_socket_is_admitted_under_the_loan() {
+    let source = "\
+import std.socket;
+import std.event;
+
+fn main() -> unit effects { io, alloc } {
+    event open;
+    let client = udp;
+    bind client;
+    let server = udp;
+    bind server;
+    watch inbox server read;
+    disjoint client server;
+    sendto client server [81];
+    dispatch ready inbox;
+    recvfrom server 1;
+    unwatch inbox;
+    event close;
+    close server;
+    close client;
+    return;
+}
+";
+    let module = compile(source).unwrap_or_else(|diagnostics| {
+        panic!("a question reads a loaned socket as a send does: {diagnostics:?}")
+    });
+    assert_eq!(module.execution_profile, SourceExecutionProfile::StandardSocketV1);
+    let CheckedSourceModule::StandardSocket(module) = &module.checked else {
+        panic!("the composed route publishes a socket module");
+    };
+    assert_eq!(module.cells.footprint.admitted_disjointness.len(), 1);
+}
+
+/// The HTTP composition (`HTTP-QUIRIN-V1`) hands every statement it does not
+/// spell to this reader, so the question lowers into its transport program.
+/// Before card `CT42-CELL-ROUTE` composed the cell check there, `quirin check`
+/// admitted this program with no judgement (measured, `measure/http_disjoint`);
+/// the exchange's own two ends are now refused as one cell there too.
+#[test]
+fn an_http_exchanges_two_ends_are_refused_as_one_cell_at_q664() {
+    let marker = "    let server = accept listener;\n";
+    assert_eq!(HTTP_EXCHANGE.matches(marker).count(), 1);
+    let source = HTTP_EXCHANGE.replace(
+        marker,
+        "    let server = accept listener;\n    disjoint client server;\n",
+    );
+    let diagnostics = refused(&source);
+    assert_eq!(
+        diagnostics
+            .iter()
+            .map(|diagnostic| diagnostic.code.as_str())
+            .collect::<Vec<_>>(),
+        ["Q664"],
+        "{diagnostics:?}"
+    );
+    assert_eq!(diagnostics[0].pass, SemanticPass::Concurrency);
+    assert_eq!(diagnostics[0].location.line_source.trim(), "disjoint client server;");
+}
+
+#[test]
+fn an_http_module_asking_about_its_listener_is_admitted_and_the_question_erases() {
+    let marker = "    let server = accept listener;\n";
+    let asked = HTTP_EXCHANGE.replace(
+        marker,
+        "    let server = accept listener;\n    disjoint client listener;\n",
+    );
+    let twin = HTTP_EXCHANGE.replace(marker, "    let server = accept listener;\n\n");
+    let asked_module = compile(&asked).unwrap_or_else(|diagnostics| {
+        panic!("a listener shares no connection cell on the HTTP route either: {diagnostics:?}")
+    });
+    let twin_module = compile(&twin).expect("the published example is admitted");
+    assert_eq!(
+        asked_module.execution_profile,
+        SourceExecutionProfile::StandardHttpV1
+    );
+    assert_eq!(asked_module.c_source, twin_module.c_source);
+    assert_eq!(asked_module.extern_observation, twin_module.extern_observation);
+    let CheckedSourceModule::StandardHttp(module) = &asked_module.checked else {
+        panic!("the HTTP route publishes an HTTP module");
+    };
+    assert_eq!(module.cells.questions.len(), 1);
+    assert_eq!(module.cells.footprint.admitted_disjointness.len(), 1);
+    assert!(
+        !module
+            .cells
+            .footprint
+            .assumptions
+            .contains(&FootprintAssumption::DeclaredProtocolCellIdentity)
+    );
 }
