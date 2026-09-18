@@ -340,11 +340,59 @@ of one arm, the named test must go **red**, the file is restored from its byte
 copy and shown sha256-equal; a green mutation is reported VACUOUS and fails the
 harness.
 
-MUTATION-LOG-PLACEHOLDER
+Result (`mutations.log`): baseline unit and end-to-end green; **14 of 14
+mutations red, 0 vacuous**; every restore sha256-equal; restored suites green;
+harness exit 0.
+
+| Mutation | File | Arm falsified | Red test |
+|---|---|---|---|
+| M1 drop-through releases nothing | `ownership.rs` | drop-through releases the live fields | `dropping_an_aggregate_releases_its_live_fields_and_tolerates_a_hole` |
+| M2 emitter frees in reverse order | `std_buffer_c_emit.rs` | whole-record release in declaration order | `a_whole_record_drop_releases_the_live_fields_in_declared_order` |
+| M3 value half publishes only the first release | `std_buffer.rs` | the certificate publishes every field released | same |
+| M4 construction does not move the source | `ownership.rs` | the moved-in binding is a use after move | `using_the_buffer_after_moving_it_into_a_record_refuses_as_a_use_after_move` |
+| M5 move out leaves no hole | `ownership.rs` | a move out leaves a hole (invariant, second read) | `moving_a_field_out_leaves_a_hole_a_second_read_refuses` |
+| M6 leak rule blind to fields | `ownership.rs` | an unreleased field is reported by its path | `an_unreleased_field_is_a_normal_path_leak_named_by_its_path` |
+| M7 aggregate copied | `ownership.rs` | a record with an owned field is never copied | `an_aggregate_is_never_copied` |
+| M8 `Q055` lift withdrawn | `std_buffer.rs` | a buffer at a `bytes` field is admitted | `a_buffer_at_a_bytes_field_is_admitted_and_at_an_i32_field_still_refused` |
+| M9 lend-window gate removed | `std_buffer.rs` | `OWNED-FIELD-LEND-WINDOW` refuses by name | `a_lend_beside_an_owned_field_and_an_owned_field_in_a_loop_body_refuse_by_name` |
+| M10 loop-body gate removed | `std_buffer.rs` | `OWNED-FIELD-LOOP-BODY` refuses by name | same |
+| M11 aggregate readable as a plain owner | `ownership.rs` | the record is not a plain owner | `an_aggregate_at_a_plain_owner_position_refuses_by_name` |
+| M12 emitter frees a moved-out member | `std_buffer_c_emit.rs` | the whole-record release skips a hole (no double free) | `the_emitted_c_holds_the_pointer_in_the_struct_and_moves_by_initializer` |
+| M13 field-path bounds unchecked | `std_buffer.rs` | an index through a field is bounded | `an_index_through_a_field_is_bounded_by_the_buffer_it_holds` |
+| M14 scalar field at a custody position admitted | `std_buffer.rs` | a custody position naming an `i32` field refuses | `a_custody_position_at_a_scalar_field_is_refused` |
+
+Not mutated, and said so: the IR's declaration order in `drop_through` (M2
+and M3 pin it where it is observable, §2.2); the Lean theorems (a proof is
+its own falsification). Both by-name gates (M9, M10) and the lift (M8) are
+one-arm Rust rules whose non-vacuity is exactly this table.
 
 ## 10. Gate
 
-GATE-PLACEHOLDER
+One detached full standing gate (`scripts/gate.sh`, `setsid -f`, no
+`trap '' TERM`, every step's exit in its own file, no pipe), at tip
+`d9f0dfbe` (`gate/head.txt`; every commit after it is documentation and the
+regeneration), disk 208 GB free at launch. Artifacts in `gate/` beside this
+file; summary by `scripts/gate_summary.py`; the machine-readable record is
+`gate.json` (eleven keys, `lean_audits` and `clang` included, the latter
+checked against `gate/clang-version.txt` and `.exit` by the generator).
+
+| Step | Exit | Figure |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | |
+| `cargo test --workspace --no-fail-fast` | 101 in the run | **4,671 passed / 1 failed / 9 ignored**, 235 result summaries, 233 targets (224 `Running` + 9 doc-test sections), 29m02s on a host carrying sibling gates |
+| the one failure, re-verified | 0 (`gate/isolated-std_socket_inet.exit`) | `std_socket_inet::this_card_reserves_no_word_and_its_address_rule_collides_with_nothing` scans every `.qcore` under the tree; `measure/base-tree/` — this card's own gitignored `git archive e878b362` extraction for §3 — still held a second copy of the two inet examples, so the scan found four files where it expects two. **A measurement artifact of this card's census, not a defect**: the scratch tree was removed after the census (its summary is shipped) and the test re-run alone, 1 passed. The published figure is therefore **4,672 / 0 / 9**, both facts recorded (constraint 16's shape). No load-sensitive row tripped |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `scripts/check_lean_audits.py` | 0 | **138** audits (137 + `AuditAggregateOwnedField.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | **1 in the run, deliberately reported** | 303 run, 2 failures — `test_each_derived_dimension_matches_the_section_it_counts` (228 ≠ 233) and `test_the_derived_facts_are_recomputed_rather_than_carried` (137 ≠ 138): the two tripwires doing their jobs against a tree edited before regeneration, the wave-38 close's shape exactly. Repaired by `build_matrix.py . --gate docs/reports/aggregate-owned-field/gate.json` (exit 0: 233 follow-ons, 138 audits, 88 contract modules); re-run **303 OK, exit 0** (`gate/python-post.exit`, `gate/python-post.log`) |
+| Clang | 0 | `present: Ubuntu clang version 21.1.8 (6ubuntu1)` |
+| providers | carried | 122, not re-measured: nothing under `providers/` or `crates/qcore-schemas/` changed, `qcore-schemas` 14.0.0 |
+
+Deltas against the wave-38 close (4,639 / 303 / 137): workspace **+33** (12
+ownership unit tests, 22 in `aggregate_owned_field.rs`, no new test function
+in `examples_suite`), Python +0, Lean **+1**. Nothing is promoted: no corpus,
+CT, unit or function figure moves.
 
 ## 11. Residuals and retirements
 
