@@ -850,6 +850,19 @@ pointer is the card that established it; read it before deviating.
       `SOCKET-INET-ADDRESSES` and `WRITE-LEND-TASKS`, because the card claims
       no word — and both clause **names** stay genuine references, measured
       rather than asserted (an unbound one refuses at `Q013`).
+    * `AGGREGATE-OWNED-FIELD` (wave 39) **+0 words, +0 tokens, and no lexer
+      rule changed**: the owned field type is spelled `bytes`, the acquisition's
+      own reserved word (`STD-BUFFER`), censused in field-type position at zero
+      occurrences across every `.qcore`/`.qc` file; the four field-path
+      statements (`RECORD.FIELD[I] = V;`, `let X = RECORD.FIELD[I];`,
+      `extent(RECORD.FIELD)`, `drop RECORD.FIELD;`) reuse the `Dot`, `[`, `=`
+      and `drop` the language already has and are read by the record reader's
+      shape rule. **`Buffer` was measured and rejected** for the field type: it
+      is the task route's word for a different resource (`qcore_buffer_new`'s
+      four-byte payload) with a different model, and a field spelled one while
+      meaning the other would be a collision by design; it stays what it was
+      (a task parameter type), and `type R { f: Buffer }` refuses at `Q051`
+      naming `AGGREGATE-FIELD-TYPES`.
     * **Cards that do not engage this constraint at all** — none reserves a
       word or moves the lexer, and the documentation cards touch no crate
       source: `EXAMPLES-SUITE-WIRE`, `DOCS-COMPACT-3`, `GATEWAY-C-LOCATION`;
@@ -1248,32 +1261,64 @@ pointer is the card that established it; read it before deviating.
     the word does not exist; an elided arm is `error(drop);`, which is exactly the
     accounting that existed before, and `qcore_core::epoch_accounting` is
     untouched. `ct23-credit-error-path`.
-15k. **A v1 record is a plain copyable value, and the field-custody answer is a
-    measurement rather than a simplification.** `source.record.v1`'s
+15k. **A record of scalars is a plain copyable value; a record with a `bytes`
+    field is a custody shape the ownership IR addresses by path — and the four
+    rules that make it one live in the IR, not in a route.** `source.record.v1`'s
     `type NAME { FIELD: i32, … }`, `let p = NAME { FIELD: OPERAND, … };` and
     `let a = p.FIELD;` are admitted on `source.buffer.v1` only, with every other
-    route's refusal measured and pinned rather than widened. Every field is an
-    `i32`, so a record contributes **no** `qcore_core::ownership` operation, opens
-    no obligation and derives **no effect** — do not give a field custody without
-    the four rules that do not exist: the cycle-3 ownership IR addresses an owner
-    by a plain **name** and has no path, so `p.buf` is not a question
-    `check_ownership` can be asked, and an owned field needs a field-path owner
-    vocabulary, a partial-move rule, a drop-through-aggregate rule and a leak rule
-    at normal exit that sees into the aggregate (`AGGREGATE-OWNED-FIELD`;
-    `AGGREGATE-VIEW-FIELD` for the smaller view-field step, which constraint 15h's
-    exact borrow window cannot reach through). The consequences are the admitting
-    route's **existing** rules and not new ones — `drop p;` is `Q052`, a leak
-    beside a record is still the inherited checker's `Q054` — and construction
-    totality is what makes projection total, which is what makes the field read a
-    function rather than a partial one. Two emission facts are load-bearing: the
+    route's refusal measured and pinned rather than widened. A record whose every
+    field is an `i32` contributes **no** `qcore_core::ownership` operation, opens
+    no obligation and derives **no effect**, and its consequences are the
+    admitting route's **existing** rules — `drop p;` is `Q052`, a leak beside it
+    is still the inherited checker's `Q054`; construction totality is what makes
+    projection total, which is what makes the field read a function rather than a
+    partial one. **Amended, card `AGGREGATE-OWNED-FIELD` (wave 39; deliberate —
+    it supersedes this constraint's former "do not give a field custody without
+    the four rules that do not exist", by landing them).** The cycle-3 ownership
+    IR now addresses an owner by a **path** (`ownership::Place::Field`, one level:
+    `NAME.FIELD`, measured sufficient for the record route and recorded as the
+    boundary `AGGREGATE-NESTED` beyond), and the four rules are the IR's own and
+    must stay there (15h's precedent forbids route-side custody rules): a
+    `Compose` **moves** each named buffer into its field, so the source binding
+    is a use after move from the construction on; a field read of an owned field
+    is the **partial move** (`MoveOut`), leaving a hole a second read refuses;
+    `Drop` of the record releases **every live owned field in declaration order
+    and nothing twice**, tolerating a hole (`drop_through`; the Lean
+    `QCore.AggregateOwnedField.drop_through_releases_exactly_the_live_fields`
+    and `…nothing_twice`); `NormalPathLeak` names an unreleased field **by its
+    path**; and `Copy` of a record declaring an owned field refuses whatever the
+    state of its fields. The record itself is never a plain owner — a read,
+    write, whole move, transfer, borrow or lend of it is
+    `AggregateAtOwnerPosition` — and a field path is a **type**, not a dotted
+    spelling: `Read("p.buf")` is an unknown binding. On the route, the field type
+    is spelled **`bytes`** — the acquisition's own reserved word; the task
+    route's `Buffer` names a different resource with a different model and was
+    measured and not taken — and `RECORD.FIELD` stands at every custody position
+    a buffer name does; `drop RECORD;` of a record of scalars keeps its `Q052`.
+    **`Q055` is narrowed, the one lift**: a buffer at a field position is
+    refused only where the field is declared `i32`. Two shapes are refused by
+    name rather than modelled and must stay so until their card:
+    `OWNED-FIELD-LEND-WINDOW` (a lend in an entry that composes such a record —
+    the lend projection addresses owners by plain name) and
+    `OWNED-FIELD-LOOP-BODY` (an owned-field statement in a `for` body — the
+    unrolled walk scopes acquisitions by name and a composed record's fields by
+    path). Every program written before the card builds the operation list it
+    always built and emits byte-identical C, measured over the whole tree
+    (`docs/reports/aggregate-owned-field/README.md` §3, §6); the record of
+    scalars is exactly what `aggregates-v1` measured. `AGGREGATE-VIEW-FIELD`
+    remains the view-field step constraint 15h's exact borrow window cannot
+    reach through. Two emission facts are load-bearing: the
     `qcore_record_`/`f_`/`r_` prefixes, so a QCore name that is a C keyword still
     emits compilable C and a record, a buffer and a scalar of one source name are
     three distinct C objects; and **a program that acquires no buffer carries no
     buffer prelude**, forced by `-Wall -Wextra -Werror` on an unused `static` and
     byte-neutral for every previously admitted program by an argument about which
     programs the emitter could reach (among admitted programs, reading or writing
-    a byte *implies* acquiring a buffer) — measured over the whole tree at 80
-    emitting programs byte-identical, not asserted. `aggregates-v1`.
+    a byte *implies* acquiring a buffer — **re-derived at wave 39 with the owned
+    field enumerated**: a field holds only a buffer `bytes(N)` acquired, and a
+    construction moves rather than acquires, so no new acquisition path exists and
+    the argument stands) — measured at 80 emitting programs byte-identical at
+    wave 27 and re-measured at wave 39. `aggregates-v1`, `aggregate-owned-field`.
 15l. **An admitted quantitative region erases from emission, and the sealed pack
     is a linear capability consumed exactly once.** `source.region.v1` —
     `error region NAME { … } catch (ERROR) quant open NAME as BINDING { discharge
@@ -1870,7 +1915,13 @@ waves without a card needing a range. **Re-affirmed on 2026-09-18 for wave 39
 resolved) in the wave-38 close's deferred decisions:** condition extensions
 only; no card allocates a new `Q` code, including the aggregate-custody card,
 which widens the existing `StandardBuffer` and `Ownership` bands with each
-widening stated in §L21.
+widening stated in §L21. **Wave 39's `AGGREGATE-OWNED-FIELD` is the
+sixteenth instance**, on the `StandardBuffer` band a fourth time (`Q051`–`Q054`
+widened, **`Q055` narrowed** — the first deliberate *lift* under the icebox) and
+on the `Ownership` band by vocabulary alone (`Q103` covers the grown
+`OwnershipError`, reached by no sequential program:
+`OWNED-FIELD-SEQUENTIAL-UNREACHED`), allocating nothing; its rows in the table
+below are the card's own.
 
 | Codes | Owning pass | Meaning |
 |---|---|---|
@@ -1886,13 +1937,13 @@ widening stated in §L21.
 | `Q043` | `ComposedStdIo` | composed extern/std-io route's own refusals (`source.std-io.v1` × `source.extern-call.v1`) |
 | `Q044`–`Q046` | `Branch` | `source.branch.v1` `if`/`else` admission: shape and arm subset, decidable condition tier (connectives, `!`, bitwise, constant bindings), custody join over survivors |
 | `Q050` | `ComposedTasks` | `source.std-io-tasks.v1`: the composed task/std-io route's own refusals — a worker-body line now admissible where `qcore.obs-reordering.v1` covers it (constraint 15a) |
-| `Q051`–`Q057` | `StandardBuffer` | `source.buffer.v1`: the owned extent-carrying byte buffer (`bytes`, `[i]`, `extent`, `drop`). Card `AGGREGATES-V1` admits the first source-level aggregate on this route — `source.record.v1`'s `type NAME { FIELD: i32, … }`, its construction and its field read — and **allocates no code**, widening three conditions: `Q051`'s to a record declaration, a field declaration, a construction outside the form (including one supplying a field twice, an undeclared field, or not every declared field), a field value that is not one operand and a numeric field path; `Q052`'s to a name at a record or field position that is not one (a construction of an *undeclared type* refuses earlier still, at `Q013`, a type name being an ordinary reference); and `Q053`'s from an index/byte/extent range to those and a **field count** outside `1..=32`. `Q054` (leak beside a record) and `Q055` (a buffer at a field position) are the route's existing rules reached unchanged, and `Q056`'s condition is **not** widened — the recheck comparing two more published halves is that condition working. Card `SLICE-PERMISSIONS-WRITE-LEND` (wave 29) lands the **write lend** `let NAME = lend(BUFFER, LOW, HIGH);` on this route (constraint 15h carries the rules) and again allocates no code, widening five conditions: `Q051` to the lend's window shapes (a `for` beside a lend, crossed windows, an acquisition inside a window, a malformed or shadowing `lend(…)`); `Q052` to a lend of anything but an owned buffer this entry acquired, and a `drop` of a loan; `Q053` to the lend's range beside the existing ranges; `Q054` from the four listed refusals of the unedited checker to **any refusal of the lend-extended cycle-3 checker** — the checker itself was extended, in the semantic model where every other custody rule lives, and the route still inherits rather than re-implements; and `Q055` to a loan at a scalar, index or rendering position. `Q056` is once more not widened — the recheck comparing the published `lends` field for field is that condition working |
+| `Q051`–`Q057` | `StandardBuffer` | `source.buffer.v1`: the owned extent-carrying byte buffer (`bytes`, `[i]`, `extent`, `drop`). Card `AGGREGATES-V1` admits the first source-level aggregate on this route — `source.record.v1`'s `type NAME { FIELD: i32, … }`, its construction and its field read — and **allocates no code**, widening three conditions: `Q051`'s to a record declaration, a field declaration, a construction outside the form (including one supplying a field twice, an undeclared field, or not every declared field), a field value that is not one operand and a numeric field path; `Q052`'s to a name at a record or field position that is not one (a construction of an *undeclared type* refuses earlier still, at `Q013`, a type name being an ordinary reference); and `Q053`'s from an index/byte/extent range to those and a **field count** outside `1..=32`. `Q054` (leak beside a record) and `Q055` (a buffer at a field position) are the route's existing rules reached unchanged, and `Q056`'s condition is **not** widened — the recheck comparing two more published halves is that condition working. Card `SLICE-PERMISSIONS-WRITE-LEND` (wave 29) lands the **write lend** `let NAME = lend(BUFFER, LOW, HIGH);` on this route (constraint 15h carries the rules) and again allocates no code, widening five conditions: `Q051` to the lend's window shapes (a `for` beside a lend, crossed windows, an acquisition inside a window, a malformed or shadowing `lend(…)`); `Q052` to a lend of anything but an owned buffer this entry acquired, and a `drop` of a loan; `Q053` to the lend's range beside the existing ranges; `Q054` from the four listed refusals of the unedited checker to **any refusal of the lend-extended cycle-3 checker** — the checker itself was extended, in the semantic model where every other custody rule lives, and the route still inherits rather than re-implements; and `Q055` to a loan at a scalar, index or rendering position. `Q056` is once more not widened — the recheck comparing the published `lends` field for field is that condition working. Card `AGGREGATE-OWNED-FIELD` (wave 39) lands the **owned field** `FIELD: bytes` (constraint 15k carries the rules) and again allocates no code: **`Q055` is narrowed**, the one lift — a buffer at a field position refuses only at an `i32` field; `Q051` widens to a malformed field-path statement and the two by-name refusals `OWNED-FIELD-LEND-WINDOW` and `OWNED-FIELD-LOOP-BODY`; `Q052` to an integer, scalar or record at a `bytes` field and to a custody position naming an `i32` field; `Q053` to an index outside the extent a field holds; `Q054` carries the path-extended checker's vocabulary (a use after move of a path, a double drop of a record or path, a leak naming `RECORD.FIELD`, `AggregateAtOwnerPosition`); `Q056` is not widened — the recheck comparing the published moves and field releases is that condition working |
 | `Q058`–`Q062`, `Q074` | `Event` | `source.event.v1` in two bands: the checked event vocabulary over the reactor/descriptor custody models, `Q061` the determinism boundary (`Q058`–`Q062`); its composition with the source line vocabulary (`print`, `log`, `flush`) and that composition's one value form, `let NAME = dispatch ready E;` (`Q074`, relocated from `Q065` at integration) |
 | `Q068`–`Q073`, `Q075`–`Q079` | `StandardString` | `source.string.v1` behind `std.string`, three bands. `Q068`–`Q073` (relocated from `Q065`–`Q070` at integration) the immutable UTF-8 `{ptr, len}` view: entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, the declared `effects` row. `Q075`–`Q076` (`STRING-SLICE-IO`, which returned `Q077`–`Q079` to the pool) text reaching a stream: `Q075` the line's shape, `Q076` a text operand naming no string this entry bound. `Q077`–`Q079` (`STRING-CONCAT`, reassigned to this pass) **computed text** — `concat(…)`, `dec`/`hex`, `borrow_utf8`: `Q077` shape and bound refusals **including an embedded `source.buffer.v1` statement carrying that route's own message under this pass's code**, `Q078` the borrow-exclusion window with the inherited ownership checker's own refusal, `Q079` the **static UTF-8 decision** on a buffer's write history. Card `CT07-SLICE-PERMISSIONS` makes the borrow lend a **range** (`borrow_utf8(NAME, LOW, HIGH)`, arity one or three) and allocates **no code**: `Q077` also covers a range bound violating `0 <= low <= high <= extent` and the two-argument spelling (deliberately not `Q071`, whose condition is a bound on a *view* decided against `len(s)`); **`Q078`'s condition is widened** from "a store into or a release of a buffer inside a live borrow's window" to "a store **into the bytes** of a live loan, or a release of a buffer any live loan holds", a whole-extent loan reporting the sentence it always reported byte for byte; and `Q079` is reached **without widening at all**, because that condition was always *the bytes this borrow would view* — so a range whose end splits a code point refuses there by the rule already written. A bound that is not a check-time constant stays `Q069`/`Q013` and a buffer or string at a bound position stays `Q072`. `SLICE-PERMISSIONS-WRITE-LEND` (wave 29) widens `Q077` once more: a `lend(…)` in a composed string/buffer entry refuses **by name** until a cross-model overlap rule with `borrow_utf8`'s read loans exists (`SLICE-PERMISSIONS-COMPOSED-LEND`, constraint 15h) |
 | `Q080`–`Q089` | `StandardSocket` | `source.socket.v1`: the `std.socket` bundled module's checked TCP and UDP surface over loopback — `Q080` entry shape, `Q081` the operand rule, `Q082` the transport state machine, `Q083` the inherited custody refusal, `Q084` byte/payload/count ranges, `Q085` the **determinism boundary** (a receive the program's own committed history does not satisfy), `Q086` the crossing boundary, `Q087` the `effects` row, `Q088`/`Q089` the certificate recheck and the backend refusal. Band assigned by the integrator before the card, with `Q075`–`Q079` held for a sibling card. Two later cards extend the row and **allocate no code**, landing on `Q080`–`Q082` and `Q085`–`Q087`: `SOCKET-EVENT-COMPOSE`, the **reactor composition** (a checked socket registered with `source.event.v1`'s reactor), and `SOCKET-INET-ADDRESSES`, **declared IPv4/IPv6 addresses with ports** (`bind S 127.0.0.1:8080;`, `connect C [::1]:8080;`, `sendto U ADDRESS […];`), whose external-peer refusal is `Q085`. Each **widens one condition**, stated here and in §L21 (constraint 1): `Q083`'s from "the inherited ownership checker refused" to "an inherited, unedited **custody model** refused", so a reactor `L00`–`L12` diagnostic lands there carrying its own value; and `Q084`'s from a byte/payload-length/receive-count range to those and a **port** range. Per-condition mapping in §L21 |
 | `Q090`–`Q096` | `StandardHttp` | `source.http.v1`: the `std.http` bundled module's checked HTTP/1.1 message subset — `Q090` entry and statement shape, `Q091` the start line, `Q092` header fields (including the required single `Host` and the `CR`/`LF` exclusion that makes the constructed framing unforgeable, so header injection is not expressible), `Q093` framing (signature condition: a declared `Content-Length` that is not the content's byte count), `Q094` a name at a message position that is not one, `Q095` the **inherited, unedited** `source.socket.v1` refusal carrying that checker's own error value, `Q096` an undeclared derived effect. Band pre-assigned as `Q090`–`Q099`; `Q097`–`Q099` unused and returned to the pool (`HTTP-QUIRIN-V1`). Card `HTTP-V1-COMPUTED-LENGTH` admits a **computed** header value or content — a quoted token, a name this entry bound to text, a `concat(…)` of check-time-known pieces, or `dec(NAME)`/`hex(NAME)` — allocating **no code** and widening no gate, since every component is resolved to bytes *before* `admit_field` and `admit_framing` run and `Q093`'s equality stays decided rather than trusted (constraint 15f). It widens `Q090`'s condition (a malformed `concat`/`len`, a composition of fewer than two pieces, a composed payload above the 4096-byte bound, a selector without its operand, a value name rebound) and `Q094`'s (a component, piece or `len` operand naming a binding of the other kind). The field **name** stays a written token |
 | `Q097`–`Q099` | `Loop` | `source.loop.v1`: the counted `for NAME in 0..BOUND { … }` loop, admitted on `source.buffer.v1` only — `Q097` the loop's **shape** (a header outside that form, a low end not the written-out `0`, a `break`/`continue`/`return` in the body, a body binding shadowing one the entry made), `Q098` the **bound** (not a check-time constant the lowering can compute, zero, negative, above `MAX_ITERATIONS`, or an entry above `MAX_UNROLLED_EVENTS` unrolled), `Q099` one iteration of the body is not the **identity** on custody. A separate pass on the `IF-STATEMENT` precedent: a control shape, not a capability of a bundled module. The band `HTTP-QUIRIN-V1` returned to the pool, now spent (`LOOP-V1`). Card `LOOP-UNROLL-BUDGET` widens two conditions and allocates **no code**: `Q097` also covers the statement-adjacent `[| #unroll, where #bound < N |]` clause list's **shape** and a list that licenses nothing (before a non-`for`, doubled, or dangling; an *unterminated* list stays a `Q000` parse failure), and `Q098` becomes the **three-layer budget** — an absolute ceiling of 4096 no declaration may raise, a default budget of 256 an unattributed `for` is held to (refusing *with the licensing clause list written into the message*), and a licence that is **checked, never trusted**, a declared `N` above the ceiling refusing before this loop's bound is read. The licence **erases from emission**: attributed and unattributed programs of the same admitted bound emit byte-identical C |
-| `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
+| `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership. Card `AGGREGATE-OWNED-FIELD` (wave 39) grows `qcore_core::ownership`'s refusal vocabulary (`AggregateAtOwnerPosition`, `NotAnAggregate`, every variant able to name a `BASE.FIELD` path), which `Q103`'s condition covers by definition — but **no sequential program reaches it**, that route building no aggregate operation (`OWNED-FIELD-SEQUENTIAL-UNREACHED`); `Q100` is not widened, the copy refusal being the checker's `CopyOfOwned` |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
 | `Q300`, `Q302`–`Q309` | `TypedErrors`, `ErrorRegion` | `Q300` typed errors; `Q302` error region, with `Q303`–`Q309` the finer conditions the pass has allocated since Cycle 6 and `RegionTaskDiagnostic::code` already reads back — `Q303` a `quant open` naming another region, `Q304` a pack consumed twice, `Q305` a handler returning with its pack open, `Q306` a **nonempty** pack caught without being opened, `Q307` an error leaving a handler undischarged, `Q308` a cleanup action that is not total and noexcept, `Q309` one resource in both the payload and a pack. Card `QUANT-REGION-SOURCE` allocates **no code** and widens two conditions: `Q302`'s from "the error-region model refused" to that **and** `source.region.v1`'s own shape refusals, each v1 path boundary refused **by name** there (`REGION-NORMAL-EXIT`, `-MULTIPLE-CATCH`, `-MULTIPLE`, `-PROPAGATE`, `-FAILING-ACQUIRE`, `-IN-ARM`, `-HANDLER-BODY`, `-CATCH-PAYLOAD-BINDING`); and these codes are now emitted from the **driver** as well as the frontend. `REGION-CREDIT-JOINS` (wave 28), `REGION-JOINS-DUTIES` (wave 29) and `REGION-JOINS-LOAN` (wave 30) widen `Q302`'s composed-route condition a second, third and fourth time — the region on the epoch task route after every join, then its sealed pack carrying real duties, then the **adoption** `move NAME;` beside a worker's counted read share (with an adopted name the entry does not bind, and one owner taken twice through either shape, as that card's own `Q302` conditions) — constraint 15m's admitted set, each stated in §L21, each allocating nothing |
 | `Q400`, `Q401`, `Q403` | driver invocation | no inputs; missing/ambiguous entry; `--entry` against a library module |
