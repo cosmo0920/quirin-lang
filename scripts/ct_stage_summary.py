@@ -138,6 +138,11 @@ EVIDENCE_FILES = [
     # record per constraint 21 — the ct07-write-remap record keeps its bytes.
     # It maps no new case, so no count moves.
     "docs/reports/ct-lane-5/ct_stage_evidence.json",
+    # Card `CT07-TWO-THREAD-PROOF-LEG` (wave 39): CT07's proof stage moves to
+    # executed on the named ledger-bound leg. A superseding record per
+    # constraint 21 — the ct-lane-5 record keeps its bytes. Every other stage
+    # row is carried from that record unchanged; proof is the only move.
+    "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"

@@ -10,6 +10,7 @@ import QCore.TaskTraceLeaseBoundary
 import QCore.Ct01OwnedTransfer
 import QCore.Ct37CompletionCapsule
 import QCore.Ct03ReadShares
+import QCore.Ct07LeaseLedger
 import QCore.ConcurrencyPrelude
 import QCore.BooleanFieldUnit
 import QCore.SourceProfileWitness

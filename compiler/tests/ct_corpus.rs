@@ -237,6 +237,16 @@ const PROOF_GATED_CASES: &[(&str, &str)] = &[
         "CT03",
         "compiler/tests/ct03_proof_leg.rs::ct03_artifact_is_the_lean_proved_shared_reads_shape",
     ),
+    // Card `CT07-TWO-THREAD-PROOF-LEG` (wave 39): CT07's disjointness
+    // procedure over the scoped-task ledger's lease set
+    // (QCore.Ct07LeaseLedger over QCore.WriteLendTasks,
+    // AuditCt07LeaseLedger.lean). The first leg bound **through the ledger**
+    // rather than the F02 trace relation, which refuses this run's lease
+    // events by constraint 15n's decided boundary; the alphabet did not grow.
+    (
+        "CT07",
+        "compiler/tests/ct07_proof_leg.rs::ct07_artifact_is_the_lean_proved_disjoint_halves_shape",
+    ),
 ];
 /// The `source.epoch.tasks.v1` composed cases, whose verdict mode pins
 /// published credit quantities wholesale because an epoch that merely checks
@@ -472,6 +482,10 @@ const RUNNER_REGISTRY: &[&str] = &[
     "compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape",
     // Card `CT03-PROOF-ALPHABET`: CT03's proof-stage runner, the same shape.
     "compiler/tests/ct03_proof_leg.rs::ct03_artifact_is_the_lean_proved_shared_reads_shape",
+    // Card `CT07-TWO-THREAD-PROOF-LEG` (wave 39): CT07's proof-stage runner —
+    // the same shape, bound through the checked module's lease set and the
+    // production ledger rather than the F02 digest relation.
+    "compiler/tests/ct07_proof_leg.rs::ct07_artifact_is_the_lean_proved_disjoint_halves_shape",
     // Card `CT-COMPOSED-NATIVE` (wave 32): the composed-epoch accept runner —
     // one sanitized compile-and-run of the case's own emitted C, its standard
     // output compared byte for byte with the reference observation of the
