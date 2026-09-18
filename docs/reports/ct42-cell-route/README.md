@@ -324,8 +324,9 @@ reading (two descriptor slots, one program, one thread), not the dup reading
 
 `scripts/mutations.py`, log `mutations.log` (both in this directory). Each
 mutation edits one arm, runs exactly the named test, writes the original bytes
-back and asserts the round trip sha256-equal. Run at `9bea6b1e` minus the
-docs (the code at that tip): **10 of 10 as required**.
+back and asserts the round trip sha256-equal. Final run on the formatted
+tree (HEAD `2bac4877` plus the formatter's whitespace, the code the gate's
+`9bea6b1e` carries up to formatting): **10 of 10 as required**.
 
 | # | Arm | Test shown red |
 |---|---|---|
@@ -342,8 +343,30 @@ docs (the code at that tip): **10 of 10 as required**.
 
 ## 7. Gate
 
-See §7 below the residuals — the figures are the detached run's own exit
-files, copied into `gate/`, and `gate.json` beside this file.
+One detached full gate (`scripts/gate.sh`: `setsid -f`, no `trap '' TERM`,
+every exit to its own file, no pipe) at **`9bea6b1e`**, the tip carrying
+every code change of this card; the exit files, timings and small logs are
+copied into `gate/` beside this file and the figures are `gate.json`'s.
+Disk before: 249 GB free (`df -h .`: 310 GB at branch time, four sibling
+`target/` directories building); 125 GB free at the end. Start
+`07:46:45Z`, cargo end `08:13:05Z`, gate end `08:15:36Z`.
+
+| Step | Exit | Result |
+|---|---|---|
+| `cargo test --workspace --no-fail-fast` | **101** | **4,658 passed / 1 failed / 9 ignored** over 235 result summaries, 233 targets (224 `Running` + 9 doc-test sections). The one red row is `a_confined_fixture_cannot_write_outside_the_admitted_paths` (`qcore-verifier-host`, `confined_process_execution.rs:349`) — constraint 16's named load-sensitive confined-fixture write test, in its recorded shape (`left: Io`, `right: Terminated`, `Broken pipe (os error 32)`) under a full-suite run beside three sibling builds. **Re-verified in isolation on the same binary: 1 passed / 0 failed** (`gate/confined-isolated.exit` 0). Both facts recorded; the `workspace_tests` figure 4,659 counts it. |
+| `cargo fmt --all -- --check` | **1**, then 0 | Deliberately reported: the only diffs were rustfmt's wrapping of `compiler/tests/socket_cell_route.rs` (this card's new file) and two closure calls in `driver.rs`'s cell-check blocks (this card's edits), no semantic change (`gate/fmt.log`). `cargo fmt --all` applied; re-check exit **0** with an empty diff (`gate/fmt-post.exit`); the mutation harness re-run on the formatted tree, **10 of 10** red as required (M9 re-anchored to the formatted text). |
+| `cargo clippy --all-targets -- -D warnings` | 0 | clean |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `scripts/check_lean_audits.py` | 0 | **138** Lean audits (137 + `AuditSocketCellRoute.lean`; `AuditSocketFootprint.lean` amended), `lean_audits` key checked by the generator |
+| `python3 -m unittest discover -s scripts/tests` | **1**, then 0 | Deliberately reported: 303 ran, 2 failed, both the regeneration tripwires (`['14.0.0', 137] != ['14.0.0', 138]`; `228 != 225`) against a tree this card had moved and not yet regenerated. Repaired by `build_matrix.py . --gate docs/reports/ct42-cell-route/gate.json` (exit 0, `gate/regen.exit`: 225 followups, 138 audits); re-run **303 OK**, exit 0 (`gate/python-post.exit`). |
+| Clang | 0 | `present: Ubuntu clang version 21.1.8 (6ubuntu1)` (`gate/clang-version.txt`, `QCORE_CLANG` unset) |
+| Provider | carried | 122, not re-measured: `providers/` and `crates/qcore-schemas/` unchanged since `e878b362`, schemas 14.0.0 (constraint 18 not engaged) |
+
+Deltas against the wave-38 close (4,639 / 303 / 137): workspace **+20**
+(six `socket_footprint` unit tests, fourteen `socket_cell_route.rs` tests;
+`ct_corpus` stays six with CT42 inside `run_mapped_case`), Python +0, Lean
+**+1**. Nothing is promoted: no corpus count, unit status or function status
+moves; raw units stay unpromoted; full language conformance stays **false**.
 
 ## 8. Residuals and retirements (exact names)
 

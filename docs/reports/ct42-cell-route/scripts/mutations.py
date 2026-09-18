@@ -194,24 +194,12 @@ MUTATIONS = [
     (
         "M9 the HTTP composition checks the cells of an empty transport (the pre-fix admitting gap)",
         DRIVER,
-        """    let cells = qcore_core::socket_footprint::check_socket_cells(&transport.program).map_err(
-        |errors| {
-            errors
-                .into_iter()
-                .map(|error| {
-                    let event = transport""",
-        """    let cells = qcore_core::socket_footprint::check_socket_cells(
-        &qcore_core::std_socket::SocketProgram {
+        """        qcore_core::socket_footprint::check_socket_cells(&transport.program).map_err(|errors| {""",
+        """        qcore_core::socket_footprint::check_socket_cells(&qcore_core::std_socket::SocketProgram {
             statements: Vec::new(),
             ..transport.program.clone()
-        },
-    )
-    .map_err(
-        |errors| {
-            errors
-                .into_iter()
-                .map(|error| {
-                    let event = transport""",
+        })
+        .map_err(|errors| {""",
         ROUTE("an_http_exchanges_two_ends_are_refused_as_one_cell_at_q664"),
         "an_http_exchanges_two_ends_are_refused_as_one_cell_at_q664",
     ),

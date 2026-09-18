@@ -41,7 +41,11 @@ fn codes(source: &str) -> Vec<String> {
 /// `TCP_ECHO` with `marker` replaced by `line`, so a question can be placed at
 /// a known statement while every other byte of the published example stays.
 fn echo_with(marker: &str, line: &str) -> String {
-    assert_eq!(TCP_ECHO.matches(marker).count(), 1, "{marker} must occur once");
+    assert_eq!(
+        TCP_ECHO.matches(marker).count(),
+        1,
+        "{marker} must occur once"
+    );
     TCP_ECHO.replace(marker, line)
 }
 
@@ -76,7 +80,10 @@ fn the_two_ends_of_one_connection_are_refused_as_one_cell_at_q664() {
         refusal.message
     );
     // Attributed to the question, not to the accept or the entry.
-    assert_eq!(refusal.location.line_source.trim(), "disjoint client server;");
+    assert_eq!(
+        refusal.location.line_source.trim(),
+        "disjoint client server;"
+    );
 }
 
 #[test]
@@ -178,9 +185,8 @@ fn main() -> unit effects { io, alloc } {
     return;
 }
 ";
-    let module = compile(source).unwrap_or_else(|diagnostics| {
-        panic!("two connections are two cells: {diagnostics:?}")
-    });
+    let module = compile(source)
+        .unwrap_or_else(|diagnostics| panic!("two connections are two cells: {diagnostics:?}"));
     let CheckedSourceModule::StandardSocket(module) = &module.checked else {
         panic!("the socket route publishes a socket module");
     };
@@ -207,10 +213,12 @@ fn a_datagram_pair_is_admitted_as_disjoint() {
         marker,
         "    let server = udp;\n    disjoint client server;\n",
     );
-    let module = compile(&source).unwrap_or_else(|diagnostics| {
-        panic!("a datagram pair is not a cell: {diagnostics:?}")
-    });
-    assert_eq!(module.execution_profile, SourceExecutionProfile::StandardSocketV1);
+    let module = compile(&source)
+        .unwrap_or_else(|diagnostics| panic!("a datagram pair is not a cell: {diagnostics:?}"));
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::StandardSocketV1
+    );
     let CheckedSourceModule::StandardSocket(module) = &module.checked else {
         panic!("the socket route publishes a socket module");
     };
@@ -232,7 +240,10 @@ fn a_question_naming_no_socket_is_the_transport_checkers_q081() {
 #[test]
 fn a_question_asked_of_a_closed_socket_is_refused_by_the_inherited_checkers() {
     let marker = "    close server;\n    close client;\n";
-    let source = echo_with(marker, "    close server;\n    disjoint client server;\n    close client;\n");
+    let source = echo_with(
+        marker,
+        "    close server;\n    disjoint client server;\n    close client;\n",
+    );
     let diagnostics = refused(&source);
     let codes: Vec<&str> = diagnostics
         .iter()
@@ -251,7 +262,11 @@ fn a_question_asked_of_a_closed_socket_is_refused_by_the_inherited_checkers() {
 
 #[test]
 fn a_malformed_question_is_q080() {
-    for question in ["disjoint client;", "disjoint client server listener;", "disjoint;"] {
+    for question in [
+        "disjoint client;",
+        "disjoint client server listener;",
+        "disjoint;",
+    ] {
         let source = echo_with(
             AFTER_ACCEPT,
             &format!("    let server = accept listener;\n    {question}\n"),
@@ -270,8 +285,10 @@ fn a_question_in_a_helper_is_refused_as_a_construct_outside_the_entry() {
     );
     let diagnostics = refused(&source);
     assert!(
-        diagnostics.iter().any(|diagnostic| diagnostic.code == "Q080"
-            && diagnostic.message.contains("models the entry only")),
+        diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.code == "Q080"
+                && diagnostic.message.contains("models the entry only")),
         "{diagnostics:?}"
     );
 }
@@ -287,7 +304,11 @@ fn the_question_needs_the_socket_module() {
     )
     .replace("import std.socket;\n", "");
     assert_eq!(codes(&source), codes(&with_question));
-    assert!(codes(&source).contains(&"Q015".to_owned()), "{:?}", codes(&source));
+    assert!(
+        codes(&source).contains(&"Q015".to_owned()),
+        "{:?}",
+        codes(&source)
+    );
 }
 
 #[test]
@@ -343,7 +364,10 @@ fn main() -> unit effects { io, alloc } {
     let module = compile(source).unwrap_or_else(|diagnostics| {
         panic!("a question reads a loaned socket as a send does: {diagnostics:?}")
     });
-    assert_eq!(module.execution_profile, SourceExecutionProfile::StandardSocketV1);
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::StandardSocketV1
+    );
     let CheckedSourceModule::StandardSocket(module) = &module.checked else {
         panic!("the composed route publishes a socket module");
     };
@@ -373,7 +397,10 @@ fn an_http_exchanges_two_ends_are_refused_as_one_cell_at_q664() {
         "{diagnostics:?}"
     );
     assert_eq!(diagnostics[0].pass, SemanticPass::Concurrency);
-    assert_eq!(diagnostics[0].location.line_source.trim(), "disjoint client server;");
+    assert_eq!(
+        diagnostics[0].location.line_source.trim(),
+        "disjoint client server;"
+    );
 }
 
 #[test]
@@ -393,7 +420,10 @@ fn an_http_module_asking_about_its_listener_is_admitted_and_the_question_erases(
         SourceExecutionProfile::StandardHttpV1
     );
     assert_eq!(asked_module.c_source, twin_module.c_source);
-    assert_eq!(asked_module.extern_observation, twin_module.extern_observation);
+    assert_eq!(
+        asked_module.extern_observation,
+        twin_module.extern_observation
+    );
     let CheckedSourceModule::StandardHttp(module) = &asked_module.checked else {
         panic!("the HTTP route publishes an HTTP module");
     };

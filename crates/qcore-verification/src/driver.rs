@@ -5472,8 +5472,8 @@ fn compile_socket_source(
     // own two refusals (an unpaired connect or accept, unreachable after the
     // transport checker admitted the program) land on this route's `Q085`,
     // whose condition they already are.
-    let cells = qcore_core::socket_footprint::check_socket_cells(&lowered.program).map_err(
-        |errors| {
+    let cells =
+        qcore_core::socket_footprint::check_socket_cells(&lowered.program).map_err(|errors| {
             errors
                 .into_iter()
                 .map(|error| {
@@ -5490,8 +5490,7 @@ fn compile_socket_source(
                     map_raw_diagnostic(error.code(), pass, span, error.to_string(), ranges)
                 })
                 .collect::<Vec<_>>()
-        },
-    )?;
+        })?;
     qcore_core::socket_footprint::recheck_socket_cell_certificate(&lowered.program, &cells)
         .map_err(|failure| {
             vec![map_raw_diagnostic(
@@ -5654,8 +5653,8 @@ fn compile_http_source(
             })
             .collect::<Vec<_>>()
     })?;
-    let cells = qcore_core::socket_footprint::check_socket_cells(&transport.program).map_err(
-        |errors| {
+    let cells =
+        qcore_core::socket_footprint::check_socket_cells(&transport.program).map_err(|errors| {
             errors
                 .into_iter()
                 .map(|error| {
@@ -5688,8 +5687,7 @@ fn compile_http_source(
                     }
                 })
                 .collect::<Vec<_>>()
-        },
-    )?;
+        })?;
     qcore_core::socket_footprint::recheck_socket_cell_certificate(&transport.program, &cells)
         .map_err(|failure| {
             vec![map_raw_diagnostic(
