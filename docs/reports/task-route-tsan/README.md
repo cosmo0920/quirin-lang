@@ -512,3 +512,35 @@ CT46's lowered events, or both reports reworded beside them; one shared
 `halt_on_error=0` run archived) is material for the queued `TSAN-ROWS-2`
 card. This note corrects the reading; it archives no new run and changes no
 code.
+
+## Published beside by `TSAN-ROWS-2` (2026-09-18) — the twins, the count, and the forced schedules
+
+Appended, not edited (constraint 21): every line above this rule and the
+wave-38 note is the frozen card text. Card `TSAN-ROWS-2` (wave 39,
+`docs/reports/tsan-rows-2/README.md`) discharges the wave-38 note's four
+items and rewords two of this card's phrases beside them rather than in them.
+
+1. **"The write-lease disjoint exercise" (§4, §5)** ran *the logger twin* —
+   a literal duplicated from `write_lend_tasks_exercise.rs`. Both files now
+   read **one fixture**,
+   `compiler/tests/fixtures/write_lend_tasks_exercise/disjoint_exercise.qcore`,
+   and `fixtures/ct/CT07/case.qcore` is a subject in its own right, pinned as
+   that program without its logger (`ct07s_case_is_the_flagship_without_its_logger`).
+2. **"CT46's emitted crossing" (§4's table, §5.1)** was *a CT46-shaped
+   program*, `fork_join_trace()` of the core unit file. CT46's **own case**,
+   lowered through `compile_files`, is now a subject
+   (`ct46s_own_case_runs_clean_bound_and_the_forcing_header_finds_no_seam`):
+   unbound it dies at the `0x18` fault, bound it runs clean with stdout
+   byte-identical to `interpret_mutex_program`'s observation. The unit-file
+   row stands as the backend's own row about the program it builds by hand.
+3. **"TSan reports two races" (§4.1)** described an un-halted run. Measured
+   again under `halt_on_error=0` on the committed mutation: **16** reports
+   under the unforced schedule, **6** under either forced schedule
+   (`docs/reports/tsan-rows-2/artifacts/catch-rates.json`); the committed
+   test asserts *at least one* under `halt_on_error=1`, as the wave-38 note
+   said.
+4. **§5.2's "one run, whatever happened"** is no longer the only kind of row:
+   every task-route subject also runs under two **forced** schedules, the
+   realised schedule read back from the harness trace and asserted, and
+   §5.1's sentence about CT46 is now a recorded decision — serial by
+   construction — rather than an open question (`TSAN-ROWS-2` §6).

@@ -1,0 +1,34 @@
+import std.concurrency; import std.logger; concurrency checked;
+fn writer(half: lend<Buffer>) -> i32 {
+  let done = qcore_buffer_write(half, 0, 9);
+  return 1;
+}
+fn main() -> i32 effects { io, alloc, throws<AllocError>, spawn, join, may_block } {
+  log_level trace;
+  let buffer = qcore_buffer_new(0)?;
+  thread scope s {
+    match spawn s writer(lend buffer 0..2) {
+      Result::Ok { value: first } => {
+        match spawn s writer(lend buffer 2..4) {
+          Result::Ok { value: second } => {
+            let a = join move first?;
+            let b = join move second?;
+            let byte0 = qcore_buffer_read(buffer, 0);
+            let byte2 = qcore_buffer_read(buffer, 2);
+            drop buffer;
+            return byte2;
+          }
+          Result::Err { error: refused } => {
+            let a = join move first?;
+            drop buffer;
+            return a;
+          }
+        }
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 0;
+      }
+    }
+  }
+}

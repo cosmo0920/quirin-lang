@@ -165,7 +165,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**232** entries after `CT07-TWO-THREAD-PROOF-LEG` (228 after the wave-38 close,
+**234** entries after `CT07-TWO-THREAD-PROOF-LEG` (228 after the wave-38 close,
 229 after `STABILITY-REEVAL-3`, 215 at the wave-37 close; the wave-38 close
 registered two and retired three, each named in
 `docs/reports/wave38-close/README.md`; the proof-leg card retired two and

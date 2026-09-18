@@ -1,0 +1,41 @@
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/bound_stdout.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/ct07_relation.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/ct46_seam_expected.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/ct46_unbound.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/gate_opened_after_all.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/hook_exit_barrier.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/hook_instrumented_only.verdict:VACUOUS-ARM-STILL-GREEN
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/hook_release_order.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/hook_visible_to_tsan.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/join_not_removed.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/no_byte_change_join.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/overlap_not_applied.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/rows_reverse_expectation.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/rows_unbound.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/wlt_bound_stdout.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/wlt_bound_unbound.verdict:RED-AS-REQUIRED
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/measure/mutations/wlt_unbound_shape.verdict:RED-AS-REQUIRED
+{
+  "card": "TSAN-ROWS-2",
+  "method": "one mutation per arm that should make it fail; file restored with mtime advanced; two mutations move the forcing header (the rule) rather than the test; the exit-barrier mutation is timing-dependent once applied and is run five times with the red count published",
+  "script": "docs/reports/tsan-rows-2/artifacts/mutate.sh",
+  "verdicts": {
+    "bound_stdout": "RED-AS-REQUIRED",
+    "ct07_relation": "RED-AS-REQUIRED",
+    "ct46_seam_expected": "RED-AS-REQUIRED",
+    "ct46_unbound": "RED-AS-REQUIRED",
+    "gate_opened_after_all": "RED-AS-REQUIRED",
+    "hook_exit_barrier": "RED-AS-REQUIRED (5 of 5 runs red)",
+    "hook_instrumented_only": "VACUOUS-ARM-STILL-GREEN (0 of 5 runs red)",
+    "hook_release_order": "RED-AS-REQUIRED",
+    "hook_visible_to_tsan": "RED-AS-REQUIRED",
+    "join_not_removed": "RED-AS-REQUIRED",
+    "no_byte_change_join": "RED-AS-REQUIRED",
+    "overlap_not_applied": "RED-AS-REQUIRED",
+    "rows_reverse_expectation": "RED-AS-REQUIRED",
+    "rows_unbound": "RED-AS-REQUIRED",
+    "wlt_bound_stdout": "RED-AS-REQUIRED",
+    "wlt_bound_unbound": "RED-AS-REQUIRED",
+    "wlt_unbound_shape": "RED-AS-REQUIRED"
+  }
+}
