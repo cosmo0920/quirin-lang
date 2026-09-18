@@ -19,7 +19,7 @@ mod windows_c;
 
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 use qcore_core::source_record::{
-    self, FieldType, MAX_FIELDS, RecordField, RecordRefusal, RecordType,
+    self, FieldType, FieldValue, MAX_FIELDS, RecordField, RecordRefusal, RecordType,
 };
 use qcore_core::std_buffer::{self, BufferEvent, BufferOperand, BufferProgram};
 use qcore_frontend::frontend::{DeclarationKind, parse_source_program};
@@ -283,11 +283,15 @@ fn a_repeated_field_name_is_refused() {
     assert!(messages(&source).contains("declares `x` twice"));
 }
 
+/// The refusal names the gap that remains. Before card `AGGREGATE-OWNED-FIELD`
+/// it named that card; the owned field now exists (`bytes`), so a field of any
+/// other type is `AGGREGATE-FIELD-TYPES` and the message says so.
 #[test]
 fn a_field_type_this_revision_does_not_model_is_refused() {
     let source = module("type Point { x: u8 }", "    let a = 1;\n    print dec a;\n");
     assert_eq!(codes(&source), ["Q051"]);
-    assert!(messages(&source).contains("AGGREGATE-OWNED-FIELD"));
+    assert!(messages(&source).contains("AGGREGATE-FIELD-TYPES"));
+    assert!(!messages(&source).contains("AGGREGATE-OWNED-FIELD"));
 }
 
 #[test]
@@ -510,10 +514,16 @@ fn projection_returns_what_construction_supplied() {
             },
         ],
     };
-    let value = source_record::construct(&declared, &[("y".to_owned(), 9), ("x".to_owned(), 4)])
-        .expect("a complete field list");
-    assert_eq!(value.project("x"), Some(4));
-    assert_eq!(value.project("y"), Some(9));
+    let value = source_record::construct(
+        &declared,
+        &[
+            ("y".to_owned(), FieldValue::Scalar(9)),
+            ("x".to_owned(), FieldValue::Scalar(4)),
+        ],
+    )
+    .expect("a complete field list");
+    assert_eq!(value.scalar("x"), Some(4));
+    assert_eq!(value.scalar("y"), Some(9));
     assert_eq!(value.project("z"), None);
 }
 

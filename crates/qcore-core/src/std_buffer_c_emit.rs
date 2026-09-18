@@ -40,12 +40,12 @@
 //! the per-line comparison this route rests on would be unwritable. `calloc`
 //! is what makes the two agree, and it is not an optimisation detail.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
 
 use crate::c_program::{self, Fragment, Section};
 use crate::io_emit;
-use crate::source_record::RecordType;
+use crate::source_record::{FieldType, RecordType};
 use crate::std_buffer::{
     self, BufferCertificate, BufferEvent, BufferOperand, BufferProgram, MAX_EXTENT,
 };
@@ -212,12 +212,23 @@ fn buffer_prelude(program: &BufferProgram) -> String {
     // at **every depth** (card `LOOP-V1`), because a program whose only byte
     // write is inside a `for` body still writes one and emitting no writer for
     // it would not compile.
+    // Card `AGGREGATE-OWNED-FIELD`: a store or a load **through a field** is
+    // a store or a load, and needs its accessor exactly as the plain-name one
+    // does. Neither can occur in a program that acquires nothing: a field can
+    // hold only a buffer `bytes(N)` acquired, so the scan above still decides
+    // whether the prelude exists at all.
     buffer_prelude_for(
         std_buffer::any_event(&program.events, |event| {
-            matches!(event, BufferEvent::Store { .. })
+            matches!(
+                event,
+                BufferEvent::Store { .. } | BufferEvent::FieldStore { .. }
+            )
         }),
         std_buffer::any_event(&program.events, |event| {
-            matches!(event, BufferEvent::Load { .. })
+            matches!(
+                event,
+                BufferEvent::Load { .. } | BufferEvent::FieldLoad { .. }
+            )
         }),
     )
 }
@@ -294,10 +305,24 @@ pub fn record_types_text(records: &[RecordType]) -> String {
         return String::new();
     }
     let mut text = String::from(RECORD_PRELUDE_HEADER);
+    // Card `AGGREGATE-OWNED-FIELD`: the paragraph about owned members is
+    // written only for a module that declares one, so a module of scalar
+    // records emits the bytes it always emitted.
+    if records.iter().any(RecordType::has_owned_field) {
+        text.push_str(RECORD_PRELUDE_OWNED);
+    }
     for record in records {
         let _ = writeln!(text, "struct {} {{", record_type_tag(&record.name));
         for field in &record.fields {
-            let _ = writeln!(text, "    int32_t {};", record_field_name(&field.name));
+            let member = record_field_name(&field.name);
+            match field.field_type {
+                FieldType::I32 => {
+                    let _ = writeln!(text, "    int32_t {member};");
+                }
+                FieldType::Bytes => {
+                    let _ = writeln!(text, "    unsigned char *{member};");
+                }
+            }
         }
         let _ = writeln!(text, "}};");
     }
@@ -318,6 +343,21 @@ pub const RECORD_PRELUDE_HEADER: &str = r#"
    The member names carry an `f_` prefix and the tags a `qcore_record_` prefix
    so that a QCore field or type name which happens to be a C keyword still
    emits a compilable struct. */
+"#;
+
+/// The paragraph a module with an owned field adds to the header above (card
+/// `AGGREGATE-OWNED-FIELD`). Appended rather than edited into
+/// [`RECORD_PRELUDE_HEADER`], so the header's bytes are unchanged for every
+/// module of scalar records.
+pub const RECORD_PRELUDE_OWNED: &str = r#"
+/* AGGREGATE-OWNED-FIELD: a member declared `bytes` in the source holds the
+   pointer of an owned byte buffer, MOVED into the struct by the designated
+   initializer that names it. The struct then owes that buffer's release:
+   `drop RECORD;` in the source is one `qcore_bytes_drop` per member still
+   held, in declaration order, and `let NAME = RECORD.FIELD;` hands the
+   pointer to a plain binding that owes it instead. The checker decided every
+   move and every release before emission; the paragraph above about scalar
+   members is unchanged for them. */
 "#;
 
 /// The reference observation, as `"<stream>: <line>"` records in program order.
@@ -463,8 +503,15 @@ pub fn buffer_event_statement(
             return Err(BufferEmissionRefusal::UnemittableLoop { event: index });
         }
         // **Refused, not skipped** — the same rule, for the same reason. See
-        // [`BufferEmissionRefusal::UnemittableRecord`].
-        BufferEvent::Construct { .. } | BufferEvent::Field { .. } => {
+        // [`BufferEmissionRefusal::UnemittableRecord`]. Card
+        // `AGGREGATE-OWNED-FIELD`'s field-path statements need the same record
+        // environment and are refused here for the same reason.
+        BufferEvent::Construct { .. }
+        | BufferEvent::Field { .. }
+        | BufferEvent::FieldStore { .. }
+        | BufferEvent::FieldLoad { .. }
+        | BufferEvent::FieldExtent { .. }
+        | BufferEvent::FieldRelease { .. } => {
             return Err(BufferEmissionRefusal::UnemittableRecord { event: index });
         }
         // **Refused, not skipped** — see [`BufferEmissionRefusal::UnemittableLend`].
@@ -500,6 +547,8 @@ pub fn emit_buffer_c11(
             .map(|record| (record.name.clone(), record.clone()))
             .collect(),
         bound: BTreeMap::new(),
+        field_extents: BTreeMap::new(),
+        live_fields: BTreeMap::new(),
     };
 
     let lends: BTreeMap<usize, &std_buffer::LendRecord> = certificate
@@ -552,6 +601,29 @@ pub fn emit_buffer_c11(
 struct RecordEnvironment {
     types: BTreeMap<String, RecordType>,
     bound: BTreeMap<String, String>,
+    /// `(record binding, field)` → the extent of the buffer moved into that
+    /// owned field (card `AGGREGATE-OWNED-FIELD`), so an access through the
+    /// field emits the same bounds witness a plain access does.
+    field_extents: BTreeMap<(String, String), u32>,
+    /// Record binding → the owned fields that still hold their buffer, so a
+    /// whole-record release frees exactly those, in declaration order — the
+    /// emitter's mirror of what the checker decided and the certificate
+    /// published.
+    live_fields: BTreeMap<String, BTreeSet<String>>,
+}
+
+impl RecordEnvironment {
+    /// The C expression for the member `record.field`.
+    fn member(record: &str, field: &str) -> String {
+        format!("{}.{}", record_binding_name(record), record_field_name(field))
+    }
+
+    fn field_extent(&self, event: usize, record: &str, field: &str) -> Result<u32, BufferEmissionRefusal> {
+        self.field_extents
+            .get(&(record.to_owned(), field.to_owned()))
+            .copied()
+            .ok_or(BufferEmissionRefusal::UnplaceableAccess { event })
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -637,6 +709,35 @@ fn emit_events(
             _ => {}
         }
         match event {
+            // Card `AGGREGATE-OWNED-FIELD`: `drop RECORD;` of a composed
+            // record frees every owned member still held, in declaration
+            // order — the emitter walking the same declared list the checker
+            // published its releases from. A record of scalars is never in
+            // `live_fields`, so its `drop` — refused by the checker — never
+            // reaches this arm.
+            BufferEvent::Release { name } if records.live_fields.contains_key(name) => {
+                let Some(type_name) = records.bound.get(name) else {
+                    return Err(BufferEmissionRefusal::Unbound {
+                        event: index,
+                        name: name.clone(),
+                    });
+                };
+                let declared: Vec<String> = records
+                    .types
+                    .get(type_name)
+                    .map(|declared| declared.owned_field_names().map(ToOwned::to_owned).collect())
+                    .unwrap_or_default();
+                let live = records.live_fields.remove(name).unwrap_or_default();
+                for field in declared {
+                    if live.contains(&field) {
+                        let _ = writeln!(
+                            source,
+                            "{indent}qcore_bytes_drop({});",
+                            RecordEnvironment::member(name, &field)
+                        );
+                    }
+                }
+            }
             // **The composition of the two restructures** (cards `LOOP-V1`
             // and `STRING-CONCAT`). The recursion and the indent are
             // `LOOP-V1`'s and are unchanged; what one value-bearing event
@@ -655,6 +756,61 @@ fn emit_events(
                 if let Some(statement) = buffer_event_statement(index, event, scalars, extents)? {
                     let _ = writeln!(source, "{indent}{statement}");
                 }
+            }
+            // Card `AGGREGATE-OWNED-FIELD`: the four field-path positions are
+            // the plain-name statements with the member in place of the
+            // binding and the field's extent as the bounds witness.
+            BufferEvent::FieldStore {
+                record,
+                field,
+                index: at,
+                value,
+            } => {
+                let extent = records.field_extent(index, record, field)?;
+                let at = operand_expression(scalars, index, at)?;
+                let value = operand_expression(scalars, index, value)?;
+                let _ = writeln!(
+                    source,
+                    "{indent}qcore_bytes_store({}, (size_t) {extent}u, (size_t) ({at}), {value});",
+                    RecordEnvironment::member(record, field)
+                );
+            }
+            BufferEvent::FieldLoad {
+                binding,
+                record,
+                field,
+                index: at,
+            } => {
+                let extent = records.field_extent(index, record, field)?;
+                let at = operand_expression(scalars, index, at)?;
+                let emitted = scalar_name(binding);
+                scalars.insert(binding.clone(), emitted.clone());
+                let _ = writeln!(
+                    source,
+                    "{indent}int32_t {emitted} = qcore_bytes_load({}, (size_t) {extent}u, (size_t) ({at}));",
+                    RecordEnvironment::member(record, field)
+                );
+            }
+            BufferEvent::FieldExtent {
+                binding,
+                record,
+                field,
+            } => {
+                let extent = records.field_extent(index, record, field)?;
+                let emitted = scalar_name(binding);
+                scalars.insert(binding.clone(), emitted.clone());
+                let _ = writeln!(source, "{indent}int32_t {emitted} = INT32_C({extent});");
+            }
+            BufferEvent::FieldRelease { record, field } => {
+                records.field_extent(index, record, field)?;
+                if let Some(live) = records.live_fields.get_mut(record) {
+                    live.remove(field);
+                }
+                let _ = writeln!(
+                    source,
+                    "{indent}qcore_bytes_drop({});",
+                    RecordEnvironment::member(record, field)
+                );
             }
             // Card `AGGREGATES-V1`. Emitted here rather than in
             // `buffer_event_statement` because both need the record
@@ -678,6 +834,8 @@ fn emit_events(
                 // below refuses rather than leaving a member indeterminate if
                 // it ever were not.
                 let mut initializers = Vec::new();
+                let mut live = BTreeSet::new();
+                let mut moved_in = Vec::new();
                 for field in &declared.fields {
                     let Some((_, operand)) = fields.iter().find(|(name, _)| *name == field.name)
                     else {
@@ -686,11 +844,35 @@ fn emit_events(
                             name: format!("{type_name}.{}", field.name),
                         });
                     };
-                    let value = operand_expression(scalars, index, operand)?;
+                    let value = match field.field_type {
+                        FieldType::I32 => operand_expression(scalars, index, operand)?,
+                        // Card `AGGREGATE-OWNED-FIELD`: the owned member takes
+                        // the buffer's pointer — the move, in C, is the
+                        // initializer naming the old binding — and the struct
+                        // owes it from here on.
+                        FieldType::Bytes => {
+                            let BufferOperand::Scalar(from) = operand else {
+                                return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
+                            };
+                            let Some(extent) = extents.get(from).copied() else {
+                                return Err(BufferEmissionRefusal::Unbound {
+                                    event: index,
+                                    name: from.clone(),
+                                });
+                            };
+                            moved_in.push(((binding.clone(), field.name.clone()), extent));
+                            live.insert(field.name.clone());
+                            buffer_name(from)
+                        }
+                    };
                     initializers.push(format!(".{} = {value}", record_field_name(&field.name)));
                 }
                 let emitted = record_binding_name(binding);
                 records.bound.insert(binding.clone(), type_name.clone());
+                if !live.is_empty() {
+                    records.live_fields.insert(binding.clone(), live);
+                    records.field_extents.extend(moved_in);
+                }
                 let _ = writeln!(
                     source,
                     "{indent}struct {} {emitted} = {{ {} }};",
@@ -712,21 +894,42 @@ fn emit_events(
                 // The declared type is consulted rather than trusted: a field
                 // the type does not declare has no member to read, and the
                 // checker already refused it.
-                let declares = records
+                let Some(field_type) = records
                     .types
                     .get(type_name)
-                    .is_some_and(|declared| declared.field(field).is_some());
-                if !declares {
+                    .and_then(|declared| declared.field(field))
+                else {
                     return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
+                };
+                match field_type {
+                    FieldType::I32 => {
+                        let emitted = scalar_name(binding);
+                        scalars.insert(binding.clone(), emitted.clone());
+                        let _ = writeln!(
+                            source,
+                            "{indent}int32_t {emitted} = {}.{};",
+                            record_binding_name(record),
+                            record_field_name(field)
+                        );
+                    }
+                    // Card `AGGREGATE-OWNED-FIELD`: the partial move. The plain
+                    // binding takes the member's pointer and owes it; the
+                    // struct no longer does, so the whole-record release below
+                    // skips this member.
+                    FieldType::Bytes => {
+                        let extent = records.field_extent(index, record, field)?;
+                        if let Some(live) = records.live_fields.get_mut(record) {
+                            live.remove(field);
+                        }
+                        extents.insert(binding.clone(), extent);
+                        let _ = writeln!(
+                            source,
+                            "{indent}unsigned char *{} = {};",
+                            buffer_name(binding),
+                            RecordEnvironment::member(record, field)
+                        );
+                    }
                 }
-                let emitted = scalar_name(binding);
-                scalars.insert(binding.clone(), emitted.clone());
-                let _ = writeln!(
-                    source,
-                    "{indent}int32_t {emitted} = {}.{};",
-                    record_binding_name(record),
-                    record_field_name(field)
-                );
             }
             BufferEvent::Repeat {
                 variable,

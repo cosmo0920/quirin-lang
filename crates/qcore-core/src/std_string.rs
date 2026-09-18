@@ -879,10 +879,20 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
             // effects: an acquisition and a release are `Alloc`, a store is
             // `Mut`, a read observes. Read from that route's vocabulary rather
             // than restated, so the two rows cannot drift.
-            StringEvent::Buffer(BufferEvent::Acquire { .. } | BufferEvent::Release { .. }) => {
+            // Card `AGGREGATE-OWNED-FIELD`: the field-path release and store
+            // derive what their plain-name twins derive. This route refuses
+            // a record statement before emission (`AGGREGATE-STRING-COMPOSE`),
+            // and the row is derived before that refusal is reported, so
+            // these arms are right rather than empty — the fail-closed
+            // direction the `Repeat` arm below states.
+            StringEvent::Buffer(
+                BufferEvent::Acquire { .. }
+                | BufferEvent::Release { .. }
+                | BufferEvent::FieldRelease { .. },
+            ) => {
                 effects.insert(Effect::Alloc);
             }
-            StringEvent::Buffer(BufferEvent::Store { .. }) => {
+            StringEvent::Buffer(BufferEvent::Store { .. } | BufferEvent::FieldStore { .. }) => {
                 effects.insert(Effect::Mut);
             }
             // A composed `for` (the `LOOP-V1` × `STRING-CONCAT` composition).
@@ -933,6 +943,8 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
             | StringEvent::Buffer(
                 BufferEvent::Bind { .. }
                 | BufferEvent::Load { .. }
+                | BufferEvent::FieldLoad { .. }
+                | BufferEvent::FieldExtent { .. }
                 | BufferEvent::Extent { .. }
                 // Card `SLICE-PERMISSIONS-WRITE-LEND`: a lend derives nothing
                 // — authority moves, no byte does. The composed route refuses
