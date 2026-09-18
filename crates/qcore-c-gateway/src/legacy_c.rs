@@ -458,6 +458,19 @@ pub struct LegacyCfgNode {
     pub successors: Vec<LegacyNodeId>,
     pub line: usize,
     pub is_exit: bool,
+    /// Card **SCALAR-ROUTE-EXIT-EDGE**: the index in [`Self::successors`] that
+    /// leaves the loop this node heads, for the three loop headers that have
+    /// one — `while`, `do`-`while` and `for`. `None` on every other node,
+    /// including a `for (;;)` header, which carries no exit successor at all.
+    ///
+    /// It is a **static** structural fact recorded where the successors are
+    /// assigned, never re-derived from reachability: constraint 6 records that
+    /// a fact read off an intermediate iterate depends on the work-list
+    /// schedule, and this one gates a refusal, so it must not.
+    ///
+    /// Its single consumer is the `Infeasible` arm of the custody work list,
+    /// which may not delete this edge. See that arm for why.
+    pub loop_exit_edge: Option<usize>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -5130,6 +5143,9 @@ impl CfgBuilder {
                 self.continue_targets.pop();
                 self.break_targets.pop();
                 self.nodes[header].successors = vec![body_entry, continuation];
+                // SCALAR-ROUTE-EXIT-EDGE: index 1 is the successor that leaves
+                // the loop.
+                self.nodes[header].loop_exit_edge = Some(1);
                 header
             }
             Statement::For {
@@ -5163,6 +5179,11 @@ impl CfgBuilder {
                 } else {
                     vec![body_entry, continuation]
                 };
+                // SCALAR-ROUTE-EXIT-EDGE. A `for (;;)` header has no exit
+                // successor to protect — that route removes it at construction
+                // and is a different, unowned neighbour
+                // (`FOREVER-FOR-EXIT-EDGE-UNOWNED`), deliberately untouched.
+                self.nodes[header].loop_exit_edge = (!*condition_always_true).then_some(1);
                 init.as_ref().map_or(header, |clause| {
                     let (instruction, line) = clause.as_ref();
                     self.push(instruction.clone(), vec![header], *line, false)
@@ -5202,6 +5223,11 @@ impl CfgBuilder {
                 } else {
                     vec![body_entry, continuation]
                 };
+                // SCALAR-ROUTE-EXIT-EDGE. Under card
+                // `C-GATEWAY-CONSTANT-DO-WHILE`'s rule the continuation is the
+                // header's only successor, so it is index 0; otherwise index 1,
+                // as for `while`. Either way it is the edge that leaves.
+                self.nodes[header].loop_exit_edge = Some(usize::from(!*condition_is_literal_zero));
                 body_entry
             }
             Statement::Switch {
@@ -5326,6 +5352,9 @@ impl CfgBuilder {
             successors,
             line,
             is_exit,
+            // Set only by the three loop headers, where the successors are
+            // assigned after the body is compiled.
+            loop_exit_edge: None,
         });
         id
     }
@@ -6131,6 +6160,59 @@ fn observe_exit(
 /// The published claim is the existing `UnknownAlias` naming the actual. No
 /// diagnostic code is added, changed or downgraded, and the rule can only turn
 /// `Safe` into `Unknown`.
+/// Card **SCALAR-ROUTE-EXIT-EDGE**: report each loop header whose exit edge the
+/// value route called infeasible and the work list retained anyway.
+///
+/// Read from the **settled** incoming states, exactly as
+/// [`require_live_borrowed_actuals`] is and for the same reason: the arm is
+/// reached on intermediate iterates of a header whose fixed point later widens
+/// the deciding binding to `unknown` (a body that writes the scalar takes
+/// `ForgetScalar`, and `AbstractState::join`'s `(Some, None)` arm then makes it
+/// `unknown`), so a diagnostic emitted inside the work list would depend on the
+/// work-list schedule — the hazard constraint 6 records.
+///
+/// A `BranchOnNull` node's transfer function is empty and it is never a release
+/// site, so its settled incoming state *is* the state the edge was refined
+/// from; the probe below therefore asks exactly the question the work list
+/// asked, on the state the fixed point settled at.
+fn report_retained_loop_exit_edges(
+    cfg: &LegacyCfg,
+    incoming: &[Option<AbstractState>],
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    for (node_id, node) in cfg.nodes.iter().enumerate() {
+        // An unreached header supports no claim in either direction.
+        let (Some(edge), Some(state)) = (node.loop_exit_edge, incoming[node_id].as_ref()) else {
+            continue;
+        };
+        let LegacyInstruction::BranchOnNull {
+            source,
+            true_is_null,
+        } = &node.instruction
+        else {
+            continue;
+        };
+        let assume_null = if edge == 0 {
+            *true_is_null
+        } else {
+            !*true_is_null
+        };
+        let mut probe = state.clone();
+        if matches!(
+            refine_pointer_null(&mut probe, source, assume_null),
+            PointerRefinement::Infeasible
+        ) {
+            diagnostics.insert(LegacyDiagnostic {
+                function: cfg.function.clone(),
+                line: node.line,
+                kind: LegacyDiagnosticKind::Unsupported {
+                    description: LOOP_EXIT_EDGE_RETAINED.to_owned(),
+                },
+            });
+        }
+    }
+}
+
 fn require_live_borrowed_actuals(
     cfg: &LegacyCfg,
     incoming: &[Option<AbstractState>],
@@ -6392,6 +6474,60 @@ pub(crate) fn analyze_cfg_with_entry(
                     !*true_is_null
                 };
                 match refine_pointer_null(&mut edge_output, source, assume_null) {
+                    // Card **SCALAR-ROUTE-EXIT-EDGE**. A loop header's exit
+                    // edge is never removed, whatever the value route decides.
+                    //
+                    // `Infeasible` elsewhere is ordinary path sensitivity: an
+                    // `if`'s two arms rejoin at the same continuation, so
+                    // pruning one orphans nothing. A *loop header*'s two
+                    // successors do not rejoin — everything after the loop
+                    // hangs off this one edge — so deleting it leaves the exit
+                    // node with no incoming state at all, `report_leaks` never
+                    // runs there, and `classify_diagnostics` can return `Safe`
+                    // for a body that leaks, double-releases or releases after
+                    // escape *after* the loop. That is the direction invariant
+                    // 1 forbids, and it was measured: see
+                    // `crates/qcore-c-gateway/tests/constant_do_while.rs`.
+                    //
+                    // The deletion would be exact only if the loop really
+                    // cannot terminate, and this route cannot know that. Its
+                    // must-fact is a *modelled value*, not a token, so it rests
+                    // on two premises the analyzer does not verify: that every
+                    // write the body performs to the deciding name reaches the
+                    // header as a forget, an opaque value or a poison
+                    // (constraint 10a's `Sparing`, in a role 10a does not
+                    // record), and that the object is not modified
+                    // asynchronously — which is **false for a `volatile`
+                    // object**, where C11 §5.1.2.3 lets `while (!flag) { }`
+                    // terminate. Constraint 5a already forbids deciding
+                    // control flow from a computed value; this is that rule
+                    // applied to the one place that still did.
+                    //
+                    // The edge is therefore retained carrying the *unrefined*
+                    // state, and the header reports `Unsupported`, so the
+                    // function is `Unknown` rather than either a false `Safe`
+                    // or a fabricated `Unsafe` about a path the model says it
+                    // does not have. The sibling *back* edge is deliberately
+                    // untouched (`SCALAR-ROUTE-BACK-EDGE-UNDEFENDED`): removing
+                    // it deletes a loop body, which is what card
+                    // `C-GATEWAY-CONSTANT-DO-WHILE` proved for a token, and it
+                    // needs its own measured re-pin rather than being folded in
+                    // here.
+                    //
+                    // The refusal itself is **not** reported here. This arm is
+                    // reached on intermediate iterates of a header whose fixed
+                    // point later widens the deciding binding to `unknown`, so a
+                    // diagnostic emitted inside the work list would depend on
+                    // the work-list schedule — constraint 6's recorded hazard.
+                    // It is reported from the settled states by
+                    // [`report_retained_loop_exit_edges`] instead, exactly as
+                    // `require_live_borrowed_actuals` reads its must-fact.
+                    // Retaining the edge is itself monotone, so the fixed point
+                    // stays order-independent.
+                    PointerRefinement::Infeasible if node.loop_exit_edge == Some(edge) => {
+                        edge_output = output.clone();
+                        edge_output.unmodeled = true;
+                    }
                     PointerRefinement::Infeasible => continue,
                     PointerRefinement::Unknown => {
                         edge_output.unmodeled = true;
@@ -6437,6 +6573,7 @@ pub(crate) fn analyze_cfg_with_entry(
     // would depend on the work-list schedule. Read-only — see
     // [`crate::borrow_liveness`].
     require_live_borrowed_actuals(&cfg, &incoming, &mut diagnostics);
+    report_retained_loop_exit_edges(&cfg, &incoming, &mut diagnostics);
 
     // Read the settled exit states once the work list is stable, so that a
     // summary describes the joined behavior of every reachable return rather
@@ -7971,6 +8108,13 @@ enum PointerRefinement {
     Infeasible,
     Unknown,
 }
+
+/// Card **SCALAR-ROUTE-EXIT-EDGE**: the refusal a loop header reports when the
+/// value route called its exit edge infeasible and the edge was retained
+/// anyway. It is `Unsupported`, so [`classify_diagnostics`] reads `Unknown` —
+/// the fail-closed answer for a path whose absence the analyzer cannot prove.
+pub(crate) const LOOP_EXIT_EDGE_RETAINED: &str =
+    "loop exit edge retained: a modeled value cannot remove it";
 
 fn refine_pointer_null(
     state: &mut AbstractState,

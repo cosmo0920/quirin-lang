@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 192
+  "named_followups": 196
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6160,7 +6160,7 @@
   "workspace_tests": 4611,
   "provider_tests": 122,
   "python_evidence_validator_tests": 293,
-  "lean_audits": 135,
+  "lean_audits": 136,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6264,6 +6264,7 @@
    "AuditRegionTaskCredit.lean",
    "AuditReturnCallCustody.lean",
    "AuditReturnPositionEscape.lean",
+   "AuditScalarRouteExitEdge.lean",
    "AuditSingleEmissionRoute.lean",
    "AuditSlicePermissions.lean",
    "AuditSocketEventCompose.lean",
@@ -6926,13 +6927,6 @@
    "recorded_by": "WAVE-35-CLOSE"
   },
   {
-   "id": "CONSTANT-DO-WHILE-SCALAR-ROUTE-UNOWNED",
-   "title": "A pre-existing route decides a do-while from a modelled scalar VALUE, and it has no card, no Lean and no report",
-   "why": "Card C-GATEWAY-CONSTANT-DO-WHILE (wave 35) §6 found that a pre-existing route already decides a `do`-`while` from a modelled scalar value, where the card's own rule decides from a TOKEN. Both answers agree wherever they overlap and the scalar route answered conservatively on all four probed shapes - but it has no card, no Lean and no report of its own, and is pinned only by one test the card happened to write (a_modeled_scalar_condition_is_a_separate_pre_existing_route). Standing constraint 5c records it as 'not owned by that card'. DISCHARGE: a card that states the route's premise, measures its corpus reach, and either gives it a theorem or records it as a measured boundary - or a finding that the two routes CAN disagree, which would be the more interesting outcome.",
-   "source": "docs/reports/c-gateway-constant-do-while/README.md",
-   "recorded_by": "WAVE-35-CLOSE"
-  },
-  {
    "id": "VERIFIER-HOST-EARLY-ARM-OVERLOAD",
    "title": "A sixth load-sensitive host row, and the only one sensitive at the TOP of the load range",
    "why": "Card VERIFIER-HOST-CONTROL-BUDGET (wave 35) §5 measured standalone_host.rs's assert!(start.elapsed() < Duration::from_secs(1)), a fixed one-second guard over a 40 ms deadline in the first arm of closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request, failing 3 of 6 repetitions at 1-minute load ~100 on a 16-CPU host. Correct but load-sensitive: constraint 16's shape, at the OPPOSITE end of the band from the defect that card repaired. The amendment text the card proposed for constraint 16 was landed by the wave-35 close. DISCHARGE: derive the guard from the declared budget instead of a fixed second. NOT a discharge: raising the second, or deleting the guard.",
@@ -7589,6 +7583,41 @@
    "title": "The indirect-census feature now carries two cards' instrumentation and is still built by no CI job",
    "why": "Raised by C-GATEWAY-INDIRECT-CENSUS-2 (wave 36) as INDIRECT-CENSUS-FEATURE-UNBUILT, left to the integrator, and not registered. BASE-TYPE-READER-CENSUS (wave 37) has now paid into it a second time: the feature gates hooks in legacy_c.rs, typed_field_access.rs and indirect_census.rs, including note sinks threaded through classify_specifiers, declared_type, read_parameters, read_locals, read_declaration and record_variable. No workspace member enables it, so the standing gate never compiles it; each card adds its own extra clippy pass and nothing else checks it. A refactor of the declaration reader will break the census silently and the next card will pay to repair it. DISCHARGE: a CI job building `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings`, or a recorded decision that the instrumentation is disposable and a future census re-derives it.",
    "source": "docs/reports/base-type-reader-census/README.md"
+  },
+  {
+   "id": "SCALAR-ROUTE-BACK-EDGE-UNDEFENDED",
+   "recorded_by": "SCALAR-ROUTE-EXIT-EDGE",
+   "source": "docs/reports/scalar-route-exit-edge/README.md",
+   "title": "The value route still deletes a loop header's BODY edge from a modelled value, on the same two unverifiable premises",
+   "why": "Card SCALAR-ROUTE-EXIT-EDGE (wave 37) restricted the EXIT direction of refine_pointer_null's Infeasible arm and deliberately left the sibling BACK edge alone. A positively spelled loop header - `while (flag)` with a known-null binding, `while (p)` with a known-non-null one - still loses its BODY edge, decided from a modelled value, on exactly the two premises the card found unverifiable: the volatile witness applies unchanged (a volatile zero flag with `while (flag) { q_free(p); q_free(p); }` was measured Safe, swallowing a double release INSIDE the body), and constraint 10a's Sparing completeness applies unchanged. It is not folded in because deleting a body edge is what C-GATEWAY-CONSTANT-DO-WHILE proved for a literal token, and CONSTANT-DO-WHILE-OTHER-CONSTANTS gives the ground for the mirror case: the other direction must not be folded into this rule. Measured corpus reach today: 0 of 201 loop-header BranchOnNull nodes delete a body edge. DISCHARGE: a card that either proves the back-edge deletion sound under a premise it states and the analyzer can check, or restricts it, in both cases with its own measured re-pin and a test driving a volatile flag and a spared body write."
+  },
+  {
+   "id": "GATEWAY-VOLATILE-PREMISE",
+   "recorded_by": "SCALAR-ROUTE-EXIT-EDGE",
+   "source": "docs/reports/scalar-route-exit-edge/README.md",
+   "title": "The gateway's abstract state assumes no asynchronous modification, and that premise is written down nowhere",
+   "why": "Card SCALAR-ROUTE-EXIT-EDGE (wave 37) measured a value-derived must-fact in legacy_c.rs to be FALSE for a volatile object: C11 5.1.2.3 lets such an object be modified by means outside the program, so `while (!flag) { }` on a volatile flag terminates in well-defined C while the abstract state still calls flag null. The reduced importer does not read the volatile qualifier, so every value-derived must-fact in the file inherits this premise silently - it is a global premise of the same kind as AOM-POISON-NO-UB (constraint 10a), which IS recorded, where this one is not. The card's restriction removes the premise's LOAD at a loop header's exit edge and nowhere else. DISCHARGE: a census of the places in legacy_c.rs where a value-derived must-fact decides an admission or a CFG edge, followed either by recording the premise as a standing constraint beside 5a and 10a with that census as its evidence, or by giving the importer the qualifier so the premise can be checked rather than assumed."
+  },
+  {
+   "id": "SCALAR-ROUTE-BRANCH-PRUNING-UNPROVED",
+   "recorded_by": "SCALAR-ROUTE-EXIT-EDGE",
+   "source": "docs/reports/scalar-route-exit-edge/README.md",
+   "title": "154 corpus branch-edge prunings rest on the same two premises and carry no theorem",
+   "why": "Card SCALAR-ROUTE-EXIT-EDGE (wave 37) deliberately preserved refine_pointer_null's branch pruning, measuring it at 154 corpus edges (24 through the empty_targets arm, 130 through known_non_null), because an `if`'s two arms rejoin at the same continuation so pruning one orphans no destination - that is the precision a blanket restriction would have destroyed. But a pruned arm's diagnostics are still not reported, and under the volatile witness a pruned arm CAN be taken. Whether any of the 205 corpus Safe functions depends on one is NOT measured by that card, which measured only that none depends on a deleted EXIT edge. DISCHARGE: re-run the card's census harness (docs/reports/scalar-route-exit-edge/scripts/) with branch pruning disabled and diff the verdicts, which answers the question the same way the card answered it for loop headers; then either prove the branch arm sound under a stated premise or record the measured dependence."
+  },
+  {
+   "id": "SCALAR-ROUTE-UNTRACKED-ARM-DOMINATES",
+   "recorded_by": "SCALAR-ROUTE-EXIT-EDGE",
+   "source": "docs/reports/scalar-route-exit-edge/README.md",
+   "title": "The 'hazard unreached in the corpus' result is a coverage fact, and one card away from being false",
+   "why": "Card SCALAR-ROUTE-EXIT-EDGE (wave 37) measured 0 of 201 loop-header BranchOnNull nodes reaching either deciding arm of refine_pointer_null, which is why its restriction moved no count. The REASON is coverage, not safety: 369 of 412 loop-header edge rows (89.6%) land in the route's `untracked` early return, whose own comment says why - 'the reduced importer has no scalar type environment' - so the corpus's loop conditions are names the importer does not bind. The shape is present: 37 rows spell the inverted polarity the hazard needs. Any card that gives the reduced importer a scalar type environment, or otherwise binds integer loop conditions, moves those 369 rows into the deciding arms and makes the hazard reachable in one step. DISCHARGE: re-run docs/reports/scalar-route-exit-edge/scripts/census.sh when such a card lands and publish the moved table beside it; the restriction needs no change, but the '0 of 201' figure must not be carried forward as though it were stable."
+  },
+  {
+   "id": "SCALAR-ROUTE-ZERO-SPELLINGS",
+   "recorded_by": "SCALAR-ROUTE-EXIT-EDGE",
+   "source": "docs/reports/scalar-route-exit-edge/README.md",
+   "title": "The value route's zero spellings do NOT move with CONSTANT-DO-WHILE-ZERO-SPELLINGS - measured, with the ground",
+   "why": "Card SCALAR-ROUTE-EXIT-EDGE (wave 37) was asked whether the value route's unclaimed zero spellings move with CONSTANT-DO-WHILE-ZERO-SPELLINGS, and measured that they do not. The two rules key DIFFERENT PREDICATES IN DIFFERENT POSITIONS: condition_is_literal_zero (legacy_c.rs:4652) matches a single token whose text is \"0\" over a CONDITION token stream, while the value route keys on is_null_constant (legacy_c.rs:4799), which matches NULL, nullptr, 0 and (void *)0, applied to an INITIALIZER's right-hand side and to the operands of == and !=. Neither is a subset of the other - is_null_constant already accepts two spellings condition_is_literal_zero refuses - so widening one does not widen the other, and CONSTANT-DO-WHILE-ZERO-SPELLINGS's discharge (a preprocessed census of do-while CONDITIONS) does not answer this question. Pinned by the_other_zero_spellings_reach_neither_arm: 0x0, 0u, 0L, 00, a null character constant and 1 - 1 bind no known null, reach neither deciding arm and keep every edge. DISCHARGE: a census of INITIALIZER right-hand sides over the 185 units classifying every single-token integer constant expression, followed either by a widening of is_null_constant with its own measured re-pin or by a recorded statement that the set is empty. Note the direction: widening is_null_constant would create new exit-edge deletions on this route, which is now harmless because card SCALAR-ROUTE-EXIT-EDGE refuses them whatever the binding says."
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

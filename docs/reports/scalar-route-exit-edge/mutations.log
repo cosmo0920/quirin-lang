@@ -1,0 +1,20 @@
+baseline: exit=0 red=[]
+M1-prune-the-exit-edge-again: exit=101 RED (arm is driven)
+  the whole restriction: the exit edge is deleted as before
+  red: ['a_retained_exit_edge_still_reports_a_double_release_after_the_loop', 'a_volatile_flag_loop_is_not_safe', 'an_inverted_loop_header_does_not_delete_its_exit_edge', 'the_known_non_null_arm_does_not_delete_its_exit_edge', 'the_retained_edge_carries_the_state_the_header_had']
+M2-drop-the-settled-report: exit=101 RED (arm is driven)
+  the edge is retained but the refusal is never reported
+  red: ['an_inverted_loop_header_does_not_delete_its_exit_edge', 'the_known_non_null_arm_does_not_delete_its_exit_edge']
+M3-while-header-forgets-its-exit-edge: exit=101 RED (arm is driven)
+  the `while` header records no loop exit edge, so the rule cannot see it
+  red: ['a_retained_exit_edge_still_reports_a_double_release_after_the_loop', 'a_volatile_flag_loop_is_not_safe', 'an_inverted_loop_header_does_not_delete_its_exit_edge', 'the_known_non_null_arm_does_not_delete_its_exit_edge', 'the_retained_edge_carries_the_state_the_header_had']
+M4-protect-every-edge: exit=101 RED (arm is driven)
+  the rule fires on branches too, destroying ordinary path sensitivity
+  red: ['a_branch_keeps_its_ordinary_path_sensitivity', 'the_back_edge_arm_is_unchanged']
+M5-protect-the-body-edge-instead: exit=101 RED (arm is driven)
+  the protected index is the body edge, not the leaving one
+  red: ['a_retained_exit_edge_still_reports_a_double_release_after_the_loop', 'a_volatile_flag_loop_is_not_safe', 'an_inverted_loop_header_does_not_delete_its_exit_edge', 'the_known_non_null_arm_does_not_delete_its_exit_edge', 'the_retained_edge_carries_the_state_the_header_had']
+M6-report-inside-the-work-list: exit=101 RED (arm is driven)
+  the refusal is reported on intermediate iterates, not settled states
+  red: ['a_body_that_writes_the_deciding_scalar_reaches_the_unknown_arm']
+restored: sha256 EQUAL exit=0

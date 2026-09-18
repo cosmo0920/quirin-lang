@@ -441,6 +441,7 @@ mod tests {
             successors,
             line: 0,
             is_exit: false,
+            loop_exit_edge: None,
         };
         let mut nodes = vec![
             plain(vec![1]),
@@ -664,6 +665,7 @@ mod tests {
             successors,
             line: 0,
             is_exit: false,
+            loop_exit_edge: None,
         };
         let mut nodes = vec![
             plain(
