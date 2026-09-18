@@ -7771,3 +7771,57 @@ fn ct37_retains_sequential_transferred_payload_control() {
         ["acquire:5", "acquire:6", "transfer:6", "release:5"]
     );
 }
+
+/// Card `STABILITY-REEVAL-3` (wave 38). The proof stage is credited to a
+/// **string**: `PROOF_GATED_CASES` names `file::test`, and the manifest checks
+/// above compare that string with the manifest's `executor` and with
+/// `RUNNER_REGISTRY` — nothing reads the file it names. A proof-leg test
+/// renamed, `#[ignore]`d, or re-pointed at another case's fixture (CT12's is
+/// byte-identical to CT01's) would therefore leave the numerator reading 3
+/// with this harness green. This test reads each named file and asserts the
+/// binding the string credits: the named `fn` exists, its attribute block
+/// carries `#[test]` and no `#[ignore]`, and the file `include_str!`s the
+/// case's own `fixtures/ct/<ID>/case.qcore`. Shown red by mutation in
+/// `docs/reports/stability-reeval-3/`; the residual it closes is
+/// `CT-PROOF-LEG-BINDING-BY-NAME`.
+#[test]
+fn proof_gated_cases_name_a_live_test_that_reads_the_cases_own_fixture() {
+    for (id, executor) in PROOF_GATED_CASES {
+        let (file, test) = executor
+            .split_once("::")
+            .unwrap_or_else(|| panic!("{id}: executor `{executor}` is not `file::test`"));
+        let path = repo_root().join(file);
+        let text = fs::read_to_string(&path)
+            .unwrap_or_else(|error| panic!("{id}: proof-leg file `{file}` is unreadable: {error}"));
+        let signature = format!("fn {test}()");
+        let at = text
+            .find(&signature)
+            .unwrap_or_else(|| panic!("{id}: `{file}` defines no `{signature}`"));
+        // The attribute block is the run of `#[…]` and `///` lines immediately
+        // above the signature; it must carry `#[test]` and nothing ignoring it.
+        let attributes: Vec<&str> = text[..at]
+            .lines()
+            .rev()
+            .take_while(|line| {
+                let line = line.trim_start();
+                line.starts_with("#[") || line.starts_with("///")
+            })
+            .map(str::trim)
+            .collect();
+        assert!(
+            attributes.contains(&"#[test]"),
+            "{id}: `{signature}` in `{file}` is not a `#[test]`: {attributes:?}"
+        );
+        assert!(
+            attributes.iter().all(|line| !line.contains("ignore")),
+            "{id}: `{signature}` in `{file}` is ignored, so the proof stage it is credited \
+             with runs nowhere: {attributes:?}"
+        );
+        let fixture = format!("include_str!(\"fixtures/ct/{id}/case.qcore\")");
+        assert!(
+            text.contains(&fixture),
+            "{id}: `{file}` does not read `{fixture}`, so the test it names is not lowering \
+             this case's own fixture"
+        );
+    }
+}
