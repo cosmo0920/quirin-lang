@@ -1,0 +1,11 @@
+baseline: exit=0
+M1-rename-the-credited-test: exit=101 RED (arm is driven)
+  the string in PROOF_GATED_CASES names a function that no longer exists
+  thread 'proof_gated_cases_name_a_live_test_that_reads_the_cases_own_fixture' (3679404) panicked at compiler/tests/ct_corpus.rs:7799:32:
+M2-ignore-the-credited-test: exit=101 RED (arm is driven)
+  the credited test is #[ignore]d, so the proof stage runs nowhere
+  thread 'proof_gated_cases_name_a_live_test_that_reads_the_cases_own_fixture' (3679410) panicked at compiler/tests/ct_corpus.rs:7815:9:
+M3-repoint-the-fixture: exit=101 RED (arm is driven)
+  the credited test lowers another case's fixture
+  thread 'proof_gated_cases_name_a_live_test_that_reads_the_cases_own_fixture' (3679415) panicked at compiler/tests/ct_corpus.rs:7821:9:
+restored: sha256 EQUAL exit=0

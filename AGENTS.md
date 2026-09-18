@@ -165,7 +165,8 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**215** entries at the wave-37 close. Which card registered or retired which name,
+**229** entries after `STABILITY-REEVAL-3` (wave 38; 215 at the wave-37
+close). Which card registered or retired which name,
 and each wave's chain, is the increment records' business — read the wave
 paragraphs; the retirement discipline itself is a standing rule in `CLAUDE.md`,
 and each close's own record carries that close's arithmetic. The operative rule
