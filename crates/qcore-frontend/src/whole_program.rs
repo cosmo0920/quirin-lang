@@ -715,7 +715,15 @@ fn collect_ownership_identities(operations: &[OwnershipOp], result: &mut BTreeSe
             | OwnershipOp::Move { .. }
             | OwnershipOp::Copy(_)
             | OwnershipOp::Drop(_)
-            | OwnershipOp::TransferOut(_) => {}
+            | OwnershipOp::TransferOut(_)
+            // Card `AGGREGATE-OWNED-FIELD`: the aggregate operations move,
+            // access and release identities an `Acquire` already introduced;
+            // none introduces one.
+            | OwnershipOp::Compose { .. }
+            | OwnershipOp::ReadField(_)
+            | OwnershipOp::WriteField(_)
+            | OwnershipOp::MoveOut { .. }
+            | OwnershipOp::DropField(_) => {}
         }
     }
 }

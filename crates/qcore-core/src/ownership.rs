@@ -78,12 +78,78 @@ impl Footprint {
     }
 }
 
+/// One field of a named aggregate — the owner path `BASE.FIELD` (card
+/// `AGGREGATE-OWNED-FIELD`).
+///
+/// **This is the field-path owner vocabulary constraint 15k recorded as
+/// missing.** Before the card every owner-addressing field of this IR was a
+/// plain `String`, so `p.buf` had nothing to be spelled into and
+/// [`check_ownership`] could not be *asked* about a field. A path is one level
+/// deep — a name and one field — which is measured to be what the record route
+/// needs (`AGGREGATE-NESTED` is the recorded step beyond it), and it is a
+/// **type** rather than a spelling convention: a plain `String` owner in an
+/// existing operation is always [`Place::Name`], so no name containing a `.`
+/// can be mistaken for a path and no path can be forged by spelling one.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct FieldPath {
+    pub base: String,
+    pub field: String,
+}
+
+impl FieldPath {
+    #[must_use]
+    pub fn new(base: impl Into<String>, field: impl Into<String>) -> Self {
+        Self {
+            base: base.into(),
+            field: field.into(),
+        }
+    }
+
+    /// The `BASE.FIELD` spelling a diagnostic names the path by.
+    #[must_use]
+    pub fn spelling(&self) -> String {
+        format!("{}.{}", self.base, self.field)
+    }
+}
+
+/// An owner place of the cycle-3 IR: a plain binding name, or one field of a
+/// named aggregate (card `AGGREGATE-OWNED-FIELD`).
+///
+/// Every operation this IR carried before the card names its owners by
+/// `String`, and every one of those is a [`Self::Name`]: the binding map is
+/// keyed by this type so that a field owner and a plain owner cannot collide,
+/// and so that the ledger's owner column can point at a field. The variant
+/// order is load-bearing for one published list only — [`OwnershipError::NormalPathLeak`]
+/// names plain owners before field owners — and for a program that composes no
+/// aggregate the list is exactly the list it always was.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Place {
+    Name(String),
+    Field(FieldPath),
+}
+
+impl Place {
+    fn name(name: &str) -> Self {
+        Self::Name(name.to_owned())
+    }
+
+    /// The spelling a diagnostic names this place by: the name itself, or
+    /// `BASE.FIELD`.
+    #[must_use]
+    pub fn spelling(&self) -> String {
+        match self {
+            Self::Name(name) => name.clone(),
+            Self::Field(path) => path.spelling(),
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ResourceEntry {
     id: ResourceId,
     resource_type: String,
     footprint: Footprint,
-    owner: String,
+    owner: Place,
     acquisition_order: u64,
 }
 
@@ -100,8 +166,16 @@ impl ResourceEntry {
         &self.footprint
     }
 
-    pub fn owner(&self) -> &str {
+    /// The place that owns this resource: a plain binding, or — since card
+    /// `AGGREGATE-OWNED-FIELD` — one field of an aggregate.
+    pub fn owner(&self) -> &Place {
         &self.owner
+    }
+
+    /// [`Self::owner`]'s spelling, for the readers that key by it.
+    #[must_use]
+    pub fn owner_spelling(&self) -> String {
+        self.owner.spelling()
     }
 
     pub fn acquisition_order(&self) -> u64 {
@@ -155,6 +229,11 @@ enum Binding {
     },
     Moved,
     Dropped,
+    /// A named aggregate whose owned fields, in declaration order, are the
+    /// [`Place::Field`] bindings `BASE.FIELD` beside it (card
+    /// `AGGREGATE-OWNED-FIELD`). The aggregate itself owns no resource: each
+    /// field does, and the aggregate is what a whole-record `Drop` walks.
+    Aggregate { fields: Vec<String> },
 }
 
 /// Reduced cycle-3 ownership IR. Borrow nodes delimit lexical loan lifetimes.
@@ -235,11 +314,44 @@ pub enum OwnershipOp {
         then_ops: Vec<OwnershipOp>,
         else_ops: Vec<OwnershipOp>,
     },
+    /// Bind `owner` as an aggregate whose owned fields take custody of the
+    /// named bindings **by move**, in the order given — the declaration order
+    /// the admitting route publishes (card `AGGREGATE-OWNED-FIELD`).
+    ///
+    /// The construction rule of the four: each `(field, from)` moves the
+    /// resource `from` owns into the field owner `owner.field`, exactly as a
+    /// [`Self::Move`] would into a plain name, so `from` is [`Binding::Moved`]
+    /// afterwards and a later use of it refuses. A binding composed into two
+    /// fields therefore refuses at the second (`UseAfterMove`), and a field
+    /// named twice refuses as a rebound live name. An aggregate that composes
+    /// **no** owned field is a shape no route emits — a record of scalars
+    /// contributes no operation at all, which is what keeps every program
+    /// written before the card byte-identical — but the IR admits it as the
+    /// degenerate aggregate: its `Drop` releases nothing and its `Copy` still
+    /// refuses.
+    Compose {
+        owner: String,
+        fields: Vec<(String, String)>,
+    },
+    /// A read through an owned field: [`Self::Read`] at a path.
+    ReadField(FieldPath),
+    /// A write through an owned field: [`Self::Write`] at a path.
+    WriteField(FieldPath),
+    /// **The partial-move rule.** The field's resource leaves the aggregate for
+    /// the plain binding `to`; the field is a hole ([`Binding::Moved`]) that a
+    /// later whole-record `Drop` tolerates and a later access refuses.
+    MoveOut {
+        from: FieldPath,
+        to: String,
+    },
+    /// A release of one owned field, leaving a hole the whole-record `Drop`
+    /// tolerates; a second release of it is a `DoubleDrop`.
+    DropField(FieldPath),
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct OwnershipState {
-    bindings: BTreeMap<String, Binding>,
+    bindings: BTreeMap<Place, Binding>,
     ledger: BTreeMap<ResourceId, ResourceEntry>,
     live: Footprint,
     next_acquisition_order: u64,
@@ -255,8 +367,28 @@ impl OwnershipState {
     }
 
     pub fn owner_resource(&self, owner: &str) -> Option<ResourceId> {
-        match self.bindings.get(owner) {
+        match self.bindings.get(&Place::name(owner)) {
             Some(Binding::Owned(resource)) => Some(*resource),
+            _ => None,
+        }
+    }
+
+    /// The resource an owned field holds, if the field is live (card
+    /// `AGGREGATE-OWNED-FIELD`).
+    #[must_use]
+    pub fn field_resource(&self, path: &FieldPath) -> Option<ResourceId> {
+        match self.bindings.get(&Place::Field(path.clone())) {
+            Some(Binding::Owned(resource)) => Some(*resource),
+            _ => None,
+        }
+    }
+
+    /// The owned fields of aggregate `owner` in declaration order, if `owner`
+    /// is an aggregate binding.
+    #[must_use]
+    pub fn aggregate_fields(&self, owner: &str) -> Option<&[String]> {
+        match self.bindings.get(&Place::name(owner)) {
+            Some(Binding::Aggregate { fields }) => Some(fields),
             _ => None,
         }
     }
@@ -272,19 +404,36 @@ impl OwnershipState {
         if aggregate != self.live {
             return Err(OwnershipError::LedgerInvariantViolation);
         }
-        for (name, binding) in &self.bindings {
+        for (place, binding) in &self.bindings {
             match binding {
                 Binding::Owned(resource) => {
                     let Some(entry) = self.ledger.get(resource) else {
                         return Err(OwnershipError::LedgerInvariantViolation);
                     };
-                    if entry.owner != *name {
+                    if entry.owner != *place {
                         return Err(OwnershipError::LedgerInvariantViolation);
                     }
                 }
                 Binding::Borrowed { resource, .. } => {
                     if !self.ledger.contains_key(resource) {
                         return Err(OwnershipError::LedgerInvariantViolation);
+                    }
+                }
+                // Every declared owned field of an aggregate has a field
+                // binding beside it — live, moved out or released — and an
+                // aggregate is never itself a field.
+                Binding::Aggregate { fields } => {
+                    let Place::Name(base) = place else {
+                        return Err(OwnershipError::LedgerInvariantViolation);
+                    };
+                    for field in fields {
+                        let key = Place::Field(FieldPath::new(base.clone(), field.clone()));
+                        if !matches!(
+                            self.bindings.get(&key),
+                            Some(Binding::Owned(_) | Binding::Moved | Binding::Dropped)
+                        ) {
+                            return Err(OwnershipError::LedgerInvariantViolation);
+                        }
                     }
                 }
                 Binding::Moved | Binding::Dropped => {}
@@ -309,12 +458,12 @@ impl OwnershipState {
                 resource_type,
                 footprint,
             } => self.acquire(*id, owner, resource_type, footprint),
-            OwnershipOp::Read(place) => self.read(place),
-            OwnershipOp::Write(place) => self.write(place),
-            OwnershipOp::Move { from, to } => self.move_owned(from, to),
-            OwnershipOp::Copy(place) => self.copy_owned(place),
-            OwnershipOp::Drop(place) => self.release(place, false),
-            OwnershipOp::TransferOut(place) => self.release(place, true),
+            OwnershipOp::Read(place) => self.read(&Place::name(place)),
+            OwnershipOp::Write(place) => self.write(&Place::name(place)),
+            OwnershipOp::Move { from, to } => self.move_owned(&Place::name(from), &Place::name(to)),
+            OwnershipOp::Copy(place) => self.copy_owned(&Place::name(place)),
+            OwnershipOp::Drop(place) => self.release(&Place::name(place), false),
+            OwnershipOp::TransferOut(place) => self.release(&Place::name(place), true),
             OwnershipOp::BorrowShared {
                 owner,
                 borrower,
@@ -346,6 +495,13 @@ impl OwnershipState {
                 high,
             } => self.read_range(place, axis, *low, *high),
             OwnershipOp::Branch { then_ops, else_ops } => self.branch(then_ops, else_ops),
+            OwnershipOp::Compose { owner, fields } => self.compose(owner, fields),
+            OwnershipOp::ReadField(path) => self.read(&Place::Field(path.clone())),
+            OwnershipOp::WriteField(path) => self.write(&Place::Field(path.clone())),
+            OwnershipOp::MoveOut { from, to } => {
+                self.move_owned(&Place::Field(from.clone()), &Place::name(to))
+            }
+            OwnershipOp::DropField(path) => self.release(&Place::Field(path.clone()), false),
         }
     }
 
@@ -356,8 +512,9 @@ impl OwnershipState {
         resource_type: &str,
         footprint: &Footprint,
     ) -> Result<(), OwnershipError> {
-        if self.bindings.contains_key(owner) {
-            return Err(OwnershipError::BindingAlreadyExists(owner.into()));
+        let owner = Place::name(owner);
+        if self.bindings.contains_key(&owner) {
+            return Err(OwnershipError::BindingAlreadyExists(owner.spelling()));
         }
         if self.ledger.contains_key(&id) {
             return Err(OwnershipError::DuplicateResourceId(id));
@@ -374,21 +531,68 @@ impl OwnershipState {
                 id,
                 resource_type: resource_type.into(),
                 footprint: footprint.clone(),
-                owner: owner.into(),
+                owner: owner.clone(),
                 acquisition_order,
             },
         );
-        self.bindings.insert(owner.into(), Binding::Owned(id));
+        self.bindings.insert(owner, Binding::Owned(id));
         self.live = next_live;
         Ok(())
     }
 
-    fn read(&self, place: &str) -> Result<(), OwnershipError> {
+    /// **The construction rule** (card `AGGREGATE-OWNED-FIELD`): see
+    /// [`OwnershipOp::Compose`]. Every precondition is checked before any
+    /// binding moves, so a refused composition names its one fault.
+    fn compose(&mut self, owner: &str, fields: &[(String, String)]) -> Result<(), OwnershipError> {
+        let base = Place::name(owner);
+        if self.bindings.contains_key(&base) {
+            return Err(OwnershipError::BindingAlreadyExists(owner.into()));
+        }
+        let mut moves = Vec::with_capacity(fields.len());
+        let mut named: Vec<&str> = Vec::with_capacity(fields.len());
+        for (field, from) in fields {
+            let path = FieldPath::new(owner, field.clone());
+            if named.contains(&field.as_str()) {
+                return Err(OwnershipError::BindingAlreadyExists(path.spelling()));
+            }
+            named.push(field);
+            // A source moved twice refuses at its second occurrence exactly as
+            // a second `Move` of it would: the first move is recorded below,
+            // so here the check is against the sources already taken.
+            if moves.iter().any(|(_, taken, _)| taken == from) {
+                return Err(OwnershipError::UseAfterMove(from.clone()));
+            }
+            let resource = self.require_owned(&Place::name(from))?;
+            if self.has_any_borrow(resource) {
+                return Err(OwnershipError::MoveWhileBorrowed(from.clone()));
+            }
+            moves.push((path, from.clone(), resource));
+        }
+        for (path, from, resource) in moves {
+            let entry = self
+                .ledger
+                .get_mut(&resource)
+                .ok_or(OwnershipError::LedgerInvariantViolation)?;
+            entry.owner = Place::Field(path.clone());
+            self.bindings.insert(Place::name(&from), Binding::Moved);
+            self.bindings
+                .insert(Place::Field(path), Binding::Owned(resource));
+        }
+        self.bindings.insert(
+            base,
+            Binding::Aggregate {
+                fields: fields.iter().map(|(field, _)| field.clone()).collect(),
+            },
+        );
+        Ok(())
+    }
+
+    fn read(&self, place: &Place) -> Result<(), OwnershipError> {
         match self.binding(place)? {
             Binding::Owned(resource) => {
                 if self.has_mutable_borrow(*resource) {
                     Err(OwnershipError::OwnerAccessWhileMutablyBorrowed(
-                        place.into(),
+                        place.spelling(),
                     ))
                 } else {
                     Ok(())
@@ -401,18 +605,23 @@ impl OwnershipState {
             Binding::Borrowed {
                 kind: BorrowKind::MutableRange { .. },
                 ..
-            } => Err(OwnershipError::AccessOutsideLendRange(place.into())),
+            } => Err(OwnershipError::AccessOutsideLendRange(place.spelling())),
             Binding::Borrowed { .. } => Ok(()),
-            Binding::Moved => Err(OwnershipError::UseAfterMove(place.into())),
-            Binding::Dropped => Err(OwnershipError::UseAfterDrop(place.into())),
+            Binding::Moved => Err(OwnershipError::UseAfterMove(place.spelling())),
+            Binding::Dropped => Err(OwnershipError::UseAfterDrop(place.spelling())),
+            // An aggregate is addressed field by field; the record itself is
+            // not an owner a read can name.
+            Binding::Aggregate { .. } => {
+                Err(OwnershipError::AggregateAtOwnerPosition(place.spelling()))
+            }
         }
     }
 
-    fn write(&self, place: &str) -> Result<(), OwnershipError> {
+    fn write(&self, place: &Place) -> Result<(), OwnershipError> {
         match self.binding(place)? {
             Binding::Owned(resource) => {
                 if self.has_any_borrow(*resource) {
-                    Err(OwnershipError::OwnerMutationWhileBorrowed(place.into()))
+                    Err(OwnershipError::OwnerMutationWhileBorrowed(place.spelling()))
                 } else {
                     Ok(())
                 }
@@ -425,43 +634,74 @@ impl OwnershipState {
             Binding::Borrowed {
                 kind: BorrowKind::MutableRange { .. },
                 ..
-            } => Err(OwnershipError::AccessOutsideLendRange(place.into())),
+            } => Err(OwnershipError::AccessOutsideLendRange(place.spelling())),
             Binding::Borrowed {
                 kind: BorrowKind::Shared,
                 ..
-            } => Err(OwnershipError::WriteThroughSharedBorrow(place.into())),
-            Binding::Moved => Err(OwnershipError::UseAfterMove(place.into())),
-            Binding::Dropped => Err(OwnershipError::UseAfterDrop(place.into())),
+            } => Err(OwnershipError::WriteThroughSharedBorrow(place.spelling())),
+            Binding::Moved => Err(OwnershipError::UseAfterMove(place.spelling())),
+            Binding::Dropped => Err(OwnershipError::UseAfterDrop(place.spelling())),
+            Binding::Aggregate { .. } => {
+                Err(OwnershipError::AggregateAtOwnerPosition(place.spelling()))
+            }
         }
     }
 
-    fn move_owned(&mut self, from: &str, to: &str) -> Result<(), OwnershipError> {
+    /// A move between plain owners, and — since card `AGGREGATE-OWNED-FIELD`
+    /// — the **partial move** out of an owned field: `from` may be a field
+    /// path, in which case the field becomes a hole the whole-record drop
+    /// tolerates. `to` is always a plain name: a move *into* a field is the
+    /// construction rule's alone (`Compose`), because v1 has no field write.
+    fn move_owned(&mut self, from: &Place, to: &Place) -> Result<(), OwnershipError> {
         if self.bindings.contains_key(to) {
-            return Err(OwnershipError::BindingAlreadyExists(to.into()));
+            return Err(OwnershipError::BindingAlreadyExists(to.spelling()));
         }
         let resource = self.require_owned(from)?;
         if self.has_any_borrow(resource) {
-            return Err(OwnershipError::MoveWhileBorrowed(from.into()));
+            return Err(OwnershipError::MoveWhileBorrowed(from.spelling()));
         }
         let entry = self
             .ledger
             .get_mut(&resource)
             .ok_or(OwnershipError::LedgerInvariantViolation)?;
-        entry.owner = to.into();
-        self.bindings.insert(from.into(), Binding::Moved);
-        self.bindings.insert(to.into(), Binding::Owned(resource));
+        entry.owner = to.clone();
+        self.bindings.insert(from.clone(), Binding::Moved);
+        self.bindings.insert(to.clone(), Binding::Owned(resource));
         Ok(())
     }
 
-    fn copy_owned(&self, place: &str) -> Result<(), OwnershipError> {
-        self.require_owned(place)?;
-        Err(OwnershipError::CopyOfOwned(place.into()))
+    /// **The copy rule.** An owned resource is never copied, and — card
+    /// `AGGREGATE-OWNED-FIELD` — neither is an aggregate that declares an
+    /// owned field, whatever the state of its fields: the refusal is about the
+    /// type, and a record whose every field has been moved out is still not a
+    /// value two bindings may hold.
+    fn copy_owned(&self, place: &Place) -> Result<(), OwnershipError> {
+        match self.binding(place)? {
+            Binding::Owned(_) | Binding::Aggregate { .. } => {
+                Err(OwnershipError::CopyOfOwned(place.spelling()))
+            }
+            Binding::Borrowed { .. } => Err(OwnershipError::MoveOfBorrow(place.spelling())),
+            Binding::Moved => Err(OwnershipError::UseAfterMove(place.spelling())),
+            Binding::Dropped => Err(OwnershipError::UseAfterDrop(place.spelling())),
+        }
     }
 
-    fn release(&mut self, place: &str, transfer: bool) -> Result<(), OwnershipError> {
+    fn release(&mut self, place: &Place, transfer: bool) -> Result<(), OwnershipError> {
+        if let Some(Binding::Aggregate { fields }) = self.bindings.get(place) {
+            if transfer {
+                // Transferring a whole aggregate to the caller is not a shape
+                // this revision models; refused rather than read as a
+                // transfer of each field.
+                return Err(OwnershipError::AggregateAtOwnerPosition(place.spelling()));
+            }
+            let Place::Name(base) = place else {
+                return Err(OwnershipError::LedgerInvariantViolation);
+            };
+            return self.drop_through(base, &fields.clone());
+        }
         let resource = self.require_owned_for_drop(place)?;
         if self.has_any_borrow(resource) {
-            return Err(OwnershipError::DropWhileBorrowed(place.into()));
+            return Err(OwnershipError::DropWhileBorrowed(place.spelling()));
         }
         let entry = self
             .ledger
@@ -469,13 +709,53 @@ impl OwnershipState {
             .ok_or(OwnershipError::LedgerInvariantViolation)?;
         self.live = self.live.checked_sub(&entry.footprint)?;
         self.bindings.insert(
-            place.into(),
+            place.clone(),
             if transfer {
                 Binding::Moved
             } else {
                 Binding::Dropped
             },
         );
+        Ok(())
+    }
+
+    /// **The drop-through-aggregate rule** (card `AGGREGATE-OWNED-FIELD`).
+    ///
+    /// `drop p;` releases every **live** owned field of `p`, in declaration
+    /// order, and nothing twice: a field already moved out or released is a
+    /// hole, tolerated rather than refused, because the hole is exactly what
+    /// the partial-move rule left behind and the reader who wrote the move
+    /// expects the record's remaining duties — not one more — to be
+    /// discharged here. Every field is checked for a live loan before any is
+    /// released, so a refused drop releases nothing. The aggregate binding is
+    /// [`Binding::Dropped`] afterwards, so a second `drop p;` is a
+    /// `DoubleDrop` of `p` and a later field access is a use after drop.
+    /// `QCore.AggregateOwnedField.drop_through_releases_exactly_the_live_fields`
+    /// is the Lean statement.
+    fn drop_through(&mut self, base: &str, fields: &[String]) -> Result<(), OwnershipError> {
+        let mut releasing = Vec::new();
+        for field in fields {
+            let path = Place::Field(FieldPath::new(base, field.clone()));
+            match self.bindings.get(&path) {
+                Some(Binding::Owned(resource)) => {
+                    if self.has_any_borrow(*resource) {
+                        return Err(OwnershipError::DropWhileBorrowed(path.spelling()));
+                    }
+                    releasing.push((path, *resource));
+                }
+                Some(Binding::Moved | Binding::Dropped) => {}
+                _ => return Err(OwnershipError::LedgerInvariantViolation),
+            }
+        }
+        for (path, resource) in releasing {
+            let entry = self
+                .ledger
+                .remove(&resource)
+                .ok_or(OwnershipError::LedgerInvariantViolation)?;
+            self.live = self.live.checked_sub(&entry.footprint)?;
+            self.bindings.insert(path, Binding::Dropped);
+        }
+        self.bindings.insert(Place::name(base), Binding::Dropped);
         Ok(())
     }
 
@@ -486,10 +766,10 @@ impl OwnershipState {
         kind: BorrowKind,
         body: &[OwnershipOp],
     ) -> Result<(), OwnershipError> {
-        if self.bindings.contains_key(borrower) {
+        if self.bindings.contains_key(&Place::name(borrower)) {
             return Err(OwnershipError::BindingAlreadyExists(borrower.into()));
         }
-        let resource = self.require_owned(owner)?;
+        let resource = self.require_owned(&Place::name(owner))?;
         match kind {
             BorrowKind::Shared if self.has_mutable_borrow(resource) => {
                 return Err(OwnershipError::SharedBorrowWhileMutablyBorrowed(
@@ -502,9 +782,9 @@ impl OwnershipState {
             _ => {}
         }
         let loan = Binding::Borrowed { resource, kind };
-        self.bindings.insert(borrower.into(), loan.clone());
+        self.bindings.insert(Place::name(borrower), loan.clone());
         self.execute(body)?;
-        if self.bindings.remove(borrower) != Some(loan) {
+        if self.bindings.remove(&Place::name(borrower)) != Some(loan) {
             return Err(OwnershipError::LedgerInvariantViolation);
         }
         Ok(())
@@ -528,16 +808,20 @@ impl OwnershipState {
         high: u64,
         body: &[OwnershipOp],
     ) -> Result<(), OwnershipError> {
-        if self.bindings.contains_key(borrower) {
+        if self.bindings.contains_key(&Place::name(borrower)) {
             return Err(OwnershipError::BindingAlreadyExists(borrower.into()));
         }
-        let resource = match self.binding(owner)? {
+        let resource = match self.binding(&Place::name(owner))? {
             Binding::Owned(resource) => *resource,
             // A loan is not an owner: re-lending is refused rather than given a
             // transitive reading this revision does not model.
             Binding::Borrowed { .. } => return Err(OwnershipError::LendOfBorrow(owner.into())),
             Binding::Moved => return Err(OwnershipError::UseAfterMove(owner.into())),
             Binding::Dropped => return Err(OwnershipError::UseAfterDrop(owner.into())),
+            // A lend addresses one owner's bytes; an aggregate is not one.
+            Binding::Aggregate { .. } => {
+                return Err(OwnershipError::AggregateAtOwnerPosition(owner.into()));
+            }
         };
         for binding in self.bindings.values() {
             let Binding::Borrowed {
@@ -578,9 +862,9 @@ impl OwnershipState {
                 high,
             },
         };
-        self.bindings.insert(borrower.into(), loan.clone());
+        self.bindings.insert(Place::name(borrower), loan.clone());
         self.execute(body)?;
-        if self.bindings.remove(borrower) != Some(loan) {
+        if self.bindings.remove(&Place::name(borrower)) != Some(loan) {
             return Err(OwnershipError::LedgerInvariantViolation);
         }
         Ok(())
@@ -597,7 +881,7 @@ impl OwnershipState {
         low: u64,
         high: u64,
     ) -> Result<(), OwnershipError> {
-        match self.binding(place)? {
+        match self.binding(&Place::name(place))? {
             Binding::Owned(resource) => {
                 if self.has_loan_overlapping(*resource, axis, low, high, false) {
                     Err(OwnershipError::OwnerMutationWhileBorrowed(place.into()))
@@ -630,6 +914,9 @@ impl OwnershipState {
             }
             Binding::Moved => Err(OwnershipError::UseAfterMove(place.into())),
             Binding::Dropped => Err(OwnershipError::UseAfterDrop(place.into())),
+            Binding::Aggregate { .. } => {
+                Err(OwnershipError::AggregateAtOwnerPosition(place.into()))
+            }
         }
     }
 
@@ -645,7 +932,7 @@ impl OwnershipState {
         low: u64,
         high: u64,
     ) -> Result<(), OwnershipError> {
-        match self.binding(place)? {
+        match self.binding(&Place::name(place))? {
             Binding::Owned(resource) => {
                 if self.has_loan_overlapping(*resource, axis, low, high, true) {
                     Err(OwnershipError::OwnerAccessWhileMutablyBorrowed(
@@ -676,6 +963,9 @@ impl OwnershipState {
             }
             Binding::Moved => Err(OwnershipError::UseAfterMove(place.into())),
             Binding::Dropped => Err(OwnershipError::UseAfterDrop(place.into())),
+            Binding::Aggregate { .. } => {
+                Err(OwnershipError::AggregateAtOwnerPosition(place.into()))
+            }
         }
     }
 
@@ -740,27 +1030,46 @@ impl OwnershipState {
         Ok(())
     }
 
-    fn binding(&self, place: &str) -> Result<&Binding, OwnershipError> {
-        self.bindings
-            .get(place)
-            .ok_or_else(|| OwnershipError::UnknownBinding(place.into()))
+    /// The binding at `place`. A field path whose base is bound but is not an
+    /// aggregate is refused by name (`NotAnAggregate`), so a reader is told
+    /// "`p` has no fields" rather than "`p.buf` is unknown"; every other
+    /// absence is the unknown binding it always was.
+    fn binding(&self, place: &Place) -> Result<&Binding, OwnershipError> {
+        if let Some(binding) = self.bindings.get(place) {
+            return Ok(binding);
+        }
+        if let Place::Field(path) = place
+            && let Some(base) = self.bindings.get(&Place::name(&path.base))
+            && !matches!(base, Binding::Aggregate { .. })
+        {
+            return Err(OwnershipError::NotAnAggregate(path.base.clone()));
+        }
+        Err(OwnershipError::UnknownBinding(place.spelling()))
     }
 
-    fn require_owned(&self, place: &str) -> Result<ResourceId, OwnershipError> {
+    fn require_owned(&self, place: &Place) -> Result<ResourceId, OwnershipError> {
         match self.binding(place)? {
             Binding::Owned(resource) => Ok(*resource),
-            Binding::Borrowed { .. } => Err(OwnershipError::MoveOfBorrow(place.into())),
-            Binding::Moved => Err(OwnershipError::UseAfterMove(place.into())),
-            Binding::Dropped => Err(OwnershipError::UseAfterDrop(place.into())),
+            Binding::Borrowed { .. } => Err(OwnershipError::MoveOfBorrow(place.spelling())),
+            Binding::Moved => Err(OwnershipError::UseAfterMove(place.spelling())),
+            Binding::Dropped => Err(OwnershipError::UseAfterDrop(place.spelling())),
+            Binding::Aggregate { .. } => {
+                Err(OwnershipError::AggregateAtOwnerPosition(place.spelling()))
+            }
         }
     }
 
-    fn require_owned_for_drop(&self, place: &str) -> Result<ResourceId, OwnershipError> {
+    fn require_owned_for_drop(&self, place: &Place) -> Result<ResourceId, OwnershipError> {
         match self.binding(place)? {
             Binding::Owned(resource) => Ok(*resource),
-            Binding::Borrowed { .. } => Err(OwnershipError::DropOfBorrow(place.into())),
-            Binding::Moved => Err(OwnershipError::UseAfterMove(place.into())),
-            Binding::Dropped => Err(OwnershipError::DoubleDrop(place.into())),
+            Binding::Borrowed { .. } => Err(OwnershipError::DropOfBorrow(place.spelling())),
+            Binding::Moved => Err(OwnershipError::UseAfterMove(place.spelling())),
+            Binding::Dropped => Err(OwnershipError::DoubleDrop(place.spelling())),
+            // Unreachable from `release`, which walks an aggregate before it
+            // asks; kept total in the refusing direction.
+            Binding::Aggregate { .. } => {
+                Err(OwnershipError::AggregateAtOwnerPosition(place.spelling()))
+            }
         }
     }
 
@@ -785,11 +1094,15 @@ impl OwnershipState {
         })
     }
 
+    /// Every live owner's spelling — plain names first, then `BASE.FIELD`
+    /// paths — which is what **the leak rule that sees into the aggregate**
+    /// (card `AGGREGATE-OWNED-FIELD`) reports: an unreleased field is an owner
+    /// like any other, and `NormalPathLeak` names it by its path.
     fn owned_places(&self) -> Vec<String> {
         self.bindings
             .iter()
             .filter(|(_, binding)| matches!(binding, Binding::Owned(_)))
-            .map(|(name, _)| name.clone())
+            .map(|(place, _)| place.spelling())
             .collect()
     }
 }
@@ -838,6 +1151,14 @@ pub enum OwnershipError {
     /// An access through a range lend lies outside — or does not state — the
     /// lent range. The rebasing law, enforced rather than trusted.
     AccessOutsideLendRange(String),
+    /// An aggregate name at a position that takes a plain owner — a read, a
+    /// write, a whole move, a transfer, a borrow or a lend of the record
+    /// itself (card `AGGREGATE-OWNED-FIELD`). A record with an owned field is
+    /// addressed field by field; its only whole-record operations are `Drop`
+    /// (which walks its fields) and `Copy` (refused).
+    AggregateAtOwnerPosition(String),
+    /// A field path whose base is a binding that has no fields.
+    NotAnAggregate(String),
     BranchOwnershipMismatch {
         then_owned: Vec<String>,
         else_owned: Vec<String>,
@@ -901,6 +1222,17 @@ impl fmt::Display for OwnershipError {
                     "an access through lend `{name}` lies outside — or does not state — the \
                      range it was lent"
                 )
+            }
+            Self::AggregateAtOwnerPosition(name) => {
+                write!(
+                    f,
+                    "`{name}` is a record with an owned field and is addressed field by field; \
+                     the record itself is dropped as a whole or not at all, and is never read, \
+                     written, moved, lent or transferred as one owner"
+                )
+            }
+            Self::NotAnAggregate(name) => {
+                write!(f, "`{name}` has no fields to address")
             }
             Self::BranchOwnershipMismatch { .. } => {
                 f.write_str("branch ownership states do not join")
