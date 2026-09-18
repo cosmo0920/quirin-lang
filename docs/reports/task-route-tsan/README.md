@@ -291,6 +291,14 @@ C never mentions the binding and still carries `QCORE_TASK_CREATE thrd_create`;
 and the binding reaches the compiler only through an `-include` flag, so a
 build without that flag cannot see it.
 
+### 6.2 Constraint 14 and the diagnostics namespace: both vacuous here
+
+**+0 reserved words, +0 tokens, +0 `Q` codes**, and vacuously so rather than by
+a census: this card adds no source-language construct, touches no lexer, no
+parser, no checker and no diagnostic. It is a diagnosis, a test harness and
+test rows. Listed for the wave's ledger so the card appears in the "does not
+engage this constraint at all" line rather than being absent from it.
+
 ## 7. Residuals
 
 `named_followups` **171 → 174** (+4 −1).
@@ -407,7 +415,16 @@ worker sitting directly on `start_thread`) rather than by proof.
    still passes, and still measures a true thing (unbound, TSan cannot run
    these programs). Only its doc comment gained a pointer saying which of its
    sentences this card superseded. Nothing was deleted to make a test pass.
-5. **A candidate for the close's own agenda, not an amendment:** §7.1's finding
+5. **Constraint 14's "does not engage" enumeration.** Add `TASK-ROUTE-TSAN` to
+   it (§6.2: +0 words, +0 tokens, +0 `Q` codes, vacuously — no lexer, parser,
+   checker or diagnostic is touched). Deliberately **not** edited here: that
+   bullet's enumeration currently stops at wave 35, so wave 36's cards are
+   already missing from it, and adding one wave-37 card in front of that gap
+   would make the list read as current when it is not. The wave-35 close's own
+   finding (`CONSTRAINT-14-WAVE-32-CENSUS-INCOMPLETE`) is about exactly this
+   failure mode, which is why this card declined to repeat it and is saying so
+   instead.
+6. **A candidate for the close's own agenda, not an amendment:** §7.1's finding
    suggests the reconciliation sweep's `--residuals` arm cannot see open items
    written as prose. Whether to widen it is a decision for the close; this card
    records the instance and the cost rather than proposing a tool change it did
