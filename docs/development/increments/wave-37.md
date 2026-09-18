@@ -41,8 +41,13 @@ vacuous** — forcing the two workers onto one byte makes TSan name the race
 inside `qcore_buffer_byte_write`, with both worker stacks and the heap block
 `qcore_buffer_new` allocated — so wave 36's C11 3.14 claim that two threads
 writing distinct bytes of one `int32_t` are not in a data race is now backed by
-a race detector rather than by argument. All eight new arms were shown
-non-vacuous by mutation, restored with mtime advanced. What the rows cannot say
+a race detector rather than by argument. All nine new arms were shown non-vacuous by
+mutation, restored with mtime advanced — including a second, route-level one: 
+replacing `shared_readers`' emitted `QCORE_TASK_JOIN` with a sleep, keeping
+every other statement, makes TSan report two races, so the clean rows depend on
+the join edge rather than on the detector seeing nothing. That mutation also
+shows the instrument's character, since the sleep means the accesses never
+physically overlap and TSan reports them anyway. What the rows cannot say
 is stated rather than elided: they run a pthread-bound build
 (`TASK-ROUTE-TSAN-PTHREAD-BINDING`), a clean detector run is evidence about the
 schedules that executed and the failure arms are never taken

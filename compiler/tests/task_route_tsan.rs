@@ -318,6 +318,47 @@ fn overlapping_writers_are_reported_which_is_what_makes_the_clean_row_mean_somet
     );
 }
 
+/// **The clean rows depend on the join edge, and that is measured too.** The
+/// row above could in principle be clean because ThreadSanitizer sees the
+/// happens-before edges and is satisfied, or because it sees nothing at all in
+/// these programs. `overlapping_writers_…` already rules the second out for one
+/// byte write; this rules it out for the *route's own synchronization*.
+///
+/// `shared_readers` is the subject because it is the strongest one: two workers
+/// and the parent all read one buffer while the children hold their shares, and
+/// the parent **writes** it after both joins. That write is safe exactly
+/// because the join orders it after the readers. Replacing the emitted
+/// `QCORE_TASK_JOIN` with a sleep — keeping every other statement, so the
+/// parent still reads completion data and still writes afterwards — removes
+/// that edge and nothing else, and TSan reports the races.
+///
+/// Note what this also demonstrates about the instrument: the 50 ms sleep means
+/// the worker has certainly finished before the parent reads, so the accesses
+/// never physically overlap. TSan reports them anyway, because it detects a
+/// *missing happens-before edge* rather than an observed interleaving. That is
+/// the property which makes the clean rows worth more than a timing test, and
+/// it is shown here rather than asserted in the report.
+#[test]
+fn removing_the_join_edge_is_reported_so_the_clean_rows_are_not_blind() {
+    let c = emitted(PUBLISHED[2].1);
+    assert_eq!(PUBLISHED[2].0, "shared_readers");
+    let join = "    if (QCORE_TASK_JOIN(record->thread, &status) != thrd_success) abort();";
+    assert!(
+        c.contains(join),
+        "the join this mutation removes should be in the emitted C"
+    );
+    let unjoined = c.replace(
+        join,
+        "    { struct timespec qs = {0, 50000000}; thrd_sleep(&qs, NULL); status = 0; }",
+    );
+    let run = thread_sanitizer::run("no-join", &unjoined, true).unwrap();
+    assert!(
+        run.races >= 1,
+        "removing the join edge should be reported:\n{}",
+        run.stderr
+    );
+}
+
 /// The binding is a compile-time overlay and nothing more: the emitted C the
 /// row runs is byte-identical to the emitted C the rest of the suite runs.
 /// Stated as a test so "no emitted byte changes" is checked rather than

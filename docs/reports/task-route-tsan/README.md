@@ -165,7 +165,7 @@ Windows thread arm, and the Apple arm. Registered as
 
 ## 4. The TSan row and its non-vacuity
 
-`compiler/tests/task_route_tsan.rs` (7 tests) and one added test in
+`compiler/tests/task_route_tsan.rs` (8 tests) and one added test in
 `crates/qcore-core/tests/unit/mutex_c_emit.rs`. Every one is
 `#[cfg(target_os = "linux")]`, and on any other platform the file contributes
 **no rows at all** rather than passing vacuously — the
@@ -179,7 +179,8 @@ repeat. That is stated in the file's own header, not only here.
 | `an_uninstrumented_body_is_why_the_minimal_probe_ran_clean` | Why wave 36's control was a false negative |
 | `every_subject_dies_unbound_at_the_one_fault` | The inherited symmetry, over all five task-route subjects |
 | `every_subject_runs_clean_under_thread_sanitizer_when_bound` | **The row.** All five run clean, zero races |
-| `overlapping_writers_are_reported_…` | **The row's non-vacuity** |
+| `overlapping_writers_are_reported_…` | **The row's non-vacuity**, at the byte write |
+| `removing_the_join_edge_is_reported_so_the_clean_rows_are_not_blind` | **The row's non-vacuity, at the route's own synchronization** |
 | `the_binding_changes_no_emitted_byte` | The emitted C never mentions the binding and still defaults its hook to `thrd_create` |
 | `the_fork_join_crossing_runs_clean_under_thread_sanitizer` | CT46's emitted crossing, bound and unbound |
 
@@ -207,9 +208,30 @@ Both sides are worker threads, the location is the buffer `qcore_buffer_new`
 allocated, and the frames are the emitted helper's own. Without this row, the
 clean row would be satisfied by a build in which TSan saw nothing at all.
 
-**Every arm's.** All eight new arms were driven red by mutation and restored
-with mtime advanced (`artifacts/mutate.sh`, verdicts in
-`artifacts/mutations.json`, all eight `RED-AS-REQUIRED`):
+**The second non-vacuity, and it is about the route rather than one write.**
+The clean rows could in principle be clean because TSan sees the
+happens-before edges and is satisfied, or because it sees nothing at all in
+these programs. `overlapping_writers_…` rules the second out for one byte
+write; `removing_the_join_edge_…` rules it out for the route's own
+synchronization. `shared_readers` is the subject because it is the strongest
+one: two workers *and the parent* read one buffer while the children hold their
+shares, and the parent **writes** it after both joins — a write that is safe
+exactly because the join orders it after the readers. Replacing the emitted
+`QCORE_TASK_JOIN` with a sleep, keeping every other statement, removes that
+edge and nothing else, and TSan reports **two** races, the first naming
+`qcore_task_collect` reading completion data.
+
+That mutation also demonstrates the instrument's character, which is why the
+test says so in its own doc comment: the 50 ms sleep means the worker has
+certainly *finished* before the parent reads, so the accesses never physically
+overlap — and TSan reports them anyway, because it detects a **missing
+happens-before edge** rather than an observed interleaving. That is what makes
+the clean rows worth more than a timing test, and it is shown rather than
+argued.
+
+**Every arm's.** All nine new arms were driven red by mutation and restored
+with mtime advanced (`artifacts/mutate.sh` and `artifacts/mutate2.sh`, verdicts
+in `artifacts/mutations.json`, all nine `RED-AS-REQUIRED`):
 
 | Arm | Mutation | Verdict |
 |---|---|---|
@@ -220,6 +242,7 @@ with mtime advanced (`artifacts/mutate.sh`, verdicts in
 | `every_subject_runs_clean_…_when_bound` | unbind them | red |
 | `overlapping_writers_are_reported_…` | do not force the overlap | red |
 | `the_binding_changes_no_emitted_byte` | expect a hook default the route does not emit | red |
+| `removing_the_join_edge_…` | do not remove the join | red |
 | `the_fork_join_crossing_…` | unbind the bound run | red |
 
 ## 5. What TSan says about each subject
@@ -232,7 +255,7 @@ exits 0 with zero race reports.
 | Subject | Threads live at once | Unbound | Bound | What the clean run is worth |
 |---|---|---|---|---|
 | `examples/threads/two_workers` | **2 workers** (both started before either join, verified in the emitted C) | SEGV `0x18` | clean | Two real OS threads overlapping, with a detector watching. First TSan evidence this published example has had |
-| `examples/threads/shared_readers` | **2 workers** sharing one buffer | SEGV `0x18` | clean | The counted read-share discipline's shape is exactly what a race detector can speak to: two threads reading one heap object, and no writer among them |
+| `examples/threads/shared_readers` | **2 workers plus the parent**, all three reading one buffer at once | SEGV `0x18` | clean | The strongest row here, and by more than the others. Three threads read one heap object concurrently — the parent's own `qcore_buffer_read` runs *while both children hold their 512-unit shares* — and the buffer is **written** (`qcore_buffer_write(buffer, 7)`) only after both joins. So this program contains a real write/read pair that is unsafe if and only if the join edge is missing, and TSan is silent: the counted read-share discipline's restoration of exclusive write access is backed by a detector, not only by the ledger that decided it |
 | `examples/threads/owned_buffer` | 1 worker; parent works on a separate buffer meanwhile | SEGV `0x18` | clean | The transfer really is exclusive — the parent touches no byte of the transferred object while the worker holds it |
 | `examples/threads/core_context` | 1 worker | SEGV `0x18` | clean | Owned handoff and explicit join |
 | The write-lease disjoint exercise | **2 workers**, each writing one byte of one `int32_t` through its own lease | SEGV `0x18` | clean | **The claim wave 36 withheld.** Two threads writing distinct bytes of one scalar object are distinct memory locations under C11 6.2.6.1/4 and 3.14, so not a data race — and a race detector agrees, rather than the point resting on the emitted helper's comment |

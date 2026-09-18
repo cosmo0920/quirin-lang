@@ -9,6 +9,7 @@
     "neutral_pthread": "RED-AS-REQUIRED",
     "neutral_unbound": "RED-AS-REQUIRED",
     "no_byte_change": "RED-AS-REQUIRED",
+    "nojoin": "RED-AS-REQUIRED",
     "overlap": "RED-AS-REQUIRED",
     "unbound_symmetry": "RED-AS-REQUIRED"
   }
