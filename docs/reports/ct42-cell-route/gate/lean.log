@@ -1,192 +1,35 @@
 Starting Lean build (limit 600s)
-✔ [2/185] Built QCore.Quant (1.1s)
-✔ [3/185] Built QCore.ScopedTasks (1.3s)
-✔ [4/185] Built QCore.RefusedWrites (1.4s)
-✔ [5/185] Built QCore.SourceProfileWitness (1.4s)
-✔ [6/185] Built QCore.ReadLoan (1.5s)
-✔ [7/185] Built QCore.FixedScalarQuery (1.6s)
-✔ [8/185] Built QCore.ReadShare (2.1s)
-✔ [9/185] Built QCore.SourceValidation (1.1s)
-✔ [10/185] Built QCore.GuardedDelete (926ms)
-✔ [11/185] Built QCore.ShortCircuit (801ms)
-✔ [12/185] Built QCore.BucketTally (2.5s)
-✔ [13/185] Built QCore.TaskExecution (2.5s)
-✔ [14/185] Built QCore.UnsupportedClose (1.1s)
-✔ [15/185] Built QCore.LegacyCAnalyzer (2.7s)
-✔ [16/185] Built QCore.CleanupOutcome (1.1s)
-✔ [17/185] Built QCore.ParentTeardown (501ms)
-✔ [18/185] Built QCore.VerifierEvidenceV2 (1.6s)
-✔ [19/185] Built QCore.TeardownTraversal (690ms)
-✔ [20/185] Built QCore.ProcessQuotaPlan (3.2s)
-✔ [21/185] Built QCore.NestedCleanup (1.2s)
-✔ [22/185] Built QCore.Index (1.1s)
-✔ [23/185] Built QCore.Concurrency (4.1s)
-✔ [24/185] Built QCore.TeardownAdmission (1.9s)
-✔ [25/185] Built QCore.ChunkSource (4.1s)
-✔ [26/185] Built QCore.CallbackBinding (1.5s)
-✔ [27/185] Built QCore.CallbackSource (1.4s)
-✔ [28/185] Built QCore.CustodySummary (4.3s)
-✔ [29/185] Built QCore.Lowering (1.3s)
-✔ [30/185] Built QCore.AdvancedControl (1.5s)
-✔ [31/185] Built QCore.CompositionAdmission (2.3s)
-✔ [32/185] Built QCore.Frontend (1.3s)
-✔ [33/185] Built QCore.ErrorRegion (1.0s)
-✔ [34/185] Built QCore.CallResultUse (728ms)
-✔ [35/185] Built QCore.ListUnlink (671ms)
-✔ [36/185] Built QCore.CounterSource (654ms)
-✔ [37/185] Built QCore.CallUseAdmission (2.9s)
-✔ [38/185] Built QCore.FieldDestructor (615ms)
-✔ [39/185] Built QCore.CleanupReplayAgreement (3.2s)
-✔ [40/185] Built QCore.MemoryClose (1.6s)
-✔ [41/185] Built QCore.ExternalIntegration (1.9s)
-✔ [42/185] Built QCore.ControlFlow (847ms)
-✔ [44/185] Built QCore.ChunkLifecycle (1.9s)
-✔ [45/185] Built QCore.EventDriven (2.1s)
-✔ [46/185] Built QCore.Resource (875ms)
-✔ [47/185] Built QCore.DescriptorObservation (709ms)
-✔ [48/185] Built QCore.NativeTeardownObservation (877ms)
-✔ [49/185] Built QCore.TypedErrors (1.6s)
-✔ [50/185] Built QCore.SymbolicClassAdmission (2.5s)
-✔ [51/185] Built QCore.VariadicNested (2.6s)
-✔ [52/185] Built QCore.ResearchExtensions (2.9s)
-✔ [53/185] Built QCore.DerivedTextAdmission (2.0s)
-✔ [54/185] Built QCore.ExecutableModel (3.5s)
-✔ [55/185] Built QCore.SourceRootAdmission (1.8s)
-✔ [56/185] Built QCore.PackageIdentity (1.4s)
-✔ [57/185] Built QCore.ChunkIntegrityObservation (2.4s)
-✔ [58/185] Built QCore.ReasonCategory (3.3s)
-✔ [59/185] Built QCore.DenominatorCoverage (2.0s)
-✔ [60/185] Built QCore.BorrowLiveness (4.6s)
-✔ [61/185] Built QCore.EnumerationAttribution (2.2s)
-✔ [62/185] Built QCore.PackageTemplateBinding (3.5s)
-✔ [63/185] Built QCore.MayAlias (1.7s)
-✔ [64/185] Built QCore.SourceEnumeration (3.3s)
-✔ [65/185] Built QCore.NeutralExpressionPosition (2.0s)
-✔ [66/185] Built QCore.AggregateComposition (4.5s)
-✔ [67/185] Built QCore.RawDirectiveLexing (3.7s)
-✔ [68/185] Built QCore.Usage (1.1s)
-✔ [69/185] Built QCore.ExternCall (6.9s)
-✔ [70/185] Built QCore.ReachGatePosition (2.8s)
-✔ [71/185] Built QCore.PublicationCustody (2.3s)
-Still running Lean build: 15.0s / 600s
-✔ [72/185] Built QCore.ObsReordering (1.5s)
-✔ [73/185] Built QCore.VerifierPlugin (9.1s)
-✔ [74/185] Built QCore.MutexShareCrossEmission (4.2s)
-✔ [75/185] Built QCore.ProtectionGrowthEmission (3.9s)
-✔ [76/185] Built QCore.LiteralArgumentPremise (4.7s)
-✔ [77/185] Built QCore.ReturnCallCustody (1.3s)
-✔ [78/185] Built QCore.ConstantDoWhile (849ms)
-✔ [79/185] Built QCore.ScalarRouteExitEdge (988ms)
-✔ [80/185] Built QCore.ModuleImports (16s)
-✔ [81/185] Built QCore.CProgram (3.9s)
-✔ [82/185] Built QCore.SocketInetAddresses (1.6s)
-✔ [83/185] Built QCore.BranchJoin (4.4s)
-✔ [84/185] Built QCore.Flow (1.1s)
-✔ [85/185] Built QCore.ErrorPayload (1.6s)
-✔ [86/185] Built QCore.OsEndpointPostState (13s)
-✔ [87/185] Built QCore.Ownership (1.7s)
-✔ [88/185] Built QCore.CGatewayRefinements (674ms)
-✔ [89/185] Built QCore.UnmapWrapper (632ms)
-✔ [90/185] Built QCore.FileClose (694ms)
-✔ [91/185] Built QCore.TypedFieldAccess (1.6s)
-✔ [92/185] Built QCore.CtReasons (1.8s)
-✔ [93/185] Built QCore.PipeDesugaring (6.6s)
-✔ [94/185] Built QCore.EpochAccounting (2.4s)
-✔ [95/185] Built QCore.RegionTaskCredit (3.7s)
-✔ [96/185] Built QCore.BooleanFieldUnit (1.4s)
-✔ [98/185] Built QCore.QuantIndexBinding (2.1s)
-✔ [99/185] Built QCore.FrameHelperTask (2.1s)
-✔ [100/185] Built QCore.NeutralFrameRecursion (1.6s)
-✔ [101/185] Built QCore.ContextualCustody (1.5s)
-✔ [102/185] Built QCore.OwnedTaskExecution (3.7s)
-✔ [103/185] Built QCore.DereferencedResult (1.4s)
-✔ [104/185] Built QCore.ReasonCarrier (684ms)
-✔ [105/185] Built QCore.QuantRegionSource (1.9s)
-✔ [106/185] Built QCore.WholeProgram (1.0s)
-✔ [107/185] Built QCore.NullableRemoval (2.6s)
-✔ [108/185] Built QCore.TwoDerivationAdmission (2.2s)
-✔ [109/185] Built QCore.UsageDemand (1.9s)
-✔ [110/185] Built QCore.StdHttp (1.4s)
-✔ [111/185] Built QCore.UncheckedLinkage (1.9s)
-✔ [112/185] Built QCore.SourceCoordinate (2.4s)
-✔ [113/185] Built QCore.NativeOsObservation (3.5s)
-✔ [114/185] Built QCore.StdSocket (1.7s)
-✔ [115/185] Built QCore.SocketEventCompose (2.0s)
-✔ [116/185] Built QCore.JoinedProvenanceCycles (893ms)
-✔ [117/185] Built QCore.StdBuffer (2.1s)
-✔ [118/185] Built QCore.StdIo (1.7s)
-✔ [119/185] Built QCore.StdString (2.0s)
-✔ [120/185] Built QCore.Connectives (2.0s)
-✔ [122/185] Built QCore.FilesystemChunkClose (968ms)
-✔ [123/185] Built QCore.ComposedStdIo (4.3s)
-✔ [124/185] Built QCore.ConditionalGroupDepth (16s)
-✔ [125/185] Built QCore.BranchArms (2.5s)
-✔ [126/185] Built QCore.StdEvent (2.9s)
-✔ [127/185] Built QCore.NeutralPrefixPreservation (996ms)
-✔ [128/185] Built QCore.ExitResiduals (1.7s)
-✔ [129/185] Built QCore.Compiler (1.2s)
-✔ [130/185] Built QCore.JoinedProvenanceCallFrames (651ms)
-✔ [131/185] Built QCore.RegionCreditJoins (1.5s)
-✔ [132/185] Built QCore.JoinedProvenanceRoundBound (1.3s)
-✔ [133/185] Built QCore.LifetimeCorrespondence (9.6s)
-✔ [134/185] Built QCore.HttpComputedLength (1.0s)
-✔ [135/185] Built QCore.SourceLoop (1.3s)
-✔ [136/185] Built QCore.NativeLibrary (2.2s)
-✔ [137/185] Built QCore.StringConcat (1.4s)
-✔ [138/185] Built QCore.SourceRecord (2.1s)
-✔ [139/185] Built QCore.StringSliceIo (2.3s)
-✔ [140/185] Built QCore.SingleEmissionRoute (15s)
-✔ [141/185] Built QCore.CapacityBoundary (22s)
-✔ [142/185] Built QCore.TranslationValidation (1.6s)
-✔ [143/185] Built QCore.BorrowedActual (2.1s)
-Still running Lean build: 30.0s / 600s
-✔ [144/185] Built QCore.AggregateStore (2.9s)
-✔ [145/185] Built QCore.ComposedTasks (4.2s)
-✔ [146/185] Built QCore.RegionJoinsDuties (2.0s)
-✔ [147/185] Built QCore.ComposeEventLines (4.5s)
-✔ [148/185] Built QCore.LoopBudget (3.3s)
-✔ [149/185] Built QCore.Bitwise (5.2s)
-✔ [150/185] Built QCore.SlicePermissions (2.0s)
-✔ [151/185] Built QCore.NativeLibraryContract (3.8s)
-✔ [152/185] Built QCore.Metatheory (3.4s)
-✔ [153/185] Built QCore.NativeLibrarySourceBinding (4.5s)
-✔ [154/185] Built QCore.MutexInvariant (17s)
-✔ [155/185] Built QCore.BoundFieldRead (3.4s)
-✔ [156/185] Built QCore.EpochSourceLowering (9.3s)
-✔ [157/185] Built QCore.WriteLend (1.4s)
-✔ [158/185] Built QCore.MutexShareCross (1.6s)
-✔ [159/185] Built QCore.MemberAddress (2.3s)
-✔ [160/185] Built QCore.WriteLendTasks (2.4s)
-✔ [161/185] Built QCore.RegionJoinsLoan (2.9s)
-✔ [162/185] Built QCore.WriteLendTasksExercise (2.5s)
-✔ [163/185] Built QCore.MemberAddressReader (2.9s)
-Still running Lean build: 45.0s / 600s
-✔ [164/185] Built QCore.ChainedAccess (17s)
-✔ [165/185] Built QCore.ReturnPositionEscape (1.4s)
-✔ [166/185] Built QCore.ChainedTailActual (1.5s)
-✔ [167/185] Built QCore.Transferability (15s)
-✔ [168/185] Built QCore.DeclaredAbiAgreement (5.5s)
-✔ [169/185] Built QCore.DescriptorCustody (29s)
-✔ [170/185] Built QCore.MutexShareCrossArms (1.1s)
-✔ [171/185] Built QCore.MonkeyEvent (744ms)
-✔ [172/185] Built QCore.TypedefProjection (3.5s)
-✔ [173/185] Built QCore.DeclaredModeAgreement (3.6s)
-Still running Lean build: 60.0s / 600s
-✔ [174/185] Built QCore.NativeLibraryHeader (5.8s)
-✔ [175/185] Built QCore.NativeLibraryHeaderDecoration (1.1s)
-✔ [176/185] Built QCore.CleanupVocabulary (61s)
-Still running Lean build: 75.0s / 600s
-✔ [177/185] Built QCore.TaskTraceRelation (76s)
-✔ [178/185] Built QCore.ConcurrencyPrelude (193ms)
-✔ [179/185] Built QCore.Ct01OwnedTransfer (1.2s)
-✔ [180/185] Built QCore.Ct37CompletionCapsule (925ms)
-✔ [181/185] Built QCore.TaskTraceWrites (2.3s)
-✔ [182/185] Built QCore.Ct03ReadShares (797ms)
-✔ [183/185] Built QCore.TaskTraceLeaseBoundary (901ms)
-✔ [184/185] Built QCore (392ms)
-Build completed successfully (185 jobs).
-Passed Lean build in 81.2s
-Starting 138 audits, 8 at a time (limit 120s each)
+✔ [184/187] Built QCore.SourceRecord (403ms)
+✔ [185/187] Built QCore.AggregateOwnedField (398ms)
+✔ [186/187] Built QCore (326ms)
+Build completed successfully (187 jobs).
+Passed Lean build in 1.3s
+Starting 140 audits, 8 at a time (limit 120s each)
+'QCore.AggregateOwnedField.release_removes_exactly_its_own' depends on axioms: [propext]
+'QCore.AggregateOwnedField.release_keeps_every_other' depends on axioms: [propext]
+'QCore.AggregateOwnedField.move_preserves_length' depends on axioms: [propext]
+'QCore.AggregateOwnedField.compose_moves_each_source_in' depends on axioms: [propext, Quot.sound]
+'QCore.AggregateOwnedField.compose_two_moves_both_in' depends on axioms: [propext, Quot.sound]
+'QCore.AggregateOwnedField.compose_moves_no_quantity' depends on axioms: [propext]
+'QCore.AggregateOwnedField.compose_holds_the_sources' depends on axioms: [propext]
+'QCore.AggregateOwnedField.move_out_leaves_a_hole' depends on axioms: [propext]
+'QCore.AggregateOwnedField.a_hole_refuses_a_second_move' depends on axioms: [propext]
+'QCore.AggregateOwnedField.move_out_keeps_the_other_fields' depends on axioms: [propext]
+'QCore.AggregateOwnedField.dropThrough_released' depends on axioms: [propext]
+'QCore.AggregateOwnedField.drop_through_releases_exactly_the_live_fields' depends on axioms: [propext]
+'QCore.AggregateOwnedField.drop_through_releases_nothing_twice' depends on axioms: [propext]
+'QCore.AggregateOwnedField.drop_through_tolerates_a_hole' depends on axioms: [propext]
+'QCore.AggregateOwnedField.drop_through_is_in_declaration_order' depends on axioms: [propext]
+'QCore.AggregateOwnedField.drop_through_releases_from_the_ledger' depends on axioms: [propext, Quot.sound]
+'QCore.AggregateOwnedField.an_unreleased_field_is_a_leak_named_by_its_path' depends on axioms: [propext]
+'QCore.AggregateOwnedField.drop_through_discharges_the_leak' depends on axioms: [propext, Quot.sound]
+'QCore.AggregateOwnedField.an_aggregate_is_never_copied' does not depend on any axioms
+'QCore.AggregateOwnedField.a_hollow_aggregate_is_still_not_copied' does not depend on any axioms
+'QCore.AggregateOwnedField.agreement_is_exactly_kind_for_kind' depends on axioms: [propext, Quot.sound]
+'QCore.AggregateOwnedField.a_scalar_at_a_bytes_field_is_refused' does not depend on any axioms
+'QCore.AggregateOwnedField.a_buffer_at_an_i32_field_is_refused' does not depend on any axioms
+'QCore.AggregateOwnedField.a_record_of_scalars_composes_nothing' does not depend on any axioms
+Passed AuditAggregateOwnedField.lean (1/140) in 0.4s
 'QCore.AggregateStore.unread_declarations_never_admit_a_store' depends on axioms: [propext]
 'QCore.AggregateStore.a_formal_base_never_admits_a_store' depends on axioms: [propext]
 'QCore.AggregateStore.a_non_record_pointer_base_never_admits_a_store' depends on axioms: [propext]
@@ -239,10 +82,10 @@ Starting 138 audits, 8 at a time (limit 120s each)
 'QCore.AggregateStore.a_released_owner_flips_the_admitted_opaque_store' does not depend on any axioms
 'QCore.AggregateStore.a_caller_held_owner_flips_the_admitted_opaque_store' does not depend on any axioms
 'QCore.AggregateStore.the_member_classes_are_exclusive' does not depend on any axioms
-Passed AuditAggregateStore.lean (1/138) in 0.3s
-QCore statement audit: 9131 public theorems checked for self-equality and exact assumed conclusions
-QCore axiom audit: 44106 declarations checked; only standard logical axioms
-Passed AuditAll.lean (2/138) in 5.6s
+Passed AuditAggregateStore.lean (2/140) in 0.3s
+QCore statement audit: 9203 public theorems checked for self-equality and exact assumed conclusions
+QCore axiom audit: 44420 declarations checked; only standard logical axioms
+Passed AuditAll.lean (3/140) in 3.2s
 'QCore.Bitwise.the_operators_are_their_truth_tables' depends on axioms: [propext, Quot.sound]
 'QCore.Bitwise.the_three_operators_are_distinct' depends on axioms: [propext, Quot.sound]
 'QCore.Bitwise.the_operators_are_total' depends on axioms: [propext, Quot.sound]
@@ -285,7 +128,7 @@ Passed AuditAll.lean (2/138) in 5.6s
 'QCore.Bitwise.a_resource_name_is_not_an_integer' depends on axioms: [propext]
 'QCore.Bitwise.the_custody_refusal_is_about_custody' depends on axioms: [propext]
 'QCore.Bitwise.a_binding_contributes_no_operation' depends on axioms: [propext, Quot.sound]
-Passed AuditBitwise.lean (3/138) in 0.3s
+Passed AuditBitwise.lean (4/140) in 0.3s
 'QCore.BorrowLiveness.a_settled_released_identity_is_refused' depends on axioms: [propext]
 'QCore.BorrowLiveness.a_refusal_withdraws_a_certificate' depends on axioms: [propext]
 'QCore.BorrowLiveness.a_release_joined_with_an_escape_is_refused' depends on axioms: [propext]
@@ -344,7 +187,7 @@ Passed AuditBitwise.lean (3/138) in 0.3s
 'QCore.BorrowLiveness.an_existing_violation_survives_the_same_call_rule' depends on axioms: [propext]
 'QCore.BorrowLiveness.no_decision_discharges_a_premise' depends on axioms: [propext]
 'QCore.BorrowLiveness.every_outcome_either_refuses_or_changes_nothing' depends on axioms: [propext]
-Passed AuditBorrowLiveness.lean (4/138) in 0.3s
+Passed AuditBorrowLiveness.lean (5/140) in 0.3s
 'QCore.BoundFieldRead.unread_declarations_never_admit_a_read' depends on axioms: [propext]
 'QCore.BoundFieldRead.a_formal_base_never_admits_a_read' depends on axioms: [propext]
 'QCore.BoundFieldRead.a_non_record_pointer_base_never_admits_a_read' depends on axioms: [propext]
@@ -393,7 +236,7 @@ Passed AuditBorrowLiveness.lean (4/138) in 0.3s
 'QCore.BoundFieldRead.an_opaque_member_never_admits_a_custody_read' depends on axioms: [propext]
 'QCore.BoundFieldRead.an_opaque_member_is_admitted_by_no_read_half' depends on axioms: [propext]
 'QCore.BoundFieldRead.one_opaque_member_flips_the_admitted_read' does not depend on any axioms
-Passed AuditBoundFieldRead.lean (5/138) in 0.3s
+Passed AuditBoundFieldRead.lean (6/140) in 0.3s
 'QCore.BranchArms.a_return_terminates' depends on axioms: [propext]
 'QCore.BranchArms.a_branch_terminates_when_both_arms_do' depends on axioms: [propext]
 'QCore.BranchArms.the_missing_arm_falls_through' depends on axioms: [propext]
@@ -416,7 +259,7 @@ Passed AuditBoundFieldRead.lean (5/138) in 0.3s
 'QCore.BranchArms.a_leaking_survivor_refuses' does not depend on any axioms
 'QCore.BranchArms.refused_arm_shapes_are_exactly_these' does not depend on any axioms
 'QCore.BranchArms.admitted_arm_shapes_are_exactly_these' does not depend on any axioms
-Passed AuditBranchArms.lean (6/138) in 0.3s
+Passed AuditBranchArms.lean (7/140) in 0.3s
 'QCore.BranchJoin.every_condition_has_a_value' does not depend on any axioms
 'QCore.BranchJoin.the_comparisons_are_the_relations' does not depend on any axioms
 'QCore.BranchJoin.the_join_of_two_survivors_is_their_common_state' does not depend on any axioms
@@ -455,7 +298,7 @@ Passed AuditBranchArms.lean (6/138) in 0.3s
 'QCore.BranchJoin.the_admitted_branch_observes_its_taken_arm' does not depend on any axioms
 'QCore.BranchJoin.the_branch_observes_what_its_hand_written_twin_does' does not depend on any axioms
 'QCore.BranchJoin.the_twin_is_branch_free_and_the_branched_program_is_not' depends on axioms: [propext]
-Passed AuditBranchJoin.lean (7/138) in 0.4s
+Passed AuditBranchJoin.lean (8/140) in 0.3s
 'QCore.BucketTally.total_bump' depends on axioms: [propext, Quot.sound]
 'QCore.BucketTally.total_tally' depends on axioms: [propext, Quot.sound]
 'QCore.BucketTally.resolve_length' depends on axioms: [propext]
@@ -470,7 +313,7 @@ Passed AuditBranchJoin.lean (7/138) in 0.4s
 'QCore.BucketTally.the_ctwin_restoration_publishes_the_same_tally' depends on axioms: [propext]
 'QCore.BucketTally.the_archive_still_decides_ct44' does not depend on any axioms
 'QCore.BucketTally.the_transcribed_instance_accounts_for_every_case' depends on axioms: [propext]
-Passed AuditBucketTally.lean (8/138) in 0.3s
+Passed AuditBucketTally.lean (9/140) in 0.3s
 'QCore.CGatewayRefinements.scalar_write_preserves_custody' does not depend on any axioms
 'QCore.CGatewayRefinements.scalar_write_keeps_both_branches' depends on axioms: [propext]
 'QCore.CGatewayRefinements.incomplete_expression_spares_nothing' does not depend on any axioms
@@ -487,7 +330,7 @@ Passed AuditBucketTally.lean (8/138) in 0.3s
 'QCore.CGatewayRefinements.nonnull_does_not_resolve_identity' does not depend on any axioms
 'QCore.CGatewayRefinements.null_alternative_has_no_target' does not depend on any axioms
 'QCore.CGatewayRefinements.a_conditional_discharge_does_not_certify_the_lookup' does not depend on any axioms
-Passed AuditCGatewayRefinements.lean (9/138) in 0.4s
+Passed AuditCGatewayRefinements.lean (10/140) in 0.3s
 'QCore.CProgram.dedupFrom_skips_seen' depends on axioms: [propext]
 'QCore.CProgram.dedupFrom_key_mem' depends on axioms: [propext]
 'QCore.CProgram.dedupFrom_avoids_seen' depends on axioms: [propext]
@@ -511,7 +354,7 @@ Passed AuditCGatewayRefinements.lean (9/138) in 0.4s
 'QCore.CProgram.merging_is_idempotent' depends on axioms: [propext, Classical.choice, Quot.sound]
 'QCore.CProgram.domain_has_six_contributions' depends on axioms: [propext, Classical.choice, Quot.sound]
 'QCore.CProgram.the_domain_outcomes_are_pinned' depends on axioms: [propext, Classical.choice, Quot.sound]
-Passed AuditCProgram.lean (10/138) in 0.4s
+Passed AuditCProgram.lean (11/140) in 0.3s
 'QCore.CallUseAdmission.a_scan_loop_has_no_projection' does not depend on any axioms
 'QCore.CallUseAdmission.a_termination_has_no_projection' does not depend on any axioms
 'QCore.CallUseAdmission.an_expression_outside_the_vocabulary_has_no_projection' does not depend on any axioms
@@ -540,7 +383,7 @@ Passed AuditCProgram.lean (10/138) in 0.4s
 'QCore.CallUseAdmission.every_prerequisite_field_is_load_bearing' depends on axioms: [propext]
 'QCore.CallUseAdmission.the_derived_prerequisite_is_established' depends on axioms: [propext]
 'QCore.CallUseAdmission.a_prerequisite_does_not_cross_tasks' depends on axioms: [propext]
-Passed AuditCallUseAdmission.lean (11/138) in 0.4s
+Passed AuditCallUseAdmission.lean (12/140) in 0.3s
 'QCore.CapacityBoundary.mem_allTargets' depends on axioms: [propext]
 'QCore.CapacityBoundary.mem_allPremises' depends on axioms: [propext]
 'QCore.CapacityBoundary.of_domainAll' depends on axioms: [propext, Quot.sound]
@@ -571,7 +414,7 @@ Passed AuditCallUseAdmission.lean (11/138) in 0.4s
 'QCore.CapacityBoundary.an_event_after_the_teardown_record_is_refused' depends on axioms: [propext]
 'QCore.CapacityBoundary.every_mutation_is_refused' depends on axioms: [propext]
 'QCore.CapacityBoundary.the_mutation_matrix_is_not_vacuous' does not depend on any axioms
-Passed AuditCapacityBoundary.lean (12/138) in 0.4s
+Passed AuditCapacityBoundary.lean (13/140) in 0.3s
 'QCore.ChainedAccess.an_empty_chain_never_admits' depends on axioms: [propext]
 'QCore.ChainedAccess.unread_declarations_never_admit_a_chain' depends on axioms: [propext]
 'QCore.ChainedAccess.a_mismatched_base_never_admits_a_chain' depends on axioms: [propext]
@@ -595,7 +438,7 @@ Passed AuditCapacityBoundary.lean (12/138) in 0.4s
 'QCore.ChainedAccess.a_refused_chain_refuses_the_statement' depends on axioms: [propext, Quot.sound]
 'QCore.ChainedAccess.a_refused_chain_is_never_safe' depends on axioms: [propext]
 'QCore.ChainedAccess.an_admitted_chain_does_not_rescue_a_statement' depends on axioms: [propext]
-Passed AuditChainedAccess.lean (13/138) in 0.4s
+Passed AuditChainedAccess.lean (14/140) in 0.3s
 'QCore.ChainedTailActual.the_declaration_is_read_from_the_callee_never_from_the_actual' depends on axioms: [propext]
 'QCore.ChainedTailActual.unread_declarations_never_admit' depends on axioms: [propext]
 'QCore.ChainedTailActual.every_previously_admitted_actual_is_still_data' depends on axioms: [propext]
@@ -634,7 +477,7 @@ Passed AuditChainedAccess.lean (13/138) in 0.4s
  Classical.choice,
  Quot.sound]
 'QCore.ChainedTailActual.each_premise_is_load_bearing_on_the_subject' does not depend on any axioms
-Passed AuditChainedTailActual.lean (14/138) in 0.4s
+Passed AuditChainedTailActual.lean (15/140) in 0.3s
 'QCore.ChunkIntegrityObservation.mem_allClasses' depends on axioms: [propext]
 'QCore.ChunkIntegrityObservation.mem_allInjections' depends on axioms: [propext]
 'QCore.ChunkIntegrityObservation.every_content_class_is_reachable' does not depend on any axioms
@@ -680,7 +523,7 @@ Passed AuditChainedTailActual.lean (14/138) in 0.4s
 'QCore.ChunkIntegrityObservation.an_injection_may_not_borrow_a_corruption_code' depends on axioms: [propext]
 'QCore.ChunkIntegrityObservation.a_suppressed_call_without_an_errno_is_refused' depends on axioms: [propext]
 'QCore.ChunkIntegrityObservation.a_replaced_fixture_is_refused' depends on axioms: [propext]
-Passed AuditChunkIntegrityObservation.lean (15/138) in 0.4s
+Passed AuditChunkIntegrityObservation.lean (16/140) in 0.3s
 'QCore.CleanupReplayAgreement.the_lattice_has_nine_constructors' does not depend on any axioms
 'QCore.CleanupReplayAgreement.the_nine_constructors_are_distinct' does not depend on any axioms
 'QCore.CleanupReplayAgreement.the_lattice_enumeration_is_complete' depends on axioms: [propext]
@@ -721,7 +564,7 @@ Passed AuditChunkIntegrityObservation.lean (15/138) in 0.4s
 'QCore.CleanupReplayAgreement.an_admitted_delete_proposal_has_five_cases' depends on axioms: [propext, Quot.sound]
 'QCore.CleanupReplayAgreement.the_core_replay_is_admitted' depends on axioms: [propext, Classical.choice, Quot.sound]
 'QCore.CleanupReplayAgreement.the_domain_rule_is_not_vacuous' does not depend on any axioms
-Passed AuditCleanupReplayAgreement.lean (16/138) in 0.4s
+Passed AuditCleanupReplayAgreement.lean (17/140) in 0.3s
 'QCore.CleanupVocabulary.the_prefixes_are_pairwise_incomparable' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
@@ -783,7 +626,7 @@ Passed AuditCleanupReplayAgreement.lean (16/138) in 0.4s
 'QCore.CleanupVocabulary.the_pinned_unmap_spellings_are_distinct' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-Passed AuditCleanupVocabulary.lean (17/138) in 0.4s
+Passed AuditCleanupVocabulary.lean (18/140) in 0.3s
 'QCore.ComposeEventLines.erase' does not depend on any axioms
 'QCore.ComposeEventLines.project' does not depend on any axioms
 'QCore.ComposeEventLines.a_line_erases_to_nothing' does not depend on any axioms
@@ -813,7 +656,7 @@ Passed AuditCleanupVocabulary.lean (17/138) in 0.4s
 'QCore.ComposeEventLines.the_event_relation_is_strict' depends on axioms: [propext, Quot.sound]
 'QCore.ComposeEventLines.a_native_event_stream_is_admitted_exactly_when_it_is_byte_identical' depends on axioms: [propext,
  Quot.sound]
-Passed AuditComposeEventLines.lean (18/138) in 0.4s
+Passed AuditComposeEventLines.lean (19/140) in 0.3s
 'QCore.ComposedStdIo.a_rendering_leaves_the_ledger_unchanged' depends on axioms: [propext]
 'QCore.ComposedStdIo.the_shared_return_leaves_the_ledger_unchanged' depends on axioms: [propext]
 'QCore.ComposedStdIo.the_order_runs_only_its_extern_steps' depends on axioms: [propext]
@@ -861,7 +704,7 @@ Passed AuditComposeEventLines.lean (18/138) in 0.4s
 'QCore.ComposedStdIo.a_borrowed_render_reads_no_value' depends on axioms: [propext, Quot.sound]
 'QCore.ComposedStdIo.a_scalar_render_reads_no_identity' depends on axioms: [propext, Quot.sound]
 'QCore.ComposedStdIo.a_borrowed_render_binds_no_value' depends on axioms: [propext]
-Passed AuditComposedStdIo.lean (19/138) in 0.4s
+Passed AuditComposedStdIo.lean (20/140) in 0.3s
 'QCore.ComposedTasks.ledger_of_step' depends on axioms: [propext]
 'QCore.ComposedTasks.a_line_leaves_the_ledger_unchanged' depends on axioms: [propext]
 'QCore.ComposedTasks.the_ledger_is_a_function_of_the_task_steps_alone' depends on axioms: [propext]
@@ -899,7 +742,7 @@ Passed AuditComposedStdIo.lean (19/138) in 0.4s
 'QCore.ComposedTasks.writing_requires_io' does not depend on any axioms
 'QCore.ComposedTasks.a_barrier_still_carries_io' does not depend on any axioms
 'QCore.ComposedTasks.no_line_carries_alloc_or_mut' depends on axioms: [propext]
-Passed AuditComposedTasks.lean (20/138) in 0.4s
+Passed AuditComposedTasks.lean (21/140) in 0.3s
 'QCore.CompositionAdmission.revalidation_is_total' depends on axioms: [propext]
 'QCore.CompositionAdmission.a_foreign_claim_is_refused' depends on axioms: [propext]
 'QCore.CompositionAdmission.a_refusing_prerequisite_is_never_established' depends on axioms: [propext]
@@ -951,7 +794,7 @@ Passed AuditComposedTasks.lean (20/138) in 0.4s
 'QCore.CompositionAdmission.an_honest_outer_route_is_established' depends on axioms: [propext]
 'QCore.CompositionAdmission.the_outer_distinctness_rule_is_decidable' does not depend on any axioms
 'QCore.CompositionAdmission.the_file_close_question_nests_exactly_twice' does not depend on any axioms
-Passed AuditCompositionAdmission.lean (21/138) in 0.4s
+Passed AuditCompositionAdmission.lean (22/140) in 0.3s
 'QCore.ModuleImports.empty_imports_grant_no_concurrency' does not depend on any axioms
 'QCore.ModuleImports.unknown_module_rejects' depends on axioms: [propext]
 'QCore.ModuleImports.admitted_concurrency_requires_import' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -972,7 +815,7 @@ Passed AuditCompositionAdmission.lean (21/138) in 0.4s
 'QCore.Concurrency.MutexInvariant.guard_authorizes_only_declared_footprint' depends on axioms: [propext]
 'QCore.Concurrency.MutexInvariant.unlock_requires_closed_invariant' depends on axioms: [propext, Quot.sound]
 'QCore.Concurrency.MutexInvariant.forged_witness_is_refused' depends on axioms: [propext, Quot.sound]
-Passed AuditConcurrencyPrelude.lean (22/138) in 0.4s
+Passed AuditConcurrencyPrelude.lean (23/140) in 0.3s
 'QCore.ConditionalGroupDepth.groupDepth_dominates' depends on axioms: [propext, Quot.sound]
 'QCore.ConditionalGroupDepth.agreeing_arms_are_exact' depends on axioms: [propext, Quot.sound]
 'QCore.ConditionalGroupDepth.groupDepth_is_reached' depends on axioms: [propext, Quot.sound]
@@ -998,7 +841,7 @@ Passed AuditConcurrencyPrelude.lean (22/138) in 0.4s
 'QCore.ConditionalGroupDepth.the_domain_is_exhaustive' does not depend on any axioms
 'QCore.ConditionalGroupDepth.the_domain_is_decided' depends on axioms: [propext]
 'QCore.ConditionalGroupDepth.the_domain_checksum_is_pinned' does not depend on any axioms
-Passed AuditConditionalGroupDepth.lean (23/138) in 0.3s
+Passed AuditConditionalGroupDepth.lean (24/140) in 0.3s
 'QCore.Connectives.or_lowers_to_its_hand_written_chain' does not depend on any axioms
 'QCore.Connectives.and_lowers_to_its_hand_written_nesting' does not depend on any axioms
 'QCore.Connectives.the_two_connectives_nest_oppositely' does not depend on any axioms
@@ -1023,7 +866,7 @@ Passed AuditConditionalGroupDepth.lean (23/138) in 0.3s
 'QCore.Connectives.agreeing_arms_are_admitted_through_a_connective' does not depend on any axioms
 'QCore.Connectives.refused_connective_shapes_are_exactly_these' does not depend on any axioms
 'QCore.Connectives.the_connective_program_is_its_hand_written_twin' does not depend on any axioms
-Passed AuditConnectives.lean (24/138) in 0.4s
+Passed AuditConnectives.lean (25/140) in 0.3s
 'QCore.ConstantDoWhile.constant_do_while_is_its_body' does not depend on any axioms
 'QCore.ConstantDoWhile.constant_do_while_is_one_iteration' depends on axioms: [propext]
 'QCore.ConstantDoWhile.removing_the_back_edge_only_removes_paths' depends on axioms: [propext]
@@ -1038,7 +881,7 @@ Passed AuditConnectives.lean (24/138) in 0.4s
 'QCore.ConstantDoWhile.every_other_header_keeps_both_successors' does not depend on any axioms
 'QCore.ConstantDoWhile.the_exit_edge_is_never_removed' depends on axioms: [propext]
 'QCore.ConstantDoWhile.the_successor_list_never_grows' depends on axioms: [propext]
-Passed AuditConstantDoWhile.lean (25/138) in 0.4s
+Passed AuditConstantDoWhile.lean (26/140) in 0.3s
 'QCore.Ct01OwnedTransfer.parent_projection_of_the_reference' does not depend on any axioms
 'QCore.Ct01OwnedTransfer.child_projection_of_the_reference' does not depend on any axioms
 'QCore.Ct01OwnedTransfer.ct01_trace_digest' does not depend on any axioms
@@ -1062,7 +905,7 @@ Passed AuditConstantDoWhile.lean (25/138) in 0.4s
 'QCore.Ct01OwnedTransfer.a_release_by_the_child_is_refused' depends on axioms: [propext]
 'QCore.Ct01OwnedTransfer.a_double_release_is_refused' depends on axioms: [propext]
 'QCore.Ct01OwnedTransfer.a_generation_changing_return_is_refused' depends on axioms: [propext]
-Passed AuditCt01OwnedTransfer.lean (26/138) in 0.4s
+Passed AuditCt01OwnedTransfer.lean (27/140) in 0.3s
 'QCore.TaskTraceWrites.relate_agrees_on_the_embedded_alphabet' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
@@ -1113,7 +956,36 @@ Passed AuditCt01OwnedTransfer.lean (26/138) in 0.4s
 'QCore.Ct03ReadShares.a_missing_release_is_refused' depends on axioms: [propext]
 'QCore.Ct03ReadShares.a_double_release_is_refused' depends on axioms: [propext]
 'QCore.Ct03ReadShares.a_borrower_that_writes_is_refused' depends on axioms: [propext]
-Passed AuditCt03ReadShares.lean (27/138) in 0.5s
+Passed AuditCt03ReadShares.lean (28/140) in 0.3s
+'QCore.Ct07LeaseLedger.step' does not depend on any axioms
+'QCore.Ct07LeaseLedger.replayFrom' does not depend on any axioms
+'QCore.Ct07LeaseLedger.replay' does not depend on any axioms
+'QCore.Ct07LeaseLedger.dischargesDisjointHalves' does not depend on any axioms
+'QCore.Ct07LeaseLedger.mixLedger' does not depend on any axioms
+'QCore.Ct07LeaseLedger.step_reaches' depends on axioms: [propext]
+'QCore.Ct07LeaseLedger.replayFrom_reaches' depends on axioms: [propext, Quot.sound]
+'QCore.Ct07LeaseLedger.replay_reaches' depends on axioms: [propext, Quot.sound]
+'QCore.Ct07LeaseLedger.ct07_both_leases_are_admitted' does not depend on any axioms
+'QCore.Ct07LeaseLedger.ct07_the_run_returns_every_lease' does not depend on any axioms
+'QCore.Ct07LeaseLedger.ct07_ledger_is_reachable' depends on axioms: [propext, Quot.sound]
+'QCore.Ct07LeaseLedger.ct07_ledger_digest' does not depend on any axioms
+'QCore.Ct07LeaseLedger.ct07_no_byte_has_two_write_authorities' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'QCore.Ct07LeaseLedger.ct07_writes_are_admitted' does not depend on any axioms
+'QCore.Ct07LeaseLedger.ct07_no_byte_is_written_by_two_parties' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'QCore.Ct07LeaseLedger.ct07_discharges_disjoint_halves' does not depend on any axioms
+'QCore.Ct07LeaseLedger.a_discharged_ledger_holds_every_byte_exactly_once' depends on axioms: [propext, Quot.sound]
+'QCore.Ct07LeaseLedger.a_discharged_ledger_has_two_distinct_holders' depends on axioms: [propext, Quot.sound]
+'QCore.Ct07LeaseLedger.overlapping_halves_are_refused' does not depend on any axioms
+'QCore.Ct07LeaseLedger.the_overlap_is_the_disjointness_clause' does not depend on any axioms
+'QCore.Ct07LeaseLedger.an_empty_half_is_refused' does not depend on any axioms
+'QCore.Ct07LeaseLedger.the_empty_half_is_the_nonemptiness_clause' depends on axioms: [propext]
+'QCore.Ct07LeaseLedger.a_single_writer_is_reachable_but_not_the_scenario' does not depend on any axioms
+'QCore.Ct07LeaseLedger.a_single_writer_leaves_the_other_half_unheld' does not depend on any axioms
+Passed AuditCt07LeaseLedger.lean (29/140) in 0.3s
 'QCore.Ct37CompletionCapsule.ct37_reference_run_is_an_admitted_causal_order' depends on axioms: [propext]
 'QCore.Ct37CompletionCapsule.parent_projection_of_the_reference' does not depend on any axioms
 'QCore.Ct37CompletionCapsule.child_projection_of_the_reference' does not depend on any axioms
@@ -1143,7 +1015,7 @@ Passed AuditCt03ReadShares.lean (27/138) in 0.5s
 'QCore.Ct37CompletionCapsule.a_double_release_is_refused' depends on axioms: [propext]
 'QCore.Ct37CompletionCapsule.a_generation_changing_return_is_refused' depends on axioms: [propext]
 'QCore.Ct37CompletionCapsule.a_payload_losing_capsule_is_refused' depends on axioms: [propext]
-Passed AuditCt37CompletionCapsule.lean (28/138) in 0.4s
+Passed AuditCt37CompletionCapsule.lean (30/140) in 0.3s
 'QCore.CtReasons.keys_are_the_published_list' depends on axioms: [propext]
 'QCore.CtReasons.every_selected_case_is_unmapped' depends on axioms: [propext]
 'QCore.CtReasons.select_drops_a_mapped_case' depends on axioms: [propext]
@@ -1159,7 +1031,7 @@ Passed AuditCt37CompletionCapsule.lean (28/138) in 0.4s
 'QCore.CtReasons.the_ct39_row_would_be_refused' does not depend on any axioms
 'QCore.CtReasons.the_committed_map_after_this_card_reports_nothing' does not depend on any axioms
 'QCore.CtReasons.mapping_ct24_retires_its_row' does not depend on any axioms
-Passed AuditCtReasons.lean (29/138) in 0.5s
+Passed AuditCtReasons.lean (31/140) in 0.4s
 'QCore.Frontend.elaborate_implies_wellFormed' depends on axioms: [propext]
 'QCore.Frontend.elaborate_preserves_source' depends on axioms: [propext]
 'QCore.Frontend.elaborate_preserves_declaration_count' depends on axioms: [propext]
@@ -1170,7 +1042,7 @@ Passed AuditCtReasons.lean (29/138) in 0.5s
 'QCore.Frontend.elaborate_symbol_count' depends on axioms: [propext]
 'QCore.Frontend.elaborate_symbols_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
 'QCore.Frontend.invalid_program_is_rejected' depends on axioms: [propext]
-Passed AuditCycle10.lean (30/138) in 0.5s
+Passed AuditCycle10.lean (32/140) in 0.3s
 'QCore.WholeProgram.checkPasses_implies_interfaces' depends on axioms: [propext]
 'QCore.WholeProgram.checkPasses_preserves_input' depends on axioms: [propext]
 'QCore.WholeProgram.accepted_passes_have_checked_cfg' depends on axioms: [propext]
@@ -1189,20 +1061,20 @@ Passed AuditCycle10.lean (30/138) in 0.5s
 'QCore.Frontend.BodyScope.binder_resolves_in_body' depends on axioms: [propext, Classical.choice, Quot.sound]
 'QCore.Frontend.BodyScope.leaving_body_restores_outer' does not depend on any axioms
 'QCore.Frontend.BodyScope.binder_cannot_escape' does not depend on any axioms
-Passed AuditCycle11.lean (31/138) in 0.5s
+Passed AuditCycle11.lean (33/140) in 0.3s
 'QCore.Compiler.compile_preserves_checked_source' depends on axioms: [propext, Quot.sound]
 'QCore.Compiler.compile_implies_whole_program_accepts' depends on axioms: [propext, Quot.sound]
 'QCore.Compiler.compile_selects_named_entry' depends on axioms: [propext, Quot.sound]
 'QCore.Compiler.compile_retains_entry_cfg' depends on axioms: [propext, Quot.sound]
 'QCore.Compiler.compile_emits_origin_mapping' depends on axioms: [propext, Quot.sound]
 'QCore.Compiler.emitted_c11_matches_reference' does not depend on any axioms
-Passed AuditCycle12.lean (32/138) in 0.4s
+Passed AuditCycle12.lean (34/140) in 0.3s
 'QCore.TranslationValidation.validation_preserves_pass_boundary' does not depend on any axioms
 'QCore.TranslationValidation.validation_source_matches_cfg' does not depend on any axioms
 'QCore.TranslationValidation.validation_cfg_matches_target' does not depend on any axioms
 'QCore.TranslationValidation.validation_source_matches_target' does not depend on any axioms
 'QCore.TranslationValidation.widened_legacy_state_is_never_safe' depends on axioms: [propext]
-Passed AuditCycle13.lean (33/138) in 0.4s
+Passed AuditCycle13.lean (35/140) in 0.3s
 'QCore.Concurrency.accepted_accesses_are_authorized' depends on axioms: [propext, Quot.sound]
 'QCore.Concurrency.accepted_program_is_race_free' depends on axioms: [propext, Quot.sound]
 'QCore.Concurrency.accepted_lock_capabilities_are_linear' depends on axioms: [propext, Quot.sound]
@@ -1307,7 +1179,7 @@ Passed AuditCycle13.lean (33/138) in 0.4s
 'QCore.OwnedTaskExecution.successful_worker_allocation_advances_only_local_ordinal' depends on axioms: [propext,
  Quot.sound]
 'QCore.OwnedTaskExecution.exhausted_namespace_cannot_allocate' depends on axioms: [propext, Quot.sound]
-Passed AuditCycle14.lean (34/138) in 0.5s
+Passed AuditCycle14.lean (36/140) in 0.3s
 'QCore.AdvancedControl.double_error_preserves_primary_error' depends on axioms: [propext]
 'QCore.AdvancedControl.double_error_preserves_cancellation' depends on axioms: [propext]
 'QCore.AdvancedControl.cleanup_is_lifo' does not depend on any axioms
@@ -1315,7 +1187,7 @@ Passed AuditCycle14.lean (34/138) in 0.5s
 'QCore.AdvancedControl.checked_owned_capture_is_one_shot' does not depend on any axioms
 'QCore.AdvancedControl.checked_owned_capture_is_consumed_once' does not depend on any axioms
 'QCore.AdvancedControl.checked_captures_are_unique' does not depend on any axioms
-Passed AuditCycle15.lean (35/138) in 0.5s
+Passed AuditCycle15.lean (37/140) in 0.3s
 'QCore.Metatheory.preservation' depends on axioms: [propext, Quot.sound]
 'QCore.Metatheory.progress' depends on axioms: [propext, Quot.sound]
 'QCore.Metatheory.resource_safety_across_ledgers' depends on axioms: [propext, Quot.sound]
@@ -1323,7 +1195,7 @@ Passed AuditCycle15.lean (35/138) in 0.5s
 'QCore.Metatheory.supported_c11_matches_source' depends on axioms: [propext, Quot.sound]
 'QCore.Metatheory.checked_interfaces_are_simultaneous' depends on axioms: [propext, Quot.sound]
 'QCore.Metatheory.research_boundary_is_explicit' does not depend on any axioms
-Passed AuditCycle16.lean (36/138) in 0.5s
+Passed AuditCycle16.lean (38/140) in 0.4s
 'QCore.ResearchExtensions.checked_inference_is_principal' does not depend on any axioms
 'QCore.ResearchExtensions.principal_result_unique' does not depend on any axioms
 'QCore.ResearchExtensions.checked_loop_conserves_net' does not depend on any axioms
@@ -1348,7 +1220,7 @@ Passed AuditCycle16.lean (36/138) in 0.5s
 'QCore.ResearchExtensions.positive_maximum_nonzero_net_rejected' depends on axioms: [propext]
 'QCore.ResearchExtensions.accepted_maximum_has_zero_net' depends on axioms: [propext]
 'QCore.ResearchExtensions.maximum_total_covers_early_exit' depends on axioms: [propext, Quot.sound]
-Passed AuditCycle17.lean (37/138) in 0.4s
+Passed AuditCycle17.lean (39/140) in 0.3s
 'QCore.EventDriven.accepted_transition_preserves_lifecycle' depends on axioms: [propext]
 'QCore.EventDriven.accepted_transition_is_generation_safe' depends on axioms: [propext]
 'QCore.EventDriven.accepted_lifecycles_are_well_formed' does not depend on any axioms
@@ -1362,7 +1234,7 @@ Passed AuditCycle17.lean (37/138) in 0.4s
 'QCore.EventDriven.accepted_progress_claim_is_qualified_by_blocking' does not depend on any axioms
 'QCore.EventDriven.accepted_observation_refines_event_trace' does not depend on any axioms
 'QCore.EventDriven.combined_cycle18_safety' does not depend on any axioms
-Passed AuditCycle18.lean (38/138) in 0.4s
+Passed AuditCycle18.lean (40/140) in 0.3s
 'QCore.ChunkLifecycle.accepted_failed_replacement_preserves_old' does not depend on any axioms
 'QCore.ChunkLifecycle.accepted_successful_replacement_replaces_old' does not depend on any axioms
 'QCore.ChunkLifecycle.accepted_owner_teardown_discharges_stored_child' does not depend on any axioms
@@ -1686,7 +1558,7 @@ Passed AuditCycle18.lean (38/138) in 0.4s
 'QCore.ChunkSource.UnitResult.invalid_boolean_store_rejects' depends on axioms: [propext]
 'QCore.ChunkSource.UnitResult.metadata_write_preserves_selected_field' does not depend on any axioms
 'QCore.ChunkSource.UnitResult.integer_fallthrough_is_still_rejected' does not depend on any axioms
-Passed AuditCycle19.lean (39/138) in 0.4s
+Passed AuditCycle19.lean (41/140) in 0.4s
 'QCore.VerifierPlugin.checked_safe_has_valid_evidence' depends on axioms: [propext, Quot.sound]
 'QCore.VerifierPlugin.safe_without_evidence_is_unknown' does not depend on any axioms
 'QCore.VerifierPlugin.invalid_envelope_is_unknown' does not depend on any axioms
@@ -1776,7 +1648,7 @@ Passed AuditCycle19.lean (39/138) in 0.4s
 'QCore.VerifierEvidenceV2.absent_flag_names_conditional_trust' does not depend on any axioms
 'QCore.VerifierEvidenceV2.accepted_claim_preserves_scope_bounds_and_module' depends on axioms: [propext, Quot.sound]
 'QCore.VerifierEvidenceV2.substituted_claim_rejects' depends on axioms: [propext, Quot.sound]
-Passed AuditCycle20.lean (40/138) in 0.4s
+Passed AuditCycle20.lean (42/140) in 0.3s
 'QCore.ErrorRegion.seal_is_path_specific' does not depend on any axioms
 'QCore.ErrorRegion.quant_open_matching_region' depends on axioms: [propext]
 'QCore.ErrorRegion.quant_open_wrong_region' depends on axioms: [propext]
@@ -1791,7 +1663,7 @@ Passed AuditCycle20.lean (40/138) in 0.4s
 'QCore.ErrorRegion.remaining_cleanup_resource_is_not_in_payload' depends on axioms: [propext, Quot.sound]
 'QCore.ErrorRegion.partial_initialization_is_exact' does not depend on any axioms
 'QCore.ErrorRegion.nested_cleanup_order_is_deterministic' does not depend on any axioms
-Passed AuditCycle6.lean (41/138) in 0.4s
+Passed AuditCycle6.lean (43/140) in 0.4s
 'QCore.Lowering.source_cfg_simulation' depends on axioms: [propext]
 'QCore.Lowering.error_edge_has_cleanup_label' does not depend on any axioms
 'QCore.Lowering.partial_initialization_gets_exact_cleanup' does not depend on any axioms
@@ -1803,14 +1675,14 @@ Passed AuditCycle6.lean (41/138) in 0.4s
 'QCore.Lowering.c_lowering_simulation' depends on axioms: [propext]
 'QCore.Lowering.normal_value_and_transfer_are_preserved' depends on axioms: [propext]
 'QCore.Lowering.error_tag_and_cleanup_trace_are_preserved' does not depend on any axioms
-Passed AuditCycle7.lean (42/138) in 0.3s
+Passed AuditCycle7.lean (44/140) in 0.3s
 'QCore.ExecutableModel.progress_up_to_typed_error' depends on axioms: [propext, Quot.sound]
 'QCore.ExecutableModel.preservation' depends on axioms: [propext, Quot.sound]
 'QCore.ExecutableModel.steps_preservation' depends on axioms: [propext, Quot.sound]
 'QCore.ExecutableModel.no_duplication_of_resource_identities' depends on axioms: [propext, Quot.sound]
 'QCore.ExecutableModel.no_double_release' depends on axioms: [propext, Quot.sound]
 'QCore.ExecutableModel.region_cleanup_theorem' depends on axioms: [propext, Quot.sound]
-Passed AuditCycle8.lean (43/138) in 0.4s
+Passed AuditCycle8.lean (45/140) in 0.3s
 'QCore.LegacyCAnalyzer.safe_implies_no_exit_leak' depends on axioms: [propext]
 'QCore.LegacyCAnalyzer.safe_implies_no_safety_diagnostic' depends on axioms: [propext]
 'QCore.LegacyCAnalyzer.safe_implies_precise' depends on axioms: [propext]
@@ -1828,7 +1700,7 @@ Passed AuditCycle8.lean (43/138) in 0.4s
 'QCore.LegacyCAnalyzer.alias_join_preserves_unknown_left' depends on axioms: [propext]
 'QCore.LegacyCAnalyzer.alias_join_preserves_unknown_right' depends on axioms: [propext]
 'QCore.LegacyCAnalyzer.released_then_unmodeled_access_is_indeterminate' depends on axioms: [propext]
-Passed AuditCycle9.lean (44/138) in 0.4s
+Passed AuditCycle9.lean (46/140) in 0.3s
 'QCore.DeclaredAbiAgreement.agreement_applies_the_declared_contract' depends on axioms: [propext]
 'QCore.DeclaredAbiAgreement.an_applied_contract_is_the_declared_one' depends on axioms: [propext]
 'QCore.DeclaredAbiAgreement.an_undeclared_callee_is_never_applied' depends on axioms: [propext]
@@ -1871,7 +1743,7 @@ Passed AuditCycle9.lean (44/138) in 0.4s
 'QCore.DeclaredAbiAgreement.two_disagreeing_declarations_are_ambiguous' does not depend on any axioms
 'QCore.DeclaredAbiAgreement.disagreeing_results_are_ambiguous' does not depend on any axioms
 'QCore.DeclaredAbiAgreement.composition_returns_one_of_its_inputs' depends on axioms: [propext]
-Passed AuditDeclaredAbiAgreement.lean (45/138) in 0.3s
+Passed AuditDeclaredAbiAgreement.lean (47/140) in 0.3s
 'QCore.DeclaredModeAgreement.absence_of_evidence_applies_the_declaration' depends on axioms: [propext]
 'QCore.DeclaredModeAgreement.an_undeclared_callee_is_never_applied' depends on axioms: [propext]
 'QCore.DeclaredModeAgreement.equality_never_contradicts' depends on axioms: [propext]
@@ -1908,7 +1780,7 @@ Passed AuditDeclaredAbiAgreement.lean (45/138) in 0.3s
 'QCore.DeclaredModeAgreement.the_parameter_domain_is_decided' depends on axioms: [propext]
 'QCore.DeclaredModeAgreement.the_result_domain_is_decided' depends on axioms: [propext]
 'QCore.DeclaredModeAgreement.the_checksum_is_pinned' depends on axioms: [propext]
-Passed AuditDeclaredModeAgreement.lean (46/138) in 0.3s
+Passed AuditDeclaredModeAgreement.lean (48/140) in 0.3s
 'QCore.DenominatorCoverage.safe_is_published_exactly_when_clean_and_covered' depends on axioms: [propext]
 'QCore.DenominatorCoverage.an_unread_definition_withholds_safe' depends on axioms: [propext]
 'QCore.DenominatorCoverage.the_gate_only_refuses' depends on axioms: [propext]
@@ -1922,7 +1794,7 @@ Passed AuditDeclaredModeAgreement.lean (46/138) in 0.3s
 'QCore.DenominatorCoverage.the_rules_agree_on_the_knr_cause' depends on axioms: [propext]
 'QCore.DenominatorCoverage.the_coverage_gate_is_strictly_stronger' depends on axioms: [propext]
 'QCore.DenominatorCoverage.the_gate_refuses_every_unanalyzable_definition' depends on axioms: [propext]
-Passed AuditDenominatorCoverage.lean (47/138) in 0.3s
+Passed AuditDenominatorCoverage.lean (49/140) in 0.3s
 'QCore.DereferencedResult.the_bare_wrapper_is_exactly_the_base_admission' depends on axioms: [propext]
 'QCore.DereferencedResult.every_previously_admitted_nested_call_is_still_admitted' depends on axioms: [propext]
 'QCore.DereferencedResult.the_pointee_is_read_only_under_a_dereference' depends on axioms: [propext]
@@ -1954,7 +1826,7 @@ Passed AuditDenominatorCoverage.lean (47/138) in 0.3s
 'QCore.DereferencedResult.a_site_with_no_nested_call_is_unchanged' depends on axioms: [propext, Quot.sound]
 'QCore.DereferencedResult.the_measured_fail_open_is_closed' does not depend on any axioms
 'QCore.DereferencedResult.the_control_is_unmoved' does not depend on any axioms
-Passed AuditDereferencedResult.lean (48/138) in 0.3s
+Passed AuditDereferencedResult.lean (50/140) in 0.3s
 'QCore.DerivedTextAdmission.two_declared_files_with_equal_bytes_derive_equal_derived_identities' does not depend on any axioms
 'QCore.DerivedTextAdmission.a_declared_file_and_an_anonymous_text_derive_one_identity' does not depend on any axioms
 'QCore.DerivedTextAdmission.the_base_identities_are_not_equal' does not depend on any axioms
@@ -1987,7 +1859,7 @@ Passed AuditDereferencedResult.lean (48/138) in 0.3s
 'QCore.DerivedTextAdmission.the_honest_proposal_is_admitted' does not depend on any axioms
 'QCore.DerivedTextAdmission.the_honest_derivation_records_the_erasure' does not depend on any axioms
 'QCore.DerivedTextAdmission.the_refusals_are_not_vacuous' does not depend on any axioms
-Passed AuditDerivedTextAdmission.lean (49/138) in 0.3s
+Passed AuditDerivedTextAdmission.lean (51/140) in 0.4s
 'QCore.DisjointFootprint.sliceBytes_within_extent' depends on axioms: [propext]
 'QCore.DisjointFootprint.sliceBytes_nonempty' depends on axioms: [propext, Quot.sound]
 'QCore.DisjointFootprint.range_disjoint_iff_bytes_disjoint' depends on axioms: [propext]
@@ -2016,7 +1888,7 @@ Passed AuditDerivedTextAdmission.lean (49/138) in 0.3s
 'QCore.DisjointFootprint.a_stale_handle_decides_nothing' depends on axioms: [propext]
 'QCore.DisjointFootprint.live_handles_of_one_generation_are_decided' depends on axioms: [propext]
 'QCore.DisjointFootprint.the_same_pair_after_a_reallocation_is_refused' depends on axioms: [propext]
-Passed AuditDisjointFootprint.lean (50/138) in 0.3s
+Passed AuditDisjointFootprint.lean (52/140) in 0.3s
 'QCore.EnumerationAttribution.relabel_preserves_depth' depends on axioms: [propext]
 'QCore.EnumerationAttribution.relabel_preserves_breakage' depends on axioms: [propext]
 'QCore.EnumerationAttribution.enter_then_leave_restores_depth' depends on axioms: [propext]
@@ -2035,7 +1907,7 @@ Passed AuditDisjointFootprint.lean (50/138) in 0.3s
 'QCore.EnumerationAttribution.breakage_is_absorbing' depends on axioms: [propext]
 'QCore.EnumerationAttribution.the_unbalanced_ground_says_nothing_about_the_source' does not depend on any axioms
 'QCore.EnumerationAttribution.the_two_subjects_are_distinct' does not depend on any axioms
-Passed AuditEnumerationAttribution.lean (51/138) in 0.3s
+Passed AuditEnumerationAttribution.lean (53/140) in 0.3s
 'QCore.EpochAccounting.union_counts_a_repeated_cell_once' depends on axioms: [propext, Quot.sound]
 'QCore.EpochAccounting.union_ignores_a_repeated_identity' depends on axioms: [propext]
 'QCore.EpochAccounting.union_is_at_most_the_double_count' depends on axioms: [propext]
@@ -2057,7 +1929,7 @@ Passed AuditEnumerationAttribution.lean (51/138) in 0.3s
 'QCore.EpochAccounting.credits_beyond_the_allocation_are_not_covered' does not depend on any axioms
 'QCore.EpochAccounting.work_total_does_not_determine_finish_time' depends on axioms: [propext]
 'QCore.EpochAccounting.no_function_of_the_work_total_is_the_finish_time' depends on axioms: [propext]
-Passed AuditEpochAccounting.lean (52/138) in 0.3s
+Passed AuditEpochAccounting.lean (54/140) in 0.3s
 'QCore.EpochSourceLowering.bytesOf_le' depends on axioms: [propext, Quot.sound]
 'QCore.EpochSourceLowering.lower_preserves_the_worker_count' depends on axioms: [propext]
 'QCore.EpochSourceLowering.lower_preserves_each_declared_peak' depends on axioms: [propext]
@@ -2148,7 +2020,7 @@ Passed AuditEpochAccounting.lean (52/138) in 0.3s
 'QCore.EpochSourceLowering.an_over_restoring_plan_is_refused' does not depend on any axioms
 'QCore.EpochSourceLowering.a_declarative_arm_is_refused' does not depend on any axioms
 'QCore.EpochSourceLowering.an_elided_declarative_arm_is_admitted' does not depend on any axioms
-Passed AuditEpochSourceLowering.lean (53/138) in 0.3s
+Passed AuditEpochSourceLowering.lean (55/140) in 0.3s
 'QCore.ErrorPayload.an_outcome_carries_at_most_one_identity' depends on axioms: [propext, Quot.sound]
 'QCore.ErrorPayload.payload_free_outcomes_carry_nothing' depends on axioms: [propext]
 'QCore.ErrorPayload.completion_holds_exactly_what_it_names' depends on axioms: [propext]
@@ -2168,7 +2040,7 @@ Passed AuditEpochSourceLowering.lean (53/138) in 0.3s
 'QCore.ErrorPayload.a_taken_error_may_be_re_raised' depends on axioms: [propext]
 'QCore.ErrorPayload.taking_preserves_every_other_identity' depends on axioms: [propext]
 'QCore.ErrorPayload.the_admitted_payload_round_trip_ends_released' depends on axioms: [propext]
-Passed AuditErrorPayload.lean (54/138) in 0.3s
+Passed AuditErrorPayload.lean (56/140) in 0.3s
 'QCore.ExternCall.nullable_released_parameter_refuses' depends on axioms: [propext]
 'QCore.ExternCall.releasing_other_than_a_flat_mutable_pointer_refuses' depends on axioms: [propext]
 'QCore.ExternCall.removed_parameter_refuses' depends on axioms: [propext]
@@ -2291,7 +2163,7 @@ Passed AuditErrorPayload.lean (54/138) in 0.3s
 'QCore.ModuleImports.the_concurrency_import_alone_grants_no_extern_call' does not depend on any axioms
 'QCore.ModuleImports.sequential_code_needs_no_extern_import' depends on axioms: [propext]
 'QCore.ModuleImports.both_imports_are_independent' depends on axioms: [propext, Classical.choice, Quot.sound]
-Passed AuditExternCall.lean (55/138) in 0.3s
+Passed AuditExternCall.lean (57/140) in 0.3s
 'QCore.FixedScalarQuery.erasure_preserves_effects' depends on axioms: [propext]
 'QCore.FixedScalarQuery.variable_array_refuses' depends on axioms: [propext]
 'QCore.FixedScalarQuery.opaque_operand_refuses' depends on axioms: [propext]
@@ -2301,7 +2173,7 @@ Passed AuditExternCall.lean (55/138) in 0.3s
 'QCore.FixedScalarQuery.query_assignment_forgets_old_value' depends on axioms: [propext]
 'QCore.FixedScalarQuery.other_scalar_facts_survive' depends on axioms: [propext]
 'QCore.FixedScalarQuery.query_assignment_keeps_both_branches' depends on axioms: [propext]
-Passed AuditFixedScalarQuery.lean (56/138) in 0.3s
+Passed AuditFixedScalarQuery.lean (58/140) in 0.3s
 'QCore.FrameHelperTask.equal_digests_are_equal_tasks' does not depend on any axioms
 'QCore.FrameHelperTask.a_changed_summary_retires_the_task' does not depend on any axioms
 'QCore.FrameHelperTask.a_changed_import_identity_retires_the_task' does not depend on any axioms
@@ -2335,13 +2207,13 @@ Passed AuditFixedScalarQuery.lean (56/138) in 0.3s
  Classical.choice,
  Quot.sound]
 'QCore.FrameHelperTask.the_real_chunkio_helper_writes_its_metadata_field' depends on axioms: [propext]
-Passed AuditFrameHelperTask.lean (57/138) in 0.3s
+Passed AuditFrameHelperTask.lean (59/140) in 0.3s
 'QCore.DescriptorCustody.accepted_descriptor_teardown_is_complete_and_unique' does not depend on any axioms
 'QCore.DescriptorCustody.accepted_monkey_descriptor_teardown_is_complete_and_unique' does not depend on any axioms
 'QCore.ChunkSource.busy_effect_preserves_lock' depends on axioms: [propext]
 'QCore.ChunkSource.busy_effect_preserves_chunkio_lock' depends on axioms: [propext]
 'QCore.ExternalIntegration.accepted_monkey_composition_has_event_teardown' does not depend on any axioms
-Passed AuditGenericNames.lean (58/138) in 0.3s
+Passed AuditGenericNames.lean (60/140) in 0.3s
 'QCore.HttpComputedLength.fromDigits_snoc' depends on axioms: [propext, Quot.sound]
 'QCore.HttpComputedLength.fromDigits_digits' depends on axioms: [propext, Quot.sound]
 'QCore.HttpComputedLength.digits_lt_ten' depends on axioms: [propext, Quot.sound]
@@ -2378,7 +2250,7 @@ Passed AuditGenericNames.lean (58/138) in 0.3s
 'QCore.HttpComputedLength.a_composition_of_one_is_refused' depends on axioms: [propext]
 'QCore.HttpComputedLength.a_composition_of_none_is_refused' depends on axioms: [propext]
 'QCore.HttpComputedLength.a_composition_of_two_is_admitted' depends on axioms: [propext, Quot.sound]
-Passed AuditHttpComputedLength.lean (59/138) in 0.3s
+Passed AuditHttpComputedLength.lean (61/140) in 0.3s
 'QCore.JoinedProvenanceCallFrames.call_preserves_sound_claims' does not depend on any axioms
 'QCore.JoinedProvenanceCallFrames.a_call_never_adds_a_name' does not depend on any axioms
 'QCore.JoinedProvenanceCallFrames.a_smaller_frame_claims_less' does not depend on any axioms
@@ -2388,7 +2260,7 @@ Passed AuditHttpComputedLength.lean (59/138) in 0.3s
 'QCore.JoinedProvenanceCallFrames.the_frame_keeps_what_the_blanket_forget_dropped' does not depend on any axioms
 'QCore.JoinedProvenanceCallFrames.a_call_edge_is_transfer_sound' does not depend on any axioms
 'QCore.JoinedProvenanceCallFrames.a_graph_with_call_edges_is_sound' does not depend on any axioms
-Passed AuditJoinedProvenanceCallFrames.lean (60/138) in 0.4s
+Passed AuditJoinedProvenanceCallFrames.lean (62/140) in 0.3s
 'QCore.JoinedProvenanceCycles.fixed_point_is_sound' does not depend on any axioms
 'QCore.JoinedProvenanceCycles.weakening_stays_sound' does not depend on any axioms
 'QCore.JoinedProvenanceCycles.claiming_nothing_is_sound' does not depend on any axioms
@@ -2396,7 +2268,7 @@ Passed AuditJoinedProvenanceCallFrames.lean (60/138) in 0.4s
 'QCore.JoinedProvenanceCycles.acyclic_solution_is_unique' depends on axioms: [propext, Quot.sound]
 'QCore.JoinedProvenanceCycles.steps_increase_rank' does not depend on any axioms
 'QCore.JoinedProvenanceCycles.an_off_cycle_node_does_not_return' does not depend on any axioms
-Passed AuditJoinedProvenanceCycles.lean (61/138) in 0.4s
+Passed AuditJoinedProvenanceCycles.lean (63/140) in 0.3s
 'QCore.JoinedProvenanceRoundBound.countB_le' depends on axioms: [propext, Quot.sound]
 'QCore.JoinedProvenanceRoundBound.countB_mono' depends on axioms: [propext, Quot.sound]
 'QCore.JoinedProvenanceRoundBound.countB_lt' depends on axioms: [propext, Quot.sound]
@@ -2418,7 +2290,7 @@ Passed AuditJoinedProvenanceCycles.lean (61/138) in 0.4s
  Quot.sound]
 'QCore.JoinedProvenanceRoundBound.a_settled_state_is_a_fixed_point' does not depend on any axioms
 'QCore.JoinedProvenanceRoundBound.stopping_early_is_declining' does not depend on any axioms
-Passed AuditJoinedProvenanceRoundBound.lean (62/138) in 0.3s
+Passed AuditJoinedProvenanceRoundBound.lean (64/140) in 0.3s
 'QCore.Concurrency.LifetimeCorrespondence.domain_size' does not depend on any axioms
 'QCore.Concurrency.LifetimeCorrespondence.domain_trace_digest' does not depend on any axioms
 'QCore.Concurrency.LifetimeCorrespondence.domain_outcome_digest' depends on axioms: [propext, Quot.sound]
@@ -2430,7 +2302,7 @@ Passed AuditJoinedProvenanceRoundBound.lean (62/138) in 0.3s
  Quot.sound]
 'QCore.Concurrency.LifetimeCorrespondence.domain_terminal_participant_probes_are_nonvacuous' depends on axioms: [propext,
  Quot.sound]
-Passed AuditLifetimeCorrespondence.lean (63/138) in 0.3s
+Passed AuditLifetimeCorrespondence.lean (65/140) in 0.3s
 'QCore.LiteralArgumentPremise.an_applied_contract_is_the_declared_one' depends on axioms: [propext]
 'QCore.LiteralArgumentPremise.an_applied_call_has_a_declaration' depends on axioms: [propext]
 'QCore.LiteralArgumentPremise.an_undeclared_callee_is_never_applied' depends on axioms: [propext]
@@ -2516,7 +2388,7 @@ Passed AuditLifetimeCorrespondence.lean (63/138) in 0.3s
 'QCore.LiteralArgumentPremise.the_live_pointer_call_is_withdrawn' depends on axioms: [propext]
 'QCore.LiteralArgumentPremise.an_unsatisfiable_pointer_premise_withdraws_every_call' depends on axioms: [propext,
  Quot.sound]
-Passed AuditLiteralArgumentPremise.lean (64/138) in 0.3s
+Passed AuditLiteralArgumentPremise.lean (66/140) in 0.4s
 'QCore.LoopBudget.the_verdicts_are_exactly_these' depends on axioms: [propext]
 'QCore.LoopBudget.the_decision_is_total' depends on axioms: [propext]
 'QCore.LoopBudget.the_default_is_inside_the_ceiling' does not depend on any axioms
@@ -2539,7 +2411,7 @@ Passed AuditLiteralArgumentPremise.lean (64/138) in 0.3s
 'QCore.LoopBudget.an_attributed_program_unrolls_to_its_unattributed_one' does not depend on any axioms
 'QCore.LoopBudget.the_one_pass_maximum_is_the_maximum_over_every_prefix' depends on axioms: [propext]
 'QCore.LoopBudget.the_maximum_is_a_value_the_run_passed_through' depends on axioms: [propext, Quot.sound]
-Passed AuditLoopBudget.lean (65/138) in 0.4s
+Passed AuditLoopBudget.lean (67/140) in 0.3s
 'QCore.MayAlias.sameTag_is_symmetric' depends on axioms: [propext, Classical.choice, Quot.sound]
 'QCore.MayAlias.peer_is_symmetric' depends on axioms: [propext, Classical.choice, Quot.sound]
 'QCore.MayAlias.a_name_is_never_its_own_peer' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -2593,7 +2465,7 @@ Passed AuditLoopBudget.lean (65/138) in 0.4s
 'QCore.MayAlias.the_rule_is_not_vacuous' depends on axioms: [propext, Classical.choice, Quot.sound]
 'QCore.MayAlias.the_guard_discharge_is_load_bearing' depends on axioms: [propext, Classical.choice, Quot.sound]
 'QCore.MayAlias.the_provenance_discharge_is_load_bearing' depends on axioms: [propext, Classical.choice, Quot.sound]
-Passed AuditMayAlias.lean (66/138) in 0.5s
+Passed AuditMayAlias.lean (68/140) in 0.3s
 'QCore.MemberAddress.unread_declarations_never_admit_an_address' depends on axioms: [propext]
 'QCore.MemberAddress.a_partial_address_never_admits' depends on axioms: [propext]
 'QCore.MemberAddress.a_non_record_pointer_base_never_admits_an_address' depends on axioms: [propext]
@@ -2647,7 +2519,7 @@ Passed AuditMayAlias.lean (66/138) in 0.5s
 'QCore.BoundFieldRead.the_borrowed_half_refuses_the_custody_example' does not depend on any axioms
 'QCore.BoundFieldRead.one_scalar_member_flips_the_custody_read' does not depend on any axioms
 'QCore.BoundFieldRead.one_owned_position_flips_the_custody_read' does not depend on any axioms
-Passed AuditMemberAddress.lean (67/138) in 0.5s
+Passed AuditMemberAddress.lean (69/140) in 0.3s
 'QCore.MemberAddressReader.the_classifier_is_unchanged' depends on axioms: [propext]
 'QCore.MemberAddressReader.an_aggregate_definition_is_still_opaque_to_the_classifier' depends on axioms: [propext]
 'QCore.MemberAddressReader.an_aggregate_definition_behind_an_alias_is_still_opaque' depends on axioms: [propext]
@@ -2688,7 +2560,7 @@ Passed AuditMemberAddress.lean (67/138) in 0.5s
 'QCore.MemberAddressReader.a_name_recorded_twice_differently_is_unresolved' depends on axioms: [propext]
 'QCore.MemberAddressReader.an_aggregate_definition_and_a_plain_typedef_of_one_name_retire_it' does not depend on any axioms
 'QCore.MemberAddressReader.a_retired_name_is_never_addressable' depends on axioms: [propext]
-Passed AuditMemberAddressReader.lean (68/138) in 0.5s
+Passed AuditMemberAddressReader.lean (70/140) in 0.3s
 'QCore.Concurrency.MutexInvariant.parked_authority_is_conserved' depends on axioms: [propext]
 'QCore.Concurrency.MutexInvariant.createMutexEffect_preserves_authority' depends on axioms: [propext]
 'QCore.Concurrency.MutexInvariant.destroyMutexEffect_preserves_authority' depends on axioms: [propext]
@@ -2839,7 +2711,7 @@ Passed AuditMemberAddressReader.lean (68/138) in 0.5s
 'QCore.Concurrency.MutexInvariant.a_grown_section_cannot_close_with_the_checked_witness' depends on axioms: [propext]
 'QCore.Concurrency.MutexInvariant.a_grown_section_cannot_be_released_before_closing' depends on axioms: [propext,
  Quot.sound]
-Passed AuditMutexInvariant.lean (69/138) in 0.5s
+Passed AuditMutexInvariant.lean (71/140) in 0.3s
 'QCore.MutexShareCross.MutexShareObligation' does not depend on any axioms
 'QCore.MutexShareCross.mutexShareObligationHolds' depends on axioms: [propext, Quot.sound]
 'QCore.MutexShareCross.aSharedPayloadIsReachableOnlyThroughTheProtocol' depends on axioms: [propext, Quot.sound]
@@ -2860,7 +2732,7 @@ Passed AuditMutexInvariant.lean (69/138) in 0.5s
 'QCore.Transferability.refusalComplementsAdmission' depends on axioms: [propext]
 'QCore.Transferability.aWriteCaptureIsRefusedByName' depends on axioms: [propext]
 'QCore.Transferability.everyAdmittedTransferIsBacked' depends on axioms: [propext, Classical.choice, Quot.sound]
-Passed AuditMutexShareCross.lean (70/138) in 0.5s
+Passed AuditMutexShareCross.lean (72/140) in 0.3s
 'QCore.MutexShareCrossArms.theProtocolResidueIsEmpty' depends on axioms: [propext]
 'QCore.MutexShareCrossArms.theOkOtherArmIsUnreachable' depends on axioms: [propext]
 'QCore.MutexShareCrossArms.theAdmittingCaseExists' depends on axioms: [propext]
@@ -2870,7 +2742,7 @@ Passed AuditMutexShareCross.lean (70/138) in 0.5s
 'QCore.MutexShareCrossArms.theClassFormIsTheJudgment' depends on axioms: [propext]
 'QCore.MutexShareCrossArms.theJudgmentCannotTellTwoKindsOfOneClassApart' depends on axioms: [propext]
 'QCore.MutexShareCrossArms.armDLeansOnUniqueness' does not depend on any axioms
-Passed AuditMutexShareCrossArms.lean (71/138) in 0.6s
+Passed AuditMutexShareCrossArms.lean (73/140) in 0.3s
 'QCore.MutexShareCrossEmission.outside_renders_nothing' depends on axioms: [propext]
 'QCore.MutexShareCrossEmission.refusals_agree' depends on axioms: [propext]
 'QCore.MutexShareCrossEmission.segmentEnd_finds_the_join' depends on axioms: [propext]
@@ -2902,7 +2774,7 @@ Passed AuditMutexShareCrossArms.lean (71/138) in 0.6s
 'QCore.MutexShareCrossEmission.a_stray_join_is_refused' depends on axioms: [propext]
 'QCore.MutexShareCrossEmission.a_segment_running_off_the_end_is_refused' depends on axioms: [propext]
 'QCore.MutexShareCrossEmission.a_refused_trace_renders_nothing' depends on axioms: [propext]
-Passed AuditMutexShareCrossEmission.lean (72/138) in 0.5s
+Passed AuditMutexShareCrossEmission.lean (74/140) in 0.3s
 'QCore.NativeLibrary.manifest_assumption_totality' depends on axioms: [propext, Quot.sound]
 'QCore.NativeLibrary.there_is_no_assumption_free_path' depends on axioms: [propext]
 'QCore.NativeLibrary.every_resident_contributes_exactly_one_premise' depends on axioms: [propext]
@@ -2928,7 +2800,7 @@ Passed AuditMutexShareCrossEmission.lean (72/138) in 0.5s
  Classical.choice,
  Quot.sound]
 'QCore.NativeLibrary.an_unnamed_symbol_is_admitted_bare' depends on axioms: [propext]
-Passed AuditNativeLibrary.lean (73/138) in 0.5s
+Passed AuditNativeLibrary.lean (75/140) in 0.3s
 'QCore.NativeLibraryContract.an_unmanifested_contract_keeps_its_one_premise' does not depend on any axioms
 'QCore.NativeLibraryContract.a_manifest_bound_call_stacks_both_premises' does not depend on any axioms
 'QCore.NativeLibraryContract.the_contract_premise_is_never_replaced' depends on axioms: [propext]
@@ -2969,7 +2841,7 @@ Passed AuditNativeLibrary.lean (73/138) in 0.5s
  Classical.choice,
  Quot.sound]
 'QCore.NativeLibraryContract.an_unbound_symbol_keeps_the_single_premise' depends on axioms: [propext]
-Passed AuditNativeLibraryContract.lean (74/138) in 0.5s
+Passed AuditNativeLibraryContract.lean (76/140) in 0.3s
 'QCore.NativeLibraryHeader.the_agreement_relation_is_the_declared_abi_one' depends on axioms: [propext]
 'QCore.NativeLibraryHeader.a_read_position_that_does_not_admit_disagrees' depends on axioms: [propext]
 'QCore.NativeLibraryHeader.a_manifest_naming_no_header_is_unchanged' depends on axioms: [propext]
@@ -2999,7 +2871,7 @@ Passed AuditNativeLibraryContract.lean (74/138) in 0.5s
 'QCore.NativeLibraryHeader.an_arity_difference_disagrees' depends on axioms: [propext]
 'QCore.NativeLibraryHeader.an_internal_declaration_refuses_even_when_it_agrees' depends on axioms: [propext]
 'QCore.NativeLibraryHeader.an_agreeing_binding_is_admitted' depends on axioms: [propext]
-Passed AuditNativeLibraryHeader.lean (75/138) in 0.6s
+Passed AuditNativeLibraryHeader.lean (77/140) in 0.3s
 'QCore.NativeLibraryHeaderDecoration.expanding_then_erasing_equals_erasing' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
@@ -3037,7 +2909,7 @@ Passed AuditNativeLibraryHeader.lean (75/138) in 0.6s
 'QCore.NativeLibraryHeaderDecoration.a_declared_supplied_and_reached_text_binds' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-Passed AuditNativeLibraryHeaderDecoration.lean (76/138) in 0.5s
+Passed AuditNativeLibraryHeaderDecoration.lean (78/140) in 0.3s
 'QCore.NativeLibrarySourceBinding.an_unknown_name_refuses' depends on axioms: [propext]
 'QCore.NativeLibrarySourceBinding.an_ambiguous_name_refuses' depends on axioms: [propext]
 'QCore.NativeLibrarySourceBinding.a_repeated_name_refuses' depends on axioms: [propext]
@@ -3055,7 +2927,7 @@ Passed AuditNativeLibraryHeaderDecoration.lean (76/138) in 0.5s
 'QCore.NativeLibrarySourceBinding.the_route_binds_narrows_and_refuses' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-Passed AuditNativeLibrarySourceBinding.lean (77/138) in 0.5s
+Passed AuditNativeLibrarySourceBinding.lean (79/140) in 0.3s
 'QCore.NeutralExpressionPosition.a_literal_is_admitted' does not depend on any axioms
 'QCore.NeutralExpressionPosition.an_enumeration_constant_is_admitted' does not depend on any axioms
 'QCore.NeutralExpressionPosition.a_declared_scalar_is_admitted' does not depend on any axioms
@@ -3096,7 +2968,7 @@ Passed AuditNativeLibrarySourceBinding.lean (77/138) in 0.5s
 'QCore.NeutralExpressionPosition.a_bound_base_never_reads_even_a_scalar_member' does not depend on any axioms
 'QCore.NeutralExpressionPosition.an_unmodelled_member_refuses' does not depend on any axioms
 'QCore.NeutralExpressionPosition.one_unadmitted_argument_refuses_the_whole_call' does not depend on any axioms
-Passed AuditNeutralExpressionPosition.lean (78/138) in 0.5s
+Passed AuditNeutralExpressionPosition.lean (80/140) in 0.3s
 'QCore.NeutralFrameRecursion.step_descends' depends on axioms: [propext]
 'QCore.NeutralFrameRecursion.step_preserves_bounds' depends on axioms: [propext]
 'QCore.NeutralFrameRecursion.top_is_bounded' depends on axioms: [propext]
@@ -3134,7 +3006,7 @@ Passed AuditNeutralExpressionPosition.lean (78/138) in 0.5s
 'QCore.NeutralFrameRecursion.published_neutral_member_has_a_reachable_exit' depends on axioms: [propext, Quot.sound]
 'QCore.NeutralFrameRecursion.published_neutral_member_matches_every_exit' depends on axioms: [propext, Quot.sound]
 'QCore.NeutralFrameRecursion.a_published_neutral_member_hands_back_no_custody' depends on axioms: [propext, Quot.sound]
-Passed AuditNeutralFrameRecursion.lean (79/138) in 0.4s
+Passed AuditNeutralFrameRecursion.lean (81/140) in 0.3s
 'QCore.NeutralPrefixPreservation.neutral_prefix_preservation' depends on axioms: [propext]
 'QCore.NeutralPrefixPreservation.a_completed_call_is_a_strictly_shorter_sub_execution' depends on axioms: [propext,
  Quot.sound]
@@ -3142,7 +3014,7 @@ Passed AuditNeutralFrameRecursion.lean (79/138) in 0.4s
 'QCore.NeutralPrefixPreservation.a_validated_prefix_exists' depends on axioms: [propext]
 'QCore.NeutralPrefixPreservation.an_assumed_effect_appears_in_no_divergent_prefix' depends on axioms: [propext]
 'QCore.NeutralPrefixPreservation.a_returned_prefix_discharges_the_exit_claim' depends on axioms: [propext]
-Passed AuditNeutralPrefixPreservation.lean (80/138) in 0.4s
+Passed AuditNeutralPrefixPreservation.lean (82/140) in 0.3s
 'QCore.AggregateComposition.an_empty_aggregate_is_not_a_vacuous_success' depends on axioms: [propext]
 'QCore.AggregateComposition.a_structurally_malformed_program_is_unknown' depends on axioms: [propext]
 'QCore.AggregateComposition.a_malformed_program_reports_only_structural_refusals' depends on axioms: [propext]
@@ -3190,7 +3062,7 @@ Passed AuditNeutralPrefixPreservation.lean (80/138) in 0.4s
 'QCore.AggregateComposition.the_reference_aggregate_composes' depends on axioms: [propext]
 'QCore.AggregateComposition.a_live_callback_makes_the_reference_unknown' depends on axioms: [propext]
 'QCore.AggregateComposition.a_reused_live_descriptor_number_makes_the_reference_unknown' depends on axioms: [propext]
-Passed AuditO05.lean (81/138) in 0.4s
+Passed AuditO05.lean (83/140) in 0.3s
 'QCore.ObsReordering.proj_nil' does not depend on any axioms
 'QCore.ObsReordering.proj_cons_same' depends on axioms: [propext]
 'QCore.ObsReordering.proj_cons_other' depends on axioms: [propext]
@@ -3220,7 +3092,7 @@ Passed AuditO05.lean (81/138) in 0.4s
 'QCore.ObsReordering.proj_eq_nil_of_not_mem' depends on axioms: [propext, Quot.sound]
 'QCore.ObsReordering.decideWindow_correct' depends on axioms: [propext, Quot.sound]
 'QCore.ObsReordering.decideEquiv_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
-Passed AuditObsReordering.lean (82/138) in 0.4s
+Passed AuditObsReordering.lean (84/140) in 0.3s
 'QCore.OsEndpointPostState.mem_allTargets' depends on axioms: [propext]
 'QCore.OsEndpointPostState.mem_allOutcomes' depends on axioms: [propext]
 'QCore.OsEndpointPostState.mem_allPremises' depends on axioms: [propext]
@@ -3249,7 +3121,7 @@ Passed AuditObsReordering.lean (82/138) in 0.4s
 'QCore.OsEndpointPostState.a_join_across_targets_is_refused' depends on axioms: [propext]
 'QCore.OsEndpointPostState.a_reused_number_is_a_distinct_epoch' depends on axioms: [propext, Quot.sound]
 'QCore.OsEndpointPostState.the_suppressed_wrapper_post_state_is_not_the_linux_post_state' depends on axioms: [propext]
-Passed AuditOsEndpointPostState.lean (83/138) in 0.4s
+Passed AuditOsEndpointPostState.lean (85/140) in 0.3s
 'QCore.PackageIdentity.revalidate_ok_iff' depends on axioms: [propext]
 'QCore.PackageIdentity.ok_loads_the_rechecked_content' depends on axioms: [propext]
 'QCore.PackageIdentity.ok_loads_content_of_the_verified_digest' depends on axioms: [propext]
@@ -3276,7 +3148,7 @@ Passed AuditOsEndpointPostState.lean (83/138) in 0.4s
 'QCore.PackageIdentity.an_unchanged_package_dispatches' depends on axioms: [propext]
 'QCore.PackageIdentity.revalidate_depends_only_on_the_two_observations' depends on axioms: [propext]
 'QCore.PackageIdentity.a_post_check_substitution_is_not_refused' depends on axioms: [propext]
-Passed AuditPackageIdentity.lean (84/138) in 0.4s
+Passed AuditPackageIdentity.lean (86/140) in 0.3s
 'QCore.PackageTemplateBinding.count_append' depends on axioms: [propext]
 'QCore.PackageTemplateBinding.count_eq_zero_of_markerless' depends on axioms: [propext]
 'QCore.PackageTemplateBinding.afterOpening_of_markerless' depends on axioms: [propext]
@@ -3305,7 +3177,7 @@ Passed AuditPackageIdentity.lean (84/138) in 0.4s
 'QCore.PackageTemplateBinding.a_second_envelope_is_named_ambiguous' depends on axioms: [propext]
 'QCore.PackageTemplateBinding.refusals_are_not_acceptance' depends on axioms: [propext, Quot.sound]
 'QCore.PackageTemplateBinding.an_unmodified_package_binds' depends on axioms: [propext, Quot.sound]
-Passed AuditPackageTemplateBinding.lean (85/138) in 0.4s
+Passed AuditPackageTemplateBinding.lean (87/140) in 0.3s
 'QCore.PipeDesugaring.sink_pipeline_is_its_hand_written_statement' depends on axioms: [propext]
 'QCore.PipeDesugaring.log_pipeline_is_its_hand_written_statement' depends on axioms: [propext]
 'QCore.PipeDesugaring.call_pipeline_is_its_hand_written_call' depends on axioms: [propext]
@@ -3399,7 +3271,7 @@ Passed AuditPackageTemplateBinding.lean (85/138) in 0.4s
 'QCore.PipeDesugaring.three_ampersands_are_and_then_reserved' does not depend on any axioms
 'QCore.PipeDesugaring.three_bars_are_or_then_reserved' does not depend on any axioms
 'QCore.PipeDesugaring.the_caret_never_absorbs_a_neighbour' does not depend on any axioms
-Passed AuditPipeDesugaring.lean (86/138) in 0.3s
+Passed AuditPipeDesugaring.lean (88/140) in 0.3s
 'QCore.ProcessQuotaPlan.the_recorded_default_is_the_unenforcing_profile' does not depend on any axioms
 'QCore.ProcessQuotaPlan.the_default_profile_installs_nothing' depends on axioms: [propext]
 'QCore.ProcessQuotaPlan.exactly_one_profile_installs_a_quota' depends on axioms: [propext]
@@ -3431,7 +3303,7 @@ Passed AuditPipeDesugaring.lean (86/138) in 0.3s
 'QCore.ProcessQuotaPlan.a_forced_probe_only_refuses' depends on axioms: [propext]
 'QCore.ProcessQuotaPlan.a_forced_probe_refuses_every_confined_execution' depends on axioms: [propext]
 'QCore.ProcessQuotaPlan.a_forced_probe_grants_no_profile_a_mechanism' depends on axioms: [propext]
-Passed AuditProcessQuotaPlan.lean (87/138) in 0.4s
+Passed AuditProcessQuotaPlan.lean (89/140) in 0.2s
 'QCore.ProtectionGrowthEmission.a_growth_statement_performs_no_mutex_operation' does not depend on any axioms
 'QCore.ProtectionGrowthEmission.step_operations_are_the_events_own' depends on axioms: [propext]
 'QCore.ProtectionGrowthEmission.operations_are_exactly_the_traces_own_mutex_calls' depends on axioms: [propext]
@@ -3458,7 +3330,7 @@ Passed AuditProcessQuotaPlan.lean (87/138) in 0.4s
 'QCore.ProtectionGrowthEmission.the_fixture_with_an_edited_record_is_refused' depends on axioms: [propext]
 'QCore.ProtectionGrowthEmission.the_fixture_with_a_hidden_shape_is_refused' depends on axioms: [propext]
 'QCore.ProtectionGrowthEmission.a_growth_under_an_unminted_guard_is_refused' depends on axioms: [propext]
-Passed AuditProtectionGrowthEmission.lean (88/138) in 0.3s
+Passed AuditProtectionGrowthEmission.lean (90/140) in 0.3s
 'QCore.PublicationCustody.a_store_of_a_body_acquired_identity_into_a_file_scope_object_is_refused' does not depend on any axioms
 'QCore.PublicationCustody.an_acquisition_bound_to_such_an_object_is_refused' does not depend on any axioms
 'QCore.PublicationCustody.a_custody_yielding_call_bound_to_such_an_object_is_refused' does not depend on any axioms
@@ -3511,7 +3383,7 @@ Passed AuditProtectionGrowthEmission.lean (88/138) in 0.3s
 'QCore.PublicationCustody.both_spellings_of_one_object_are_recognised_alike' depends on axioms: [propext]
 'QCore.PublicationCustody.no_landed_shape_certifies' depends on axioms: [propext]
 'QCore.PublicationCustody.the_widened_rule_both_refuses_and_admits' does not depend on any axioms
-Passed AuditPublicationCustody.lean (89/138) in 0.3s
+Passed AuditPublicationCustody.lean (91/140) in 0.3s
 'QCore.QuantRegionSource.sealed_pack_carries_the_bodys_duties' does not depend on any axioms
 'QCore.QuantRegionSource.sealed_pack_carries_the_regions_quantity' does not depend on any axioms
 'QCore.QuantRegionSource.handler_admits_iff_one_discharge' depends on axioms: [propext]
@@ -3530,7 +3402,7 @@ Passed AuditPublicationCustody.lean (89/138) in 0.3s
 'QCore.QuantRegionSource.a_release_erases_an_earlier_duty' depends on axioms: [propext, Quot.sound]
 'QCore.QuantRegionSource.admitted_body_shapes_are_exactly_these' does not depend on any axioms
 'QCore.QuantRegionSource.admitted_handler_shapes_are_exactly_these' does not depend on any axioms
-Passed AuditQuantRegionSource.lean (90/138) in 0.3s
+Passed AuditQuantRegionSource.lean (92/140) in 0.3s
 'QCore.RawDirectiveLexing.classify_is_total' does not depend on any axioms
 'QCore.RawDirectiveLexing.classify_is_single_valued' does not depend on any axioms
 'QCore.RawDirectiveLexing.hash_at_line_start_is_a_directive' does not depend on any axioms
@@ -3562,7 +3434,7 @@ Passed AuditQuantRegionSource.lean (90/138) in 0.3s
 'QCore.RawDirectiveLexing.the_rules_agree_on_directive_free_input' depends on axioms: [propext]
 'QCore.RawDirectiveLexing.the_digest_domain_is_exhaustive' does not depend on any axioms
 'QCore.RawDirectiveLexing.the_domain_checksum_is_pinned' depends on axioms: [propext]
-Passed AuditRawDirectiveLexing.lean (91/138) in 0.3s
+Passed AuditRawDirectiveLexing.lean (93/140) in 0.3s
 'QCore.ReachGatePosition.a_scalar_leaf_is_admitted_in_either_role' depends on axioms: [propext]
 'QCore.ReachGatePosition.a_pointer_leaf_is_admitted_exactly_where_the_value_is_discarded' depends on axioms: [propext]
 'QCore.ReachGatePosition.a_record_pointer_leaf_is_admitted_exactly_where_the_value_is_discarded' depends on axioms: [propext]
@@ -3612,7 +3484,7 @@ Passed AuditRawDirectiveLexing.lean (91/138) in 0.3s
 'QCore.ReachGatePosition.a_pointer_chain_refuses_inside_a_call_argument' depends on axioms: [propext]
 'QCore.ReachGatePosition.an_assignment_refuses_the_measured_pointer_chain' depends on axioms: [propext]
 'QCore.ReachGatePosition.a_bare_pointer_operand_refuses_beside_an_admitted_chain' depends on axioms: [propext]
-Passed AuditReachGatePosition.lean (92/138) in 0.3s
+Passed AuditReachGatePosition.lean (94/140) in 0.3s
 'QCore.ReadLoan.reserve_demands_exclusive_authority' depends on axioms: [propext]
 'QCore.ReadLoan.a_borrower_cannot_lend_onward' depends on axioms: [propext]
 'QCore.ReadLoan.an_outstanding_loan_cannot_be_lent_again' depends on axioms: [propext]
@@ -3630,7 +3502,7 @@ Passed AuditReachGatePosition.lean (92/138) in 0.3s
 'QCore.ReadLoan.a_successful_join_revokes_the_borrower_read' depends on axioms: [propext, Quot.sound]
 'QCore.ReadLoan.closing_a_loan_preserves_every_other_resource' depends on axioms: [propext]
 'QCore.ReadLoan.the_admitted_lending_round_trip_is_authority_neutral' depends on axioms: [propext, Quot.sound]
-Passed AuditReadLoan.lean (93/138) in 0.4s
+Passed AuditReadLoan.lean (95/140) in 0.3s
 'QCore.ReadShare.lending_adds_exactly_the_granted_share' depends on axioms: [propext, Quot.sound]
 'QCore.ReadShare.the_outstanding_total_never_exceeds_full' depends on axioms: [propext, Quot.sound]
 'QCore.ReadShare.excess_allocation_of_authority_is_refused' depends on axioms: [propext, Quot.sound]
@@ -3650,7 +3522,7 @@ Passed AuditReadLoan.lean (93/138) in 0.4s
 'QCore.ReadShare.lending_changes_only_the_lent_resource' depends on axioms: [propext]
 'QCore.ReadShare.returning_changes_only_the_lent_resource' depends on axioms: [propext]
 'QCore.ReadShare.the_admitted_share_round_trip_is_authority_neutral' depends on axioms: [propext, Quot.sound]
-Passed AuditReadShare.lean (94/138) in 0.3s
+Passed AuditReadShare.lean (96/140) in 0.3s
 'QCore.ReasonCarrier.the_text_route_is_the_unchanged_classification' does not depend on any axioms
 'QCore.ReasonCarrier.the_site_route_publishes_environment_unavailable' does not depend on any axioms
 'QCore.ReasonCarrier.an_unrecognised_text_still_publishes_no_category' does not depend on any axioms
@@ -3666,7 +3538,7 @@ Passed AuditReadShare.lean (94/138) in 0.3s
 'QCore.ReasonCarrier.the_site_route_publishes_something' does not depend on any axioms
 'QCore.ReasonCarrier.publication_is_total' does not depend on any axioms
 'QCore.ReasonCarrier.only_a_refused_text_publishes_nothing' depends on axioms: [propext]
-Passed AuditReasonCarrier.lean (95/138) in 0.3s
+Passed AuditReasonCarrier.lean (97/140) in 0.3s
 'QCore.ReasonCategory.all_is_complete' depends on axioms: [propext]
 'QCore.ReasonCategory.all_has_no_duplicates' does not depend on any axioms
 'QCore.ReasonCategory.spellings_are_pairwise_distinct' does not depend on any axioms
@@ -3687,7 +3559,7 @@ Passed AuditReasonCarrier.lean (95/138) in 0.3s
 'QCore.ReasonCategory.a_source_statement_has_a_recognised_non_environment_origin' depends on axioms: [propext]
 'QCore.ReasonCategory.an_unrecognised_reason_is_refused' does not depend on any axioms
 'QCore.ReasonCategory.refusal_never_yields_a_source_statement' depends on axioms: [propext]
-Passed AuditReasonCategory.lean (96/138) in 0.3s
+Passed AuditReasonCategory.lean (98/140) in 0.3s
 'QCore.RefusedWrites.unbounded_is_the_blanket_poison' depends on axioms: [propext, Quot.sound]
 'QCore.RefusedWrites.an_empty_sparing_list_is_also_the_blanket_poison' depends on axioms: [propext, Quot.sound]
 'QCore.RefusedWrites.spared_places_are_unwritable' depends on axioms: [propext]
@@ -3706,7 +3578,7 @@ Passed AuditReasonCategory.lean (96/138) in 0.3s
 'QCore.RefusedWrites.the_address_taken_aggregate_does_not' does not depend on any axioms
 'QCore.RefusedWrites.the_written_member_is_still_poisoned' does not depend on any axioms
 'QCore.RefusedWrites.the_fixture_state_spares_exactly_one_binding' does not depend on any axioms
-Passed AuditRefusedWrites.lean (97/138) in 0.3s
+Passed AuditRefusedWrites.lean (99/140) in 0.3s
 'QCore.RegionCreditJoins.admitted_parent_shapes_are_exactly_these' does not depend on any axioms
 'QCore.RegionCreditJoins.a_parent_local_body_builds_no_duty' does not depend on any axioms
 'QCore.RegionCreditJoins.the_pack_after_joins_holds_only_the_quantity' does not depend on any axioms
@@ -3721,7 +3593,7 @@ Passed AuditRefusedWrites.lean (97/138) in 0.3s
 'QCore.RegionCreditJoins.the_boundary_abandons_nothing' does not depend on any axioms
 'QCore.RegionCreditJoins.a_join_returns_its_spawn' depends on axioms: [propext, Quot.sound]
 'QCore.RegionCreditJoins.the_sequential_spawn_join_discipline_leaves_no_child' depends on axioms: [propext, Quot.sound]
-Passed AuditRegionCreditJoins.lean (98/138) in 0.3s
+Passed AuditRegionCreditJoins.lean (100/140) in 0.3s
 'QCore.RegionJoinsDuties.admitted_owner_shapes_are_exactly_these' does not depend on any axioms
 'QCore.RegionJoinsDuties.the_duty_free_sublanguage_is_unchanged' does not depend on any axioms
 'QCore.RegionJoinsDuties.the_pack_after_joins_carries_the_bodys_duties' does not depend on any axioms
@@ -3736,7 +3608,7 @@ Passed AuditRegionCreditJoins.lean (98/138) in 0.3s
 'QCore.RegionJoinsDuties.a_body_release_erases_its_duty' does not depend on any axioms
 'QCore.RegionJoinsDuties.a_sequenced_body_leaves_the_second_owner' does not depend on any axioms
 'QCore.RegionJoinsDuties.two_owners_are_destroyed_last_first' does not depend on any axioms
-Passed AuditRegionJoinsDuties.lean (99/138) in 0.3s
+Passed AuditRegionJoinsDuties.lean (101/140) in 0.3s
 'QCore.RegionJoinsLoan.admitted_captures_are_exactly_these' does not depend on any axioms
 'QCore.RegionJoinsLoan.the_loan_free_capture_language_is_unchanged' depends on axioms: [propext]
 'QCore.RegionJoinsLoan.a_read_capture_is_new' depends on axioms: [propext]
@@ -3753,7 +3625,7 @@ Passed AuditRegionJoinsDuties.lean (99/138) in 0.3s
 'QCore.RegionJoinsLoan.the_flagship_adopts_one_owner_and_abandons_three' does not depend on any axioms
 'QCore.RegionJoinsLoan.an_adopted_owner_released_in_the_body_erases_its_duty' does not depend on any axioms
 'QCore.RegionJoinsLoan.an_adopted_and_an_acquired_duty_are_destroyed_last_first' does not depend on any axioms
-Passed AuditRegionJoinsLoan.lean (100/138) in 0.3s
+Passed AuditRegionJoinsLoan.lean (102/140) in 0.3s
 'QCore.RegionTaskCredit.step_preserves_accounted' depends on axioms: [propext, Quot.sound]
 'QCore.RegionTaskCredit.run_preserves_accounted' depends on axioms: [propext, Quot.sound]
 'QCore.RegionTaskCredit.discharge_only_moves_the_packs_remainder' depends on axioms: [propext]
@@ -3777,7 +3649,7 @@ Passed AuditRegionJoinsLoan.lean (100/138) in 0.3s
 'QCore.RegionTaskCredit.a_failed_creation_leaves_nothing_to_wait_for' depends on axioms: [propext]
 'QCore.RegionTaskCredit.a_normal_exit_with_a_live_join_is_refused' depends on axioms: [propext]
 'QCore.RegionTaskCredit.an_outstanding_loan_refuses_the_discharge' depends on axioms: [propext]
-Passed AuditRegionTaskCredit.lean (101/138) in 0.3s
+Passed AuditRegionTaskCredit.lean (103/140) in 0.2s
 'QCore.ReturnCallCustody.the_lowering_is_the_desugaring' does not depend on any axioms
 'QCore.ReturnCallCustody.a_none_result_escapes_nothing' does not depend on any axioms
 'QCore.ReturnCallCustody.a_produced_site_is_absent_from_the_pre_state' does not depend on any axioms
@@ -3786,7 +3658,7 @@ Passed AuditRegionTaskCredit.lean (101/138) in 0.3s
 'QCore.ReturnCallCustody.a_reallocated_result_would_have_discharged_its_parameter' depends on axioms: [propext,
  Quot.sound]
 'QCore.ReturnCallCustody.only_reallocation_is_refused' depends on axioms: [propext, Quot.sound]
-Passed AuditReturnCallCustody.lean (102/138) in 0.3s
+Passed AuditReturnCallCustody.lean (104/140) in 0.2s
 'QCore.ReturnPositionEscape.an_admitted_chain_names_no_tracked_place' depends on axioms: [propext]
 'QCore.ReturnPositionEscape.escaping_an_admitted_chain_changes_nothing' depends on axioms: [propext]
 'QCore.ReturnPositionEscape.the_strict_answer_is_unchanged' depends on axioms: [propext]
@@ -3799,7 +3671,7 @@ Passed AuditReturnCallCustody.lean (102/138) in 0.3s
 'QCore.ReturnPositionEscape.the_two_answers_agree_on_every_admitted_chain' depends on axioms: [propext]
 'QCore.ReturnPositionEscape.without_the_base_premise_the_answers_part' depends on axioms: [propext]
 'QCore.ReturnPositionEscape.the_parting_witness_is_never_admitted' depends on axioms: [propext]
-Passed AuditReturnPositionEscape.lean (103/138) in 0.3s
+Passed AuditReturnPositionEscape.lean (105/140) in 0.3s
 'QCore.ScalarRouteExitEdge.the_exit_edge_is_never_removed' does not depend on any axioms
 'QCore.ScalarRouteExitEdge.propagation_only_grows' does not depend on any axioms
 'QCore.ScalarRouteExitEdge.a_branch_is_unchanged' depends on axioms: [propext]
@@ -3816,7 +3688,7 @@ Passed AuditReturnPositionEscape.lean (103/138) in 0.3s
 'QCore.ScalarRouteExitEdge.a_spared_write_leaves_the_fact_standing' depends on axioms: [propext]
 'QCore.ScalarRouteExitEdge.an_unspared_write_widens_the_fact' depends on axioms: [propext]
 'QCore.ScalarRouteExitEdge.no_write_leaves_the_fact_standing' depends on axioms: [propext]
-Passed AuditScalarRouteExitEdge.lean (104/138) in 0.3s
+Passed AuditScalarRouteExitEdge.lean (106/140) in 0.3s
 'QCore.SingleEmissionRoute.prefixOf_iff' depends on axioms: [propext, Quot.sound]
 'QCore.SingleEmissionRoute.containsInfix_iff' depends on axioms: [propext, Quot.sound]
 'QCore.SingleEmissionRoute.spellings_sorted_by_decreasing_length' depends on axioms: [propext,
@@ -3854,7 +3726,7 @@ Passed AuditScalarRouteExitEdge.lean (104/138) in 0.3s
  Quot.sound]
 'QCore.SingleEmissionRoute.domain_has_eleven_lines' depends on axioms: [propext, Classical.choice, Quot.sound]
 'QCore.SingleEmissionRoute.the_domain_outcomes_are_pinned' depends on axioms: [propext, Classical.choice, Quot.sound]
-Passed AuditSingleEmissionRoute.lean (105/138) in 0.4s
+Passed AuditSingleEmissionRoute.lean (107/140) in 0.3s
 'QCore.SlicePermissions.Range.contains' does not depend on any axioms
 'QCore.SlicePermissions.overlaps' does not depend on any axioms
 'QCore.SlicePermissions.writeRange' does not depend on any axioms
@@ -3911,7 +3783,7 @@ Passed AuditSingleEmissionRoute.lean (105/138) in 0.4s
 'QCore.SlicePermissions.a_range_past_the_extent_is_refused' depends on axioms: [propext]
 'QCore.SlicePermissions.the_whole_extent_is_an_admitted_range' depends on axioms: [propext, Quot.sound]
 'QCore.SlicePermissions.the_added_operation_is_exactly_one' does not depend on any axioms
-Passed AuditSlicePermissions.lean (106/138) in 0.4s
+Passed AuditSlicePermissions.lean (108/140) in 0.3s
 'QCore.SocketCellRoute.a_derived_projection_stamps_no_declared_identity' depends on axioms: [propext, Quot.sound]
 'QCore.SocketCellRoute.a_declared_alias_stamps_the_premise' depends on axioms: [propext]
 'QCore.SocketCellRoute.derived_and_declared_aliases_decide_alike' depends on axioms: [propext]
@@ -3919,7 +3791,7 @@ Passed AuditSlicePermissions.lean (106/138) in 0.4s
 'QCore.SocketCellRoute.a_question_over_distinct_cells_is_admitted' depends on axioms: [propext]
 'QCore.SocketCellRoute.a_question_naming_no_socket_answers_nothing' depends on axioms: [propext]
 'QCore.SocketCellRoute.the_question_is_symmetric' depends on axioms: [propext]
-Passed AuditSocketCellRoute.lean (107/138) in 0.3s
+Passed AuditSocketCellRoute.lean (109/140) in 0.3s
 'QCore.SocketEventCompose.a_registration_acquires_no_descriptor' does not depend on any axioms
 'QCore.SocketEventCompose.retiring_a_registration_releases_no_descriptor' does not depend on any axioms
 'QCore.SocketEventCompose.the_context_statements_move_no_custody' does not depend on any axioms
@@ -3954,7 +3826,7 @@ Passed AuditSocketCellRoute.lean (107/138) in 0.3s
 'QCore.SocketEventCompose.the_event_module_alone_grants_no_registration' does not depend on any axioms
 'QCore.SocketEventCompose.code_that_registers_nothing_needs_neither' does not depend on any axioms
 'QCore.SocketEventCompose.the_transport_half_still_needs_its_module' depends on axioms: [propext]
-Passed AuditSocketEventCompose.lean (108/138) in 0.3s
+Passed AuditSocketEventCompose.lean (110/140) in 0.3s
 'QCore.SocketFootprint.initial_is_bounded' does not depend on any axioms
 'QCore.SocketFootprint.assigned_cell_is_bounded' depends on axioms: [propext]
 'QCore.SocketFootprint.step_preserves_bounded' depends on axioms: [propext]
@@ -3970,7 +3842,7 @@ Passed AuditSocketEventCompose.lean (108/138) in 0.3s
 'QCore.SocketFootprint.an_admitted_accept_takes_an_existing_cell' depends on axioms: [propext]
 'QCore.SocketFootprint.a_derived_pair_is_refused_as_a_shared_cell' depends on axioms: [propext]
 'QCore.SocketFootprint.a_distinct_derived_cell_decides_disjoint' depends on axioms: [propext]
-Passed AuditSocketFootprint.lean (109/138) in 0.3s
+Passed AuditSocketFootprint.lean (111/140) in 0.3s
 'QCore.SocketInetAddresses.every_address_has_exactly_one_family' does not depend on any axioms
 'QCore.SocketInetAddresses.the_two_families_are_disjoint' does not depend on any axioms
 'QCore.SocketInetAddresses.an_implicit_bind_is_ipv4_loopback_on_a_kernel_chosen_port' does not depend on any axioms
@@ -3990,7 +3862,7 @@ Passed AuditSocketFootprint.lean (109/138) in 0.3s
 'QCore.SocketInetAddresses.an_unsupported_family_yields_no_socket' does not depend on any axioms
 'QCore.SocketInetAddresses.two_ephemeral_binds_never_collide' depends on axioms: [propext]
 'QCore.SocketInetAddresses.a_repeated_declared_address_collides' depends on axioms: [propext]
-Passed AuditSocketInetAddresses.lean (110/138) in 0.3s
+Passed AuditSocketInetAddresses.lean (112/140) in 0.3s
 'QCore.SourceCoordinate.mem_stackNames_cons' depends on axioms: [propext, Quot.sound]
 'QCore.SourceCoordinate.step_adds_only_an_entering_spelling' depends on axioms: [propext, Quot.sound]
 'QCore.SourceCoordinate.content_keeps_the_stack_names' depends on axioms: [propext]
@@ -4008,7 +3880,7 @@ Passed AuditSocketInetAddresses.lean (110/138) in 0.3s
 'QCore.SourceCoordinate.a_well_formed_return_does_not_break_the_reader' does not depend on any axioms
 'QCore.SourceCoordinate.every_location_refusal_says_nothing_about_the_source' does not depend on any axioms
 'QCore.SourceCoordinate.the_environment_subject_is_not_the_source_subject' does not depend on any axioms
-Passed AuditSourceCoordinate.lean (111/138) in 0.3s
+Passed AuditSourceCoordinate.lean (113/140) in 0.3s
 'QCore.SourceEnumeration.mem_dedup' depends on axioms: [propext]
 'QCore.SourceEnumeration.raw_is_kept' depends on axioms: [propext]
 'QCore.SourceEnumeration.prototype_is_kept' depends on axioms: [propext]
@@ -4047,7 +3919,7 @@ Passed AuditSourceCoordinate.lean (111/138) in 0.3s
 'QCore.SourceEnumeration.the_knr_case_grows_the_denominator_and_withholds_safe' depends on axioms: [propext]
 'QCore.SourceEnumeration.a_compiled_out_definition_keeps_its_row' depends on axioms: [propext]
 'QCore.SourceEnumeration.an_unavailable_expansion_keeps_the_historical_scan' depends on axioms: [propext]
-Passed AuditSourceEnumeration.lean (112/138) in 0.3s
+Passed AuditSourceEnumeration.lean (114/140) in 0.3s
 'QCore.SourceLoop.run_append' does not depend on any axioms
 'QCore.SourceLoop.running_the_unrolling_is_iterating_the_body' does not depend on any axioms
 'QCore.SourceLoop.a_loop_unrolls_to_its_body_repeated' does not depend on any axioms
@@ -4068,7 +3940,7 @@ Passed AuditSourceEnumeration.lean (112/138) in 0.3s
 'QCore.SourceLoop.a_loop_free_sequence_unrolls_to_itself' depends on axioms: [propext]
 'QCore.SourceLoop.a_loop_is_the_one_item_that_is_not_loop_free' does not depend on any axioms
 'QCore.SourceLoop.refused_shapes_are_exactly_these' depends on axioms: [propext]
-Passed AuditSourceLoop.lean (113/138) in 0.4s
+Passed AuditSourceLoop.lean (115/140) in 0.3s
 'QCore.SourceRecord.admitType_iff' depends on axioms: [propext]
 'QCore.SourceRecord.a_record_declaring_no_field_is_refused' depends on axioms: [propext]
 'QCore.SourceRecord.a_repeated_field_name_is_refused' depends on axioms: [propext]
@@ -4097,7 +3969,7 @@ Passed AuditSourceLoop.lean (113/138) in 0.4s
 'QCore.SourceRecord.a_construction_derives_nothing' does not depend on any axioms
 'QCore.SourceRecord.a_field_read_derives_nothing' does not depend on any axioms
 'QCore.SourceRecord.an_acquisition_beside_it_still_derives_alloc' does not depend on any axioms
-Passed AuditSourceRecord.lean (114/138) in 0.5s
+Passed AuditSourceRecord.lean (116/140) in 0.3s
 'QCore.SourceRootAdmission.version_two_admits_everything_version_one_does' depends on axioms: [propext, Quot.sound]
 'QCore.SourceRootAdmission.admission_is_monotone_in_the_version' depends on axioms: [propext]
 'QCore.SourceRootAdmission.only_the_checkout_root_spelling_moved' depends on axioms: [propext, Quot.sound]
@@ -4118,7 +3990,7 @@ Passed AuditSourceRecord.lean (114/138) in 0.5s
 'QCore.SourceRootAdmission.a_higher_version_number_does_not_buy_the_checkout_root' depends on axioms: [propext]
 'QCore.SourceRootAdmission.both_supported_versions_load_an_ordinary_root' depends on axioms: [propext]
 'QCore.SourceRootAdmission.a_version_one_profile_is_unaffected' depends on axioms: [propext, Quot.sound]
-Passed AuditSourceRootAdmission.lean (115/138) in 0.3s
+Passed AuditSourceRootAdmission.lean (117/140) in 0.3s
 'QCore.SourceValidation.admitted_return_has_declared_shape' depends on axioms: [propext]
 'QCore.SourceValidation.unsupported_result_rejected' depends on axioms: [propext]
 'QCore.SourceValidation.integer_cannot_satisfy_unit' depends on axioms: [propext]
@@ -4127,7 +3999,7 @@ Passed AuditSourceRootAdmission.lean (115/138) in 0.3s
 'QCore.SourceValidation.declaration_validation_independent_of_uses' does not depend on any axioms
 'QCore.SourceValidation.accepted_declarations_are_valid' does not depend on any axioms
 'QCore.SourceValidation.scalar_check_preserves_separate_custody' depends on axioms: [propext]
-Passed AuditSourceValidation.lean (116/138) in 0.4s
+Passed AuditSourceValidation.lean (118/140) in 0.3s
 'QCore.StdBuffer.the_extent_read_back_is_the_extent_declared' depends on axioms: [propext]
 'QCore.StdBuffer.a_store_moves_no_extent' does not depend on any axioms
 'QCore.StdBuffer.a_load_moves_no_extent' does not depend on any axioms
@@ -4170,7 +4042,7 @@ Passed AuditSourceValidation.lean (116/138) in 0.4s
  Classical.choice,
  Quot.sound]
 'QCore.ModuleImports.a_near_miss_buffer_spelling_rejects' depends on axioms: [propext, Classical.choice, Quot.sound]
-Passed AuditStdBuffer.lean (117/138) in 0.4s
+Passed AuditStdBuffer.lean (119/140) in 0.3s
 'QCore.StdEvent.diagnosticEnabled' does not depend on any axioms
 'QCore.StdEvent.an_absent_log_level_is_quiet' does not depend on any axioms
 'QCore.StdEvent.trace_log_level_admits_every_level' does not depend on any axioms
@@ -4208,7 +4080,7 @@ Passed AuditStdBuffer.lean (117/138) in 0.4s
 'QCore.StdEvent.two_induced_readinesses_refuse_the_idle_declaration' depends on axioms: [propext]
 'QCore.StdEvent.draining_one_readiness_admits_the_next_turn' depends on axioms: [propext]
 'QCore.StdEvent.a_write_registration_is_checked_but_not_executable' depends on axioms: [propext]
-Passed AuditStdEvent.lean (118/138) in 0.5s
+Passed AuditStdEvent.lean (120/140) in 0.2s
 'QCore.StdHttp.the_version_is_exactly_http_1_1' depends on axioms: [propext, Quot.sound]
 'QCore.StdHttp.a_status_outside_the_registered_range_is_refused' depends on axioms: [propext,
  Classical.choice,
@@ -4249,7 +4121,7 @@ Passed AuditStdEvent.lean (118/138) in 0.5s
  Classical.choice,
  Quot.sound]
 'QCore.ModuleImports.a_near_miss_http_spelling_rejects' depends on axioms: [propext, Classical.choice, Quot.sound]
-Passed AuditStdHttp.lean (119/138) in 0.4s
+Passed AuditStdHttp.lean (121/140) in 0.3s
 'QCore.ModuleImports.empty_imports_grant_no_concurrency' does not depend on any axioms
 'QCore.ModuleImports.empty_imports_grant_no_extern_calls' does not depend on any axioms
 'QCore.ModuleImports.empty_imports_grant_no_output' does not depend on any axioms
@@ -4311,7 +4183,7 @@ Passed AuditStdHttp.lean (119/138) in 0.4s
 'QCore.StdIo.a_borrowed_render_still_carries_io' does not depend on any axioms
 'QCore.StdIo.a_borrowed_render_allocates_and_mutates_nothing' depends on axioms: [propext]
 'QCore.StdIo.a_borrowed_render_writes_one_line_on_its_own_stream' does not depend on any axioms
-Passed AuditStdIo.lean (120/138) in 0.5s
+Passed AuditStdIo.lean (122/140) in 0.3s
 'QCore.StdSocket.an_empty_ledger_holds_no_descriptors' does not depend on any axioms
 'QCore.StdSocket.an_acquisition_adds_exactly_one' depends on axioms: [propext]
 'QCore.StdSocket.a_release_removes_exactly_its_own' depends on axioms: [propext, Quot.sound]
@@ -4352,7 +4224,7 @@ Passed AuditStdIo.lean (120/138) in 0.5s
  Classical.choice,
  Quot.sound]
 'QCore.ModuleImports.a_near_miss_socket_spelling_rejects' depends on axioms: [propext, Classical.choice, Quot.sound]
-Passed AuditStdSocket.lean (121/138) in 0.5s
+Passed AuditStdSocket.lean (123/140) in 0.3s
 'QCore.StdString.a_literal_view_has_the_payloads_length' does not depend on any axioms
 'QCore.StdString.an_embedded_nul_is_inside_the_length' does not depend on any axioms
 'QCore.StdString.a_derived_length_is_the_difference' does not depend on any axioms
@@ -4393,7 +4265,7 @@ Passed AuditStdSocket.lean (121/138) in 0.5s
  Classical.choice,
  Quot.sound]
 'QCore.ModuleImports.a_near_miss_string_spelling_rejects' depends on axioms: [propext, Classical.choice, Quot.sound]
-Passed AuditStdString.lean (122/138) in 0.5s
+Passed AuditStdString.lean (124/140) in 0.3s
 'QCore.StringConcat.compose' does not depend on any axioms
 'QCore.StringConcat.pieceLens' does not depend on any axioms
 'QCore.StringConcat.composedView' does not depend on any axioms
@@ -4445,7 +4317,7 @@ Passed AuditStdString.lean (122/138) in 0.5s
 'QCore.StringConcat.neither_added_operation_derives_mut' depends on axioms: [propext]
 'QCore.StringConcat.views_equal_iff_components_equal' depends on axioms: [propext]
 'QCore.StringConcat.the_added_operations_are_exactly_two' does not depend on any axioms
-Passed AuditStringConcat.lean (123/138) in 0.5s
+Passed AuditStringConcat.lean (125/140) in 0.3s
 'QCore.StringSliceIo.written' does not depend on any axioms
 'QCore.StringSliceIo.erase' does not depend on any axioms
 'QCore.StringSliceIo.eraseProgram' does not depend on any axioms
@@ -4477,7 +4349,7 @@ Passed AuditStringConcat.lean (123/138) in 0.5s
 'QCore.StringSliceIo.a_logged_string_needs_both_modules' depends on axioms: [propext]
 'QCore.StringSliceIo.the_output_imports_alone_still_grant_no_string' does not depend on any axioms
 'QCore.StringSliceIo.the_string_import_alone_still_grants_no_stream' does not depend on any axioms
-Passed AuditStringSliceIo.lean (124/138) in 0.5s
+Passed AuditStringSliceIo.lean (126/140) in 0.3s
 'QCore.SymbolicClassAdmission.the_class_never_decides_an_equality_true' depends on axioms: [propext]
 'QCore.SymbolicClassAdmission.an_excluded_constant_decides_false' depends on axioms: [propext]
 'QCore.SymbolicClassAdmission.an_undecided_equality_refuses' depends on axioms: [propext]
@@ -4515,7 +4387,7 @@ Passed AuditStringSliceIo.lean (124/138) in 0.5s
 'QCore.SymbolicClassAdmission.the_family_tag_refusal_is_not_vacuous' depends on axioms: [propext, Quot.sound]
 'QCore.SymbolicClassAdmission.the_unit_tie_is_not_vacuous' depends on axioms: [propext, Quot.sound]
 'QCore.SymbolicClassAdmission.the_collapsed_class_refusal_is_not_vacuous' depends on axioms: [propext]
-Passed AuditSymbolicClassAdmission.lean (125/138) in 0.4s
+Passed AuditSymbolicClassAdmission.lean (127/140) in 0.3s
 'QCore.TaskExecution.checked_copy_preserves_ordered_values' does not depend on any axioms
 'QCore.TaskExecution.checked_copy_has_exact_parameter_types' does not depend on any axioms
 'QCore.TaskExecution.checked_copy_preserves_arity' depends on axioms: [propext]
@@ -4572,7 +4444,7 @@ Passed AuditSymbolicClassAdmission.lean (125/138) in 0.4s
 'QCore.TaskExecution.the_preempting_gate_reads_the_backstops_own_judgment' depends on axioms: [propext]
 'QCore.TaskExecution.an_unlent_frame_keeps_the_plain_refusal' depends on axioms: [propext]
 'QCore.TaskExecution.ct24s_cell_is_attributed_to_the_destroy_before_join' depends on axioms: [propext, Quot.sound]
-Passed AuditTaskExecution.lean (126/138) in 0.4s
+Passed AuditTaskExecution.lean (128/140) in 0.3s
 'QCore.TaskTraceLeaseBoundary.isLease' depends on axioms: [propext]
 'QCore.TaskTraceLeaseBoundary.isRefusable' depends on axioms: [propext]
 'QCore.TaskTraceLeaseBoundary.encodeEventAt' does not depend on any axioms
@@ -4593,7 +4465,7 @@ Passed AuditTaskExecution.lean (126/138) in 0.4s
 'QCore.TaskTraceLeaseBoundary.the_lease_free_twin_is_an_admitted_causal_order' depends on axioms: [propext]
 'QCore.TaskTraceLeaseBoundary.the_dropped_encoding_would_have_been_admitted' depends on axioms: [propext]
 'QCore.TaskTraceLeaseBoundary.the_dropped_run_loses_exactly_the_four_lease_events' depends on axioms: [propext]
-Passed AuditTaskTraceLeaseBoundary.lean (127/138) in 0.3s
+Passed AuditTaskTraceLeaseBoundary.lean (129/140) in 0.3s
 'QCore.TaskTraceRelation.unattributable_is_refused' depends on axioms: [propext]
 'QCore.TaskTraceRelation.duplicate_occurrences_are_refused' depends on axioms: [propext]
 'QCore.TaskTraceRelation.admitted_traces_are_attributable' depends on axioms: [propext]
@@ -4620,7 +4492,7 @@ Passed AuditTaskTraceLeaseBoundary.lean (127/138) in 0.3s
 'QCore.TaskTraceRelation.domain_one_refuses_part_of_its_domain' depends on axioms: [propext]
 'QCore.TaskTraceRelation.domain_two_refuses_part_of_its_domain' depends on axioms: [propext]
 'QCore.TaskTraceRelation.domain_three_refuses_most_of_its_domain' depends on axioms: [propext]
-Passed AuditTaskTraceRelation.lean (128/138) in 0.4s
+Passed AuditTaskTraceRelation.lean (130/140) in 0.3s
 'QCore.TeardownAdmission.a_refusing_core_admits_nothing' depends on axioms: [propext]
 'QCore.TeardownAdmission.an_admitted_witness_has_a_core_evaluation' depends on axioms: [propext]
 'QCore.TeardownAdmission.only_the_core_reading_is_admitted' depends on axioms: [propext, Quot.sound]
@@ -4650,7 +4522,7 @@ Passed AuditTaskTraceRelation.lean (128/138) in 0.4s
 'QCore.TeardownAdmission.the_destructor_family_admits_a_reading' does not depend on any axioms
 'QCore.TeardownAdmission.a_destructor_reading_never_satisfies_the_unlink_checker' does not depend on any axioms
 'QCore.TeardownAdmission.an_unlink_reading_never_satisfies_the_destructor_checker' does not depend on any axioms
-Passed AuditTeardownAdmission.lean (129/138) in 0.4s
+Passed AuditTeardownAdmission.lean (131/140) in 0.2s
 'QCore.Transferability.kindInventoryIsComplete' depends on axioms: [propext]
 'QCore.Transferability.kindInventoryHasNoDuplicates' does not depend on any axioms
 'QCore.Transferability.kindInventoryHasSixteenEntries' does not depend on any axioms
@@ -4687,7 +4559,7 @@ Passed AuditTeardownAdmission.lean (129/138) in 0.4s
 'QCore.Transferability.mutablyShareableUnder' does not depend on any axioms
 'QCore.Transferability.exactlyOneKindIsMutablyShareable' does not depend on any axioms
 'QCore.Transferability.leaseObligationHolds' depends on axioms: [propext, Classical.choice, Quot.sound]
-Passed AuditTransferability.lean (130/138) in 0.4s
+Passed AuditTransferability.lean (132/140) in 0.3s
 'QCore.TwoDerivationAdmission.different_recipes_derive_different_texts' depends on axioms: [propext]
 'QCore.TwoDerivationAdmission.one_recipe_twice_is_not_two_derivations' depends on axioms: [propext]
 'QCore.TwoDerivationAdmission.two_base_texts_are_not_one_question' depends on axioms: [propext]
@@ -4723,7 +4595,7 @@ Passed AuditTransferability.lean (130/138) in 0.4s
 'QCore.TwoDerivationAdmission.the_honest_proposal_is_admitted' depends on axioms: [propext]
 'QCore.TwoDerivationAdmission.the_refusals_are_not_vacuous' depends on axioms: [propext]
 'QCore.TwoDerivationAdmission.the_cross_unit_expectation_is_two_sided' depends on axioms: [propext]
-Passed AuditTwoDerivationAdmission.lean (131/138) in 0.5s
+Passed AuditTwoDerivationAdmission.lean (133/140) in 0.3s
 'QCore.TypedefProjection.the_widening_only_adds' depends on axioms: [propext]
 'QCore.TypedefProjection.the_widening_loses_no_reading' depends on axioms: [propext]
 'QCore.TypedefProjection.an_untagged_aggregate_pointer_was_unreadable_and_is_now_read' depends on axioms: [propext]
@@ -4759,7 +4631,7 @@ Passed AuditTwoDerivationAdmission.lean (131/138) in 0.5s
 'QCore.TypedefProjection.a_name_recorded_twice_differently_is_unresolved' depends on axioms: [propext]
 'QCore.TypedefProjection.a_tagged_definition_composes_with_its_plain_typedef' does not depend on any axioms
 'QCore.TypedefProjection.an_untagged_definition_would_not_have_composed' does not depend on any axioms
-Passed AuditTypedefProjection.lean (132/138) in 0.4s
+Passed AuditTypedefProjection.lean (134/140) in 0.3s
 'QCore.UncheckedLinkage.assumption_totality' depends on axioms: [propext, Quot.sound]
 'QCore.UncheckedLinkage.every_callee_contributes_exactly_one_premise' depends on axioms: [propext]
 'QCore.UncheckedLinkage.an_uncontracted_callee_is_never_published_as_contracted' depends on axioms: [propext]
@@ -4794,7 +4666,7 @@ Passed AuditTypedefProjection.lean (132/138) in 0.4s
 'QCore.ModuleImports.the_two_extern_modules_are_independent' depends on axioms: [propext, Classical.choice, Quot.sound]
 'QCore.ModuleImports.code_that_waives_nothing_needs_no_waiver_import' depends on axioms: [propext]
 'QCore.ModuleImports.a_near_miss_waiver_spelling_rejects' depends on axioms: [propext, Classical.choice, Quot.sound]
-Passed AuditUncheckedLinkage.lean (133/138) in 0.4s
+Passed AuditUncheckedLinkage.lean (135/140) in 0.3s
 'QCore.VariadicNested.unread_declarations_never_admit_a_nested_call' depends on axioms: [propext]
 'QCore.VariadicNested.more_than_one_nested_call_is_never_admitted' depends on axioms: [propext]
 'QCore.VariadicNested.a_partial_nested_expression_is_never_admitted' depends on axioms: [propext]
@@ -4843,7 +4715,7 @@ Passed AuditUncheckedLinkage.lean (133/138) in 0.4s
 'QCore.VariadicNested.the_tail_premises_are_separately_load_bearing' does not depend on any axioms
 'QCore.VariadicNested.an_empty_excess_still_needs_the_declaration' does not depend on any axioms
 'QCore.VariadicNested.the_witness_nested_contract_is_neutral' does not depend on any axioms
-Passed AuditVariadicNested.lean (134/138) in 0.4s
+Passed AuditVariadicNested.lean (136/140) in 0.3s
 'QCore.CustodySummary.unvalidated_analysis_never_validates' depends on axioms: [propext]
 'QCore.CustodySummary.no_reachable_exit_never_validates' depends on axioms: [propext]
 'QCore.CustodySummary.validated_summary_matches_every_exit' depends on axioms: [propext, Quot.sound]
@@ -5063,7 +4935,7 @@ Passed AuditVariadicNested.lean (134/138) in 0.4s
 'QCore.BorrowedActual.an_actual_through_a_released_base_stays_indeterminate' depends on axioms: [propext]
 'QCore.BorrowedActual.a_statement_with_a_refused_base_is_refused' depends on axioms: [propext, Quot.sound]
 'QCore.BorrowedActual.the_admission_survives_the_closure' depends on axioms: [propext]
-Passed AuditW4.lean (135/138) in 0.5s
+Passed AuditW4.lean (137/140) in 0.3s
 'QCore.WriteLend.blocksLend' does not depend on any axioms
 'QCore.WriteLend.admitsLend' does not depend on any axioms
 'QCore.WriteLend.blocksOwner' does not depend on any axioms
@@ -5093,7 +4965,7 @@ Passed AuditW4.lean (135/138) in 0.5s
  Quot.sound]
 'QCore.WriteLend.a_rebased_loan_store_is_confined' depends on axioms: [propext, Classical.choice, Quot.sound]
 'QCore.WriteLend.the_added_operation_is_exactly_one' does not depend on any axioms
-Passed AuditWriteLend.lean (136/138) in 0.5s
+Passed AuditWriteLend.lean (138/140) in 0.3s
 'QCore.WriteLendTasks.admitsLease' does not depend on any axioms
 'QCore.WriteLendTasks.openLease' does not depend on any axioms
 'QCore.WriteLendTasks.closeLease' does not depend on any axioms
@@ -5115,7 +4987,7 @@ Passed AuditWriteLend.lean (136/138) in 0.5s
 'QCore.WriteLendTasks.a_join_never_disturbs_a_siblings_lease' depends on axioms: [propext, Quot.sound]
 'QCore.WriteLendTasks.a_closed_holder_retains_nothing' depends on axioms: [propext, Quot.sound]
 'QCore.WriteLendTasks.the_added_capture_is_exactly_one' does not depend on any axioms
-Passed AuditWriteLendTasks.lean (137/138) in 0.4s
+Passed AuditWriteLendTasks.lean (139/140) in 0.3s
 'QCore.WriteLendTasksExercise.rebase' does not depend on any axioms
 'QCore.WriteLendTasksExercise.admitsIndex' does not depend on any axioms
 'QCore.WriteLendTasksExercise.footprintFits' does not depend on any axioms
@@ -5132,5 +5004,5 @@ Passed AuditWriteLendTasks.lean (137/138) in 0.4s
  Quot.sound]
 'QCore.WriteLendTasksExercise.the_owner_writes_no_byte_while_any_lease_is_out' depends on axioms: [propext]
 'QCore.WriteLendTasksExercise.the_added_operations_are_exactly_two' does not depend on any axioms
-Passed AuditWriteLendTasksExercise.lean (138/138) in 0.4s
-Passed 138 Lean audits
+Passed AuditWriteLendTasksExercise.lean (140/140) in 0.3s
+Passed 140 Lean audits

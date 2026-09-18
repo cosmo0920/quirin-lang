@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 232
+  "named_followups": 229
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -1028,13 +1028,14 @@
    "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
    "docs/reports/mutex-share-cross-emission/ct_stage_evidence.json",
    "docs/reports/ct-lane-5/ct_stage_evidence.json",
-   "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json"
+   "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
+   "docs/reports/ct42-cell-route/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 46,
-   "unmapped": 4
+   "mapped": 47,
+   "unmapped": 3
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1163,73 +1164,73 @@
   ],
   "stage_histogram": {
    "parse": {
-    "executed": 46
+    "executed": 47
    },
    "elaborate": {
-    "executed": 43,
+    "executed": 44,
     "not_applicable": 3
    },
    "task_lowering": {
     "executed": 23,
-    "not_applicable": 23
+    "not_applicable": 24
    },
    "task_ledger_check": {
     "executed": 22,
-    "not_applicable": 24
+    "not_applicable": 25
    },
    "mutex_lowering": {
     "executed": 11,
-    "not_applicable": 35
+    "not_applicable": 36
    },
    "mutex_invariant_check": {
     "executed": 11,
-    "not_applicable": 35
+    "not_applicable": 36
    },
    "epoch_lowering": {
     "executed": 7,
-    "not_applicable": 39
+    "not_applicable": 40
    },
    "epoch_bound_check": {
     "executed": 7,
-    "not_applicable": 39
+    "not_applicable": 40
    },
    "sequential_whole_program": {
-    "executed": 1,
+    "executed": 2,
     "not_applicable": 45
    },
    "sequential_reference_execution": {
     "executed": 1,
-    "not_applicable": 45
+    "not_applicable": 46
    },
    "task_reference_execution": {
     "executed": 13,
-    "not_applicable": 33
+    "not_applicable": 34
    },
    "mutex_reference_execution": {
     "executed": 3,
-    "not_applicable": 43
+    "not_applicable": 44
    },
    "c_emission": {
     "executed": 19,
-    "not_applicable": 27
+    "not_applicable": 28
    },
    "native_execution": {
     "executed": 19,
-    "not_applicable": 27
+    "not_applicable": 28
    },
    "native_sanitized": {
     "executed": 10,
     "not_applicable": 7,
     "recorded_not_gated": 5,
-    "unassessed": 24
+    "unassessed": 25
    },
    "legacy_c_twin": {
     "executed": 3,
-    "not_applicable": 43
+    "not_applicable": 44
    },
    "proof": {
     "executed": 4,
-    "unassessed": 42
+    "unassessed": 43
    }
   },
   "depth_profile": {
@@ -1240,6 +1241,7 @@
    "native_execution": 7,
    "native_sanitized": 8,
    "proof": 4,
+   "sequential_whole_program": 1,
    "task_ledger_check": 7,
    "task_lowering": 1
   },
@@ -1282,6 +1284,7 @@
    "CT38": "epoch_bound_check",
    "CT39": "epoch_bound_check",
    "CT40": "legacy_c_twin",
+   "CT42": "sequential_whole_program",
    "CT43": "legacy_c_twin",
    "CT44": "task_ledger_check",
    "CT45": "legacy_c_twin",
@@ -1293,7 +1296,7 @@
   },
   "observation_counts": {
    "c_emission": 36,
-   "elaborate": 43,
+   "elaborate": 44,
    "epoch_bound_check": 7,
    "epoch_lowering": 7,
    "legacy_c_twin": 4,
@@ -1302,10 +1305,10 @@
    "mutex_reference_execution": 3,
    "native_execution": 51,
    "native_sanitized": 32,
-   "parse": 46,
+   "parse": 47,
    "proof": 4,
    "sequential_reference_execution": 1,
-   "sequential_whole_program": 1,
+   "sequential_whole_program": 2,
    "task_ledger_check": 22,
    "task_lowering": 23,
    "task_reference_execution": 29
@@ -5188,70 +5191,80 @@
    },
    {
     "id": "CT42",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Preserve shared protocol-cell identity",
-    "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
-    "current_bucket_source": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
-    "archived_bucket": "blocked-on-harness-schema (C-twin stage)",
-    "blocker": "as CT40",
-    "bucket_changed_since_batch2": false,
+    "route": "sequential",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
+      "observations": 1
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null,
-    "blocker_current": "Both arms measured. The C-twin arm is unchanged and re-verified: an int-typed resource identity is not expressible at all, the contract loader refusing `owned result requires a pointer return type`. The socket arm that card CT42-PROTOCOL-CELL landed at model level is unreachable from source -- derive_socket_cells and footprint_program are called from one unit test and from nothing in the frontend, the checker or compile_files -- so no .qcore fixture can reach the Q664 SharedProtocolCell refusal and a row on that arm would name evidence the harness cannot execute.",
-    "blocker_superseded_by": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
-    "blocker_measured_by": "docs/reports/ct-ctwin-lane/README.md (wave-35 CT lane), both arms measured on this tree; follow-ons CT-CTWIN-DESCRIPTOR, CT42-MAP and CT42-CELL-UNROUTED"
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "sequential_whole_program",
+    "stage_evidence_record": "docs/reports/ct42-cell-route/ct_stage_evidence.json",
+    "semantic_profile": "StandardSocketV1 (card QUIRIN-SOCKET-V1) composed with the derived protocol cells of card CT42-PROTOCOL-CELL through the `disjoint NAME NAME;` question card CT42-CELL-ROUTE (wave 39) routes from source. CT42's scenario is `Two descriptors share an underlying logical state`, expected `Preserve shared protocol-cell identity`, and the case is REFUSED with each word carried by a named rule. TWO DESCRIPTORS: `client` and `server`, two source names each bound to its own socket descriptor, the connector and the accepted binding of one completed TCP connection. SHARE AN UNDERLYING LOGICAL STATE: the transport checker's own cross-name rules (a send through one is decided by the other's committed stream; a close of one is refused while the other's bytes sit unread), which qcore_core::socket_footprint reads off the admitted program's decided connection structure as one protocol cell with two custodians and projects as DeriveDescriptorAlias events onto the UNEDITED DisjointFootprintsV1 checker. PRESERVE SHARED PROTOCOL-CELL IDENTITY: the program asks that the two be treated as disjoint custodians and the unedited checker refuses at Q664 SharedProtocolCell naming the cell, attributed to the question, under the Concurrency pass that owns the band -- reached by condition extension, no code allocated. Five controls separate the refusal from its surroundings: the listener and an end ADMITTED (and emitting the case's C byte for byte, the question erasing), the ends of two different connections ADMITTED, a datagram pair ADMITTED (CT42-CELL-UDP-QUEUE re-affirmed with its ground), a closed custodian refused Q083 then Q082 by the inherited checkers before any cell is derived, a scalar at the position refused Q081. BOUNDARY: no dup-like alias over one open description exists on any route (CT42-CELL-DUP-SOURCE), so `descriptors` is carried by the connection-cell reading; the C-twin arm stays blocked on the contract loader's int-typed identity (CT-CTWIN-DESCRIPTOR), out of this card's scope. The refusal is a check-time decision over one flat statement sequence; no C is emitted for the case, nothing is executed, and no native, sanitizer or proof evidence is claimed."
    },
    {
     "id": "CT43",
@@ -6028,13 +6041,12 @@
   "unmapped_bucket_counts": {
    "blocked-on-unimplemented-syntax": 1,
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
-   "blocked-on-gateway-expressiveness (C-twin measured)": 2
+   "blocked-on-gateway-expressiveness (C-twin measured)": 1
   },
   "unmapped_label_sources": {
    "CT10": "t00-archive",
    "CT24": "t00-archive",
-   "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
-   "CT42": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
+   "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
   },
   "newly_decidable_not_mapped": [
    "CT24"
@@ -6164,11 +6176,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate measured by the integrator at the merge tip 3fa88fc6 (detached run gate-aggregate; every exit to its own file; the per-merge regeneration could not use any card's gate.json because two wave-39 cards added Lean audits and the generator refuses a figure that disagrees with the tree). Workspace figure is the merged tip's own; provider 122 carried (providers/ and crates/qcore-schemas/ unchanged since the merge base); Python figure is the re-run after this regeneration; Clang claim taken from the card's own recording beside this file (gate/clang-version.txt, same host).",
-  "workspace_tests": 4677,
+  "note": "CT42-CELL-ROUTE (wave 39), 2026-09-18, REBASED onto origin/main e80b58d6 (CT07-TWO-THREAD-PROOF-LEG and AGGREGATE-OWNED-FIELD merged ahead). ONE detached full gate on the rebased tip (setsid -f, no trap '' TERM; every exit to its own file, no pipe; worktree-private private/ct42-cell-route/gate-rebased2/, the exit files, timings and small logs copied into gate/ beside this file) at d2e6fd41, the tip carrying every code change of this card and both siblings' merges (later commits are this gate record, the regeneration and the report's gate section only). Two earlier gates -- 9bea6b1e on the pre-rebase tree (4,658/1/9, the one red row constraint 16's confined-fixture write test, green in isolation) and c13c4772 on the first rebase (4,664/0/9) -- are superseded by this run and do not count for this tip; their records stay in the worktree-private directories. CARGO TEST: 4,697 passed / 0 failed / 9 ignored over 237 result summaries and 235 test targets (226 Running + 9 doc-test sections), exit 0; test result: FAILED 0 times, so no isolated re-verification was required and none is claimed (constraint 16's five rows all green under full-suite load beside sibling builds). FMT 0 (the pre-rebase run's rustfmt diffs on this card's two files were applied before the first rebase and stay applied). CLIPPY 0. BOTH PROBES 0. LEAN 140 audits (139 at e80b58d6 + AuditSocketCellRoute.lean; AuditSocketFootprint.lean amended), recorded under the required lean_audits key and checked by the generator against proof/Audit*.lean. PYTHON: the detached run exited 1 -- DELIBERATELY REPORTED: 303 ran, 2 failed, both the regeneration tripwires doing their job against a tree whose tracker (232 -> 229 after this card's idempotent register.py on main's matrix) and audit count (139 -> 140) this card moved and had not yet regenerated (test_the_derived_facts_are_recomputed_rather_than_carried: ['14.0.0', 139] != ['14.0.0', 140]; test_each_derived_dimension_matches_the_section_it_counts: 232 != 229); the repair is the regeneration with THIS gate.json (--gate docs/reports/ct42-cell-route/gate.json), and the Python figure below is the re-run after it (gate/python-post.exit). THE UNION PROVED on the rebased tip before the gate: ct_corpus 6 passed (EVIDENCE_FILES 25 with both cards' records, PROOF_GATED_CASES CT01/CT37/CT03/CT07, MAPPED_CASES and SEQUENTIAL_REJECT_CASES with CT42, statement_heads 9), scripts/ct_stage_summary.py --check no drift (mapped 47 / unmapped 3, proof 4), and the committed-matrix tests green after the regeneration. CLANG PRESENCE RECORDED AND CHECKED: gate/clang-version.txt is `clang --version` on the gate's host with QCORE_CLANG unset, exit 0, first line under the clang key. PROVIDER 122 CARRIED, NOT RE-MEASURED: git diff --name-only e878b362 HEAD -- providers/ crates/qcore-schemas/ is empty and qcore-schemas is still 14.0.0 (constraint 18 not engaged); a Unix figure (PROVIDER-CONFORMANCE-UNIX-ONLY). Timing: start 12:06:07Z, cargo end 12:22:22Z (16m15s), gate end 12:22:58Z (16m51s); disk 165 -> 207 GB free. MUTATIONS: the shipped harness's final log (10 of 10 red as required) was run on the pre-rebase tree; every code commit of this card applied to the rebase without conflict (the conflicts were the harness tables, the ledger trio and the acceptance record), so the mutated arms are byte-identical on this tip. DELTAS against main e80b58d6's own merged figure are the integrator's to state; against the wave-38 close's 4,639 / 303 / 137 this tree carries three wave-39 cards. CT 46/50 -> 47/50 mapped by this card, a grown denominator that is mapping and not conformance; proof 4 of 47 (the proof-leg card's move, carried); sanitized-native 10 of 47; no corpus count, unit status or function status moves; raw units stay unpromoted; full language conformance FALSE. Evidence: docs/reports/ct42-cell-route/README.md sections 6-7 and mutations.log.",
+  "workspace_tests": 4697,
   "provider_tests": 122,
   "python_evidence_validator_tests": 303,
-  "lean_audits": 139,
+  "lean_audits": 140,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6278,6 +6290,7 @@
    "AuditScalarRouteExitEdge.lean",
    "AuditSingleEmissionRoute.lean",
    "AuditSlicePermissions.lean",
+   "AuditSocketCellRoute.lean",
    "AuditSocketEventCompose.lean",
    "AuditSocketFootprint.lean",
    "AuditSocketInetAddresses.lean",
@@ -6316,7 +6329,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/aggregate-owned-field/integration-gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/ct42-cell-route/gate.json)"
  },
  "named_followups": [
   {

@@ -23,7 +23,7 @@ card composed the cell check there too (§4.4). **One reserved word**
 (`disjoint`), census-clean. **No new `Q` code**: `Q664` reached by condition
 extension, `Q080`/`Q081`/`Q085`/`Q095` widened and stated. Rust plus audited
 Lean (`AuditSocketFootprint.lean` amended, `AuditSocketCellRoute.lean` new:
-137 → **138** audits). Mutations **10 of 10** red as required, harness shipped.
+one audit added: **140** on the rebased tip, 139 at `e80b58d6`). Mutations **10 of 10** red as required, harness shipped.
 
 ## 1. Scope, and what was true at base (re-derived, not inherited)
 
@@ -325,8 +325,11 @@ reading (two descriptor slots, one program, one thread), not the dup reading
 `scripts/mutations.py`, log `mutations.log` (both in this directory). Each
 mutation edits one arm, runs exactly the named test, writes the original bytes
 back and asserts the round trip sha256-equal. Final run on the formatted
-tree (HEAD `2bac4877` plus the formatter's whitespace, the code the gate's
-`9bea6b1e` carries up to formatting): **10 of 10 as required**.
+pre-rebase tree (HEAD `2bac4877` plus the formatter's whitespace):
+**10 of 10 as required**. Every code commit of this card applied to both
+rebases without conflict (the conflicts were the harness tables, the ledger
+trio and the acceptance record), so the mutated arms are byte-identical on
+the final tip.
 
 | # | Arm | Test shown red |
 |---|---|---|
@@ -343,30 +346,42 @@ tree (HEAD `2bac4877` plus the formatter's whitespace, the code the gate's
 
 ## 7. Gate
 
+The card was **rebased twice** after its first gate: onto `0d9e922f`
+(`CT07-TWO-THREAD-PROOF-LEG` merged ahead) and then onto `e80b58d6`
+(`AGGREGATE-OWNED-FIELD` merged ahead). The gate that counts is the one on
+the final tip, **`d2e6fd41`**; the two earlier runs (`9bea6b1e` pre-rebase,
+4,658 / 1 / 9 with constraint 16's confined-fixture row red under load and
+green in isolation; `c13c4772` after the first rebase, 4,664 / 0 / 9) are
+superseded and kept only in the worktree-private directories. The union was
+proved on the final tip before the gate: `ct_corpus` 6 passed
+(`EVIDENCE_FILES` 25 with both cards' records, `PROOF_GATED_CASES`
+CT01/CT37/CT03/CT07, `MAPPED_CASES` and `SEQUENTIAL_REJECT_CASES` with CT42,
+`statement_heads` 9), `scripts/ct_stage_summary.py --check` no drift (mapped
+47 / unmapped 3, proof 4), the tracker 232 → **229** by this card's idempotent
+`register.py` over main's matrix, and the committed-matrix tests green after
+the regeneration below.
+
 One detached full gate (`scripts/gate.sh`: `setsid -f`, no `trap '' TERM`,
-every exit to its own file, no pipe) at **`9bea6b1e`**, the tip carrying
-every code change of this card; the exit files, timings and small logs are
-copied into `gate/` beside this file and the figures are `gate.json`'s.
-Disk before: 249 GB free (`df -h .`: 310 GB at branch time, four sibling
-`target/` directories building); 125 GB free at the end. Start
-`07:46:45Z`, cargo end `08:13:05Z`, gate end `08:15:36Z`.
+every exit to its own file, no pipe) at **`d2e6fd41`**, polled in a bounded
+foreground loop; the exit files, timings and small logs are in `gate/` beside
+this file and the figures are `gate.json`'s. Disk 165 GB free at start, 207 GB
+at the end. Start `12:06:07Z`, cargo end `12:22:22Z`, gate end `12:22:58Z`.
 
 | Step | Exit | Result |
 |---|---|---|
-| `cargo test --workspace --no-fail-fast` | **101** | **4,658 passed / 1 failed / 9 ignored** over 235 result summaries, 233 targets (224 `Running` + 9 doc-test sections). The one red row is `a_confined_fixture_cannot_write_outside_the_admitted_paths` (`qcore-verifier-host`, `confined_process_execution.rs:349`) — constraint 16's named load-sensitive confined-fixture write test, in its recorded shape (`left: Io`, `right: Terminated`, `Broken pipe (os error 32)`) under a full-suite run beside three sibling builds. **Re-verified in isolation on the same binary: 1 passed / 0 failed** (`gate/confined-isolated.exit` 0). Both facts recorded; the `workspace_tests` figure 4,659 counts it. |
-| `cargo fmt --all -- --check` | **1**, then 0 | Deliberately reported: the only diffs were rustfmt's wrapping of `compiler/tests/socket_cell_route.rs` (this card's new file) and two closure calls in `driver.rs`'s cell-check blocks (this card's edits), no semantic change (`gate/fmt.log`). `cargo fmt --all` applied; re-check exit **0** with an empty diff (`gate/fmt-post.exit`); the mutation harness re-run on the formatted tree, **10 of 10** red as required (M9 re-anchored to the formatted text). |
+| `cargo test --workspace --no-fail-fast` | 0 | **4,697 passed / 0 failed / 9 ignored** over 237 result summaries, 235 targets (226 `Running` + 9 doc-test sections); `test result: FAILED` 0 times, so no isolated re-verification was required and none is claimed |
+| `cargo fmt --all -- --check` | 0 | clean (the pre-rebase run's rustfmt diffs on this card's two files were applied before the first rebase) |
 | `cargo clippy --all-targets -- -D warnings` | 0 | clean |
 | `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
-| `scripts/check_lean_audits.py` | 0 | **138** Lean audits (137 + `AuditSocketCellRoute.lean`; `AuditSocketFootprint.lean` amended), `lean_audits` key checked by the generator |
-| `python3 -m unittest discover -s scripts/tests` | **1**, then 0 | Deliberately reported: 303 ran, 2 failed, both the regeneration tripwires (`['14.0.0', 137] != ['14.0.0', 138]`; `228 != 225`) against a tree this card had moved and not yet regenerated. Repaired by `build_matrix.py . --gate docs/reports/ct42-cell-route/gate.json` (exit 0, `gate/regen.exit`: 225 followups, 138 audits); re-run **303 OK**, exit 0 (`gate/python-post.exit`). |
+| `scripts/check_lean_audits.py` | 0 | **140** Lean audits (139 at `e80b58d6` + `AuditSocketCellRoute.lean`; `AuditSocketFootprint.lean` amended), `lean_audits` checked by the generator |
+| `python3 -m unittest discover -s scripts/tests` | **1**, then 0 | Deliberately reported: 303 ran, 2 failed, both the regeneration tripwires (`['14.0.0', 139] != ['14.0.0', 140]`; `232 != 229`) against the rebased tree before regeneration. Repaired by `build_matrix.py . --gate docs/reports/ct42-cell-route/gate.json` (exit 0, `gate/regen.exit`: 229 followups, 140 audits); re-run **303 OK**, exit 0 (`gate/python-post.exit`) |
 | Clang | 0 | `present: Ubuntu clang version 21.1.8 (6ubuntu1)` (`gate/clang-version.txt`, `QCORE_CLANG` unset) |
 | Provider | carried | 122, not re-measured: `providers/` and `crates/qcore-schemas/` unchanged since `e878b362`, schemas 14.0.0 (constraint 18 not engaged) |
 
-Deltas against the wave-38 close (4,639 / 303 / 137): workspace **+20**
-(six `socket_footprint` unit tests, fourteen `socket_cell_route.rs` tests;
-`ct_corpus` stays six with CT42 inside `run_mapped_case`), Python +0, Lean
-**+1**. Nothing is promoted: no corpus count, unit status or function status
-moves; raw units stay unpromoted; full language conformance stays **false**.
+Nothing is promoted: no corpus count, unit status or function status moves;
+raw units stay unpromoted; full language conformance stays **false**. CT
+46/50 → 47/50 is this card's mapping; proof 4 of 47 is the proof-leg card's
+move, carried.
 
 ## 8. Residuals and retirements (exact names)
 
@@ -412,17 +427,18 @@ Tracker: 228 → **225** entries (two registered, five retired, one withdrawn).
 
 Every ledger item, as an item:
 
-1. **CT row**: `46/50 mapped, 4 unmapped; sanitized-native 10 of 46; proof
-   3 of 46` → `47/50 mapped, 3 unmapped; sanitized-native 10 of 47; proof 3
-   of 47` — edited in AGENTS.md in this tree, with the CT42 sentence in the
-   "unmapped" paragraph rewritten (CT42 left the set; "the three unmapped").
-   A grown denominator is mapping, not conformance.
-2. **Lean audits**: 137 → **138** (`AuditSocketCellRoute.lean` new;
-   `AuditSocketFootprint.lean` amended with four new theorem names). The
-   gate.json here records 138; the merged-gate row of AGENTS.md is the
-   close's to move.
-3. **`named_followups`**: 228 → **225**; the AGENTS.md count line edited in
-   this tree. Registered: `SOCKET-CELL-COUPLING-UNPROVED`,
+1. **CT row**: now reads `47/50 mapped, 3 unmapped; sanitized-native 10 of
+   47; proof 4 of 47` with both wave-39 sentences (the proof-leg card's and
+   this card's) — edited in AGENTS.md in this tree after the rebase, with the
+   CT42 sentence in the "unmapped" paragraph rewritten (CT42 left the set;
+   "the three unmapped"). A grown denominator is mapping, not conformance.
+2. **Lean audits**: +1 (`AuditSocketCellRoute.lean` new;
+   `AuditSocketFootprint.lean` amended with four new theorem names): **140**
+   on the rebased tip (139 at `e80b58d6`). The gate.json here records 140;
+   the merged-gate row of AGENTS.md is the close's to move.
+3. **`named_followups`**: 232 → **229** on the rebased tip (228 → 225 on
+   the pre-rebase tree: the same +2 −5 −1); the AGENTS.md count line edited in
+   this tree with both siblings' figures. Registered: `SOCKET-CELL-COUPLING-UNPROVED`,
    `CT42-CONTROLS-NATIVE-UNRUN`. Retired: the five in §8. Amended:
    `CT42-CELL-PENDING-PHASE`. Withdrawn: `SOCKET-CELL-QUESTION-COMPOSED-ROUTES`.
    The matrix is regenerated with `--gate docs/reports/ct42-cell-route/gate.json`.
@@ -442,7 +458,8 @@ Every ledger item, as an item:
    row updated. Sibling cards' paragraphs union at the merge.
 8. **Pinned expectations moved deliberately**: `statement_heads()` 8 → 9
    (`compiler/tests/std_socket.rs`); `MAPPED_CASES`,
-   `SEQUENTIAL_REJECT_CASES`, `EVIDENCE_FILES` (23 → 24) in `ct_corpus.rs`;
+   `SEQUENTIAL_REJECT_CASES`, `EVIDENCE_FILES` (24 → 25 after the rebase,
+   both cards' records) in `ct_corpus.rs`;
    `EVIDENCE_FILES` in `scripts/ct_stage_summary.py`; the CT41/CT42 examples
    in `scripts/tests/test_ct_stage_summary.py`.
 9. **Shared-file note (file ownership)**: this card edited
