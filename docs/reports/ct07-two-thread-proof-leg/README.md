@@ -303,7 +303,33 @@ run's interleaving is observation (`run_native_heap_scenarios`).
 
 ## 9. Gate
 
-GATE-FIGURES-PENDING
+One detached full standing gate (`measure/gate.sh`: `setsid -f`, no
+`trap '' TERM`, every exit to its own file, no pipe), run at tip **`81f783ce`**
+— the commit carrying every code change of this card; the commits after it are
+documentation and the matrix regeneration only. Exits and the short logs are
+copied into `gate/` beside this file; the facts below were extracted from them
+by `measure/build_gate_json.py` (`measure/gate-facts.json`), nothing typed in.
+
+| Step | Result |
+|---|---|
+| `git submodule update --init --recursive` | exit 0 (`measure/submodule.log`, `d82464a2`) |
+| `cargo test --workspace --no-fail-fast` | **exit 0 — 4,644 passed / 0 failed / 9 ignored** over 235 result summaries and 233 test targets (224 `Running` + 9 doc-test sections); `test result: FAILED` **0** times, so no constraint-16 isolated re-verification was needed and none is claimed; 18m16s (07:22:35Z → 07:40:51Z) with four sibling worktrees building; +5 against the wave-38 close's 4,639 (this leg's five tests), ignored +0 |
+| `cargo fmt --all -- --check` | exit 0 |
+| `cargo clippy --all-targets -- -D warnings` | exit 0 |
+| `reevaluation_probe` / `reevaluation_followup` | exit 0 / exit 0 |
+| `scripts/check_lean_audits.py` | exit 0, **"Passed 138 Lean audits"** (137 + `AuditCt07LeaseLedger.lean`) |
+| `python3 -m unittest discover -s scripts/tests` (detached run) | **exit 1, deliberately reported**: 303 ran, 2 failures, both regeneration tripwires against the tree with `named_followups` 228 → 227 and `Audit*.lean` 137 → 138 not yet regenerated — `test_each_derived_dimension_matches_the_section_it_counts` (`228 != 227`) and `test_the_derived_facts_are_recomputed_rather_than_carried` (`['14.0.0', 137] != ['14.0.0', 138]`); the wave-36/37/38 closes' shape |
+| matrix regeneration | `build_matrix.py . --gate docs/reports/ct07-two-thread-proof-leg/gate.json` exit 0: named followups 227, lean audits 138, contract modules 88; the CT section's derived rows moved exactly as §5 describes (proof executed 4, CT07 `case_depth` → `proof`, `stage_evidence_record` → this card's) |
+| Python **post**-regeneration | `gate/python-post.exit` **0**, `Ran 303 tests … OK`; `ct_stage_summary.py --check` exit 0 |
+| `clang --version` | exit 0, `Ubuntu clang version 21.1.8 (6ubuntu1)` (`gate/clang-version.txt`), `QCORE_CLANG` unset |
+| disk | 280 GB → 207 GB free across the run |
+| provider 122 | **carried, not re-measured**: `git diff --name-only e878b362 HEAD -- providers/ crates/qcore-schemas/` is empty, `qcore-schemas` 14.0.0 (constraint 18 not engaged); a Unix figure |
+
+`gate.json` carries the nine standard keys plus `lean_audits` (138) and `clang`
+(the wave-38 close's shape). A gate figure is a measurement on one machine,
+never a property; this one was taken under sibling load and is offered as the
+card's own figure, to be replaced by the wave-39 close's integration-tip
+measurement.
 
 ## 10. Files touched, and sibling ownership
 

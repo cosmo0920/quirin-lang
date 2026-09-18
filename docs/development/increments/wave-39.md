@@ -67,5 +67,10 @@ verified registered and met word for word: `CT07-TWO-THREAD-PROOF-LEG`,
 `CT07-PROOF-LEG-F02-PREMISE-PIN` (the leg's last assertion re-measures that
 `AdmittedCausalOrder::derive` refuses CT07's run, so a later alphabet growth
 turns the leg red by design and must remove the pin deliberately);
-`named_followups` **228 → 227**. Gate: GATE-FIGURES-PENDING.
+`named_followups` **228 → 227**. Gate at tip `81f783ce`: **4,644 passed / 0
+failed / 9 ignored** over 235 summaries and 233 targets (+5 on the wave-38
+close's 4,639), fmt/clippy clean, both probes 0, **138** Lean audits, Python
+303 OK after the `--gate` regeneration (the detached run's own Python step red
+on the two regeneration tripwires, `228 != 227` and `137` against `138`,
+recorded in `gate.json`), Clang present, provider 122 carried.
 Report: `docs/reports/ct07-two-thread-proof-leg/README.md`.
