@@ -1,0 +1,14 @@
+   Compiling qcore-c-gateway v0.1.0 (/tmp/agent-b03/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.17s
+     Running tests/loop_switch_condition_calls.rs (/home/cosmo/Documents/GitHub/qcore-c/private/b-series/targets/b03/debug/deps/loop_switch_condition_calls-ff87711789453f8f)
+
+running 6 tests
+test switch_evaluates_the_call_once_before_any_arm ... ok
+test do_while_break_exits_before_the_condition_call ... ok
+test conditionally_evaluated_and_post_release_accesses_stay_refused ... ok
+test loop_headers_evaluate_the_call_again_on_the_back_edge ... ok
+test every_loop_keeps_its_exit_successor_after_modeling_the_call ... ok
+test continue_paths_revisit_the_call_and_for_runs_its_increment_first ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+

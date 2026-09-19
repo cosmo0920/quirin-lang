@@ -2794,6 +2794,9 @@ enum Statement {
     While {
         line: usize,
         condition_supported: bool,
+        /// Card **B03-LOOP-AND-SWITCH**: the one contracted call evaluated at
+        /// every visit to this loop header, before either successor is chosen.
+        condition_call: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         body: Vec<Statement>,
@@ -2803,6 +2806,9 @@ enum Statement {
         init: Option<Box<(LegacyInstruction, usize)>>,
         condition_always_true: bool,
         condition_supported: bool,
+        /// Card **B03-LOOP-AND-SWITCH**: the one contracted call evaluated at
+        /// every visit to this loop header, before either successor is chosen.
+        condition_call: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         increment: Option<Box<(LegacyInstruction, usize)>>,
@@ -2811,6 +2817,9 @@ enum Statement {
     DoWhile {
         line: usize,
         condition_supported: bool,
+        /// Card **B03-LOOP-AND-SWITCH**: the one contracted call evaluated
+        /// after every completed body execution, before the back/exit choice.
+        condition_call: Option<Box<LegacyInstruction>>,
         /// The controlling expression is the single literal token `0`, so the
         /// body runs exactly once (C11 §6.8.5.2) and the CFG carries no back
         /// edge. Keyed on the *token*, never on an evaluated expression
@@ -2824,6 +2833,9 @@ enum Statement {
     Switch {
         line: usize,
         expression_supported: bool,
+        /// Card **B03-LOOP-AND-SWITCH**: the one contracted call evaluated
+        /// once before control enters the selected switch arm.
+        expression_call: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         body: Vec<Statement>,
     },
@@ -3056,18 +3068,18 @@ impl Parser<'_> {
         )
     }
 
-    /// The one unconditionally evaluated modeled call in a branch condition.
+    /// The one unconditionally evaluated modeled call in a controlling
+    /// expression.
     ///
-    /// Card **B02-BRANCH-CONDITION** decomposes the condition into an isolated
-    /// call and a custody-neutral residual.  The lexical boundary comes from
-    /// [`crate::legacy_condition_call`]; the residual is admitted by the same
-    /// expression-position classifier as every existing branch, and the call
-    /// is admitted by [`Self::classify_simple`].  Thus the new CFG instruction
-    /// uses the existing transfer function rather than restating any contract
-    /// effect here.
+    /// Cards B02 and B03 decompose a condition into one isolated call and a
+    /// custody-neutral residual. The lexical boundary rejects every shape in
+    /// which C may skip the call. The residual is checked by the existing
+    /// expression-position rule, and the call is checked by the ordinary
+    /// statement classifier, so there is one contract-effect model.
     ///
     /// A declined speculative classification restores `next_site`, preserving
-    /// certificate identity for every condition this rule keeps refused.
+    /// site numbering and certificate identity for every expression this rule
+    /// keeps refused.
     fn condition_call_instruction(&mut self, condition: &[Token]) -> Option<LegacyInstruction> {
         let texts = condition
             .iter()
@@ -3330,12 +3342,18 @@ impl Parser<'_> {
             Some("while") => {
                 self.cursor += 1;
                 let condition = self.take_parenthesized()?;
+                let condition_supported =
+                    self.supported_expression(&condition, ExpressionRole::Decides);
+                let condition_call = (!condition_supported)
+                    .then(|| self.condition_call_instruction(&condition))
+                    .flatten()
+                    .map(Box::new);
                 let body = self.parse_statement_body()?;
                 Ok(Statement::While {
                     line,
                     writes: self.expression_writes(&condition),
-                    condition_supported: self
-                        .supported_expression(&condition, ExpressionRole::Decides),
+                    condition_supported,
+                    condition_call,
                     null_condition: self.null_condition(&condition),
                     body,
                 })
@@ -3364,6 +3382,12 @@ impl Parser<'_> {
                         line,
                     ));
                 };
+                let condition_supported =
+                    self.supported_expression(&condition, ExpressionRole::Decides);
+                let condition_call = (!condition_supported && !condition.is_empty())
+                    .then(|| self.condition_call_instruction(&condition))
+                    .flatten()
+                    .map(Box::new);
                 let body = self.parse_statement_body()?;
                 let init =
                     (!init.is_empty()).then(|| Box::new((self.classify_simple(&init), line)));
@@ -3374,8 +3398,8 @@ impl Parser<'_> {
                     writes: self.expression_writes(&condition),
                     init,
                     condition_always_true: condition.is_empty(),
-                    condition_supported: self
-                        .supported_expression(&condition, ExpressionRole::Decides),
+                    condition_supported,
+                    condition_call,
                     null_condition: self.null_condition(&condition),
                     increment,
                     body,
@@ -3393,11 +3417,17 @@ impl Parser<'_> {
                     return Err(line);
                 }
                 self.cursor += 1;
+                let condition_supported =
+                    self.supported_expression(&condition, ExpressionRole::Decides);
+                let condition_call = (!condition_supported)
+                    .then(|| self.condition_call_instruction(&condition))
+                    .flatten()
+                    .map(Box::new);
                 Ok(Statement::DoWhile {
                     line,
                     writes: self.expression_writes(&condition),
-                    condition_supported: self
-                        .supported_expression(&condition, ExpressionRole::Decides),
+                    condition_supported,
+                    condition_call,
                     condition_is_literal_zero: condition_is_literal_zero(&condition),
                     null_condition: self.null_condition(&condition),
                     body,
@@ -3406,12 +3436,18 @@ impl Parser<'_> {
             Some("switch") => {
                 self.cursor += 1;
                 let expression = self.take_parenthesized()?;
+                let expression_supported =
+                    self.supported_expression(&expression, ExpressionRole::Decides);
+                let expression_call = (!expression_supported)
+                    .then(|| self.condition_call_instruction(&expression))
+                    .flatten()
+                    .map(Box::new);
                 let body = self.parse_statement_body()?;
                 Ok(Statement::Switch {
                     line,
                     writes: self.expression_writes(&expression),
-                    expression_supported: self
-                        .supported_expression(&expression, ExpressionRole::Decides),
+                    expression_supported,
+                    expression_call,
                     body,
                 })
             }
@@ -5173,6 +5209,7 @@ impl CfgBuilder {
                 line,
                 writes,
                 condition_supported,
+                condition_call,
                 null_condition,
                 body,
             } => {
@@ -5181,6 +5218,8 @@ impl CfgBuilder {
                         source: condition.source.clone(),
                         true_is_null: condition.true_is_null,
                     }
+                } else if let Some(call) = condition_call {
+                    (**call).clone()
                 } else if *condition_supported {
                     LegacyInstruction::NoOp
                 } else {
@@ -5209,15 +5248,21 @@ impl CfgBuilder {
                 init,
                 condition_always_true,
                 condition_supported,
+                condition_call,
                 null_condition,
                 increment,
                 body,
             } => {
-                let instruction = branch_instruction(
-                    *condition_supported,
-                    null_condition,
-                    writes,
-                    "unmodeled call, aggregate or indirect access in for-loop condition",
+                let instruction = condition_call.as_ref().map_or_else(
+                    || {
+                        branch_instruction(
+                            *condition_supported,
+                            null_condition,
+                            writes,
+                            "unmodeled call, aggregate or indirect access in for-loop condition",
+                        )
+                    },
+                    |call| (**call).clone(),
                 );
                 let header = self.push(instruction, Vec::new(), *line, false);
                 let increment_entry = increment.as_ref().map_or(header, |clause| {
@@ -5248,15 +5293,21 @@ impl CfgBuilder {
                 line,
                 writes,
                 condition_supported,
+                condition_call,
                 condition_is_literal_zero,
                 null_condition,
                 body,
             } => {
-                let instruction = branch_instruction(
-                    *condition_supported,
-                    null_condition,
-                    writes,
-                    "unmodeled call, aggregate or indirect access in do-while condition",
+                let instruction = condition_call.as_ref().map_or_else(
+                    || {
+                        branch_instruction(
+                            *condition_supported,
+                            null_condition,
+                            writes,
+                            "unmodeled call, aggregate or indirect access in do-while condition",
+                        )
+                    },
+                    |call| (**call).clone(),
                 );
                 let header = self.push(instruction, Vec::new(), *line, false);
                 self.break_targets.push(continuation);
@@ -5289,6 +5340,7 @@ impl CfgBuilder {
                 line,
                 writes,
                 expression_supported,
+                expression_call,
                 body,
             } => {
                 self.break_targets.push(continuation);
@@ -5302,7 +5354,9 @@ impl CfgBuilder {
                 }
                 successors.sort_unstable();
                 successors.dedup();
-                let instruction = if *expression_supported {
+                let instruction = if let Some(call) = expression_call {
+                    (**call).clone()
+                } else if *expression_supported {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {

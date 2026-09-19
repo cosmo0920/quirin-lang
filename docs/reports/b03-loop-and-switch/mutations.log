@@ -1,0 +1,16 @@
+baseline: green
+short-circuit-admitted: CAUGHT — the call must execute on every visit
+  <compile error> error: test failed, to rerun pass `-p qcore-c-gateway --test loop_switch_condition_calls`
+  conditionally_evaluated_and_post_release_accesses_stay_refused
+while-call-erased: CAUGHT — the while header applies the call effect
+  <compile error> error: test failed, to rerun pass `-p qcore-c-gateway --test loop_switch_condition_calls`
+  continue_paths_revisit_the_call_and_for_runs_its_increment_first
+  loop_headers_evaluate_the_call_again_on_the_back_edge
+for-call-erased: CAUGHT — the for header applies the call effect
+  <compile error> error: test failed, to rerun pass `-p qcore-c-gateway --test loop_switch_condition_calls`
+  continue_paths_revisit_the_call_and_for_runs_its_increment_first
+  loop_headers_evaluate_the_call_again_on_the_back_edge
+switch-call-erased: CAUGHT — switch applies the call once before dispatch
+  <compile error> error: test failed, to rerun pass `-p qcore-c-gateway --test loop_switch_condition_calls`
+  switch_evaluates_the_call_once_before_any_arm
+4/4 mutations caught
