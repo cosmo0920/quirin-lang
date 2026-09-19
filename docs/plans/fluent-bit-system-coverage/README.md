@@ -82,7 +82,7 @@ for CT coverage and each linked report for its measured scope.
 |---|---|---|
 | [CT24 cleanup/task composition](../../reports/ct24-cleanup-task-composition/README.md) | Backlog/retry destruction while a child retains a chunk share | Bind real queue transitions, owners, borrowers and failure arms to the custody model |
 | [CT10 field footprints](../../reports/ct10-source-layout/README.md) | Concurrent writes to chunk or engine flags | Derive trustworthy target layout; the property-only successful-window check supplies no task-lifetime proof |
-| [CT41 atomic publication](../../reports/ct41-sync-model/README.md) | Publishing initialized chunk/task state | Establish the declared invocation bounds and successful release/acquire observation; volatile is not synchronization |
+| [CT41 publication mapping](../../reports/ct41-publication-mapping/README.md) | Publishing initialized chunk/task state | Establish the declared invocation bounds and successful release/acquire observation; volatile is not synchronization |
 
 These mechanisms supply no production verdict or throughput/fairness guarantee.
 P0 remains first; its pinned source census decides whether a proposed transfer

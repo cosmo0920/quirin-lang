@@ -113,3 +113,14 @@ including cross-topic rules, before editing; the index is not a substitute.
     `remaining-p04`, `c-gateway-wave`, `stability-reeval-1` §3.2.
 
 <!-- preserved:constraint-28:end -->
+
+## CT41 negative synchronization attribution
+
+CT41 retains its volatile-completion scenario and “no synchronization proof”
+expectation. Its bounded publication route uses protocol replacement for
+attribution: shape-validated volatile and plain cases both refuse, a matching
+release/acquire atomic control checks, and relaxed-store/load controls refuse.
+Removing `volatile` must never confer ordering. This explicitly supersedes the
+historical removal-must-change-verdict criterion for CT41 only. Mapping credits
+its own executed source stages, not its control's certificate, model theorem or
+native evidence. [Decision and bounds](../reports/ct41-publication-mapping/README.md).

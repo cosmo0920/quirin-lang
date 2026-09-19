@@ -114,4 +114,34 @@ theorem equal_initial_and_ready_do_not_identify_the_release :
     ¬ identifiesRelease { releaseAcquireFixture with initial := 1 } := by
   simp [identifiesRelease, releaseAcquireFixture]
 
+private def side : Event → Bool
+  | .payloadWrite | .releaseStore => false
+  | .acquireLoad | .payloadRead => true
+
+private theorem no_sync_preserves_side (p : Program) (h : ¬ synchronizesWith p)
+    (path : HappensBefore p a b) : side a = side b := by
+  induction path with
+  | step edge =>
+    cases edge with
+    | producer => rfl
+    | consumer => rfl
+    | synchronization sync => exact False.elim (h sync)
+  | trans _ _ left right => exact left.trans right
+
+theorem payload_path_requires_synchronization (p : Program)
+    (path : HappensBefore p .payloadWrite .payloadRead) : synchronizesWith p := by
+  apply Classical.byContradiction
+  intro h
+  have impossible := no_sync_preserves_side p h path
+  simp [side] at impossible
+
+theorem non_atomic_completion_has_no_payload_path (p : Program)
+    (h : p.flagKind = .plain ∨ p.flagKind = .volatile) :
+    ¬ HappensBefore p .payloadWrite .payloadRead := by
+  intro path
+  have sync := payload_path_requires_synchronization p path
+  cases h with
+  | inl plain => exact plain_has_no_synchronizes_with_edge p plain sync
+  | inr volatile => exact volatile_has_no_synchronizes_with_edge p volatile sync
+
 end QCore.AtomicPublication

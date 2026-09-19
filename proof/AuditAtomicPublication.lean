@@ -10,3 +10,6 @@ import QCore.AtomicPublication
 #print axioms QCore.AtomicPublication.repeated_publisher_has_no_synchronizes_with_edge
 #print axioms QCore.AtomicPublication.fixture_has_a_real_three_edge_path
 #print axioms QCore.AtomicPublication.equal_initial_and_ready_do_not_identify_the_release
+
+#print axioms QCore.AtomicPublication.payload_path_requires_synchronization
+#print axioms QCore.AtomicPublication.non_atomic_completion_has_no_payload_path

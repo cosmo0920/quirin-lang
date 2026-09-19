@@ -1,0 +1,15 @@
+{
+  "id": "CT41",
+  "verdict": "no_synchronization_proof",
+  "property": "payload write happens before successful consumer payload read",
+  "bounds": [
+    1,
+    1
+  ],
+  "controls": {
+    "plain.c": "plain_no_synchronization",
+    "release_acquire.c": "ordered_payload",
+    "relaxed_store.c": "store_not_release",
+    "relaxed_load.c": "load_not_acquire"
+  }
+}
