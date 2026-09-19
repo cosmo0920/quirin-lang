@@ -434,4 +434,111 @@ See `gate.json` and `gate/` beside this file.
 
 ## 9. For the integrator
 
+Every item is addressable on its own.
+
+1. **Headline numbers moved in this tree.** `AGENTS.md` `named_followups`
+   **257 → 259** (the sentence after `named_followups`, re-worded to name this
+   card; three retired, five registered, four amended). Lean audits
+   **141 → 142** (`AuditOwnedFieldCopyReach.lean`). Workspace tests: **+19**
+   (`compiler/tests/owned_field_route_reach.rs`; no other test file gains or
+   loses a function) — the figure to carry into the "Merged gate" row at the
+   merge is §8's, measured at this card's own tip, and it is a card gate, not
+   an integration one.
+2. **Standing constraint 15k is amended in this tree, deliberately**, by an
+   **appended** paragraph that supersedes nothing above it: it records that two
+   of the constraint's own sentences (the copy rule, and "a record of scalars
+   is a plain copyable value") were decided by four unit tests and by nothing
+   else, and states the copy bind, the three rules that must survive refactors
+   (not a `buffer_use`; the value half says nothing about a ledger-held name;
+   the admitting side's safety is proved), the three boundaries that now name
+   themselves, and what stays absence. Quoted here in the card's own words —
+   read it at 15k in `AGENTS.md`, not from this list.
+3. **Constraint 14's ledger** gains this card's bullet: +0 words, +0 tokens,
+   with the **29-occurrence collision** with `source.socket.v1`'s creation form
+   recorded as the census's finding, and the two zero counts behind the
+   by-name boundary refusals.
+4. **The Q-space note** counts the **nineteenth** instance of the icebox's
+   consequence (`Q051`–`Q057`, allocating nothing) and states that this card's
+   two other movements are **not** instances, a message not being a code.
+5. **§L21** (`docs/QCORE_SPEC_r0_3.md`): three rows amended — `Q051`–`Q057`
+   (the copy bind; the `Q051` narrowing; the by-message split of the
+   unknown-field-type condition), `Q1xx` (re-measured, both codes unmoved,
+   `OWNED-FIELD-SEQUENTIAL-UNREACHED` re-scoped), `Q5xx`
+   (`AGGREGATE-TASK-CAPTURE` by name, no condition widened). The `Q054`
+   sentence in the wave-39 amendment is amended in the same place, which is
+   `OWNED-FIELD-IR-REFUSALS-UNREACHED`'s discharge word for word.
+6. **`AGENTS.md`'s diagnostics table**: the `Q051`–`Q057`, `Q100`/`Q103` and
+   `Q500` rows carry the same three amendments in summary form.
+7. **Increment record:** `docs/development/increments/wave-41.md` **created**
+   in wave-40's shape, one paragraph, and `docs/development/increments/README.md`
+   has its current-record pointer moved and its wave-table row added. Union
+   with siblings' paragraphs at the merge. `DEVELOPMENT.md` needs no edit —
+   it names the index, not a wave file.
+8. **Matrix:** `docs/reviews/r0_3/acceptance_matrix.json`'s `named_followups`
+   edited by `scripts/register.py` (idempotent; `--show` first, output shipped
+   as `register-show.log`) and regenerated with
+   `--gate docs/reports/owned-field-route-reach/gate.json` — never without.
+9. **A decision I could not take.** `COPY-BIND-SOCKET-SHAPE-COLLISION` is the
+   one thing in this card an integrator might want handled differently. The
+   copy bind and `let listener = tcp;` are the same token shape; I kept the
+   collision because the alternatives each edit something pinned (renaming the
+   socket route's creation form would touch a published example family and CT42
+   fixtures; renaming the copy bind means introducing a word, which this card's
+   whole census says is unnecessary). The separation is real and pinned, but it
+   is a property of **dispatch order**. If the integrator prefers a structural
+   guard, the residual's discharge names one.
+10. **A second one.** `BUFFER-UNUSED-BIND-WERROR` is inherited, not introduced,
+    and I did not fix it inside this card's scope. The fail-closed direction is
+    a route-level refusal of an unused binding, which is a `Q051` condition
+    extension and someone's card; the cheap direction is the composed string
+    route's existing `(void)` discard scan, applied to the plain route.
+
 ## 10. File ownership and overlaps (wave-41 scope)
+
+**Owned by this card and edited:** `crates/qcore-core/src/ownership.rs` — in
+fact **not edited at all**, which is worth saying: the copy rule this card makes
+reachable is `copy_owned` exactly as wave 39 left it, and that is what "the
+route asks, the IR answers" means here. `crates/qcore-core/src/source_record.rs`
+(two `RecordRefusal` variants, their `code` arms, their `Display` arms, the
+`field_type_refusal` classifier and `VIEW_FIELD_SPELLING`).
+`crates/qcore-core/src/std_buffer.rs` **record/field and copy arms only**: the
+`CopyBind` variant, its arm in the custody walk, in the lend-structured
+projection's flat segment and repeat walk, in the value half, in
+`derived_effects`, in `body_bindings`, in `run`'s value-bearing list, and in
+`custody_names_at_any_depth`.
+
+**Shared with `COMPOSED-WINDOW-REACH` by design, and coordinated here rather
+than by editing their functions.** Two of the functions that card owns gained a
+**one-arm** addition each, forced by an exhaustive `match` on a grown enum and
+by nothing else:
+
+* `std_buffer::custody_names_at_any_depth` (feeds `last_uses`) — a copy bind
+  **names its source**, so it is pushed, in the refusing direction: a window
+  that ended before a statement naming a loan is the one mistake that function
+  exists to prevent. No other line of the function is touched, and
+  `last_uses`, `lend_windows`, `crossed_lend_windows` and the nested-acquire
+  scan are **not** edited.
+* `std_string::view_uses_at_any_depth` and `loop_body_conflict` — the copy bind
+  is listed in the "names no view" arm and in the leaves-the-constant-tier arm
+  respectively. On that route the variant cannot exist at all (`buffer_use`
+  does not claim the shape), so both arms are total rather than reachable and
+  say so in a comment.
+
+**Edited with no other card's ownership, and noted:**
+`crates/qcore-frontend/src/source_std_buffer.rs` (the reader's last `let` arm,
+`LoweringConstants::observe`'s explicit do-nothing arm, the module header's
+grammar and one new header section), `crates/qcore-frontend/src/source_record.rs`
+(the declared-record-name set and the classifier call),
+`crates/qcore-frontend/src/source_tasks.rs` (**one** `if` before the existing
+declaration-kind refusal; that refusal's own arm is unedited),
+`crates/qcore-core/src/std_buffer_c_emit.rs` (the scalar arm in
+`buffer_event_statement`, the record arm in `emit_events`),
+`crates/qcore-core/src/std_string_c_emit.rs` (one `buffer_consumers` arm),
+`proof/QCore/OwnedFieldCopyReach.lean` and `proof/AuditOwnedFieldCopyReach.lean`
+(new), `proof/QCore.lean` (one import), and the ledger documents.
+
+**Not touched:** `compiler/tests/ct_corpus.rs` (`CT-PROOF-LEG-3`),
+`tests/support/thread_sanitizer.rs`, `compiler/tests/task_route_tsan.rs`,
+`compiler/tests/write_lend_tasks_exercise.rs` (`TSAN-FAILURE-ARMS`),
+`proof/QCore/LoopWindows.lean` (`COMPOSED-WINDOW-REACH`), and every frozen
+archive under `docs/reports/`.
