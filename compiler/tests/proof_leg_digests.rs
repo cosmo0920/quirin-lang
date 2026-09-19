@@ -94,7 +94,10 @@ fn lean_pins(root: &Path) -> Vec<Pin> {
     let mut entries: Vec<PathBuf> = fs::read_dir(&directory)
         .expect("proof/QCore is part of the checkout")
         .map(|entry| entry.expect("a readable directory entry").path())
-        .filter(|path| path.extension().is_some_and(|extension| extension == "lean"))
+        .filter(|path| {
+            path.extension()
+                .is_some_and(|extension| extension == "lean")
+        })
         .collect();
     entries.sort();
     let mut pins = Vec::new();
@@ -104,14 +107,22 @@ fn lean_pins(root: &Path) -> Vec<Pin> {
             let Some(rest) = line.strip_prefix("theorem ") else {
                 continue;
             };
-            let symbol = rest.split([' ', ':']).next().unwrap_or_default().to_string();
+            let symbol = rest
+                .split([' ', ':'])
+                .next()
+                .unwrap_or_default()
+                .to_string();
             let Some(case) = lean_case_of(&symbol) else {
                 continue;
             };
             let equation = rest
                 .split_once(" = ")
                 .unwrap_or_else(|| {
-                    panic!("{}:{}: a digest theorem states an equation", path.display(), index + 1)
+                    panic!(
+                        "{}:{}: a digest theorem states an equation",
+                        path.display(),
+                        index + 1
+                    )
                 })
                 .1;
             let value = numeral(equation).unwrap_or_else(|| {
@@ -152,7 +163,12 @@ fn rust_pins(root: &Path) -> Vec<Pin> {
             let Some(rest) = line.trim_start().strip_prefix("const ") else {
                 continue;
             };
-            let symbol = rest.split(':').next().unwrap_or_default().trim().to_string();
+            let symbol = rest
+                .split(':')
+                .next()
+                .unwrap_or_default()
+                .trim()
+                .to_string();
             let Some(case) = rust_case_of(&symbol) else {
                 continue;
             };
@@ -259,10 +275,16 @@ fn the_digest_inventory_is_reported() {
     let lean = lean_pins(&root);
     let rust = rust_pins(&root);
     for pin in &lean {
-        println!("LEAN\t{}\t{}\t{}\t{}", pin.case, pin.symbol, pin.value, pin.site);
+        println!(
+            "LEAN\t{}\t{}\t{}\t{}",
+            pin.case, pin.symbol, pin.value, pin.site
+        );
     }
     for pin in &rust {
-        println!("RUST\t{}\t{}\t{}\t{}", pin.case, pin.symbol, pin.value, pin.site);
+        println!(
+            "RUST\t{}\t{}\t{}\t{}",
+            pin.case, pin.symbol, pin.value, pin.site
+        );
     }
     // Measured at the card's tip: five Lean theorems, six Rust constants —
     // CT01's is written twice (`ct01_proof_leg.rs` and `ct12_ct14_proof_reach.rs`),

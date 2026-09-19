@@ -239,6 +239,58 @@ theorem discharged_every_fact_is_the_root_tasks {t : List Event}
     (h : dischargesLifetimeIdentity t = true) : projection t 0 = t :=
   (discharged_clauses h).2.1
 
+/-! ### One clause is **not** independent, and that is stated rather than left
+to be discovered
+
+The card's mutation harness weakened the payload clause
+`t.countP (readsBack fresh 42) = 1` to the bare read count and **no test
+reddened** (`R5`). The reason is not that the mutants are thin: the clause is
+*implied* by the two clauses beside it, so no trace can separate them. That is
+published here as a theorem rather than recorded as a gap — and the clause is
+kept, because it is the sentence the scenario is about and the meaning theorem
+above reads it directly. -/
+
+private theorem countP_le_of_implies {p q : Event → Bool} :
+    ∀ {t : List Event}, (∀ e ∈ t, p e = true → q e = true) →
+      t.countP p ≤ t.countP q := by
+  intro t
+  induction t with
+  | nil => intro _; simp
+  | cons a rest ih =>
+    intro h
+    have hrest := ih fun e he => h e (List.mem_cons_of_mem a he)
+    have ha := h a (List.mem_cons_self ..)
+    by_cases hp : p a = true
+    · have hq : q a = true := ha hp
+      simp [hp, hq]
+      omega
+    · simp only [Bool.not_eq_true] at hp
+      simp [List.countP_cons, hp]
+      omega
+
+theorem the_payload_clause_is_implied_by_the_read_window_and_the_read_count
+    {t : List Event} (hwindow : List.Sublist [freshAllocation, freshRead,
+      freshRelease] t) (hreads : t.countP isRead = 1) :
+    t.countP (readsBack fresh 42) = 1 := by
+  have hmem : freshRead ∈ t := hwindow.subset (by decide)
+  have hle : t.countP (readsBack fresh 42) ≤ t.countP isRead := by
+    refine countP_le_of_implies ?_
+    intro e _ he
+    cases e with
+    | read _ _ _ => rfl
+    | allocated _ _ _ => simp [readsBack] at he
+    | allocationFailed _ => simp [readsBack] at he
+    | spawned _ _ => simp [readsBack] at he
+    | creationFailed _ => simp [readsBack] at he
+    | dropped _ _ => simp [readsBack] at he
+    | loaned _ _ => simp [readsBack] at he
+    | returned _ _ => simp [readsBack] at he
+    | completed _ _ => simp [readsBack] at he
+    | joined _ => simp [readsBack] at he
+  have hpos : t.countP (readsBack fresh 42) ≠ 0 := fun hzero =>
+    (List.countP_eq_zero.mp hzero freshRead hmem) (by decide)
+  omega
+
 /-! ## CT50's reference run is accepted -/
 
 theorem ct50_reference_run_discharges_the_lifetime_identity :
@@ -387,7 +439,38 @@ theorem a_read_after_the_fresh_release_fails_only_the_read_window_clause :
       ∧ ¬ List.Sublist [freshAllocation, freshRead, freshRelease]
           readAfterTheFreshRelease := by decide
 
-/-- A fact attributed to a second actor: this run has no child. -/
+/-- The task's own result is attributed to a child: this run has no child, so
+the fact belongs to nobody. -/
+def resultClaimedByASecondActor : List Event :=
+  [staleAllocation, staleRelease, freshAllocation, freshRead, freshRelease,
+    .completed 1 (.i32 42)]
+
+theorem a_result_claimed_by_a_second_actor_is_refused :
+    dischargesLifetimeIdentity resultClaimedByASecondActor = false := by decide
+
+/-- …and the clause that refuses it is the single-actor clause; **every other
+clause of the procedure** still holds. -/
+theorem a_result_claimed_by_a_second_actor_fails_only_the_single_actor_clause :
+    resultClaimedByASecondActor.length = 6
+      ∧ resultClaimedByASecondActor.countP (isAllocationOf stale) = 1
+      ∧ resultClaimedByASecondActor.countP (isReleaseOf stale) = 1
+      ∧ resultClaimedByASecondActor.countP (isAllocationOf fresh) = 1
+      ∧ resultClaimedByASecondActor.countP (isReleaseOf fresh) = 1
+      ∧ resultClaimedByASecondActor.countP isStaleUse = 0
+      ∧ resultClaimedByASecondActor.countP isRead = 1
+      ∧ resultClaimedByASecondActor.countP (readsBack fresh 42) = 1
+      ∧ List.Sublist [staleAllocation, staleRelease, freshAllocation]
+          resultClaimedByASecondActor
+      ∧ List.Sublist [freshAllocation, freshRead, freshRelease]
+          resultClaimedByASecondActor
+      ∧ projection resultClaimedByASecondActor 0 ≠ resultClaimedByASecondActor
+      := by decide
+
+/-- A *read* attributed to a second actor is refused too, but it is **not** an
+isolating mutant and is not presented as one: moving the read off the root task
+also moves it out of the read-window chain, so two clauses catch it. Measured
+by the card's harness (`R4`, which reddened nothing when the single-actor
+clause alone was removed) and recorded here rather than papered over. -/
 def readByASecondActor : List Event :=
   [staleAllocation, staleRelease, freshAllocation, .read 1 fresh 42,
     freshRelease, rootResult]
@@ -395,20 +478,10 @@ def readByASecondActor : List Event :=
 theorem a_read_by_a_second_actor_is_refused :
     dischargesLifetimeIdentity readByASecondActor = false := by decide
 
-/-- …and the clause that refuses it is the single-actor clause; every count
-clause still holds of it. -/
-theorem a_read_by_a_second_actor_fails_only_the_single_actor_clause :
-    readByASecondActor.length = 6
-      ∧ readByASecondActor.countP (isAllocationOf stale) = 1
-      ∧ readByASecondActor.countP (isReleaseOf stale) = 1
-      ∧ readByASecondActor.countP (isAllocationOf fresh) = 1
-      ∧ readByASecondActor.countP (isReleaseOf fresh) = 1
-      ∧ readByASecondActor.countP isStaleUse = 0
-      ∧ readByASecondActor.countP isRead = 1
-      ∧ readByASecondActor.countP (readsBack fresh 42) = 1
-      ∧ List.Sublist [staleAllocation, staleRelease, freshAllocation]
-          readByASecondActor
-      ∧ projection readByASecondActor 0 ≠ readByASecondActor := by decide
+theorem a_read_by_a_second_actor_fails_two_clauses :
+    projection readByASecondActor 0 ≠ readByASecondActor
+      ∧ ¬ List.Sublist [freshAllocation, freshRead, freshRelease]
+          readByASecondActor := by decide
 
 /-- The read names the **old** generation after the new one exists: the
 scenario's own crux, stated at the level the alphabet sees. -/

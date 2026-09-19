@@ -36,6 +36,11 @@ import QCore.Ct50LifetimeIdentity
 #print axioms QCore.Ct50LifetimeIdentity.discharged_the_read_sits_inside_the_new_lifetime
 #print axioms QCore.Ct50LifetimeIdentity.discharged_every_fact_is_the_root_tasks
 
+-- **A clause that is not independent**, stated rather than left to be found:
+-- the card's harness measured that weakening the payload clause reddens
+-- nothing, because the read-window chain and the read count imply it.
+#print axioms QCore.Ct50LifetimeIdentity.the_payload_clause_is_implied_by_the_read_window_and_the_read_count
+
 -- **The closure**: a single-actor reference admits nothing but itself, so
 -- every admitted rendering discharges the scenario.
 #print axioms QCore.Ct50LifetimeIdentity.an_admitted_rendering_is_the_reference_run
@@ -49,8 +54,10 @@ import QCore.Ct50LifetimeIdentity
 #print axioms QCore.Ct50LifetimeIdentity.an_escaping_stale_capability_fails_only_the_stale_use_clause
 #print axioms QCore.Ct50LifetimeIdentity.a_read_after_the_fresh_release_is_refused
 #print axioms QCore.Ct50LifetimeIdentity.a_read_after_the_fresh_release_fails_only_the_read_window_clause
+#print axioms QCore.Ct50LifetimeIdentity.a_result_claimed_by_a_second_actor_is_refused
+#print axioms QCore.Ct50LifetimeIdentity.a_result_claimed_by_a_second_actor_fails_only_the_single_actor_clause
 #print axioms QCore.Ct50LifetimeIdentity.a_read_by_a_second_actor_is_refused
-#print axioms QCore.Ct50LifetimeIdentity.a_read_by_a_second_actor_fails_only_the_single_actor_clause
+#print axioms QCore.Ct50LifetimeIdentity.a_read_by_a_second_actor_fails_two_clauses
 #print axioms QCore.Ct50LifetimeIdentity.a_read_of_the_stale_generation_is_refused
 #print axioms QCore.Ct50LifetimeIdentity.a_read_carrying_the_old_payload_is_refused
 #print axioms QCore.Ct50LifetimeIdentity.a_leaked_stale_generation_is_refused

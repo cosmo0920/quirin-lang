@@ -376,6 +376,24 @@ fn read_after_the_fresh_release() -> Vec<ObservedEvent> {
     ]
 }
 
+fn result_claimed_by_a_second_actor() -> Vec<ObservedEvent> {
+    vec![
+        stale_allocation(),
+        stale_release(),
+        fresh_allocation(),
+        fresh_read(),
+        fresh_release(),
+        ObservedEvent::Completed {
+            task: 1,
+            outcome: ObservedOutcome::I32(42),
+        },
+    ]
+}
+
+/// Refused, but **not** an isolating mutant and deliberately not presented as
+/// one: moving the read off the root task also moves it out of the read-window
+/// chain, so two clauses catch it. Measured by this card's harness (`R4`
+/// reddened nothing when the single-actor clause alone was removed).
 fn read_by_a_second_actor() -> Vec<ObservedEvent> {
     vec![
         stale_allocation(),
@@ -446,17 +464,30 @@ fn double_release_of_the_fresh_generation() -> Vec<ObservedEvent> {
     ]
 }
 
-/// The transcription agrees on the refusing side too: the eight mutants the
+/// The transcription agrees on the refusing side too: the nine mutants the
 /// Lean module proves refused are refused here, mutant for mutant.
 #[test]
 fn the_procedure_refuses_the_lean_named_mutations() {
     for (name, mutant) in [
         ("overlapping lifetimes", overlapping_lifetimes()),
         ("an escaping stale capability", escaping_stale_capability()),
-        ("a read after the fresh release", read_after_the_fresh_release()),
+        (
+            "a read after the fresh release",
+            read_after_the_fresh_release(),
+        ),
+        (
+            "a result claimed by a second actor",
+            result_claimed_by_a_second_actor(),
+        ),
         ("a read by a second actor", read_by_a_second_actor()),
-        ("a read of the stale generation", read_of_the_stale_generation()),
-        ("a read carrying the old payload", read_carrying_the_old_payload()),
+        (
+            "a read of the stale generation",
+            read_of_the_stale_generation(),
+        ),
+        (
+            "a read carrying the old payload",
+            read_carrying_the_old_payload(),
+        ),
         ("a leaked stale generation", leaked_stale_generation()),
         (
             "a double release of the fresh generation",
@@ -537,8 +568,8 @@ fn the_isolating_mutants_fail_only_their_named_clause() {
         &trace
     ));
 
-    // `a_read_by_a_second_actor_fails_only_the_single_actor_clause`.
-    let trace = read_by_a_second_actor();
+    // `a_result_claimed_by_a_second_actor_fails_only_the_single_actor_clause`.
+    let trace = result_claimed_by_a_second_actor();
     assert_eq!(trace.len(), 6);
     assert_eq!(count(&trace, |event| is_allocation_of(STALE, event)), 1);
     assert_eq!(count(&trace, |event| is_release_of(STALE, event)), 1);
@@ -551,7 +582,44 @@ fn the_isolating_mutants_fail_only_their_named_clause() {
         &[stale_allocation(), stale_release(), fresh_allocation()],
         &trace
     ));
+    assert!(is_sublist(
+        &[fresh_allocation(), fresh_read(), fresh_release()],
+        &trace
+    ));
     assert_ne!(projection(&trace, 0), trace);
+}
+
+/// `a_read_by_a_second_actor_fails_two_clauses`, and the measured redundancy
+/// beside it. Both are findings of this card's mutation harness, published
+/// rather than left to be rediscovered: a read moved off the root task fails
+/// **two** clauses, so it isolates neither; and the payload clause is *implied*
+/// by the read-window chain together with the read count
+/// (`QCore.Ct50LifetimeIdentity.the_payload_clause_is_implied_by_the_read_window_and_the_read_count`),
+/// so no trace can separate them and no mutation of it can redden anything.
+#[test]
+fn the_measured_non_isolating_mutant_and_the_implied_clause_are_stated() {
+    let trace = read_by_a_second_actor();
+    assert_ne!(projection(&trace, 0), trace);
+    assert!(!is_sublist(
+        &[fresh_allocation(), fresh_read(), fresh_release()],
+        &trace
+    ));
+
+    // The implication, checked on every trace this file names: wherever the
+    // read-window chain holds and there is exactly one read, the payload
+    // clause holds too.
+    for trace in [
+        reference_run(),
+        overlapping_lifetimes(),
+        escaping_stale_capability(),
+        result_claimed_by_a_second_actor(),
+    ] {
+        if is_sublist(&[fresh_allocation(), fresh_read(), fresh_release()], &trace)
+            && count(&trace, is_read) == 1
+        {
+            assert_eq!(count(&trace, |event| reads_back(FRESH, 42, event)), 1);
+        }
+    }
 }
 
 /// The two mutants whose refusal the Lean module names as *also* a length
