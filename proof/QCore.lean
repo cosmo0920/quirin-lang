@@ -146,6 +146,7 @@ import QCore.DereferencedResult
 import QCore.PublicationCustody
 import QCore.RefusedWrites
 import QCore.PipeDesugaring
+import QCore.BranchConditionCall
 import QCore.BranchArms
 import QCore.BranchJoin
 import QCore.Connectives
