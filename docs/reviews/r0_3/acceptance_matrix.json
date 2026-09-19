@@ -192,10 +192,10 @@
   "evidence_classes": 4,
   "requirement_evidence_cells": 68,
   "ct_rows": 50,
-  "ct_stage_names": 19,
-  "ct_cells": 950,
+  "ct_stage_names": 20,
+  "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 263
+  "named_followups": 262
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -1032,13 +1032,14 @@
    "docs/reports/ct42-cell-route/ct_stage_evidence.json",
    "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
    "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json",
-   "docs/reports/ct10-source-layout/ct_stage_evidence.json"
+   "docs/reports/ct10-source-layout/ct_stage_evidence.json",
+   "docs/reports/ct41-publication-mapping/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 49,
-   "unmapped": 1
+   "mapped": 50,
+   "unmapped": 0
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1047,6 +1048,9 @@
    "windows"
   ],
   "host_scope": {
+   "atomic_publication_check": [
+    "any"
+   ],
    "c_emission": [
     "linux",
     "macos",
@@ -1115,6 +1119,9 @@
    ]
   },
   "tool_scope": {
+   "atomic_publication_check": [
+    "clang"
+   ],
    "c_emission": [
     "none"
    ],
@@ -1179,84 +1186,89 @@
   ],
   "stage_histogram": {
    "parse": {
-    "executed": 49
+    "executed": 50
    },
    "elaborate": {
     "executed": 46,
-    "not_applicable": 3
+    "not_applicable": 4
    },
    "footprint_lowering": {
     "executed": 1,
-    "not_applicable": 48
+    "not_applicable": 49
    },
    "footprint_check": {
     "executed": 1,
-    "not_applicable": 48
+    "not_applicable": 49
    },
    "task_lowering": {
     "executed": 24,
-    "not_applicable": 25
+    "not_applicable": 26
    },
    "task_ledger_check": {
     "executed": 23,
-    "not_applicable": 26
+    "not_applicable": 27
    },
    "mutex_lowering": {
     "executed": 11,
-    "not_applicable": 38
+    "not_applicable": 39
    },
    "mutex_invariant_check": {
     "executed": 11,
-    "not_applicable": 38
+    "not_applicable": 39
    },
    "epoch_lowering": {
     "executed": 7,
-    "not_applicable": 42
+    "not_applicable": 43
    },
    "epoch_bound_check": {
     "executed": 7,
-    "not_applicable": 42
+    "not_applicable": 43
    },
    "sequential_whole_program": {
     "executed": 2,
-    "not_applicable": 47
+    "not_applicable": 48
    },
    "sequential_reference_execution": {
     "executed": 1,
-    "not_applicable": 48
+    "not_applicable": 49
    },
    "task_reference_execution": {
     "executed": 13,
-    "not_applicable": 36
+    "not_applicable": 37
    },
    "mutex_reference_execution": {
     "executed": 3,
-    "not_applicable": 46
+    "not_applicable": 47
    },
    "c_emission": {
     "executed": 19,
-    "not_applicable": 30
+    "not_applicable": 31
    },
    "native_execution": {
     "executed": 19,
-    "not_applicable": 30
+    "not_applicable": 31
    },
    "native_sanitized": {
     "executed": 10,
-    "not_applicable": 8,
+    "not_applicable": 9,
     "recorded_not_gated": 5,
     "unassessed": 26
    },
    "legacy_c_twin": {
     "executed": 3,
-    "not_applicable": 46
+    "not_applicable": 47
+   },
+   "atomic_publication_check": {
+    "executed": 1,
+    "not_applicable": 49
    },
    "proof": {
     "executed": 5,
-    "unassessed": 44
+    "unassessed": 45
    }
   },
   "depth_profile": {
+   "atomic_publication_check": 1,
    "elaborate": 4,
    "epoch_bound_check": 4,
    "footprint_check": 1,
@@ -1310,6 +1322,7 @@
    "CT38": "epoch_bound_check",
    "CT39": "epoch_bound_check",
    "CT40": "legacy_c_twin",
+   "CT41": "atomic_publication_check",
    "CT42": "sequential_whole_program",
    "CT43": "legacy_c_twin",
    "CT44": "task_ledger_check",
@@ -1321,6 +1334,7 @@
    "CT50": "proof"
   },
   "observation_counts": {
+   "atomic_publication_check": 1,
    "c_emission": 36,
    "elaborate": 46,
    "epoch_bound_check": 7,
@@ -1333,7 +1347,7 @@
    "mutex_reference_execution": 3,
    "native_execution": 51,
    "native_sanitized": 32,
-   "parse": 49,
+   "parse": 50,
    "proof": 5,
    "sequential_reference_execution": 1,
    "sequential_whole_program": 2,
@@ -1443,6 +1457,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "executed",
       "executor": "compiler/tests/ct01_proof_leg.rs::ct01_artifact_is_the_lean_proved_owned_transfer_shape",
@@ -1544,6 +1561,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -1661,6 +1681,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "executed",
       "executor": "compiler/tests/ct03_proof_leg.rs::ct03_artifact_is_the_lean_proved_shared_reads_shape",
@@ -1750,6 +1773,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -1836,6 +1862,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -1914,6 +1943,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -2031,6 +2063,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "executed",
       "executor": "compiler/tests/ct07_proof_leg.rs::ct07_artifact_is_the_lean_proved_disjoint_halves_shape",
@@ -2112,6 +2147,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -2226,6 +2264,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -2312,6 +2353,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -2390,6 +2434,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -2502,6 +2549,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -2610,6 +2660,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -2732,6 +2785,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -2840,6 +2896,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -2951,6 +3010,9 @@
       "record": "docs/reports/w6-worker-allocation/README.md"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -3074,6 +3136,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -3155,6 +3220,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -3241,6 +3309,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -3363,6 +3434,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -3441,6 +3515,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -3557,6 +3634,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -3649,6 +3729,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -3733,6 +3816,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -3847,6 +3933,9 @@
       ]
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -3964,6 +4053,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -4048,6 +4140,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -4145,6 +4240,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -4252,6 +4350,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -4347,6 +4448,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -4453,6 +4557,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -4551,6 +4658,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -4647,6 +4757,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -4789,6 +4902,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -4903,6 +5019,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -5002,6 +5121,9 @@
       "status": "not_applicable"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -5130,6 +5252,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "executed",
       "executor": "compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape",
@@ -5223,6 +5348,9 @@
       "status": "not_applicable"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -5319,6 +5447,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -5413,6 +5544,9 @@
        "clang"
       ]
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -5424,76 +5558,92 @@
    },
    {
     "id": "CT41",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "No synchronization proof",
-    "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
-    "current_bucket_source": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
-    "archived_bucket": "blocked-on-harness-schema (C-twin stage)",
-    "blocker": "as CT40; the gateway plausibly already decides it (typed_source.rs refuses volatile/_Atomic/restrict) but no harness path runs it",
-    "bucket_changed_since_batch2": false,
+    "route": "atomic_publication",
+    "harness_verdict_mode": "no_synchronization_proof",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::atomic_publication::run",
+      "artifact": "compiler/tests/fixtures/ct/CT41/case.c",
+      "observations": 1,
+      "tool_gate": [
+       "clang"
+      ]
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "footprint_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "footprint_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::atomic_publication::run",
+      "artifact": "compiler/tests/fixtures/ct/CT41/case.c",
+      "observations": 1,
+      "tool_gate": [
+       "clang"
+      ]
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null,
-    "blocker_current": "The resource projection has no synchronization model, and the `volatile` invariance is asserted as CORRECT by card CTWIN-PUBLISH section 5 rather than open, so no verdict of this gateway is evidence about a synchronization proof. The obstruction is structural, not a gap: clause (b) of the wave-9 attribution rule needs a control in which removing the named construct moves the verdict, and the decided fact is that removing `volatile` moves nothing. Re-measured here over five shapes, including the scenario's own consumer shape, which is answered SAFE with and without the qualifier. The typed-source arm cannot carry it either: that refusal covers `volatile`, `_Atomic` and `restrict` in one branch with one message, and so cannot express the very distinction the case is about.",
-    "blocker_superseded_by": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
-    "blocker_measured_by": "docs/reports/ct-ctwin-lane/README.md (wave-35 CT lane), re-measured over five shapes plus the typed-source arm; the decision is card CTWIN-PUBLISH section 5, follow-ons CT-CTWIN-SYNC and CT41-TYPED-SOURCE-UNDISCRIMINATING"
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "atomic_publication_check",
+    "stage_evidence_record": "docs/reports/ct41-publication-mapping/ct_stage_evidence.json",
+    "semantic_profile": "c11-bounded-atomic-publication-v1"
    },
    {
     "id": "CT42",
@@ -5567,6 +5717,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -5654,6 +5807,9 @@
       "tool_gate": [
        "clang"
       ]
+     },
+     "atomic_publication_check": {
+      "status": "not_applicable"
      },
      "proof": {
       "status": "unassessed"
@@ -5756,6 +5912,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -5841,6 +6000,9 @@
       "tool_gate": [
        "clang"
       ]
+     },
+     "atomic_publication_check": {
+      "status": "not_applicable"
      },
      "proof": {
       "status": "unassessed"
@@ -5965,6 +6127,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -6051,6 +6216,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -6135,6 +6303,9 @@
       "status": "unassessed"
      },
      "legacy_c_twin": {
+      "status": "not_applicable"
+     },
+     "atomic_publication_check": {
       "status": "not_applicable"
      },
      "proof": {
@@ -6271,6 +6442,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "unassessed"
      }
@@ -6380,6 +6554,9 @@
      "legacy_c_twin": {
       "status": "not_applicable"
      },
+     "atomic_publication_check": {
+      "status": "not_applicable"
+     },
      "proof": {
       "status": "executed",
       "executor": "compiler/tests/ct50_proof_leg.rs::ct50_artifact_is_the_lean_proved_lifetime_identity_shape",
@@ -6401,12 +6578,8 @@
    "cases_with_proof_evidence": 0,
    "cases_stopping_at_source_rejection": 2
   },
-  "unmapped_bucket_counts": {
-   "blocked-on-gateway-expressiveness (C-twin measured)": 1
-  },
-  "unmapped_label_sources": {
-   "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
-  },
+  "unmapped_bucket_counts": {},
+  "unmapped_label_sources": {},
   "newly_decidable_not_mapped": [],
   "newly_decidable_not_mapped_reasons": {
    "_derivation": "derived by docs/reports/remaining-d02/build_matrix.py through scripts/ct_stage_summary.py::newly_decidable_reasons (card GEN-CTREASONS, follow-on D02-GEN-CTREASONS): one row per id in newly_decidable_not_mapped, carrying that case's resolved bucket label and reason — the newest CT lane record that measured it, else card T00's frozen archive — and the record that decided them. A hand edit here is overwritten on the next regeneration, and scripts/ct_stage_summary.py --check refuses a committed row the derivation cannot produce as well as a derived row the file does not carry. The carry-forward step docs/reports/wave16-corpus/readd_ct_reasons.py is retired by this key existing: its own assertion refuses to run once the generator emits it."
@@ -6527,8 +6700,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CT integration rebase standing gate on main 026314c89b7792a4b1b7403983a2d44c66a3cbcb. Previous published head a0584a50e303441ef6fff60d47af82d80bca2d6a; original checkpoint evidence is retained unchanged. Source head 637ef1a3ecdd082c98be13e7edac6490de45e796; Rust/Lean/Cargo source remains unchanged through evidence publication. Actual run /home/cosmo/Documents/GitHub/qcore-c/private/ct-remaining/integration/private/ct-integration/rebase-gate-20260919T101431Z; see gate-facts.json for captured exits and counts. Rust 4808 passed, 0 failed, 10 ignored over 246 result summaries; 235 Running targets and 9 doc-test sections. Python 305 measured before publication; post-regeneration check is recorded separately. Clang was invoked in this measuring worktree. Provider122 is carried Unix evidence, not remeasured; providers and schemas unchanged. All child failed/incomplete runs remain disclosed in their reports. CT49/50 mapped, proof5/49, gated sanitized-native10/49 Linux/macOS; no full conformance or production promotion.",
-  "workspace_tests": 4808,
+  "note": "CT41-PUBLICATION-MAPPING standing gate at source checkpoint a0ca619666a06b1a3a3fb143b2a3935165148f98. Run: /home/cosmo/Documents/GitHub/qcore-c/private/ct-remaining/integration/private/ct41-mapping/gate-20260919T110010Z; captured command exits, timestamps and Cargo environment in gate-facts.json. Rust 4812 passed, 0 failed, 10 ignored across 246 summaries (235 Running targets plus 9 doc-test sections). Clang invoked in this measuring worktree. Python measured before publication and checked again after regeneration. Provider 122 is carried Unix evidence, not remeasured. CT 50/50 mapped, 5/50 case-bound proof, 10/50 gated sanitized-native on Linux/macOS; mapping is not full conformance or production safety. CT41 adds only Clang-gated parsing and publication-check evidence. See README.md for the explicit attribution decision and declared bounds.",
+  "workspace_tests": 4812,
   "provider_tests": 122,
   "python_evidence_validator_tests": 305,
   "lean_audits": 145,
@@ -6685,7 +6858,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/ct-remaining-implementation/rebase-gate/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/ct41-publication-mapping/gate.json)"
  },
  "named_followups": [
   {
@@ -7186,13 +7359,6 @@
    "why": "Measured by the WAVE-34 CLOSE while gating its own change, not by any card. One run of `python3 -m unittest discover -s scripts/tests` reported `Ran 229 tests ... FAILED (failures=1)`. SIX subsequent runs were green - four in isolation and two deliberately concurrent with a second copy of the same suite - so the row is NOT reliably reproducible in either direction. WHICH row failed is UNKNOWN: that run's per-test output was not captured, and the reproduction attempts produced no FAIL line to name. The failing run was the one executed concurrently with another Python process, and the suite does contain at least one timing-based fixture (it prints `Still running stalled fixture: 0.2s / 0.5s`), so a wall-clock row is the leading hypothesis and is explicitly NOT asserted here. The finding is not that a test is broken - every other signal this close measured is green, including the full workspace suite at 4,559 passed / 0 failed and the same Python suite six times - but that AGENTS.md publishes `229 Python` as though it were a property, while constraint 16's five load-sensitive rows are ALL RUST and nothing records a Python one. That is the same shape as VERIFIER-HOST-LARGE-RESPONSE-CONTROL-RED: an observation on one machine presented as a property. DISCHARGE, one of: (a) re-run the suite under controlled concurrent load with per-test output captured (`-v`, or a runner that prints the failing test on failure) until the row is NAMED, then decide whether it joins constraint 16's list or is repaired; (b) a measurement showing the failure was an artifact of this close's environment specifically - the run happened minutes after a full-disk ENOSPC condition cleared and while a large cargo build's artifacts were still settling - which would close this as environmental rather than as a test defect. NOT a discharge: assuming it was a flake because it did not recur, which is the inference this project's own STABILITY-REEVAL cadence exists to refuse. WAVE-39 CLOSE: a row is NAMED for the first time, on the integrator's record rather than a captured log: at the amend of merge 0150c904 (TSAN-ROWS-2) one run of the suite failed test_every_audit_runs_once_with_the_sequential_command (scripts/tests/test_check_lean_audits.py:141) and the re-run was green. The run's per-test output is not in the tree, so this close records the name as reported and measured what the test does: it patches check_lean_audits.run_step and asserts the sorted command list check_audits issues through its ThreadPoolExecutor (scripts/check_lean_audits.py:160) - a concurrency-shaped row, not the wall-clock one the wave-34 hypothesis named. Discharge (a) is half met (a row named once, not reproduced under captured output); whether it joins constraint 16's list or is repaired is still undecided, and the wave-34 caution stands: one green re-run is not a discharge.",
    "source": "docs/reports/wave34-close/README.md",
    "recorded_by": "WAVE-34-CLOSE"
-  },
-  {
-   "id": "CT41-TYPED-SOURCE-UNDISCRIMINATING",
-   "title": "CT41 remains unmapped: bounded atomic publication is available, but the original volatile completion case still lacks attributed case evidence",
-   "why": "The historical typed_source qualifier refusal remains fail-closed and unchanged. CT41-SYNC-MODEL now provides a separate full-AST extractor and verification-layer release/acquire judgment under explicit one-publisher/one-successful-consumer bounds; plain and volatile flags establish no synchronization. This does not map CT41: no case fixture/stage runner satisfies the unchanged attribution rule, and model parity is not case-bound proof. Discharge: supply the original case and a legitimate isolating control through an attributed source route under the existing evidence rules, or explicitly review and record a revised scenario definition. Do not manufacture a plain-versus-volatile synchronization difference or promote the legacy gateway.",
-   "source": "docs/reports/ct41-sync-model/README.md",
-   "recorded_by": "CT-REMAINING-IMPLEMENTATION"
   },
   {
    "id": "CT-FIXTURE-CROSS-CASE-DUPLICATES",

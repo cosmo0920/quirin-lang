@@ -10,14 +10,14 @@ numbers from those sources, not from an older summary. History belongs in the
 | Measure | Recorded value | Source |
 |---|---|---|
 | Full language conformance | **false** | [Acceptance](reviews/r0_3/acceptance.json) |
-| CT cases mapped | **49/50**; CT41 unmapped | [Manifest](reevaluation/ct_manifest.json) |
-| CT case-bound proof | **5/49**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
-| CT gated sanitized-native | **10/49, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
+| CT cases mapped | **50/50**; none unmapped | [Manifest](reevaluation/ct_manifest.json) |
+| CT case-bound proof | **5/50**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
+| CT gated sanitized-native | **10/50, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
 | Cycle 19 units | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only**, 185 total | [Corpus baseline](reports/w37-corpus-contracts-4/README.md) |
 | Projected functions | **213 Safe / 84 provisional Unsafe / 4,537 Unknown**, 4,834 total | Same baseline |
 | Corpus diagnostics | leak **272**; unknown_alias **4,309**; double_release **0**; unsupported **49,753**; summary_conflict **1** | Same baseline, `artifacts/diagnostics.json.gz` |
 | Contract corpus | **88** modules; **59** resource-v1 declarations; **33** manifest-selected | `contract/qcore/`, [selection](../contract/cycle19-resource-contracts.json) and pinned tests |
-| Registered follow-ups | **263** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **262** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -60,11 +60,11 @@ separately.
 
 ## Last integrated gate
 
-The [CT rebase gate](reports/ct-remaining-implementation/rebase-gate/gate.json) records
-**4,808 Rust passed, 0 failed, 10 ignored; 246 result summaries over 244 targets;
+The [CT41 mapping gate](reports/ct41-publication-mapping/gate.json) records
+**4,812 Rust passed, 0 failed, 10 ignored; 246 result summaries over 244 targets;
 145 Lean audits; 305 Python tests**, clean fmt/clippy and both probes exit 0.
 Clang 21.1.8 was recorded in the measuring worktree. **122 provider tests are
-carried Unix evidence, not re-measured.** [Run identity and private logs](reports/ct-remaining-implementation/README.md#rebase-onto-main)
+carried Unix evidence, not re-measured.** [Run identity and private logs](reports/ct41-publication-mapping/README.md#validation)
 bind these measurements to the checked source; they are not promises about
 another host or a later tree.
 

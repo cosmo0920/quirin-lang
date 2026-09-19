@@ -3,8 +3,8 @@
   "spec_revision": "0.3",
   "integration_base_revision": "ea0e54e162a2ea16c9fc2332b9e01f8e0c3bc4a3",
   "full_conformance": false,
-  "ct_mapped": 49,
-  "ct_unmapped": 1,
+  "ct_mapped": 50,
+  "ct_unmapped": 0,
   "findings": [
     {
       "id": "R01",
@@ -280,89 +280,95 @@
       "docs/reports/ct42-cell-route/ct_stage_evidence.json",
       "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
       "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json",
-      "docs/reports/ct10-source-layout/ct_stage_evidence.json"
+      "docs/reports/ct10-source-layout/ct_stage_evidence.json",
+      "docs/reports/ct41-publication-mapping/ct_stage_evidence.json"
     ],
     "reporting_host": "linux",
     "stage_histogram": {
       "parse": {
-        "executed": 49
+        "executed": 50
       },
       "elaborate": {
         "executed": 46,
-        "not_applicable": 3
+        "not_applicable": 4
       },
       "footprint_lowering": {
         "executed": 1,
-        "not_applicable": 48
+        "not_applicable": 49
       },
       "footprint_check": {
         "executed": 1,
-        "not_applicable": 48
+        "not_applicable": 49
       },
       "task_lowering": {
         "executed": 24,
-        "not_applicable": 25
+        "not_applicable": 26
       },
       "task_ledger_check": {
         "executed": 23,
-        "not_applicable": 26
+        "not_applicable": 27
       },
       "mutex_lowering": {
         "executed": 11,
-        "not_applicable": 38
+        "not_applicable": 39
       },
       "mutex_invariant_check": {
         "executed": 11,
-        "not_applicable": 38
+        "not_applicable": 39
       },
       "epoch_lowering": {
         "executed": 7,
-        "not_applicable": 42
+        "not_applicable": 43
       },
       "epoch_bound_check": {
         "executed": 7,
-        "not_applicable": 42
+        "not_applicable": 43
       },
       "sequential_whole_program": {
         "executed": 2,
-        "not_applicable": 47
+        "not_applicable": 48
       },
       "sequential_reference_execution": {
         "executed": 1,
-        "not_applicable": 48
+        "not_applicable": 49
       },
       "task_reference_execution": {
         "executed": 13,
-        "not_applicable": 36
+        "not_applicable": 37
       },
       "mutex_reference_execution": {
         "executed": 3,
-        "not_applicable": 46
+        "not_applicable": 47
       },
       "c_emission": {
         "executed": 19,
-        "not_applicable": 30
+        "not_applicable": 31
       },
       "native_execution": {
         "executed": 19,
-        "not_applicable": 30
+        "not_applicable": 31
       },
       "native_sanitized": {
         "executed": 10,
-        "not_applicable": 8,
+        "not_applicable": 9,
         "recorded_not_gated": 5,
         "unassessed": 26
       },
       "legacy_c_twin": {
         "executed": 3,
-        "not_applicable": 46
+        "not_applicable": 47
+      },
+      "atomic_publication_check": {
+        "executed": 1,
+        "not_applicable": 49
       },
       "proof": {
         "executed": 5,
-        "unassessed": 44
+        "unassessed": 45
       }
     },
     "depth_profile": {
+      "atomic_publication_check": 1,
       "elaborate": 4,
       "epoch_bound_check": 4,
       "footprint_check": 1,
@@ -376,6 +382,7 @@
       "task_lowering": 1
     },
     "observation_counts": {
+      "atomic_publication_check": 1,
       "c_emission": 36,
       "elaborate": 46,
       "epoch_bound_check": 7,
@@ -388,7 +395,7 @@
       "mutex_reference_execution": 3,
       "native_execution": 51,
       "native_sanitized": 32,
-      "parse": 49,
+      "parse": 50,
       "proof": 5,
       "sequential_reference_execution": 1,
       "sequential_whole_program": 2,
@@ -396,9 +403,7 @@
       "task_lowering": 24,
       "task_reference_execution": 29
     },
-    "unmapped_bucket_counts": {
-      "blocked-on-gateway-expressiveness (C-twin measured)": 1
-    },
+    "unmapped_bucket_counts": {},
     "newly_decidable_not_mapped": [],
     "cause": "docs/reports/remaining-t00/README.md, docs/reports/remaining-t03-ct-integration/README.md, docs/reports/remaining-wave3-ct-integration/README.md, docs/reports/wave5-ct-integration/README.md, docs/reports/wave8-epoch-ct/README.md, docs/reports/wave9-ctwin/README.md, docs/reports/wave11-ct33/README.md, docs/reports/wave13-ct34/README.md, docs/reports/remaining-ct34-sanitized/README.md, docs/reports/wave17-ct40/README.md",
     "newly_decidable_not_mapped_reasons": {},
@@ -415,6 +420,9 @@
       "unmapped_label_sources"
     ],
     "host_scope": {
+      "atomic_publication_check": [
+        "any"
+      ],
       "c_emission": [
         "linux",
         "macos",
@@ -523,6 +531,7 @@
       "CT38": "epoch_bound_check",
       "CT39": "epoch_bound_check",
       "CT40": "legacy_c_twin",
+      "CT41": "atomic_publication_check",
       "CT42": "sequential_whole_program",
       "CT43": "legacy_c_twin",
       "CT44": "task_ledger_check",
@@ -546,6 +555,9 @@
       "cause"
     ],
     "tool_scope": {
+      "atomic_publication_check": [
+        "clang"
+      ],
       "c_emission": [
         "none"
       ],
@@ -605,9 +617,7 @@
         "none"
       ]
     },
-    "unmapped_label_sources": {
-      "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
-    }
+    "unmapped_label_sources": {}
   },
   "unverified_specs_disposition": {
     "authority_note": "These are the supplied revision-0.3 inputs. They are DECLARED INPUTS, not implementation authority: an item's disposition records what this repository adopted, not what it implements. Implementation status is carried by the requirement rows above and by docs/reviews/r0_3/acceptance.json.",

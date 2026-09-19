@@ -64,6 +64,7 @@ STAGE_DEPTH = {
     "mutex_reference_execution": 4,
     "sequential_reference_execution": 4,
     "legacy_c_twin": 4,
+    "atomic_publication_check": 4,
     "c_emission": 5,
     "native_execution": 6,
     "native_sanitized": 7,
@@ -167,6 +168,7 @@ EVIDENCE_FILES = [
     # Its stages name footprint lowering/check rather than the scoped-task
     # ledger, which this route deliberately does not execute.
     "docs/reports/ct10-source-layout/ct_stage_evidence.json",
+    "docs/reports/ct41-publication-mapping/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"

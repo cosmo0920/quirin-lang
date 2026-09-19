@@ -21,6 +21,7 @@
       "native_execution",
       "native_sanitized",
       "legacy_c_twin",
+      "atomic_publication_check",
       "proof"
     ],
     "statuses": [
@@ -30,6 +31,18 @@
       "unassessed"
     ],
     "routes": {
+      "atomic_publication": [
+        "parse",
+        "atomic_publication_check",
+        "proof"
+      ],
+      "bitfield_concurrency": [
+        "parse",
+        "elaborate",
+        "footprint_lowering",
+        "footprint_check",
+        "proof"
+      ],
       "composed_epoch": [
         "parse",
         "elaborate",
@@ -84,13 +97,6 @@
         "c_emission",
         "native_execution",
         "native_sanitized",
-        "proof"
-      ],
-      "bitfield_concurrency": [
-        "parse",
-        "elaborate",
-        "footprint_lowering",
-        "footprint_check",
         "proof"
       ]
     }
@@ -202,6 +208,9 @@
           "executor": "compiler/tests/ct01_proof_leg.rs::ct01_artifact_is_the_lean_proved_owned_transfer_shape",
           "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
           "observations": 1
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -285,6 +294,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       }
     },
@@ -399,6 +411,9 @@
           "executor": "compiler/tests/ct03_proof_leg.rs::ct03_artifact_is_the_lean_proved_shared_reads_shape",
           "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
           "observations": 1
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -482,6 +497,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -565,6 +583,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -641,6 +662,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "harness_verdict_mode": "reject"
@@ -755,6 +779,9 @@
           "executor": "compiler/tests/ct07_proof_leg.rs::ct07_artifact_is_the_lean_proved_disjoint_halves_shape",
           "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
           "observations": 1
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux",
@@ -832,6 +859,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "harness_verdict_mode": "reject"
@@ -940,6 +970,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux",
@@ -1023,6 +1056,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "harness_verdict_mode": "bitfield_reject"
@@ -1099,6 +1135,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "harness_verdict_mode": "reject"
@@ -1206,6 +1245,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -1313,6 +1355,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -1421,6 +1466,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -1528,6 +1576,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -1636,6 +1687,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -1748,6 +1802,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -1828,6 +1885,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -1911,6 +1971,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       }
     },
@@ -2018,6 +2081,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -2094,6 +2160,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "harness_verdict_mode": "reject"
@@ -2204,6 +2273,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux",
@@ -2293,6 +2365,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux",
@@ -2376,6 +2451,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux",
@@ -2487,6 +2565,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux",
@@ -2600,6 +2681,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -2683,6 +2767,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -2766,6 +2853,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -2849,6 +2939,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -2932,6 +3025,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -3015,6 +3111,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -3098,6 +3197,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -3181,6 +3283,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -3293,6 +3398,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -3376,6 +3484,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       }
     },
@@ -3458,6 +3569,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       }
     },
@@ -3568,6 +3682,9 @@
           "executor": "compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape",
           "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
           "observations": 1
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -3651,6 +3768,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       }
     },
@@ -3733,6 +3853,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       }
     },
@@ -3815,6 +3938,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       }
     },
@@ -3823,69 +3949,85 @@
       "scenario": "`volatile` used as a completion flag",
       "expected": "No synchronization proof",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "route": null,
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "route": "atomic_publication",
+      "source_fixture": "compiler/tests/fixtures/ct/CT41/case.c",
+      "semantic_profile": "c11-bounded-atomic-publication-v1",
       "stages": {
         "parse": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::atomic_publication::run",
+          "artifact": "compiler/tests/fixtures/ct/CT41/case.c",
+          "observations": 1,
+          "tool_gate": [
+            "clang"
+          ]
         },
         "elaborate": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "footprint_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "footprint_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "task_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "task_ledger_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_invariant_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "epoch_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "epoch_bound_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "sequential_whole_program": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "sequential_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "task_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "c_emission": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "native_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "native_sanitized": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "legacy_c_twin": {
-          "status": "unassessed"
+          "status": "not_applicable"
+        },
+        "atomic_publication_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::atomic_publication::run",
+          "artifact": "compiler/tests/fixtures/ct/CT41/case.c",
+          "observations": 1,
+          "tool_gate": [
+            "clang"
+          ]
         },
         "proof": {
           "status": "unassessed"
         }
-      }
+      },
+      "harness_verdict_mode": "no_synchronization_proof"
     },
     {
       "id": "CT42",
@@ -3962,6 +4104,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "harness_verdict_mode": "reject"
@@ -4045,6 +4190,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       }
     },
@@ -4126,6 +4274,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "harness_verdict_mode": "reject",
@@ -4210,6 +4361,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       }
     },
@@ -4321,6 +4475,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -4403,6 +4560,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "harness_verdict_mode": "reject",
@@ -4487,6 +4647,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"
@@ -4598,6 +4761,9 @@
         },
         "proof": {
           "status": "unassessed"
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "harness_verdict_mode": "reordering_partial_order",
@@ -4708,6 +4874,9 @@
           "executor": "compiler/tests/ct50_proof_leg.rs::ct50_artifact_is_the_lean_proved_lifetime_identity_shape",
           "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
           "observations": 1
+        },
+        "atomic_publication_check": {
+          "status": "not_applicable"
         }
       },
       "evidence_target": "linux"

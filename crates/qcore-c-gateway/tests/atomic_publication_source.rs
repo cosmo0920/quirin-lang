@@ -206,7 +206,7 @@ fn volatile_and_plain_flags_establish_no_synchronization() {
 static int done = 0;
 static int payload;
 void publish(void) { payload = 7; done = 1; }
-int consume(void) { if (done != 1) return 0; return payload; }
+int consume(void) { int seen = done; if (seen != 1) return 0; return payload; }
 "#;
     assert_eq!(
         check(ordinary),
@@ -348,4 +348,70 @@ fn invocation_counts_are_explicit_bounded_execution_premises() {
         result,
         Err(AtomicPublicationSourceRefusal::UnsupportedExecutionBounds)
     );
+}
+
+#[test]
+fn non_atomic_refusal_requires_the_actual_closed_publication_shape() {
+    if !clang_available() {
+        return;
+    }
+    let source = include_str!("../../../compiler/tests/fixtures/ct/CT41/case.c");
+    assert_eq!(
+        check(source),
+        Err(AtomicPublicationSourceRefusal::VolatileFlagHasNoSynchronization)
+    );
+    let bypass = source.replace("if (seen != 1) return 0;", "(void) seen;");
+    assert_eq!(
+        check(&bypass),
+        Err(AtomicPublicationSourceRefusal::UnsupportedConsumer)
+    );
+    let reversed = source.replace("payload = 7;\n    done = 1;", "done = 1;\n    payload = 7;");
+    assert_eq!(
+        check(&reversed),
+        Err(AtomicPublicationSourceRefusal::UnsupportedPublisher)
+    );
+    let extra_writer = format!("{source}\nvoid extra(void) {{ done = 2; }}\n");
+    assert_eq!(
+        check(&extra_writer),
+        Err(AtomicPublicationSourceRefusal::ExtraFlagAccess)
+    );
+    let extra_reader = format!("{source}\nint extra(void) {{ return payload; }}\n");
+    assert_eq!(
+        check(&extra_reader),
+        Err(AtomicPublicationSourceRefusal::ExtraPayloadAccess)
+    );
+    let repeated = format!("{source}\nvoid extra(void) {{ publish(); }}\n");
+    assert_eq!(
+        check(&repeated),
+        Err(AtomicPublicationSourceRefusal::ExtraEntryCall)
+    );
+}
+
+#[test]
+fn memory_order_enum_values_are_semantic_not_name_only() {
+    if !clang_available() {
+        return;
+    }
+    let declarations = "typedef enum memory_order { memory_order_relaxed = 0, memory_order_acquire = 2, memory_order_release = 3, memory_order_seq_cst = 5 } memory_order;";
+    let direct = SOURCE
+        .replace("#include <stdatomic.h>", declarations)
+        .replace("atomic_store_explicit", "__c11_atomic_store")
+        .replace("atomic_load_explicit", "__c11_atomic_load");
+    assert_eq!(
+        check(&direct).unwrap().store_order,
+        AtomicPublicationOrder::Release
+    );
+    for (from, to) in [
+        ("memory_order_release = 3", "memory_order_release = 0"),
+        ("memory_order_acquire = 2", "memory_order_acquire = 0"),
+        ("memory_order_seq_cst = 5", "memory_order_seq_cst = 0"),
+        ("memory_order_release = 3", "memory_order_release = 2"),
+        ("memory_order_acquire = 2", "memory_order_acquire = 3"),
+    ] {
+        assert_eq!(
+            check(&direct.replace(from, to)),
+            Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder),
+            "{to}"
+        );
+    }
 }

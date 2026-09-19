@@ -6,6 +6,19 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`CT41-PUBLICATION-MAPPING` (2026-09-19).** CT41's original volatile
+completion case now executes through the bounded C publication route: volatile
+and plain refuse, release/acquire checks, and either relaxed arm refuses.
+The explicit protocol-replacement attribution decision preserves qualifier
+invariance. Source-shape checks precede attribution; Lean proves the missing
+payload ordering path for non-atomic flags. Evaluated enum values now prevent
+misleading names from conferring release/acquire ordering. **50/50 mapped**, **5/50 case-bound
+proof**, **10/50 gated sanitized-native** on Linux/macOS; mapping is not full
+conformance or production safety. The CT41 blocker retires: **263 → 262**
+follow-ups. Standing gate: **4,812 Rust passed / 0 failed / 10 ignored;
+145 Lean audits; 305 Python tests**, all required exits 0.
+[Decision, bounds and measured evidence](../../reports/ct41-publication-mapping/README.md).
+
 **`CT-INTEGRATION-REBASE` (2026-09-19).** Rebased the published CT branch onto
 main `026314c8`, preserving reviewed CT conflict resolutions and main’s TSAN
 evidence. Code, fixtures, scripts and Lean proofs are unchanged from `a0584a50`;

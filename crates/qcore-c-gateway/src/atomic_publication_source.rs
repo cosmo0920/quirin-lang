@@ -121,15 +121,14 @@ pub fn extract_atomic_publication_source(
 
     let flag_type =
         type_spelling(flag).ok_or(AtomicPublicationSourceRefusal::UnsupportedAtomicFlag)?;
-    if flag_type == "int" {
-        return Err(AtomicPublicationSourceRefusal::PlainFlagHasNoSynchronization);
-    }
-    if flag_type.contains("volatile") && !flag_type.contains("_Atomic") {
-        return Err(AtomicPublicationSourceRefusal::VolatileFlagHasNoSynchronization);
-    }
-    if flag_type != "_Atomic(int)" {
-        return Err(AtomicPublicationSourceRefusal::UnsupportedAtomicFlag);
-    }
+    // Qualifier refusals are attributed only after checking the full bounded
+    // publication shape and access inventory, never from the declaration alone.
+    let non_atomic_refusal = match flag_type {
+        "int" => Some(AtomicPublicationSourceRefusal::PlainFlagHasNoSynchronization),
+        "volatile int" => Some(AtomicPublicationSourceRefusal::VolatileFlagHasNoSynchronization),
+        "_Atomic(int)" => None,
+        _ => return Err(AtomicPublicationSourceRefusal::UnsupportedAtomicFlag),
+    };
     if flag["storageClass"].as_str() != Some("static") {
         return Err(AtomicPublicationSourceRefusal::FlagMustBeStatic);
     }
@@ -152,15 +151,21 @@ pub fn extract_atomic_publication_source(
     let payload_id =
         node_id(payload).ok_or(AtomicPublicationSourceRefusal::PayloadMustBeStaticInt)?;
 
-    let memory_orders = canonical_memory_orders(&ast)?;
+    let atomic = non_atomic_refusal.is_none();
+    let memory_orders = if atomic {
+        canonical_memory_orders(&ast)?
+    } else {
+        BTreeMap::new()
+    };
     let (published_value, store_order) =
-        match_publisher(publisher, flag_id, payload_id, &memory_orders)?;
+        match_publisher(publisher, flag_id, payload_id, &memory_orders, atomic)?;
     let load_order = match_consumer(
         consumer,
         flag_id,
         payload_id,
         published_value,
         &memory_orders,
+        atomic,
     )?;
     let publisher_id =
         node_id(publisher).ok_or(AtomicPublicationSourceRefusal::UnsupportedPublisher)?;
@@ -195,6 +200,10 @@ pub fn extract_atomic_publication_source(
     count_references(&ast, consumer_id, &mut consumer_references);
     if publisher_references != 0 || consumer_references != 0 {
         return Err(AtomicPublicationSourceRefusal::ExtraEntryCall);
+    }
+
+    if let Some(refusal) = non_atomic_refusal {
+        return Err(refusal);
     }
 
     Ok(AtomicPublicationSourceCertificate {
@@ -394,11 +403,32 @@ fn canonical_memory_orders(
     let [memory_order] = enums.as_slice() else {
         return Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder);
     };
-    let orders = children(memory_order)
-        .iter()
-        .filter(|node| kind(node) == "EnumConstantDecl")
-        .filter_map(|node| Some((node["name"].as_str()?.into(), node_id(node)?.into())))
-        .collect::<BTreeMap<_, _>>();
+    // AtomicExpr executes Clang's numeric builtin order, not the spelling of
+    // an enum member. A user-defined `memory_order_release = 0` is relaxed.
+    // Require evaluated int constants for the four orders this route models.
+    let mut orders = BTreeMap::new();
+    for (name, expected_value) in [
+        ("memory_order_relaxed", "0"),
+        ("memory_order_acquire", "2"),
+        ("memory_order_release", "3"),
+        ("memory_order_seq_cst", "5"),
+    ] {
+        let member = children(memory_order)
+            .iter()
+            .find(|node| kind(node) == "EnumConstantDecl" && node["name"].as_str() == Some(name))
+            .ok_or(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder)?;
+        let [value] = children(member) else {
+            return Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder);
+        };
+        if kind(value) != "ConstantExpr"
+            || type_spelling(value) != Some("int")
+            || value["value"].as_str() != Some(expected_value)
+        {
+            return Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder);
+        }
+        let id = node_id(member).ok_or(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder)?;
+        orders.insert(name.to_owned(), id.to_owned());
+    }
     Ok(orders)
 }
 
@@ -427,6 +457,7 @@ fn match_publisher(
     flag: &str,
     payload: &str,
     orders: &BTreeMap<String, String>,
+    atomic: bool,
 ) -> Result<(i64, AtomicPublicationOrder), AtomicPublicationSourceRefusal> {
     let body =
         function_body(function).ok_or(AtomicPublicationSourceRefusal::UnsupportedPublisher)?;
@@ -442,6 +473,21 @@ fn match_publisher(
         || integer(payload_value).is_none()
     {
         return Err(AtomicPublicationSourceRefusal::UnsupportedPublisher);
+    }
+    if !atomic {
+        let [destination, value] = children(flag_store) else {
+            return Err(AtomicPublicationSourceRefusal::UnsupportedPublisher);
+        };
+        if kind(flag_store) != "BinaryOperator"
+            || flag_store["opcode"].as_str() != Some("=")
+            || !reference_is(destination, flag)
+        {
+            return Err(AtomicPublicationSourceRefusal::UnsupportedPublisher);
+        }
+        let value = integer(value).ok_or(AtomicPublicationSourceRefusal::UnsupportedPublisher)?;
+        // This placeholder never leaves extraction: the non-atomic arm refuses
+        // after the common inventory checks, before constructing a certificate.
+        return Ok((value, AtomicPublicationOrder::Relaxed));
     }
     let [address, ordering, value] = children(flag_store) else {
         return Err(AtomicPublicationSourceRefusal::UnsupportedPublisher);
@@ -462,6 +508,7 @@ fn match_consumer(
     payload: &str,
     published: i64,
     orders: &BTreeMap<String, String>,
+    atomic: bool,
 ) -> Result<AtomicPublicationOrder, AtomicPublicationSourceRefusal> {
     let body =
         function_body(function).ok_or(AtomicPublicationSourceRefusal::UnsupportedConsumer)?;
@@ -475,18 +522,29 @@ fn match_consumer(
     let [load] = children(seen_decl) else {
         return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
     };
-    let [address, ordering] = children(load) else {
-        return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
-    };
     if kind(load_statement) != "DeclStmt"
         || kind(seen_decl) != "VarDecl"
         || type_spelling(seen_decl) != Some("int")
-        || kind(load) != "AtomicExpr"
-        || load["name"].as_str() != Some("__c11_atomic_load")
-        || !address_of(address, flag)
     {
         return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
     }
+    let load_order = if atomic {
+        let [address, ordering] = children(load) else {
+            return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
+        };
+        if kind(load) != "AtomicExpr"
+            || load["name"].as_str() != Some("__c11_atomic_load")
+            || !address_of(address, flag)
+        {
+            return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
+        }
+        order(ordering, orders)?
+    } else {
+        if !reference_is(load, flag) {
+            return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
+        }
+        AtomicPublicationOrder::Relaxed
+    };
     let [condition, rejected_return] = children(gate) else {
         return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
     };
@@ -505,7 +563,7 @@ fn match_consumer(
     {
         return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
     }
-    order(ordering, orders)
+    Ok(load_order)
 }
 
 fn count_references(node: &Value, id: &str, count: &mut usize) {
