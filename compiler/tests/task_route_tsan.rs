@@ -730,13 +730,15 @@ fn removing_the_join_edge_is_reported_under_every_schedule() {
             // Wave 39's own cell at wave 39's own trigger. This mutation keeps
             // the *gate-opening* stand-in, so the join trigger is exactly what
             // it was; card `TSAN-FAILURE-ARMS` measured that adding the cohort
-            // trigger here changes what ThreadSanitizer reports on
-            // `shared_readers` — the workers run and finish before the
-            // parent's post-join write, and the report becomes a thread leak
-            // rather than a data race (`TSAN-COHORT-TRIGGER-SHADOW-ORDER`,
-            // measured at 0/20 in the card's own table). So the committed row
-            // stays at wave 39's trigger and the other cohort is measured
-            // beside it rather than asserted.
+            // trigger **here** costs catches — the workers then run and finish
+            // long before the parent's post-join access, and what TSan reports
+            // becomes a thread leak rather than a data race: 0 of 20 on both
+            // subjects under `forced-together`, 18 of 20 on `shared_readers`
+            // under `forced-reverse` (`TSAN-COHORT-TRIGGER-CATCH-COST`,
+            // `artifacts/catch-rates.json`). So this row stays at wave 39's
+            // trigger and the other cohort is measured beside it rather than
+            // asserted — the second trigger is an addition for the arms that
+            // need it, not a replacement.
             let run = Row {
                 tag: &format!("unjoined-{name}"),
                 source: &unjoined,
