@@ -255,7 +255,10 @@ fn the_depth_contribution_is_empty_for_every_event() {
     ];
     for (label, event) in &quiet {
         let (shallow, contributed) = view_window_names(event);
-        assert!(shallow.is_empty(), "{label}: names no view at its own level");
+        assert!(
+            shallow.is_empty(),
+            "{label}: names no view at its own level"
+        );
         assert!(
             contributed.is_empty(),
             "{label}: the depth recursion contributes nothing — this is \

@@ -1175,10 +1175,7 @@ enum WindowName<'a> {
     /// window that forgot a use — the shortening, and therefore admitting,
     /// direction. It is refused by [`window_unnameable_events`] rather than
     /// dropped.
-    FieldPath {
-        record: &'a str,
-        field: &'a str,
-    },
+    FieldPath { record: &'a str, field: &'a str },
 }
 
 /// Every buffer or loan name one event names at a custody or access position,
