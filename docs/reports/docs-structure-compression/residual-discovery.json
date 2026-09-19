@@ -1,0 +1,10 @@
+{
+  "source_commit": "463fa6e8d0c44c23e402dd78bdc146963f0244ca",
+  "before_candidates": 49,
+  "after_candidates": 50,
+  "lost": [],
+  "additional": [
+    "DOCS-STRUCTURE-COMPRESSION"
+  ],
+  "note": "Candidates are not classifications. The new increment's own card name is an expected additional candidate, not an unresolved finding."
+}

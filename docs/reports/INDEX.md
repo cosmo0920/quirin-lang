@@ -1,0 +1,888 @@
+# Report lookup index
+
+[Documentation hub](../README.md) · [Wave history](../development/increments/README.md)
+
+Generated directory/title lookup, **not a status ledger**. Search an exact
+card id here; read its report for evidence and the acceptance matrix's
+`named_followups` for registered open work. Frozen reports are not rewritten.
+
+Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
+
+## A
+
+| Card directory | Original report title |
+|---|---|
+
+| [aggregate-owned-field](aggregate-owned-field/README.md) | `AGGREGATE-OWNED-FIELD` (wave 39) — an owned buffer inside a record: the IR first, then the route |
+
+| [aggregates-v1](aggregates-v1/README.md) | AGGREGATES-V1 — the first source-level aggregate type (wave 27) |
+
+| [aom-binding-poison](aom-binding-poison/README.md) | AOM-BINDING-POISON — a refused statement stops destroying what it cannot write — 2026-09-12 |
+
+| [aom-destroy-siblings](aom-destroy-siblings/README.md) | AOM-DESTROY-SIBLINGS — the two undeclared sibling destructors, decided differently — 2026-09-11 |
+
+## B
+
+| Card directory | Original report title |
+|---|---|
+
+| [base-type-reader-census](base-type-reader-census/README.md) | BASE-TYPE-READER-CENSUS — the reader beneath the member reader, measured |
+
+## C
+
+| Card directory | Original report title |
+|---|---|
+
+| [c-emit-main-unify](c-emit-main-unify/README.md) | C-EMIT-MAIN-UNIFY — one injected entry point, and a modular emission architecture |
+
+| [c-gateway-constant-do-while](c-gateway-constant-do-while/README.md) | C-GATEWAY-CONSTANT-DO-WHILE — the constant `do … while (0)` exit |
+
+| [c-gateway-indirect-census-2](c-gateway-indirect-census-2/README.md) | C-GATEWAY-INDIRECT-CENSUS-2 — the indirect-access refusal family, measured from the analyzer's own projection |
+
+| [c-gateway-return-call-w4](c-gateway-return-call-w4/README.md) | C-GATEWAY-RETURN-CALL-W4 — the modeled call in `return` position |
+
+| [c-gateway-return-position](c-gateway-return-position/README.md) | C-GATEWAY-RETURN-POSITION — a pointer-valued chain leaf in a `return` |
+
+| [c-gateway-wave](c-gateway-wave/README.md) | C gateway refinements after the worktree sweep |
+
+| [card-scope-guard](card-scope-guard/README.md) | `CARD-SCOPE-GUARD` — a mechanism that makes a delegated card unable to advance `main` |
+
+| [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
+
+| [core-concurrency-prelude](core-concurrency-prelude/README.md) | Core concurrency prelude — 2026-09-08 |
+
+| [corpus-repin](corpus-repin/README.md) | CORPUS-REPIN — re-measurement and deliberate re-pin of the four 185-unit artifacts |
+
+| [ct-composed-native](ct-composed-native/README.md) | Wave-32 CT lane — the composed-epoch native runner (CT-COMPOSED-NATIVE) |
+
+| [ct-ctwin-lane](ct-ctwin-lane/README.md) | `CT-CTWIN-LANE` — wave 35's CT mapping lane |
+
+| [ct-lane-5](ct-lane-5/README.md) | `CT-LANE-5` — wave 37's CT mapping lane |
+
+| [ct-proof-leg-2](ct-proof-leg-2/README.md) | CT37 proof leg — the second executed proof row's capability, on the CT01 precedent (CT-PROOF-LEG-2) |
+
+| [ct-wire-lane](ct-wire-lane/README.md) | Wave-26 CT lane — what the current tree can actually wire |
+
+| [ct-wire-lane-2](ct-wire-lane-2/README.md) | Wave-28 CT lane — mapping the wave-27 capabilities (CT-WIRE-LANE-2) |
+
+| [ct-wire-lane-3](ct-wire-lane-3/README.md) | Wave-31 CT lane — CT25 mapped, CT24 withdrawn with the measurement (CT-WIRE-LANE-3) |
+
+| [ct-wire-lane-4](ct-wire-lane-4/README.md) | Wave-32 CT lane — CT44 and CT47 mapped, each with its one inexpressible word published (CT-WIRE-LANE-4) |
+
+| [ct01-proof-leg](ct01-proof-leg/README.md) | CT01 proof leg — the first proof-stage capability for a mapped CT case (CT01-PROOF-LEG) |
+
+| [ct03-proof-alphabet](ct03-proof-alphabet/README.md) | CT03 proof leg — the third executed-proof capability, and the F02 alphabet grown by the Buffer write (CT03-PROOF-ALPHABET) |
+
+| [ct07-slice-permissions](ct07-slice-permissions/README.md) | CT07-SLICE-PERMISSIONS — lending a range, and the blocker that was about a different operation (wave 27) |
+
+| [ct07-two-thread-proof-leg](ct07-two-thread-proof-leg/README.md) | `CT07-TWO-THREAD-PROOF-LEG` (wave 39) — bind CT07's disjointness theorem to its artifact through the ledger |
+
+| [ct07-write-remap](ct07-write-remap/README.md) | CT07-WRITE-REMAP — CT07's evidence upgraded to the two-write-authorities scenario (wave 30) |
+
+| [ct22-wire](ct22-wire/README.md) | Wave-29 CT lane — mapping CT22 (CT22-WIRE) |
+
+| [ct23-credit-error-path](ct23-credit-error-path/README.md) | CT23-CREDIT-ERROR-PATH — an error path over the flat epoch's credits |
+
+| [ct24-cleanup-preempted](ct24-cleanup-preempted/README.md) | CT24-CLEANUP-PREEMPTED — the preempting refusal carries the exit rule's own judgment |
+
+| [ct42-cell-route](ct42-cell-route/README.md) | CT42-CELL-ROUTE (wave 39) — route the socket protocol cell from source, and map CT42 |
+
+| [ct42-protocol-cell](ct42-protocol-cell/README.md) | CT42-PROTOCOL-CELL — the shared protocol cell, surveyed, and its derivation landed for the socket route (wave 31) |
+
+| [ct47-copy-capture](ct47-copy-capture/README.md) | CT47-COPY-CAPTURE — the boundary refuses by the judgment, not the backend |
+
+| [cycle19-callback-binding](cycle19-callback-binding/README.md) | Cycle 19D: native callback binding and Lean models |
+
+| [cycle19-callback-source](cycle19-callback-source/README.md) | Cycle 19: source-derived Monkey callback access paths |
+
+| [cycle19-chunk-helper](cycle19-chunk-helper/README.md) | Cycle 19: source-validated ChunkIO frame helper |
+
+| [cycle19-cleanup-frames](cycle19-cleanup-frames/README.md) | Cycle 19: explicit cleanup storage separation |
+
+| [cycle19-cleanup-observations](cycle19-cleanup-observations/README.md) | Cycle 19: controlled native cleanup executions |
+
+| [cycle19-constructor-failures](cycle19-constructor-failures/README.md) | Cycle 19: native constructor allocation failures |
+
+| [cycle19-contract-extraction](cycle19-contract-extraction/README.md) | Cycle 19: extracted source and wrapper contracts |
+
+| [cycle19-contract-loader](cycle19-contract-loader/README.md) | Cycle 19: declarative resource-contract loader |
+
+| [cycle19-counters](cycle19-counters/README.md) | Cycle 19: source-derived ChunkIO counter updates |
+
+| [cycle19-current-command](cycle19-current-command/README.md) | Cycle19 current-command checkpoint — 2026-09-07 |
+
+| [cycle19-delete-observations](cycle19-delete-observations/README.md) | Cycle 19: controlled native deletion observations |
+
+| [cycle19-delete-outcomes](cycle19-delete-outcomes/README.md) | Cycle 19: native deletion eligibility and outcomes |
+
+| [cycle19-deleting-close](cycle19-deleting-close/README.md) | Cycle 19: deleting backend close composition |
+
+| [cycle19-descriptor-observations](cycle19-descriptor-observations/README.md) | Cycle 19: Monkey descriptor identity observations |
+
+| [cycle19-explicit-clang](cycle19-explicit-clang/README.md) | Explicit Clang Cycle19 audit — 2026-09-07 |
+
+| [cycle19-file-close](cycle19-file-close/README.md) | Cycle 19: backend release retains unresolved OS custody |
+
+| [cycle19-file-constructor-failures](cycle19-file-constructor-failures/README.md) | Cycle 19: filesystem constructor allocation failures |
+
+| [cycle19-file-descriptor-failures](cycle19-file-descriptor-failures/README.md) | Cycle 19: descriptor failures during down and reopen |
+
+| [cycle19-file-existing](cycle19-file-existing/README.md) | Cycle 19: existing-file profiles and rollback custody |
+
+| [cycle19-file-os](cycle19-file-os/README.md) | Cycle 19: real Linux cleanup endpoint observations |
+
+| [cycle19-file-os-constructors](cycle19-file-os-constructors/README.md) | Cycle 19: constructor OS failures and rollback custody |
+
+| [cycle19-file-sync-failures](cycle19-file-sync-failures/README.md) | Cycle 19: native synchronization failure and retry observations |
+
+| [cycle19-file-transitions](cycle19-file-transitions/README.md) | Cycle 19: native residency, transaction and lock transitions |
+
+| [cycle19-file-tree](cycle19-file-tree/README.md) | Cycle 19: native filesystem construction and residual teardown |
+
+| [cycle19-file-unmap-failures](cycle19-file-unmap-failures/README.md) | Cycle 19: failed unmap during down and subsequent recovery |
+
+| [cycle19-filesystem-attempts](cycle19-filesystem-attempts/README.md) | Cycle 19: filesystem cleanup result-use evidence |
+
+| [cycle19-filesystem-chunk](cycle19-filesystem-chunk/README.md) | Cycle 19: enclosing filesystem chunk close |
+
+| [cycle19-filesystem-outcomes](cycle19-filesystem-outcomes/README.md) | Cycle 19: native filesystem cleanup outcomes |
+
+| [cycle19-list-unlink](cycle19-list-unlink/README.md) | Cycle 19: source-derived intrusive-list unlink |
+
+| [cycle19-memory-backend](cycle19-memory-backend/README.md) | Cycle 19: source-derived memory backend custody |
+
+| [cycle19-memory-close](cycle19-memory-close/README.md) | Cycle 19: source-derived memory chunk close composition |
+
+| [cycle19-native-contracts](cycle19-native-contracts/README.md) | Cycle 19 native contracts and entry-free QCore modules |
+
+| [cycle19-native-rules](cycle19-native-rules/README.md) | Cycle 19: native replay contracts and expanded Monkey paths |
+
+| [cycle19-native-teardown](cycle19-native-teardown/README.md) | Cycle 19: native constructor and memory teardown observations |
+
+| [cycle19-nested-cleanup](cycle19-nested-cleanup/README.md) | Cycle 19: residual custody through nested parent teardown |
+
+| [cycle19-nested-memory](cycle19-nested-memory/README.md) | Cycle 19: source-bound nested memory teardown |
+
+| [cycle19-nested-unsupported](cycle19-nested-unsupported/README.md) | Cycle 19: opaque backend custody through parent release |
+
+| [cycle19-parent-teardown](cycle19-parent-teardown/README.md) | Cycle 19: stream and context allocation release |
+
+| [cycle19-reopen-failures](cycle19-reopen-failures/README.md) | Cycle 19: reopen size-lookup and mapping failures |
+
+| [cycle19-resource-triage](cycle19-resource-triage/README.md) | Cycle 19: resource diagnostic inventory and importer recovery |
+
+| [cycle19-scan-loop](cycle19-scan-loop/README.md) | Cycle 19: structured Monkey injection scan |
+
+| [cycle19-short-circuit](cycle19-short-circuit/README.md) | Cycle 19: shared short-circuit source conditions |
+
+| [cycle19-source-contracts](cycle19-source-contracts/README.md) | Cycle 19: native QCore contracts checked against typed C source |
+
+| [cycle19-teardown-traversal](cycle19-teardown-traversal/README.md) | Cycle 19: source-bound teardown traversal |
+
+| [cycle19-unmap-wrapper](cycle19-unmap-wrapper/README.md) | Cycle 19: conditional unmap wrapper composition |
+
+| [cycle19-unsupported-close](cycle19-unsupported-close/README.md) | Cycle 19: unsupported backend close classification |
+
+| [cycle19-unsupported-constructors](cycle19-unsupported-constructors/README.md) | Cycle 19: native unsupported-type constructor outcomes |
+
+| [cycle19-wrapper-control](cycle19-wrapper-control/README.md) | Cycle 19: wrapper assertion and terminal control |
+
+| [cycle19-wrapper-storage](cycle19-wrapper-storage/README.md) | Cycle 19: wrapper constants and stack storage |
+
+## D
+
+| Card directory | Original report title |
+|---|---|
+
+| [development-docs-structure](development-docs-structure/README.md) | Development documentation structure and retrieval |
+
+| [docs-compact-2](docs-compact-2/README.md) | DOCS-COMPACT-2 — second compaction pass over `AGENTS.md`, `CLAUDE.md` and `README.md` |
+
+| [docs-compact-3](docs-compact-3/README.md) | DOCS-COMPACT-3 — third compaction pass, plus the examples style pass |
+
+| [docs-compact-4](docs-compact-4/README.md) | DOCS-COMPACT-4 — fourth compaction pass |
+
+| [docs-compact-5](docs-compact-5/README.md) | DOCS-COMPACT-5 — fifth compaction pass |
+
+| [docs-compact-6](docs-compact-6/README.md) | DOCS-COMPACT-6 — the sixth three-file compaction pass |
+
+| [docs-compact-7](docs-compact-7/README.md) | DOCS-COMPACT-7 — the seventh firing of the three-file compaction cadence |
+
+| [docs-compact-8](docs-compact-8/README.md) | `DOCS-COMPACT-8` — the wave-40 compaction pass over `AGENTS.md`, `CLAUDE.md`, `README.md` |
+
+| [docs-structure-compression](docs-structure-compression/README.md) | DOCS-STRUCTURE-COMPRESSION — routed rules and a single documentation hub |
+
+## E
+
+| Card directory | Original report title |
+|---|---|
+
+| [examples-aggregates](examples-aggregates/README.md) | EXAMPLES-AGGREGATES — the published records family (wave 28) |
+
+| [examples-suite-wire](examples-suite-wire/README.md) | EXAMPLES-SUITE-WIRE — every published example family under one standard (wave 26) |
+
+| [extern-call-f1](extern-call-f1/README.md) | EXTERN-F1 — the `resource_out` and `resource_stored` call modes |
+
+| [extern-call-v1](extern-call-v1/README.md) | `source.extern-call.v1` — bounded extern-call semantics |
+
+## F
+
+| Card directory | Original report title |
+|---|---|
+
+| [fluent-bit-contracts-2026-09-05](fluent-bit-contracts-2026-09-05/README.md) | QCore contracts against actual Fluent Bit source — 2026-09-05 |
+
+| [fluent-bit-moving-revisions](fluent-bit-moving-revisions/README.md) | Moving Fluent Bit revisions — 2026-09-07 |
+
+## G
+
+| Card directory | Original report title |
+|---|---|
+
+| [gateway-c-location](gateway-c-location/README.md) | GATEWAY-C-LOCATION — a gateway diagnostic names the C a person wrote — 2026-09-12 |
+
+| [generalization-integration-20260907](generalization-integration-20260907/README.md) | Generalization integration checkpoint — 2026-09-07 |
+
+## H
+
+| Card directory | Original report title |
+|---|---|
+
+| [http-quirin-v1](http-quirin-v1/README.md) | HTTP-QUIRIN-V1 — an executed HTTP/1.1 subset in pure Quirin, with the boundary named |
+
+| [http-v1-computed-length](http-v1-computed-length/README.md) | HTTP-V1-COMPUTED-LENGTH — a `Content-Length` the program works out, decided exactly as hard (wave 26) |
+
+## J
+
+| Card directory | Original report title |
+|---|---|
+
+| [joined-provenance-call-frames](joined-provenance-call-frames/README.md) | JOINED-PROVENANCE-CALL-FRAMES — conditional provenance across a call |
+
+| [joined-provenance-cycles](joined-provenance-cycles/README.md) | JOINED-PROVENANCE-CYCLES — the conditional-provenance relation on cyclic CFGs |
+
+| [joined-provenance-round-bound](joined-provenance-round-bound/README.md) | JOINED-PROVENANCE-ROUND-BOUND (wave 37) |
+
+## L
+
+| Card directory | Original report title |
+|---|---|
+
+| [lean-build-performance](lean-build-performance/README.md) | Lean build performance and bounded audit runner — 2026-09-08 |
+
+| [lean-proof-integrity](lean-proof-integrity/README.md) | Lean proof integrity and Lean 4.34 warning cleanup |
+
+| [loop-unroll-budget](loop-unroll-budget/README.md) | LOOP-UNROLL-BUDGET — the three-layer unrolling budget (wave 26) |
+
+| [loop-v1](loop-v1/README.md) | LOOP-V1 — the first checked source loop (wave 25) |
+
+| [loops-on-composed-routes](loops-on-composed-routes/README.md) | Card `LOOPS-ON-COMPOSED-ROUTES` (wave 39) — a `for` beside a borrow or a lend, with the window computed over iterations |
+
+## M
+
+| Card directory | Original report title |
+|---|---|
+
+| [macos-cycle19-compiler-options](macos-cycle19-compiler-options/README.md) | macOS Cycle19 compiler-option transport — 2026-09-08 |
+
+| [mutex-share-cross](mutex-share-cross/README.md) | MUTEX-SHARE-CROSS — a payload crosses because a verified mutex protects it (wave 32) |
+
+| [mutex-share-cross-arms](mutex-share-cross-arms/README.md) | `MUTEX-SHARE-CROSS-ARMS` — four arms, four outcomes |
+
+| [mutex-share-cross-emission](mutex-share-cross-emission/README.md) | MUTEX-SHARE-CROSS-EMISSION (wave 36) |
+
+## N
+
+| Card directory | Original report title |
+|---|---|
+
+| [native-library-header-decoration](native-library-header-decoration/README.md) | NATIVE-LIBRARY-HEADER-DECORATION — the export macro, derived — 2026-09-11 |
+
+| [native-library-source-binding](native-library-source-binding/README.md) | Card `NATIVE-LIBRARY-SOURCE-BINDING` — the source file's own library binding |
+
+| [native-observation-repair](native-observation-repair/README.md) | Native observation repair |
+
+## P
+
+| Card directory | Original report title |
+|---|---|
+
+| [pipe-drop-stage](pipe-drop-stage/README.md) | PIPE-DROP-STAGE — the releasing pipeline stage (wave 23) |
+
+| [proof-leg-batch](proof-leg-batch/README.md) | Two proof rows withdrawn by measurement: CT12 and CT14 are CT01's artifact (PROOF-LEG-BATCH) |
+
+## Q
+
+| Card directory | Original report title |
+|---|---|
+
+| [quant-region-source](quant-region-source/README.md) | QUANT-REGION-SOURCE — the first source path to `RegionOp::QuantOpen` |
+
+| [quiet-emission-streams](quiet-emission-streams/README.md) | Quiet emission and composable streams |
+
+| [quirin-socket-v1](quirin-socket-v1/README.md) | QUIRIN-SOCKET-V1 — a checked TCP and UDP socket surface in pure QCore source |
+
+## R
+
+| Card directory | Original report title |
+|---|---|
+
+| [r0-3-concurrency-lifetimes](r0-3-concurrency-lifetimes/README.md) | r0.3 R01/R02 concurrency lifetimes and R03 trust boundary |
+
+| [r0-3-source-validation](r0-3-source-validation/README.md) | r0.3 source result, axis and signed-literal validation |
+
+| [r03-contract-evidence](r03-contract-evidence/README.md) | Revision 0.3 review: R08 / R10 contract and evidence consumers |
+
+| [r03-integration](r03-integration/README.md) | Revision 0.3 integration and persistent audit inputs |
+
+| [r03-loop-counts](r03-loop-counts/README.md) | Revision 0.3 R06: exact repetition and maximum counts |
+
+| [region-credit-joins](region-credit-joins/README.md) | REGION-CREDIT-JOINS — the composed region: parent-local credit after the joins |
+
+| [region-joins-duties](region-joins-duties/README.md) | REGION-JOINS-DUTIES — real duties in the composed region's pack |
+
+| [region-joins-loan](region-joins-loan/README.md) | REGION-JOINS-LOAN — the loan half of CT25 |
+
+| [remaining-alias-aggregate](remaining-alias-aggregate/README.md) | ALIAS-AGGREGATE — the twelve identity residuals, measured to their roots — 2026-09-10 |
+
+| [remaining-alias-locals](remaining-alias-locals/README.md) | ALIAS-LOCALS — two locals, and the definite-alias relation kind — 2026-09-09 |
+
+| [remaining-b00](remaining-b00/README.md) | B00 — Current-state ledger: checkpoint identity and halt handoff reconciliation |
+
+| [remaining-b01](remaining-b01/README.md) | B01 — Revision-bound baseline reproduction — 2026-09-07 |
+
+| [remaining-b02](remaining-b02/README.md) | B02 — Stale-review delta ledger for r0.3 requirements R01–R10 |
+
+| [remaining-borrow-liveness](remaining-borrow-liveness/README.md) | ALIAS-LOCALS-BORROW-LIVENESS — a `Borrowed` position gets a real precondition — 2026-09-09 |
+
+| [remaining-borrow-residuals](remaining-borrow-residuals/README.md) | BORROW-RESIDUALS — the four `BORROW-LIVENESS` residuals, taken in soundness order — 2026-09-09 |
+
+| [remaining-c00](remaining-c00/README.md) | C00 — Classify the six CMetrics Unknown functions — 2026-09-07 |
+
+| [remaining-c01](remaining-c01/README.md) | C01 — Validate existing richer custody summaries across calls — 2026-09-07 |
+
+| [remaining-c02](remaining-c02/README.md) | C02 — Typed direct scalar-field access classification — 2026-09-07 |
+
+| [remaining-c02-p](remaining-c02-p/README.md) | C02-P — borrowed pointer-field reads as contracted-call actuals — 2026-09-08 |
+
+| [remaining-c02-p-alias](remaining-c02-p-alias/README.md) | C02-P-ALIAS — the bounded may-alias refinement — 2026-09-09 |
+
+| [remaining-c03](remaining-c03/README.md) | C03 — Specify a finite recursive-summary profile — 2026-09-07 |
+
+| [remaining-c03-nfr](remaining-c03-nfr/README.md) | C03-NFR — Implement the neutral-frame recursion route — 2026-09-08 |
+
+| [remaining-c03-reach](remaining-c03-reach/README.md) | C03-REACH — re-measuring neutral-frame recursion's corpus reach — 2026-09-09 |
+
+| [remaining-constructor-residuals](remaining-constructor-residuals/README.md) | CONSTRUCTOR-RESIDUALS — the last two roots of `flb_input_chunk_create`, measured — 2026-09-10 |
+
+| [remaining-ct33-ranks](remaining-ct33-ranks/README.md) | CT33-RANKS — a lock-rank source form onto the represented rank refusal |
+
+| [remaining-ct34-growth](remaining-ct34-growth/README.md) | CT34-GROWTH — a protection-growth source form, and the rule it is sound under |
+
+| [remaining-ct34-sanitized](remaining-ct34-sanitized/README.md) | CT34-SANITIZED — emitting a protection growth, and what the native run is evidence of |
+
+| [remaining-ct46-sendsync](remaining-ct46-sendsync/README.md) | CT46-SENDSYNC — task-boundary transferability, derived from the kind |
+
+| [remaining-ctwin-publish](remaining-ctwin-publish/README.md) | CTWIN-PUBLISH — publication into an object that outlives the call |
+
+| [remaining-ctwin-residuals](remaining-ctwin-residuals/README.md) | CTWIN-RESIDUALS — the four publication shapes wave 16 left open |
+
+| [remaining-d01](remaining-d01/README.md) | D01 — Diagnostic ownership and actionable `Unknown` reasons |
+
+| [remaining-d02](remaining-d02/README.md) | D02 — Revision 0.3 implementation and acceptance matrix |
+
+| [remaining-e01](remaining-e01/README.md) | E01 — Source-derived obligation completeness (ChunkIO Boolean-field capability) |
+
+| [remaining-e01-f1](remaining-e01-f1/README.md) | E01-F1 — Complete the source function enumeration |
+
+| [remaining-e01-f1-raw](remaining-e01-f1-raw/README.md) | E01-F1-RAW — Repair the raw tokenizer's macro-continuation directive defect |
+
+| [remaining-e01-raw-cond](remaining-e01-raw-cond/README.md) | E01-RAW-COND — Decide conditional-group brace balance in the raw scan |
+
+| [remaining-e01-tail](remaining-e01-tail/README.md) | E01-TAIL — the enumeration leftovers |
+
+| [remaining-e02](remaining-e02/README.md) | E02 — Mutation matrix for source-bound witness replay and cached summaries |
+
+| [remaining-e03](remaining-e03/README.md) | E03 — Bounded multi-provider coverage composition |
+
+| [remaining-e03-b](remaining-e03-b/README.md) | E03-B — Composition completeness boundaries, repaired |
+
+| [remaining-e03-b-o](remaining-e03-b-o/README.md) | E03-B-O — the three recorded composition residuals, dispositioned |
+
+| [remaining-extern-err-rel](remaining-extern-err-rel/README.md) | EXTERN-ERR-REL — the extern adapter's error-arm release |
+
+| [remaining-extern-modes](remaining-extern-modes/README.md) | EXTERN-MODES — the released and reallocated call modes |
+
+| [remaining-f01](remaining-f01/README.md) | F01 — one checker/model correspondence boundary |
+
+| [remaining-f02](remaining-f02/README.md) | F02 — one source-to-native trace relation |
+
+| [remaining-g01](remaining-g01/README.md) | G01 — compile-task identity and dependency contract — 2026-09-07 |
+
+| [remaining-g02](remaining-g02/README.md) | G02 source-filename-sensitive preprocessing transport — 2026-09-07 |
+
+| [remaining-g03](remaining-g03/README.md) | G03: configuration-only addition of a second source set |
+
+| [remaining-g03-f](remaining-g03-f/README.md) | G03-F: checkout-root source sets (F1) and Libevent's unmodified CMake database (F2) |
+
+| [remaining-hash-clause](remaining-hash-clause/README.md) | HASH-CLAUSE — the literal-argument premise becomes a real v1 clause — 2026-09-09 |
+
+| [remaining-hash-contracts](remaining-hash-contracts/README.md) | HASH-CONTRACTS — declared contract text for the four `flb_hash_table_add` sites — 2026-09-09 |
+
+| [remaining-hash-refine](remaining-hash-refine/README.md) | HASH-REFINE — the literal-argument clause's two boundaries, decided — 2026-09-10 |
+
+| [remaining-hygiene-14](remaining-hygiene-14/README.md) | HYGIENE-14 — two bounded residuals: `D02-BUCKETS-STALE` and `BORROW-LIVENESS-MIXED` |
+
+| [remaining-loader-abi](remaining-loader-abi/README.md) | LOADER-ABI — the declared contract's ABI types, compared against the C declaration — 2026-09-10 |
+
+| [remaining-loader-abi-modes](remaining-loader-abi-modes/README.md) | LOADER-ABI-MODES — the declared custody *mode*, compared against the body — 2026-09-10 |
+
+| [remaining-memclose](remaining-memclose/README.md) | P04-COMPOSE-MEMCLOSE — the `memory_close` composition through the process boundary |
+
+| [remaining-neighbours](remaining-neighbours/README.md) | NEIGHBOURS — production declared contract text for the six uncontracted callees on the constructor's path — 2026-09-09 |
+
+| [remaining-neighbours-chained-tail](remaining-neighbours-chained-tail/README.md) | NEIGHBOURS-CHAINED-TAIL — a bounded typed access chain at a declared variadic data tail — 2026-09-10 |
+
+| [remaining-o00](remaining-o00/README.md) | O00 — Source contracts needed for caller/constructor provenance — 2026-09-07 |
+
+| [remaining-o01](remaining-o01/README.md) | O01 — One reopen corruption/checksum observation family — 2026-09-08 |
+
+| [remaining-o02](remaining-o02/README.md) | O02 — One capacity boundary family, observed natively — 2026-09-08 |
+
+| [remaining-o03](remaining-o03/README.md) | O03 — Specify one real OS failure post-state profile — 2026-09-08 |
+
+| [remaining-o03-reactor](remaining-o03-reactor/README.md) | O03-REACTOR — a declared close-failure premise for the reactor — 2026-09-09 |
+
+| [remaining-o03-u4u5](remaining-o03-u4u5/README.md) | O03-U4/U5 — Repair the two declared-model defects O03 recorded — 2026-09-09 |
+
+| [remaining-o04](remaining-o04/README.md) | O04 — Validate one constructor-to-caller custody path — 2026-09-08 |
+
+| [remaining-o04-arms](remaining-o04-arms/README.md) | O04-ARMS — per-arm discharge on the remaining early-return arms — 2026-09-09 |
+
+| [remaining-o04-b08](remaining-o04-b08/README.md) | O04-B08 — aggregate stores and the aggregate branch condition — 2026-09-09 |
+
+| [remaining-o04-b09b10](remaining-o04-b09b10/README.md) | O04-B09B10 — member addresses and custody-taking bound reads — 2026-09-09 |
+
+| [remaining-o04-read-bound](remaining-o04-read-bound/README.md) | O04-READ-BOUND — reading a member back through a base this body bound — 2026-09-09 |
+
+| [remaining-o04-trace](remaining-o04-trace/README.md) | O04-TRACE — the variadic tail and one level of nesting — 2026-09-09 |
+
+| [remaining-o05](remaining-o05/README.md) | O05 — Aggregate lifecycle and Cycle 18/19 composition — 2026-09-08 |
+
+| [remaining-p01](remaining-p01/README.md) | P01 — Independent provider packages and layering audit |
+
+| [remaining-p01-f2](remaining-p01-f2/README.md) | P01-F2 — Binding manifest declarations to the executable's embedded template |
+
+| [remaining-p01-f3](remaining-p01-f3/README.md) | P01-F3 — the unverified loader, and the check-to-dispatch window |
+
+| [remaining-p02](remaining-p02/README.md) | P02 — Enforced process resource limits for one supported target |
+
+| [remaining-p03](remaining-p03/README.md) | P03 — Enforced filesystem and network confinement for one supported target |
+
+| [remaining-p03-f](remaining-p03-f/README.md) | P03-F — Remaining confinement bounds, plus the P09-lock CI rider |
+
+| [remaining-p04](remaining-p04/README.md) | P04 — One additional ChunkIO capability through the process boundary |
+
+| [remaining-p04-b1](remaining-p04-b1/README.md) | P04-B1 — the cleanup-outcome contracts declare their referents |
+
+| [remaining-p04-b2](remaining-p04-b2/README.md) | P04-B2 — the symbolic cleanup-replay vocabulary through the process boundary |
+
+| [remaining-p04-compose](remaining-p04-compose/README.md) | P04-COMPOSE — the ChunkIO composition capabilities through the process boundary |
+
+| [remaining-p04-compose-a](remaining-p04-compose-a/README.md) | P04-COMPOSE-A — the `cio_file_close` compositions through the process boundary |
+
+| [remaining-p04-compose-fs](remaining-p04-compose-fs/README.md) | P04-COMPOSE-FS — the `filesystem_chunk_close` composition through the process boundary |
+
+| [remaining-p04-compose-unsupported](remaining-p04-compose-unsupported/README.md) | P04-COMPOSE-UNSUPPORTED — the `unsupported_close` symbolic classification through the process boundary |
+
+| [remaining-p04-frame](remaining-p04-frame/README.md) | P04-COMPOSE-FRAME — a verification task for the Boolean frame helper |
+
+| [remaining-p04-next](remaining-p04-next/README.md) | P04-NEXT — Remaining in-process ChunkIO capabilities through the process boundary |
+
+| [remaining-p04-next-ab](remaining-p04-next-ab/README.md) | P04-NEXT-AB — the call-result def/use vocabulary through the process boundary |
+
+| [remaining-p05](remaining-p05/README.md) | P05 — One Libevent/Monkey callback capability through the process boundary |
+
+| [remaining-p06](remaining-p06/README.md) | P06 — Define the first CTraces provider capability |
+
+| [remaining-p07](remaining-p07/README.md) | P07 — the first librdkafka provider capability |
+
+| [remaining-p08](remaining-p08/README.md) | P08 — Reproduce the configured five-provider composition (bounded) |
+
+| [remaining-p09](remaining-p09/README.md) | P09 — Remove one parity-proven legacy route at a time |
+
+| [remaining-p09-routes](remaining-p09-routes/README.md) | P09-ROUTES — disposition of the seven named legacy routes P09-A..G |
+
+| [remaining-prod-contracts](remaining-prod-contracts/README.md) | PROD-CONTRACTS — production declared contract text for the logging family, the name accessor and the routes-mask helpers — 2026-09-09 |
+
+| [remaining-reach-gate](remaining-reach-gate/README.md) | REACH-GATE — the INDIRECT half of the joint expression-position gate — 2026-09-09 |
+
+| [remaining-reason-codes](remaining-reason-codes/README.md) | REASON-CODES — the closed L21.1 reason-code vocabulary for uncovered obligations |
+
+| [remaining-t00](remaining-t00/README.md) | T00 — Stage- and target-derived CT coverage audit |
+
+| [remaining-t00-ct-schema](remaining-t00-ct-schema/README.md) | T00-CT-SCHEMA — a stage-derived CT manifest and summarizer |
+
+| [remaining-t01](remaining-t01/README.md) | T01 — Checked fixed-footprint mutex profile: specification and trust-premise ledger |
+
+| [remaining-t02](remaining-t02/README.md) | T02 — `CheckedMutexInvariantV1`: fixed-shape mutex-invariant checker |
+
+| [remaining-t03](remaining-t03/README.md) | T03 — `source.mutex.guard.v1`: lowering one lexical guard onto `CheckedMutexInvariantV1` |
+
+| [remaining-t03-ct-integration](remaining-t03-ct-integration/README.md) | T03-CT — integrating the `source.mutex.guard.v1` CT mappings |
+
+| [remaining-t03-f](remaining-t03-f/README.md) | T03-F — guard-profile completions: a checked witness, guard-scoped facts, bounded task composition, and the Lean destruction event |
+
+| [remaining-t03-guard-join](remaining-t03-guard-join/README.md) | T03-GUARD-JOIN — a task created and joined strictly inside a guard |
+
+| [remaining-t04](remaining-t04/README.md) | T04 — `ScopedReadLoansV1`: one bounded scoped read loan |
+
+| [remaining-t05](remaining-t05/README.md) | T05 — `ScopedReadSharesV1`: complementary fractional read shares |
+
+| [remaining-t06](remaining-t06/README.md) | T06: one owned Buffer in a typed worker-error payload |
+
+| [remaining-t07](remaining-t07/README.md) | T07 — `CheckedRegionTaskCreditV1`: error-region credit and lifetime obligations |
+
+| [remaining-t08](remaining-t08/README.md) | T08 — quantitative accounting for one flat concurrent epoch |
+
+| [remaining-t08-compose](remaining-t08-compose/README.md) | T08-COMPOSE — a flat-epoch bound over a real checked task region |
+
+| [remaining-t08-epoch-src](remaining-t08-epoch-src/README.md) | T08-EPOCH-SRC — a source form for the flat-epoch bound |
+
+| [remaining-t09](remaining-t09/README.md) | T09 — disjoint access footprints and alias identity |
+
+| [remaining-v01](remaining-v01/README.md) | V01 / R01: adversarial verification of the live-generation authority gate |
+
+| [remaining-v02](remaining-v02/README.md) | V02 — R02 terminal task state: adversarial verification |
+
+| [remaining-v03](remaining-v03/README.md) | V03 — R04: admitted source signatures, results and exits (adversarial probe matrix) |
+
+| [remaining-v04](remaining-v04/README.md) | V04 — R05 adversarial probe matrix: unconditional declaration checks |
+
+| [remaining-v05](remaining-v05/README.md) | V05 — R06: exact versus bounded loop evidence (adversarial verification) |
+
+| [remaining-v06](remaining-v06/README.md) | V06 — R07 signed literal boundaries: adversarial verification |
+
+| [remaining-v07](remaining-v07/README.md) | V07 — Unchecked clauses and scoped binders remain fail-closed |
+
+| [remaining-w4-expr-pos](remaining-w4-expr-pos/README.md) | W4-EXPR-POS — neutral expression positions, environment-aware — 2026-09-09 |
+
+| [remaining-wave3-ct-integration](remaining-wave3-ct-integration/README.md) | wave3-CT — integrating the T05 and T06 CT mappings |
+
+## S
+
+| Card directory | Original report title |
+|---|---|
+
+| [scalar-route-exit-edge](scalar-route-exit-edge/README.md) | SCALAR-ROUTE-EXIT-EDGE (wave 37, first arbiter) |
+
+| [schema-1-compatibility](schema-1-compatibility/README.md) | Schema 1.0 compatibility and package evidence |
+
+| [slice-permissions-write-lend](slice-permissions-write-lend/README.md) | SLICE-PERMISSIONS-WRITE-LEND — the write half of CT07, and the fraction that finally exists (wave 29) |
+
+| [socket-event-compose](socket-event-compose/README.md) | SOCKET-EVENT-COMPOSE — a checked socket as a reactor-registered event source |
+
+| [socket-inet-addresses](socket-inet-addresses/README.md) | SOCKET-INET-ADDRESSES — declared IPv4 and IPv6 addresses with ports |
+
+| [socket-v1-windows-run](socket-v1-windows-run/README.md) | SOCKET-V1-WINDOWS-RUN — native Winsock execution under Visual Studio |
+
+| [stability-reeval-1](stability-reeval-1/README.md) | STABILITY-REEVAL #1 — under what conditions each current claim is unstable |
+
+| [stability-reeval-2](stability-reeval-2/README.md) | STABILITY-REEVAL #2 — the cadence's second firing |
+
+| [stability-reeval-3](stability-reeval-3/README.md) | STABILITY-REEVAL #3 — the cadence's third firing |
+
+| [stability-reeval-4](stability-reeval-4/README.md) | STABILITY-REEVAL #4 — the cadence's fourth firing |
+
+| [string-concat](string-concat/README.md) | STRING-CONCAT — computed text, and the dependency that dissolved (wave 25) |
+
+| [string-slice](string-slice/README.md) | Card `STRING-SLICE` — `source.string.v1`, immutable UTF-8 string views |
+
+| [string-slice-io](string-slice-io/README.md) | STRING-SLICE-IO — rendering text, and the three decisions behind it (wave 24) |
+
+| [sweep-blind-spots](sweep-blind-spots/README.md) | `SWEEP-BLIND-SPOTS` — the reconciliation sweep's measured blind spots, and wave 32 retro-swept |
+
+## T
+
+| Card directory | Original report title |
+|---|---|
+
+| [task-route-tsan](task-route-tsan/README.md) | TASK-ROUTE-TSAN — ThreadSanitizer on the checked task route (wave 37) |
+
+| [trace-alphabet-lease-boundary](trace-alphabet-lease-boundary/README.md) | The F02 trace alphabet's lease boundary — proved and exercised (TRACE-ALPHABET-LEASE-BOUNDARY) |
+
+| [tsan-rows-2](tsan-rows-2/README.md) | `TSAN-ROWS-2` — contention-forcing ThreadSanitizer schedules on the task route, and the CT46 decision (wave 39) |
+
+## V
+
+| Card directory | Original report title |
+|---|---|
+
+| [verifier-host-closed-input-deadline](verifier-host-closed-input-deadline/README.md) | Verifier host closed-input deadline repair |
+
+| [verifier-host-control-budget](verifier-host-control-budget/README.md) | `VERIFIER-HOST-CONTROL-BUDGET` — the contested host row, explained and repaired |
+
+## W
+
+| Card directory | Original report title |
+|---|---|
+
+| [w0-schema-crate](w0-schema-crate/README.md) | W0: schema-surface and CLI extraction |
+
+| [w1-clause-vocabulary](w1-clause-vocabulary/README.md) | W1: clause vocabulary and interpreter boundary |
+
+| [w1-contract-crate](w1-contract-crate/README.md) | W1: contract-crate relocation |
+
+| [w1-literal-sites](w1-literal-sites/README.md) | W1: literal-site migration |
+
+| [w2-boolean-field-profiles](w2-boolean-field-profiles/README.md) | W2 Boolean field profile routing (H5, bounded) |
+
+| [w2-clang-cmake-build](w2-clang-cmake-build/README.md) | W2 Clang CMake build transport — 2026-09-07 |
+
+| [w2-monkey-typed-profile](w2-monkey-typed-profile/README.md) | W2 H4: declared Monkey typed import profiles |
+
+| [w2-preprocessor-transport](w2-preprocessor-transport/README.md) | W2 ordered preprocessing transport — 2026-09-07 |
+
+| [w2-profile-manifests](w2-profile-manifests/README.md) | W2: bounded source-profile migration |
+
+| [w2-provider-discovery](w2-provider-discovery/README.md) | W2 H6: provider manifest discovery |
+
+| [w2-source-profile-boundary](w2-source-profile-boundary/README.md) | W2 public source-profile boundary |
+
+| [w29-corpus-contracts](w29-corpus-contracts/README.md) | W29-CORPUS-CONTRACTS — two faithful size-query contracts decide thirteen uncontracted-call refusals — 2026-09-12 |
+
+| [w3-evidence-v2](w3-evidence-v2/README.md) | W3 bounded evidence-v2 replay and scope dispatch (2026-09-07) |
+
+| [w3-observation-trust](w3-observation-trust/README.md) | W3 observation trust preservation |
+
+| [w3-process-stdin-exit-race](w3-process-stdin-exit-race/README.md) | Process stdin / direct-child exit race (2026-09-07) |
+
+| [w3-source-field-provider](w3-source-field-provider/README.md) | Source-derived field contracts through the ChunkIO process provider |
+
+| [w3-verifier-host](w3-verifier-host/README.md) | W3 generic verifier-host extraction (2026-09-07) |
+
+| [w31-corpus-contracts-2](w31-corpus-contracts-2/README.md) | W31-CORPUS-CONTRACTS-2 — the two size-sibling contracts wave 29 named, each on its own body reading; five refusals decided, re-measured on the moved baseline — 2026-09-13 |
+
+| [w32-reconcile-sweep](w32-reconcile-sweep/README.md) | W32-RECONCILE-SWEEP — the integrator's own reconciliation lists, measured and made mechanical (wave 32) |
+
+| [w36-corpus-contracts-3](w36-corpus-contracts-3/README.md) | W36-CORPUS-CONTRACTS-3 — six declarations, chosen by function-cover yield |
+
+| [w37-corpus-contracts-4](w37-corpus-contracts-4/README.md) | W37-CORPUS-CONTRACTS-4 — ten custody-neutral declarations, and a measured ABI boundary |
+
+| [w4-contextual-recursion](w4-contextual-recursion/README.md) | Context-specific recursive custody inference |
+
+| [w4-custody-extensions](w4-custody-extensions/README.md) | W4 bounded custody extensions |
+
+| [w4-custody-inference](w4-custody-inference/README.md) | W4: interprocedural custody summary inference |
+
+| [w4-gateway-crate](w4-gateway-crate/README.md) | W4 gateway crate relocation |
+
+| [w4-immutable-out-aliases](w4-immutable-out-aliases/README.md) | W4: immutable aliases of original output slots |
+
+| [w4-indirect-access](w4-indirect-access/README.md) | Existing-C resource access: fail-closed projection |
+
+| [w4-nullable-removal](w4-nullable-removal/README.md) | Nullable removal and conservative custody transfers |
+
+| [w4-out-forwarding](w4-out-forwarding/README.md) | W4: validated direct Out-pointer forwarding |
+
+| [w4-recursive-summaries](w4-recursive-summaries/README.md) | W4-RECURSIVE-SUMMARIES — the neutral-element fixed-point start, verified landed; its soundness induction audited; the corpus unmoved — 2026-09-13 |
+
+| [w4-removed-custody](w4-removed-custody/README.md) | W4: validated direct Removed-custody wrappers |
+
+| [w4-unsigned-countdown](w4-unsigned-countdown/README.md) | Unsigned countdown custody inference |
+
+| [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
+
+| [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |
+
+| [w5-cmetrics-unit-provider](w5-cmetrics-unit-provider/README.md) | W5 CMetrics unit-result provider |
+
+| [w5-concurrent-kernel](w5-concurrent-kernel/README.md) | W5 bounded concurrency and translation kernel consolidation |
+
+| [w5-configured-audit](w5-configured-audit/README.md) | W5: configured resource-audit driver |
+
+| [w5-configured-frame-helpers](w5-configured-frame-helpers/README.md) | Configured Boolean frame helpers and W7 attribution integration |
+
+| [w5-configured-process-audit](w5-configured-process-audit/README.md) | Configured process source-contract audit |
+
+| [w5-configured-source-contracts](w5-configured-source-contracts/README.md) | Configured source-contract dispatch |
+
+| [w5-generic-driver-consolidation](w5-generic-driver-consolidation/README.md) | W5 generic driver and custody consolidation |
+
+| [w5-generic-reactor](w5-generic-reactor/README.md) | Generic reactor model and compatible Libevent adapter |
+
+| [w5-generic-source-consolidation](w5-generic-source-consolidation/README.md) | Generic C source import and replay consolidation |
+
+| [w5-provider-packages](w5-provider-packages/README.md) | W5 standalone first-party packaging |
+
+| [w5-provider-statement-execution](w5-provider-statement-execution/README.md) | Independent statement execution in the ChunkIO process |
+
+| [w5-reactor-callback-records](w5-reactor-callback-records/README.md) | Declared reactor callback record interoperability |
+
+| [w5-resource-accounting](w5-resource-accounting/README.md) | W5 generic resource accounting |
+
+| [w5-sequential-kernel](w5-sequential-kernel/README.md) | W5 sequential semantic kernel consolidation |
+
+| [w5-typed-body-boundary](w5-typed-body-boundary/README.md) | Generic typed-body comparison and reviewed witness boundary |
+
+| [w5-verification-adapter](w5-verification-adapter/README.md) | W5 trusted verification adapter |
+
+| [w5-whole-program-frontend](w5-whole-program-frontend/README.md) | W5 whole-program checking in frontend |
+
+| [w6-completed-child-custody](w6-completed-child-custody/README.md) | CT14 and CT37: completed children retain custody until join |
+
+| [w6-ct-batch-2](w6-ct-batch-2/README.md) | W6 CT corpus, batch 2: full 47-case triage and two new mappings (2026-09-06) |
+
+| [w6-ct-harness](w6-ct-harness/README.md) | W6 CT conformance harness stand-up (2026-09-06) |
+
+| [w6-frontend-gates](w6-frontend-gates/README.md) | W6 frontend contract and lexical-scope gates |
+
+| [w6-handler-rethrow](w6-handler-rethrow/README.md) | CT20: join and account for results before rethrow |
+
+| [w6-native-source-tasks](w6-native-source-tasks/README.md) | Native scoped-copy source tasks |
+
+| [w6-owned-source-tasks](w6-owned-source-tasks/README.md) | Owned Buffer source tasks |
+
+| [w6-reused-address](w6-reused-address/README.md) | CT50: a reused address does not revive an old Buffer identity |
+
+| [w6-source-task-foundations](w6-source-task-foundations/README.md) | Source task syntax and checked custody foundations |
+
+| [w6-task-recovery](w6-task-recovery/README.md) | Explicit scoped-task Result recovery |
+
+| [w6-worker-allocation](w6-worker-allocation/README.md) | Leaf-worker Buffer allocation and CT16 cleanup |
+
+| [w7-diagnostic-attribution](w7-diagnostic-attribution/README.md) | W7 provider diagnostic attribution |
+
+| [w7-generic-lean-names](w7-generic-lean-names/README.md) | W7 generic Lean names |
+
+| [w7-lean-ci](w7-lean-ci/README.md) | W7 Lean CI hygiene |
+
+| [wave10-corpus](wave10-corpus/README.md) | Wave-10 corpus consolidation — one fresh measurement, deliberately re-pinned |
+
+| [wave11-corpus](wave11-corpus/README.md) | Wave-11 corpus consolidation — one fresh measurement, deliberately re-pinned |
+
+| [wave11-ct33](wave11-ct33/README.md) | Wave-11 CT lane — CT33 mapped from card CT33-RANKS's proposal |
+
+| [wave12-corpus](wave12-corpus/README.md) | Wave-12 corpus consolidation — one fresh measurement, deliberately re-pinned |
+
+| [wave13-corpus](wave13-corpus/README.md) | Wave-13 corpus consolidation — one fresh measurement, deliberately re-pinned |
+
+| [wave13-ct34](wave13-ct34/README.md) | Wave-13 CT lane — CT34 mapped from card CT34-GROWTH's proposal |
+
+| [wave14-corpus](wave14-corpus/README.md) | Wave-14 corpus consolidation — one fresh measurement, deliberately re-pinned |
+
+| [wave15-corpus](wave15-corpus/README.md) | Wave-15 corpus consolidation — one fresh measurement, deliberately re-pinned |
+
+| [wave15-ct-labels](wave15-ct-labels/README.md) | CT-LABELS — the current bucket label, derived from the CT lanes' own evidence |
+
+| [wave16-corpus](wave16-corpus/README.md) | Wave-16 corpus consolidation — one fresh measurement, deliberately re-pinned |
+
+| [wave16-docs-compact](wave16-docs-compact/README.md) | DOCS-COMPACT — compacting `AGENTS.md` and `CLAUDE.md` to the agent-facing minimum |
+
+| [wave16-hygiene](wave16-hygiene/README.md) | HYGIENE-16 — three tally-neutral ledger and tooling repairs |
+
+| [wave17-corpus](wave17-corpus/README.md) | Wave-17 corpus consolidation — one fresh measurement, deliberately re-pinned |
+
+| [wave17-ct40](wave17-ct40/README.md) | Wave-17 CT lane — CT40 mapped on the `legacy_c` route |
+
+| [wave17-gen-ctreasons](wave17-gen-ctreasons/README.md) | GEN-CTREASONS — two tally-neutral tooling and ledger repairs |
+
+| [wave17-std-modules](wave17-std-modules/README.md) | STD-MODULES — `std.fmt`, `std.io`, `std.logger` (wave 17) |
+
+| [wave18-lean-perf](wave18-lean-perf/README.md) | Proof-phase build cost — 2026-09-10 (LEAN-PERF) |
+
+| [wave18-pipe-operator](wave18-pipe-operator/README.md) | PIPE-OPERATOR — `&#124;>`, and the operator token family (wave 18) |
+
+| [wave18-unsafe-linkage](wave18-unsafe-linkage/README.md) | UNSAFE-LINKAGE — linking an external library that has no contract — 2026-09-10 |
+
+| [wave19-abi-typedef](wave19-abi-typedef/README.md) | CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF — the declared-ABI reader's two unread typedef shapes, widened and measured — 2026-09-10 |
+
+| [wave19-if-statement](wave19-if-statement/README.md) | IF-STATEMENT — the source branching construct (wave 19) |
+
+| [wave19-or-and-lowering](wave19-or-and-lowering/README.md) | OR-AND-LOWERING — `&#124;&#124;` and `&&`, and the operator retable (wave 19, phase 2) |
+
+| [wave19-pipe-chain](wave19-pipe-chain/README.md) | PIPE-CHAIN — `&#124;>` as a real multi-stage operator (wave 19) |
+
+| [wave19-pipe-scalar-result](wave19-pipe-scalar-result/README.md) | PIPE-SCALAR-RESULT — binding a non-acquiring call's scalar result (wave 19) |
+
+| [wave19-std-io-compose](wave19-std-io-compose/README.md) | STD-IO-COMPOSE — one module that both calls and prints (wave 19) |
+
+| [wave19-trace-stdio](wave19-trace-stdio/README.md) | TRACE-STDIO — one printing route, and the evidence that stood on the old one (wave 19) |
+
+| [wave19-unsafe-linkage-artifact](wave19-unsafe-linkage-artifact/README.md) | UNSAFE-LINKAGE-ARTIFACT — naming the build a waiver was waived from — 2026-09-10 |
+
+| [wave20-abi-address-of-member](wave20-abi-address-of-member/README.md) | ABI-TYPEDEF-ADDRESS-OF-MEMBER — the addressed-member reader's unread typedef shape, widened and measured — 2026-09-11 |
+
+| [wave20-bitwise-conditions](wave20-bitwise-conditions/README.md) | BITWISE-CONDITIONS — the integer tier, unary `!` and condition bindings (wave 20) |
+
+| [wave20-corpus](wave20-corpus/README.md) | Wave-20 corpus re-pin |
+
+| [wave20-extern-outcome-trace](wave20-extern-outcome-trace/README.md) | EXTERN-SCALAR-OUTCOME (trace half) — the observation names the returned number (wave 20) |
+
+| [wave20-if-arms](wave20-if-arms/README.md) | IF-ARMS — widening `source.branch.v1`'s arm statement subset (wave 20) |
+
+| [wave20-native-library-contract-slice](wave20-native-library-contract-slice/README.md) | NATIVE-LIBRARY-CONTRACT-SLICE — where pointer symbols belong — 2026-09-11 |
+
+| [wave20-std-fmt-borrow](wave20-std-fmt-borrow/README.md) | STD-FMT-BORROW — a borrowed render of a live resource (wave 20) |
+
+| [wave21-compose-concurrency](wave21-compose-concurrency/README.md) | COMPOSE-CONCURRENCY — a module that spawns and prints (wave 21) |
+
+| [wave21-examples-suite](wave21-examples-suite/README.md) | EXAMPLES-SUITE — runnable, tested examples for the shipped feature families (wave 21) |
+
+| [wave21-quirin-rename](wave21-quirin-rename/README.md) | WAVE21-QUIRIN-RENAME — the language is promoted as Quirin |
+
+| [wave22-aom-destroy](wave22-aom-destroy/README.md) | ADDRESS-OF-MEMBER-DESTROY-UNDECLARED — `flb_input_chunk_destroy` declared, and the leak-273 leaf decided — 2026-09-11 |
+
+| [wave22-corpus](wave22-corpus/README.md) | Wave-22 corpus re-pin |
+
+| [wave22-native-library-header](wave22-native-library-header/README.md) | NATIVE-LIBRARY-HEADER — reading the library's own `.h` — 2026-09-11 |
+
+| [wave22-obs-reordering](wave22-obs-reordering/README.md) | OBS-REORDERING — comparison up to a declared reordering, and `COMPOSE-WORKER-LINES` (wave 22) |
+
+| [wave22-pipe-intrinsic-stage](wave22-pipe-intrinsic-stage/README.md) | PIPE-INTRINSIC-STAGE — a model intrinsic as a pipeline stage (wave 22) |
+
+| [wave22-std-buffer](wave22-std-buffer/README.md) | STD-BUFFER — `std.buffer`, a checked owned byte buffer (wave 22) |
+
+| [wave22-std-event](wave22-std-event/README.md) | STD-EVENT — a checked event surface over the existing reactor models (wave 22) |
+
+| [wave23-c-operations](wave23-c-operations/README.md) | Wave 23: existing-C gateway operations |
+
+| [wave33-close](wave33-close/README.md) | Wave 33 close |
+
+| [wave34-close](wave34-close/README.md) | Wave 34 close |
+
+| [wave35-close](wave35-close/README.md) | WAVE-35-CLOSE — seven cards, two arbiters, four losses found by measuring — 2026-09-18 |
+
+| [wave36-close](wave36-close/README.md) | WAVE-36-CLOSE — seven cards, two arbiters, four amendments found unapplied — 2026-09-18 |
+
+| [wave37-close](wave37-close/README.md) | WAVE-37-CLOSE — seven cards, three arbiters, nothing unapplied at its merge and five things found anyway — 2026-09-18 |
+
+| [wave38-close](wave38-close/README.md) | WAVE-38-CLOSE — one card, its integrator list swept, the two gate keys made required checks, the Windows F02 pin deferred with its Linux half landed — 2026-09-18 |
+
+| [wave39-close](wave39-close/README.md) | WAVE-39-CLOSE — five cards swept, one uncounted tally corrected, the integrator's own record kept, two retirements and three registrations — 2026-09-18 |
+
+| [wave40-close](wave40-close/README.md) | `WAVE-40-CLOSE` — the integrator's reconciliation and close for wave 40 |
+
+| [wave5-ct-integration](wave5-ct-integration/README.md) | Wave-5 CT integration — CT28, CT31, CT32 and CT48 mapped with stage-derived evidence |
+
+| [wave8-epoch-ct](wave8-epoch-ct/README.md) | T08-SRC-CT — mapping the four epoch CT cases on a new stage-derived route |
+
+| [wave9-corpus](wave9-corpus/README.md) | Wave-9 corpus consolidation — one fresh measurement, deliberately re-pinned |
+
+| [wave9-ctwin](wave9-ctwin/README.md) | CT-CTWIN — the blocked-on-harness-schema C-twin bucket |
+
+| [wave9-gen-reason](wave9-gen-reason/README.md) | GEN-REASON — the D02 generator's non-CT sections, and the last three reason-code residuals |
+
+| [windows-c11-threads](windows-c11-threads/README.md) | Windows C11 thread emission |
+
+| [windows-clang-fixtures](windows-clang-fixtures/README.md) | Windows Clang fixture type and line-ending repairs |
+
+| [windows-native-sockets-harness](windows-native-sockets-harness/README.md) | WINDOWS-NATIVE-SOCKETS-HARNESS — the wave-24 native runs, made runnable on Windows |
+
+| [windows-std-event-af-unix](windows-std-event-af-unix/README.md) | EVENT-V1-WINDOWS-AFUNIX — capability-selected Windows endpoint pairs |
+
+| [windows-vs2026](windows-vs2026/README.md) | Windows Visual Studio 2026 toolchain repair |
+
+| [write-lend-tasks](write-lend-tasks/README.md) | WRITE-LEND-TASKS — write lends crossing the spawn boundary (wave 31) |
+
+| [write-lend-tasks-exercise](write-lend-tasks-exercise/README.md) | `WRITE-LEND-TASKS-EXERCISE` — the worker exercises its range write lease |

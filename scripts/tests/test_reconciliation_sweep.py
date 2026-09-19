@@ -443,6 +443,31 @@ class ResidualTests(unittest.TestCase):
             found = names_of(sweep_module.untracked_residuals(root, ["a-card"]))
         self.assertEqual(found, ["QUIRIN-ARM64-GATE"])
 
+    def test_routed_rule_and_platform_names_are_seen_but_not_tracking(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root = self._tree(scratch, ledger=("A-CARD-TRACKED", "A-CARD-UNTRACKED"))
+            policy = root / "docs/agents/gateway.md"
+            policy.parent.mkdir(parents=True)
+            policy.write_text("Rule: `ROUTED-ONLY-RESIDUAL`.\n", encoding="utf-8")
+            platform = root / "docs/development/platform-evidence.md"
+            platform.parent.mkdir(parents=True)
+            platform.write_text("Open: `PLATFORM-ONLY-RESIDUAL`.\n", encoding="utf-8")
+            found = sweep_module.untracked_residuals(root, ["a-card"])
+            self.assertEqual(names_of(found), ["PLATFORM-ONLY-RESIDUAL", "ROUTED-ONLY-RESIDUAL"])
+            self.assertEqual(found[1].mentions, ("docs/agents/gateway.md",))
+            write_ledger(root, "A-CARD-TRACKED", "A-CARD-UNTRACKED", "ROUTED-ONLY-RESIDUAL")
+            self.assertEqual(names_of(sweep_module.untracked_residuals(root, ["a-card"])),
+                             ["PLATFORM-ONLY-RESIDUAL"])
+
+    def test_routed_policy_discovery_does_not_treat_archives_as_live_rules(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root = self._tree(scratch, ledger=("A-CARD-TRACKED", "A-CARD-UNTRACKED"))
+            archive = root / "docs/development/increments/structure-checkpoints/old.md"
+            archive.parent.mkdir(parents=True)
+            archive.write_text("Old rule: `ARCHIVE-ONLY-NAME`.\n", encoding="utf-8")
+            self.assertNotIn(str(archive.relative_to(root)), sweep_module.rule_documents(root))
+            self.assertEqual(sweep_module.untracked_residuals(root, ["a-card"]), [])
+
     def test_the_cli_says_it_classifies_nothing(self):
         with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
             root = self._tree(scratch, "")

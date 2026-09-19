@@ -388,6 +388,23 @@ TRACKERS = (f"{MATRIX}:named_followups",)
 MENTION_ONLY = ("AGENTS.md", "CLAUDE.md")
 
 
+def rule_documents(root: pathlib.Path) -> tuple[str, ...]:
+    """Include routed policies after documentation restructuring.
+
+    These remain mention-only evidence, never tracker registrations. Limit the
+    discovery to the canonical policy directory, not archived checkpoints.
+    """
+    routed = sorted(
+        str(path.relative_to(root))
+        for path in (root / "docs" / "agents").glob("*.md")
+        if path.is_file()
+    )
+    platform = "docs/development/platform-evidence.md"
+    if (root / platform).is_file():
+        routed.append(platform)
+    return (*MENTION_ONLY, *routed)
+
+
 @dataclass(frozen=True)
 class ResidualName:
     """One residual-shaped name the ledger does not carry."""
@@ -395,7 +412,7 @@ class ResidualName:
     name: str
     #: Documents that *write* the name, relative to the root.
     sources: tuple[str, ...]
-    #: Non-tracker documents that mention it (see `MENTION_ONLY`).
+    #: Non-tracker documents that mention it (see `rule_documents`).
     mentions: tuple[str, ...]
 
 
@@ -460,7 +477,7 @@ def residual_sources(root: pathlib.Path, cards: list[str]) -> dict[str, str]:
             sources[f"docs/development/increments/{record.name}"] = record.read_text(
                 encoding="utf-8"
             )
-    for name in MENTION_ONLY:
+    for name in rule_documents(root):
         text = constraint_text(root, name)
         if text:
             sources[f"{name} (standing constraints)"] = text
@@ -474,7 +491,7 @@ def untracked_residuals(root: pathlib.Path, cards: list[str]) -> list[ResidualNa
     from a profile name or a test id, and deliberately does not try.
     """
     tracked = ledger_text(root)
-    mentions = {name: (root / name).read_text(encoding="utf-8") for name in MENTION_ONLY if (root / name).is_file()}
+    mentions = {name: (root / name).read_text(encoding="utf-8") for name in rule_documents(root) if (root / name).is_file()}
     where: dict[str, set[str]] = {}
     for label, text in residual_sources(root, cards).items():
         for match in RESIDUAL.finditer(text):
@@ -1062,7 +1079,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"\n{len(found)} residual-shaped names the tracker ({TRACKERS[0]}) does not carry.")
         print(
             "Scanned: the named card reports, docs/development/increments/, and the "
-            "standing-constraints text of " + ", ".join(MENTION_ONLY) + "."
+            "standing-constraints text of " + ", ".join(rule_documents(root)) + "."
         )
         print("Candidates for a human eye; this tool classifies none of them.")
         return 0

@@ -4,8 +4,9 @@
 
 This is the live navigation index for historical records. Counts, platform
 observations and old instructions on the linked pages describe their recorded
-dates. Current agent rules and headline status live in
-[AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
+dates. Current agent rules and headline status are routed by
+[AGENTS.md](../../../AGENTS.md) to the [rule reference](../../agents/README.md)
+and [status page](../../STATUS.md); each card's report owns its evidence.
 
 ## Contents
 
@@ -26,7 +27,7 @@ new increment below the checkpoint notice — and, in a record file that carries
 a `<!-- migrated-section -->` block, above that block; the current file need not
 have one. Keep that increment's evidence and boundaries together. Start the next wave's
 file when that wave begins and update this pointer and the wave table; do not
-rename old files. Main headline changes still belong in `AGENTS.md`.
+rename old files. Main headline changes belong in `docs/STATUS.md`.
 
 For a worktree created before this split, compare its `DEVELOPMENT.md` changes
 against that card's recorded base. Move only its new increment paragraphs to
@@ -83,6 +84,10 @@ merge. The migration report maps original line ranges to the new pages.
 - [Tasks, custody and configured audits](early-tasks-and-audits.md)
 
 ## Relocated historical guidance
+
+- [Structural-compaction checkpoints](structure-checkpoints/README.md): root
+  introductions, status narrative and public/development guides before the
+  2026-09-19 restructuring; full rule text lives in the current topic reference.
 
 These are the verbatim checkpoint records moved out of earlier agent guides,
 with relative links rebased where necessary. They are not current rules.

@@ -1,0 +1,194 @@
+{
+  "status": "passed",
+  "base_commit": "463fa6e8d0c44c23e402dd78bdc146963f0244ca",
+  "started_date": "2026-09-19",
+  "commands": [
+    {
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/gate-20260919/0.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/gate-20260919/1.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/gate-20260919/2.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/gate-20260919/3.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/gate-20260919/4.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/gate-20260919/5.log"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/gate-20260919/6.log"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/gate-20260919/7.log"
+    }
+  ],
+  "rust": {
+    "passed": 4727,
+    "failed": 0,
+    "ignored": 10,
+    "result_summaries": 238
+  },
+  "lean_summary": [
+    "Passed 141 Lean audits"
+  ],
+  "python_summary": [
+    "Ran 305 tests in 14.020s",
+    "OK"
+  ],
+  "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "sensitive_rows": {
+    "a_declared_process_limit_stops_the_fixture_from_forking": [
+      "test a_declared_process_limit_stops_the_fixture_from_forking ... ok"
+    ],
+    "vp04_vp07_vp08_process_lifecycle_and_payload_budgets": [
+      "test vp04_vp07_vp08_process_lifecycle_and_payload_budgets ... ok"
+    ],
+    "a_confined_fixture_cannot_read_outside_the_admitted_paths": [
+      "test a_confined_fixture_cannot_read_outside_the_admitted_paths ... ok"
+    ],
+    "memory_growth_beyond_the_declared_limit_is_bounded": [
+      "test memory_growth_beyond_the_declared_limit_is_bounded ... ok"
+    ],
+    "closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request": [
+      "test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok"
+    ],
+    "a_forced_override_never_weakens_an_execution": [
+      "test a_forced_override_never_weakens_an_execution ... ok"
+    ]
+  },
+  "provider_packages": "Not re-run: providers/ and qcore-schemas unchanged. No fresh provider count claimed.",
+  "measurement_scope": "Working tree based on base_commit; root guide content and documentation tooling changed, no Rust, Lean, contract or provider source changed. No isolated retest needed.",
+  "documentation_checks": [
+    {
+      "command": [
+        "python3",
+        "docs/reports/docs-structure-compression/verify.py",
+        "--write"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/final-checks/0.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/docs-structure-compression/rederive_status.py",
+        "--check"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/final-checks/1.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/docs-structure-compression/check_residuals.py"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/final-checks/2.log"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py",
+        "--check"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/final-checks/3.log"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ct_stage_summary.py",
+        ".",
+        "--check"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/final-checks/4.log"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/final-checks/5.log"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit": 0,
+      "log": "private/docs-structure-compression/staged-whitespace-final.log"
+    }
+  ]
+}

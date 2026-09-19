@@ -1,0 +1,126 @@
+{
+  "ct": {
+    "mapping": {
+      "mapped": 47,
+      "unmapped": 3
+    },
+    "unmapped": [
+      "CT10",
+      "CT24",
+      "CT41"
+    ],
+    "proof": {
+      "ids": [
+        "CT01",
+        "CT03",
+        "CT07",
+        "CT37"
+      ],
+      "host_gates": {
+        "CT01": null,
+        "CT03": null,
+        "CT07": null,
+        "CT37": null
+      }
+    },
+    "native_sanitized": {
+      "ids": [
+        "CT03",
+        "CT07",
+        "CT09",
+        "CT17",
+        "CT22",
+        "CT25",
+        "CT26",
+        "CT34",
+        "CT46",
+        "CT49"
+      ],
+      "host_gates": {
+        "CT03": [
+          "linux",
+          "macos"
+        ],
+        "CT07": [
+          "linux",
+          "macos"
+        ],
+        "CT09": [
+          "linux",
+          "macos"
+        ],
+        "CT17": [
+          "linux",
+          "macos"
+        ],
+        "CT22": [
+          "linux",
+          "macos"
+        ],
+        "CT25": [
+          "linux",
+          "macos"
+        ],
+        "CT26": [
+          "linux",
+          "macos"
+        ],
+        "CT34": [
+          "linux",
+          "macos"
+        ],
+        "CT46": [
+          "linux",
+          "macos"
+        ],
+        "CT49": [
+          "linux",
+          "macos"
+        ]
+      }
+    }
+  },
+  "corpus": {
+    "source": "docs/reports/w37-corpus-contracts-4/artifacts/diagnostics.json.gz",
+    "unit_statuses": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    },
+    "function_statuses": {
+      "Unknown": 4537,
+      "Safe": 213,
+      "Unsafe": 84
+    },
+    "diagnostic_counts": {
+      "leak": 272,
+      "summary_conflict": 1,
+      "unknown_alias": 4309,
+      "unsupported": 49753
+    }
+  },
+  "contracts": {
+    "modules": 88,
+    "declarations": 59,
+    "selected": 33
+  },
+  "followups": {
+    "carried": 257,
+    "derived": 257
+  },
+  "last_merged_gate": {
+    "note": "WAVE-40-CLOSE, 2026-09-19, a TWO-CARD CADENCE WAVE (STABILITY-REEVAL-4, DOCS-COMPACT-8), the close the only card running. TWO detached full gates (setsid -f, no trap '' TERM; every exit to its own file, no pipe; git submodule update --init --recursive inside the script, exit 0, third_party/libevent at d82464a2; worktree-private private/wave40-close/gate-{base,final}/, copied into gate/base/ and gate/final/ beside this file), each polled by a bounded foreground loop on its DONE marker. BASE RUN at 2ba203ef = 0c7b0cea's code byte for byte plus this close's report skeleton: 4,727 passed / 0 failed / 10 ignored over 238 STRICT result summaries and 236 test targets (227 Running + 9 doc-test sections; TWO of those sections print two summaries each - Doc-tests qcore_core and Doc-tests qcore_verifier_host - and zero targets emit no summary), test result: FAILED 0 times; fmt 0; clippy 0; both probes 0; 141 Lean; Python 303 OK; cargo 13m22s (16:08:31Z to 16:21:53Z), gate 14m39s. FINAL RUN at 3310c0e4, the tip carrying this close's tracker edits, its AGENTS.md and CLAUDE.md amendments, the two dated appended sections on frozen wave-39 card reports and the regenerated matrix. NAMED RATHER THAN GLOSSED: three documentation changes land AFTER that tip and are therefore outside both runs - this report, the reconciliation record and the wave-40 increment paragraph, plus one further AGENTS.md paragraph (the Q-space tally's 'wave 40 added nothing to it' sentence) and the final regeneration that carries this note into the matrix. No test in this tree reads AGENTS.md, CLAUDE.md, README.md, a report README or the matrix's prose, and the Python suite was re-run green after every one of them (private/wave40-close/python-final.log), so the figures below stand for the published tree; a reader who wants a gate whose tip is byte-identical to the merged tree should read that as the boundary. THE FIGURES BELOW. 4,727 passed / 0 failed / 10 ignored over the same 236 targets / 238 strict / 240 loose / two doubled sections, test result: FAILED 0 times, so no isolated constraint-16 re-verification was required and none is claimed; fmt 0; clippy 0; both probes 0; 141 Lean audits (check_lean_audits.py: 'Passed 141 Lean audits'; RECORDED UNDER THE REQUIRED lean_audits KEY, checked by build_matrix.py --gate against proof/Audit*.lean, 141 on disk); Python 303 OK - and the Python step EXITED 0 rather than tripping the regeneration tripwires, because this close had already regenerated the matrix with its interim gate.json before this run started; cargo 12m19s (16:34:15Z to 16:46:34Z), gate 12m40s; disk 260 -> 260 GB free. ZERO DELTA between the two runs and against both of the wave's merges: the workspace figure, the ignored count, the summary arithmetic, the Lean count and the Python count are the same four times over (both cards' gate.json read 4,727 / 141 / 303 too), which is what a wave that moves NO CRATE SOURCE should measure - git diff --stat 6dc484ad 0c7b0cea -- crates/ compiler/ proof/ providers/ is empty, and this close adds no code-adjacent edit at all. THE SUMMARY ARITHMETIC IS NOW A THIRD INDEPENDENT MEASUREMENT: DOCS-COMPACT-8 and STABILITY-REEVAL-4 measured 238/236/two independently on two trees and this close reproduced it exactly on a third with the reeval's own shipped script (docs/reports/stability-reeval-4/scripts/count_summaries.py); 240 is the loose match's number and is published as such (GATE-ROW-SUMMARY-COUNT-UNCHECKED, still unchecked mechanically). The tenth ignored row is the #[ignore]d F02 pin-agreement test, still RED BY DESIGN on --ignored (F02-WINDOWS-PIN-STALE-SINCE-WAVE-36, a Windows row no Linux gate can see), beside TSAN-ROWS-2's #[ignore]d measurement harness. CLANG PRESENCE RECORDED BY THIS CLOSE, NOT BORROWED: gate/clang-version.txt is `clang --version` run in THIS worktree with QCORE_CLANG unset, exit 0 captured to its own file, first line under the `clang` key below; the base and final recordings are byte-identical (cmp exit 0). The generator's check cannot tell an own recording from a borrowed one (CLANG-RECORDING-UNBOUND-TO-ITS-RUN), which is why AGENTS.md's standing-gate section now states that the key is a DISCLOSURE CONVENTION AND NOT A CHECK. CONSTRAINT 16 ROWS: four of the five named rows live in this workspace and all four were green in both runs (vp04_vp07_vp08_process_lifecycle_and_payload_budgets, a_confined_fixture_cannot_read_outside_the_admitted_paths, a_declared_process_limit_stops_the_fixture_from_forking, enforced_process_limits memory growth), plus the unnamed closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request and a_forced_override_never_weakens_an_execution; the fifth, real_packages_preserve_unknown_and_reject_mutations, lives in the separate providers/ workspace. Nothing flaked. These are full-suite runs on a machine carrying its own build, NOT the quiet-host number HOST-ROW-STARVATION-DESCRIPTION asks for. PROVIDER 122 CARRIED, NOT RE-MEASURED: nothing under providers/ or crates/qcore-schemas/ moved this wave and qcore-schemas is still 14.0.0 (constraint 18 not engaged); a Unix figure (PROVIDER-CONFORMANCE-UNIX-ONLY). BOTH MEASURED TIPS ARE IN-HISTORY commits of this close's own branch, reachable from main once its merge lands - deliberately, because the tip this row cited at the base (c188d3ab) and both wave-40 merge tips (f661b2aa, 3cb27d80) are non-ancestors (INTEGRATION-TIP-CITATION-UNREACHABLE; the successor mapping is in this close's README section 8.3). DELTAS against the wave-39 close's 4,727 / 303 / 141 at 11edf7eb: NONE in any of the three. NOTHING IS PROMOTED BY THIS CLOSE: no corpus count, unit status or function status moves; raw units stay unpromoted; contract corpus 88; CT 47/50 with sanitized-native 10 (a Unix figure, qualified in the row by this close) and proof 4; full language conformance FALSE. named_followups 258 -> 257 (three retirements, two registrations, six amendments). Evidence: docs/reports/wave40-close/README.md sections 5-7 and reconciliation.json.",
+    "workspace_tests": 4727,
+    "provider_tests": 122,
+    "python_evidence_validator_tests": 303,
+    "reevaluation_probe_exit": 0,
+    "reevaluation_followup_exit": 0,
+    "cargo_fmt": "clean",
+    "cargo_clippy": "clean",
+    "standing_gate": "pass",
+    "lean_audits": 141,
+    "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+  },
+  "lean_audits": 141
+}

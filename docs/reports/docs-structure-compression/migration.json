@@ -1,0 +1,1235 @@
+{
+  "schema_version": 1,
+  "source_commit": "463fa6e8d0c44c23e402dd78bdc146963f0244ca",
+  "sources": {
+    "AGENTS.md": {
+      "bytes": 176297,
+      "sha256": "dfc7e50fed39ebb19da6e9b3059893df09e2f65411a14a4002ae1e1d149c7bcd"
+    },
+    "CLAUDE.md": {
+      "bytes": 29134,
+      "sha256": "daade9b3737daf1bc9510cedcb1e7234e12b18e800af6d041d4a581ed284ac1a"
+    },
+    "README.md": {
+      "bytes": 13796,
+      "sha256": "1f24b63f3fb11291cc5412f75d13e8fd81baee912358829b1235a83d4c74539a"
+    },
+    "DEVELOPMENT.md": {
+      "bytes": 6966,
+      "sha256": "49093b3aa2bf75e9136ffd8fb7edf594c5db9bb3a260893c9080dfe9e811499d"
+    }
+  },
+  "parts": [
+    {
+      "source": "AGENTS.md",
+      "start": 0,
+      "end": 3917,
+      "path": "docs/development/increments/structure-checkpoints/agent-introduction.md",
+      "key": "agent-introduction",
+      "sha256": "ba923b18eaef39b2d71e542cde26c87600c58aa9e690fc26e110ac063b5ba277",
+      "transforms": [
+        {
+          "old": "](README.md)",
+          "new": "](../../../../README.md)"
+        },
+        {
+          "old": "](DEVELOPMENT.md)",
+          "new": "](../../../../DEVELOPMENT.md)"
+        }
+      ]
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 10089,
+      "end": 27812,
+      "path": "docs/development/increments/structure-checkpoints/status.md",
+      "key": "status",
+      "sha256": "adff809cf86960755973a4d902f50666b37a69e11dcdfba2600852587f6fce6a",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 3917,
+      "end": 10089,
+      "path": "docs/development/architecture.md",
+      "key": "architecture",
+      "sha256": "1b1c0fbaf5ca40c313ded135dc945853d8e3d04a7d8c510d019f05387604e52a",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 145979,
+      "end": 148824,
+      "path": "docs/development/architecture.md",
+      "key": "entry-points",
+      "sha256": "fd44e19223462f2e73fcc5bcad6468a06153373a2f1d21377142a90b7fd231ed",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 175062,
+      "end": 175412,
+      "path": "docs/development/architecture.md",
+      "key": "further-reading",
+      "sha256": "daf2b0c291518a49c8b701824f1d738518208d4829a7356d7e4da6532bd354e8",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 27812,
+      "end": 29322,
+      "path": "AGENTS.md",
+      "key": "hard-invariants",
+      "sha256": "af2c98f47e19708273f44959031bc2925cc7f884580600211df8e35709a07574",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 29322,
+      "end": 29527,
+      "path": "docs/development/increments/structure-checkpoints/constraint-preambles.md",
+      "key": "constraint-preamble-0",
+      "sha256": "221ce5e5bbe331063bd63b9c428ec21d52ed5166a07290f444e2dae75331ff9a",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 29527,
+      "end": 29554,
+      "path": "docs/development/increments/structure-checkpoints/constraint-preambles.md",
+      "key": "constraint-preamble-1",
+      "sha256": "aac8aedb2240e83b1012d71619992b55fe818705ea2ec60be3034b96dbc455db",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 29554,
+      "end": 30145,
+      "path": "docs/agents/diagnostics.md",
+      "key": "constraint-1",
+      "sha256": "cb5f7f350d4db846849e0a859d2a9d393ec27804b7881dc67496d1ba29314048",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 30145,
+      "end": 30612,
+      "path": "docs/agents/diagnostics.md",
+      "key": "constraint-2",
+      "sha256": "bf2b1ca0cfc17cfb4cbde0693bdc2cd285cc5be9d2976f613653b0f5142c16bf",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 30612,
+      "end": 31022,
+      "path": "docs/agents/diagnostics.md",
+      "key": "constraint-3",
+      "sha256": "6fd5390db6017fe6ad7b4032ab9f8ebfc9d2c6d213a711c7ba2abc689f3f23fb",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 31022,
+      "end": 31066,
+      "path": "docs/development/increments/structure-checkpoints/constraint-preambles.md",
+      "key": "constraint-preamble-5",
+      "sha256": "682b20afc64aef92bb2cfefd2403956670c9b116345ed90d9b5b0d18251eaf30",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 31066,
+      "end": 33955,
+      "path": "docs/agents/gateway.md",
+      "key": "constraint-4",
+      "sha256": "7b6360617f7a60ef56fb69d112a641134c3a6349602f3cde770a4b8866a331bb",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 33955,
+      "end": 34259,
+      "path": "docs/agents/gateway.md",
+      "key": "constraint-5",
+      "sha256": "b610549af61f59b9ce6634e6eaeee8e55fbc064ab01a9279a6070a3050582ad0",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 34259,
+      "end": 34975,
+      "path": "docs/agents/gateway.md",
+      "key": "constraint-5a",
+      "sha256": "e7e0588311a174d82ef7f1acd5b290eaa6707a6514004d3f72ba19de46f1e657",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 34975,
+      "end": 38141,
+      "path": "docs/agents/gateway.md",
+      "key": "constraint-5b",
+      "sha256": "38bceef9cc2265ab966b5012719877e08e60a563f1ede3d43caf7bbb0f2d062d",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 38141,
+      "end": 44148,
+      "path": "docs/agents/gateway.md",
+      "key": "constraint-5c",
+      "sha256": "b7900f930cd470fc6c193b797737dfa6a3ee91aa09d9c7ff566b8133c673df59",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 44148,
+      "end": 44467,
+      "path": "docs/agents/gateway.md",
+      "key": "constraint-6",
+      "sha256": "0aa34284b603da1975c1a03ea005b5e184a1b935b5529d542bba05fb5efe21c1",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 44467,
+      "end": 49847,
+      "path": "docs/agents/gateway.md",
+      "key": "constraint-7",
+      "sha256": "a5bd32647357907820b346063e44da88b4681a328c969f81e2f3ce76be01fe0b",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 49847,
+      "end": 53561,
+      "path": "docs/agents/gateway.md",
+      "key": "constraint-8",
+      "sha256": "0403b63d4cd9d95fd096f4ffdc0b863ecb0b2d470570d003691eae5fd16258d2",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 53561,
+      "end": 54030,
+      "path": "docs/agents/gateway.md",
+      "key": "constraint-9",
+      "sha256": "575ff60a1bcb6e0d3e9af6885da91b2efada80af9a19acb787dbb8f6fac58250",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 54030,
+      "end": 55455,
+      "path": "docs/agents/gateway.md",
+      "key": "constraint-10",
+      "sha256": "8a13aa6284ffb68b1f3c9361e405253392e799bdc702ab49825749100559a5bc",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 55455,
+      "end": 57407,
+      "path": "docs/agents/gateway.md",
+      "key": "constraint-10a",
+      "sha256": "30a8d29177887dd03a834868907bb29d1c82e79e7f7219071cc80e2bbccc1457",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 57407,
+      "end": 61702,
+      "path": "docs/agents/gateway.md",
+      "key": "constraint-10b",
+      "sha256": "02a2ea8a00314ffd79d0b05643f06d3e3ac41acdb1f90e4f39a98aaf5b3dba11",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 61702,
+      "end": 61750,
+      "path": "docs/development/increments/structure-checkpoints/constraint-preambles.md",
+      "key": "constraint-preamble-18",
+      "sha256": "2332c46702a8cf2a5341481229df77bc9ab6bd31b4e0cb01b33ab178d4a937a4",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 61750,
+      "end": 62252,
+      "path": "docs/agents/source-identity.md",
+      "key": "constraint-11",
+      "sha256": "011620136d504426bf706e663424dea442985417bc93d492c935f89fa98a5e8c",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 62252,
+      "end": 62502,
+      "path": "docs/agents/source-identity.md",
+      "key": "constraint-12",
+      "sha256": "a90f833447e6760ac39620e2e77ccd7d4915d2790b7cb2b74b7524343e8e876d",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 62502,
+      "end": 64830,
+      "path": "docs/agents/source-identity.md",
+      "key": "constraint-12a",
+      "sha256": "f8a2614958c7aef2281e09ec7d0a4dfdad34b07efa4a63c8aea08b20ffb17288",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 64830,
+      "end": 64861,
+      "path": "docs/development/increments/structure-checkpoints/constraint-preambles.md",
+      "key": "constraint-preamble-22",
+      "sha256": "2aa36fd11b80efa2910cf78cb3863a01225f4e64051eb91f376a9c086bcfbb5c",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 64861,
+      "end": 65181,
+      "path": "docs/agents/source-routes.md",
+      "key": "constraint-13",
+      "sha256": "668462435fda3e7aade489efae7e6ab667a114318430c784882b9cb4685c1907",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 65181,
+      "end": 71561,
+      "path": "docs/agents/source-routes.md",
+      "key": "constraint-14",
+      "sha256": "f7b742238014af1cbd0402ca582e967e4c225d4aa8b2f2537aaa1764544f1c7f",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 71561,
+      "end": 71775,
+      "path": "docs/agents/source-routes.md",
+      "key": "constraint-15",
+      "sha256": "74c9e34ca346f6965cd5deee1ef87cfa1c3c498f33cdb1ae3f7a25ffb840654b",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 71775,
+      "end": 73147,
+      "path": "docs/agents/source-routes.md",
+      "key": "constraint-15a",
+      "sha256": "f8caed527571aba049ba954931b990e74199febcbe693a67be2e5da4947de070",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 73147,
+      "end": 73695,
+      "path": "docs/agents/source-routes.md",
+      "key": "constraint-15b",
+      "sha256": "21370b73d9a9ccb19dc7341b0939397df533cebf6da4974af42f0455853be9be",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 73695,
+      "end": 74940,
+      "path": "docs/agents/io.md",
+      "key": "constraint-15c",
+      "sha256": "9ea3dfdfeb2009c41789aed469289abea0f55ce198251029eccad7cc2f7c186c",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 74940,
+      "end": 75648,
+      "path": "docs/agents/io.md",
+      "key": "constraint-15d",
+      "sha256": "a4e14c379dbb59dc4eb9dd0c3196e7cd1328a29c528018dc43027a47099e47ef",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 75648,
+      "end": 76908,
+      "path": "docs/agents/io.md",
+      "key": "constraint-15e",
+      "sha256": "63630b71bb6b96c1686113d1f357b210efdd30f8d8bb1250a9cbb87032707a4c",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 76908,
+      "end": 78863,
+      "path": "docs/agents/io.md",
+      "key": "constraint-15f",
+      "sha256": "7bffb75ae07106ea43eb65613e7da8fd071ef3756ebfd2ac7b942f1db51fc25d",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 78863,
+      "end": 80352,
+      "path": "docs/agents/io.md",
+      "key": "constraint-15g",
+      "sha256": "b12c9212b4cfd66bfb5a1d3e13c05a237e9993a7e5084c658efcd1ab83ae1931",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 80352,
+      "end": 97318,
+      "path": "docs/agents/buffers-records.md",
+      "key": "constraint-15h",
+      "sha256": "8f446ffc5c1fa6522fb366972596a66f946f4a3cc233284893ae7349b46cb180",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 97318,
+      "end": 99622,
+      "path": "docs/agents/io.md",
+      "key": "constraint-15i",
+      "sha256": "81e019f574ffd87778d0cc1c94892d586889257acc37821e70236b064b976caa",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 99622,
+      "end": 101734,
+      "path": "docs/agents/effects.md",
+      "key": "constraint-15j",
+      "sha256": "11ce2fa8985c34974cf73b056f533fceb02b467bb1c3751c4d39aff5553bbed0",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 101734,
+      "end": 106253,
+      "path": "docs/agents/buffers-records.md",
+      "key": "constraint-15k",
+      "sha256": "84a375af63663bf81c00d8a4f69698e632e02d8695a198dd2ba48e7241c9ab36",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 106253,
+      "end": 108209,
+      "path": "docs/agents/effects.md",
+      "key": "constraint-15l",
+      "sha256": "dffcfb660fb293b827f6615f4695ca9237b4935edd80049dfb625b84819c74bd",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 108209,
+      "end": 112414,
+      "path": "docs/agents/effects.md",
+      "key": "constraint-15m",
+      "sha256": "bcdf5f3be8c785377c11c48fc28a48df11044df97c33af0f72c145ab27f3421c",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 112414,
+      "end": 118946,
+      "path": "docs/agents/concurrency.md",
+      "key": "constraint-15n",
+      "sha256": "94d199a6e7fe2ed076182b4e31cd7edf5b1b0ebe6e782a0ec96a03797ede0308",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 118946,
+      "end": 123866,
+      "path": "docs/agents/concurrency.md",
+      "key": "constraint-15o",
+      "sha256": "a459f39e29128639e8259ebc3a7719b7d49ccdcf66234c54043c377d4e3055e4",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 123866,
+      "end": 126956,
+      "path": "docs/agents/io.md",
+      "key": "constraint-15p",
+      "sha256": "a3c86bb78ce6c9457dd5243c08fcffe488401fd02e8818ceda111dee3459c18b",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 126956,
+      "end": 126992,
+      "path": "docs/development/increments/structure-checkpoints/constraint-preambles.md",
+      "key": "constraint-preamble-42",
+      "sha256": "c5097bfe2b08946a02bd086c979e9baeb1d49972b286949bdb2c0dfcf16c27b2",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 126992,
+      "end": 133828,
+      "path": "docs/agents/providers.md",
+      "key": "constraint-16",
+      "sha256": "1b5631321dde2ba6dc4fa43e7da5403263b0546de2e00b6af75af715477366d4",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 133828,
+      "end": 134094,
+      "path": "docs/agents/providers.md",
+      "key": "constraint-17",
+      "sha256": "ce42e21bb7b7666a88d4a1cd7760dfffd497ef317dc706bb2479912b2943a1e2",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 134094,
+      "end": 134462,
+      "path": "docs/agents/providers.md",
+      "key": "constraint-18",
+      "sha256": "168942f98c38ead609effb872668fce02edd0fc5eece44e40b6e9efa90e7f7da",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 134462,
+      "end": 134680,
+      "path": "docs/agents/providers.md",
+      "key": "constraint-19",
+      "sha256": "73d6260f413d63d3054b9ed2775036acf0779221ccf1d7639f87699599ed1d07",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 134680,
+      "end": 134922,
+      "path": "docs/agents/providers.md",
+      "key": "constraint-20",
+      "sha256": "2e7babf8f0f0008d23d6cd32873f2d4a3ef28d2e2f46b30ebb7b0bd1f1c70d4f",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 134922,
+      "end": 134958,
+      "path": "docs/development/increments/structure-checkpoints/constraint-preambles.md",
+      "key": "constraint-preamble-48",
+      "sha256": "a7f7b4a19ccb5a623d5efc14cd0a5384eab03ba82e4368d9b30cd2f2392b2f1b",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 134958,
+      "end": 135500,
+      "path": "docs/agents/evidence.md",
+      "key": "constraint-21",
+      "sha256": "5a5db4d37f6b3cda53252385114dfe342446d09744459899e33d33c51584ce94",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 135500,
+      "end": 136528,
+      "path": "docs/agents/evidence.md",
+      "key": "constraint-22",
+      "sha256": "336f2e1dffe8a6b9d3321a71e250eed623704ccaddfe823257f9b64fff3c2129",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 136528,
+      "end": 138050,
+      "path": "docs/agents/evidence.md",
+      "key": "constraint-23",
+      "sha256": "2e2c12e554918ffc93ced1eb11045f325475c92330b160feacdcdc39b2104d67",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 138050,
+      "end": 138204,
+      "path": "docs/agents/evidence.md",
+      "key": "constraint-24",
+      "sha256": "306cb89dadb774dae51a18fc2cda9a681148f750579ad9067f0a9d53ddafa0ad",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 138204,
+      "end": 139203,
+      "path": "docs/agents/evidence.md",
+      "key": "constraint-25",
+      "sha256": "7716fcd2a127e95b9f2eab311097cfb8d29b343900a6f38d399da5e04d725000",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 139203,
+      "end": 139261,
+      "path": "docs/development/increments/structure-checkpoints/constraint-preambles.md",
+      "key": "constraint-preamble-54",
+      "sha256": "3d6f14a2fac30f4ed211e8021a26e41aabc9a2c3adf5011527f7df2721be7431",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 139261,
+      "end": 139625,
+      "path": "docs/agents/providers.md",
+      "key": "constraint-26",
+      "sha256": "266fae13d0f54c25c8b7235ed2012807755bb78ae549e117cd6d594baf4af9bb",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 139625,
+      "end": 139855,
+      "path": "docs/agents/concurrency.md",
+      "key": "constraint-27",
+      "sha256": "14a04c0967257fa054403e2f5fe1f4104ebad8938da39ec565c82f76bed9938d",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 139855,
+      "end": 141248,
+      "path": "docs/agents/evidence.md",
+      "key": "constraint-28",
+      "sha256": "4bb6df0ade61c2d7b29cddfd4abe25578bace641bc9664782fdc06fc8f668c88",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 148824,
+      "end": 175062,
+      "path": "docs/agents/diagnostics.md",
+      "key": "diagnostic-namespaces",
+      "sha256": "0cc6862d9b44e99aeaa2670f46ffd4614dbf3cd559aca767285f19202fa315c1",
+      "transforms": []
+    },
+    {
+      "source": "AGENTS.md",
+      "start": 141248,
+      "end": 145979,
+      "path": "docs/agents/validation.md",
+      "key": "validation",
+      "sha256": "4bf4bd263c6ea1e7faef9645c097d5cbe08880803c35af0644a97df232d23221",
+      "transforms": []
+    },
+    {
+      "source": "CLAUDE.md",
+      "start": 766,
+      "end": 23899,
+      "path": "docs/agents/operations.md",
+      "key": "operations",
+      "sha256": "0721d9b1581a3a32dc71425634e9ca4a899f994a292de843436f750c771efd42",
+      "transforms": []
+    },
+    {
+      "source": "CLAUDE.md",
+      "start": 23899,
+      "end": 28735,
+      "path": "docs/development/platform-evidence.md",
+      "key": "platform-records",
+      "sha256": "69373fa7a6f21c0e4267d32e9827370c3c6a67a1a1e69e39461894c114bf3d73",
+      "transforms": []
+    },
+    {
+      "source": "CLAUDE.md",
+      "start": 0,
+      "end": 766,
+      "path": "docs/development/increments/structure-checkpoints/agent-introduction.md",
+      "key": "claude-intro",
+      "sha256": "155792b8432bf5918f8f2ab38bcb0d4e1d44b707f4ce9f1553b0a0a6a67df8fc",
+      "transforms": []
+    },
+    {
+      "source": "CLAUDE.md",
+      "start": 28735,
+      "end": 28997,
+      "path": "docs/development/increments/structure-checkpoints/agent-introduction.md",
+      "key": "claude-pointer",
+      "sha256": "18230f04c54872c3a763a8c941053cff516e1b59411466ff6c4c44ec15570a5f",
+      "transforms": []
+    },
+    {
+      "source": "README.md",
+      "start": 0,
+      "end": 13719,
+      "path": "docs/development/increments/structure-checkpoints/public-overview.md",
+      "key": "public-overview",
+      "sha256": "1f24b63f3fb11291cc5412f75d13e8fd81baee912358829b1235a83d4c74539a",
+      "transforms": [
+        {
+          "old": "](docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md)",
+          "new": "](../../../QCORE_IMPLEMENTED_GRAMMARS_r0_3.md)"
+        },
+        {
+          "old": "](examples/threads/README.md#mapping-source-examples-to-the-core-prelude)",
+          "new": "](../../../../examples/threads/README.md#mapping-source-examples-to-the-core-prelude)"
+        },
+        {
+          "old": "](docs/reports/tsan-rows-2/README.md)",
+          "new": "](../../../reports/tsan-rows-2/README.md)"
+        },
+        {
+          "old": "](docs/cycles/)",
+          "new": "](../../../cycles)"
+        },
+        {
+          "old": "](AGENTS.md)",
+          "new": "](../../../../AGENTS.md)"
+        },
+        {
+          "old": "](DEVELOPMENT.md)",
+          "new": "](../../../../DEVELOPMENT.md)"
+        },
+        {
+          "old": "](docs/reports/)",
+          "new": "](../../../reports)"
+        },
+        {
+          "old": "](docs/reports/windows-c11-threads/README.md)",
+          "new": "](../../../reports/windows-c11-threads/README.md)"
+        },
+        {
+          "old": "](docs/reports/windows-clang-fixtures/README.md)",
+          "new": "](../../../reports/windows-clang-fixtures/README.md)"
+        },
+        {
+          "old": "](docs/reports/macos-cycle19-compiler-options/README.md)",
+          "new": "](../../../reports/macos-cycle19-compiler-options/README.md)"
+        },
+        {
+          "old": "](examples/README.md)",
+          "new": "](../../../../examples/README.md)"
+        },
+        {
+          "old": "](examples/threads/README.md)",
+          "new": "](../../../../examples/threads/README.md)"
+        },
+        {
+          "old": "](AGENTS.md)",
+          "new": "](../../../../AGENTS.md)"
+        },
+        {
+          "old": "](DEVELOPMENT.md#build-and-test)",
+          "new": "](../../../../DEVELOPMENT.md#build-and-test)"
+        },
+        {
+          "old": "](AGENTS.md)",
+          "new": "](../../../../AGENTS.md)"
+        },
+        {
+          "old": "](DEVELOPMENT.md)",
+          "new": "](../../../../DEVELOPMENT.md)"
+        },
+        {
+          "old": "](docs/development/build-and-test.md)",
+          "new": "](../../build-and-test.md)"
+        },
+        {
+          "old": "](docs/development/increments/README.md)",
+          "new": "](../README.md)"
+        },
+        {
+          "old": "](docs/QCORE_SPEC_r0_3.md)",
+          "new": "](../../../QCORE_SPEC_r0_3.md)"
+        },
+        {
+          "old": "](docs/QCORE_CONTRACT_SPEC_r0_3.md)",
+          "new": "](../../../QCORE_CONTRACT_SPEC_r0_3.md)"
+        },
+        {
+          "old": "](docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md)",
+          "new": "](../../../QCORE_IMPLEMENTED_GRAMMARS_r0_3.md)"
+        },
+        {
+          "old": "](docs/GENERALIZATION_PLAN.md)",
+          "new": "](../../../GENERALIZATION_PLAN.md)"
+        },
+        {
+          "old": "](docs/reviews/r0_3/REVIEW.md)",
+          "new": "](../../../reviews/r0_3/REVIEW.md)"
+        },
+        {
+          "old": "](examples/README.md)",
+          "new": "](../../../../examples/README.md)"
+        },
+        {
+          "old": "](docs/cycles/)",
+          "new": "](../../../cycles)"
+        },
+        {
+          "old": "](docs/reports/)",
+          "new": "](../../../reports)"
+        },
+        {
+          "old": "](editors/emacs/README.md)",
+          "new": "](../../../../editors/emacs/README.md)"
+        },
+        {
+          "old": "](docs/QCORE_MODULE_MODES.md)",
+          "new": "](../../../QCORE_MODULE_MODES.md)"
+        },
+        {
+          "old": "](docs/QTT_ALIGNMENT.md)",
+          "new": "](../../../QTT_ALIGNMENT.md)"
+        },
+        {
+          "old": "](docs/ROADMAP_AFTER_CYCLE_9.md)",
+          "new": "](../../../ROADMAP_AFTER_CYCLE_9.md)"
+        },
+        {
+          "old": "](docs/REEVALUATION_SPEC.md)",
+          "new": "](../../../REEVALUATION_SPEC.md)"
+        },
+        {
+          "old": "](docs/REEVALUATION_FOLLOWUP.md)",
+          "new": "](../../../REEVALUATION_FOLLOWUP.md)"
+        }
+      ]
+    },
+    {
+      "source": "DEVELOPMENT.md",
+      "start": 0,
+      "end": 6966,
+      "path": "docs/development/increments/structure-checkpoints/development-index.md",
+      "key": "development-index",
+      "sha256": "49093b3aa2bf75e9136ffd8fb7edf594c5db9bb3a260893c9080dfe9e811499d",
+      "transforms": [
+        {
+          "old": "](README.md)",
+          "new": "](../../../../README.md)"
+        },
+        {
+          "old": "](AGENTS.md)",
+          "new": "](../../../../AGENTS.md)"
+        },
+        {
+          "old": "](docs/development/README.md)",
+          "new": "](../../README.md)"
+        },
+        {
+          "old": "](#specifications-and-records)",
+          "new": "](../../../../DEVELOPMENT.md#specifications-and-records)"
+        },
+        {
+          "old": "](#repository-layout)",
+          "new": "](../../../../DEVELOPMENT.md#repository-layout)"
+        },
+        {
+          "old": "](#project-status)",
+          "new": "](../../../../DEVELOPMENT.md#project-status)"
+        },
+        {
+          "old": "](#build-and-test)",
+          "new": "](../../../../DEVELOPMENT.md#build-and-test)"
+        },
+        {
+          "old": "](#windows)",
+          "new": "](../../../../DEVELOPMENT.md#windows)"
+        },
+        {
+          "old": "](#increment-records)",
+          "new": "](../../../../DEVELOPMENT.md#increment-records)"
+        },
+        {
+          "old": "](#historical-section-links)",
+          "new": "](../../../../DEVELOPMENT.md#historical-section-links)"
+        },
+        {
+          "old": "](docs/development/references.md)",
+          "new": "](../../references.md)"
+        },
+        {
+          "old": "](docs/development/repository-layout.md)",
+          "new": "](../../repository-layout.md)"
+        },
+        {
+          "old": "](docs/development/cycle-status.md)",
+          "new": "](../../cycle-status.md)"
+        },
+        {
+          "old": "](AGENTS.md#status-ledger-do-not-overstate)",
+          "new": "](../../../../AGENTS.md#status-ledger-do-not-overstate)"
+        },
+        {
+          "old": "](docs/development/build-and-test.md)",
+          "new": "](../../build-and-test.md)"
+        },
+        {
+          "old": "](AGENTS.md#standing-per-change-gate)",
+          "new": "](../../../../AGENTS.md#standing-per-change-gate)"
+        },
+        {
+          "old": "](docs/development/build-and-test.md#windows)",
+          "new": "](../../build-and-test.md#windows)"
+        },
+        {
+          "old": "](docs/development/increments/README.md)",
+          "new": "](../README.md)"
+        },
+        {
+          "old": "](docs/development/increments/README.md#adding-a-record)",
+          "new": "](../README.md#adding-a-record)"
+        },
+        {
+          "old": "](docs/development/increments/README.md#waves)",
+          "new": "](../README.md#waves)"
+        },
+        {
+          "old": "](docs/development/increments/README.md#earlier-source-and-platform-records)",
+          "new": "](../README.md#earlier-source-and-platform-records)"
+        },
+        {
+          "old": "](docs/development/increments/README.md#relocated-historical-guidance)",
+          "new": "](../README.md#relocated-historical-guidance)"
+        },
+        {
+          "old": "](docs/development/increments/source-and-platform-notes.md#quant-delimiter-alias---2026-09-09)",
+          "new": "](../source-and-platform-notes.md#quant-delimiter-alias---2026-09-09)"
+        },
+        {
+          "old": "](docs/development/increments/source-and-platform-notes.md#sequential-c-emission-indentation-2026-09-08)",
+          "new": "](../source-and-platform-notes.md#sequential-c-emission-indentation-2026-09-08)"
+        },
+        {
+          "old": "](docs/development/increments/source-and-platform-notes.md#core-concurrency-prelude-2026-09-08)",
+          "new": "](../source-and-platform-notes.md#core-concurrency-prelude-2026-09-08)"
+        },
+        {
+          "old": "](docs/development/increments/early-integration.md#reopen-failure-evidence-2026-09-07)",
+          "new": "](../early-integration.md#reopen-failure-evidence-2026-09-07)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/cycles-and-teardown.md#status-paragraphs-relocated-from-agentsmd-and-claudemd-2026-09-10-card-docs-compact)",
+          "new": "](../legacy/cycles-and-teardown.md#status-paragraphs-relocated-from-agentsmd-and-claudemd-2026-09-10-card-docs-compact)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/cycles-and-teardown.md#cycle-status-ledger-as-carried-in-agentsmd-through-wave-15)",
+          "new": "](../legacy/cycles-and-teardown.md#cycle-status-ledger-as-carried-in-agentsmd-through-wave-15)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/cycles-and-teardown.md#cycle-19-nested-teardown-boundary-as-carried-in-claudemd-through-wave-15)",
+          "new": "](../legacy/cycles-and-teardown.md#cycle-19-nested-teardown-boundary-as-carried-in-claudemd-through-wave-15)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/identity-and-diagnostics.md#r02-terminal-task-state-adversarial-verification-2026-09-07)",
+          "new": "](../legacy/identity-and-diagnostics.md#r02-terminal-task-state-adversarial-verification-2026-09-07)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/identity-and-diagnostics.md#compile-task-identity-2026-09-07)",
+          "new": "](../legacy/identity-and-diagnostics.md#compile-task-identity-2026-09-07)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/identity-and-diagnostics.md#windows-clang-discovery-and-test-portability-2026-09-07)",
+          "new": "](../legacy/identity-and-diagnostics.md#windows-clang-discovery-and-test-portability-2026-09-07)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/identity-and-diagnostics.md#diagnostic-attribution-and-ownership-2026-09-07)",
+          "new": "](../legacy/identity-and-diagnostics.md#diagnostic-attribution-and-ownership-2026-09-07)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/identity-and-diagnostics.md#configured-second-source-set-2026-09-07)",
+          "new": "](../legacy/identity-and-diagnostics.md#configured-second-source-set-2026-09-07)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/identity-and-diagnostics.md#replay-mutation-matrix-2026-09-07)",
+          "new": "](../legacy/identity-and-diagnostics.md#replay-mutation-matrix-2026-09-07)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/identity-and-diagnostics.md#source-filename-sensitive-transport-2026-09-07)",
+          "new": "](../legacy/identity-and-diagnostics.md#source-filename-sensitive-transport-2026-09-07)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/mutex-and-scalars.md#checked-mutex-invariants-2026-09-07)",
+          "new": "](../legacy/mutex-and-scalars.md#checked-mutex-invariants-2026-09-07)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/mutex-and-scalars.md#typed-scalar-field-access-classification-2026-09-07)",
+          "new": "](../legacy/mutex-and-scalars.md#typed-scalar-field-access-classification-2026-09-07)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/remaining-work.md#remaining-work-wave-accounting-2026-09-07)",
+          "new": "](../legacy/remaining-work.md#remaining-work-wave-accounting-2026-09-07)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/remaining-work.md#delegated-increment-2026-09-08)",
+          "new": "](../legacy/remaining-work.md#delegated-increment-2026-09-08)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/remaining-work.md#second-delegated-increment-2026-09-08)",
+          "new": "](../legacy/remaining-work.md#second-delegated-increment-2026-09-08)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/operational-notes.md#short-pointer-bullets-carried-in-claudemd-through-wave-15)",
+          "new": "](../legacy/operational-notes.md#short-pointer-bullets-carried-in-claudemd-through-wave-15)"
+        },
+        {
+          "old": "](docs/development/increments/legacy/operational-notes.md#claude-specific-working-bullets-carried-in-claudemd-through-wave-15)",
+          "new": "](../legacy/operational-notes.md#claude-specific-working-bullets-carried-in-claudemd-through-wave-15)"
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "1",
+      "path": "docs/agents/diagnostics.md",
+      "title": "docs/QCORE_SPEC_r0_3.md \u00a7L21 is the canonical per-code ownership table. A"
+    },
+    {
+      "id": "2",
+      "path": "docs/agents/diagnostics.md",
+      "title": "Q020 (task route) and Q021 (sequential route) both refuse an unenforced"
+    },
+    {
+      "id": "3",
+      "path": "docs/agents/diagnostics.md",
+      "title": "\u00a7L21.1's reason vocabulary is implemented as qcore_schemas::reason, but"
+    },
+    {
+      "id": "4",
+      "path": "docs/agents/gateway.md",
+      "title": "A call into an internal C function is modeled only through a declared"
+    },
+    {
+      "id": "5",
+      "path": "docs/agents/gateway.md",
+      "title": "The typed scalar-field whitelist's last premise \u2014 the base is a name this"
+    },
+    {
+      "id": "5a",
+      "path": "docs/agents/gateway.md",
+      "title": "A fixed C sizeof/_Alignof query's operand-class marker is never a"
+    },
+    {
+      "id": "5b",
+      "path": "docs/agents/gateway.md",
+      "title": "A return admits what a condition admits, and the difference escapes"
+    },
+    {
+      "id": "5c",
+      "path": "docs/agents/gateway.md",
+      "title": "A constant do \u2026 while (0) is sequential composition, and the key is"
+    },
+    {
+      "id": "6",
+      "path": "docs/agents/gateway.md",
+      "title": "C02-P-ALIAS-LEAK-ORDER: report_leaks on intermediate iterates is"
+    },
+    {
+      "id": "7",
+      "path": "docs/agents/gateway.md",
+      "title": "Leak diagnostics are 272 across the pinned 185-unit corpus. A change"
+    },
+    {
+      "id": "8",
+      "path": "docs/agents/gateway.md",
+      "title": "A declared contract must agree with the C the unit declares \u2014 in types"
+    },
+    {
+      "id": "9",
+      "path": "docs/agents/gateway.md",
+      "title": "A fixture prelude is not a production declaration. A fixture result is"
+    },
+    {
+      "id": "10",
+      "path": "docs/agents/gateway.md",
+      "title": "A store into an object that outlives the call is refused, not escaped."
+    },
+    {
+      "id": "10a",
+      "path": "docs/agents/gateway.md",
+      "title": "A refused statement invalidates only the bindings it could have"
+    },
+    {
+      "id": "10b",
+      "path": "docs/agents/gateway.md",
+      "title": "Non-nullness does not establish lookup identity. A null guard on an"
+    },
+    {
+      "id": "11",
+      "path": "docs/agents/source-identity.md",
+      "title": "Do not normalize the spelled input path (that changes __FILE__), do"
+    },
+    {
+      "id": "12",
+      "path": "docs/agents/source-identity.md",
+      "title": "A #line directive in analysed source must not be able to move the audited"
+    },
+    {
+      "id": "12a",
+      "path": "docs/agents/source-identity.md",
+      "title": "A presented coordinate is derived, and no file spelling is ever read from"
+    },
+    {
+      "id": "13",
+      "path": "docs/agents/source-routes.md",
+      "title": "Concurrency is opt-in: a file declares import std.concurrency;, the"
+    },
+    {
+      "id": "14",
+      "path": "docs/agents/source-routes.md",
+      "title": "New keywords are a recorded compatibility hazard: every candidate is"
+    },
+    {
+      "id": "15",
+      "path": "docs/agents/source-routes.md",
+      "title": "Lock ranks and protection growth are opt-in disciplines: unranked"
+    },
+    {
+      "id": "15a",
+      "path": "docs/agents/source-routes.md",
+      "title": "A source line in a composed task module stands in the parent's body"
+    },
+    {
+      "id": "15b",
+      "path": "docs/agents/source-routes.md",
+      "title": "A route reads its statement tokens from the parsed program's"
+    },
+    {
+      "id": "15c",
+      "path": "docs/agents/io.md",
+      "title": "An event program's streams are compared byte for byte, and that is a"
+    },
+    {
+      "id": "15d",
+      "path": "docs/agents/io.md",
+      "title": "Windows std.event selects AF_UNIX by capability, not by compilation."
+    },
+    {
+      "id": "15e",
+      "path": "docs/agents/io.md",
+      "title": "A rendered string's observation is the view's exact bytes, and the"
+    },
+    {
+      "id": "15f",
+      "path": "docs/agents/io.md",
+      "title": "An HTTP message's framing is constructed, and its Content-Length is"
+    },
+    {
+      "id": "15g",
+      "path": "docs/agents/io.md",
+      "title": "A reactor registration is a loan, and the reactor owns no descriptor of"
+    },
+    {
+      "id": "15h",
+      "path": "docs/agents/buffers-records.md",
+      "title": "A concat result is static storage the compiler computed, and a"
+    },
+    {
+      "id": "15i",
+      "path": "docs/agents/io.md",
+      "title": "A declared address is a check-time constant parsed once, and the two"
+    },
+    {
+      "id": "15j",
+      "path": "docs/agents/effects.md",
+      "title": "A flat epoch's credit is conserved across the creator's own error edges,"
+    },
+    {
+      "id": "15k",
+      "path": "docs/agents/buffers-records.md",
+      "title": "A record of scalars is a plain copyable value; a record with a bytes"
+    },
+    {
+      "id": "15l",
+      "path": "docs/agents/effects.md",
+      "title": "An admitted quantitative region erases from emission, and the sealed pack"
+    },
+    {
+      "id": "15m",
+      "path": "docs/agents/effects.md",
+      "title": "A composed region on the epoch task route opens its pack after every"
+    },
+    {
+      "id": "15n",
+      "path": "docs/agents/concurrency.md",
+      "title": "The F02 trace boundary refuses a range write lease, and refusing is the"
+    },
+    {
+      "id": "15o",
+      "path": "docs/agents/concurrency.md",
+      "title": "(card MUTEX-SHARE-CROSS.) A protected N payload crosses a task"
+    },
+    {
+      "id": "15p",
+      "path": "docs/agents/io.md",
+      "title": "A socket program's protocol cells are derived, never declared, and the"
+    },
+    {
+      "id": "16",
+      "path": "docs/agents/providers.md",
+      "title": "P02-FLAKE: six provider/host rows are load- or parallelism-sensitive"
+    },
+    {
+      "id": "17",
+      "path": "docs/agents/providers.md",
+      "title": "EXTERN-F1-STORE-REACH: the abandonment gate refuses a second live"
+    },
+    {
+      "id": "18",
+      "path": "docs/agents/providers.md",
+      "title": "Provider executables embed their manifest template and installed manifests"
+    },
+    {
+      "id": "19",
+      "path": "docs/agents/providers.md",
+      "title": "E03-B deliberately supersedes E03's QP012 unequal-premise-set refusal"
+    },
+    {
+      "id": "20",
+      "path": "docs/agents/providers.md",
+      "title": "P04's in-process counter route was deliberately not removed (live"
+    },
+    {
+      "id": "21",
+      "path": "docs/agents/evidence.md",
+      "title": "Never edit a frozen archive in place. Card T00's coverage.json was"
+    },
+    {
+      "id": "22",
+      "path": "docs/agents/evidence.md",
+      "title": "contracts.json is the fifth artifact diff_artifacts.py itemizes"
+    },
+    {
+      "id": "23",
+      "path": "docs/agents/evidence.md",
+      "title": "CT coverage grows by mapping, not conformance. A grown denominator is"
+    },
+    {
+      "id": "24",
+      "path": "docs/agents/evidence.md",
+      "title": "REASON-CODES-B3's sidecar reason_code tripwire test is flipped at the"
+    },
+    {
+      "id": "25",
+      "path": "docs/agents/evidence.md",
+      "title": "The acceptance-matrix generator carries a section_ownership block:"
+    },
+    {
+      "id": "26",
+      "path": "docs/agents/providers.md",
+      "title": "Process providers have process-group containment plus the opt-in"
+    },
+    {
+      "id": "27",
+      "path": "docs/agents/concurrency.md",
+      "title": "The mutex model supports initially-unlocked non-recursive mutexes only."
+    },
+    {
+      "id": "28",
+      "path": "docs/agents/evidence.md",
+      "title": "Declared profiles, observations_trusted, GuardFootprintAuthority,"
+    }
+  ]
+}

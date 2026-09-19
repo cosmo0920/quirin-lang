@@ -1,68 +1,52 @@
 # QCore-C development notes
 
-This is the development table of contents. Open the page for the task at hand;
-historical checkpoint narratives are loaded only when their evidence is needed.
-[README.md](README.md) gives the human overview. [AGENTS.md](AGENTS.md) owns
-current agent rules and headline status. Each card's report remains the
-authority for that card's counts, boundaries and premises.
-The [development directory index](docs/development/README.md) is a second
-entry point to the same topic pages.
+[Documentation hub](docs/README.md) · [Current status](docs/STATUS.md)
+
+This is a compact compatibility entry point. The hub is the common navigation
+surface; the pages below own their content.
 
 ## Table of contents
 
-- [Specifications and records](#specifications-and-records)
-- [Repository layout](#repository-layout)
-- [Project status](#project-status)
-- [Build and test](#build-and-test), including [Windows](#windows)
-- [Increment records](#increment-records): current record location and wave index
-- [Historical section links](#historical-section-links): original fragment compatibility
+| Topic | Authority |
+|---|---|
+| Specifications and records | [References](docs/development/references.md) |
+| Repository layout | [Architecture](docs/development/architecture.md) |
+| Current measurements | [Status](docs/STATUS.md) |
+| Build and test | [Setup](docs/development/build-and-test.md) · [gate](docs/agents/validation.md) |
+| Agent policies | [Rule router](docs/agents/README.md) |
+| Past increments | [Wave index](docs/development/increments/README.md) |
 
 ## Specifications and records
 
-[Development references](docs/development/references.md) links the normative
-specifications, acceptance records, audit setup and editor support.
+See [references](docs/development/references.md).
 
 ## Repository layout
 
-[Repository structure and entry points](docs/development/repository-layout.md)
-maps crates, contracts, proofs and compiler APIs.
+See [architecture and entry points](docs/development/architecture.md).
 
 ## Project status
 
-[Cycle status and recorded evidence](docs/development/cycle-status.md) retains
-the former guide's detailed checkpoint narratives. For the latest headline
-measurements, read the [agent status ledger](AGENTS.md#status-ledger-do-not-overstate).
-Historical counts are not new conformance or current aggregate gate results.
+See [current status](docs/STATUS.md). Historical cycle summaries are in
+[cycle evidence](docs/development/cycle-status.md).
 
 ## Build and test
 
-[Building and validating QCore-C](docs/development/build-and-test.md) contains
-toolchain setup, Clang requirements, Lean invocation and platform instructions.
-Run the complete [standing per-change gate](AGENTS.md#standing-per-change-gate)
-before claiming a change complete; `--no-fail-fast` remains required.
+Read [setup](docs/development/build-and-test.md) and run the
+[standing gate](docs/agents/validation.md).
 
 ### Windows
 
-[Windows setup and compiler discovery](docs/development/build-and-test.md#windows).
+See [Windows setup](docs/development/build-and-test.md#windows) and
+[platform evidence](docs/development/platform-evidence.md).
 
 ## Increment records
 
-The [increment history index](docs/development/increments/README.md) names the
-**current record file**, every wave, and the early and relocated archives.
-Add one paragraph to that current file, newest first, rather than growing this
-table of contents. Update headline numbers in `AGENTS.md` when they change.
-
-| Read | Purpose |
-|---|---|
-| [Current record location](docs/development/increments/README.md#adding-a-record) | Where to add the next increment |
-| [Wave index](docs/development/increments/README.md#waves) | Individual wave pages, newest first |
-| [Early source and platform records](docs/development/increments/README.md#earlier-source-and-platform-records) | Original integration narratives |
-| [Relocated guidance archive](docs/development/increments/README.md#relocated-historical-guidance) | Older status and operational records; historical authority only |
+[The increment index](docs/development/increments/README.md) names the current
+record file and every wave. Add one paragraph there per increment, newest first.
 
 ## Historical section links
 
-The original headings below keep existing fragment URLs usable. Follow their
-links for the preserved text; the full history is in the index above.
+Legacy anchors below remain valid. The linked records preserve their checkpoints.
 
 ### Quant delimiter alias `[| |]` (2026-09-09)
 

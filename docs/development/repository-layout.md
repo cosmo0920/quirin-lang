@@ -1,5 +1,8 @@
 # Repository structure and entry points
 
+For the current consolidated map, use [architecture and entry points](architecture.md).
+The migrated section below preserves the earlier development-guide checkpoint.
+
 [Development table of contents](../../DEVELOPMENT.md)
 
 <!-- migrated-section:start -->

@@ -6,6 +6,24 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`DOCS-STRUCTURE-COMPRESSION` (2026-09-19).** At the user's request for
+extreme structural compaction, the four root guides shrink from 226,193 to
+14,379 bytes (93.64%); all 50 numbered standing constraints and six hard
+invariants survive, with exact reconstruction of all four base documents
+after reversible link rebasing. Current rules move to a numbered topic router,
+status to `docs/STATUS.md`, and navigation to `docs/README.md` plus an index of
+392 reports; frozen reports remain unchanged and replaced context is retained
+in dated checkpoints below 32 KiB. Residual discovery follows the moved rule
+files without counting mentions as tracking: the same 49 candidates survive,
+and two new Python controls cover the routing. Packet byte measurements are
+source-reading fixtures, not token billing or runtime telemetry. No language,
+corpus, contract, CT or proof claim moves; validation and the authority migration
+are recorded in [the restructuring report](../../reports/docs-structure-compression/README.md).
+The full gate passed: 4,727 Rust tests (0 failed, 10 ignored, 238 summaries),
+141 Lean audits, 305 Python tests, fmt/clippy and both probes exit 0; all named
+workspace host-sensitive rows were green, with no isolated retry. Provider
+packages were unchanged and not re-measured.
+
 **`WAVE-40-CLOSE` (2026-09-19).** Wave 40 closed: a two-card cadence wave
 (`STABILITY-REEVAL-4`, `DOCS-COMPACT-8`) that moves **no crate source at all** —
 `git diff --stat 6dc484ad 0c7b0cea -- crates/ compiler/ proof/ providers/` is
