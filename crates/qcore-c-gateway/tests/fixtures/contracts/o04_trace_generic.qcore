@@ -66,7 +66,7 @@ contract {
     ensures normal resource_return_owned(nullable);
 };
 
-// --- a second neutral accessor, for the sibling-nesting refusal ------------
+// --- a second neutral accessor, for sibling-neutral composition ------------
 extern fn v_size(b: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
