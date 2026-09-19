@@ -73,4 +73,14 @@ three registrations (`COMPOSED-BODY-BARE-RENDER-INCIDENTAL`,
 `WINDOW-FIELD-PATH-REFUSED-NOT-WINDOWED`, `LOOPWINDOWS-BINDING-IS-FINITE`).
 No new `Q` code, no reserved word, no corpus count, unit status or function
 status moved, raw units stay unpromoted and full language conformance stays
-**false**. Evidence: `docs/reports/composed-window-reach/`.
+**false**. The card was rebased mid-flight onto `96142e49`'s documentation
+restructure and its ledger edits re-routed: the follow-up figure to
+`docs/STATUS.md`, constraint 15h's amendment to `docs/agents/buffers-records.md`
+and the `Q051` widening plus the namespace tally to `docs/agents/diagnostics.md`
+— in every case **outside** the `<!-- preserved:… -->` markers, because
+`docs/reports/docs-structure-compression/verify.py` pins each preserved span's
+`sha256` as a byte-exact reconstruction of the pre-restructure guides. The first
+draft was written inside those markers, the verifier caught it, and **the pin
+was not edited** (constraint 21); `scripts/build_docs_index.py --check` caught a
+stale report index in the same pass and was regenerated. Evidence:
+`docs/reports/composed-window-reach/`.

@@ -508,53 +508,121 @@ in the committed tree.
 
 ---
 
-## 13. For the integrator
+## 13. The mid-flight rebase, and what the preservation check caught
 
-Every item is an item; each is already applied in this card's own tree in the
-words below unless marked otherwise.
+The card was written against `463fa6e8` and rebased onto **`96142e49`** ("docs:
+restructure guides into routed rules and a unified hub"), which landed while it
+ran. `AGENTS.md` is now a 5.4 KB router; the ledger, the constraints and the
+numbers moved to `docs/STATUS.md` and `docs/agents/*.md`. Every ledger edit was
+re-routed; §14 says where each one landed.
 
-1. **`AGENTS.md` constraint 15h** — a new amendment paragraph, card
-   `COMPOSED-WINDOW-REACH`, appended after the `LOOPS-ON-COMPOSED-ROUTES`
-   amendment's census sentence. It narrows a clause that amendment carries and
-   adds a refusal; it supersedes nothing else. Its three parts: the two routes'
-   window functions have **different standing** (7 of wave 39's 24 rows anchored
-   on the buffer route, **none** on the composed one); the closure rests on
-   **three** mechanisms, the third a rendering rule doing a window's work; and a
-   name the window's key space cannot express is now **refused** at `Q051` by
-   the window function's own gate. `composed-window-reach` added to that
-   constraint's evidence list.
-2. **`AGENTS.md` diagnostics table, `Q051`–`Q057` row** — one sentence: `Q051`
-   also covers a statement whose name the window's key space cannot express,
-   unreachable from source today, no other condition on the row moving.
-3. **`AGENTS.md` `Q-NAMESPACE-DECISION` tally** — wave 41 adds
-   `COMPOSED-WINDOW-REACH`'s one widening, taking the running count to
-   **nineteen** on the same ten bands. The wave's other cards are counted at the
-   close, which should **re-derive** the total rather than adding to that
-   sentence.
-4. **`AGENTS.md` `named_followups` count: 257 → 256.** Four retired, three
-   registered, by this card. The sentence names this card and says the wave's
-   remaining cards and its close move it again — please re-derive at the close.
-5. **`docs/QCORE_SPEC_r0_3.md` §L21**, `Q051`–`Q057` row — a new amendment
+**A finding, reported as one.** The first draft of the constraint-15h amendment
+was written **inside** `docs/agents/buffers-records.md`'s
+`<!-- preserved:constraint-15h:start -->` / `:end` markers, which is the obvious
+reading of "edit the right topic page". Running
+`docs/reports/docs-structure-compression/verify.py` refused it:
+
+```
+AssertionError: {'source': 'AGENTS.md', 'start': 80352, 'end': 97318,
+ 'path': 'docs/agents/buffers-records.md', 'key': 'constraint-15h',
+ 'sha256': '8f446ffc5c1fa6522fb366972596a66f946f4a3cc233284893ae7349b46cb180', ...}
+```
+
+That verifier's own docstring says what the markers are for: *"Check this
+migration at its own checkpoint, not all future rule revisions."* Each preserved
+span is a **byte-exact reconstruction of the pre-restructure guide**, pinned by
+`sha256` and cross-checked against the source commit's own copy of the file. It
+is a frozen archive in constraint 21's sense, and the `sha256` is a pinned
+expectation. **The pin was not edited.** The amendment moved *outside* the
+block, under the same `<a id="constraint-15h">` anchor, prefaced by a paragraph
+saying why it sits there and that it carries the same authority as the block it
+amends. The same was done for `docs/agents/diagnostics.md`, whose
+`Q051`–`Q057` row and `Q-NAMESPACE-DECISION` tally are both inside
+`preserved:diagnostic-namespaces`.
+
+Verifier, before and after the amendments: **exit 0**, `source_reconstruction`
+`"exact after reversible link rebasing"`, 50 standing rules, 6 hard invariants,
+`largest_policy_page_bytes` 32262 (unmoved — `buffers-records.md` 22058 → 26593
+and `diagnostics.md` 28599 → 30489, both under the 32768 cap the verifier
+asserts), 852 local links checked with no failures.
+
+**A second gate caught a second thing.** `python3 scripts/build_docs_index.py
+--check` reported "report index is stale" — `docs/reports/INDEX.md` is generated
+from the report directories and this card adds one. Regenerated; `--check` now
+green.
+
+Two general notes for the next card in this tree, neither a criticism of the
+restructure: the preserved markers read as "the place to edit" and are in fact
+the place **not** to edit, and nothing in the Python suite fails when they are
+edited — `verify.py` is a separate script and both of the checks above have to
+be run deliberately. The standing gate as written includes neither.
+
+## 14. For the integrator
+
+Every item is an item, with the file it landed in named. Each is already applied
+in this card's tree in the words below unless marked otherwise.
+
+1. **`docs/agents/buffers-records.md`, after
+   `<!-- preserved:constraint-15h:end -->`** — a new section
+   "15h — amendment, card `COMPOSED-WINDOW-REACH` (wave 41)". **Outside the
+   preserved block deliberately** (§13), with a paragraph saying so. It narrows
+   a clause the `LOOPS-ON-COMPOSED-ROUTES` amendment carries and adds a refusal;
+   it supersedes nothing else. Three parts: the two routes' window functions
+   have **different standing** (7 of wave 39's 24 rows anchored on the buffer
+   route, **none** on the composed one); the closure rests on **three**
+   mechanisms, the third a rendering rule doing a window's work; and a name the
+   window's key space cannot express is now **refused** at `Q051` by the window
+   function's own gate. `composed-window-reach` named as its evidence.
+2. **`docs/agents/diagnostics.md`, after
+   `<!-- preserved:diagnostic-namespaces:end -->`** — a new
+   "Amendments after the restructure checkpoint" section with two entries: the
+   `Q051`–`Q057` condition widening, and the `Q-NAMESPACE-DECISION` tally going
+   to **nineteen** on the same ten bands. Also outside the preserved block, for
+   the same reason, and the section header says so once for both.
+3. **`docs/STATUS.md`** — `| Registered follow-ups |` **257 → 256**, plus a
+   paragraph naming this card's four retirements and three registrations and
+   asking the reader to re-derive from the matrix. The **"Last integrated
+   gate"** section was deliberately **left alone**: it is the wave-40 close's
+   measurement and says "A later card reports its own gate separately", which
+   this card does, in `gate.json`.
+4. **`docs/QCORE_SPEC_r0_3.md` §L21**, `Q051`–`Q057` row — a new amendment
    paragraph stating the `Q051` widening, its ground (the key space is plain
    bindings), the two refusals that still precede it, the 535-program census and
-   the successor residual.
-6. **`docs/development/increments/wave-41.md`** — created in wave-40.md's shape;
-   `docs/development/increments/README.md`'s current-record pointer moved to it
-   and a wave-41 row added at the top of the wave table. The integrator should
-   union siblings' paragraphs into this file at the merge.
-7. **Headline numbers this card moves:** only `named_followups` (item 4).
-   **Nothing else.** No corpus count, unit status or function status moves; raw
-   units stay unpromoted; CT counts untouched; full language conformance stays
-   **false**. The Lean audit file count rises by **0** — `AuditLoopWindows.lean`
-   already existed and was edited, not added.
-8. **A cross-card note, not a ledger item.** `OWNED-FIELD-ROUTE-REACH` owns
+   the successor residual. That file is unchanged by the restructure, so this
+   edit is in its original place.
+5. **`docs/development/increments/wave-41.md`** — created in wave-40.md's shape,
+   this card being first; `docs/development/increments/README.md`'s
+   current-record pointer moved to it and a wave-41 row added at the top of the
+   wave table. The integrator should union siblings' paragraphs into this file
+   at the merge.
+6. **`docs/reports/INDEX.md`** — regenerated with
+   `python3 scripts/build_docs_index.py` (§13); `--check` green.
+7. **`docs/reviews/r0_3/acceptance_matrix.json`** — `named_followups`
+   **257 → 256** via `register_followups.py` (idempotent), then the whole file
+   regenerated with
+   `python3 -B docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/composed-window-reach/gate.json`
+   — **never without `--gate`**.
+8. **Headline numbers this card moves:** only the registered-follow-up figure
+   (items 3 and 7). **Nothing else.** No corpus count, unit status or function
+   status moves; raw units stay unpromoted; CT counts untouched; full language
+   conformance stays **false**. The Lean audit file count rises by **0** —
+   `AuditLoopWindows.lean` already existed and was edited, not added.
+9. **A cross-card note, not a ledger item.** `OWNED-FIELD-ROUTE-REACH` owns
    `std_buffer.rs`'s record/field arms and this card owns its window functions;
    §12 says exactly which lines each touched. If that card lifts
-   `OWNED-FIELD-LEND-WINDOW` or `OWNED-FIELD-LOOP-BODY`, this card's gate becomes
-   reachable and `WINDOW-FIELD-PATH-REFUSED-NOT-WINDOWED` is the work that must
-   land with it.
-9. **A finding to carry, not to file quietly.** `COMPOSED-VIEW-WINDOW-INERT`'s
-   registered **title** is wrong (§1). It was registered by `STABILITY-REEVAL-4`
-   and is retired by this card, so nothing needs editing — but the shape is worth
-   the next `STABILITY-REEVAL`'s attention: a residual whose `why` is accurate
-   and whose title over-generalises reads, at a glance, as a live admitting gap.
+   `OWNED-FIELD-LEND-WINDOW` or `OWNED-FIELD-LOOP-BODY`, this card's gate
+   becomes reachable and `WINDOW-FIELD-PATH-REFUSED-NOT-WINDOWED` is the work
+   that must land with it.
+10. **Two process findings for the close, from §13.** The preserved markers read
+    as the place to edit and are the place *not* to edit; and neither
+    `verify.py` nor `build_docs_index.py --check` is in the standing gate, so a
+    card that edits a topic page or adds a report can go green without running
+    either. Both caught something real here. Worth a standing-gate line, or at
+    least a line in `docs/agents/operations.md`; **not taken by this card**,
+    which has no mandate over the gate's own definition.
+11. **A finding to carry, not to file quietly.** `COMPOSED-VIEW-WINDOW-INERT`'s
+    registered **title** is wrong (§1). It was registered by
+    `STABILITY-REEVAL-4` and is retired by this card, so nothing needs editing —
+    but the shape is worth the next `STABILITY-REEVAL`'s attention: a residual
+    whose `why` is accurate and whose title over-generalises reads, at a glance,
+    as a live admitting gap.
