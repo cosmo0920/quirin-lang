@@ -28,13 +28,14 @@ structure Shape where
   collision : Bool
   resultCarriesCustody : Bool
   residualNeutral : Bool
+  externallyDeclared : Bool
   deriving DecidableEq, Repr
 
 def Admitted (s : Shape) : Prop :=
   s.calls = 1 ∧ s.conditional = false ∧ s.shortCircuit = false ∧
   s.assignment = false ∧ s.mutation = false ∧ s.typeOperator = false ∧
   s.collision = false ∧ s.resultCarriesCustody = false ∧
-  s.residualNeutral = true
+  s.residualNeutral = true ∧ s.externallyDeclared = true
 
 instance admittedDecidable (s : Shape) : Decidable (Admitted s) := by
   unfold Admitted
@@ -71,6 +72,15 @@ theorem a_collision_stays_refused
     contradiction
   simp [lower, hn]
 
+theorem a_local_summary_stays_refused
+    (s : Shape) (effect : CallEffect) (st : State)
+    (h : s.externallyDeclared = false) : lower s effect st = none := by
+  have hn : ¬ Admitted s := by
+    intro ha
+    rw [ha.2.2.2.2.2.2.2.2.2] at h
+    contradiction
+  simp [lower, hn]
+
 theorem an_admitted_return_is_exactly_the_call_effect
     (s : Shape) (effect : CallEffect) (st : State) (h : Admitted s) :
     lower s effect st = some (effect st) := by simp [lower, h]
@@ -91,6 +101,7 @@ def arithmeticShape : Shape where
   collision := false
   resultCarriesCustody := false
   residualNeutral := true
+  externallyDeclared := true
 
 theorem the_positive_family_is_admitted : Admitted arithmeticShape := by
   simp [Admitted, arithmeticShape]

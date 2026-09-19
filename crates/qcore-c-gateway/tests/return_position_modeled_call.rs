@@ -431,6 +431,22 @@ fn a_resource_free_call_is_evaluated_inside_a_scalar_return() {
     }
 }
 
+/// A fixed-point summary for a locally defined recursive function is not the
+/// declared API-contract premise of B01. In particular, the older W4
+/// pointer-actual refusal remains load-bearing for this shape.
+#[test]
+fn a_local_summary_does_not_admit_an_embedded_recursive_call() {
+    if !clang_available() {
+        return;
+    }
+    let refused = run("int subject(void *p) {
+            if (p == 0) return 0;
+            return 1 + subject(p);
+        }");
+    assert_eq!(refused.status, AnalysisStatus::Unknown);
+    assert!(refused.refuses_return());
+}
+
 /// A conditionally evaluated call cannot be extracted and applied on every
 /// path. Doing so would release `p` even when C skips the call, turning this
 /// body falsely Safe. Both conditional operators therefore keep the blanket
