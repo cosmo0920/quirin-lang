@@ -253,6 +253,21 @@ const PROOF_GATED_CASES: &[(&str, &str)] = &[
         "CT07",
         "compiler/tests/ct07_proof_leg.rs::ct07_artifact_is_the_lean_proved_disjoint_halves_shape",
     ),
+    // Card `CT-PROOF-LEG-3` (wave 41): CT50's lifetime-identity procedure over
+    // the F02 observation alphabet (QCore.Ct50LifetimeIdentity,
+    // AuditCt50LifetimeIdentity.lean). The fourth leg bound through the trace
+    // relation, and the first whose closure over admitted renderings is the
+    // **degenerate** case — the run is single-actor, so the relation admits
+    // nothing but the run itself, proved as
+    // `an_admitted_rendering_is_the_reference_run` and measured on the
+    // artifact by enumerating `admitted_linearizations`. The alphabet did not
+    // grow. Scope: the capability half of the scenario — the numeric address
+    // reuse it names is invisible to this alphabet and stays with
+    // `run_native_task_scenarios`' observation, unproved.
+    (
+        "CT50",
+        "compiler/tests/ct50_proof_leg.rs::ct50_artifact_is_the_lean_proved_lifetime_identity_shape",
+    ),
 ];
 /// The `source.epoch.tasks.v1` composed cases, whose verdict mode pins
 /// published credit quantities wholesale because an epoch that merely checks
@@ -492,6 +507,10 @@ const RUNNER_REGISTRY: &[&str] = &[
     // the same shape, bound through the checked module's lease set and the
     // production ledger rather than the F02 digest relation.
     "compiler/tests/ct07_proof_leg.rs::ct07_artifact_is_the_lean_proved_disjoint_halves_shape",
+    // Card `CT-PROOF-LEG-3` (wave 41): CT50's proof-stage runner — the CT01
+    // shape again, bound through the F02 digest relation, with the admitted
+    // set enumerated on the artifact because this run has one actor.
+    "compiler/tests/ct50_proof_leg.rs::ct50_artifact_is_the_lean_proved_lifetime_identity_shape",
     // Card `CT-COMPOSED-NATIVE` (wave 32): the composed-epoch accept runner —
     // one sanitized compile-and-run of the case's own emitted C, its standard
     // output compared byte for byte with the reference observation of the
@@ -3821,7 +3840,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 25] = [
+const EVIDENCE_FILES: [&str; 26] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3868,6 +3887,12 @@ const EVIDENCE_FILES: [&str; 25] = [
     // routed through `disjoint NAME NAME;`. It retires the ct-ctwin-lane
     // record's CT42 bucket row by declaration; that record keeps its bytes.
     "docs/reports/ct42-cell-route/ct_stage_evidence.json",
+    // Card `CT-PROOF-LEG-3` (wave 41): CT50's proof stage moves to executed on
+    // the F02-bound leg. It supersedes card T00's frozen archive for CT50 —
+    // the record that still held that case's stages — by declaration;
+    // `remaining-t00/coverage.json` keeps its bytes (constraint 21). Every
+    // other stage row is carried from it unchanged.
+    "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.

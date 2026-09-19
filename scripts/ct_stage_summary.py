@@ -149,6 +149,12 @@ EVIDENCE_FILES = [
     # DisjointFootprintsV1 checker at Q664. It retires the ct-ctwin-lane
     # record's CT42 bucket row by declaration; that record keeps its bytes.
     "docs/reports/ct42-cell-route/ct_stage_evidence.json",
+    # Card `CT-PROOF-LEG-3` (wave 41): CT50's proof stage moves to executed on
+    # the F02-bound leg. It supersedes card T00's frozen archive for CT50 --
+    # the record that still held that case's stages -- by declaration; that
+    # archive keeps its bytes (constraint 21). Every other stage row is carried
+    # from it unchanged; proof is the only move.
+    "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"

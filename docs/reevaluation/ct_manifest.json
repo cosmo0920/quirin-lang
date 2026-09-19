@@ -4368,7 +4368,10 @@
           "status": "not_applicable"
         },
         "proof": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct50_proof_leg.rs::ct50_artifact_is_the_lean_proved_lifetime_identity_shape",
+          "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+          "observations": 1
         }
       },
       "evidence_target": "linux"
