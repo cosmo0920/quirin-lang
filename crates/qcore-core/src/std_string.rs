@@ -1119,14 +1119,47 @@ fn view_uses(event: &StringEvent) -> Vec<&str> {
 ///
 /// Under the runs-many-times reading an event inside a `for` body occurs at
 /// every iteration, and the loop is one top-level statement, so a view a body
-/// read would be a view the **loop's** index reads. On this route that set is
-/// **empty by construction and measured, not assumed**: a `for` body is
-/// lowered by `source.buffer.v1`'s own reader, so it holds
-/// [`BufferEvent`]s only, and no buffer event names a view — the exhaustive
-/// `match` in [`view_uses`] returns nothing for `StringEvent::Buffer`. The
-/// recursion is written anyway, so that a later widening of the body grammar
-/// that lets a view be read inside a loop lengthens the window here rather
-/// than closing it before the loop opens.
+/// read would be a view the **loop's** index reads.
+///
+/// **The depth contribution is empty for every input, and card
+/// `COMPOSED-WINDOW-REACH` (wave 41) measured what that does and does not
+/// mean.** `buffer_view_uses` below returns the empty vector for every
+/// [`BufferEvent`], so this function is extensionally [`view_uses`] — pinned
+/// by `the_depth_contribution_is_empty_for_every_event`, over every
+/// constructor. What is *not* true is the reading
+/// `COMPOSED-VIEW-WINDOW-INERT` recorded, that this function returns the empty
+/// vector for every input: it returns a name at every position a view is read
+/// from — a slice, a `len`, a text render, a `concat` piece — and those are
+/// the positions the composed route's window is actually computed from. The
+/// inert part is the recursion, and its consequence is precise: **a `for`
+/// contributes nothing to any view's window.**
+///
+/// That is sound only because **no admitted composed loop body can read a
+/// view**, and that premise now names its own three mechanisms instead of one,
+/// each measured rather than argued (`composed_window_reach.rs` §2):
+/// 1. a body is lowered by `source.buffer.v1`'s own reader, so it holds
+///    [`BufferEvent`]s only, and no `BufferEvent` constructor names a view —
+///    the exhaustive `match` below is what makes a widening that forgot this a
+///    compile error;
+/// 2. a body statement that *constructs* a view — a quoted literal, a `len`, a
+///    `concat`, an inline-slice render, a `borrow_utf8` — is refused by name at
+///    `Q077` before the buffer reader sees it
+///    (`LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY`, `LOOP-PER-ITERATION-LOAN`);
+/// 3. a **bare name** at a rendering operand — `print s;` — is *not* claimed
+///    by that refusal, because a bare name deliberately does not select this
+///    route (see `StringUse::Render`). It is refused instead by the buffer
+///    route's own line reader, which demands a `dec`/`hex` selector. That
+///    third mechanism is **incidental rather than a window rule**, and it is
+///    the one a later card could remove without noticing: it is recorded as
+///    `COMPOSED-BODY-BARE-RENDER-INCIDENTAL` and pinned by
+///    `a_bare_render_of_a_view_inside_a_composed_body_is_refused`.
+///
+/// The recursion is kept, so that a later widening of the body grammar that
+/// lets a view be read inside a loop lengthens the window here rather than
+/// closing it before the loop opens. It is **defence in depth and not the
+/// deciding rule**; the deciding rule is the `Repeat` arm of
+/// [`check_string_program`], which judges every body store against every loan
+/// live at the loop's own index before the body runs.
 fn view_uses_at_any_depth(event: &StringEvent) -> Vec<&str> {
     /// The view names a buffer event reads, at any depth: a loop's are its
     /// body's, and every other buffer event's are none.
@@ -1156,6 +1189,23 @@ fn view_uses_at_any_depth(event: &StringEvent) -> Vec<&str> {
         names.extend(buffer_view_uses(buffer_event));
     }
     names
+}
+
+/// The composed route's window reader, split into its two halves (card
+/// `COMPOSED-WINDOW-REACH`, wave 41): the view names the event reads at its
+/// **own** level, and the ones its **depth recursion** contributes.
+///
+/// Published so that the inertness [`view_uses_at_any_depth`]'s documentation
+/// describes is a *tested equation* over every constructor rather than a
+/// sentence a reader must take on trust. Neither half is used by the checker;
+/// the checker calls [`view_uses_at_any_depth`], whose result is the
+/// concatenation of the two.
+#[must_use]
+pub fn view_window_names(event: &StringEvent) -> (Vec<&str>, Vec<&str>) {
+    let shallow = view_uses(event);
+    let deep = view_uses_at_any_depth(event);
+    let contributed = deep[shallow.len()..].to_vec();
+    (shallow, contributed)
 }
 
 /// The last **top-level** event index at which each view name is read, at any
