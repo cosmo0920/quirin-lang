@@ -137,35 +137,23 @@ engage.
 
 <!-- preserved:diagnostic-namespaces:end -->
 
-## Amendments after the restructure checkpoint
+## Amendments after the 2026-09-19 migration checkpoint
 
-The block above reconstructs the pre-restructure guide byte for byte and
-`docs/reports/docs-structure-compression/verify.py` pins its `sha256`, so it is
-a frozen archive in constraint 21's sense and is never edited in place. Later
-condition widenings and narrowings land here, and carry the same authority as
-the table they amend.
+The table above is a frozen reconstruction pinned by
+`docs/reports/docs-structure-compression/verify.py` and is never edited in
+place (constraint 21). Later widenings land here **in summary** and carry the
+same authority; `docs/QCORE_SPEC_r0_3.md` §L21 is unchanged by the restructure
+and remains the **canonical** per-code table. Keep entries short — this page is
+capped at 32 KiB.
 
-### `Q051`–`Q057` (`StandardBuffer`) — card `COMPOSED-WINDOW-REACH` (wave 41)
-
-**One condition widens; no code is allocated.** `Q051` also covers a statement
-whose name the **window's key space cannot express** — a field path met by
-`qcore_core::std_buffer::custody_names_at_any_depth` in an entry that lends,
-reported by `window_unnameable_events` and refused before any window is built
-from it (`WINDOW-FIELD-ARM-UNREACHED`; constraint 15h's wave-41 amendment). It
-is the same condition the row already carries for the lend's window shapes,
-reached **from the window function itself** rather than from a source spelling,
-on the `SOCKET-EVENT-COMPOSE` precedent. It is **unreachable from source
-today** — `OWNED-FIELD-LEND-WINDOW` and `OWNED-FIELD-LOOP-BODY` still refuse
-first — which a 535-program emission census confirms by moving no verdict in
-either direction. No other condition on that row moves, and `Q056` is again not
-widened.
-
-### `Q-NAMESPACE-DECISION` tally — wave 41
-
-The preserved paragraph records the consequence running **eighteen** times on
-**ten** bands across waves 26–39, with wave 40 adding nothing.
-`COMPOSED-WINDOW-REACH` adds its one widening of `Q051`, taking the running
-count to **nineteen** on the same ten bands (no new band). The wave's other
-cards are counted at its close, which should **re-derive** the total from the
-table rows rather than adding to this sentence — the tally is hand-kept
-(`Q-SPACE-EXTENSION-TALLY-HAND-KEPT`) and has undercounted twice.
+* **`Q051`–`Q057`, card `COMPOSED-WINDOW-REACH` (wave 41)** — `Q051` widens to
+  a statement whose name the lend window's key space cannot express (a field
+  path met by `custody_names_at_any_depth`, refused by
+  `window_unnameable_events`); **no code allocated**, unreachable from source
+  today, 535-program census moved no verdict.
+  See §L21 and constraint 15h's wave-41 amendment in `buffers-records.md`.
+* **`Q-NAMESPACE-DECISION` tally** — the preserved paragraph's eighteen
+  instances on ten bands (waves 26–39, wave 40 adding none) become **nineteen**
+  on the same ten bands with the entry above. The close should re-derive the
+  total from the table rows; the tally is hand-kept
+  (`Q-SPACE-EXTENSION-TALLY-HAND-KEPT`) and has undercounted twice.

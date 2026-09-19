@@ -551,11 +551,39 @@ asserts), 852 local links checked with no failures.
 from the report directories and this card adds one. Regenerated; `--check` now
 green.
 
-Two general notes for the next card in this tree, neither a criticism of the
+**`check_residuals.py` rewrites another card's record when it is run.** The
+third check beside `verify.py` is
+`docs/reports/docs-structure-compression/check_residuals.py`. It exits 0 here
+with `"lost": []` — nothing this card did makes a residual name undiscoverable
+— but its last statement *writes* `residual-discovery.json` **into the
+restructure's own report directory**, and running it therefore moved that
+card's published record from `after_candidates: 50` to `52` (the two extra
+candidates are the retired residual names this report quotes). That is editing
+another card's archive as a side effect of verifying, which constraint 21
+forbids. The file was restored to `96142e49`'s bytes and this card's run is
+published **beside** its own gate instead, as
+`gate/residual-discovery-at-this-card.json` — the dual-publication shape
+constraint 21 prescribes. Worth a `--write` flag on that script.
+
+**Where the amendments live, and the 32 KiB cap.** Both pages now carry a
+section headed "Amendments after the 2026-09-19 migration checkpoint", placed
+**at the end of the page** so several cards' amendments collect in one place
+rather than interleaving with the preserved blocks. The diagnostics entry is
+deliberately a **summary pointing at §L21**, which the restructure left
+unchanged and which remains the canonical per-code table: `docs/agents/*.md` is
+capped at 32 KiB by `verify.py` and `diagnostics.md` starts at 28,599 bytes, so
+a full condition paragraph from each of several sibling cards would breach it.
+After this card: `buffers-records.md` 22,058 → 26,464 and `diagnostics.md`
+28,599 → 29,812, with `largest_policy_page_bytes` unmoved at 32,262
+(`gateway.md`, untouched here).
+
+Three general notes for the next card in this tree, none a criticism of the
 restructure: the preserved markers read as "the place to edit" and are in fact
-the place **not** to edit, and nothing in the Python suite fails when they are
-edited — `verify.py` is a separate script and both of the checks above have to
-be run deliberately. The standing gate as written includes neither.
+the place **not** to edit; `check_residuals.py` writes as it verifies; and
+nothing in the Python suite fails for any of it — `verify.py`,
+`check_residuals.py` and `build_docs_index.py --check` are three separate
+scripts that have to be run deliberately, and the standing gate as written
+includes none of them.
 
 ## 14. For the integrator
 
@@ -613,13 +641,21 @@ in this card's tree in the words below unless marked otherwise.
    `OWNED-FIELD-LEND-WINDOW` or `OWNED-FIELD-LOOP-BODY`, this card's gate
    becomes reachable and `WINDOW-FIELD-PATH-REFUSED-NOT-WINDOWED` is the work
    that must land with it.
-10. **Two process findings for the close, from §13.** The preserved markers read
-    as the place to edit and are the place *not* to edit; and neither
-    `verify.py` nor `build_docs_index.py --check` is in the standing gate, so a
-    card that edits a topic page or adds a report can go green without running
-    either. Both caught something real here. Worth a standing-gate line, or at
-    least a line in `docs/agents/operations.md`; **not taken by this card**,
-    which has no mandate over the gate's own definition.
+10. **Three process findings for the close, from §13.** (a) The preserved
+    markers read as the place to edit and are the place *not* to edit — the
+    canonical home is the "Amendments after the 2026-09-19 migration
+    checkpoint" section, which this card places at the **end** of each page so
+    siblings collect rather than interleave. (b) `check_residuals.py` **writes**
+    `residual-discovery.json` into the restructure's own report directory as a
+    side effect of verifying, so running it edits another card's archive; this
+    card restored that file and published its run beside its own gate instead
+    (constraint 21's dual publication). A `--write` flag would fix it. (c)
+    Neither `verify.py`, nor `check_residuals.py`, nor
+    `build_docs_index.py --check` is in the standing gate, so a card that edits
+    a topic page or adds a report can go green without running any of them; all
+    three caught something real here. Worth a standing-gate line, or at least a
+    line in `docs/agents/operations.md`; **not taken by this card**, which has
+    no mandate over the gate's own definition.
 11. **A finding to carry, not to file quietly.** `COMPOSED-VIEW-WINDOW-INERT`'s
     registered **title** is wrong (§1). It was registered by
     `STABILITY-REEVAL-4` and is retired by this card, so nothing needs editing —
