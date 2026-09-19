@@ -159,12 +159,24 @@ pub enum CustodyPayloadProfile {
     TypedTaskBuffers,
 }
 
+/// Checked evidence for `source.bitfield-concurrency.v1`.
+///
+/// The source lowering retains the actual worker/write attribution beside the
+/// exact footprint program handed to `DisjointFootprintsV1`; the certificate
+/// is independently rechecked before publication.
+#[derive(Clone, Debug)]
+pub struct CheckedBitfieldTaskModule {
+    pub lowered: qcore_frontend::source_bitfield_concurrency::LoweredBitfieldTaskModule,
+    pub certificate: qcore_core::disjoint_footprint::FootprintCertificate,
+}
+
 /// Checked evidence is explicit about the executed semantic profile. Task
 /// modules never carry a sequential CFG with their task operations erased.
 #[derive(Clone, Debug)]
 pub enum CheckedSourceModule {
     Sequential(Box<CheckedProgram>),
     ScopedTasks(Box<task_execution::CheckedTaskModule>),
+    BitfieldTasks(Box<CheckedBitfieldTaskModule>),
     /// One entry function checked under `CheckedMutexInvariantV1`. The
     /// certificate is the evidence; the lowered program is retained beside it so
     /// a consumer can re-derive rather than believe it.
@@ -469,6 +481,7 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(program) => Some(program),
             Self::ScopedTasks(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
@@ -491,6 +504,7 @@ impl CheckedSourceModule {
     pub fn as_scoped_tasks(&self) -> Option<&task_execution::CheckedTaskModule> {
         match self {
             Self::Sequential(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
@@ -511,6 +525,7 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
@@ -533,6 +548,7 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
@@ -552,6 +568,7 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ExternCalls(_)
@@ -571,6 +588,7 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
@@ -590,6 +608,7 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
@@ -614,6 +633,7 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
@@ -639,6 +659,7 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
@@ -659,6 +680,7 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
@@ -679,6 +701,7 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
@@ -699,6 +722,7 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
@@ -719,6 +743,7 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(_)
             | Self::ScopedTasks(_)
+            | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
@@ -738,6 +763,9 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(program) => program.functions.len(),
             Self::ScopedTasks(program) => program.module().functions.len(),
+            // One entry plus the worker bodies whose writes are attributed in
+            // the retained lowering.
+            Self::BitfieldTasks(module) => module.lowered.writes.len() + 1,
             // One entry function is checked on this route; the profile admits
             // no calls, so the count is not a coverage claim about a module.
             Self::CheckedMutexGuards(_) => 1,
@@ -783,6 +811,11 @@ pub enum SourceExecutionProfile {
     SequentialCleanupV1,
     ScopedCopyTasksV1,
     ScopedOwnedTasksV1,
+    /// Two or more real task spawns carry write authority to fields of one
+    /// explicitly laid-out source record. Their pairwise independence is
+    /// decided by the unedited `DisjointFootprintsV1` checker; adjacent
+    /// bit-fields sharing a storage unit refuse as `Q661` before emission.
+    BitfieldConcurrencyV1,
     /// `ScopedReadLoansV1`: the owned-task profile plus one bounded scoped read
     /// loan of the whole read authority — never copied, moved, re-lent,
     /// returned or dropped, and closed only by the creator's successful join.
@@ -1137,6 +1170,14 @@ pub fn compile_files_with_registry(
             .map(|diagnostic| map_diagnostic(diagnostic, &ranges))
             .collect::<Vec<_>>()
     })?;
+    // `source.bitfield-concurrency.v1`: selected before the generic task route
+    // because it composes the task parser's real `write OBJECT.FIELD` captures
+    // with an explicit source-derived layout. Falling through would discard
+    // the record storage-unit identity and refuse for the generic route's
+    // shallower reason rather than deciding the concurrent writes.
+    if qcore_frontend::source_bitfield_concurrency::has_source_bitfield_tasks(&parsed) {
+        return compile_bitfield_task_source(&parsed, &typed, mode, options, &ranges);
+    }
     if qcore_frontend::source_epoch_tasks::has_composed_epoch(&parsed) {
         // Selected before the pure epoch route: a module carrying both an epoch
         // scope and the scoped-task profile's own marker is accounting for a
@@ -3773,6 +3814,80 @@ fn compile_task_source(
     ranges: &[FileRange],
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     task_route(parsed, typed, mode, options, ranges, false)
+}
+
+fn compile_bitfield_task_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q600",
+            "entry-free bit-field task modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let lowered =
+        qcore_frontend::source_bitfield_concurrency::lower_source_bitfield_tasks(parsed, &entry)
+            .map_err(|errors| {
+                errors
+                    .into_iter()
+                    .map(|error| map_diagnostic(error, ranges))
+                    .collect::<Vec<_>>()
+            })?;
+    let certificate =
+        qcore_core::disjoint_footprint::check_disjoint_footprint_program(&lowered.program)
+            .map_err(|errors| {
+                errors
+                    .into_iter()
+                    .map(|error| {
+                        map_raw_diagnostic(
+                            error.code(),
+                            SemanticPass::Concurrency,
+                            lowered.scope_span,
+                            error.to_string(),
+                            ranges,
+                        )
+                    })
+                    .collect::<Vec<_>>()
+            })?;
+    qcore_core::disjoint_footprint::recheck_disjoint_footprint_certificate(
+        &lowered.program,
+        &certificate,
+    )
+    .map_err(|failure| {
+        vec![map_raw_diagnostic(
+            "Q600",
+            SemanticPass::Concurrency,
+            lowered.scope_span,
+            format!("bit-field footprint certificate failed independent recheck: {failure:?}"),
+            ranges,
+        )]
+    })?;
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::BitfieldTasks(Box::new(CheckedBitfieldTaskModule {
+            lowered,
+            certificate,
+        })),
+        execution_profile: SourceExecutionProfile::BitfieldConcurrencyV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile: SourceResultProfile {
+            scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),
+            owned_buffer_results: Default::default(),
+            custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+        },
+        entry: Some(entry),
+        // This card establishes a checked source-to-concurrency route. Native
+        // emission of C bit-fields is a separate target-ABI problem.
+        c_source: None,
+        source_map: Vec::new(),
+        reference_observation: None,
+        extern_observation: None,
+    })
 }
 
 /// `source.std-io-tasks.v1` (card `COMPOSE-CONCURRENCY`).
