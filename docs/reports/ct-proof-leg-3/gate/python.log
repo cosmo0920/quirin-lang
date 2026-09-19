@@ -1,0 +1,60 @@
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a882c757f1dff9ed4/scripts/tests/test_build_matrix_sections.py", line 223, in test_the_derived_facts_are_recomputed_rather_than_carried
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        [committed["versions"]["qcore_schemas_rust_api"], committed["validation"]["lean_audits"]],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        [produced["versions"]["qcore_schemas_rust_api"], produced["validation"]["lean_audits"]],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: Lists differ: ['14.0.0', 141] != ['14.0.0', 142]
+
+First differing element 1:
+141
+142
+
+- ['14.0.0', 141]
+?              ^
+
++ ['14.0.0', 142]
+?              ^
+
+
+======================================================================
+FAIL: test_each_derived_dimension_matches_the_section_it_counts (test_build_matrix_sections.CommittedMatrixIsSelfConsistent.test_each_derived_dimension_matches_the_section_it_counts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a882c757f1dff9ed4/scripts/tests/test_build_matrix_sections.py", line 557, in test_each_derived_dimension_matches_the_section_it_counts
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        committed["dimensions"][section],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        f"{GENERATOR.relative_to(ROOT)} rather than repairing the count by hand",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: 257 != 258 : dimensions.named_followups is 257 against a named_followups of 258; regenerate through docs/reports/remaining-d02/build_matrix.py rather than repairing the count by hand
+
+======================================================================
+FAIL: test_the_committed_matrix_keeps_the_generators_byte_format (test_build_matrix_sections.CommittedMatrixIsSelfConsistent.test_the_committed_matrix_keeps_the_generators_byte_format)
+The second half of the same defect: a hand edit in another format
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a882c757f1dff9ed4/scripts/tests/test_build_matrix_sections.py", line 574, in test_the_committed_matrix_keeps_the_generators_byte_format
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        reserialised,
+        ^^^^^^^^^^^^^
+    ...<2 lines>...
+        "by hand with different serialisation settings",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: '{\n [194104 chars]ting — the represented refusal that stood befo[607105 chars]n}\n' != '{\n [194104 chars]ting \\u2014 the represented refusal that stoo[608623 chars]n}\n' : the committed matrix is not in the generator's byte format; it was edited by hand with different serialisation settings
+
+----------------------------------------------------------------------
+Ran 303 tests in 27.730s
+
+FAILED (failures=3)

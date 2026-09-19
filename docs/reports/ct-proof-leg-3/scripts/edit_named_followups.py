@@ -243,7 +243,9 @@ def main():
 
     matrix["named_followups"] = kept
     trailing = "\n" if text.endswith("\n") else ""
-    MATRIX.write_text(json.dumps(matrix, indent=1) + trailing)
+    # The committed matrix is `indent=1, ensure_ascii=False`; a hand edit in
+    # another serialisation is its own tripwire in scripts/tests.
+    MATRIX.write_text(json.dumps(matrix, indent=1, ensure_ascii=False) + trailing)
     print("named_followups %d -> %d" % (before, len(kept)))
 
 

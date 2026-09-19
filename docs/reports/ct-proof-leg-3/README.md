@@ -517,7 +517,50 @@ the reserved-word count stays **113**.
 
 ## 10. Gate
 
-_(see `gate.json` and `gate/`)_
+One detached full standing gate (`measure/gate.sh`: `setsid -f`, no
+`trap '' TERM`, every step's exit to its own file, no pipe), **polled in a
+foreground bounded loop**, run at tip **`0f8a5323`** — the commit carrying
+every code change of this card plus its records; the commits after it are this
+gate's own evidence and the matrix regeneration. Exits and the short logs are
+copied into `gate/` beside this file, and the figures below were extracted from
+them by `measure/build_gate_json.py` (`measure/gate-facts.json`) — **nothing
+typed in**.
+
+| Step | Result |
+|---|---|
+| `git submodule update --init --recursive` | exit 0, `third_party/libevent` at `d82464a2` |
+| `cargo test --workspace --no-fail-fast` | **exit 0 — 4,735 passed / 0 failed / 10 ignored** over 240 result summaries and 238 test targets (229 `Running` + 9 doc-test sections; two of those print two summaries each). `test result: FAILED` **0** times, so no constraint-16 isolated re-verification was required and **none is claimed**. 21m47s wall (06:59:43Z → 07:21:30Z) with sibling worktrees building |
+| `cargo fmt --all -- --check` | exit 0 |
+| `cargo clippy --all-targets -- -D warnings` | exit 0 |
+| `reevaluation_probe` / `reevaluation_followup` | exit 0 / exit 0 |
+| `python3 scripts/check_lean_audits.py` | exit 0, **"Passed 142 Lean audits"** |
+| `python3 -m unittest discover -s scripts/tests` | **exit 1, deliberately reported** — see below |
+| matrix regeneration | `build_matrix.py . --gate docs/reports/ct-proof-leg-3/gate.json` exit 0: named followups 258, lean audits 142, contract modules 88, CT depth `proof: 5` |
+| Python **post**-regeneration | `gate/python-post.exit` **0**, `Ran 303 tests … OK`; `ct_stage_summary.py --check` exit 0 |
+| `clang --version` | exit 0, `Ubuntu clang version 21.1.8 (6ubuntu1)` (`gate/clang-version.txt`), `QCORE_CLANG` unset, **run in this worktree by this card's own gate script** |
+| disk | 199 GB → 116 GB free across the run |
+| provider 122 | **carried, not re-measured**: nothing under `providers/` or `crates/qcore-schemas/` moved and `qcore-schemas` is 14.0.0, so constraint 18 is not engaged; a Unix figure |
+
+**Deltas against the wave-40 close's 4,727 / 303 / 141**: workspace **+8** —
+exactly `ct50_proof_leg.rs`'s five tests and `proof_leg_digests.rs`'s three;
+targets +2, summaries +2, ignored +0, Python +0, Lean **+1**
+(`AuditCt50LifetimeIdentity.lean`).
+
+**The Python step's exit 1, in full.** Three failures, all regeneration
+tripwires against the tree in which this card had edited `named_followups`
+(257 → 258) and added an `Audit*.lean` (141 → 142) and not yet regenerated:
+`test_each_derived_dimension_matches_the_section_it_counts` (`257 != 258`),
+`test_the_derived_facts_are_recomputed_rather_than_carried` (the Lean count),
+and `test_the_committed_matrix_keeps_the_generators_byte_format` — the third
+because this card's own tracker script had serialised with `ensure_ascii`
+defaulted on. That was a real defect in the script, **repaired in the script**
+(it now writes `indent=1, ensure_ascii=False`, the committed format) rather than
+by hand-fixing the file, and then regenerated. Post-regeneration Python is
+green: `Ran 303 tests … OK`.
+
+**A gate figure is a measurement on one machine, never a property.** This one
+was taken under sibling load and is offered as this card's own figure, to be
+replaced by the wave-41 close's integration-tip measurement.
 
 ## 11. Files touched, and sibling ownership
 

@@ -1,0 +1,40 @@
+'QCore.WriteLendTasks.admitsLease' does not depend on any axioms
+'QCore.WriteLendTasks.openLease' does not depend on any axioms
+'QCore.WriteLendTasks.closeLease' does not depend on any axioms
+'QCore.WriteLendTasks.leasesHolding' does not depend on any axioms
+'QCore.WriteLendTasks.ownerMayWrite' does not depend on any axioms
+'QCore.WriteLendTasks.writeAuthorities' does not depend on any axioms
+'QCore.WriteLendTasks.addedSurface' does not depend on any axioms
+'QCore.WriteLendTasks.a_second_lease_is_admitted_iff_disjoint' depends on axioms: [propext]
+'QCore.WriteLendTasks.two_admitted_leases_share_no_byte' depends on axioms: [propext, Quot.sound]
+'QCore.WriteLendTasks.an_empty_range_is_not_a_lease' depends on axioms: [propext]
+'QCore.WriteLendTasks.a_third_simultaneous_lease_is_refused' depends on axioms: [propext]
+'QCore.WriteLendTasks.reachable_states_are_pairwise_disjoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'QCore.WriteLendTasks.at_most_one_lease_holds_a_byte' depends on axioms: [propext, Classical.choice, Quot.sound]
+'QCore.WriteLendTasks.no_byte_has_two_write_authorities' depends on axioms: [propext, Classical.choice, Quot.sound]
+'QCore.WriteLendTasks.the_owner_is_suspended_exactly_while_a_lease_is_out' depends on axioms: [propext]
+'QCore.WriteLendTasks.closing_the_last_lease_restores_the_owner' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'QCore.WriteLendTasks.a_join_never_disturbs_a_siblings_lease' depends on axioms: [propext, Quot.sound]
+'QCore.WriteLendTasks.a_closed_holder_retains_nothing' depends on axioms: [propext, Quot.sound]
+'QCore.WriteLendTasks.the_added_capture_is_exactly_one' does not depend on any axioms
+Passed AuditWriteLendTasks.lean (141/142) in 1.0s
+'QCore.WriteLendTasksExercise.rebase' does not depend on any axioms
+'QCore.WriteLendTasksExercise.admitsIndex' does not depend on any axioms
+'QCore.WriteLendTasksExercise.footprintFits' does not depend on any axioms
+'QCore.WriteLendTasksExercise.admitsWrite' does not depend on any axioms
+'QCore.WriteLendTasksExercise.addedSurface' does not depend on any axioms
+'QCore.WriteLendTasksExercise.admits_index_iff_below_extent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'QCore.WriteLendTasksExercise.the_footprint_fit_is_exactly_the_rebasing_law' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'QCore.WriteLendTasksExercise.some_index_is_always_outside' depends on axioms: [propext, Quot.sound]
+'QCore.WriteLendTasksExercise.an_admitted_write_lies_inside_its_writers_lease' depends on axioms: [propext, Quot.sound]
+'QCore.WriteLendTasksExercise.no_byte_is_written_by_two_parties' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'QCore.WriteLendTasksExercise.the_owner_writes_no_byte_while_any_lease_is_out' depends on axioms: [propext]
+'QCore.WriteLendTasksExercise.the_added_operations_are_exactly_two' does not depend on any axioms
+Passed AuditWriteLendTasksExercise.lean (142/142) in 0.8s
+Passed 142 Lean audits
