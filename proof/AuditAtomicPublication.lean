@@ -13,3 +13,6 @@ import QCore.AtomicPublication
 
 #print axioms QCore.AtomicPublication.payload_path_requires_synchronization
 #print axioms QCore.AtomicPublication.non_atomic_completion_has_no_payload_path
+
+#print axioms QCore.AtomicPublication.a_zero_store_value_cannot_release
+#print axioms QCore.AtomicPublication.a_zero_load_value_cannot_acquire

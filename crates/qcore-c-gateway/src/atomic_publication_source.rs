@@ -403,11 +403,32 @@ fn canonical_memory_orders(
     let [memory_order] = enums.as_slice() else {
         return Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder);
     };
-    let orders = children(memory_order)
-        .iter()
-        .filter(|node| kind(node) == "EnumConstantDecl")
-        .filter_map(|node| Some((node["name"].as_str()?.into(), node_id(node)?.into())))
-        .collect::<BTreeMap<_, _>>();
+    // AtomicExpr executes Clang's numeric builtin order, not the spelling of
+    // an enum member. A user-defined `memory_order_release = 0` is relaxed.
+    // Require evaluated int constants for the four orders this route models.
+    let mut orders = BTreeMap::new();
+    for (name, expected_value) in [
+        ("memory_order_relaxed", "0"),
+        ("memory_order_acquire", "2"),
+        ("memory_order_release", "3"),
+        ("memory_order_seq_cst", "5"),
+    ] {
+        let member = children(memory_order)
+            .iter()
+            .find(|node| kind(node) == "EnumConstantDecl" && node["name"].as_str() == Some(name))
+            .ok_or(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder)?;
+        let [value] = children(member) else {
+            return Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder);
+        };
+        if kind(value) != "ConstantExpr"
+            || type_spelling(value) != Some("int")
+            || value["value"].as_str() != Some(expected_value)
+        {
+            return Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder);
+        }
+        let id = node_id(member).ok_or(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder)?;
+        orders.insert(name.to_owned(), id.to_owned());
+    }
     Ok(orders)
 }
 

@@ -31,6 +31,20 @@ keep their structural refusals. Atomic certificate construction and the legacy
 resource projection are unchanged. Non-atomic candidates still return no
 certificate; no previous Unknown becomes Safe.
 
+Review also reproduced `CT41-MEMORY-ORDER-NAME-ONLY`: an enum declaring
+`memory_order_release = 0` and `memory_order_acquire = 0` was accepted as
+release/acquire even though Clang's builtin operations use relaxed order 0.
+The extractor now checks each supported enum member's evaluated int value
+against Clang's builtin encoding (relaxed 0, acquire 2, release 3, seq_cst 5),
+then checks reference identity as before. The reproduced false certificate now
+refuses `UnsupportedMemoryOrder`; normal declarations remain admitted.
+Gateway and verification regression tests exercise the repair, with Lean
+parity that zero cannot decode as a releasing store or acquiring load.
+This finding was discovered and discharged within this card, not counted as a
+retirement of an already registered entry. Before/after observations are in
+`private/ct41-mapping/enum-value-probe-{before,after}.log`.
+
+
 The [case and controls](../../../compiler/tests/fixtures/ct/CT41/expected.json)
 execute through `compiler/tests/ct_corpus.rs::atomic_publication::run`, using
 `qcore-verification` to compose source extraction and the existing core checker.
@@ -43,7 +57,7 @@ Exactly one publisher and one successful consumer invocation are declared
 bounds. The consumer samples once and reads the payload only after the ready
 value; this is no spin-loop, termination or eventual-observation proof.
 Faithful Clang extraction and Rust–Lean correspondence remain review premises.
-Two new audited general theorems in `QCore.AtomicPublication` establish that a
+The audited general theorems in `QCore.AtomicPublication` establish that a
 payload happens-before path requires synchronization and that plain/volatile
 flags lack such a path. They are model parity, not case-bound proof evidence.
 No native execution or sanitizer evidence is added by CT41.

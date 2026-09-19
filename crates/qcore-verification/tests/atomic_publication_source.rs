@@ -88,3 +88,14 @@ fn extracted_controls_do_not_acquire_a_model_certificate() {
         ))
     );
 }
+
+#[test]
+fn misleading_enum_names_cannot_publish_an_ordering_certificate() {
+    let source = SOURCE.replace("#include <stdatomic.h>",
+        "typedef enum memory_order { memory_order_relaxed = 0, memory_order_acquire = 0, memory_order_release = 0, memory_order_seq_cst = 0 } memory_order;")
+        .replace("atomic_store_explicit", "__c11_atomic_store")
+        .replace("atomic_load_explicit", "__c11_atomic_load");
+    assert_eq!(check(&source), Err(AtomicPublicationRefusal::Source(
+        qcore_c_gateway::atomic_publication_source::AtomicPublicationSourceRefusal::UnsupportedMemoryOrder
+    )));
+}

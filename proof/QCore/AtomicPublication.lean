@@ -144,4 +144,22 @@ theorem non_atomic_completion_has_no_payload_path (p : Program)
   | inl plain => exact plain_has_no_synchronizes_with_edge p plain sync
   | inr volatile => exact volatile_has_no_synchronizes_with_edge p volatile sync
 
+def clangStoreValue : StoreOrder → Nat
+  | .relaxed => 0
+  | .release => 3
+  | .seqCst => 5
+
+def clangLoadValue : LoadOrder → Nat
+  | .relaxed => 0
+  | .acquire => 2
+  | .seqCst => 5
+
+theorem a_zero_store_value_cannot_release (order : StoreOrder)
+    (h : clangStoreValue order = 0) : ¬ releases order := by
+  cases order <;> simp_all [clangStoreValue, releases]
+
+theorem a_zero_load_value_cannot_acquire (order : LoadOrder)
+    (h : clangLoadValue order = 0) : ¬ acquires order := by
+  cases order <;> simp_all [clangLoadValue, acquires]
+
 end QCore.AtomicPublication
