@@ -1,0 +1,124 @@
+{
+  "source_commit": "0e8c5c0802c15417caa1c827a754e6e7b8787faf",
+  "start": "2026-09-19T16:02:31.061981+00:00",
+  "cwd": "/tmp/agent-b03",
+  "environment": {
+    "CARGO_BUILD_JOBS": "3",
+    "QCORE_CLANG": null,
+    "RUSTFLAGS": null,
+    "CARGO_TARGET_DIR": "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/targets/b03"
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.21,
+      "log": "/tmp/agent-b03/private/b-series/parent-b03-gate/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.12,
+      "log": "/tmp/agent-b03/private/b-series/parent-b03-gate/clang-version.log"
+    },
+    {
+      "name": "cargo-test",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "seconds": 1056.02,
+      "log": "/tmp/agent-b03/private/b-series/parent-b03-gate/cargo-test.log"
+    },
+    {
+      "name": "cargo-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 1.95,
+      "log": "/tmp/agent-b03/private/b-series/parent-b03-gate/cargo-fmt.log"
+    },
+    {
+      "name": "cargo-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 26.91,
+      "log": "/tmp/agent-b03/private/b-series/parent-b03-gate/cargo-clippy.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.11,
+      "log": "/tmp/agent-b03/private/b-series/parent-b03-gate/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.43,
+      "log": "/tmp/agent-b03/private/b-series/parent-b03-gate/reevaluation-followup.log"
+    },
+    {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "seconds": 18.75,
+      "log": "/tmp/agent-b03/private/b-series/parent-b03-gate/lean-audits.log"
+    }
+  ],
+  "rust": {
+    "passed": 4820,
+    "failed": 0,
+    "ignored": 10,
+    "result_summaries": 247,
+    "running_targets": 236,
+    "doc_targets": 9
+  },
+  "end": "2026-09-19T16:20:55.585242+00:00"
+}
