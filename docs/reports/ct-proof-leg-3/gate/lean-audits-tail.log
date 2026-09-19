@@ -19,7 +19,7 @@
 'QCore.WriteLendTasks.a_join_never_disturbs_a_siblings_lease' depends on axioms: [propext, Quot.sound]
 'QCore.WriteLendTasks.a_closed_holder_retains_nothing' depends on axioms: [propext, Quot.sound]
 'QCore.WriteLendTasks.the_added_capture_is_exactly_one' does not depend on any axioms
-Passed AuditWriteLendTasks.lean (141/142) in 1.0s
+Passed AuditWriteLendTasks.lean (141/142) in 0.6s
 'QCore.WriteLendTasksExercise.rebase' does not depend on any axioms
 'QCore.WriteLendTasksExercise.admitsIndex' does not depend on any axioms
 'QCore.WriteLendTasksExercise.footprintFits' does not depend on any axioms
@@ -36,5 +36,5 @@ Passed AuditWriteLendTasks.lean (141/142) in 1.0s
  Quot.sound]
 'QCore.WriteLendTasksExercise.the_owner_writes_no_byte_while_any_lease_is_out' depends on axioms: [propext]
 'QCore.WriteLendTasksExercise.the_added_operations_are_exactly_two' does not depend on any axioms
-Passed AuditWriteLendTasksExercise.lean (142/142) in 0.8s
+Passed AuditWriteLendTasksExercise.lean (142/142) in 0.5s
 Passed 142 Lean audits

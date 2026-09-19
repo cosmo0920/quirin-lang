@@ -525,46 +525,49 @@ the reserved-word count stays **113**.
 
 ## 10. Gate
 
-One detached full standing gate (`measure/gate.sh`: `setsid -f`, no
-`trap '' TERM`, every step's exit to its own file, no pipe), **polled in a
-foreground bounded loop**, run at tip **`0f8a5323`** — the commit carrying
-every code change of this card plus its records; the commits after it are this
-gate's own evidence and the matrix regeneration. Exits and the short logs are
-copied into `gate/` beside this file, and the figures below were extracted from
-them by `measure/build_gate_json.py` (`measure/gate-facts.json`) — **nothing
-typed in**.
+**Re-run on the rebased tree** (§13); the pre-rebase run's figures are
+superseded and not carried. One detached full standing gate (`measure/gate.sh`:
+`setsid -f`, no `trap '' TERM`, every step's exit to its own file, no pipe),
+**polled in a foreground bounded loop**, run at tip **`ca97a576`** — the commit
+carrying every change of this card on the rebased base; the commits after it are
+this gate's own evidence. Exits and the short logs are in `gate/`, and the
+figures below were extracted from them by `measure/build_gate_json.py`
+(`measure/gate-facts.json`) — **nothing typed in**.
 
 | Step | Result |
 |---|---|
-| `git submodule update --init --recursive` | exit 0, `third_party/libevent` at `d82464a2` |
-| `cargo test --workspace --no-fail-fast` | **exit 0 — 4,735 passed / 0 failed / 10 ignored** over 240 result summaries and 238 test targets (229 `Running` + 9 doc-test sections; two of those print two summaries each). `test result: FAILED` **0** times, so no constraint-16 isolated re-verification was required and **none is claimed**. 21m47s wall (06:59:43Z → 07:21:30Z) with sibling worktrees building |
+| submodule update (init, recursive) | exit 0, `third_party/libevent` at `d82464a2` |
+| `cargo test --workspace --no-fail-fast` | **4,733 passed / 2 failed / 10 ignored** over 240 result summaries and 238 test targets (229 `Running` + 9 doc-test sections; two print two summaries each). **Both failures are constraint-16 named rows and both facts are recorded** — see §10.1. `--no-fail-fast` did its job: every suite after the failing binaries still ran, so this is a measurement and not a lower bound. 17m32s wall (07:32:45Z → 07:50:17Z) with sibling worktrees building |
 | `cargo fmt --all -- --check` | exit 0 |
 | `cargo clippy --all-targets -- -D warnings` | exit 0 |
 | `reevaluation_probe` / `reevaluation_followup` | exit 0 / exit 0 |
 | `python3 scripts/check_lean_audits.py` | exit 0, **"Passed 142 Lean audits"** |
-| `python3 -m unittest discover -s scripts/tests` | **exit 1, deliberately reported** — see below |
-| matrix regeneration | `build_matrix.py . --gate docs/reports/ct-proof-leg-3/gate.json` exit 0: named followups 258, lean audits 142, contract modules 88, CT depth `proof: 5` |
-| Python **post**-regeneration | `gate/python-post.exit` **0**, `Ran 303 tests … OK`; `ct_stage_summary.py --check` exit 0 |
+| `python3 -m unittest discover -s scripts/tests` | **exit 0, `Ran 305 tests … OK`** — the suite grew 303 → 305 in the restructure. Green **during** the run, because the matrix had already been regenerated at 259 before the gate started; regenerated once more afterwards so its `validation` block carries **this** run's figures, and re-run green (`gate/python-post.exit` 0, `Ran 305 tests … OK`; `ct_stage_summary.py --check` exit 0) |
+| matrix regeneration | `build_matrix.py . --gate docs/reports/ct-proof-leg-3/gate.json` exit 0: named followups 259, lean audits 142, contract modules 88, CT depth `proof: 5` |
 | `clang --version` | exit 0, `Ubuntu clang version 21.1.8 (6ubuntu1)` (`gate/clang-version.txt`), `QCORE_CLANG` unset, **run in this worktree by this card's own gate script** |
-| disk | 199 GB → 116 GB free across the run |
+| disk | 116 GB → 114 GB free across the run |
 | provider 122 | **carried, not re-measured**: nothing under `providers/` or `crates/qcore-schemas/` moved and `qcore-schemas` is 14.0.0, so constraint 18 is not engaged; a Unix figure |
 
 **Deltas against the wave-40 close's 4,727 / 303 / 141**: workspace **+8** —
-exactly `ct50_proof_leg.rs`'s five tests and `proof_leg_digests.rs`'s three;
-targets +2, summaries +2, ignored +0, Python +0, Lean **+1**
-(`AuditCt50LifetimeIdentity.lean`).
+exactly `ct50_proof_leg.rs`'s five tests and `proof_leg_digests.rs`'s three —
+less the two rows that flaked in this run's passed column; targets +2,
+summaries +2, ignored +0, **Python +2** (the restructure's own preservation
+checks, **not** this card's), Lean **+1** (`AuditCt50LifetimeIdentity.lean`).
 
-**The Python step's exit 1, in full.** Three failures, all regeneration
-tripwires against the tree in which this card had edited `named_followups`
-(257 → 258) and added an `Audit*.lean` (141 → 142) and not yet regenerated:
-`test_each_derived_dimension_matches_the_section_it_counts` (`257 != 258`),
-`test_the_derived_facts_are_recomputed_rather_than_carried` (the Lean count),
-and `test_the_committed_matrix_keeps_the_generators_byte_format` — the third
-because this card's own tracker script had serialised with `ensure_ascii`
-defaulted on. That was a real defect in the script, **repaired in the script**
-(it now writes `indent=1, ensure_ascii=False`, the committed format) rather than
-by hand-fixing the file, and then regenerated. Post-regeneration Python is
-green: `Ran 303 tests … OK`.
+### 10.1 The two tripped constraint-16 rows, both facts recorded
+
+[Rule 16](../../agents/providers.md#constraint-16) requires a gate report to
+state which of its named load-sensitive rows it saw, and to re-verify a red one
+in isolation without weakening it. Both of this run's failures are on that list:
+
+| Row | In the full run | Re-verified in isolation |
+|---|---|---|
+| `confined_process_execution::a_confined_fixture_cannot_write_outside_the_admitted_paths` | `assertion left == right failed: Broken pipe (os error 32)`, `left: Io / right: Terminated` — **the exact `Io(Broken pipe)` shape rule 16 records for this row** | **green**, `test result: ok. 1 passed`, same binary, nothing edited, 1-minute load ≈15 (`gate/iso-confined.log`, exit 0) |
+| `enforced_process_limits::memory_growth_beyond_the_declared_limit_is_bounded` | `assertion left == right failed: Text file busy (os error 26)`, `left: SpawnFailed / right: Terminated` — the `ExecutableFileBusy` shape rule 16 records for the same family (a sibling test in the binary executes the file it mutates) | **green**, `test result: ok. 1 passed`, same binary, nothing edited (`gate/iso-memgrowth.log`, exit 0) |
+
+Nothing was weakened to obtain either result, and the 4,733 figure is published
+**with** its two failures rather than as "0 failed" — the defect
+`GATE-SUMMARY-PARSER-OK-ONLY` records elsewhere.
 
 **A gate figure is a measurement on one machine, never a property.** This one
 was taken under sibling load and is offered as this card's own figure, to be
