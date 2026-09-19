@@ -3564,23 +3564,6 @@ fn run_mapped_case(case: &ManifestCase) {
     }
 }
 
-/// CT24's rejection and every attribution/boundary control execute without
-/// depending on the corpus-wide native runners. This keeps the case's mapping
-/// directly testable on hosts or sandboxes where an unrelated sanitizer row
-/// cannot start, while `run_mapped_case` remains the one source of truth for
-/// the manifest, expected evidence, stage plan and controls.
-#[test]
-fn ct24_cleanup_before_join_mapping_and_controls_execute() {
-    let manifest = load_manifest();
-    let case = manifest
-        .cases
-        .iter()
-        .find(|case| case.id == "CT24")
-        .expect("CT24 is in the fifty-case manifest");
-    assert_eq!(case.mapping_status, "mapped");
-    run_mapped_case(case);
-}
-
 #[test]
 fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     let manifest = load_manifest();
@@ -3678,13 +3661,7 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
                 unmapped.push(case.id.clone());
             }
             "mapped" => {
-                // CT24's dedicated test below owns its one run_mapped_case
-                // invocation. Keeping it out of this loop makes the stage
-                // record's observation count literal: one runner invocation,
-                // while still including CT24 in every inventory assertion.
-                if case.id != "CT24" {
-                    run_mapped_case(case);
-                }
+                run_mapped_case(case);
                 mapped.push(case.id.clone());
             }
             other => panic!(

@@ -109,7 +109,6 @@ CARGO_INCREMENTAL=0` and this worktree's own `target/`.
 | `git submodule update --init --recursive` | exit 0; `third_party/libevent` at `d82464a277d0f42703702c4dfd9af6af38595a83` |
 | `cargo test -p qcore-frontend --test source_epoch_tasks --no-fail-fast` | exit 0; 25 passed after placement hardening |
 | `cargo test -p qcore-compiler --test cleanup_task_composition --test region_joins_loan --no-fail-fast` | exit 0; 14 passed (3 + 11), including the preserved direct-scope pre-join refusal and existing native counting-allocation control |
-| `cargo test -p qcore-compiler --test ct_corpus ct24_cleanup_before_join_mapping_and_controls_execute -- --exact` | exit 0; CT24's case plus all eight controls executed through the real corpus runner |
 | `lake build QCore.CleanupTaskComposition` | exit 0 after identity binding |
 | `lake env lean AuditRegionJoinsLoan.lean` | exit 0; only standard `propext` / `Quot.sound` dependencies |
 | `python3 scripts/check_lean_audits.py` | exit 0; 143 audits after the final proof strengthening |
