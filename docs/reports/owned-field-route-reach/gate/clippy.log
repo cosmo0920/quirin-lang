@@ -1,0 +1,10 @@
+    Checking qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+    Checking qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+    Checking qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+    Checking qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+    Checking qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+    Checking qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+    Checking qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+    Checking qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+    Checking qcorec v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcorec)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.02s

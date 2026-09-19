@@ -430,55 +430,105 @@ and `OWNED-FIELD-SEQUENTIAL-UNREACHED` (re-scoped).
 
 ## 8. Gate
 
-See `gate.json` and `gate/` beside this file.
+**Two detached full gates were run, and the published figures are the second
+one's.** The card branched from `463fa6e8`; while it ran, the documentation
+restructure (`96142e49`) landed on `main`, so the tree was rebased onto it and
+the gate re-run. The first gate, at `22ed6bdf` on the pre-restructure base,
+agreed on every figure and had **no** constraint-16 row red; it is superseded,
+because a card publishes the gate of the tree it merges.
+
+Runner `scripts/gate.sh`, `setsid -f`, **no** `trap '' TERM`, every step's exit
+to its own file, no pipe, **polled in a foreground bounded loop**. Artifacts in
+`gate/` beside this file; the machine-readable record is `gate.json` (eleven
+keys, `lean_audits` and `clang` included).
+
+| Step | Exit | Figure |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | |
+| `cargo test --workspace --no-fail-fast` | **101 in the run** | **4,744 passed / 2 failed / 10 ignored**, 239 result summaries over 237 targets (228 `Running` + 9 doc-test sections, two of which print two summaries each — the wave-40 close's measurement, +1 target and +1 summary for this card's own file) |
+| the two failures, **re-verified in isolation** | 0 / 0 | see below |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `scripts/check_lean_audits.py` | 0 | **142** audits (141 + `AuditOwnedFieldCopyReach.lean`), counted on disk by the gate itself (`gate/lean-audit-count.txt`) |
+| `python3 -m unittest discover -s scripts/tests` | **1 in the run, deliberately reported** | 305 run, 2 failures — the matrix tripwires against a tree edited before regeneration; repaired by `build_matrix.py . --gate docs/reports/owned-field-route-reach/gate.json` (exit 0: 259 follow-ons, 142 audits, 88 contract modules) and re-run **305 OK, exit 0** (`gate/python-post.exit`) |
+| `python3 docs/reports/docs-structure-compression/verify.py` | 0 | the restructure's preservation verifier, green on this tree (`gate/preservation-verify.log`) |
+| `python3 scripts/build_docs_index.py --check` | 0 | the report index includes this card's directory |
+| Clang | 0 | `present: Ubuntu clang version 21.1.8 (6ubuntu1)` — `clang --version` **run in this worktree** by the gate script (`gate/clang-version.txt`, `.exit`). The generator cannot tell a borrowed recording from a real one (`CLANG-RECORDING-UNBOUND-TO-ITS-RUN`); this one is not borrowed |
+| providers | carried | 122, not re-measured: nothing under `providers/` or `crates/qcore-schemas/` changed, `qcore-schemas` still 14.0.0, so constraint 18 is not engaged. A Unix figure |
+
+**Constraint 16, both facts recorded.** The two failures carry that
+constraint's own recorded signature — `Io(Broken pipe)` where `Terminated` is
+expected — on a host running three sibling card gates in parallel:
+
+| Row | File | In the run | In isolation |
+|---|---|---|---|
+| `a_confined_fixture_cannot_write_outside_the_admitted_paths` | `confined_process_execution.rs:349` | FAILED | **1 passed**, exit 0 (`gate/isolated-confined-write.*`) |
+| `a_declared_process_limit_stops_the_fixture_from_forking` | `enforced_process_limits.rs:389` | FAILED | **1 passed**, exit 0 (`gate/isolated-fork-limit.*`) |
+
+The first is the row constraint 16 names by description ("the confined-fixture
+write test (`Io(Broken pipe)` under load)"); the second is the sibling, in the
+same file and with the same shape, of the named
+`memory_growth_beyond_the_declared_limit_is_bounded` — which was **green in the
+run itself**, as was `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`.
+`real_packages_preserve_unknown_and_reject_mutations` lives in the separate
+`providers/` workspace. Each isolated re-run was one test,
+`--test-threads=1`. **The published figure is therefore 4,746 / 0 / 10** — the
+run's 4,744 plus the two rows re-verified green — with both facts recorded
+rather than one of them absorbed. Nothing in this card's own area flaked, and
+every other summary in the run reads `ok.`.
+
+**Deltas** against the wave-40 close's 4,727 / 238 summaries / 236 targets /
+141 Lean / 303 Python: workspace **+19** (all of them
+`compiler/tests/owned_field_route_reach.rs`; no other test file gains or loses a
+function), summaries **+1**, targets **+1**, Lean **+1**, Python **+2** — and
+those two Python tests are the restructure's, not this card's. **Nothing is
+promoted:** no corpus count, unit status, function status or CT row moves; raw
+units stay unpromoted; contract corpus 88 unchanged; full language conformance
+**false**.
 
 ## 9. For the integrator
 
 Every item is addressable on its own.
 
-1. **Headline numbers moved in this tree.** `AGENTS.md` `named_followups`
-   **257 → 259** (the sentence after `named_followups`, re-worded to name this
-   card; three retired, five registered, four amended). Lean audits
-   **141 → 142** (`AuditOwnedFieldCopyReach.lean`). Workspace tests: **+19**
-   (`compiler/tests/owned_field_route_reach.rs`; no other test file gains or
-   loses a function) — the figure to carry into the "Merged gate" row at the
-   merge is §8's, measured at this card's own tip, and it is a card gate, not
-   an integration one.
-2. **Standing constraint 15k is amended in this tree, deliberately**, by an
-   **appended** paragraph that supersedes nothing above it: it records that two
-   of the constraint's own sentences (the copy rule, and "a record of scalars
-   is a plain copyable value") were decided by four unit tests and by nothing
-   else, and states the copy bind, the three rules that must survive refactors
-   (not a `buffer_use`; the value half says nothing about a ledger-held name;
-   the admitting side's safety is proved), the three boundaries that now name
-   themselves, and what stays absence. Quoted here in the card's own words —
-   read it at 15k in `AGENTS.md`, not from this list.
-3. **Constraint 14's ledger** gains this card's bullet: +0 words, +0 tokens,
-   with the **29-occurrence collision** with `source.socket.v1`'s creation form
-   recorded as the census's finding, and the two zero counts behind the
-   by-name boundary refusals.
-4. **The Q-space note** counts the **nineteenth** instance of the icebox's
-   consequence (`Q051`–`Q057`, allocating nothing) and states that this card's
-   two other movements are **not** instances, a message not being a code.
-5. **§L21** (`docs/QCORE_SPEC_r0_3.md`): three rows amended — `Q051`–`Q057`
-   (the copy bind; the `Q051` narrowing; the by-message split of the
-   unknown-field-type condition), `Q1xx` (re-measured, both codes unmoved,
-   `OWNED-FIELD-SEQUENTIAL-UNREACHED` re-scoped), `Q5xx`
-   (`AGGREGATE-TASK-CAPTURE` by name, no condition widened). The `Q054`
-   sentence in the wave-39 amendment is amended in the same place, which is
-   `OWNED-FIELD-IR-REFUSALS-UNREACHED`'s discharge word for word.
-6. **`AGENTS.md`'s diagnostics table**: the `Q051`–`Q057`, `Q100`/`Q103` and
-   `Q500` rows carry the same three amendments in summary form.
-7. **Increment record:** `docs/development/increments/wave-41.md` **created**
-   in wave-40's shape, one paragraph, and `docs/development/increments/README.md`
-   has its current-record pointer moved and its wave-table row added. Union
-   with siblings' paragraphs at the merge. `DEVELOPMENT.md` needs no edit —
-   it names the index, not a wave file.
-8. **Matrix:** `docs/reviews/r0_3/acceptance_matrix.json`'s `named_followups`
-   edited by `scripts/register.py` (idempotent; `--show` first, output shipped
-   as `register-show.log`) and regenerated with
-   `--gate docs/reports/owned-field-route-reach/gate.json` — never without.
-9. **A decision I could not take.** `COPY-BIND-SOCKET-SHAPE-COLLISION` is the
+**Where each ledger item landed.** The card branched from `463fa6e8`; the
+documentation restructure `96142e49` landed on `main` while it ran, so the
+branch was **rebased onto it** and every ledger edit re-routed out of the old
+monolithic `AGENTS.md` into the page that now owns it. The table is the map.
+
+| Ledger item | File it landed in |
+|---|---|
+| `named_followups` **257 → 259** | `docs/STATUS.md`, the "Registered follow-ups" row |
+| Constraint **15k**'s appendix (the copy bind; the three rules that must survive refactors; the three boundaries; what stays absence) | `docs/agents/buffers-records.md` § *Amendments after the 2026-09-19 migration checkpoint* → **15k** |
+| Constraint **14**'s census entry (+0 words, +0 tokens; the 29-occurrence collision; the two zero counts) | `docs/agents/source-routes.md`, same section → **14** |
+| The **Q-space tally** (nineteenth instance; band count still ten; the two non-instances) and the `Q051`–`Q057`, `Q054`, `Q100`/`Q103` and `Q500` rows | `docs/agents/diagnostics.md`, same section |
+| **§L21**: the `Q051`–`Q057`, `Q1xx` and `Q5xx` rows, and the wave-39 `Q054` sentence | `docs/QCORE_SPEC_r0_3.md` (unchanged by the restructure) |
+| The increment paragraph | `docs/development/increments/wave-41.md` (**created**, wave-40's shape, header re-pointed at the router and `docs/STATUS.md`), with the index's current-record pointer and wave-table row moved |
+| The report directory's index row | `docs/reports/INDEX.md`, regenerated by `scripts/build_docs_index.py` |
+| Tracker edits | `docs/reviews/r0_3/acceptance_matrix.json` via `scripts/register.py`, then regenerated with `--gate docs/reports/owned-field-route-reach/gate.json` |
+
+1. **The preservation verifier is the authority, and it caught two things.**
+   `docs/reports/docs-structure-compression/verify.py` reconstructs the four
+   pre-restructure guides **byte for byte** from the `<!-- preserved:… -->`
+   spans, so an amendment written *inside* a preserved block breaks that
+   reconstruction — which is standing constraint 21's own case: provenance is
+   published **beside** a frozen archive, never by editing it. I first wrote the
+   amendments inside the blocks, as briefed; the verifier failed on
+   `constraint-14`'s sha256, and the amendments were moved to a new
+   **"Amendments after the 2026-09-19 migration checkpoint"** section on each
+   page, under the rule's own number and anchor. It then failed a **second**
+   time, on a different check: no policy page above **32 KiB**, and
+   `docs/agents/diagnostics.md` had reached 33,163 bytes. The diagnostics entry
+   was compressed to a summary pointing at §L21 — which that page already says
+   is the authority — and the page now reads 31,924. **The verifier is green on
+   the merged tree** (`gate/preservation-verify.log`, exit 0). The integrator
+   may want the convention recorded once, since every future amendment meets it.
+2. **Lean audits 141 → 142** and **workspace +19**: I did **not** edit
+   `docs/STATUS.md`'s "Last integrated gate" paragraph, because that page states
+   those figures are the wave-40 close's own measurement and that "a later card
+   reports its own gate separately". This card's are in §8 and in `gate.json`;
+   the integrator carries them at the merge.
+4. **A decision I could not take.** `COPY-BIND-SOCKET-SHAPE-COLLISION` is the
    one thing in this card an integrator might want handled differently. The
    copy bind and `let listener = tcp;` are the same token shape; I kept the
    collision because the alternatives each edit something pinned (renaming the
@@ -487,11 +537,11 @@ Every item is addressable on its own.
    whole census says is unnecessary). The separation is real and pinned, but it
    is a property of **dispatch order**. If the integrator prefers a structural
    guard, the residual's discharge names one.
-10. **A second one.** `BUFFER-UNUSED-BIND-WERROR` is inherited, not introduced,
-    and I did not fix it inside this card's scope. The fail-closed direction is
-    a route-level refusal of an unused binding, which is a `Q051` condition
-    extension and someone's card; the cheap direction is the composed string
-    route's existing `(void)` discard scan, applied to the plain route.
+5. **A second one.** `BUFFER-UNUSED-BIND-WERROR` is inherited, not introduced,
+   and I did not fix it inside this card's scope. The fail-closed direction is
+   a route-level refusal of an unused binding, which is a `Q051` condition
+   extension and someone's card; the cheap direction is the composed string
+   route's existing `(void)` discard scan, applied to the plain route.
 
 ## 10. File ownership and overlaps (wave-41 scope)
 

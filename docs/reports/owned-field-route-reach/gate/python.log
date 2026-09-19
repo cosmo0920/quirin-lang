@@ -1,0 +1,81 @@
+.............................F..F.skip: docs/reports/wave9-corpus/diff-e01f1-to-wave9.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave10-corpus/diff-wave9-to-wave10.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave11-corpus/diff-wave10-to-wave11.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave12-corpus/diff-wave11-to-wave12.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave13-corpus/diff-wave12-to-wave13.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave14-corpus/diff-wave13-to-wave14.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave15-corpus/diff-wave14-to-wave15.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave16-corpus/diff-wave15-to-wave16.json.gz: already itemized by the tool that wrote it
+skip: docs/reports/wave9-corpus/diff-e01f1-to-wave9.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave10-corpus/diff-wave9-to-wave10.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave11-corpus/diff-wave10-to-wave11.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave12-corpus/diff-wave11-to-wave12.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave13-corpus/diff-wave12-to-wave13.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave14-corpus/diff-wave13-to-wave14.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave15-corpus/diff-wave14-to-wave15.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave16-corpus/diff-wave15-to-wave16.json.gz: already itemized by the tool that wrote it
+Passed 2 Lean audits
+..Passed 2 Lean audits
+..Passed 2 Lean audits
+......Starting 6 audits, 4 at a time (limit 120s each)
+Passed Audit1.lean (1/6) in 0.0s
+Passed Audit2.lean (2/6) in 0.0s
+Passed Audit3.lean (3/6) in 0.0s
+Passed Audit4.lean (4/6) in 0.0s
+Passed Audit5.lean (5/6) in 0.0s
+Passed AuditAll.lean (6/6) in 0.0s
+Passed 6 Lean audits
+..Passed 6 Lean audits
+.......Starting failure (limit 5s)
+..Starting stalled fixture (limit 0.5s)
+Still running stalled fixture: 0.2s / 0.5s
+Still running stalled fixture: 0.4s / 0.5s
+Still running stalled fixture: 0.5s / 0.5s
+..........................................................................................................................................................................................................................................................
+======================================================================
+FAIL: test_the_derived_facts_are_recomputed_rather_than_carried (test_build_matrix_sections.BuildMatrixSections.test_the_derived_facts_are_recomputed_rather_than_carried)
+The committed matrix carries stale derived values; they must move.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/scripts/tests/test_build_matrix_sections.py", line 223, in test_the_derived_facts_are_recomputed_rather_than_carried
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        [committed["versions"]["qcore_schemas_rust_api"], committed["validation"]["lean_audits"]],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        [produced["versions"]["qcore_schemas_rust_api"], produced["validation"]["lean_audits"]],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: Lists differ: ['14.0.0', 141] != ['14.0.0', 142]
+
+First differing element 1:
+141
+142
+
+- ['14.0.0', 141]
+?              ^
+
++ ['14.0.0', 142]
+?              ^
+
+
+======================================================================
+FAIL: test_each_derived_dimension_matches_the_section_it_counts (test_build_matrix_sections.CommittedMatrixIsSelfConsistent.test_each_derived_dimension_matches_the_section_it_counts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/scripts/tests/test_build_matrix_sections.py", line 557, in test_each_derived_dimension_matches_the_section_it_counts
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        committed["dimensions"][section],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        f"{GENERATOR.relative_to(ROOT)} rather than repairing the count by hand",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: 257 != 259 : dimensions.named_followups is 257 against a named_followups of 259; regenerate through docs/reports/remaining-d02/build_matrix.py rather than repairing the count by hand
+
+----------------------------------------------------------------------
+Ran 305 tests in 14.437s
+
+FAILED (failures=2)
