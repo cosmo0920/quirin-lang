@@ -5,11 +5,13 @@ This is the abstract rule implemented by
 reader and the Rust-to-Lean correspondence remain review premises: this module
 proves properties of the rule, not extraction of arbitrary C.
 
-An admitted condition has one contracted call that C evaluates on every visit,
-and a residual expression already admitted by the existing neutral-position
-rule.  The call's existing transfer runs exactly once before the unknown
-Boolean result forks to both successors.  Shapes whose evaluation is
-conditional, suppressed by a type operator, contains more than one call, or
+An admitted condition has one externally declared contracted call that C
+evaluates on every visit, and a residual expression already admitted by the
+existing neutral-position rule.  The external-declaration premise prevents a
+local recursive component from reading its provisional neutral assumption back
+as admission evidence.  The call's existing transfer runs exactly once before
+the unknown Boolean result forks to both successors.  Shapes whose evaluation
+is conditional, suppressed by a type operator, contains more than one call, or
 whose residual is not neutral stay refused.
 -/
 
@@ -27,15 +29,18 @@ inductive Frequency
 /-- Facts handed to this rule after ordinary call and residual classification. -/
 structure Candidate where
   frequency : Frequency
+  /-- The contract was established outside this translation unit, rather than
+      provisionally assumed while validating this local recursive component. -/
+  externallyDeclared : Bool
   callModeled : Bool
   residualNeutral : Bool
   deriving DecidableEq, Repr
 
-/-- Only one unconditionally evaluated modeled call with a neutral residual is
-admitted. -/
+/-- Only one externally declared, unconditionally evaluated modeled call with
+a neutral residual is admitted. -/
 def admits (candidate : Candidate) : Bool :=
   candidate.frequency == Frequency.exactlyOnce &&
-    candidate.callModeled && candidate.residualNeutral
+    candidate.externallyDeclared && candidate.callModeled && candidate.residualNeutral
 
 /-- The two branch successors after the existing call transfer.  The branch
 result is deliberately unknown, so both arms receive the same post-call state. -/
@@ -46,7 +51,13 @@ theorem an_admitted_candidate_has_exactly_one_evaluation
     (candidate : Candidate) (h : admits candidate = true) :
     candidate.frequency = Frequency.exactlyOnce := by
   simp [admits] at h
-  exact h.1.1
+  exact h.1.1.1
+
+theorem an_admitted_candidate_is_externally_declared
+    (candidate : Candidate) (h : admits candidate = true) :
+    candidate.externallyDeclared = true := by
+  simp [admits] at h
+  exact h.1.1.2
 
 theorem an_admitted_candidate_has_a_modeled_call
     (candidate : Candidate) (h : admits candidate = true) :
@@ -60,32 +71,39 @@ theorem an_admitted_candidate_has_a_neutral_residual
   simp [admits] at h
   exact h.2
 
-theorem short_circuit_evaluation_refuses (callModeled residualNeutral : Bool) :
-    admits ⟨Frequency.shortCircuit, callModeled, residualNeutral⟩ = false := by
+theorem short_circuit_evaluation_refuses (external callModeled residualNeutral : Bool) :
+    admits ⟨Frequency.shortCircuit, external, callModeled, residualNeutral⟩ = false := by
   simp [admits]
 
-theorem conditional_evaluation_refuses (callModeled residualNeutral : Bool) :
-    admits ⟨Frequency.conditional, callModeled, residualNeutral⟩ = false := by
+theorem conditional_evaluation_refuses (external callModeled residualNeutral : Bool) :
+    admits ⟨Frequency.conditional, external, callModeled, residualNeutral⟩ = false := by
   simp [admits]
 
-theorem a_type_operator_refuses (callModeled residualNeutral : Bool) :
-    admits ⟨Frequency.typeOperator, callModeled, residualNeutral⟩ = false := by
+theorem a_type_operator_refuses (external callModeled residualNeutral : Bool) :
+    admits ⟨Frequency.typeOperator, external, callModeled, residualNeutral⟩ = false := by
   simp [admits]
 
-theorem two_calls_refuse (callModeled residualNeutral : Bool) :
-    admits ⟨Frequency.multipleCalls, callModeled, residualNeutral⟩ = false := by
+theorem two_calls_refuse (external callModeled residualNeutral : Bool) :
+    admits ⟨Frequency.multipleCalls, external, callModeled, residualNeutral⟩ = false := by
   simp [admits]
 
-theorem an_unmodeled_call_refuses (frequency : Frequency) (residualNeutral : Bool) :
-    admits ⟨frequency, false, residualNeutral⟩ = false := by
+theorem a_locally_defined_call_refuses
+    (frequency : Frequency) (callModeled residualNeutral : Bool) :
+    admits ⟨frequency, false, callModeled, residualNeutral⟩ = false := by
   simp [admits]
 
-theorem a_non_neutral_residual_refuses (frequency : Frequency) (callModeled : Bool) :
-    admits ⟨frequency, callModeled, false⟩ = false := by
+theorem an_unmodeled_call_refuses
+    (frequency : Frequency) (external residualNeutral : Bool) :
+    admits ⟨frequency, external, false, residualNeutral⟩ = false := by
+  simp [admits]
+
+theorem a_non_neutral_residual_refuses
+    (frequency : Frequency) (external callModeled : Bool) :
+    admits ⟨frequency, external, callModeled, false⟩ = false := by
   simp [admits]
 
 theorem an_exactly_once_modeled_call_with_a_neutral_residual_is_admitted :
-    admits ⟨Frequency.exactlyOnce, true, true⟩ = true := by
+    admits ⟨Frequency.exactlyOnce, true, true, true⟩ = true := by
   decide
 
 theorem both_unknown_result_arms_receive_the_post_call_state

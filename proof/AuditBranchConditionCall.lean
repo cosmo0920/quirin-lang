@@ -10,12 +10,14 @@ correspondence on the bounded shapes.
 -/
 
 #print axioms QCore.BranchConditionCall.an_admitted_candidate_has_exactly_one_evaluation
+#print axioms QCore.BranchConditionCall.an_admitted_candidate_is_externally_declared
 #print axioms QCore.BranchConditionCall.an_admitted_candidate_has_a_modeled_call
 #print axioms QCore.BranchConditionCall.an_admitted_candidate_has_a_neutral_residual
 #print axioms QCore.BranchConditionCall.short_circuit_evaluation_refuses
 #print axioms QCore.BranchConditionCall.conditional_evaluation_refuses
 #print axioms QCore.BranchConditionCall.a_type_operator_refuses
 #print axioms QCore.BranchConditionCall.two_calls_refuse
+#print axioms QCore.BranchConditionCall.a_locally_defined_call_refuses
 #print axioms QCore.BranchConditionCall.an_unmodeled_call_refuses
 #print axioms QCore.BranchConditionCall.a_non_neutral_residual_refuses
 #print axioms

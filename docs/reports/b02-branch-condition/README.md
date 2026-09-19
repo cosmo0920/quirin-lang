@@ -126,6 +126,18 @@ no evidence: LeakSanitizer refused to run under ptrace, then the run was
 interrupted before Cargo wrote its aggregate exit.  It also exposed the stale
 pre-B02 pin described above.  No count is carried from that attempt.
 
+**Integration correction — local recursive conditions.**  The combined B-card
+gate exposed an unnamed widening beyond this report's prediction: while the
+neutral-frame recursion pass was validating a local recursive component, a
+pointer-actual call in its own branch condition could read the provisional
+all-`Borrowed`, result-`None` assumption back through B02's new condition
+classifier and publish the component.  The shared B02/B03 helper now requires
+the condition callee to have no definition in this translation unit.  A focused
+branch/loop/switch regression pins that local recursive calls remain `Unknown`,
+and the Lean admission includes the same external-declaration premise and
+refusal theorem.  This correction records the discovered boundary; it does not
+rewrite the pre-AFTER prediction or add a post-hoc expectation.
+
 ## Retained limitation and integrator reconciliation list
 
 No registered entry retires.  The largest measured boundary remains the 196

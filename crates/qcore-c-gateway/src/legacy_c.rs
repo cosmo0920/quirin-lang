@@ -3090,6 +3090,15 @@ impl Parser<'_> {
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
         let (start, end) = crate::legacy_condition_call::unconditional_call_span(&texts)?;
+        // This widening is for a call whose contract is established outside
+        // the translation unit. A locally defined callee can carry a
+        // provisional neutral summary while its recursive component is being
+        // validated; reading that assumption back here would widen the
+        // pointer-actual boundary by circularity rather than by this card's
+        // declared-contract premise.
+        if find_function_body(self.tokens, texts[start]).is_some() {
+            return None;
+        }
 
         let mut residual = Vec::with_capacity(condition.len() - (end - start) + 1);
         residual.extend_from_slice(&condition[..start]);
