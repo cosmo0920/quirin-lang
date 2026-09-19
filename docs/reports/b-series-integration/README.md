@@ -33,6 +33,22 @@ four implementations. Raw units remain unpromoted; provisional Unsafe findings
 are not validated upstream defects. Lean rule models retain the extraction and
 Rust correspondence premises of evidence rule 28.
 
+## Review requirements
+
+The integrator reviewed the draft Rust and Lean rules before acceptance.
+B01 must reject calls skipped by ternary/short-circuit evaluation, retain the
+synthetic-name collision guard, avoid a synthetic escape for resource-free
+returns, and cover the opaque-field arm responsible for the measured getter
+admissions. B02 must preserve both unknown-result branch successors and every
+call effect; its old releasing-call refusal pin needs an explicit replacement
+assertion. B03 must distinguish abrupt loop exits from condition-false exits
+and test `continue`, including the `for` increment. B04 must retain every
+sibling nested call's liveness and alias obligations and justify arbitrary
+sibling order under its declared identity-effect premises.
+
+The final integration record below must say how these requirements were
+checked; this list itself is not verification evidence.
+
 ## Integration state
 
 Implementation, review, combined measurement and standing validation are pending.
