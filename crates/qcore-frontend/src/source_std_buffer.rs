@@ -7,6 +7,8 @@
 //! entry     ::= "fn" NAME "(" ")" "->" "unit"
 //!               ["effects" "{" EFFECT {"," EFFECT} "}"] "{" stmt* "}"
 //! stmt      ::= "let" NAME "=" ["-"] INTEGER ";"
+//!             | "let" NAME "=" NAME ";"                        -- the copy bind
+//!                                                              -- (card OWNED-FIELD-ROUTE-REACH)
 //!             | "let" NAME "=" "bytes" "(" INTEGER ")" ";"     -- acquire
 //!             | "let" NAME "=" "extent" "(" NAME ")" ";"       -- bind the length
 //!             | "let" NAME "=" "lend" "(" NAME "," OPERAND "," OPERAND ")" ";" -- write lend
@@ -38,6 +40,19 @@
 //! `Q097`–`Q099`; what this route supplies is the body's **statements**, read by
 //! the reader below, so a shape one admits and the other refuses is not
 //! expressible.
+//!
+//! # The copy bind, and the collision it keeps
+//!
+//! `let NAME = NAME;` (card `OWNED-FIELD-ROUTE-REACH`, wave 41) asks the
+//! ownership IR whether a second binding may hold what a name holds. It
+//! reserves nothing — four things the lexer already produces — and it is
+//! **deliberately not a [`buffer_use`]**: that function decides route selection
+//! and is how the composed string/buffer route reads this route's statements,
+//! so claiming the shape there would move both. The card's census found the
+//! identical token shape **29 times** in the tree, every occurrence
+//! `source.socket.v1`'s `let listener = tcp;`, and the two constructs are told
+//! apart by route selection and by nothing else — pinned, not argued
+//! (`COPY-BIND-SOCKET-SHAPE-COLLISION`).
 //!
 //! # Two reserved words, and one measured collision
 //!

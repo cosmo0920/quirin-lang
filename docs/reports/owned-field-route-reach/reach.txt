@@ -1,0 +1,51 @@
+r1-admitted                          ADMITTED        construction moves in
+r1-refused-use-after-move            refused Q054    construction moves in
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r1-refused-use-after-move.qcore:7:1: Q054: the checked ownership discipline refuses this program: use of `b` after move
+r2-admitted                          ADMITTED        partial move leaves a hole
+r2-refused-second-read               refused Q054    partial move leaves a hole
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r2-refused-second-read.qcore:7:1: Q054: the checked ownership discipline refuses this program: use of `f.body` after move
+r3-admitted                          ADMITTED        drop-through in declaration order
+r3-refused-double-drop               refused Q054    drop-through in declaration order
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r3-refused-double-drop.qcore:7:1: Q054: the checked ownership discipline refuses this program: resource `f` is dropped more than once
+r4-refused-leak                      refused Q054    leak at exit names the path
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r4-refused-leak.qcore:7:1: Q054: the checked ownership discipline refuses this program: live resources escape normal exit: f.body
+r5-copy-owning-record                refused Q054    non-copyability
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-owning-record.qcore:7:1: Q054: the checked ownership discipline refuses this program: owned resource `f` cannot be copied
+r5-copy-hollow-record                refused Q054    non-copyability (hollow)
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-hollow-record.qcore:7:1: Q054: the checked ownership discipline refuses this program: owned resource `f` cannot be copied
+r5-copy-buffer                       refused Q054    non-copyability (plain owner)
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-buffer.qcore:5:1: Q054: the checked ownership discipline refuses this program: owned resource `b` cannot be copied
+r5-copy-scalar-record                ADMITTED        copyability of a scalar record
+r5-copy-scalar                       ADMITTED        copyability of a scalar on the buffer route
+r5-copy-shadowing                    refused Q012    a copy bind whose name is already live
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-shadowing.qcore:10:5: Q012: duplicate local binding `p`
+r5-copy-self                         refused Q013    a copy bind naming itself
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-self.qcore:7:5: Q013: unknown name `q`
+r5-copy-composed-string              refused Q068    a copy bind on the composed string/buffer route
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-composed-string.qcore:11:5: Q068: `source.string.v1` binds an integer literal, a quoted literal, `len(NAME)` or one slice; nothing else
+r5-copy-moved-record                 refused Q054    non-copyability after the whole record is dropped
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-moved-record.qcore:7:1: Q054: the checked ownership discipline refuses this program: use of `f` after drop
+r5-copy-loan                         refused Q054    a write loan at a copy position
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-loan.qcore:5:1: Q054: the checked ownership discipline refuses this program: borrow `l` cannot be moved as an owner
+r5-copy-unbound                      refused Q013    a name this entry never bound at a copy position
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-unbound.qcore:6:5: Q013: unknown name `nope`
+collide-socket-creation              ADMITTED        a socket program's `let NAME = tcp;` is untouched
+collide-buffer-route-transport-word  refused Q015    a transport word at a copy source on the buffer route
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/collide-buffer-route-transport-word.qcore:7:5: Q015: the checked socket vocabulary requires an explicit `import std.socket;` in this source file
+b-view-field                         refused Q051    AGGREGATE-VIEW-FIELD
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/b-view-field.qcore:5:1: Q051: `Frame.s` is declared `string`, a `source.string.v1` view, and `source.record.v1` models no view field: a view is `{storage, offset, len}` borrowed from a buffer for an exact lexical window, and an aggregate has nowhere to carry that window's end — the field would outlive the borrow the window was computed for. This is `AGGREGATE-VIEW-FIELD`, and it is refused by name rather than left to the generic field-type message
+b-nested-declared                    refused Q051    AGGREGATE-NESTED (field naming a declared record type)
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/b-nested-declared.qcore:6:1: Q051: `Outer.inner` is declared `Inner`, a record type this module declares, and `source.record.v1` models no record field: the ownership IR's owner path is one level (`BASE.FIELD`), so a nested aggregate needs a recursive path, a drop-through over a tree and a termination argument for the declaration graph. This is `AGGREGATE-NESTED`, and it is refused by name rather than left to the generic field-type message
+b-nested-forward                     refused Q051    AGGREGATE-NESTED (field naming a type declared after it)
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/b-nested-forward.qcore:5:1: Q051: `Outer.inner` is declared `Inner`, a record type this module declares, and `source.record.v1` models no record field: the ownership IR's owner path is one level (`BASE.FIELD`), so a nested aggregate needs a recursive path, a drop-through over a tree and a termination argument for the declaration graph. This is `AGGREGATE-NESTED`, and it is refused by name rather than left to the generic field-type message
+b-unknown-field-type                 refused Q051    AGGREGATE-FIELD-TYPES (a word this revision models no type for)
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/b-unknown-field-type.qcore:5:1: Q051: `Frame.x` is declared `u8`, which is not a field type `source.record.v1` models; a field is `i32` or `bytes` (an owned buffer, moved in at construction), and any other type is `AGGREGATE-FIELD-TYPES`
+b-task-capture                       refused Q500    AGGREGATE-TASK-CAPTURE
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/b-task-capture.qcore:4:1: Q500: a `source.record.v1` record type is outside the copy-scalar task execution profile: the transferability judgment has no aggregate kind and the scoped-task ledger is keyed by plain name, so a record — owning or not — can neither be captured by a spawn nor held across a join (`AGGREGATE-TASK-CAPTURE`)
+b-task-capture-baseline              ADMITTED        AGGREGATE-TASK-CAPTURE (the same task module without the record)
+ir-aggregate-at-owner-lend           refused Q051    AggregateAtOwnerPosition via a lend of a record
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/ir-aggregate-at-owner-lend.qcore:10:5: Q051: a lend is not a statement an entry that composes a record with an owned field models; the lend's custody projection addresses owners by plain name, and a projection that also addressed fields would be a second one beside it (`OWNED-FIELD-LEND-WINDOW`)
+ir-aggregate-at-owner-index          refused Q052    AggregateAtOwnerPosition via a byte access on a record
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/ir-aggregate-at-owner-index.qcore:10:5: Q052: `f` is not a buffer this entry acquired; `source.buffer.v1` names a buffer only at a custody position, and every such position must name one
+ir-not-an-aggregate                  refused Q052    NotAnAggregate via a field path on a plain buffer
+                                                     > /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/ir-not-an-aggregate.qcore:7:5: Q052: `b` is not a record this entry constructed; `source.record.v1` reads a field only of a value constructed in the same entry

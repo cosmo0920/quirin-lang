@@ -103,7 +103,11 @@ fn a_source_program_produces_the_copy_operation() {
     // The program is refused — that is the rule — so the operation list is
     // read from the lowering rather than from a certificate.
     let (codes, _) = refusal(&source);
-    assert_eq!(codes, vec!["Q054"], "the IR's own condition, not a shape one");
+    assert_eq!(
+        codes,
+        vec!["Q054"],
+        "the IR's own condition, not a shape one"
+    );
 
     let admitted = module(
         SCALARS,
@@ -113,11 +117,10 @@ fn a_source_program_produces_the_copy_operation() {
     let compiled = compile(&admitted).expect("a record of scalars is copyable");
     let program = lowered(&compiled);
     assert!(
-        program
-            .events
-            .iter()
-            .any(|event| matches!(event, BufferEvent::CopyBind { binding, source }
-                if binding == "q" && source == "p")),
+        program.events.iter().any(
+            |event| matches!(event, BufferEvent::CopyBind { binding, source }
+                if binding == "q" && source == "p")
+        ),
         "the copy bind is lowered as its own event",
     );
     // The copy of a plain value contributes no custody operation at all.
@@ -446,7 +449,10 @@ fn a_record_in_a_task_module_refuses_by_its_own_name() {
     let baseline = TASK_MODULE.replace("RECORD", "");
     compile(&baseline).expect("the task module itself is admitted");
 
-    for record in ["type Frame { body: bytes }\n\n", "type Point { x: i32 }\n\n"] {
+    for record in [
+        "type Frame { body: bytes }\n\n",
+        "type Point { x: i32 }\n\n",
+    ] {
         let source = TASK_MODULE.replace("RECORD", record);
         let (codes, message) = refusal(&source);
         assert_eq!(codes, vec!["Q500"], "the code it already had");

@@ -1,0 +1,36 @@
+files scanned: 535
+
+`let NAME = NAME;` (the claimed shape): 29
+  compiler/tests/fixtures/ct/CT42/case.qcore:16: let listener = tcp;
+  compiler/tests/fixtures/ct/CT42/case.qcore:20: let client = tcp;
+  compiler/tests/fixtures/ct/CT42/closed_custodian.qcore:9: let listener = tcp;
+  compiler/tests/fixtures/ct/CT42/closed_custodian.qcore:13: let client = tcp;
+  compiler/tests/fixtures/ct/CT42/datagram_pair.qcore:12: let client = udp;
+  compiler/tests/fixtures/ct/CT42/datagram_pair.qcore:13: let server = udp;
+  compiler/tests/fixtures/ct/CT42/listener_question.qcore:8: let listener = tcp;
+  compiler/tests/fixtures/ct/CT42/listener_question.qcore:12: let client = tcp;
+  compiler/tests/fixtures/ct/CT42/not_a_socket.qcore:8: let listener = tcp;
+  compiler/tests/fixtures/ct/CT42/not_a_socket.qcore:12: let client = tcp;
+  compiler/tests/fixtures/ct/CT42/two_connections.qcore:8: let listener = tcp;
+  compiler/tests/fixtures/ct/CT42/two_connections.qcore:12: let client_one = tcp;
+  compiler/tests/fixtures/ct/CT42/two_connections.qcore:16: let client_two = tcp;
+  examples/events/socket_server.qcore:36: let listener = tcp;
+  examples/events/socket_server.qcore:43: let client = tcp;
+  examples/http/computed_length.qcore:68: let listener = tcp;
+  examples/http/computed_length.qcore:71: let client = tcp;
+  examples/http/exchange.qcore:55: let listener = tcp;
+  examples/http/exchange.qcore:58: let client = tcp;
+  examples/http/raw_request.qcore:27: let listener = tcp;
+  examples/http/raw_request.qcore:30: let client = tcp;
+  examples/sockets/inet_v4_echo.qcore:28: let listener = tcp;
+  examples/sockets/inet_v4_echo.qcore:36: let client = tcp;
+  examples/sockets/inet_v6_echo.qcore:25: let listener = tcp;
+  examples/sockets/inet_v6_echo.qcore:29: let client = tcp;
+  examples/sockets/tcp_echo.qcore:21: let listener = tcp;
+  examples/sockets/tcp_echo.qcore:28: let client = tcp;
+  examples/sockets/udp_echo.qcore:23: let client = udp;
+  examples/sockets/udp_echo.qcore:25: let server = udp;
+
+`: string` at a field type (AGGREGATE-VIEW-FIELD): 0
+
+a record-typed field (AGGREGATE-NESTED): 0

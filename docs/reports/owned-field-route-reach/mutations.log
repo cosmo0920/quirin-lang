@@ -1,0 +1,737 @@
+=== baseline before ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 19 tests
+test a_record_of_scalars_is_copyable_and_the_copy_is_by_value ... ok
+test a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders ... ok
+test a_bound_spelled_through_a_copy_is_refused_rather_than_followed ... ok
+test a_copy_bind_derives_no_effect ... ok
+test copying_a_hollow_record_is_still_the_copy_refusal ... ok
+test a_loan_at_a_copy_position_refuses_once_from_the_ownership_ir ... ok
+test a_copy_bind_in_a_body_that_shadows_an_outer_name_refuses ... ok
+test copying_an_owned_buffer_refuses ... ok
+test the_composed_string_route_keeps_its_own_refusal ... ok
+test a_copy_bind_in_a_loop_body_is_the_same_statement ... ok
+test a_view_field_refuses_by_its_own_name ... ok
+test a_scalar_is_copyable_and_the_copy_carries_its_value ... ok
+test a_source_program_produces_the_copy_operation ... ok
+test copying_a_record_with_an_owned_field_refuses_as_the_checkers_own_copy_rule ... ok
+test the_socket_routes_creation_form_is_untouched ... ok
+test shadowing_and_self_reference_are_refused_before_this_route ... ok
+test a_copy_of_a_dropped_or_moved_binding_refuses_with_the_states_own_rule ... ok
+test every_other_unknown_field_type_keeps_the_message_it_had ... ok
+test a_record_in_a_task_module_refuses_by_its_own_name ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+
+$ lake build QCore.OwnedFieldCopyReach
+Build completed successfully (6 jobs).
+
+=== M1: crates/qcore-core/src/std_buffer.rs — falsifies: the custody walk asks the IR about a ledger-held name ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach copying_a_record_with_an_owned_field_refuses_as_the_checkers_own_copy_rule -- --exact
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 47.71s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 1 test
+test copying_a_record_with_an_owned_field_refuses_as_the_checkers_own_copy_rule ... FAILED
+
+failures:
+
+---- copying_a_record_with_an_owned_field_refuses_as_the_checkers_own_copy_rule stdout ----
+
+thread 'copying_a_record_with_an_owned_field_refuses_as_the_checkers_own_copy_rule' (2238508) panicked at compiler/tests/owned_field_route_reach.rs:47:10:
+this fixture must be refused: StandardBufferV1
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    copying_a_record_with_an_owned_field_refuses_as_the_checkers_own_copy_rule
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p qcore-compiler --test owned_field_route_reach`
+M1: `copying_a_record_with_an_owned_field_refuses_as_the_checkers_own_copy_rule` exit 101 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core/src/std_buffer.rs: sha256 d464becbfbac444a820d4bd7ba380de88fb638334a6528d91bd34b93e7fea226 == d464becbfbac444a820d4bd7ba380de88fb638334a6528d91bd34b93e7fea226
+
+=== M2: crates/qcore-frontend/src/source_std_buffer.rs — falsifies: the reader recognises `let NAME = NAME;` at all ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach a_record_of_scalars_is_copyable_and_the_copy_is_by_value -- --exact
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.19s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 1 test
+test a_record_of_scalars_is_copyable_and_the_copy_is_by_value ... FAILED
+
+failures:
+
+---- a_record_of_scalars_is_copyable_and_the_copy_is_by_value stdout ----
+
+thread 'a_record_of_scalars_is_copyable_and_the_copy_is_by_value' (2245794) panicked at compiler/tests/owned_field_route_reach.rs:255:37:
+admitted: [FileDiagnostic { code: "Q051", pass: StandardBuffer, location: SourceLocation { path: "owned_field_route_reach.qcore", line: 10, column: 5, line_source: "    let q = p;" }, message: "`source.buffer.v1` binds an integer literal, a name this entry bound, `bytes(INTEGER)`, `extent(NAME)`, `lend(NAME, LOW, HIGH)` or one byte read; nothing else" }]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_record_of_scalars_is_copyable_and_the_copy_is_by_value
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p qcore-compiler --test owned_field_route_reach`
+M2: `a_record_of_scalars_is_copyable_and_the_copy_is_by_value` exit 101 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend/src/source_std_buffer.rs: sha256 fe0ec4f72385c1f1d3576d9452413c6093f80d8747543a29599d627f1bd3b88d == fe0ec4f72385c1f1d3576d9452413c6093f80d8747543a29599d627f1bd3b88d
+
+=== M3: crates/qcore-core/src/std_buffer.rs — falsifies: the value half binds the copied record value ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach a_record_of_scalars_is_copyable_and_the_copy_is_by_value -- --exact
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.88s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 1 test
+test a_record_of_scalars_is_copyable_and_the_copy_is_by_value ... FAILED
+
+failures:
+
+---- a_record_of_scalars_is_copyable_and_the_copy_is_by_value stdout ----
+
+thread 'a_record_of_scalars_is_copyable_and_the_copy_is_by_value' (2250362) panicked at compiler/tests/owned_field_route_reach.rs:255:37:
+admitted: [FileDiagnostic { code: "Q052", pass: StandardBuffer, location: SourceLocation { path: "owned_field_route_reach.qcore", line: 11, column: 5, line_source: "    let a = q.x;" }, message: "`q` is not a record this entry constructed; `source.record.v1` reads a field only of a value constructed in the same entry" }, FileDiagnostic { code: "Q052", pass: StandardBuffer, location: SourceLocation { path: "owned_field_route_reach.qcore", line: 12, column: 5, line_source: "    let c = q.y;" }, message: "`q` is not a record this entry constructed; `source.record.v1` reads a field only of a value constructed in the same entry" }, FileDiagnostic { code: "Q052", pass: StandardBuffer, location: SourceLocation { path: "owned_field_route_reach.qcore", line: 13, column: 5, line_source: "    a |> print dec;" }, message: "`a` is not a check-time-constant integer this entry bound; `source.buffer.v1` indexes and stores with an integer literal or a name bound to one, so that every access is decided before emission" }, FileDiagnostic { code: "Q052", pass: StandardBuffer, location: SourceLocation { path: "owned_field_route_reach.qcore", line: 14, column: 5, line_source: "    c |> print dec;" }, message: "`c` is not a check-time-constant integer this entry bound; `source.buffer.v1` indexes and stores with an integer literal or a name bound to one, so that every access is decided before emission" }]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_record_of_scalars_is_copyable_and_the_copy_is_by_value
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p qcore-compiler --test owned_field_route_reach`
+M3: `a_record_of_scalars_is_copyable_and_the_copy_is_by_value` exit 101 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core/src/std_buffer.rs: sha256 d464becbfbac444a820d4bd7ba380de88fb638334a6528d91bd34b93e7fea226 == d464becbfbac444a820d4bd7ba380de88fb638334a6528d91bd34b93e7fea226
+
+=== M4: crates/qcore-core/src/std_buffer.rs — falsifies: the value half carries a copied scalar's value ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach a_scalar_is_copyable_and_the_copy_carries_its_value -- --exact
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.64s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 1 test
+test a_scalar_is_copyable_and_the_copy_carries_its_value ... FAILED
+
+failures:
+
+---- a_scalar_is_copyable_and_the_copy_carries_its_value stdout ----
+
+thread 'a_scalar_is_copyable_and_the_copy_carries_its_value' (2255174) panicked at compiler/tests/owned_field_route_reach.rs:288:37:
+admitted: [FileDiagnostic { code: "Q052", pass: StandardBuffer, location: SourceLocation { path: "owned_field_route_reach.qcore", line: 10, column: 5, line_source: "    let m = n;" }, message: "`n` is not a check-time-constant integer this entry bound; `source.buffer.v1` indexes and stores with an integer literal or a name bound to one, so that every access is decided before emission" }, FileDiagnostic { code: "Q052", pass: StandardBuffer, location: SourceLocation { path: "owned_field_route_reach.qcore", line: 11, column: 5, line_source: "    b[m] = 9;" }, message: "`m` is not a check-time-constant integer this entry bound; `source.buffer.v1` indexes and stores with an integer literal or a name bound to one, so that every access is decided before emission" }]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_scalar_is_copyable_and_the_copy_carries_its_value
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p qcore-compiler --test owned_field_route_reach`
+M4: `a_scalar_is_copyable_and_the_copy_carries_its_value` exit 101 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core/src/std_buffer.rs: sha256 d464becbfbac444a820d4bd7ba380de88fb638334a6528d91bd34b93e7fea226 == d464becbfbac444a820d4bd7ba380de88fb638334a6528d91bd34b93e7fea226
+
+=== M5: crates/qcore-core/src/std_buffer_c_emit.rs — falsifies: the emitted C copies the record rather than zeroing it ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach a_record_of_scalars_is_copyable_and_the_copy_is_by_value -- --exact
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.42s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 1 test
+test a_record_of_scalars_is_copyable_and_the_copy_is_by_value ... FAILED
+
+failures:
+
+---- a_record_of_scalars_is_copyable_and_the_copy_is_by_value stdout ----
+
+thread 'a_record_of_scalars_is_copyable_and_the_copy_is_by_value' (2260017) panicked at compiler/tests/owned_field_route_reach.rs:262:5:
+one struct assignment, by value:
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+/* qcore_io: the source-authored I/O route in this program.
+   `std.io`'s `print` and `std.logger`'s `log` expand to QCORE_IO_WRITE;
+   compiler diagnostic events use a separate typed sink. The only `fprintf`
+   spelling in this file is the one below. A macro rather than a variadic
+   wrapper, so each call site keeps its -Wformat / C4477 checking under
+   `-Wall -Wextra -Werror` and `/W4 /WX`. QCORE_IO_FLUSH is sink handoff, not
+   durability: no fsync is performed and no crash survival is claimed. */
+#define QCORE_IO_WRITE(stream, ...) ((void) fprintf((stream), __VA_ARGS__))
+#define QCORE_IO_FLUSH(stream) ((void) fflush((stream)))
+
+/* source.record.v1 (card AGGREGATES-V1): one C struct per declared record type.
+
+   Every field of a v1 record is an `i32`, so each member is a distinct object
+   of the same scalar type and the struct owns nothing: there is no allocation,
+   no destructor and no custody obligation anywhere in this file on its account.
+   A value is constructed with a designated initializer naming every declared
+   field exactly once — the checker already refused a construction that does
+   not — so no member is left indeterminate and no field read is undefined.
+
+   The member names carry an `f_` prefix and the tags a `qcore_record_` prefix
+   so that a QCore field or type name which happens to be a C keyword still
+   emits a compilable struct. */
+struct qcore_record_Point {
+    int32_t f_x;
+    int32_t f_y;
+};
+
+/* std.buffer / source.buffer.v1 (card STD-BUFFER): the whole mechanism of an
+   owned byte buffer, defined here rather than linked. `calloc` and not
+   `malloc`, because the model's buffer is zero at acquisition and an
+   indeterminate byte would be undefined behaviour to read.
+
+   The bounds comparison and the allocation check are WITNESSES, not checks.
+   Every index in an admitted program is a check-time constant the checker
+   already proved in range, so the comparisons below are provably never taken;
+   if one ever fired, that would be a defect in the checker. `abort()` is not
+   catchable and yields no QCore error value: a failing run produces no
+   observation, which is why every claim on this route is a partial-correctness
+   statement.
+
+   Only the accessors this program uses are emitted. These are file-scope
+   `static` functions and the emitted C is built with -Wall -Wextra -Werror
+   (and /W4 /WX on MSVC), where an unused one is an error — so a program that
+   never reads a byte must not carry a reader. */
+static unsigned char *qcore_bytes_new(size_t extent)
+{
+    unsigned char *bytes = (unsigned char *) calloc(extent, 1u);
+    if (bytes == NULL) {
+        abort();
+    }
+    return bytes;
+}
+
+static void qcore_bytes_drop(unsigned char *bytes)
+{
+    free(bytes);
+}
+
+int main(void)
+{
+    unsigned char *b_b = qcore_bytes_new((size_t) 2u);
+    struct qcore_record_Point r_p = { .f_x = INT32_C(1), .f_y = INT32_C(2) };
+    struct qcore_record_Point r_q = { 0 };r_p
+    int32_t s_a = r_q.f_x;
+    int32_t s_c = r_q.f_y;
+    QCORE_IO_WRITE(stdout, "%" PRId32 "\n", s_a);
+    QCORE_IO_WRITE(stdout, "%" PRId32 "\n", s_c);
+    qcore_bytes_drop(b_b);
+    return 0;
+}
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_record_of_scalars_is_copyable_and_the_copy_is_by_value
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p qcore-compiler --test owned_field_route_reach`
+M5: `a_record_of_scalars_is_copyable_and_the_copy_is_by_value` exit 101 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core/src/std_buffer_c_emit.rs: sha256 2ba7ec0cdc314ac16a254fc97909020915b568d16a81136e549bd104c4cd0468 == 2ba7ec0cdc314ac16a254fc97909020915b568d16a81136e549bd104c4cd0468
+
+=== M6: crates/qcore-core/src/std_buffer_c_emit.rs — falsifies: the emitted C copies the scalar rather than zeroing it ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach a_scalar_is_copyable_and_the_copy_carries_its_value -- --exact
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.82s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 1 test
+test a_scalar_is_copyable_and_the_copy_carries_its_value ... FAILED
+
+failures:
+
+---- a_scalar_is_copyable_and_the_copy_carries_its_value stdout ----
+
+thread 'a_scalar_is_copyable_and_the_copy_carries_its_value' (2267464) panicked at compiler/tests/owned_field_route_reach.rs:290:5:
+the copy is one assignment:
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+/* qcore_io: the source-authored I/O route in this program.
+   `std.io`'s `print` and `std.logger`'s `log` expand to QCORE_IO_WRITE;
+   compiler diagnostic events use a separate typed sink. The only `fprintf`
+   spelling in this file is the one below. A macro rather than a variadic
+   wrapper, so each call site keeps its -Wformat / C4477 checking under
+   `-Wall -Wextra -Werror` and `/W4 /WX`. QCORE_IO_FLUSH is sink handoff, not
+   durability: no fsync is performed and no crash survival is claimed. */
+#define QCORE_IO_WRITE(stream, ...) ((void) fprintf((stream), __VA_ARGS__))
+#define QCORE_IO_FLUSH(stream) ((void) fflush((stream)))
+
+/* std.buffer / source.buffer.v1 (card STD-BUFFER): the whole mechanism of an
+   owned byte buffer, defined here rather than linked. `calloc` and not
+   `malloc`, because the model's buffer is zero at acquisition and an
+   indeterminate byte would be undefined behaviour to read.
+
+   The bounds comparison and the allocation check are WITNESSES, not checks.
+   Every index in an admitted program is a check-time constant the checker
+   already proved in range, so the comparisons below are provably never taken;
+   if one ever fired, that would be a defect in the checker. `abort()` is not
+   catchable and yields no QCore error value: a failing run produces no
+   observation, which is why every claim on this route is a partial-correctness
+   statement.
+
+   Only the accessors this program uses are emitted. These are file-scope
+   `static` functions and the emitted C is built with -Wall -Wextra -Werror
+   (and /W4 /WX on MSVC), where an unused one is an error — so a program that
+   never reads a byte must not carry a reader. */
+static unsigned char *qcore_bytes_new(size_t extent)
+{
+    unsigned char *bytes = (unsigned char *) calloc(extent, 1u);
+    if (bytes == NULL) {
+        abort();
+    }
+    return bytes;
+}
+
+static void qcore_bytes_drop(unsigned char *bytes)
+{
+    free(bytes);
+}
+
+static void qcore_bytes_store(unsigned char *bytes, size_t extent, size_t index, int32_t value)
+{
+    if (index >= extent) {
+        abort();
+    }
+    bytes[index] = (unsigned char) value;
+}
+
+static int32_t qcore_bytes_load(const unsigned char *bytes, size_t extent, size_t index)
+{
+    if (index >= extent) {
+        abort();
+    }
+    return (int32_t) bytes[index];
+}
+
+int main(void)
+{
+    unsigned char *b_b = qcore_bytes_new((size_t) 4u);
+    int32_t s_n = INT32_C(2);
+    int32_t s_m = INT32_C(0); (void) s_n;
+    qcore_bytes_store(b_b, (size_t) 4u, (size_t) (s_m), INT32_C(9));
+    int32_t s_seen = qcore_bytes_load(b_b, (size_t) 4u, (size_t) (INT32_C(2)));
+    QCORE_IO_WRITE(stdout, "%" PRId32 "\n", s_seen);
+    qcore_bytes_drop(b_b);
+    return 0;
+}
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_scalar_is_copyable_and_the_copy_carries_its_value
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p qcore-compiler --test owned_field_route_reach`
+M6: `a_scalar_is_copyable_and_the_copy_carries_its_value` exit 101 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core/src/std_buffer_c_emit.rs: sha256 2ba7ec0cdc314ac16a254fc97909020915b568d16a81136e549bd104c4cd0468 == 2ba7ec0cdc314ac16a254fc97909020915b568d16a81136e549bd104c4cd0468
+
+=== M7: crates/qcore-core/src/source_record.rs — falsifies: `AGGREGATE-VIEW-FIELD` refuses by its own name ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach a_view_field_refuses_by_its_own_name -- --exact
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.73s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 1 test
+test a_view_field_refuses_by_its_own_name ... FAILED
+
+failures:
+
+---- a_view_field_refuses_by_its_own_name stdout ----
+
+thread 'a_view_field_refuses_by_its_own_name' (2275518) panicked at compiler/tests/owned_field_route_reach.rs:360:5:
+the boundary names itself: `Frame.s` is declared `string`, which is not a field type `source.record.v1` models; a field is `i32` or `bytes` (an owned buffer, moved in at construction), and any other type is `AGGREGATE-FIELD-TYPES`
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_view_field_refuses_by_its_own_name
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p qcore-compiler --test owned_field_route_reach`
+M7: `a_view_field_refuses_by_its_own_name` exit 101 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core/src/source_record.rs: sha256 f8aebde4997d2fc5eb31a6380d79dc222b277aebfd38b768d22c50a24b25310e == f8aebde4997d2fc5eb31a6380d79dc222b277aebfd38b768d22c50a24b25310e
+
+=== M8: crates/qcore-core/src/source_record.rs — falsifies: `AGGREGATE-NESTED` refuses by its own name ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders -- --exact
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.43s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 1 test
+test a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders ... FAILED
+
+failures:
+
+---- a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders stdout ----
+
+thread 'a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders' (2282710) panicked at compiler/tests/owned_field_route_reach.rs:382:9:
+the boundary names itself: `Outer.inner` is declared `Inner`, which is not a field type `source.record.v1` models; a field is `i32` or `bytes` (an owned buffer, moved in at construction), and any other type is `AGGREGATE-FIELD-TYPES`
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p qcore-compiler --test owned_field_route_reach`
+M8: `a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders` exit 101 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core/src/source_record.rs: sha256 f8aebde4997d2fc5eb31a6380d79dc222b277aebfd38b768d22c50a24b25310e == f8aebde4997d2fc5eb31a6380d79dc222b277aebfd38b768d22c50a24b25310e
+
+=== M9: crates/qcore-frontend/src/source_record.rs — falsifies: the nested classification sees the module's declared record names ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders -- --exact
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.91s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 1 test
+test a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders ... FAILED
+
+failures:
+
+---- a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders stdout ----
+
+thread 'a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders' (2286230) panicked at compiler/tests/owned_field_route_reach.rs:382:9:
+the boundary names itself: `Outer.inner` is declared `Inner`, which is not a field type `source.record.v1` models; a field is `i32` or `bytes` (an owned buffer, moved in at construction), and any other type is `AGGREGATE-FIELD-TYPES`
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p qcore-compiler --test owned_field_route_reach`
+M9: `a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders` exit 101 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend/src/source_record.rs: sha256 cdc9ef1c8cd0de7d4f40a015b40bebd695b20243b17a72e019cd4220d84d4007 == cdc9ef1c8cd0de7d4f40a015b40bebd695b20243b17a72e019cd4220d84d4007
+
+=== M10: crates/qcore-frontend/src/source_tasks.rs — falsifies: `AGGREGATE-TASK-CAPTURE` refuses by its own name ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach a_record_in_a_task_module_refuses_by_its_own_name -- --exact
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.10s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 1 test
+test a_record_in_a_task_module_refuses_by_its_own_name ... FAILED
+
+failures:
+
+---- a_record_in_a_task_module_refuses_by_its_own_name stdout ----
+
+thread 'a_record_in_a_task_module_refuses_by_its_own_name' (2288803) panicked at compiler/tests/owned_field_route_reach.rs:453:9:
+the boundary names itself: declaration is outside the copy-scalar task execution profile
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_record_in_a_task_module_refuses_by_its_own_name
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p qcore-compiler --test owned_field_route_reach`
+M10: `a_record_in_a_task_module_refuses_by_its_own_name` exit 101 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend/src/source_tasks.rs: sha256 0891c33f6f95e5d27d372e0dac2dbe40d37863234d8d7e3528f17d6ec612aac9 == 0891c33f6f95e5d27d372e0dac2dbe40d37863234d8d7e3528f17d6ec612aac9
+
+=== M11: crates/qcore-core/src/std_buffer.rs — falsifies: the lend-structured projection asks the IR about a copy too ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach a_loan_at_a_copy_position_refuses_once_from_the_ownership_ir -- --exact
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.23s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 1 test
+test a_loan_at_a_copy_position_refuses_once_from_the_ownership_ir ... FAILED
+
+failures:
+
+---- a_loan_at_a_copy_position_refuses_once_from_the_ownership_ir stdout ----
+
+thread 'a_loan_at_a_copy_position_refuses_once_from_the_ownership_ir' (2292157) panicked at compiler/tests/owned_field_route_reach.rs:235:5:
+assertion `left == right` failed: one refusal, not two
+  left: ["Q063"]
+ right: ["Q054"]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_loan_at_a_copy_position_refuses_once_from_the_ownership_ir
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p qcore-compiler --test owned_field_route_reach`
+M11: `a_loan_at_a_copy_position_refuses_once_from_the_ownership_ir` exit 101 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core/src/std_buffer.rs: sha256 d464becbfbac444a820d4bd7ba380de88fb638334a6528d91bd34b93e7fea226 == d464becbfbac444a820d4bd7ba380de88fb638334a6528d91bd34b93e7fea226
+
+=== M12: crates/qcore-core/src/std_buffer.rs — falsifies: a copy bind's binding counts as a name the body binds ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach a_copy_bind_in_a_body_that_shadows_an_outer_name_refuses -- --exact
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.16s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 1 test
+test a_copy_bind_in_a_body_that_shadows_an_outer_name_refuses ... FAILED
+
+failures:
+
+---- a_copy_bind_in_a_body_that_shadows_an_outer_name_refuses stdout ----
+
+thread 'a_copy_bind_in_a_body_that_shadows_an_outer_name_refuses' (2295146) panicked at compiler/tests/owned_field_route_reach.rs:47:10:
+this fixture must be refused: StandardBufferV1
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_copy_bind_in_a_body_that_shadows_an_outer_name_refuses
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p qcore-compiler --test owned_field_route_reach`
+M12: `a_copy_bind_in_a_body_that_shadows_an_outer_name_refuses` exit 101 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core/src/std_buffer.rs: sha256 d464becbfbac444a820d4bd7ba380de88fb638334a6528d91bd34b93e7fea226 == d464becbfbac444a820d4bd7ba380de88fb638334a6528d91bd34b93e7fea226
+
+=== L1: proof/QCore/OwnedFieldCopyReach.lean — falsifies: every bound place refuses, the aggregate arm included (copy_refuses_every_bound_place) ===
+
+$ lake build QCore.OwnedFieldCopyReach
+✖ [6/6] Building QCore.OwnedFieldCopyReach (692ms)
+trace: .> LEAN_PATH=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/.lake/build/lib/lean /home/cosmo/.elan/toolchains/leanprover--lean4---v4.34.0/bin/lean /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/QCore/OwnedFieldCopyReach.lean -o /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/.lake/build/lib/lean/QCore/OwnedFieldCopyReach.olean -i /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/.lake/build/lib/lean/QCore/OwnedFieldCopyReach.ilean -c /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/.lake/build/ir/QCore/OwnedFieldCopyReach.c --setup /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/.lake/build/ir/QCore/OwnedFieldCopyReach.setup.json --json
+error: QCore/OwnedFieldCopyReach.lean:86:14: Tactic `rfl` failed: The left-hand side
+  (copyOwned n (Binding.aggregate a✝)).toOption
+is not definitionally equal to the right-hand side
+  none
+
+case aggregate
+n : Name
+a✝ : Aggregate
+⊢ (copyOwned n (Binding.aggregate a✝)).toOption = none
+error: QCore/OwnedFieldCopyReach.lean:95:13: Application type mismatch: The argument
+  rfl
+has type
+  ?m.34 = ?m.34
+but is expected to have type
+  copyOwned n (Binding.aggregate { fields := [] }) = Except.error (CopyRefusal.copyOfOwned n)
+in the application
+  ⟨?m.32, rfl⟩
+error: QCore/OwnedFieldCopyReach.lean:97:0: Not a definitional equality: the left-hand side
+  copyOwned n (Binding.owned r)
+is not definitionally equal to the right-hand side
+  copyOwned n (Binding.aggregate { fields := [{ name := "f", held := some r }] })
+error: QCore/OwnedFieldCopyReach.lean:100:75: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  copyOwned n (Binding.owned r) = copyOwned n (Binding.aggregate { fields := [{ name := "f", held := some r }] })
+error: QCore/OwnedFieldCopyReach.lean:126:17: unsolved goals
+case some.aggregate
+ledger : Ledger
+b : Bindings
+n : Name
+a✝ : Aggregate
+h : lookup b n = some (Binding.aggregate a✝)
+⊢ False
+error: QCore/OwnedFieldCopyReach.lean:188:17: unsolved goals
+case some.aggregate
+ledger : Ledger
+b : Bindings
+n : Name
+coherent : LedgerCoherent ledger b
+a✝ : Aggregate
+h : lookup b n = some (Binding.aggregate a✝)
+⊢ False
+Some required targets logged failures:
+- QCore.OwnedFieldCopyReach
+error: build failed
+L1: `lake build` exit 1 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/QCore/OwnedFieldCopyReach.lean: sha256 964e6d2c3e7147edb5cbba05f8555e9e0beb0e7be3847d66a0d79e59d1f76852 == 964e6d2c3e7147edb5cbba05f8555e9e0beb0e7be3847d66a0d79e59d1f76852
+
+=== L2: proof/QCore/OwnedFieldCopyReach.lean — falsifies: every bound place refuses, the dropped arm included (copy_refuses_every_bound_place) ===
+
+$ lake build QCore.OwnedFieldCopyReach
+✖ [6/6] Building QCore.OwnedFieldCopyReach (299ms)
+trace: .> LEAN_PATH=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/.lake/build/lib/lean /home/cosmo/.elan/toolchains/leanprover--lean4---v4.34.0/bin/lean /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/QCore/OwnedFieldCopyReach.lean -o /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/.lake/build/lib/lean/QCore/OwnedFieldCopyReach.olean -i /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/.lake/build/lib/lean/QCore/OwnedFieldCopyReach.ilean -c /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/.lake/build/ir/QCore/OwnedFieldCopyReach.c --setup /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/.lake/build/ir/QCore/OwnedFieldCopyReach.setup.json --json
+error: QCore/OwnedFieldCopyReach.lean:86:14: Tactic `rfl` failed: The left-hand side
+  (copyOwned n Binding.dropped).toOption
+is not definitionally equal to the right-hand side
+  none
+
+case dropped
+n : Name
+⊢ (copyOwned n Binding.dropped).toOption = none
+error: QCore/OwnedFieldCopyReach.lean:126:17: unsolved goals
+case some.dropped
+ledger : Ledger
+b : Bindings
+n : Name
+h : lookup b n = some Binding.dropped
+⊢ False
+error: QCore/OwnedFieldCopyReach.lean:188:17: unsolved goals
+case some.dropped
+ledger : Ledger
+b : Bindings
+n : Name
+coherent : LedgerCoherent ledger b
+h : lookup b n = some Binding.dropped
+⊢ False
+Some required targets logged failures:
+- QCore.OwnedFieldCopyReach
+error: build failed
+L2: `lake build` exit 1 (RED)
+restore /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/proof/QCore/OwnedFieldCopyReach.lean: sha256 964e6d2c3e7147edb5cbba05f8555e9e0beb0e7be3847d66a0d79e59d1f76852 == 964e6d2c3e7147edb5cbba05f8555e9e0beb0e7be3847d66a0d79e59d1f76852
+
+=== baseline after ===
+
+$ cargo test -p qcore-compiler --test owned_field_route_reach
+   Compiling qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-core)
+   Compiling qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-frontend)
+   Compiling qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-contract)
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verifier-host)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-c-gateway)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-verification)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/crates/qcore-audit)
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.81s
+     Running tests/owned_field_route_reach.rs (target/debug/deps/owned_field_route_reach-31f62a065143c820)
+
+running 19 tests
+test a_view_field_refuses_by_its_own_name ... ok
+test a_loan_at_a_copy_position_refuses_once_from_the_ownership_ir ... ok
+test copying_a_record_with_an_owned_field_refuses_as_the_checkers_own_copy_rule ... ok
+test copying_an_owned_buffer_refuses ... ok
+test copying_a_hollow_record_is_still_the_copy_refusal ... ok
+test a_copy_bind_in_a_body_that_shadows_an_outer_name_refuses ... ok
+test a_scalar_is_copyable_and_the_copy_carries_its_value ... ok
+test a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders ... ok
+test the_composed_string_route_keeps_its_own_refusal ... ok
+test a_record_of_scalars_is_copyable_and_the_copy_is_by_value ... ok
+test a_copy_of_a_dropped_or_moved_binding_refuses_with_the_states_own_rule ... ok
+test a_copy_bind_derives_no_effect ... ok
+test shadowing_and_self_reference_are_refused_before_this_route ... ok
+test a_bound_spelled_through_a_copy_is_refused_rather_than_followed ... ok
+test every_other_unknown_field_type_keeps_the_message_it_had ... ok
+test a_source_program_produces_the_copy_operation ... ok
+test a_copy_bind_in_a_loop_body_is_the_same_statement ... ok
+test the_socket_routes_creation_form_is_untouched ... ok
+test a_record_in_a_task_module_refuses_by_its_own_name ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+
+$ lake build QCore.OwnedFieldCopyReach
+✔ [6/6] Built QCore.OwnedFieldCopyReach (456ms)
+Build completed successfully (6 jobs).
+baseline after: GREEN
+
+SUMMARY: 14 of 14 red, 0 vacuous, 0 broken
