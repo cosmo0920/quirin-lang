@@ -1,0 +1,303 @@
+{
+  "wave": 41,
+  "cards": [
+    "b-series-integration",
+    "b01-return-expression",
+    "b02-branch-condition",
+    "b03-loop-and-switch",
+    "b04-nested-call-argument"
+  ],
+  "verify_applied": true,
+  "note": "B01\u2013B04 integration at base8e633261, not a whole-wave41 cadence close. All27 integrator-addressed items reconciled. No follow-up retires;269 entries retained. Final source18b142b8 is reachable through integration merges. Applied assertions measured against this tree only. All four integration-gate.json files use the final combined gate and disclose borrowed colocated Clang records.",
+  "verdicts": {
+    "b01-return-expression#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Regenerated from final combined gate; 148 audits measured, not the isolated count.",
+      "verify": [
+        {
+          "file": "docs/reports/b-series-integration/gate.json",
+          "contains": "\"lean_audits\": 148"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "AuditReturnExpressionEvaluation.lean"
+        }
+      ]
+    },
+    "b01-return-expression#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Combined pinned release run exit 0, eight movers with exact disjoint attribution. Integration gate beside card retains isolated historical evidence.",
+      "verify": [
+        {
+          "file": "docs/reports/b01-return-expression/integration-gate.json",
+          "contains": "\"workspace_tests\": 4845"
+        },
+        {
+          "file": "docs/reports/b-series-integration/artifacts/attribution.txt",
+          "contains": "b01: 12 removed leaves; 7 function moves"
+        }
+      ]
+    },
+    "b01-return-expression#integrator-reconciliation-list#3": {
+      "verdict": "declined",
+      "note": "The exact standalone increment sentence and conditional standalone status figures are declined in favor of one combined paragraph and final primary counts 221/84/4529, unsupported49735. The B01 contribution remains12 leaves/seven movers, explicitly attributed; the requested current-status update itself is performed."
+    },
+    "b01-return-expression#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Bounded scalar evaluation and opaque getter rules landed in canonical gateway5d/5e, including local-definition refusal and no custody identity.",
+      "verify": [
+        {
+          "file": "docs/agents/gateway.md",
+          "contains": "The B01\u2013B03 effectful-call lowering preserves evaluation frequency."
+        },
+        {
+          "file": "docs/agents/gateway.md",
+          "contains": "Opaque return evaluation does not establish custody identity."
+        }
+      ]
+    },
+    "b01-return-expression#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "All four registered entries retained; no umbrella residual introduced. Registry remains269.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "RETURN-POSITION-SUBSHAPE-B"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "RETURN-CALL-INCOMPLETE-LINE-455"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "RETURN-POSITION-TYPED-MEMBER-REACH"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "RETURN-POSITION-CONDITIONAL"
+        }
+      ]
+    },
+    "b01-return-expression#integrator-reconciliation-list#6": {
+      "verdict": "applied",
+      "note": "Shared helper preserved; no duplicate restored.",
+      "verify": [
+        {
+          "file": "crates/qcore-c-gateway/src/legacy_condition_call.rs",
+          "contains": "pub(crate) fn unconditional_call_span"
+        }
+      ]
+    },
+    "b02-branch-condition#retained-limitation-and-integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "No retirement; final census retains196 indirect+branch functions. W42-INDIRECT-ACCESS remains outside this card."
+    },
+    "b02-branch-condition#retained-limitation-and-integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "All four branches merged in sequence and combined release audit rerun at18b142b8; attribution independently checked."
+    },
+    "b02-branch-condition#retained-limitation-and-integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Deliberate releasing-call behavior pin retained.",
+      "verify": [
+        {
+          "file": "crates/qcore-c-gateway/tests/neutral_expression_positions.rs",
+          "contains": "an_unconditional_releasing_call_in_a_branch_condition_is_modeled"
+        }
+      ]
+    },
+    "b02-branch-condition#retained-limitation-and-integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Derived matrix regenerated from final gate.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "AuditBranchConditionCall.lean"
+        },
+        {
+          "file": "docs/reports/b-series-integration/gate.json",
+          "contains": "\"lean_audits\": 148"
+        }
+      ]
+    },
+    "b02-branch-condition#retained-limitation-and-integrator-reconciliation-list#5": {
+      "verdict": "superseded",
+      "note": "Standalone status proposal superseded by guarded B02 six-leaf delta and combined221/84/4529,unsupported49735; units unchanged."
+    },
+    "b02-branch-condition#retained-limitation-and-integrator-reconciliation-list#6": {
+      "verdict": "declined",
+      "note": "Exact proposed standalone increment paragraph uses the intermediate45-leaf result and would violate one combined newest-first paragraph. Final paragraph records guarded six-leaf B02 contribution and combined18; original proposal remains frozen."
+    },
+    "b02-branch-condition#retained-limitation-and-integrator-reconciliation-list#7": {
+      "verdict": "noted",
+      "note": "Original forecast named cio_file_is_up, actual mover is flb_input_chunk_down. Prediction unchanged. Guarded second leaf forecast24 also missed actual6; all misses preserved in B02 report."
+    },
+    "b03-loop-and-switch#integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "Zero isolated corpus reach; no B03 coverage or conformance gain claimed. Shared local-definition refusal reviewed and covered by final combined gate."
+    },
+    "b03-loop-and-switch#integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "No registered follow-up retired; zero predicted/measured moves."
+    },
+    "b03-loop-and-switch#integrator-reconciliation-list#3": {
+      "verdict": "declined",
+      "note": "Proposed global constraint5d heading/text declined: older independent neutral-expression routes can admit shapes outside this additional route. New scoped B01\u2013B03 rule5d is an explicit replacement, not a silently softened acceptance."
+    },
+    "b03-loop-and-switch#integrator-reconciliation-list#4": {
+      "verdict": "declined",
+      "note": "Exact global only-when paragraph would incorrectly constrain all existing admissions. Replaced with scope limited to additional B01\u2013B03 effectful-call lowering, and external-declaration premise after recursive-summary review. Original proposal preserved."
+    },
+    "b03-loop-and-switch#integrator-reconciliation-list#5": {
+      "verdict": "superseded",
+      "note": "Conditional original router row superseded because its proposed paragraph was declined; router points to the new scoped5d instead."
+    },
+    "b03-loop-and-switch#integrator-reconciliation-list#6": {
+      "verdict": "applied",
+      "note": "Matrix regenerated; every item individually recorded here.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "AuditLoopSwitchCallEvaluation.lean"
+        },
+        {
+          "file": "docs/reports/b-series-integration/gate.json",
+          "contains": "\"workspace_tests\": 4845"
+        }
+      ]
+    },
+    "b04-nested-call-argument#integrator-reconciliation#1": {
+      "verdict": "noted",
+      "note": "Union reviewed against vector consumers, Lean premises, deliberate pins, zero reach and retained tracker."
+    },
+    "b04-nested-call-argument#integrator-reconciliation#2": {
+      "verdict": "applied",
+      "note": "All producers/consumers updated; joined provenance uses emptiness gate, while diagnostic printer iterates.",
+      "verify": [
+        {
+          "file": "crates/qcore-c-gateway/src/legacy_c.rs",
+          "contains": "nested: Vec<NestedContractCall>"
+        },
+        {
+          "file": "compiler/examples/alias_aggregate_probe.rs",
+          "contains": "for nested in nested"
+        }
+      ]
+    },
+    "b04-nested-call-argument#integrator-reconciliation#3": {
+      "verdict": "applied",
+      "note": "One-level premise and arbitrary neutral sibling identity/order proofs retained; downstream proof references repaired.",
+      "verify": [
+        {
+          "file": "proof/QCore/VariadicNested.lean",
+          "contains": "oneLevel : Bool"
+        },
+        {
+          "file": "proof/QCore/VariadicNested.lean",
+          "contains": "theorem sibling_evaluation_order_is_unobservable"
+        }
+      ]
+    },
+    "b04-nested-call-argument#integrator-reconciliation#4": {
+      "verdict": "applied",
+      "note": "O04 old combined refusal split deliberately; positive sibling certificate rechecks while deeper nesting stays refused.",
+      "verify": [
+        {
+          "file": "crates/qcore-c-gateway/tests/o04_trace.rs",
+          "contains": "fn two_level_nesting_is_never_admitted"
+        },
+        {
+          "file": "crates/qcore-c-gateway/tests/o04_trace.rs",
+          "contains": "fn sibling_neutral_nested_calls_are_admitted_and_recheck"
+        }
+      ]
+    },
+    "b04-nested-call-argument#integrator-reconciliation#5": {
+      "verdict": "applied",
+      "note": "Zero movement/exchanges verified in isolated artifact comparison; registry unchanged.",
+      "verify": [
+        {
+          "file": "docs/reports/b-series-integration/artifacts/attribution.txt",
+          "contains": "b04: 0 removed leaves; 0 function moves"
+        }
+      ]
+    },
+    "b04-nested-call-argument#integrator-reconciliation#6": {
+      "verdict": "applied",
+      "note": "Residual remains registered; bounded neutral siblings do not discharge broader effects/declarations.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "NESTED-CALL-IN-ARGUMENT-POSITION"
+        }
+      ]
+    },
+    "b04-nested-call-argument#integrator-reconciliation#7": {
+      "verdict": "applied",
+      "note": "Combined gate, corpus/status and one increment recorded; no arithmetic merge of isolated gate snapshots.",
+      "verify": [
+        {
+          "file": "docs/reports/b-series-integration/gate.json",
+          "contains": "\"workspace_tests\": 4845"
+        },
+        {
+          "file": "docs/reports/b-series-integration/README.md",
+          "contains": "49,735"
+        }
+      ]
+    },
+    "b04-nested-call-argument#integrator-reconciliation#8": {
+      "verdict": "noted",
+      "note": "Parent performs authorized main merge and push only after final combined gate and reconciliation checks; no delegated branch updates main."
+    }
+  },
+  "no_section": {
+    "b-series-integration": "Integrator-owned combined evidence record, not a delegated amendment request."
+  },
+  "deferred_decisions": {
+    "CT10-REASON-ROW": {
+      "verdict": "deferred",
+      "note": "Carried from wave40; this B-series integration does not decide the unrelated question. Prior checkpoint ground: Still deferred, an EIGHTH wave, and now with a second card asking for it: STABILITY-REEVAL-4's section 6 item 6 names CT24-CLEANUP-TASK-COMPOSITION and CT46-NOTES-PREDATE-TSAN-ROW as two names that reach no tracker precisely because the CT ledger row does not say where an unmapped or retired case's reason lives - which is this decision's question. NO NEW EVIDENCE ABOUT CT10 ITSELF: wave 40 moved no crate source at all (git diff --stat 6dc484ad 0c7b0cea over crates/ compiler/ proof/ providers/ is empty), so nothing touched compiler/tests/fixtures/ct/CT10/. The decision - whether to write such a row at all - is untaken and this close does not take it; what it did take is the general half, registered as RESIDUAL-QUIET-BY-PROSE-MENTION. Still double-carried as a named_followup (DECISION-ALSO-REGISTERED-AS-FOLLOWUP)."
+    },
+    "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK": {
+      "verdict": "deferred",
+      "note": "Carried from wave40; this B-series integration does not decide the unrelated question. Prior checkpoint ground: Still deferred - a question raised for the user and not for a close to answer. NEW DATA POINT, offered as such and cutting BOTH ways this wave: DOCS-COMPACT-8 did fire, and it did nine corrections, which is the pattern the question is about; and this close STILL did correction work on top of it - constraint 14's reserved-word count was one short of what its own named authority matches (112 against 113), CLAUDE.md's stability-cadence bullet was a wave stale, and the merged-gate row's provenance named a non-ancestor tip. So correction work arrived from the compaction card AND from the close in the same wave. Neither reading is argued for here. DOCS-COMPACT-9 is recorded as due around wave 42 or 43 and not run."
+    },
+    "EXAMPLES-STYLE-SLICE-FANOUT": {
+      "verdict": "deferred",
+      "note": "Carried from wave40; this B-series integration does not decide the unrelated question. Prior checkpoint ground: Still deferred, an EIGHTH wave, and re-listed so it does not expire in silence. Measured at this base: examples/ did not move this wave at all (git diff --name-only 6dc484ad 0c7b0cea -- examples/ is empty), and there are 12 example family directories, unchanged. A two-card documentation wave produces no evidence either way about the slice fan-out spelling of existing programs, which is what the decision is about."
+    },
+    "F02-WINDOWS-PIN-RUN": {
+      "verdict": "deferred",
+      "note": "Carried from wave40; this B-series integration does not decide the unrelated question. Prior checkpoint ground: Still deferred, raised at wave 38 for the user: a user-validated Windows run of the F02 row at or after a re-pin, in the HTTP-V1-WINDOWS-RUN pattern. NEW EVIDENCE, which does not resolve it: STABILITY-REEVAL-4 re-read both pin sites this wave and reports the literals still disagree, so F02-WINDOWS-PIN-STALE-SINCE-WAVE-36 is red for a FIFTH wave; no wave-40 card claims a Windows or Apple run and neither could, both being documentation cards; this close's two gates report 10 ignored, the tenth being that #[ignore]d agreement test, the same count as wave 39's. No Linux gate can see this row, which is why the decision exists."
+    },
+    "INDIRECT-CENSUS-FEATURE-UNBUILT": {
+      "verdict": "deferred",
+      "note": "Carried from wave40; this B-series integration does not decide the unrelated question. Prior checkpoint ground: Still deferred and not resolved. Measured: no wave-40 commit touched a Cargo.toml feature or a CI job - the wave's whole diff outside docs/ is empty - so nothing builds either feature still. Both arms stand as written at wave 36: a CI job building the features, or a recorded decision that the instrumentation is disposable and a future census re-derives it."
+    },
+    "MATRIX-RECORDED-BY-DECISION": {
+      "verdict": "deferred",
+      "note": "Carried from wave40; this B-series integration does not decide the unrelated question. Prior checkpoint ground: Still deferred, raised at wave 38 for the user: back-fill the 67 entries without `recorded_by` with a five-key generator check, or record that `recorded_by` is optional and `source` is the provenance key. MEASURED at this close: still exactly 67 entries without the key, and every wave-40 registration carries it (23 STABILITY-REEVAL-4, 2 DOCS-COMPACT-8, 2 this close), so the unkeyed set is stable across another wave and the decision is untouched. Not decided here; no entry was back-filled by guess."
+    },
+    "MATRIX-UPDATED-STALE-AT-WAVE-27": {
+      "verdict": "deferred",
+      "note": "Carried from wave40; this B-series integration does not decide the unrelated question. Prior checkpoint ground: Still deferred; untaken. NEW EVIDENCE: the matrix was regenerated at least four more times this wave (each card's own, each merge's, and this close's two), and the `updated` field still opens '2026-09-12 (wave 27 complete' - read off the committed key at this close - so the prose now sits beside a file regenerated thirteen waves later. Still double-carried as a named_followup."
+    },
+    "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED": {
+      "verdict": "deferred",
+      "note": "Carried from wave40; this B-series integration does not decide the unrelated question. Prior checkpoint ground: Still deferred, and this close again did NOT resolve it by completing the registration, for the wave-35 ground: which arm to take IS the decision. NEW EVIDENCE: OWNED-FIELD-WINDOWS-RUN is still unregistered and now appears in CLAUDE.md, the wave-40 checkpoint page and DOCS-COMPACT-8's report as well as the wave-39 close - four documents, no tracker entry - and HTTP-V1-WINDOWS-RUN is still absent from named_followups by id while appearing twice in the matrix's prose, which is exactly the mechanism this close registered as RESIDUAL-QUIET-BY-PROSE-MENTION. The family is once more more partially tracked than before."
+    },
+    "Q-NAMESPACE-DECISION": {
+      "verdict": "deferred",
+      "note": "Carried from wave40; this B-series integration does not decide the unrelated question. Prior checkpoint ground: OPEN, NOT RESOLVED, and RE-AFFIRMED FOR WAVE 41 BY THIS CLOSE only in the sense the wave-39 close meant it - the decision itself (open Q101+ around the legacy bands, or take a new prefix) is integrator/spec work and is not a close's to take. MEASURED for wave 40: the consequence ran ZERO times and zero codes were allocated, because neither cadence card moves crate source (git diff --stat 6dc484ad 0c7b0cea -- crates/ compiler/ proof/ providers/ is empty). The tally therefore stands at eighteen instances on ten bands across waves 26-39, and AGENTS.md now says wave 40 added nothing to it. Carried so a later close re-lists it rather than reading the AGENTS.md sentence as a resolution. The 'held for N waves' figure is NOT restored - see this record's verdict on docs-compact-8 item 9."
+    },
+    "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS": {
+      "verdict": "deferred",
+      "note": "Carried from wave40; this B-series integration does not decide the unrelated question. Prior checkpoint ground: Still deferred, raised at wave 37 for the user; NOT taken here, on the same ground: widening --residuals to prose needs a definition of the shape a test can make red by mutation, and none was designed or measured by this close. RELATED BUT DISTINCT, and registered separately so the two are not confused: RESIDUAL-QUIET-BY-PROSE-MENTION is the opposite direction - the tool reads TOO MUCH prose, matching a name inside another entry's `why` and calling it tracked - and it is a measured defect with a discharge condition rather than an open decision."
+    },
+    "SYNC-RULE-TOOLING-COMMIT-SCOPE": {
+      "verdict": "deferred",
+      "note": "Carried from wave40; this B-series integration does not decide the unrelated question. Prior checkpoint ground: Still deferred, and wave 40 repeats the shape a FOURTH time with one new wrinkle. --uncarded returned 9 commits: six DOCS-COMPACT-8 branch commits, two WAVE-39-CLOSE branch commits reachable only through the inclusive base merge, and ONE structural integrator commit outside any merge - f11ccbba, 'Open wave 40: create the increment record and move the index pointer', the same convention as 05bbd149 (wave 38) and 477b733d (wave 37). So the answer to 'zero integrator commits outside merges' is NO this wave, and the one that exists is the conventional wave-opening commit, carried on STABILITY-REEVAL-4's branch. The wrinkle: that commit is also what broke one of the wave-39 close's verify claims, so a structural commit nobody reports is now measurably load-bearing. Everything else the integrator did this wave lives INSIDE the two merges, indexed by nothing but their messages, which is again the only reason this close could sweep it (README section 4). The question the decision asks is unchanged."
+    }
+  }
+}

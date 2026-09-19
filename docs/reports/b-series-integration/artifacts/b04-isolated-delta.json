@@ -1,0 +1,46 @@
+{
+  "unit_counts": {
+    "before": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    },
+    "after": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    }
+  },
+  "function_counts": {
+    "before": {
+      "Unknown": 4537,
+      "Safe": 213,
+      "Unsafe": 84
+    },
+    "after": {
+      "Unknown": 4537,
+      "Safe": 213,
+      "Unsafe": 84
+    }
+  },
+  "diagnostic_counts": {
+    "before": {
+      "leak": 272,
+      "summary_conflict": 1,
+      "unknown_alias": 4309,
+      "unsupported": 49753
+    },
+    "after": {
+      "leak": 272,
+      "summary_conflict": 1,
+      "unknown_alias": 4309,
+      "unsupported": 49753
+    }
+  },
+  "unit_moves": [],
+  "function_moves": [],
+  "leaves_removed": [],
+  "leaves_added": []
+}

@@ -1,0 +1,552 @@
+{
+  "unit_counts": {
+    "before": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    },
+    "after": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    }
+  },
+  "function_counts": {
+    "before": {
+      "Unknown": 4537,
+      "Safe": 213,
+      "Unsafe": 84
+    },
+    "after": {
+      "Unknown": 4536,
+      "Safe": 214,
+      "Unsafe": 84
+    }
+  },
+  "diagnostic_counts": {
+    "before": {
+      "leak": 272,
+      "summary_conflict": 1,
+      "unknown_alias": 4309,
+      "unsupported": 49753
+    },
+    "after": {
+      "leak": 272,
+      "summary_conflict": 1,
+      "unknown_alias": 4309,
+      "unsupported": 49708
+    }
+  },
+  "unit_moves": [],
+  "function_moves": [
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_down"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    }
+  ],
+  "leaves_removed": [
+    {
+      "key": [
+        "chunkio",
+        "cio_chunk.c",
+        "chunk_state_sync",
+        2384,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_chunk.c",
+        "cio_chunk_lock",
+        2275,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_chunk.c",
+        "cio_chunk_open",
+        2059,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_chunk.c",
+        "cio_chunk_tx_begin",
+        2299,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_content_copy",
+        3166,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_write",
+        3464,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_stats.c",
+        "cio_stats_get",
+        2126,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_encode_prometheus_remote_write.c",
+        "pack_basic_type",
+        7036,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_encode_prometheus_remote_write.c",
+        "pack_complex_metric_sample",
+        7083,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_destroy",
+        19715,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_destroy",
+        19731,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_destroy",
+        19733,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_destroy",
+        19741,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_destroy",
+        19746,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_destroy_corrupted",
+        19669,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_destroy_corrupted",
+        19671,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_down",
+        19975,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_find_space_new_data",
+        18546,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_has_overlimit_routes",
+        18566,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_has_overlimit_routes",
+        18569,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_protect",
+        19941,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_release_space",
+        18070,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_release_space",
+        18089,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_release_space",
+        18100,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_release_space",
+        18103,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_release_space",
+        18112,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_release_space",
+        18142,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_release_space",
+        18148,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_set_up",
+        19982,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_set_up_down",
+        19959,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_set_up_down",
+        19960,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_update_output_instances",
+        20524,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_update_output_instances",
+        20534,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "input_chunk_append_raw",
+        20100,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "input_chunk_append_raw",
+        20173,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_compressEnd",
+        1721,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_compressFrame_usingCDict",
+        1255,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_compressFrame_usingCDict",
+        1259,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_compressFrame_usingCDict",
+        1263,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_decompress",
+        2008,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_getFrameInfo",
+        1909,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_getFrameInfo",
+        1915,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4hc.c",
+        "LZ4HC_InsertAndGetWiderMatch",
+        804,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4hc.c",
+        "LZ4HC_InsertAndGetWiderMatch",
+        812,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_admin.c",
+        "rd_kafka_ListOffsets_handle_result",
+        22645,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    }
+  ],
+  "leaves_added": []
+}

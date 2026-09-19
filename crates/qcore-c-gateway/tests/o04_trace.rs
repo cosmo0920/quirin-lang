@@ -684,30 +684,46 @@ fn a_nested_call_producing_custody_is_never_admitted() {
     assert_ne!(summary.status, AnalysisStatus::Safe);
 }
 
-/// **Adversarial row 3 — two-level nesting.** Exactly one nested call is
-/// admitted, so `f(g(h(x)))` refuses, and so does a second nested call in a
-/// sibling argument.
+/// **Adversarial row 3 — two-level nesting.** Each admitted nested call must
+/// itself contain no call, so `f(g(h(x)))` still refuses.
 #[test]
-fn two_level_and_sibling_nesting_are_never_admitted() {
+fn two_level_nesting_is_never_admitted() {
     if !clang_available() {
         return;
     }
-    for body in [
-        "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
-           v_log(\"%d\", v_size(v_make(n))); v_drop(b); return 0; }",
-        "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
-           v_log(\"%s %d\", v_name(b), v_size(b)); v_drop(b); return 0; }",
-    ] {
-        let summary = generic_summary(body, "v_use");
-        assert!(
-            unsupported(&summary)
-                .iter()
-                .any(|description| description.starts_with("nested call")),
-            "more than one nested call keeps the refusal: {body} -> {:?}",
-            summary.diagnostics
-        );
-        assert_ne!(summary.status, AnalysisStatus::Safe);
+    let body = "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
+        v_log(\"%d\", v_size(v_make(n))); v_drop(b); return 0; }";
+    let summary = generic_summary(body, "v_use");
+    assert!(
+        unsupported(&summary)
+            .iter()
+            .any(|description| description.starts_with("nested call")),
+        "a call inside a nested call keeps the refusal: {:?}",
+        summary.diagnostics
+    );
+    assert_ne!(summary.status, AnalysisStatus::Safe);
+}
+
+/// **Sibling-neutral calls compose.** C leaves their evaluation order
+/// unspecified, so this is admitted only because both callees are independently
+/// modeled as effect-neutral borrowed reads. The retained certificate must
+/// rederive the same result.
+#[test]
+fn sibling_neutral_nested_calls_are_admitted_and_recheck() {
+    if !clang_available() {
+        return;
     }
+    let body = "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
+        v_log(\"%s %d\", v_name(b), v_size(b)); v_drop(b); return 0; }";
+    let certificate = generic_certificate(body, "v_use");
+    let summary = function(&certificate.summary, "v_use");
+    assert_eq!(summary.status, AnalysisStatus::Safe);
+    assert!(
+        unsupported(summary).is_empty(),
+        "neutral siblings need no unsupported diagnostic: {:?}",
+        summary.diagnostics
+    );
+    check_legacy_safety_certificate(&certificate).expect("sibling certificate rechecks");
 }
 
 /// **Adversarial row 4 — an inner call with no contract in force.** Nothing

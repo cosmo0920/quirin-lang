@@ -1,0 +1,30 @@
+{
+ "schema_version": 1,
+ "card": "B02-BRANCH-CONDITION",
+ "base_commit": "8e633261fd216a76d4d25390b0dadeda891c59aa",
+ "before": {
+  "diagnostics_sha256": "c54ad4219fa85793652760e94cdff48f145fc30f04f7ab2604f65da38a42cc2b",
+  "chunk_contracts_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+  "units": {"Safe": 2, "Unsafe": 42, "Unknown": 137, "data_only": 4},
+  "functions": {"Safe": 213, "Unsafe": 84, "Unknown": 4537},
+  "diagnostics": {"leak": 272, "unknown_alias": 4309, "unsupported": 49753, "summary_conflict": 1}
+ },
+ "after": {
+  "diagnostics_sha256": "fa7bc5c07db34b61794e255120eaa91fcf3e89fb27858855ffaeb51a7fa95232",
+  "chunk_contracts_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+  "units": {"Safe": 2, "Unsafe": 42, "Unknown": 137, "data_only": 4},
+  "functions": {"Safe": 214, "Unsafe": 84, "Unknown": 4536},
+  "diagnostics": {"leak": 272, "unknown_alias": 4309, "unsupported": 49708, "summary_conflict": 1}
+ },
+ "coordinate_delta": {
+  "removed": 45,
+  "added": 0,
+  "exchanged": 0,
+  "affected_functions": 26,
+  "affected_units": 8
+ },
+ "moved_functions": [
+  {"file": "flb_input_chunk.c", "function": "flb_input_chunk_down", "before": "Unknown", "after": "Safe"}
+ ],
+ "retired_entries": []
+}

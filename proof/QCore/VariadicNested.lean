@@ -1,5 +1,5 @@
 /-!
-# Declared variadic data tails and one level of nested calls (card O04-TRACE)
+# Declared variadic data tails and one level of nested calls
 
 This module models the two decisions
 `crates/qcore-c-gateway/src/variadic_nested.rs` makes, and the one property
@@ -18,7 +18,7 @@ that makes them compose:
 ## The composition theorem, and why it is the whole design
 
 C leaves the evaluation order of a call's arguments unspecified (C11
-6.5.2.2p10). A nested call with any custody effect would therefore have to be
+6.5.2.2p10). A sibling nested call with any custody effect would therefore have to be
 ordered against the enclosing call's other arguments, and this projection has
 no such order to give. The admission avoids the question rather than answering
 it: premises **N6** and **N7** — result mode `none`, every parameter mode
@@ -167,9 +167,9 @@ inductive Slot where
 structure Nested where
   /-- **N0** — every declaration of the enclosing function was read. -/
   declarationsRead : Bool
-  /-- **N2** — exactly one call other than the enclosing callee. Two nested
-      calls, and two-level nesting `f (g (h x))`, both fail this. -/
-  exactlyOneNested : Bool
+  /-- **N2** — this is a sibling argument call, not a call inside another
+      nested call's arguments. B04 admits any number of such siblings. -/
+  oneLevel : Bool
   /-- **N4** — the nested call is a *whole* argument of the enclosing call:
       its callee is the argument's first token, its `)` the last. -/
   wholeArgument : Bool
@@ -211,7 +211,7 @@ def slotIsData (n : Nested) : Bool :=
     the enclosing statement keeps card O04-B09B10's nested refusal. -/
 def admitsNested (n : Nested) : Bool :=
   n.declarationsRead
-    && n.exactlyOneNested
+    && n.oneLevel
     && n.wholeArgument
     && n.innerArgumentsCallFree
     && n.calleeContracted
@@ -227,11 +227,10 @@ theorem unread_declarations_never_admit_a_nested_call (n : Nested)
     (unread : n.declarationsRead = false) : admitsNested n = false := by
   simp [admitsNested, unread]
 
-/-- Two nested calls in one statement, and two-level nesting, are the same
-    refusal: this rule admits **one** level and one call. -/
-theorem more_than_one_nested_call_is_never_admitted (n : Nested)
-    (several : n.exactlyOneNested = false) : admitsNested n = false := by
-  simp [admitsNested, several]
+/-- Nesting inside a sibling's arguments remains refused. -/
+theorem a_two_level_nested_call_is_never_admitted (n : Nested)
+    (deeper : n.oneLevel = false) : admitsNested n = false := by
+  simp [admitsNested, deeper]
 
 theorem a_partial_nested_expression_is_never_admitted (n : Nested)
     (fragment : n.wholeArgument = false) : admitsNested n = false := by
@@ -372,6 +371,42 @@ theorem evaluation_order_is_unobservable (inner outer : Contract)
   rw [compose_inner_first inner outer innerArgs outerArgs o neutral,
       compose_outer_first inner outer innerArgs outerArgs o neutral]
 
+/-! ## B04: an arbitrary sibling list -/
+
+/-- The modeled calls paired with their written actuals. -/
+abbrev ModeledCall := Contract × List (Option Nat)
+
+/-- Apply the sibling calls in one possible C evaluation order. -/
+def applyNestedCalls (calls : List ModeledCall) (o : Outcome) : Outcome :=
+  calls.foldl (fun state call => applyCall call.1 call.2 state) o
+
+/-- Every admitted sibling is neutral. This predicate deliberately quantifies
+    over the complete list rather than a fixed two-call witness. -/
+def allNestedCallsNeutral (calls : List ModeledCall) : Prop :=
+  ∀ call ∈ calls, nestedContractNeutral call.1 = true
+
+/-- Any finite list of admitted sibling calls is the identity. -/
+theorem admitted_sibling_calls_are_the_identity (calls : List ModeledCall) (o : Outcome)
+    (neutral : allNestedCallsNeutral calls) : applyNestedCalls calls o = o := by
+  induction calls generalizing o with
+  | nil => rfl
+  | cons call rest ih =>
+      simp only [applyNestedCalls, List.foldl_cons]
+      rw [an_admitted_nested_call_is_neutral call.1 call.2 (neutral call (by simp)) o]
+      apply ih
+      intro member present
+      exact neutral member (by simp [present])
+
+/-- C may choose any sibling order. Because every admitted sibling list is the
+    identity, any two orders agree; no chosen Rust iteration order is semantic. -/
+theorem sibling_evaluation_order_is_unobservable
+    (left right : List ModeledCall) (o : Outcome)
+    (leftNeutral : allNestedCallsNeutral left)
+    (rightNeutral : allNestedCallsNeutral right) :
+    applyNestedCalls left o = applyNestedCalls right o := by
+  rw [admitted_sibling_calls_are_the_identity left o leftNeutral,
+      admitted_sibling_calls_are_the_identity right o rightNeutral]
+
 /-! ## The converse — the neutrality premises are load-bearing -/
 
 /-- An owned result is **not** neutral: it produces an identity that a
@@ -503,7 +538,7 @@ theorem the_declaration_alone_admits_nothing (a : TailActual)
 
 /-- An admitted nested call exists, on both data slots. -/
 def witnessNested (slot : Slot) : Nested :=
-  { declarationsRead := true, exactlyOneNested := true, wholeArgument := true,
+  { declarationsRead := true, oneLevel := true, wholeArgument := true,
     innerArgumentsCallFree := true, calleeContracted := true, outerContracted := true,
     contract := { modes := [ParamMode.borrowed], result := ResultMode.none,
                   declaredTail := false },
@@ -521,7 +556,7 @@ theorem a_nested_call_at_a_custody_parameter_is_refused :
 
 /-- Each syntactic premise, flipped separately on the same witness. -/
 theorem the_nested_premises_are_separately_load_bearing :
-    admitsNested { witnessNested Slot.beyondNamedVector with exactlyOneNested := false } = false
+    admitsNested { witnessNested Slot.beyondNamedVector with oneLevel := false } = false
       ∧ admitsNested { witnessNested Slot.beyondNamedVector with wholeArgument := false } = false
       ∧ admitsNested { witnessNested Slot.beyondNamedVector with
                        innerArgumentsCallFree := false } = false

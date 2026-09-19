@@ -151,10 +151,10 @@ theorem unread_declarations_never_admit (d : Candidate)
   a_refused_nested_call_refuses_the_candidate d
     (unread_declarations_never_admit_a_nested_call d.nested unread)
 
-theorem more_than_one_nested_call_is_never_admitted (d : Candidate)
-    (many : d.nested.exactlyOneNested = false) : admits d = false :=
+theorem a_two_level_nested_call_is_never_admitted (d : Candidate)
+    (deeper : d.nested.oneLevel = false) : admits d = false :=
   a_refused_nested_call_refuses_the_candidate d
-    (VariadicNested.more_than_one_nested_call_is_never_admitted d.nested many)
+    (VariadicNested.a_two_level_nested_call_is_never_admitted d.nested deeper)
 
 theorem a_call_inside_the_nested_arguments_is_never_admitted (d : Candidate)
     (inner : d.nested.innerArgumentsCallFree = false) : admits d = false :=
@@ -315,7 +315,7 @@ theorem an_admitted_candidate_is_neutral (d : Candidate) (args : List (Option Na
     `borrowed` parameter. -/
 def errnoNested : Nested :=
   { declarationsRead := true
-    exactlyOneNested := true
+    oneLevel := true
     wholeArgument := true
     innerArgumentsCallFree := true
     calleeContracted := true
@@ -347,7 +347,7 @@ theorem each_premise_is_load_bearing_on_the_subject :
     ∧ admits { errnoCandidate with
                nested := { errnoNested with declarationsRead := false } } = false
     ∧ admits { errnoCandidate with
-               nested := { errnoNested with exactlyOneNested := false } } = false
+               nested := { errnoNested with oneLevel := false } } = false
     ∧ admits { errnoCandidate with
                nested := { errnoNested with calleeContracted := false } } = false
     ∧ admits { errnoCandidate with

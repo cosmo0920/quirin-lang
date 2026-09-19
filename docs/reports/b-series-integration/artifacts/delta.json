@@ -1,0 +1,318 @@
+{
+  "unit_counts": {
+    "before": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    },
+    "after": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    }
+  },
+  "function_counts": {
+    "before": {
+      "Unknown": 4537,
+      "Safe": 213,
+      "Unsafe": 84
+    },
+    "after": {
+      "Unknown": 4529,
+      "Safe": 221,
+      "Unsafe": 84
+    }
+  },
+  "diagnostic_counts": {
+    "before": {
+      "leak": 272,
+      "summary_conflict": 1,
+      "unknown_alias": 4309,
+      "unsupported": 49753
+    },
+    "after": {
+      "leak": 272,
+      "summary_conflict": 1,
+      "unknown_alias": 4309,
+      "unsupported": 49735
+    }
+  },
+  "unit_moves": [],
+  "function_moves": [
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_down"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_admin.c",
+        "rd_kafka_ConsumerGroupDescription_coordinator"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_admin.c",
+        "rd_kafka_ListOffsetsResultInfo_topic_partition"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_admin.c",
+        "rd_kafka_MemberAssignment_partitions"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_admin.c",
+        "rd_kafka_TopicPartitionInfo_leader"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_aux.c",
+        "rd_kafka_group_result_partitions"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_aux.c",
+        "rd_kafka_topic_partition_result_partition"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_share_acknowledgement.c",
+        "rd_kafka_share_partition_offsets_partition"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    }
+  ],
+  "leaves_removed": [
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_content_copy",
+        3166,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_write",
+        3464,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_stats.c",
+        "cio_stats_get",
+        2126,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_encode_opentelemetry.c",
+        "get_context_arena",
+        6759,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_down",
+        19975,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_get_name",
+        20455,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_set_up",
+        19982,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_set_up_down",
+        19960,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_admin.c",
+        "rd_kafka_ConfigResource_error_string",
+        21928,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_admin.c",
+        "rd_kafka_ConsumerGroupDescription_authorized_operations",
+        25366,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_admin.c",
+        "rd_kafka_ConsumerGroupDescription_coordinator",
+        25374,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_admin.c",
+        "rd_kafka_ListOffsetsResultInfo_topic_partition",
+        22541,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_admin.c",
+        "rd_kafka_MemberAssignment_partitions",
+        25259,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_admin.c",
+        "rd_kafka_TopicDescription_authorized_operations",
+        26096,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_admin.c",
+        "rd_kafka_TopicPartitionInfo_leader",
+        26072,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_aux.c",
+        "rd_kafka_group_result_partitions",
+        19683,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_aux.c",
+        "rd_kafka_topic_partition_result_partition",
+        19812,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_share_acknowledgement.c",
+        "rd_kafka_share_partition_offsets_partition",
+        20251,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      "count": 1
+    }
+  ],
+  "leaves_added": []
+}

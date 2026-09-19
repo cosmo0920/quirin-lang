@@ -6,6 +6,27 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`B01–B04-CALL-POSITIONS` (2026-09-20).** Four GPT-5.6 Sol medium agents
+implemented bounded return evaluation, branch conditions, loop/switch conditions
+and neutral sibling nested arguments. The merged rules retain call effects,
+alias/liveness obligations and CFG exits; new return/control call extraction
+requires an external declaration without a local definition, preserving the
+pre-existing recursive pointer boundary. B01's direct opaque getters escape no
+identity. B04 keeps effectful/deeper nesting refused. The final pinned arbiter
+moves **8 functions Unknown→Safe**: **213→221 Safe / 84 provisional Unsafe /
+4,537→4,529 Unknown**; units remain **2 / 42 / 137 / 4 data-only**, unpromoted.
+Unsupported diagnostics fall **49,753→49,735**: **12** return leaves from B01
+and **6** branch leaves from B02, with no additions or exchanges; leaks **272**,
+unknown_alias **4,309** and summary_conflict **1** are unchanged. B03/B04 have
+zero measured corpus movement. The combined forecast's eight mover identities
+match, but its **57-leaf** prediction misses: the guard repair retains **39**
+local-definition branch refusals. Initial B01/B02 forecast misses and failed
+gates remain disclosed; the sibling refusal pin is deliberately replaced by a
+positive certificate check and retained deep-nesting refusal. No tracker entry
+retires (**269** remain), the indirect+branch pair stays **196**, and CT
+mapping/proof/native counts and full-language conformance do not change.
+[Measurements, validation and reconciliation](../../reports/b-series-integration/README.md).
+
 **`CT41-MAP` (2026-09-19).** A **second, independent** CT41 mapping was built
 from the same base and reached the same row; `CT41-PUBLICATION-MAPPING` landed
 and this card is what survives **reduction onto it**. It claims **no coverage**:

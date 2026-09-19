@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "card": "B01-RETURN-EXPRESSION",
+  "baseline": "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/baseline",
+  "after_private": "/tmp/agent-b01/measure/w37/runs/after-repair",
+  "analyzer_commit": "d7ed1a459753605d63002fb6f79fb826a9114628",
+  "after_audit_exit": 0,
+  "files": {
+    "chunk-contracts.json.gz": "429552f091cc171edcc973f8563539d5c38309e9613eee7d954c567e5dcc5d26",
+    "contracts.json.gz": "811b5d5a72e21c5371daf55e4657e2e76878c3c9489bbc5dfd6a8da2bab26d70",
+    "diagnostics.json.gz": "be26d99efd2ab093db69fc3215ed8b54d98b39d6a63d068d45c0ab6bae289244",
+    "source-effects.json.gz": "41550438f4c2a33176efc6a0d2fa9f82544594cca9eaf3933f38cc9fca74fed2",
+    "source.json.gz": "ff84fb895f8aff7d369bd8c004c66a983a8b4cf46be35dc3a929c9a72d280ebb"
+  }
+}

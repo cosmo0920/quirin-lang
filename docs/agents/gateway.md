@@ -207,6 +207,54 @@ including cross-topic rules, before editing; the index is not a substitute.
     lost. `c-gateway-constant-do-while`, `joined-provenance-cycles`.
 <!-- preserved:constraint-5c:end -->
 
+<a id="constraint-5d"></a>
+
+5d. **The B01–B03 effectful-call lowering preserves evaluation frequency.**
+    This additional route admits exactly one ordinary, unconditionally evaluated
+    contracted call whose callee has no definition in the translation unit, and a
+    custody-neutral residual. A local provisional summary cannot supply this new
+    route's external-declaration premise. It refuses short-circuit,
+    conditional, assignment, increment/decrement, type-operator, nested-call and
+    multiple-call shapes. This boundary applies to the additional route; it does
+    not revoke the older neutral-expression admissions. The existing statement
+    classifier supplies the call instruction and all argument, alias and effect
+    obligations. In an `if`, both unknown-result successors receive the post-call
+    state. In loops the call occupies the condition node: back edges and
+    `continue` revisit it (`for` after its increment), while `do`/`while` `break`
+    bypasses it. `switch` evaluates it once. No loop exit or back edge disappears.
+    Declined probes restore site numbering. B01's scalar residual route additionally
+    requires an externally declared callee (no definition in this translation unit),
+    a resource-free call result, and uses a `NoOp` exit, never a synthetic
+    custody escape. Existing exact whole-call return behavior is preserved.
+    [B-series implementation and evidence](../reports/b-series-integration/README.md).
+
+<a id="constraint-5e"></a>
+
+5e. **Opaque return evaluation does not establish custody identity.** B01's
+    additional direct-member route retains the ordinary `OpaqueValue` classifier's
+    complete typed-read, untracked-base and alias-read obligations, requires one
+    member selection, and checks the reserved result-place collision before
+    admission. It evaluates the read and uses a `NoOp` exit. It must not escape a
+    canonical spelling whose resource identity the classifier did not establish.
+    These are maintained extraction/correspondence premises, not a whole-C proof.
+
+
+<a id="constraint-5f"></a>
+
+5f. **Every admitted nested sibling retains its obligations.** B04 widens the
+    existing one-level neutral nested-call rule from one call to a complete list
+    of sibling arguments. Each inner call independently needs an in-force
+    contract with result `None`, every parameter `Borrowed`, exact arity, a whole
+    outer argument in a data/Borrowed slot, and denotable or data-only actuals.
+    The existing scalar-result dereference wrapper keeps its typed-result check.
+    Deeper nesting, partial arguments, missing contracts and custody effects stay
+    refused by this route. The complete sibling set is admitted or refused
+    together. Every sibling's liveness and may-alias obligations survive, and
+    every inner identity transfer precedes the outer call. Identity transfers
+    make C's unspecified sibling order unobservable in this resource model;
+    they do not establish arbitrary runtime purity or whole-C correctness.
+    [B04 evidence](../reports/b04-nested-call-argument/README.md).
+
 <a id="constraint-6"></a>
 
 <!-- preserved:constraint-6:start -->

@@ -42,7 +42,7 @@ subject, `flb_errno_print((*__errno_location ()), …)`.
 -- Fail-closed: every O04-TRACE premise still refuses on its own.
 #print axioms QCore.DereferencedResult.a_refused_nested_call_refuses_the_candidate
 #print axioms QCore.DereferencedResult.unread_declarations_never_admit
-#print axioms QCore.DereferencedResult.more_than_one_nested_call_is_never_admitted
+#print axioms QCore.DereferencedResult.a_two_level_nested_call_is_never_admitted
 #print axioms QCore.DereferencedResult.a_call_inside_the_nested_arguments_is_never_admitted
 #print axioms QCore.DereferencedResult.an_uncontracted_nested_callee_is_never_admitted
 #print axioms QCore.DereferencedResult.an_uncontracted_outer_callee_never_admits

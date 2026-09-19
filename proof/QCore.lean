@@ -1,4 +1,5 @@
 import QCore.ReturnPositionEscape
+import QCore.ReturnExpressionEvaluation
 import QCore.CGatewayRefinements
 import QCore.FixedScalarQuery
 import QCore.BucketTally
@@ -146,6 +147,7 @@ import QCore.DereferencedResult
 import QCore.PublicationCustody
 import QCore.RefusedWrites
 import QCore.PipeDesugaring
+import QCore.BranchConditionCall
 import QCore.BranchArms
 import QCore.BranchJoin
 import QCore.Connectives
@@ -165,6 +167,7 @@ import QCore.RegionJoinsLoan
 import QCore.CleanupTaskComposition
 import QCore.LoopBudget
 import QCore.LoopWindows
+import QCore.LoopSwitchCallEvaluation
 import QCore.StdString
 import QCore.StringSliceIo
 import QCore.StringConcat

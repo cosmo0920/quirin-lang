@@ -437,6 +437,46 @@ fn a_pointer_actual_stays_unknown() {
     assert_eq!(run.status("counted"), AnalysisStatus::Unknown);
 }
 
+/// B02/B03's condition-call widening must not read a provisional neutral
+/// summary for the local recursive callee back as its own admission premise.
+/// The existing neutral-expression rule still decides its previously admitted
+/// scalar-actual cases; these pointer-actual conditions keep the old refusal.
+#[test]
+fn recursive_pointer_calls_in_control_expressions_stay_unknown() {
+    if !clang_available() {
+        return;
+    }
+    for (name, control) in [
+        ("branch_counted", "if (branch_counted(p)) return 1;"),
+        ("while_counted", "while (while_counted(p)) { }"),
+        ("for_counted", "for (; for_counted(p); ) { }"),
+        ("do_counted", "do { } while (do_counted(p));"),
+        (
+            "switch_counted",
+            "switch (switch_counted(p)) { default: break; }",
+        ),
+    ] {
+        let program = format!(
+            "unsigned long {name}(void *p) {{
+                if (p == 0) return 0;
+                {control}
+                return 0;
+            }}"
+        );
+        let run = run(&program);
+        assert_eq!(
+            run.status(name),
+            AnalysisStatus::Unknown,
+            "{name} unexpectedly admitted: {:?}",
+            run.unsupported(name)
+        );
+        assert!(
+            !run.records.contains_key(name),
+            "{name} must not publish a circular neutral summary"
+        );
+    }
+}
+
 /// Admitting the *position* must not admit an effectful *body*. This
 /// component's return expression is exactly the admitted shape, and its body
 /// still leaks, so the descent demotes it and it publishes nothing.
@@ -618,12 +658,14 @@ fn a_branch_condition_refuses_a_read_through_a_bound_base() {
     );
 }
 
-/// A releasing call in a branch condition keeps its refusal: the release must
-/// not disappear into a `NoOp`. It answers `Unsafe` rather than `Unknown`
-/// because the refused condition leaves the acquisition outstanding at the
-/// exit, which is the fail-closed direction.
+/// **Deliberate pin update, card B02-BRANCH-CONDITION.**  A releasing call in
+/// a branch condition is now an ordinary `ContractCall` node before the
+/// two-successor branch, so its effect does not disappear into a `NoOp`.
+/// This exact comma expression evaluates the call unconditionally; the
+/// short-circuit and conditional neighbours in `branch_condition_calls.rs`
+/// retain the old refusal.
 #[test]
-fn a_releasing_call_in_a_branch_condition_is_never_admitted() {
+fn an_unconditional_releasing_call_in_a_branch_condition_is_modeled() {
     if !clang_available() {
         return;
     }
@@ -631,15 +673,9 @@ fn a_releasing_call_in_a_branch_condition_is_never_admitted() {
             void *p = q_alloc();
             if ((q_free(p), 1)) { }
         }");
-    assert_ne!(run.status("subject"), AnalysisStatus::Safe);
-    assert!(
-        run.unsupported("subject").iter().any(|description| {
-            description == "unmodeled call, aggregate or indirect access in branch condition"
-        }),
-        "unsupported: {:?}",
-        run.unsupported("subject")
-    );
-    assert_eq!(run.leaks("subject"), 1);
+    assert_eq!(run.status("subject"), AnalysisStatus::Safe);
+    assert!(run.unsupported("subject").is_empty());
+    assert_eq!(run.leaks("subject"), 0);
 }
 
 /// An uncontracted call in each of the five stage-2 positions keeps its own

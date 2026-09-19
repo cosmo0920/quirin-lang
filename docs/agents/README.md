@@ -37,6 +37,9 @@ was read. Backticked code paths throughout these pages are repository-relative.
 | 5a | [gateway](gateway.md#constraint-5a) | A fixed C sizeof/_Alignof query's operand-class marker is never a… |
 | 5b | [gateway](gateway.md#constraint-5b) | A return admits what a condition admits, and the difference escapes… |
 | 5c | [gateway](gateway.md#constraint-5c) | A constant do … while (0) is sequential composition, and the key is… |
+| 5d | [gateway](gateway.md#constraint-5d) | B01–B03 effectful calls preserve evaluation frequency and CFG successors. |
+| 5e | [gateway](gateway.md#constraint-5e) | Opaque return evaluation does not establish custody identity. |
+| 5f | [gateway](gateway.md#constraint-5f) | Every neutral nested sibling retains liveness and alias obligations. |
 | 6 | [gateway](gateway.md#constraint-6) | C02-P-ALIAS-LEAK-ORDER: report_leaks on intermediate iterates is… |
 | 7 | [gateway](gateway.md#constraint-7) | Leak diagnostics are 272 across the pinned 185-unit corpus. A change… |
 | 8 | [gateway](gateway.md#constraint-8) | A declared contract must agree with the C the unit declares — in types… |

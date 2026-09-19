@@ -942,6 +942,19 @@ Variable-length arrays, opaque types and compound operands are outside this
 admission. The same token-derived decision governs summary validation and
 certificate rechecking. See [the bounded implementation record](reports/wave23-c-operations/README.md).
 
+The bounded B-series lowering models one unconditional externally declared
+contracted call (no local definition) in an
+otherwise custody-neutral return or controlling expression, preserving its
+ordinary resource transfer and the existing CFG successors. The new scalar-return call route additionally requires a callee with no local
+definition and carries no custody result; the additional direct opaque-member return
+read establishes no escaping identity. Multiple one-level nested sibling calls
+are admitted only when every inner contract is resource-neutral and all of
+its argument/liveness/alias obligations remain checked. Short-circuit effectful
+calls, deeper nesting and other shapes outside these additional rules retain
+Unknown unless an existing independently justified rule already models them.
+See the [exact boundaries and measured reach](reports/b-series-integration/README.md)
+and [gateway constraints 5d–5f](agents/gateway.md#constraint-5d).
+
 External resource declarations are assumptions. W4 may infer an internal summary, but a candidate is published only after body re-analysis validates its entry assumptions, every modeled exit, formal disposition, result custody, and absence of unmodeled escape. The certificate checker re-derives summaries instead of trusting serialized labels.
 
 The current W4 implementation supports bounded direct Out, Stored, Removed,

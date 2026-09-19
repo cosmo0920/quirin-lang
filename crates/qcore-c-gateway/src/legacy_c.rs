@@ -75,7 +75,8 @@ use crate::neutral_position::ExpressionRole;
 pub use crate::publication::{IndirectPublication, PublicationFacts};
 use crate::typed_field_access::{FunctionTypes, TypedAccessModel};
 
-/// One admitted nested call (card **O04-TRACE**), as modeled.
+/// One admitted nested call (cards **O04-TRACE** and
+/// **B04-NESTED-CALL-ARGUMENT**), as modeled.
 ///
 /// Its declared effects are applied by [`transfer`] **before** the enclosing
 /// call's, through the same `apply_contract_call` every other modeled call
@@ -154,17 +155,16 @@ pub enum LegacyInstruction {
         /// discharge applies. Empty for every argument the rule does not
         /// relate, which is most of the corpus. See [`crate::may_alias`].
         alias_reads: Vec<AliasPeers>,
-        /// Card **O04-TRACE**: the one nested call this statement admits, whose
-        /// declared effects apply **before** this call's own. Boxed so the
-        /// variant does not grow for the overwhelming majority of calls that
-        /// have none.
+        /// Cards **O04-TRACE** and **B04-NESTED-CALL-ARGUMENT**: every sibling
+        /// nested call this statement admits. Each declared effect applies
+        /// before this call's own.
         ///
         /// It is admitted only when its declared effects are the *identity* on
         /// the abstract state — result `None`, every parameter `Borrowed` — so
         /// applying it first is well defined despite C leaving the evaluation
         /// order of arguments unspecified. Every other nested call is refused
         /// where it stands, with card O04-B09B10's diagnostic.
-        nested: Option<Box<NestedContractCall>>,
+        nested: Vec<NestedContractCall>,
     },
     BranchOnNull {
         source: String,
@@ -2777,6 +2777,11 @@ enum Statement {
     If {
         line: usize,
         condition_supported: bool,
+        /// Card **B02-BRANCH-CONDITION**: the one contracted call whose
+        /// custody effects are evaluated before this branch decision.  The
+        /// isolated instruction is produced by the ordinary statement
+        /// classifier; `Some` therefore adds no second call-effect model.
+        condition_call: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         /// C02-P-ALIAS: the pointer-inequality guard this condition expresses,
@@ -2789,6 +2794,9 @@ enum Statement {
     While {
         line: usize,
         condition_supported: bool,
+        /// Card **B03-LOOP-AND-SWITCH**: the one contracted call evaluated at
+        /// every visit to this loop header, before either successor is chosen.
+        condition_call: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         body: Vec<Statement>,
@@ -2798,6 +2806,9 @@ enum Statement {
         init: Option<Box<(LegacyInstruction, usize)>>,
         condition_always_true: bool,
         condition_supported: bool,
+        /// Card **B03-LOOP-AND-SWITCH**: the one contracted call evaluated at
+        /// every visit to this loop header, before either successor is chosen.
+        condition_call: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         increment: Option<Box<(LegacyInstruction, usize)>>,
@@ -2806,6 +2817,9 @@ enum Statement {
     DoWhile {
         line: usize,
         condition_supported: bool,
+        /// Card **B03-LOOP-AND-SWITCH**: the one contracted call evaluated
+        /// after every completed body execution, before the back/exit choice.
+        condition_call: Option<Box<LegacyInstruction>>,
         /// The controlling expression is the single literal token `0`, so the
         /// body runs exactly once (C11 §6.8.5.2) and the CFG carries no back
         /// edge. Keyed on the *token*, never on an evaluated expression
@@ -2819,6 +2833,9 @@ enum Statement {
     Switch {
         line: usize,
         expression_supported: bool,
+        /// Card **B03-LOOP-AND-SWITCH**: the one contracted call evaluated
+        /// once before control enters the selected switch arm.
+        expression_call: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         body: Vec<Statement>,
     },
@@ -2847,11 +2864,15 @@ enum Statement {
         expression_supported: bool,
         writes: RefusedWrites,
         returned_place: Option<String>,
-        /// Card **C-GATEWAY-RETURN-CALL-W4**: the modeled call this `return`
-        /// expression is, when it is exactly one. `Some` desugars the exit into
-        /// the two nodes `PLACE = f(args); return PLACE;` the analyzer already
-        /// decides; see [`return_call`] for why that reduction is the rule.
-        returned_call: Option<Box<LegacyInstruction>>,
+        /// A modeled evaluation of this `return` expression. Card
+        /// C-GATEWAY-RETURN-CALL-W4 supplies the exact contract-call case;
+        /// B01-RETURN-EXPRESSION adds bounded scalar and opaque evaluations.
+        /// A declined evaluation keeps the existing refusal byte for byte.
+        returned_evaluation: Option<Box<LegacyInstruction>>,
+        /// Whether the evaluated value can carry custody and therefore needs
+        /// the synthetic `EscapeIfOwned` exit. B01's scalar/opaque family is
+        /// resource-free and uses `NoOp` instead.
+        returned_evaluation_escapes: bool,
     },
 }
 
@@ -3049,6 +3070,55 @@ impl Parser<'_> {
             &self.typed_model,
             &self.typed_types,
         )
+    }
+
+    /// The one unconditionally evaluated modeled call in a controlling
+    /// expression.
+    ///
+    /// Cards B02 and B03 decompose a condition into one isolated call and a
+    /// custody-neutral residual. The lexical boundary rejects every shape in
+    /// which C may skip the call. The residual is checked by the existing
+    /// expression-position rule, and the call is checked by the ordinary
+    /// statement classifier, so there is one contract-effect model.
+    ///
+    /// A declined speculative classification restores `next_site`, preserving
+    /// site numbering and certificate identity for every expression this rule
+    /// keeps refused.
+    fn condition_call_instruction(&mut self, condition: &[Token]) -> Option<LegacyInstruction> {
+        let texts = condition
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let (start, end) = crate::legacy_condition_call::unconditional_call_span(&texts)?;
+        // This widening is for a call whose contract is established outside
+        // the translation unit. A locally defined callee can carry a
+        // provisional neutral summary while its recursive component is being
+        // validated; reading that assumption back here would widen the
+        // pointer-actual boundary by circularity rather than by this card's
+        // declared-contract premise.
+        if find_function_body(self.tokens, texts[start]).is_some() {
+            return None;
+        }
+
+        let mut residual = Vec::with_capacity(condition.len() - (end - start) + 1);
+        residual.extend_from_slice(&condition[..start]);
+        residual.push(Token {
+            text: "0".to_owned(),
+            line: condition[start].line,
+        });
+        residual.extend_from_slice(&condition[end..]);
+        if !self.supported_expression(&residual, ExpressionRole::Decides) {
+            return None;
+        }
+
+        let restore = self.next_site;
+        let instruction = self.classify_simple(&condition[start..end]);
+        if matches!(instruction, LegacyInstruction::ContractCall { .. }) {
+            Some(instruction)
+        } else {
+            self.next_site = restore;
+            None
+        }
     }
 
     /// The null test a branch condition expresses, including the one
@@ -3258,6 +3328,12 @@ impl Parser<'_> {
             Some("if") => {
                 self.cursor += 1;
                 let condition = self.take_parenthesized()?;
+                let condition_supported =
+                    self.supported_expression(&condition, ExpressionRole::Decides);
+                let condition_call = (!condition_supported)
+                    .then(|| self.condition_call_instruction(&condition))
+                    .flatten()
+                    .map(Box::new);
                 let then_body = self.parse_statement_body()?;
                 let else_body = if self.text() == Some("else") {
                     self.cursor += 1;
@@ -3268,8 +3344,8 @@ impl Parser<'_> {
                 Ok(Statement::If {
                     line,
                     writes: self.expression_writes(&condition),
-                    condition_supported: self
-                        .supported_expression(&condition, ExpressionRole::Decides),
+                    condition_supported,
+                    condition_call,
                     null_condition: self.null_condition(&condition),
                     distinct_condition: self.distinct_condition(&condition),
                     then_body,
@@ -3279,12 +3355,18 @@ impl Parser<'_> {
             Some("while") => {
                 self.cursor += 1;
                 let condition = self.take_parenthesized()?;
+                let condition_supported =
+                    self.supported_expression(&condition, ExpressionRole::Decides);
+                let condition_call = (!condition_supported)
+                    .then(|| self.condition_call_instruction(&condition))
+                    .flatten()
+                    .map(Box::new);
                 let body = self.parse_statement_body()?;
                 Ok(Statement::While {
                     line,
                     writes: self.expression_writes(&condition),
-                    condition_supported: self
-                        .supported_expression(&condition, ExpressionRole::Decides),
+                    condition_supported,
+                    condition_call,
                     null_condition: self.null_condition(&condition),
                     body,
                 })
@@ -3313,6 +3395,12 @@ impl Parser<'_> {
                         line,
                     ));
                 };
+                let condition_supported =
+                    self.supported_expression(&condition, ExpressionRole::Decides);
+                let condition_call = (!condition_supported && !condition.is_empty())
+                    .then(|| self.condition_call_instruction(&condition))
+                    .flatten()
+                    .map(Box::new);
                 let body = self.parse_statement_body()?;
                 let init =
                     (!init.is_empty()).then(|| Box::new((self.classify_simple(&init), line)));
@@ -3323,8 +3411,8 @@ impl Parser<'_> {
                     writes: self.expression_writes(&condition),
                     init,
                     condition_always_true: condition.is_empty(),
-                    condition_supported: self
-                        .supported_expression(&condition, ExpressionRole::Decides),
+                    condition_supported,
+                    condition_call,
                     null_condition: self.null_condition(&condition),
                     increment,
                     body,
@@ -3342,11 +3430,17 @@ impl Parser<'_> {
                     return Err(line);
                 }
                 self.cursor += 1;
+                let condition_supported =
+                    self.supported_expression(&condition, ExpressionRole::Decides);
+                let condition_call = (!condition_supported)
+                    .then(|| self.condition_call_instruction(&condition))
+                    .flatten()
+                    .map(Box::new);
                 Ok(Statement::DoWhile {
                     line,
                     writes: self.expression_writes(&condition),
-                    condition_supported: self
-                        .supported_expression(&condition, ExpressionRole::Decides),
+                    condition_supported,
+                    condition_call,
                     condition_is_literal_zero: condition_is_literal_zero(&condition),
                     null_condition: self.null_condition(&condition),
                     body,
@@ -3355,12 +3449,18 @@ impl Parser<'_> {
             Some("switch") => {
                 self.cursor += 1;
                 let expression = self.take_parenthesized()?;
+                let expression_supported =
+                    self.supported_expression(&expression, ExpressionRole::Decides);
+                let expression_call = (!expression_supported)
+                    .then(|| self.condition_call_instruction(&expression))
+                    .flatten()
+                    .map(Box::new);
                 let body = self.parse_statement_body()?;
                 Ok(Statement::Switch {
                     line,
                     writes: self.expression_writes(&expression),
-                    expression_supported: self
-                        .supported_expression(&expression, ExpressionRole::Decides),
+                    expression_supported,
+                    expression_call,
                     body,
                 })
             }
@@ -3444,8 +3544,8 @@ impl Parser<'_> {
                 // call itself produced; everything else keeps the refusal it
                 // has, including the `Reallocated` result wave 33's soundness
                 // ground was right about.
-                let returned_call = (!strict && !untracked_pointer)
-                    .then(|| self.return_call_instruction(&expression, line))
+                let returned_evaluation = (!strict && !untracked_pointer)
+                    .then(|| self.return_expression_instruction(&expression, line))
                     .flatten();
                 Ok(Statement::Return {
                     line,
@@ -3456,7 +3556,11 @@ impl Parser<'_> {
                     } else {
                         canonical_place(&texts)
                     },
-                    returned_call: returned_call.map(Box::new),
+                    returned_evaluation: returned_evaluation
+                        .as_ref()
+                        .map(|(instruction, _)| Box::new(instruction.clone())),
+                    returned_evaluation_escapes: returned_evaluation
+                        .is_some_and(|(_, escapes)| escapes),
                 })
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
@@ -3589,6 +3693,100 @@ impl Parser<'_> {
         );
         if admitted {
             Some(instruction)
+        } else {
+            self.next_site = restore;
+            None
+        }
+    }
+
+    /// Card **B01-RETURN-EXPRESSION**: evaluate a refused return through the
+    /// ordinary assignment classifier before falling back to the position's
+    /// generic refusal.
+    ///
+    /// The pre-existing whole-call rule is asked first and unchanged. For the
+    /// remaining expressions this rule admits two bounded shapes:
+    ///
+    /// * an `OpaqueValue` assigned to the reserved return place; the classifier
+    ///   has established that the value carries no resource identity, so B01
+    ///   emits a `NoOp` exit and performs no custody escape;
+    /// * exactly one contracted call with `ResourceReturnMode::None` inside an
+    ///   otherwise custody-neutral scalar expression. The call is classified
+    ///   as a standalone statement so its parameter effects are applied, and
+    ///   its resource-free result leaves nothing for the return to escape.
+    ///
+    /// Every refusal, including the classifier's own `Unknown`, keeps the old
+    /// return-position wrapper and wording.
+    ///
+    /// A declined probe restores `next_site`, so a classification attempt
+    /// cannot perturb later certificate identities.
+    fn return_expression_instruction(
+        &mut self,
+        expression: &[Token],
+        line: usize,
+    ) -> Option<(LegacyInstruction, bool)> {
+        if let Some(call) = self.return_call_instruction(expression, line) {
+            return Some((call, true));
+        }
+        if !return_call::place_is_unspelled(self.tokens, return_call::RETURN_RESULT_PLACE) {
+            return None;
+        }
+        let texts = expression
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        if let Some((call_index, call_end)) =
+            crate::legacy_condition_call::unconditional_call_span(&texts)
+        {
+            // This widening is for calls backed by a declared API contract.
+            // A locally defined callee may acquire a provisional summary
+            // during fixed-point analysis; treating that summary as the
+            // declaration premise would weaken W4's pointer-actual boundary
+            // for recursive expressions such as `1 + counted(p)`.
+            let externally_declared = find_function_body(self.tokens, texts[call_index]).is_none();
+            let outside = texts[..call_index]
+                .iter()
+                .chain(texts[call_end..].iter())
+                .copied()
+                .collect::<Vec<_>>();
+            if externally_declared
+                && crate::typed_field_access::is_scalar_operand_expression(
+                    &outside,
+                    &self.typed_model,
+                    &self.typed_types,
+                )
+            {
+                let restore = self.next_site;
+                let instruction = self.classify_simple(&expression[call_index..call_end]);
+                let admitted = matches!(
+                    &instruction,
+                    LegacyInstruction::ContractCall {
+                        destination: None,
+                        contract,
+                        ..
+                    } if contract.result == ResourceReturnMode::None
+                );
+                if admitted {
+                    return Some((instruction, false));
+                }
+                self.next_site = restore;
+            }
+        }
+        let mut synthetic = Vec::with_capacity(expression.len() + 2);
+        synthetic.extend(return_call::assignment_prefix(line));
+        synthetic.extend_from_slice(expression);
+        let restore = self.next_site;
+        let instruction = self.classify_simple(&synthetic);
+        let direct_member_read = texts.iter().filter(|text| **text == ".").count()
+            + texts.windows(2).filter(|pair| *pair == ["-", ">"]).count()
+            == 1;
+        let admitted = matches!(
+            &instruction,
+            LegacyInstruction::OpaqueValue { destination, .. }
+                if destination == return_call::RETURN_RESULT_PLACE
+        ) && direct_member_read;
+        if admitted {
+            self.next_site = restore;
+            Some((instruction, false))
         } else {
             self.next_site = restore;
             None
@@ -3835,13 +4033,17 @@ impl Parser<'_> {
         // dereference of an admitted nested call's result — `errno`, spelled
         // `(*__errno_location ())` after preprocessing. Its span leaves the
         // lexical gate exactly as a C02-P borrowed actual does; the decision is
-        // [`crate::variadic_nested::admitted_nested_call`]'s own, premises N1-N10,
+        // [`crate::variadic_nested::admitted_nested_calls`]' own, premises N1-N10,
         // and exempting the span is never on its own an admission: the nested
         // rule below is consulted again and still governs the statement.
-        let dereferenced = find_call(&texts).and_then(|(call_index, function)| {
-            let contract = self.contracts.contract(function)?;
-            let spans = call_argument_spans(&texts, call_index)?;
-            crate::variadic_nested::dereferenced_argument_span(
+        let dereferenced = find_call(&texts).map_or_else(Vec::new, |(call_index, function)| {
+            let Some(contract) = self.contracts.contract(function) else {
+                return Vec::new();
+            };
+            let Some(spans) = call_argument_spans(&texts, call_index) else {
+                return Vec::new();
+            };
+            crate::variadic_nested::dereferenced_argument_spans(
                 &texts,
                 call_index,
                 &spans,
@@ -4032,12 +4234,12 @@ impl Parser<'_> {
             if let Some(contract) = self.contracts.contract(function).cloned() {
                 // Card O04-TRACE, the two halves of card O04-B09B10's measured
                 // residual, decided together because the subject needs both:
-                // one nested call may be admitted, and a declared variadic tail
-                // may cover actuals beyond the declared parameter vector.
+                // sibling nested calls may be admitted, and a declared variadic
+                // tail may cover actuals beyond the declared parameter vector.
                 let argument_spans = call_argument_spans(&texts, call_index);
                 let variadic_tail = self.variadic_tails.contains(function);
                 let nested = argument_spans.as_ref().and_then(|spans| {
-                    crate::variadic_nested::admitted_nested_call(
+                    crate::variadic_nested::admitted_nested_calls(
                         &texts,
                         call_index,
                         spans,
@@ -4152,6 +4354,7 @@ impl Parser<'_> {
                         writes: self.refused_writes(&texts),
                     };
                 }
+                let nested = nested.unwrap_or_default();
                 let raw_arguments = argument_spans.as_ref().map(|spans| {
                     spans
                         .iter()
@@ -4170,10 +4373,10 @@ impl Parser<'_> {
                 if let Some(arguments) = &raw_arguments
                     && arguments.len() > contract.parameters.len()
                     && !(variadic_tail
-                        && crate::variadic_nested::tail_arguments_are_data(
+                        && crate::variadic_nested::tail_arguments_are_data_with_nested(
                             arguments,
                             contract.parameters.len(),
-                            nested.as_ref(),
+                            &nested,
                             &self.typed_model,
                             &self.typed_types,
                             &self.typed_bases,
@@ -4205,9 +4408,7 @@ impl Parser<'_> {
                 if raw_arguments.as_ref().is_some_and(|arguments| {
                     contract.parameters.iter().zip(arguments).enumerate().any(
                         |(index, (mode, argument))| {
-                            !nested
-                                .as_ref()
-                                .is_some_and(|nested| nested.argument == index)
+                            !nested.iter().any(|nested| nested.argument == index)
                                 && !admitted_addresses.contains(argument)
                                 && (((!matches!(mode, ResourceParameterMode::Out { .. })
                                     && argument.contains(&"&"))
@@ -4253,7 +4454,7 @@ impl Parser<'_> {
                 let mut alias_reads = self.call_alias_reads(&arguments, &contract);
                 // The admitted nested call's own reads carry the same
                 // may-alias obligation the outer call's reads do.
-                if let Some(nested) = &nested {
+                for nested in &nested {
                     let inner = self.call_alias_reads(&nested.arguments, &nested.contract);
                     for read in inner {
                         if !alias_reads
@@ -4281,13 +4482,14 @@ impl Parser<'_> {
                         .filter_map(|address| address.bound_owner.clone())
                         .collect(),
                     alias_reads,
-                    nested: nested.map(|nested| {
-                        Box::new(NestedContractCall {
+                    nested: nested
+                        .into_iter()
+                        .map(|nested| NestedContractCall {
                             function: nested.function,
                             contract: nested.contract,
                             arguments: nested.arguments,
                         })
-                    }),
+                        .collect(),
                 };
             }
             // Card HASH-CONTRACTS: a callee whose declared literal-argument
@@ -5041,7 +5243,8 @@ impl CfgBuilder {
                 writes,
                 expression_supported,
                 returned_place,
-                returned_call,
+                returned_evaluation,
+                returned_evaluation_escapes,
             } => {
                 // Card C-GATEWAY-RETURN-CALL-W4. `return f(args);` becomes the
                 // two nodes `PLACE = f(args);` and `return PLACE;` — the same C,
@@ -5049,15 +5252,15 @@ impl CfgBuilder {
                 // node is an ordinary interior node; the exit is an ordinary
                 // `EscapeIfOwned`, so `observe_exit` needs no arm for a call
                 // result.
-                if let Some(call) = returned_call {
-                    let exit = self.push(
+                if let Some(call) = returned_evaluation {
+                    let exit_instruction = if *returned_evaluation_escapes {
                         LegacyInstruction::EscapeIfOwned {
                             source: return_call::RETURN_RESULT_PLACE.to_owned(),
-                        },
-                        Vec::new(),
-                        *line,
-                        true,
-                    );
+                        }
+                    } else {
+                        LegacyInstruction::NoOp
+                    };
+                    let exit = self.push(exit_instruction, Vec::new(), *line, true);
                     return self.push((**call).clone(), vec![exit], *line, false);
                 }
                 let instruction = if !*expression_supported {
@@ -5080,6 +5283,7 @@ impl CfgBuilder {
                 line,
                 writes,
                 condition_supported,
+                condition_call,
                 null_condition,
                 distinct_condition,
                 then_body,
@@ -5102,7 +5306,7 @@ impl CfgBuilder {
                         right: condition.right.clone(),
                         true_is_distinct: condition.true_is_distinct,
                     }
-                } else if *condition_supported {
+                } else if *condition_supported || condition_call.is_some() {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
@@ -5112,12 +5316,16 @@ impl CfgBuilder {
                         writes: writes.clone(),
                     }
                 };
-                self.push(instruction, vec![then_entry, else_entry], *line, false)
+                let branch = self.push(instruction, vec![then_entry, else_entry], *line, false);
+                condition_call.as_ref().map_or(branch, |call| {
+                    self.push((**call).clone(), vec![branch], *line, false)
+                })
             }
             Statement::While {
                 line,
                 writes,
                 condition_supported,
+                condition_call,
                 null_condition,
                 body,
             } => {
@@ -5126,6 +5334,8 @@ impl CfgBuilder {
                         source: condition.source.clone(),
                         true_is_null: condition.true_is_null,
                     }
+                } else if let Some(call) = condition_call {
+                    (**call).clone()
                 } else if *condition_supported {
                     LegacyInstruction::NoOp
                 } else {
@@ -5154,15 +5364,21 @@ impl CfgBuilder {
                 init,
                 condition_always_true,
                 condition_supported,
+                condition_call,
                 null_condition,
                 increment,
                 body,
             } => {
-                let instruction = branch_instruction(
-                    *condition_supported,
-                    null_condition,
-                    writes,
-                    "unmodeled call, aggregate or indirect access in for-loop condition",
+                let instruction = condition_call.as_ref().map_or_else(
+                    || {
+                        branch_instruction(
+                            *condition_supported,
+                            null_condition,
+                            writes,
+                            "unmodeled call, aggregate or indirect access in for-loop condition",
+                        )
+                    },
+                    |call| (**call).clone(),
                 );
                 let header = self.push(instruction, Vec::new(), *line, false);
                 let increment_entry = increment.as_ref().map_or(header, |clause| {
@@ -5193,15 +5409,21 @@ impl CfgBuilder {
                 line,
                 writes,
                 condition_supported,
+                condition_call,
                 condition_is_literal_zero,
                 null_condition,
                 body,
             } => {
-                let instruction = branch_instruction(
-                    *condition_supported,
-                    null_condition,
-                    writes,
-                    "unmodeled call, aggregate or indirect access in do-while condition",
+                let instruction = condition_call.as_ref().map_or_else(
+                    || {
+                        branch_instruction(
+                            *condition_supported,
+                            null_condition,
+                            writes,
+                            "unmodeled call, aggregate or indirect access in do-while condition",
+                        )
+                    },
+                    |call| (**call).clone(),
                 );
                 let header = self.push(instruction, Vec::new(), *line, false);
                 self.break_targets.push(continuation);
@@ -5234,6 +5456,7 @@ impl CfgBuilder {
                 line,
                 writes,
                 expression_supported,
+                expression_call,
                 body,
             } => {
                 self.break_targets.push(continuation);
@@ -5247,7 +5470,9 @@ impl CfgBuilder {
                 }
                 successors.sort_unstable();
                 successors.dedup();
-                let instruction = if *expression_supported {
+                let instruction = if let Some(call) = expression_call {
+                    (**call).clone()
+                } else if *expression_supported {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
@@ -6259,7 +6484,7 @@ fn require_live_borrowed_actuals(
         // the same state.
         let calls = std::iter::once((arguments, contract)).chain(
             nested
-                .as_deref()
+                .iter()
                 .map(|nested| (&nested.arguments, &nested.contract)),
         );
         for (arguments, contract) in calls {
@@ -7158,7 +7383,7 @@ fn transfer(
             // Card O04-TRACE: the admitted nested call's declared effects, in
             // order, before the enclosing call's. It produces nothing, so its
             // produced-site vector is empty by construction.
-            if let Some(nested) = nested {
+            for nested in nested {
                 apply_contract_call(
                     function,
                     node.line,

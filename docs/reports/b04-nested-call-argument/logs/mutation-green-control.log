@@ -1,0 +1,30 @@
+   Compiling qcore-c-gateway v0.1.0 (/tmp/agent-b04/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.68s
+     Running tests/constructor_residuals.rs (/home/cosmo/Documents/GitHub/qcore-c/private/b-series/targets/b04/debug/deps/constructor_residuals-03525a51c2599f02)
+
+running 22 tests
+test a_dereferenced_result_carrying_custody_is_refused_by_premise_n6 ... ok
+test an_uncontracted_accessor_keeps_the_nested_call_refusal ... ok
+test a_dereferenced_result_of_a_releasing_accessor_is_refused_by_premise_n7 ... ok
+test an_inner_actual_the_projection_cannot_denote_is_refused_by_premise_n9 ... ok
+test every_sibling_keeps_its_borrow_liveness_obligation ... ok
+test every_sibling_keeps_its_may_alias_obligation ... ok
+test a_borrowed_inner_actual_composes_and_stays_accounted ... ok
+test the_admission_does_not_hide_the_resource_it_stands_beside ... ok
+test one_effectful_or_uncontracted_sibling_refuses_the_whole_outer_call ... ok
+test a_call_that_is_not_a_declaration_does_not_retire_the_fact ... ok
+test a_typedef_pointee_resolves_and_an_unresolved_one_refuses ... ok
+test a_dereferenced_pointer_result_is_refused_by_premise_n10 ... ok
+test a_write_through_a_dereferenced_call_result_never_discharges_a_resource ... ok
+test premise_n8_decides_the_position_in_both_directions ... ok
+test sibling_neutral_nested_calls_compose_and_recheck ... ok
+test both_spellings_of_the_wrapper_answer_alike ... ok
+test the_production_dereference_shape_is_admitted_and_accounts_for_its_resource ... ok
+test the_admission_is_rederived_from_the_certificate_alone ... ok
+test the_bare_nested_call_family_is_unchanged ... ok
+test a_released_identity_at_a_nested_borrowed_actual_is_refused ... ok
+test every_other_wrapper_shape_keeps_the_existing_refusal ... ok
+test a_declaration_substitution_withdraws_the_admission ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.89s
+

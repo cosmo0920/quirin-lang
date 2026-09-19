@@ -1,0 +1,11 @@
+# B02 mutations 2026-09-19T15:41:16Z
+# HEAD 83585a48389cdaa339239ea3d84d9c38aea48db6
+M0 baseline: exit=0; GREEN; failures=-
+M1 call transfer omitted before the branch: exit=101; RED as required; named_test=yes; compile_error=False; restored_sha256_equal=True; failures=['an_unconditional_release_runs_before_the_branch']
+M2 short-circuit condition treated as unconditional: exit=101; RED as required; named_test=yes; compile_error=False; restored_sha256_equal=True; failures=['a_short_circuit_release_stays_refused_and_cannot_hide_the_live_resource']
+M3 call under a type operator treated as evaluated: exit=101; RED as required; named_test=yes; compile_error=False; restored_sha256_equal=True; failures=['legacy_condition_call::tests::refuses_conditional_or_out_of_scope_evaluation']
+M4 residual expression skipped instead of checked: exit=101; RED as required; named_test=yes; compile_error=False; restored_sha256_equal=True; failures=['an_indirect_residual_cannot_be_masked_by_the_modeled_call']
+M5 any isolated instruction accepted instead of ContractCall only: exit=101; RED as required; named_test=yes; compile_error=False; restored_sha256_equal=True; failures=['an_uncontracted_call_stays_refused']
+M6 unknown Boolean result loses the else successor: exit=101; RED as required; named_test=yes; compile_error=False; restored_sha256_equal=True; failures=['the_unknown_call_result_keeps_both_branch_arms']
+M7 restored baseline: exit=0; GREEN; failures=-
+# 8 of 8 verdicts as required

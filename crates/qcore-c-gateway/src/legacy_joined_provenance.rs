@@ -473,7 +473,7 @@ pub(super) fn release_site(
         contract,
         arguments,
         destination: None,
-        nested: None,
+        nested,
         aggregate_reads,
         aggregate_consumed,
         aggregate_addresses,
@@ -486,6 +486,7 @@ pub(super) fn release_site(
         || !aggregate_reads.is_empty()
         || !aggregate_consumed.is_empty()
         || !aggregate_addresses.is_empty()
+        || !nested.is_empty()
     {
         return None;
     }
@@ -739,7 +740,7 @@ mod tests {
             aggregate_consumed: Vec::new(),
             aggregate_addresses: Vec::new(),
             alias_reads: Vec::new(),
-            nested: None,
+            nested: Vec::new(),
         };
         cfg.conditional_names.insert("q".to_string());
         let reachable = BTreeSet::from([0, 1, 2, 3]);
@@ -842,7 +843,7 @@ mod tests {
             aggregate_consumed: Vec::new(),
             aggregate_addresses: Vec::new(),
             alias_reads: Vec::new(),
-            nested: None,
+            nested: Vec::new(),
         }
     }
 

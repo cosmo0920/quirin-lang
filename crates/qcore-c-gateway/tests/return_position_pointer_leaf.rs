@@ -51,6 +51,9 @@ struct z_leaf { int size; void *opaque; }; \
 struct z_node { int flag; struct z_leaf *leaf; struct z_node *next; }; \
 struct z_view { int kind; struct z_node *head; struct z_node *tail; \
                 struct z_node *ring[2]; int *count; }; \
+typedef struct z_opaque { int id; } z_opaque_t; \
+typedef struct z_getter z_getter_t; \
+struct z_getter { z_opaque_t *value; }; \
 void z_hold(struct z_node *n); \
 int z_unknown(int n);";
 
@@ -343,6 +346,56 @@ fn a_released_base_keeps_the_return_refusal() {
         "the released base's read must keep its refusal, got {:?}",
         measured.unsupported()
     );
+}
+
+/// B01's production-moving opaque getter family. The member's typedef does
+/// not establish a tracked resource identity, so the ordinary assignment
+/// classifier lowers the read to `OpaqueValue` and the return adds no escape.
+#[test]
+fn an_untracked_opaque_getter_is_evaluated_at_return() {
+    if !clang_available() {
+        return;
+    }
+    let measured = run("z_opaque_t *subject(const z_getter_t *getter) { return getter->value; }");
+    assert!(!measured.refuses_return(), "{:?}", measured.unsupported());
+    assert_eq!(measured.status, AnalysisStatus::Safe);
+    assert!(measured.certified);
+}
+
+/// The opaque getter is admitted only for a base the risk closure leaves
+/// untracked. A call that releases the formal makes the base protected, and an
+/// acquired local makes it bound; both keep the old refusal.
+#[test]
+fn protected_and_bound_opaque_getter_bases_stay_refused() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "z_opaque_t *subject(z_getter_t *getter) { q_free(getter); return getter->value; }",
+        "z_opaque_t *subject(void) { z_getter_t *getter; getter = q_alloc(); return getter->value; }",
+    ] {
+        let measured = run(body);
+        assert!(
+            measured.refuses_return(),
+            "{body}: {:?}",
+            measured.unsupported()
+        );
+        assert_ne!(measured.status, AnalysisStatus::Safe, "{body}");
+    }
+}
+
+/// `OpaqueValue` covers one complete direct member read, not a conditional
+/// choice of pointer results. The latter still needs branch-sensitive value
+/// identity and remains refused.
+#[test]
+fn a_conditional_opaque_pointer_result_stays_refused() {
+    if !clang_available() {
+        return;
+    }
+    let measured = run("z_opaque_t *subject(const z_getter_t *getter, int flag) { \
+         return flag ? getter->value : (z_opaque_t *)0; }");
+    assert!(measured.refuses_return(), "{:?}", measured.unsupported());
+    assert_ne!(measured.status, AnalysisStatus::Safe);
 }
 
 /// Every shape outside the premises, each keeping the refusal it already had.
