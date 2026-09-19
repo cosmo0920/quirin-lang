@@ -412,23 +412,20 @@ fn a_resource_free_call_is_evaluated_inside_a_scalar_return() {
     if !clang_available() {
         return;
     }
-    for (expression, explicit) in [("r_release_code(p) + 1", "r_release_code(p); return 1")] {
-        let lowered = run(&format!(
-            "int subject(void) {{ void *p = q_alloc(); return {expression}; }}"
-        ));
-        let written = run(&format!(
-            "int subject(void) {{ void *p = q_alloc(); {explicit}; }}"
-        ));
-        assert!(
-            !lowered.refuses_return(),
-            "{expression}: {:?}",
-            lowered.unsupported()
-        );
-        assert_eq!(lowered.status, written.status, "{expression}");
-        assert_eq!(lowered.unsupported(), written.unsupported(), "{expression}");
-        assert_eq!(lowered.status, AnalysisStatus::Safe, "{expression}");
-        assert!(!lowered.has_synthetic_unknown_alias(), "{expression}");
-    }
+    let expression = "r_release_code(p) + 1";
+    let lowered = run(&format!(
+        "int subject(void) {{ void *p = q_alloc(); return {expression}; }}"
+    ));
+    let written = run("int subject(void) { void *p = q_alloc(); r_release_code(p); return 1; }");
+    assert!(
+        !lowered.refuses_return(),
+        "{expression}: {:?}",
+        lowered.unsupported()
+    );
+    assert_eq!(lowered.status, written.status, "{expression}");
+    assert_eq!(lowered.unsupported(), written.unsupported(), "{expression}");
+    assert_eq!(lowered.status, AnalysisStatus::Safe, "{expression}");
+    assert!(!lowered.has_synthetic_unknown_alias(), "{expression}");
 }
 
 /// A fixed-point summary for a locally defined recursive function is not the
