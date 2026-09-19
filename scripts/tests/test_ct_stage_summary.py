@@ -716,10 +716,11 @@ class SummaryTest(unittest.TestCase):
         self.assertEqual(touched, len(measured))
         with MutableRoot() as scratch:
             scratch.write_manifest(manifest)
+            before_acceptance = summary.check_acceptance(scratch.directory)
             scratch.write_triage(coverage)
             self.assertEqual(summary.unmapped_bucket_counts(scratch.directory), before_counts)
             self.assertEqual(summary.unmapped_label_sources(scratch.directory), before_sources)
-            self.assertEqual(summary.check_acceptance(scratch.directory), [])
+            self.assertEqual(summary.check_acceptance(scratch.directory), before_acceptance)
             # Non-vacuity: the archive text IS read, and published, for a case no
             # lane measured, so the neutrality above is a property of the
             # resolution rule and not of the archive being ignored everywhere.
@@ -764,9 +765,9 @@ class SummaryTest(unittest.TestCase):
     def test_a_measured_label_wins_over_the_archive_and_says_so(self):
         """The resolution rule, on the real tree.
 
-        Three of the seven unmapped cases carry a lane's measured bucket; the
-        other four still read card T00's 2026-09-07 analysis, and the published
-        source is what makes the difference legible.
+        CT41 is the sole unmapped case and carries a lane-measured bucket. The
+        published source makes that provenance legible; scratch tests above
+        retain the archived-only arm after CT10 and CT24 mapped.
         """
         labels = summary.unmapped_labels(ROOT)
         measured = {
@@ -991,8 +992,8 @@ class SummaryTest(unittest.TestCase):
                     case["mapping_status"] = "unmapped"
             scratch.write_manifest(manifest)
             acceptance = scratch.read_acceptance()
-            # The two ids are a tree fact: they must be cases the manifest still
-            # leaves unmapped. They read CT44 and CT47 until card
+            # The two ids are a scratch-tree fact: they are staged back to
+            # unmapped above. They read CT44 and CT47 until card
             # `CT-WIRE-LANE-4` (wave 32) mapped both, and read CT10 and CT24 --
             # formerly archive-held -- since. Stage both back to unmapped in
             # this scratch tree so both unsupported-source arms stay live.
@@ -1099,9 +1100,9 @@ class SummaryTest(unittest.TestCase):
         """The direction that would silently drop a live label."""
         with MutableRoot() as scratch:
             data = scratch.read_evidence(self.WAVE17)
-            data["retired_unmapped_reasons"]["CT42"] = {
+            data["retired_unmapped_reasons"]["CT41"] = {
                 "retires": self.WAVE9,
-                "mapped_by": "nothing — CT42 is still unmapped",
+                "mapped_by": "nothing — CT41 is still unmapped",
             }
             scratch.write_evidence(self.WAVE17, data)
             with self.assertRaises(SystemExit):
