@@ -6700,11 +6700,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Card CT41-MAP, REDUCED onto the landed CT41 mapping (merge 2910c1e0). This card claims no coverage: CT41's row, stage evidence and bucket retirement belong to docs/reports/ct41-publication-mapping/, and the workspace figure below is unchanged from that card's (4812) because this card's two added controls run inside the existing CT41 test rather than adding one. Complete standing gate on this card's own worktree, run detached with every step's exit captured to its own file, never through a pipe (GATE-EXIT-SWALLOWED-BY-PIPE). Submodules were initialised in this fresh worktree (WORKTREE-SUBMODULE-UNGATED). Workspace: 4812 passed / 0 failed / 10 ignored over 246 result summaries and 244 targets. No constraint-16 load-sensitive row failed in this run; an earlier pre-reduction run on this worktree did fail a_confined_fixture_cannot_write_outside_the_admitted_paths with Io(Broken pipe) under concurrency and was re-verified in isolation, recorded here so the row's sensitivity is not hidden by a clean run. Provider 122 is CARRIED, not remeasured: `git diff 2910c1e0 -- providers crates/qcore-schemas` is empty. Clang 21.1.8 was recorded by running `clang --version` in THIS worktree and the recording sits beside this file; it is not borrowed. The Python suite was run after the matrix regeneration, per the validation policy's ordering. scripts/check_residuals.py (docs/reports/docs-structure-compression/check_residuals.py) fails for the known inherited reason RESIDUAL-DISCOVERY-CHECK-LOST-ARM-OVERBROAD, unchanged by this card and not chased. Six mutations over the arms this card adds: all red through assertions, 0 vacuous, every file restored sha256-identical. Private logs: measure/gate-run and measure/mut-final.",
-  "workspace_tests": 4812,
+  "note": "Card B02-BRANCH-CONDITION at ec3a86e0. Full standing gate run outside ptrace so LeakSanitizer could execute: submodule 0, 4825 Rust passed / 0 failed / 10 ignored over 247 result summaries and 245 targets, fmt 0, clippy 0, both reevaluation examples 0, 146 Lean audits 0. The matrix was regenerated with this gate, then 305 Python tests passed, exit 0. Provider 122 is carried, not remeasured: this card changes only qcore-c-gateway Rust/tests, one Lean model/audit and its report. Clang was invoked in this worktree during this run and its recording is beside this file. The earlier sandboxed run is preserved privately as incomplete and invalid: LeakSanitizer refused ptrace and the run was interrupted before cargo wrote an aggregate exit; no figure is carried from it. Full language conformance remains false; the corpus measurement moves one projected function, not a unit promotion or an upstream defect claim.",
+  "workspace_tests": 4825,
   "provider_tests": 122,
   "python_evidence_validator_tests": 305,
-  "lean_audits": 145,
+  "lean_audits": 146,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6715,6 +6715,7 @@
    "AuditBorrowLiveness.lean",
    "AuditBoundFieldRead.lean",
    "AuditBranchArms.lean",
+   "AuditBranchConditionCall.lean",
    "AuditBranchJoin.lean",
    "AuditBucketTally.lean",
    "AuditCGatewayRefinements.lean",
@@ -6858,7 +6859,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/ct41-map/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/b02-branch-condition/gate.json)"
  },
  "named_followups": [
   {
