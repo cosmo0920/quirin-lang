@@ -195,7 +195,11 @@
   "ct_stage_names": 19,
   "ct_cells": 950,
   "unverified_spec_items": 7,
+<<<<<<< HEAD
   "named_followups": 264
+=======
+  "named_followups": 262
+>>>>>>> refs/rewritten/codex-ct24-composition
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -1031,14 +1035,23 @@
    "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
    "docs/reports/ct42-cell-route/ct_stage_evidence.json",
    "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
+<<<<<<< HEAD
    "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json",
    "docs/reports/ct10-source-layout/ct_stage_evidence.json"
+=======
+   "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json"
+>>>>>>> refs/rewritten/codex-ct24-composition
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
+<<<<<<< HEAD
    "mapped": 49,
    "unmapped": 1
+=======
+   "mapped": 48,
+   "unmapped": 2
+>>>>>>> refs/rewritten/codex-ct24-composition
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1179,10 +1192,17 @@
   ],
   "stage_histogram": {
    "parse": {
+<<<<<<< HEAD
     "executed": 49
    },
    "elaborate": {
     "executed": 46,
+=======
+    "executed": 48
+   },
+   "elaborate": {
+    "executed": 45,
+>>>>>>> refs/rewritten/codex-ct24-composition
     "not_applicable": 3
    },
    "footprint_lowering": {
@@ -1195,6 +1215,7 @@
    },
    "task_lowering": {
     "executed": 24,
+<<<<<<< HEAD
     "not_applicable": 25
    },
    "task_ledger_check": {
@@ -1240,6 +1261,53 @@
    "native_execution": {
     "executed": 19,
     "not_applicable": 30
+=======
+    "not_applicable": 24
+   },
+   "task_ledger_check": {
+    "executed": 23,
+    "not_applicable": 25
+   },
+   "mutex_lowering": {
+    "executed": 11,
+    "not_applicable": 37
+   },
+   "mutex_invariant_check": {
+    "executed": 11,
+    "not_applicable": 37
+   },
+   "epoch_lowering": {
+    "executed": 7,
+    "not_applicable": 41
+   },
+   "epoch_bound_check": {
+    "executed": 7,
+    "not_applicable": 41
+   },
+   "sequential_whole_program": {
+    "executed": 2,
+    "not_applicable": 46
+   },
+   "sequential_reference_execution": {
+    "executed": 1,
+    "not_applicable": 47
+   },
+   "task_reference_execution": {
+    "executed": 13,
+    "not_applicable": 35
+   },
+   "mutex_reference_execution": {
+    "executed": 3,
+    "not_applicable": 45
+   },
+   "c_emission": {
+    "executed": 19,
+    "not_applicable": 29
+   },
+   "native_execution": {
+    "executed": 19,
+    "not_applicable": 29
+>>>>>>> refs/rewritten/codex-ct24-composition
    },
    "native_sanitized": {
     "executed": 10,
@@ -1249,11 +1317,19 @@
    },
    "legacy_c_twin": {
     "executed": 3,
+<<<<<<< HEAD
     "not_applicable": 46
    },
    "proof": {
     "executed": 5,
     "unassessed": 44
+=======
+    "not_applicable": 45
+   },
+   "proof": {
+    "executed": 5,
+    "unassessed": 43
+>>>>>>> refs/rewritten/codex-ct24-composition
    }
   },
   "depth_profile": {
@@ -1322,7 +1398,11 @@
   },
   "observation_counts": {
    "c_emission": 36,
+<<<<<<< HEAD
    "elaborate": 46,
+=======
+   "elaborate": 45,
+>>>>>>> refs/rewritten/codex-ct24-composition
    "epoch_bound_check": 7,
    "epoch_lowering": 7,
    "footprint_check": 1,
@@ -1333,7 +1413,11 @@
    "mutex_reference_execution": 3,
    "native_execution": 51,
    "native_sanitized": 32,
+<<<<<<< HEAD
    "parse": 49,
+=======
+   "parse": 48,
+>>>>>>> refs/rewritten/codex-ct24-composition
    "proof": 5,
    "sequential_reference_execution": 1,
    "sequential_whole_program": 2,
@@ -3680,12 +3764,15 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
       "observations": 1
+<<<<<<< HEAD
      },
      "footprint_lowering": {
       "status": "not_applicable"
      },
      "footprint_check": {
       "status": "not_applicable"
+=======
+>>>>>>> refs/rewritten/codex-ct24-composition
      },
      "task_lowering": {
       "status": "executed",
@@ -6402,9 +6489,17 @@
    "cases_stopping_at_source_rejection": 2
   },
   "unmapped_bucket_counts": {
+<<<<<<< HEAD
    "blocked-on-gateway-expressiveness (C-twin measured)": 1
   },
   "unmapped_label_sources": {
+=======
+   "blocked-on-unimplemented-syntax": 1,
+   "blocked-on-gateway-expressiveness (C-twin measured)": 1
+  },
+  "unmapped_label_sources": {
+   "CT10": "t00-archive",
+>>>>>>> refs/rewritten/codex-ct24-composition
    "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
   },
   "newly_decidable_not_mapped": [],
@@ -6531,7 +6626,11 @@
   "workspace_tests": 4733,
   "provider_tests": 122,
   "python_evidence_validator_tests": 305,
+<<<<<<< HEAD
   "lean_audits": 144,
+=======
+  "lean_audits": 143,
+>>>>>>> refs/rewritten/codex-ct24-composition
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",

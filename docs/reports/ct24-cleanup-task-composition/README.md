@@ -112,7 +112,30 @@ CARGO_INCREMENTAL=0` and this worktree's own `target/`.
 | `lake build QCore.CleanupTaskComposition` | exit 0 after identity binding |
 | `lake env lean AuditRegionJoinsLoan.lean` | exit 0; only standard `propext` / `Quot.sound` dependencies |
 | `python3 scripts/check_lean_audits.py` | exit 0; 143 audits after the final proof strengthening |
-| `cargo test -p qcore-compiler --test ct_corpus --no-fail-fast` inside the filesystem sandbox | reached the existing sanitized heap runner, then exit 101 because LeakSanitizer's process inspection is sandbox-blocked; this is a failed attempt, not gate evidence, and will be rerun unsandboxed in the standing gate |
+| `cargo fmt --all -- --check` | exit 0 |
+| `cargo clippy --all-targets -- -D warnings` | exit 0 |
+| both reevaluation probes | exit 0; zero failed expectations |
+| `python3 -m unittest discover -s scripts/tests` after regeneration | exit 0; 305 passed |
+| `python3 scripts/ct_stage_summary.py . --check` | exit 0; 48 mapped / 2 unmapped |
+| `clang --version` | exit 0; this card's recording is in `gate/clang-version.txt` |
+
+The first sandboxed corpus attempt reached the existing sanitized heap runner
+and exited 101 because LeakSanitizer's process inspection was sandbox-blocked.
+It is a failed attempt, not evidence. The later unrestricted workspace command
+ran to its final doctest summary and its log contains 242 strict result
+summaries totaling 4,758 passed, zero failed and 10 ignored. The shell wrapper
+then assigned zsh's read-only `status` variable before it could capture Cargo's
+exit, so that observation has an **unknown Cargo exit** and is not published as
+a standing-gate pass. A duplicate rerun was stopped at the integrator's request;
+the merged tree will receive the definitive combined workspace gate.
+
+The complete observation is preserved at
+`private/ct24-gate-20260919/workspace-rerun.log`; the wrapper error is the
+session exit text `zsh:1: read-only variable: status`. Other final logs and
+their explicit exit files are in the same private directory. The matrix was
+regenerated without `--gate`: its CT mapping and stage rows are current, while
+its standing-gate measurements remain explicitly carried until the integrator
+regenerates it with the combined run's gate JSON.
 
 The corpus inventory now executes the mapped CT24 row and all eight controls:
 same cleanup after join and independent-owner cleanup before join admit;
@@ -128,11 +151,11 @@ generic unsupported-body refusal from satisfying the case.
    `10`, proof unchanged at `5`, and Lean audits `142 -> 143` only where the
    merged tree and full gate confirm those bases. This card itself adds no
    audit file; its module is registered in `AuditRegionJoinsLoan.lean`.
-2. Apply the CT24 mapping's constraint-25 consequence: the hand-kept
-   `newly_decidable_not_mapped` list and reasons map lose CT24, and regenerate
-   the matrix through `docs/reports/remaining-d02/build_matrix.py` with this
-   card's own completed gate record. The derived matrix reason map then loses
-   CT24 structurally. Do not reuse the stale 142-audit predecessor gate.
+2. The hand-kept `newly_decidable_not_mapped` list and reasons map now lose
+   CT24, and the matrix generator removes CT24 from the derived reason map.
+   Regenerate the matrix once more with the definitive integration gate JSON
+   so its carried validation block becomes the merged tree's measurements. Do
+   not reuse the stale 142-audit predecessor gate.
 3. Proposed replacement for the CT24-relevant placement sentence in standing
    constraint 15m:
 
@@ -170,4 +193,6 @@ This checkpoint does not add cleanup to workers, arbitrary control flow,
 multiple regions, an unhandled error edge, or an implicit scope-exit cleanup.
 It does not prove faithful source extraction, Rust/Lean refinement, native
 scheduler coverage, or CT conformance. It supplies a bounded executed cleanup
-task composition and leaves mapping and promotion to the evidence lane.
+task composition and maps CT24 as one source-level rejection with the stage
+and control boundaries above. No status or conformance promotion follows from
+that mapping.
