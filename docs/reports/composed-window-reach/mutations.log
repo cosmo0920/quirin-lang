@@ -1,0 +1,28 @@
+mutations.sh — 2026-09-19T06:45:21Z — HEAD c4daf585
+sha256 before: 26b9c258801ff987  crates/qcore-core/src/std_buffer.rs;d86c85e516e4cb00  crates/qcore-core/src/std_string.rs;49e77c407429327c  crates/qcore-frontend/src/source_std_string.rs;2978429cd05edfbb  proof/QCore/LoopWindows.lean;
+baseline (before): composed_window_reach GREEN
+lean baseline (before): QCore.LoopWindows BUILDS
+W41-M1-field-arms-silent: test 'a_field_path_is_refused_by_the_window_functions_own_gate' went RED under the mutation — non-vacuous (ok)
+  crates/qcore-core/src/std_buffer.rs restored sha256-equal (26b9c258801ff987)
+W41-M2-gate-not-consulted: test 'a_field_path_is_refused_by_the_window_functions_own_gate' went RED under the mutation — non-vacuous (ok)
+  crates/qcore-core/src/std_buffer.rs restored sha256-equal (26b9c258801ff987)
+W41-M3-shallow-window-emptied: test 'every_view_reading_position_keeps_the_owner_out' went RED under the mutation — non-vacuous (ok)
+  crates/qcore-core/src/std_string.rs restored sha256-equal (d86c85e516e4cb00)
+W41-M3b-shallow-pin: test 'the_depth_contribution_is_empty_for_every_event' went RED under the mutation — non-vacuous (ok)
+  crates/qcore-core/src/std_string.rs restored sha256-equal (d86c85e516e4cb00)
+W41-M4-depth-contributes: test 'the_depth_contribution_is_empty_for_every_event' went RED under the mutation — non-vacuous (ok)
+  crates/qcore-core/src/std_string.rs restored sha256-equal (d86c85e516e4cb00)
+W41-M9-composed-window-emptied: test 'every_view_reading_position_keeps_the_owner_out' went RED under the mutation — non-vacuous (ok)
+  crates/qcore-core/src/std_string.rs restored sha256-equal (d86c85e516e4cb00)
+W41-M5-body-vocabulary-skips-render: test 'a_view_constructing_statement_in_a_composed_body_is_refused_by_name' went RED under the mutation — non-vacuous (ok)
+  crates/qcore-frontend/src/source_std_string.rs restored sha256-equal (49e77c407429327c)
+W41-M6-lean-vector-number: test 'the_lean_window_model_and_the_rust_window_function_agree_on_shared_vectors' went RED under the mutation — non-vacuous (ok)
+  proof/QCore/LoopWindows.lean restored sha256-equal (2978429cd05edfbb)
+W41-M7-lean-vector-spelling: QCore.LoopWindows FAILED TO BUILD under the mutation — non-vacuous (ok)
+  proof/QCore/LoopWindows.lean restored sha256-equal (2978429cd05edfbb)
+W41-M8-body-admits-field-path: QCore.LoopWindows FAILED TO BUILD under the mutation — non-vacuous (ok)
+  proof/QCore/LoopWindows.lean restored sha256-equal (2978429cd05edfbb)
+baseline (after): composed_window_reach GREEN
+lean baseline (after): QCore.LoopWindows BUILDS
+sha256 after:  26b9c258801ff987  crates/qcore-core/src/std_buffer.rs;d86c85e516e4cb00  crates/qcore-core/src/std_string.rs;49e77c407429327c  crates/qcore-frontend/src/source_std_string.rs;2978429cd05edfbb  proof/QCore/LoopWindows.lean;
+RESULT: every mutation reddened its named test; every file restored sha256-equal.

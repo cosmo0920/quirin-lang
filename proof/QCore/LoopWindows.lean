@@ -427,24 +427,233 @@ theorem a_longer_live_set_blocks_the_drop_no_less (loans : List QCore.WriteLend.
   rw [blocked]
   exact Bool.or_true _
 
-/-! ## 8. What this card admits, as one list
+/-! ## 8. The alphabet the implementation produces
 
-A widening must change a theorem rather than slip past one. The shapes a loop
-body may hold beside a loan are exactly these; a lend or a borrow inside a body
-(`LOOP-PER-ITERATION-LOAN`) and an acquisition or a release inside one
-(`LOOP-WINDOW-BODY-CUSTODY`) are outside the list and refused by name. -/
+Card `COMPOSED-WINDOW-REACH` (wave 41) replaced this section. What stood here
+was a two-constructor enumeration `AdmittedInBody` and the theorem
+`the_admitted_body_shapes_are_exactly_these`, which said that each of an
+inductive type's two constructors is a member of a list spelling both of them.
+That is true of *any* two-constructor type and any list of its two
+constructors: it is decided by the shape of the declaration and says nothing
+about the route (`LOOPWINDOWS-ADMITTED-SHAPES-TAUTOLOGY`, measured by
+`STABILITY-REEVAL-4`). It is superseded here rather than deleted: the question
+it was reaching for — *may a loop body hold an event the window function cannot
+account for?* — is now asked over the alphabet the implementation actually
+produces, and answered by a theorem that a mutation can falsify.
 
-inductive AdmittedInBody where
-  /-- A store, a load or an extent read — through the owner or through a loan. -/
-  | access
-  /-- A literal binding, a line, a nested loop. -/
-  | plain
+`§4`'s `the_unrolling_is_loop_v1s` is stated at `QCore.StdBuffer.Event`, whose
+eight constructors are `bind`/`acquire`/`store`/`load`/`extent`/`release`/
+`line`/`ret` — **no loan**. The Rust `BufferEvent` the window function runs
+over has sixteen, `Lend` and the four field-path events among them, so the one
+theorem tying the model to `LOOP-V1` was proved over an alphabet with nothing
+in it to lend (`LOOPWINDOWS-LEAN-IS-A-TRANSCRIPTION`). `LendEvent` below is
+that alphabet, collapsed to exactly what the window function distinguishes, and
+`§9` instantiates the unrolling at it. -/
+
+/-- The window-relevant shape of `qcore_core::std_buffer::BufferEvent`. Three
+classes, because the window function distinguishes three and no more:
+
+* `names n` — the five events that name a buffer or a loan at a custody or
+  access position (`Store`, `Load`, `Extent`, `Release`, `Lend`). A name here
+  is a **plain binding**, which is the only shape a lend binding has.
+* `fieldPath` — the four events that address a buffer as `RECORD.FIELD`
+  (`FieldStore`, `FieldLoad`, `FieldExtent`, `FieldRelease`). The window's key
+  space is plain bindings, so this name cannot be expressed in it at all.
+* `quiet` — the six that name neither (`Bind`, `Acquire`, `Construct`, `Field`,
+  `Line`, `Return`).
+
+`Repeat` is not a constructor here: it is `Stmt.loop`, §1's own. -/
+inductive LendEvent where
+  | names (name : String)
+  | fieldPath
+  | quiet
   deriving DecidableEq, Repr
 
-def admittedInBody : List AdmittedInBody := [.access, .plain]
+/-- Whether an event names `loan` — the Rust `custody_names_at_any_depth`'s
+`WindowName::Binding` test. A field path names *something*, but not something
+this predicate can compare against a binding, which is the whole point of the
+third case below. -/
+def usesLoan (loan : String) : LendEvent → Bool
+  | .names n => n == loan
+  | .fieldPath => false
+  | .quiet => false
 
-theorem the_admitted_body_shapes_are_exactly_these (s : AdmittedInBody) :
-    s ∈ admittedInBody := by
-  cases s <;> simp [admittedInBody]
+/-- Whether an event's name lies **outside the window's key space** — the Rust
+`window_unnameable_events`' test. -/
+def unnameable : LendEvent → Bool
+  | .fieldPath => true
+  | .names _ => false
+  | .quiet => false
+
+/-- The shapes a loop body may hold beside a loan, as a decision on the
+alphabet the implementation produces. A lend inside a body is refused by name
+(`LOOP-PER-ITERATION-LOAN`) and so is an acquisition or a release
+(`LOOP-WINDOW-BODY-CUSTODY`); but those three are `names` events here, because
+the window function does not distinguish them — the refusal that keeps them out
+is the route's, not this model's, and the model must not pretend otherwise. What
+this model *can* decide is the field path: `OWNED-FIELD-LOOP-BODY` keeps it out
+of a body, and card `COMPOSED-WINDOW-REACH`'s own gate keeps it out of any
+entry whose window is computed. -/
+def admittedInBody : LendEvent → Bool
+  | .names _ => true
+  | .quiet => true
+  | .fieldPath => false
+
+/-- **Every event a body may hold is one the window function can account for.**
+
+This is what §8's tautology was reaching for, with content: it is falsified by
+admitting `fieldPath` in a body, which is exactly the mutation
+`WINDOW-FIELD-ARM-UNREACHED` describes — the day `OWNED-FIELD-LOOP-BODY` is
+lifted without giving the four field-path arms real windows, a body holds an
+event whose name the window forgets, the window runs **shorter**, and the owner
+may write bytes a loan holds. -/
+theorem every_admitted_body_event_is_windowed (e : LendEvent) :
+    admittedInBody e = true → unnameable e = false := by
+  cases e <;> simp [admittedInBody, unnameable]
+
+/-- And the converse, so the two definitions cannot drift apart: the events the
+window cannot name are exactly the ones a body may not hold. -/
+theorem the_unnameable_events_are_exactly_the_inadmissible_ones (e : LendEvent) :
+    unnameable e = ! admittedInBody e := by
+  cases e <;> simp [admittedInBody, unnameable]
+
+/-- An unnameable event contributes to **no** loan's window, at any depth —
+which is the precise sense in which forgetting it shortens a window. -/
+theorem an_unnameable_event_uses_no_loan (e : LendEvent) (loan : String) :
+    unnameable e = true → usesLoan loan e = false := by
+  cases e <;> simp [unnameable, usesLoan]
+
+/-! ## 9. The unrolling at the lend alphabet, and the Rust binding
+
+§4 proves the unrolling this window is stated over is `LOOP-V1`'s, at
+`QCore.StdBuffer.Event`. That alphabet has no loan, so the tie was to a
+structure the implementation never produces. The unrolling is one recursion
+whatever the element type — `copies` is generic and `QCore.SourceLoop`'s
+`repeatAppend` is its instance at `Event` — so the tie extends to `LendEvent`
+by the equation below rather than by a second proof about a second unrolling.
+
+`§4`'s `the_unrolling_is_loop_v1s` stays exactly as it is; this adds the leg it
+was missing. -/
+
+/-- `copies` as a flattening of a replication — a spelling that mentions no
+element type, so the two instances below are visibly the same recursion. -/
+theorem copies_eq_flatten_replicate {β : Type} (count : Nat) (xs : List β) :
+    copies count xs = (List.replicate count xs).flatten := by
+  induction count with
+  | zero => rfl
+  | succ n ih => simp [copies, List.replicate, ih]
+
+/-- `QCore.SourceLoop.repeatAppend` — `LOOP-V1`'s own unrolling of a body — is
+that same flattening. -/
+theorem repeatAppend_eq_flatten_replicate (count : Nat) (xs : List Event) :
+    repeatAppend count xs = (List.replicate count xs).flatten := by
+  induction count with
+  | zero => rfl
+  | succ n ih => simp [repeatAppend, List.replicate, ih]
+
+/-- **The unrolling at the lend alphabet is the recursion `LOOP-V1` uses.**
+A loop's unrolling at `LendEvent` — where a loan *can* be named — is its body's
+unrolling flattened out of a replication, which is exactly what
+`repeatAppend_eq_flatten_replicate` says `LOOP-V1`'s own `repeatAppend` is. The
+two are one function up to the element type, so this is not a second unrolling
+that happens to agree on an alphabet with no loan in it. This is the leg
+`LOOPWINDOWS-LEAN-IS-A-TRANSCRIPTION` measured as missing: `§4`'s
+`the_unrolling_is_loop_v1s` ties the model to `LOOP-V1` at
+`QCore.StdBuffer.Event`, whose eight constructors cannot spell a lend. -/
+theorem the_lend_alphabets_unrolling_is_loop_v1s_recursion
+    (count : Nat) (body : List (Stmt LendEvent)) :
+    unrollStmt (Stmt.loop count body)
+      = (List.replicate count (unrollStmts body)).flatten := by
+  simp only [unrollStmt, copies_eq_flatten_replicate]
+
+/-- And the same equation at `LOOP-V1`'s own alphabet, so the two sit side by
+side and a reader can see they are the same right-hand side. -/
+theorem loop_v1s_unrolling_is_the_same_flattening (count : Nat) (body : List Item) :
+    unroll (.loop "" count body) = (List.replicate count (unrollList body)).flatten := by
+  simp only [unroll, repeatAppend_eq_flatten_replicate]
+
+/-- **The window function is total on the lend alphabet.** Stated at
+`LendEvent` rather than at an alphabet with no loan: every use in the unrolled
+program has an origin at or before the window's end, `§3`'s theorem
+instantiated where a lend can be named. -/
+theorem every_lend_use_lies_inside_the_window
+    (loan : String) (prog : List (Stmt LendEvent)) (p : Nat × LendEvent)
+    (mem : p ∈ tagged prog) (uses : usesLoan loan p.2 = true) :
+    p.1 ≤ lastUse (usesLoan loan) prog :=
+  every_use_lies_inside_the_window (usesLoan loan) prog p mem uses
+
+/-! ### The shared vectors the Rust differential test reads
+
+`compiler/tests/composed_window_reach.rs` reads **this file as text**, extracts
+every `spelling` and `expected` below, rebuilds each program as a Rust
+`Vec<BufferEvent>` from the spelling, and asserts
+`qcore_core::std_buffer::last_uses` returns the same number. That is the
+correspondence mechanism `LOOPWINDOWS-LEAN-IS-A-TRANSCRIPTION` asked for — a
+differential test over shared vectors — in place of the doc comment that was
+the whole of the link before.
+
+The spelling is decided **here** as well as parsed there, so neither side can
+drift from it: `render` below turns a program into its spelling and
+`the_agreement_table_holds` checks, for every row, that the spelling is the
+program's own *and* that `lastUse` gives the stated number. The grammar is four
+characters: `l` a leaf naming the loan, `z` a leaf naming another binding, `f` a
+leaf at a field path, `q` a quiet leaf, and `[N…]` a loop of count `N` over a
+body. Names are single letters so a spelling needs no separators. -/
+
+def renderEvent : LendEvent → String
+  | .names n => n
+  | .fieldPath => "f"
+  | .quiet => "q"
+
+mutual
+  def render : Stmt LendEvent → String
+    | .leaf e => renderEvent e
+    | .loop count body => "[" ++ toString count ++ renderList body ++ "]"
+
+  def renderList : List (Stmt LendEvent) → String
+    | [] => ""
+    | s :: rest => render s ++ renderList rest
+end
+
+/-- One shared vector: the program, its spelling, and the window `lastUse`
+gives for the loan named `l`. -/
+structure AgreementRow where
+  spelling : String
+  expected : Nat
+  program : List (Stmt LendEvent)
+
+/-- The shared vectors. Each exercises one thing the Rust window function is
+supposed to do: a flat last use, a use inside a body, a use inside a nested
+body, a loop that names another binding only, a use before *and* inside a loop,
+and a program with no use at all. -/
+def agreement : List AgreementRow :=
+  [ { spelling := "lzzz", expected := 0, program := [.leaf (.names "l"), .leaf (.names "z"), .leaf (.names "z"), .leaf (.names "z")] }
+  , { spelling := "zlqz", expected := 1, program := [.leaf (.names "z"), .leaf (.names "l"), .leaf .quiet, .leaf (.names "z")] }
+  , { spelling := "z[2l]z", expected := 1, program := [.leaf (.names "z"), .loop 2 [.leaf (.names "l")], .leaf (.names "z")] }
+  , { spelling := "z[2[3l]]z", expected := 1, program := [.leaf (.names "z"), .loop 2 [.loop 3 [.leaf (.names "l")]], .leaf (.names "z")] }
+  , { spelling := "l[2z]z", expected := 0, program := [.leaf (.names "l"), .loop 2 [.leaf (.names "z")], .leaf (.names "z")] }
+  , { spelling := "l[2zl]q", expected := 1, program := [.leaf (.names "l"), .loop 2 [.leaf (.names "z"), .leaf (.names "l")], .leaf .quiet] }
+  , { spelling := "zz[2q]", expected := 0, program := [.leaf (.names "z"), .leaf (.names "z"), .loop 2 [.leaf .quiet]] }
+  , { spelling := "[2l]zzl", expected := 3, program := [.loop 2 [.leaf (.names "l")], .leaf (.names "z"), .leaf (.names "z"), .leaf (.names "l")] }
+  ]
+
+def tableHolds : Bool :=
+  agreement.all fun row => (renderList row.program == row.spelling)
+    && (lastUse (usesLoan "l") row.program == row.expected)
+
+/-- **The shared vectors are decided here.** Each row's spelling is the
+program's own rendering and each row's number is `lastUse`'s answer, so the
+Rust differential test compares against a table this module proves rather than
+against a transcription. -/
+theorem the_agreement_table_holds : tableHolds = true := by decide
+
+/-- The table is non-vacuous in the direction that matters: it contains a row
+whose loan is used **only inside a loop body**, where the replaced top-level
+window would have answered a smaller number. Without such a row the whole table
+would agree with a window that ignores loops. -/
+theorem the_table_contains_a_body_only_use :
+    lastUseShallow (usesLoan "l") [.leaf (.names "z"), .loop 2 [.leaf (.names "l")], .leaf (.names "z")] = 0
+      ∧ lastUse (usesLoan "l") [.leaf (.names "z"), .loop 2 [.leaf (.names "l")], .leaf (.names "z")] = 1 := by
+  decide
 
 end QCore.LoopWindows

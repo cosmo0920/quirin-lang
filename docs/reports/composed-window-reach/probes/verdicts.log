@@ -1,0 +1,59 @@
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aa0a01a14ef0e4522/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.41s
+     Running tests/composed_window_probe.rs (target/debug/deps/composed_window_probe-ca1b792ad8dd07ad)
+
+running 3 tests
+test probe ... == P1 bare-print-in-body + owner store into loan bytes: REFUSED
+   [Q077] `print` names a `std.fmt` rendering: `dec` or `hex`
+== P1b bare-print-in-body only: REFUSED
+   [Q077] `print` names a `std.fmt` rendering: `dec` or `hex`
+== P1c bare-print-in-body, owner store after the loop: REFUSED
+   [Q077] `print` names a `std.fmt` rendering: `dec` or `hex`
+== P2 body store into loan bytes, view read after: REFUSED
+   [Q078] this statement would write a byte of `b` while `head` borrows it; a `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer it addresses may not be written or released until the last statement that reads the view or anything derived from it (statement 7 of this entry); `head` borrows bytes [0, 2) of `b` and this write is inside that range — a write outside every live borrow's range is admitted
+== P3 inline-slice render in body: REFUSED
+   [Q077] a `for` body on the composed string/buffer route is `source.buffer.v1`'s statement vocabulary, read by that route's reader; a string view, a `len`, a `concat` or a text line inside one is not modelled and is refused by name (`LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY`)
+== P4 bare log render in body: REFUSED
+   [Q077] `log` names a `std.fmt` rendering after its level: `dec` or `hex`
+== P5 control: top-level bare print after a body store: REFUSED
+   [Q078] this statement would write a byte of `b` while `head` borrows it; a `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer it addresses may not be written or released until the last statement that reads the view or anything derived from it (statement 7 of this entry); `head` borrows bytes [0, 2) of `b` and this write is inside that range — a write outside every live borrow's range is admitted
+ok
+test probe_records_and_lends ... == R1 plain record beside a lend: ADMITTED
+   observation: Some([])
+== R2 plain record inside a for body of a lending entry: ADMITTED
+   observation: Some([])
+== R3 owned-field record in a composed for body: REFUSED
+   [Q077] this `for` body acquires or releases a buffer; on the composed string/buffer route a loop body neither acquires nor releases, because a custody step inside an iteration is decided by neither this route's custody list nor the buffer route's per-iteration identity gate (`LOOP-WINDOW-BODY-CUSTODY`)
+== B1 body renders the loan binding as a scalar: REFUSED
+   [Q055] `l` is a lend of a buffer and cannot cross here; a scalar position takes an integer, and a lend publishes no custody identity for a borrowed render
+== B2 loan loaded in body, owner writes its bytes after the loop: ADMITTED
+   observation: Some([])
+== B3 loan used in body, owner writes its bytes inside the body: REFUSED
+   [Q054] the checked ownership discipline refuses this program: cannot mutate owner `z` while it is borrowed
+== S1 rebinding a scalar at top level: REFUSED
+   [Q012] duplicate local binding `n`
+== S2 lend bound through a scalar rebound from a byte: REFUSED
+   [Q012] duplicate local binding `n`
+== S3 lend bound through a scalar rebound from an extent: REFUSED
+   [Q012] duplicate local binding `n`
+== B4 extent of the loan read in the body: ADMITTED
+   observation: Some([])
+ok
+test probe_view_positions ... == V1 view at a dec() concat piece, then an owner write: REFUSED
+   [Q072] `s` is a string and cannot cross here; a rendering operand is a scalar, and this amendment does not make `std.io` or `std.logger` accept text (`STRING-SLICE-IO`). Passing a string to a declared extern callee is refused for a separate reason: no C04 pointer contract transports this aggregate or its extent, so the crossing would discard the length and provenance the view carries (`STRING-SLICE-ABI`)
+== V2 view at a print dec position, then an owner write: REFUSED
+   [Q072] `s` is a string and cannot cross here; a rendering operand is a scalar, and this amendment does not make `std.io` or `std.logger` accept text (`STRING-SLICE-IO`). Passing a string to a declared extern callee is refused for a separate reason: no C04 pointer contract transports this aggregate or its extent, so the crossing would discard the length and provenance the view carries (`STRING-SLICE-ABI`)
+== V3 slice of a view read after an owner write: REFUSED
+   [Q078] this statement would write a byte of `b` while `t` borrows it; a `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer it addresses may not be written or released until the last statement that reads the view or anything derived from it (statement 8 of this entry); `t` borrows bytes [0, 1) of `b` and this write is inside that range — a write outside every live borrow's range is admitted
+== V4 slice of a slice read after an owner write: REFUSED
+   [Q078] this statement would write a byte of `b` while `u` borrows it; a `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer it addresses may not be written or released until the last statement that reads the view or anything derived from it (statement 9 of this entry); `u` borrows bytes [0, 1) of `b` and this write is inside that range — a write outside every live borrow's range is admitted
+== V5 len of a view after an owner write: REFUSED
+   [Q078] this statement would write a byte of `b` while `s` borrows it; a `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer it addresses may not be written or released until the last statement that reads the view or anything derived from it (statement 7 of this entry); `s` borrows bytes [0, 2) of `b` and this write is inside that range — a write outside every live borrow's range is admitted
+== V6 control: concat launders, owner write after it: ADMITTED
+   observation: Some(["out: abx"])
+== V7 nested-loop body renders an inline slice of the view: REFUSED
+   [Q077] a `for` body on the composed string/buffer route is `source.buffer.v1`'s statement vocabulary, read by that route's reader; a string view, a `len`, a `concat` or a text line inside one is not modelled and is refused by name (`LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY`)
+ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+

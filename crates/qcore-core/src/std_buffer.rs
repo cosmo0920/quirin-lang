@@ -1224,6 +1224,29 @@ pub struct LendWindow {
     pub through: usize,
 }
 
+/// A name the window function met at a custody or access position, classified
+/// by whether the window's **key space** can express it (card
+/// `COMPOSED-WINDOW-REACH`, wave 41).
+///
+/// The window map is keyed by plain binding names, because that is the only
+/// shape a lend binding has: `let NAME = lend(BUFFER, LOW, HIGH);` binds one
+/// identifier. A buffer addressed through a record's field path is a name of a
+/// second kind, and the classification exists so the difference is a value the
+/// callers must decide about rather than an arm that silently contributes
+/// nothing.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum WindowName<'a> {
+    /// A plain binding — an owner this entry acquired, or a loan it opened.
+    Binding(&'a str),
+    /// A buffer addressed as `RECORD.FIELD` (card `AGGREGATE-OWNED-FIELD`'s
+    /// four field-path events). **The window's key space cannot express this
+    /// name**, so a window computed over a program containing one would be a
+    /// window that forgot a use — the shortening, and therefore admitting,
+    /// direction. It is refused by [`window_unnameable_events`] rather than
+    /// dropped.
+    FieldPath { record: &'a str, field: &'a str },
+}
+
 /// Every buffer or loan name one event names at a custody or access position,
 /// **at any depth** (card `LOOPS-ON-COMPOSED-ROUTES`).
 ///
@@ -1235,40 +1258,104 @@ pub struct LendWindow {
 /// reads names through, so a widening of the grammar that forgets to extend it
 /// would shorten a window — and the exhaustive `match` makes that a compile
 /// error rather than an unsoundness.
-fn custody_names_at_any_depth<'a>(event: &'a BufferEvent, into: &mut Vec<&'a str>) {
+///
+/// Card `COMPOSED-WINDOW-REACH` (wave 41) changed what the four **field-path**
+/// arms do. They used to sit in the same empty arm as `Bind` and `Line`,
+/// justified in-comment by a refusal that runs earlier
+/// (`OWNED-FIELD-LEND-WINDOW`) — so the function was correct only because a
+/// construct was unreachable, and the day that refusal is lifted it would have
+/// silently forgotten every field-path name and produced a **shorter** window
+/// (`WINDOW-FIELD-ARM-UNREACHED`). They now yield [`WindowName::FieldPath`],
+/// which [`window_unnameable_events`] turns into a refusal by name. Two arms
+/// the same residual counted with them — `Construct` and `Field` — are
+/// **measured reachable today** (a record whose fields are all `i32` beside a
+/// lend, and one inside a loop body of a lending entry, are both admitted) and
+/// are correctly empty: a scalar construction and a scalar field read name no
+/// buffer and no loan at all.
+fn custody_names_at_any_depth<'a>(event: &'a BufferEvent, into: &mut Vec<WindowName<'a>>) {
     match event {
         BufferEvent::Store { name, .. }
         | BufferEvent::Load { name, .. }
         | BufferEvent::Extent { name, .. }
         | BufferEvent::Release { name }
-        | BufferEvent::Lend { name, .. } => into.push(name.as_str()),
+        | BufferEvent::Lend { name, .. } => into.push(WindowName::Binding(name.as_str())),
         // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind **names its source**, so
         // it is a use of that name and a loan's window runs through it. Pushed
         // rather than skipped in the refusing direction: a copy of a loan is
         // refused at `Q055` by the value half, and a window that ended before
         // the statement naming the loan would be the one mistake this function
-        // exists to make impossible.
-        BufferEvent::CopyBind { source, .. } => into.push(source.as_str()),
+        // exists to make impossible. Carried onto `COMPOSED-WINDOW-REACH`'s
+        // classified key space by the integrator at the wave-41 merge: a copy
+        // bind names a plain binding, never a field path, so it is a
+        // `WindowName::Binding` and the two cards' rules compose unchanged.
+        BufferEvent::CopyBind { source, .. } => into.push(WindowName::Binding(source.as_str())),
         BufferEvent::Repeat { body, .. } => {
             for event in body {
                 custody_names_at_any_depth(event, into);
             }
         }
         // Card `AGGREGATE-OWNED-FIELD`'s four field-path events address a
-        // record's field, never a loan binding, and an owned-field record
-        // beside a lend refuses by name before any window is computed
-        // (`OWNED-FIELD-LEND-WINDOW`).
+        // buffer the window's key space cannot name. Reported rather than
+        // dropped; see [`WindowName::FieldPath`].
+        BufferEvent::FieldStore { record, field, .. }
+        | BufferEvent::FieldLoad { record, field, .. }
+        | BufferEvent::FieldExtent { record, field, .. }
+        | BufferEvent::FieldRelease { record, field } => into.push(WindowName::FieldPath {
+            record: record.as_str(),
+            field: field.as_str(),
+        }),
+        // These name no buffer and no loan. `Acquire` names a buffer, but a
+        // freshly acquired one: a name the entry has not bound before, so it
+        // is no loan of this window map (a rebinding is `Q012`, refused by
+        // name resolution before any route sees the program), and an
+        // acquisition inside a live window is refused separately
+        // (`WRITE-LEND-NESTED-ACQUIRE`). `Construct` and `Field` name a
+        // **record** and a field of it; for a scalar field the value is an
+        // ordinary integer of this route's environment, and for an owned one
+        // the statement is refused before any window is computed.
         BufferEvent::Bind { .. }
         | BufferEvent::Acquire { .. }
         | BufferEvent::Construct { .. }
         | BufferEvent::Field { .. }
-        | BufferEvent::FieldStore { .. }
-        | BufferEvent::FieldLoad { .. }
-        | BufferEvent::FieldExtent { .. }
-        | BufferEvent::FieldRelease { .. }
         | BufferEvent::Line(_)
         | BufferEvent::Return => {}
     }
+}
+
+/// The top-level statements whose events name a buffer the window's key space
+/// **cannot express**, each with the field path it names (card
+/// `COMPOSED-WINDOW-REACH`, wave 41).
+///
+/// This is the fail-closed half of [`custody_names_at_any_depth`]'s
+/// classification. A window computed over a program containing one of these
+/// would silently omit that name, giving a **shorter** window than the program
+/// deserves — and a shorter window is a *longer* stretch in which the owner may
+/// write bytes a loan holds, which is the admitting direction invariant 1
+/// constrains.
+///
+/// Today no source program reaches it: `check_buffer_program` refuses an
+/// owned-field record beside a lend (`OWNED-FIELD-LEND-WINDOW`) and an
+/// owned-field statement inside a loop body (`OWNED-FIELD-LOOP-BODY`), both
+/// before [`lend_windows`] runs. That ordering is exactly what made the old
+/// empty arm *look* safe. The refusal here does not depend on it: it is the
+/// window function's own gate, reached by any caller — a model-level one
+/// included — so lifting either of those two refusals cannot shorten a window
+/// by accident. Whoever lifts them must give the four arms real windows and
+/// retire this gate deliberately, which is what `WINDOW-FIELD-ARM-UNREACHED`
+/// asked for.
+#[must_use]
+pub fn window_unnameable_events(events: &[BufferEvent]) -> Vec<(usize, String)> {
+    let mut found = Vec::new();
+    for (index, event) in events.iter().enumerate() {
+        let mut names = Vec::new();
+        custody_names_at_any_depth(event, &mut names);
+        for name in names {
+            if let WindowName::FieldPath { record, field } = name {
+                found.push((index, format!("{record}.{field}")));
+            }
+        }
+    }
+    found
 }
 
 /// **The window function over iterations** (card `LOOPS-ON-COMPOSED-ROUTES`):
@@ -1301,8 +1388,19 @@ pub fn last_uses<'a>(
         let mut names = Vec::new();
         custody_names_at_any_depth(event, &mut names);
         for name in names {
-            if bindings.contains(name) {
-                last_use.insert(name, index);
+            match name {
+                WindowName::Binding(name) => {
+                    if bindings.contains(name) {
+                        last_use.insert(name, index);
+                    }
+                }
+                // A name this map's key space cannot hold. Skipping it here is
+                // sound **only** because [`window_unnameable_events`] refuses
+                // the program before a window built from this map is used
+                // (card `COMPOSED-WINDOW-REACH`); it is not skipped on the
+                // ground that the construct is unreachable, which is what
+                // `WINDOW-FIELD-ARM-UNREACHED` measured and objected to.
+                WindowName::FieldPath { .. } => {}
             }
         }
     }
@@ -1332,6 +1430,24 @@ pub fn lend_windows(events: &[BufferEvent]) -> (Vec<LendWindow>, Vec<BufferError
     let mut extents: BTreeMap<String, u32> = BTreeMap::new();
     let mut windows = Vec::new();
     let mut errors = Vec::new();
+
+    // Card `COMPOSED-WINDOW-REACH` (wave 41): a name the window's key space
+    // cannot express is refused **here**, by the window function's own gate,
+    // rather than dropped on the ground that an earlier refusal makes the
+    // construct unreachable. See [`window_unnameable_events`].
+    for (index, path) in window_unnameable_events(events) {
+        errors.push(BufferError::Lend {
+            event: index,
+            refusal: LendRefusal::Shape(format!(
+                "this statement addresses the buffer `{path}` through a record's field path, \
+                 and a lend's window is an interval of statement indices keyed by the plain \
+                 binding a lend opens; the window function cannot name a field path, so a \
+                 window computed over this entry would silently omit every use of it and run \
+                 shorter than the program deserves — the admitting direction — and the entry \
+                 is refused by name instead (`WINDOW-FIELD-ARM-UNREACHED`)"
+            )),
+        });
+    }
 
     // Card `LOOPS-ON-COMPOSED-ROUTES`: the last top-level event naming each
     // lend binding **at any depth** — `last_uses` is the window function.

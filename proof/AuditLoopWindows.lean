@@ -68,6 +68,42 @@ import QCore.LoopWindows
 #print axioms QCore.LoopWindows.a_longer_live_set_admits_no_more_lends
 #print axioms QCore.LoopWindows.a_longer_live_set_blocks_the_drop_no_less
 
--- What a loop body may hold beside a loan, as one list, so a widening changes a
--- theorem rather than slipping past one.
-#print axioms QCore.LoopWindows.the_admitted_body_shapes_are_exactly_these
+-- Card `COMPOSED-WINDOW-REACH` (wave 41): the alphabet the implementation
+-- actually produces, and the Rust binding.
+--
+-- What stood here was `the_admitted_body_shapes_are_exactly_these`, a theorem
+-- that each of a two-constructor type's constructors is a member of a list
+-- spelling both — true of any such pair and silent about the route
+-- (`LOOPWINDOWS-ADMITTED-SHAPES-TAUTOLOGY`). It is superseded by a decision on
+-- `LendEvent`, the window-relevant shape of the Rust `BufferEvent`, which a
+-- mutation can falsify.
+#print axioms QCore.LoopWindows.LendEvent
+#print axioms QCore.LoopWindows.usesLoan
+#print axioms QCore.LoopWindows.unnameable
+#print axioms QCore.LoopWindows.admittedInBody
+#print axioms QCore.LoopWindows.every_admitted_body_event_is_windowed
+#print axioms QCore.LoopWindows.the_unnameable_events_are_exactly_the_inadmissible_ones
+#print axioms QCore.LoopWindows.an_unnameable_event_uses_no_loan
+
+-- The unrolling at an alphabet that carries a loan. `§4`'s
+-- `the_unrolling_is_loop_v1s` is stated at `QCore.StdBuffer.Event`, whose eight
+-- constructors cannot spell a lend, so the tie was to a structure the
+-- implementation never produces (`LOOPWINDOWS-LEAN-IS-A-TRANSCRIPTION`). These
+-- put the same recursion on both sides of the boundary.
+#print axioms QCore.LoopWindows.copies_eq_flatten_replicate
+#print axioms QCore.LoopWindows.repeatAppend_eq_flatten_replicate
+#print axioms QCore.LoopWindows.the_lend_alphabets_unrolling_is_loop_v1s_recursion
+#print axioms QCore.LoopWindows.loop_v1s_unrolling_is_the_same_flattening
+#print axioms QCore.LoopWindows.every_lend_use_lies_inside_the_window
+
+-- The shared vectors `compiler/tests/composed_window_reach.rs` reads out of
+-- this module's source and replays against the Rust `last_uses`. Each row's
+-- spelling is decided here to be the program's own rendering, so neither side
+-- can drift from the other's transcription of it.
+#print axioms QCore.LoopWindows.renderEvent
+#print axioms QCore.LoopWindows.render
+#print axioms QCore.LoopWindows.renderList
+#print axioms QCore.LoopWindows.agreement
+#print axioms QCore.LoopWindows.tableHolds
+#print axioms QCore.LoopWindows.the_agreement_table_holds
+#print axioms QCore.LoopWindows.the_table_contains_a_body_only_use

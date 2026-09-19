@@ -368,3 +368,66 @@ future route that reaches the IR without such a gate
 (`AGGREGATE-OWNER-POSITION-UNREACHABLE`).
 
 `aggregates-v1`, `aggregate-owned-field`, `owned-field-route-reach`.
+
+### 15h — card `COMPOSED-WINDOW-REACH` (wave 41)
+
+It **narrows a clause** the `LOOPS-ON-COMPOSED-ROUTES` amendment carries and
+**adds a refusal**; it supersedes nothing else.
+
+**First, the two routes' window computations are not parallel.** On the
+**buffer** route `std_buffer::last_uses` is the deciding rule and its "at any
+depth" is live: re-running wave 39's own M1 against that card's 24 test rows
+reddens **7**, every one a lend row. On the **composed string** route
+`std_string::view_uses_at_any_depth` decides at **top level only** — its depth
+half is empty for every input, so a `for` contributes nothing to any view's
+window, because a composed body holds `BufferEvent`s and no `BufferEvent` names
+a view — and **no** composed row of wave 39's file is anchored by it. Read the
+clause that names those two functions as naming two functions of *different
+standing*: on the composed route the window is **defence in depth**, and the
+deciding rule is `check_string_program`'s `Repeat` arm judging every body store
+against every loan live at the loop before the body runs, which the preserved
+text already says two sentences later. `COMPOSED-VIEW-WINDOW-INERT`'s own title
+("returns the empty vector for every input") is **wrong** and its content is
+right: the function names a view at every reading position.
+
+**Second, what makes the inert recursion safe rests on three mechanisms, not
+one**, and all three must survive refactors: a composed body's type; the `Q077`
+vocabulary refusal for the view-*constructing* forms; and — newly named, because
+it is a **rendering** rule doing a window's work and a later card could remove it
+without reading this constraint — the buffer route's own "`print` names a
+`std.fmt` rendering" refusal, which is what stops a **bare** `print s;` in a
+body, `StringUse::Render` deliberately not claiming a bare name
+(`COMPOSED-BODY-BARE-RENDER-INCIDENTAL`, pinned by
+`a_bare_render_of_a_view_inside_a_composed_body_is_refused`).
+
+**Third, and the one change to code:** a name the window's key space **cannot
+express** is now refused by the window function's own gate rather than dropped.
+`custody_names_at_any_depth` classifies what it meets (`WindowName::Binding` /
+`WindowName::FieldPath`), and `window_unnameable_events` turns a field path —
+`AGGREGATE-OWNED-FIELD`'s four `Field*` events, which address a buffer as
+`RECORD.FIELD` — into a refusal by name at `Q051` (a condition extension of the
+band this constraint already names for the lend's window shapes; **no code
+allocated**). Before the card those four arms returned nothing, correct only
+because `OWNED-FIELD-LEND-WINDOW` and `OWNED-FIELD-LOOP-BODY` run first, so
+lifting either would have silently **shortened** a window — the admitting
+direction (`WINDOW-FIELD-ARM-UNREACHED`). Both of those refusals stand and still
+fire first; this gate is a second, independent line, and whoever lifts them must
+give the four arms real windows and retire it deliberately
+(`WINDOW-FIELD-PATH-REFUSED-NOT-WINDOWED`). Two arms that residual counted with
+them, `Construct` and `Field`, are **measured reachable today** — a record whose
+fields are all `i32` is admitted beside a lend and inside a loop body of a
+lending entry — and are correctly empty.
+
+The Lean is now **bound** to the Rust rather than linked by a doc comment:
+`QCore.LoopWindows` carries `LendEvent`, the window-relevant shape of the Rust
+`BufferEvent`; the unrolling is instantiated there
+(`the_lend_alphabets_unrolling_is_loop_v1s_recursion`, sharing a right-hand side
+with `loop_v1s_unrolling_is_the_same_flattening`); and eight shared vectors are
+decided in Lean (`the_agreement_table_holds`) and replayed against `last_uses`
+by `compiler/tests/composed_window_reach.rs`, so neither side can be edited
+alone — a **finite** binding, and that is its boundary
+(`LOOPWINDOWS-BINDING-IS-FINITE`).
+
+Nothing this card lands is reachable from source: a 535-program census admits
+146 on both sides, byte-identical, with **0** verdicts moved either way.
+Evidence: `docs/reports/composed-window-reach/README.md`.

@@ -1,0 +1,29 @@
+wave39_anchoring.sh — 2026-09-19T06:44:44Z — HEAD c4daf585
+wave-39 test rows: 24
+applied wave-39 M1 (the window function's Repeat arm emptied)
+RED under M1    a_loan_used_only_inside_the_loop_is_live_across_it_and_the_body_write_refuses
+GREEN under M1  a_body_write_into_a_borrowed_range_refuses_on_the_composed_route
+RED under M1    a_loop_filling_a_lend_is_admitted_and_its_window_runs_through_the_loop
+RED under M1    an_owner_write_before_the_loop_is_inside_the_window_and_one_after_it_is_outside
+RED under M1    two_loans_last_used_inside_one_loop_nest_and_their_disjointness_is_still_decided
+RED under M1    a_nested_loop_is_projected_by_the_same_rule_at_every_depth
+GREEN under M1  a_loop_before_the_lend_writes_the_owner_freely
+RED under M1    a_body_index_read_from_a_byte_conflicts_with_every_live_loan
+RED under M1    the_projection_unrolls_the_body_inside_the_borrow_node
+GREEN under M1  a_loop_filling_a_buffer_before_it_is_borrowed_is_admitted
+GREEN under M1  a_loop_writing_outside_a_live_loans_range_is_admitted_on_the_composed_route
+GREEN under M1  a_body_release_under_a_live_loan_is_refused_by_the_model_by_name
+GREEN under M1  a_body_store_after_the_release_is_the_inherited_use_after_drop
+GREEN under M1  a_body_index_read_from_a_byte_conflicts_on_the_composed_route_too
+GREEN under M1  the_loops_own_refusals_keep_their_codes_on_the_composed_route
+GREEN under M1  a_body_line_renders_once_per_iteration_on_the_composed_route
+GREEN under M1  the_lend_fill_example_runs_sanitized_and_matches_its_reference_execution
+GREEN under M1  the_looped_fill_example_runs_sanitized_and_matches_its_reference_execution
+GREEN under M1  a_lend_inside_a_body_is_a_per_iteration_loan_and_refuses_by_name
+GREEN under M1  a_borrow_inside_a_body_is_a_per_iteration_loan_and_refuses_by_name
+GREEN under M1  a_body_that_acquires_or_releases_refuses_by_name_where_a_loan_is_held
+GREEN under M1  a_string_construct_inside_a_body_on_the_composed_route_refuses_by_name
+GREEN under M1  the_owned_field_refusals_survive_a_for_beside_a_loan
+GREEN under M1  a_for_in_a_string_module_without_a_buffer_still_refuses_as_a_nested_block
+restored sha256-equal (26b9c258801ff987)
+SUMMARY: 7 row(s) anchored by the window rule, 17 row(s) not.

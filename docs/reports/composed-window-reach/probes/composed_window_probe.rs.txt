@@ -1,0 +1,500 @@
+//! TEMPORARY probe harness (card `COMPOSED-WINDOW-REACH`, wave 41).
+//!
+//! Prints the verdict of each probe program so the card can measure what the
+//! composed route judges today before repairing anything. Removed before the
+//! card closes; the surviving assertions live in `composed_window_reach.rs`.
+
+use qcore_compiler::{CompileOptions, SourceFile, compile_files};
+
+fn options() -> CompileOptions {
+    CompileOptions {
+        entry: None,
+        extern_contracts: None,
+        native_libraries: None,
+        native_library_headers: None,
+    }
+}
+
+fn verdict(label: &str, source: &str) {
+    match compile_files(&[SourceFile::new("probe.qcore", source)], &options()) {
+        Ok(module) => {
+            println!("== {label}: ADMITTED");
+            println!("   observation: {:?}", module.extern_observation);
+        }
+        Err(diagnostics) => {
+            println!("== {label}: REFUSED");
+            for d in &diagnostics {
+                println!("   [{}] {}", d.code, d.message);
+            }
+        }
+    }
+}
+
+fn string_module(body: &[&str]) -> String {
+    let mut source = vec![
+        "import std.string;".to_owned(),
+        "import std.buffer;".to_owned(),
+        "import std.fmt;".to_owned(),
+        "import std.io;".to_owned(),
+        "import std.logger;".to_owned(),
+        String::new(),
+        "fn main() -> unit effects { io, alloc, mut } {".to_owned(),
+    ];
+    source.extend(body.iter().map(|line| format!("    {line}")));
+    source.push("}".to_owned());
+    source.push(String::new());
+    source.join("\n")
+}
+
+#[test]
+fn probe() {
+    // P1: a view whose ONLY use is a bare `print head;` inside a `for` body,
+    // with an owner store into the loan's bytes in the same body.
+    verdict(
+        "P1 bare-print-in-body + owner store into loan bytes",
+        &string_module(&[
+            "let b = bytes(4);",
+            "b[0] = 97;",
+            "b[1] = 98;",
+            "b[2] = 99;",
+            "b[3] = 100;",
+            "let head = borrow_utf8(b, 0, 2);",
+            "for i in 0..2 {",
+            "    b[1] = 120;",
+            "    print head;",
+            "}",
+            "drop b;",
+            "return;",
+        ]),
+    );
+
+    // P1b: the same, with NO owner store — just the bare print in the body.
+    verdict(
+        "P1b bare-print-in-body only",
+        &string_module(&[
+            "let b = bytes(4);",
+            "b[0] = 97;",
+            "b[1] = 98;",
+            "b[2] = 99;",
+            "b[3] = 100;",
+            "let head = borrow_utf8(b, 0, 2);",
+            "for i in 0..2 {",
+            "    print head;",
+            "}",
+            "drop b;",
+            "return;",
+        ]),
+    );
+
+    // P1c: bare print in body, owner store AFTER the loop (loan should still
+    // be live if the body print counts as a use).
+    verdict(
+        "P1c bare-print-in-body, owner store after the loop",
+        &string_module(&[
+            "let b = bytes(4);",
+            "b[0] = 97;",
+            "b[1] = 98;",
+            "b[2] = 99;",
+            "b[3] = 100;",
+            "let head = borrow_utf8(b, 0, 2);",
+            "for i in 0..2 {",
+            "    print head;",
+            "}",
+            "b[1] = 120;",
+            "drop b;",
+            "return;",
+        ]),
+    );
+
+    // P2: the wave-39 pinned scenario — owner store into loan bytes in body,
+    // view read AFTER the loop. Expect Q078 via loop_body_conflict.
+    verdict(
+        "P2 body store into loan bytes, view read after",
+        &string_module(&[
+            "let b = bytes(4);",
+            "b[0] = 97;",
+            "b[1] = 98;",
+            "b[2] = 99;",
+            "b[3] = 100;",
+            "let head = borrow_utf8(b, 0, 2);",
+            "for i in 0..2 {",
+            "    b[1] = 120;",
+            "}",
+            "print head;",
+            "drop b;",
+            "return;",
+        ]),
+    );
+
+    // P3: inline slice render in a body — should be Q077 Render.
+    verdict(
+        "P3 inline-slice render in body",
+        &string_module(&[
+            "let b = bytes(4);",
+            "b[0] = 97;",
+            "b[1] = 98;",
+            "b[2] = 99;",
+            "b[3] = 100;",
+            "let head = borrow_utf8(b, 0, 2);",
+            "for i in 0..2 {",
+            "    print head[0:1];",
+            "}",
+            "drop b;",
+            "return;",
+        ]),
+    );
+
+    // P4: `log info head;` bare name in a body.
+    verdict(
+        "P4 bare log render in body",
+        &string_module(&[
+            "let b = bytes(4);",
+            "b[0] = 97;",
+            "b[1] = 98;",
+            "b[2] = 99;",
+            "b[3] = 100;",
+            "let head = borrow_utf8(b, 0, 2);",
+            "for i in 0..2 {",
+            "    b[1] = 120;",
+            "    log info head;",
+            "}",
+            "drop b;",
+            "return;",
+        ]),
+    );
+
+    // P5: control — bare print at top level extends the window.
+    verdict(
+        "P5 control: top-level bare print after a body store",
+        &string_module(&[
+            "let b = bytes(4);",
+            "b[0] = 97;",
+            "b[1] = 98;",
+            "b[2] = 99;",
+            "b[3] = 100;",
+            "let head = borrow_utf8(b, 0, 2);",
+            "b[1] = 120;",
+            "print head;",
+            "drop b;",
+            "return;",
+        ]),
+    );
+}
+
+#[test]
+fn probe_view_positions() {
+    fn head(rest: &[&str]) -> Vec<String> {
+        let mut v: Vec<String> = vec![
+            "let b = bytes(4);".to_owned(),
+            "b[0] = 97;".to_owned(),
+            "b[1] = 98;".to_owned(),
+            "b[2] = 99;".to_owned(),
+            "b[3] = 100;".to_owned(),
+            "let s = borrow_utf8(b, 0, 2);".to_owned(),
+        ];
+        v.extend(rest.iter().map(|l| (*l).to_owned()));
+        v
+    }
+    fn run(label: &str, rest: &[&str]) {
+        let lines = head(rest);
+        let refs: Vec<&str> = lines.iter().map(String::as_str).collect();
+        verdict(label, &string_module(&refs));
+    }
+
+    // V1: a view at a `dec(...)` concat-piece position (StringPiece::Scalar,
+    // which view_uses returns nothing for).
+    run(
+        "V1 view at a dec() concat piece, then an owner write",
+        &[
+            "let c = concat(dec(s), \"x\");",
+            "b[0] = 120;",
+            "print c;",
+            "drop b;",
+            "return;",
+        ],
+    );
+
+    // V2: a view at a `print dec` scalar-line position (StringEvent::Line,
+    // which view_uses returns nothing for).
+    run(
+        "V2 view at a print dec position, then an owner write",
+        &["print dec s;", "b[0] = 120;", "drop b;", "return;"],
+    );
+
+    // V3: a derived view read after an owner write — one level.
+    run(
+        "V3 slice of a view read after an owner write",
+        &[
+            "let t = s[0:1];",
+            "b[0] = 120;",
+            "print t;",
+            "drop b;",
+            "return;",
+        ],
+    );
+
+    // V4: two levels of derivation.
+    run(
+        "V4 slice of a slice read after an owner write",
+        &[
+            "let t = s[0:2];",
+            "let u = t[0:1];",
+            "b[0] = 120;",
+            "print u;",
+            "drop b;",
+            "return;",
+        ],
+    );
+
+    // V5: a `len` of a view after an owner write.
+    run(
+        "V5 len of a view after an owner write",
+        &[
+            "b[0] = 120;",
+            "let n = len(s);",
+            "print dec n;",
+            "drop b;",
+            "return;",
+        ],
+    );
+
+    // V6: control — concat launders the bytes, so an owner write after the
+    // concat and before rendering the composed result must be admitted.
+    run(
+        "V6 control: concat launders, owner write after it",
+        &[
+            "let c = concat(s, \"x\");",
+            "b[0] = 120;",
+            "print c;",
+            "drop b;",
+            "return;",
+        ],
+    );
+
+    // V7: the view is read inside a `for` body via an inline slice at a
+    // rendering operand nested one level deeper (a nested loop).
+    run(
+        "V7 nested-loop body renders an inline slice of the view",
+        &[
+            "for i in 0..2 {",
+            "    for j in 0..2 {",
+            "        print s[0:1];",
+            "    }",
+            "}",
+            "drop b;",
+            "return;",
+        ],
+    );
+}
+
+fn record_module(type_decl: &str, body: &[&str]) -> String {
+    let mut source = vec![
+        "import std.buffer;".to_owned(),
+        "import std.fmt;".to_owned(),
+        "import std.io;".to_owned(),
+        "import std.logger;".to_owned(),
+        String::new(),
+        type_decl.to_owned(),
+        String::new(),
+        "fn main() -> unit effects { io, alloc, mut } {".to_owned(),
+    ];
+    source.extend(body.iter().map(|line| format!("    {line}")));
+    source.push("}".to_owned());
+    source.push(String::new());
+    source.join("\n")
+}
+
+fn buffer_module(body: &[&str]) -> String {
+    let mut source = vec![
+        "import std.buffer;".to_owned(),
+        "import std.fmt;".to_owned(),
+        "import std.io;".to_owned(),
+        "import std.logger;".to_owned(),
+        String::new(),
+        "fn main() -> unit effects { io, alloc, mut } {".to_owned(),
+    ];
+    source.extend(body.iter().map(|line| format!("    {line}")));
+    source.push("}".to_owned());
+    source.push(String::new());
+    source.join("\n")
+}
+
+#[test]
+fn probe_records_and_lends() {
+    verdict(
+        "R1 plain record beside a lend",
+        &record_module(
+            "type Pair { a: i32, b: i32 }",
+            &[
+                "let z = bytes(4);",
+                "let l = lend(z, 0, 2);",
+                "let p = Pair { a: 1, b: 2 };",
+                "let x = p.a;",
+                "l[0] = 7;",
+                "drop z;",
+                "return;",
+            ],
+        ),
+    );
+
+    verdict(
+        "R2 plain record inside a for body of a lending entry",
+        &record_module(
+            "type Pair { a: i32, b: i32 }",
+            &[
+                "let z = bytes(4);",
+                "let l = lend(z, 0, 2);",
+                "for i in 0..2 {",
+                "    let p = Pair { a: 1, b: 2 };",
+                "    let x = p.a;",
+                "    l[0] = 7;",
+                "}",
+                "drop z;",
+                "return;",
+            ],
+        ),
+    );
+
+    // R3: an OWNED-field record inside a loop body of a COMPOSED string
+    // module — does the composed route reach OWNED-FIELD-LOOP-BODY, which
+    // lives in check_buffer_program and which the composed route does not
+    // call?
+    verdict(
+        "R3 owned-field record in a composed for body",
+        &{
+            let mut s = vec![
+                "import std.string;".to_owned(),
+                "import std.buffer;".to_owned(),
+                "import std.fmt;".to_owned(),
+                "import std.io;".to_owned(),
+                "import std.logger;".to_owned(),
+                String::new(),
+                "type Packet { tag: i32, buf: bytes }".to_owned(),
+                String::new(),
+                "fn main() -> unit effects { io, alloc, mut } {".to_owned(),
+            ];
+            for line in [
+                "let b = bytes(4);",
+                "b[0] = 97;",
+                "b[1] = 98;",
+                "b[2] = 99;",
+                "b[3] = 100;",
+                "let s = borrow_utf8(b, 0, 2);",
+                "for i in 0..2 {",
+                "    let c = bytes(2);",
+                "    let p = Packet { tag: i, buf: c };",
+                "    p.buf[0] = 5;",
+                "    drop p;",
+                "}",
+                "print s;",
+                "drop b;",
+                "return;",
+            ] {
+                s.push(format!("    {line}"));
+            }
+            s.push("}".to_owned());
+            s.push(String::new());
+            s.join("\n")
+        },
+    );
+
+    verdict(
+        "B1 body renders the loan binding as a scalar",
+        &buffer_module(&[
+            "let z = bytes(4);",
+            "let l = lend(z, 0, 2);",
+            "for i in 0..2 {",
+            "    print dec l;",
+            "}",
+            "z[0] = 7;",
+            "drop z;",
+            "return;",
+        ]),
+    );
+
+    verdict(
+        "B2 loan loaded in body, owner writes its bytes after the loop",
+        &buffer_module(&[
+            "let z = bytes(4);",
+            "let l = lend(z, 0, 2);",
+            "for i in 0..2 {",
+            "    let x = l[0];",
+            "}",
+            "z[0] = 7;",
+            "drop z;",
+            "return;",
+        ]),
+    );
+
+    verdict(
+        "B3 loan used in body, owner writes its bytes inside the body",
+        &buffer_module(&[
+            "let z = bytes(4);",
+            "let l = lend(z, 0, 2);",
+            "for i in 0..2 {",
+            "    l[0] = 1;",
+            "    z[1] = 7;",
+            "}",
+            "drop z;",
+            "return;",
+        ]),
+    );
+
+    // S1: does the buffer route admit rebinding a scalar name at all?
+    verdict(
+        "S1 rebinding a scalar at top level",
+        &buffer_module(&[
+            "let z = bytes(8);",
+            "let n = 2;",
+            "let n = 4;",
+            "print dec n;",
+            "drop z;",
+            "return;",
+        ]),
+    );
+
+    // S2: a scalar first bound to a literal, then REBOUND from a byte read
+    // (outside the lowering-visible tier), then used as a lend bound.
+    // `lend_windows`' scalar environment has no arm for `Load`, so the stale
+    // literal may still be there.
+    verdict(
+        "S2 lend bound through a scalar rebound from a byte",
+        &buffer_module(&[
+            "let z = bytes(8);",
+            "let n = 2;",
+            "let n = z[0];",
+            "let l = lend(z, 0, n);",
+            "l[0] = 1;",
+            "z[4] = 7;",
+            "drop z;",
+            "return;",
+        ]),
+    );
+
+    // S3: the same through an `extent` rebinding.
+    verdict(
+        "S3 lend bound through a scalar rebound from an extent",
+        &buffer_module(&[
+            "let z = bytes(8);",
+            "let n = 2;",
+            "let n = extent(z);",
+            "let l = lend(z, 0, n);",
+            "l[0] = 1;",
+            "drop z;",
+            "return;",
+        ]),
+    );
+
+    verdict(
+        "B4 extent of the loan read in the body",
+        &buffer_module(&[
+            "let z = bytes(4);",
+            "let l = lend(z, 0, 2);",
+            "for i in 0..2 {",
+            "    let e = extent(l);",
+            "}",
+            "drop z;",
+            "return;",
+        ]),
+    );
+}

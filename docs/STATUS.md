@@ -17,7 +17,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Projected functions | **213 Safe / 84 provisional Unsafe / 4,537 Unknown**, 4,834 total | Same baseline |
 | Corpus diagnostics | leak **272**; unknown_alias **4,309**; double_release **0**; unsupported **49,753**; summary_conflict **1** | Same baseline, `artifacts/diagnostics.json.gz` |
 | Contract corpus | **88** modules; **59** resource-v1 declarations; **33** manifest-selected | `contract/qcore/`, [selection](../contract/cycle19-resource-contracts.json) and pinned tests |
-| Registered follow-ups | **262** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **261** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -33,6 +33,16 @@ measured). Since wave 41 each leg's pinned digest is compared with the value its
 Lean side decides, total-or-reject both ways. Native execution is observed,
 not proved. The sanitizer count carries its host condition; emission assertions
 can run on other hosts without implying sanitizer execution there.
+
+**257 → 256 at card `COMPOSED-WINDOW-REACH`** (wave 41), which retired four
+names — `COMPOSED-VIEW-WINDOW-INERT`, `WINDOW-FIELD-ARM-UNREACHED`,
+`LOOPWINDOWS-LEAN-IS-A-TRANSCRIPTION`, `LOOPWINDOWS-ADMITTED-SHAPES-TAUTOLOGY`
+— and registered three: `COMPOSED-BODY-BARE-RENDER-INCIDENTAL`,
+`WINDOW-FIELD-PATH-REFUSED-NOT-WINDOWED`, `LOOPWINDOWS-BINDING-IS-FINITE`. Each
+retirement's discharge condition is quoted beside the evidence that met it in
+[that card's report](reports/composed-window-reach/README.md). Wave 41's
+remaining cards and its close move this figure again; re-derive it from the
+matrix rather than from this sentence.
 
 **Raw units remain unpromoted.** `flb_input_chunk_create` is function-level Safe;
 the production `input_chunk_get` residual remains Unknown. Provisional Unsafe
