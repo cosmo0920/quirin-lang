@@ -1,0 +1,30 @@
+{
+  "previous_published_head": "a0584a50e303441ef6fff60d47af82d80bca2d6a",
+  "rebase_base": "026314c89b7792a4b1b7403983a2d44c66a3cbcb",
+  "rebased_head_before_evidence": "637ef1a3ecdd082c98be13e7edac6490de45e796",
+  "backup_branch": "codex/ct-integration-before-rebase-a0584a50",
+  "method": "git rebase --rebase-merges --onto <rebase_base> 7d2c1fa6 codex/ct-remaining-integration",
+  "resolution": "Replayed conflicts restored the reviewed CT integration merge results; main TSAN evidence retained. No code or proof changes.",
+  "identical_to_previous_published_paths": [
+    "crates",
+    "compiler",
+    "proof",
+    "scripts",
+    "Cargo.toml",
+    "Cargo.lock",
+    "docs/reevaluation/ct_manifest.json",
+    "docs/reviews/r0_3/acceptance.json"
+  ],
+  "identical_to_main_paths": [
+    "docs/reports/tsan-failure-arms"
+  ],
+  "tree_delta_before_evidence": [
+    "D\tdocs/reports/tsan-failure-arms/clang-version.exit",
+    "D\tdocs/reports/tsan-failure-arms/clang-version.txt",
+    "A\tdocs/reports/tsan-failure-arms/gate/integration-clang-version.exit",
+    "A\tdocs/reports/tsan-failure-arms/gate/integration-clang-version.txt",
+    "A\tdocs/reports/tsan-failure-arms/integration-gate.json"
+  ],
+  "original_source_checkpoint": "72a648f169a3d13846df0d0811e08093036b93d3",
+  "rebased_source_checkpoint": "fd6734751e41343f8c6c65f4b8ba478b434327e6"
+}

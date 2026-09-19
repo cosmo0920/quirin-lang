@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "card": "CT24-CLEANUP-TASK-COMPOSITION",
+  "generated": "2026-09-19",
+  "report": "docs/reports/ct24-cleanup-task-composition/README.md",
+  "purpose": "Map CT24 on the composed-epoch route after the card supplied an executed cleanup at the exact spawn-success-arm position. The case is refused by the unedited scoped-task ledger at Q600 LoanOutstanding; mapping grows 47/50 to 48/50 and moves no native, sanitizer or proof numerator.",
+  "derivation_rule": "A stage is executed only where compiler/tests/ct_corpus.rs::run_mapped_case runs it on compiler/tests/fixtures/ct/CT24/case.qcore. compile_composed_epoch_source parses and elaborates the planned module, reads and erases the region, parses and elaborates the task half, then compile_task_source lowers it and the scoped-task ledger refuses the synthesized drop. The function returns at that point, before lower_composed_epoch, check_flat_epoch, emission, native execution or any proof-bound runner. Controls run on their own artifacts and confer no stage credit on the case.",
+  "mapped_case_stage_matrix": {
+    "CT24": {
+      "harness_verdict_mode": "epoch_credit_split",
+      "manifest_evidence_target": "linux",
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+          "observations": 1
+        },
+        "task_ledger_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+          "observations": 1
+        },
+        "mutex_lowering": { "status": "not_applicable" },
+        "mutex_invariant_check": { "status": "not_applicable" },
+        "epoch_lowering": { "status": "not_applicable" },
+        "epoch_bound_check": { "status": "not_applicable" },
+        "sequential_whole_program": { "status": "not_applicable" },
+        "sequential_reference_execution": { "status": "not_applicable" },
+        "task_reference_execution": { "status": "not_applicable" },
+        "mutex_reference_execution": { "status": "not_applicable" },
+        "c_emission": { "status": "not_applicable" },
+        "native_execution": { "status": "not_applicable" },
+        "native_sanitized": { "status": "unassessed" },
+        "legacy_c_twin": { "status": "not_applicable" },
+        "proof": {
+          "status": "unassessed",
+          "note": "QCore.CleanupTaskComposition is audited abstract Lean parity. No workspace test binds CT24's own fixture to that model, and faithful Lean/Rust correspondence remains evidence rule 28's review premise."
+        }
+      },
+      "controls": {
+        "accepted": [
+          "after_join.qcore: same loan, same cleanup, join first; released=[owner], abandoned=3",
+          "independent_owner.qcore: same pre-join placement, independent cleanup owner; released=[owner], abandoned=3"
+        ],
+        "refused": [
+          "missing_join.qcore: [Q600]",
+          "nested_if.qcore: [Q302]",
+          "nested_loop.qcore: [Q302]",
+          "in_error_arm.qcore: [Q302]",
+          "double_discharge.qcore: [Q304]",
+          "unsupported_body.qcore: [Q302]"
+        ]
+      }
+    }
+  },
+  "unmapped_reasons": {},
+  "retired_unmapped_reasons": {},
+  "inventory": {
+    "added_mapped_ids": ["CT24"],
+    "mapped_before": 47,
+    "mapped_after": 48,
+    "unmapped_after": 2,
+    "total": 50,
+    "proof_before": 5,
+    "proof_after": 5,
+    "sanitized_native_before": 10,
+    "sanitized_native_after": 10
+  }
+}

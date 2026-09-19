@@ -898,6 +898,15 @@ That surface admits three further forms, each bounded by a decidable rule rather
 
 The `concurrency checked;` marker is not evidence of race verification. The marker alone does not select evidence. The scoped-copy path independently checks its typed task IR; the supplied-event concurrency checker remains a separate API. A future supported source-concurrency profile MUST derive and validate its events, task transitions, access permissions, and synchronization witnesses rather than accepting producer-supplied truth flags.
 
+`source.bitfield-concurrency.v1` derives field footprints from explicit source
+layouts and simultaneous worker write captures, then independently rechecks
+`DisjointFootprintsV1` evidence. Its claim is **field independence only**, under
+the recorded `SpawnAndJoinSucceed` and declared-layout premises. It establishes
+no failure-path custody, task lifetime, reference execution or C refinement;
+`quirin check` must identify this restricted result. Same-unit bit-fields
+remain one memory location, never independent byte leases. Supported forms are
+[G09](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g09-concurrent-field-footprint-questions).
+
 ## L17. Explicit C11 execution candidates
 
 The weak-memory API accepts explicit events and relations such as reads-from, modification order, synchronization, sequential consistency order, and mutex order. Its checker and associated theorems concern that supplied candidate representation and its implemented axioms.
@@ -905,6 +914,17 @@ The weak-memory API accepts explicit events and relations such as reads-from, mo
 Accepting one candidate does not establish that every execution of a C program is race-free. Rejecting a candidate does not establish that the program is safe either. A whole-program claim requires a justified complete candidate set or another sound all-execution argument, including publication and reclamation conditions relevant to the property.
 
 A provider or source importer MUST NOT manufacture a synchronization relation merely because it makes a candidate pass. Candidate relations must be derived or explicitly declared as assumptions, with the distinction preserved in the evidence record. A `volatile` qualifier is not an independently established synchronization witness in this specification.
+
+The bounded atomic-publication API checks a separate, conditional property:
+a successful acquire observation of the unique release value orders one
+payload write before one payload read. It validates a restricted full typed
+translation unit and uses the existing C11 execution checker. Exactly one
+publisher invocation and one successful consumer are **declared bounds**, not
+source-proved call counts. The result binds raw/preprocessed source and analysis
+configuration, carries its profile, property, scope, bounds and assumptions,
+and proves no termination or whole-C safety. Plain/volatile flags and relaxed
+ordering supply no synchronization proof. This API does not promote the legacy
+resource verdict or CT41 mapping. [Implementation and boundaries](reports/ct41-sync-model/README.md).
 
 ## L18. Existing C and interprocedural summaries
 
@@ -1026,6 +1046,21 @@ The `ExternCall` pass is separate from `OrdinaryTypes` on purpose. `Q020` and `Q
 The Libevent-specific `Q700`–`Q712` table in revision 0.2 is a superseded design allocation, not a second active use of the same numbers. Libevent enum variants now use local L00–L12 codes, emitted under qcore.libevent; the mapping and regression tests are recorded with W3. Both response versions reject nested, empty or malformed local components with QP007 before verdict handling; see the [attribution report](reports/w7-diagnostic-attribution/README.md). Provider messages remain untrusted text. Other diagnostic cleanup remains incremental.
 
 This specification revision does not change `PLUGIN_PROTOCOL_VERSION = 1`, `PLUGIN_EVIDENCE_VERSION = 1`, the resource manifest's `schema_version = 1`, the CLI's package version, or any stored observation schema. Future semantic changes require explicit versioning; changing the prose revision number is not wire compatibility work.
+
+**CT implementation amendments.** `CT24-CLEANUP-TASK-COMPOSITION` narrows
+`Q302`/`Q600` placement refusals only for a direct handled region in the exact
+success arm of a direct creator-scope spawn match; the direct epilogue still
+follows every creation/join. The task ledger's cleanup-before-join refusal
+remains `Q600`. `CT10-SOURCE-LAYOUT` extends the same `Concurrency` pass's
+`Q600` structural condition to the bounded field-write profile and reaches
+`Q661` through the unchanged footprint checker. Neither card allocates a code.
+
+On `source.bitfield-concurrency.v1`, `Q661` is
+reachable from two actual simultaneous worker write captures whose fields have
+the same declared bit-field storage-unit identity. Bit offsets and widths are
+retained but cannot establish disjointness. All bounded source-shape,
+worker-body, capture, join and successful-window grammar refusals remain
+`Q600` under the `Concurrency` pass.
 
 ### L21.1 Reason categories for uncovered obligations
 

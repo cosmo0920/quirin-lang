@@ -51,11 +51,13 @@ import sys
 STAGE_DEPTH = {
     "parse": 0,
     "elaborate": 1,
+    "footprint_lowering": 2,
     "task_lowering": 2,
     "mutex_lowering": 2,
     "epoch_lowering": 2,
     "sequential_whole_program": 2,
     "task_ledger_check": 3,
+    "footprint_check": 3,
     "mutex_invariant_check": 3,
     "epoch_bound_check": 3,
     "task_reference_execution": 4,
@@ -155,6 +157,16 @@ EVIDENCE_FILES = [
     # archive keeps its bytes (constraint 21). Every other stage row is carried
     # from it unchanged; proof is the only move.
     "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
+    # Card `CT24-CLEANUP-TASK-COMPOSITION`: CT24 maps on the composed-epoch
+    # route at the task-ledger refusal. Its own artifact reaches no epoch,
+    # emission, native or proof stage; accepted controls do not lend it those
+    # stages. Card T00's bucket was archive-held, so there is no lane row to
+    # retire.
+    "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json",
+    # Card `CT10-SOURCE-LAYOUT`: CT10 maps on a dedicated property-only route.
+    # Its stages name footprint lowering/check rather than the scoped-task
+    # ledger, which this route deliberately does not execute.
+    "docs/reports/ct10-source-layout/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"

@@ -5,6 +5,7 @@
 pub(crate) use qcore_core::chunk_lifecycle;
 pub(crate) use qcore_verifier_host as verifier_plugin;
 
+pub mod atomic_publication_source;
 pub mod obligation_derivation;
 pub mod verify_dispatch;
 pub mod witness_replay;

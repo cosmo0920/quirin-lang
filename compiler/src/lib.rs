@@ -113,11 +113,11 @@ pub use concurrency::{
     LockRank, MutexId, SharedResourceId, TaskId, check_concurrent,
 };
 pub use driver::{
-    CheckedComposedModule, CheckedEpochModule, CheckedExternModule, CheckedMutexGuardModule,
-    CheckedSourceModule, CheckedStdIoModule, CompileOptions, CompiledModule, ComposedEpochModule,
-    ComposedRegionEvidence, CustodyPayloadProfile, EmittedSourceMap, FileDiagnostic,
-    SourceExecutionProfile, SourceFile, SourceLocation, SourceResultProfile, compile_files,
-    compile_files_with_registry, format_diagnostic,
+    BitfieldTaskAssumption, CheckedComposedModule, CheckedEpochModule, CheckedExternModule,
+    CheckedMutexGuardModule, CheckedSourceModule, CheckedStdIoModule, CompileOptions,
+    CompiledModule, ComposedEpochModule, ComposedRegionEvidence, CustodyPayloadProfile,
+    EmittedSourceMap, FileDiagnostic, SourceExecutionProfile, SourceFile, SourceLocation,
+    SourceResultProfile, compile_files, compile_files_with_registry, format_diagnostic,
 };
 pub use error_region::{
     CleanupAction, CleanupBinding, CleanupEvent, CleanupPack, ErrorRegionError, QuantOpen,

@@ -1,0 +1,27 @@
+{
+  "source_head": "637ef1a3ecdd082c98be13e7edac6490de45e796",
+  "run_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/ct-remaining/integration/private/ct-integration/rebase-gate-20260919T101431Z",
+  "start": "2026-09-19T10:14:31.154750+00:00",
+  "completed": "2026-09-19T10:28:46.134992+00:00",
+  "rust_passed": 4808,
+  "rust_failed": 0,
+  "rust_ignored": 10,
+  "result_summaries": 246,
+  "running_targets": 235,
+  "doc_test_targets": 9,
+  "lean_audits": 145,
+  "python_tests": 305,
+  "command_exits": {
+    "submodule": 0,
+    "clang-version": 0,
+    "cargo-test": 0,
+    "fmt": 0,
+    "clippy": 0,
+    "probe": 0,
+    "followup": 0,
+    "lean": 0,
+    "python-final": 0
+  },
+  "rust_lean_source_unchanged_since_head": true,
+  "post_regeneration_python_verified": true
+}

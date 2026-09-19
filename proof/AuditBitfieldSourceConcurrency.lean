@@ -1,0 +1,7 @@
+import QCore.BitfieldSourceConcurrency
+
+#print axioms QCore.BitfieldSourceConcurrency.simultaneous_writes_to_one_unit_are_refused
+#print axioms QCore.BitfieldSourceConcurrency.ordinary_disjoint_fields_are_admitted
+#print axioms QCore.BitfieldSourceConcurrency.distinct_units_with_disjoint_bytes_are_admitted
+#print axioms QCore.BitfieldSourceConcurrency.sequentialized_writes_are_not_a_concurrent_question
+#print axioms QCore.BitfieldSourceConcurrency.rust_refuses_adjacent_writes_under_correspondence

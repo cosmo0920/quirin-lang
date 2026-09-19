@@ -127,3 +127,20 @@ including cross-topic rules, before editing; the index is not a substitute.
     `Q600` narrowing, in §L21. `region-credit-joins`, `region-joins-duties`,
     `region-joins-loan`.
 <!-- preserved:constraint-15m:end -->
+
+## Amendment to 15m — CT24 cleanup/task composition
+
+A composed handled region is either the creator's direct epilogue after
+every creation and join, or one direct statement in the exact
+`Result::Ok` arm of a direct `match spawn` in that creator task scope. In
+the second form, its straight-line erasure places every cleanup release at
+the region's own source position; the unedited scoped-task ledger checks
+that release before any later join. Arbitrary branches and loops, the
+spawn-error arm, worker regions and every other nested placement remain
+refused. Region strict credit is creator-local and neither settles nor
+abandons a child's epoch grant; published region evidence in a success arm
+is conditional on that arm, while spawn-failure recovery stays the task
+route's own.
+
+This supersedes only the blanket after-all-joins placement premise above.
+[Evidence and controls](../reports/ct24-cleanup-task-composition/README.md).

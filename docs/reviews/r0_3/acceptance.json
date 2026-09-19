@@ -3,8 +3,8 @@
   "spec_revision": "0.3",
   "integration_base_revision": "ea0e54e162a2ea16c9fc2332b9e01f8e0c3bc4a3",
   "full_conformance": false,
-  "ct_mapped": 47,
-  "ct_unmapped": 3,
+  "ct_mapped": 49,
+  "ct_unmapped": 1,
   "findings": [
     {
       "id": "R01",
@@ -278,123 +278,130 @@
       "docs/reports/ct-lane-5/ct_stage_evidence.json",
       "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
       "docs/reports/ct42-cell-route/ct_stage_evidence.json",
-      "docs/reports/ct-proof-leg-3/ct_stage_evidence.json"
+      "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
+      "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json",
+      "docs/reports/ct10-source-layout/ct_stage_evidence.json"
     ],
     "reporting_host": "linux",
     "stage_histogram": {
       "parse": {
-        "executed": 47
+        "executed": 49
       },
       "elaborate": {
-        "executed": 44,
+        "executed": 46,
         "not_applicable": 3
       },
+      "footprint_lowering": {
+        "executed": 1,
+        "not_applicable": 48
+      },
+      "footprint_check": {
+        "executed": 1,
+        "not_applicable": 48
+      },
       "task_lowering": {
-        "executed": 23,
-        "not_applicable": 24
+        "executed": 24,
+        "not_applicable": 25
       },
       "task_ledger_check": {
-        "executed": 22,
-        "not_applicable": 25
+        "executed": 23,
+        "not_applicable": 26
       },
       "mutex_lowering": {
         "executed": 11,
-        "not_applicable": 36
+        "not_applicable": 38
       },
       "mutex_invariant_check": {
         "executed": 11,
-        "not_applicable": 36
+        "not_applicable": 38
       },
       "epoch_lowering": {
         "executed": 7,
-        "not_applicable": 40
+        "not_applicable": 42
       },
       "epoch_bound_check": {
         "executed": 7,
-        "not_applicable": 40
+        "not_applicable": 42
       },
       "sequential_whole_program": {
         "executed": 2,
-        "not_applicable": 45
+        "not_applicable": 47
       },
       "sequential_reference_execution": {
         "executed": 1,
-        "not_applicable": 46
+        "not_applicable": 48
       },
       "task_reference_execution": {
         "executed": 13,
-        "not_applicable": 34
+        "not_applicable": 36
       },
       "mutex_reference_execution": {
         "executed": 3,
-        "not_applicable": 44
+        "not_applicable": 46
       },
       "c_emission": {
         "executed": 19,
-        "not_applicable": 28
+        "not_applicable": 30
       },
       "native_execution": {
         "executed": 19,
-        "not_applicable": 28
+        "not_applicable": 30
       },
       "native_sanitized": {
         "executed": 10,
-        "not_applicable": 7,
+        "not_applicable": 8,
         "recorded_not_gated": 5,
-        "unassessed": 25
+        "unassessed": 26
       },
       "legacy_c_twin": {
         "executed": 3,
-        "not_applicable": 44
+        "not_applicable": 46
       },
       "proof": {
         "executed": 5,
-        "unassessed": 42
+        "unassessed": 44
       }
     },
     "depth_profile": {
       "elaborate": 4,
       "epoch_bound_check": 4,
+      "footprint_check": 1,
       "legacy_c_twin": 3,
       "mutex_invariant_check": 8,
       "native_execution": 6,
       "native_sanitized": 8,
       "proof": 5,
       "sequential_whole_program": 1,
-      "task_ledger_check": 7,
+      "task_ledger_check": 8,
       "task_lowering": 1
     },
     "observation_counts": {
       "c_emission": 36,
-      "elaborate": 44,
+      "elaborate": 46,
       "epoch_bound_check": 7,
       "epoch_lowering": 7,
+      "footprint_check": 1,
+      "footprint_lowering": 1,
       "legacy_c_twin": 4,
       "mutex_invariant_check": 11,
       "mutex_lowering": 11,
       "mutex_reference_execution": 3,
       "native_execution": 51,
       "native_sanitized": 32,
-      "parse": 47,
+      "parse": 49,
       "proof": 5,
       "sequential_reference_execution": 1,
       "sequential_whole_program": 2,
-      "task_ledger_check": 22,
-      "task_lowering": 23,
+      "task_ledger_check": 23,
+      "task_lowering": 24,
       "task_reference_execution": 29
     },
     "unmapped_bucket_counts": {
-      "blocked-on-unimplemented-syntax": 1,
-      "DECIDABLE-NOW (with a distinguishing fixture)": 1,
       "blocked-on-gateway-expressiveness (C-twin measured)": 1
     },
-    "newly_decidable_not_mapped": [
-      "CT24"
-    ],
+    "newly_decidable_not_mapped": [],
     "cause": "docs/reports/remaining-t00/README.md, docs/reports/remaining-t03-ct-integration/README.md, docs/reports/remaining-wave3-ct-integration/README.md, docs/reports/wave5-ct-integration/README.md, docs/reports/wave8-epoch-ct/README.md, docs/reports/wave9-ctwin/README.md, docs/reports/wave11-ct33/README.md, docs/reports/wave13-ct34/README.md, docs/reports/remaining-ct34-sanitized/README.md, docs/reports/wave17-ct40/README.md",
-    "newly_decidable_not_mapped_reasons": {
-      "CT24": "Refusal re-attributed by the wave-30 card CT24-CLEANUP-PREEMPTED and still unmapped pending a mapping lane's decision: the explicit `drop` of a shared owner before the join keeps its own refusal (Q600 LoanOutstanding, unchanged), and the cleanup shape the case names - an early exit (`?` or return) inside the thread scope while the child holds a read share of the frame's owner - is still refused first on the scope obligation (Q600 ScopeBusy, unweakened and unreordered), but that refusal now carries the exit rule's own loan judgment, naming the owner the preempted cleanup would destroy and the borrower whose join it precedes - the attribution the wave-26 lane measured missing and declined to map on. Readiness statement and measured boundary in docs/reports/ct24-cleanup-preempted/README.md; card T04's fixture stays in docs/reports/remaining-t04/fixtures/. Re-measured by the wave-31 lane (card CT-WIRE-LANE-3) and left unmapped with the bucket unchanged: the attributed ScopeBusy message is real, but the checked task route executes no destroy at scope exit, and on the composed epoch route -- where CT25's executed cleanup-destroy lives -- a region before the join is refused for its placement whatever its duties (an adopting region between spawn and join refuses at the ledger's own LoanOutstanding, a duty-free one refuses too), so no control can isolate the destroy and the wave-9 attribution rule is not met on either route. Measurement and the measured constraint-25 consequence of a future mapping in docs/reports/ct-wire-lane-3/ct_stage_evidence.json (cases_examined_and_left_unmapped)."
-    },
+    "newly_decidable_not_mapped_reasons": {},
     "generated_fields": [
       "ct_mapped",
       "ct_unmapped",
@@ -420,6 +427,12 @@
         "any"
       ],
       "epoch_lowering": [
+        "any"
+      ],
+      "footprint_check": [
+        "any"
+      ],
+      "footprint_lowering": [
         "any"
       ],
       "legacy_c_twin": [
@@ -479,6 +492,7 @@
       "CT07": "proof",
       "CT08": "elaborate",
       "CT09": "native_sanitized",
+      "CT10": "footprint_check",
       "CT11": "elaborate",
       "CT12": "native_execution",
       "CT13": "native_execution",
@@ -492,6 +506,7 @@
       "CT21": "elaborate",
       "CT22": "native_sanitized",
       "CT23": "task_ledger_check",
+      "CT24": "task_ledger_check",
       "CT25": "native_sanitized",
       "CT26": "native_sanitized",
       "CT27": "mutex_invariant_check",
@@ -543,6 +558,12 @@
       "epoch_lowering": [
         "none"
       ],
+      "footprint_check": [
+        "none"
+      ],
+      "footprint_lowering": [
+        "none"
+      ],
       "legacy_c_twin": [
         "clang"
       ],
@@ -585,8 +606,6 @@
       ]
     },
     "unmapped_label_sources": {
-      "CT10": "t00-archive",
-      "CT24": "t00-archive",
       "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
     }
   },

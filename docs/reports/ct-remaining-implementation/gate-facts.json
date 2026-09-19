@@ -1,0 +1,41 @@
+{
+  "source_head": "72a648f169a3d13846df0d0811e08093036b93d3",
+  "run_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/ct-remaining/integration/private/ct-integration/gate-20260919T093327Z",
+  "start": "2026-09-19T09:33:27.502960+00:00",
+  "completed": "2026-09-19T09:48:29.490141+00:00",
+  "rust_passed": 4808,
+  "rust_failed": 0,
+  "rust_ignored": 10,
+  "result_summaries": 246,
+  "running_targets": 235,
+  "doc_test_targets": 9,
+  "lean_audits": 145,
+  "python_tests": 305,
+  "command_exits": {
+    "submodule": 0,
+    "clang-version": 0,
+    "cargo-test": 0,
+    "fmt": 0,
+    "clippy": 0,
+    "probe": 0,
+    "followup": 0,
+    "lean": 0,
+    "python-final": 0
+  },
+  "rust_lean_source_unchanged_since_head": true,
+  "post_regeneration_python_verified": true,
+  "publication_checks_initial": {
+    "python-publication": 0,
+    "reconciliation": 1,
+    "docs-preservation": 0,
+    "ct-stages": 0,
+    "diff-check": 0
+  },
+  "publication_checks_final": {
+    "python-publication": 0,
+    "reconciliation": 0,
+    "docs-preservation": 0,
+    "ct-stages": 0,
+    "diff-check": 0
+  }
+}

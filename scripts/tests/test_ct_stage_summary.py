@@ -188,20 +188,16 @@ class SummaryTest(unittest.TestCase):
             self.assertTrue(summary.check_acceptance(scratch.directory))
             self.assertTrue(summary.check_provenance(scratch.directory))
 
-    def test_a_mapping_change_is_reported_as_drift(self):
+    def test_a_mapping_status_change_is_reported_as_drift(self):
         manifest = load_manifest()
         for case in manifest["cases"]:
             if case["id"] == "CT24":
-                case["mapping_status"] = "mapped"
-                case["route"] = "task"
-                case["stages"] = copy.deepcopy(
-                    next(c for c in manifest["cases"] if c["id"] == "CT02")["stages"]
-                )
+                case["mapping_status"] = "unmapped"
         with MutableRoot() as scratch:
             scratch.write_manifest(manifest)
             self.assertTrue(summary.check_acceptance(scratch.directory))
             self.assertIn(
-                "CT24: mapped with no archived stage-evidence record",
+                "CT24: archived stage evidence exists but the case is unmapped",
                 summary.check_provenance(scratch.directory),
             )
 
@@ -328,37 +324,39 @@ class SummaryTest(unittest.TestCase):
         moment the mapping lands and the drift names this field.
         """
         manifest = load_manifest()
-        before = summary.unmapped_bucket_counts(ROOT, manifest)
         for case in manifest["cases"]:
             if case["id"] == "CT24":
-                case["mapping_status"] = "mapped"
-                case["route"] = "task"
-                case["stages"] = copy.deepcopy(
-                    next(c for c in manifest["cases"] if c["id"] == "CT02")["stages"]
-                )
+                case["mapping_status"] = "unmapped"
+        before = summary.unmapped_bucket_counts(ROOT, manifest)
         with MutableRoot() as scratch:
+            scratch.write_manifest(manifest)
+            for case in manifest["cases"]:
+                if case["id"] == "CT24":
+                    case["mapping_status"] = "mapped"
             scratch.write_manifest(manifest)
             after = summary.unmapped_bucket_counts(scratch.directory, manifest)
             self.assertEqual(sum(after.values()), sum(before.values()) - 1)
             self.assertNotIn("DECIDABLE-NOW (with a distinguishing fixture)", after)
-            self.assertIn(
-                "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
-                summary.check_acceptance(scratch.directory),
-            )
 
     def test_an_unclassified_unmapped_case_fails_closed(self):
         """A hole is refused rather than counted as a zero.
 
         The case this removes is a tree fact, not the assertion: it must be one
         the manifest still leaves unmapped, or the removal is invisible. It read
-        CT44 until card `CT-WIRE-LANE-4` (wave 32) mapped that case, and reads
-        CT10 -- still unmapped, still archive-held -- since.
+        CT44 until card `CT-WIRE-LANE-4` (wave 32) mapped that case, CT10 until
+        card `CT10-SOURCE-LAYOUT`, and CT24 until cleanup composition mapped it.
+        CT41 is now the sole live unmapped case.
         """
         coverage = json.loads((ROOT / summary.TRIAGE).read_text())
         coverage["unmapped_triage"]["cases"] = [
-            case for case in coverage["unmapped_triage"]["cases"] if case["id"] != "CT10"
+            case for case in coverage["unmapped_triage"]["cases"] if case["id"] != "CT24"
         ]
         with MutableRoot() as scratch:
+            manifest = load_manifest()
+            for case in manifest["cases"]:
+                if case["id"] == "CT24":
+                    case["mapping_status"] = "unmapped"
+            scratch.write_manifest(manifest)
             scratch.write_triage(coverage)
             with self.assertRaises(SystemExit):
                 summary.unmapped_bucket_counts(scratch.directory)
@@ -388,10 +386,16 @@ class SummaryTest(unittest.TestCase):
     def test_newly_decidable_ids_must_still_be_unmapped(self):
         self.assertEqual(summary.check_newly_decidable(ROOT), [])
         manifest = load_manifest()
+        acceptance = json.loads((ROOT / summary.ACCEPTANCE).read_text())
+        acceptance["ct_evidence"]["newly_decidable_not_mapped"] = ["CT10"]
+        acceptance["ct_evidence"]["newly_decidable_not_mapped_reasons"] = {
+            "CT10": "staged stale reason"
+        }
         for case in manifest["cases"]:
-            if case["id"] == "CT24":
+            if case["id"] == "CT10":
                 case["mapping_status"] = "mapped"
         with MutableRoot() as scratch:
+            scratch.write_acceptance(acceptance)
             scratch.write_manifest(manifest)
             # Card HYGIENE-16 deliberately widened this pin rather than
             # loosening it: the staged case is named in BOTH hand-kept halves, so
@@ -402,13 +406,14 @@ class SummaryTest(unittest.TestCase):
             # The staged case was CT11 until the wave-26 CT lane mapped it for
             # real, which is the mechanism working: the committed tree no longer
             # names CT11 in either half, so staging it here would assert nothing.
-            # CT24 is one of the two ids the committed halves still carry.
+            # CT24 left both halves when its lane mapped it, so stage CT10 in
+            # both halves to keep the stale mapped-id refusal non-vacuous.
             self.assertEqual(
                 summary.check_newly_decidable(scratch.directory),
                 [
-                    "acceptance.json newly_decidable_not_mapped names CT24, "
+                    "acceptance.json newly_decidable_not_mapped names CT10, "
                     "which the manifest maps",
-                    "acceptance.json newly_decidable_not_mapped_reasons explains why CT24 "
+                    "acceptance.json newly_decidable_not_mapped_reasons explains why CT10 "
                     "is not mapped, but the manifest maps it",
                 ],
             )
@@ -485,9 +490,10 @@ class SummaryTest(unittest.TestCase):
                     "measured_by": labels[case_id]["measured_by"],
                 },
             )
-        # Non-vacuity: the derivation is not the empty map, and every id it
-        # publishes is a case the manifest currently leaves unmapped.
-        self.assertTrue(derived)
+        # Every id it publishes is a case the manifest currently leaves
+        # unmapped. CT24 was the final archived "newly decidable" row, so the
+        # committed fixed point is now intentionally empty; mutation tests
+        # below stage CT24 back to unmapped to exercise non-empty behavior.
         self.assertTrue(set(derived) <= set(summary.unmapped_ids(load_manifest())))
 
     def test_a_matrix_reason_row_for_a_mapped_case_is_refused(self):
@@ -565,9 +571,15 @@ class SummaryTest(unittest.TestCase):
 
     def test_dropping_the_map_or_a_row_of_it_is_refused(self):
         """The direction that let the key be lost on every regeneration."""
-        derived = summary.newly_decidable_reasons(ROOT)
-        case_id = next(iter(derived))
         with MutableRoot() as scratch:
+            manifest = load_manifest()
+            for case in manifest["cases"]:
+                if case["id"] == "CT24":
+                    case["mapping_status"] = "unmapped"
+            scratch.write_manifest(manifest)
+            derived = summary.newly_decidable_reasons(scratch.directory)
+            case_id = next(iter(derived))
+            scratch.write_matrix_reasons(derived)
             matrix = scratch.read_matrix()
             del matrix["ct_conformance"][summary.REASONS_KEY]
             scratch.write_matrix(matrix)
@@ -587,9 +599,14 @@ class SummaryTest(unittest.TestCase):
 
     def test_a_rewritten_reason_paragraph_is_refused(self):
         """The map is the records' text, not the editor's."""
-        derived = summary.newly_decidable_reasons(ROOT)
-        case_id = next(iter(derived))
         with MutableRoot() as scratch:
+            manifest = load_manifest()
+            for case in manifest["cases"]:
+                if case["id"] == "CT24":
+                    case["mapping_status"] = "unmapped"
+            scratch.write_manifest(manifest)
+            derived = summary.newly_decidable_reasons(scratch.directory)
+            case_id = next(iter(derived))
             reasons = copy.deepcopy(derived)
             reasons[case_id]["reason"] = "rewritten by hand"
             scratch.write_matrix_reasons(reasons)
@@ -603,13 +620,18 @@ class SummaryTest(unittest.TestCase):
 
     def test_mapping_a_newly_decidable_case_retires_its_reason_row(self):
         """A lane that maps a case takes the row with it, editing nothing."""
-        derived = summary.newly_decidable_reasons(ROOT)
-        case_id = next(iter(derived))
         manifest = load_manifest()
         for case in manifest["cases"]:
-            if case["id"] == case_id:
-                case["mapping_status"] = "mapped"
+            if case["id"] == "CT24":
+                case["mapping_status"] = "unmapped"
         with MutableRoot() as scratch:
+            scratch.write_manifest(manifest)
+            derived = summary.newly_decidable_reasons(scratch.directory)
+            case_id = next(iter(derived))
+            scratch.write_matrix_reasons(derived)
+            for case in manifest["cases"]:
+                if case["id"] == case_id:
+                    case["mapping_status"] = "mapped"
             scratch.write_manifest(manifest)
             after = summary.newly_decidable_reasons(scratch.directory)
             self.assertNotIn(case_id, after)
@@ -675,8 +697,12 @@ class SummaryTest(unittest.TestCase):
         sources. The wave-17 CT lane mapped CT40, so the set is CT41/CT42 and
         CT40 is asserted out of the label map entirely.
         """
-        before_counts = summary.unmapped_bucket_counts(ROOT)
-        before_sources = summary.unmapped_label_sources(ROOT)
+        manifest = load_manifest()
+        for case in manifest["cases"]:
+            if case["id"] == "CT24":
+                case["mapping_status"] = "unmapped"
+        before_counts = summary.unmapped_bucket_counts(ROOT, manifest)
+        before_sources = summary.unmapped_label_sources(ROOT, manifest)
         coverage = json.loads((ROOT / summary.TRIAGE).read_text())
         # CT42 left this set in wave 39 (card `CT42-CELL-ROUTE` mapped it), so
         # the one case still both lane-measured and unmapped is CT41.
@@ -689,10 +715,12 @@ class SummaryTest(unittest.TestCase):
                 touched += 1
         self.assertEqual(touched, len(measured))
         with MutableRoot() as scratch:
+            scratch.write_manifest(manifest)
+            before_acceptance = summary.check_acceptance(scratch.directory)
             scratch.write_triage(coverage)
             self.assertEqual(summary.unmapped_bucket_counts(scratch.directory), before_counts)
             self.assertEqual(summary.unmapped_label_sources(scratch.directory), before_sources)
-            self.assertEqual(summary.check_acceptance(scratch.directory), [])
+            self.assertEqual(summary.check_acceptance(scratch.directory), before_acceptance)
             # Non-vacuity: the archive text IS read, and published, for a case no
             # lane measured, so the neutrality above is a property of the
             # resolution rule and not of the archive being ignored everywhere.
@@ -701,8 +729,10 @@ class SummaryTest(unittest.TestCase):
             self.assertNotEqual(labels["CT41"]["label"], "invented-archive-label")
             # A tree fact: the case named here must be one no lane measured, so
             # it must still be unmapped and still archive-held. CT44 until card
-            # `CT-WIRE-LANE-4` (wave 32) mapped it; CT10 since.
-            self.assertEqual(labels["CT10"]["label_source"], summary.ARCHIVE_SOURCE)
+            # `CT-WIRE-LANE-4` (wave 32) mapped it; CT10 followed at
+            # `CT10-SOURCE-LAYOUT`; CT24 followed in cleanup composition. Stage
+            # CT24 back to unmapped above to keep the archive-held arm live.
+            self.assertEqual(labels["CT24"]["label_source"], summary.ARCHIVE_SOURCE)
             # A mapped case has no label at all, whatever the archive says about
             # it: CT40 keeps its archived row and its retired lane row, and
             # neither reaches the published map.
@@ -735,9 +765,9 @@ class SummaryTest(unittest.TestCase):
     def test_a_measured_label_wins_over_the_archive_and_says_so(self):
         """The resolution rule, on the real tree.
 
-        Three of the seven unmapped cases carry a lane's measured bucket; the
-        other four still read card T00's 2026-09-07 analysis, and the published
-        source is what makes the difference legible.
+        CT41 is the sole unmapped case and carries a lane-measured bucket. The
+        published source makes that provenance legible; scratch tests above
+        retain the archived-only arm after CT10 and CT24 mapped.
         """
         labels = summary.unmapped_labels(ROOT)
         measured = {
@@ -956,11 +986,17 @@ class SummaryTest(unittest.TestCase):
         carries no row for that case.
         """
         with MutableRoot() as scratch:
+            manifest = load_manifest()
+            for case in manifest["cases"]:
+                if case["id"] in {"CT10", "CT24"}:
+                    case["mapping_status"] = "unmapped"
+            scratch.write_manifest(manifest)
             acceptance = scratch.read_acceptance()
-            # The two ids are a tree fact: they must be cases the manifest still
-            # leaves unmapped. They read CT44 and CT47 until card
+            # The two ids are a scratch-tree fact: they are staged back to
+            # unmapped above. They read CT44 and CT47 until card
             # `CT-WIRE-LANE-4` (wave 32) mapped both, and read CT10 and CT24 --
-            # the two still archive-held -- since.
+            # formerly archive-held -- since. Stage both back to unmapped in
+            # this scratch tree so both unsupported-source arms stay live.
             acceptance["ct_evidence"]["unmapped_label_sources"]["CT10"] = (
                 "docs/reports/remaining-t00/README.md"
             )
@@ -1001,9 +1037,11 @@ class SummaryTest(unittest.TestCase):
             # wave-31 lane mapped CT25, 7 until card `CT-WIRE-LANE-4` (wave 32)
             # mapped CT44 and CT47, 5 until card `CT-CTWIN-LANE` (wave 35) mapped
             # CT46, 4 until card `CT42-CELL-ROUTE` (wave 39) mapped CT42, 3
-            # since. A tree fact, not a loosened assertion -- relabelling one
+            # until card `CT10-SOURCE-LAYOUT` mapped CT10, 2 until CT24 cleanup
+            # composition mapped CT24, and 1 since. A tree
+            # fact, not a loosened assertion -- relabelling one
             # row still moves no total.
-            self.assertEqual(sum(counts.values()), 3)
+            self.assertEqual(sum(counts.values()), 1)
             self.assertIn(
                 "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
                 summary.check_acceptance(scratch.directory),
@@ -1062,9 +1100,9 @@ class SummaryTest(unittest.TestCase):
         """The direction that would silently drop a live label."""
         with MutableRoot() as scratch:
             data = scratch.read_evidence(self.WAVE17)
-            data["retired_unmapped_reasons"]["CT42"] = {
+            data["retired_unmapped_reasons"]["CT41"] = {
                 "retires": self.WAVE9,
-                "mapped_by": "nothing — CT42 is still unmapped",
+                "mapped_by": "nothing — CT41 is still unmapped",
             }
             scratch.write_evidence(self.WAVE17, data)
             with self.assertRaises(SystemExit):

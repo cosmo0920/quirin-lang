@@ -94,6 +94,7 @@ import QCore.MutexInvariant
 import QCore.MutexShareCross
 import QCore.MutexShareCrossArms
 import QCore.DisjointFootprint
+import QCore.BitfieldSourceConcurrency
 import QCore.TranslationValidation
 import QCore.VerifierPlugin
 import QCore.NativeOsObservation
@@ -128,6 +129,7 @@ import QCore.SourceEnumeration
 import QCore.RawDirectiveLexing
 import QCore.ConditionalGroupDepth
 import QCore.AggregateStore
+import QCore.AtomicPublication
 import QCore.BoundFieldRead
 import QCore.MemberAddress
 import QCore.MemberAddressReader
@@ -160,6 +162,7 @@ import QCore.QuantRegionSource
 import QCore.RegionCreditJoins
 import QCore.RegionJoinsDuties
 import QCore.RegionJoinsLoan
+import QCore.CleanupTaskComposition
 import QCore.LoopBudget
 import QCore.LoopWindows
 import QCore.StdString

@@ -126,10 +126,11 @@ use serde::Deserialize;
 /// Pinned mapping expectation. Exactly these manifest entries carry
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
-    "CT01", "CT02", "CT03", "CT04", "CT05", "CT06", "CT07", "CT08", "CT09", "CT11", "CT12", "CT13",
-    "CT14", "CT15", "CT16", "CT17", "CT18", "CT19", "CT20", "CT21", "CT22", "CT23", "CT25", "CT26",
-    "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35", "CT36", "CT37", "CT38",
-    "CT39", "CT40", "CT42", "CT43", "CT44", "CT45", "CT46", "CT47", "CT48", "CT49", "CT50",
+    "CT01", "CT02", "CT03", "CT04", "CT05", "CT06", "CT07", "CT08", "CT09", "CT10", "CT11", "CT12",
+    "CT13", "CT14", "CT15", "CT16", "CT17", "CT18", "CT19", "CT20", "CT21", "CT22", "CT23", "CT24",
+    "CT25", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35", "CT36",
+    "CT37", "CT38", "CT39", "CT40", "CT42", "CT43", "CT44", "CT45", "CT46", "CT47", "CT48", "CT49",
+    "CT50",
 ];
 /// The `legacy_c` route (card CT-CTWIN, extended by the wave-17 CT lane). These
 /// three cases name C constructs that
@@ -201,6 +202,10 @@ const SOURCE_REJECT_CASES: &[&str] = &["CT04", "CT05", "CT18", "CT44", "CT47"];
 /// `SharedProtocolCell` (`Q664`) — the socket route is a non-concurrent source
 /// route, which is what `sequential` names in this harness.
 const SEQUENTIAL_REJECT_CASES: &[&str] = &["CT06", "CT08", "CT11", "CT21", "CT42"];
+/// CT10 is a check-time field-independence question over real task captures.
+/// It has its own route because no scoped-task ledger is run and calling its
+/// checker stage `task_ledger_check` would overstate the evidence.
+const BITFIELD_REJECT_CASE: &str = "CT10";
 /// `sequential`-route **accept** cases whose evidence is a sanitized native run
 /// of the case's own emitted C compared per stream with the route's checked
 /// observation (card `CT-WIRE-LANE-2`, wave 28). CT09
@@ -292,7 +297,7 @@ const PROOF_GATED_CASES: &[(&str, &str)] = &[
 /// assertion (no `Acquire` in the published body), while a case pinning one
 /// must publish exactly that duty as a body `Acquire` — the adoption, checked
 /// on the published operations rather than trusted.
-const EPOCH_CREDIT_SPLIT_CASES: &[&str] = &["CT22", "CT23", "CT25"];
+const EPOCH_CREDIT_SPLIT_CASES: &[&str] = &["CT22", "CT23", "CT24", "CT25"];
 /// Card `CT-COMPOSED-NATIVE` (wave 32), discharging the follow-on CT22 and
 /// CT25 named by their own `unassessed` emission and native rows: the
 /// composed-epoch cases whose **own** emitted C this harness really compiles
@@ -348,6 +353,8 @@ const TOTAL_CASES: usize = 50;
 const STAGE_NAMES: &[&str] = &[
     "parse",
     "elaborate",
+    "footprint_lowering",
+    "footprint_check",
     "task_lowering",
     "task_ledger_check",
     "mutex_lowering",
@@ -381,6 +388,16 @@ const STAGE_STATUSES: &[&str] = &[
 /// carry no mapped case — declaring them is what makes "this route has no such
 /// stage" a structural statement rather than a note.
 const ROUTE_STAGES: &[(&str, &[&str])] = &[
+    (
+        "bitfield_concurrency",
+        &[
+            "parse",
+            "elaborate",
+            "footprint_lowering",
+            "footprint_check",
+            "proof",
+        ],
+    ),
     // `source.epoch.tasks.v1` (card T08-COMPOSE; first mapped case in card
     // CT-WIRE-LANE-2): a flat-epoch plan over a real checked scoped-task
     // region. Both halves lower and check — the credit-recovery gate derives
@@ -548,11 +565,13 @@ const SANITIZER_TRANSCRIPT_CASES: &[&str] = &["CT14", "CT16", "CT20", "CT37", "C
 const STAGE_DEPTH: &[(&str, u8)] = &[
     ("parse", 0),
     ("elaborate", 1),
+    ("footprint_lowering", 2),
     ("task_lowering", 2),
     ("mutex_lowering", 2),
     ("epoch_lowering", 2),
     ("sequential_whole_program", 2),
     ("task_ledger_check", 3),
+    ("footprint_check", 3),
     ("mutex_invariant_check", 3),
     ("epoch_bound_check", 3),
     ("task_reference_execution", 4),
@@ -664,6 +683,8 @@ struct ExpectedCase {
     native_heap_scenarios: Option<NativeHeapScenarios>,
     #[serde(default)]
     source_reject: Option<SourceReject>,
+    #[serde(default)]
+    bitfield_reject: Option<SourceReject>,
     #[serde(default)]
     sequential_reject: Option<SourceReject>,
     #[serde(default)]
@@ -1480,6 +1501,7 @@ fn route_for_case(case_id: &str, verdict: &str) -> &'static str {
         "checked_mutex_crossing" => "mutex_guard",
         "epoch_bound_figures" => "epoch",
         "legacy_c_twin" => "legacy_c",
+        "bitfield_reject" => "bitfield_concurrency",
         "native_join_failure"
         | "native_create_recovery"
         | "native_owned_transfer"
@@ -1666,6 +1688,7 @@ fn derive_stage_plan(
             Some("sequential_reference_execution"),
         ),
         "epoch" => ("epoch_lowering", Some("epoch_bound_check"), None),
+        "bitfield_concurrency" => ("footprint_lowering", Some("footprint_check"), None),
         // The composed route lowers a flat-epoch plan over a checked task
         // region; the epoch pair is the tuple here and the task pair is
         // inserted below, because both halves demonstrably run before the
@@ -1699,6 +1722,17 @@ fn derive_stage_plan(
         plan.insert("task_lowering", StagePlan::executed(base, 1, None));
         if reached_model_check {
             plan.insert("task_ledger_check", StagePlan::executed(base, 1, None));
+        }
+        // CT24 is refused by the task ledger while compiling the erased task
+        // half. The epoch plan has been read syntactically, but neither epoch
+        // lowering nor the bound checker runs: compile_composed_epoch_source
+        // returns immediately from compile_task_source. A Q600 code alone
+        // cannot distinguish that ordering from a later epoch refusal, so pin
+        // this case's named composition boundary explicitly rather than
+        // crediting stages its own artifact never reaches.
+        if case_id == "CT24" && refused {
+            plan.insert("epoch_lowering", StagePlan::absent("not_applicable"));
+            plan.insert("epoch_bound_check", StagePlan::absent("not_applicable"));
         }
     }
     // Card `CT22-WIRE`. An *admitted* composed-epoch module really emits the
@@ -1987,6 +2021,18 @@ fn run_mapped_case(case: &ManifestCase) {
         expected.source_reject.is_some(),
         SOURCE_REJECT_CASES.contains(&case.id.as_str()),
         "{}: task-route rejection metadata is pinned to its own case set",
+        case.id
+    );
+    assert_eq!(
+        expected.bitfield_reject.is_some(),
+        case.id == BITFIELD_REJECT_CASE,
+        "{}: exactly CT10 carries bit-field footprint rejection metadata",
+        case.id
+    );
+    assert_eq!(
+        expected.bitfield_reject.is_some(),
+        expected.verdict == "bitfield_reject",
+        "{}: bit-field route metadata and verdict mode must agree",
         case.id
     );
     assert_eq!(
@@ -2819,6 +2865,26 @@ fn run_mapped_case(case: &ManifestCase) {
             assert!(required_files.insert(control.source.clone()));
         }
     }
+    if let Some(reject) = &expected.bitfield_reject {
+        assert_eq!(reject.diagnostic_sequence, ["Q661"]);
+        assert!(
+            reject.controls.len() >= 2
+                && reject
+                    .controls
+                    .iter()
+                    .all(|control| control.expectation == "accept"),
+            "{}: CT10 requires both admitting attribution controls",
+            case.id
+        );
+        for control in &reject.controls {
+            assert!(control.diagnostic_sequence.is_empty());
+            assert_eq!(
+                control.execution_profile.as_deref(),
+                Some("BitfieldConcurrencyV1")
+            );
+            assert!(required_files.insert(control.source.clone()));
+        }
+    }
     if let Some(reject) = &expected.sequential_reject {
         assert!(
             !reject.diagnostic_sequence.is_empty(),
@@ -3212,6 +3278,9 @@ fn run_mapped_case(case: &ManifestCase) {
     if let Some(reject) = &expected.source_reject {
         run_source_controls(&directory, &case.id, reject);
     }
+    if let Some(reject) = &expected.bitfield_reject {
+        run_bitfield_controls(&directory, &case.id, reject);
+    }
     if let Some(reject) = &expected.sequential_reject {
         run_sequential_controls(&directory, &case.id, reject);
     }
@@ -3451,7 +3520,7 @@ fn run_mapped_case(case: &ManifestCase) {
                 );
             }
         }
-        "reject" => {
+        "reject" | "bitfield_reject" => {
             assert!(
                 expected.outcome.is_none() && expected.trace.is_none(),
                 "{}: a reject case has no execution post-state",
@@ -3533,6 +3602,17 @@ fn run_mapped_case(case: &ManifestCase) {
                         .collect::<Vec<_>>(),
                     reject.diagnostic_sequence,
                     "{}: exact diagnostic cascade mismatch; actual:\n{rendered}",
+                    case.id
+                );
+            }
+            if let Some(reject) = &expected.bitfield_reject {
+                assert_eq!(
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.code.clone())
+                        .collect::<Vec<_>>(),
+                    reject.diagnostic_sequence,
+                    "{}: exact bit-field diagnostic vector mismatch; actual:\n{rendered}",
                     case.id
                 );
             }
@@ -3840,7 +3920,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 26] = [
+const EVIDENCE_FILES: [&str; 28] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3893,6 +3973,12 @@ const EVIDENCE_FILES: [&str; 26] = [
     // `remaining-t00/coverage.json` keeps its bytes (constraint 21). Every
     // other stage row is carried from it unchanged.
     "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
+    // Card `CT24-CLEANUP-TASK-COMPOSITION`: CT24 maps at the composed route's
+    // task-ledger refusal. It adds no native or proof stage.
+    "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json",
+    // Card `CT10-SOURCE-LAYOUT`: CT10's actual field-write captures reach the
+    // footprint checker on a property-only route, with no task-ledger claim.
+    "docs/reports/ct10-source-layout/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
@@ -5557,6 +5643,7 @@ fn execution_profile(label: &str) -> qcore_compiler::SourceExecutionProfile {
         // Card `CT42-CELL-ROUTE` (wave 39): CT42's accepted controls are
         // `source.socket.v1` programs asking an admitted `disjoint` question.
         "StandardSocketV1" => Profile::StandardSocketV1,
+        "BitfieldConcurrencyV1" => Profile::BitfieldConcurrencyV1,
         "ComposedStdIoTasksV1" => Profile::ComposedStdIoTasksV1,
         "ComposedEpochTasksV1" => Profile::ComposedEpochTasksV1,
         other => panic!("unknown execution profile `{other}`"),
@@ -5629,6 +5716,41 @@ fn run_source_controls(directory: &Path, id: &str, reject: &SourceReject) {
             }
             other => panic!("{id}: unknown control expectation `{other}`"),
         }
+    }
+}
+
+/// Controls for CT10's property-only route. Admission means only that the
+/// successful write window's field footprints are independent; it must remain
+/// check-only and publish neither C nor a reference execution.
+fn run_bitfield_controls(directory: &Path, id: &str, reject: &SourceReject) {
+    for control in &reject.controls {
+        let path = directory.join(&control.source);
+        let source = fs::read_to_string(&path)
+            .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display()));
+        let module = compile_files(
+            &[SourceFile::new(path.to_string_lossy(), source)],
+            &CompileOptions::default(),
+        )
+        .unwrap_or_else(|diagnostics| {
+            panic!(
+                "{id} control {} must admit the footprint property:\n{}",
+                control.source,
+                diagnostics
+                    .iter()
+                    .map(format_diagnostic)
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            )
+        });
+        assert_eq!(
+            module.execution_profile,
+            execution_profile(control.execution_profile.as_deref().unwrap())
+        );
+        assert!(module.c_source.is_none(), "{id}: property route emits no C");
+        assert!(
+            module.reference_observation.is_none(),
+            "{id}: property route executes no task schedule"
+        );
     }
 }
 

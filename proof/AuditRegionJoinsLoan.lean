@@ -1,4 +1,5 @@
 import QCore.RegionJoinsLoan
+import QCore.CleanupTaskComposition
 
 -- Card `REGION-JOINS-LOAN` (wave 30): read-loan captures and owner adoption
 -- on `source.epoch.tasks.v1` — CT25's loan half, "cleanup destroys owner
@@ -39,3 +40,10 @@ import QCore.RegionJoinsLoan
 #print axioms QCore.RegionJoinsLoan.the_flagship_adopts_one_owner_and_abandons_three
 #print axioms QCore.RegionJoinsLoan.an_adopted_owner_released_in_the_body_erases_its_duty
 #print axioms QCore.RegionJoinsLoan.an_adopted_and_an_acquired_duty_are_destroyed_last_first
+
+-- Card `CT24-CLEANUP-TASK-COMPOSITION`: the cleanup/loan product. The
+-- existing audit owns this successor module so adding the parity theorem does
+-- not create an uncoordinated global audit-count change.
+#print axioms QCore.CleanupTaskComposition.cleanup_of_the_lent_owner_before_join_refuses
+#print axioms QCore.CleanupTaskComposition.the_same_cleanup_after_join_is_admitted
+#print axioms QCore.CleanupTaskComposition.independent_cleanup_before_join_preserves_the_live_task

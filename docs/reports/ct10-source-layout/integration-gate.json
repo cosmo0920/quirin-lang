@@ -1,0 +1,13 @@
+{
+  "note": "Same combined measurement as docs/reports/ct-remaining-implementation/gate.json; detailed captured facts and actual run recording are in that directory. CT-REMAINING-IMPLEMENTATION combined standing gate. Source head 72a648f169a3d13846df0d0811e08093036b93d3; Rust/Lean/Cargo source remains unchanged through evidence publication. Actual run /home/cosmo/Documents/GitHub/qcore-c/private/ct-remaining/integration/private/ct-integration/gate-20260919T093327Z; see gate-facts.json for captured exits and counts. Rust 4808 passed, 0 failed, 10 ignored over 246 result summaries; 235 Running targets and 9 doc-test sections. Python 305 measured before publication; post-regeneration check is recorded separately. Clang was invoked in this measuring worktree. Provider 122 is carried Unix evidence, not remeasured; providers and schemas unchanged. All child failed/incomplete runs remain disclosed in their reports. CT 49/50 mapped, proof 5/49, gated sanitized-native 10/49 Linux/macOS; no full conformance or production promotion. The adjacent Clang recording is a copy from this same combined measuring run, not a separate per-card invocation.",
+  "workspace_tests": 4808,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 305,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "pass",
+  "lean_audits": 145,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
