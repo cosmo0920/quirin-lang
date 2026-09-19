@@ -2847,10 +2847,12 @@ enum Statement {
         expression_supported: bool,
         writes: RefusedWrites,
         returned_place: Option<String>,
-        /// Card **C-GATEWAY-RETURN-CALL-W4**: the modeled call this `return`
-        /// expression is, when it is exactly one. `Some` desugars the exit into
-        /// the two nodes `PLACE = f(args); return PLACE;` the analyzer already
-        /// decides; see [`return_call`] for why that reduction is the rule.
+        /// A modeled or precisely refused evaluation of this `return`
+        /// expression. `Some` desugars the exit into the two nodes
+        /// `PLACE = expression; return PLACE;` that the analyzer already
+        /// decides. Card C-GATEWAY-RETURN-CALL-W4 supplies the contract-call
+        /// case; B01-RETURN-EXPRESSION adds the opaque-value and fail-closed
+        /// refusal cases.
         returned_call: Option<Box<LegacyInstruction>>,
     },
 }
@@ -3445,7 +3447,7 @@ impl Parser<'_> {
                 // has, including the `Reallocated` result wave 33's soundness
                 // ground was right about.
                 let returned_call = (!strict && !untracked_pointer)
-                    .then(|| self.return_call_instruction(&expression, line))
+                    .then(|| self.return_expression_instruction(&expression, line))
                     .flatten();
                 Ok(Statement::Return {
                     line,
@@ -3588,6 +3590,87 @@ impl Parser<'_> {
                 && return_call::escapes_only_fresh_custody(contract.result)
         );
         if admitted {
+            Some(instruction)
+        } else {
+            self.next_site = restore;
+            None
+        }
+    }
+
+    /// Card **B01-RETURN-EXPRESSION**: evaluate a refused return through the
+    /// ordinary assignment classifier before falling back to the position's
+    /// generic refusal.
+    ///
+    /// The pre-existing whole-call rule is asked first and unchanged. For the
+    /// remaining expressions this rule admits two bounded shapes:
+    ///
+    /// * an `OpaqueValue` assigned to the reserved return place; the classifier
+    ///   has established that the value carries no resource identity, so the
+    ///   following `EscapeIfOwned` is a no-op on custody;
+    /// * exactly one contracted call with `ResourceReturnMode::None` inside an
+    ///   otherwise custody-neutral scalar expression. The call is classified
+    ///   as a standalone statement so its parameter effects are applied, and
+    ///   its resource-free result leaves nothing for the return to escape.
+    ///
+    /// Every refusal, including the classifier's own `Unknown`, keeps the old
+    /// return-position wrapper and wording.
+    ///
+    /// A declined probe restores `next_site`, including a precise refusal, so
+    /// a classification attempt cannot perturb later certificate identities.
+    fn return_expression_instruction(
+        &mut self,
+        expression: &[Token],
+        line: usize,
+    ) -> Option<LegacyInstruction> {
+        if let Some(call) = self.return_call_instruction(expression, line) {
+            return Some(call);
+        }
+        if !return_call::place_is_unspelled(self.tokens, return_call::RETURN_RESULT_PLACE) {
+            return None;
+        }
+        let texts = expression
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        if let Some((call_index, call_end)) = unconditional_return_call_span(&texts) {
+            let outside = texts[..call_index]
+                .iter()
+                .chain(texts[call_end..].iter())
+                .copied()
+                .collect::<Vec<_>>();
+            if crate::typed_field_access::is_scalar_operand_expression(
+                &outside,
+                &self.typed_model,
+                &self.typed_types,
+            ) {
+                let restore = self.next_site;
+                let instruction = self.classify_simple(&expression[call_index..call_end]);
+                let admitted = matches!(
+                    &instruction,
+                    LegacyInstruction::ContractCall {
+                        destination: None,
+                        contract,
+                        ..
+                    } if contract.result == ResourceReturnMode::None
+                );
+                if admitted {
+                    return Some(instruction);
+                }
+                self.next_site = restore;
+            }
+        }
+        let mut synthetic = Vec::with_capacity(expression.len() + 2);
+        synthetic.extend(return_call::assignment_prefix(line));
+        synthetic.extend_from_slice(expression);
+        let restore = self.next_site;
+        let instruction = self.classify_simple(&synthetic);
+        let admitted = matches!(
+            &instruction,
+            LegacyInstruction::OpaqueValue { destination, .. }
+                if destination == return_call::RETURN_RESULT_PLACE
+        );
+        if admitted {
+            self.next_site = restore;
             Some(instruction)
         } else {
             self.next_site = restore;
@@ -4486,6 +4569,69 @@ fn find_call<'a>(tokens: &'a [&'a str]) -> Option<(usize, &'a str)> {
     tokens.windows(2).enumerate().find_map(|(index, pair)| {
         (is_identifier(pair[0]) && pair[1] == "(").then_some((index, pair[0]))
     })
+}
+
+/// B01-RETURN-EXPRESSION's bounded evaluation order check.
+///
+/// A modeled custody effect may be extracted from a return expression only
+/// when C evaluates it unconditionally. Short-circuit, conditional,
+/// assignment, mutation and type-operator expressions therefore refuse. This
+/// is the return-position twin of B02's condition-call boundary; the integrator
+/// may reconcile the two copies onto the shared helper when both cards land.
+fn unconditional_return_call_span(tokens: &[&str]) -> Option<(usize, usize)> {
+    if tokens.iter().any(|token| matches!(*token, "?" | ":"))
+        || tokens
+            .windows(2)
+            .any(|pair| matches!(pair, ["&", "&"] | ["|", "|"] | ["+", "+"] | ["-", "-"]))
+        || return_expression_contains_assignment(tokens)
+    {
+        return None;
+    }
+    let mut found = None;
+    for (index, pair) in tokens.windows(2).enumerate() {
+        if !is_identifier(pair[0]) || pair[1] != "(" {
+            continue;
+        }
+        if TYPE_OPERATORS.contains(&pair[0]) {
+            return None;
+        }
+        let end = matching_close_texts(tokens, index + 1)? + 1;
+        if found.replace((index, end)).is_some() {
+            return None;
+        }
+    }
+    found
+}
+
+fn return_expression_contains_assignment(tokens: &[&str]) -> bool {
+    tokens.iter().enumerate().any(|(index, token)| {
+        if *token != "=" {
+            return false;
+        }
+        let previous = index.checked_sub(1).and_then(|i| tokens.get(i)).copied();
+        let next = tokens.get(index + 1).copied();
+        next != Some("=")
+            && (!matches!(previous, Some("=" | "!" | "<" | ">"))
+                || (matches!(previous, Some("<" | ">"))
+                    && index.checked_sub(2).and_then(|i| tokens.get(i)).copied() == previous))
+    })
+}
+
+fn matching_close_texts(tokens: &[&str], open: usize) -> Option<usize> {
+    let mut depth = 0usize;
+    for (index, token) in tokens.iter().enumerate().skip(open) {
+        match *token {
+            "(" => depth += 1,
+            ")" => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    return Some(index);
+                }
+            }
+            _ => {}
+        }
+    }
+    None
 }
 
 /// C type-operator tokens, distinguished lexically from ordinary callees.
