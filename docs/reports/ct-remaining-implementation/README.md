@@ -39,7 +39,9 @@ accesses that evade reference counts, and redeclarations that could introduce
 another declaration identity for a selected object or function. Static AST
 access counts do not prove dynamic invocation counts: those remain declared
 bounds in the certificate alongside source/configuration identity and review
-premises for extraction and Rust/Lean correspondence.
+premises for extraction and Rust/Lean correspondence. The full gate also
+caught a forbidden gateway-to-core dependency: extraction stays in the gateway,
+while `qcore-verification` now composes those facts with the core judgment.
 
 ## Integration and validation
 
@@ -51,4 +53,21 @@ passing result.
 
 ## Reconciliation
 
-Pending final tracker reconciliation and generated matrix/status update.
+The verified union maps **49/50** cases; CT41 is the only unmapped case.
+Case-bound proof stays **5/49**, gated sanitized-native **10/49** on Linux/macOS.
+Two registered entries, `CT10-BYTE-ENCODING-UNSOUND` and `CT10-REASON-ROW`,
+are retired. The first is discharged by actual bit-field storage-unit derivation;
+the second is superseded by the executed CT10 mapping, so no new unmapped
+reason row is needed. No frozen reason row is deleted. CT24's prospective
+name was not a registered entry and is not counted as a retirement.
+
+`CT10-TASK-FAILURE-LIFETIME` is registered for composing the source profile
+with real task-ledger failure recovery and matching Lean semantics before it
+can publish a scoped-task certificate. `CT41-TYPED-SOURCE-UNDISCRIMINATING`
+remains registered with a narrowed, current boundary. Registered follow-ups
+therefore move **264 → 263**. The next numbered wave close must carry this
+record's resolved CT10 reason decision: the decision-discovery script only
+reads numbered close directories. The general dual-tracking issue remains
+under `DECISION-ALSO-REGISTERED-AS-FOLLOWUP`.
+
+The reconciliation record and final gate evidence are pending completion.

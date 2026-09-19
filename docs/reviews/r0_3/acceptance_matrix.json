@@ -195,11 +195,7 @@
   "ct_stage_names": 19,
   "ct_cells": 950,
   "unverified_spec_items": 7,
-<<<<<<< HEAD
-  "named_followups": 264
-=======
-  "named_followups": 262
->>>>>>> refs/rewritten/codex-ct24-composition
+  "named_followups": 263
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -1035,23 +1031,14 @@
    "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
    "docs/reports/ct42-cell-route/ct_stage_evidence.json",
    "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
-<<<<<<< HEAD
    "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json",
    "docs/reports/ct10-source-layout/ct_stage_evidence.json"
-=======
-   "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json"
->>>>>>> refs/rewritten/codex-ct24-composition
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-<<<<<<< HEAD
    "mapped": 49,
    "unmapped": 1
-=======
-   "mapped": 48,
-   "unmapped": 2
->>>>>>> refs/rewritten/codex-ct24-composition
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1192,17 +1179,10 @@
   ],
   "stage_histogram": {
    "parse": {
-<<<<<<< HEAD
     "executed": 49
    },
    "elaborate": {
     "executed": 46,
-=======
-    "executed": 48
-   },
-   "elaborate": {
-    "executed": 45,
->>>>>>> refs/rewritten/codex-ct24-composition
     "not_applicable": 3
    },
    "footprint_lowering": {
@@ -1215,7 +1195,6 @@
    },
    "task_lowering": {
     "executed": 24,
-<<<<<<< HEAD
     "not_applicable": 25
    },
    "task_ledger_check": {
@@ -1261,53 +1240,6 @@
    "native_execution": {
     "executed": 19,
     "not_applicable": 30
-=======
-    "not_applicable": 24
-   },
-   "task_ledger_check": {
-    "executed": 23,
-    "not_applicable": 25
-   },
-   "mutex_lowering": {
-    "executed": 11,
-    "not_applicable": 37
-   },
-   "mutex_invariant_check": {
-    "executed": 11,
-    "not_applicable": 37
-   },
-   "epoch_lowering": {
-    "executed": 7,
-    "not_applicable": 41
-   },
-   "epoch_bound_check": {
-    "executed": 7,
-    "not_applicable": 41
-   },
-   "sequential_whole_program": {
-    "executed": 2,
-    "not_applicable": 46
-   },
-   "sequential_reference_execution": {
-    "executed": 1,
-    "not_applicable": 47
-   },
-   "task_reference_execution": {
-    "executed": 13,
-    "not_applicable": 35
-   },
-   "mutex_reference_execution": {
-    "executed": 3,
-    "not_applicable": 45
-   },
-   "c_emission": {
-    "executed": 19,
-    "not_applicable": 29
-   },
-   "native_execution": {
-    "executed": 19,
-    "not_applicable": 29
->>>>>>> refs/rewritten/codex-ct24-composition
    },
    "native_sanitized": {
     "executed": 10,
@@ -1317,19 +1249,11 @@
    },
    "legacy_c_twin": {
     "executed": 3,
-<<<<<<< HEAD
     "not_applicable": 46
    },
    "proof": {
     "executed": 5,
     "unassessed": 44
-=======
-    "not_applicable": 45
-   },
-   "proof": {
-    "executed": 5,
-    "unassessed": 43
->>>>>>> refs/rewritten/codex-ct24-composition
    }
   },
   "depth_profile": {
@@ -1398,11 +1322,7 @@
   },
   "observation_counts": {
    "c_emission": 36,
-<<<<<<< HEAD
    "elaborate": 46,
-=======
-   "elaborate": 45,
->>>>>>> refs/rewritten/codex-ct24-composition
    "epoch_bound_check": 7,
    "epoch_lowering": 7,
    "footprint_check": 1,
@@ -1413,11 +1333,7 @@
    "mutex_reference_execution": 3,
    "native_execution": 51,
    "native_sanitized": 32,
-<<<<<<< HEAD
    "parse": 49,
-=======
-   "parse": 48,
->>>>>>> refs/rewritten/codex-ct24-composition
    "proof": 5,
    "sequential_reference_execution": 1,
    "sequential_whole_program": 2,
@@ -3764,15 +3680,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
       "observations": 1
-<<<<<<< HEAD
      },
      "footprint_lowering": {
       "status": "not_applicable"
      },
      "footprint_check": {
       "status": "not_applicable"
-=======
->>>>>>> refs/rewritten/codex-ct24-composition
      },
      "task_lowering": {
       "status": "executed",
@@ -6489,17 +6402,9 @@
    "cases_stopping_at_source_rejection": 2
   },
   "unmapped_bucket_counts": {
-<<<<<<< HEAD
    "blocked-on-gateway-expressiveness (C-twin measured)": 1
   },
   "unmapped_label_sources": {
-=======
-   "blocked-on-unimplemented-syntax": 1,
-   "blocked-on-gateway-expressiveness (C-twin measured)": 1
-  },
-  "unmapped_label_sources": {
-   "CT10": "t00-archive",
->>>>>>> refs/rewritten/codex-ct24-composition
    "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
   },
   "newly_decidable_not_mapped": [],
@@ -6626,15 +6531,12 @@
   "workspace_tests": 4733,
   "provider_tests": 122,
   "python_evidence_validator_tests": 305,
-<<<<<<< HEAD
-  "lean_audits": 144,
-=======
-  "lean_audits": 143,
->>>>>>> refs/rewritten/codex-ct24-composition
+  "lean_audits": 145,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
    "AuditAll.lean",
+   "AuditAtomicPublication.lean",
    "AuditBitfieldSourceConcurrency.lean",
    "AuditBitwise.lean",
    "AuditBorrowLiveness.lean",
@@ -7287,10 +7189,10 @@
   },
   {
    "id": "CT41-TYPED-SOURCE-UNDISCRIMINATING",
-   "title": "The typed-source arm named in CT41's archived blocker cannot carry the case: it refuses volatile, _Atomic and restrict in one branch with one message",
-   "why": "Card CT-CTWIN-LANE (wave 35) examined that arm for the first time. CT41's recorded blocker has always carried the parenthetical `typed_source.rs refuses volatile/_Atomic/restrict`, and it is still true -- crates/qcore-c-gateway/src/typed_source.rs::c_type refuses any such type with `qualified access requires additional synchronization/alias evidence`. It is nevertheless not a route on which CT41 could map, and the reason is about the rule's SHAPE rather than its reachability: one branch, one message, covering a real synchronization primitive (_Atomic), a pure aliasing qualifier (restrict) and the access-ordering qualifier that is neither (volatile) alike. CT41's entire content is the difference between the first and the third -- card CTWIN-PUBLISH section 5's decision that C11 volatile is not a synchronization primitive -- so a rule that cannot tell them apart cannot be evidence about that difference. Recorded as a measured boundary, NOT as a defect in typed_source.rs: refusing the whole qualifier class is fail-closed and correct for what that importer does. Discharge: either a statement that this arm is permanently out of scope for CT41, or a rule that distinguishes the qualifiers, which would need the synchronization model the gateway does not have.",
-   "source": "docs/reports/ct-ctwin-lane/README.md",
-   "recorded_by": "CT-CTWIN-LANE"
+   "title": "CT41 remains unmapped: bounded atomic publication is available, but the original volatile completion case still lacks attributed case evidence",
+   "why": "The historical typed_source qualifier refusal remains fail-closed and unchanged. CT41-SYNC-MODEL now provides a separate full-AST extractor and verification-layer release/acquire judgment under explicit one-publisher/one-successful-consumer bounds; plain and volatile flags establish no synchronization. This does not map CT41: no case fixture/stage runner satisfies the unchanged attribution rule, and model parity is not case-bound proof. Discharge: supply the original case and a legitimate isolating control through an attributed source route under the existing evidence rules, or explicitly review and record a revised scenario definition. Do not manufacture a plain-versus-volatile synchronization difference or promote the legacy gateway.",
+   "source": "docs/reports/ct41-sync-model/README.md",
+   "recorded_by": "CT-REMAINING-IMPLEMENTATION"
   },
   {
    "id": "CT-FIXTURE-CROSS-CASE-DUPLICATES",
@@ -7591,13 +7493,6 @@
    "id": "STABILITY-REEVAL-1-RESIDUALS-ORPHANED",
    "title": "Retiring WAVE-33-DEFERRED-DECISIONS-UNTRACKED removed the only tracker entry for two names, which now reach no tracker at all",
    "why": "MEASURED three ways, including by the project's own tool. CT10-REASON-ROW and MATRIX-UPDATED-STALE-AT-WAVE-27 each appear 0 times in named_followups and 0 times in AGENTS.md, and scripts/reconciliation_sweep.py --residuals lists both with NO tracker line, written only in docs/reports/stability-reeval-1/README.md. So the names raised by the stability card now sit in exactly the untracked set that --residuals exists to surface - the same place DOCS-COMPACT-4's and DOCS-COMPACT-5's own findings sat for two waves. The defect the cadence was created to catch has happened to the cadence's own output. DISCHARGE: this card registers both names in their own right; additionally, add to the close rule that RETIRING A TRACKER ENTRY REQUIRES RE-HOMING EVERY NAME IT WAS THE SOLE TRACKER FOR, checked by --residuals BEFORE the retirement lands rather than after.",
-   "source": "docs/reports/stability-reeval-2/README.md",
-   "recorded_by": "STABILITY-REEVAL-2"
-  },
-  {
-   "id": "CT10-REASON-ROW",
-   "title": "Re-homed orphan: raised by STABILITY-REEVAL #1, left with no tracker when its parent entry was retired",
-   "why": "Registered here in its own right under STABILITY-REEVAL-1-RESIDUALS-ORPHANED. Raised by firing 1 of the stability cadence and carried only in docs/reports/stability-reeval-1/README.md; the retirement of WAVE-33-DEFERRED-DECISIONS-UNTRACKED removed the only tracker entry pointing at it. This entry exists so the name reaches a tracker; the substance is firing 1's. DISCHARGE: read docs/reports/stability-reeval-1/README.md's statement of this name and either act on it or record it declined with its ground - and do not retire this entry without re-homing anything it is the sole tracker for.",
    "source": "docs/reports/stability-reeval-2/README.md",
    "recorded_by": "STABILITY-REEVAL-2"
   },
@@ -7926,7 +7821,7 @@
   {
    "id": "DECISION-ALSO-REGISTERED-AS-FOLLOWUP",
    "title": "CT10-REASON-ROW and MATRIX-UPDATED-STALE-AT-WAVE-27 are now both a deferred decision and a named_followup",
-   "why": "Card STABILITY-REEVAL #2 registered both names in named_followups, correctly, because STABILITY-REEVAL #1 had raised them and no tracker carried them (STABILITY-REEVAL-1-RESIDUALS-ORPHANED). But both are ALSO open deferred decisions, carried from the wave-33 close through waves 34 and 35, and the wave-35 close's own classification says in terms that decisions 'must not be registered as followups as well'. Neither half is wrong on its own and the close did not undo either: --check re-lists them as decisions and --residuals now sees them tracked, so both mechanisms work. The hazard is at the END - resolving the decision will not retire the followup, and retiring the followup will not resolve the decision, so one half can stand for waves after the other is answered, which is the same silence the re-listing mechanism was landed to prevent. This is also the shape STABILITY-REEVAL #2 item 5 asks the close rule to cover from the other direction (retiring a tracker entry must re-home every name it was the sole tracker for). DISCHARGE: state which mechanism owns a name that is both, and add the cross-check to the close rule - or, if both are to be kept, make each entry name the other so ending one is visibly half the job.",
+   "why": "Card STABILITY-REEVAL #2 registered both names in named_followups, correctly, because STABILITY-REEVAL #1 had raised them and no tracker carried them (STABILITY-REEVAL-1-RESIDUALS-ORPHANED). But both are ALSO open deferred decisions, carried from the wave-33 close through waves 34 and 35, and the wave-35 close's own classification says in terms that decisions 'must not be registered as followups as well'. Neither half is wrong on its own and the close did not undo either: --check re-lists them as decisions and --residuals now sees them tracked, so both mechanisms work. The hazard is at the END - resolving the decision will not retire the followup, and retiring the followup will not resolve the decision, so one half can stand for waves after the other is answered, which is the same silence the re-listing mechanism was landed to prevent. This is also the shape STABILITY-REEVAL #2 item 5 asks the close rule to cover from the other direction (retiring a tracker entry must re-home every name it was the sole tracker for). DISCHARGE: state which mechanism owns a name that is both, and add the cross-check to the close rule - or, if both are to be kept, make each entry name the other so ending one is visibly half the job. CT-REMAINING-IMPLEMENTATION resolves CT10-REASON-ROW in both its tracker retirement and its reconciliation deferred_decisions record. The next numbered wave close must carry that resolved decision because outstanding_decisions discovers only numbered close directories. The other names and the general dual-tracking mechanism remain open.",
    "source": "docs/reports/wave36-close/README.md",
    "recorded_by": "WAVE-36-CLOSE"
   },
@@ -8022,13 +7917,6 @@
    "why": "Over the 159 sweeping visits of the pinned corpus the proved bound nodes * (1 + sites + sites * names) runs min 28 / median 378 / max 17,091, against an observed maximum of 148 rounds (card JOINED-PROVENANCE-ROUND-BOUND, wave 37). For 11 of those 159 visits the proved bound is at or below the old constant of 64, so the old cap was already provably sufficient there and nobody knew. The classical tighter results for this shape - loop connectedness for a round-robin sweep in reverse postorder - do not carry to this Jacobi schedule unchanged, and none is proved here. Looseness costs nothing today because nothing approaches the loose bound; it is recorded so that a later cost question (JOINED-PROVENANCE-BOUND-COST-UNMEASURED) is not answered by tightening something nobody proved. DISCHARGE: a tighter proved bound, or a recorded decision that tightness buys nothing while nothing approaches the loose one.",
    "source": "docs/reports/joined-provenance-round-bound/README.md",
    "recorded_by": "JOINED-PROVENANCE-ROUND-BOUND"
-  },
-  {
-   "id": "CT10-BYTE-ENCODING-UNSOUND",
-   "title": "The tempting byte-granular encoding of CT10's bit-fields is wrong in BOTH directions, not merely coarse - measured, so it stays refused",
-   "why": "Wave 31 offered and wave 35 declined a shortcut for CT10: encode two adjacent bit-fields as two leases of the byte they share, and let the existing byte-granular exclusivity refuse them. Card CT-LANE-5 measured why that is not just `the right answer for the wrong reason` but unsound in both directions. C11 makes two bit-fields one memory location exactly when they share a storage UNIT: so a program whose bit-fields lie in different bytes of one unit would be ADMITTED by the byte rule though C11 makes them one location, and a program whose adjacent members are addressable would be REFUSED though they are genuinely independent. The floor is structural: FieldStorage::BitfieldUnit is the only bit-addressed type in the workspace and its own doc says the bit range `never participates in the disjointness decision`, while FootprintExport::SharedMemoryLocation exists precisely to stop a bit-field unit reaching a concurrency checker as an interval. DISCHARGE: give .qcore a bit-field declaration so a LayoutContract is derived rather than hand-built, or wire DisjointFootprintsV1 to a source route at all (it has zero callers outside one unit test). Both are route cards. Until one lands, CT10 must stay unmapped rather than mapped on the byte encoding.",
-   "source": "docs/reports/ct-lane-5/README.md",
-   "recorded_by": "CT-LANE-5"
   },
   {
    "id": "CT-FIXTURE-EXTERNAL-READERS",
@@ -8565,6 +8453,13 @@
    "why": "Card TSAN-FAILURE-ARMS (wave 41) discharged TSAN-HEADER-INVISIBILITY-UNENFORCED with two committed tests, and states here what they do not cover. Half one (the_forcing_header_stays_invisible_to_thread_sanitizer) is a LIST: the shipped header must carry no_sanitize(\"thread\") on every static qcore_forced_ function and must not name any of pthread_mutex, pthread_cond, pthread_barrier, pthread_rwlock, sem_wait, mtx_lock, mtx_init, cnd_wait, cnd_signal, cnd_broadcast. A future design synchronising visibly through a primitive outside that list, or outside the qcore_forced_ namespace, passes it. Half two (a_visible_forcing_header_would_hide_the_overlap_which_is_why_the_shipped_one_is_not) measures ONE mutation - the pthread-mutex park-and-release shape wave 39 actually built - going 0 of 20 against the shipped header's 20 of 20; it is a witness that visible synchronization can hide a race, not a proof that every visible design does. DISCHARGE: a property-shaped check (for instance, that no symbol the header references is one ThreadSanitizer intercepts) or an argument that the namespace check is exhaustive; or state permanently as the measured boundary of the enforcement.",
    "source": "docs/reports/tsan-failure-arms/README.md",
    "recorded_by": "TSAN-FAILURE-ARMS"
+  },
+  {
+   "id": "CT10-TASK-FAILURE-LIFETIME",
+   "title": "The CT10 source profile proves footprint independence only on a successful spawn/join window",
+   "why": "The profile explicitly records SpawnAndJoinSucceed and does not execute the scoped-task custody ledger. A propagated second-spawn failure may leave an earlier child outstanding in source forms outside that property claim; admitting disjoint footprints is not a lifetime judgment. Discharge: compose the generic task ledger with the explicit-layout source profile, exercise failed creation/join recovery with live siblings, and provide matching audited Lean semantics before exporting a scoped-task certificate. Keep the current property-only certificate and CLI boundary until then.",
+   "source": "docs/reports/ct-remaining-implementation/README.md",
+   "recorded_by": "CT-REMAINING-IMPLEMENTATION"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"
