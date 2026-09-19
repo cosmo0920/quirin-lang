@@ -77,11 +77,19 @@ designs. `TASK-ROUTE-TSAN-EXECUTED-SCHEDULES`' **named remaining half is met**
 becoming the first branch of its own discharge — stated permanently as a
 measured boundary — because what remains of it is the permanent statement that a
 clean ThreadSanitizer run is evidence about the paths that executed and not a
-proof of race freedom. Four residuals registered
+proof of race freedom. Five residuals registered
 (`TSAN-COHORT-TRIGGER-CATCH-COST`, `TSAN-ALLOC-FAILURE-ARM-SINGLE-THREADED`,
 `TSAN-FAILURE-ARM-COHORT-SUPPLIED-BY-HAND`,
-`TSAN-VISIBLE-HEADER-ONE-MUTATION-NOT-A-QUANTIFIER`), so the tracker moves
-**257 → 258**. Evidence: `docs/reports/tsan-failure-arms/README.md`.
+`TSAN-VISIBLE-HEADER-ONE-MUTATION-NOT-A-QUANTIFIER` and, found while rebasing
+onto the documentation restructure `96142e49`,
+`STATUS-SOURCES-CHECKPOINT-VS-LIVE-TRACKER`), so the tracker moves
+**257 → 259** and the stated count moves with it — in `docs/STATUS.md`'s
+`Registered follow-ups` row, since the restructured `AGENTS.md` is a router that
+carries no counts. The card lands **no standing constraint**, so it edits nothing
+inside a `<!-- preserved:… -->` span; the restructure touched no crate source,
+no test and no fixture, so every measurement above stands unchanged across the
+rebase and only the standing gate was re-run.
+Evidence: `docs/reports/tsan-failure-arms/README.md`.
 
 **`CT-PROOF-LEG-3` (2026-09-19).** The fifth executed `proof` row, and the
 measurement that the cheap route to a sixth is spent. The card first **re-ran

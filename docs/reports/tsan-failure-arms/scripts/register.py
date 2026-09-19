@@ -132,6 +132,30 @@ NEW = [
         "or state permanently, with the schedule-shape assertion named as the guard.",
     ),
     entry(
+        "STATUS-SOURCES-CHECKPOINT-VS-LIVE-TRACKER",
+        "docs-structure-compression's status-sources.json is a frozen checkpoint that its own --check compares against live inputs, so the first legitimate tracker edit after it makes that check stale",
+        "MEASURED by card TSAN-FAILURE-ARMS (wave 41), the first card to move a tracker count after the "
+        "documentation restructure at 96142e49. docs/reports/docs-structure-compression/"
+        "rederive_status.py --check re-derives the status snapshot from PRIMARY INPUTS (the CT "
+        "manifest, the w37 corpus artifacts, contract/qcore, the wave-40 close's gate.json, "
+        "proof/Audit*.lean and the acceptance matrix) and asserts it equals the archived "
+        "status-sources.json. This card's tracker delta - three retirements and four registrations, "
+        "named_followups 257 -> 258 - moves EXACTLY ONE field of that archive, followups {carried "
+        "257, derived 257} -> {258, 258}, and nothing else: lean_audits stays 141, contracts.modules "
+        "stays 88, and the ct, corpus and last_merged_gate blocks are untouched (measured, not "
+        "assumed). The archive is NOT edited, because it is a frozen checkpoint (constraint 21), and "
+        "the script is NOT run by the standing gate - nothing in scripts/tests/, no Rust test and no "
+        "CI step references it, so no gate row is red and this is a latent staleness rather than a "
+        "failure. Its sibling verify.py is unaffected: it reconstructs the pre-restructure guides "
+        "from git show <source_commit>:<source>, so it is checkpoint-scoped by construction and "
+        "stays green. This is the D02-B00-LEDGER-SNAPSHOT shape - a derived figure reading a frozen "
+        "archive beside a live source - and it is a decision above a card. DISCHARGE: publish "
+        "provenance beside status-sources.json (the fields a later wave is expected to move, and "
+        "where the live figure is read instead), or make the checkpoint re-derivable on demand with "
+        "the archived copy labelled as the migration's own observation; never by editing the "
+        "archive to match a later tree.",
+    ),
+    entry(
         "TSAN-VISIBLE-HEADER-ONE-MUTATION-NOT-A-QUANTIFIER",
         "The enforced invisibility property is a forbidden-primitive list plus one measured mutation, not a statement about every visible forcing design",
         "Card TSAN-FAILURE-ARMS (wave 41) discharged TSAN-HEADER-INVISIBILITY-UNENFORCED with two "

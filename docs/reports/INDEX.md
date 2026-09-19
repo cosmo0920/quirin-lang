@@ -611,6 +611,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [trace-alphabet-lease-boundary](trace-alphabet-lease-boundary/README.md) | The F02 trace alphabet's lease boundary — proved and exercised (TRACE-ALPHABET-LEASE-BOUNDARY) |
 
+| [tsan-failure-arms](tsan-failure-arms/README.md) | `TSAN-FAILURE-ARMS` — a ThreadSanitizer release trigger the join does not own, the task programs' failure arms, and an enforced invisibility property (wave 41) |
+
 | [tsan-rows-2](tsan-rows-2/README.md) | `TSAN-ROWS-2` — contention-forcing ThreadSanitizer schedules on the task route, and the CT46 decision (wave 39) |
 
 ## V
