@@ -8,6 +8,81 @@
 > [rule reference](../../agents/README.md) and [status page](../../STATUS.md);
 > each card's report owns its evidence.
 
+**`TSAN-FAILURE-ARMS` (2026-09-19).** The ThreadSanitizer forcing harness gains
+a **release trigger the creator's join does not own**, and the task programs'
+**failure arms** get rows for the first time — the order `STABILITY-REEVAL-4`
+measured, in which the harness breaks before the arms can be reached. Wave 39's
+gate opened only at `QCORE_TASK_JOIN`, so a mutation deleting the join deleted
+the release with it and hid every race (`TSAN-FORCED-GATE-OPENED-BY-THE-JOIN`,
+0 of 20 forced against 20 of 20 unforced).
+`tests/support/thread_sanitizer.rs`'s `SCHEDULE_FORCING` now also opens its gate
+**inside the create hook**, when the row's own per-program cohort count
+(`QCORE_FORCED_COHORT`) of workers stands parked, before the creator reaches any
+join; the join trigger is **retained beside it**, and `0` keeps wave 39's
+join-only behaviour reachable, which is how that card's own 0-of-20 survives as
+the control arm of `a_join_deleted_is_caught_by_the_cohort_trigger` rather than
+as a memory. Re-measured at 20 runs per cell: the same gate-closed mutation is
+now reported **20 of 20** under both forced schedules, and every wave-39 cell
+reproduces exactly at `cohort 0`, including the `halt_on_error=0` race counts
+16 / 6 / 6. A **cost is published rather than elided**
+(`TSAN-COHORT-TRIGGER-CATCH-COST`): at `cohort 2` the *join-edge-removal*
+mutation loses catches — 0/20 on both subjects under `forced-together`, 18/20 on
+`shared_readers` under `forced-reverse` — because the workers then finish long
+before the creator's post-join access and ThreadSanitizer reports a thread leak
+instead, so the second trigger is an addition for the arms that need it and the
+two wave-39 mutation rows stay at wave 39's trigger. A third `-include` header
+drives each subject onto a real failure arm — CT07's own refusing second
+`QCORE_TASK_CREATE`, and a NULL-returning `QCORE_BUFFER_MALLOC` — and the twelve
+cells (write-lend flagship and CT07's `case.qcore` × two arms × three schedules)
+are each **20/20 clean, 20/20 arm-named and 20/20 byte-identical to the
+reference execution scripted for the same outcomes**, with the arm that ran
+asserted **from the program's own stdout** (`QCORE_TASK_CREATE_FAILED 0` with the
+first lease present and the second absent; `QCORE_BUFFER_ALLOC_FAILED 0` with no
+lease at all) rather than from the harness's intent, and a control row showing
+the same subject taking the success arm when nothing is injected. The
+allocation-failure arm creates **no thread** on either subject, so its clean
+verdict is about a single-threaded recovery path — said in those words and
+registered (`TSAN-ALLOC-FAILURE-ARM-SINGLE-THREADED`). The forcing header's
+invisibility to ThreadSanitizer is now **enforced rather than documented**,
+discharging `TSAN-HEADER-INVISIBILITY-UNENFORCED` on **both** branches of its
+condition: a textual tripwire over the shipped header (`no_sanitize("thread")`
+on every `qcore_forced_` function, no pthread or C11 synchronization primitive
+named) and the `hook_visible_to_tsan` reproduction promoted to a workspace test
+that is **not** `#[ignore]`d — it rebuilds the visible-synchronization header
+from the shipped text, every substitution asserting its anchor appears exactly
+once, and measures the overlap mutation going unreported **0 of 20 under both
+forced schedules** where the shipped header reports it 20 of 20, which is
+broader than wave 39 recorded. Twelve mutations, **eight of them moving the rule
+rather than the test**, all `RED-AS-REQUIRED`, baseline green before and after,
+every file restored by rewrite and checked sha256-equal. **No emitted byte
+moves**: the diff over every emitting source against the base is empty and the
+whole card's `git diff --name-only` is two test files plus its report; the seam
+is `-include`/`-D` only, and the emitted C still carries both hook defaults.
+Nothing is promoted — no corpus count, unit status, function status, CT stage,
+contract count or verdict moves; raw units stay unpromoted; full language
+conformance stays **false**. No `Q` code is allocated and no band's condition is
+widened (nothing here is a checker rule); constraint 14 is **+0 words and +0
+tokens**, run not assumed (`is_reserved_source_word` holds 113 literals, all
+distinct, and `crates/qcore-frontend/src/frontend.rs` is unchanged); no Lean
+moves, because no semantic surface does. **Linux only, and no Windows or Apple
+claim is made** (`TASK-ROUTE-TSAN-WINDOWS-APPLE-RUN` stands), and every row is
+still a pthread-bound build (`TASK-ROUTE-TSAN-PTHREAD-BINDING` stands).
+Retirements, each verified registered by id and met word for word:
+`TSAN-FORCED-GATE-OPENED-BY-THE-JOIN`, `TSAN-FORCED-SCHEDULE-FAILURE-ARMS`,
+`TSAN-HEADER-INVISIBILITY-UNENFORCED`. `TSAN-FORCED-HARNESS-SYNC-INVISIBILITY`
+is **amended, not retired** — it is a rule about any future forcing harness and
+the behavioural half is one mutation rather than a quantifier over all visible
+designs. `TASK-ROUTE-TSAN-EXECUTED-SCHEDULES`' **named remaining half is met**
+(the failure arms) and the residual is nonetheless **kept**, its disposition
+becoming the first branch of its own discharge — stated permanently as a
+measured boundary — because what remains of it is the permanent statement that a
+clean ThreadSanitizer run is evidence about the paths that executed and not a
+proof of race freedom. Four residuals registered
+(`TSAN-COHORT-TRIGGER-CATCH-COST`, `TSAN-ALLOC-FAILURE-ARM-SINGLE-THREADED`,
+`TSAN-FAILURE-ARM-COHORT-SUPPLIED-BY-HAND`,
+`TSAN-VISIBLE-HEADER-ONE-MUTATION-NOT-A-QUANTIFIER`), so the tracker moves
+**257 → 258**. Evidence: `docs/reports/tsan-failure-arms/README.md`.
+
 **`CT-PROOF-LEG-3` (2026-09-19).** The fifth executed `proof` row, and the
 measurement that the cheap route to a sixth is spent. The card first **re-ran
 the survey rather than inheriting it**: every one of the 47 mapped cases' own
