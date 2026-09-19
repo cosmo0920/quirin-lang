@@ -323,6 +323,26 @@ fn a_copy_bind_in_a_loop_body_is_the_same_statement() {
     );
 }
 
+/// A copy bind in a loop body **shadowing** a name the entry already bound is
+/// refused at `source.loop.v1`'s own shape condition. The rule is the loop's,
+/// and it reaches a copy bind because `body_bindings` counts the names a body
+/// binds — which is what makes that function's copy-bind arm observable rather
+/// than a totality arm.
+#[test]
+fn a_copy_bind_in_a_body_that_shadows_an_outer_name_refuses() {
+    let source = module(
+        "",
+        "    let b = bytes(2);\n    let n = 5;\n    for i in 0..2 {\n        let n = i;\n    \
+         }\n    drop b;\n",
+    );
+    let (codes, message) = refusal(&source);
+    assert_eq!(codes, vec!["Q097"], "the loop's own shape condition");
+    assert!(
+        message.contains("`n` is bound in this loop body and already bound outside it"),
+        "the loop's own words: {message}"
+    );
+}
+
 // --- Family two: the three boundaries refuse by their own names. ---
 
 /// `AGGREGATE-VIEW-FIELD` refuses **by name**. Before this card the same

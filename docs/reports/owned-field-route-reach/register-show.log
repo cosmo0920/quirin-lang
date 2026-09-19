@@ -1,0 +1,56 @@
+## OWNERSHIP-COPY-OP-UNPRODUCED
+{
+ "id": "OWNERSHIP-COPY-OP-UNPRODUCED",
+ "title": "OwnershipOp::Copy is constructed by no route in the tree, so the copy rules are decided by unit tests alone",
+ "why": "MEASURED by card STABILITY-REEVAL-4 (wave 40) with rg over crates and compiler: OwnershipOp::Copy is CONSTRUCTED at exactly four places, all in crates/qcore-core/tests/unit/ownership.rs (:80, :715, :727, :817). The one non-test occurrence, crates/qcore-frontend/src/whole_program.rs:716, is a CONSUMER - an arm of an exhaustive no-identity match. copy_owned has one caller (ownership.rs:466). So no route on any pipeline emits Copy, and BOTH the aggregate non-copyability rule AGGREGATE-OWNED-FIELD landed (ownership.rs:680, Binding::Aggregate arm :682) and the older plain-owner copy rule are decided by hand-built operation lists. The defect is inherited, not introduced by the card - but the card counts non-copyability among the four IR rules it landed, and a reader of 'four rules, all green' does not learn that one of them is reachable from nothing. This is evidence about the paths the suite took. DISCHARGE: emit Copy from a route (which is a semantic card, not an audit's edit), OR record the variant as model-only in ownership.rs's own doc and in constraint 15k, so the rule is read as a model property rather than as route coverage.",
+ "source": "docs/reports/stability-reeval-4/README.md",
+ "recorded_by": "STABILITY-REEVAL-4"
+}
+## OWNED-FIELD-IR-REFUSALS-UNREACHED
+{
+ "id": "OWNED-FIELD-IR-REFUSALS-UNREACHED",
+ "title": "AggregateAtOwnerPosition and NotAnAggregate are named in a standing constraint and reached by no source program",
+ "why": "MEASURED by card STABILITY-REEVAL-4 (wave 40). AggregateAtOwnerPosition has eight construction sites (crates/qcore-core/src/ownership.rs:617, :647, :697, :825, :920, :969, :1059, :1073) and NotAnAggregate one (:1047); both are asserted only at crates/qcore-core/tests/unit/ownership.rs:779 and :800, over hand-built operation lists. On the admitting route the record card's own Q052 arm (FieldIsNotABuffer, 'read the field you mean first') fires first, as AGGREGATE-OWNED-FIELD's own section 5.2 table shows. Yet AGENTS.md's Q054 amendment states that the condition 'now carries ... the IR's own AggregateAtOwnerPosition and NotAnAggregate' - a standing-constraint sentence about a condition no source program reaches. Fail-closed in direction, so this is a coverage finding and not a soundness one. DISCHARGE: a source fixture that reaches either refusal through the real pipeline, OR an amended Q054 sentence saying the two IR errors are carried but unreached today and naming what would reach them.",
+ "source": "docs/reports/stability-reeval-4/README.md",
+ "recorded_by": "STABILITY-REEVAL-4"
+}
+## OWNED-FIELD-BOUNDARIES-ARE-ABSENCE
+{
+ "id": "OWNED-FIELD-BOUNDARIES-ARE-ABSENCE",
+ "title": "AGGREGATE-VIEW-FIELD, AGGREGATE-NESTED and AGGREGATE-TASK-CAPTURE are absence, not refusals a test drives by name",
+ "why": "MEASURED by card STABILITY-REEVAL-4 (wave 40), the distinction this cadence exists to draw. AGGREGATE-VIEW-FIELD: a view spelling reaches FieldType::from_spelling (crates/qcore-core/src/source_record.rs:88, two constructors I32 and Bytes), returns None, and refuses as UnknownFieldType at crates/qcore-frontend/src/source_record.rs:447 with a Q051 message naming AGGREGATE-FIELD-TYPES, a DIFFERENT residual; the only tests on that arm use u8 (source_record.rs:291) and Buffer (aggregate_owned_field.rs:514), and NO test writes a view field. AGGREGATE-NESTED: 'type A { b: B }' takes the identical arm and the identical message, and no nested-record declaration exists anywhere in the tree (every 'type NAME {' in compiler/tests and crates/*/tests was read). AGGREGATE-TASK-CAPTURE: pure absence - route dispatch selects the task route at crates/qcore-verification/src/driver.rs:1168 and the record/buffer route at :1277, so a module that spawns never reaches the record route, and no test combines spawn with a record declaration. So of three registered boundaries, ZERO are refused by their own name. DISCHARGE: per boundary, a test that drives the refusal and asserts the boundary's own name in the message, OR a restatement in the card's record and in constraint 15k that the boundary is an unspellable construct rather than a checked refusal.",
+ "source": "docs/reports/stability-reeval-4/README.md",
+ "recorded_by": "STABILITY-REEVAL-4"
+}
+## AGGREGATE-VIEW-FIELD
+{
+ "id": "AGGREGATE-VIEW-FIELD",
+ "title": "A record field of string type: a view stored in an aggregate, which the composed string route's exact borrow window cannot see through",
+ "why": "Named by card AGGREGATES-V1 (docs/reports/aggregates-v1/README.md section 3.3 and section 12) and carried in AGENTS.md standing constraint 15k since wave 27; registered by AGGREGATE-OWNED-FIELD (wave 39), which landed the owned field beside it and did not land this. What it needs, in the constraint's words: source.string.v1's borrow WINDOW (constraint 15h) 'runs from the borrow to the last statement reading the view or anything derived from it', and a view stored in a record makes 'derived from it' reach through an aggregate the window computation cannot see into - a real rule, not a type-table entry. The composed string/buffer route also refuses every record statement at Q068 today (AGGREGATE-STRING-COMPOSE), so a view field has no route to land on until that is lifted. DISCHARGE: a card that extends last_view_uses (or its successor) to reach through a record binding to the views its fields hold, admits `FIELD: string` on a route that holds both records and views, and re-measures constraint 15h's exactness argument with the aggregate enumerated; until then the field type refuses at Q051 naming AGGREGATE-FIELD-TYPES.",
+ "source": "AGENTS.md standing constraint 15k; docs/reports/aggregates-v1/README.md section 3.3; docs/reports/aggregate-owned-field/README.md",
+ "recorded_by": "AGGREGATE-OWNED-FIELD"
+}
+## AGGREGATE-NESTED
+{
+ "id": "AGGREGATE-NESTED",
+ "title": "A record field whose type is another record: the owner path is one level deep by measurement, and a nested field needs a recursive path and a termination argument for the declaration graph",
+ "why": "Named by card AGGREGATES-V1 (section 12) and made concrete by AGGREGATE-OWNED-FIELD (wave 39): the cycle-3 ownership IR's Place::Field is deliberately ONE level (`NAME.FIELD`), measured sufficient for every record the route admits and for the CT scenarios the record family maps (CT09), so `p.inner.buf` has no spelling in the IR and `type Outer { inner: Inner }` refuses at Q051 (UnknownFieldType). What it needs: a recursive owner path in the IR with the drop-through rule stated over a tree of fields (declaration order at every level, nothing twice), a recursive construction and projection rule in source_record, a termination argument for the declaration graph (a record may not contain itself), and Lean parity for each. DISCHARGE: those four landed together, with the one-level `Place::Field` generalised rather than a second path type added beside it, and the byte-identity census re-run.",
+ "source": "docs/reports/aggregates-v1/README.md section 12; docs/reports/aggregate-owned-field/README.md",
+ "recorded_by": "AGGREGATE-OWNED-FIELD"
+}
+## AGGREGATE-TASK-CAPTURE
+{
+ "id": "AGGREGATE-TASK-CAPTURE",
+ "title": "A record with an owned field inside a task-creation capture: the transferability judgment has no aggregate kind, and the scoped-task ledger addresses owners by plain name",
+ "why": "Registered by AGGREGATE-OWNED-FIELD (wave 39) from its own boundary: the owned field is admitted on source.buffer.v1 only, and a module that spawns never reaches that route (it keeps its Q600), so a record holding a buffer cannot today be named in a spawn capture at all. What it needs: a kind for the aggregate in the transferability judgment (crates/qcore-core/src/transfer.rs) deciding whether a record is sendable exactly when every owned field is, an owner-path vocabulary in the scoped-task ledger (crates/qcore-core/src/scoped_tasks.rs, which addresses owners by name as ownership.rs did before this card), the capture's move of the whole record into the worker with the worker's drop-through, and Lean parity for the sendability rule. DISCHARGE: a card landing those in the task route with the CT47-COPY-CAPTURE refusal re-measured for the aggregate kind; until then the composition is unreachable by route selection and no refusal names it.",
+ "source": "docs/reports/aggregate-owned-field/README.md",
+ "recorded_by": "AGGREGATE-OWNED-FIELD"
+}
+## OWNED-FIELD-SEQUENTIAL-UNREACHED
+{
+ "id": "OWNED-FIELD-SEQUENTIAL-UNREACHED",
+ "title": "Q103 covers the path-extended ownership vocabulary by definition, and no sequential program reaches it: the sequential route builds no aggregate operation",
+ "why": "Recorded by AGGREGATE-OWNED-FIELD (wave 39) as a measured boundary rather than a claim: the sequential route (qcore_frontend::whole_program) hands check_ownership an operation list built from plain-name ownership operations only, so the new OwnershipError variants (AggregateAtOwnerPosition, NotAnAggregate) and the path spellings of the existing ones can surface at Q103 only through a model-level caller, never through a source program on that route; Q103's row in section L21 and AGENTS.md says so. DISCHARGE: either a sequential-route construct that builds a Compose (a record with an owned field admitted on that route, AGGREGATE-ROUTE-WIDENING's territory) reaching Q103 through whole_program.rs with a pinned test, or the rows restated as not applicable when the namespace decision is taken; until then the row is a vocabulary statement and not a reachable refusal.",
+ "source": "docs/reports/aggregate-owned-field/README.md section 5",
+ "recorded_by": "AGGREGATE-OWNED-FIELD"
+}

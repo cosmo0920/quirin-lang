@@ -249,6 +249,39 @@ probe(
     program("", "    let q = nope;\n"),
 )
 
+# --- the shape collision the census found ----------------------------------
+#
+# `source.socket.v1`'s creation form `let listener = tcp;` is token for token
+# the copy bind's shape, and the census counts 29 of them in the tree. The two
+# are separated by **route selection** and by nothing else, so this probe is
+# the measurement rather than the argument.
+probe(
+    "collide-socket-creation",
+    "a socket program's `let NAME = tcp;` is untouched",
+    "import std.socket;\nimport std.fmt;\nimport std.io;\n\n"
+    "fn main() -> unit effects { io, alloc } {\n"
+    "    let listener = tcp;\n"
+    "    bind listener;\n"
+    "    listen listener;\n"
+    "    let client = tcp;\n"
+    "    connect client listener;\n"
+    "    let server = accept listener;\n"
+    "    send client [81];\n"
+    "    recv server 1;\n"
+    "    close server;\n"
+    "    close client;\n"
+    "    close listener;\n"
+    "    return;\n}\n",
+)
+probe(
+    "collide-buffer-route-transport-word",
+    "a transport word at a copy source on the buffer route",
+    program(
+        "",
+        "    let b = bytes(2);\n    let c = tcp;\n    drop b;\n",
+    ),
+)
+
 # --- the three named boundaries --------------------------------------------
 probe(
     "b-view-field",
