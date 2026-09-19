@@ -1,0 +1,48 @@
+baseline: docs/reports/w37-corpus-contracts-4/artifacts
+corpus diagnostic counts: {'leak': 272, 'summary_conflict': 1, 'unknown_alias': 4309, 'unsupported': 49753}
+Unknown functions: 4537
+functions with exactly one distinct blocker: 990
+functions with exactly two: 1030
+
+  leaves  functions   sole  reason
+  17,775      3,157    285  indirect memory access is outside the resource projection
+  11,352      2,445    152  call to uncontracted function `_`
+   8,755      2,426     44  unmodeled call, aggregate or indirect access in branch condition
+   4,114      1,366      3  unresolved resource identity `_`
+   2,083        986      6  braced initializer, expression, or declaration is not modeled
+   1,683        589      3  unsupported assignment expression
+   1,452      1,120    471  unmodeled call, aggregate or indirect access in return expression
+     927        602      0  unmodeled call, aggregate or indirect access in for-loop condition
+     901        434      2  unrecognized assignment destination
+     734        378      5  unmodeled increment or decrement expression
+     656        253      2  store through `_` without an out-parameter contract
+     447        117      1  C operator `_` requires type/operand analysis
+     318        203      3  unmodeled call, aggregate or indirect access in loop condition
+     118         69      0  unmodeled expression may mutate a formal resource identity
+      96         90      1  unmodeled call, aggregate or indirect access in switch expression
+      64         61      0  nullable resource `_` used by a non-null contract
+      33         22      2  local declaration may shadow a formal resource identity
+      31         29      0  unmodeled call, aggregate or indirect access in do-while condition
+      22         13      4  nested call `_` inside a modeled call is outside the resource projection
+      17          9      0  arguments beyond the declared parameters of `_` are outside the resource projection
+
+the unmodeled-call family, by position (the B series' subject)
+   8,755      2,426     44  branch condition
+   1,452      1,120    471  return expression
+     927        602      0  for-loop condition
+     318        203      3  loop condition
+      96         90      1  switch expression
+      31         29      0  do-while condition
+      22         13      4  nested call `_` inside a modeled call is outside the resource projection
+
+dominant two-blocker pairs (a card landing only one of a pair moves neither function)
+     196  indirect memory access is outside the resource  +  branch condition
+     194  call to uncontracted function `_`  +  indirect memory access is outside the resource
+      77  indirect memory access is outside the resource  +  unresolved resource identity `_`
+      62  indirect memory access is outside the resource  +  return expression
+      61  branch condition  +  return expression
+      58  call to uncontracted function `_`  +  branch condition
+      57  call to uncontracted function `_`  +  unresolved resource identity `_`
+      40  braced initializer, expression, or declaration  +  call to uncontracted function `_`
+      36  call to uncontracted function `_`  +  return expression
+      33  return expression  +  unresolved resource identity `_`
