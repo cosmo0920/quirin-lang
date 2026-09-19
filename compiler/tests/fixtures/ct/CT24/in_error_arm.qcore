@@ -1,0 +1,23 @@
+import std.concurrency;
+concurrency checked;
+error Failure { Failed; }
+fn worker(value: i32) -> i32 { return value; }
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch { bound 65536 effort 1000; overhead scope 512 thread 128; thread scope worker { copy; peak 1024; effort 10; credit 4096 effort 100; } }
+    let owner = qcore_buffer_new(42)?;
+    let value = 7;
+    thread scope s {
+        match spawn s worker(copy value) {
+            Result::Ok { value: handle } => { let seen = join move handle?; return seen; }
+            Result::Err { error: failure } => {
+                error region R {
+                    move owner;
+                    credit 5;
+                    effort 2;
+                    qcore_check(false, Failure);
+                } catch (Failure) quant open R as pack { discharge pack; }
+                return 0;
+            }
+        }
+    }
+}

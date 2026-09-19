@@ -127,9 +127,9 @@ use serde::Deserialize;
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
     "CT01", "CT02", "CT03", "CT04", "CT05", "CT06", "CT07", "CT08", "CT09", "CT11", "CT12", "CT13",
-    "CT14", "CT15", "CT16", "CT17", "CT18", "CT19", "CT20", "CT21", "CT22", "CT23", "CT25", "CT26",
-    "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35", "CT36", "CT37", "CT38",
-    "CT39", "CT40", "CT42", "CT43", "CT44", "CT45", "CT46", "CT47", "CT48", "CT49", "CT50",
+    "CT14", "CT15", "CT16", "CT17", "CT18", "CT19", "CT20", "CT21", "CT22", "CT23", "CT24", "CT25",
+    "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35", "CT36", "CT37",
+    "CT38", "CT39", "CT40", "CT42", "CT43", "CT44", "CT45", "CT46", "CT47", "CT48", "CT49", "CT50",
 ];
 /// The `legacy_c` route (card CT-CTWIN, extended by the wave-17 CT lane). These
 /// three cases name C constructs that
@@ -292,7 +292,7 @@ const PROOF_GATED_CASES: &[(&str, &str)] = &[
 /// assertion (no `Acquire` in the published body), while a case pinning one
 /// must publish exactly that duty as a body `Acquire` — the adoption, checked
 /// on the published operations rather than trusted.
-const EPOCH_CREDIT_SPLIT_CASES: &[&str] = &["CT22", "CT23", "CT25"];
+const EPOCH_CREDIT_SPLIT_CASES: &[&str] = &["CT22", "CT23", "CT24", "CT25"];
 /// Card `CT-COMPOSED-NATIVE` (wave 32), discharging the follow-on CT22 and
 /// CT25 named by their own `unassessed` emission and native rows: the
 /// composed-epoch cases whose **own** emitted C this harness really compiles
@@ -1699,6 +1699,17 @@ fn derive_stage_plan(
         plan.insert("task_lowering", StagePlan::executed(base, 1, None));
         if reached_model_check {
             plan.insert("task_ledger_check", StagePlan::executed(base, 1, None));
+        }
+        // CT24 is refused by the task ledger while compiling the erased task
+        // half. The epoch plan has been read syntactically, but neither epoch
+        // lowering nor the bound checker runs: compile_composed_epoch_source
+        // returns immediately from compile_task_source. A Q600 code alone
+        // cannot distinguish that ordering from a later epoch refusal, so pin
+        // this case's named composition boundary explicitly rather than
+        // crediting stages its own artifact never reaches.
+        if case_id == "CT24" && refused {
+            plan.insert("epoch_lowering", StagePlan::absent("not_applicable"));
+            plan.insert("epoch_bound_check", StagePlan::absent("not_applicable"));
         }
     }
     // Card `CT22-WIRE`. An *admitted* composed-epoch module really emits the
@@ -3840,7 +3851,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 26] = [
+const EVIDENCE_FILES: [&str; 27] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3893,6 +3904,9 @@ const EVIDENCE_FILES: [&str; 26] = [
     // `remaining-t00/coverage.json` keeps its bytes (constraint 21). Every
     // other stage row is carried from it unchanged.
     "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
+    // Card `CT24-CLEANUP-TASK-COMPOSITION`: CT24 maps at the composed route's
+    // task-ledger refusal. It adds no native or proof stage.
+    "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.

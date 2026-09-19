@@ -422,14 +422,13 @@ pub struct ComposedEpochModule {
     /// return to the epoch and how much its failure handling spends. Published
     /// beside the bound, never inside it — the bound is unchanged by it.
     pub credit_recovery: epoch_credit_recovery::EpochCreditRecoveryCertificate,
-    /// The parent's own quantitative epilogue over the unedited
-    /// `qcore_core::error_region` model (cards `REGION-CREDIT-JOINS` and
-    /// `REGION-JOINS-DUTIES`): an `error region` written after every spawn
-    /// and join, whose catch's `quant open` binds the sealed pack and whose
-    /// `discharge` destroys the pack's owners in reverse acquisition order
-    /// and abandons exactly the parent-local unused credit. `None` for every
-    /// entry that writes no region, which is what keeps every previously
-    /// admitted composed epoch byte-identical.
+    /// The parent's own handled cleanup over the unedited error-region model
+    /// (cards `REGION-CREDIT-JOINS`, `REGION-JOINS-DUTIES` and
+    /// `CT24-CLEANUP-TASK-COMPOSITION`). For an epilogue, this describes the
+    /// single path after every join. For a cleanup in a spawn-success arm, it
+    /// is conditional evidence for that arm: the spawn-failure arm does not
+    /// execute this cleanup and keeps its own task-checked recovery. `None`
+    /// for every entry that writes no region.
     pub region: Option<ComposedRegionEvidence>,
     /// The scoped-task profile the task half executes under, kept because the
     /// composed label would otherwise hide whether the region moves owned
@@ -437,13 +436,16 @@ pub struct ComposedEpochModule {
     pub task_profile: SourceExecutionProfile,
 }
 
-/// The published evidence for one composed region (card `REGION-CREDIT-JOINS`).
+/// The published evidence for one composed region (cards
+/// `REGION-CREDIT-JOINS` and `CT24-CLEANUP-TASK-COMPOSITION`).
 ///
 /// Every field is re-derived rather than believed: `operations` is what the
 /// unedited model was handed and admitted, and `abandoned_credit` is read out
 /// of the model's own cleanup trace **and** cross-checked against the reader's
 /// independent fold of the body's `credit`/`effort` quantities before either is
-/// published.
+/// published. When the region is in a spawn-success arm these fields describe
+/// that reached arm only; they are not a claim that the cleanup ran on the
+/// spawn-failure arm.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ComposedRegionEvidence {
     /// The statement's extent in the original file — the erased range.
@@ -6315,10 +6317,11 @@ fn compile_composed_epoch_source(
         };
         return Err(vec![map_diagnostic(composed.plan.locate(&refusal), ranges)]);
     }
-    // The region half (card `REGION-CREDIT-JOINS`): the unedited
-    // `qcore_core::error_region` model over the parent's own quantities, after
-    // the checked task IR has confirmed that every creation and every join
-    // precedes the statement.
+    // The region half (cards `REGION-CREDIT-JOINS` and
+    // `CT24-CLEANUP-TASK-COMPOSITION`): the unedited error-region model over
+    // the parent's own quantities. The straight-line erasure has already
+    // placed each cleanup release at the region's source position, where the
+    // unedited task checker accepts or refuses it against live child loans.
     let region = match region {
         None => None,
         Some(region) => Some(check_composed_region(&tasks, region, ranges)?),
@@ -6352,14 +6355,13 @@ fn compile_composed_epoch_source(
 ///
 /// Three facts are established, in order, and each is a refusal when absent:
 ///
-/// 1. **After every join.** Every `TrySpawn` terminator and every `Join`
-///    instruction of the checked creator ends before the region statement
-///    begins. The entry's statements run in written order on this route and the
-///    scoped-task ledger already requires every creation joined before its
-///    scope exits, so at the region's entry no child exists and no child holds
-///    any grant — which is what makes the sealed pack's credit **parent-local**.
-///    Derived from the checked IR, never declared (`Q600`, the composed route's
-///    own reconciliation band).
+/// 1. **The task route admits the erased cleanup.** Each cleanup release stands
+///    at the region's source position, so a release before a child's join is
+///    checked against that child's live loans by the task ledger itself. For a
+///    direct task-scope region, this function also retains the prior
+///    after-every-creation-and-join span check. The region model carries only
+///    creator-owned duties and creator-local strict credit; it neither owns nor
+///    settles a child's epoch credit.
 /// 2. **The model admits the region.** `analyze_error_regions` — unedited —
 ///    decides every pack obligation, reported at the codes that pass already
 ///    allocates (`Q302`–`Q309`, `Q300`), exactly as the sequential route
@@ -6374,32 +6376,36 @@ fn check_composed_region(
     ranges: &[FileRange],
 ) -> Result<ComposedRegionEvidence, Vec<FileDiagnostic>> {
     use qcore_core::task_execution::{TaskInstructionKind, TaskTerminatorKind};
+    use qcore_frontend::source_epoch_tasks::ComposedRegionPlacement;
 
-    let module = tasks.module();
-    let creator = &module.functions[&module.entry];
-    let mut last_task_fact: Option<usize> = None;
-    for block in creator.blocks.values() {
-        if matches!(block.terminator.kind, TaskTerminatorKind::TrySpawn { .. }) {
-            last_task_fact = last_task_fact.max(Some(block.terminator.span.end));
-        }
-        for instruction in &block.instructions {
-            if matches!(instruction.kind, TaskInstructionKind::Join { .. }) {
-                last_task_fact = last_task_fact.max(Some(instruction.span.end));
+    if region.placement == ComposedRegionPlacement::TaskEpilogue {
+        let module = tasks.module();
+        let creator = &module.functions[&module.entry];
+        let mut last_task_fact: Option<usize> = None;
+        for block in creator.blocks.values() {
+            if matches!(block.terminator.kind, TaskTerminatorKind::TrySpawn { .. }) {
+                last_task_fact = last_task_fact.max(Some(block.terminator.span.end));
+            }
+            for instruction in &block.instructions {
+                if matches!(instruction.kind, TaskInstructionKind::Join { .. }) {
+                    last_task_fact = last_task_fact.max(Some(instruction.span.end));
+                }
             }
         }
-    }
-    if last_task_fact.is_some_and(|end| end > region.span.start) {
-        return Err(vec![map_diagnostic(
-            diagnostic(
-                SemanticPass::Concurrency,
-                region.span,
-                "the composed region is the parent's own epilogue over credit no child still \
-                 holds, so every creation and every join of the checked task region precedes it; \
-                 a spawn or join after the region is refused rather than accounted for (card \
-                 `REGION-CREDIT-JOINS`)",
-            ),
-            ranges,
-        )]);
+        if last_task_fact.is_some_and(|end| end > region.span.start) {
+            return Err(vec![map_diagnostic(
+                diagnostic(
+                    SemanticPass::Concurrency,
+                    region.span,
+                    "a region written directly in the task scope is the parent's epilogue, so \
+                     every creation and join of the checked task region must precede it; only \
+                     the exact spawn-success-arm placement may execute cleanup before its later \
+                     join (cards `REGION-CREDIT-JOINS` and \
+                     `CT24-CLEANUP-TASK-COMPOSITION`)",
+                ),
+                ranges,
+            )]);
+        }
     }
     let declarations = ErrorDeclarations::new(region.declared_errors.iter().cloned());
     let allowed = EffectRow::new(
