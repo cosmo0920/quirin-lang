@@ -75,7 +75,8 @@ use crate::neutral_position::ExpressionRole;
 pub use crate::publication::{IndirectPublication, PublicationFacts};
 use crate::typed_field_access::{FunctionTypes, TypedAccessModel};
 
-/// One admitted nested call (card **O04-TRACE**), as modeled.
+/// One admitted nested call (cards **O04-TRACE** and
+/// **B04-NESTED-CALL-ARGUMENT**), as modeled.
 ///
 /// Its declared effects are applied by [`transfer`] **before** the enclosing
 /// call's, through the same `apply_contract_call` every other modeled call
@@ -154,17 +155,16 @@ pub enum LegacyInstruction {
         /// discharge applies. Empty for every argument the rule does not
         /// relate, which is most of the corpus. See [`crate::may_alias`].
         alias_reads: Vec<AliasPeers>,
-        /// Card **O04-TRACE**: the one nested call this statement admits, whose
-        /// declared effects apply **before** this call's own. Boxed so the
-        /// variant does not grow for the overwhelming majority of calls that
-        /// have none.
+        /// Cards **O04-TRACE** and **B04-NESTED-CALL-ARGUMENT**: every sibling
+        /// nested call this statement admits. Each declared effect applies
+        /// before this call's own.
         ///
         /// It is admitted only when its declared effects are the *identity* on
         /// the abstract state — result `None`, every parameter `Borrowed` — so
         /// applying it first is well defined despite C leaving the evaluation
         /// order of arguments unspecified. Every other nested call is refused
         /// where it stands, with card O04-B09B10's diagnostic.
-        nested: Option<Box<NestedContractCall>>,
+        nested: Vec<NestedContractCall>,
     },
     BranchOnNull {
         source: String,
@@ -3835,13 +3835,17 @@ impl Parser<'_> {
         // dereference of an admitted nested call's result — `errno`, spelled
         // `(*__errno_location ())` after preprocessing. Its span leaves the
         // lexical gate exactly as a C02-P borrowed actual does; the decision is
-        // [`crate::variadic_nested::admitted_nested_call`]'s own, premises N1-N10,
+        // [`crate::variadic_nested::admitted_nested_calls`]' own, premises N1-N10,
         // and exempting the span is never on its own an admission: the nested
         // rule below is consulted again and still governs the statement.
-        let dereferenced = find_call(&texts).and_then(|(call_index, function)| {
-            let contract = self.contracts.contract(function)?;
-            let spans = call_argument_spans(&texts, call_index)?;
-            crate::variadic_nested::dereferenced_argument_span(
+        let dereferenced = find_call(&texts).map_or_else(Vec::new, |(call_index, function)| {
+            let Some(contract) = self.contracts.contract(function) else {
+                return Vec::new();
+            };
+            let Some(spans) = call_argument_spans(&texts, call_index) else {
+                return Vec::new();
+            };
+            crate::variadic_nested::dereferenced_argument_spans(
                 &texts,
                 call_index,
                 &spans,
@@ -4032,12 +4036,12 @@ impl Parser<'_> {
             if let Some(contract) = self.contracts.contract(function).cloned() {
                 // Card O04-TRACE, the two halves of card O04-B09B10's measured
                 // residual, decided together because the subject needs both:
-                // one nested call may be admitted, and a declared variadic tail
-                // may cover actuals beyond the declared parameter vector.
+                // sibling nested calls may be admitted, and a declared variadic
+                // tail may cover actuals beyond the declared parameter vector.
                 let argument_spans = call_argument_spans(&texts, call_index);
                 let variadic_tail = self.variadic_tails.contains(function);
                 let nested = argument_spans.as_ref().and_then(|spans| {
-                    crate::variadic_nested::admitted_nested_call(
+                    crate::variadic_nested::admitted_nested_calls(
                         &texts,
                         call_index,
                         spans,
@@ -4152,6 +4156,7 @@ impl Parser<'_> {
                         writes: self.refused_writes(&texts),
                     };
                 }
+                let nested = nested.unwrap_or_default();
                 let raw_arguments = argument_spans.as_ref().map(|spans| {
                     spans
                         .iter()
@@ -4170,10 +4175,10 @@ impl Parser<'_> {
                 if let Some(arguments) = &raw_arguments
                     && arguments.len() > contract.parameters.len()
                     && !(variadic_tail
-                        && crate::variadic_nested::tail_arguments_are_data(
+                        && crate::variadic_nested::tail_arguments_are_data_with_nested(
                             arguments,
                             contract.parameters.len(),
-                            nested.as_ref(),
+                            &nested,
                             &self.typed_model,
                             &self.typed_types,
                             &self.typed_bases,
@@ -4205,9 +4210,7 @@ impl Parser<'_> {
                 if raw_arguments.as_ref().is_some_and(|arguments| {
                     contract.parameters.iter().zip(arguments).enumerate().any(
                         |(index, (mode, argument))| {
-                            !nested
-                                .as_ref()
-                                .is_some_and(|nested| nested.argument == index)
+                            !nested.iter().any(|nested| nested.argument == index)
                                 && !admitted_addresses.contains(argument)
                                 && (((!matches!(mode, ResourceParameterMode::Out { .. })
                                     && argument.contains(&"&"))
@@ -4253,7 +4256,7 @@ impl Parser<'_> {
                 let mut alias_reads = self.call_alias_reads(&arguments, &contract);
                 // The admitted nested call's own reads carry the same
                 // may-alias obligation the outer call's reads do.
-                if let Some(nested) = &nested {
+                for nested in &nested {
                     let inner = self.call_alias_reads(&nested.arguments, &nested.contract);
                     for read in inner {
                         if !alias_reads
@@ -4281,13 +4284,14 @@ impl Parser<'_> {
                         .filter_map(|address| address.bound_owner.clone())
                         .collect(),
                     alias_reads,
-                    nested: nested.map(|nested| {
-                        Box::new(NestedContractCall {
+                    nested: nested
+                        .into_iter()
+                        .map(|nested| NestedContractCall {
                             function: nested.function,
                             contract: nested.contract,
                             arguments: nested.arguments,
                         })
-                    }),
+                        .collect(),
                 };
             }
             // Card HASH-CONTRACTS: a callee whose declared literal-argument
@@ -6259,7 +6263,7 @@ fn require_live_borrowed_actuals(
         // the same state.
         let calls = std::iter::once((arguments, contract)).chain(
             nested
-                .as_deref()
+                .iter()
                 .map(|nested| (&nested.arguments, &nested.contract)),
         );
         for (arguments, contract) in calls {
@@ -7158,7 +7162,7 @@ fn transfer(
             // Card O04-TRACE: the admitted nested call's declared effects, in
             // order, before the enclosing call's. It produces nothing, so its
             // produced-site vector is empty by construction.
-            if let Some(nested) = nested {
+            for nested in nested {
                 apply_contract_call(
                     function,
                     node.line,

@@ -26,7 +26,7 @@ premise separately flipped on the same witness. -/
 -- Every premise of the nested-call whitelist refuses on its own, N9 (the
 -- fail-open this card found and closed) included.
 #print axioms QCore.VariadicNested.unread_declarations_never_admit_a_nested_call
-#print axioms QCore.VariadicNested.more_than_one_nested_call_is_never_admitted
+#print axioms QCore.VariadicNested.a_two_level_nested_call_is_never_admitted
 #print axioms QCore.VariadicNested.a_partial_nested_expression_is_never_admitted
 #print axioms QCore.VariadicNested.a_call_inside_the_nested_arguments_is_never_admitted
 #print axioms QCore.VariadicNested.an_uncontracted_nested_callee_is_never_admitted
@@ -51,6 +51,8 @@ premise separately flipped on the same witness. -/
 #print axioms QCore.VariadicNested.compose_inner_first
 #print axioms QCore.VariadicNested.compose_outer_first
 #print axioms QCore.VariadicNested.evaluation_order_is_unobservable
+#print axioms QCore.VariadicNested.admitted_sibling_calls_are_the_identity
+#print axioms QCore.VariadicNested.sibling_evaluation_order_is_unobservable
 
 -- The converse: each neutrality premise is load-bearing, exhibited.
 #print axioms QCore.VariadicNested.an_owned_result_is_not_neutral
