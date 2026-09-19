@@ -452,7 +452,28 @@ worktree** with `QCORE_CLANG` unset; the recording is this card's own
 (`CLANG-RECORDING-UNBOUND-TO-ITS-RUN` — the generator cannot tell, so the
 honesty is stated here).
 
-See `gate.json` for the figures and `gate/` for the exits.
+**Run on the rebased tree, at `2aac6e92`** (base `96142e49`), and every step
+exited 0 in that one run — nothing was repaired and re-run, and no figure is
+carried from the superseded pre-rebase run at `e3363b92`. Headline: **4,739
+passed / 0 failed / 10 ignored** over 239 result summaries and 237 targets,
+`test result: FAILED` 0 times (so no constraint-16 row tripped and none is
+re-verified in isolation); fmt 0; clippy 0; both probes 0; **141** Lean audits
+and 141 `proof/Audit*.lean` on disk; **Python 305 OK**. The +12 against the
+wave-40 close's 4,727 is exactly this card's twelve new rows.
+
+Nothing under `crates/`, `compiler/`, `proof/`, `providers/`, `scripts/` or
+`contract/` moved after that tip — only markdown, `gate.json` and the matrix —
+and the Python suite was re-run green after the final regeneration
+(`gate/python-final.exit` = 0, 305 OK).
+
+**Three checks outside the standing gate**, run deliberately and each reported
+here because each caught something (§13): `verify.py` exit 0
+(`gate/preservation-verify.log`), `check_residuals.py` exit 0 with `"lost": []`
+(`gate/residual-discovery-at-this-card.json`, published beside this gate rather
+than in the restructure's own directory), and
+`scripts/build_docs_index.py --check` green.
+
+See `gate.json` for the figures and its note, and `gate/` for the exits.
 
 ---
 
