@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 259
+  "named_followups": 262
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -1030,13 +1030,14 @@
    "docs/reports/ct-lane-5/ct_stage_evidence.json",
    "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
    "docs/reports/ct42-cell-route/ct_stage_evidence.json",
-   "docs/reports/ct-proof-leg-3/ct_stage_evidence.json"
+   "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
+   "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 47,
-   "unmapped": 3
+   "mapped": 48,
+   "unmapped": 2
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1165,73 +1166,73 @@
   ],
   "stage_histogram": {
    "parse": {
-    "executed": 47
+    "executed": 48
    },
    "elaborate": {
-    "executed": 44,
+    "executed": 45,
     "not_applicable": 3
    },
    "task_lowering": {
-    "executed": 23,
+    "executed": 24,
     "not_applicable": 24
    },
    "task_ledger_check": {
-    "executed": 22,
+    "executed": 23,
     "not_applicable": 25
    },
    "mutex_lowering": {
     "executed": 11,
-    "not_applicable": 36
+    "not_applicable": 37
    },
    "mutex_invariant_check": {
     "executed": 11,
-    "not_applicable": 36
+    "not_applicable": 37
    },
    "epoch_lowering": {
     "executed": 7,
-    "not_applicable": 40
+    "not_applicable": 41
    },
    "epoch_bound_check": {
     "executed": 7,
-    "not_applicable": 40
+    "not_applicable": 41
    },
    "sequential_whole_program": {
     "executed": 2,
-    "not_applicable": 45
+    "not_applicable": 46
    },
    "sequential_reference_execution": {
     "executed": 1,
-    "not_applicable": 46
+    "not_applicable": 47
    },
    "task_reference_execution": {
     "executed": 13,
-    "not_applicable": 34
+    "not_applicable": 35
    },
    "mutex_reference_execution": {
     "executed": 3,
-    "not_applicable": 44
+    "not_applicable": 45
    },
    "c_emission": {
     "executed": 19,
-    "not_applicable": 28
+    "not_applicable": 29
    },
    "native_execution": {
     "executed": 19,
-    "not_applicable": 28
+    "not_applicable": 29
    },
    "native_sanitized": {
     "executed": 10,
     "not_applicable": 7,
     "recorded_not_gated": 5,
-    "unassessed": 25
+    "unassessed": 26
    },
    "legacy_c_twin": {
     "executed": 3,
-    "not_applicable": 44
+    "not_applicable": 45
    },
    "proof": {
     "executed": 5,
-    "unassessed": 42
+    "unassessed": 43
    }
   },
   "depth_profile": {
@@ -1243,7 +1244,7 @@
    "native_sanitized": 8,
    "proof": 5,
    "sequential_whole_program": 1,
-   "task_ledger_check": 7,
+   "task_ledger_check": 8,
    "task_lowering": 1
   },
   "case_depth": {
@@ -1269,6 +1270,7 @@
    "CT21": "elaborate",
    "CT22": "native_sanitized",
    "CT23": "task_ledger_check",
+   "CT24": "task_ledger_check",
    "CT25": "native_sanitized",
    "CT26": "native_sanitized",
    "CT27": "mutex_invariant_check",
@@ -1297,7 +1299,7 @@
   },
   "observation_counts": {
    "c_emission": 36,
-   "elaborate": 44,
+   "elaborate": 45,
    "epoch_bound_check": 7,
    "epoch_lowering": 7,
    "legacy_c_twin": 4,
@@ -1306,12 +1308,12 @@
    "mutex_reference_execution": 3,
    "native_execution": 51,
    "native_sanitized": 32,
-   "parse": 47,
+   "parse": 48,
    "proof": 5,
    "sequential_reference_execution": 1,
    "sequential_whole_program": 2,
-   "task_ledger_check": 22,
-   "task_lowering": 23,
+   "task_ledger_check": 23,
+   "task_lowering": 24,
    "task_reference_execution": 29
   },
   "ct_rows": [
@@ -3479,67 +3481,83 @@
    },
    {
     "id": "CT24",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Reject",
-    "current_bucket": "DECIDABLE-NOW (with a distinguishing fixture)",
-    "current_bucket_source": "t00-archive",
-    "archived_bucket": "DECIDABLE-NOW (with a distinguishing fixture)",
-    "blocker": "resolved: joins exist, and scope-exit cleanup is a distinct mechanism from an explicit drop",
-    "bucket_changed_since_batch2": true,
+    "route": "composed_epoch",
+    "harness_verdict_mode": "epoch_credit_split",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+      "observations": 1
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+      "observations": 1
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "task_ledger_check",
+    "stage_evidence_record": "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json",
+    "semantic_profile": "ComposedEpochTasksV1 (source.epoch.tasks.v1, card CT24-CLEANUP-TASK-COMPOSITION): a flat-epoch plan over a checked scoped-task region whose parent owns `owner`, lends its worker a counted read share at the spawn, and then directly in the exact Result::Ok arm executes a handled region that adopts the same owner. The discharge erases to a real `drop owner;` at the region's own source position, before the later join; the unedited task ledger refuses that release at Q600 LoanOutstanding. The case's own artifact executes parse, elaboration, task lowering and task-ledger checking, then returns from compile_task_source before epoch lowering or epoch-bound checking. Accepted controls do not confer stage credit: the same cleanup after join admits and publishes released=[owner], abandoned=3, and cleanup of an independent owner before join does the same, proving the case is neither a blanket placement refusal nor an unsupported-region fallback. Refused controls pin missing join [Q600], arbitrary nested if/loop and spawn-error-arm placement [Q302], double cleanup-pack use [Q304], and unsupported region-body syntax [Q302]. Direct task-scope regions retain the prior after-every-creation-and-join gate; only this exact success-arm statement receives the conditional placement. Region strict credit remains creator-local and does not settle or abandon the child's epoch grant. No native evidence: the case is refused before emission. No proof stage: QCore.CleanupTaskComposition is audited abstract Lean parity, but no runner binds this fixture to it and faithful Rust/Lean correspondence remains a review premise."
    },
    {
     "id": "CT25",
@@ -6044,25 +6062,15 @@
   },
   "unmapped_bucket_counts": {
    "blocked-on-unimplemented-syntax": 1,
-   "DECIDABLE-NOW (with a distinguishing fixture)": 1,
    "blocked-on-gateway-expressiveness (C-twin measured)": 1
   },
   "unmapped_label_sources": {
    "CT10": "t00-archive",
-   "CT24": "t00-archive",
    "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
   },
-  "newly_decidable_not_mapped": [
-   "CT24"
-  ],
+  "newly_decidable_not_mapped": [],
   "newly_decidable_not_mapped_reasons": {
-   "_derivation": "derived by docs/reports/remaining-d02/build_matrix.py through scripts/ct_stage_summary.py::newly_decidable_reasons (card GEN-CTREASONS, follow-on D02-GEN-CTREASONS): one row per id in newly_decidable_not_mapped, carrying that case's resolved bucket label and reason — the newest CT lane record that measured it, else card T00's frozen archive — and the record that decided them. A hand edit here is overwritten on the next regeneration, and scripts/ct_stage_summary.py --check refuses a committed row the derivation cannot produce as well as a derived row the file does not carry. The carry-forward step docs/reports/wave16-corpus/readd_ct_reasons.py is retired by this key existing: its own assertion refuses to run once the generator emits it.",
-   "CT24": {
-    "label": "DECIDABLE-NOW (with a distinguishing fixture)",
-    "label_source": "t00-archive",
-    "reason": "resolved: joins exist, and scope-exit cleanup is a distinct mechanism from an explicit drop",
-    "measured_by": "t00-archive"
-   }
+   "_derivation": "derived by docs/reports/remaining-d02/build_matrix.py through scripts/ct_stage_summary.py::newly_decidable_reasons (card GEN-CTREASONS, follow-on D02-GEN-CTREASONS): one row per id in newly_decidable_not_mapped, carrying that case's resolved bucket label and reason — the newest CT lane record that measured it, else card T00's frozen archive — and the record that decided them. A hand edit here is overwritten on the next regeneration, and scripts/ct_stage_summary.py --check refuses a committed row the derivation cannot produce as well as a derived row the file does not carry. The carry-forward step docs/reports/wave16-corpus/readd_ct_reasons.py is retired by this key existing: its own assertion refuses to run once the generator emits it."
   },
   "known_manifest_overstatements": [
    "O1 - No assertion targets a CFG artifact. The sequential resource CFG is provably NOT run: compile_task_source (crates/qcore-verification/src/driver.rs:1100-1212) never calls synthesize_semantics or check_whole_program, and returns reference_observation: None. The claim is defensible only under the unstated reading 'cfg' = the task IR's blocks/terminators, which is exercised transitively by check_task_module/emit_task_c11 but never independently checked.",
@@ -6184,7 +6192,7 @@
   "workspace_tests": 4733,
   "provider_tests": 122,
   "python_evidence_validator_tests": 305,
-  "lean_audits": 142,
+  "lean_audits": 143,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6273,6 +6281,7 @@
    "AuditO05.lean",
    "AuditObsReordering.lean",
    "AuditOsEndpointPostState.lean",
+   "AuditOwnedFieldCopyReach.lean",
    "AuditPackageIdentity.lean",
    "AuditPackageTemplateBinding.lean",
    "AuditPipeDesugaring.lean",
@@ -6335,7 +6344,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/ct-proof-leg-3/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {

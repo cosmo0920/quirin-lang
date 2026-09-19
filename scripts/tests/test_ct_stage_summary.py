@@ -191,7 +191,7 @@ class SummaryTest(unittest.TestCase):
     def test_a_mapping_change_is_reported_as_drift(self):
         manifest = load_manifest()
         for case in manifest["cases"]:
-            if case["id"] == "CT24":
+            if case["id"] == "CT10":
                 case["mapping_status"] = "mapped"
                 case["route"] = "task"
                 case["stages"] = copy.deepcopy(
@@ -201,7 +201,7 @@ class SummaryTest(unittest.TestCase):
             scratch.write_manifest(manifest)
             self.assertTrue(summary.check_acceptance(scratch.directory))
             self.assertIn(
-                "CT24: mapped with no archived stage-evidence record",
+                "CT10: mapped with no archived stage-evidence record",
                 summary.check_provenance(scratch.directory),
             )
 
@@ -330,7 +330,7 @@ class SummaryTest(unittest.TestCase):
         manifest = load_manifest()
         before = summary.unmapped_bucket_counts(ROOT, manifest)
         for case in manifest["cases"]:
-            if case["id"] == "CT24":
+            if case["id"] == "CT10":
                 case["mapping_status"] = "mapped"
                 case["route"] = "task"
                 case["stages"] = copy.deepcopy(
@@ -340,7 +340,7 @@ class SummaryTest(unittest.TestCase):
             scratch.write_manifest(manifest)
             after = summary.unmapped_bucket_counts(scratch.directory, manifest)
             self.assertEqual(sum(after.values()), sum(before.values()) - 1)
-            self.assertNotIn("DECIDABLE-NOW (with a distinguishing fixture)", after)
+            self.assertNotIn("blocked-on-unimplemented-syntax", after)
             self.assertIn(
                 "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
                 summary.check_acceptance(scratch.directory),
@@ -388,10 +388,16 @@ class SummaryTest(unittest.TestCase):
     def test_newly_decidable_ids_must_still_be_unmapped(self):
         self.assertEqual(summary.check_newly_decidable(ROOT), [])
         manifest = load_manifest()
+        acceptance = json.loads((ROOT / summary.ACCEPTANCE).read_text())
+        acceptance["ct_evidence"]["newly_decidable_not_mapped"] = ["CT10"]
+        acceptance["ct_evidence"]["newly_decidable_not_mapped_reasons"] = {
+            "CT10": "staged stale reason"
+        }
         for case in manifest["cases"]:
-            if case["id"] == "CT24":
+            if case["id"] == "CT10":
                 case["mapping_status"] = "mapped"
         with MutableRoot() as scratch:
+            scratch.write_acceptance(acceptance)
             scratch.write_manifest(manifest)
             # Card HYGIENE-16 deliberately widened this pin rather than
             # loosening it: the staged case is named in BOTH hand-kept halves, so
@@ -402,13 +408,14 @@ class SummaryTest(unittest.TestCase):
             # The staged case was CT11 until the wave-26 CT lane mapped it for
             # real, which is the mechanism working: the committed tree no longer
             # names CT11 in either half, so staging it here would assert nothing.
-            # CT24 is one of the two ids the committed halves still carry.
+            # CT24 left both halves when its lane mapped it, so stage CT10 in
+            # both halves to keep the stale mapped-id refusal non-vacuous.
             self.assertEqual(
                 summary.check_newly_decidable(scratch.directory),
                 [
-                    "acceptance.json newly_decidable_not_mapped names CT24, "
+                    "acceptance.json newly_decidable_not_mapped names CT10, "
                     "which the manifest maps",
-                    "acceptance.json newly_decidable_not_mapped_reasons explains why CT24 "
+                    "acceptance.json newly_decidable_not_mapped_reasons explains why CT10 "
                     "is not mapped, but the manifest maps it",
                 ],
             )
@@ -485,9 +492,10 @@ class SummaryTest(unittest.TestCase):
                     "measured_by": labels[case_id]["measured_by"],
                 },
             )
-        # Non-vacuity: the derivation is not the empty map, and every id it
-        # publishes is a case the manifest currently leaves unmapped.
-        self.assertTrue(derived)
+        # Every id it publishes is a case the manifest currently leaves
+        # unmapped. CT24 was the final archived "newly decidable" row, so the
+        # committed fixed point is now intentionally empty; mutation tests
+        # below stage CT24 back to unmapped to exercise non-empty behavior.
         self.assertTrue(set(derived) <= set(summary.unmapped_ids(load_manifest())))
 
     def test_a_matrix_reason_row_for_a_mapped_case_is_refused(self):
@@ -565,9 +573,15 @@ class SummaryTest(unittest.TestCase):
 
     def test_dropping_the_map_or_a_row_of_it_is_refused(self):
         """The direction that let the key be lost on every regeneration."""
-        derived = summary.newly_decidable_reasons(ROOT)
-        case_id = next(iter(derived))
         with MutableRoot() as scratch:
+            manifest = load_manifest()
+            for case in manifest["cases"]:
+                if case["id"] == "CT24":
+                    case["mapping_status"] = "unmapped"
+            scratch.write_manifest(manifest)
+            derived = summary.newly_decidable_reasons(scratch.directory)
+            case_id = next(iter(derived))
+            scratch.write_matrix_reasons(derived)
             matrix = scratch.read_matrix()
             del matrix["ct_conformance"][summary.REASONS_KEY]
             scratch.write_matrix(matrix)
@@ -587,9 +601,14 @@ class SummaryTest(unittest.TestCase):
 
     def test_a_rewritten_reason_paragraph_is_refused(self):
         """The map is the records' text, not the editor's."""
-        derived = summary.newly_decidable_reasons(ROOT)
-        case_id = next(iter(derived))
         with MutableRoot() as scratch:
+            manifest = load_manifest()
+            for case in manifest["cases"]:
+                if case["id"] == "CT24":
+                    case["mapping_status"] = "unmapped"
+            scratch.write_manifest(manifest)
+            derived = summary.newly_decidable_reasons(scratch.directory)
+            case_id = next(iter(derived))
             reasons = copy.deepcopy(derived)
             reasons[case_id]["reason"] = "rewritten by hand"
             scratch.write_matrix_reasons(reasons)
@@ -603,13 +622,18 @@ class SummaryTest(unittest.TestCase):
 
     def test_mapping_a_newly_decidable_case_retires_its_reason_row(self):
         """A lane that maps a case takes the row with it, editing nothing."""
-        derived = summary.newly_decidable_reasons(ROOT)
-        case_id = next(iter(derived))
         manifest = load_manifest()
         for case in manifest["cases"]:
-            if case["id"] == case_id:
-                case["mapping_status"] = "mapped"
+            if case["id"] == "CT24":
+                case["mapping_status"] = "unmapped"
         with MutableRoot() as scratch:
+            scratch.write_manifest(manifest)
+            derived = summary.newly_decidable_reasons(scratch.directory)
+            case_id = next(iter(derived))
+            scratch.write_matrix_reasons(derived)
+            for case in manifest["cases"]:
+                if case["id"] == case_id:
+                    case["mapping_status"] = "mapped"
             scratch.write_manifest(manifest)
             after = summary.newly_decidable_reasons(scratch.directory)
             self.assertNotIn(case_id, after)
@@ -1001,9 +1025,10 @@ class SummaryTest(unittest.TestCase):
             # wave-31 lane mapped CT25, 7 until card `CT-WIRE-LANE-4` (wave 32)
             # mapped CT44 and CT47, 5 until card `CT-CTWIN-LANE` (wave 35) mapped
             # CT46, 4 until card `CT42-CELL-ROUTE` (wave 39) mapped CT42, 3
-            # since. A tree fact, not a loosened assertion -- relabelling one
+            # until CT24 cleanup composition mapped CT24, and 2 since. A tree
+            # fact, not a loosened assertion -- relabelling one
             # row still moves no total.
-            self.assertEqual(sum(counts.values()), 3)
+            self.assertEqual(sum(counts.values()), 2)
             self.assertIn(
                 "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
                 summary.check_acceptance(scratch.directory),

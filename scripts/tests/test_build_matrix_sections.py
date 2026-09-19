@@ -451,14 +451,14 @@ class BuildMatrixSections(unittest.TestCase):
             "regenerating moved the derived reasons map; the committed matrix is not a "
             "fixed point of its own generator",
         )
-        # Non-vacuity in the direction that matters: the map is not empty, its
-        # keys are exactly the companion list the same section publishes, and
-        # its rows are objects carrying the record that decided them.
+        # Its keys are exactly the companion list the same section publishes,
+        # and its rows are objects carrying the record that decided them.
+        # CT24 was the last still-unmapped member of the archived list, so an
+        # empty committed fixed point is now intentional.
         rows = {
             case: row for case, row in produced["ct_conformance"][key].items()
             if not case.startswith("_")
         }
-        self.assertTrue(rows)
         self.assertEqual(
             list(rows), produced["ct_conformance"]["newly_decidable_not_mapped"]
         )
