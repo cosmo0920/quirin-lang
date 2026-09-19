@@ -104,3 +104,14 @@ Logs and every exit remain in `private/b-series/combined-gate/`. The example
 printer repair is `9831463a`; the Lean repair updates downstream names to the
 one-level rule instead of retaining a misleading "only one call" name with a
 new meaning. Corrected measurements are recorded separately below.
+
+
+The first compiled combined Rust run also exposed two old expectations. B01
+incorrectly admitted `return 1 + counted(p)` using a locally defined recursive
+callee's provisional summary; `d7ed1a45` restricts only its additional scalar-call
+arm to a callee without a local definition, retains the existing W4 refusal,
+and adds a negative test and matching Lean premise. The earlier combined corpus
+run is therefore intermediate evidence; the repaired analyzer is remeasured.
+B04 intentionally changes the old O04 sibling-call refusal; its source-level pin
+must become a positive sibling case while retaining the deeper-nesting refusal.
+The original failing logs remain separate from the final gate.

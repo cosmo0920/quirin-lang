@@ -221,7 +221,8 @@ including cross-topic rules, before editing; the index is not a substitute.
     `continue` revisit it (`for` after its increment), while `do`/`while` `break`
     bypasses it. `switch` evaluates it once. No loop exit or back edge disappears.
     Declined probes restore site numbering. B01's scalar residual route additionally
-    requires a resource-free call result and uses a `NoOp` exit, never a synthetic
+    requires an externally declared callee (no definition in this translation unit),
+    a resource-free call result, and uses a `NoOp` exit, never a synthetic
     custody escape. Existing exact whole-call return behavior is preserved.
     [B-series implementation and evidence](../reports/b-series-integration/README.md).
 

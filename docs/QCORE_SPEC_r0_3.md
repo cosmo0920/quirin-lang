@@ -944,8 +944,8 @@ certificate rechecking. See [the bounded implementation record](reports/wave23-c
 
 The bounded B-series lowering models one unconditional contracted call in an
 otherwise custody-neutral return or controlling expression, preserving its
-ordinary resource transfer and the existing CFG successors. Scalar return
-residuals carry no custody result; the additional direct opaque-member return
+ordinary resource transfer and the existing CFG successors. The new scalar-return call route additionally requires a callee with no local
+definition and carries no custody result; the additional direct opaque-member return
 read establishes no escaping identity. Multiple one-level nested sibling calls
 are admitted only when every inner contract is resource-neutral and all of
 its argument/liveness/alias obligations remain checked. Short-circuit effectful

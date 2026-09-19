@@ -29,3 +29,15 @@ and `rd_kafka_share_partition_offsets_partition`.
 Cross-card summary inference could invalidate this additive prediction. The
 combined audit must enumerate every changed function and diagnostic coordinate;
 any interaction is a measured miss, not permission to rewrite this forecast.
+
+## Guard-repair checkpoint, before the repaired AFTER
+
+The first combined audit matched the forecast above, but full validation and
+review found an unmeasured local provisional-summary admission. B01 and the
+shared B02/B03 call-lowering route are being restricted to callees without a
+local definition. The original forecast is retained: **8 function moves, 57
+removed leaves, zero additions/exchanges/unit moves/retirements**. The named
+movers are opaque getters and the externally implemented `cio_chunk_is_up`
+call in `flb_input_chunk_down`. The leaf forecast may miss if other changed
+conditions call a locally defined callee; the repaired audit must name those
+retained refusals rather than silently carrying the intermediate result.
