@@ -1,0 +1,6 @@
+scalar-call-disabled: exit 101
+declared-only-disabled: exit 101
+opaque-read-disabled: exit 101
+collision-guard-disabled: exit 101
+opaque-result-escaped: exit 101
+restored-green: exit 0

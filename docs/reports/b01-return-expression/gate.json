@@ -1,0 +1,13 @@
+{
+  "note": "B01-RETURN-EXPRESSION isolated standing gate at final branch tip 0e91d859 (analyzer d7ed1a45 plus a test-only Clippy cleanup). cargo test ran outside the ptrace sandbox with CARGO_BUILD_JOBS=3 and a private external target: 4,822 passed, 0 failed, 10 ignored over 246 strict result summaries and 244 test targets (235 Running plus 9 doc-test sections; qcore-core and qcore-verifier-host each emit a second summary). fmt, Clippy, both probes and 146 Lean audits passed. Python first exited 1 on the expected stale-matrix 145-versus-146 Lean tripwire, then ran 305 tests green after regeneration with this gate. Clang was invoked and recorded in this worktree. The earlier full cargo run exited 101 after completing all suites: 4,820 passed / 1 failed / 10 ignored because B01 incorrectly admitted a locally summarized recursive pointer call; d7ed1a45 added the declared-only gate and regression. The first all-target Clippy invocation then caught a single-element test loop and exited 101; test-only 0e91d859 repaired it. Both failures and fixes are retained in the private logs named by README.md. Provider 122 is carried Unix evidence, not remeasured: B01 changes neither providers nor qcore-schemas. No full-language-conformance, cross-platform, or unpinned-corpus claim is made.",
+  "workspace_tests": 4822,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 305,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "pass",
+  "lean_audits": 146,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
