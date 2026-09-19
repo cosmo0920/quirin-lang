@@ -733,6 +733,23 @@ fn the_composed_region_reader_reads_the_parents_epilogue() {
     assert_eq!(read(&region_module("        effort_free();")), Ok(None));
 }
 
+/// CT24's composition point is a handled cleanup nested in the creator's task
+/// scope. The reader admits the same bounded region body there; its erasure
+/// keeps the source position, so the task checker (not this reader) decides
+/// whether a later join still owns a loan over the cleanup duty.
+#[test]
+fn the_reader_finds_handled_cleanup_nested_in_the_task_scope() {
+    let nested = region_module(&format!(
+        "        match spawn s worker() {{\n            Result::Ok {{ value: handle }} => {{\n{REGION}\n            }}\n            Result::Err {{ error: failure }} => {{\n                return 0;\n            }}\n        }}"
+    ));
+    let region = read(&nested)
+        .expect("the nested cleanup reads")
+        .expect("the region is found");
+    assert_eq!(region.duties, Vec::<(String, u64)>::new());
+    assert_eq!(region.remainder, Some(3));
+    assert!(nested[region.span.start..region.span.end].starts_with("error region R"));
+}
+
 /// The reader's own placement and shape refusals, each on `Q302` with the rule
 /// it enforces named in the message.
 #[test]
@@ -759,7 +776,16 @@ fn main() -> i32 {
     }
 }
 "#;
-    assert!(refusal(top_level).contains("direct statement of the entry's task scope"));
+    assert!(refusal(top_level).contains("entry's task scope"));
+
+    // CT24's one deliberate nested placement is narrow: arbitrary control and
+    // the spawn-failure arm do not acquire cleanup/task semantics by proximity.
+    let in_if = region_module(&format!("        if (true) {{\n{REGION}\n        }}"));
+    assert!(refusal(&in_if).contains("other branches, loops"));
+    let in_spawn_error = region_module(&format!(
+        "        match spawn s worker() {{\n            Result::Ok {{ value: handle }} => {{\n                return 0;\n            }}\n            Result::Err {{ error: failure }} => {{\n{REGION}\n            }}\n        }}"
+    ));
+    assert!(refusal(&in_spawn_error).contains("spawn-error arm"));
 
     // In a worker: a spawned worker is a first-order leaf function.
     let in_worker = format!(

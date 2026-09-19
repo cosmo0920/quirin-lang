@@ -348,9 +348,10 @@ fn split(
     })
 }
 
-/// The creator's own quantitative epilogue: one `error region … catch (E)
-/// quant open … { discharge …; }` statement written **after every spawn and
-/// join** of the composed entry's task scope (card `REGION-CREDIT-JOINS`).
+/// The creator's own handled cleanup: one `error region … catch (E) quant
+/// open … { discharge …; }` statement inside the composed entry's task scope.
+/// It may be an epilogue after every join (card `REGION-CREDIT-JOINS`) or a
+/// nested statement before a later join (card `CT24-CLEANUP-TASK-COMPOSITION`).
 ///
 /// The body admits the parent's own quantities, the decided error edge, and —
 /// since card `REGION-JOINS-DUTIES` (wave 29), which deliberately supersedes
@@ -365,12 +366,13 @@ fn split(
 /// owner's acquisition standing in the entry's own text before the region —
 /// and the opening's `discharge` destroys the remaining owners in reverse
 /// order of appearance. With a worker capturing a counted read share of that
-/// owner (`read PLACE share N` at the spawn), this is CT25's whole scenario,
-/// *"cleanup destroys owner after joins **and loan expiry**"*: the share
-/// returns at the join under the unedited task ledger, every join precedes
-/// the region (`Q600`), and the erased `drop NAME;` is therefore ordered
-/// after the expiry — while a `drop` of a still-lent owner refuses at the
-/// task route's own custody rule.
+/// owner (`read PLACE share N` at the spawn), the region's source position
+/// decides which side of the loan boundary its cleanup reaches. After the
+/// join this is CT25's admitted cleanup-after-expiry shape. Before the join
+/// this is CT24's cleanup-before-expiry shape: the erased `drop NAME;`
+/// executes while the share is live, and the unedited task ledger refuses it.
+/// A region destroying an independent owner at the same point remains
+/// admitted, isolating the cleanup/loan composition from placement.
 ///
 /// The emission story is the sequential route's own precedent read at the
 /// text level: an admitted region has exactly one path, so it **erases into
@@ -449,11 +451,13 @@ pub struct RegionErasure {
 /// Find and read the composed entry's `error region` statement, if any.
 ///
 /// Returns `Ok(None)` exactly when the program contains **no** `error region`
-/// statement anywhere. A region anywhere it is not admitted — in a worker, at
-/// the entry's top level, nested inside another statement, or more than once —
-/// is a refusal, never a silent skip: a skipped region would stay in the task
-/// half and refuse there with a message about the task profile rather than
-/// about the composition.
+/// statement anywhere. The region is admitted either as the task scope's
+/// direct epilogue or as a direct statement of a spawned task's exact
+/// `Result::Ok` arm. Any other placement — in a worker, at entry top level, in
+/// an arbitrary branch or loop, in the spawn-error arm, or more than once — is
+/// a refusal, never a silent skip: a skipped region would stay in the task half
+/// and refuse there with a message about the task profile rather than about
+/// the composition.
 pub fn read_composed_region(
     source: &SourceProgram,
     entry: &str,
@@ -490,19 +494,49 @@ fn composed_region(
         ));
     }
     let (_, body) = entry_body(source, entry)?;
-    let direct_child_of_task_scope = body.statements.iter().skip(1).any(|candidate| {
+    let inside_task_scope = body.statements.iter().skip(1).any(|candidate| {
         matches!(&candidate.value, StatementKind::ThreadScope { body, .. }
-            if body.statements.iter().any(|child| child.span == statement.span))
+            if admitted_region_placement(source, body, statement.span))
     });
-    if !direct_child_of_task_scope {
+    if !inside_task_scope {
         return Err(region_shape(
             statement.span,
-            "the composed region is the parent's own epilogue, written as a direct statement of \
-             the entry's task scope after every spawn and join; source.epoch.tasks.v1 reads it \
-             nowhere else (card `REGION-CREDIT-JOINS`)",
+            "the composed region is the parent's own handled cleanup, written either directly \
+             in the entry's task scope or directly in the exact `Result::Ok` arm of that scope's \
+             spawn; other branches, loops, the spawn-error arm, entry top level and the epoch \
+             plan stay outside the bounded composition (cards `REGION-CREDIT-JOINS` and \
+             `CT24-CLEANUP-TASK-COMPOSITION`)",
         ));
     }
     read_region_statement(source, statement, body).map(Some)
+}
+
+fn admitted_region_placement(source: &SourceProgram, task: &SourceBlock, wanted: Span) -> bool {
+    if task
+        .statements
+        .iter()
+        .any(|statement| statement.span == wanted)
+    {
+        return true;
+    }
+    task.statements.iter().any(|statement| {
+        let StatementKind::Match { .. } = &statement.value else {
+            return false;
+        };
+        source.result_matches().iter().any(|result_match| {
+            result_match.span == statement.span
+                && result_match
+                    .scrutinee_source
+                    .trim_start()
+                    .starts_with("spawn ")
+                && result_match.arms.iter().any(|arm| {
+                    arm.pattern
+                        .as_ref()
+                        .is_some_and(|pattern| pattern.kind == ResultPatternKind::Ok)
+                        && arm.body.statements.iter().any(|child| child.span == wanted)
+                })
+        })
+    })
 }
 
 fn collect_region_statements<'a>(
@@ -580,8 +614,8 @@ fn read_region_statement(
                  composed region refuses an unreachable statement rather than emitting one",
             ));
         }
-        let admitted_set = "statement is not in the composed region body: after every join the \
-                            body admits the parent's own quantities, the task route's own \
+        let admitted_set = "statement is not in the composed region body: the body admits the \
+                            parent's own quantities, the task route's own \
                             acquisition and release, the adoption of a live entry owner, and the \
                             decided error edge — `credit N;`, `effort N;`, \
                             `let NAME = qcore_buffer_new(INT)?;`, `drop NAME;`, `move NAME;` and \

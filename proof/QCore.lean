@@ -160,6 +160,7 @@ import QCore.QuantRegionSource
 import QCore.RegionCreditJoins
 import QCore.RegionJoinsDuties
 import QCore.RegionJoinsLoan
+import QCore.CleanupTaskComposition
 import QCore.LoopBudget
 import QCore.LoopWindows
 import QCore.StdString
