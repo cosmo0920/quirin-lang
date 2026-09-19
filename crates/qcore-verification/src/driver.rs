@@ -6355,12 +6355,13 @@ fn compile_composed_epoch_source(
 ///
 /// Three facts are established, in order, and each is a refusal when absent:
 ///
-/// 1. **The task route admits the erased cleanup.** This has already happened
-///    before this function is called. Each cleanup release stands at the
-///    region's source position, so a release before a child's join is checked
-///    against that child's live loans by the task ledger itself. The region
-///    model carries only creator-owned duties and creator-local strict credit;
-///    it neither owns nor settles a child's epoch credit.
+/// 1. **The task route admits the erased cleanup.** Each cleanup release stands
+///    at the region's source position, so a release before a child's join is
+///    checked against that child's live loans by the task ledger itself. For a
+///    direct task-scope region, this function also retains the prior
+///    after-every-creation-and-join span check. The region model carries only
+///    creator-owned duties and creator-local strict credit; it neither owns nor
+///    settles a child's epoch credit.
 /// 2. **The model admits the region.** `analyze_error_regions` — unedited —
 ///    decides every pack obligation, reported at the codes that pass already
 ///    allocates (`Q302`–`Q309`, `Q300`), exactly as the sequential route
@@ -6370,10 +6371,42 @@ fn compile_composed_epoch_source(
 ///    reader's independent fold of the body's quantities; a disagreement is
 ///    `Q600`, exactly as the bound's and the split's recheck failures are.
 fn check_composed_region(
-    _tasks: &task_execution::CheckedTaskModule,
+    tasks: &task_execution::CheckedTaskModule,
     region: qcore_frontend::source_epoch_tasks::ComposedRegion,
     ranges: &[FileRange],
 ) -> Result<ComposedRegionEvidence, Vec<FileDiagnostic>> {
+    use qcore_core::task_execution::{TaskInstructionKind, TaskTerminatorKind};
+    use qcore_frontend::source_epoch_tasks::ComposedRegionPlacement;
+
+    if region.placement == ComposedRegionPlacement::TaskEpilogue {
+        let module = tasks.module();
+        let creator = &module.functions[&module.entry];
+        let mut last_task_fact: Option<usize> = None;
+        for block in creator.blocks.values() {
+            if matches!(block.terminator.kind, TaskTerminatorKind::TrySpawn { .. }) {
+                last_task_fact = last_task_fact.max(Some(block.terminator.span.end));
+            }
+            for instruction in &block.instructions {
+                if matches!(instruction.kind, TaskInstructionKind::Join { .. }) {
+                    last_task_fact = last_task_fact.max(Some(instruction.span.end));
+                }
+            }
+        }
+        if last_task_fact.is_some_and(|end| end > region.span.start) {
+            return Err(vec![map_diagnostic(
+                diagnostic(
+                    SemanticPass::Concurrency,
+                    region.span,
+                    "a region written directly in the task scope is the parent's epilogue, so \
+                     every creation and join of the checked task region must precede it; only \
+                     the exact spawn-success-arm placement may execute cleanup before its later \
+                     join (cards `REGION-CREDIT-JOINS` and \
+                     `CT24-CLEANUP-TASK-COMPOSITION`)",
+                ),
+                ranges,
+            )]);
+        }
+    }
     let declarations = ErrorDeclarations::new(region.declared_errors.iter().cloned());
     let allowed = EffectRow::new(
         std::iter::once(Effect::Alloc)

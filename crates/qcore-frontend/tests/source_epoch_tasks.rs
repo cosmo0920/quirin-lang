@@ -700,6 +700,10 @@ fn the_composed_region_reader_reads_the_parents_epilogue() {
     let region = read(&region_module(REGION))
         .expect("the region reads")
         .expect("the region is found");
+    assert_eq!(
+        region.placement,
+        qcore_frontend::source_epoch_tasks::ComposedRegionPlacement::TaskEpilogue
+    );
     assert_eq!(region.raised, "Failure");
     assert_eq!(region.remainder, Some(3));
     assert!(region.declared_errors.contains("Failure"));
@@ -745,6 +749,10 @@ fn the_reader_finds_handled_cleanup_nested_in_the_task_scope() {
     let region = read(&nested)
         .expect("the nested cleanup reads")
         .expect("the region is found");
+    assert_eq!(
+        region.placement,
+        qcore_frontend::source_epoch_tasks::ComposedRegionPlacement::SpawnSuccessArm
+    );
     assert_eq!(region.duties, Vec::<(String, u64)>::new());
     assert_eq!(region.remainder, Some(3));
     assert!(nested[region.span.start..region.span.end].starts_with("error region R"));

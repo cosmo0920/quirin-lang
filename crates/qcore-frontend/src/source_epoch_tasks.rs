@@ -396,6 +396,11 @@ pub struct ComposedRegion {
     /// The whole statement's extent — the erased range, and where the model's
     /// refusals are attributed.
     pub span: Span,
+    /// Which of the two bounded source placements admitted this region. The
+    /// driver retains the original after-all-task-facts check for a direct
+    /// task-scope epilogue; only the exact spawn-success-arm form may precede
+    /// its matching join.
+    pub placement: ComposedRegionPlacement,
     /// Exactly one [`RegionOp::ErrorRegion`], built from the model's own
     /// constructors.
     pub operations: Vec<RegionOp>,
@@ -424,6 +429,12 @@ pub struct ComposedRegion {
     pub declared_errors: BTreeSet<String>,
     /// How the split erases this region into the task half.
     pub erasure: RegionErasure,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ComposedRegionPlacement {
+    TaskEpilogue,
+    SpawnSuccessArm,
 }
 
 /// The textual erasure of a composed region into its straight-line twin
@@ -494,11 +505,17 @@ fn composed_region(
         ));
     }
     let (_, body) = entry_body(source, entry)?;
-    let inside_task_scope = body.statements.iter().skip(1).any(|candidate| {
-        matches!(&candidate.value, StatementKind::ThreadScope { body, .. }
-            if admitted_region_placement(source, body, statement.span))
-    });
-    if !inside_task_scope {
+    let placement = body
+        .statements
+        .iter()
+        .skip(1)
+        .find_map(|candidate| match &candidate.value {
+            StatementKind::ThreadScope { body, .. } => {
+                admitted_region_placement(source, body, statement.span)
+            }
+            _ => None,
+        });
+    let Some(placement) = placement else {
         return Err(region_shape(
             statement.span,
             "the composed region is the parent's own handled cleanup, written either directly \
@@ -507,24 +524,28 @@ fn composed_region(
              plan stay outside the bounded composition (cards `REGION-CREDIT-JOINS` and \
              `CT24-CLEANUP-TASK-COMPOSITION`)",
         ));
-    }
-    read_region_statement(source, statement, body).map(Some)
+    };
+    read_region_statement(source, statement, body, placement).map(Some)
 }
 
-fn admitted_region_placement(source: &SourceProgram, task: &SourceBlock, wanted: Span) -> bool {
+fn admitted_region_placement(
+    source: &SourceProgram,
+    task: &SourceBlock,
+    wanted: Span,
+) -> Option<ComposedRegionPlacement> {
     if task
         .statements
         .iter()
         .any(|statement| statement.span == wanted)
     {
-        return true;
+        return Some(ComposedRegionPlacement::TaskEpilogue);
     }
-    task.statements.iter().any(|statement| {
+    task.statements.iter().find_map(|statement| {
         let StatementKind::Match { .. } = &statement.value else {
-            return false;
+            return None;
         };
-        source.result_matches().iter().any(|result_match| {
-            result_match.span == statement.span
+        source.result_matches().iter().find_map(|result_match| {
+            (result_match.span == statement.span
                 && result_match
                     .scrutinee_source
                     .trim_start()
@@ -534,7 +555,8 @@ fn admitted_region_placement(source: &SourceProgram, task: &SourceBlock, wanted:
                         .as_ref()
                         .is_some_and(|pattern| pattern.kind == ResultPatternKind::Ok)
                         && arm.body.statements.iter().any(|child| child.span == wanted)
-                })
+                }))
+            .then_some(ComposedRegionPlacement::SpawnSuccessArm)
         })
     })
 }
@@ -558,6 +580,7 @@ fn read_region_statement(
     source: &SourceProgram,
     statement: &Located<StatementKind>,
     entry_body: &SourceBlock,
+    placement: ComposedRegionPlacement,
 ) -> Result<ComposedRegion, SourceDiagnostic> {
     let span = statement.span;
     let StatementKind::ErrorRegion {
@@ -809,6 +832,7 @@ fn read_region_statement(
     let releases = plan_releases(source, span, &kept, &duties)?;
     Ok(ComposedRegion {
         span,
+        placement,
         operations: vec![RegionOp::ErrorRegion {
             region: region_name.clone(),
             body: region_body,

@@ -1,0 +1,111 @@
+{
+  "id": "CT24",
+  "verdict": "epoch_credit_split",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q600",
+      "message_contains": "LoanOutstanding { resource: 1, outstanding: 1024, borrowers: [2] }"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.epoch.tasks.v1 with CT24-CLEANUP-TASK-COMPOSITION's bounded success-arm placement: the parent lends `owner` to the child as a counted read share, then directly in the exact Result::Ok arm executes a handled region whose pack adopts that same owner and whose discharge erases to `drop owner;` at the region statement before the later join. The unedited scoped-task ledger refuses the release at Q600 LoanOutstanding. The case therefore reaches parse, elaboration, task lowering and task-ledger checking on its own artifact, but returns from the task half before epoch lowering or bound checking; the accepted controls exercise those later stages only on their own artifacts and confer no stage credit on the case. Same-owner cleanup after join and independent-owner cleanup before join both admit and publish released=[owner], abandoned=3, so the rejection is neither a blanket placement refusal nor an unsupported-region fallback. Missing join still refuses at the same live-loan release; nested if, nested loop and Result::Err placements refuse at Q302; unsupported region-body syntax refuses at Q302; and consuming the opened cleanup pack twice refuses at Q304. No native or proof stage is claimed: the rejected artifact emits nothing, and the audited Lean module is an abstract rule theorem with no artifact-bound runner.",
+  "epoch_credit_split": {
+    "execution_profile": "ComposedEpochTasksV1",
+    "diagnostic_sequence": [
+      "Q600"
+    ],
+    "granted": {
+      "effort": 100,
+      "memory": 4096
+    },
+    "controls": [
+      {
+        "source": "after_join.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "restored": {},
+        "spent": {
+          "effort": 100,
+          "memory": 4096
+        },
+        "abandoned": 3,
+        "released": [
+          "owner"
+        ],
+        "note": "The same counted read loan and same adopting cleanup, with only the join moved before the region. The task ledger closes the loan, then admits the erased release; the region publishes exactly the owner and remainder the case intended to clean."
+      },
+      {
+        "source": "independent_owner.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "restored": {},
+        "spent": {
+          "effort": 100,
+          "memory": 4096
+        },
+        "abandoned": 3,
+        "released": [
+          "owner"
+        ],
+        "note": "The cleanup remains before a later join but destroys an independent owner while the child carries only a scalar copy. Acceptance proves the new placement itself is not the refusal."
+      },
+      {
+        "source": "missing_join.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q600"
+        ],
+        "note": "Removing the later join cannot make the cleanup acceptable: the first refusal remains the cleanup release against the live counted share."
+      },
+      {
+        "source": "nested_if.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q302"
+        ],
+        "note": "A region nested one level further under an arbitrary if stays outside the bounded placement."
+      },
+      {
+        "source": "nested_loop.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q302"
+        ],
+        "note": "A region nested one level further under a loop stays outside the bounded placement."
+      },
+      {
+        "source": "in_error_arm.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q302"
+        ],
+        "note": "Only the exact Result::Ok arm receives cleanup composition; the spawn-error arm keeps its written recovery and cannot acquire this conditional evidence."
+      },
+      {
+        "source": "double_discharge.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q304"
+        ],
+        "note": "The existing linear cleanup capability refuses a second discharge; the new placement does not weaken pack consumption."
+      },
+      {
+        "source": "unsupported_body.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q302"
+        ],
+        "note": "A return inside the region body is outside the decided straight-line cleanup grammar and refuses before erasure."
+      }
+    ]
+  }
+}

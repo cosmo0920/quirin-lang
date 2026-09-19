@@ -2143,63 +2143,77 @@
       "scenario": "Cleanup destroys an owner before child join",
       "expected": "Reject",
       "spec_section": "55",
-      "mapping_status": "unmapped",
-      "route": null,
-      "source_fixture": null,
-      "semantic_profile": null,
+      "mapping_status": "mapped",
+      "route": "composed_epoch",
+      "source_fixture": "compiler/tests/fixtures/ct/CT24/case.qcore",
+      "semantic_profile": "ComposedEpochTasksV1 (source.epoch.tasks.v1, card CT24-CLEANUP-TASK-COMPOSITION): a flat-epoch plan over a checked scoped-task region whose parent owns `owner`, lends its worker a counted read share at the spawn, and then directly in the exact Result::Ok arm executes a handled region that adopts the same owner. The discharge erases to a real `drop owner;` at the region's own source position, before the later join; the unedited task ledger refuses that release at Q600 LoanOutstanding. The case's own artifact executes parse, elaboration, task lowering and task-ledger checking, then returns from compile_task_source before epoch lowering or epoch-bound checking. Accepted controls do not confer stage credit: the same cleanup after join admits and publishes released=[owner], abandoned=3, and cleanup of an independent owner before join does the same, proving the case is neither a blanket placement refusal nor an unsupported-region fallback. Refused controls pin missing join [Q600], arbitrary nested if/loop and spawn-error-arm placement [Q302], double cleanup-pack use [Q304], and unsupported region-body syntax [Q302]. Direct task-scope regions retain the prior after-every-creation-and-join gate; only this exact success-arm statement receives the conditional placement. Region strict credit remains creator-local and does not settle or abandon the child's epoch grant. No native evidence: the case is refused before emission. No proof stage: QCore.CleanupTaskComposition is audited abstract Lean parity, but no runner binds this fixture to it and faithful Rust/Lean correspondence remains a review premise.",
       "stages": {
         "parse": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+          "observations": 1
         },
         "elaborate": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+          "observations": 1
         },
         "task_lowering": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+          "observations": 1
         },
         "task_ledger_check": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+          "observations": 1
         },
         "mutex_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_invariant_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "epoch_lowering": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "epoch_bound_check": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "sequential_whole_program": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "sequential_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "task_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "mutex_reference_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "c_emission": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "native_execution": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "native_sanitized": {
           "status": "unassessed"
         },
         "legacy_c_twin": {
-          "status": "unassessed"
+          "status": "not_applicable"
         },
         "proof": {
           "status": "unassessed"
         }
-      }
+      },
+      "evidence_target": "linux",
+      "harness_verdict_mode": "epoch_credit_split"
     },
     {
       "id": "CT25",

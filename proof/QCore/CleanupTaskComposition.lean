@@ -55,12 +55,22 @@ the already-open pack discharges. -/
 theorem the_same_cleanup_after_join_is_admitted
     (state : State) {closed : QCore.ReadLoan.Custody}
     {resource owner borrower : Nat}
+    (sameCleanup : state.pack.actions = [resource])
     (joined : QCore.ReadLoan.closeLoan state.custody resource owner borrower = some closed) :
-    (executeCleanup { state with custody := closed } resource owner).isSome := by
+    ∃ result, executeCleanup { state with custody := closed } resource owner = some result ∧
+      result.cleanup.cleanupTrace = [resource] := by
   have released := QCore.RegionJoinsLoan.the_loan_expires_at_the_join joined
   rw [Option.isSome_iff_exists] at released
   obtain ⟨afterRelease, released⟩ := released
-  simp [executeCleanup, released, discharge]
+  refine ⟨
+    { cleanup :=
+        { ledger := state.pack.baseline
+          cleanupTrace := [resource]
+          abandonedCredit := state.pack.creditRemainder
+          capability := .consumed }
+      custody := afterRelease
+      childGrant := state.childGrant }, ?_, rfl⟩
+  simp [executeCleanup, released, discharge, sameCleanup]
 
 /-- A concrete two-identity custody state: resource 1 remains loaned to child
 2, while independent resource 3 is exclusively owned by the creator. -/
