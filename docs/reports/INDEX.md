@@ -63,6 +63,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [ct-proof-leg-2](ct-proof-leg-2/README.md) | CT37 proof leg — the second executed proof row's capability, on the CT01 precedent (CT-PROOF-LEG-2) |
 
+| [ct-proof-leg-3](ct-proof-leg-3/README.md) | `CT-PROOF-LEG-3` (wave 41) — survey every unproved mapped case, then land the leg the survey picks |
+
 | [ct-wire-lane](ct-wire-lane/README.md) | Wave-26 CT lane — what the current tree can actually wire |
 
 | [ct-wire-lane-2](ct-wire-lane-2/README.md) | Wave-28 CT lane — mapping the wave-27 capabilities (CT-WIRE-LANE-2) |
@@ -619,6 +621,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [task-route-tsan](task-route-tsan/README.md) | TASK-ROUTE-TSAN — ThreadSanitizer on the checked task route (wave 37) |
 
 | [trace-alphabet-lease-boundary](trace-alphabet-lease-boundary/README.md) | The F02 trace alphabet's lease boundary — proved and exercised (TRACE-ALPHABET-LEASE-BOUNDARY) |
+
+| [tsan-failure-arms](tsan-failure-arms/README.md) | `TSAN-FAILURE-ARMS` — a ThreadSanitizer release trigger the join does not own, the task programs' failure arms, and an enforced invisibility property (wave 41) |
 
 | [tsan-rows-2](tsan-rows-2/README.md) | `TSAN-ROWS-2` — contention-forcing ThreadSanitizer schedules on the task route, and the CT46 decision (wave 39) |
 

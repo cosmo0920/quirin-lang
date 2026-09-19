@@ -73,6 +73,31 @@
 //! replayed by the parent at collect (constraint 15a), which is why parking a
 //! worker moves no stdout byte and the strict stdout comparison stays strict.
 //!
+//! **The release trigger the join does not own (card `TSAN-FAILURE-ARMS`,
+//! wave 41).** Wave 39's gate opened at the creator's `QCORE_TASK_JOIN` and
+//! nowhere else, which had two consequences it registered as boundaries: a
+//! mutation deleting the join deleted the release with it and hid every race
+//! (`TSAN-FORCED-GATE-OPENED-BY-THE-JOIN`, measured 0/20 forced against 20/20
+//! unforced), and a program whose **failure arm never reaches a join** could
+//! not be forced at all (`TSAN-FORCED-SCHEDULE-FAILURE-ARMS`).
+//! `QCORE_FORCED_COHORT` is a second, independent trigger: the row supplies the
+//! number of workers the program parks in one cohort, and the gate opens inside
+//! `QCORE_TASK_CREATE` as soon as that many workers stand parked — before the
+//! creator reaches any join, and whether or not it ever reaches one. The join
+//! trigger is **retained** rather than replaced, so a cohort count that is
+//! never reached (a refused spawn) still releases at the first join; a row
+//! supplies the cohort its arm actually creates. `0` selects wave 39's
+//! join-only behaviour and is kept reachable as a control.
+//!
+//! **The failure arms (card `TSAN-FAILURE-ARMS`).** [`FAILURE_INJECTION`] is a
+//! third `-include` header, placed after the forcing header so that it wraps
+//! whatever `QCORE_TASK_CREATE` then means. [`Failure::RefuseSecondCreate`]
+//! refuses the second creation only, so the first worker really is created,
+//! really runs and really is joined on the recovery arm;
+//! [`Failure::NullBufferMalloc`] makes `QCORE_BUFFER_MALLOC` return `NULL`, so
+//! the entry's `qcore_buffer_new(...)?` takes its error edge. Neither changes
+//! an emitted byte: both arrive at the same `-include` seam as the binding.
+//!
 //! Linux only, and gated as such. `run` is `#[cfg(target_os = "linux")]`
 //! because the diagnosis, the binding and every measurement above are
 //! x86-64-Linux/glibc observations; a caller on another platform gets no row
@@ -169,7 +194,13 @@ static int qcore_tsan_drop_join(thrd_t thread, int *status) {
 /// `QCORE_FORCED_REVERSE` selects the release policy (`0`: together with an
 /// exit barrier; `1`: last-created first, serialized). Bookkeeping is a static
 /// table of at most `QCORE_FORCED_CAPACITY` workers per process, and every
-/// state change happens under one mutex with one condition variable.
+/// state change happens under one uninstrumented spinlock.
+///
+/// `QCORE_FORCED_COHORT` (card `TSAN-FAILURE-ARMS`) is the **second release
+/// trigger**: the row's own count of the workers this program parks in one
+/// cohort. The gate opens inside the create hook as soon as that many workers
+/// stand parked, so the creator's join no longer owns the release. `0` is wave
+/// 39's join-only behaviour.
 pub const SCHEDULE_FORCING: &str = r#"
 /* Card TSAN-ROWS-2: park every worker at creation; release at the creator's
  * next join, together (with an exit barrier) or last-created first.
@@ -195,6 +226,11 @@ pub const SCHEDULE_FORCING: &str = r#"
 #ifndef QCORE_FORCED_REVERSE
 #define QCORE_FORCED_REVERSE 0
 #endif
+/* Card TSAN-FAILURE-ARMS: the row's own cohort count. 0 keeps wave 39's
+ * join-only trigger; N > 0 adds a trigger the creator's join does not own. */
+#ifndef QCORE_FORCED_COHORT
+#define QCORE_FORCED_COHORT 0
+#endif
 #define QCORE_FORCED_CAPACITY 64
 #define QCORE_FORCED_UNINSTRUMENTED __attribute__((no_sanitize("thread")))
 
@@ -202,15 +238,15 @@ struct qcore_forced_worker {
     int (*function)(void *);
     void *argument;
     size_t ordinal;     /* 1-based creation order */
-    size_t generation;  /* the creator's join count when this worker was created */
-    size_t cohort;      /* the join (1-based) that released it; 0 while parked */
+    size_t generation;  /* the gate count when this worker was created */
+    size_t cohort;      /* the gate opening (1-based) that released it; 0 while parked */
     atomic_int released;
     atomic_int finished;
 };
 static atomic_flag qcore_forced_spin = ATOMIC_FLAG_INIT;
 static struct qcore_forced_worker qcore_forced_workers[QCORE_FORCED_CAPACITY];
 static size_t qcore_forced_created = 0;
-static size_t qcore_forced_joins = 0;
+static size_t qcore_forced_gate = 0;
 static size_t qcore_forced_cohort_size[QCORE_FORCED_CAPACITY + 1];
 static size_t qcore_forced_cohort_finished[QCORE_FORCED_CAPACITY + 1];
 
@@ -231,16 +267,26 @@ QCORE_FORCED_UNINSTRUMENTED static int qcore_forced_body_running(void) {
     return 0;
 }
 
+/* Under the lock: how many created workers stand parked? Card
+ * TSAN-FAILURE-ARMS reads this in the create hook to decide whether the row's
+ * own cohort has assembled, which is a release trigger no join owns. */
+QCORE_FORCED_UNINSTRUMENTED static size_t qcore_forced_parked(void) {
+    size_t parked = 0;
+    for (size_t i = 0; i < qcore_forced_created; ++i)
+        if (!atomic_load_explicit(&qcore_forced_workers[i].released, memory_order_relaxed)) ++parked;
+    return parked;
+}
+
 /* Under the lock, reverse policy: release the most recently created worker
- * that is eligible (created before the last join) and not yet released, and
- * only when no released body is still running. */
+ * that is eligible (created before the last gate opening) and not yet
+ * released, and only when no released body is still running. */
 QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_release_next_reverse(void) {
     if (qcore_forced_body_running()) return;
     for (size_t i = qcore_forced_created; i > 0; --i) {
         struct qcore_forced_worker *worker = &qcore_forced_workers[i - 1];
-        if (worker->generation < qcore_forced_joins &&
+        if (worker->generation < qcore_forced_gate &&
             !atomic_load_explicit(&worker->released, memory_order_relaxed)) {
-            worker->cohort = qcore_forced_joins;
+            worker->cohort = qcore_forced_gate;
             qcore_forced_cohort_size[worker->cohort] += 1;
             atomic_store_explicit(&worker->released, 1, memory_order_relaxed);
             return;
@@ -248,20 +294,21 @@ QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_release_next_reverse(void) 
     }
 }
 
-/* Under the lock: the creator reached a join, so every worker parked before
- * it becomes eligible. */
+/* Under the lock: a trigger fired — the creator reached a join, or (card
+ * TSAN-FAILURE-ARMS) the row's cohort assembled — so every worker parked
+ * before it becomes eligible. */
 QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_open_gate(void) {
-    if (qcore_forced_joins >= QCORE_FORCED_CAPACITY) abort();
-    ++qcore_forced_joins;
+    if (qcore_forced_gate >= QCORE_FORCED_CAPACITY) abort();
+    ++qcore_forced_gate;
     if (QCORE_FORCED_REVERSE) {
         qcore_forced_release_next_reverse();
         return;
     }
     for (size_t i = 0; i < qcore_forced_created; ++i) {
         struct qcore_forced_worker *worker = &qcore_forced_workers[i];
-        if (worker->generation < qcore_forced_joins &&
+        if (worker->generation < qcore_forced_gate &&
             !atomic_load_explicit(&worker->released, memory_order_relaxed)) {
-            worker->cohort = qcore_forced_joins;
+            worker->cohort = qcore_forced_gate;
             qcore_forced_cohort_size[worker->cohort] += 1;
             atomic_store_explicit(&worker->released, 1, memory_order_relaxed);
         }
@@ -324,16 +371,28 @@ static int qcore_forced_create(thrd_t *thread, int (*function)(void *), void *ar
     worker->function = function;
     worker->argument = argument;
     worker->ordinal = qcore_forced_created + 1;
-    worker->generation = qcore_forced_joins;
+    worker->generation = qcore_forced_gate;
     worker->cohort = 0;
     atomic_store_explicit(&worker->released, 0, memory_order_relaxed);
     atomic_store_explicit(&worker->finished, 0, memory_order_relaxed);
     ++qcore_forced_created;
+    /* Card TSAN-FAILURE-ARMS: the trigger the creator's join does not own.
+     * Once the row's cohort stands parked the gate opens here, inside the
+     * create hook, before the creator has reached any join at all. */
+    if (QCORE_FORCED_COHORT > 0 && qcore_forced_parked() >= (size_t)QCORE_FORCED_COHORT)
+        qcore_forced_open_gate();
     qcore_forced_unlock();
     outcome = thrd_create(thread, qcore_forced_trampoline, worker);
     if (outcome != thrd_success) {
-        /* A worker that was never created must not be waited for. */
+        /* A worker that was never created must not be waited for — and, if the
+         * cohort trigger already released it, must not be waited for at an exit
+         * barrier either, so its cohort seat is given back. */
         qcore_forced_lock();
+        if (atomic_load_explicit(&worker->released, memory_order_relaxed)) {
+            qcore_forced_cohort_size[worker->cohort] -= 1;
+            atomic_store_explicit(&worker->released, 0, memory_order_relaxed);
+            worker->cohort = 0;
+        }
         --qcore_forced_created;
         qcore_forced_unlock();
     }
@@ -368,6 +427,163 @@ static int qcore_forced_drop_join(thrd_t thread, int *status) {
 #define QCORE_TASK_CREATE qcore_forced_create
 #define QCORE_TASK_JOIN qcore_forced_join
 "#;
+
+/// Card `TSAN-FAILURE-ARMS`: the **failure arms** of a task program, injected
+/// at the same `-include` seam and placed *after* [`SCHEDULE_FORCING`] so that
+/// whatever `QCORE_TASK_CREATE` then means is what a permitted creation really
+/// travels through. `QCORE_TSAN_FAILURE` selects the arm (`0` none, `1` the
+/// second creation refuses, `2` `QCORE_BUFFER_MALLOC` returns `NULL`).
+///
+/// Neither injection is invented here. The refusing create is CT07's own
+/// `refuse_second_spawn.h` rule — only the *second* creation refuses, so the
+/// first worker is really created, really runs its body and is really joined on
+/// the recovery arm — and the null allocator is the shape CT20's
+/// `task_scenarios.h` already uses for `QCORE_CT_FAIL_ALLOC`. What is new is
+/// that they compose with the pthread binding and the forced schedules, so a
+/// failure arm can be run under ThreadSanitizer at all.
+pub const FAILURE_INJECTION: &str = r#"
+#include <stdlib.h>
+#include <threads.h>
+
+#ifndef QCORE_TSAN_FAILURE
+#define QCORE_TSAN_FAILURE 0
+#endif
+
+#if QCORE_TSAN_FAILURE == 1
+#ifndef QCORE_TASK_CREATE
+#define QCORE_TASK_CREATE thrd_create
+#endif
+/* Whatever QCORE_TASK_CREATE means at this point — the binding's
+ * pthread-backed thrd_create, or the forcing header's qcore_forced_create —
+ * expands here, once, so the permitted creation is the row's own schedule. */
+__attribute__((unused))
+static int qcore_tsan_permitted_create(thrd_t *thread, int (*function)(void *), void *argument) {
+    return QCORE_TASK_CREATE(thread, function, argument);
+}
+static int qcore_tsan_create_attempts = 0;
+__attribute__((unused))
+static int qcore_tsan_refuse_second_create(thrd_t *thread, int (*function)(void *), void *argument) {
+    if (++qcore_tsan_create_attempts >= 2) return thrd_error;
+    return qcore_tsan_permitted_create(thread, function, argument);
+}
+#undef QCORE_TASK_CREATE
+#define QCORE_TASK_CREATE qcore_tsan_refuse_second_create
+#endif
+
+#if QCORE_TSAN_FAILURE == 2
+/* The entry's own qcore_buffer_new goes through QCORE_BUFFER_MALLOC_FOR_TASK,
+ * whose default is QCORE_BUFFER_MALLOC(size); defining the latter before the
+ * emitted prelude leaves the prelude's own #ifndef untaken. */
+__attribute__((unused))
+static void *qcore_tsan_null_malloc(size_t size) { (void)size; return NULL; }
+#define QCORE_BUFFER_MALLOC qcore_tsan_null_malloc
+#endif
+"#;
+
+/// Which failure the injection header forces (card `TSAN-FAILURE-ARMS`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Failure {
+    /// No injection: every creation and every allocation succeeds.
+    None,
+    /// Only the **second** `QCORE_TASK_CREATE` refuses, so the first worker
+    /// runs and the program takes its spawn-refusal recovery arm.
+    RefuseSecondCreate,
+    /// `QCORE_BUFFER_MALLOC` returns `NULL`, so the entry's
+    /// `qcore_buffer_new(...)?` takes its allocation-failure error edge.
+    NullBufferMalloc,
+}
+
+impl Failure {
+    pub fn tag(self) -> &'static str {
+        match self {
+            Failure::None => "no-failure",
+            Failure::RefuseSecondCreate => "refuse-second-create",
+            Failure::NullBufferMalloc => "null-buffer-malloc",
+        }
+    }
+
+    fn selector(self) -> i32 {
+        match self {
+            Failure::None => 0,
+            Failure::RefuseSecondCreate => 1,
+            Failure::NullBufferMalloc => 2,
+        }
+    }
+}
+
+/// Card `TSAN-FAILURE-ARMS`: the `hook_visible_to_tsan` mutation, as a function
+/// over the shipped [`SCHEDULE_FORCING`] text rather than as a patch file.
+///
+/// It puts back exactly what wave 39 measured and then removed: the forcing
+/// header's bookkeeping lock becomes a **pthread mutex**, every function of the
+/// header becomes instrumented, and a parked worker learns it was released *by
+/// acquiring that mutex*. ThreadSanitizer then sees a release/acquire edge
+/// between the releasing thread and the released one, and under
+/// [`Schedule::ForcedReverse`] — where the releaser is the previous worker's
+/// own `finish` — that edge orders the two workers' byte writes and the overlap
+/// race goes **unreported**.
+///
+/// Every substitution asserts its anchor, so this function is also the
+/// enforcement of `TSAN-FORCED-HARNESS-SYNC-INVISIBILITY`: a header edit that
+/// moves the lock, the park loop or the `no_sanitize` attribute out of the
+/// shapes below makes the mutation panic rather than silently become a no-op.
+pub fn with_visible_synchronization(header: &str) -> String {
+    const ANCHORS: [(&str, &str); 3] = [
+        (
+            "#define QCORE_FORCED_UNINSTRUMENTED __attribute__((no_sanitize(\"thread\")))",
+            "#define QCORE_FORCED_UNINSTRUMENTED /* mutation: instrumented */",
+        ),
+        (
+            "static atomic_flag qcore_forced_spin = ATOMIC_FLAG_INIT;",
+            "#include <pthread.h>\nstatic pthread_mutex_t qcore_forced_visible = PTHREAD_MUTEX_INITIALIZER;",
+        ),
+        (
+            concat!(
+                "QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_lock(void) {\n",
+                "    while (atomic_flag_test_and_set_explicit(&qcore_forced_spin, memory_order_acquire)) sched_yield();\n",
+                "}\n",
+                "QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_unlock(void) {\n",
+                "    atomic_flag_clear_explicit(&qcore_forced_spin, memory_order_release);\n",
+                "}",
+            ),
+            concat!(
+                "static void qcore_forced_lock(void) { pthread_mutex_lock(&qcore_forced_visible); }\n",
+                "static void qcore_forced_unlock(void) { pthread_mutex_unlock(&qcore_forced_visible); }",
+            ),
+        ),
+    ];
+    const PARK: (&str, &str) = (
+        concat!(
+            "QCORE_FORCED_UNINSTRUMENTED static void qcore_forced_park(struct qcore_forced_worker *worker) {\n",
+            "    while (!atomic_load_explicit(&worker->released, memory_order_relaxed)) sched_yield();\n",
+            "}",
+        ),
+        concat!(
+            "static void qcore_forced_park(struct qcore_forced_worker *worker) {\n",
+            "    for (;;) {\n",
+            "        int released;\n",
+            "        qcore_forced_lock();\n",
+            "        released = atomic_load_explicit(&worker->released, memory_order_relaxed);\n",
+            "        qcore_forced_unlock();\n",
+            "        if (released) return;\n",
+            "        sched_yield();\n",
+            "    }\n",
+            "}",
+        ),
+    );
+    let mut text = header.to_owned();
+    for (anchor, replacement) in ANCHORS.iter().chain(std::iter::once(&PARK)) {
+        assert_eq!(
+            text.matches(anchor).count(),
+            1,
+            "the invisibility mutation's anchor must appear exactly once in the shipped \
+             forcing header; it does not, so the header has moved out of the shape \
+             TSAN-FORCED-HARNESS-SYNC-INVISIBILITY describes:\n{anchor}"
+        );
+        text = text.replace(anchor, replacement);
+    }
+    text
+}
 
 /// Which schedule a run is forced onto (card `TSAN-ROWS-2`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -506,24 +722,94 @@ pub fn run_with_options(
     schedule: Schedule,
     tsan_options: &str,
 ) -> Result<Sanitized, String> {
+    Row {
+        tag,
+        source: c_source,
+        bind_threads,
+        schedule,
+        tsan_options,
+        ..Row::default()
+    }
+    .execute()
+}
+
+/// One row's complete run description (card `TSAN-FAILURE-ARMS`). The wave-39
+/// entry points above are this with their own fields set and everything else
+/// left at its wave-39 default, so no existing row's meaning moves.
+#[derive(Clone, Copy, Debug)]
+pub struct Row<'a> {
+    pub tag: &'a str,
+    pub source: &'a str,
+    pub bind_threads: bool,
+    pub schedule: Schedule,
+    /// The row's own cohort count — the number of workers this program parks
+    /// before the trigger should fire. `0` is wave 39's join-only gate.
+    pub cohort: usize,
+    /// Which failure arm the program is driven onto.
+    pub failure: Failure,
+    pub tsan_options: &'a str,
+    /// A replacement for [`SCHEDULE_FORCING`] — used only by the
+    /// `hook_visible_to_tsan` mutation, which must compile a *different*
+    /// forcing header while changing nothing else about the run.
+    pub forcing: Option<&'a str>,
+}
+
+impl Default for Row<'_> {
+    fn default() -> Self {
+        Row {
+            tag: "row",
+            source: "",
+            bind_threads: true,
+            schedule: Schedule::Unforced,
+            cohort: 0,
+            failure: Failure::None,
+            tsan_options: "halt_on_error=1",
+            forcing: None,
+        }
+    }
+}
+
+#[cfg(target_os = "linux")]
+impl Row<'_> {
+    pub fn execute(self) -> Result<Sanitized, String> {
+        run_row(self)
+    }
+}
+
+#[cfg(target_os = "linux")]
+fn run_row(row: Row<'_>) -> Result<Sanitized, String> {
     use std::os::unix::process::ExitStatusExt;
     use std::process::Command;
 
-    // Run-scoped by tag, schedule and pid, so two runs cannot truncate each
-    // other.
+    let Row {
+        tag,
+        source: c_source,
+        bind_threads,
+        schedule,
+        cohort,
+        failure,
+        tsan_options,
+        forcing: forcing_override,
+    } = row;
+
+    // Run-scoped by tag, schedule, failure arm and pid, so two runs cannot
+    // truncate each other.
     let directory = std::env::temp_dir().join(format!(
-        "qcore-task-route-tsan-{tag}-{}-{}",
+        "qcore-task-route-tsan-{tag}-{}-{}-{}",
         schedule.tag(),
+        failure.tag(),
         std::process::id()
     ));
     std::fs::create_dir_all(&directory).unwrap();
     let c = directory.join("module.c");
     let binding = directory.join("bind.h");
     let forcing = directory.join("force.h");
+    let failing = directory.join("fail.h");
     let executable = directory.join("module");
     std::fs::write(&c, c_source).unwrap();
     std::fs::write(&binding, PTHREAD_BINDING).unwrap();
-    std::fs::write(&forcing, SCHEDULE_FORCING).unwrap();
+    std::fs::write(&forcing, forcing_override.unwrap_or(SCHEDULE_FORCING)).unwrap();
+    std::fs::write(&failing, FAILURE_INJECTION).unwrap();
     let compiled = std::fs::read_to_string(&c).unwrap();
 
     let mut compiler =
@@ -546,12 +832,18 @@ pub fn run_with_options(
         Schedule::Unforced => {}
         Schedule::ForcedTogether => {
             compiler.arg("-DQCORE_FORCED_REVERSE=0");
+            compiler.arg(format!("-DQCORE_FORCED_COHORT={cohort}"));
             compiler.arg("-include").arg(&forcing);
         }
         Schedule::ForcedReverse => {
             compiler.arg("-DQCORE_FORCED_REVERSE=1");
+            compiler.arg(format!("-DQCORE_FORCED_COHORT={cohort}"));
             compiler.arg("-include").arg(&forcing);
         }
+    }
+    if failure != Failure::None {
+        compiler.arg(format!("-DQCORE_TSAN_FAILURE={}", failure.selector()));
+        compiler.arg("-include").arg(&failing);
     }
     let built = compiler
         .arg(&c)

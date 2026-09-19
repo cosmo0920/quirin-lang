@@ -1,0 +1,22 @@
+{
+  "card": "TSAN-FAILURE-ARMS",
+  "method": "one mutation per arm this card added or changed; eight of the twelve move THE RULE (the forcing header, the failure-injection header, the invisibility mutation, the run plumbing) rather than the test; every file restored by rewrite with the mtime advanced, never mtime-preserving; baseline proved green before and after, and every file checked sha256-equal to its pre-sweep copy",
+  "script": "docs/reports/tsan-failure-arms/artifacts/mutate.sh",
+  "baseline_before_rc": 0,
+  "baseline_after_rc": 0,
+  "restore_sha256_rc": 0,
+  "verdicts": {
+    "arm_control_injected": "RED-AS-REQUIRED",
+    "arm_create_not_refused": "RED-AS-REQUIRED",
+    "arm_header_not_included": "RED-AS-REQUIRED",
+    "arm_malloc_not_null": "RED-AS-REQUIRED",
+    "cohort_trigger_always_on": "RED-AS-REQUIRED",
+    "cohort_trigger_removed": "RED-AS-REQUIRED",
+    "hook_mutex_reintroduced": "RED-AS-REQUIRED",
+    "hook_visible_to_tsan": "RED-AS-REQUIRED",
+    "no_byte_change_new_symbols": "RED-AS-REQUIRED",
+    "rows_cohort_is_the_row_s": "RED-AS-REQUIRED",
+    "rows_unbound": "RED-AS-REQUIRED",
+    "visible_mutation_without_the_lock": "RED-AS-REQUIRED"
+  }
+}

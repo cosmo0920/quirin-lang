@@ -431,3 +431,38 @@ alone — a **finite** binding, and that is its boundary
 Nothing this card lands is reachable from source: a 535-program census admits
 146 on both sides, byte-identical, with **0** verdicts moved either way.
 Evidence: `docs/reports/composed-window-reach/README.md`.
+
+### Constraint 15h — the task-route ThreadSanitizer citation (card `TSAN-FAILURE-ARMS`, wave 41)
+
+Constraint 15h's preserved text records that wave 39's `TSAN-ROWS-2` runs the
+write-lend flagship itself *"clean, unforced and under both forced cohort
+schedules, Linux only"*. **That sentence is extended, and the boundary sentence
+beside it is not weakened.** `TSAN-FAILURE-ARMS` adds, through the same
+`-include` seam and changing no emitted byte:
+
+* a **release trigger the creator's join does not own** — a per-program cohort
+  count the row supplies, so the gate opens inside `QCORE_TASK_CREATE` once that
+  many workers stand parked. The mutation that deletes a join, which wave 39
+  measured hiding every race (0 of 20 forced), is now reported **20 of 20** under
+  both forced schedules, with wave 39's own 0-of-20 kept as the control arm of
+  `a_join_deleted_is_caught_by_the_cohort_trigger`. The join trigger is
+  **retained beside it** and the two wave-39 mutation rows deliberately stay on
+  it, because the cohort trigger **costs catches** on the join-edge-removal
+  mutation (`TSAN-COHORT-TRIGGER-CATCH-COST`);
+* rows over the flagship's and CT07's **failure arms** — a refusing second
+  `QCORE_TASK_CREATE` and a NULL-returning `QCORE_BUFFER_MALLOC` — twelve cells
+  each clean, each asserting **which arm executed from the program's own
+  stdout**, each byte-identical to the reference run scripted for the same
+  outcomes, 20 of 20. The allocation-failure arm creates **no thread** on either
+  subject, so that arm's verdict is about a single-threaded recovery path
+  (`TSAN-ALLOC-FAILURE-ARM-SINGLE-THREADED`).
+
+**What does not change.** The exclusivity claim of constraint 15h still rests on
+C11 3.14, on the ASan/UBSan/LSan run and on the allocation identity, with the
+ThreadSanitizer rows beside them and not in their place: a clean detector is
+evidence about the schedules realised and never a proof of race freedom
+(`TASK-ROUTE-TSAN-EXECUTED-SCHEDULES`, kept registered and stated permanently as
+a measured boundary). Every row is still a pthread-bound Linux build
+(`TASK-ROUTE-TSAN-PTHREAD-BINDING`), and **no Windows or Apple run is claimed**
+(`TASK-ROUTE-TSAN-WINDOWS-APPLE-RUN`, `WRITE-LEND-EXERCISE-WINDOWS-RUN`).
+Evidence: `docs/reports/tsan-failure-arms/README.md`.

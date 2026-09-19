@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate measured by the integrator at the wave-41 tip 7d2c1fa6 (the four cards' merges above 96142e49), run by the WAVE-41-TIP-GATE measurement task in its own worktree at that commit with every exit captured to its own file (docs/reports/wave41-tip-gate/README.md in that worktree, logs under its measure/). The per-merge regeneration was deferred to this tip by instruction, so this file is what the matrix is regenerated with; it repairs BOTH stale derived fields - dimensions.named_followups 259 -> 264 and validation.lean_audits 142 -> 143. Provider 122 carried: providers/ and crates/qcore-schemas/ are unchanged since 96142e49. The clang claim is the integrator's own recording beside this file (integration-clang-version.txt/.exit, run in the main checkout), not a card's - CLANG-RECORDING-UNBOUND-TO-ITS-RUN.",
+ "workspace_tests": 4770,
+ "provider_tests": 122,
+ "python_evidence_validator_tests": 305,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "pass",
+ "lean_audits": 143,
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

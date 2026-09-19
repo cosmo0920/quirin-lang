@@ -1,0 +1,26 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/task_route_tsan.rs (target/debug/deps/task_route_tsan-fe5701d2c006b5dc)
+
+running 19 tests
+test a_join_deleted_is_caught_by_the_cohort_trigger ... ok
+test a_program_with_no_qcore_in_it_dies_the_same_way ... ok
+test a_visible_forcing_header_would_hide_the_overlap_which_is_why_the_shipped_one_is_not ... ok
+test an_uninstrumented_body_is_why_the_minimal_probe_ran_clean ... ok
+test ct07s_case_is_the_flagship_without_its_logger ... ok
+test ct46s_own_case_runs_clean_bound_and_the_forcing_header_finds_no_seam ... ok
+test every_failure_arm_runs_clean_and_says_which_arm_it_took ... ok
+test every_subject_dies_unbound_at_the_one_fault ... ok
+test every_subject_runs_clean_under_each_forced_schedule ... ok
+test every_subject_runs_clean_under_thread_sanitizer_when_bound ... ok
+test measure_catch_rates_for_the_report ... ignored, measurement harness for the TSAN-ROWS-2 / TSAN-FAILURE-ARMS reports; run with --ignored and QCORE_TSAN2_MEASURE_DIR set
+test overlapping_writers_are_reported_under_every_schedule ... ok
+test overlapping_writers_are_reported_which_is_what_makes_the_clean_row_mean_something ... ok
+test removing_the_join_edge_is_reported_so_the_clean_rows_are_not_blind ... ok
+test removing_the_join_edge_is_reported_under_every_schedule ... ok
+test the_binding_changes_no_emitted_byte ... ok
+test the_forcing_header_stays_invisible_to_thread_sanitizer ... ok
+test the_same_program_through_pthread_runs_clean ... ok
+test without_the_injection_the_same_subject_takes_the_success_arm ... ok
+
+test result: ok. 18 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 16.79s
+

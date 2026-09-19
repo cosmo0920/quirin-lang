@@ -1,0 +1,63 @@
+{
+  "card": "TSAN-FAILURE-ARMS",
+  "supersedes": "docs/reports/tsan-rows-2/artifacts/catch-rates.json",
+  "repeats": 20,
+  "tsan_options": "halt_on_error=1",
+  "caught": {
+    "overlap/ct07-case @ cohort 0 @ unforced": {"caught": 20, "workers_released": 0},
+    "overlap/ct07-case @ cohort 0 @ forced-together": {"caught": 20, "workers_released": 20},
+    "overlap/ct07-case @ cohort 0 @ forced-reverse": {"caught": 20, "workers_released": 20},
+    "overlap/ct07-case @ cohort 2 @ unforced": {"caught": 20, "workers_released": 0},
+    "overlap/ct07-case @ cohort 2 @ forced-together": {"caught": 20, "workers_released": 20},
+    "overlap/ct07-case @ cohort 2 @ forced-reverse": {"caught": 20, "workers_released": 20},
+    "overlap/disjoint-exercise @ cohort 0 @ unforced": {"caught": 20, "workers_released": 0},
+    "overlap/disjoint-exercise @ cohort 0 @ forced-together": {"caught": 20, "workers_released": 20},
+    "overlap/disjoint-exercise @ cohort 0 @ forced-reverse": {"caught": 20, "workers_released": 20},
+    "overlap/disjoint-exercise @ cohort 2 @ unforced": {"caught": 20, "workers_released": 0},
+    "overlap/disjoint-exercise @ cohort 2 @ forced-together": {"caught": 20, "workers_released": 20},
+    "overlap/disjoint-exercise @ cohort 2 @ forced-reverse": {"caught": 20, "workers_released": 20},
+    "join-edge-removed/shared_readers @ cohort 0 @ unforced": {"caught": 20, "workers_released": 0},
+    "join-edge-removed/shared_readers @ cohort 0 @ forced-together": {"caught": 20, "workers_released": 20},
+    "join-edge-removed/shared_readers @ cohort 0 @ forced-reverse": {"caught": 20, "workers_released": 20},
+    "join-edge-removed/shared_readers @ cohort 2 @ unforced": {"caught": 20, "workers_released": 0},
+    "join-edge-removed/shared_readers @ cohort 2 @ forced-together": {"caught": 0, "workers_released": 20},
+    "join-edge-removed/shared_readers @ cohort 2 @ forced-reverse": {"caught": 18, "workers_released": 20},
+    "join-edge-removed/ct07-case @ cohort 0 @ unforced": {"caught": 20, "workers_released": 0},
+    "join-edge-removed/ct07-case @ cohort 0 @ forced-together": {"caught": 20, "workers_released": 20},
+    "join-edge-removed/ct07-case @ cohort 0 @ forced-reverse": {"caught": 20, "workers_released": 20},
+    "join-edge-removed/ct07-case @ cohort 2 @ unforced": {"caught": 20, "workers_released": 0},
+    "join-edge-removed/ct07-case @ cohort 2 @ forced-together": {"caught": 0, "workers_released": 20},
+    "join-edge-removed/ct07-case @ cohort 2 @ forced-reverse": {"caught": 20, "workers_released": 20},
+    "join-deleted-gate-closed/ct07-case @ cohort 0 @ unforced": {"caught": 20, "workers_released": 0},
+    "join-deleted-gate-closed/ct07-case @ cohort 0 @ forced-together": {"caught": 0, "workers_released": 0},
+    "join-deleted-gate-closed/ct07-case @ cohort 0 @ forced-reverse": {"caught": 0, "workers_released": 0},
+    "join-deleted-gate-closed/ct07-case @ cohort 2 @ unforced": {"caught": 20, "workers_released": 0},
+    "join-deleted-gate-closed/ct07-case @ cohort 2 @ forced-together": {"caught": 20, "workers_released": 20},
+    "join-deleted-gate-closed/ct07-case @ cohort 2 @ forced-reverse": {"caught": 20, "workers_released": 20}
+  },
+  "failure_arms": {
+    "disjoint-exercise @ refuse-second-create @ unforced": {"clean": 20, "arm_named": 20, "stdout_matches_reference": 20},
+    "disjoint-exercise @ refuse-second-create @ forced-together": {"clean": 20, "arm_named": 20, "stdout_matches_reference": 20},
+    "disjoint-exercise @ refuse-second-create @ forced-reverse": {"clean": 20, "arm_named": 20, "stdout_matches_reference": 20},
+    "disjoint-exercise @ null-buffer-malloc @ unforced": {"clean": 20, "arm_named": 20, "stdout_matches_reference": 20},
+    "disjoint-exercise @ null-buffer-malloc @ forced-together": {"clean": 20, "arm_named": 20, "stdout_matches_reference": 20},
+    "disjoint-exercise @ null-buffer-malloc @ forced-reverse": {"clean": 20, "arm_named": 20, "stdout_matches_reference": 20},
+    "ct07-case @ refuse-second-create @ unforced": {"clean": 20, "arm_named": 20, "stdout_matches_reference": 20},
+    "ct07-case @ refuse-second-create @ forced-together": {"clean": 20, "arm_named": 20, "stdout_matches_reference": 20},
+    "ct07-case @ refuse-second-create @ forced-reverse": {"clean": 20, "arm_named": 20, "stdout_matches_reference": 20},
+    "ct07-case @ null-buffer-malloc @ unforced": {"clean": 20, "arm_named": 20, "stdout_matches_reference": 20},
+    "ct07-case @ null-buffer-malloc @ forced-together": {"clean": 20, "arm_named": 20, "stdout_matches_reference": 20},
+    "ct07-case @ null-buffer-malloc @ forced-reverse": {"clean": 20, "arm_named": 20, "stdout_matches_reference": 20}
+  },
+  "invisibility": {
+    "overlap/ct07-case @ shipped-invisible @ forced-together": {"caught": 20},
+    "overlap/ct07-case @ hook_visible_to_tsan @ forced-together": {"caught": 0},
+    "overlap/ct07-case @ shipped-invisible @ forced-reverse": {"caught": 20},
+    "overlap/ct07-case @ hook_visible_to_tsan @ forced-reverse": {"caught": 0}
+  },
+  "race_count_halt_on_error_0": {
+    "join-edge-removed/shared_readers @ unforced": 16,
+    "join-edge-removed/shared_readers @ forced-together": 6,
+    "join-edge-removed/shared_readers @ forced-reverse": 6
+  }
+}

@@ -1,0 +1,25 @@
+failures:
+
+---- removing_the_join_edge_is_reported_under_every_schedule stdout ----
+
+thread 'removing_the_join_edge_is_reported_under_every_schedule' (3308413) panicked at compiler/tests/task_route_tsan.rs:746:13:
+ct07-case under forced-together: removing the join edge should be reported:
+QCORE_FORCED start 1
+QCORE_FORCED start 2
+QCORE_FORCED leave 1
+QCORE_FORCED leave 2
+==================
+WARNING: ThreadSanitizer: thread leak (pid=3310565)
+  Thread T1 (tid=3310574, finished) created by main thread at:
+    #0 pthread_create <null> (module+0x655de) (BuildId: 705ae961593818b1310db738235f8435c3667ba4)
+    #1 qcore_tsan_thread_create /tmp/qcore-task-route-tsan-unjoined-ct07-case-forced-together-no-failure-3308377/bind.h:29:9 (module+0xece35) (BuildId: 705ae961593818b1310db738235f8435c3667ba4)
+    #2 qcore_forced_create /tmp/qcore-task-route-tsan-unjoined-ct07-case-forced-together-no-failure-3308377/force.h:182:15 (module+0xebc40) (BuildId: 705ae961593818b1310db738235f8435c3667ba4)
+    #3 qcore_task_start /tmp/qcore-task-route-tsan-unjoined-ct07-case-forced-together-no-failure-3308377/module.c:452:9 (module+0xea64f) (BuildId: 705ae961593818b1310db738235f8435c3667ba4)
+    #4 qcore_task_fn_1 /tmp/qcore-task-route-tsan-unjoined-ct07-case-forced-together-no-failure-3308377/module.c:524:22 (module+0xeb126) (BuildId: 705ae961593818b1310db738235f8435c3667ba4)
+    #5 main /tmp/qcore-task-route-tsan-unjoined-ct07-case-forced-together-no-failure-3308377/module.c:584:39 (module+0xea3ea) (BuildId: 705ae961593818b1310db738235f8435c3667ba4)
+
+SUMMARY: ThreadSanitizer: thread leak (/tmp/qcore-task-route-tsan-unjoined-ct07-case-forced-together-no-failure-3308377/module+0x655de) (BuildId: 705ae961593818b1310db738235f8435c3667ba4) in pthread_create
+==================
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+

@@ -1,0 +1,12 @@
+measure/mutate/arm_header_not_included.verdict:RED-AS-REQUIRED
+measure/mutate/hook_visible_to_tsan.verdict:RED-AS-REQUIRED
+measure/mutate/cohort_trigger_removed.verdict:RED-AS-REQUIRED
+measure/mutate/cohort_trigger_always_on.verdict:RED-AS-REQUIRED
+measure/mutate/rows_cohort_is_the_row_s.verdict:RED-AS-REQUIRED
+measure/mutate/arm_create_not_refused.verdict:RED-AS-REQUIRED
+measure/mutate/arm_malloc_not_null.verdict:RED-AS-REQUIRED
+measure/mutate/rows_unbound.verdict:RED-AS-REQUIRED
+measure/mutate/visible_mutation_without_the_lock.verdict:RED-AS-REQUIRED
+measure/mutate/arm_control_injected.verdict:RED-AS-REQUIRED
+measure/mutate/no_byte_change_new_symbols.verdict:RED-AS-REQUIRED
+measure/mutate/hook_mutex_reintroduced.verdict:RED-AS-REQUIRED
