@@ -1,0 +1,195 @@
+#!/usr/bin/env python3
+"""Write `docs/reports/ct-proof-leg-3/ct_stage_evidence.json` (card `CT-PROOF-LEG-3`).
+
+Every non-`proof` stage row is **carried from the manifest's own CT50 rows**.
+Measured (`measure/cmp_t00.py`): those rows agree with card T00's frozen
+archive — the record this one supersedes, by declaration; that archive keeps
+its bytes (constraint 21) — in **status and observation count for all
+seventeen stages**, and differ only in the `host_gate` of
+`task_reference_execution` and `c_emission`, which later lanes widened from
+`["linux"]` to `["linux","macos","windows"]` in the manifest. The manifest's
+values are the ones carried. Only the `proof` row is written by this card. Run
+from the repository root:
+
+    python3 docs/reports/ct-proof-leg-3/scripts/build_stage_evidence.py
+"""
+
+import json
+import pathlib
+
+ROOT = pathlib.Path(__file__).resolve().parents[4]
+OUT = ROOT / "docs/reports/ct-proof-leg-3/ct_stage_evidence.json"
+
+EXECUTOR = (
+    "compiler/tests/ct50_proof_leg.rs::"
+    "ct50_artifact_is_the_lean_proved_lifetime_identity_shape"
+)
+
+PROOF_NOTE = (
+    "the artifact checked against the Lean-proved total decision procedure "
+    "dischargesLifetimeIdentity (QCore.Ct50LifetimeIdentity, "
+    "AuditCt50LifetimeIdentity.lean): each generation allocated once and "
+    "released once, the old generation's whole existence closing before the "
+    "new one begins, NO fact of the trace using the old generation, and the "
+    "one read naming the new generation with the new allocation's own payload "
+    "inside the new generation's lifetime. Reference-run discharge and "
+    "admitted renderings covered -- the run is single-actor, so the relation "
+    "admits nothing but the run itself "
+    "(an_admitted_rendering_is_the_reference_run), proved in Lean and "
+    "measured on the artifact by enumerating admitted_linearizations. "
+    "Host-unconditional: no cfg, no Clang, no native half. SCOPE: the "
+    "capability half of the scenario only; the numeric address reuse CT50 "
+    "names is invisible to the F02 alphabet and stays with "
+    "run_native_task_scenarios' observation, unproved."
+)
+
+
+def main():
+    manifest = json.loads((ROOT / "docs/reevaluation/ct_manifest.json").read_text())
+    stages = manifest["stage_vocabulary"]["stages"]
+    case = next(c for c in manifest["cases"] if c["id"] == "CT50")
+
+    verified = {}
+    for stage in stages:
+        row = dict(case["stages"][stage])
+        if stage == "proof":
+            row = {
+                "status": "executed",
+                "executor": EXECUTOR,
+                "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
+                "observations": 1,
+                "note": PROOF_NOTE,
+            }
+        verified[stage] = row
+
+    record = {
+        "schema_version": 1,
+        "card": "CT-PROOF-LEG-3",
+        "generated": "2026-09-19",
+        "report": "docs/reports/ct-proof-leg-3/README.md",
+        "purpose": (
+            "The flip of CT50's proof stage: the manifest's fifth executed proof row, "
+            "superseding card T00's frozen archive for CT50 -- the record that still held "
+            "this case's stages -- without editing it (constraint 21). Every other stage row "
+            "is carried from the manifest's own CT50 rows, which agree with that archive in "
+            "status and observation count for all seventeen stages and differ only in the "
+            "host_gate of task_reference_execution and c_emission, widened by later lanes; "
+            "only proof moves, on the named workspace test this card landed. Proof 4 of 47 "
+            "-> 5 of 47 is evidence about one case's artifact and never conformance "
+            "(constraint 23)."
+        ),
+        "derivation_rule": (
+            "A stage is executed only where a named workspace test runs it on the case's own "
+            "artifact. compiler/tests/ct50_proof_leg.rs include_str!s CT50's fixture, compiles "
+            "it through compile_files, executes the checked task module's reference execution, "
+            "derives the admitted causal order with the production observer "
+            "(AdmittedCausalOrder::derive), asserts the events are the Lean referenceRun term "
+            "event for event, recomputes the kernel-decided digest pin from those events with "
+            "wrapping u64 arithmetic, runs the clause-for-clause transcription of "
+            "dischargesLifetimeIdentity and requires acceptance, and enumerates the relation's "
+            "admitted linearizations of the artifact's own order, requiring the admitted set to "
+            "be the singleton {referenceRun}."
+        ),
+        "theorem_bound": {
+            "primary": (
+                "QCore.Ct50LifetimeIdentity.ct50_reference_run_discharges_the_lifetime_identity "
+                "together with every_admitted_rendering_discharges_the_lifetime_identity, whose "
+                "meaning is fixed by the seven theorems stated for an arbitrary accepted trace "
+                "(discharged_each_generation_is_allocated_and_released_once, "
+                "discharged_the_old_lifetime_closes_before_the_new_one_opens, "
+                "discharged_no_fact_uses_the_old_capability, "
+                "discharged_the_old_generation_is_never_read, "
+                "discharged_the_one_read_names_the_new_generation, "
+                "discharged_the_read_sits_inside_the_new_lifetime, "
+                "discharged_every_fact_is_the_root_tasks)"
+            ),
+            "closure": (
+                "an_admitted_rendering_is_the_reference_run: CT50's run has one actor, and the "
+                "F02 relation demands agreement with the reference on EVERY actor's projection "
+                "over the same multiset of facts, so the admitted set is a singleton. The "
+                "closure is therefore the degenerate case of CT01's and CT37's -- proved here "
+                "rather than assumed, and measured on the artifact by enumeration."
+            ),
+            "pin": (
+                "ct50_trace_digest = 1699395409980170611, proved by decide in Lean and "
+                "recomputed from the artifact with wrapping u64 arithmetic; the Rust literal is "
+                "itself compared with the Lean source's numeral by "
+                "compiler/tests/proof_leg_digests.rs (PROOF-LEG-DIGESTS-UNCROSSCHECKED)"
+            ),
+            "alphabet": (
+                "unchanged. CT50's run carries only allocated/dropped/read/completed events, all "
+                "inside QCore.TaskTraceRelation's base alphabet; neither reference_trace nor the "
+                "relation nor any existing digest moved."
+            ),
+        },
+        "mapped_case_stage_matrix": {
+            "CT50": {
+                "supersedes": "docs/reports/remaining-t00/coverage.json",
+                "harness_verdict_mode": case["harness_verdict_mode"],
+                "manifest_evidence_target": "linux",
+                "verified_stages": verified,
+                "carried_unchanged_from_t00": [
+                    stage for stage in stages if stage != "proof"
+                ],
+                "non_vacuity_of_the_proof_leg": {
+                    "method": (
+                        "Two tiers, separated by measurement. TIER 1, the fixture mutations: "
+                        "each of three mutations of CT50's own case.qcore is measured at the "
+                        "place the pipeline catches it, so a mutation the CHECKER refuses is "
+                        "never presented as evidence about the leg. TIER 2, the rule mutations: "
+                        "each clause of the transcription and each Lean term is mutated in "
+                        "place and the named test watched go red, then restored and compared by "
+                        "sha256. Harness and log: "
+                        "docs/reports/ct-proof-leg-3/scripts/mutate_ct50_proof_leg.py and "
+                        "docs/reports/ct-proof-leg-3/mutations.log."
+                    ),
+                    "clause_isolation": (
+                        "Four of the eight Lean-named mutants are proved to fail EXACTLY ONE "
+                        "clause, with every other clause still holding "
+                        "(overlapping_lifetimes_fail_only_the_old_lifetime_clause, "
+                        "an_escaping_stale_capability_fails_only_the_stale_use_clause, "
+                        "a_read_after_the_fresh_release_fails_only_the_read_window_clause, "
+                        "a_read_by_a_second_actor_fails_only_the_single_actor_clause), and the "
+                        "Rust test the_isolating_mutants_fail_only_their_named_clause "
+                        "re-measures the same isolation on the transcription. The two "
+                        "length-changing mutants are named as such rather than presented as "
+                        "isolating."
+                    ),
+                },
+                "boundary": (
+                    "The binding is about the checked module's reference execution and the "
+                    "renderings the F02 relation admits against it, host-unconditionally. The "
+                    "emitted C's native behaviour stays observation-only under "
+                    "run_native_task_scenarios, and native_sanitized stays recorded_not_gated "
+                    "(a transcript in docs/reports/w6-reused-address/README.md, re-run by "
+                    "nothing). No verified extraction between Lean and Rust is claimed: the "
+                    "agreement is the checked-digest transcription pattern F02 established. "
+                    "MOST IMPORTANTLY: the numeric address reuse the scenario names -- the "
+                    "second mapping placed at the first one's address with MAP_FIXED_NOREPLACE "
+                    "-- is invisible to the F02 alphabet, which carries generations and not "
+                    "addresses. The proved half is the capability half; the address half is "
+                    "native observation and is not proved (CT50-PROOF-ADDRESS-REUSE-UNPROVED)."
+                ),
+            }
+        },
+        "unmapped_reasons": {},
+        "retired_unmapped_reasons": {},
+        "inventory": {
+            "added_mapped_ids": [],
+            "re_mapped_ids": [],
+            "mapped_before": 47,
+            "mapped_after": 47,
+            "unmapped_after": 3,
+            "total": 50,
+            "proof_before": 4,
+            "proof_after": 5,
+            "sanitized_native_before": 10,
+            "sanitized_native_after": 10,
+        },
+    }
+    OUT.write_text(json.dumps(record, indent=1) + "\n")
+    print("wrote", OUT)
+
+
+if __name__ == "__main__":
+    main()

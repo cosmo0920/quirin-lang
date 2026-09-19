@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/confined_process_execution.rs (target/debug/deps/confined_process_execution-39b6b4f02e4bba85)
+
+running 1 test
+test a_confined_fixture_cannot_write_outside_the_admitted_paths ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.01s
+
