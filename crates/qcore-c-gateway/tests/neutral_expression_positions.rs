@@ -618,12 +618,14 @@ fn a_branch_condition_refuses_a_read_through_a_bound_base() {
     );
 }
 
-/// A releasing call in a branch condition keeps its refusal: the release must
-/// not disappear into a `NoOp`. It answers `Unsafe` rather than `Unknown`
-/// because the refused condition leaves the acquisition outstanding at the
-/// exit, which is the fail-closed direction.
+/// **Deliberate pin update, card B02-BRANCH-CONDITION.**  A releasing call in
+/// a branch condition is now an ordinary `ContractCall` node before the
+/// two-successor branch, so its effect does not disappear into a `NoOp`.
+/// This exact comma expression evaluates the call unconditionally; the
+/// short-circuit and conditional neighbours in `branch_condition_calls.rs`
+/// retain the old refusal.
 #[test]
-fn a_releasing_call_in_a_branch_condition_is_never_admitted() {
+fn an_unconditional_releasing_call_in_a_branch_condition_is_modeled() {
     if !clang_available() {
         return;
     }
@@ -631,15 +633,9 @@ fn a_releasing_call_in_a_branch_condition_is_never_admitted() {
             void *p = q_alloc();
             if ((q_free(p), 1)) { }
         }");
-    assert_ne!(run.status("subject"), AnalysisStatus::Safe);
-    assert!(
-        run.unsupported("subject").iter().any(|description| {
-            description == "unmodeled call, aggregate or indirect access in branch condition"
-        }),
-        "unsupported: {:?}",
-        run.unsupported("subject")
-    );
-    assert_eq!(run.leaks("subject"), 1);
+    assert_eq!(run.status("subject"), AnalysisStatus::Safe);
+    assert!(run.unsupported("subject").is_empty());
+    assert_eq!(run.leaks("subject"), 0);
 }
 
 /// An uncontracted call in each of the five stage-2 positions keeps its own
