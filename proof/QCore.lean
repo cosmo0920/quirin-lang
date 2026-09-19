@@ -154,6 +154,7 @@ import QCore.StdBuffer
 import QCore.SourceLoop
 import QCore.SourceRecord
 import QCore.AggregateOwnedField
+import QCore.OwnedFieldCopyReach
 import QCore.QuantRegionSource
 import QCore.RegionCreditJoins
 import QCore.RegionJoinsDuties
