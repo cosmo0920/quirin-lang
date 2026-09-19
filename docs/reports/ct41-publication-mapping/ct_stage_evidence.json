@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "card": "CT41-PUBLICATION-MAPPING",
+  "generated": "2026-09-19",
+  "report": "docs/reports/ct41-publication-mapping/README.md",
+  "purpose": "Map the original volatile completion flag refusal using a bounded C publication route and protocol-replacement attribution. No conformance promotion.",
+  "retired_unmapped_reasons": {
+    "CT41": {
+      "retires": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
+      "mapped_by": "CT41-PUBLICATION-MAPPING"
+    }
+  },
+  "inventory": {
+    "added_mapped_ids": [
+      "CT41"
+    ],
+    "mapped_before": 49,
+    "mapped_after": 50,
+    "unmapped_after": 0,
+    "total": 50
+  },
+  "mapped_case_stage_matrix": {
+    "CT41": {
+      "artifact": "compiler/tests/fixtures/ct/CT41/case.c",
+      "route": "atomic_publication",
+      "harness_verdict_mode": "no_synchronization_proof",
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::atomic_publication::run",
+          "artifact": "compiler/tests/fixtures/ct/CT41/case.c",
+          "observations": 1,
+          "tool_gate": [
+            "clang"
+          ]
+        },
+        "atomic_publication_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::atomic_publication::run",
+          "artifact": "compiler/tests/fixtures/ct/CT41/case.c",
+          "observations": 1,
+          "tool_gate": [
+            "clang"
+          ]
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      }
+    }
+  }
+}

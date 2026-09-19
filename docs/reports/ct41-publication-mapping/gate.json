@@ -1,0 +1,13 @@
+{
+  "note": "CT41-PUBLICATION-MAPPING standing gate at source checkpoint a0ca619666a06b1a3a3fb143b2a3935165148f98. Run: /home/cosmo/Documents/GitHub/qcore-c/private/ct-remaining/integration/private/ct41-mapping/gate-20260919T110010Z; captured command exits, timestamps and Cargo environment in gate-facts.json. Rust 4812 passed, 0 failed, 10 ignored across 246 summaries (235 Running targets plus 9 doc-test sections). Clang invoked in this measuring worktree. Python measured before publication and checked again after regeneration. Provider 122 is carried Unix evidence, not remeasured. CT 50/50 mapped, 5/50 case-bound proof, 10/50 gated sanitized-native on Linux/macOS; mapping is not full conformance or production safety. CT41 adds only Clang-gated parsing and publication-check evidence. See README.md for the explicit attribution decision and declared bounds.",
+  "workspace_tests": 4812,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 305,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "pass",
+  "lean_audits": 145,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

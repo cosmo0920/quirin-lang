@@ -1,0 +1,36 @@
+{
+  "source_head": "a0ca619666a06b1a3a3fb143b2a3935165148f98",
+  "run_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/ct-remaining/integration/private/ct41-mapping/gate-20260919T110010Z",
+  "start": "2026-09-19T11:00:10.067709+00:00",
+  "completed": "2026-09-19T11:14:05.050336+00:00",
+  "cargo_environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "rust_passed": 4812,
+  "rust_failed": 0,
+  "rust_ignored": 10,
+  "result_summaries": 246,
+  "running_targets": 235,
+  "doc_test_targets": 9,
+  "lean_audits": 145,
+  "python_tests": 305,
+  "command_exits": {
+    "submodule": 0,
+    "clang-version": 0,
+    "cargo-test": 0,
+    "fmt": 0,
+    "clippy": 0,
+    "probe": 0,
+    "followup": 0,
+    "lean": 0,
+    "python-final": 0,
+    "matrix-final": 0
+  },
+  "source_unchanged_since_checkpoint": true,
+  "post_regeneration_python_verified": true,
+  "publication_checked_at": "2026-09-19T11:15:47.125308+00:00",
+  "timestamp_note": "completed is the end of the Rust/Lean standing sequence; final matrix generation and Python verification followed."
+}

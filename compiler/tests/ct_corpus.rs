@@ -129,8 +129,8 @@ const MAPPED_CASES: &[&str] = &[
     "CT01", "CT02", "CT03", "CT04", "CT05", "CT06", "CT07", "CT08", "CT09", "CT10", "CT11", "CT12",
     "CT13", "CT14", "CT15", "CT16", "CT17", "CT18", "CT19", "CT20", "CT21", "CT22", "CT23", "CT24",
     "CT25", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35", "CT36",
-    "CT37", "CT38", "CT39", "CT40", "CT42", "CT43", "CT44", "CT45", "CT46", "CT47", "CT48", "CT49",
-    "CT50",
+    "CT37", "CT38", "CT39", "CT40", "CT41", "CT42", "CT43", "CT44", "CT45", "CT46", "CT47", "CT48",
+    "CT49", "CT50",
 ];
 /// The `legacy_c` route (card CT-CTWIN, extended by the wave-17 CT lane). These
 /// three cases name C constructs that
@@ -369,6 +369,7 @@ const STAGE_NAMES: &[&str] = &[
     "native_execution",
     "native_sanitized",
     "legacy_c_twin",
+    "atomic_publication_check",
     "proof",
 ];
 /// `executed` needs an executor, an artifact and an observation count;
@@ -388,6 +389,10 @@ const STAGE_STATUSES: &[&str] = &[
 /// carry no mapped case — declaring them is what makes "this route has no such
 /// stage" a structural statement rather than a note.
 const ROUTE_STAGES: &[(&str, &[&str])] = &[
+    (
+        "atomic_publication",
+        &["parse", "atomic_publication_check", "proof"],
+    ),
     (
         "bitfield_concurrency",
         &[
@@ -487,6 +492,7 @@ const ROUTE_STAGES: &[(&str, &[&str])] = &[
 /// The only executors a manifest stage entry may name. A stage cannot be
 /// credited to a runner this file does not have.
 const RUNNER_REGISTRY: &[&str] = &[
+    "compiler/tests/ct_corpus.rs::atomic_publication::run",
     "compiler/tests/ct_corpus.rs::run_mapped_case",
     "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
     "compiler/tests/ct_corpus.rs::run_native_create_recovery",
@@ -578,6 +584,7 @@ const STAGE_DEPTH: &[(&str, u8)] = &[
     ("mutex_reference_execution", 4),
     ("sequential_reference_execution", 4),
     ("legacy_c_twin", 4),
+    ("atomic_publication_check", 4),
     ("c_emission", 5),
     ("native_execution", 6),
     ("native_sanitized", 7),
@@ -1943,7 +1950,14 @@ fn derive_legacy_stage_plan(
     plan
 }
 
+#[path = "support/ct_atomic_publication.rs"]
+mod atomic_publication;
+
 fn run_mapped_case(case: &ManifestCase) {
+    if case.id == "CT41" {
+        atomic_publication::run(case);
+        return;
+    }
     let directory = fixture_root().join(&case.id);
     assert!(
         directory.is_dir(),
@@ -3920,7 +3934,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 28] = [
+const EVIDENCE_FILES: [&str; 29] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3979,6 +3993,7 @@ const EVIDENCE_FILES: [&str; 28] = [
     // Card `CT10-SOURCE-LAYOUT`: CT10's actual field-write captures reach the
     // footprint checker on a property-only route, with no task-ledger claim.
     "docs/reports/ct10-source-layout/ct_stage_evidence.json",
+    "docs/reports/ct41-publication-mapping/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
