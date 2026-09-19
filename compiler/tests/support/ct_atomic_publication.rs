@@ -122,7 +122,10 @@ pub(super) fn run(case: &ManifestCase) {
     // the flag's TYPE and nothing else.
     assert_eq!(
         fs::read_to_string(directory.join("qualified_atomic.c")).unwrap(),
-        atomic.replace("static _Atomic int done", "static volatile _Atomic int done"),
+        atomic.replace(
+            "static _Atomic int done",
+            "static volatile _Atomic int done"
+        ),
         "the qualified-atomic control changes only the flag declaration"
     );
     assert_eq!(
@@ -149,9 +152,8 @@ pub(super) fn run(case: &ManifestCase) {
         })
         .expect_err("a language-boundary control is not admissible C11");
         assert!(
-            format!("{error:?}").contains(
-                "address argument to atomic operation must be a pointer to _Atomic type"
-            ),
+            format!("{error:?}")
+                .contains("address argument to atomic operation must be a pointer to _Atomic type"),
             "CT41 {file}: C itself must refuse this, and for the stated reason"
         );
     }

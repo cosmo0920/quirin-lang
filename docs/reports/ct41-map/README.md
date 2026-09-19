@@ -215,12 +215,64 @@ returning an empty map is invisible to the committed-tree arm except through
 that one direct assertion, which is why the residual asks for the tally-sum and
 `ct_unmapped` zero arms beside it.
 
-## 6. Gate
+## 6. Mutations
+
+`bash docs/reports/ct41-map/mutations.sh <out>`. Only the arms **this card
+adds** are mutated; the landed mapping's own arms are its card's to defend. Each
+mutation edits the rule, not the test; the file is restored by `cp` + `touch`
+and its sha256 compared.
+
+| # | Mutation | Test's message |
+|---|---|---|
+| A1 | flag match widened to `contains("_Atomic")` | `qualified_atomic.c` is **admitted with a certificate** (`payload_happens_before 1 → 4`) |
+| A2 | volatile arm widened to `contains("volatile")` | `qualified_atomic.c` refuses `Source(UnsupportedPublisher)` — the widened arm routes a genuinely atomic program down the non-atomic path |
+| A3 | language-boundary expectation inverted to `expect` | panics carrying Clang's own `address argument to atomic operation must be a pointer to _Atomic type` |
+| A4 | the required refusal reason changed to one Clang never emits | `CT41 volatile_atomic_ops.c: C itself must refuse this, and for the stated reason` |
+| A5 | a derivation assertion replaced by an identity | `the language-boundary control changes only the flag declaration` |
+| A6 | boundary files dropped from the fixture inventory | the inventory assertion lists `volatile_atomic_ops.c` as untracked |
+
+**6 of 6 red, 0 vacuous, every file restored sha256-identical**, re-run after
+rustfmt moved two hunks so the result describes the committed bytes. A1 is the
+one that matters most: the control is not decorative, it prevents a widening
+that would **issue a happens-before certificate** for a flag this route does not
+model. An earlier draft of A3 reddened on a *type error* rather than an
+assertion — a mutation that only breaks the build proves nothing — and was
+replaced with one that compiles.
+
+## 7. Gate
 
 [`gate.json`](gate.json), with [`clang-version.txt`](clang-version.txt) recorded
 by running `clang --version` **in this worktree**; it is not borrowed.
 
-## 7. Integrator reconciliation list
+| Step | Result |
+|---|---|
+| `cargo test --workspace --no-fail-fast` | **4,812 passed, 0 failed, 10 ignored**, 246 result summaries over 244 targets, exit 0 |
+| `cargo fmt --all -- --check` | exit 0 |
+| `cargo clippy --all-targets -- -D warnings` | exit 0 |
+| `reevaluation_probe` / `reevaluation_followup` | exit 0 / exit 0 |
+| `scripts/check_lean_audits.py` | **145** audits, exit 0 (on-disk `proof/Audit*.lean` = 145) |
+| `python3 -m unittest discover -s scripts/tests` | **305 tests, OK**, run after the matrix regeneration |
+| provider tests | **122, carried** — `git diff 2910c1e0 -- providers crates/qcore-schemas` is empty |
+| `clang --version` | `Ubuntu clang version 21.1.8 (6ubuntu1)`, this worktree |
+
+The workspace figure is **unchanged from the landed card's 4,812**, because this
+card's two controls run inside the existing CT41 test rather than adding one —
+which is the right shape for a reduction.
+
+**Matrix**, regenerated with `--gate docs/reports/ct41-map/gate.json`:
+`named_followups` **262 → 269**, `dimensions.named_followups` with it, and the
+`validation` block. **`ct_conformance` is byte-unchanged** — every CT row,
+histogram, depth profile and observation count identical to the landed matrix's,
+which is the mechanical confirmation that this card moves no coverage.
+`scripts/ct_stage_summary.py --check` exits 0 at `mapped 50 / unmapped 0`.
+
+`docs/reports/docs-structure-compression/verify.py` exits **0**
+(`largest_policy_page_bytes` 32,262, under the 32 KiB cap; 962 local links) and
+`scripts/build_docs_index.py --check` exits **0**. `check_residuals.py` exits 1
+for the known inherited reason (`RESIDUAL-DISCOVERY-CHECK-LOST-ARM-OVERBROAD`),
+unchanged by this card and not chased.
+
+## 8. Integrator reconciliation list
 
 1. **This card claims no coverage.** CT41's row, its stage evidence and its
    bucket retirement are `ct41-publication-mapping`'s. This report adds no

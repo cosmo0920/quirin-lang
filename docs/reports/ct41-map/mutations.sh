@@ -103,7 +103,7 @@ mutate a4-boundary-reason "$RUNNER" \
 # declaration substitution of the accepting control, so it changes the flag's
 # type and nothing else.
 mutate a5-derivation "$RUNNER" \
-    'atomic.replace("static _Atomic int done", "static volatile _Atomic int done"),=>>atomic.clone(),' \
+    'atomic.replace("static _Atomic int done", "static volatile int done"),=>>atomic.clone(),' \
     || true
 
 # A6 — the boundary files must be inventoried. The landed runner asserts the

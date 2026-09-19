@@ -95,6 +95,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [ct24-cleanup-task-composition](ct24-cleanup-task-composition/README.md) | CT24-CLEANUP-TASK-COMPOSITION — completed implementation and CT mapping |
 
+| [ct41-map](ct41-map/README.md) | Card `CT41-MAP` — reduced onto the landed CT41 mapping |
+
 | [ct41-publication-mapping](ct41-publication-mapping/README.md) | CT41 publication mapping |
 
 | [ct41-sync-model](ct41-sync-model/README.md) | CT41 bounded atomic-publication prerequisite |
