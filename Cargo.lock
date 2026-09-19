@@ -63,6 +63,7 @@ name = "qcore-c-gateway"
 version = "0.1.0"
 dependencies = [
  "qcore-contract",
+ "qcore-core",
  "qcore-schemas",
  "serde",
  "serde_json",

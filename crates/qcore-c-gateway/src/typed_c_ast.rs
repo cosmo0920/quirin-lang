@@ -61,6 +61,49 @@ pub fn ast_declarations(
         .collect()
 }
 
+/// Parse the complete translation-unit AST.
+///
+/// Dedicated closed-world source judgments need this form when proving that a
+/// selected object has no unexamined readers or writers.  The result is still
+/// raw Clang transport and conveys no semantic authority by itself.
+pub fn translation_unit_ast(source: &str, unit: &C11TranslationUnit<'_>) -> Result<Value, String> {
+    let mut command = crate::clang::command()?;
+    unit.append_frontend_flags(&mut command);
+    let mut child = command
+        .args([
+            "-x",
+            "c",
+            unit.dialect.clang_argument(),
+            "-fsyntax-only",
+            "-Xclang",
+            "-ast-dump=json",
+            "-",
+        ])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|error| format!("Clang AST unavailable: {error}"))?;
+    let mut stdin = child.stdin.take().ok_or("Clang stdin unavailable")?;
+    let output = std::thread::scope(|scope| {
+        let writer = scope.spawn(move || stdin.write_all(source.as_bytes()));
+        let output = child.wait_with_output();
+        let written = writer
+            .join()
+            .map_err(|_| "Clang input writer panicked".to_owned())?;
+        written.map_err(|error| format!("Clang input failed: {error}"))?;
+        output.map_err(|error| format!("Clang AST failed: {error}"))
+    })?;
+    if !output.status.success() {
+        return Err(format!(
+            "Clang AST rejected source: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        ));
+    }
+    serde_json::from_slice(&output.stdout)
+        .map_err(|error| format!("unsupported Clang AST JSON: {error}"))
+}
+
 /// Require exactly one body-bearing definition with the exact requested name.
 pub fn function_ast(
     source: &str,

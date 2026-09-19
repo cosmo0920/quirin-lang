@@ -9,6 +9,7 @@
 //! interpreters. Its output alone is never a safety certificate.
 
 mod aggregate_store;
+pub mod atomic_publication_source;
 pub mod boolean_source;
 mod borrow_liveness;
 mod borrowed_actual;

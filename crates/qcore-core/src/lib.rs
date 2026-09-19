@@ -10,6 +10,7 @@
 pub mod advanced_control;
 pub mod aggregate_composition;
 pub mod ast;
+pub mod atomic_publication;
 pub mod c_emit;
 pub mod c_program;
 pub mod capacity_boundary;
@@ -68,6 +69,10 @@ pub use advanced_control::{
     AdvancedControlError, AdvancedExecution, AdvancedOp, AdvancedOutcome, AdvancedProgram,
     AdvancedResourceId, AdvancedTraceEvent, Capture, CaptureMode, DestructorId, DestructorOutcome,
     DestructorSpec, HandlerId, HandlerKind, HandlerSpec, PrimaryFailure, run_advanced,
+};
+pub use atomic_publication::{
+    AtomicPublicationCertificate, AtomicPublicationProgram, AtomicPublicationRefusal,
+    check_atomic_publication,
 };
 pub use c_emit::{CEmitError, emit_c11, emit_c11_with_log_level, parse_c_observation};
 pub use cfg::{
