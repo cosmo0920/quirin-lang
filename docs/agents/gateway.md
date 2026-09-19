@@ -236,6 +236,22 @@ including cross-topic rules, before editing; the index is not a substitute.
     These are maintained extraction/correspondence premises, not a whole-C proof.
 
 
+<a id="constraint-5f"></a>
+
+5f. **Every admitted nested sibling retains its obligations.** B04 widens the
+    existing one-level neutral nested-call rule from one call to a complete list
+    of sibling arguments. Each inner call independently needs an in-force
+    contract with result `None`, every parameter `Borrowed`, exact arity, a whole
+    outer argument in a data/Borrowed slot, and denotable or data-only actuals.
+    The existing scalar-result dereference wrapper keeps its typed-result check.
+    Deeper nesting, partial arguments, missing contracts and custody effects stay
+    refused by this route. The complete sibling set is admitted or refused
+    together. Every sibling's liveness and may-alias obligations survive, and
+    every inner identity transfer precedes the outer call. Identity transfers
+    make C's unspecified sibling order unobservable in this resource model;
+    they do not establish arbitrary runtime purity or whole-C correctness.
+    [B04 evidence](../reports/b04-nested-call-argument/README.md).
+
 <a id="constraint-6"></a>
 
 <!-- preserved:constraint-6:start -->

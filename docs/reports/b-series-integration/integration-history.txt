@@ -1,0 +1,6 @@
+77443afeb236a3818a4044fba6e6e2465a43a39e Integrate bounded B04 neutral sibling calls; mutation and combined gates pending
+70017e35273d6678111337512ddcdab296ff6df7 Integrate reviewed B01 return evaluation; combined gate pending
+914d460d158b464aed4048b4527c9126520a7785 Import completed B03 isolated gate; regenerate shared matrix after combined gate
+d55498cb1e34aa9f80fc9b1c3aee78687c72dac3 Include B02 in aggregate Lean axiom audit; isolated 146-audit recheck passed
+e73e96a22afb79b40e6cff60418546f8b13e2059 Integrate B03 loop and switch call lowering; preserve B02 branch behavior and helper tests
+340d0b9d50eaba1d10cceaafbc53ed7390ab8d9b Integrate B02 branch-condition implementation and isolated evidence; combined gate pending

@@ -5,6 +5,12 @@ figure below is computed by `blocker_census.py` in this directory and printed in
 `blocker-census.txt`; re-run it at each arbiter rather than carrying the numbers forward, because
 they are properties of the pinned corpus at the baseline `docs/reports/w37-corpus-contracts-4/artifacts/`.
 
+Execution update, later 2026-09-20: the user explicitly dispatched B01–B04
+in parallel. Their bounded implementation, prediction misses, combined arbiter
+and validation are recorded in [B-series integration](../../reports/b-series-integration/README.md).
+The figures and ordering proposal below remain the pre-dispatch checkpoint;
+the W-series cards and registered residuals are not closed by that dispatch.
+
 ## What the census changes about card sizing
 
 Of the **4,537** Unknown functions, only **990** have a single distinct blocker and **1,030** have

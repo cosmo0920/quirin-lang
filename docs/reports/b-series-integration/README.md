@@ -52,3 +52,55 @@ checked; this list itself is not verification evidence.
 ## Integration state
 
 Implementation, review, combined measurement and standing validation are pending.
+
+## Integration review and merge attribution
+
+The source merges are reachable commits: B02 `340d0b9d`, B03 `e73e96a2`,
+B01 `70017e35`, and B04 `77443afe`. The corpus audit uses
+`77443afeb236a3818a4044fba6e6e2465a43a39e`. The first combined build found a
+missed diagnostic-example consumer of B04's `Option` → `Vec` change; the
+integrator changed its printer to iterate every nested call. This does not
+change analyzer semantics. The final standing gate records the corrected
+source commit independently. Exact merge identities are listed in
+`integration-history.txt`. Later report and matrix commits change no Rust or
+Lean.
+
+B02/B03 conflicted only in the shared helper's documentation and test list.
+The integrator retained the controlling-expression documentation, the complete
+B02/B03 behavior and B02's `_Alignof` negative control. B01 and B04 merged
+without semantic conflict. Competing isolated matrix snapshots are not merged
+arithmetically: the final measured tree regenerates the matrix. Combined
+focused checks passed **427 unit tests and 69 source tests**, exit 0; private
+log `private/b-series/all-b-merge-tests.log`. Earlier merge checks passed 49
+source tests (B02/B03) and 47 source tests (B01/B02/B03).
+
+Review changed B01's draft before acceptance: conditional calls stay refused,
+the reserved-name guard precedes every new route, and scalar/opaque results
+use a `NoOp` exit rather than a synthetic escape. Its direct opaque-field arm
+is bounded to one member selection. The nonvacuous production-shaped typedef
+fixture fails when that admission is removed; a simpler field fixture had
+already been admitted by the older neutral-expression rule and was insufficient.
+The ordinary opaque-read classifier retains alias obligations and the
+untracked-base premise without establishing resource identity.
+
+B03's proof distinguishes normal condition-false exits from abrupt body exits;
+source tests exercise repeated effects, exits, `continue` and `for` increments,
+and the `do`/`while` break bypass. B04 applies and validates every neutral sibling
+call; its tests make the second sibling carry the liveness and may-alias
+obligations. Its Lean identity theorem quantifies over arbitrary finite sibling
+lists. These models do not extract the Rust implementation or prove all C
+semantics: the correspondence and extraction premises remain explicit.
+
+B02 initially omitted its module from the aggregate `QCore.lean` import despite
+passing its individual audit. Follow-up `056e3a43` adds the import and repeats
+all 146 isolated Lean audits, including `AuditAll`; the combined run covers all
+three newly added modules. B04 extends an existing audit rather than adding one.
+
+The first combined gate at `77443afe` is a failed build, not test evidence:
+`cargo test` and Clippy exited 101 on the diagnostic example's stale optional
+nested-call pattern, and Lean exited 1 on downstream `DereferencedResult`
+references to B04's renamed premise. There were zero Rust result summaries.
+Logs and every exit remain in `private/b-series/combined-gate/`. The example
+printer repair is `9831463a`; the Lean repair updates downstream names to the
+one-level rule instead of retaining a misleading "only one call" name with a
+new meaning. Corrected measurements are recorded separately below.
