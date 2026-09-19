@@ -61,6 +61,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [ct-proof-leg-2](ct-proof-leg-2/README.md) | CT37 proof leg — the second executed proof row's capability, on the CT01 precedent (CT-PROOF-LEG-2) |
 
+| [ct-proof-leg-3](ct-proof-leg-3/README.md) | `CT-PROOF-LEG-3` (wave 41) — survey every unproved mapped case, then land the leg the survey picks |
+
 | [ct-wire-lane](ct-wire-lane/README.md) | Wave-26 CT lane — what the current tree can actually wire |
 
 | [ct-wire-lane-2](ct-wire-lane-2/README.md) | Wave-28 CT lane — mapping the wave-27 capabilities (CT-WIRE-LANE-2) |
