@@ -105,6 +105,8 @@ Rust extraction, C ABI derivation or whole-C theorem.
 
 `AuditBitfieldSourceConcurrency.lean` registers five public theorems. The full
 audit script passed 144 audits; all five new theorems use only `propext`.
+`QCore.lean` imports the module, so `AuditAll.lean` also checks those theorems
+inside the compiled project closure rather than only through the dedicated audit.
 
 ## 5. Focused validation at this checkpoint
 
@@ -118,7 +120,7 @@ CARGO_PROFILE_TEST_DEBUG=0 CARGO_INCREMENTAL=0` where Cargo was involved.
 | `cargo test -p qcore-compiler --test bitfield_concurrency --no-fail-fast` | 0 | 13 passed, 0 failed |
 | `cargo clippy -p qcore-compiler --test bitfield_concurrency -- -D warnings` | 0 | clean |
 | `cargo fmt --all` then `cargo fmt --all -- --check` | 0 | clean |
-| `python3 -B scripts/check_lean_audits.py` | 0 | Lean build 190 jobs; 144 audits passed |
+| `python3 -B scripts/check_lean_audits.py` | 0 | Lean build 191 jobs; 144 audits passed; `AuditAll` checked 9,322 public theorems |
 | `git diff --check` | 0 | clean including this report |
 
 No standing full gate, probes, Python unit suite or Clang recording is claimed

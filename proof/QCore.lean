@@ -94,6 +94,7 @@ import QCore.MutexInvariant
 import QCore.MutexShareCross
 import QCore.MutexShareCrossArms
 import QCore.DisjointFootprint
+import QCore.BitfieldSourceConcurrency
 import QCore.TranslationValidation
 import QCore.VerifierPlugin
 import QCore.NativeOsObservation
