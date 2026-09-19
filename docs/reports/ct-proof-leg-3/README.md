@@ -270,13 +270,13 @@ here.
 | LEAN | CT03 | `ct03_trace_digest` | 9638775376944872586 | `proof/QCore/Ct03ReadShares.lean:126` |
 | LEAN | CT07 | `ct07_ledger_digest` | 8876998389998880787 | `proof/QCore/Ct07LeaseLedger.lean:209` |
 | LEAN | CT37 | `ct37_trace_digest` | 17239871955803798867 | `proof/QCore/Ct37CompletionCapsule.lean:106` |
-| LEAN | CT50 | `ct50_trace_digest` | 1699395409980170611 | `proof/QCore/Ct50LifetimeIdentity.lean` |
+| LEAN | CT50 | `ct50_trace_digest` | 1699395409980170611 | `proof/QCore/Ct50LifetimeIdentity.lean:93` |
 | RUST | CT01 | `CT01_LEAN_TRACE_DIGEST` | 13023433800416048247 | `compiler/tests/ct01_proof_leg.rs:52` |
 | RUST | CT01 | `CT01_LEAN_TRACE_DIGEST` | 13023433800416048247 | `compiler/tests/ct12_ct14_proof_reach.rs:63` |
 | RUST | CT03 | `CT03_LEAN_TRACE_DIGEST` | 9638775376944872586 | `compiler/tests/ct03_proof_leg.rs:55` |
 | RUST | CT07 | `CT07_LEAN_LEDGER_DIGEST` | 8876998389998880787 | `compiler/tests/ct07_proof_leg.rs:75` |
 | RUST | CT37 | `CT37_LEAN_TRACE_DIGEST` | 17239871955803798867 | `compiler/tests/ct37_proof_leg.rs:49` |
-| RUST | CT50 | `CT50_LEAN_TRACE_DIGEST` | 1699395409980170611 | `compiler/tests/ct50_proof_leg.rs` |
+| RUST | CT50 | `CT50_LEAN_TRACE_DIGEST` | 1699395409980170611 | `compiler/tests/ct50_proof_leg.rs:64` |
 
 Five Lean theorems, **six** Rust constants. The residual's own inventory named
 four sites and gave CT01's as `ct12_ct14_proof_reach.rs:63`; there is a **second
