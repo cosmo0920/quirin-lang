@@ -12,6 +12,6 @@
     "before_bytes": 205431,
     "after_bytes": 6163
   },
-  "local_links_checked": 852,
+  "local_links_checked": 853,
   "limits": "Explicit reading packets, not runtime telemetry or token billing; evidence archives retained and total repository bytes may grow."
 }
