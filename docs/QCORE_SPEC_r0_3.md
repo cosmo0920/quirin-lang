@@ -942,7 +942,8 @@ Variable-length arrays, opaque types and compound operands are outside this
 admission. The same token-derived decision governs summary validation and
 certificate rechecking. See [the bounded implementation record](reports/wave23-c-operations/README.md).
 
-The bounded B-series lowering models one unconditional contracted call in an
+The bounded B-series lowering models one unconditional externally declared
+contracted call (no local definition) in an
 otherwise custody-neutral return or controlling expression, preserving its
 ordinary resource transfer and the existing CFG successors. The new scalar-return call route additionally requires a callee with no local
 definition and carries no custody result; the additional direct opaque-member return

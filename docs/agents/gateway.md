@@ -211,7 +211,9 @@ including cross-topic rules, before editing; the index is not a substitute.
 
 5d. **The B01–B03 effectful-call lowering preserves evaluation frequency.**
     This additional route admits exactly one ordinary, unconditionally evaluated
-    contracted call and a custody-neutral residual. It refuses short-circuit,
+    contracted call whose callee has no definition in the translation unit, and a
+    custody-neutral residual. A local provisional summary cannot supply this new
+    route's external-declaration premise. It refuses short-circuit,
     conditional, assignment, increment/decrement, type-operator, nested-call and
     multiple-call shapes. This boundary applies to the additional route; it does
     not revoke the older neutral-expression admissions. The existing statement

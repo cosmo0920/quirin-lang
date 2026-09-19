@@ -3,6 +3,8 @@ namespace QCore.LoopSwitchCallEvaluation
 /-! Card `B03-LOOP-AND-SWITCH`: evaluation of one modeled contract call in a
 C controlling expression.
 
+This additional gateway route requires an externally declared callee with no
+definition in the translation unit; provisional local summaries are excluded.
 The gateway admits a call only after a lexical check establishes that it is
 unconditionally evaluated within the controlling expression and the remaining
 expression is custody-neutral. This module models where the call instruction
