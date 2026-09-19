@@ -1055,6 +1055,13 @@ remains `Q600`. `CT10-SOURCE-LAYOUT` extends the same `Concurrency` pass's
 `Q600` structural condition to the bounded field-write profile and reaches
 `Q661` through the unchanged footprint checker. Neither card allocates a code.
 
+On `source.bitfield-concurrency.v1`, `Q661` is
+reachable from two actual simultaneous worker write captures whose fields have
+the same declared bit-field storage-unit identity. Bit offsets and widths are
+retained but cannot establish disjointness. All bounded source-shape,
+worker-body, capture, join and successful-window grammar refusals remain
+`Q600` under the `Concurrency` pass.
+
 ### L21.1 Reason categories for uncovered obligations
 
 Every `Unknown` row carries a free-text `reason` today: `DerivationIncomplete.reason` on a `VerificationTask`, `ChunkSourceResult::Unknown { reason }` from a source importer, and the per-unit `"reason"` field of an audit report. Free text is not queryable and does not distinguish a defect in the analysed source from a failure of the machine analysing it. The following closed vocabulary is normative for classifying such a row. It is **implemented** (2026-09-08, card REASON-CODES): the vocabulary is published as `qcore_schemas::reason`, `DerivationIncomplete` carries a required `category` field named at construction, and audit-report units and source-contract functions carry a classified `reason_code` that fails closed to `null` rather than defaulting a category. The implementation constraints recorded below remain the rules for extending either carrier; the four archived 185-unit artifacts predate the field and move only at CORPUS-REPIN.
