@@ -977,6 +977,11 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
                 // be right rather than absent.
                 | BufferEvent::Construct { .. }
                 | BufferEvent::Field { .. }
+                // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind derives nothing
+                // — an admitted copy binds a value that already exists. This
+                // route lowers none (`buffer_use` does not claim the shape),
+                // so the arm is total rather than reachable.
+                | BufferEvent::CopyBind { .. }
                 | BufferEvent::Line(StdIoEvent::Return)
                 | BufferEvent::Return,
             )
@@ -1148,6 +1153,12 @@ fn view_uses_at_any_depth(event: &StringEvent) -> Vec<&str> {
             | BufferEvent::FieldLoad { .. }
             | BufferEvent::FieldExtent { .. }
             | BufferEvent::FieldRelease { .. }
+            // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind names no view, and
+            // on this route it cannot exist at all — `buffer_use` does not
+            // claim the shape, so a composed module never lowers one and
+            // `let t = s;` keeps the `Q068` it always had. Listed rather than
+            // omitted so the exhaustive match stays the tripwire it is.
+            | BufferEvent::CopyBind { .. }
             | BufferEvent::Return => Vec::new(),
         }
     }
@@ -1643,6 +1654,14 @@ pub fn check_string_program(
                     // total rather than reachable.
                     BufferEvent::FieldLoad { binding, .. }
                     | BufferEvent::FieldExtent { binding, .. } => {
+                        env.remove(binding);
+                    }
+                    // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind's binding
+                    // leaves the constant tier, the `Load` rule — this route
+                    // lowers none, so the arm is total rather than reachable,
+                    // and it is written in the refusing direction (an
+                    // unresolvable index is not provably disjoint).
+                    BufferEvent::CopyBind { binding, .. } => {
                         env.remove(binding);
                     }
                     BufferEvent::Acquire { .. }

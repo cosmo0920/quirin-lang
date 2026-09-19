@@ -442,6 +442,20 @@ pub fn buffer_event_statement(
             scalars.insert(binding.clone(), emitted.clone());
             format!("int32_t {emitted} = INT32_C({value});")
         }
+        // Card `OWNED-FIELD-ROUTE-REACH`: the **scalar** half of the copy
+        // bind. A copy of a record needs the record environment this function
+        // does not carry, so it is refused here and emitted by `emit_events`
+        // — the `Construct` rule, for the `Construct` reason. A copy of
+        // anything the ledger holds never reaches emission: the checker
+        // refused it at `Q054`.
+        BufferEvent::CopyBind { binding, source } => {
+            let Some(from) = scalars.get(source).cloned() else {
+                return Err(BufferEmissionRefusal::UnemittableRecord { event: index });
+            };
+            let emitted = scalar_name(binding);
+            scalars.insert(binding.clone(), emitted.clone());
+            format!("int32_t {emitted} = {from};")
+        }
         BufferEvent::Acquire { name, extent } => {
             debug_assert!(*extent > 0 && *extent <= MAX_EXTENT);
             extents.insert(name.clone(), *extent);
@@ -806,7 +820,31 @@ fn emit_events(
             // the composed string/buffer route emits a top-level one with.
             // The indent is applied here rather than inside that function,
             // because a statement's text does not depend on its depth.
+            // Card `OWNED-FIELD-ROUTE-REACH`: a copy of a **record** value is
+            // one C struct assignment — the aggregate is a plain value, so the
+            // copy is the language's own, with no member walk and no custody.
+            // Handled here rather than in `buffer_event_statement` because it
+            // needs the record environment, exactly as `Construct` does. The
+            // copy is **by value**, so the two bindings are two C objects and
+            // a later read of either names its own member; only a record whose
+            // type declares no owned field reaches emission, the rest having
+            // been refused at `Q054`.
+            BufferEvent::CopyBind {
+                binding,
+                source: from,
+            } if records.bound.contains_key(from) => {
+                let type_name = records.bound[from].clone();
+                let emitted = record_binding_name(binding);
+                records.bound.insert(binding.clone(), type_name.clone());
+                let _ = writeln!(
+                    source,
+                    "{indent}struct {} {emitted} = {};",
+                    record_type_tag(&type_name),
+                    record_binding_name(from)
+                );
+            }
             BufferEvent::Bind { .. }
+            | BufferEvent::CopyBind { .. }
             | BufferEvent::Acquire { .. }
             | BufferEvent::Store { .. }
             | BufferEvent::Load { .. }

@@ -570,6 +570,29 @@ fn lower_let(
             index,
         });
     }
+    // `let NAME = NAME ;` — **the copy bind** (card `OWNED-FIELD-ROUTE-REACH`,
+    // wave 41).
+    //
+    // Tried after every other form, so it claims nothing another shape wants:
+    // `bytes`, `extent` and `lend` take a `(`, a byte read takes a `[`, the
+    // two record forms take a `{` or a `.`, and a literal bind takes a digit
+    // or a `-`. What is left at index 3 is a bare word followed by the
+    // semicolon, which before this card was the `Q051` shape refusal below.
+    //
+    // The statement is **not** added to `buffer_use`, deliberately: that
+    // function decides route selection and is what the composed string route
+    // reads this route's statements through, so claiming a shape there that is
+    // a plain value bind on every route would move both. `lower_let` is
+    // reached only from this route's own entry walk.
+    if let Some(source) = word(window, 3)
+        && symbol(window, 4, Symbol::Semicolon)
+        && window.len() == 5
+    {
+        return Some(BufferEvent::CopyBind {
+            binding: binding.to_owned(),
+            source: source.to_owned(),
+        });
+    }
     // `let NAME = ["-"] INTEGER ;`
     match integer(window, 3) {
         Some((value, next)) if ends_with_semicolon(window, next) => Some(BufferEvent::Bind {
@@ -580,8 +603,9 @@ fn lower_let(
             diagnostics.push(diagnostic(
                 "Q051",
                 span,
-                "`source.buffer.v1` binds an integer literal, `bytes(INTEGER)`, `extent(NAME)`, \
-                 `lend(NAME, LOW, HIGH)` or one byte read; nothing else",
+                "`source.buffer.v1` binds an integer literal, a name this entry bound, \
+                 `bytes(INTEGER)`, `extent(NAME)`, `lend(NAME, LOW, HIGH)` or one byte read; \
+                 nothing else",
             ));
             None
         }
@@ -1069,6 +1093,17 @@ impl LoweringConstants {
             | BufferEvent::Line(_)
             | BufferEvent::Repeat { .. }
             | BufferEvent::Return => {}
+            // Card `OWNED-FIELD-ROUTE-REACH`: **a copy bind contributes no
+            // bound**, and that is a decision rather than an omission. The
+            // lowering's tier is a literal, a literal `let` and an `extent`
+            // binding, and it is deliberately narrower than the checker's, so
+            // that a loop bound and a lend footprint are decided in one place
+            // (`LOOP-BOUND-FROM-BYTE`, `WRITE-LEND-BOUND-FROM-BYTE`).
+            // Following a copy here would widen that tier by a second rule
+            // rather than by that card's own; a bound spelled through a copy
+            // is refused by name, in the same direction as a bound read out of
+            // a byte (`AGGREGATE-BOUND-FROM-FIELD`'s shape at a copy).
+            | BufferEvent::CopyBind { .. } => {}
         }
     }
 }
