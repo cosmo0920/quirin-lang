@@ -129,6 +129,7 @@ import QCore.SourceEnumeration
 import QCore.RawDirectiveLexing
 import QCore.ConditionalGroupDepth
 import QCore.AggregateStore
+import QCore.AtomicPublication
 import QCore.BoundFieldRead
 import QCore.MemberAddress
 import QCore.MemberAddressReader

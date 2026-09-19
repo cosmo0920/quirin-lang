@@ -1,0 +1,12 @@
+import QCore.AtomicPublication
+
+/-! Audited parity for the bounded CT41 synchronization prerequisite. -/
+
+#print axioms QCore.AtomicPublication.synchronized_observation_orders_payload
+#print axioms QCore.AtomicPublication.volatile_has_no_synchronizes_with_edge
+#print axioms QCore.AtomicPublication.plain_has_no_synchronizes_with_edge
+#print axioms QCore.AtomicPublication.relaxed_store_has_no_synchronizes_with_edge
+#print axioms QCore.AtomicPublication.relaxed_load_has_no_synchronizes_with_edge
+#print axioms QCore.AtomicPublication.repeated_publisher_has_no_synchronizes_with_edge
+#print axioms QCore.AtomicPublication.fixture_has_a_real_three_edge_path
+#print axioms QCore.AtomicPublication.equal_initial_and_ready_do_not_identify_the_release
