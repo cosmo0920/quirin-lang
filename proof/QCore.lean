@@ -1,4 +1,5 @@
 import QCore.ReturnPositionEscape
+import QCore.ReturnExpressionEvaluation
 import QCore.CGatewayRefinements
 import QCore.FixedScalarQuery
 import QCore.BucketTally

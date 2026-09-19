@@ -113,6 +113,12 @@ impl Run {
             .count()
     }
 
+    fn has_synthetic_unknown_alias(&self) -> bool {
+        self.diagnostics.iter().any(|kind| {
+            matches!(kind, LegacyDiagnosticKind::UnknownAlias { variable } if variable == RESERVED)
+        })
+    }
+
     /// The comparable content of a run: everything a consumer reads, with the
     /// diagnostics sorted so the comparison is about content and not order.
     fn shape(&self) -> (AnalysisStatus, bool, Vec<String>) {
@@ -373,16 +379,15 @@ fn the_reallocation_refusal_is_about_the_return_and_not_the_call() {
 // The shape premise: the call must be the whole return expression
 // ---------------------------------------------------------------------------
 
-/// A call that is not the whole expression keeps the refusal. The desugaring's
-/// equivalence argument is about `return f(a);` and nothing else, so a cast of a
-/// call, arithmetic over one, and a conditional between two are all outside it.
+/// A call whose result may carry custody, a nested call and the comma operator
+/// keep the refusal. B01 admits only one resource-free call inside a scalar
+/// expression; none of these shapes meets that rule.
 #[test]
 fn a_call_that_is_not_the_whole_return_expression_is_refused() {
     if !clang_available() {
         return;
     }
     for body in [
-        "int subject(void) { void *p = q_alloc(); return r_release_code(p) + 1; }",
         "void *subject(void) { return (void *) q_alloc(); }",
         "int subject(void) { void *p = q_alloc(); return z_unknown(r_release_code(p)); }",
         "int subject(void) { void *p = q_alloc(); return r_release_code(p) ? 1 : 0; }",
@@ -396,6 +401,89 @@ fn a_call_that_is_not_the_whole_return_expression_is_refused() {
             refused.unsupported()
         );
     }
+}
+
+/// B01's positive family: exactly one modeled resource-free call may sit
+/// inside an otherwise custody-neutral scalar expression. Its parameter
+/// effect is applied before the return, just as in the explicit two-statement
+/// spelling.
+#[test]
+fn a_resource_free_call_is_evaluated_inside_a_scalar_return() {
+    if !clang_available() {
+        return;
+    }
+    for (expression, explicit) in [("r_release_code(p) + 1", "r_release_code(p); return 1")] {
+        let lowered = run(&format!(
+            "int subject(void) {{ void *p = q_alloc(); return {expression}; }}"
+        ));
+        let written = run(&format!(
+            "int subject(void) {{ void *p = q_alloc(); {explicit}; }}"
+        ));
+        assert!(
+            !lowered.refuses_return(),
+            "{expression}: {:?}",
+            lowered.unsupported()
+        );
+        assert_eq!(lowered.status, written.status, "{expression}");
+        assert_eq!(lowered.unsupported(), written.unsupported(), "{expression}");
+        assert_eq!(lowered.status, AnalysisStatus::Safe, "{expression}");
+        assert!(!lowered.has_synthetic_unknown_alias(), "{expression}");
+    }
+}
+
+/// A conditionally evaluated call cannot be extracted and applied on every
+/// path. Doing so would release `p` even when C skips the call, turning this
+/// body falsely Safe. Both conditional operators therefore keep the blanket
+/// refusal.
+#[test]
+fn a_skippable_call_keeps_the_return_refusal() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "int subject(int flag) { void *p = q_alloc(); return flag ? r_release_code(p) : 0; }",
+        "int subject(int flag) { void *p = q_alloc(); return flag && r_release_code(p); }",
+    ] {
+        let measured = run(body);
+        assert!(
+            measured.refuses_return(),
+            "{body}: {:?}",
+            measured.unsupported()
+        );
+        assert_ne!(measured.status, AnalysisStatus::Safe, "{body}");
+    }
+}
+
+/// B01 also uses the reserved synthetic exit place. A source binding with that
+/// spelling must refuse before the scalar-call path, just as it does for the
+/// pre-existing whole-call lowering.
+#[test]
+fn the_scalar_call_path_keeps_the_synthetic_place_collision_guard() {
+    if !clang_available() {
+        return;
+    }
+    let body = format!(
+        "int subject(void) {{ void *{RESERVED} = q_alloc(); return r_release_code({RESERVED}) + 1; }}"
+    );
+    let measured = run(&body);
+    assert!(measured.refuses_return(), "{:?}", measured.unsupported());
+    assert_ne!(measured.status, AnalysisStatus::Safe);
+}
+
+/// The admission must not turn the old blanket refusal into a way to hide a
+/// live obligation. A borrowed call changes no custody, so the allocation is
+/// still reported at the now-modeled exit.
+#[test]
+fn the_scalar_call_admission_exposes_a_retained_obligation() {
+    if !clang_available() {
+        return;
+    }
+    let measured = run("int subject(void) { void *p = q_alloc(); return r_borrow_code(p) + 1; }");
+    assert!(!measured.refuses_return(), "{:?}", measured.unsupported());
+    assert_eq!(measured.status, AnalysisStatus::Unsafe);
+    assert_eq!(measured.leaks(), 1);
+    assert!(!measured.has_synthetic_unknown_alias());
+    assert!(!measured.certified);
 }
 
 /// **The shape that makes the whole-expression premise load-bearing, measured

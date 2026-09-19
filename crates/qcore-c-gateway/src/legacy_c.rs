@@ -2864,11 +2864,15 @@ enum Statement {
         expression_supported: bool,
         writes: RefusedWrites,
         returned_place: Option<String>,
-        /// Card **C-GATEWAY-RETURN-CALL-W4**: the modeled call this `return`
-        /// expression is, when it is exactly one. `Some` desugars the exit into
-        /// the two nodes `PLACE = f(args); return PLACE;` the analyzer already
-        /// decides; see [`return_call`] for why that reduction is the rule.
-        returned_call: Option<Box<LegacyInstruction>>,
+        /// A modeled evaluation of this `return` expression. Card
+        /// C-GATEWAY-RETURN-CALL-W4 supplies the exact contract-call case;
+        /// B01-RETURN-EXPRESSION adds bounded scalar and opaque evaluations.
+        /// A declined evaluation keeps the existing refusal byte for byte.
+        returned_evaluation: Option<Box<LegacyInstruction>>,
+        /// Whether the evaluated value can carry custody and therefore needs
+        /// the synthetic `EscapeIfOwned` exit. B01's scalar/opaque family is
+        /// resource-free and uses `NoOp` instead.
+        returned_evaluation_escapes: bool,
     },
 }
 
@@ -3531,8 +3535,8 @@ impl Parser<'_> {
                 // call itself produced; everything else keeps the refusal it
                 // has, including the `Reallocated` result wave 33's soundness
                 // ground was right about.
-                let returned_call = (!strict && !untracked_pointer)
-                    .then(|| self.return_call_instruction(&expression, line))
+                let returned_evaluation = (!strict && !untracked_pointer)
+                    .then(|| self.return_expression_instruction(&expression, line))
                     .flatten();
                 Ok(Statement::Return {
                     line,
@@ -3543,7 +3547,11 @@ impl Parser<'_> {
                     } else {
                         canonical_place(&texts)
                     },
-                    returned_call: returned_call.map(Box::new),
+                    returned_evaluation: returned_evaluation
+                        .as_ref()
+                        .map(|(instruction, _)| Box::new(instruction.clone())),
+                    returned_evaluation_escapes: returned_evaluation
+                        .is_some_and(|(_, escapes)| escapes),
                 })
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
@@ -3676,6 +3684,92 @@ impl Parser<'_> {
         );
         if admitted {
             Some(instruction)
+        } else {
+            self.next_site = restore;
+            None
+        }
+    }
+
+    /// Card **B01-RETURN-EXPRESSION**: evaluate a refused return through the
+    /// ordinary assignment classifier before falling back to the position's
+    /// generic refusal.
+    ///
+    /// The pre-existing whole-call rule is asked first and unchanged. For the
+    /// remaining expressions this rule admits two bounded shapes:
+    ///
+    /// * an `OpaqueValue` assigned to the reserved return place; the classifier
+    ///   has established that the value carries no resource identity, so B01
+    ///   emits a `NoOp` exit and performs no custody escape;
+    /// * exactly one contracted call with `ResourceReturnMode::None` inside an
+    ///   otherwise custody-neutral scalar expression. The call is classified
+    ///   as a standalone statement so its parameter effects are applied, and
+    ///   its resource-free result leaves nothing for the return to escape.
+    ///
+    /// Every refusal, including the classifier's own `Unknown`, keeps the old
+    /// return-position wrapper and wording.
+    ///
+    /// A declined probe restores `next_site`, so a classification attempt
+    /// cannot perturb later certificate identities.
+    fn return_expression_instruction(
+        &mut self,
+        expression: &[Token],
+        line: usize,
+    ) -> Option<(LegacyInstruction, bool)> {
+        if let Some(call) = self.return_call_instruction(expression, line) {
+            return Some((call, true));
+        }
+        if !return_call::place_is_unspelled(self.tokens, return_call::RETURN_RESULT_PLACE) {
+            return None;
+        }
+        let texts = expression
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        if let Some((call_index, call_end)) =
+            crate::legacy_condition_call::unconditional_call_span(&texts)
+        {
+            let outside = texts[..call_index]
+                .iter()
+                .chain(texts[call_end..].iter())
+                .copied()
+                .collect::<Vec<_>>();
+            if crate::typed_field_access::is_scalar_operand_expression(
+                &outside,
+                &self.typed_model,
+                &self.typed_types,
+            ) {
+                let restore = self.next_site;
+                let instruction = self.classify_simple(&expression[call_index..call_end]);
+                let admitted = matches!(
+                    &instruction,
+                    LegacyInstruction::ContractCall {
+                        destination: None,
+                        contract,
+                        ..
+                    } if contract.result == ResourceReturnMode::None
+                );
+                if admitted {
+                    return Some((instruction, false));
+                }
+                self.next_site = restore;
+            }
+        }
+        let mut synthetic = Vec::with_capacity(expression.len() + 2);
+        synthetic.extend(return_call::assignment_prefix(line));
+        synthetic.extend_from_slice(expression);
+        let restore = self.next_site;
+        let instruction = self.classify_simple(&synthetic);
+        let direct_member_read = texts.iter().filter(|text| **text == ".").count()
+            + texts.windows(2).filter(|pair| *pair == ["-", ">"]).count()
+            == 1;
+        let admitted = matches!(
+            &instruction,
+            LegacyInstruction::OpaqueValue { destination, .. }
+                if destination == return_call::RETURN_RESULT_PLACE
+        ) && direct_member_read;
+        if admitted {
+            self.next_site = restore;
+            Some((instruction, false))
         } else {
             self.next_site = restore;
             None
@@ -5128,7 +5222,8 @@ impl CfgBuilder {
                 writes,
                 expression_supported,
                 returned_place,
-                returned_call,
+                returned_evaluation,
+                returned_evaluation_escapes,
             } => {
                 // Card C-GATEWAY-RETURN-CALL-W4. `return f(args);` becomes the
                 // two nodes `PLACE = f(args);` and `return PLACE;` — the same C,
@@ -5136,15 +5231,15 @@ impl CfgBuilder {
                 // node is an ordinary interior node; the exit is an ordinary
                 // `EscapeIfOwned`, so `observe_exit` needs no arm for a call
                 // result.
-                if let Some(call) = returned_call {
-                    let exit = self.push(
+                if let Some(call) = returned_evaluation {
+                    let exit_instruction = if *returned_evaluation_escapes {
                         LegacyInstruction::EscapeIfOwned {
                             source: return_call::RETURN_RESULT_PLACE.to_owned(),
-                        },
-                        Vec::new(),
-                        *line,
-                        true,
-                    );
+                        }
+                    } else {
+                        LegacyInstruction::NoOp
+                    };
+                    let exit = self.push(exit_instruction, Vec::new(), *line, true);
                     return self.push((**call).clone(), vec![exit], *line, false);
                 }
                 let instruction = if !*expression_supported {
