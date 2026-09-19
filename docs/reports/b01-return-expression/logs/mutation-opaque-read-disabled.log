@@ -1,0 +1,58 @@
+   Compiling qcore-c-gateway v0.1.0 (/tmp/agent-b01/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.89s
+     Running tests/return_position_modeled_call.rs (/home/cosmo/Documents/GitHub/qcore-c/private/b-series/targets/b01-mutations/debug/deps/return_position_modeled_call-576b059338180868)
+
+running 19 tests
+test a_body_that_spells_the_reserved_place_is_refused ... ok
+test the_reallocation_refusal_is_about_the_return_and_not_the_call ... ok
+test an_uncontracted_callee_keeps_the_return_refusal ... ok
+test a_local_summary_does_not_admit_an_embedded_recursive_call ... ok
+test a_reallocated_result_is_refused_at_a_return ... ok
+test the_collision_refusal_is_the_guard_and_not_the_body ... ok
+test the_exposed_leak_is_the_retained_acquisition_and_not_the_shape ... ok
+test a_tail_after_the_call_cannot_launder_the_produced_site ... ok
+test the_scalar_call_path_keeps_the_synthetic_place_collision_guard ... ok
+test an_admitted_return_exposes_a_leak_the_blanket_refusal_hid ... ok
+test the_scalar_call_admission_exposes_a_retained_obligation ... ok
+test the_whole_expression_premise_is_what_refuses_those_shapes ... ok
+test a_borrowed_argument_with_an_owned_result_matches_its_desugaring ... ok
+test a_skippable_call_keeps_the_return_refusal ... ok
+test an_owned_result_returned_directly_matches_its_desugaring ... ok
+test a_resource_free_call_is_evaluated_inside_a_scalar_return ... ok
+test a_released_parameter_at_a_return_matches_its_desugaring ... ok
+test a_consumed_parameter_at_a_return_matches_its_desugaring ... ok
+test a_call_that_is_not_the_whole_return_expression_is_refused ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.54s
+
+     Running tests/return_position_pointer_leaf.rs (/home/cosmo/Documents/GitHub/qcore-c/private/b-series/targets/b01-mutations/debug/deps/return_position_pointer_leaf-52347aa1776b728a)
+
+running 12 tests
+test a_conditional_opaque_pointer_result_stays_refused ... ok
+test an_admitted_return_reports_the_obligation_it_could_have_laundered ... ok
+test a_released_base_keeps_the_return_refusal ... ok
+test an_untracked_opaque_getter_is_evaluated_at_return ... FAILED
+test an_admitted_return_beside_a_discharged_obligation_reports_nothing ... ok
+test the_scalar_leaf_return_is_unchanged ... ok
+test a_chain_rooted_at_an_acquisition_keeps_the_return_refusal ... ok
+test protected_and_bound_opaque_getter_bases_stay_refused ... ok
+test a_plain_canonical_place_still_escapes ... ok
+test a_pointer_leaf_chain_is_admitted_in_a_return_at_every_depth ... ok
+test a_bound_base_keeps_the_return_refusal ... ok
+test the_adversarial_family_keeps_its_return_refusal ... ok
+
+failures:
+
+---- an_untracked_opaque_getter_is_evaluated_at_return stdout ----
+
+thread 'an_untracked_opaque_getter_is_evaluated_at_return' (1769) panicked at crates/qcore-c-gateway/tests/return_position_pointer_leaf.rs:360:5:
+["unmodeled call, aggregate or indirect access in return expression"]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    an_untracked_opaque_getter_is_evaluated_at_return
+
+test result: FAILED. 11 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.06s
+
+error: test failed, to rerun pass `-p qcore-c-gateway --test return_position_pointer_leaf`

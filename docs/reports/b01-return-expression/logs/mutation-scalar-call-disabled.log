@@ -1,0 +1,46 @@
+   Compiling qcore-c-gateway v0.1.0 (/tmp/agent-b01/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.97s
+     Running tests/return_position_modeled_call.rs (/home/cosmo/Documents/GitHub/qcore-c/private/b-series/targets/b01-mutations/debug/deps/return_position_modeled_call-576b059338180868)
+
+running 19 tests
+test a_body_that_spells_the_reserved_place_is_refused ... ok
+test a_local_summary_does_not_admit_an_embedded_recursive_call ... ok
+test an_uncontracted_callee_keeps_the_return_refusal ... ok
+test the_reallocation_refusal_is_about_the_return_and_not_the_call ... ok
+test the_exposed_leak_is_the_retained_acquisition_and_not_the_shape ... ok
+test a_reallocated_result_is_refused_at_a_return ... ok
+test the_collision_refusal_is_the_guard_and_not_the_body ... ok
+test an_admitted_return_exposes_a_leak_the_blanket_refusal_hid ... ok
+test a_tail_after_the_call_cannot_launder_the_produced_site ... ok
+test a_resource_free_call_is_evaluated_inside_a_scalar_return ... FAILED
+test a_skippable_call_keeps_the_return_refusal ... ok
+test the_scalar_call_admission_exposes_a_retained_obligation ... FAILED
+test the_scalar_call_path_keeps_the_synthetic_place_collision_guard ... ok
+test a_released_parameter_at_a_return_matches_its_desugaring ... ok
+test a_borrowed_argument_with_an_owned_result_matches_its_desugaring ... ok
+test a_consumed_parameter_at_a_return_matches_its_desugaring ... ok
+test an_owned_result_returned_directly_matches_its_desugaring ... ok
+test the_whole_expression_premise_is_what_refuses_those_shapes ... ok
+test a_call_that_is_not_the_whole_return_expression_is_refused ... ok
+
+failures:
+
+---- a_resource_free_call_is_evaluated_inside_a_scalar_return stdout ----
+
+thread 'a_resource_free_call_is_evaluated_inside_a_scalar_return' (439) panicked at crates/qcore-c-gateway/tests/return_position_modeled_call.rs:422:9:
+r_release_code(p) + 1: ["unmodeled call, aggregate or indirect access in return expression"]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- the_scalar_call_admission_exposes_a_retained_obligation stdout ----
+
+thread 'the_scalar_call_admission_exposes_a_retained_obligation' (532) panicked at crates/qcore-c-gateway/tests/return_position_modeled_call.rs:498:5:
+["unmodeled call, aggregate or indirect access in return expression"]
+
+
+failures:
+    a_resource_free_call_is_evaluated_inside_a_scalar_return
+    the_scalar_call_admission_exposes_a_retained_obligation
+
+test result: FAILED. 17 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.47s
+
+error: test failed, to rerun pass `-p qcore-c-gateway --test return_position_modeled_call`
