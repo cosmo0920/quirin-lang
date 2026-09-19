@@ -97,12 +97,13 @@ mod tests {
     }
 
     #[test]
-    fn refuses_conditional_or_ambiguous_evaluation() {
+    fn refuses_conditional_or_out_of_scope_evaluation() {
         for tokens in [
             &["ready", "&", "&", "release", "(", "p", ")"][..],
             &["ready", "?", "release", "(", "p", ")", ":", "0"][..],
             &["release", "(", "p", ")", "+", "other", "(", ")"][..],
             &["sizeof", "(", "release", "(", "p", ")", ")"][..],
+            &["_Alignof", "(", "probe", "(", ")", ")"][..],
             &["x", "=", "release", "(", "p", ")"][..],
         ] {
             assert_eq!(unconditional_call_span(tokens), None, "{tokens:?}");

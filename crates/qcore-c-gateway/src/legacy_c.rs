@@ -2777,6 +2777,11 @@ enum Statement {
     If {
         line: usize,
         condition_supported: bool,
+        /// Card **B02-BRANCH-CONDITION**: the one contracted call whose
+        /// custody effects are evaluated before this branch decision.  The
+        /// isolated instruction is produced by the ordinary statement
+        /// classifier; `Some` therefore adds no second call-effect model.
+        condition_call: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         /// C02-P-ALIAS: the pointer-inequality guard this condition expresses,
@@ -3051,6 +3056,46 @@ impl Parser<'_> {
         )
     }
 
+    /// The one unconditionally evaluated modeled call in a branch condition.
+    ///
+    /// Card **B02-BRANCH-CONDITION** decomposes the condition into an isolated
+    /// call and a custody-neutral residual.  The lexical boundary comes from
+    /// [`crate::legacy_condition_call`]; the residual is admitted by the same
+    /// expression-position classifier as every existing branch, and the call
+    /// is admitted by [`Self::classify_simple`].  Thus the new CFG instruction
+    /// uses the existing transfer function rather than restating any contract
+    /// effect here.
+    ///
+    /// A declined speculative classification restores `next_site`, preserving
+    /// certificate identity for every condition this rule keeps refused.
+    fn condition_call_instruction(&mut self, condition: &[Token]) -> Option<LegacyInstruction> {
+        let texts = condition
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let (start, end) = crate::legacy_condition_call::unconditional_call_span(&texts)?;
+
+        let mut residual = Vec::with_capacity(condition.len() - (end - start) + 1);
+        residual.extend_from_slice(&condition[..start]);
+        residual.push(Token {
+            text: "0".to_owned(),
+            line: condition[start].line,
+        });
+        residual.extend_from_slice(&condition[end..]);
+        if !self.supported_expression(&residual, ExpressionRole::Decides) {
+            return None;
+        }
+
+        let restore = self.next_site;
+        let instruction = self.classify_simple(&condition[start..end]);
+        if matches!(instruction, LegacyInstruction::ContractCall { .. }) {
+            Some(instruction)
+        } else {
+            self.next_site = restore;
+            None
+        }
+    }
+
     /// The null test a branch condition expresses, including the one
     /// aggregate-field form card O04-B08 admits.
     ///
@@ -3258,6 +3303,12 @@ impl Parser<'_> {
             Some("if") => {
                 self.cursor += 1;
                 let condition = self.take_parenthesized()?;
+                let condition_supported =
+                    self.supported_expression(&condition, ExpressionRole::Decides);
+                let condition_call = (!condition_supported)
+                    .then(|| self.condition_call_instruction(&condition))
+                    .flatten()
+                    .map(Box::new);
                 let then_body = self.parse_statement_body()?;
                 let else_body = if self.text() == Some("else") {
                     self.cursor += 1;
@@ -3268,8 +3319,8 @@ impl Parser<'_> {
                 Ok(Statement::If {
                     line,
                     writes: self.expression_writes(&condition),
-                    condition_supported: self
-                        .supported_expression(&condition, ExpressionRole::Decides),
+                    condition_supported,
+                    condition_call,
                     null_condition: self.null_condition(&condition),
                     distinct_condition: self.distinct_condition(&condition),
                     then_body,
@@ -5080,6 +5131,7 @@ impl CfgBuilder {
                 line,
                 writes,
                 condition_supported,
+                condition_call,
                 null_condition,
                 distinct_condition,
                 then_body,
@@ -5102,7 +5154,7 @@ impl CfgBuilder {
                         right: condition.right.clone(),
                         true_is_distinct: condition.true_is_distinct,
                     }
-                } else if *condition_supported {
+                } else if *condition_supported || condition_call.is_some() {
                     LegacyInstruction::NoOp
                 } else {
                     LegacyInstruction::Unknown {
@@ -5112,7 +5164,10 @@ impl CfgBuilder {
                         writes: writes.clone(),
                     }
                 };
-                self.push(instruction, vec![then_entry, else_entry], *line, false)
+                let branch = self.push(instruction, vec![then_entry, else_entry], *line, false);
+                condition_call.as_ref().map_or(branch, |call| {
+                    self.push((**call).clone(), vec![branch], *line, false)
+                })
             }
             Statement::While {
                 line,
