@@ -45,8 +45,9 @@
 //!
 //! ## One level of nesting
 //!
-//! [`admitted_nested_call`] admits exactly one nested call, under nine
-//! conjunctive premises. The load-bearing pair is **N6** and **N7**: the nested
+//! [`admitted_nested_calls`] admits any number of sibling nested calls, each
+//! under nine conjunctive premises. The load-bearing pair is **N6** and **N7**:
+//! every nested
 //! contract's result mode is `None` and every one of its parameter modes is
 //! `Borrowed`. Under those two the nested call's **declared effects are the
 //! identity on the abstract state**, which is what makes composing it with the
@@ -67,12 +68,11 @@
 //!
 //! # What is refused, by construction
 //!
-//! Two or more nested calls (two-level nesting included), a nested call whose
-//! callee has no contract in force, a nested result carrying custody, a nested
+//! Two-level nesting, a nested call whose callee has no contract in force, a nested result carrying custody, a nested
 //! parameter carrying custody, a nested call that is only *part* of an
 //! argument, a nested call inside the nested call's own arguments, an inner
 //! actual this projection can neither denote nor call data (premise **N9**, the
-//! fail-open this card found and closed — see `admitted_nested_call`), a tail
+//! fail-open this card found and closed — see `admitted_nested_calls`), a tail
 //! actual mentioning a name that may hold a tracked identity, every tail actual
 //! carrying `&`, `*` or a subscript, and every tail actual carrying a member
 //! access that is not *exactly* one admitted chain (T5).
@@ -116,13 +116,16 @@ pub(crate) struct NestedCallActual {
     pub(crate) argument_end: usize,
 }
 
-/// The nested call this statement's outer call admits, if any.
+/// The nested calls this statement's outer call admits.
 ///
 /// `call_index` is the outer callee's token index — the index
 /// `legacy_c::find_call` returned — and `arguments` its raw argument spans.
-/// Returning `None` leaves card O04-B09B10's refusal in place unchanged.
+/// `Some([])` means that the statement carries no nested call. Returning
+/// `None` means at least one nested call was present but the complete sibling
+/// set did not satisfy the admission, and leaves card O04-B09B10's refusal in
+/// place unchanged.
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn admitted_nested_call(
+pub(crate) fn admitted_nested_calls(
     texts: &[&str],
     call_index: usize,
     argument_spans: &[(usize, usize)],
@@ -132,149 +135,144 @@ pub(crate) fn admitted_nested_call(
     model: &TypedAccessModel,
     types: &FunctionTypes,
     bases: &UntrackedBases,
-) -> Option<NestedCallActual> {
+) -> Option<Vec<NestedCallActual>> {
     // Premise 0: a function whose declarations this reader refused admits
     // nothing at all, exactly as in every other typed family.
     if !types.is_readable() {
         return None;
     }
-    // Premise N2: *exactly one* nested call in the whole statement. Two calls
-    // beyond the outer one — `f(g(x), h(y))` — or a call inside the nested
-    // call's own arguments — `f(g(h(x)))` — both leave more than one, so
-    // two-level nesting is refused here and needs no separate rule.
-    let mut nested_callees = texts.windows(2).enumerate().filter_map(|(index, pair)| {
-        (index != call_index
-            && is_name(pair[0])
-            && pair[1] == "("
-            && !crate::legacy_c::TYPE_OPERATORS.contains(&pair[0]))
-        .then_some(index)
-    });
-    let nested_index = nested_callees.next()?;
-    if nested_callees.next().is_some() {
-        return None;
-    }
-    // Premise N4: the nested call is exactly one *whole* argument of the outer
-    // call — its callee is the argument's first token and its closing `)` the
-    // argument's last. A cast, an arithmetic combination, a comparison or any
-    // other surrounding expression refuses.
-    //
-    // Premise **N4-D**, card **CONSTRUCTOR-RESIDUALS**: the one further shape
-    // admitted is a *dereference of the call's result*, written `* f ( )` or
-    // `( * f ( ) )` and nothing else. See [`dereference_wrapper`] for the
-    // argument and for premise N10, which is what keeps the dereferenced value
-    // out of the projection.
-    let (argument, &(argument_start, argument_end)) = argument_spans
-        .iter()
-        .enumerate()
-        .find(|(_, (start, end))| (*start..*end).contains(&nested_index))?;
-    let (prefix, suffix) = dereference_wrapper(texts, argument_start, argument_end)?;
-    if argument_start + prefix != nested_index {
-        return None;
-    }
-    let (start, end) = (nested_index, argument_end - suffix);
-    let span = texts.get(start..end)?;
-    if span.last().copied() != Some(")") {
-        return None;
-    }
-    // Premise N5: the nested call's own argument list carries no call. N2
-    // already implies it; asserting it here keeps the premise local and keeps
-    // the depth bound explicit at one.
-    if span[1..]
+    // Card B04-NESTED-CALL-ARGUMENT: collect the complete sibling set. Each
+    // member is checked below against the same N3-N10 premises. Because every
+    // admitted member is an identity effect, every permutation of sibling
+    // evaluation has the same abstract-state result. A call inside another
+    // nested call's arguments fails the whole-argument check below.
+    let nested_callees = texts
         .windows(2)
-        .any(|pair| is_name(pair[0]) && pair[1] == "(")
-    {
-        return None;
-    }
-    // Premise N3: the nested callee has a contract in force. An uncontracted
-    // inner call is refused — nothing models its effects, which is the whole
-    // reason the outer statement was refused in the first place.
-    let function = texts[nested_index];
-    let contract = contracts.contract(function)?.clone();
-    // Premises N6 and N7: the nested call's declared effects are the identity.
-    if !matches!(contract.result, ResourceReturnMode::None)
-        || !contract
-            .parameters
-            .iter()
-            .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
-    {
-        return None;
-    }
-    // Premise **N10**, card **CONSTRUCTOR-RESIDUALS**: a dereferenced result
-    // must be a pointer to a *scalar*, read from this unit's own declarations.
-    // Under N6 the projection binds nothing from the call, so `f ( )` names no
-    // identity; N10 is what makes `* f ( )` a **value** the projection also
-    // never tracks. Without it `* f ( )` could denote, say, a `struct chunk *`
-    // and reach a `Release` position as an identity nobody named.
-    if prefix > 0 && !model.scalar_pointer_result(function) {
-        return None;
-    }
-    // Premise N8: the position the nested result occupies needs no identity.
-    let position_is_data = match outer.parameters.get(argument) {
-        Some(ResourceParameterMode::Borrowed) => true,
-        Some(_) => false,
-        None => outer_tail,
-    };
-    if !position_is_data {
-        return None;
-    }
-    // The nested call's own actuals, arity-exact: a nested call whose actual
-    // count differs from its declared parameter count is refused rather than
-    // zipped, the same repair the outer arity gate makes.
-    let inner_arguments = crate::legacy_c::call_arguments(span, 0)?;
-    if inner_arguments.len() != contract.parameters.len() {
-        return None;
-    }
-    let arguments = inner_arguments
-        .iter()
-        .map(|argument| crate::legacy_c::borrowed_argument_place(argument))
+        .enumerate()
+        .filter_map(|(index, pair)| {
+            (index != call_index
+                && is_name(pair[0])
+                && pair[1] == "("
+                && !crate::legacy_c::TYPE_OPERATORS.contains(&pair[0]))
+            .then_some(index)
+        })
         .collect::<Vec<_>>();
-    // Premise N9: every inner actual is either a place this projection can
-    // denote, or data.
-    //
-    // Without it the admission is fail-OPEN, and measurably so: `f(g(&x))`
-    // hands the callee the *address* of a name, which `canonical_place`
-    // refuses to denote and which the enclosing gate — exempted below for the
-    // admitted nested argument — would then never see. `contains_unmodeled_access`
-    // does not read `&` either, so the escape would be modeled by nobody. Every
-    // other unmodeled shape (`*p`, `p[i]` with a non-constant index, a chain)
-    // is refused here too, and a member selection inside the nested arguments is
-    // separately refused by the enclosing statement's own indirect-access gate.
-    if inner_arguments
-        .iter()
-        .zip(&arguments)
-        .any(|(actual, place)| place.is_none() && !is_data_only_actual(actual, model, types, bases))
-    {
-        return None;
+    let mut admitted = Vec::with_capacity(nested_callees.len());
+    for nested_index in nested_callees {
+        // Premise N4: the nested call is exactly one *whole* argument of the outer
+        // call — its callee is the argument's first token and its closing `)` the
+        // argument's last. A cast, an arithmetic combination, a comparison or any
+        // other surrounding expression refuses.
+        //
+        // Premise **N4-D**, card **CONSTRUCTOR-RESIDUALS**: the one further shape
+        // admitted is a *dereference of the call's result*, written `* f ( )` or
+        // `( * f ( ) )` and nothing else. See [`dereference_wrapper`] for the
+        // argument and for premise N10, which is what keeps the dereferenced value
+        // out of the projection.
+        let (argument, &(argument_start, argument_end)) = argument_spans
+            .iter()
+            .enumerate()
+            .find(|(_, (start, end))| (*start..*end).contains(&nested_index))?;
+        let (prefix, suffix) = dereference_wrapper(texts, argument_start, argument_end)?;
+        if argument_start + prefix != nested_index {
+            return None;
+        }
+        let (start, end) = (nested_index, argument_end - suffix);
+        let span = texts.get(start..end)?;
+        if span.last().copied() != Some(")") {
+            return None;
+        }
+        // Premise N5: the nested call's own argument list carries no call. N2
+        // already implies it; asserting it here keeps the premise local and keeps
+        // the depth bound explicit at one.
+        if span[1..]
+            .windows(2)
+            .any(|pair| is_name(pair[0]) && pair[1] == "(")
+        {
+            return None;
+        }
+        // Premise N3: the nested callee has a contract in force. An uncontracted
+        // inner call is refused — nothing models its effects, which is the whole
+        // reason the outer statement was refused in the first place.
+        let function = texts[nested_index];
+        let contract = contracts.contract(function)?.clone();
+        // Premises N6 and N7: the nested call's declared effects are the identity.
+        if !matches!(contract.result, ResourceReturnMode::None)
+            || !contract
+                .parameters
+                .iter()
+                .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
+        {
+            return None;
+        }
+        // Premise **N10**, card **CONSTRUCTOR-RESIDUALS**: a dereferenced result
+        // must be a pointer to a *scalar*, read from this unit's own declarations.
+        // Under N6 the projection binds nothing from the call, so `f ( )` names no
+        // identity; N10 is what makes `* f ( )` a **value** the projection also
+        // never tracks. Without it `* f ( )` could denote, say, a `struct chunk *`
+        // and reach a `Release` position as an identity nobody named.
+        if prefix > 0 && !model.scalar_pointer_result(function) {
+            return None;
+        }
+        // Premise N8: the position the nested result occupies needs no identity.
+        let position_is_data = match outer.parameters.get(argument) {
+            Some(ResourceParameterMode::Borrowed) => true,
+            Some(_) => false,
+            None => outer_tail,
+        };
+        if !position_is_data {
+            return None;
+        }
+        // The nested call's own actuals, arity-exact: a nested call whose actual
+        // count differs from its declared parameter count is refused rather than
+        // zipped, the same repair the outer arity gate makes.
+        let inner_arguments = crate::legacy_c::call_arguments(span, 0)?;
+        if inner_arguments.len() != contract.parameters.len() {
+            return None;
+        }
+        let arguments = inner_arguments
+            .iter()
+            .map(|argument| crate::legacy_c::borrowed_argument_place(argument))
+            .collect::<Vec<_>>();
+        // Premise N9: every inner actual is either a place this projection can
+        // denote, or data.
+        //
+        // Without it the admission is fail-OPEN, and measurably so: `f(g(&x))`
+        // hands the callee the *address* of a name, which `canonical_place`
+        // refuses to denote and which the enclosing gate — exempted below for the
+        // admitted nested argument — would then never see. `contains_unmodeled_access`
+        // does not read `&` either, so the escape would be modeled by nobody. Every
+        // other unmodeled shape (`*p`, `p[i]` with a non-constant index, a chain)
+        // is refused here too, and a member selection inside the nested arguments is
+        // separately refused by the enclosing statement's own indirect-access gate.
+        if inner_arguments
+            .iter()
+            .zip(&arguments)
+            .any(|(actual, place)| {
+                place.is_none() && !is_data_only_actual(actual, model, types, bases)
+            })
+        {
+            return None;
+        }
+        admitted.push(NestedCallActual {
+            argument,
+            function: function.to_owned(),
+            contract,
+            arguments,
+            start,
+            end,
+            dereferenced: prefix > 0,
+            argument_start,
+            argument_end,
+        });
     }
-    Some(NestedCallActual {
-        argument,
-        function: function.to_owned(),
-        contract,
-        arguments,
-        start,
-        end,
-        dereferenced: prefix > 0,
-        argument_start,
-        argument_end,
-    })
+    Some(admitted)
 }
 
-/// The absolute token span of the one outer argument that premise N4-D
-/// admitted as a **dereference** of a nested call's result, if any.
-///
-/// The lexical indirect-access gate in [`crate::legacy_c`] runs over the tokens
-/// no whitelist claimed, and it reads `*`. An admitted dereference wrapper must
-/// therefore leave that gate the same way a declared `Borrowed` actual does, or
-/// the statement reports `indirect memory access` before
-/// [`admitted_nested_call`] is ever consulted — which is exactly the state card
-/// ALIAS-AGGREGATE measured at `flb_input_chunk.c` L19600 and L19619.
-///
-/// **The decision is not repeated here.** This calls [`admitted_nested_call`],
-/// the single place every premise lives, and exempts a span only when that
-/// function admitted it *and* the wrapper was a dereference. A bare nested call
-/// needs no exemption (it carries no `*`), so it is deliberately not returned.
+/// All outer-argument spans admitted as scalar dereferences of neutral nested
+/// results. The admission is decided once for the complete sibling set.
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn dereferenced_argument_span(
+pub(crate) fn dereferenced_argument_spans(
     texts: &[&str],
     call_index: usize,
     argument_spans: &[(usize, usize)],
@@ -284,8 +282,8 @@ pub(crate) fn dereferenced_argument_span(
     model: &TypedAccessModel,
     types: &FunctionTypes,
     bases: &UntrackedBases,
-) -> Option<(usize, usize)> {
-    let nested = admitted_nested_call(
+) -> Vec<(usize, usize)> {
+    admitted_nested_calls(
         texts,
         call_index,
         argument_spans,
@@ -295,10 +293,12 @@ pub(crate) fn dereferenced_argument_span(
         model,
         types,
         bases,
-    )?;
-    nested
-        .dereferenced
-        .then_some((nested.argument_start, nested.argument_end))
+    )
+    .unwrap_or_default()
+    .into_iter()
+    .filter(|nested| nested.dereferenced)
+    .map(|nested| (nested.argument_start, nested.argument_end))
+    .collect()
 }
 
 /// The wrapper premise **N4-D**: how many tokens of the outer argument stand
@@ -376,12 +376,10 @@ fn dereference_wrapper(
 /// Whether every actual beyond the declared parameter vector carries no custody
 /// (premises T1-T4).
 ///
-/// `nested` is the one admitted nested call, which is data by premises N6-N8
-/// and is therefore skipped by this walker rather than re-examined as text.
-pub(crate) fn tail_arguments_are_data(
+pub(crate) fn tail_arguments_are_data_with_nested(
     arguments: &[&[&str]],
     named: usize,
-    nested: Option<&NestedCallActual>,
+    nested: &[NestedCallActual],
     model: &TypedAccessModel,
     types: &FunctionTypes,
     bases: &UntrackedBases,
@@ -394,10 +392,8 @@ pub(crate) fn tail_arguments_are_data(
         .enumerate()
         .skip(named)
         .all(|(index, argument)| {
-            if nested.is_some_and(|nested| nested.argument == index) {
-                return true;
-            }
-            is_data_only_actual(argument, model, types, bases)
+            nested.iter().any(|nested| nested.argument == index)
+                || is_data_only_actual(argument, model, types, bases)
                 || is_admitted_tail_access(argument, model, types, bases)
         })
 }
@@ -493,7 +489,7 @@ pub(crate) fn tail_access_spans(
 ///   dereference, no subscript and no member access: each of those denotes
 ///   storage this projection has no model for, and the first of them is exactly
 ///   how a caller hands a callee a handle it could keep.
-/// * **T3** — no call. The one admitted nested call is handled by its own
+/// * **T3** — no call. Admitted nested calls are handled by their own
 ///   premises; every other call is refused.
 /// * **T4** — every identifier is an enumeration constant, a declared scalar
 ///   variable, or a name C02-P's closure says this function can **never** bind
@@ -618,7 +614,23 @@ mod tests {
         let f = facts(body_source, contracts);
         let tokens = texts(statement);
         let spans = crate::legacy_c::call_argument_spans(&tokens, 0)?;
-        admitted_nested_call(
+        let mut nested = admitted_nested_calls(
+            &tokens, 0, &spans, outer, outer_tail, contracts, &f.model, &f.types, &f.bases,
+        )?;
+        (nested.len() == 1).then(|| nested.remove(0))
+    }
+
+    fn nested_many(
+        body_source: &str,
+        statement: &str,
+        outer: &ResourceFunctionContract,
+        outer_tail: bool,
+        contracts: &ResourceContracts,
+    ) -> Option<Vec<NestedCallActual>> {
+        let f = facts(body_source, contracts);
+        let tokens = texts(statement);
+        let spans = crate::legacy_c::call_argument_spans(&tokens, 0)?;
+        admitted_nested_calls(
             &tokens, 0, &spans, outer, outer_tail, contracts, &f.model, &f.types, &f.bases,
         )
     }
@@ -634,7 +646,7 @@ mod tests {
             .iter()
             .map(|&(start, end)| &tokens[start..end])
             .collect::<Vec<_>>();
-        tail_arguments_are_data(&arguments, named, None, &f.model, &f.types, &f.bases)
+        tail_arguments_are_data_with_nested(&arguments, named, &[], &f.model, &f.types, &f.bases)
     }
 
     const BODY: &str = "int count ; struct box * b ; char * label ; b = make ( ) ;";
@@ -761,8 +773,13 @@ mod tests {
             .iter()
             .map(|&(start, end)| &tokens[start..end])
             .collect::<Vec<_>>();
-        assert!(!tail_arguments_are_data(
-            &arguments, 1, None, &f.model, &f.types, &f.bases
+        assert!(!tail_arguments_are_data_with_nested(
+            &arguments,
+            1,
+            &[],
+            &f.model,
+            &f.types,
+            &f.bases
         ));
     }
 
@@ -839,17 +856,17 @@ mod tests {
     }
 
     #[test]
-    fn a_second_nested_call_and_two_level_nesting_are_refused() {
+    fn sibling_nested_calls_are_admitted_but_two_level_nesting_is_refused() {
         let contracts = with_accessor(ResourceReturnMode::None, 1);
-        for statement in [
-            "log ( __qcore_literal__ , name ( b ) , name ( b ) )",
-            "log ( __qcore_literal__ , name ( name ( b ) ) )",
-        ] {
-            assert!(
-                nested_of(BODY, statement, &borrowing(1), true, &contracts).is_none(),
-                "`{statement}` must refuse"
-            );
-        }
+        let siblings = "log ( __qcore_literal__ , name ( b ) , name ( b ) )";
+        assert_eq!(
+            nested_many(BODY, siblings, &borrowing(1), true, &contracts)
+                .expect("siblings admitted")
+                .len(),
+            2
+        );
+        let deep = "log ( __qcore_literal__ , name ( name ( b ) ) )";
+        assert!(nested_many(BODY, deep, &borrowing(1), true, &contracts).is_none());
     }
 
     #[test]

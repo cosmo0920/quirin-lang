@@ -384,6 +384,92 @@ fn a_borrowed_inner_actual_composes_and_stays_accounted() {
 }
 
 #[test]
+fn sibling_neutral_nested_calls_compose_and_recheck() {
+    if !clang_available() {
+        return;
+    }
+    // B04: two sibling arguments may be evaluated in either order. Both inner
+    // contracts are identity effects, so either order reaches the same state;
+    // the outer call is applied only after both argument evaluations complete.
+    let result = analyze_with(
+        DECLARATIONS,
+        "void d_run(int n) { struct d_rec *h; h = d_open(n); if (!h) { return; } \
+         d_report((*d_slot()), d_label_of(h)); d_close(h); }",
+        "d_run",
+    );
+    let UnrestrictedLegacyResult::Safe(certificate) = result else {
+        panic!("expected sibling neutral calls to be Safe: {result:?}");
+    };
+    check_legacy_safety_certificate(&certificate).expect("sibling admission rechecks");
+}
+
+#[test]
+fn every_sibling_keeps_its_borrow_liveness_obligation() {
+    if !clang_available() {
+        return;
+    }
+    // The second nested call is the load-bearing one. Dropping it from the
+    // vector conversion would make this function erroneously Safe.
+    let summary = summary_with(
+        DECLARATIONS,
+        "void d_run(int n) { struct d_rec *h; h = d_open(n); if (!h) { return; } \
+         d_close(h); d_report((*d_slot()), d_label_of(h)); }",
+        "d_run",
+    );
+    assert_ne!(summary.status, AnalysisStatus::Safe);
+    assert!(summary.diagnostics.iter().any(|diagnostic| matches!(
+        &diagnostic.kind,
+        LegacyDiagnosticKind::UnknownAlias { variable } if variable == "h"
+    )));
+}
+
+#[test]
+fn every_sibling_keeps_its_may_alias_obligation() {
+    if !clang_available() {
+        return;
+    }
+    // `a` and `b` have the same declared record-pointer type. Releasing `a`
+    // makes the second nested call's read of `b` uncertain unless a guard has
+    // established that they differ. The first sibling must not hide that read.
+    let source = "void d_run(struct d_rec *a, struct d_rec *b) { \
+        d_close(a); d_report((*d_slot()), d_label_of(b)); }";
+    let summary = summary_with(DECLARATIONS, source, "d_run");
+    assert_ne!(summary.status, AnalysisStatus::Safe);
+    assert!(
+        summary.diagnostics.iter().any(|diagnostic| matches!(
+            &diagnostic.kind,
+        LegacyDiagnosticKind::UnknownAlias { variable } if variable.contains('b')
+        )),
+        "{:?}",
+        summary.diagnostics
+    );
+}
+
+#[test]
+fn one_effectful_or_uncontracted_sibling_refuses_the_whole_outer_call() {
+    if !clang_available() {
+        return;
+    }
+    for (declarations, body) in [
+        (
+            DECLARATIONS.to_owned(),
+            "void d_run(int n) { d_report((*d_slot()), d_owned_slot()); (void) n; }",
+        ),
+        (
+            DECLARATIONS.replace(
+                "int *d_slot(void);",
+                "int *d_slot(void); const char *d_unknown(void);",
+            ),
+            "void d_run(int n) { d_report((*d_slot()), d_unknown()); (void) n; }",
+        ),
+    ] {
+        let summary = summary_with(&declarations, body, "d_run");
+        assert_ne!(summary.status, AnalysisStatus::Safe, "{body}");
+        assert!(!unsupported(&summary).is_empty(), "{body}");
+    }
+}
+
+#[test]
 fn a_released_identity_at_a_nested_borrowed_actual_is_refused() {
     if !clang_available() {
         return;
