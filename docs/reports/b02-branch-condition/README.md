@@ -110,6 +110,17 @@ targets; fmt 0; Clippy 0; both probes 0; 146/146 Lean audits; matrix regeneratio
 0; Python 305/305, exit 0.  Provider tests 122 are carried, not remeasured,
 because providers and `qcore-schemas` are unchanged.
 
+**Aggregate-audit correction.**  Review after the initial B02 merge found that
+`AuditBranchConditionCall.lean` built and audited every named theorem, but the
+new model was absent from `proof/QCore.lean`; consequently `AuditAll.lean` did
+not include the module in the project's aggregate axiom-closure check.  The
+follow-up imports `QCore.BranchConditionCall` there and reruns the full isolated
+Lean audit suite: 146/146 pass, including `AuditAll`.  The integrator's combined
+tree has two additional B-card audits and therefore records 148 rather than
+this branch's isolated 146.  The original Rust/corpus gate figures remain the
+measurement at `ec3a86e0`; this import-only correction changes no Rust or
+corpus artifact.
+
 The first sandboxed attempt is preserved at `private/b02-gate-run` and supplies
 no evidence: LeakSanitizer refused to run under ptrace, then the run was
 interrupted before Cargo wrote its aggregate exit.  It also exposed the stale
