@@ -178,3 +178,28 @@ multiple calls, conditionally evaluated calls, nested calls, or a residual
 whose typed custody reads are not neutral. That boundary explains the measured
 zero corpus reach. Native execution is not proved, and no provisional Unsafe
 row in this report is a validated upstream defect.
+
+## 10. Parent validation and corrections — 2026-09-20
+
+The integrator completed the previously pending isolated standing gate at
+`0e8c5c08`: **4,820 Rust passed, 0 failed, 10 ignored; 247 result summaries over
+245 targets; 146 Lean audits**. Submodule initialization, fmt, Clippy and both
+reevaluation probes exited 0. Clang 21.1.8 was invoked in this measuring
+worktree. The acceptance matrix was regenerated, then the Python suite passed
+305/305, exit 0. Provider122 remains carried evidence. Commands, durations,
+source commit and absolute private log paths are in `gate-facts.json`; the
+private run is `/tmp/agent-b03/private/b-series/parent-b03-gate/`.
+The combined B-series gate will supersede these isolated counts.
+
+Two wording corrections to the handoff are necessary. In §6, **two** artifacts
+are verdict-bearing (`diagnostics` and `chunk-contracts`); `source` is separately
+byte-identical. The three source-effect identity differences are checkout and
+configuration identities, not measured semantic changes to the analyzer.
+In the mutation log, the harness's generic `<compile error>` label also matched
+Cargo's final `error: test failed` line. All four measured runs include named
+failed test assertions; none is counted solely from a compilation failure.
+
+The proposed global rule in §8 is declined as worded: older neutral-expression
+rules can already admit shapes outside that sentence. The integration lands an
+explicitly scoped B01–B03 additional-lowering rule instead and records this
+choice in its reconciliation ledger. No existing neutral admission is revoked.
