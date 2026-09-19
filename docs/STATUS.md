@@ -60,19 +60,20 @@ separately.
 
 ## Last integrated gate
 
-The [wave-40 close](reports/wave40-close/gate.json) records **4,727 Rust passed,
-0 failed, 10 ignored; 238 result summaries over 236 targets; 141 Lean audits;
-303 Python tests**, clean fmt/clippy and both probes exit 0. Clang 21.1.8 was
-recorded in that measuring worktree. **122 provider tests are carried Unix
-evidence, not re-measured.** These are that close's measurements, not a promise
-about another host or a later tree. A later card reports its own gate separately.
+The [CT integration gate](reports/ct-remaining-implementation/gate.json) records
+**4,808 Rust passed, 0 failed, 10 ignored; 246 result summaries over 244 targets;
+145 Lean audits; 305 Python tests**, clean fmt/clippy and both probes exit 0.
+Clang 21.1.8 was recorded in the measuring worktree. **122 provider tests are
+carried Unix evidence, not re-measured.** [Run identity and private logs](reports/ct-remaining-implementation/README.md#integration-and-validation)
+bind these measurements to the checked source; they are not promises about
+another host or a later tree.
 
 The ignored F02 Windows pin-agreement test is red by design on `--ignored`;
 Linux green does not repair it. Host/load-sensitive tests and their reporting
 requirements remain in [rule 16](agents/providers.md#constraint-16).
 The summary-count and Clang recording mechanisms still have their disclosed
-limitations; see [validation policy](agents/validation.md). This restructuring
-does not discharge them or replace the wave-40 gate with its own run.
+limitations; see [validation policy](agents/validation.md). This integration
+does not discharge those measurement-mechanism limitations.
 
 ## Where to go next
 

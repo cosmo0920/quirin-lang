@@ -196,3 +196,10 @@ scheduler coverage, or CT conformance. It supplies a bounded executed cleanup
 task composition and maps CT24 as one source-level rejection with the stage
 and control boundaries above. No status or conformance promotion follows from
 that mapping.
+
+## Integrated validation — 2026-09-19
+
+The [combined integration gate](integration-gate.json) supersedes the incomplete
+per-card standing-gate claim: **4,808 Rust passed, 0 failed, 10 ignored; 145 Lean
+audits; 305 Python tests**, with all required exits 0. This is the combined
+tree's measurement, not this card alone. [Run identity, logs and boundaries](../ct-remaining-implementation/README.md#integration-and-validation).

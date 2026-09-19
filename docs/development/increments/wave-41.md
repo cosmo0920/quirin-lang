@@ -6,6 +6,18 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`CT-REMAINING-IMPLEMENTATION` (2026-09-19).** Six Sol medium agents in two
+waves implemented and reviewed CT10 field-footprint checking, CT24 real
+cleanup/task-ledger composition, and CT41's bounded atomic-publication
+prerequisite. The combined corpus maps **49/50**, leaving CT41 unmapped;
+case-bound proof stays **5/49**, gated sanitized-native **10/49** on Linux/macOS.
+Declared layout, successful task windows and dynamic invocation bounds remain
+explicit premises, not production safety claims. Two CT10 entries retire and
+`CT10-TASK-FAILURE-LIFETIME` is registered: **264 → 263** follow-ups. Compact
+rule/spec amendments and the Fluent Bit transfer queue preserve these scopes.
+Combined standing gate: **4,808 Rust passed / 0 failed / 10 ignored; 145 Lean
+audits; 305 Python tests**, all required exits 0. [Integration evidence and reconciliation](../../reports/ct-remaining-implementation/README.md).
+
 **`COMPOSED-WINDOW-REACH` (2026-09-19).** The wave's soundness-adjacent card,
 against `STABILITY-REEVAL-4`'s four findings about the loan-window machinery.
 **The headline is negative and is reported as one: no program constraint 15h

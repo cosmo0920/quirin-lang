@@ -1,0 +1,348 @@
+{
+  "wave": 41,
+  "cards": [
+    "ct10-source-layout",
+    "ct24-cleanup-task-composition",
+    "ct41-sync-model",
+    "ct-remaining-implementation"
+  ],
+  "verify_applied": true,
+  "note": "CT-REMAINING-IMPLEMENTATION reconciliation, measured on the fully merged source tree after the combined standing gate passed. Source, rules, specifications, status and tracker are judged independently from gate publication. All five gate-dependent items are now applied against the measured gate and final matrix; Rust 4808 passed/0 failed/10 ignored, Lean 145 and Python 305, required exits 0. CT10 and CT24 are mapped, CT41 remains unmapped, case-bound proof is 5, gated sanitized-native is 10, and 145 Lean audits are present. The tracker moves 264 to 263 by retiring CT10-BYTE-ENCODING-UNSOUND and CT10-REASON-ROW and registering CT10-TASK-FAILURE-LIFETIME; CT41-TYPED-SOURCE-UNDISCRIMINATING remains registered with its narrowed boundary.",
+  "verdicts": {
+    "ct10-source-layout#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "The manifest maps CT10 on the dedicated route and credits only the four stated stages; task-ledger, emission, native and proof stages are not credited.",
+      "verify": [
+        {
+          "file": "docs/reevaluation/ct_manifest.json",
+          "contains": "\"id\": \"CT10\", \"scenario\": \"Adjacent bit-fields in one memory location\", \"expected\": \"Reject independent concurrent writes\", \"spec_section\": \"55\", \"mapping_status\": \"mapped\", \"route\": \"bitfield_concurrency\""
+        },
+        {
+          "file": "docs/reevaluation/ct_manifest.json",
+          "contains": "\"footprint_check\": { \"status\": \"executed\", \"executor\": \"compiler/tests/ct_corpus.rs::run_mapped_case\", \"artifact\": \"compiler/tests/fixtures/ct/CT10/case.qcore\", \"observations\": 1 }"
+        },
+        {
+          "file": "docs/reevaluation/ct_manifest.json",
+          "contains": "\"task_ledger_check\": { \"status\": \"not_applicable\" }"
+        }
+      ]
+    },
+    "ct10-source-layout#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Combined gate published with all required exits 0; generated matrix and compact status/increment are reconciled to 49 mapped cases, 145 audits and the actual measured gate. Original per-card failures/incomplete exits remain disclosed.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "\"lean_audits\": 145"
+        },
+        {
+          "file": "docs/reports/ct-remaining-implementation/gate.json",
+          "contains": "\"standing_gate\": \"pass\""
+        },
+        {
+          "file": "docs/reports/ct-remaining-implementation/gate-facts.json",
+          "contains": "\"post_regeneration_python_verified\": true"
+        }
+      ]
+    },
+    "ct10-source-layout#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "The tracker entry is retired and the mapped source route derives bit-field storage-unit identity rather than byte leases.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "absent": "\"id\": \"CT10-BYTE-ENCODING-UNSOUND\""
+        },
+        {
+          "file": "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+          "contains": "Same-unit bit-fields refuse at `Q661` regardless of disjoint bit ranges. Layout truth remains a declared ABI premise."
+        }
+      ]
+    },
+    "ct10-source-layout#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "CT10 is mapped, its old decision/tracker row is retired, and its new evidence record declares no frozen unmapped-reason retirement.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "absent": "\"id\": \"CT10-REASON-ROW\""
+        },
+        {
+          "file": "docs/reports/ct10-source-layout/ct_stage_evidence.json",
+          "absent": "\"unmapped_reasons\""
+        }
+      ]
+    },
+    "ct10-source-layout#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "Combined gate published with all required exits 0; generated matrix and compact status/increment are reconciled to 49 mapped cases, 145 audits and the actual measured gate. Original per-card failures/incomplete exits remain disclosed.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "CT cases mapped | **49/50**; CT41 unmapped"
+        },
+        {
+          "file": "docs/development/increments/wave-41.md",
+          "contains": "The combined corpus maps **49/50**, leaving CT41 unmapped; case-bound proof stays **5/49**, gated sanitized-native **10/49** on Linux/macOS."
+        },
+        {
+          "file": "docs/reports/ct-remaining-implementation/gate.json",
+          "contains": "\"standing_gate\": \"pass\""
+        },
+        {
+          "file": "docs/reports/ct-remaining-implementation/gate-facts.json",
+          "contains": "\"post_regeneration_python_verified\": true"
+        }
+      ]
+    },
+    "ct10-source-layout#integrator-reconciliation-list#6": {
+      "verdict": "applied",
+      "note": "The standing CT10 boundary is present in the concurrency rules with the property-only and premise limitations intact.",
+      "verify": [
+        {
+          "file": "docs/agents/concurrency.md",
+          "contains": "`source.bitfield-concurrency.v1` derives one declared record layout and actual `write OBJECT.FIELD` spawn captures into `DisjointFootprintsV1`. Its certificate proves only field-footprint independence on the explicit `SpawnAndJoinSucceed` premise; it runs no scoped-task ledger, emits no C and publishes no reference/native execution."
+        }
+      ]
+    },
+    "ct10-source-layout#integrator-reconciliation-list#7": {
+      "verdict": "applied",
+      "note": "The canonical diagnostic text keeps bounded grammar refusals at Q600 and reaches unchanged Q661 without allocating a code.",
+      "verify": [
+        {
+          "file": "docs/QCORE_SPEC_r0_3.md",
+          "contains": "All bounded source-shape, worker-body, capture, join and successful-window grammar refusals remain `Q600` under the `Concurrency` pass."
+        },
+        {
+          "file": "docs/agents/diagnostics.md",
+          "contains": "`CT10-SOURCE-LAYOUT` extends `Q600`'s structural condition to the bounded field-write profile and reaches unchanged `Q661`. No code is allocated."
+        }
+      ]
+    },
+    "ct10-source-layout#integrator-reconciliation-list#8": {
+      "verdict": "applied",
+      "note": "The exact Q661 reachability amendment is in the language specification.",
+      "verify": [
+        {
+          "file": "docs/QCORE_SPEC_r0_3.md",
+          "contains": "On `source.bitfield-concurrency.v1`, `Q661` is reachable from two actual simultaneous worker write captures whose fields have the same declared bit-field storage-unit identity. Bit offsets and widths are retained but cannot establish disjointness."
+        }
+      ]
+    },
+    "ct24-cleanup-task-composition#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Combined gate published with all required exits 0; generated matrix and compact status/increment are reconciled to 49 mapped cases, 145 audits and the actual measured gate. Original per-card failures/incomplete exits remain disclosed.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "CT case-bound proof | **5/49**: CT01, CT03, CT07, CT37, CT50"
+        },
+        {
+          "file": "docs/STATUS.md",
+          "contains": "CT gated sanitized-native | **10/49, Linux/macOS only**"
+        },
+        {
+          "file": "docs/reports/ct-remaining-implementation/gate.json",
+          "contains": "\"standing_gate\": \"pass\""
+        },
+        {
+          "file": "docs/reports/ct-remaining-implementation/gate-facts.json",
+          "contains": "\"post_regeneration_python_verified\": true"
+        }
+      ]
+    },
+    "ct24-cleanup-task-composition#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Combined gate published with all required exits 0; generated matrix and compact status/increment are reconciled to 49 mapped cases, 145 audits and the actual measured gate. Original per-card failures/incomplete exits remain disclosed. The generator retains _derivation metadata in the otherwise empty reason map; the initial empty-object verification claim was incorrect and was replaced with the empty case list plus absence of the CT24 reason row. No evidence data changed.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance.json",
+          "contains": "\"newly_decidable_not_mapped\": []"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "\"newly_decidable_not_mapped\": []"
+        },
+        {
+          "file": "docs/reports/ct-remaining-implementation/gate.json",
+          "contains": "\"standing_gate\": \"pass\""
+        },
+        {
+          "file": "docs/reports/ct-remaining-implementation/gate-facts.json",
+          "contains": "\"post_regeneration_python_verified\": true"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "absent": "\"CT24\": {"
+        }
+      ]
+    },
+    "ct24-cleanup-task-composition#integrator-reconciliation-list#3": {
+      "verdict": "noted",
+      "note": "Introductory line for the exact standing-text proposal; the following swept item records its disposition."
+    },
+    "ct24-cleanup-task-composition#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "The exact bounded creator-scope placement and custody text is present as the constraint-15m amendment.",
+      "verify": [
+        {
+          "file": "docs/agents/effects.md",
+          "contains": "A composed handled region is either the creator's direct epilogue after every creation and join, or one direct statement in the exact `Result::Ok` arm of a direct `match spawn` in that creator task scope."
+        },
+        {
+          "file": "docs/agents/effects.md",
+          "contains": "Arbitrary branches and loops, the spawn-error arm, worker regions and every other nested placement remain refused."
+        }
+      ]
+    },
+    "ct24-cleanup-task-composition#integrator-reconciliation-list#5": {
+      "verdict": "noted",
+      "note": "Introductory line for the proposed duplicate source-profile paragraph; the following item records the deliberate decline."
+    },
+    "ct24-cleanup-task-composition#integrator-reconciliation-list#6": {
+      "verdict": "declined",
+      "note": "Declined as duplicate and potentially misleading wording. Saying cleanup is in a 'spawned task's exact success arm' can be read as child-worker cleanup, which remains refused. The consolidated G02f grammar is more precise: the region is a direct statement of the Result::Ok arm of a direct creator task-scope match spawn, and the standing 15m amendment explicitly refuses worker regions. The semantic behavior is retained there without creating a second authority.",
+      "verify": [
+        {
+          "file": "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+          "contains": "It is admitted as a direct epilogue of the entry's task scope, **after every spawn and join**, or as a direct statement of the exact `Result::Ok` arm of a direct task-scope `match spawn` (`CT24-CLEANUP-TASK-COMPOSITION`)."
+        },
+        {
+          "file": "docs/agents/effects.md",
+          "contains": "the spawn-error arm, worker regions and every other nested placement remain refused"
+        }
+      ]
+    },
+    "ct24-cleanup-task-composition#integrator-reconciliation-list#7": {
+      "verdict": "applied",
+      "note": "The diagnostic ledger records the Q302/Q600 narrowing, the task-ledger refusal, and no new code allocation.",
+      "verify": [
+        {
+          "file": "docs/agents/diagnostics.md",
+          "contains": "`CT24-CLEANUP-TASK-COMPOSITION` narrows `Q302`/`Q600` placement refusals for the bounded spawn-success-arm cleanup; the direct epilogue ordering remains."
+        },
+        {
+          "file": "docs/QCORE_SPEC_r0_3.md",
+          "contains": "The task ledger's cleanup-before-join refusal remains `Q600`."
+        }
+      ]
+    },
+    "ct41-sync-model#limits-and-integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "This is the card's evidence boundary, retained in the report and current specification; it requests no separate integration mutation."
+    },
+    "ct41-sync-model#limits-and-integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "Section introduction only; its numbered actions are recorded separately."
+    },
+    "ct41-sync-model#limits-and-integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "The final descendant is merged: gateway extraction and verification-layer composition are present in their correct workspace layers.",
+      "verify": [
+        {
+          "file": "crates/qcore-c-gateway/src/atomic_publication_source.rs",
+          "contains": "pub fn extract_atomic_publication_source"
+        },
+        {
+          "file": "crates/qcore-verification/src/atomic_publication_source.rs",
+          "contains": "pub fn check_atomic_publication_source"
+        }
+      ]
+    },
+    "ct41-sync-model#limits-and-integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Combined gate published with all required exits 0; generated matrix and compact status/increment are reconciled to 49 mapped cases, 145 audits and the actual measured gate. Original per-card failures/incomplete exits remain disclosed.",
+      "verify": [
+        {
+          "file": "docs/reports/ct-remaining-implementation/gate.json",
+          "contains": "\"standing_gate\": \"pass\""
+        },
+        {
+          "file": "docs/reports/ct-remaining-implementation/gate-facts.json",
+          "contains": "\"post_regeneration_python_verified\": true"
+        }
+      ]
+    },
+    "ct41-sync-model#limits-and-integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "CT41 remains the sole unmapped case with no fixture, and its narrowed tracker entry remains registered.",
+      "verify": [
+        {
+          "file": "docs/reevaluation/ct_manifest.json",
+          "contains": "\"id\": \"CT41\", \"scenario\": \"`volatile` used as a completion flag\", \"expected\": \"No synchronization proof\", \"spec_section\": \"55\", \"mapping_status\": \"unmapped\", \"route\": null, \"source_fixture\": null"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "\"id\": \"CT41-TYPED-SOURCE-UNDISCRIMINATING\""
+        }
+      ]
+    },
+    "ct41-sync-model#limits-and-integrator-reconciliation-list#6": {
+      "verdict": "noted",
+      "note": "The card itself made no global coverage or tracker promotion. Integration changes come from the combined integration record, while any future CT41 mapping still requires case-bound executed evidence under the standing evidence rules."
+    }
+  },
+  "no_section": {
+    "ct-remaining-implementation": "This is the integration report that owns this reconciliation record. Its Reconciliation section states the already measured union and pending gate but is not phrased as an instruction to another integrator, so the sweep correctly finds no addressed items for it. Gate-dependent publication is explicitly deferred in the card verdicts above."
+  },
+  "deferred_decisions": {
+    "note": "Wave-41 carry from the latest numbered close. CT10-REASON-ROW is resolved by the mapped CT10 artifact and simultaneous tracker retirement; every other open decision is outside this bounded three-card integration and remains deferred. Because outstanding_decisions reads only numbered close directories, the next numbered close must carry this resolved CT10 decision as well as the still-open set.",
+    "items": [
+      {
+        "name": "CT10-REASON-ROW",
+        "verdict": "resolved",
+        "ground": "Resolved in both mechanisms: CT10 is now mapped with an executed stage record that declares no frozen unmapped-reason retirement, and the CT10-REASON-ROW named_followup is absent. No replacement unmapped-reason row is needed for a mapped case. DECISION-ALSO-REGISTERED-AS-FOLLOWUP remains open for the general dual-tracking mechanism and records that the next numbered close must carry this resolution."
+      },
+      {
+        "name": "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK",
+        "verdict": "deferred",
+        "ground": "Outside this CT implementation integration; no cadence-policy decision is taken."
+      },
+      {
+        "name": "EXAMPLES-STYLE-SLICE-FANOUT",
+        "verdict": "deferred",
+        "ground": "Outside this CT integration; the cards do not decide example-family layout."
+      },
+      {
+        "name": "F02-WINDOWS-PIN-RUN",
+        "verdict": "deferred",
+        "ground": "No user-validated Windows run is supplied by these Linux integration cards."
+      },
+      {
+        "name": "INDIRECT-CENSUS-FEATURE-UNBUILT",
+        "verdict": "deferred",
+        "ground": "The CT cards neither add the feature CI job nor decide that the instrumentation is disposable."
+      },
+      {
+        "name": "MATRIX-RECORDED-BY-DECISION",
+        "verdict": "deferred",
+        "ground": "This integration does not backfill historical recorded_by fields or decide that source alone is canonical provenance."
+      },
+      {
+        "name": "MATRIX-UPDATED-STALE-AT-WAVE-27",
+        "verdict": "deferred",
+        "ground": "The matrix is regenerated for CT evidence, but this integration does not decide the semantics of its historical updated prose."
+      },
+      {
+        "name": "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED",
+        "verdict": "deferred",
+        "ground": "No platform-family registration policy is chosen by these CT cards."
+      },
+      {
+        "name": "Q-NAMESPACE-DECISION",
+        "verdict": "deferred",
+        "ground": "CT10 and CT24 allocate no new diagnostic code, so this integration supplies no evidence that chooses either namespace arm."
+      },
+      {
+        "name": "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS",
+        "verdict": "deferred",
+        "ground": "This record uses the current sweep but does not define or implement a prose-only residual grammar."
+      },
+      {
+        "name": "SYNC-RULE-TOOLING-COMMIT-SCOPE",
+        "verdict": "deferred",
+        "ground": "This bounded reconciliation does not decide how future close rules classify integrator tooling commits."
+      }
+    ]
+  }
+}

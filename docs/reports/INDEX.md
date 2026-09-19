@@ -65,6 +65,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [ct-proof-leg-3](ct-proof-leg-3/README.md) | `CT-PROOF-LEG-3` (wave 41) — survey every unproved mapped case, then land the leg the survey picks |
 
+| [ct-remaining-implementation](ct-remaining-implementation/README.md) | Remaining CT implementation integration |
+
 | [ct-wire-lane](ct-wire-lane/README.md) | Wave-26 CT lane — what the current tree can actually wire |
 
 | [ct-wire-lane-2](ct-wire-lane-2/README.md) | Wave-28 CT lane — mapping the wave-27 capabilities (CT-WIRE-LANE-2) |
@@ -83,11 +85,17 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [ct07-write-remap](ct07-write-remap/README.md) | CT07-WRITE-REMAP — CT07's evidence upgraded to the two-write-authorities scenario (wave 30) |
 
+| [ct10-source-layout](ct10-source-layout/README.md) | CT10 source layout and concurrent field writes |
+
 | [ct22-wire](ct22-wire/README.md) | Wave-29 CT lane — mapping CT22 (CT22-WIRE) |
 
 | [ct23-credit-error-path](ct23-credit-error-path/README.md) | CT23-CREDIT-ERROR-PATH — an error path over the flat epoch's credits |
 
 | [ct24-cleanup-preempted](ct24-cleanup-preempted/README.md) | CT24-CLEANUP-PREEMPTED — the preempting refusal carries the exit rule's own judgment |
+
+| [ct24-cleanup-task-composition](ct24-cleanup-task-composition/README.md) | CT24-CLEANUP-TASK-COMPOSITION — completed implementation and CT mapping |
+
+| [ct41-sync-model](ct41-sync-model/README.md) | CT41 bounded atomic-publication prerequisite |
 
 | [ct42-cell-route](ct42-cell-route/README.md) | CT42-CELL-ROUTE (wave 39) — route the socket protocol cell from source, and map CT42 |
 

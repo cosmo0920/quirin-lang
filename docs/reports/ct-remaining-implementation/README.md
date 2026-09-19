@@ -1,6 +1,6 @@
 # Remaining CT implementation integration
 
-Integration record, 2026-09-19. **Validation in progress; not a completed gate.**
+Integration record, 2026-09-19. Completed combined validation; CT41 mapping remains open.
 
 ## Result and boundaries
 
@@ -45,11 +45,38 @@ while `qcore-verification` now composes those facts with the core judgment.
 
 ## Integration and validation
 
-Pending final branch merges and the combined standing gate. Per-card gate
-reports retain failed or incomplete attempts and their actual outcomes. The
-combined gate will own its Clang recording, counts, exits and private logs.
-No tests, diagnostic refusals or historical evidence are weakened to obtain a
-passing result.
+[Gate](gate.json) and [captured facts](gate-facts.json) record source head
+`72a648f169a3d13846df0d0811e08093036b93d3`, retained in this branch's ancestry.
+Rust/Lean/Cargo source stayed unchanged through publication; later commits
+reconcile documentation and Python scratch fixtures. The source gate ran
+09:33:27–09:48:29 UTC on 2026-09-19, followed by final matrix/Python checks.
+
+| Command | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | pinned libevent initialized |
+| `cargo test --workspace --no-fail-fast` | 0 | **4,808 passed, 0 failed, 10 ignored**; 246 summaries over 235 Running targets and 9 doc-test sections |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --all-targets -- -D warnings` | 0 | clean |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | completed |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | completed |
+| `python3 scripts/check_lean_audits.py` | 0 | **145 audits** |
+| `python3 -m unittest discover -s scripts/tests` | 0 | **305 tests**, including post-regeneration verification |
+| `clang --version` | 0 | Ubuntu Clang 21.1.8, recorded in this measuring worktree |
+
+Cargo used `CARGO_BUILD_JOBS=2`, `CARGO_PROFILE_DEV_DEBUG=0`,
+`CARGO_PROFILE_TEST_DEBUG=0`, `CARGO_INCREMENTAL=0`. Sanitizer-enabled native
+checks ran with normal process access; sanitizers were not disabled. Provider
+**122** remains carried Unix evidence, not a new measurement. Private logs and
+individual exit files are under
+`/home/cosmo/Documents/GitHub/qcore-c/private/ct-remaining/integration/private/ct-integration/gate-20260919T093327Z/`.
+
+Each card preserves its failed/incomplete runs and carries an
+`integration-gate.json` referencing this combined measurement. CT10's manifest
+metadata failure, CT24's lost wrapper exit and CT41's layering failure are not
+rewritten as passing runs. No pinned diagnostic or historical evidence was
+weakened. The documentation preservation check recovered all **50 rules and
+6 hard invariants**; the largest policy page remains below 32 KiB. Local links
+and the generated report index pass their checks.
 
 ## Reconciliation
 
@@ -70,4 +97,19 @@ record's resolved CT10 reason decision: the decision-discovery script only
 reads numbered close directories. The general dual-tracking issue remains
 under `DECISION-ALSO-REGISTERED-AS-FOLLOWUP`.
 
-The reconciliation record and final gate evidence are pending completion.
+The before/after residual sweep reports 52 → 53 candidate names, adding only
+the deliberately discharged `CT10-BYTE-ENCODING-UNSOUND`; no new unowned
+residual was introduced by these retirements. `CT10-REASON-ROW` remains
+mentioned by the retained dual-tracking entry, with its resolution recorded
+here. These are lexical candidates, not counts of open defects. Private
+records: `private/ct-integration/{registered-before.json,residuals-before.txt,residuals-after.txt}`.
+The [reconciliation record](reconciliation.json) covers all 21 items. Gate-dependent
+items are now applied; the duplicate, ambiguous CT24 profile wording is explicitly
+declined in favor of the precise consolidated creator-arm grammar. Unrelated
+prior decisions remain deferred with their grounds.
+
+The publication check caught one incorrect reconciliation assertion: the matrix's
+reason map retains `_derivation` metadata after its last case retires. The
+assertion now checks the empty case list and absence of the CT24 row; evidence
+data was unchanged. The failed check and corrected rerun are retained as
+`reconciliation.log` and `reconciliation-final.log` in the same private run.
