@@ -132,6 +132,33 @@ NEW = [
         "or state permanently, with the schedule-shape assertion named as the guard.",
     ),
     entry(
+        "TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE",
+        "removing_the_join_edge_is_reported_under_every_schedule misses its ct07-case forced-together cell under concurrent whole-workspace load, and passes it 20 of 20 in isolation",
+        "MEASURED by card TSAN-FAILURE-ARMS (wave 41) at its rebased gate, and recorded in BOTH "
+        "directions rather than absorbed. Inside `cargo test --workspace --no-fail-fast` with three "
+        "sibling worktrees building concurrently, "
+        "removing_the_join_edge_is_reported_under_every_schedule (compiler/tests/task_route_tsan.rs, "
+        "wave 39's row, whose behaviour this card did not change - it runs at cohort 0, wave 39's "
+        "own join trigger) failed at its ct07-case @ forced-together cell: ThreadSanitizer reported "
+        "a THREAD LEAK instead of a data race, with the schedule trace showing both workers started "
+        "and left (docs/reports/tsan-failure-arms/gate/red-row.log). ON THE SAME BINARY AND THE SAME "
+        "TREE the whole file is 18 passed / 0 failed / 1 ignored in isolation "
+        "(gate/row-isolation.exit 0), and the row alone ran TWENTY times at load average 5.78 with "
+        "0 OF 20 RED (gate/row-isolation-20-runs.log). The card's own 20-run table had measured this "
+        "cell at 20 of 20 on a quiet host (artifacts/catch-rates.json, 'join-edge-removed/ct07-case "
+        "@ cohort 0 @ forced-together'), so this is a load observation and not a new defect, and the "
+        "assertion is deliberately NOT weakened and the row is NOT ignored. The mechanism is the one "
+        "TSAN-COHORT-TRIGGER-CATCH-COST names from the other side: what this mutation's detection "
+        "depends on is that the creator's post-join access still has the workers' accesses in "
+        "ThreadSanitizer's shadow history, and anything that lets the workers finish far earlier - a "
+        "release trigger, or a loaded machine descheduling the creator - can cost the report. "
+        "DISCHARGE: measure the row under controlled load to establish the rate (the P02-FLAKE "
+        "method), then either add it to rule 16's enumerated load-sensitive rows - a decision above "
+        "a card, since that rule lives in a preserved span - or make the row insensitive by "
+        "asserting on ThreadSanitizer's report SET rather than on a data race specifically, which "
+        "would weaken what it measures and needs its own argument.",
+    ),
+    entry(
         "STATUS-SOURCES-CHECKPOINT-VS-LIVE-TRACKER",
         "docs-structure-compression's status-sources.json is a frozen checkpoint that its own --check compares against live inputs, so the first legitimate tracker edit after it makes that check stale",
         "MEASURED by card TSAN-FAILURE-ARMS (wave 41), the first card to move a tracker count after the "
