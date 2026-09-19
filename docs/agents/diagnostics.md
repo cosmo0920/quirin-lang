@@ -170,3 +170,14 @@ seeing the other's, which is the hand-kept tally undercounting for the third
 recorded time (`Q-SPACE-EXTENSION-TALLY-HAND-KEPT`; the wave-39 close corrected it
 once and the wave-40 close once). The wave-41 close should **re-derive** the total
 from §L21's rows rather than carry this sentence forward.
+
+### CT implementation amendments
+
+`CT24-CLEANUP-TASK-COMPOSITION` narrows `Q302`/`Q600` placement refusals for
+the bounded spawn-success-arm cleanup; the direct epilogue ordering remains.
+`CT10-SOURCE-LAYOUT` extends `Q600`'s structural condition to the bounded
+field-write profile and reaches unchanged `Q661`. No code is allocated.
+These are two further instances of the namespace rule, on existing bands;
+the twenty-instance checkpoint above becomes **twenty-two on ten bands**.
+Canonical conditions: specification §L21; scopes: [effects](effects.md) and
+[concurrency](concurrency.md).

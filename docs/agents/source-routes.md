@@ -185,3 +185,12 @@ record-typed field are censused at **zero** each, which is why giving those two
 spellings their own by-name refusals changes no program's verdict.
 
 Add `owned-field-route-reach` to the rule's closing evidence list.
+
+### 14 — CT implementation source forms
+
+CT24 reuses the parsed error-region and spawn-success-arm forms. CT10 uses
+contextual `bits<…>`/`field<…>` in record declarations and existing task
+captures. Neither adds a reserved word. CT10 selects only explicit layouts
+with direct field-write captures; other routes retain their existing rules.
+See the [CT10 census](../reports/ct10-source-layout/README.md) and
+[CT24 scope](../reports/ct24-cleanup-task-composition/README.md).

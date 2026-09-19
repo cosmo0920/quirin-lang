@@ -1302,9 +1302,15 @@ region_epilogue = "error", "region", NAME, "{",
                   "{", { "discharge", BINDING, ";" }, "}" ;
 ```
 
-It is admitted only as a direct statement of the entry's task scope, **after
-every spawn and join** — an ordering derived from the checked task IR's own
-spans, refused at `Q600` when false in either direction. Since card
+It is admitted as a direct epilogue of the entry's task scope, **after every
+spawn and join**, or as a direct statement of the exact `Result::Ok` arm of a
+direct task-scope `match spawn` (`CT24-CLEANUP-TASK-COMPOSITION`). The epilogue's
+ordering is derived from checked task-IR spans and refused at `Q600` when false.
+The success-arm form may precede its join: the existing task ledger refuses a
+cleanup release while a child holds that owner's share (`LoanOutstanding`),
+while independent-owner cleanup is admitted. Other nested placements remain
+refused. Published cleanup quantities and releases in this arm are conditional
+on reaching it; spawn-failure recovery is checked separately by the task route. Since card
 `REGION-JOINS-DUTIES` (wave 29, deliberately superseding the wave-28 duty-free
 premise) the body admits the task route's **own** acquisition and release
 beside the parent's quantities, so the sealed pack carries real cleanup duties
@@ -1336,8 +1342,9 @@ pack — the same sealed `Destroy`, an acquisition from the pack's side — so a
 name is the entry's own (a name the entry does not bind refuses at `Q302`, as
 does one owner taken twice through either shape). The adoption erases
 completely — the owner's acquisition already stands in the entry's own text —
-and the discharge's `drop NAME;` is written into the blanks after every join,
-where the **unedited** task route decides everything custodial: an adopted
+and the discharge's `drop NAME;` is written into the blanks at the region's
+source position (after every join for the direct epilogue), where the
+**unedited** task route decides everything custodial: an adopted
 scalar refuses at that route's `Q500` ("drop requires an owned buffer"), a
 drop of a still-lent owner at its `Q600` (`LoanOutstanding`), and an
 acquisition beside an adopted owner keeps the `REGION-JOINS-MULTI-OWNER`
@@ -2834,3 +2841,29 @@ unknown fields reject. The exact configuration and helper-resolution rules are
 in the [audit command documentation](../crates/qcore-audit/README.md#configured-source-contract-processes).
 This input selects existing bounded Boolean source import and evidence-v2 replay;
 it does not extend QCore source grammar or promote the C resource verdict.
+
+## G09. Concurrent field-footprint questions
+
+`source.bitfield-concurrency.v1` is a property-only checker. It requires
+`import std.concurrency; concurrency checked;`, explicit-layout records, and
+one `unit` entry with effects `{spawn, join, mut}`. The entry declares one
+object with `let OBJECT = TYPE;`, then one task scope, then `return;`.
+
+```ebnf
+layout_field = NAME, ":", ("field", "<", OFFSET, ",", SIZE, ">"
+             | "bits", "<", UNIT, ",", BIT_OFFSET, ",", BIT_WIDTH,
+               ",", BYTE_OFFSET, ",", BYTE_SIZE, ">") ;
+```
+
+The scope contains at least two `let H = spawn S WORKER(write OBJECT.FIELD)?;`
+statements before any join, followed by one `let R = join move H?;` for each
+handle in spawn order. Each used worker has one `i32` parameter, effect `{mut}`,
+and exactly `write PARAM; return;`. Other declarations/statements refuse.
+`bits` and `field` are contextual, not newly reserved words.
+
+The checker derives layouts and field handles for `DisjointFootprintsV1`.
+Same-unit bit-fields refuse at `Q661` regardless of disjoint bit ranges. Layout
+truth remains a declared ABI premise. Admission establishes only pairwise
+field independence in a **successful spawn/join window**; it does not establish
+task failure recovery or lifetime safety. No C or reference execution is
+published. See [the bounded profile and controls](reports/ct10-source-layout/README.md).

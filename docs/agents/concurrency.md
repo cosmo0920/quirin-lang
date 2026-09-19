@@ -175,3 +175,18 @@ including cross-topic rules, before editing; the index is not a substitute.
     Dynamic shapes, condition variables, try/timed locks, rwlocks and recursive
     acquisition are represented refusals, not omissions. `remaining-t02`.
 <!-- preserved:constraint-27:end -->
+
+## Field-footprint profile boundary — CT10
+
+`source.bitfield-concurrency.v1` derives one
+declared record layout and actual `write OBJECT.FIELD` spawn captures into
+`DisjointFootprintsV1`. Its certificate proves only field-footprint
+independence on the explicit `SpawnAndJoinSucceed` premise; it runs no
+scoped-task ledger, emits no C and publishes no reference/native execution.
+Adjacent bit-fields in one declared storage unit refuse at `Q661`; ordinary
+disjoint fields and distinct bit-field units are admitted controls. Declared
+target layout and Rust-to-Lean correspondence remain premises.
+
+It must not be exported as a checked scoped-task certificate. Ordinary
+record/task refusals are unchanged outside this explicit-layout profile.
+[Scope and controls](../reports/ct10-source-layout/README.md).
