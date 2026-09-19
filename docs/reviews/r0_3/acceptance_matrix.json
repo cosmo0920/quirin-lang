@@ -6700,8 +6700,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CT integration rebase standing gate on main 026314c89b7792a4b1b7403983a2d44c66a3cbcb. Previous published head a0584a50e303441ef6fff60d47af82d80bca2d6a; original checkpoint evidence is retained unchanged. Source head 637ef1a3ecdd082c98be13e7edac6490de45e796; Rust/Lean/Cargo source remains unchanged through evidence publication. Actual run /home/cosmo/Documents/GitHub/qcore-c/private/ct-remaining/integration/private/ct-integration/rebase-gate-20260919T101431Z; see gate-facts.json for captured exits and counts. Rust 4808 passed, 0 failed, 10 ignored over 246 result summaries; 235 Running targets and 9 doc-test sections. Python 305 measured before publication; post-regeneration check is recorded separately. Clang was invoked in this measuring worktree. Provider122 is carried Unix evidence, not remeasured; providers and schemas unchanged. All child failed/incomplete runs remain disclosed in their reports. CT49/50 mapped, proof5/49, gated sanitized-native10/49 Linux/macOS; no full conformance or production promotion.",
-  "workspace_tests": 4808,
+  "note": "CT41-PUBLICATION-MAPPING standing gate at source checkpoint a0ca619666a06b1a3a3fb143b2a3935165148f98. Run: /home/cosmo/Documents/GitHub/qcore-c/private/ct-remaining/integration/private/ct41-mapping/gate-20260919T110010Z; captured command exits, timestamps and Cargo environment in gate-facts.json. Rust 4812 passed, 0 failed, 10 ignored across 246 summaries (235 Running targets plus 9 doc-test sections). Clang invoked in this measuring worktree. Python measured before publication and checked again after regeneration. Provider 122 is carried Unix evidence, not remeasured. CT 50/50 mapped, 5/50 case-bound proof, 10/50 gated sanitized-native on Linux/macOS; mapping is not full conformance or production safety. CT41 adds only Clang-gated parsing and publication-check evidence. See README.md for the explicit attribution decision and declared bounds.",
+  "workspace_tests": 4812,
   "provider_tests": 122,
   "python_evidence_validator_tests": 305,
   "lean_audits": 145,
@@ -6858,7 +6858,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/ct41-publication-mapping/gate.json)"
  },
  "named_followups": [
   {

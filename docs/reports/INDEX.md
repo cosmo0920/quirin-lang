@@ -95,6 +95,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [ct24-cleanup-task-composition](ct24-cleanup-task-composition/README.md) | CT24-CLEANUP-TASK-COMPOSITION — completed implementation and CT mapping |
 
+| [ct41-publication-mapping](ct41-publication-mapping/README.md) | CT41 publication mapping |
+
 | [ct41-sync-model](ct41-sync-model/README.md) | CT41 bounded atomic-publication prerequisite |
 
 | [ct42-cell-route](ct42-cell-route/README.md) | CT42-CELL-ROUTE (wave 39) — route the socket protocol cell from source, and map CT42 |

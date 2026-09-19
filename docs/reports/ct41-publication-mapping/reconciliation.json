@@ -1,0 +1,118 @@
+{
+  "wave": 41,
+  "cards": [
+    "ct41-sync-model",
+    "ct41-publication-mapping"
+  ],
+  "verify_applied": true,
+  "note": "CT41 mapping adjudication. Earlier report remains frozen; scope changes are explicit.",
+  "no_section": {
+    "ct41-publication-mapping": "This integrator-authored mapping record states its decisions directly; there is no delegated carry list."
+  },
+  "verdicts": {
+    "ct41-sync-model#limits-and-integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "The same bounded, conditional ordering limits remain explicit in the new mapping report."
+    },
+    "ct41-sync-model#limits-and-integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "Section introduction; each substantive item is adjudicated separately."
+    },
+    "ct41-sync-model#limits-and-integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "The integrated base already contains the corrected verification-layer adapter; the mapping calls that adapter and adds no gateway-to-core dependency.",
+      "verify": [
+        {
+          "file": "compiler/tests/support/ct_atomic_publication.rs",
+          "contains": "use qcore_verification::atomic_publication_source::"
+        },
+        {
+          "file": "crates/qcore-verification/src/atomic_publication_source.rs",
+          "contains": "use qcore_core::"
+        }
+      ]
+    },
+    "ct41-sync-model#limits-and-integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Fresh full standing gate passed at the mapping checkpoint and the matrix was regenerated with the measured gate; Python passed after regeneration.",
+      "verify": [
+        {
+          "file": "docs/reports/ct41-publication-mapping/gate.json",
+          "contains": "\"standing_gate\": \"pass\""
+        },
+        {
+          "file": "docs/reports/ct41-publication-mapping/gate-facts.json",
+          "contains": "\"rust_failed\": 0"
+        }
+      ]
+    },
+    "ct41-sync-model#limits-and-integrator-reconciliation-list#5": {
+      "verdict": "superseded",
+      "note": "This later mapping explicitly revises CT41 attribution to protocol replacement plus qualifier invariance, retains the original scenario/expected result, executes the case, and retires the historical bucket by declaration. Earlier checkpoint evidence is preserved."
+    },
+    "ct41-sync-model#limits-and-integrator-reconciliation-list#6": {
+      "verdict": "declined",
+      "note": "The prohibition on global edits scoped the prerequisite card, not this user-requested mapping. This card updates the current ledger. The proposed native-evidence prerequisite is declined: a native trace cannot establish the absence of synchronization, so this property-only route claims no native stage. It does supply the executed C artifact and clearly separate source/model evidence."
+    }
+  },
+  "deferred_decisions": {
+    "note": "Wave-41 carry from the latest numbered close. CT10-REASON-ROW is resolved by the mapped CT10 artifact and simultaneous tracker retirement; every other open decision is outside this bounded three-card integration and remains deferred. Because outstanding_decisions reads only numbered close directories, the next numbered close must carry this resolved CT10 decision as well as the still-open set.",
+    "items": [
+      {
+        "name": "CT10-REASON-ROW",
+        "verdict": "resolved",
+        "ground": "Resolved in both mechanisms: CT10 is now mapped with an executed stage record that declares no frozen unmapped-reason retirement, and the CT10-REASON-ROW named_followup is absent. No replacement unmapped-reason row is needed for a mapped case. DECISION-ALSO-REGISTERED-AS-FOLLOWUP remains open for the general dual-tracking mechanism and records that the next numbered close must carry this resolution."
+      },
+      {
+        "name": "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK",
+        "verdict": "deferred",
+        "ground": "Outside this CT implementation integration; no cadence-policy decision is taken."
+      },
+      {
+        "name": "EXAMPLES-STYLE-SLICE-FANOUT",
+        "verdict": "deferred",
+        "ground": "Outside this CT integration; the cards do not decide example-family layout."
+      },
+      {
+        "name": "F02-WINDOWS-PIN-RUN",
+        "verdict": "deferred",
+        "ground": "No user-validated Windows run is supplied by these Linux integration cards."
+      },
+      {
+        "name": "INDIRECT-CENSUS-FEATURE-UNBUILT",
+        "verdict": "deferred",
+        "ground": "The CT cards neither add the feature CI job nor decide that the instrumentation is disposable."
+      },
+      {
+        "name": "MATRIX-RECORDED-BY-DECISION",
+        "verdict": "deferred",
+        "ground": "This integration does not backfill historical recorded_by fields or decide that source alone is canonical provenance."
+      },
+      {
+        "name": "MATRIX-UPDATED-STALE-AT-WAVE-27",
+        "verdict": "deferred",
+        "ground": "The matrix is regenerated for CT evidence, but this integration does not decide the semantics of its historical updated prose."
+      },
+      {
+        "name": "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED",
+        "verdict": "deferred",
+        "ground": "No platform-family registration policy is chosen by these CT cards."
+      },
+      {
+        "name": "Q-NAMESPACE-DECISION",
+        "verdict": "deferred",
+        "ground": "CT10 and CT24 allocate no new diagnostic code, so this integration supplies no evidence that chooses either namespace arm."
+      },
+      {
+        "name": "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS",
+        "verdict": "deferred",
+        "ground": "This record uses the current sweep but does not define or implement a prose-only residual grammar."
+      },
+      {
+        "name": "SYNC-RULE-TOOLING-COMMIT-SCOPE",
+        "verdict": "deferred",
+        "ground": "This bounded reconciliation does not decide how future close rules classify integrator tooling commits."
+      }
+    ]
+  }
+}

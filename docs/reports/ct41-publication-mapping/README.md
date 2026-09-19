@@ -2,7 +2,7 @@
 
 CT41 keeps its original scenario, **`volatile` used as a completion flag**, and
 expected result, **no synchronization proof**. Its bounded C fixture now runs
-through the source publication API and the CT harness. Validation is in progress.
+through the source publication API and the CT harness. The full standing gate passed; see validation below.
 
 ## Attribution decision
 
@@ -62,7 +62,7 @@ payload happens-before path requires synchronization and that plain/volatile
 flags lack such a path. They are model parity, not case-bound proof evidence.
 No native execution or sanitizer evidence is added by CT41.
 
-The intended ledger is **50/50 mapped, 0 unmapped; 5/50 case-bound proof;
+The ledger is **50/50 mapped, 0 unmapped; 5/50 case-bound proof;
 10/50 gated sanitized-native on Linux/macOS**. Full language conformance remains
 false. Finishing the CT mapping list does not finish legacy-C analysis or certify
 Fluent Bit: production source coverage, dynamic invocation bounds, termination,
@@ -77,3 +77,41 @@ source-model correspondence and bounded execution premises remain disclosed
 under the existing trust rules; retirement claims no wider discharge.
 The prior prerequisite card's instruction to leave CT41 unmapped was its own
 scope restriction; this later mapping supersedes it without rewriting that card.
+
+## Validation
+
+[Gate](gate.json), [captured facts](gate-facts.json) and [reconciliation](reconciliation.json)
+record source checkpoint `a0ca619666a06b1a3a3fb143b2a3935165148f98`.
+**4,812 Rust passed, 0 failed, 10 ignored** across 246 summaries
+(235 Running targets and 9 doc-test sections); **145 Lean audits;
+305 Python tests**, including post-regeneration verification.
+
+Every standing command returned 0: `git submodule update --init --recursive`,
+`cargo test --workspace --no-fail-fast`, `cargo fmt --all -- --check`,
+`cargo clippy --all-targets -- -D warnings`, both `qcore-compiler` examples
+(`reevaluation_probe`, `reevaluation_followup`),
+`python3 scripts/check_lean_audits.py`, and
+`python3 -m unittest discover -s scripts/tests`. Clang was invoked and recorded
+in this worktree. Cargo used two jobs, dev/test debug level 0 and incremental
+compilation off. Native sanitizer checks retained normal process access.
+Provider 122 is carried Unix evidence, not remeasured.
+
+Private logs and individual exits: `/home/cosmo/Documents/GitHub/qcore-c/private/ct-remaining/integration/private/ct41-mapping/gate-20260919T110010Z/`.
+The initial Python check failed because scratch tests depended on CT41 remaining
+unmapped; they now construct that state explicitly, preserving the tested
+refusal arms. An intermediate test edit lost shared constants and was corrected;
+the initial Lean module check used an unavailable tactic and was corrected.
+The first full gate was deliberately interrupted after the enum-value bug was
+reproduced; its logs and interruption record remain under
+`private/ct41-mapping/gate-20260919T105029Z/`. A fresh full run on the
+corrected source supplies the final measurement. Development attempts are recorded in
+`private/ct41-mapping/development-checks.json`. Failed or interrupted attempts
+are not treated as passing gates. The complete final gate is measured above.
+
+Registered follow-ups move **263 → 262**. The before/after residual sweep moves
+54 → 55 lexical candidates, adding only the deliberately retired CT41 name;
+these are not counts of open defects. Records are in
+`private/ct41-mapping/residuals-{before,after}-retirement.txt`.
+The final sweep has 57 candidates: it additionally names this completed card
+and its discharged enum-value finding, both accounted for above
+(`private/ct41-mapping/residuals-final.txt`).
