@@ -10,7 +10,7 @@ use qcore_core::{
 use serde_json::Value;
 use std::collections::BTreeMap;
 
-use crate::legacy_c::{C11TranslationUnit, validate_unrestricted_c11};
+use crate::legacy_c::{C11TranslationUnit, LegacyFunctionScope, validate_unrestricted_c11};
 use crate::typed_c_ast::{children, kind, translation_unit_ast};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -34,8 +34,13 @@ pub struct AtomicPublicationSourceCertificate {
     pub artifact_preprocessed_sha256: String,
     /// Caller-declared label; the digests bind the actual source bytes.
     pub source_revision: String,
+    /// Digest of every declared input/configuration field that can select the
+    /// preprocessed source or typed AST. The two artifact digests alone do not
+    /// bind frontend flags or the declared input identity.
+    pub analysis_configuration_sha256: String,
     pub property: &'static str,
     pub semantic_profile: &'static str,
+    pub scope: &'static str,
     pub evidence_version: &'static str,
     pub publisher: String,
     pub consumer: String,
@@ -55,6 +60,7 @@ pub enum AtomicPublicationSourceRefusal {
     InvalidSource(String),
     InvalidProfile,
     MissingOrAmbiguousDeclaration(&'static str),
+    RedeclaredProfileEntity(&'static str),
     PlainFlagHasNoSynchronization,
     VolatileFlagHasNoSynchronization,
     UnsupportedAtomicFlag,
@@ -63,6 +69,7 @@ pub enum AtomicPublicationSourceRefusal {
     UnsupportedInitializer,
     UnsupportedPublisher,
     UnsupportedConsumer,
+    UnsupportedHiddenAccess,
     ExtraFlagAccess,
     ExtraPayloadAccess,
     ExtraEntryCall,
@@ -98,6 +105,9 @@ pub fn check_atomic_publication_source(
         .map_err(|error| AtomicPublicationSourceRefusal::InvalidSource(format!("{error:?}")))?;
     let ast = translation_unit_ast(&source, unit)
         .map_err(AtomicPublicationSourceRefusal::InvalidSource)?;
+    if contains_hidden_access(&ast) {
+        return Err(AtomicPublicationSourceRefusal::UnsupportedHiddenAccess);
+    }
     let top = children(&ast);
     let flag = one_top_level(top, "VarDecl", profile.flag, "flag")?;
     let payload = one_top_level(top, "VarDecl", profile.payload, "payload")?;
@@ -118,11 +128,21 @@ pub fn check_atomic_publication_source(
     if flag["storageClass"].as_str() != Some("static") {
         return Err(AtomicPublicationSourceRefusal::FlagMustBeStatic);
     }
-    if type_spelling(payload) != Some("int") || payload["storageClass"].as_str() != Some("static") {
+    if type_spelling(payload) != Some("int")
+        || payload["storageClass"].as_str() != Some("static")
+        || !children(payload).is_empty()
+    {
         return Err(AtomicPublicationSourceRefusal::PayloadMustBeStaticInt);
     }
-    let initial_value = only_integer_descendant(flag)
-        .ok_or(AtomicPublicationSourceRefusal::UnsupportedInitializer)?;
+    let [initializer] = children(flag) else {
+        // Attributes are semantic input too. In particular, an AsmLabelAttr
+        // can make two distinct declarations denote the same linker object,
+        // invalidating the separate-location premise. The flag declaration is
+        // therefore exactly one initializer expression and nothing else.
+        return Err(AtomicPublicationSourceRefusal::UnsupportedInitializer);
+    };
+    let initial_value =
+        integer(initializer).ok_or(AtomicPublicationSourceRefusal::UnsupportedInitializer)?;
     let flag_id = node_id(flag).ok_or(AtomicPublicationSourceRefusal::UnsupportedAtomicFlag)?;
     let payload_id =
         node_id(payload).ok_or(AtomicPublicationSourceRefusal::PayloadMustBeStaticInt)?;
@@ -141,6 +161,18 @@ pub fn check_atomic_publication_source(
         node_id(publisher).ok_or(AtomicPublicationSourceRefusal::UnsupportedPublisher)?;
     let consumer_id =
         node_id(consumer).ok_or(AtomicPublicationSourceRefusal::UnsupportedConsumer)?;
+    for (expected_kind, name, selected_id, label) in [
+        ("VarDecl", profile.flag, flag_id, "flag"),
+        ("VarDecl", profile.payload, payload_id, "payload"),
+        ("FunctionDecl", profile.publisher, publisher_id, "publisher"),
+        ("FunctionDecl", profile.consumer, consumer_id, "consumer"),
+    ] {
+        if has_other_declaration_named(&ast, expected_kind, name, selected_id) {
+            return Err(AtomicPublicationSourceRefusal::RedeclaredProfileEntity(
+                label,
+            ));
+        }
+    }
 
     let mut flag_references = 0;
     let mut payload_references = 0;
@@ -174,8 +206,10 @@ pub fn check_atomic_publication_source(
         artifact_raw_sha256: qcore_schemas::sha256_hex(unit.source.as_bytes()),
         artifact_preprocessed_sha256: qcore_schemas::sha256_hex(source.as_bytes()),
         source_revision: source_revision.into(),
+        analysis_configuration_sha256: analysis_configuration_sha256(unit),
         property: "successful release/acquire publication orders one payload write before one payload read",
         semantic_profile: "c11-bounded-atomic-publication-v1",
+        scope: "the selected full preprocessed translation unit, exactly one declared publisher invocation, and exactly one successful selected consumer invocation",
         evidence_version: "ct41-sync-model-v1",
         publisher: profile.publisher.into(),
         consumer: profile.consumer.into(),
@@ -193,6 +227,49 @@ pub fn check_atomic_publication_source(
         ],
         model,
     })
+}
+
+fn contains_hidden_access(node: &Value) -> bool {
+    // These nodes can name an object only in a string or assembler symbol, so
+    // DeclRefExpr identity counting cannot prove the closed-world access set.
+    // Reject them across the complete AST, including unrelated functions and
+    // declarations: either can name the selected static objects.
+    matches!(
+        kind(node),
+        "GCCAsmStmt" | "MSAsmStmt" | "FileScopeAsmDecl" | "AsmLabelAttr" | "AliasAttr"
+    ) || children(node).iter().any(contains_hidden_access)
+}
+
+fn has_other_declaration_named(
+    node: &Value,
+    expected_kind: &str,
+    name: &str,
+    selected_id: &str,
+) -> bool {
+    (kind(node) == expected_kind
+        && node["name"].as_str() == Some(name)
+        && node_id(node).is_some_and(|id| id != selected_id))
+        || children(node)
+            .iter()
+            .any(|child| has_other_declaration_named(child, expected_kind, name, selected_id))
+}
+
+fn analysis_configuration_sha256(unit: &C11TranslationUnit<'_>) -> String {
+    let function_scope = match unit.function_scope {
+        LegacyFunctionScope::PreprocessedTranslationUnit => "preprocessed-translation-unit",
+        LegacyFunctionScope::MainSourceDefinitions => "main-source-definitions",
+    };
+    let value = serde_json::json!({
+        "include_paths": unit.include_paths,
+        "definitions": unit.definitions,
+        "preprocessor_options": unit.preprocessor_options,
+        "dialect": unit.dialect.clang_argument(),
+        "function_scope": function_scope,
+        "input": unit.input,
+    });
+    qcore_schemas::sha256_hex(
+        &serde_json::to_vec(&value).expect("translation-unit configuration is serializable"),
+    )
 }
 
 fn one_top_level<'a>(
@@ -233,9 +310,21 @@ fn one_definition<'a>(
 }
 
 fn function_body(function: &Value) -> Option<&Value> {
-    children(function)
+    let nodes = children(function);
+    if nodes
         .iter()
-        .find(|node| kind(node) == "CompoundStmt")
+        .any(|node| !matches!(kind(node), "ParmVarDecl" | "CompoundStmt"))
+    {
+        return None;
+    }
+    let bodies = nodes
+        .iter()
+        .filter(|node| kind(node) == "CompoundStmt")
+        .collect::<Vec<_>>();
+    match bodies.as_slice() {
+        [body] => Some(*body),
+        _ => None,
+    }
 }
 
 fn type_spelling(node: &Value) -> Option<&str> {
@@ -263,21 +352,31 @@ fn unwrap_implicit(mut node: &Value) -> &Value {
 }
 
 fn integer(node: &Value) -> Option<i64> {
-    let node = unwrap_implicit(node);
-    (kind(node) == "IntegerLiteral")
+    let mut node = node;
+    loop {
+        match kind(node) {
+            "ParenExpr" => {
+                let [child] = children(node) else { return None };
+                node = child;
+            }
+            // Clang represents `_Atomic int flag = 0` by this value-preserving
+            // wrapper. Every integer conversion, including a narrowing
+            // `long`/`unsigned` literal, stays unsupported: looking through an
+            // `IntegralCast` would compare the token value rather than the C
+            // value stored in the int object.
+            "ImplicitCastExpr" if node["castKind"].as_str() == Some("NonAtomicToAtomic") => {
+                let [child] = children(node) else { return None };
+                if type_spelling(node) != Some("_Atomic(int)") {
+                    return None;
+                }
+                node = child;
+            }
+            _ => break,
+        }
+    }
+    (kind(node) == "IntegerLiteral" && type_spelling(node) == Some("int"))
         .then(|| node["value"].as_str()?.parse().ok())
         .flatten()
-}
-
-fn only_integer_descendant(node: &Value) -> Option<i64> {
-    let values = children(node)
-        .iter()
-        .filter_map(integer)
-        .collect::<Vec<_>>();
-    match values.as_slice() {
-        [value] => Some(*value),
-        _ => None,
-    }
 }
 
 fn reference_is(node: &Value, id: &str) -> bool {

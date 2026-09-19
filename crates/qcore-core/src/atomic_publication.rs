@@ -187,5 +187,17 @@ mod tests {
             check_atomic_publication(&case),
             Err(AtomicPublicationRefusal::AmbiguousPublishedValue)
         );
+        let mut case = program();
+        case.observed_value = 2;
+        assert_eq!(
+            check_atomic_publication(&case),
+            Err(AtomicPublicationRefusal::SuccessfulBranchNotObserved)
+        );
+        let mut case = program();
+        case.payload_location = case.flag_location;
+        assert_eq!(
+            check_atomic_publication(&case),
+            Err(AtomicPublicationRefusal::AliasedLocations)
+        );
     }
 }

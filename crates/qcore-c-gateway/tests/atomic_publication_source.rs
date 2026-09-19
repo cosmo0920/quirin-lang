@@ -71,12 +71,134 @@ fn release_acquire_source_derives_the_conditional_publication_edge() {
     assert_eq!(certificate.initial_value, 0);
     assert_eq!(certificate.published_value, 1);
     assert_eq!(certificate.successful_observation, 1);
+    assert_eq!(
+        certificate.semantic_profile,
+        "c11-bounded-atomic-publication-v1"
+    );
+    assert!(
+        certificate
+            .scope
+            .contains("full preprocessed translation unit")
+    );
+    assert_eq!(certificate.analysis_configuration_sha256.len(), 64);
     assert!(
         certificate
             .model
             .execution
             .happens_before
             .contains(&certificate.model.payload_happens_before)
+    );
+}
+
+#[test]
+fn integer_conversions_never_supply_publication_values() {
+    if !clang_available() {
+        return;
+    }
+    // On the test target these literals undergo an IntegralCast to int. The
+    // first stores 0 and the second stores 1; reading their literal tokens as
+    // i64 would invent the very value distinction used to identify reads-from.
+    let narrowed_initializer = SOURCE.replace("done = 0", "done = 4294967296");
+    assert_eq!(
+        check(&narrowed_initializer),
+        Err(AtomicPublicationSourceRefusal::UnsupportedInitializer)
+    );
+    let narrowed_publication = SOURCE.replace(
+        "atomic_store_explicit(&done, 1, memory_order_release);",
+        "atomic_store_explicit(&done, 4294967297, memory_order_release);",
+    );
+    assert_eq!(
+        check(&narrowed_publication),
+        Err(AtomicPublicationSourceRefusal::UnsupportedPublisher)
+    );
+    let converted_ready = SOURCE.replace("seen != 1", "seen != 4294967297");
+    assert_eq!(
+        check(&converted_ready),
+        Err(AtomicPublicationSourceRefusal::UnsupportedConsumer)
+    );
+    let unsigned_initializer = SOURCE.replace("done = 0", "done = 0u");
+    assert_eq!(
+        check(&unsigned_initializer),
+        Err(AtomicPublicationSourceRefusal::UnsupportedInitializer)
+    );
+}
+
+#[test]
+fn declaration_and_function_attributes_are_not_ignored() {
+    if !clang_available() {
+        return;
+    }
+    // Clang accepts these two declarations even though their assembler names
+    // alias. Distinct AST declaration ids are therefore insufficient proof of
+    // distinct memory locations.
+    let assembler_alias = SOURCE.replace(
+        "static _Atomic int done = 0;",
+        "static _Atomic int done __asm__(\"payload\") = 0;",
+    );
+    assert_eq!(
+        check(&assembler_alias),
+        Err(AtomicPublicationSourceRefusal::UnsupportedHiddenAccess)
+    );
+    let attributed_publisher = SOURCE.replace(
+        "void publish(void) {",
+        "__attribute__((noinline)) void publish(void) {",
+    );
+    assert_eq!(
+        check(&attributed_publisher),
+        Err(AtomicPublicationSourceRefusal::UnsupportedPublisher)
+    );
+}
+
+#[test]
+fn inline_assembly_cannot_bypass_the_full_translation_unit_inventory() {
+    if !clang_available() {
+        return;
+    }
+    let hidden_writer = format!(
+        "{SOURCE}\nvoid hidden(void) {{ __asm__ volatile(\"movl $2, done(%%rip)\" ::: \"memory\"); }}\n"
+    );
+    assert_eq!(
+        check(&hidden_writer),
+        Err(AtomicPublicationSourceRefusal::UnsupportedHiddenAccess)
+    );
+    let file_scope_asm = format!("{SOURCE}\n__asm__(\".globl ct41_hidden_symbol\");\n");
+    assert_eq!(
+        check(&file_scope_asm),
+        Err(AtomicPublicationSourceRefusal::UnsupportedHiddenAccess)
+    );
+}
+
+#[test]
+fn redeclarations_cannot_change_the_identity_used_by_reference_counting() {
+    if !clang_available() {
+        return;
+    }
+    let flag_redeclaration = format!(
+        "{SOURCE}\nvoid hidden(void) {{ extern _Atomic int done; atomic_store_explicit(&done, 2, memory_order_relaxed); }}\n"
+    );
+    assert_eq!(
+        check(&flag_redeclaration),
+        Err(AtomicPublicationSourceRefusal::RedeclaredProfileEntity(
+            "flag"
+        ))
+    );
+    let payload_redeclaration =
+        format!("{SOURCE}\nint hidden(void) {{ extern int payload; return payload; }}\n");
+    assert_eq!(
+        check(&payload_redeclaration),
+        Err(AtomicPublicationSourceRefusal::RedeclaredProfileEntity(
+            "payload"
+        ))
+    );
+    let publisher_prototype = SOURCE.replace(
+        "void publish(void) {",
+        "void publish(void);\nvoid publish(void) {",
+    );
+    assert_eq!(
+        check(&publisher_prototype),
+        Err(AtomicPublicationSourceRefusal::RedeclaredProfileEntity(
+            "publisher"
+        ))
     );
 }
 
@@ -136,6 +258,14 @@ fn atomic_spelling_without_release_acquire_is_refused() {
         check(&shadowed_order),
         Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder)
     );
+    let shadowed_load_order = SOURCE.replace(
+        "int consume(void) {",
+        "int consume(int memory_order_acquire) {",
+    );
+    assert_eq!(
+        check(&shadowed_load_order),
+        Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder)
+    );
     let effectful_payload = SOURCE
         .replace(
             "static int payload;",
@@ -145,6 +275,11 @@ fn atomic_spelling_without_release_acquire_is_refused() {
     assert_eq!(
         check(&effectful_payload),
         Err(AtomicPublicationSourceRefusal::UnsupportedPublisher)
+    );
+    let initialized_payload = SOURCE.replace("static int payload;", "static int payload = 3;");
+    assert_eq!(
+        check(&initialized_payload),
+        Err(AtomicPublicationSourceRefusal::PayloadMustBeStaticInt)
     );
 }
 
