@@ -1,0 +1,797 @@
+{
+ "card": "CT-PROOF-LEG-3",
+ "generated": "2026-09-19",
+ "method": "CT-PROOF-LEG-2's method, re-run rather than inherited: every mapped case's own source_fixture compiled through qcore_compiler::compile_files; where the module lowers to a checked task module, executed by qcore_core::task_execution::execute_task_module and handed to qcore_core::task_trace_relation::AdmittedCausalOrder::derive (which is reference_trace followed by declare). Five failure scripts beside the default one. Probe source: probes/survey_probe.rs; raw output: probes/survey.tsv.",
+ "mapped_cases": 47,
+ "default_run_summary": {
+  "DERIVES": 11,
+  "COMPILE-REFUSED": 24,
+  "DERIVE-REFUSED": 1,
+  "NO-TASK-MODULE": 8,
+  "NOT-PROBED": 3
+ },
+ "rows": [
+  {
+   "id": "CT01",
+   "route": "task",
+   "expected": "Accept",
+   "harness_verdict_mode": "native_owned_transfer",
+   "proof_stage": "executed",
+   "default_run": "DERIVES",
+   "default_detail": "7\tAllocated { task: 0, buffer: 1, payload: 42 } | Spawned { child: 1, worker: 0 } | Completed { task: 1, outcome: Buffer(1) } | Joined { child: 1 } | Read { task: 0, buffer: 1, value: 42 } | Dropped { task: 0, buffer: 1 } | Completed { task: 0, outcome: I32(42) }",
+   "scripted_arms": [
+    {
+     "script": "spawn-fail-first",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 1 })\traw=BufferAllocated { task: 0, buffer: 1, initial: 42 } | CreateFailed { worker: 0 } | BufferRead { task: 0, buffer: 1, value: 42 } | BufferDropped { task: 0, buffer: 1 } | Result { task: 0, outcome: I32(42) }"
+    },
+    {
+     "script": "spawn-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    },
+    {
+     "script": "alloc-fail-first",
+     "outcome": "DERIVES-AND-DECLARES",
+     "detail": "2\tAllocationFailed { task: 0 } | Completed { task: 0, outcome: Error(\"AllocError\") }"
+    },
+    {
+     "script": "alloc-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "spawn-fail-second-alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    }
+   ]
+  },
+  {
+   "id": "CT02",
+   "route": "task",
+   "expected": "Reject",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 9, column: 17, line_source: \"                let forbidden = qcore_buffer_read(buffer);\" }, message: \"slot 3 is not an initialized owned buffer\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT03",
+   "route": "task",
+   "expected": "Accept",
+   "harness_verdict_mode": "native_heap_scenarios",
+   "proof_stage": "executed",
+   "default_run": "DERIVES",
+   "default_detail": "19\tAllocated { task: 0, buffer: 1, payload: 1 } | Written { task: 0, buffer: 1, value: 42 } | Spawned { child: 1, worker: 0 } | Loaned { borrower: 1, buffer: 1 } | Spawned { child: 2, worker: 0 } | Loaned { borrower: 2, buffer: 1 } | Read { task: 0, buffer: 1, value: 42 } | Read { task: 1, buffer: 1, value: 42 } | Completed { task: 1, outcome: I32(42) } | Joined { child: 1 } | Returned { borrower: 1, buffer: 1 } | Read { task: 2, buffer: 1, value: 42 } | Completed { task: 2, outcome: I32(42) } | Joined { child: 2 } | Returned { borrower: 2, buffer: 1 } | Written { task: 0, buffer: 1, value: 7 } | Read { task: 0, buffer: 1, value: 7 } | Dropped { task: 0, buffer: 1 } | Completed { task: 0, outcome: I32(7) }",
+   "scripted_arms": [
+    {
+     "script": "spawn-fail-first",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 2 })\traw=BufferAllocated { task: 0, buffer: 1, initial: 1 } | BufferWritten { task: 0, buffer: 1, value: 42 } | CreateFailed { worker: 0 } | BufferDropped { task: 0, buffer: 1 } | Result { task: 0, outcome: I32(0) }"
+    },
+    {
+     "script": "spawn-fail-second",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 4 })\traw=BufferAllocated { task: 0, buffer: 1, initial: 1 } | BufferWritten { task: 0, buffer: 1, value: 42 } | Spawn { task: 1, worker: 0 } | BufferLoaned { borrower: 1, buffer: 1 } | CreateFailed { worker: 0 } | BufferRead { task: 1, buffer: 1, value: 42 } | Result { task: 1, outcome: I32(42) } | Join { task: 1 } | BufferReturned { borrower: 1, buffer: 1 } | BufferDropped { task: 0, buffer: 1 } | Result { task: 0, outcome: I32(42) }"
+    },
+    {
+     "script": "alloc-fail-first",
+     "outcome": "DERIVES-AND-DECLARES",
+     "detail": "2\tAllocationFailed { task: 0 } | Completed { task: 0, outcome: Error(\"AllocError\") }"
+    },
+    {
+     "script": "alloc-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "spawn-fail-second-alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    }
+   ]
+  },
+  {
+   "id": "CT04",
+   "route": "task",
+   "expected": "Reject",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 15, column: 13, line_source: \"            let during = qcore_buffer_write(buffer, 9);\" }, message: \"LoanOutstanding { resource: 1, outstanding: 1024, borrowers: [2, 3] }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT05",
+   "route": "task",
+   "expected": "Reject",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 13, column: 9, line_source: \"        match spawn s reader(read buffer share FULL) {\" }, message: \"ShareExceedsAuthority { resource: 1, outstanding: 1024, requested: 1024 }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT06",
+   "route": "sequential",
+   "expected": "Still same permission identity",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q078\", pass: StandardString, location: SourceLocation { path: \"case.qcore\", line: 25, column: 5, line_source: \"    drop store;\" }, message: \"this statement would release `store` while `same` borrows it; a `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer it addresses may not be written or released until the last statement that reads the view or anything derived from it (statement 7 of this entry)\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT07",
+   "route": "task",
+   "expected": "Accept with bounds/disjointness proof",
+   "harness_verdict_mode": "native_heap_scenarios",
+   "proof_stage": "executed",
+   "default_run": "DERIVE-REFUSED",
+   "default_detail": "Unsupported(UnsupportedObservedEvent { index: 2 })\traw=BufferAllocated { task: 0, buffer: 1, initial: 0 } | Spawn { task: 1, worker: 0 } | BufferLeased { borrower: 1, buffer: 1, low: 0, high: 2 } | Spawn { task: 2, worker: 0 } | BufferLeased { borrower: 2, buffer: 1, low: 2, high: 4 } | BufferByteWritten { task: 1, buffer: 1, index: 0, byte: 9 } | Result { task: 1, outcome: I32(1) } | Join { task: 1 } | BufferLeaseReturned { borrower: 1, buffer: 1 } | BufferByteWritten { task: 2, buffer: 1, index: 2, byte: 9 } | Result { task: 2, outcome: I32(1) } | Join { task: 2 } | BufferLeaseReturned { borrower: 2, buffer: 1 } | BufferByteRead { task: 0, buffer: 1, index: 0, byte: 9 } | BufferByteRead { task: 0, buffer: 1, index: 2, byte: 9 } | BufferDropped { task: 0, buffer: 1 } | Result { task: 0, outcome: I32(9) }",
+   "scripted_arms": [
+    {
+     "script": "spawn-fail-first",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 1 })\traw=BufferAllocated { task: 0, buffer: 1, initial: 0 } | CreateFailed { worker: 0 } | BufferDropped { task: 0, buffer: 1 } | Result { task: 0, outcome: I32(0) }"
+    },
+    {
+     "script": "spawn-fail-second",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Unsupported(UnsupportedObservedEvent { index: 2 })\traw=BufferAllocated { task: 0, buffer: 1, initial: 0 } | Spawn { task: 1, worker: 0 } | BufferLeased { borrower: 1, buffer: 1, low: 0, high: 2 } | CreateFailed { worker: 0 } | BufferByteWritten { task: 1, buffer: 1, index: 0, byte: 9 } | Result { task: 1, outcome: I32(1) } | Join { task: 1 } | BufferLeaseReturned { borrower: 1, buffer: 1 } | BufferDropped { task: 0, buffer: 1 } | Result { task: 0, outcome: I32(1) }"
+    },
+    {
+     "script": "alloc-fail-first",
+     "outcome": "DERIVES-AND-DECLARES",
+     "detail": "2\tAllocationFailed { task: 0 } | Completed { task: 0, outcome: Error(\"AllocError\") }"
+    },
+    {
+     "script": "alloc-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "spawn-fail-second-alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    }
+   ]
+  },
+  {
+   "id": "CT08",
+   "route": "sequential",
+   "expected": "Reject or analyzer potential/unknown",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q078\", pass: StandardString, location: SourceLocation { path: \"case.qcore\", line: 26, column: 5, line_source: \"    store[1] = 88;\" }, message: \"this statement would write a byte of `store` while `head` borrows it; a `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer it addresses may not be written or released until the last statement that reads the view or anything derived from it (statement 10 of this entry); `head` borrows bytes [0, 2) of `store` and this write is inside that range \u2014 a write outside every live borrow's range is admitted\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT09",
+   "route": "sequential",
+   "expected": "Accept only after layout/access proof",
+   "harness_verdict_mode": "sequential_sanitized",
+   "proof_stage": "unassessed",
+   "default_run": "NO-TASK-MODULE",
+   "default_detail": "other",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT11",
+   "route": "sequential",
+   "expected": "Reject",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q078\", pass: StandardString, location: SourceLocation { path: \"case.qcore\", line: 20, column: 5, line_source: \"    store[0] = 106;\" }, message: \"this statement would write a byte of `store` while `view` borrows it; a `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer it addresses may not be written or released until the last statement that reads the view or anything derived from it (statement 5 of this entry)\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT12",
+   "route": "task",
+   "expected": "Capture state restored; no task obligation",
+   "harness_verdict_mode": "native_owned_transfer",
+   "proof_stage": "unassessed",
+   "default_run": "DERIVES",
+   "default_detail": "7\tAllocated { task: 0, buffer: 1, payload: 42 } | Spawned { child: 1, worker: 0 } | Completed { task: 1, outcome: Buffer(1) } | Joined { child: 1 } | Read { task: 0, buffer: 1, value: 42 } | Dropped { task: 0, buffer: 1 } | Completed { task: 0, outcome: I32(42) }",
+   "scripted_arms": [
+    {
+     "script": "spawn-fail-first",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 1 })\traw=BufferAllocated { task: 0, buffer: 1, initial: 42 } | CreateFailed { worker: 0 } | BufferRead { task: 0, buffer: 1, value: 42 } | BufferDropped { task: 0, buffer: 1 } | Result { task: 0, outcome: I32(42) }"
+    },
+    {
+     "script": "spawn-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    },
+    {
+     "script": "alloc-fail-first",
+     "outcome": "DERIVES-AND-DECLARES",
+     "detail": "2\tAllocationFailed { task: 0 } | Completed { task: 0, outcome: Error(\"AllocError\") }"
+    },
+    {
+     "script": "alloc-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "spawn-fail-second-alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    }
+   ]
+  },
+  {
+   "id": "CT13",
+   "route": "task",
+   "expected": "First task must still be joined",
+   "harness_verdict_mode": "native_create_recovery",
+   "proof_stage": "unassessed",
+   "default_run": "DERIVES",
+   "default_detail": "7\tSpawned { child: 1, worker: 0 } | Spawned { child: 2, worker: 0 } | Completed { task: 2, outcome: I32(7) } | Joined { child: 2 } | Completed { task: 1, outcome: I32(42) } | Joined { child: 1 } | Completed { task: 0, outcome: I32(7) }",
+   "scripted_arms": [
+    {
+     "script": "spawn-fail-first",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 0 })\traw=CreateFailed { worker: 0 } | Result { task: 0, outcome: Error(\"SpawnError\") }"
+    },
+    {
+     "script": "spawn-fail-second",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 1 })\traw=Spawn { task: 1, worker: 0 } | CreateFailed { worker: 0 } | Result { task: 1, outcome: I32(42) } | Join { task: 1 } | Result { task: 0, outcome: I32(42) }"
+    },
+    {
+     "script": "alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "alloc-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "spawn-fail-second-alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    }
+   ]
+  },
+  {
+   "id": "CT14",
+   "route": "task",
+   "expected": "No restored parent authority",
+   "harness_verdict_mode": "native_task_scenarios",
+   "proof_stage": "unassessed",
+   "default_run": "DERIVES",
+   "default_detail": "7\tAllocated { task: 0, buffer: 1, payload: 42 } | Spawned { child: 1, worker: 0 } | Completed { task: 1, outcome: Buffer(1) } | Joined { child: 1 } | Read { task: 0, buffer: 1, value: 42 } | Dropped { task: 0, buffer: 1 } | Completed { task: 0, outcome: I32(42) }",
+   "scripted_arms": [
+    {
+     "script": "spawn-fail-first",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 1 })\traw=BufferAllocated { task: 0, buffer: 1, initial: 42 } | CreateFailed { worker: 0 } | BufferRead { task: 0, buffer: 1, value: 42 } | BufferDropped { task: 0, buffer: 1 } | Result { task: 0, outcome: I32(42) }"
+    },
+    {
+     "script": "spawn-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    },
+    {
+     "script": "alloc-fail-first",
+     "outcome": "DERIVES-AND-DECLARES",
+     "detail": "2\tAllocationFailed { task: 0 } | Completed { task: 0, outcome: Error(\"AllocError\") }"
+    },
+    {
+     "script": "alloc-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "spawn-fail-second-alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    }
+   ]
+  },
+  {
+   "id": "CT15",
+   "route": "task",
+   "expected": "No quiescence, no environment reclamation",
+   "harness_verdict_mode": "native_join_failure",
+   "proof_stage": "unassessed",
+   "default_run": "DERIVES",
+   "default_detail": "4\tSpawned { child: 1, worker: 0 } | Completed { task: 1, outcome: I32(42) } | Joined { child: 1 } | Completed { task: 0, outcome: I32(42) }",
+   "scripted_arms": [
+    {
+     "script": "spawn-fail-first",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 0 })\traw=CreateFailed { worker: 0 } | Result { task: 0, outcome: Error(\"SpawnError\") }"
+    },
+    {
+     "script": "spawn-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    },
+    {
+     "script": "alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "alloc-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "spawn-fail-second-alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    }
+   ]
+  },
+  {
+   "id": "CT16",
+   "route": "task",
+   "expected": "Clean locals, return loans, carry declared payload",
+   "harness_verdict_mode": "native_task_scenarios",
+   "proof_stage": "unassessed",
+   "default_run": "DERIVES",
+   "default_detail": "8\tSpawned { child: 1, worker: 1 } | Allocated { task: 1, buffer: 4294967297, payload: 7 } | Allocated { task: 1, buffer: 4294967298, payload: 9 } | Dropped { task: 1, buffer: 4294967298 } | Dropped { task: 1, buffer: 4294967297 } | Completed { task: 1, outcome: Error(\"WorkerError::Failed\") } | Joined { child: 1 } | Completed { task: 0, outcome: Error(\"WorkerError::Failed\") }",
+   "scripted_arms": [
+    {
+     "script": "spawn-fail-first",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 0 })\traw=CreateFailed { worker: 1 } | Result { task: 0, outcome: Error(\"SpawnError\") }"
+    },
+    {
+     "script": "spawn-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(2), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    },
+    {
+     "script": "alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(2), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "alloc-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(2), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "spawn-fail-second-alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(2), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    }
+   ]
+  },
+  {
+   "id": "CT17",
+   "route": "task",
+   "expected": "Join transfers it exactly once",
+   "harness_verdict_mode": "native_heap_scenarios",
+   "proof_stage": "unassessed",
+   "default_run": "DERIVES",
+   "default_detail": "11\tAllocated { task: 0, buffer: 1, payload: 42 } | Spawned { child: 1, worker: 1 } | Allocated { task: 1, buffer: 4294967297, payload: 7 } | Allocated { task: 1, buffer: 4294967298, payload: 9 } | Read { task: 1, buffer: 1, value: 42 } | Dropped { task: 1, buffer: 1 } | Dropped { task: 1, buffer: 4294967297 } | Dropped { task: 1, buffer: 4294967298 } | Completed { task: 1, outcome: I32(42) } | Joined { child: 1 } | Completed { task: 0, outcome: I32(42) }",
+   "scripted_arms": [
+    {
+     "script": "spawn-fail-first",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 1 })\traw=BufferAllocated { task: 0, buffer: 1, initial: 42 } | CreateFailed { worker: 1 } | BufferDropped { task: 0, buffer: 1 } | Result { task: 0, outcome: I32(0) }"
+    },
+    {
+     "script": "spawn-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(2), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    },
+    {
+     "script": "alloc-fail-first",
+     "outcome": "DERIVES-AND-DECLARES",
+     "detail": "2\tAllocationFailed { task: 0 } | Completed { task: 0, outcome: Error(\"AllocError\") }"
+    },
+    {
+     "script": "alloc-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(2), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "spawn-fail-second-alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(2), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    }
+   ]
+  },
+  {
+   "id": "CT18",
+   "route": "task",
+   "expected": "Reject",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q500\", pass: CEmission, location: SourceLocation { path: \"case.qcore\", line: 12, column: 7, line_source: \"      raise Recovery::Failed(payload);\" }, message: \"an error payload requires own<Buffer>\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT19",
+   "route": "task",
+   "expected": "Reject",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 8, column: 9, line_source: \"        let second = spawn tasks worker(copy value)?;\" }, message: \"ScopeBusy(4)\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT20",
+   "route": "task",
+   "expected": "Accept with all result obligations accounted",
+   "harness_verdict_mode": "native_task_scenarios",
+   "proof_stage": "unassessed",
+   "default_run": "DERIVES",
+   "default_detail": "10\tAllocated { task: 0, buffer: 1, payload: 42 } | Spawned { child: 1, worker: 0 } | Spawned { child: 2, worker: 1 } | Completed { task: 2, outcome: I32(7) } | Joined { child: 2 } | Completed { task: 1, outcome: Buffer(1) } | Joined { child: 1 } | Read { task: 0, buffer: 1, value: 42 } | Dropped { task: 0, buffer: 1 } | Completed { task: 0, outcome: I32(42) }",
+   "scripted_arms": [
+    {
+     "script": "spawn-fail-first",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 1 })\traw=BufferAllocated { task: 0, buffer: 1, initial: 42 } | CreateFailed { worker: 0 } | BufferDropped { task: 0, buffer: 1 } | Result { task: 0, outcome: Error(\"SpawnError\") }"
+    },
+    {
+     "script": "spawn-fail-second",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 2 })\traw=BufferAllocated { task: 0, buffer: 1, initial: 42 } | Spawn { task: 1, worker: 0 } | CreateFailed { worker: 1 } | Result { task: 1, outcome: OwnedBuffer(1) } | Join { task: 1 } | BufferDropped { task: 0, buffer: 1 } | Result { task: 0, outcome: Error(\"SpawnError\") }"
+    },
+    {
+     "script": "alloc-fail-first",
+     "outcome": "DERIVES-AND-DECLARES",
+     "detail": "2\tAllocationFailed { task: 0 } | Completed { task: 0, outcome: Error(\"AllocError\") }"
+    },
+    {
+     "script": "alloc-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(2), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "spawn-fail-second-alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(2), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    }
+   ]
+  },
+  {
+   "id": "CT21",
+   "route": "sequential",
+   "expected": "Reject",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q305\", pass: ErrorRegion, location: SourceLocation { path: \"case.qcore\", line: 14, column: 5, line_source: \"    error region R {\" }, message: \"cleanup pack is not discharged\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT22",
+   "route": "composed_epoch",
+   "expected": "Accept",
+   "harness_verdict_mode": "epoch_credit_split",
+   "proof_stage": "unassessed",
+   "default_run": "NO-TASK-MODULE",
+   "default_detail": "other",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT23",
+   "route": "composed_epoch",
+   "expected": "Reject",
+   "harness_verdict_mode": "epoch_credit_split",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q635\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 18, column: 13, line_source: \"            error(close);\" }, message: \"CreditAbandonedAtErrorArm { task: 1, axis: \\\"effort\\\", abandoned: 100 }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT25",
+   "route": "composed_epoch",
+   "expected": "Accept",
+   "harness_verdict_mode": "epoch_credit_split",
+   "proof_stage": "unassessed",
+   "default_run": "NO-TASK-MODULE",
+   "default_detail": "other",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT26",
+   "route": "mutex_guard",
+   "expected": "Accept",
+   "harness_verdict_mode": "checked_mutex_sanitized",
+   "proof_stage": "unassessed",
+   "default_run": "NO-TASK-MODULE",
+   "default_detail": "MutexGuards",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT27",
+   "route": "mutex_guard",
+   "expected": "Reject without a valid composite protocol",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q617\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 6, column: 9, line_source: \"        let n = mutex guards buf;\" }, message: \"FootprintAlreadyProtected { event: 1, mutex: 2 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 7, column: 5, line_source: \"    }\" }, message: \"UnknownMutex { event: 2, mutex: 2 }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT28",
+   "route": "mutex_guard",
+   "expected": "Reject",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q612\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 7, column: 30, line_source: \"            thread scope c { read buf with g; }\" }, message: \"WrongGuardAffinity { event: 3, guard: 1, task: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 7, column: 47, line_source: \"            thread scope c { read buf with g; }\" }, message: \"JoinWhileGuardHeld { event: 4, task: 0 }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT29",
+   "route": "mutex_guard",
+   "expected": "Reject unless restored before unlock",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q614\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 11, column: 13, line_source: \"            raise Fault::Broken;\" }, message: \"InvariantOpenAtErrorExit { event: 4, guard: 1 }\" }, FileDiagnostic { code: \"Q619\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 13, column: 5, line_source: \"    }\" }, message: \"NonquiescentMutexDestruction { event: 5, mutex: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 13, column: 5, line_source: \"    }\" }, message: \"NonquiescentDestruction { event: 6, resource: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 5, column: 5, line_source: \"    thread scope s {\" }, message: \"OutstandingGuard { guard: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 5, column: 5, line_source: \"    thread scope s {\" }, message: \"OutstandingMutex { mutex: 1 }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT30",
+   "route": "mutex_guard",
+   "expected": "Reject",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q615\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 8, column: 9, line_source: \"        }\" }, message: \"GuardBorrowEscape { event: 3, guard: 1, borrow: 1 }\" }, FileDiagnostic { code: \"Q619\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 9, column: 5, line_source: \"    }\" }, message: \"NonquiescentMutexDestruction { event: 4, mutex: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 9, column: 5, line_source: \"    }\" }, message: \"NonquiescentDestruction { event: 5, resource: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 3, column: 5, line_source: \"    thread scope s {\" }, message: \"OutstandingGuard { guard: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 3, column: 5, line_source: \"    thread scope s {\" }, message: \"OutstandingMutex { mutex: 1 }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT31",
+   "route": "mutex_guard",
+   "expected": "Reject",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q619\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 7, column: 5, line_source: \"    }\" }, message: \"NonquiescentMutexDestruction { event: 4, mutex: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 7, column: 5, line_source: \"    }\" }, message: \"NonquiescentDestruction { event: 5, resource: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 3, column: 5, line_source: \"    thread scope s {\" }, message: \"OutstandingMutex { mutex: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 3, column: 5, line_source: \"    thread scope s {\" }, message: \"OutstandingWaiter { mutex: 1, task: 1 }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT32",
+   "route": "mutex_guard",
+   "expected": "Reject in initial profile",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 8, column: 30, line_source: \"            thread scope c { }\" }, message: \"JoinWhileGuardHeld { event: 4, task: 0 }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT33",
+   "route": "mutex_guard",
+   "expected": "Reject rank proof",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q624\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 9, column: 29, line_source: \"        with lock b as gc { with lock a as gd { } }\" }, message: \"LockRankViolation { event: 7, mutex: 1, rank: 1, held_guard: 3, held_mutex: 2, held_rank: 2 }\" }, FileDiagnostic { code: \"Q612\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 9, column: 49, line_source: \"        with lock b as gc { with lock a as gd { } }\" }, message: \"DeadGuard { event: 8, guard: 4 }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT34",
+   "route": "mutex_guard",
+   "expected": "Unsupported in fixed-shape profile",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q613\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 9, column: 62, line_source: \"        with lock m as g { open g; grow g guards y; close g; }\" }, message: \"InvariantOpenAtUnlock { event: 6, guard: 1 }\" }, FileDiagnostic { code: \"Q617\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 9, column: 36, line_source: \"        with lock m as g { open g; grow g guards y; close g; }\" }, message: \"FootprintAlreadyProtected { event: 4, mutex: 1 }\" }, FileDiagnostic { code: \"Q619\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 10, column: 5, line_source: \"    }\" }, message: \"NonquiescentMutexDestruction { event: 8, mutex: 1 }\" }, FileDiagnostic { code: \"Q613\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 9, column: 53, line_source: \"        with lock m as g { open g; grow g guards y; close g; }\" }, message: \"InvalidInvariantWitness { event: 5, guard: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 10, column: 5, line_source: \"    }\" }, message: \"NonquiescentDestruction { event: 11, resource: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 3, column: 5, line_source: \"    thread scope s {\" }, message: \"OutstandingGuard { guard: 1 }\" }, FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 3, column: 5, line_source: \"    thread scope s {\" }, message: \"OutstandingMutex { mutex: 1 }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT35",
+   "route": "epoch",
+   "expected": "Count 4096 once",
+   "harness_verdict_mode": "epoch_bound_figures",
+   "proof_stage": "unassessed",
+   "default_run": "NO-TASK-MODULE",
+   "default_detail": "EpochBound",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT36",
+   "route": "epoch",
+   "expected": "Bound at least 8192 plus modeled overhead",
+   "harness_verdict_mode": "epoch_bound_figures",
+   "proof_stage": "unassessed",
+   "default_run": "NO-TASK-MODULE",
+   "default_detail": "EpochBound",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT37",
+   "route": "task",
+   "expected": "Allocation remains live in completion capsule",
+   "harness_verdict_mode": "native_task_scenarios",
+   "proof_stage": "executed",
+   "default_run": "DERIVES",
+   "default_detail": "7\tSpawned { child: 1, worker: 0 } | Allocated { task: 1, buffer: 4294967297, payload: 42 } | Completed { task: 1, outcome: Buffer(4294967297) } | Joined { child: 1 } | Read { task: 0, buffer: 4294967297, value: 42 } | Dropped { task: 0, buffer: 4294967297 } | Completed { task: 0, outcome: I32(42) }",
+   "scripted_arms": [
+    {
+     "script": "spawn-fail-first",
+     "outcome": "DERIVE-REFUSED",
+     "detail": "Violation(UnattributableEvent { index: 0 })\traw=CreateFailed { worker: 0 } | Result { task: 0, outcome: Error(\"SpawnError\") }"
+    },
+    {
+     "script": "spawn-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    },
+    {
+     "script": "alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "alloc-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"unused allocation outcomes\" }"
+    },
+    {
+     "script": "spawn-fail-second-alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(1), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    }
+   ]
+  },
+  {
+   "id": "CT38",
+   "route": "epoch",
+   "expected": "Reject",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q637\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 3, column: 5, line_source: \"    thread scope e epoch {\" }, message: \"CreditsExceedAllocation { axis: \\\"memory\\\", granted: 12288, allocation: 8192 }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT39",
+   "route": "epoch",
+   "expected": "Reject unsupported claim",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q639\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 6, column: 9, line_source: \"        bound effort as latency;\" }, message: \"WallClockUnavailable\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT40",
+   "route": "legacy_c",
+   "expected": "Not certified; unsupported lifetime/publication protocol",
+   "harness_verdict_mode": "legacy_c_twin",
+   "proof_stage": "unassessed",
+   "default_run": "NOT-PROBED",
+   "default_detail": "",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT42",
+   "route": "sequential",
+   "expected": "Preserve shared protocol-cell identity",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q664\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 25, column: 5, line_source: \"    disjoint client server;\" }, message: \"`client` and `server` are the two custodians of one accepted connection's protocol cell (cell 1): a send through one is decided by state the other established, so `source.socket.v1` refuses to call them disjoint (`DisjointFootprintsV1` SharedProtocolCell)\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT43",
+   "route": "legacy_c",
+   "expected": "Unknown; no whole-program proof",
+   "harness_verdict_mode": "legacy_c_twin",
+   "proof_stage": "unassessed",
+   "default_run": "NOT-PROBED",
+   "default_detail": "",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT44",
+   "route": "task",
+   "expected": "Reject",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 35, column: 9, line_source: \"        drop buffer;\" }, message: \"LoanOutstanding { resource: 1, outstanding: 1024, borrowers: [2] }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT45",
+   "route": "legacy_c",
+   "expected": "Require access contract or report unknown",
+   "harness_verdict_mode": "legacy_c_twin",
+   "proof_stage": "unassessed",
+   "default_run": "NOT-PROBED",
+   "default_detail": "",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT46",
+   "route": "mutex_guard",
+   "expected": "Accept only through verified mutex protocol",
+   "harness_verdict_mode": "checked_mutex_crossing",
+   "proof_stage": "unassessed",
+   "default_run": "NO-TASK-MODULE",
+   "default_detail": "MutexGuards",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT47",
+   "route": "task",
+   "expected": "Reject automatic cross-thread acceptance",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q600\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 32, column: 26, line_source: \"    match spawn s reader(copy buffer) {\" }, message: \"the transferability judgment refuses this capture: no transfer or share contract admits `copy` of `own<Buffer>` across a spawn boundary; `own<Buffer>` crosses only under `move` (custody transferred to the worker), `read PLACE share N` (a counted read share), or `lend PLACE LOW..HIGH` (a disjoint range write lease)\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT48",
+   "route": "mutex_guard",
+   "expected": "Invalidate/re-establish, never assume",
+   "harness_verdict_mode": "reject",
+   "proof_stage": "unassessed",
+   "default_run": "COMPILE-REFUSED",
+   "default_detail": "[FileDiagnostic { code: \"Q616\", pass: Concurrency, location: SourceLocation { path: \"case.qcore\", line: 8, column: 28, line_source: \"        with lock m as h { use f; }\" }, message: \"StaleProtectedFact { event: 5, fact: 2 }\" }]",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT49",
+   "route": "task",
+   "expected": "Validate partial order, not exact total trace",
+   "harness_verdict_mode": "reordering_partial_order",
+   "proof_stage": "unassessed",
+   "default_run": "NO-TASK-MODULE",
+   "default_detail": "other",
+   "scripted_arms": []
+  },
+  {
+   "id": "CT50",
+   "route": "task",
+   "expected": "Old capability cannot authorize new identity",
+   "harness_verdict_mode": "native_task_scenarios",
+   "proof_stage": "executed",
+   "default_run": "DERIVES",
+   "default_detail": "6\tAllocated { task: 0, buffer: 1, payload: 7 } | Dropped { task: 0, buffer: 1 } | Allocated { task: 0, buffer: 2, payload: 42 } | Read { task: 0, buffer: 2, value: 42 } | Dropped { task: 0, buffer: 2 } | Completed { task: 0, outcome: I32(42) }",
+   "scripted_arms": [
+    {
+     "script": "spawn-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(0), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    },
+    {
+     "script": "spawn-fail-second",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(0), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    },
+    {
+     "script": "alloc-fail-first",
+     "outcome": "DERIVES-AND-DECLARES",
+     "detail": "2\tAllocationFailed { task: 0 } | Completed { task: 0, outcome: Error(\"AllocError\") }"
+    },
+    {
+     "script": "alloc-fail-second",
+     "outcome": "DERIVES-AND-DECLARES",
+     "detail": "4\tAllocated { task: 0, buffer: 1, payload: 7 } | Dropped { task: 0, buffer: 1 } | AllocationFailed { task: 0 } | Completed { task: 0, outcome: Error(\"AllocError\") }"
+    },
+    {
+     "script": "spawn-fail-second-alloc-fail-first",
+     "outcome": "EXEC-FAILED",
+     "detail": "TaskDiagnostic { function: Some(0), span: TaskSpan { start: 0, end: 0 }, message: \"reference script contains unused creation outcomes\" }"
+    }
+   ]
+  }
+ ]
+}

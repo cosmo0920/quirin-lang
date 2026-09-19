@@ -1,0 +1,38 @@
+✖ [187/189] Building QCore.Ct50LifetimeIdentity (2.2s)
+trace: .> LEAN_PATH=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a882c757f1dff9ed4/proof/.lake/build/lib/lean /home/cosmo/.elan/toolchains/leanprover--lean4---v4.34.0/bin/lean /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a882c757f1dff9ed4/proof/QCore/Ct50LifetimeIdentity.lean -o /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a882c757f1dff9ed4/proof/.lake/build/lib/lean/QCore/Ct50LifetimeIdentity.olean -i /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a882c757f1dff9ed4/proof/.lake/build/lib/lean/QCore/Ct50LifetimeIdentity.ilean -c /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a882c757f1dff9ed4/proof/.lake/build/ir/QCore/Ct50LifetimeIdentity.c --setup /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a882c757f1dff9ed4/proof/.lake/build/ir/QCore/Ct50LifetimeIdentity.setup.json --json
+error: QCore/Ct50LifetimeIdentity.lean:204:23: unsolved goals
+case read
+t : List Event
+h : dischargesLifetimeIdentity t = true
+hzero : ∀ (a : Event), a ∈ t → ¬isStaleUse a = true
+task✝ candidate value✝ : Nat
+mem : Event.read task✝ candidate value✝ ∈ t
+huse : ¬isStaleUse (Event.read task✝ candidate value✝) = true
+hread : (candidate == stale) = true
+⊢ candidate = 99
+error: QCore/Ct50LifetimeIdentity.lean:206:71: This simp argument is unused:
+  hread
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [isStaleUse, mentions, bufferOf, isAllocationOf, isReleaseOf]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+error: QCore/Ct50LifetimeIdentity.lean:397:69: Tactic `decide` proved that the proposition
+  dischargesLifetimeIdentity escapingStaleCapability = false
+is false
+error: QCore/Ct50LifetimeIdentity.lean:414:60: Tactic `decide` proved that the proposition
+  escapingStaleCapability.length = 6 ∧
+    projection escapingStaleCapability 0 = escapingStaleCapability ∧
+      List.countP (isAllocationOf stale) escapingStaleCapability = 1 ∧
+        List.countP (isReleaseOf stale) escapingStaleCapability = 1 ∧
+          List.countP (isAllocationOf fresh) escapingStaleCapability = 1 ∧
+            List.countP (isReleaseOf fresh) escapingStaleCapability = 1 ∧
+              List.countP isRead escapingStaleCapability = 1 ∧
+                List.countP (readsBack fresh 42) escapingStaleCapability = 1 ∧
+                  [staleAllocation, staleRelease, freshAllocation].Sublist escapingStaleCapability ∧
+                    [freshAllocation, freshRead, freshRelease].Sublist escapingStaleCapability ∧
+                      List.countP isStaleUse escapingStaleCapability = 1
+is false
+Some required targets logged failures:
+- QCore.Ct50LifetimeIdentity
+error: build failed

@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test memory_growth_beyond_the_declared_limit_is_bounded ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.03s
+

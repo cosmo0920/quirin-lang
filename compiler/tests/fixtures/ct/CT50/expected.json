@@ -12,7 +12,8 @@
     "task_ledger_check",
     "task_reference_execution",
     "c_emission",
-    "native_execution"
+    "native_execution",
+    "proof"
   ],
   "evidence_target": "linux",
   "notes": "Linux ScopedOwnedTasksV1 Buffer lifetime identity: two successful root allocations are separated by real munmap/mmap at the same numeric address using MAP_FIXED_NOREPLACE. Native release hooks check generations 1 and 2, exact mapping identity and complete release. Stale read/drop of the first consumed binding after the new allocation reject at Q600. Native stdout agrees with reference generation events. This covers owned Buffer mappings, not arbitrary raw pointers, descriptors, allocator failures or full source/native refinement.",
