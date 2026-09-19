@@ -1,0 +1,11 @@
+archive: docs/reports/w37-corpus-contracts-4/artifacts
+run:     private/b-series/baseline
+
+*diagnostics      raw IDENTICAL  canonical IDENTICAL   c54ad4219fa85793 / c54ad4219fa85793
+ source           raw IDENTICAL  canonical IDENTICAL   ae38f6c93dfbe341 / ae38f6c93dfbe341
+*chunk-contracts  raw IDENTICAL  canonical IDENTICAL   c4f438e4ed3dab3c / c4f438e4ed3dab3c
+ source-effects   raw differs    canonical differs     c199353eddb00e20 / 0bda08ad86da01b1
+ contracts        raw differs    canonical differs     fe945ffb298efc2b / 9de748ce56d2c614
+
+* = verdict-bearing artifact
+RESULT: the verdict-bearing artifacts reproduce the baseline BYTE FOR BYTE.
