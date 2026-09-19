@@ -23,6 +23,7 @@ pub mod indirect_census;
 pub mod legacy_c;
 pub mod legacy_census;
 mod legacy_summary;
+mod legacy_condition_call;
 mod may_alias;
 mod neutral_position;
 mod publication;
