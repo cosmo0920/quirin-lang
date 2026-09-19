@@ -374,75 +374,93 @@ rustfmt cannot move, and the suite is green before and after the reflow.
 
 ## 6. Gate
 
-`gate.json`, with `gate/` beside it holding every step's own exit file. One
-**detached** full gate (`setsid -f` on `scripts/gate.sh`, no `trap '' TERM`,
-every exit to its own file, no pipe), polled by a bounded foreground loop on its
-`DONE` marker, at `3deba6ea` — the tip carrying every code change of this card.
-`git submodule update --init --recursive` ran at the start of the card, exit 0,
-`third_party/libevent` at `d82464a2`.
+`gate.json`, with `gate/` beside it holding every step's own exit file, and the
+two superseded runs under `gate/pre-rebase/` (base `463fa6e8`) and
+`gate/rebase-1/` (base `96142e49`). The final gate is **detached** (`setsid -f`
+on `scripts/gate.sh`, no `trap '' TERM`, every exit to its own file, no pipe),
+polled by a bounded foreground loop on its `DONE` marker, at `8412fc86` on the
+**integration tip `dffa151d`** (which carries `CT-PROOF-LEG-3` and is ahead of
+`origin/main`, that merge being unpushed). `git submodule update --init
+--recursive` ran immediately before it, exit 0.
 
 ```
-4731 passed / 0 failed / 10 ignored   over 238 result summaries
+4739 passed / 0 failed / 10 ignored   over 240 result summaries
                                       ("test result: FAILED" 0 times)
-cargo-test 0   fmt 1   clippy 0   probe 0   followup 0   lean 0   python 1
-fmt-post 0     clippy-post 0      regen 0   python-post 0   clang-version 0
-141 Lean audits ("Passed 141 Lean audits"; proof/Audit*.lean is 141 on disk)
-Python 303 OK                     provider 122 carried
-cargo test 06:53:18Z → 07:15:48Z, whole gate → 07:18:07Z
-disk 247G free at start, 115G at end (three sibling worktrees building)
+cargo-test 0  fmt 0  clippy 0  probe 0  followup 0  lean 0  python 1
+regen 0       python-post 0   clang-version 0
+142 Lean audits ("Passed 142 Lean audits"; proof/Audit*.lean is 142 on disk)
+Python 305 OK                         provider 122 carried
+cargo test 08:01:28Z -> 08:15:37Z, whole gate -> 08:16:02Z
+disk 160G free at start, 159G at end; host load average 2.15 at launch
 ```
 
-No row failed, so **no isolated constraint-16 re-verification was required and
-none is claimed**.
+No row failed in this run, so **no isolated constraint-16 re-verification was
+required here and none is claimed**.
 
-**Two steps exited nonzero in the detached run and both are reported rather than
-smoothed over.**
+### 6.1 A row that was red in the previous run, recorded in both directions
 
-* **`fmt` exit 1** — seven rustfmt diffs, every one whitespace in this card's own
-  `compiler/tests/task_route_tsan.rs` (a call reflowed onto one line, three
-  string lists rewrapped, two assert arguments wrapped). No behaviour and no
-  assertion text moved. Repaired with `cargo fmt --all`; the workspace re-checks
-  clean (`gate/fmt-post.exit` 0) and clippy re-runs clean
-  (`gate/clippy-post.exit` 0). The `cargo_fmt`/`cargo_clippy` figures in
-  `gate.json` are those re-runs; the `cargo test` figure is the detached run's,
-  which compiled and ran the identical assertions before the reflow. The
-  mutation sweep was **re-run in full** against the formatted tree (§5.2).
-* **`python` exit 1** — it ran against the tree in which this card had already
-  edited `named_followups` (257 → 258) and not yet regenerated, and the one
-  failure was
-  `CommittedMatrixIsSelfConsistent::test_each_derived_dimension_matches_the_section_it_counts`
-  (`257 != 258`) — `D02-DIMENSIONS-FOLLOWUP-COUNT`'s tripwire doing its job, the
-  shape the wave-36 through wave-39 closes each recorded. The repair is the
-  regeneration with **this** `gate.json`
-  (`--gate docs/reports/tsan-failure-arms/gate.json`, `gate/regen.exit` 0,
-  `artifacts/regen.log`), and the Python figure recorded is the re-run after it:
-  303 OK (`gate/python-post.exit` 0).
+At the `1065d1b9` run (base `96142e49`), under concurrent sibling builds,
+`removing_the_join_edge_is_reported_under_every_schedule` — **wave 39's row,
+whose behaviour this card did not change** (it runs at `cohort 0`, wave 39's own
+join trigger, §2.3) — failed at its `ct07-case @ forced-together` cell:
+ThreadSanitizer reported a **thread leak** instead of a data race, both workers
+having started and left (`gate/red-row.log`). Every measurement taken since:
+
+| measurement | result |
+|---|---|
+| the whole file in isolation, same binary and tree | **18 passed / 0 failed / 1 ignored** (`gate/row-isolation.exit` 0) |
+| that row alone, 20 runs at load average 5.78 | **0 of 20 red** (`gate/row-isolation-20-runs.log`) |
+| this card's 20-run table, quiet host | **20 of 20 caught** (`artifacts/catch-rates.json`) |
+| the **final** gate, whole workspace suite at load 2.15 | **passed** |
+
+The assertion is **not weakened** and the row is **not ignored**. The mechanism
+is `TSAN-COHORT-TRIGGER-CATCH-COST` (§2.3) seen from the other side: this
+mutation's detection needs the workers' accesses still to be in
+ThreadSanitizer's shadow history when the creator's post-join access runs, and
+anything that lets the workers finish far earlier — a release trigger, or a
+loaded machine descheduling the creator — can cost the report. Registered as
+`TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE`; whether it joins rule 16's enumerated list
+is a decision above a card, since that rule lives in a preserved block.
+
+### 6.2 The one nonzero step
+
+**`python` exit 1** — the suite is **305** tests (the restructure's two new
+reconciliation-sweep cases, none this card's). It ran against the tree in which
+this card had already edited `named_followups` (259 → 262) and not yet
+regenerated, and the one failure was
+`CommittedMatrixIsSelfConsistent::test_each_derived_dimension_matches_the_section_it_counts`
+— `D02-DIMENSIONS-FOLLOWUP-COUNT`'s tripwire doing its job, the shape every
+recent close recorded. Repaired by the regeneration with **this** `gate.json`
+(`gate/regen.exit` 0); the figure recorded is the re-run after it, **305 OK**
+(`gate/python-post.exit` 0).
+
+`fmt` and `clippy` were **clean**. (The first run's `fmt` exit 1 was whitespace
+in this card's own test file, repaired then, with the whole mutation sweep
+re-run against the formatted tree — §5.2.)
 
 **The `clang` recording was made in this worktree** — `gate/clang-version.txt`
 is `clang --version` with `QCORE_CLANG` unset, exit 0, run by this card's own
-gate script — not borrowed from another card
-(`CLANG-RECORDING-UNBOUND-TO-ITS-RUN`).
+gate script — not borrowed (`CLANG-RECORDING-UNBOUND-TO-ITS-RUN`).
 
-**Provider 122 carried, not re-measured:**
-`git diff --name-only 463fa6e8 HEAD -- providers/ crates/qcore-schemas/` is
-empty and `qcore-schemas` is still 14.0.0, so constraint 18 is not engaged.
+**Provider 122 carried, not re-measured:** the diff of `dffa151d..HEAD` over
+`providers/` and `crates/qcore-schemas/` is empty and `qcore-schemas` is still
+14.0.0, so constraint 18 is not engaged.
 
-**Deltas against the wave-40 close's 4,727 / 10 ignored / 303 Python / 141
-Lean:** workspace passed **+4**, all in `compiler/tests/task_route_tsan.rs`
+**Delta:** workspace passed **+4** against the same tree without this card, all
+four in `compiler/tests/task_route_tsan.rs`
 (`every_failure_arm_runs_clean_and_says_which_arm_it_took`,
 `without_the_injection_the_same_subject_takes_the_success_arm`,
 `the_forcing_header_stays_invisible_to_thread_sanitizer`,
 `a_visible_forcing_header_would_hide_the_overlap_which_is_why_the_shipped_one_is_not`);
-ignored **+0** — the measurement harness is the same single ignored row,
-extended rather than added to; the renamed
-`a_join_deleted_is_caught_by_the_cohort_trigger` moves no count; Python **+0**;
-Lean **+0**, because no semantic surface moved.
+ignored **+0**; Python **+0** and Lean **+0** against this base — the 305 and
+the 142 are the restructure's and `CT-PROOF-LEG-3`'s, not this card's, because
+no semantic surface moved here.
 
 **Changes landing after the gate's tip,** named rather than glossed: this
-report's sections 5.2 and 6, the regenerated matrix, the wave-41 increment
-paragraph's final wording and this card's artifacts. No test in this tree reads
-a report README, `AGENTS.md` or the matrix's prose; the Python suite was re-run
-green after the regeneration, and `fmt`/`clippy` after the reflow.
+section, §9's rebase table, the regenerated matrix and `docs/STATUS.md`'s count.
+No test reads a report README, `AGENTS.md`, `docs/STATUS.md` or the matrix's
+prose; the Python suite was re-run green after the regeneration
+(`gate/python-post.log`, 305 OK).
 
 ## 7. Residuals and retirements
 
@@ -487,7 +505,7 @@ green after the regeneration, and `fmt`/`clippy` after the reflow.
   conclude the opposite. Its disposition becomes its first branch: *stated
   permanently as a measured boundary*. Amendment text in §10.
 
-### Registered (five, `recorded_by: TSAN-FAILURE-ARMS`)
+### Registered (six, `recorded_by: TSAN-FAILURE-ARMS`)
 
 * **`TSAN-COHORT-TRIGGER-CATCH-COST`** — the cohort trigger costs catches on the
   join-edge-removal mutation (§2.3): 0/20 on both subjects under
@@ -509,6 +527,18 @@ green after the regeneration, and `fmt`/`clippy` after the reflow.
   is the schedule-shape assertion. Discharge: derive the count from the checked
   task IR (the `TrySpawn` spans preceding the first `Join`) and assert the row's
   literal against it; or state permanently.
+* **`TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE`** (added at the rebase, §6.1) — wave
+  39's `removing_the_join_edge_is_reported_under_every_schedule` missed its
+  `ct07-case @ forced-together` cell inside a full workspace run under
+  concurrent sibling builds, reporting a thread leak instead of a data race,
+  and passed 18/18 in isolation, 0 of 20 red on the row alone at load 5.78, and
+  again inside the final gate's own suite at load 2.15. Both facts recorded;
+  the assertion is not weakened and the row is not ignored. Discharge: measure
+  it under controlled load on the `P02-FLAKE` method and either add it to rule
+  16's enumerated rows — a decision above a card, that rule living in a
+  preserved block — or make the row insensitive by asserting on the report
+  *set* rather than on a data race, which weakens what it measures and needs
+  its own argument.
 * **`STATUS-SOURCES-CHECKPOINT-VS-LIVE-TRACKER`** (added at the rebase, §9) —
   `docs/reports/docs-structure-compression/status-sources.json` is a frozen
   checkpoint whose own `rederive_status.py --check` compares it to *live*
@@ -576,13 +606,20 @@ measurement in this report is affected and the 20-run catch-rate table was
 | the one conflicting hunk — this card's follow-up-count edit in the old 173 KB `AGENTS.md`, now a 5.4 KB router carrying no counts | resolved to the router; the figure re-routed to `docs/STATUS.md`'s `Registered follow-ups` row, **258** |
 | `docs/development/increments/README.md` (both sides moved it) | merged cleanly; the current-record pointer and the wave table still name `wave-41.md`, re-checked after the rebase |
 | `docs/reports/INDEX.md`, a generated lookup this branch did not know about | regenerated with `scripts/build_docs_index.py`; `--check` was red before (this report missing) and is green after |
-| the standing gate | **re-run in full on the rebased tree** (§6); the Python suite is 305 tests there, not 303 |
-| everything else — the harness, the rows, the mutation sweep, the catch rates, the matrix delta, the increment paragraph | unchanged, byte for byte |
+| the standing gate | **re-run in full on each rebased tree** (§6); the Python suite is 305 tests there, not 303 |
+| a **second** rebase, onto the integration tip `dffa151d` carrying `CT-PROOF-LEG-3` (Lean 141 → 142, tracker 257 → 259) | the matrix resolved to that tip's and `scripts/register.py` re-run idempotently on top, so the delta is −3/+6 wherever it lands; `docs/STATUS.md` 259 → 262; `wave-41.md` carries both cards' paragraphs, this one newest-first |
+| the constraint-15h evidence citation | landed **outside** every preserved block, in a new "Amendments after the 2026-09-19 migration checkpoint" section of `docs/agents/buffers-records.md`; `verify.py` exit 0, page 24,721 bytes (§10 item 9) |
+| everything else — the harness, the rows, the mutation sweep, the catch rates, the increment paragraph's measurements | unchanged, byte for byte |
 
-**Nothing of this card belongs in a preserved span,** because it lands no
-standing constraint (§10 item 9), and none was edited. One finding is
-disclosed rather than repaired: `rederive_status.py --check` is stale by exactly
-this card's tracker delta and by nothing else (§10 item 10).
+**No preserved block is edited.** The card lands no new rule, and its one
+evidence citation goes in the migration-safe amendments section (§10 item 9);
+`docs/reports/docs-structure-compression/verify.py` exits **0** on this tree
+(`gate/verify.log`). Two findings are disclosed rather than repaired:
+`rederive_status.py --check` is stale by exactly this card's tracker delta and
+by nothing else (§10 item 10), and `check_residuals.py` fails **identically at
+the unmodified base** `dffa151d` — `lost: CT-PROOF-LEG-3, CT03-PROOF-ALPHABET`,
+names that card's own merge made tracked — measured both ways and inherited
+rather than caused here (`gate/check-residuals-at-base.log`).
 
 ## 10. For the integrator
 
@@ -637,37 +674,45 @@ Every item below is an item.
    of its own discharge — stated permanently as a measured boundary. Boundaries
    carried: TSAN-ALLOC-FAILURE-ARM-SINGLE-THREADED (the allocation-failure arm
    creates no thread on either subject) and TSAN-COHORT-TRIGGER-CATCH-COST."*
-7. **Register five residuals** with `recorded_by: TSAN-FAILURE-ARMS` and
-   `source: docs/reports/tsan-failure-arms/README.md`, texts as in §7:
-   `TSAN-COHORT-TRIGGER-CATCH-COST`, `TSAN-ALLOC-FAILURE-ARM-SINGLE-THREADED`,
+7. **Register six residuals** with `recorded_by: TSAN-FAILURE-ARMS` and
+   `source: docs/reports/tsan-failure-arms/README.md`, texts as in §7: four
+   the card's own findings — `TSAN-COHORT-TRIGGER-CATCH-COST`,
+   `TSAN-ALLOC-FAILURE-ARM-SINGLE-THREADED`,
    `TSAN-FAILURE-ARM-COHORT-SUPPLIED-BY-HAND`,
-   `TSAN-VISIBLE-HEADER-ONE-MUTATION-NOT-A-QUANTIFIER` and, added at the rebase,
-   `STATUS-SOURCES-CHECKPOINT-VS-LIVE-TRACKER`.
-8. **`named_followups` arithmetic:** 257 at the base, −3 retired, +5 registered
-   = **259**. After the restructure the stated count is
-   `docs/STATUS.md`'s `| Registered follow-ups | **259** |` row — **that is the
+   `TSAN-VISIBLE-HEADER-ONE-MUTATION-NOT-A-QUANTIFIER` — and two found while
+   rebasing, `TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE` (§6.1) and
+   `STATUS-SOURCES-CHECKPOINT-VS-LIVE-TRACKER` (§10 item 10). All six are
+   applied in this tree by `scripts/register.py`, which is idempotent and was
+   re-run after each rebase.
+8. **`named_followups` arithmetic:** **259** at the rebased base `dffa151d`
+   (`CT-PROOF-LEG-3` having moved it from 257), −3 retired, +6 registered
+   = **262**. All three retirement targets were verified present by id on *this*
+   base before anything moved (`artifacts/residuals-before.txt`). After the
+   restructure the stated count is
+   `docs/STATUS.md`'s `| Registered follow-ups | **262** |` row — **that is the
    one ledger figure this card edits**, and `AGENTS.md` (now a 5.4 KB router)
    carries no count to keep in step. The matrix was regenerated **with
    `--gate`** pointing at this card's `gate.json`, and `docs/reports/INDEX.md`
    was regenerated by `scripts/build_docs_index.py` so this report is listed
    (`--check` was red before and is green after).
-9. **No standing constraint is landed or amended by this card**, and no §L21 row
-   moves — so **nothing of this card belongs inside a `<!-- preserved:… -->`
-   span**, and none was edited. Two routed pages carry TSan sentences this card
-   extends in fact but not in rule — `docs/agents/buffers-records.md`'s
-   constraint-15h task-route paragraph ("wave 39's `TSAN-ROWS-2` runs **this
-   flagship itself** … clean, unforced and under both forced cohort schedules",
-   now also on both failure arms) and `docs/agents/concurrency.md`'s CT46
-   sentence. Both sit inside preserved spans whose payload
-   `docs/reports/docs-structure-compression/verify.py` asserts reconstructs the
-   pre-restructure `AGENTS.md` **byte for byte** (sha256 plus exact slice
-   equality), so an evidence citation appended there would redden that check.
-   This card therefore **appends no citation** — the same decision it already
-   took for CT07's `expected.json` (§8) — and leaves the wording to the
-   integrator, who can move the sentence and the migration span together. If the
-   integrator wants the enforcement indexed, it belongs beside
-   `TASK-ROUTE-TSAN-PTHREAD-BINDING`'s existing treatment rather than as a new
-   numbered constraint; this card does not propose one.
+9. **One constraint amendment, landed where the migration allows it.** The
+   card lands **no new rule** and moves no §L21 row; what it does add is the
+   **evidence citation** that constraint 15h's own text already carries for wave
+   39 (*"wave 39's `TSAN-ROWS-2` runs this flagship itself … clean, unforced and
+   under both forced cohort schedules"*), extended by the cohort trigger and the
+   failure arms. That paragraph sits inside a `<!-- preserved:constraint-15h -->`
+   block whose payload `docs/reports/docs-structure-compression/verify.py`
+   asserts reconstructs the pre-restructure `AGENTS.md` **byte for byte**, so the
+   amendment is written **outside** it, in a new
+   **"Amendments after the 2026-09-19 migration checkpoint"** section at the
+   foot of `docs/agents/buffers-records.md` — the page that holds
+   `constraint-15h`. Checked, not assumed: `verify.py` **exits 0** (828 local
+   links) and the page is **24,721 bytes**, under the 32 KiB cap. The boundary
+   sentences beside the citation are **not weakened**: the exclusivity claim
+   still rests on C11 3.14, the ASan/UBSan/LSan run and the allocation identity,
+   with the TSan rows beside them; `TASK-ROUTE-TSAN-PTHREAD-BINDING` and
+   `TASK-ROUTE-TSAN-WINDOWS-APPLE-RUN` stand. `docs/agents/concurrency.md`'s
+   CT46 sentence is **untouched**, because CT46's row does not move.
 10. **`rederive_status.py --check` is stale on this branch, and deliberately not
     repaired here.** `docs/reports/docs-structure-compression/status-sources.json`
     is that card's frozen checkpoint of the live inputs, and

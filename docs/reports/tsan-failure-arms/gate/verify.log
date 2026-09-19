@@ -1,0 +1,17 @@
+{
+  "source_commit": "463fa6e8d0c44c23e402dd78bdc146963f0244ca",
+  "source_reconstruction": "exact after reversible link rebasing",
+  "source_bytes_preserved": 226193,
+  "standing_rules": 50,
+  "hard_invariants": 6,
+  "root_guides_before_bytes": 226193,
+  "root_guides_after_bytes": 14379,
+  "root_reduction_percent": 93.64,
+  "largest_policy_page_bytes": 32262,
+  "startup_guidance_assumed_injected": {
+    "before_bytes": 205431,
+    "after_bytes": 6163
+  },
+  "local_links_checked": 829,
+  "limits": "Explicit reading packets, not runtime telemetry or token billing; evidence archives retained and total repository bytes may grow."
+}

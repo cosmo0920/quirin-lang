@@ -5,10 +5,10 @@ requirements 17
 cells 68
 ct rows 50 stages 17
 histogram native_execution {'executed': 19, 'not_applicable': 28}
-depth {'elaborate': 4, 'epoch_bound_check': 4, 'legacy_c_twin': 3, 'mutex_invariant_check': 8, 'native_execution': 7, 'native_sanitized': 8, 'proof': 4, 'sequential_whole_program': 1, 'task_ledger_check': 7, 'task_lowering': 1}
-observations {'c_emission': 36, 'elaborate': 44, 'epoch_bound_check': 7, 'epoch_lowering': 7, 'legacy_c_twin': 4, 'mutex_invariant_check': 11, 'mutex_lowering': 11, 'mutex_reference_execution': 3, 'native_execution': 51, 'native_sanitized': 32, 'parse': 47, 'proof': 4, 'sequential_reference_execution': 1, 'sequential_whole_program': 2, 'task_ledger_check': 22, 'task_lowering': 23, 'task_reference_execution': 29}
+depth {'elaborate': 4, 'epoch_bound_check': 4, 'legacy_c_twin': 3, 'mutex_invariant_check': 8, 'native_execution': 6, 'native_sanitized': 8, 'proof': 5, 'sequential_whole_program': 1, 'task_ledger_check': 7, 'task_lowering': 1}
+observations {'c_emission': 36, 'elaborate': 44, 'epoch_bound_check': 7, 'epoch_lowering': 7, 'legacy_c_twin': 4, 'mutex_invariant_check': 11, 'mutex_lowering': 11, 'mutex_reference_execution': 3, 'native_execution': 51, 'native_sanitized': 32, 'parse': 47, 'proof': 5, 'sequential_reference_execution': 1, 'sequential_whole_program': 2, 'task_ledger_check': 22, 'task_lowering': 23, 'task_reference_execution': 29}
 buckets {'blocked-on-unimplemented-syntax': 1, 'DECIDABLE-NOW (with a distinguishing fixture)': 1, 'blocked-on-gateway-expressiveness (C-twin measured)': 1}
-named followups 260
-lean audits 141
+named followups 262
+lean audits 142
 provider packages {'qcore.chunkio': '0.13.0', 'qcore.cmetrics': '0.2.0', 'qcore.ctraces': '0.1.0', 'qcore.libevent': '0.2.0', 'qcore.librdkafka': '0.1.0'}
 contract modules 88

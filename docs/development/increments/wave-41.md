@@ -80,15 +80,29 @@ clean ThreadSanitizer run is evidence about the paths that executed and not a
 proof of race freedom. Five residuals registered
 (`TSAN-COHORT-TRIGGER-CATCH-COST`, `TSAN-ALLOC-FAILURE-ARM-SINGLE-THREADED`,
 `TSAN-FAILURE-ARM-COHORT-SUPPLIED-BY-HAND`,
-`TSAN-VISIBLE-HEADER-ONE-MUTATION-NOT-A-QUANTIFIER` and, found while rebasing
-onto the documentation restructure `96142e49`,
-`STATUS-SOURCES-CHECKPOINT-VS-LIVE-TRACKER`), so the tracker moves
-**257 → 259** and the stated count moves with it — in `docs/STATUS.md`'s
-`Registered follow-ups` row, since the restructured `AGENTS.md` is a router that
-carries no counts. The card lands **no standing constraint**, so it edits nothing
-inside a `<!-- preserved:… -->` span; the restructure touched no crate source,
-no test and no fixture, so every measurement above stands unchanged across the
-rebase and only the standing gate was re-run.
+`TSAN-VISIBLE-HEADER-ONE-MUTATION-NOT-A-QUANTIFIER`) and two more found while
+rebasing — `TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE`, wave 39's join-edge row missing
+its `ct07-case` forced-together cell under concurrent sibling load and passing it
+18/18 in isolation, 0 of 20 red on the row alone and again inside the final
+suite, both facts recorded and the assertion not weakened; and
+`STATUS-SOURCES-CHECKPOINT-VS-LIVE-TRACKER`, the migration's frozen
+`status-sources.json` going stale by exactly this card's tracker delta and by
+nothing else, disclosed rather than repaired because the archive is frozen
+(constraint 21) and the check is in no gate. The card was rebased twice, onto
+the documentation restructure `96142e49` and then onto the integration tip
+`dffa151d` carrying `CT-PROOF-LEG-3`; neither touches this card's harness, its
+subjects or any emitting source, so **every measurement above stands unchanged
+across both rebases** and only the standing gate was re-run. The tracker moves
+**259 → 262** on that base, and the stated count moves with it in
+`docs/STATUS.md`'s `Registered follow-ups` row, the restructured `AGENTS.md`
+being a router that carries no counts. The card lands **no new rule**; its one
+constraint amendment — the ThreadSanitizer evidence citation constraint 15h
+already carries for wave 39, extended by the cohort trigger and the failure arms
+— is written **outside** every `<!-- preserved:… -->` block, in a new
+"Amendments after the 2026-09-19 migration checkpoint" section of
+`docs/agents/buffers-records.md`, with
+`docs/reports/docs-structure-compression/verify.py` exiting **0** and the page at
+24,721 bytes, under the 32 KiB cap.
 Evidence: `docs/reports/tsan-failure-arms/README.md`.
 
 **`CT-PROOF-LEG-3` (2026-09-19).** The fifth executed `proof` row, and the
