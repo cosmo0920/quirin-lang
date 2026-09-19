@@ -156,3 +156,32 @@ including cross-topic rules, before editing; the index is not a substitute.
     extern, std-io and task readers have used since their own cards.
     `wave22-pipe-intrinsic-stage`.
 <!-- preserved:constraint-15b:end -->
+
+<a id="amendments-after-the-migration-checkpoint"></a>
+
+## Amendments after the 2026-09-19 migration checkpoint
+
+The blocks above are the migration's **preserved checkpoint text**, which
+`docs/reports/docs-structure-compression/verify.py` reconstructs byte for byte;
+amendments therefore land here, beside the frozen text rather than inside it
+(standing constraint 21's own discipline). They are part of the rule.
+
+<a id="constraint-14-amendments"></a>
+
+### 14 — census entry, card `OWNED-FIELD-ROUTE-REACH` (wave 41)
+
+Reserves **+0 words and +0 tokens** — the copy bind `let NAME = NAME;` is four
+things the lexer already produces — and its census is the one that **found a
+collision and kept it**. The claimed token shape occurs **29 times** across the
+535 `.qcore`/`.qc` files of the tree, every occurrence `source.socket.v1`'s
+creation form (`let listener = tcp;`, `let client = udp;`) in the socket, HTTP,
+event and CT42 families. The two constructs are separated by **route selection
+and by nothing else**, so the card deliberately did *not* add the shape to
+`source_std_buffer::buffer_use` — the function route selection and the composed
+string route both read this route's statements through — and pinned a socket
+program's admission and the composed route's `Q068` rather than arguing them
+(`COPY-BIND-SOCKET-SHAPE-COLLISION`). `: string` at a field type and a
+record-typed field are censused at **zero** each, which is why giving those two
+spellings their own by-name refusals changes no program's verdict.
+
+Add `owned-field-route-reach` to the rule's closing evidence list.

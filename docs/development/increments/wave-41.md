@@ -3,8 +3,10 @@
 [Development table of contents](../../../DEVELOPMENT.md) · [History index](README.md)
 
 > Preserved checkpoint narrative. Counts, platform observations and old
-> instructions describe their recorded dates. Current agent rules and headline
-> status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
+> instructions describe their recorded dates. Current agent rules are routed by
+> [AGENTS.md](../../../AGENTS.md) to the [rule reference](../../agents/README.md)
+> and headline status lives in [docs/STATUS.md](../../STATUS.md); each card's
+> report owns its evidence.
 
 **`OWNED-FIELD-ROUTE-REACH` (2026-09-19).** Wave 39's five owned-field rules
 were measured for **reach** before anything was changed, by a shipped script
