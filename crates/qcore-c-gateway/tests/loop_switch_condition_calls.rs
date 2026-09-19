@@ -1,0 +1,180 @@
+//! Card B03-LOOP-AND-SWITCH: modeled custody calls in C controlling
+//! expressions, through the real Clang-backed gateway.
+
+use qcore_c_gateway::legacy_c::{
+    AnalysisStatus, C11TranslationUnit, LegacyDiagnosticKind, ResourceContracts,
+    UnrestrictedLegacyResult, analyze_unrestricted_c11,
+};
+use qcore_contract::contract_loader::load_resource_contract_sources;
+
+const DECLARATIONS: &str = "\
+void *q_alloc(void); void q_free(void *); \
+int r_release_code(void *p); int r_consume_code(void *p); int r_borrow_code(void *p);";
+
+const LOOP: &str = "unmodeled call, aggregate or indirect access in loop condition";
+const FOR: &str = "unmodeled call, aggregate or indirect access in for-loop condition";
+const DO_WHILE: &str = "unmodeled call, aggregate or indirect access in do-while condition";
+const SWITCH: &str = "unmodeled call, aggregate or indirect access in switch expression";
+
+fn contracts() -> ResourceContracts {
+    load_resource_contract_sources(
+        &[
+            (
+                "q_base.qcore".to_owned(),
+                include_str!("fixtures/contracts/q_base.qcore").to_owned(),
+            ),
+            (
+                "r_return_call.qcore".to_owned(),
+                include_str!("fixtures/contracts/r_return_call.qcore").to_owned(),
+            ),
+        ]
+        .into_iter()
+        .collect(),
+    )
+    .unwrap()
+}
+
+#[derive(Debug)]
+struct Run {
+    status: AnalysisStatus,
+    diagnostics: Vec<LegacyDiagnosticKind>,
+}
+
+impl Run {
+    fn unsupported(&self) -> Vec<String> {
+        self.diagnostics
+            .iter()
+            .filter_map(|kind| match kind {
+                LegacyDiagnosticKind::Unsupported { description } => Some(description.clone()),
+                _ => None,
+            })
+            .collect()
+    }
+
+    fn double_releases(&self) -> usize {
+        self.diagnostics
+            .iter()
+            .filter(|kind| matches!(kind, LegacyDiagnosticKind::DoubleRelease { .. }))
+            .count()
+    }
+}
+
+fn run(body: &str) -> Run {
+    let source = format!("{DECLARATIONS}\n{body}\n");
+    let outcome = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        },
+        "subject",
+        &contracts(),
+    )
+    .unwrap_or_else(|error| panic!("valid fixture rejected by Clang: {error:?}\n{source}"));
+    let summary = match outcome {
+        UnrestrictedLegacyResult::Safe(certificate) => certificate.summary,
+        UnrestrictedLegacyResult::Unsafe(summary) => summary,
+        UnrestrictedLegacyResult::Unknown { partial, .. } => {
+            partial.expect("these fixtures project partially")
+        }
+    };
+    let function = summary
+        .functions
+        .get("subject")
+        .expect("the entry is projected");
+    Run {
+        status: function.status,
+        diagnostics: function
+            .diagnostics
+            .iter()
+            .map(|diagnostic| diagnostic.kind.clone())
+            .collect(),
+    }
+}
+
+fn clang_available() -> bool {
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG configuration is invalid: {reason}"
+            );
+            eprintln!("skipping Clang-dependent B03 test: {reason}");
+            false
+        }
+    }
+}
+
+#[test]
+fn loop_headers_evaluate_the_call_again_on_the_back_edge() {
+    if !clang_available() {
+        return;
+    }
+    for (header, refusal) in [
+        ("while (r_release_code(p)) { }", LOOP),
+        ("for (; r_release_code(p); ) { }", FOR),
+        ("do { } while (r_release_code(p));", DO_WHILE),
+    ] {
+        let run = run(&format!(
+            "void subject(void) {{ void *p = q_alloc(); {header} }}"
+        ));
+        assert!(
+            !run.unsupported().contains(&refusal.to_owned()),
+            "{header}: {:?}",
+            run.unsupported()
+        );
+        assert_ne!(run.status, AnalysisStatus::Safe, "{header}");
+        assert!(run.double_releases() > 0, "{header}: {run:?}");
+    }
+}
+
+#[test]
+fn switch_evaluates_the_call_once_before_any_arm() {
+    if !clang_available() {
+        return;
+    }
+    let run = run("void subject(void) {
+            void *p = q_alloc();
+            switch (r_release_code(p)) { case 0: break; default: break; }
+        }");
+    assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
+    assert!(!run.unsupported().contains(&SWITCH.to_owned()), "{run:?}");
+    assert_eq!(run.double_releases(), 0, "{run:?}");
+}
+
+#[test]
+fn every_loop_keeps_its_exit_successor_after_modeling_the_call() {
+    if !clang_available() {
+        return;
+    }
+    for header in [
+        "while (r_borrow_code(p)) { break; }",
+        "for (; r_borrow_code(p); ) { break; }",
+        "do { break; } while (r_borrow_code(p));",
+    ] {
+        let run = run(&format!(
+            "void subject(void) {{ void *p = q_alloc(); {header} }}"
+        ));
+        assert_ne!(run.status, AnalysisStatus::Safe, "{header}: {run:?}");
+        assert!(
+            run.diagnostics
+                .iter()
+                .any(|kind| matches!(kind, LegacyDiagnosticKind::Leak { .. })),
+            "the retained exit must still expose the live acquisition: {header}: {run:?}"
+        );
+    }
+}
+
+#[test]
+fn conditionally_evaluated_and_post_release_accesses_stay_refused() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "void subject(int ready) { void *p = q_alloc(); while (ready && r_release_code(p)) { } }",
+        "struct cell { int value; }; void subject(struct cell *p) { while (r_release_code(p) + p->value) { } }",
+    ] {
+        let run = run(body);
+        assert!(run.unsupported().contains(&LOOP.to_owned()), "{run:?}");
+    }
+}

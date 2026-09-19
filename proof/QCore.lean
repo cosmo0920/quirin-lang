@@ -165,6 +165,7 @@ import QCore.RegionJoinsLoan
 import QCore.CleanupTaskComposition
 import QCore.LoopBudget
 import QCore.LoopWindows
+import QCore.LoopSwitchCallEvaluation
 import QCore.StdString
 import QCore.StringSliceIo
 import QCore.StringConcat
