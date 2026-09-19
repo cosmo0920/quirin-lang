@@ -3,8 +3,8 @@
   "spec_revision": "0.3",
   "integration_base_revision": "ea0e54e162a2ea16c9fc2332b9e01f8e0c3bc4a3",
   "full_conformance": false,
-  "ct_mapped": 47,
-  "ct_unmapped": 3,
+  "ct_mapped": 48,
+  "ct_unmapped": 2,
   "findings": [
     {
       "id": "R01",
@@ -250,7 +250,7 @@
     }
   },
   "ct_evidence": {
-    "note": "Card T00-CT-SCHEMA (T00.9): the fields listed in generated_fields are GENERATED from docs/reevaluation/ct_manifest.json's per-case stage evidence and are not hand-kept. compiler/tests/ct_corpus.rs::ct_acceptance_summary_is_derived_from_the_manifest recomputes every one of them in Rust and refuses any drift; scripts/ct_stage_summary.py recomputes the same values in Python for docs/reports/remaining-d02/build_matrix.py and is covered by scripts/tests/test_ct_stage_summary.py. Each manifest stage entry names the executor, the artifact, the invocation count and the exact host gate behind its status, and the CT harness rederives all of that from its own dispatch, so a status here can never be a host-unconditional word. ct_mapped/ct_unmapped are retained for existing readers but are inventory scalars, not coverage: on their own they treat a source-rejection case with zero native runs and a five-scenario sanitized case as one identical unit (T00 finding O7). case_depth is the repair \u2014 it gives each mapped case its deepest executed stage, so CT18 (task_lowering) and CT17 (native_sanitized) are no longer the same number. 10 of 46 mapped cases (CT03, CT07, CT09, CT17, CT22, CT25, CT26, CT34, CT46, CT49) carry GATED sanitized-native evidence, 5 (CT14, CT16, CT20, CT37, CT50) carry recorded_not_gated transcripts that no workspace test re-runs, and 3 of 46 (CT01, CT03, CT37) carry proof evidence (cards CT01-PROOF-LEG, CT-PROOF-LEG-2 and CT03-PROOF-ALPHABET). Both halves of this sentence are RE-READ FROM THE MANIFEST by every card that touches it rather than carried: it read '0 of 42' until card CT-WIRE-LANE-3 refreshed it, then still read '2 of 43 (CT01, CT37)' after the wave-31 integrator flipped CT03's proof stage and still read '7 of 43' after card CT-COMPOSED-NATIVE's runner moved CT22 and CT25 into the gate -- both staleness windows closed by card CT-WIRE-LANE-4 -- and still read '9 of 45' and '3 of 45' after card CT-CTWIN-LANE mapped CT46 and grew the denominator to 46, a THIRD staleness window, closed here by card MUTEX-SHARE-CROSS-EMISSION. That card is also what moves the gated numerator to 10: the checked mutex backend learned to render a non-nested fork/join trace with real C11 children, so CT46's mutex_reference_execution, c_emission, native_execution and native_sanitized stages move from unassessed to executed on the case's own artifact, driven by compiler/tests/ct_corpus.rs::run_mutex_crossing. A moved numerator is evidence about one case's artifact and not conformance, the denominator does not move, and the card claims no contention or data-race evidence: the checked trace is a total order whose child segment is contiguous, so the creator performs no trace event while the child runs (MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION). The wave-17 denominator grew by a C twin (CT40), which has no c_emission stage and therefore contributes to neither of those counts by construction; the wave-26 denominator grew by two sequential-route refusals that emit nothing (CT06, CT11) and by CT49, which is the one case of the three that does carry sanitized evidence - sixteen runs of its own emitted C, compared up to the declared qcore.obs-reordering.v1 relation rather than byte for byte, which is what that case's expectation asks for. The wave-28 denominator (card CT-WIRE-LANE-2) grew by two sequential-route refusals that emit nothing (CT08, CT21), one composed_epoch refusal (CT23), and the sequential route's first two ACCEPTED cases (CT07, CT09), each carrying one sanitized run of its own emitted C compared per stream with the route's checked observation - the two that moved the gated count to 7 of 41. The wave-29 denominator (card CT22-WIRE) grew by one composed_epoch ACCEPTED case, CT22 \u2014 card REGION-CREDIT-JOINS's parent-local error region after every join, mapped under the epoch_credit_split verdict mode widened for the accepting shape, its published abandoned/restored/spent quantities compared wholesale \u2014 whose admitted module emits the task route's own C that no harness runner executes, so its emission and native stages read unassessed and it moves neither the gated count (7 of 42) nor proof (0 of 42). Mapping, not conformance. The wave-31 denominator (card CT-WIRE-LANE-3) grew by one more composed_epoch ACCEPTED case, CT25 \u2014 cards REGION-JOINS-DUTIES' and REGION-JOINS-LOAN's lending parent whose region adopts the owner after every join and whose discharge destroys it after the loan's expiry, mapped under the epoch_credit_split verdict mode widened for the adopting shape (the pinned evidence gains the released duty list and the derived capture list, compared wholesale) \u2014 on exactly CT22's emission footing, so the gated count is 7 of 43 and proof 2 of 43. Mapping, not conformance. The wave-32 denominator (card CT-WIRE-LANE-4) grew by two task-route REFUSALS that emit nothing, CT44 and CT47, so neither the gated count nor proof moved. Both are mapped on the nearest expressible shape with the scenario's one inexpressible word published as a boundary in its own semantic profile -- the CT06 precedent. CT47 ('Raw pointer is Copy but no transfer/share contract exists') is refused by the transferability judgment at the crossing construct, naming the missing contract and enumerating the three this kind carries, with ALL THREE supplied by accepted controls that each admit the program and the automatic half pinned as the grammar's own Q000; its boundary is that no pointer type exists and no QCore type is both freely duplicable and resource-bearing, so the combination the scenario names is prevented by the type system. CT44 ('Stack capture expires or environment moves before join') is refused by the checked task ledger's LoanOutstanding naming the borrowing task, attributed to a written `drop buffer;` whose executed meaning the admitting control demonstrates, with both disjuncts pinned and the construct separated from its position in both directions; its boundary is that the captured storage is a heap buffer bound to a parent-frame local, there being no stack-allocated capturable resource. Two of card T00's archived blockers for CT44 are measured obsolete and said so: the available rejection is now about the capture rather than the handle, and 'environment moves before join' has the source form T00 recorded it lacked (true at that checkpoint, where share captures did not lower at all). NO RETIREMENT is declared for either, and that is the mechanism working: both were archive-held, so no lane record carries a row to retire. Mapping, not conformance. Counting rules: a stage is `executed` for a case when a named CT harness runner runs it on that case's own fixture; a stage the case's route does not have, or that its own refusal provably never reaches, is `not_applicable` (CT18 is refused during task lowering, so it never reaches the task ledger); `proof` is never `not_applicable`, because a theorem could be bound to any case, while `native_sanitized` is `not_applicable` on a route with no `c_emission` stage and `unassessed` everywhere else (narrowed deliberately by card T08-SRC-CT when the check-only epoch route landed, and applying again to card CT-CTWIN's `legacy_c` route, which analyzes C rather than emitting any); observation_counts count runner invocations, not cases; host_scope reports `any` for a stage that runs on every host and the exact target_os list otherwise; tool_scope is the separate axis a `legacy_c` stage needs, reporting `none` for a stage that needs no external tool and the exact tool list otherwise, because a C-twin stage runs on any target and only where Clang exists; and a case's accepted control is never counted as that case's own stage, with two recorded exceptions \u2014 a control that varies only the declared contracts re-analyzes the case's own artifact, so it counts as a second observation of that case (card CT-CTWIN, CT45); and a control the harness itself compiles and runs under the sanitizers carries its case's four native stages, which then name that CONTROL's file as their artifact rather than the case's fixture, because a mutex rejection's own fixture is a refusal no compiler ever sees (card CT34-SANITIZED, CT34). The harness derives the artifact rather than assuming it, so the manifest must name the exact file the runner executed. The per-CT rows live in the acceptance matrix. The triage fields are the exception to 'generated from stage evidence': the manifest carries no blocker field for an unmapped case, so their second input is the per-case bucket labels. Card HYGIENE-14 derived the COUNTED SET from the manifest's own mapping_status (finding D02-BUCKETS-STALE, where the hand-kept mirror had drifted to a sum of 22 against ct_unmapped 18), and left this sentence still calling unmapped_bucket_counts hand-maintained; card CT-LABELS corrects that and derives the LABEL as well (finding D02-BUCKETS-LABELS). A CT lane that examines a case and leaves it unmapped now records the bucket it measured in its own ct_stage_evidence.json under unmapped_reasons, the newest such record wins over card T00's archived triage, and unmapped_label_sources publishes which of the two decided each case: currently 3 of the 7 measured (CT41/CT42 by wave 17, CT46 by wave 13) and the other 4 (CT10, CT24, CT44, CT47) still t00-archive, which is card T00's 2026-09-07 analysis rather than a current measurement. Both derivations refuse a bucket naming a mapped case, two records labelling one case differently with no supersession, and a label_source the evidence-file set cannot support. The wave-17 CT lane added the one admitted exception to the first of those: a lane that MAPS a case whose bucket an earlier lane recorded declares the retirement in its own record, under retired_unmapped_reasons as {CASE: {retires, mapped_by}}, so the earlier record stays byte-identical instead of being edited \u2014 the in-place rewrite of a frozen archive that card CT-LABELS built this mechanism to replace and card HYGIENE-16 reverted. Both derivations refuse a retirement of a still unmapped case, one naming a record that carries no row for that case or is not the newest that does, one naming a record that is not strictly earlier, and two records retiring one case; a row for a mapped case with no retirement at all still fails closed. CT40's wave-9 row is retired that way, and so are CT11's wave-3 row (wave-26 CT lane), CT07's and CT08's wave-26 rows (wave-28 CT lane), and CT22's wave-28 row (wave-29 CT lane, card CT22-WIRE). newly_decidable_not_mapped and its reasons remain hand-maintained analysis; only their 'still unmapped' half is checked.",
+    "note": "Card T00-CT-SCHEMA (T00.9): the fields listed in generated_fields are GENERATED from docs/reevaluation/ct_manifest.json's per-case stage evidence and are not hand-kept. compiler/tests/ct_corpus.rs::ct_acceptance_summary_is_derived_from_the_manifest recomputes every one of them in Rust and refuses any drift; scripts/ct_stage_summary.py recomputes the same values in Python for docs/reports/remaining-d02/build_matrix.py and is covered by scripts/tests/test_ct_stage_summary.py. Each manifest stage entry names the executor, the artifact, the invocation count and the exact host gate behind its status, and the CT harness rederives all of that from its own dispatch, so a status here can never be a host-unconditional word. ct_mapped/ct_unmapped are retained for existing readers but are inventory scalars, not coverage: on their own they treat a source-rejection case with zero native runs and a five-scenario sanitized case as one identical unit (T00 finding O7). case_depth is the repair \u2014 it gives each mapped case its deepest executed stage, so CT18 (task_lowering) and CT17 (native_sanitized) are no longer the same number. 10 of 48 mapped cases (CT03, CT07, CT09, CT17, CT22, CT25, CT26, CT34, CT46, CT49) carry GATED sanitized-native evidence, 5 (CT14, CT16, CT20, CT37, CT50) carry recorded_not_gated transcripts that no workspace test re-runs, and 5 of 48 (CT01, CT03, CT07, CT37, CT50) carry proof evidence (cards CT01-PROOF-LEG, CT-PROOF-LEG-2, CT03-PROOF-ALPHABET, CT07-TWO-THREAD-PROOF-LEG and CT-PROOF-LEG-3). Both halves of this sentence are RE-READ FROM THE MANIFEST by every card that touches it rather than carried: it read '0 of 42' until card CT-WIRE-LANE-3 refreshed it, then still read '2 of 43 (CT01, CT37)' after the wave-31 integrator flipped CT03's proof stage and still read '7 of 43' after card CT-COMPOSED-NATIVE's runner moved CT22 and CT25 into the gate -- both staleness windows closed by card CT-WIRE-LANE-4 -- and still read '9 of 45' and '3 of 45' after card CT-CTWIN-LANE mapped CT46 and grew the denominator to 46, a THIRD staleness window, closed here by card MUTEX-SHARE-CROSS-EMISSION. That card is also what moves the gated numerator to 10: the checked mutex backend learned to render a non-nested fork/join trace with real C11 children, so CT46's mutex_reference_execution, c_emission, native_execution and native_sanitized stages move from unassessed to executed on the case's own artifact, driven by compiler/tests/ct_corpus.rs::run_mutex_crossing. A moved numerator is evidence about one case's artifact and not conformance, the denominator does not move, and the card claims no contention or data-race evidence: the checked trace is a total order whose child segment is contiguous, so the creator performs no trace event while the child runs (MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION). The wave-17 denominator grew by a C twin (CT40), which has no c_emission stage and therefore contributes to neither of those counts by construction; the wave-26 denominator grew by two sequential-route refusals that emit nothing (CT06, CT11) and by CT49, which is the one case of the three that does carry sanitized evidence - sixteen runs of its own emitted C, compared up to the declared qcore.obs-reordering.v1 relation rather than byte for byte, which is what that case's expectation asks for. The wave-28 denominator (card CT-WIRE-LANE-2) grew by two sequential-route refusals that emit nothing (CT08, CT21), one composed_epoch refusal (CT23), and the sequential route's first two ACCEPTED cases (CT07, CT09), each carrying one sanitized run of its own emitted C compared per stream with the route's checked observation - the two that moved the gated count to 7 of 41. The wave-29 denominator (card CT22-WIRE) grew by one composed_epoch ACCEPTED case, CT22 \u2014 card REGION-CREDIT-JOINS's parent-local error region after every join, mapped under the epoch_credit_split verdict mode widened for the accepting shape, its published abandoned/restored/spent quantities compared wholesale \u2014 whose admitted module emits the task route's own C that no harness runner executes, so its emission and native stages read unassessed and it moves neither the gated count (7 of 42) nor proof (0 of 42). Mapping, not conformance. The wave-31 denominator (card CT-WIRE-LANE-3) grew by one more composed_epoch ACCEPTED case, CT25 \u2014 cards REGION-JOINS-DUTIES' and REGION-JOINS-LOAN's lending parent whose region adopts the owner after every join and whose discharge destroys it after the loan's expiry, mapped under the epoch_credit_split verdict mode widened for the adopting shape (the pinned evidence gains the released duty list and the derived capture list, compared wholesale) \u2014 on exactly CT22's emission footing, so the gated count is 7 of 43 and proof 2 of 43. Mapping, not conformance. The wave-32 denominator (card CT-WIRE-LANE-4) grew by two task-route REFUSALS that emit nothing, CT44 and CT47, so neither the gated count nor proof moved. Both are mapped on the nearest expressible shape with the scenario's one inexpressible word published as a boundary in its own semantic profile -- the CT06 precedent. CT47 ('Raw pointer is Copy but no transfer/share contract exists') is refused by the transferability judgment at the crossing construct, naming the missing contract and enumerating the three this kind carries, with ALL THREE supplied by accepted controls that each admit the program and the automatic half pinned as the grammar's own Q000; its boundary is that no pointer type exists and no QCore type is both freely duplicable and resource-bearing, so the combination the scenario names is prevented by the type system. CT44 ('Stack capture expires or environment moves before join') is refused by the checked task ledger's LoanOutstanding naming the borrowing task, attributed to a written `drop buffer;` whose executed meaning the admitting control demonstrates, with both disjuncts pinned and the construct separated from its position in both directions; its boundary is that the captured storage is a heap buffer bound to a parent-frame local, there being no stack-allocated capturable resource. Two of card T00's archived blockers for CT44 are measured obsolete and said so: the available rejection is now about the capture rather than the handle, and 'environment moves before join' has the source form T00 recorded it lacked (true at that checkpoint, where share captures did not lower at all). NO RETIREMENT is declared for either, and that is the mechanism working: both were archive-held, so no lane record carries a row to retire. Mapping, not conformance. Counting rules: a stage is `executed` for a case when a named CT harness runner runs it on that case's own fixture; a stage the case's route does not have, or that its own refusal provably never reaches, is `not_applicable` (CT18 is refused during task lowering, so it never reaches the task ledger); `proof` is never `not_applicable`, because a theorem could be bound to any case, while `native_sanitized` is `not_applicable` on a route with no `c_emission` stage and `unassessed` everywhere else (narrowed deliberately by card T08-SRC-CT when the check-only epoch route landed, and applying again to card CT-CTWIN's `legacy_c` route, which analyzes C rather than emitting any); observation_counts count runner invocations, not cases; host_scope reports `any` for a stage that runs on every host and the exact target_os list otherwise; tool_scope is the separate axis a `legacy_c` stage needs, reporting `none` for a stage that needs no external tool and the exact tool list otherwise, because a C-twin stage runs on any target and only where Clang exists; and a case's accepted control is never counted as that case's own stage, with two recorded exceptions \u2014 a control that varies only the declared contracts re-analyzes the case's own artifact, so it counts as a second observation of that case (card CT-CTWIN, CT45); and a control the harness itself compiles and runs under the sanitizers carries its case's four native stages, which then name that CONTROL's file as their artifact rather than the case's fixture, because a mutex rejection's own fixture is a refusal no compiler ever sees (card CT34-SANITIZED, CT34). The harness derives the artifact rather than assuming it, so the manifest must name the exact file the runner executed. The per-CT rows live in the acceptance matrix. The triage fields are the exception to 'generated from stage evidence': the manifest carries no blocker field for an unmapped case, so their second input is the per-case bucket labels. Card HYGIENE-14 derived the COUNTED SET from the manifest's own mapping_status (finding D02-BUCKETS-STALE, where the hand-kept mirror had drifted to a sum of 22 against ct_unmapped 18), and left this sentence still calling unmapped_bucket_counts hand-maintained; card CT-LABELS corrects that and derives the LABEL as well (finding D02-BUCKETS-LABELS). A CT lane that examines a case and leaves it unmapped now records the bucket it measured in its own ct_stage_evidence.json under unmapped_reasons, the newest such record wins over card T00's archived triage, and unmapped_label_sources publishes which of the two decided each case: currently 3 of the 5 unmapped cases measured at that checkpoint (CT41/CT42 by wave 17, CT46 by wave 13), while CT24 remains t00-archive; CT10, CT44 and CT47 have since mapped, which is card T00's 2026-09-07 analysis rather than a current measurement. Both derivations refuse a bucket naming a mapped case, two records labelling one case differently with no supersession, and a label_source the evidence-file set cannot support. The wave-17 CT lane added the one admitted exception to the first of those: a lane that MAPS a case whose bucket an earlier lane recorded declares the retirement in its own record, under retired_unmapped_reasons as {CASE: {retires, mapped_by}}, so the earlier record stays byte-identical instead of being edited \u2014 the in-place rewrite of a frozen archive that card CT-LABELS built this mechanism to replace and card HYGIENE-16 reverted. Both derivations refuse a retirement of a still unmapped case, one naming a record that carries no row for that case or is not the newest that does, one naming a record that is not strictly earlier, and two records retiring one case; a row for a mapped case with no retirement at all still fails closed. CT40's wave-9 row is retired that way, and so are CT11's wave-3 row (wave-26 CT lane), CT07's and CT08's wave-26 rows (wave-28 CT lane), and CT22's wave-28 row (wave-29 CT lane, card CT22-WIRE). newly_decidable_not_mapped and its reasons remain hand-maintained analysis; only their 'still unmapped' half is checked. Card CT10-SOURCE-LAYOUT maps CT10 as the 48th case on a dedicated property-only route: footprint lowering and footprint check execute on the case artifact, while the scoped-task ledger, failure-path custody, emission, reference/native execution, sanitizer, and case-bound proof do not. Mapping is denominator growth, not conformance.",
     "derived_from": [
       "docs/reevaluation/ct_manifest.json",
       "docs/reports/remaining-t00/coverage.json",
@@ -278,83 +278,93 @@
       "docs/reports/ct-lane-5/ct_stage_evidence.json",
       "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
       "docs/reports/ct42-cell-route/ct_stage_evidence.json",
-      "docs/reports/ct-proof-leg-3/ct_stage_evidence.json"
+      "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
+      "docs/reports/ct10-source-layout/ct_stage_evidence.json"
     ],
     "reporting_host": "linux",
     "stage_histogram": {
       "parse": {
-        "executed": 47
+        "executed": 48
       },
       "elaborate": {
-        "executed": 44,
+        "executed": 45,
         "not_applicable": 3
+      },
+      "footprint_lowering": {
+        "executed": 1,
+        "not_applicable": 47
+      },
+      "footprint_check": {
+        "executed": 1,
+        "not_applicable": 47
       },
       "task_lowering": {
         "executed": 23,
-        "not_applicable": 24
+        "not_applicable": 25
       },
       "task_ledger_check": {
         "executed": 22,
-        "not_applicable": 25
+        "not_applicable": 26
       },
       "mutex_lowering": {
         "executed": 11,
-        "not_applicable": 36
+        "not_applicable": 37
       },
       "mutex_invariant_check": {
         "executed": 11,
-        "not_applicable": 36
+        "not_applicable": 37
       },
       "epoch_lowering": {
         "executed": 7,
-        "not_applicable": 40
+        "not_applicable": 41
       },
       "epoch_bound_check": {
         "executed": 7,
-        "not_applicable": 40
+        "not_applicable": 41
       },
       "sequential_whole_program": {
         "executed": 2,
-        "not_applicable": 45
+        "not_applicable": 46
       },
       "sequential_reference_execution": {
         "executed": 1,
-        "not_applicable": 46
+        "not_applicable": 47
       },
       "task_reference_execution": {
         "executed": 13,
-        "not_applicable": 34
+        "not_applicable": 35
       },
       "mutex_reference_execution": {
         "executed": 3,
-        "not_applicable": 44
+        "not_applicable": 45
       },
       "c_emission": {
         "executed": 19,
-        "not_applicable": 28
+        "not_applicable": 29
       },
       "native_execution": {
         "executed": 19,
-        "not_applicable": 28
+        "not_applicable": 29
       },
       "native_sanitized": {
         "executed": 10,
-        "not_applicable": 7,
+        "not_applicable": 8,
         "recorded_not_gated": 5,
         "unassessed": 25
       },
       "legacy_c_twin": {
         "executed": 3,
-        "not_applicable": 44
+        "not_applicable": 45
       },
       "proof": {
         "executed": 5,
-        "unassessed": 42
+        "unassessed": 43
       }
     },
     "depth_profile": {
       "elaborate": 4,
       "epoch_bound_check": 4,
+      "footprint_check": 1,
       "legacy_c_twin": 3,
       "mutex_invariant_check": 8,
       "native_execution": 6,
@@ -366,16 +376,18 @@
     },
     "observation_counts": {
       "c_emission": 36,
-      "elaborate": 44,
+      "elaborate": 45,
       "epoch_bound_check": 7,
       "epoch_lowering": 7,
+      "footprint_check": 1,
+      "footprint_lowering": 1,
       "legacy_c_twin": 4,
       "mutex_invariant_check": 11,
       "mutex_lowering": 11,
       "mutex_reference_execution": 3,
       "native_execution": 51,
       "native_sanitized": 32,
-      "parse": 47,
+      "parse": 48,
       "proof": 5,
       "sequential_reference_execution": 1,
       "sequential_whole_program": 2,
@@ -384,7 +396,6 @@
       "task_reference_execution": 29
     },
     "unmapped_bucket_counts": {
-      "blocked-on-unimplemented-syntax": 1,
       "DECIDABLE-NOW (with a distinguishing fixture)": 1,
       "blocked-on-gateway-expressiveness (C-twin measured)": 1
     },
@@ -420,6 +431,12 @@
         "any"
       ],
       "epoch_lowering": [
+        "any"
+      ],
+      "footprint_check": [
+        "any"
+      ],
+      "footprint_lowering": [
         "any"
       ],
       "legacy_c_twin": [
@@ -479,6 +496,7 @@
       "CT07": "proof",
       "CT08": "elaborate",
       "CT09": "native_sanitized",
+      "CT10": "footprint_check",
       "CT11": "elaborate",
       "CT12": "native_execution",
       "CT13": "native_execution",
@@ -543,6 +561,12 @@
       "epoch_lowering": [
         "none"
       ],
+      "footprint_check": [
+        "none"
+      ],
+      "footprint_lowering": [
+        "none"
+      ],
       "legacy_c_twin": [
         "clang"
       ],
@@ -585,7 +609,6 @@
       ]
     },
     "unmapped_label_sources": {
-      "CT10": "t00-archive",
       "CT24": "t00-archive",
       "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
     }

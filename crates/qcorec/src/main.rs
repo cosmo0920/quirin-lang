@@ -250,10 +250,18 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 }
                 _ => "",
             };
-            println!(
-                "checked {} function(s); entry `{entry}`{profile}",
-                module.checked.function_count()
-            );
+            if let qcore_compiler::CheckedSourceModule::BitfieldTasks(checked) = &module.checked {
+                println!(
+                    "checked field-footprint independence for {} worker write(s); entry `{entry}`; \
+                     property-only successful spawn/join window; no scoped-task lifetime proof or C emission",
+                    checked.lowered.writes.len()
+                );
+            } else {
+                println!(
+                    "checked {} function(s); entry `{entry}`{profile}",
+                    module.checked.function_count()
+                );
+            }
             print_declared_assumptions(&module);
         } else {
             println!(

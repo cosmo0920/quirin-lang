@@ -27,6 +27,10 @@ fn examples() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../examples")
 }
 
+fn repository() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
+}
+
 /// The fenced block immediately following `<!-- MARKER -->` in a README.
 fn block(readme: &str, marker: &str) -> String {
     let readme = readme.replace("\r\n", "\n");
@@ -55,6 +59,19 @@ fn check(arguments: &[PathBuf]) -> std::process::Output {
         command.arg(argument);
     }
     command.output().unwrap()
+}
+
+#[test]
+fn bitfield_property_route_prints_its_success_window_boundary() {
+    let output = check(&[
+        repository().join("compiler/tests/fixtures/bitfield_concurrency/addressable.qcore")
+    ]);
+    assert!(output.status.success(), "{output:?}");
+    assert_eq!(
+        String::from_utf8_lossy(&output.stdout),
+        "checked field-footprint independence for 2 worker write(s); entry `main`; \
+property-only successful spawn/join window; no scoped-task lifetime proof or C emission\n"
+    );
 }
 
 /// The bare waiver listing the page publishes.

@@ -97,11 +97,20 @@ does not extract or execute that code. -/
 structure RustCorrespondence (left right : WorkerWrite) (rustDecision : Option Decision) : Prop where
   sameDecision : rustDecision = sourceDecision left right
 
+/-- The Rust route's successful-window premise. The source uses propagating
+spawn/join operations, but this property model does not prove their failure
+edges or the scoped-task lifetime ledger. -/
+structure SuccessfulTaskWindow (spawnResults joinResults : List Bool) : Prop where
+  allSpawnsSucceed : spawnResults.all id = true
+  allJoinsSucceed : joinResults.all id = true
+
 /-- What the model proves about Rust is conditional on the correspondence
 premise, rather than silently treating a transcription as extraction. -/
 theorem rust_refuses_adjacent_writes_under_correspondence
     (unit leftBit leftWidth rightBit rightWidth leftByte leftSize rightByte rightSize : Nat)
     (rustDecision : Option Decision)
+    (spawnResults joinResults : List Bool)
+    (_successful : SuccessfulTaskWindow spawnResults joinResults)
     (corresponds : RustCorrespondence
       ⟨0, 3, .bits unit leftBit leftWidth leftByte leftSize⟩
       ⟨1, 2, .bits unit rightBit rightWidth rightByte rightSize⟩

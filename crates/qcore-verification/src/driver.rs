@@ -168,6 +168,17 @@ pub enum CustodyPayloadProfile {
 pub struct CheckedBitfieldTaskModule {
     pub lowered: qcore_frontend::source_bitfield_concurrency::LoweredBitfieldTaskModule,
     pub certificate: qcore_core::disjoint_footprint::FootprintCertificate,
+    /// Premises outside the footprint question. This property-only route does
+    /// not run the scoped-task lifetime ledger: in particular, it does not
+    /// prove recovery if a later spawn or join propagates failure.
+    pub assumptions: BTreeSet<BitfieldTaskAssumption>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum BitfieldTaskAssumption {
+    /// The modeled write window is the successful path on which every spawn
+    /// starts and every join returns. Failure-path custody remains unproved.
+    SpawnAndJoinSucceed,
 }
 
 /// Checked evidence is explicit about the executed semantic profile. Task
@@ -763,9 +774,11 @@ impl CheckedSourceModule {
         match self {
             Self::Sequential(program) => program.functions.len(),
             Self::ScopedTasks(program) => program.module().functions.len(),
-            // One entry plus the worker bodies whose writes are attributed in
-            // the retained lowering.
-            Self::BitfieldTasks(module) => module.lowered.writes.len() + 1,
+            // This route checks one footprint property over retained writes;
+            // it does not run the function/task checker, so counting the entry
+            // or workers here would turn a property certificate into function
+            // coverage.
+            Self::BitfieldTasks(_) => 0,
             // One entry function is checked on this route; the profile admits
             // no calls, so the count is not a coverage claim about a module.
             Self::CheckedMutexGuards(_) => 1,
@@ -811,10 +824,11 @@ pub enum SourceExecutionProfile {
     SequentialCleanupV1,
     ScopedCopyTasksV1,
     ScopedOwnedTasksV1,
-    /// Two or more real task spawns carry write authority to fields of one
-    /// explicitly laid-out source record. Their pairwise independence is
-    /// decided by the unedited `DisjointFootprintsV1` checker; adjacent
-    /// bit-fields sharing a storage unit refuse as `Q661` before emission.
+    /// Property-only check of field-write independence on the successful task
+    /// window. The unedited `DisjointFootprintsV1` checker decides the actual
+    /// spawn captures; adjacent bit-fields sharing a storage unit refuse as
+    /// `Q661`. This profile proves no spawn/join failure-path custody and emits
+    /// no C.
     BitfieldConcurrencyV1,
     /// `ScopedReadLoansV1`: the owned-task profile plus one bounded scoped read
     /// loan of the whole read authority — never copied, moved, re-lent,
@@ -3871,6 +3885,7 @@ fn compile_bitfield_task_source(
         checked: CheckedSourceModule::BitfieldTasks(Box::new(CheckedBitfieldTaskModule {
             lowered,
             certificate,
+            assumptions: BTreeSet::from([BitfieldTaskAssumption::SpawnAndJoinSucceed]),
         })),
         execution_profile: SourceExecutionProfile::BitfieldConcurrencyV1,
         declaration_count: typed.declarations.len(),

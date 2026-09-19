@@ -591,6 +591,12 @@ pub fn lower_source_bitfield_tasks(
     {
         errors.push(diagnostic(function.span, "the entry must return `unit`"));
     }
+    if !function.value.parameters.is_empty() {
+        errors.push(diagnostic(
+            function.span,
+            "the bounded entry takes no parameters",
+        ));
+    }
     if body.statements.len() != 3
         || let_object(source, body.statements[0].span).is_none()
         || !matches!(body.statements[1].value, StatementKind::ThreadScope { .. })

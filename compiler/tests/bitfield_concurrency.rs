@@ -5,7 +5,8 @@
 //! can map CT10 only after reconciling this card's evidence with the ledger.
 
 use qcore_compiler::{
-    CheckedSourceModule, CompileOptions, SourceExecutionProfile, SourceFile, compile_files,
+    BitfieldTaskAssumption, CheckedSourceModule, CompileOptions, SourceExecutionProfile,
+    SourceFile, compile_files,
 };
 use qcore_core::disjoint_footprint::{
     DerivedFootprint, DisjointnessJudgement, FootprintAssumption, FootprintExport,
@@ -74,6 +75,15 @@ fn ordinary_disjoint_fields_admit_independent_workers() {
         module.c_source.is_none(),
         "the route is check-only at this card"
     );
+    assert_eq!(
+        module.checked.function_count(),
+        0,
+        "a footprint property is not function-check coverage"
+    );
+    assert!(
+        module.checked.as_scoped_tasks().is_none(),
+        "the property certificate cannot be exported as a scoped-task certificate"
+    );
     let CheckedSourceModule::BitfieldTasks(checked) = &module.checked else {
         panic!("expected bit-field task evidence");
     };
@@ -88,6 +98,10 @@ fn ordinary_disjoint_fields_admit_independent_workers() {
             .certificate
             .assumptions
             .contains(&FootprintAssumption::DeclaredRecordLayout)
+    );
+    assert_eq!(
+        checked.assumptions,
+        std::collections::BTreeSet::from([BitfieldTaskAssumption::SpawnAndJoinSucceed])
     );
 }
 
@@ -203,4 +217,89 @@ fn an_unrelated_declaration_is_not_silently_ignored() {
     let diagnostics = compile(&source).expect_err("bounded profile owns every declaration");
     assert_eq!(diagnostics[0].code, "Q600");
     assert!(diagnostics[0].message.contains("unrelated declaration"));
+}
+
+#[test]
+fn the_entry_cannot_hide_unmodelled_parameters() {
+    let source = ADDRESSABLE.replace("fn main()", "fn main(hidden: i32)");
+    let diagnostics = compile(&source).expect_err("entry parameters are outside the grammar");
+    assert_eq!(diagnostics[0].code, "Q600");
+    assert!(diagnostics[0].message.contains("takes no parameters"));
+}
+
+#[test]
+fn duplicate_write_captures_are_refused() {
+    let source = ADDRESSABLE.replace(
+        "writer(write pair.left)?;",
+        "writer(write pair.left, write pair.left)?;",
+    );
+    let diagnostics = compile(&source).expect_err("one spawn cannot duplicate write authority");
+    assert_eq!(diagnostics[0].code, "Q013");
+}
+
+#[test]
+fn duplicate_joins_are_refused() {
+    let source = ADDRESSABLE.replace("join move right?;", "join move left?;");
+    let diagnostics = compile(&source).expect_err("one handle cannot satisfy both joins");
+    assert_eq!(diagnostics[0].code, "Q600");
+    assert!(diagnostics[0].message.contains("join each handle once"));
+}
+
+#[test]
+fn a_spawn_binding_cannot_shadow_the_layout_object() {
+    let source = ADDRESSABLE.replace(
+        "let left = spawn workers writer(write pair.left)?;",
+        "let pair = spawn workers writer(write pair.left)?;",
+    );
+    let diagnostics = compile(&source).expect_err("the second capture resolves to a task handle");
+    assert!(
+        diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.code == "Q013")
+            || diagnostics
+                .iter()
+                .any(|diagnostic| diagnostic.code == "Q600"),
+        "shadowing must fail closed: {diagnostics:?}"
+    );
+}
+
+#[test]
+fn inconsistent_declared_layout_arithmetic_is_refused_by_the_core_checker() {
+    let source = ADJACENT.replace("bits<0, 3, 5, 0, 4>", "bits<0, 31, 5, 0, 4>");
+    let diagnostics = compile(&source).expect_err("bit extent exceeds its declared storage");
+    assert_eq!(diagnostics[0].code, "Q657");
+    assert!(
+        diagnostics[0]
+            .message
+            .contains("BitfieldBitsOutsideStorage")
+    );
+}
+
+#[test]
+fn propagated_spawn_failure_is_an_explicit_unproved_premise() {
+    let module = checked(ADDRESSABLE);
+    let CheckedSourceModule::BitfieldTasks(checked) = &module.checked else {
+        panic!("expected property-only bit-field evidence");
+    };
+    assert!(
+        checked
+            .assumptions
+            .contains(&BitfieldTaskAssumption::SpawnAndJoinSucceed)
+    );
+    assert!(module.c_source.is_none());
+    assert!(module.reference_observation.is_none());
+}
+
+#[test]
+fn a_layout_word_without_a_layout_constructor_does_not_select_this_route() {
+    let source = ADDRESSABLE
+        .replace("left: field<0, 4>", "left: field")
+        .replace("right: field<4, 4>", "right: field");
+    let diagnostics = compile(&source).expect_err("ordinary record typing owns this source");
+    assert!(diagnostics.iter().all(|diagnostic| {
+        !diagnostic.message.contains("layout fields must be")
+            && !diagnostic
+                .message
+                .contains("source.bitfield-concurrency.v1")
+    }));
 }
