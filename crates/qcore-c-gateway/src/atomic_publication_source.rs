@@ -4,9 +4,6 @@
 //! observed ready value, the payload write happens before its payload read.
 //! Termination and eventual observation are deliberately outside this route.
 
-use qcore_core::{
-    AtomicPublicationCertificate, AtomicPublicationProgram, MemoryOrder, check_atomic_publication,
-};
 use serde_json::Value;
 use std::collections::BTreeMap;
 
@@ -26,6 +23,14 @@ pub struct AtomicPublicationExecutionBounds {
     /// Declared premise; a definition cannot prove its dynamic call count.
     pub publisher_invocations: usize,
     pub successful_consumer_invocations: usize,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum AtomicPublicationOrder {
+    Relaxed,
+    Acquire,
+    Release,
+    SequentiallyConsistent,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -50,9 +55,10 @@ pub struct AtomicPublicationSourceCertificate {
     pub published_value: i64,
     /// The theorem applies only on the consumer branch that observed this value.
     pub successful_observation: i64,
+    pub store_order: AtomicPublicationOrder,
+    pub load_order: AtomicPublicationOrder,
     pub bounds: AtomicPublicationExecutionBounds,
     pub assumptions: Vec<&'static str>,
-    pub model: AtomicPublicationCertificate,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -75,10 +81,9 @@ pub enum AtomicPublicationSourceRefusal {
     ExtraEntryCall,
     UnsupportedMemoryOrder,
     UnsupportedExecutionBounds,
-    Model(qcore_core::AtomicPublicationRefusal),
 }
 
-pub fn check_atomic_publication_source(
+pub fn extract_atomic_publication_source(
     unit: &C11TranslationUnit<'_>,
     source_revision: &str,
     profile: &AtomicPublicationSourceProfile<'_>,
@@ -192,23 +197,13 @@ pub fn check_atomic_publication_source(
         return Err(AtomicPublicationSourceRefusal::ExtraEntryCall);
     }
 
-    let model = check_atomic_publication(&AtomicPublicationProgram {
-        flag_location: 0,
-        payload_location: 1,
-        initial_value,
-        published_value,
-        observed_value: published_value,
-        store_order,
-        load_order,
-    })
-    .map_err(AtomicPublicationSourceRefusal::Model)?;
     Ok(AtomicPublicationSourceCertificate {
         artifact_raw_sha256: qcore_schemas::sha256_hex(unit.source.as_bytes()),
         artifact_preprocessed_sha256: qcore_schemas::sha256_hex(source.as_bytes()),
         source_revision: source_revision.into(),
         analysis_configuration_sha256: analysis_configuration_sha256(unit),
-        property: "successful release/acquire publication orders one payload write before one payload read",
-        semantic_profile: "c11-bounded-atomic-publication-v1",
+        property: "closed typed source facts for one bounded atomic publication candidate",
+        semantic_profile: "c11-bounded-atomic-publication-source-v1",
         scope: "the selected full preprocessed translation unit, exactly one declared publisher invocation, and exactly one successful selected consumer invocation",
         evidence_version: "ct41-sync-model-v1",
         publisher: profile.publisher.into(),
@@ -218,14 +213,14 @@ pub fn check_atomic_publication_source(
         initial_value,
         published_value,
         successful_observation: published_value,
+        store_order,
+        load_order,
         bounds,
         assumptions: vec![
             "the publisher entry is invoked exactly once in the bounded execution",
             "exactly one consumer takes the successful observation branch",
             "the full Clang AST faithfully represents the preprocessed C translation unit",
-            "the Rust weak-memory checker corresponds to the audited Lean abstraction by review",
         ],
-        model,
     })
 }
 
@@ -410,7 +405,7 @@ fn canonical_memory_orders(
 fn order(
     node: &Value,
     canonical: &BTreeMap<String, String>,
-) -> Result<MemoryOrder, AtomicPublicationSourceRefusal> {
+) -> Result<AtomicPublicationOrder, AtomicPublicationSourceRefusal> {
     let reference = &unwrap_implicit(node)["referencedDecl"];
     let name = reference["name"].as_str();
     if reference["kind"].as_str() != Some("EnumConstantDecl")
@@ -419,10 +414,10 @@ fn order(
         return Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder);
     }
     match name {
-        Some("memory_order_relaxed") => Ok(MemoryOrder::Relaxed),
-        Some("memory_order_acquire") => Ok(MemoryOrder::Acquire),
-        Some("memory_order_release") => Ok(MemoryOrder::Release),
-        Some("memory_order_seq_cst") => Ok(MemoryOrder::SequentiallyConsistent),
+        Some("memory_order_relaxed") => Ok(AtomicPublicationOrder::Relaxed),
+        Some("memory_order_acquire") => Ok(AtomicPublicationOrder::Acquire),
+        Some("memory_order_release") => Ok(AtomicPublicationOrder::Release),
+        Some("memory_order_seq_cst") => Ok(AtomicPublicationOrder::SequentiallyConsistent),
         _ => Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder),
     }
 }
@@ -432,7 +427,7 @@ fn match_publisher(
     flag: &str,
     payload: &str,
     orders: &BTreeMap<String, String>,
-) -> Result<(i64, MemoryOrder), AtomicPublicationSourceRefusal> {
+) -> Result<(i64, AtomicPublicationOrder), AtomicPublicationSourceRefusal> {
     let body =
         function_body(function).ok_or(AtomicPublicationSourceRefusal::UnsupportedPublisher)?;
     let [payload_write, flag_store] = children(body) else {
@@ -467,7 +462,7 @@ fn match_consumer(
     payload: &str,
     published: i64,
     orders: &BTreeMap<String, String>,
-) -> Result<MemoryOrder, AtomicPublicationSourceRefusal> {
+) -> Result<AtomicPublicationOrder, AtomicPublicationSourceRefusal> {
     let body =
         function_body(function).ok_or(AtomicPublicationSourceRefusal::UnsupportedConsumer)?;
     let [load_statement, gate, payload_return] = children(body) else {

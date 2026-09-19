@@ -1,6 +1,6 @@
 use qcore_c_gateway::atomic_publication_source::{
-    AtomicPublicationExecutionBounds, AtomicPublicationSourceProfile,
-    AtomicPublicationSourceRefusal, check_atomic_publication_source,
+    AtomicPublicationExecutionBounds, AtomicPublicationOrder, AtomicPublicationSourceProfile,
+    AtomicPublicationSourceRefusal, extract_atomic_publication_source,
 };
 use qcore_c_gateway::legacy_c::C11TranslationUnit;
 
@@ -48,7 +48,7 @@ fn check(
     qcore_c_gateway::atomic_publication_source::AtomicPublicationSourceCertificate,
     AtomicPublicationSourceRefusal,
 > {
-    check_atomic_publication_source(
+    extract_atomic_publication_source(
         &C11TranslationUnit {
             source,
             ..Default::default()
@@ -63,7 +63,7 @@ fn check(
 }
 
 #[test]
-fn release_acquire_source_derives_the_conditional_publication_edge() {
+fn release_acquire_source_derives_the_closed_typed_candidate() {
     if !clang_available() {
         return;
     }
@@ -73,7 +73,7 @@ fn release_acquire_source_derives_the_conditional_publication_edge() {
     assert_eq!(certificate.successful_observation, 1);
     assert_eq!(
         certificate.semantic_profile,
-        "c11-bounded-atomic-publication-v1"
+        "c11-bounded-atomic-publication-source-v1"
     );
     assert!(
         certificate
@@ -81,13 +81,8 @@ fn release_acquire_source_derives_the_conditional_publication_edge() {
             .contains("full preprocessed translation unit")
     );
     assert_eq!(certificate.analysis_configuration_sha256.len(), 64);
-    assert!(
-        certificate
-            .model
-            .execution
-            .happens_before
-            .contains(&certificate.model.payload_happens_before)
-    );
+    assert_eq!(certificate.store_order, AtomicPublicationOrder::Release);
+    assert_eq!(certificate.load_order, AtomicPublicationOrder::Acquire);
 }
 
 #[test]
@@ -224,23 +219,19 @@ int consume(void) { if (done != 1) return 0; return payload; }
 }
 
 #[test]
-fn atomic_spelling_without_release_acquire_is_refused() {
+fn atomic_spelling_extracts_orders_without_claiming_synchronization() {
     if !clang_available() {
         return;
     }
     let relaxed_store = SOURCE.replace("memory_order_release", "memory_order_relaxed");
     assert_eq!(
-        check(&relaxed_store),
-        Err(AtomicPublicationSourceRefusal::Model(
-            qcore_core::AtomicPublicationRefusal::StoreIsNotRelease
-        ))
+        check(&relaxed_store).unwrap().store_order,
+        AtomicPublicationOrder::Relaxed
     );
     let relaxed_load = SOURCE.replace("memory_order_acquire", "memory_order_relaxed");
     assert_eq!(
-        check(&relaxed_load),
-        Err(AtomicPublicationSourceRefusal::Model(
-            qcore_core::AtomicPublicationRefusal::LoadIsNotAcquire
-        ))
+        check(&relaxed_load).unwrap().load_order,
+        AtomicPublicationOrder::Relaxed
     );
     let ordinary_store = SOURCE.replace(
         "atomic_store_explicit(&done, 1, memory_order_release);",
@@ -302,12 +293,8 @@ fn source_shape_refuses_bypasses_ambiguity_and_extra_accesses() {
         Err(AtomicPublicationSourceRefusal::UnsupportedConsumer)
     );
     let same_initial = SOURCE.replace("done = 0", "done = 1");
-    assert_eq!(
-        check(&same_initial),
-        Err(AtomicPublicationSourceRefusal::Model(
-            qcore_core::AtomicPublicationRefusal::AmbiguousPublishedValue
-        ))
-    );
+    let ambiguous = check(&same_initial).unwrap();
+    assert_eq!(ambiguous.initial_value, ambiguous.published_value);
     let extra_store = SOURCE.replace(
         "payload = 7;",
         "atomic_store_explicit(&done, 2, memory_order_relaxed);\n    payload = 7;",
@@ -345,7 +332,7 @@ fn invocation_counts_are_explicit_bounded_execution_premises() {
     if !clang_available() {
         return;
     }
-    let result = check_atomic_publication_source(
+    let result = extract_atomic_publication_source(
         &C11TranslationUnit {
             source: SOURCE,
             ..Default::default()
