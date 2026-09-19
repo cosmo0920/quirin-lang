@@ -8,6 +8,7 @@ control is run after the last mutant so Cargo cannot retain a stale mutant.
 from __future__ import annotations
 
 import os
+from datetime import datetime, timezone
 from pathlib import Path
 import subprocess
 import sys
@@ -18,7 +19,9 @@ SOURCE = ROOT / "crates/qcore-c-gateway/src/legacy_c.rs"
 LOGS = Path(
     os.environ.get(
         "QCORE_MUTATION_LOG_DIR",
-        ROOT / "docs/reports/b04-nested-call-argument/logs",
+        ROOT
+        / "private/b04-mutations"
+        / datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ"),
     )
 )
 TARGET = Path(os.environ.get("CARGO_TARGET_DIR", ROOT / "target"))
@@ -62,7 +65,8 @@ def run(log: Path, test_name: str | None = None) -> int:
 
 
 def main() -> int:
-    LOGS.mkdir(parents=True, exist_ok=True)
+    LOGS.parent.mkdir(parents=True, exist_ok=True)
+    LOGS.mkdir(exist_ok=False)
     original = SOURCE.read_text()
     failures: list[str] = []
     try:
