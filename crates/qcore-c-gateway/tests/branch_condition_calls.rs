@@ -121,12 +121,69 @@ fn a_whole_scalar_result_call_is_evaluated_once_before_the_split() {
 }
 
 #[test]
+fn the_unknown_call_result_keeps_both_branch_arms() {
+    if !clang_available() {
+        return;
+    }
+    let source = "int q_probe(void); void *q_alloc(void); void q_free(void *);\n\
+                  void subject(void) {\n\
+                      void *p = q_alloc();\n\
+                      if (q_probe()) { q_free(p); }\n\
+                  }";
+    let outcome = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        "subject",
+        &probe_contracts(),
+    )
+    .unwrap();
+    let summary = match outcome {
+        UnrestrictedLegacyResult::Unsafe(summary) => summary,
+        other => panic!("the else path leaks and must stay reachable, got {other:?}"),
+    };
+    assert_eq!(summary.functions["subject"].status, AnalysisStatus::Unsafe);
+}
+
+#[test]
 fn a_call_inside_sizeof_stays_refused_because_c_does_not_evaluate_it() {
     if !clang_available() {
         return;
     }
     let source =
         "int q_probe(void); void subject(int flag) { if (sizeof(q_probe()) > 0) { flag = 1; } }";
+    let outcome = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        "subject",
+        &probe_contracts(),
+    )
+    .unwrap();
+    let partial = match outcome {
+        UnrestrictedLegacyResult::Unknown { partial, .. } => partial.unwrap(),
+        other => panic!("expected Unknown, got {other:?}"),
+    };
+    assert!(has_branch_refusal(
+        &partial.functions["subject"]
+            .diagnostics
+            .iter()
+            .map(|diagnostic| diagnostic.kind.clone())
+            .collect::<Vec<_>>()
+    ));
+}
+
+#[test]
+fn an_indirect_residual_cannot_be_masked_by_the_modeled_call() {
+    if !clang_available() {
+        return;
+    }
+    let source = "int q_probe(void);\n\
+                  void subject(int flag, int *table) {\n\
+                      if (q_probe() + table[flag]) { }\n\
+                  }";
     let outcome = analyze_unrestricted_c11(
         &C11TranslationUnit {
             source,
