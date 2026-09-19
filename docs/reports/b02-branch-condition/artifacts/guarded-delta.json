@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "card": "B02-BRANCH-CONDITION-GUARDED-CORRECTION",
+  "base_commit": "8e633261fd216a76d4d25390b0dadeda891c59aa",
+  "source_commit": "35564d32",
+  "before": {
+    "diagnostics_sha256": "c54ad4219fa85793652760e94cdff48f145fc30f04f7ab2604f65da38a42cc2b",
+    "units": {
+      "Safe": 2,
+      "Unsafe": 42,
+      "Unknown": 137,
+      "data_only": 4
+    },
+    "functions": {
+      "Safe": 213,
+      "Unsafe": 84,
+      "Unknown": 4537
+    },
+    "diagnostics": {
+      "leak": 272,
+      "unknown_alias": 4309,
+      "unsupported": 49753,
+      "summary_conflict": 1
+    }
+  },
+  "after": {
+    "diagnostics_sha256": "e5f7d8a70c04d4e289a7b29d5a3185b382ddd36a4a4f05a4c8d0599cfbc4e3c9",
+    "units": {
+      "Safe": 2,
+      "Unsafe": 42,
+      "Unknown": 137,
+      "data_only": 4
+    },
+    "functions": {
+      "Safe": 214,
+      "Unsafe": 84,
+      "Unknown": 4536
+    },
+    "diagnostics": {
+      "leak": 272,
+      "unknown_alias": 4309,
+      "unsupported": 49747,
+      "summary_conflict": 1
+    }
+  },
+  "coordinate_delta": {
+    "removed": 6,
+    "added": 0,
+    "exchanged": 0,
+    "affected_functions": 6,
+    "affected_units": 3
+  },
+  "moved_functions": [
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_down",
+      "before": "Unknown",
+      "after": "Safe"
+    }
+  ],
+  "removed_coordinates": [
+    {
+      "file": "cio_file.c",
+      "function": "cio_file_content_copy",
+      "origin": "cio_file.c:521"
+    },
+    {
+      "file": "cio_file.c",
+      "function": "cio_file_write",
+      "origin": "cio_file.c:1015"
+    },
+    {
+      "file": "cio_stats.c",
+      "function": "cio_stats_get",
+      "origin": "cio_stats.c:55"
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_down",
+      "origin": "flb_input_chunk.c:3135"
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_set_up",
+      "origin": "flb_input_chunk.c:3144"
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_set_up_down",
+      "origin": "flb_input_chunk.c:3114"
+    }
+  ],
+  "retired_entries": []
+}

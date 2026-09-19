@@ -138,6 +138,35 @@ and the Lean admission includes the same external-declaration premise and
 refusal theorem.  This correction records the discovered boundary; it does not
 rewrite the pre-AFTER prediction or add a post-hoc expectation.
 
+Before running the corrected isolated AFTER, the prior 45 removed coordinates
+were reclassified against the pinned source definitions.  The guard is expected
+to retain 21 same-translation-unit call leaves (2 cmetrics, 7 lz4frame, 2
+lz4hc, 1 librdkafka admin, 4 chunkio and 5 Fluent Bit input-chunk leaves), for
+**24 removed / 0 added** branch-condition leaves.  The verdict forecast remains
+one function movement, `flb_input_chunk_down` Unknown→Safe, because its
+`cio_chunk_is_up` callee is external to that translation unit.  This forecast
+was recorded at source commit `35564d32` before the corrected audit; the audit
+below tests it rather than defining it.
+
+The corrected pinned-evidence audit exits 0 at
+`private/b02-after-guarded-pinned` and measures **6 removed / 0 added / 0
+exchanged** leaves across six functions in three units.  The sole verdict move
+is the predicted `flb_input_chunk_down` Unknown→Safe; units remain 2 Safe / 42
+provisional Unsafe / 137 Unknown / 4 data-only, while functions become 214 Safe
+/ 84 provisional Unsafe / 4,536 Unknown.  Unsupported diagnostics are 49,747;
+leak 272, unknown-alias 4,309 and summary-conflict 1 are unchanged.  The exact
+coordinates and hashes are in
+[`artifacts/guarded-delta.json`](artifacts/guarded-delta.json).  Monkey source
+identity (`ae38f6c9…`) and chunk contracts (`c4f438e4…`) are byte-identical to
+the integrator baseline.
+
+The 24-leaf corrected forecast therefore overpredicted by 18.  Its manual
+classification consulted original source files, while `find_function_body`
+runs over the preprocessed translation unit: definitions supplied through
+included headers are local to that token stream too.  Those 18 leaves correctly
+remain refused by the implemented premise.  The forecast and miss stay recorded
+as separate pre-run and post-run facts.
+
 ## Retained limitation and integrator reconciliation list
 
 No registered entry retires.  The largest measured boundary remains the 196
