@@ -101,4 +101,41 @@ theorem a_declared_release_is_applied (st : State) (site : Site) :
       some (fun s => if s = site then false else st s) := by
   simp [lower, the_positive_family_is_admitted]
 
+/-- The second B01 arm: a complete opaque member read, carrying the assignment
+    classifier's retained alias check and rooted at an untracked base. -/
+def OpaqueAdmitted
+    (baseUntracked aliasValid completeRead collision : Bool) : Prop :=
+  baseUntracked = true ∧ aliasValid = true ∧ completeRead = true ∧ collision = false
+
+instance opaqueAdmittedDecidable (b a r c : Bool) :
+    Decidable (OpaqueAdmitted b a r c) := by
+  unfold OpaqueAdmitted
+  infer_instance
+
+def lowerOpaque
+    (baseUntracked aliasValid completeRead collision : Bool) (st : State) : Option State :=
+  if OpaqueAdmitted baseUntracked aliasValid completeRead collision
+  then some st
+  else none
+
+/-- `OpaqueValue` followed by B01's `NoOp` return escapes no identity. -/
+theorem an_admitted_opaque_read_changes_no_custody (st : State) :
+    lowerOpaque true true true false st = some st := by
+  simp [lowerOpaque, OpaqueAdmitted]
+
+/-- The alias obligation is retained rather than erased by the return. -/
+theorem an_unvalidated_alias_read_stays_refused (st : State) :
+    lowerOpaque true false true false st = none := by
+  simp [lowerOpaque, OpaqueAdmitted]
+
+/-- A protected or body-bound base is not the untracked getter family. -/
+theorem a_tracked_base_stays_refused (st : State) :
+    lowerOpaque false true true false st = none := by
+  simp [lowerOpaque, OpaqueAdmitted]
+
+/-- A conditional pointer result is not one complete opaque member read. -/
+theorem a_conditional_opaque_result_stays_refused (st : State) :
+    lowerOpaque true true false false st = none := by
+  simp [lowerOpaque, OpaqueAdmitted]
+
 end QCore.ReturnExpressionEvaluation

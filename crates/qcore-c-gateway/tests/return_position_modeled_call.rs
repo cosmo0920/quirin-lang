@@ -113,6 +113,12 @@ impl Run {
             .count()
     }
 
+    fn has_synthetic_unknown_alias(&self) -> bool {
+        self.diagnostics.iter().any(|kind| {
+            matches!(kind, LegacyDiagnosticKind::UnknownAlias { variable } if variable == RESERVED)
+        })
+    }
+
     /// The comparable content of a run: everything a consumer reads, with the
     /// diagnostics sorted so the comparison is about content and not order.
     fn shape(&self) -> (AnalysisStatus, bool, Vec<String>) {
@@ -421,6 +427,7 @@ fn a_resource_free_call_is_evaluated_inside_a_scalar_return() {
         assert_eq!(lowered.status, written.status, "{expression}");
         assert_eq!(lowered.unsupported(), written.unsupported(), "{expression}");
         assert_eq!(lowered.status, AnalysisStatus::Safe, "{expression}");
+        assert!(!lowered.has_synthetic_unknown_alias(), "{expression}");
     }
 }
 
@@ -475,6 +482,7 @@ fn the_scalar_call_admission_exposes_a_retained_obligation() {
     assert!(!measured.refuses_return(), "{:?}", measured.unsupported());
     assert_eq!(measured.status, AnalysisStatus::Unsafe);
     assert_eq!(measured.leaks(), 1);
+    assert!(!measured.has_synthetic_unknown_alias());
     assert!(!measured.certified);
 }
 
