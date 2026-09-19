@@ -60,6 +60,31 @@
 //! also reads, `fixtures/ct/CT07/case.qcore` through the real pipeline, the
 //! four published examples, and — unforced, by its own path — CT46's fixture.
 //!
+//! # The failure arms, and a trigger the join does not own (wave 41)
+//!
+//! Wave 39 registered two boundaries this file is the subject of.
+//! `TSAN-FORCED-GATE-OPENED-BY-THE-JOIN`: the forcing gate opened at the
+//! creator's `QCORE_TASK_JOIN` and nowhere else, so a mutation that *deleted*
+//! the join deleted the release with it and hid every race — measured 0 of 20
+//! forced against 20 of 20 unforced. `TSAN-FORCED-SCHEDULE-FAILURE-ARMS`: no
+//! row took a task program's failure arms, and schedule forcing could not
+//! reach them, because a failure arm may never arrive at a join at all.
+//! `STABILITY-REEVAL-4` measured the order those two must be attacked in — the
+//! **harness breaks first** — and card `TSAN-FAILURE-ARMS` follows it.
+//!
+//! `QCORE_FORCED_COHORT` is the second trigger: the row states how many
+//! workers the program parks in one cohort, and the gate opens inside the
+//! create hook as soon as that many stand parked, before the creator reaches
+//! any join. The join trigger is retained beside it, so nothing wave 39
+//! measured changes; `a_join_deleted_is_caught_by_the_cohort_trigger` runs the
+//! very mutation wave 39 pinned as *hidden* and now finds it, with the
+//! join-only gate kept as the control in the same test.
+//!
+//! On top of that, [`thread_sanitizer::Failure`] drives each subject onto a
+//! real failure arm — a refusing second `QCORE_TASK_CREATE`, a NULL-returning
+//! `QCORE_BUFFER_MALLOC` — and every failure-arm row asserts **which arm ran**
+//! from the program's own stdout rather than from the harness's intent.
+//!
 //! # Honest gating
 //!
 //! Every test here is `#[cfg(target_os = "linux")]`, and that is a real
@@ -77,7 +102,7 @@ use std::collections::BTreeMap;
 
 #[path = "../../tests/support/thread_sanitizer.rs"]
 mod thread_sanitizer;
-use thread_sanitizer::{Schedule, ScheduleEvent};
+use thread_sanitizer::{Failure, Row, Schedule, ScheduleEvent};
 // The CT harness's own stdout-sink overlays for programs that declare no
 // `log_level` (CT07's case, CT46's case): a declaration before the emitted
 // text and the sink definition after it, exactly as `ct_corpus.rs` applies
@@ -184,16 +209,23 @@ fn prepared(c: &str) -> String {
 /// shape for a composed module and on the plain task route's own entry point
 /// (an empty site list) for a module with no source lines, such as CT07's.
 fn reference_stdout(module: &CompiledModule) -> String {
-    let script = TaskExecutionScript::default();
+    reference_stdout_scripted(module, &TaskExecutionScript::default())
+}
+
+/// [`reference_stdout`] with the creation and allocation decisions supplied
+/// (card `TSAN-FAILURE-ARMS`): the reference run of the very arm the injection
+/// header drives the native program onto, so a failure-arm row compares
+/// against a rendering rather than against a description of one.
+fn reference_stdout_scripted(module: &CompiledModule, script: &TaskExecutionScript) -> String {
     let observation = if let Some(composed) = module.checked.as_composed_tasks() {
         execute_with_source_lines(
             composed.tasks(),
-            &script,
+            script,
             &BTreeMap::new(),
             composed.sites(),
         )
     } else if let Some(tasks) = module.checked.as_scoped_tasks() {
-        execute_with_source_lines(tasks, &script, &BTreeMap::new(), &[])
+        execute_with_source_lines(tasks, script, &BTreeMap::new(), &[])
     } else {
         panic!("a task-route subject takes the scoped or the composed task route")
     }
@@ -504,7 +536,15 @@ fn the_binding_changes_no_emitted_byte() {
         let first = emitted(source);
         let second = emitted(source);
         assert_eq!(first, second, "{name} emits deterministically");
-        for harness_symbol in ["qcore_tsan_", "qcore_forced_", "QCORE_TSAN_DROP_JOIN"] {
+        for harness_symbol in [
+            "qcore_tsan_",
+            "qcore_forced_",
+            "QCORE_TSAN_DROP_JOIN",
+            // Card `TSAN-FAILURE-ARMS`' third overlay: the failure arms arrive
+            // at the same `-include` seam and leave no trace in the emitted C.
+            "QCORE_TSAN_FAILURE",
+            "QCORE_FORCED_COHORT",
+        ] {
             assert!(
                 !first.contains(harness_symbol),
                 "{name}'s emitted C must not mention the harness symbol `{harness_symbol}`"
@@ -581,8 +621,19 @@ fn every_subject_runs_clean_under_each_forced_schedule() {
         let c = prepared(module.c_source.as_deref().expect("the route emits C"));
         let reference = reference_stdout(&module);
         for schedule in Schedule::FORCED {
-            let run = thread_sanitizer::run_scheduled(&format!("rows-{name}"), &c, true, schedule)
-                .unwrap();
+            // Card `TSAN-FAILURE-ARMS`: the row supplies its own cohort count,
+            // so the gate opens at creation as well as at the join. Wave 39's
+            // verdicts below are unchanged by that — which is the measurement
+            // that the second trigger disturbed nothing.
+            let run = Row {
+                tag: &format!("rows-{name}"),
+                source: &c,
+                schedule,
+                cohort: workers,
+                ..Row::default()
+            }
+            .execute()
+            .unwrap();
             assert_eq!(
                 run.races,
                 0,
@@ -628,12 +679,18 @@ fn overlapping_writers_are_reported_under_every_schedule() {
     ] {
         let overlapping = prepared(&with_overlapping_writers(&emitted(source)));
         for schedule in Schedule::ALL {
-            let run = thread_sanitizer::run_scheduled(
-                &format!("overlap-{name}"),
-                &overlapping,
-                true,
+            // Wave 39's own cell, at wave 39's own trigger: this row's verdict
+            // must not move because card `TSAN-FAILURE-ARMS` added a second
+            // one. The same text at `cohort: 2` is measured beside it in
+            // `measure_catch_rates_for_the_report`, and is reported there.
+            let run = Row {
+                tag: &format!("overlap-{name}"),
+                source: &overlapping,
                 schedule,
-            )
+                cohort: 0,
+                ..Row::default()
+            }
+            .execute()
             .unwrap();
             assert!(
                 run.races >= 1,
@@ -670,12 +727,24 @@ fn removing_the_join_edge_is_reported_under_every_schedule() {
     for (name, source) in [("shared_readers", PUBLISHED[2].1), ("ct07-case", CT07_CASE)] {
         let unjoined = prepared(&with_join_edge_removed(&emitted(source)));
         for schedule in Schedule::ALL {
-            let run = thread_sanitizer::run_scheduled(
-                &format!("unjoined-{name}"),
-                &unjoined,
-                true,
+            // Wave 39's own cell at wave 39's own trigger. This mutation keeps
+            // the *gate-opening* stand-in, so the join trigger is exactly what
+            // it was; card `TSAN-FAILURE-ARMS` measured that adding the cohort
+            // trigger here changes what ThreadSanitizer reports on
+            // `shared_readers` — the workers run and finish before the
+            // parent's post-join write, and the report becomes a thread leak
+            // rather than a data race (`TSAN-COHORT-TRIGGER-SHADOW-ORDER`,
+            // measured at 0/20 in the card's own table). So the committed row
+            // stays at wave 39's trigger and the other cohort is measured
+            // beside it rather than asserted.
+            let run = Row {
+                tag: &format!("unjoined-{name}"),
+                source: &unjoined,
                 schedule,
-            )
+                cohort: 0,
+                ..Row::default()
+            }
+            .execute()
             .unwrap();
             assert!(
                 run.races >= 1,
@@ -694,21 +763,31 @@ fn removing_the_join_edge_is_reported_under_every_schedule() {
     }
 }
 
-/// **Non-vacuity, direction two: forcing can hide a race, and this is why the
-/// no-edge stand-in opens the gate.** The forcing header releases workers at
-/// the creator's join. Delete the join outright — replace it with the
-/// *unbound* 50 ms stand-in, named by its function so the forcing header's
-/// macro does not reach it — and under either forced schedule no worker is
-/// ever released: the process exits with every worker still parked, TSan
-/// reports **nothing**, and the schedule trace is empty. The same text under
-/// the unforced schedule is the join-edge mutation and is reported.
+/// **The gate-closed reproduction, and the trigger that now catches it**
+/// (card `TSAN-FAILURE-ARMS`, wave 41; this test replaces wave 39's
+/// `a_join_deleted_without_opening_the_gate_hides_the_race_under_forcing`,
+/// whose measurement it keeps as its own control arm).
 ///
-/// So a forced-schedule harness has a failure mode the unforced one does not:
-/// a mutation that removes the release trigger removes the race with it. It
-/// is pinned here rather than left for a reader to discover, and it is the
-/// reason `QCORE_TSAN_DROP_JOIN` is a *gate-opening* stand-in under forcing.
+/// The mutation is wave 39's: delete the join outright, replacing it with the
+/// *unbound* 50 ms stand-in named by its function, so the forcing header's
+/// gate-opening macro does not reach it. Under wave 39's join-only gate that
+/// removed the release along with the edge — no worker ever ran, TSan reported
+/// nothing, the schedule trace was empty — which is exactly what
+/// `TSAN-FORCED-GATE-OPENED-BY-THE-JOIN` recorded, and is reproduced here as
+/// the `cohort: 0` arm so the finding stays a measurement rather than a memory.
+///
+/// With the row's own cohort count supplied the gate opens **inside the create
+/// hook**, when both workers stand parked and before the creator has reached
+/// any join. Both workers then run, the creator's post-join byte reads are no
+/// longer ordered after their writes, and ThreadSanitizer reports the race —
+/// under both forced schedules, and with a non-empty schedule trace proving
+/// the workers really were released. The same text unforced is the ordinary
+/// join-edge mutation, reported as it always was.
+///
+/// So the failure mode wave 39 registered is repaired rather than documented:
+/// a mutation that removes the join no longer removes the release with it.
 #[test]
-fn a_join_deleted_without_opening_the_gate_hides_the_race_under_forcing() {
+fn a_join_deleted_is_caught_by_the_cohort_trigger() {
     let c = emitted(CT07_CASE);
     let deleted = prepared(&c.replace(JOIN_CALL, "qcore_tsan_drop_join(record->thread, &status)"));
     assert!(
@@ -716,19 +795,52 @@ fn a_join_deleted_without_opening_the_gate_hides_the_race_under_forcing() {
         "the join this mutation deletes should be in the emitted C"
     );
     for schedule in Schedule::FORCED {
-        let run = thread_sanitizer::run_scheduled("gate-closed", &deleted, true, schedule).unwrap();
+        // The control: wave 39's join-only gate, whose own measurement this is.
+        let closed = Row {
+            tag: "gate-closed",
+            source: &deleted,
+            schedule,
+            cohort: 0,
+            ..Row::default()
+        }
+        .execute()
+        .unwrap();
         assert_eq!(
-            run.races,
+            closed.races,
             0,
-            "under {} with the gate never opened no worker runs, so nothing can race:\n{}",
+            "under {} with the join-only gate no worker runs, so nothing can race \
+             (TSAN-FORCED-GATE-OPENED-BY-THE-JOIN, reproduced):\n{}",
             schedule.tag(),
-            run.stderr
+            closed.stderr
         );
         assert!(
-            run.schedule.is_empty(),
-            "under {} no worker should have been released, got {:?}",
+            closed.schedule.is_empty(),
+            "under {} with the join-only gate no worker should have been released, got {:?}",
             schedule.tag(),
-            run.schedule
+            closed.schedule
+        );
+
+        // The repair: the cohort trigger the join does not own.
+        let open = Row {
+            tag: "gate-by-cohort",
+            source: &deleted,
+            schedule,
+            cohort: 2,
+            ..Row::default()
+        }
+        .execute()
+        .unwrap();
+        assert!(
+            !open.schedule.is_empty(),
+            "under {} the cohort trigger must release the workers without a join, got {:?}",
+            schedule.tag(),
+            open.schedule
+        );
+        assert!(
+            open.races >= 1,
+            "under {} the deleted join must now be reported:\n{}",
+            schedule.tag(),
+            open.stderr
         );
     }
     let unforced = thread_sanitizer::run("gate-closed", &deleted, true).unwrap();
@@ -736,6 +848,307 @@ fn a_join_deleted_without_opening_the_gate_hides_the_race_under_forcing() {
         unforced.races >= 1,
         "the same text unforced is the join-edge mutation and is reported:\n{}",
         unforced.stderr
+    );
+}
+
+// ---------------------------------------------------------------- leg 4
+// (card TSAN-FAILURE-ARMS): the task programs' failure arms.
+
+/// One failure-arm row's subject: the injection, the cohort the arm actually
+/// creates, the reference script that renders the same arm, and the markers
+/// in the **program's own stdout** that say which arm ran.
+struct Arm {
+    failure: Failure,
+    /// Workers this arm really parks — the refusal arm creates one, the
+    /// allocation-failure arm none.
+    cohort: usize,
+    /// Lines the arm's stdout must carry, and lines it must not.
+    present: &'static [&'static str],
+    absent: &'static [&'static str],
+    script: fn() -> TaskExecutionScript,
+}
+
+/// The two arms, on the two subjects the card names. Both subjects are the
+/// same program modulo the logger (`ct07s_case_is_the_flagship_without_its_logger`),
+/// so the arms' markers are the same lines in both.
+fn failure_arms() -> [Arm; 2] {
+    [
+        Arm {
+            failure: Failure::RefuseSecondCreate,
+            cohort: 1,
+            // The first lease really was taken out and the second creation
+            // really refused: the recovery arm, named by the program.
+            present: &["QCORE_BUFFER_LEASE 1 1 0 2\n", "QCORE_TASK_CREATE_FAILED 0\n"],
+            absent: &[
+                "QCORE_BUFFER_LEASE 2 1 2 4",
+                "QCORE_BUFFER_BYTE_WRITE 2 1 2 9",
+                "QCORE_BUFFER_ALLOC_FAILED",
+            ],
+            script: || TaskExecutionScript {
+                spawn_outcomes: vec![true, false],
+                allocation_outcomes: vec![],
+            },
+        },
+        Arm {
+            failure: Failure::NullBufferMalloc,
+            cohort: 0,
+            // The entry's `?` took its allocation-failure edge, so no worker
+            // and no lease exists at all.
+            present: &["QCORE_BUFFER_ALLOC_FAILED 0\n"],
+            absent: &[
+                "QCORE_BUFFER_LEASE",
+                "QCORE_TASK_CREATE_FAILED",
+                "QCORE_BUFFER_BYTE_WRITE",
+            ],
+            script: || TaskExecutionScript {
+                spawn_outcomes: vec![],
+                allocation_outcomes: vec![false],
+            },
+        },
+    ]
+}
+
+/// **The failure-arm rows.** Wave 39 could take neither arm: a program whose
+/// spawn refuses may never reach the join at which its gate opened, so the
+/// forcing harness broke before the arm could be measured
+/// (`TSAN-FORCED-SCHEDULE-FAILURE-ARMS`, and `STABILITY-REEVAL-4`'s "the
+/// harness breaks first"). With the cohort trigger in place each arm runs
+/// under every schedule, and each row asserts **which arm executed from the
+/// program's own output**: the refusal arm shows the first worker's lease and
+/// the refused creation and no second lease; the allocation arm shows the
+/// failed acquisition and no worker at all.
+///
+/// The verdicts: no race, no diagnostic of any kind, and stdout byte-identical
+/// to the reference execution **of that same arm** — the reference run driven
+/// by the matching `TaskExecutionScript`, so the comparison is against a
+/// rendering of the arm rather than against a description of one.
+#[test]
+fn every_failure_arm_runs_clean_and_says_which_arm_it_took() {
+    for (name, source) in [
+        ("disjoint-exercise", DISJOINT_EXERCISE),
+        ("ct07-case", CT07_CASE),
+    ] {
+        let module = compiled(source);
+        let c = prepared(module.c_source.as_deref().expect("the route emits C"));
+        for arm in failure_arms() {
+            let reference = reference_stdout_scripted(&module, &(arm.script)());
+            for schedule in Schedule::ALL {
+                let run = Row {
+                    tag: &format!("arm-{name}"),
+                    source: &c,
+                    schedule,
+                    cohort: arm.cohort,
+                    failure: arm.failure,
+                    ..Row::default()
+                }
+                .execute()
+                .unwrap();
+                let where_ = format!("{name} @ {} @ {}", arm.failure.tag(), schedule.tag());
+                assert_eq!(
+                    run.races, 0,
+                    "{where_}: ThreadSanitizer reported a race:\n{}",
+                    run.stderr
+                );
+                assert!(
+                    run.clean,
+                    "{where_}: the failure arm did not run clean (signal {:?}):\n{}",
+                    run.signal, run.stderr
+                );
+                assert_eq!(
+                    run.compiled, c,
+                    "{where_}: a failure-arm run must compile the emitted C byte for byte"
+                );
+                // Which arm executed, read off the program's own stdout.
+                for marker in arm.present {
+                    assert!(
+                        run.stdout.contains(marker),
+                        "{where_}: the arm should have written `{}`:\n{}",
+                        marker.trim_end(),
+                        run.stdout
+                    );
+                }
+                for marker in arm.absent {
+                    assert!(
+                        !run.stdout.contains(marker),
+                        "{where_}: the arm must not have written `{marker}`:\n{}",
+                        run.stdout
+                    );
+                }
+                assert_eq!(
+                    run.stdout, reference,
+                    "{where_}: native stdout and the reference rendering of this arm disagree"
+                );
+                if schedule.is_forced() {
+                    assert_schedule_shape(&where_, schedule, arm.cohort, &run.schedule);
+                }
+            }
+        }
+    }
+}
+
+/// **The failure-arm rows' own non-vacuity.** Each injection is shown to be
+/// the thing that moved the program: with the header present but
+/// `Failure::None` selected, the *same* subject under the *same* schedule
+/// takes the success arm instead — every marker the failure arm asserted
+/// present is absent, and the second lease the refusal arm forbids is there.
+///
+/// Without this row the assertions above could be satisfied by a program that
+/// always takes one arm, and the injection would be decorative.
+#[test]
+fn without_the_injection_the_same_subject_takes_the_success_arm() {
+    let module = compiled(CT07_CASE);
+    let c = prepared(module.c_source.as_deref().expect("the route emits C"));
+    let run = Row {
+        tag: "arm-control",
+        source: &c,
+        schedule: Schedule::ForcedTogether,
+        cohort: 2,
+        failure: Failure::None,
+        ..Row::default()
+    }
+    .execute()
+    .unwrap();
+    assert!(run.clean, "{}", run.stderr);
+    for marker in ["QCORE_TASK_CREATE_FAILED", "QCORE_BUFFER_ALLOC_FAILED"] {
+        assert!(
+            !run.stdout.contains(marker),
+            "the success arm must not write `{marker}`:\n{}",
+            run.stdout
+        );
+    }
+    assert!(
+        run.stdout.contains("QCORE_BUFFER_LEASE 2 1 2 4\n"),
+        "the success arm takes out both leases:\n{}",
+        run.stdout
+    );
+    assert_eq!(run.stdout, reference_stdout(&module));
+}
+
+// ---------------------------------------------------------------- leg 5
+// (card TSAN-FAILURE-ARMS): the forcing header's invisibility to
+// ThreadSanitizer, enforced rather than documented.
+
+/// **Enforcement, half one: the shipped header's shape.** Wave 39 found that a
+/// forcing header realised with synchronization ThreadSanitizer can *see*
+/// hides exactly the races the rows exist to detect, made the header
+/// uninstrumented with an atomic-flag spinlock, and registered the property as
+/// `TSAN-FORCED-HARNESS-SYNC-INVISIBILITY`. `STABILITY-REEVAL-4` found nothing
+/// enforced it: a later edit could reintroduce the visible synchronization and
+/// every row would stay green while quietly meaning less.
+///
+/// This row reads the shipped text. Every function the header defines carries
+/// the `no_sanitize("thread")` attribute macro; the header names no pthread
+/// synchronization primitive and no C11 `mtx_`/`cnd_` primitive; and its only
+/// waiting construct is `sched_yield`. An edit that introduces a mutex, a
+/// condition variable or an uninstrumented-attribute-less function reddens
+/// here.
+#[test]
+fn the_forcing_header_stays_invisible_to_thread_sanitizer() {
+    let header = thread_sanitizer::SCHEDULE_FORCING;
+    assert!(
+        header.contains("#define QCORE_FORCED_UNINSTRUMENTED __attribute__((no_sanitize(\"thread\")))"),
+        "the uninstrumented attribute macro must keep its definition"
+    );
+    for forbidden in [
+        "pthread_mutex", "pthread_cond", "pthread_barrier", "pthread_rwlock", "sem_wait",
+        "mtx_lock", "mtx_init", "cnd_wait", "cnd_signal", "cnd_broadcast",
+    ] {
+        assert!(
+            !header.contains(forbidden),
+            "the forcing header must not realise its schedule with `{forbidden}`, which \
+             ThreadSanitizer instruments — TSAN-FORCED-HARNESS-SYNC-INVISIBILITY"
+        );
+    }
+    // Every function definition in the header is uninstrumented. A definition
+    // is a line ending in `{` that declares a `static` function of the
+    // header's own namespace; the attribute macro sits on that line or on the
+    // one above it (three of them carry `__attribute__((unused))` first).
+    let lines: Vec<&str> = header.lines().collect();
+    let undecorated: Vec<&str> = lines
+        .iter()
+        .enumerate()
+        .filter(|(_, line)| {
+            line.contains("static") && line.contains("qcore_forced_") && line.ends_with('{')
+        })
+        .filter(|(index, line)| {
+            !line.contains("QCORE_FORCED_UNINSTRUMENTED")
+                && !lines[index.saturating_sub(1)].contains("QCORE_FORCED_UNINSTRUMENTED")
+        })
+        .map(|(_, line)| *line)
+        .collect();
+    assert!(
+        undecorated.is_empty(),
+        "every function of the forcing header must be uninstrumented, these are not: {undecorated:?}"
+    );
+    // …and the check is not vacuous: it really did find the definitions.
+    let definitions = lines
+        .iter()
+        .filter(|line| line.contains("static") && line.contains("qcore_forced_") && line.ends_with('{'))
+        .count();
+    assert!(
+        definitions >= 8,
+        "the shape check should be looking at every function of the header, found {definitions}"
+    );
+}
+
+/// **Enforcement, half two: the property the first half protects, measured.**
+/// The shape check above is only worth something if a header outside that
+/// shape really would hide a race. [`thread_sanitizer::with_visible_synchronization`]
+/// puts back exactly what wave 39 removed — a pthread mutex for the
+/// bookkeeping lock, instrumentation on every function, and a parked worker
+/// that learns it was released *by acquiring that mutex* — and under the
+/// **reverse** schedule, where the releaser is the previous worker's own
+/// `finish`, ThreadSanitizer then sees a release/acquire edge between the two
+/// workers' byte writes and the overlap mutation goes **unreported**.
+///
+/// The same mutated text under the shipped, invisible header reports it, in
+/// the very next assertion, so this row is a difference measured in one place
+/// rather than two claims compared by hand.
+///
+/// Each substitution in the mutation asserts its own anchor, so a header edit
+/// that moves the lock, the park loop or the attribute out of the shapes wave
+/// 39 measured makes this row panic rather than silently pass.
+#[test]
+fn a_visible_forcing_header_would_hide_the_overlap_which_is_why_the_shipped_one_is_not() {
+    let visible = thread_sanitizer::with_visible_synchronization(thread_sanitizer::SCHEDULE_FORCING);
+    let overlapping = prepared(&with_overlapping_writers(&emitted(CT07_CASE)));
+
+    let hidden = Row {
+        tag: "visible-sync",
+        source: &overlapping,
+        schedule: Schedule::ForcedReverse,
+        cohort: 2,
+        forcing: Some(&visible),
+        ..Row::default()
+    }
+    .execute()
+    .unwrap();
+    assert!(
+        !hidden.schedule.is_empty(),
+        "the mutated header must still force a schedule, or the row measures nothing: {:?}",
+        hidden.schedule
+    );
+    assert_eq!(
+        hidden.races, 0,
+        "a forcing header whose release is visible to ThreadSanitizer should hide the \
+         overlap under the reverse schedule — this is TSAN-FORCED-HARNESS-SYNC-INVISIBILITY's \
+         own measurement:\n{}",
+        hidden.stderr
+    );
+
+    let seen = Row {
+        tag: "invisible-sync",
+        source: &overlapping,
+        schedule: Schedule::ForcedReverse,
+        cohort: 2,
+        ..Row::default()
+    }
+    .execute()
+    .unwrap();
+    assert!(
+        seen.races >= 1,
+        "the shipped, invisible header reports the same overlap:\n{}",
+        seen.stderr
     );
 }
 
@@ -823,15 +1236,24 @@ fn ct46s_own_case_runs_clean_bound_and_the_forcing_header_finds_no_seam() {
 /// 20), counts the runs in which ThreadSanitizer reported a race, archives a
 /// `halt_on_error=0` run of the join-edge mutation on `shared_readers` so the
 /// race *count* is recorded rather than remembered, and writes the result as
-/// JSON to `QCORE_TSAN2_MEASURE_DIR`. The archived copy is
-/// `docs/reports/tsan-rows-2/artifacts/catch-rates.json`.
+/// JSON to `QCORE_TSAN2_MEASURE_DIR`. The archived copies are
+/// `docs/reports/tsan-rows-2/artifacts/catch-rates.json` (wave 39) and
+/// `docs/reports/tsan-failure-arms/artifacts/catch-rates.json` (wave 41).
+///
+/// Card `TSAN-FAILURE-ARMS` adds three families of cells and keeps every
+/// wave-39 one so the two tables are comparable line for line: the gate-closed
+/// mutation under **both** triggers (`cohort 0` reproducing wave 39's 0/20 and
+/// `cohort 2` the repair), each failure arm on each subject under each
+/// schedule (`caught` is the wrong column for those — a clean arm is the
+/// verdict, so `clean` is recorded instead), and the `hook_visible_to_tsan`
+/// header mutation against the shipped header on the same text.
 ///
 /// ```sh
 /// QCORE_TSAN2_MEASURE_DIR=measure/catch cargo test -p qcore-compiler \
 ///     --test task_route_tsan measure_catch_rates_for_the_report -- --ignored
 /// ```
 #[test]
-#[ignore = "measurement harness for the TSAN-ROWS-2 report; run with --ignored and QCORE_TSAN2_MEASURE_DIR set"]
+#[ignore = "measurement harness for the TSAN-ROWS-2 / TSAN-FAILURE-ARMS reports; run with --ignored and QCORE_TSAN2_MEASURE_DIR set"]
 fn measure_catch_rates_for_the_report() {
     let directory = std::path::PathBuf::from(
         std::env::var("QCORE_TSAN2_MEASURE_DIR").expect("set QCORE_TSAN2_MEASURE_DIR"),
@@ -845,7 +1267,13 @@ fn measure_catch_rates_for_the_report() {
     let ct07 = emitted(CT07_CASE);
     let flagship = emitted(DISJOINT_EXERCISE);
     let shared_readers = emitted(PUBLISHED[2].1);
-    let mutations: Vec<(&str, String)> = vec![
+    let gate_deleted =
+        prepared(&ct07.replace(JOIN_CALL, "qcore_tsan_drop_join(record->thread, &status)"));
+    // (name, text, cohort): the cohort column is card TSAN-FAILURE-ARMS'.
+    // Every wave-39 mutation is measured at BOTH triggers, so the table says
+    // what the second trigger changed rather than leaving it to be inferred.
+    let mut mutations: Vec<(String, String, usize)> = Vec::new();
+    for (name, text) in [
         (
             "overlap/ct07-case",
             prepared(&with_overlapping_writers(&ct07)),
@@ -862,26 +1290,38 @@ fn measure_catch_rates_for_the_report() {
             "join-edge-removed/ct07-case",
             prepared(&with_join_edge_removed(&ct07)),
         ),
-        (
-            "join-deleted-gate-closed/ct07-case",
-            prepared(&ct07.replace(JOIN_CALL, "qcore_tsan_drop_join(record->thread, &status)")),
-        ),
-    ];
+        // Wave 39's gate-closed measurement, and card TSAN-FAILURE-ARMS' repair
+        // of it: the same text under the two triggers.
+        ("join-deleted-gate-closed/ct07-case", gate_deleted),
+    ] {
+        for cohort in [0usize, 2] {
+            mutations.push((format!("{name} @ cohort {cohort}"), text.clone(), cohort));
+        }
+    }
 
     let mut lines = vec![
         "{".to_string(),
-        "  \"card\": \"TSAN-ROWS-2\",".to_string(),
+        "  \"card\": \"TSAN-FAILURE-ARMS\",".to_string(),
+        "  \"supersedes\": \"docs/reports/tsan-rows-2/artifacts/catch-rates.json\",".to_string(),
         format!("  \"repeats\": {repeats},"),
         "  \"tsan_options\": \"halt_on_error=1\",".to_string(),
         "  \"caught\": {".to_string(),
     ];
     let mut entries = Vec::new();
-    for (name, text) in &mutations {
+    for (name, text, cohort) in &mutations {
         for schedule in Schedule::ALL {
             let mut caught = 0;
             let mut released = 0;
             for _ in 0..repeats {
-                let run = thread_sanitizer::run_scheduled("measure", text, true, schedule).unwrap();
+                let run = Row {
+                    tag: "measure",
+                    source: text,
+                    schedule,
+                    cohort: *cohort,
+                    ..Row::default()
+                }
+                .execute()
+                .unwrap();
                 caught += usize::from(run.races >= 1);
                 released += usize::from(!run.schedule.is_empty());
             }
@@ -894,17 +1334,104 @@ fn measure_catch_rates_for_the_report() {
     lines.push(entries.join(",\n"));
     lines.push("  },".to_string());
 
+    // The failure arms: a clean run taking the named arm is the verdict, so
+    // `clean` and `arm_named` are the columns, not `caught`.
+    let mut arm_entries = Vec::new();
+    for (name, source) in [
+        ("disjoint-exercise", DISJOINT_EXERCISE),
+        ("ct07-case", CT07_CASE),
+    ] {
+        let module = compiled(source);
+        let text = prepared(module.c_source.as_deref().unwrap());
+        for arm in failure_arms() {
+            let reference = reference_stdout_scripted(&module, &(arm.script)());
+            for schedule in Schedule::ALL {
+                let (mut clean, mut named, mut matched) = (0, 0, 0);
+                for _ in 0..repeats {
+                    let run = Row {
+                        tag: "measure-arm",
+                        source: &text,
+                        schedule,
+                        cohort: arm.cohort,
+                        failure: arm.failure,
+                        ..Row::default()
+                    }
+                    .execute()
+                    .unwrap();
+                    clean += usize::from(run.clean && run.races == 0);
+                    named += usize::from(
+                        arm.present.iter().all(|m| run.stdout.contains(m))
+                            && arm.absent.iter().all(|m| !run.stdout.contains(m)),
+                    );
+                    matched += usize::from(run.stdout == reference);
+                }
+                arm_entries.push(format!(
+                    "    \"{name} @ {} @ {}\": {{\"clean\": {clean}, \"arm_named\": {named}, \
+                     \"stdout_matches_reference\": {matched}}}",
+                    arm.failure.tag(),
+                    schedule.tag()
+                ));
+            }
+        }
+    }
+    lines.push("  \"failure_arms\": {".to_string());
+    lines.push(arm_entries.join(",\n"));
+    lines.push("  },".to_string());
+
+    // The invisibility property: the same overlap text under the shipped
+    // header and under the hook_visible_to_tsan mutation of it.
+    let visible = thread_sanitizer::with_visible_synchronization(thread_sanitizer::SCHEDULE_FORCING);
+    let overlapping = prepared(&with_overlapping_writers(&ct07));
+    let mut invisibility = Vec::new();
+    for schedule in Schedule::FORCED {
+        for (label, header) in [
+            ("shipped-invisible", None),
+            ("hook_visible_to_tsan", Some(visible.as_str())),
+        ] {
+            let mut caught = 0;
+            for _ in 0..repeats {
+                let run = Row {
+                    tag: "measure-visible",
+                    source: &overlapping,
+                    schedule,
+                    cohort: 2,
+                    forcing: header,
+                    ..Row::default()
+                }
+                .execute()
+                .unwrap();
+                caught += usize::from(run.races >= 1);
+            }
+            invisibility.push(format!(
+                "    \"overlap/ct07-case @ {label} @ {}\": {{\"caught\": {caught}}}",
+                schedule.tag()
+            ));
+        }
+    }
+    lines.push("  \"invisibility\": {".to_string());
+    lines.push(invisibility.join(",\n"));
+    lines.push("  },".to_string());
+
     // The race count under halt_on_error=0, on the mutation wave 37's report
-    // described as "two races".
+    // described as "two races" — at wave 39's own trigger, which is the row
+    // the committed test asserts.
+    let joinless = mutations
+        .iter()
+        .find(|(name, _, _)| name == "join-edge-removed/shared_readers @ cohort 0")
+        .expect("the join-edge mutation is in the table")
+        .1
+        .clone();
     let mut counts = Vec::new();
     for schedule in Schedule::ALL {
-        let run = thread_sanitizer::run_with_options(
-            "count",
-            &mutations[2].1,
-            true,
+        let run = Row {
+            tag: "count",
+            source: &joinless,
             schedule,
-            "halt_on_error=0",
-        )
+            cohort: 0,
+            tsan_options: "halt_on_error=0",
+            ..Row::default()
+        }
+        .execute()
         .unwrap();
         counts.push(format!(
             "    \"join-edge-removed/shared_readers @ {}\": {}",
