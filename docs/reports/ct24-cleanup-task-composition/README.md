@@ -54,6 +54,11 @@ The reader does not duplicate loan rules. A cleanup release while lent reaches
 the unchanged `TaskInstructionKind::DropBuffer` check and its existing
 `LoanOutstanding` diagnostic.
 
+The exact spawn form is recognized from the parsed `SourceTaskExpressionKind::Spawn`
+whose statement span equals the result match, not from a raw source-text prefix.
+A focused control puts a newline and comment between `spawn` and its scope and
+is admitted as the same structured expression.
+
 The completion review found and repaired one checkpoint defect: the first
 implementation had removed the after-all-task-facts check for direct
 task-scope regions as well as for the new success-arm form. `ComposedRegion`

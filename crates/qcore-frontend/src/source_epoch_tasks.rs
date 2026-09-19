@@ -546,10 +546,10 @@ fn admitted_region_placement(
         };
         source.result_matches().iter().find_map(|result_match| {
             (result_match.span == statement.span
-                && result_match
-                    .scrutinee_source
-                    .trim_start()
-                    .starts_with("spawn ")
+                && source.task_expressions().iter().any(|expression| {
+                    expression.statement_span == result_match.span
+                        && matches!(expression.kind, SourceTaskExpressionKind::Spawn { .. })
+                })
                 && result_match.arms.iter().any(|arm| {
                     arm.pattern
                         .as_ref()

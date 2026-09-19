@@ -756,6 +756,20 @@ fn the_reader_finds_handled_cleanup_nested_in_the_task_scope() {
     assert_eq!(region.duties, Vec::<(String, u64)>::new());
     assert_eq!(region.remainder, Some(3));
     assert!(nested[region.span.start..region.span.end].starts_with("error region R"));
+
+    // Placement follows the parsed task expression rather than a raw source
+    // prefix: whitespace and comments between `spawn` and its scope are still
+    // the exact same structured spawn scrutinee.
+    let formatted = region_module(&format!(
+        "        match spawn\n            // formatting does not change the expression\n            s worker() {{\n            Result::Ok {{ value: handle }} => {{\n{REGION}\n            }}\n            Result::Err {{ error: failure }} => {{\n                return 0;\n            }}\n        }}"
+    ));
+    let formatted_region = read(&formatted)
+        .expect("the formatted spawn cleanup reads")
+        .expect("the formatted spawn region is found");
+    assert_eq!(
+        formatted_region.placement,
+        qcore_frontend::source_epoch_tasks::ComposedRegionPlacement::SpawnSuccessArm
+    );
 }
 
 /// The reader's own placement and shape refusals, each on `Q302` with the rule
