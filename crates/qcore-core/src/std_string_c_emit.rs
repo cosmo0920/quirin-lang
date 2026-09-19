@@ -231,6 +231,13 @@ fn buffer_consumers(event: &BufferEvent, consumed: &mut BTreeMap<String, bool>) 
         BufferEvent::FieldExtent { record, .. } | BufferEvent::FieldRelease { record, .. } => {
             consumed.insert(record.clone(), true);
         }
+        // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind **reads its source**, so
+        // the source is consumed — marked here for the reason the record arms
+        // above are, though this route lowers no copy bind at all
+        // (`buffer_use` does not claim the shape).
+        BufferEvent::CopyBind { source, .. } => {
+            consumed.insert(source.clone(), true);
+        }
         BufferEvent::Line(_) | BufferEvent::Return => {}
     }
 }

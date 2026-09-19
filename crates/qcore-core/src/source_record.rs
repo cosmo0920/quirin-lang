@@ -62,7 +62,7 @@
 //!
 //! [`code`]: RecordRefusal::code
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 /// The largest number of fields a record this model admits may declare.
@@ -115,6 +115,54 @@ impl FieldType {
     #[must_use]
     pub fn is_owned(self) -> bool {
         matches!(self, Self::Bytes)
+    }
+}
+
+/// The spelling a `source.string.v1` borrowed view would be written with at a
+/// field position (card `OWNED-FIELD-ROUTE-REACH`).
+///
+/// One word, deliberately. The view has no written type name anywhere in this
+/// revision — it is produced by `borrow_utf8(…)` and by a quoted literal, never
+/// declared — so this constant is not "the" name of the type but the spelling a
+/// reader would reach for, and its whole job is to make `AGGREGATE-VIEW-FIELD`
+/// name itself at the one place the boundary is met.
+pub const VIEW_FIELD_SPELLING: &str = "string";
+
+/// Why a field-type spelling is not a field type — the **by-name**
+/// classification (card `OWNED-FIELD-ROUTE-REACH`, wave 41).
+///
+/// Three answers, in one place so the reader and any later route cannot
+/// disagree about which residual a spelling meets: a view spelling is
+/// `AGGREGATE-VIEW-FIELD`, a record type this module declares is
+/// `AGGREGATE-NESTED`, and everything else is the generic
+/// `AGGREGATE-FIELD-TYPES` this model always reported. All three are `Q051`
+/// and all three refuse; what the split buys is that two named boundaries now
+/// have a message to pin and something for a later card to supersede.
+#[must_use]
+pub fn field_type_refusal(
+    type_name: &str,
+    field: &str,
+    spelling: &str,
+    declared_records: &BTreeSet<String>,
+) -> RecordRefusal {
+    if spelling == VIEW_FIELD_SPELLING {
+        return RecordRefusal::ViewFieldType {
+            type_name: type_name.to_owned(),
+            field: field.to_owned(),
+            spelling: spelling.to_owned(),
+        };
+    }
+    if declared_records.contains(spelling) {
+        return RecordRefusal::NestedFieldType {
+            type_name: type_name.to_owned(),
+            field: field.to_owned(),
+            spelling: spelling.to_owned(),
+        };
+    }
+    RecordRefusal::UnknownFieldType {
+        type_name: type_name.to_owned(),
+        field: field.to_owned(),
+        spelling: spelling.to_owned(),
     }
 }
 
@@ -237,6 +285,33 @@ pub enum RecordRefusal {
         field: String,
         spelling: String,
     },
+    /// A field declared with the **view** spelling (card
+    /// `OWNED-FIELD-ROUTE-REACH`, wave 41).
+    ///
+    /// Split out of [`Self::UnknownFieldType`] so the boundary
+    /// `AGGREGATE-VIEW-FIELD` names **itself** where it is met. Before this
+    /// card the shape refused with the generic message, which named
+    /// `AGGREGATE-FIELD-TYPES` — a *different* residual — so the boundary was
+    /// absence rather than refusal and a later card lifting it would have found
+    /// nothing to supersede and no message pinned. Same code (`Q051`), same
+    /// refused set: a condition extension, not a new allocation.
+    ViewFieldType {
+        type_name: String,
+        field: String,
+        spelling: String,
+    },
+    /// A field declared with the name of a record type this module declares
+    /// (card `OWNED-FIELD-ROUTE-REACH`, wave 41) — the nested aggregate.
+    ///
+    /// Split out of [`Self::UnknownFieldType`] for [`Self::ViewFieldType`]'s
+    /// reason, and detected from the module's **declared record names**, so a
+    /// forward reference (`type Outer { inner: Inner }` written above
+    /// `type Inner { … }`) is the same refusal as a backward one.
+    NestedFieldType {
+        type_name: String,
+        field: String,
+        spelling: String,
+    },
     /// A construction naming a type this module does not declare.
     UnknownType { type_name: String },
     /// A construction supplying a field the type does not declare.
@@ -291,6 +366,11 @@ impl RecordRefusal {
             Self::Empty { .. }
             | Self::DuplicateField { .. }
             | Self::UnknownFieldType { .. }
+            // Card `OWNED-FIELD-ROUTE-REACH`: the two boundaries that now name
+            // themselves are the same shape condition, refused at the same
+            // code — what changed is the message, not the allocation.
+            | Self::ViewFieldType { .. }
+            | Self::NestedFieldType { .. }
             | Self::UndeclaredField { .. }
             | Self::RepeatedField { .. }
             | Self::MissingField { .. } => "Q051",
@@ -343,6 +423,32 @@ impl fmt::Display for RecordRefusal {
                 "`{type_name}.{field}` is declared `{spelling}`, which is not a field type \
                  `source.record.v1` models; a field is `i32` or `bytes` (an owned buffer, moved \
                  in at construction), and any other type is `AGGREGATE-FIELD-TYPES`"
+            ),
+            Self::ViewFieldType {
+                type_name,
+                field,
+                spelling,
+            } => write!(
+                f,
+                "`{type_name}.{field}` is declared `{spelling}`, a `source.string.v1` view, and \
+                 `source.record.v1` models no view field: a view is `{{storage, offset, len}}` \
+                 borrowed from a buffer for an exact lexical window, and an aggregate has \
+                 nowhere to carry that window's end — the field would outlive the borrow the \
+                 window was computed for. This is `AGGREGATE-VIEW-FIELD`, and it is refused by \
+                 name rather than left to the generic field-type message"
+            ),
+            Self::NestedFieldType {
+                type_name,
+                field,
+                spelling,
+            } => write!(
+                f,
+                "`{type_name}.{field}` is declared `{spelling}`, a record type this module \
+                 declares, and `source.record.v1` models no record field: the ownership IR's \
+                 owner path is one level (`BASE.FIELD`), so a nested aggregate needs a \
+                 recursive path, a drop-through over a tree and a termination argument for the \
+                 declaration graph. This is `AGGREGATE-NESTED`, and it is refused by name \
+                 rather than left to the generic field-type message"
             ),
             Self::UnknownType { type_name } => write!(
                 f,

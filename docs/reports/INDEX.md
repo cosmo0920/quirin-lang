@@ -302,6 +302,13 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [native-observation-repair](native-observation-repair/README.md) | Native observation repair |
 
+## O
+
+| Card directory | Original report title |
+|---|---|
+
+| [owned-field-route-reach](owned-field-route-reach/README.md) | `OWNED-FIELD-ROUTE-REACH` (wave 41) — the reach of wave 39's owned-field rules, measured, then closed or named |
+
 ## P
 
 | Card directory | Original report title |

@@ -300,3 +300,71 @@ including cross-topic rules, before editing; the index is not a substitute.
     the argument stands) — measured at 80 emitting programs byte-identical at
     wave 27 and re-measured at wave 39. `aggregates-v1`, `aggregate-owned-field`.
 <!-- preserved:constraint-15k:end -->
+
+<a id="amendments-after-the-migration-checkpoint"></a>
+
+## Amendments after the 2026-09-19 migration checkpoint
+
+The blocks above are the migration's **preserved checkpoint text**, and
+`docs/reports/docs-structure-compression/verify.py` reconstructs the pre-restructure
+guides from them byte for byte. Editing inside a `<!-- preserved:… -->` block
+therefore breaks that reconstruction, which is standing constraint 21's own
+case: provenance is published **beside** a frozen archive, never by editing it.
+Amendments to a rule on this page land here, under the rule's number, and are
+part of the rule — read them with it.
+
+<a id="constraint-15k-amendments"></a>
+
+### 15k — appended, card `OWNED-FIELD-ROUTE-REACH` (wave 41)
+
+It supersedes nothing above — it makes two of constraint 15k's own sentences
+reachable, which `STABILITY-REEVAL-4` measured they were not.
+
+The copy rule of the sentence "`Copy` of a record declaring an owned field
+refuses whatever the state of its fields" was decided by **four unit tests and
+by nothing else**: `OwnershipOp::Copy` was constructed nowhere outside
+`crates/qcore-core/tests/unit/ownership.rs`, so no `.qcore` program could
+produce the operation the rule refuses, and the opening sentence "a record of
+scalars is a plain **copyable** value" was an assertion this project could not
+check in either direction.
+
+The route now spells the question: `let NAME = NAME;` — **the copy bind** —
+builds `OwnershipOp::Copy` for every name the ledger holds a binding for and
+**no operation at all** for every other, so an owned buffer, an owning record
+hollow or not, a moved binding, a dropped one and a write loan refuse at `Q054`
+with the inherited checker's own words, while a scalar and a record of scalars
+are copied.
+
+Three things must survive refactors.
+
+* The statement is **not** a `buffer_use` — that function decides route
+  selection and is how the composed string route reads this route's statements,
+  so claiming the shape there would move both, and `let t = s;` on the composed
+  route keeps its `Q068`. The census measured the identical token shape at
+  **29 occurrences** in the tree, every one `source.socket.v1`'s
+  `let listener = tcp;`, separated from this statement by route selection and by
+  nothing else (`COPY-BIND-SOCKET-SHAPE-COLLISION`).
+* The **value half says nothing** about a name the ledger holds: the custody
+  refusals of a copy arrive from the IR exactly as a lend's do (15h), and a
+  second report would be a second copy rule.
+* The admitting side's safety is **proved, not assumed** — a place with no
+  binding owns no resource, so an admitted copy moves no duty and is the
+  identity on the ledger (`QCore.OwnedFieldCopyReach`), which is the invariant-1
+  argument for the one shape this card admits that `Q051` refused before.
+
+`AGGREGATE-VIEW-FIELD` and `AGGREGATE-NESTED` now **refuse by their own names**
+at `Q051` — a field declared `string`, and a field declared with the name of a
+record type the module declares, in either declaration order — where before both
+took the generic message naming `AGGREGATE-FIELD-TYPES`, a *different* residual;
+every other spelling keeps that message. `AGGREGATE-TASK-CAPTURE` does the same
+at `Q500`, in the task route's declaration walk, at the same code, span and
+refused set.
+
+What remains **absence** is recorded as such: the IR's
+`AggregateAtOwnerPosition` and `NotAnAggregate` are unreachable from any source
+program, the route's own `Q051`/`Q052` gates firing first by design and giving
+the better-localised message, and they stay the fail-closed backstop for a
+future route that reaches the IR without such a gate
+(`AGGREGATE-OWNER-POSITION-UNREACHABLE`).
+
+`aggregates-v1`, `aggregate-owned-field`, `owned-field-route-reach`.

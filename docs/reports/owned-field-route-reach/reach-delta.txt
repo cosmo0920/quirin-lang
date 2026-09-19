@@ -1,0 +1,31 @@
+r1-admitted                          ADMITTED   -> ADMITTED          construction moves in
+r1-refused-use-after-move            Q054       -> Q054              construction moves in
+r2-admitted                          ADMITTED   -> ADMITTED          partial move leaves a hole
+r2-refused-second-read               Q054       -> Q054              partial move leaves a hole
+r3-admitted                          ADMITTED   -> ADMITTED          drop-through in declaration order
+r3-refused-double-drop               Q054       -> Q054              drop-through in declaration order
+r4-refused-leak                      Q054       -> Q054              leak at exit names the path
+r5-copy-owning-record                Q051       -> Q054       MOVED  non-copyability
+r5-copy-hollow-record                Q051       -> Q054       MOVED  non-copyability (hollow)
+r5-copy-buffer                       Q051       -> Q054       MOVED  non-copyability (plain owner)
+r5-copy-scalar-record                Q051       -> ADMITTED   MOVED  copyability of a scalar record
+r5-copy-scalar                       Q051       -> ADMITTED   MOVED  copyability of a scalar on the buffer route
+r5-copy-shadowing                    Q012       -> Q012              a copy bind whose name is already live
+r5-copy-self                         Q013       -> Q013              a copy bind naming itself
+r5-copy-composed-string              Q068       -> Q068              a copy bind on the composed string/buffer route
+r5-copy-moved-record                 Q051       -> Q054       MOVED  non-copyability after the whole record is dropped
+r5-copy-loan                         Q051       -> Q054       MOVED  a write loan at a copy position
+r5-copy-unbound                      Q013       -> Q013              a name this entry never bound at a copy position
+collide-socket-creation              ADMITTED   -> ADMITTED          a socket program's `let NAME = tcp;` is untouched
+collide-buffer-route-transport-word  Q015       -> Q015              a transport word at a copy source on the buffer route
+b-view-field                         Q051       -> Q051              AGGREGATE-VIEW-FIELD
+b-nested-declared                    Q051       -> Q051              AGGREGATE-NESTED (field naming a declared record type)
+b-nested-forward                     Q051       -> Q051              AGGREGATE-NESTED (field naming a type declared after it)
+b-unknown-field-type                 Q051       -> Q051              AGGREGATE-FIELD-TYPES (a word this revision models no type for)
+b-task-capture                       Q500       -> Q500              AGGREGATE-TASK-CAPTURE
+b-task-capture-baseline              ADMITTED   -> ADMITTED          AGGREGATE-TASK-CAPTURE (the same task module without the record)
+ir-aggregate-at-owner-lend           Q051       -> Q051              AggregateAtOwnerPosition via a lend of a record
+ir-aggregate-at-owner-index          Q052       -> Q052              AggregateAtOwnerPosition via a byte access on a record
+ir-not-an-aggregate                  Q052       -> Q052              NotAnAggregate via a field path on a plain buffer
+
+29 probes, 7 moved

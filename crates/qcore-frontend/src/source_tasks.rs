@@ -931,6 +931,26 @@ fn lower(
                 "reserved owned-buffer intrinsic or error name",
             ));
         }
+        // Card `OWNED-FIELD-ROUTE-REACH` (wave 41): a **record type** in a
+        // checked-concurrency module refuses here already — this is the arm it
+        // reaches — but it refused with the generic declaration-kind sentence,
+        // which named no boundary. `AGGREGATE-TASK-CAPTURE` now names itself,
+        // at the **same code, the same span and over the same refused set**:
+        // no condition is widened and no code is allocated (the
+        // `CT24-CLEANUP-PREEMPTED` shape). It matters because the record route
+        // is never *selected* for a module that spawns — route dispatch takes
+        // the task route first — so this is the only place in the tree where a
+        // reader meets the boundary, and before the card nothing there said so.
+        if declaration.value.kind == DeclarationKind::Record {
+            return Err(failure(
+                declaration.span,
+                SemanticPass::CEmission,
+                "a `source.record.v1` record type is outside the copy-scalar task execution \
+                 profile: the transferability judgment has no aggregate kind and the scoped-task \
+                 ledger is keyed by plain name, so a record — owning or not — can neither be \
+                 captured by a spawn nor held across a join (`AGGREGATE-TASK-CAPTURE`)",
+            ));
+        }
         if !matches!(
             declaration.value.kind,
             DeclarationKind::ConcurrencyProfile

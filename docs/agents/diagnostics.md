@@ -136,3 +136,59 @@ engage.
 | `<plugin-id>.<local-code>` | providers | provider-owned; exact plugin ID plus one 1–128-byte ASCII local component. Libevent uses `qcore.libevent.L00`–`L12` |
 
 <!-- preserved:diagnostic-namespaces:end -->
+
+<a id="amendments-after-the-migration-checkpoint"></a>
+
+## Amendments after the 2026-09-19 migration checkpoint
+
+The block above is the migration's **preserved checkpoint text**, reconstructed
+byte for byte by `docs/reports/docs-structure-compression/verify.py`, so
+amendments land here rather than inside it — standing constraint 21's own
+discipline. That verifier also holds this page under **32 KiB**, so an entry
+here is a *summary*: `docs/QCORE_SPEC_r0_3.md` §L21 carries each in full and is
+the authority.
+
+### Card `OWNED-FIELD-ROUTE-REACH` (wave 41) — the copy bind, and three
+boundaries that name themselves
+
+**Tally:** the **nineteenth** instance of the icebox's consequence, on the
+existing `Q051`–`Q057` band, allocating nothing; the band count stays at
+**ten**. The card's two other movements are **not** instances, by constraint 1's
+rule that a message is not a code (see `Q500` below).
+
+**`Q051`–`Q057`.** The copy bind `let NAME = NAME;` lands on this band
+(constraint 15k's appendix carries the rules). **`Q051` is narrowed** — the bare
+shape was a shape refusal and is now a statement this route reads — and `Q054`
+carries the inherited checker's **copy arm**, which no program had reached:
+`CopyOfOwned` for an owned buffer or an owning record hollow or not,
+`MoveOfBorrow` for a loan, `UseAfterMove`/`UseAfterDrop` for a moved or dropped
+binding. The value half reports **nothing** for a ledger-held name: one fault,
+one report. `Q053` is not widened — a loop bound or lend footprint spelled
+through a copy stays refused at its own condition (`COPY-BIND-BOUND-TIER`).
+`Q051`'s unknown-field-type condition is split **by message and not by code**,
+so `AGGREGATE-VIEW-FIELD` (a field declared `string`) and `AGGREGATE-NESTED` (a
+field declared with a record type this module declares, either declaration
+order) refuse by name while every other spelling keeps the generic
+`AGGREGATE-FIELD-TYPES` message.
+
+**The wave-39 `Q054` sentence is amended.** It said the condition "carries …
+`AggregateAtOwnerPosition` and `NotAnAggregate`". Both are **unreachable from
+any source program** — measured by `STABILITY-REEVAL-4`, re-measured through the
+real pipeline here: the route's `Q051`/`Q052` gates decide every shape that
+would build such an operation and fire first by design, with the
+better-localised message. They stay the fail-closed backstop for a route
+reaching the IR **without** such a gate, and what would reach them is named:
+`AGGREGATE-ROUTE-WIDENING` and `OWNED-FIELD-LEND-WINDOW`'s discharge
+(`AGGREGATE-OWNER-POSITION-UNREACHABLE`).
+
+**`Q100`, `Q103`:** both re-measured, neither moved. The copy rule is reached on
+`source.buffer.v1`, which inherits the checker and reports at `Q054`; the
+sequential route's two `ownership_operations` sites construct four variants
+between them (`Acquire`, `TransferOut`, `Drop`, `Branch`), so `Copy`, the
+aggregate, range and borrow operations, `Move`, `Read` and `Write` stay outside
+anything a sequential program presents. `OWNED-FIELD-SEQUENTIAL-UNREACHED`
+stands, re-scoped from "`Q103`'s grown vocabulary" to that whole set.
+
+**`Q500`:** no code moved, no condition widened — a record type in a
+checked-concurrency module already refused there, and the refusal now names
+`AGGREGATE-TASK-CAPTURE` at the same code, span and refused set.

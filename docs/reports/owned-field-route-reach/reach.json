@@ -1,0 +1,205 @@
+[
+  {
+    "id": "r1-admitted",
+    "rule": "construction moves in",
+    "exit": 0,
+    "code": null,
+    "message": "checked 1 function(s); entry `main`"
+  },
+  {
+    "id": "r1-refused-use-after-move",
+    "rule": "construction moves in",
+    "exit": 1,
+    "code": "Q054",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r1-refused-use-after-move.qcore:7:1: Q054: the checked ownership discipline refuses this program: use of `b` after move"
+  },
+  {
+    "id": "r2-admitted",
+    "rule": "partial move leaves a hole",
+    "exit": 0,
+    "code": null,
+    "message": "checked 1 function(s); entry `main`"
+  },
+  {
+    "id": "r2-refused-second-read",
+    "rule": "partial move leaves a hole",
+    "exit": 1,
+    "code": "Q054",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r2-refused-second-read.qcore:7:1: Q054: the checked ownership discipline refuses this program: use of `f.body` after move"
+  },
+  {
+    "id": "r3-admitted",
+    "rule": "drop-through in declaration order",
+    "exit": 0,
+    "code": null,
+    "message": "checked 1 function(s); entry `main`"
+  },
+  {
+    "id": "r3-refused-double-drop",
+    "rule": "drop-through in declaration order",
+    "exit": 1,
+    "code": "Q054",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r3-refused-double-drop.qcore:7:1: Q054: the checked ownership discipline refuses this program: resource `f` is dropped more than once"
+  },
+  {
+    "id": "r4-refused-leak",
+    "rule": "leak at exit names the path",
+    "exit": 1,
+    "code": "Q054",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r4-refused-leak.qcore:7:1: Q054: the checked ownership discipline refuses this program: live resources escape normal exit: f.body"
+  },
+  {
+    "id": "r5-copy-owning-record",
+    "rule": "non-copyability",
+    "exit": 1,
+    "code": "Q054",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-owning-record.qcore:7:1: Q054: the checked ownership discipline refuses this program: owned resource `f` cannot be copied"
+  },
+  {
+    "id": "r5-copy-hollow-record",
+    "rule": "non-copyability (hollow)",
+    "exit": 1,
+    "code": "Q054",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-hollow-record.qcore:7:1: Q054: the checked ownership discipline refuses this program: owned resource `f` cannot be copied"
+  },
+  {
+    "id": "r5-copy-buffer",
+    "rule": "non-copyability (plain owner)",
+    "exit": 1,
+    "code": "Q054",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-buffer.qcore:5:1: Q054: the checked ownership discipline refuses this program: owned resource `b` cannot be copied"
+  },
+  {
+    "id": "r5-copy-scalar-record",
+    "rule": "copyability of a scalar record",
+    "exit": 0,
+    "code": null,
+    "message": "checked 1 function(s); entry `main`"
+  },
+  {
+    "id": "r5-copy-scalar",
+    "rule": "copyability of a scalar on the buffer route",
+    "exit": 0,
+    "code": null,
+    "message": "checked 1 function(s); entry `main`"
+  },
+  {
+    "id": "r5-copy-shadowing",
+    "rule": "a copy bind whose name is already live",
+    "exit": 1,
+    "code": "Q012",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-shadowing.qcore:10:5: Q012: duplicate local binding `p`"
+  },
+  {
+    "id": "r5-copy-self",
+    "rule": "a copy bind naming itself",
+    "exit": 1,
+    "code": "Q013",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-self.qcore:7:5: Q013: unknown name `q`"
+  },
+  {
+    "id": "r5-copy-composed-string",
+    "rule": "a copy bind on the composed string/buffer route",
+    "exit": 1,
+    "code": "Q068",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-composed-string.qcore:11:5: Q068: `source.string.v1` binds an integer literal, a quoted literal, `len(NAME)` or one slice; nothing else"
+  },
+  {
+    "id": "r5-copy-moved-record",
+    "rule": "non-copyability after the whole record is dropped",
+    "exit": 1,
+    "code": "Q054",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-moved-record.qcore:7:1: Q054: the checked ownership discipline refuses this program: use of `f` after drop"
+  },
+  {
+    "id": "r5-copy-loan",
+    "rule": "a write loan at a copy position",
+    "exit": 1,
+    "code": "Q054",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-loan.qcore:5:1: Q054: the checked ownership discipline refuses this program: borrow `l` cannot be moved as an owner"
+  },
+  {
+    "id": "r5-copy-unbound",
+    "rule": "a name this entry never bound at a copy position",
+    "exit": 1,
+    "code": "Q013",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/r5-copy-unbound.qcore:6:5: Q013: unknown name `nope`"
+  },
+  {
+    "id": "collide-socket-creation",
+    "rule": "a socket program's `let NAME = tcp;` is untouched",
+    "exit": 0,
+    "code": null,
+    "message": "checked 1 function(s); entry `main`"
+  },
+  {
+    "id": "collide-buffer-route-transport-word",
+    "rule": "a transport word at a copy source on the buffer route",
+    "exit": 1,
+    "code": "Q015",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/collide-buffer-route-transport-word.qcore:7:5: Q015: the checked socket vocabulary requires an explicit `import std.socket;` in this source file"
+  },
+  {
+    "id": "b-view-field",
+    "rule": "AGGREGATE-VIEW-FIELD",
+    "exit": 1,
+    "code": "Q051",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/b-view-field.qcore:5:1: Q051: `Frame.s` is declared `string`, a `source.string.v1` view, and `source.record.v1` models no view field: a view is `{storage, offset, len}` borrowed from a buffer for an exact lexical window, and an aggregate has nowhere to carry that window's end \u2014 the field would outlive the borrow the window was computed for. This is `AGGREGATE-VIEW-FIELD`, and it is refused by name rather than left to the generic field-type message"
+  },
+  {
+    "id": "b-nested-declared",
+    "rule": "AGGREGATE-NESTED (field naming a declared record type)",
+    "exit": 1,
+    "code": "Q051",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/b-nested-declared.qcore:6:1: Q051: `Outer.inner` is declared `Inner`, a record type this module declares, and `source.record.v1` models no record field: the ownership IR's owner path is one level (`BASE.FIELD`), so a nested aggregate needs a recursive path, a drop-through over a tree and a termination argument for the declaration graph. This is `AGGREGATE-NESTED`, and it is refused by name rather than left to the generic field-type message"
+  },
+  {
+    "id": "b-nested-forward",
+    "rule": "AGGREGATE-NESTED (field naming a type declared after it)",
+    "exit": 1,
+    "code": "Q051",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/b-nested-forward.qcore:5:1: Q051: `Outer.inner` is declared `Inner`, a record type this module declares, and `source.record.v1` models no record field: the ownership IR's owner path is one level (`BASE.FIELD`), so a nested aggregate needs a recursive path, a drop-through over a tree and a termination argument for the declaration graph. This is `AGGREGATE-NESTED`, and it is refused by name rather than left to the generic field-type message"
+  },
+  {
+    "id": "b-unknown-field-type",
+    "rule": "AGGREGATE-FIELD-TYPES (a word this revision models no type for)",
+    "exit": 1,
+    "code": "Q051",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/b-unknown-field-type.qcore:5:1: Q051: `Frame.x` is declared `u8`, which is not a field type `source.record.v1` models; a field is `i32` or `bytes` (an owned buffer, moved in at construction), and any other type is `AGGREGATE-FIELD-TYPES`"
+  },
+  {
+    "id": "b-task-capture",
+    "rule": "AGGREGATE-TASK-CAPTURE",
+    "exit": 1,
+    "code": "Q500",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/b-task-capture.qcore:4:1: Q500: a `source.record.v1` record type is outside the copy-scalar task execution profile: the transferability judgment has no aggregate kind and the scoped-task ledger is keyed by plain name, so a record \u2014 owning or not \u2014 can neither be captured by a spawn nor held across a join (`AGGREGATE-TASK-CAPTURE`)"
+  },
+  {
+    "id": "b-task-capture-baseline",
+    "rule": "AGGREGATE-TASK-CAPTURE (the same task module without the record)",
+    "exit": 0,
+    "code": null,
+    "message": "checked 2 function(s); entry `main`; scoped owned-buffer tasks (Linux/macOS/Windows threads)"
+  },
+  {
+    "id": "ir-aggregate-at-owner-lend",
+    "rule": "AggregateAtOwnerPosition via a lend of a record",
+    "exit": 1,
+    "code": "Q051",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/ir-aggregate-at-owner-lend.qcore:10:5: Q051: a lend is not a statement an entry that composes a record with an owned field models; the lend's custody projection addresses owners by plain name, and a projection that also addressed fields would be a second one beside it (`OWNED-FIELD-LEND-WINDOW`)"
+  },
+  {
+    "id": "ir-aggregate-at-owner-index",
+    "rule": "AggregateAtOwnerPosition via a byte access on a record",
+    "exit": 1,
+    "code": "Q052",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/ir-aggregate-at-owner-index.qcore:10:5: Q052: `f` is not a buffer this entry acquired; `source.buffer.v1` names a buffer only at a custody position, and every such position must name one"
+  },
+  {
+    "id": "ir-not-an-aggregate",
+    "rule": "NotAnAggregate via a field path on a plain buffer",
+    "exit": 1,
+    "code": "Q052",
+    "message": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a941833997eae71fb/measure/reach-after/ir-not-an-aggregate.qcore:7:5: Q052: `b` is not a record this entry constructed; `source.record.v1` reads a field only of a value constructed in the same entry"
+  }
+]

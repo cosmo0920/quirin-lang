@@ -398,6 +398,18 @@ pub fn read_field_path_statement(window: &[&Token]) -> Option<Result<FieldPathSt
 /// [`qcore_core::source_record::admit_type`]'s, so the two cannot disagree.
 pub fn record_declarations(program: &SourceProgram) -> Result<Vec<RecordType>, (Span, String)> {
     let tokens = program.lexical_tokens();
+    // Card `OWNED-FIELD-ROUTE-REACH`: the module's record type **names**,
+    // collected before any field is read, so a field naming a record declared
+    // *after* it refuses as `AGGREGATE-NESTED` exactly as a backward reference
+    // does. Read from the declaration kinds rather than from the types this
+    // function is building, which is what makes the answer independent of
+    // declaration order.
+    let declared_records: std::collections::BTreeSet<String> = program
+        .declarations
+        .iter()
+        .filter(|declaration| declaration.value.kind == DeclarationKind::Record)
+        .map(|declaration| declaration.value.name.clone())
+        .collect();
     let mut declared = Vec::new();
     for declaration in &program.declarations {
         if declaration.value.kind != DeclarationKind::Record {
@@ -442,13 +454,19 @@ pub fn record_declarations(program: &SourceProgram) -> Result<Vec<RecordType>, (
                 // The refusal itself is the model's, and it is reported with
                 // the model's own message so there is one description of the
                 // rule rather than two.
+                //
+                // Card `OWNED-FIELD-ROUTE-REACH`: **which** refusal is the
+                // model's classification, so a view field and a nested record
+                // name their own boundaries and every other word keeps the
+                // generic message it always had.
                 return Err((
                     span,
-                    qcore_core::source_record::RecordRefusal::UnknownFieldType {
-                        type_name: name.clone(),
-                        field: field.to_owned(),
-                        spelling: spelling.to_owned(),
-                    }
+                    qcore_core::source_record::field_type_refusal(
+                        &name,
+                        field,
+                        spelling,
+                        &declared_records,
+                    )
                     .to_string(),
                 ));
             };

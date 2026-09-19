@@ -287,6 +287,34 @@ pub enum BufferEvent {
     /// ([`OwnershipOp::DropField`]). `drop RECORD;` is [`Self::Release`] naming
     /// the record, and releases every live owned field.
     FieldRelease { record: String, field: String },
+    /// `let BINDING = SOURCE;` — **the copy bind** (card
+    /// `OWNED-FIELD-ROUTE-REACH`, wave 41).
+    ///
+    /// One statement asking one question: *may a second binding hold what this
+    /// name holds?* The answer is the ownership IR's
+    /// ([`OwnershipOp::Copy`]) for every name the ledger holds a binding for,
+    /// and it is always **no** — an owned buffer, a record with an owned field
+    /// (hollow or not), a moved binding, a dropped one. For a name the ledger
+    /// holds nothing for it is **yes**, and that is not a second rule: a place
+    /// with no binding owns no resource, so the copy moves no duty
+    /// (`QCore.OwnedFieldCopyReach.copy_refuses_every_bound_place` and its
+    /// neutrality sibling).
+    ///
+    /// Why the statement exists: wave 39's non-copyability rule was reachable
+    /// from **no source program** — `OwnershipOp::Copy` was constructed at four
+    /// places in the tree, all unit tests (`OWNERSHIP-COPY-OP-UNPRODUCED`,
+    /// measured by `STABILITY-REEVAL-4`). A rule no program can reach is
+    /// decided by hand-built operation lists, and constraint 15k's "a v1 record
+    /// is a plain copyable value" was an assertion nothing could check in
+    /// either direction. This statement makes both halves real.
+    ///
+    /// **Deliberately not a `buffer_use`.** Route selection and the composed
+    /// string route both read [`crate::std_buffer`] statements through
+    /// `source_std_buffer::buffer_use`, and adding this shape there would make
+    /// a module select this route for a statement that is a plain value bind
+    /// on every route. It is read by `lower_let` alone, so `let t = s;` on the
+    /// composed string route keeps the `Q068` it always had.
+    CopyBind { binding: String, source: String },
     /// The entry's return. Exactly one, last.
     Return,
 }
@@ -784,11 +812,19 @@ pub fn derived_effects(program: &BufferProgram) -> EffectRow {
                 // does. The `Mut` a lend-holding module carries is its
                 // stores', which the arm above already derives whichever
                 // binding they go through.
+                // **A copy bind derives nothing** (card
+                // `OWNED-FIELD-ROUTE-REACH`): an admitted copy binds a value
+                // that already exists — a scalar, or a record of scalars in
+                // automatic storage — so it allocates nothing and mutates no
+                // object of the program, exactly as `let n = 5;` does. A copy
+                // of anything the ledger holds is refused before this row is
+                // read, so no arm of this walk can be reached by one.
                 BufferEvent::Construct { .. }
                 | BufferEvent::Field { .. }
                 | BufferEvent::FieldLoad { .. }
                 | BufferEvent::FieldExtent { .. }
                 | BufferEvent::Bind { .. }
+                | BufferEvent::CopyBind { .. }
                 | BufferEvent::Lend { .. }
                 | BufferEvent::Load { .. }
                 | BufferEvent::Extent { .. }
@@ -1050,6 +1086,31 @@ pub fn custody_operations_with_gates(
                     BufferEvent::Release { name } if self.composed.contains_key(name) => {
                         self.operations.push(OwnershipOp::Drop(name.clone()));
                     }
+                    // --- Card `OWNED-FIELD-ROUTE-REACH`: the copy bind. ---
+                    //
+                    // `let g = f;` asks the IR whether a second binding may
+                    // hold what `f` holds, and it asks **only for a name the
+                    // ledger holds a binding for**: an acquired buffer, a
+                    // binding a partial move gave a buffer to, or a record
+                    // this entry composed with an owned field. For any other
+                    // name — a scalar, a record of scalars, a loan — no
+                    // operation is built, because `copy_owned` is a question
+                    // about a *place in the ledger* and a place that is not in
+                    // it owns nothing; those are the value half's, at its own
+                    // codes.
+                    //
+                    // This is the one arm that makes `OwnershipOp::Copy`
+                    // producible from source at all. Every answer it can
+                    // receive is a refusal: `CopyOfOwned` for an owner and for
+                    // an aggregate hollow or not, `UseAfterMove` for a moved
+                    // binding, `UseAfterDrop` for a dropped one. That is the
+                    // rule, not a special case of it.
+                    BufferEvent::CopyBind { source, .. }
+                        if self.names(source) || self.composed.contains_key(source) =>
+                    {
+                        self.operations
+                            .push(OwnershipOp::Copy(Self::owner(renames, source)));
+                    }
                     BufferEvent::Repeat {
                         variable,
                         count,
@@ -1113,7 +1174,15 @@ pub fn custody_operations_with_gates(
                     // A record of scalars contributes no custody operation at
                     // all (card `AGGREGATES-V1`): the `Construct` and `Field`
                     // arms above push one only for a declared owned field.
-                    BufferEvent::Bind { .. } | BufferEvent::Line(_) | BufferEvent::Return => {}
+                    //
+                    // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind whose source
+                    // the ledger holds nothing for is in exactly that class —
+                    // the guarded arm above did not claim it, so it contributes
+                    // no operation and the value half decides what it binds.
+                    BufferEvent::Bind { .. }
+                    | BufferEvent::CopyBind { .. }
+                    | BufferEvent::Line(_)
+                    | BufferEvent::Return => {}
                 }
             }
         }
@@ -1173,6 +1242,13 @@ fn custody_names_at_any_depth<'a>(event: &'a BufferEvent, into: &mut Vec<&'a str
         | BufferEvent::Extent { name, .. }
         | BufferEvent::Release { name }
         | BufferEvent::Lend { name, .. } => into.push(name.as_str()),
+        // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind **names its source**, so
+        // it is a use of that name and a loan's window runs through it. Pushed
+        // rather than skipped in the refusing direction: a copy of a loan is
+        // refused at `Q055` by the value half, and a window that ended before
+        // the statement naming the loan would be the one mistake this function
+        // exists to make impossible.
+        BufferEvent::CopyBind { source, .. } => into.push(source.as_str()),
         BufferEvent::Repeat { body, .. } => {
             for event in body {
                 custody_names_at_any_depth(event, into);
@@ -1495,6 +1571,27 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                     | BufferEvent::FieldRelease { .. }
                     | BufferEvent::Line(_)
                     | BufferEvent::Return => {}
+                    // Card `OWNED-FIELD-ROUTE-REACH`: the copy bind reaches
+                    // this projection too, because an entry may both lend and
+                    // copy. The question is the same one the flat walk asks —
+                    // is the source a name this projection holds a binding for
+                    // — and the answer is built from this walk's own
+                    // environment: an acquired buffer is asked, a loan is
+                    // asked (the IR answers `MoveOfBorrow`), and a scalar is
+                    // not in either map so it contributes nothing.
+                    BufferEvent::CopyBind { binding, source } => {
+                        if self.acquired.contains(source) || self.loans.contains_key(source) {
+                            operations.push(OwnershipOp::Copy(source.clone()));
+                        }
+                        // A copied **scalar** carries its value forward in this
+                        // walk's own environment, so an index written through
+                        // the copy resolves to the constant it is rather than
+                        // falling back to the rangeless form. Strictly a
+                        // sharpening: the fallback refuses.
+                        if let Some(value) = self.scalars.get(source).copied() {
+                            self.scalars.insert(binding.clone(), value);
+                        }
+                    }
                 }
                 index += 1;
             }
@@ -1643,6 +1740,16 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                         BufferEvent::Store { .. }
                         | BufferEvent::Load { .. }
                         | BufferEvent::Extent { .. } => self.access(event, operations),
+                        // Card `OWNED-FIELD-ROUTE-REACH`: the flat segment's
+                        // arm, in a body — the same question, the same answer.
+                        BufferEvent::CopyBind { binding, source } => {
+                            if self.acquired.contains(source) || self.loans.contains_key(source) {
+                                operations.push(OwnershipOp::Copy(source.clone()));
+                            }
+                            if let Some(value) = self.scalars.get(source).copied() {
+                                self.scalars.insert(binding.clone(), value);
+                            }
+                        }
                         BufferEvent::Repeat {
                             variable,
                             count,
@@ -1831,6 +1938,45 @@ impl BufferEvaluation {
         match event {
             BufferEvent::Bind { binding, value } => {
                 self.scalars.insert(binding.clone(), *value);
+            }
+            // --- Card `OWNED-FIELD-ROUTE-REACH`: the copy bind's value half. ---
+            //
+            // Three cases, and the split is the whole rule. A **scalar** and a
+            // **record of scalars** are plain copyable values and are copied
+            // here; that is constraint 15k's "a v1 record is a plain copyable
+            // value" made checkable rather than asserted, and it is the only
+            // thing this card admits that was refused before. Everything the
+            // **ledger** holds — an acquired buffer, a moved-out binding, a
+            // record with an owned field, a write loan — is refused by the
+            // ownership IR at `Q054`, and this half deliberately says
+            // *nothing* about any of them: the custody refusals of a copy
+            // arrive from the IR exactly as a lend's do (constraint 15h), and
+            // reporting the same fault twice would put a second copy rule
+            // beside the one the card exists to reach.
+            //
+            // The order is total: names are unique (a duplicate `let` is
+            // `Q012`, before this route), so at most one arm matches.
+            BufferEvent::CopyBind { binding, source } => {
+                if let Some(value) = self.scalars.get(source).copied() {
+                    self.scalars.insert(binding.clone(), value);
+                } else if let Some(value) = self.records.get(source).cloned() {
+                    let owns = self
+                        .record_types
+                        .get(&value.type_name)
+                        .is_some_and(RecordType::has_owned_field);
+                    if !owns {
+                        self.records.insert(binding.clone(), value);
+                    }
+                } else if !self.extents.contains_key(source) && !self.loans.contains_key(source) {
+                    // Not a scalar, not a record, not a buffer, not a loan:
+                    // nothing this route bound. `Q013` refuses an unknown name
+                    // before the route runs, so this arm is the fail-closed
+                    // backstop rather than a reachable message.
+                    step.errors.push(BufferError::NotAScalar {
+                        event: index,
+                        name: source.clone(),
+                    });
+                }
             }
             BufferEvent::Acquire { name, extent } => {
                 if *extent == 0 || *extent > MAX_EXTENT {
@@ -3117,7 +3263,12 @@ impl BufferRun {
             | BufferEvent::FieldStore { .. }
             | BufferEvent::FieldLoad { .. }
             | BufferEvent::FieldExtent { .. }
-            | BufferEvent::FieldRelease { .. } => {
+            | BufferEvent::FieldRelease { .. }
+            // Card `OWNED-FIELD-ROUTE-REACH`: the copy bind is value-bearing —
+            // it binds a scalar or a record value — and reaches the same
+            // stepper, so a copy inside a `for` body is decided by the one
+            // implementation a top-level one is.
+            | BufferEvent::CopyBind { .. } => {
                 let step = evaluation.apply(index, event);
                 errors.extend(step.errors);
                 acquisitions.extend(step.acquisition);
@@ -3296,7 +3447,10 @@ fn body_bindings(events: &[BufferEvent]) -> BTreeSet<String> {
                 | BufferEvent::Construct { binding, .. }
                 | BufferEvent::Field { binding, .. }
                 | BufferEvent::FieldLoad { binding, .. }
-                | BufferEvent::FieldExtent { binding, .. } => {
+                | BufferEvent::FieldExtent { binding, .. }
+                // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind binds a name,
+                // and it is body-local exactly as every other binding is.
+                | BufferEvent::CopyBind { binding, .. } => {
                     names.insert(binding.clone());
                 }
                 BufferEvent::Acquire { name, .. } => {
