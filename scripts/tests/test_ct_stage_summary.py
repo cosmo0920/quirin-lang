@@ -352,11 +352,11 @@ class SummaryTest(unittest.TestCase):
         The case this removes is a tree fact, not the assertion: it must be one
         the manifest still leaves unmapped, or the removal is invisible. It read
         CT44 until card `CT-WIRE-LANE-4` (wave 32) mapped that case, and reads
-        CT10 -- still unmapped, still archive-held -- since.
+        CT10 until card `CT10-SOURCE-LAYOUT` mapped it; CT24 since.
         """
         coverage = json.loads((ROOT / summary.TRIAGE).read_text())
         coverage["unmapped_triage"]["cases"] = [
-            case for case in coverage["unmapped_triage"]["cases"] if case["id"] != "CT10"
+            case for case in coverage["unmapped_triage"]["cases"] if case["id"] != "CT24"
         ]
         with MutableRoot() as scratch:
             scratch.write_triage(coverage)
@@ -701,8 +701,9 @@ class SummaryTest(unittest.TestCase):
             self.assertNotEqual(labels["CT41"]["label"], "invented-archive-label")
             # A tree fact: the case named here must be one no lane measured, so
             # it must still be unmapped and still archive-held. CT44 until card
-            # `CT-WIRE-LANE-4` (wave 32) mapped it; CT10 since.
-            self.assertEqual(labels["CT10"]["label_source"], summary.ARCHIVE_SOURCE)
+            # `CT-WIRE-LANE-4` (wave 32) mapped it; CT10 followed at
+            # `CT10-SOURCE-LAYOUT`; CT24 is the remaining archive-held case.
+            self.assertEqual(labels["CT24"]["label_source"], summary.ARCHIVE_SOURCE)
             # A mapped case has no label at all, whatever the archive says about
             # it: CT40 keeps its archived row and its retired lane row, and
             # neither reaches the published map.
@@ -1001,9 +1002,10 @@ class SummaryTest(unittest.TestCase):
             # wave-31 lane mapped CT25, 7 until card `CT-WIRE-LANE-4` (wave 32)
             # mapped CT44 and CT47, 5 until card `CT-CTWIN-LANE` (wave 35) mapped
             # CT46, 4 until card `CT42-CELL-ROUTE` (wave 39) mapped CT42, 3
-            # since. A tree fact, not a loosened assertion -- relabelling one
+            # until card `CT10-SOURCE-LAYOUT` mapped CT10, 2 since. A tree
+            # fact, not a loosened assertion -- relabelling one
             # row still moves no total.
-            self.assertEqual(sum(counts.values()), 3)
+            self.assertEqual(sum(counts.values()), 2)
             self.assertIn(
                 "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
                 summary.check_acceptance(scratch.directory),

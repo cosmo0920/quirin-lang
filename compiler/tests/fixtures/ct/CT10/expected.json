@@ -1,0 +1,42 @@
+{
+  "id": "CT10",
+  "verdict": "bitfield_reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q661",
+      "message_contains": "SharedBitfieldUnit"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate",
+    "footprint_lowering",
+    "footprint_check"
+  ],
+  "evidence_target": null,
+  "notes": "Property-only check of two actual write captures on the all-spawns-and-joins-succeed path. The adjacent bit-fields share storage unit 0 and the unedited footprint checker refuses Q661. No scoped-task ledger, C emission, reference execution, native run, sanitizer run or case-bound proof is claimed.",
+  "bitfield_reject": {
+    "diagnostic_sequence": [
+      "Q661"
+    ],
+    "controls": [
+      {
+        "source": "addressable.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "BitfieldConcurrencyV1",
+        "note": "The identical worker window over two ordinary disjoint fields admits the footprint property."
+      },
+      {
+        "source": "distinct_units.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "BitfieldConcurrencyV1",
+        "note": "The identical worker window over bit-fields in distinct storage units and bytes admits the footprint property."
+      }
+    ]
+  }
+}

@@ -192,8 +192,8 @@
   "evidence_classes": 4,
   "requirement_evidence_cells": 68,
   "ct_rows": 50,
-  "ct_stage_names": 17,
-  "ct_cells": 850,
+  "ct_stage_names": 19,
+  "ct_cells": 950,
   "unverified_spec_items": 7,
   "named_followups": 264
  },
@@ -1030,13 +1030,15 @@
    "docs/reports/ct-lane-5/ct_stage_evidence.json",
    "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
    "docs/reports/ct42-cell-route/ct_stage_evidence.json",
-   "docs/reports/ct-proof-leg-3/ct_stage_evidence.json"
+   "docs/reports/ct-proof-leg-3/ct_stage_evidence.json",
+   "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json",
+   "docs/reports/ct10-source-layout/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 47,
-   "unmapped": 3
+   "mapped": 49,
+   "unmapped": 1
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1057,6 +1059,12 @@
     "any"
    ],
    "epoch_lowering": [
+    "any"
+   ],
+   "footprint_check": [
+    "any"
+   ],
+   "footprint_lowering": [
     "any"
    ],
    "legacy_c_twin": [
@@ -1119,6 +1127,12 @@
    "epoch_lowering": [
     "none"
    ],
+   "footprint_check": [
+    "none"
+   ],
+   "footprint_lowering": [
+    "none"
+   ],
    "legacy_c_twin": [
     "clang"
    ],
@@ -1165,85 +1179,94 @@
   ],
   "stage_histogram": {
    "parse": {
-    "executed": 47
+    "executed": 49
    },
    "elaborate": {
-    "executed": 44,
+    "executed": 46,
     "not_applicable": 3
    },
+   "footprint_lowering": {
+    "executed": 1,
+    "not_applicable": 48
+   },
+   "footprint_check": {
+    "executed": 1,
+    "not_applicable": 48
+   },
    "task_lowering": {
-    "executed": 23,
-    "not_applicable": 24
+    "executed": 24,
+    "not_applicable": 25
    },
    "task_ledger_check": {
-    "executed": 22,
-    "not_applicable": 25
+    "executed": 23,
+    "not_applicable": 26
    },
    "mutex_lowering": {
     "executed": 11,
-    "not_applicable": 36
+    "not_applicable": 38
    },
    "mutex_invariant_check": {
     "executed": 11,
-    "not_applicable": 36
+    "not_applicable": 38
    },
    "epoch_lowering": {
     "executed": 7,
-    "not_applicable": 40
+    "not_applicable": 42
    },
    "epoch_bound_check": {
     "executed": 7,
-    "not_applicable": 40
+    "not_applicable": 42
    },
    "sequential_whole_program": {
     "executed": 2,
-    "not_applicable": 45
+    "not_applicable": 47
    },
    "sequential_reference_execution": {
     "executed": 1,
-    "not_applicable": 46
+    "not_applicable": 48
    },
    "task_reference_execution": {
     "executed": 13,
-    "not_applicable": 34
+    "not_applicable": 36
    },
    "mutex_reference_execution": {
     "executed": 3,
-    "not_applicable": 44
+    "not_applicable": 46
    },
    "c_emission": {
     "executed": 19,
-    "not_applicable": 28
+    "not_applicable": 30
    },
    "native_execution": {
     "executed": 19,
-    "not_applicable": 28
+    "not_applicable": 30
    },
    "native_sanitized": {
     "executed": 10,
-    "not_applicable": 7,
+    "not_applicable": 8,
     "recorded_not_gated": 5,
-    "unassessed": 25
+    "unassessed": 26
    },
    "legacy_c_twin": {
     "executed": 3,
-    "not_applicable": 44
+    "not_applicable": 46
    },
    "proof": {
     "executed": 5,
-    "unassessed": 42
+    "unassessed": 44
    }
   },
   "depth_profile": {
    "elaborate": 4,
    "epoch_bound_check": 4,
+   "footprint_check": 1,
    "legacy_c_twin": 3,
    "mutex_invariant_check": 8,
    "native_execution": 6,
    "native_sanitized": 8,
    "proof": 5,
    "sequential_whole_program": 1,
-   "task_ledger_check": 7,
+   "task_ledger_check": 8,
    "task_lowering": 1
   },
   "case_depth": {
@@ -1256,6 +1279,7 @@
    "CT07": "proof",
    "CT08": "elaborate",
    "CT09": "native_sanitized",
+   "CT10": "footprint_check",
    "CT11": "elaborate",
    "CT12": "native_execution",
    "CT13": "native_execution",
@@ -1269,6 +1293,7 @@
    "CT21": "elaborate",
    "CT22": "native_sanitized",
    "CT23": "task_ledger_check",
+   "CT24": "task_ledger_check",
    "CT25": "native_sanitized",
    "CT26": "native_sanitized",
    "CT27": "mutex_invariant_check",
@@ -1297,21 +1322,23 @@
   },
   "observation_counts": {
    "c_emission": 36,
-   "elaborate": 44,
+   "elaborate": 46,
    "epoch_bound_check": 7,
    "epoch_lowering": 7,
+   "footprint_check": 1,
+   "footprint_lowering": 1,
    "legacy_c_twin": 4,
    "mutex_invariant_check": 11,
    "mutex_lowering": 11,
    "mutex_reference_execution": 3,
    "native_execution": 51,
    "native_sanitized": 32,
-   "parse": 47,
+   "parse": 49,
    "proof": 5,
    "sequential_reference_execution": 1,
    "sequential_whole_program": 2,
-   "task_ledger_check": 22,
-   "task_lowering": 23,
+   "task_ledger_check": 23,
+   "task_lowering": 24,
    "task_reference_execution": 29
   },
   "ct_rows": [
@@ -1337,6 +1364,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -1459,6 +1492,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT02/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
@@ -1538,6 +1577,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -1651,6 +1696,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT04/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
@@ -1730,6 +1781,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT05/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -1811,6 +1868,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT06/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "not_applicable"
      },
@@ -1884,6 +1947,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -1997,6 +2066,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT08/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "not_applicable"
      },
@@ -2070,6 +2145,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "not_applicable"
@@ -2156,67 +2237,89 @@
    },
    {
     "id": "CT10",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Reject independent concurrent writes",
-    "current_bucket": "blocked-on-unimplemented-syntax",
-    "current_bucket_source": "t00-archive",
-    "archived_bucket": "blocked-on-unimplemented-syntax",
-    "blocker": "no bit-fields; no C-twin stage",
-    "bucket_changed_since_batch2": false,
+    "route": "bitfield_concurrency",
+    "harness_verdict_mode": "bitfield_reject",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT10/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT10/case.qcore",
+      "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT10/case.qcore",
+      "observations": 1
+     },
+     "footprint_check": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT10/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "footprint_check",
+    "stage_evidence_record": "docs/reports/ct10-source-layout/ct_stage_evidence.json",
+    "semantic_profile": "BitfieldConcurrencyV1 property certificate (card CT10-SOURCE-LAYOUT): two real task spawns carry write captures to adjacent bit-fields of one explicitly laid-out record. On the explicit all-spawns-and-joins-succeed premise, source-derived FieldStorage::BitfieldUnit values reach the unedited DisjointFootprintsV1 checker, which refuses shared storage unit 0 as Q661. The declared target layout and Rust-to-Lean correspondence remain premises. This mapping claims parse, elaborate, footprint lowering, and footprint check only: no scoped-task ledger, failure-path custody, C emission, reference execution, native execution, sanitizer evidence, or case-bound proof. Ordinary disjoint fields and distinct bit-field units are admitted controls under the same property-only route."
    },
    {
     "id": "CT11",
@@ -2240,6 +2343,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT11/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "not_applicable"
@@ -2314,6 +2423,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT12/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -2418,6 +2533,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT13/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -2532,6 +2653,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT14/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
@@ -2637,6 +2764,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT15/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
@@ -2740,6 +2873,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT16/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -2852,6 +2991,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT17/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
@@ -2961,6 +3106,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT18/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
@@ -3037,6 +3188,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT19/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -3126,6 +3283,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT20/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -3232,6 +3395,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT21/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "not_applicable"
      },
@@ -3305,6 +3474,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -3414,6 +3589,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
@@ -3479,67 +3660,89 @@
    },
    {
     "id": "CT24",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Reject",
-    "current_bucket": "DECIDABLE-NOW (with a distinguishing fixture)",
-    "current_bucket_source": "t00-archive",
-    "archived_bucket": "DECIDABLE-NOW (with a distinguishing fixture)",
-    "blocker": "resolved: joins exist, and scope-exit cleanup is a distinct mechanism from an explicit drop",
-    "bucket_changed_since_batch2": true,
+    "route": "composed_epoch",
+    "harness_verdict_mode": "epoch_credit_split",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+      "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+      "observations": 1
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT24/case.qcore",
+      "observations": 1
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "task_ledger_check",
+    "stage_evidence_record": "docs/reports/ct24-cleanup-task-composition/ct_stage_evidence.json",
+    "semantic_profile": "ComposedEpochTasksV1 (source.epoch.tasks.v1, card CT24-CLEANUP-TASK-COMPOSITION): a flat-epoch plan over a checked scoped-task region whose parent owns `owner`, lends its worker a counted read share at the spawn, and then directly in the exact Result::Ok arm executes a handled region that adopts the same owner. The discharge erases to a real `drop owner;` at the region's own source position, before the later join; the unedited task ledger refuses that release at Q600 LoanOutstanding. The case's own artifact executes parse, elaboration, task lowering and task-ledger checking, then returns from compile_task_source before epoch lowering or epoch-bound checking. Accepted controls do not confer stage credit: the same cleanup after join admits and publishes released=[owner], abandoned=3, and cleanup of an independent owner before join does the same, proving the case is neither a blanket placement refusal nor an unsupported-region fallback. Refused controls pin missing join [Q600], arbitrary nested if/loop and spawn-error-arm placement [Q302], double cleanup-pack use [Q304], and unsupported region-body syntax [Q302]. Direct task-scope regions retain the prior after-every-creation-and-join gate; only this exact success-arm statement receives the conditional placement. Region strict credit remains creator-local and does not settle or abandon the child's epoch grant. No native evidence: the case is refused before emission. No proof stage: QCore.CleanupTaskComposition is audited abstract Lean parity, but no runner binds this fixture to it and faithful Rust/Lean correspondence remains a review premise."
    },
    {
     "id": "CT25",
@@ -3563,6 +3766,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -3671,6 +3880,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT26/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "not_applicable"
@@ -3781,6 +3996,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT27/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "not_applicable"
      },
@@ -3871,6 +4092,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT28/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "not_applicable"
@@ -3971,6 +4198,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT29/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "not_applicable"
      },
@@ -4061,6 +4294,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT30/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "not_applicable"
@@ -4160,6 +4399,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT31/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "not_applicable"
      },
@@ -4252,6 +4497,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT32/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "not_applicable"
      },
@@ -4343,6 +4594,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT33/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "not_applicable"
@@ -4448,6 +4705,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "not_applicable"
@@ -4586,6 +4849,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT35/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "not_applicable"
      },
@@ -4681,6 +4950,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT36/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "not_applicable"
      },
@@ -4775,6 +5050,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -4890,6 +5171,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT38/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "not_applicable"
      },
@@ -4977,6 +5264,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT39/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "not_applicable"
@@ -5066,6 +5359,12 @@
      "elaborate": {
       "status": "not_applicable"
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "not_applicable"
      },
@@ -5137,6 +5436,12 @@
       "status": "unexecuted"
      },
      "elaborate": {
+      "status": "unexecuted"
+     },
+     "footprint_lowering": {
+      "status": "unexecuted"
+     },
+     "footprint_check": {
       "status": "unexecuted"
      },
      "task_lowering": {
@@ -5213,6 +5518,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT42/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "not_applicable"
      },
@@ -5288,6 +5599,12 @@
       ]
      },
      "elaborate": {
+      "status": "not_applicable"
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
       "status": "not_applicable"
      },
      "task_lowering": {
@@ -5385,6 +5702,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT44/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
@@ -5463,6 +5786,12 @@
       ]
      },
      "elaborate": {
+      "status": "not_applicable"
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
       "status": "not_applicable"
      },
      "task_lowering": {
@@ -5552,6 +5881,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "not_applicable"
@@ -5662,6 +5997,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT47/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
@@ -5741,6 +6082,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT48/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "not_applicable"
@@ -5840,6 +6187,12 @@
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
       "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
       "observations": 1
+     },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
      },
      "task_lowering": {
       "status": "executed",
@@ -5950,6 +6303,12 @@
       "artifact": "compiler/tests/fixtures/ct/CT50/case.qcore",
       "observations": 1
      },
+     "footprint_lowering": {
+      "status": "not_applicable"
+     },
+     "footprint_check": {
+      "status": "not_applicable"
+     },
      "task_lowering": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
@@ -6043,26 +6402,14 @@
    "cases_stopping_at_source_rejection": 2
   },
   "unmapped_bucket_counts": {
-   "blocked-on-unimplemented-syntax": 1,
-   "DECIDABLE-NOW (with a distinguishing fixture)": 1,
    "blocked-on-gateway-expressiveness (C-twin measured)": 1
   },
   "unmapped_label_sources": {
-   "CT10": "t00-archive",
-   "CT24": "t00-archive",
    "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
   },
-  "newly_decidable_not_mapped": [
-   "CT24"
-  ],
+  "newly_decidable_not_mapped": [],
   "newly_decidable_not_mapped_reasons": {
-   "_derivation": "derived by docs/reports/remaining-d02/build_matrix.py through scripts/ct_stage_summary.py::newly_decidable_reasons (card GEN-CTREASONS, follow-on D02-GEN-CTREASONS): one row per id in newly_decidable_not_mapped, carrying that case's resolved bucket label and reason — the newest CT lane record that measured it, else card T00's frozen archive — and the record that decided them. A hand edit here is overwritten on the next regeneration, and scripts/ct_stage_summary.py --check refuses a committed row the derivation cannot produce as well as a derived row the file does not carry. The carry-forward step docs/reports/wave16-corpus/readd_ct_reasons.py is retired by this key existing: its own assertion refuses to run once the generator emits it.",
-   "CT24": {
-    "label": "DECIDABLE-NOW (with a distinguishing fixture)",
-    "label_source": "t00-archive",
-    "reason": "resolved: joins exist, and scope-exit cleanup is a distinct mechanism from an explicit drop",
-    "measured_by": "t00-archive"
-   }
+   "_derivation": "derived by docs/reports/remaining-d02/build_matrix.py through scripts/ct_stage_summary.py::newly_decidable_reasons (card GEN-CTREASONS, follow-on D02-GEN-CTREASONS): one row per id in newly_decidable_not_mapped, carrying that case's resolved bucket label and reason — the newest CT lane record that measured it, else card T00's frozen archive — and the record that decided them. A hand edit here is overwritten on the next regeneration, and scripts/ct_stage_summary.py --check refuses a committed row the derivation cannot produce as well as a derived row the file does not carry. The carry-forward step docs/reports/wave16-corpus/readd_ct_reasons.py is retired by this key existing: its own assertion refuses to run once the generator emits it."
   },
   "known_manifest_overstatements": [
    "O1 - No assertion targets a CFG artifact. The sequential resource CFG is provably NOT run: compile_task_source (crates/qcore-verification/src/driver.rs:1100-1212) never calls synthesize_semantics or check_whole_program, and returns reference_observation: None. The claim is defensible only under the unstated reading 'cfg' = the task IR's blocks/terminators, which is exercised transitively by check_task_module/emit_task_c11 but never independently checked.",
@@ -6180,15 +6527,16 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate measured by the integrator at the wave-41 tip 7d2c1fa6 (the four cards' merges above 96142e49), run by the WAVE-41-TIP-GATE measurement task in its own worktree at that commit with every exit captured to its own file (docs/reports/wave41-tip-gate/README.md in that worktree, logs under its measure/). The per-merge regeneration was deferred to this tip by instruction, so this file is what the matrix is regenerated with; it repairs BOTH stale derived fields - dimensions.named_followups 259 -> 264 and validation.lean_audits 142 -> 143. Provider 122 carried: providers/ and crates/qcore-schemas/ are unchanged since 96142e49. The clang claim is the integrator's own recording beside this file (integration-clang-version.txt/.exit, run in the main checkout), not a card's - CLANG-RECORDING-UNBOUND-TO-ITS-RUN.",
-  "workspace_tests": 4770,
+  "note": "Card CT-PROOF-LEG-3 (wave 41), 2026-09-19, RE-RUN ON THE REBASED TREE. This card was branched from 463fa6e8 and rebased onto 96142e49 (the documentation restructure) before merge; the pre-rebase run's figures are superseded by this one and are not carried (report section 13). ONE detached full standing gate (measure/gate.sh: setsid -f, no trap '' TERM, every step's exit to its own file, no pipe), polled in a foreground bounded loop. RUN at ca97a576, the tip carrying every change of this card on the rebased base; the commits after it are this gate's own evidence. FIGURES, extracted from the logs by measure/build_gate_json.py and nothing typed in (measure/gate-facts.json): 4,733 passed / 2 FAILED / 10 ignored over 240 result summaries and 238 test targets (229 Running + 9 doc-test sections; two of those sections print two summaries each). BOTH FAILURES ARE CONSTRAINT-16 NAMED LOAD-SENSITIVE ROWS AND BOTH FACTS ARE RECORDED, as that rule requires: confined_process_execution::a_confined_fixture_cannot_write_outside_the_admitted_paths failed with Io(Broken pipe) - the exact shape constraint 16 records for it - and enforced_process_limits::memory_growth_beyond_the_declared_limit_is_bounded failed with SpawnFailed / 'Text file busy' (os error 26), the ExecutableFileBusy shape that constraint records for the same family; each was re-verified GREEN IN ISOLATION on the same binaries with nothing edited, at 1-minute load ~15 (gate/iso-confined.log, gate/iso-memgrowth.log, both exit 0, 'test result: ok. 1 passed'). --no-fail-fast did its job: every suite after the failing binaries still ran, so the counts above are a measurement and not a lower bound (GATE-NO-FAIL-FAST). No test, pin or assertion was edited to obtain any figure. fmt 0; clippy 0; both probes 0; 142 Lean audits (check_lean_audits.py: 'Passed 142 Lean audits'; the +1 is proof/AuditCt50LifetimeIdentity.lean, 31 #print axioms declarations on propext/Classical.choice/Quot.sound only, with the digest pin and the root projection axiom-free); PYTHON 305 RAN, exit 0, 'OK' - the suite grew from 303 to 305 in the restructure, and it was green DURING the run because the matrix had already been regenerated at named_followups 259 before the gate started; the matrix was regenerated ONCE MORE afterwards so its validation block carries THIS run's figures rather than the superseded pre-rebase ones, and Python was re-run green after that (gate/python-post.exit 0, 'Ran 305 tests ... OK'; ct_stage_summary.py --check exit 0); 17m32s wall (07:32:45Z to 07:50:17Z) with sibling worktrees building; disk 116 -> 114 GB free. DELTAS against the wave-40 close's 4,727 / 303 / 141: workspace +8 (compiler/tests/ct50_proof_leg.rs's five tests and compiler/tests/proof_leg_digests.rs's three) minus the 2 flaked rows in this run's passed column, targets +2, summaries +2, ignored +0, Python +2 (the restructure's own preservation checks, not this card's), Lean +1. CLANG PRESENCE: gate/clang-version.txt is `clang --version` run in THIS worktree by this card's own gate script with QCORE_CLANG unset, exit 0, first line under the `clang` key - not borrowed. PROVIDER 122 CARRIED, NOT RE-MEASURED: nothing under providers/ or crates/qcore-schemas/ moved and qcore-schemas is still 14.0.0, so constraint 18 is not engaged; a Unix figure (PROVIDER-CONFORMANCE-UNIX-ONLY). NOTHING IS PROMOTED: no corpus count, unit status or function status moves; raw units stay unpromoted; CT 47/50 with sanitized-native 10 and proof 5 (4 -> 5 on CT50, evidence about one case's artifact and never conformance, constraint 23); full language conformance FALSE. A gate figure is a measurement on one machine, never a property. Evidence: docs/reports/ct-proof-leg-3/README.md section 10.",
+  "workspace_tests": 4733,
   "provider_tests": 122,
   "python_evidence_validator_tests": 305,
-  "lean_audits": 143,
+  "lean_audits": 144,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
    "AuditAll.lean",
+   "AuditBitfieldSourceConcurrency.lean",
    "AuditBitwise.lean",
    "AuditBorrowLiveness.lean",
    "AuditBoundFieldRead.lean",
@@ -6336,7 +6684,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/tsan-failure-arms/integration-gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {

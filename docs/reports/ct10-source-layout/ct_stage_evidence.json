@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "card": "CT10-SOURCE-LAYOUT",
+  "generated": "2026-09-19",
+  "report": "docs/reports/ct10-source-layout/README.md",
+  "purpose": "Map CT10 on a dedicated property-only source route. The case executes parse, elaborate, footprint lowering, and the unedited DisjointFootprintsV1 check. Mapping grows the denominator; it is not a conformance claim.",
+  "derivation_rule": "The verified stage block is the manifest row independently rederived by compiler/tests/ct_corpus.rs from its own dispatch and the case artifact.",
+  "route": "bitfield_concurrency",
+  "what_the_mapping_claims": "Two actual spawn write captures target adjacent bit-fields declared in one storage unit. On the explicit successful-spawn/join-window premise, the source lowering derives BitfieldUnit footprints and the checker refuses Q661 SharedBitfieldUnit. Ordinary disjoint fields and bit-fields in distinct units are admitted controls.",
+  "what_the_mapping_does_not_claim": "No scoped-task ledger or failure-path custody proof, no C emission, no reference or native execution, no sanitizer evidence, and no case-bound proof stage. Declared target layout and Rust-to-Lean correspondence remain premises.",
+  "retired_unmapped_reasons": {},
+  "inventory": {
+    "added_mapped_ids": ["CT10"],
+    "mapped_before": 47,
+    "mapped_after": 48,
+    "unmapped_after": 2,
+    "total": 50
+  },
+  "mapped_case_stage_matrix": {
+    "CT10": {
+      "harness_verdict_mode": "bitfield_reject",
+      "manifest_evidence_target": null,
+      "measured_refusal": {
+        "diagnostic_sequence": ["Q661"],
+        "pass": "Concurrency",
+        "attributed_to": "the pairwise footprint question derived from write flags.left and write flags.right",
+        "message_fragment": "SharedBitfieldUnit"
+      },
+      "controls": [
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT10/addressable.qcore",
+          "expectation": "property admitted",
+          "isolates": "ordinary fields in disjoint bytes under the identical worker shape"
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT10/distinct_units.qcore",
+          "expectation": "property admitted",
+          "isolates": "bit-fields in distinct declared storage units and disjoint bytes"
+        }
+      ],
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT10/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT10/case.qcore",
+          "observations": 1
+        },
+        "footprint_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT10/case.qcore",
+          "observations": 1
+        },
+        "footprint_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT10/case.qcore",
+          "observations": 1
+        },
+        "proof": {"status": "unassessed"}
+      }
+    }
+  }
+}

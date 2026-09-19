@@ -1,0 +1,23 @@
+import std.concurrency;
+concurrency checked;
+
+type Flags {
+    left: bits<0, 0, 3, 0, 4>,
+    right: bits<0, 3, 5, 0, 4>
+}
+
+fn writer(value: i32) -> unit effects { mut } {
+    write value;
+    return;
+}
+
+fn main() -> unit effects { spawn, join, mut } {
+    let flags = Flags;
+    thread scope workers {
+        let left = spawn workers writer(write flags.left)?;
+        let right = spawn workers writer(write flags.right)?;
+        let left_done = join move left?;
+        let right_done = join move right?;
+    }
+    return;
+}
