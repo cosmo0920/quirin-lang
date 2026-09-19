@@ -204,6 +204,40 @@ REGISTER = [
         "source": "docs/reports/ct-proof-leg-3/README.md",
         "recorded_by": "CT-PROOF-LEG-3",
     },
+    {
+        "id": "STATUS-SOURCES-CHECKPOINT-DIVERGES",
+        "title": (
+            "The documentation restructure's status snapshot asserts equality with the "
+            "live tree, so the first card after it diverges by design"
+        ),
+        "why": (
+            "MEASURED by card CT-PROOF-LEG-3 (wave 41), the first card to land after the "
+            "restructure 96142e49. docs/reports/docs-structure-compression/"
+            "rederive_status.py --check asserts that its status-sources.json still EQUALS "
+            "what it re-derives from primary inputs (the manifest's proof and "
+            "native_sanitized ids, the corpus artifacts, the contract corpus, "
+            "named_followups carried and derived, the wave-40 gate.json, and the "
+            "Audit*.lean count). This card moves three of those inputs -- the proof ids "
+            "gain CT50, named_followups 257 -> 258 (-> 259 with this entry), Audit*.lean "
+            "141 -> 142 -- so the check now reports a difference. NOTHING GOES RED: the "
+            "script is invoked by no scripts/tests test, by check_lean_audits.py, or by "
+            "any CI step in this repository, verified by grep at this tip; and its file "
+            "is that card's own frozen checkpoint, which constraint 21 says to leave "
+            "alone rather than refresh. So the divergence is the checkpoint behaving as a "
+            "checkpoint, not a defect -- but it is undeclared: the script's docstring "
+            "says it checks 'this card's checkpoint, not all future rule revisions', "
+            "while the --check arm's message ('status sources moved since this "
+            "checkpoint') reads as a failure to whoever runs it next. DISCHARGE: either "
+            "state in that report that --check is expected to diverge once any later card "
+            "lands and is therefore a checkpoint re-derivation tool rather than a gate, "
+            "or move the snapshot to a regenerated artifact with its own provenance "
+            "record beside the frozen one (constraint 21's dual-publication shape). This "
+            "entry is the record that the first divergence was deliberate and measured, "
+            "so a later reader does not mistake it for drift."
+        ),
+        "source": "docs/reports/ct-proof-leg-3/README.md",
+        "recorded_by": "CT-PROOF-LEG-3",
+    },
 ]
 
 

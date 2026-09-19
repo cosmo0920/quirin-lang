@@ -4,7 +4,9 @@
 
 > Preserved checkpoint narrative. Counts, platform observations and old
 > instructions describe their recorded dates. Current agent rules and headline
-> status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
+> status are routed by [AGENTS.md](../../../AGENTS.md) to the
+> [rule reference](../../agents/README.md) and [status page](../../STATUS.md);
+> each card's report owns its evidence.
 
 **`CT-PROOF-LEG-3` (2026-09-19).** The fifth executed `proof` row, and the
 measurement that the cheap route to a sixth is spent. The card first **re-ran
@@ -57,5 +59,11 @@ and `CT-PROOF-CONTROL-ARM-TIER` and `CT-PROOF-CREATION-FAILURE-ALPHABET`
 restated as measured boundaries with wave-41 measurements — the second sharpened,
 because the cases it lists need **two** alphabet extensions and the entry named
 one. No `Q` code, no reserved word, no lexer change, no checker or emitter
-change; `git diff --stat` over `crates/` and `compiler/src/` is empty.
-`named_followups` **257 → 258**.
+change; the diff over `crates/` and `compiler/src/` is empty.
+`named_followups` **257 → 259** (+4 −2). The card was **rebased onto the documentation
+restructure** (`96142e49`) before merge, so its ledger edits land in
+`docs/STATUS.md` — the CT case-bound-proof row, the registered-follow-ups row
+and the paragraph naming which cases bind through F02 — and **not** in the
+former `AGENTS.md` ledger, which that commit replaced with a router. No
+standing constraint text moved, so no `docs/agents/*.md` preserved block is
+touched.

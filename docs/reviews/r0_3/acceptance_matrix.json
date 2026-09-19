@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 258
+  "named_followups": 259
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -8073,6 +8073,13 @@
    "id": "PROOF-LEG-DIGEST-CROSSCHECK-TEXTUAL",
    "title": "The new digest cross-check compares two source texts, not a value the Lean kernel handed it",
    "why": "Registered by card CT-PROOF-LEG-3 (wave 41) with the mechanism it built, discharging PROOF-LEG-DIGESTS-UNCROSSCHECKED but not more than it. compiler/tests/proof_leg_digests.rs reads the numeral out of each 'theorem ct<N>...digest : ... = <numeral> :=' line in proof/QCore/ and compares it with the corresponding compiler/tests/ constant. That closes the re-transcription hole it was built for -- a digit changed on either side goes red, measured as D1, D2 and D3, and a Lean theorem deleted goes red as D4 -- and it rests on one premise it does not itself check: that the numeral in the .lean SOURCE is the numeral the kernel decided. The standing scripts/check_lean_audits.py gate is what makes that true (the theorem is 'by decide' and the audit builds it), so the premise is discharged by a DIFFERENT gate step rather than by this test, and a tree where the Lean build was skipped would pass this test on two agreeing but unchecked texts. The parser is also line-shaped: a digest theorem whose statement is split across lines, or written with a different numeral spelling, is not seen -- fail-open in that one direction, which is why CASES_WITH_A_DIGEST_PIN is pinned beside it as the fail-closed half. DISCHARGE: emit the digests from Lean itself (a #eval or a generated file the test reads) so the compared value comes from the kernel's own elaboration rather than from a line of source, or state this premise in the file and accept it deliberately.",
+   "source": "docs/reports/ct-proof-leg-3/README.md",
+   "recorded_by": "CT-PROOF-LEG-3"
+  },
+  {
+   "id": "STATUS-SOURCES-CHECKPOINT-DIVERGES",
+   "title": "The documentation restructure's status snapshot asserts equality with the live tree, so the first card after it diverges by design",
+   "why": "MEASURED by card CT-PROOF-LEG-3 (wave 41), the first card to land after the restructure 96142e49. docs/reports/docs-structure-compression/rederive_status.py --check asserts that its status-sources.json still EQUALS what it re-derives from primary inputs (the manifest's proof and native_sanitized ids, the corpus artifacts, the contract corpus, named_followups carried and derived, the wave-40 gate.json, and the Audit*.lean count). This card moves three of those inputs -- the proof ids gain CT50, named_followups 257 -> 258 (-> 259 with this entry), Audit*.lean 141 -> 142 -- so the check now reports a difference. NOTHING GOES RED: the script is invoked by no scripts/tests test, by check_lean_audits.py, or by any CI step in this repository, verified by grep at this tip; and its file is that card's own frozen checkpoint, which constraint 21 says to leave alone rather than refresh. So the divergence is the checkpoint behaving as a checkpoint, not a defect -- but it is undeclared: the script's docstring says it checks 'this card's checkpoint, not all future rule revisions', while the --check arm's message ('status sources moved since this checkpoint') reads as a failure to whoever runs it next. DISCHARGE: either state in that report that --check is expected to diverge once any later card lands and is therefore a checkpoint re-derivation tool rather than a gate, or move the snapshot to a regenerated artifact with its own provenance record beside the frozen one (constraint 21's dual-publication shape). This entry is the record that the first divergence was deliberate and measured, so a later reader does not mistake it for drift.",
    "source": "docs/reports/ct-proof-leg-3/README.md",
    "recorded_by": "CT-PROOF-LEG-3"
   }

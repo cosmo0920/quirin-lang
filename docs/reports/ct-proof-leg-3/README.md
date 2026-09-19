@@ -1,7 +1,9 @@
 # `CT-PROOF-LEG-3` (wave 41) — survey every unproved mapped case, then land the leg the survey picks
 
-Base `463fa6e8` (`origin/main` at branch time, confirmed equal). Report
-directory: this one. Evidence files beside this README:
+Branched from `463fa6e8` (`origin/main` at branch time, confirmed equal) and
+**rebased onto `96142e49`**, the documentation restructure, before merge — §13
+records exactly what that changed and what it did not. Report directory: this
+one. Evidence files beside this README:
 
 | File | What it is |
 |---|---|
@@ -10,7 +12,7 @@ directory: this one. Evidence files beside this README:
 | `survey.json` | The survey as a record, one row per mapped case, built from the two by `scripts/build_survey.py`. |
 | `scripts/build_survey.py` | Builds `survey.json`. |
 | `scripts/build_stage_evidence.py` | Builds `ct_stage_evidence.json`; every non-`proof` row is carried, only `proof` is written. |
-| `scripts/edit_named_followups.py` | The tracker edit — two retirements, three amendments, three registrations. Idempotent. |
+| `scripts/edit_named_followups.py` | The tracker edit — two retirements, three amendments, four registrations. Idempotent. |
 | `scripts/mutate_ct50_proof_leg.py` | The non-vacuity harness. |
 | `mutations.log` | Its shipped log: 20 mutations, three tiers, every restore sha256-verified. |
 | `l3-lean-full.log` | The whole `lake build` output of the L3 mutation, kept because Lean reports the first error only in the harness line. |
@@ -498,11 +500,17 @@ condition):
   the digests from Lean itself so the compared value comes from the kernel's
   elaboration rather than a line of source, or state the premise in the file and
   accept it deliberately.
+* **`STATUS-SOURCES-CHECKPOINT-DIVERGES`** — added at the rebase (§13): the
+  restructure's `rederive_status.py --check` asserts equality with the live
+  tree, and this card is the first to move inputs it snapshots. Nothing goes
+  red (the script is in no gate, verified by grep). Discharge: declare `--check`
+  a checkpoint re-derivation tool rather than a gate, or publish a regenerated
+  snapshot beside the frozen one.
 
 **Amended, entries kept open**: `LEASE-BOUNDARY-TRANSCRIPTION-PREMISE`,
 `CT-PROOF-CONTROL-ARM-TIER`, `CT-PROOF-CREATION-FAILURE-ALPHABET` (§6).
 
-`named_followups` **257 → 258** (+3 −2).
+`named_followups` **257 → 259** (+4 −2; the fourth registration is §13's).
 
 ## 9. Keyword census and diagnostics
 
@@ -575,8 +583,10 @@ new leg file. Also touched, **none owned by another wave-41 card**:
 `docs/reviews/r0_3/acceptance.json` (generated fields, `derived_from`),
 `scripts/ct_stage_summary.py` (`EVIDENCE_FILES`),
 `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`; derived sections
-regenerated with `--gate`), `AGENTS.md` (headline numbers),
-`docs/development/increments/{README.md,wave-41.md}`. The files
+regenerated with `--gate`), **`docs/STATUS.md`** (headline numbers — see §13),
+`docs/development/increments/{README.md,wave-41.md}`. **`AGENTS.md` and every
+`docs/agents/*.md` page are untouched**, and no `<!-- preserved:… -->` block is
+edited anywhere. The files
 `OWNED-FIELD-ROUTE-REACH`, `COMPOSED-WINDOW-REACH` and `TSAN-FAILURE-ARMS` own
 — `crates/qcore-core/src/{ownership,source_record,std_buffer,std_string}.rs`,
 `proof/QCore/LoopWindows.lean`, `tests/support/thread_sanitizer.rs`,
@@ -590,22 +600,27 @@ and the fix is the one-line registration.
 
 ## 12. For the integrator
 
-1. **Headline numbers, edited in this tree**: `AGENTS.md`'s CT row
-   `proof 4 of 47` → **`proof 5 of 47`**, with CT50 added to *The proof leg*
-   sentence, its own two-fact paragraph (the degenerate-but-proved closure, and
-   the capability-half scope), the exhaustion fact, and the digest-cross-check
-   clause; `named_followups` **257 → 258**; Lean audits **141 → 142**. The
-   merged-gate row is **not** edited by this card — this card's own figures are
-   in `gate.json` and are a per-card measurement.
-2. **No standing constraint is landed or amended.** Nothing in `AGENTS.md`'s
-   constraint list moves: no route, checker, emitter, alphabet or diagnostic
-   changes. If a future card grows the F02 alphabet, constraint 15n's amendment
-   discipline applies to it and not to this one.
+1. **Headline numbers, edited in this tree — all in `docs/STATUS.md`** (this
+   card was rebased onto the documentation restructure; §13): the
+   *CT case-bound proof* row `**4/47**: CT01, CT03, CT07, CT37` →
+   `**5/47**: CT01, CT03, CT07, CT37, CT50`; the *Registered follow-ups* row
+   **257 → 258**; and the "Mapping is not conformance" paragraph, whose F02/ledger
+   sentence gains CT50 on the F02 side and which now also carries CT50's
+   capability-half scope, the exhaustion fact and the digest-cross-check clause.
+   Lean audits move **141 → 142** and are derived by the matrix generator, not
+   written in `STATUS.md`. The *Last integrated gate* section is **not** edited
+   by this card — it is the wave-40 close's measurement, and this card's own
+   figures are in `gate.json`.
+2. **No standing constraint is landed or amended.** No `docs/agents/*.md` page
+   is touched and no `<!-- preserved:… -->` block is edited: no route, checker,
+   emitter, alphabet or diagnostic changes. If a future card grows the F02
+   alphabet, constraint 15n's amendment discipline applies to it and not to this
+   one.
 3. **Matrix**: `named_followups` carried with the two retirements, three
    amendments and three registrations above; `dimensions` regenerated with
    `--gate docs/reports/ct-proof-leg-3/gate.json` (§10). At the union with
-   sibling cards' `named_followups` edits, the count line in `AGENTS.md` must be
-   re-summed.
+   sibling cards' `named_followups` edits, the *Registered follow-ups* row in
+   `docs/STATUS.md` must be re-summed.
 4. **Records**: `docs/development/increments/wave-41.md` created in wave-40's
    shape with this card's paragraph; the index's pointer and table row moved to
    wave 41. Sibling paragraphs union at the merge.
@@ -619,3 +634,47 @@ and the fix is the one-line registration.
    change to the F02 alphabet, `reference_trace`, the checker or the emitter;
    and, specifically, **no claim about CT50's numeric address reuse**, which
    stays native observation (`CT50-PROOF-ADDRESS-REUSE-UNPROVED`).
+
+## 13. Rebase onto the documentation restructure
+
+This card was branched from `463fa6e8` and **rebased onto `96142e49`**
+("docs: restructure guides into routed rules and a unified hub") before merge.
+The restructure replaced the ~173 KB `AGENTS.md` ledger with a 5.4 KB router,
+moved headline numbers to `docs/STATUS.md` and standing constraints to
+`docs/agents/*.md` behind `<!-- preserved:… -->` markers that a reconstruction
+check reads.
+
+**What the rebase changed, and nothing else.** One commit conflicted
+(`the survey, the tracker edits, the ledger and the record`), in two files:
+`AGENTS.md`, resolved **entirely in favour of the restructure** — my ledger
+hunks were dropped there and re-applied to `docs/STATUS.md` — and
+`docs/development/increments/README.md`, which auto-merged correctly (the
+restructure's rewording plus this card's wave-41 pointer and table row). The
+wave-41 record's header was then routed through `AGENTS.md` → rule reference and
+status page, matching the restructured index, and its paragraph records where
+the ledger edits landed. The report's own §11 and §12 were re-routed to name
+`docs/STATUS.md`. **Nothing else moved**: the survey, the CT50 leg, the Lean
+module and audit, the digest cross-check, the mutation harness and its log, the
+`PROOF_GATED_CASES` / `RUNNER_REGISTRY` / `EVIDENCE_FILES` edits, the manifest,
+`expected.json`, `acceptance.json`, the stage-evidence record and the three
+carried entries' dispositions are byte-identical to the pre-rebase commits.
+
+**No preserved block is edited.** This card lands and amends no standing
+constraint, so no `docs/agents/*.md` page is touched — which also means the
+restructure's reconstruction check is unaffected by it. `docs/STATUS.md` carries
+no preservation markers.
+
+**One consequence worth naming, not repaired here.**
+`docs/reports/docs-structure-compression/rederive_status.py --check` asserts
+that its `status-sources.json` still equals the live tree, and this card moves
+three inputs it snapshots (the manifest's `proof` ids, `named_followups`, the
+`Audit*.lean` count). That script is **not** in the standing gate — it is not
+invoked by `scripts/tests`, by `check_lean_audits.py` or by any CI step here —
+so nothing goes red; and its file is that card's own frozen checkpoint, which
+constraint 21 says to leave alone. Registered as
+`STATUS-SOURCES-CHECKPOINT-DIVERGES` so the next card that touches the
+restructure's own evidence can decide whether the checkpoint should be re-derived
+or explicitly frozen.
+
+The gate in §10 is the **re-run on the rebased tree**; the pre-rebase run's
+figures are superseded by it and are not carried.
