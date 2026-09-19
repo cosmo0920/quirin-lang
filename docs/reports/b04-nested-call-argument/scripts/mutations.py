@@ -15,10 +15,13 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[4]
 SOURCE = ROOT / "crates/qcore-c-gateway/src/legacy_c.rs"
-LOGS = ROOT / "docs/reports/b04-nested-call-argument/logs"
-TARGET = Path(
-    "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/targets/b04"
+LOGS = Path(
+    os.environ.get(
+        "QCORE_MUTATION_LOG_DIR",
+        ROOT / "docs/reports/b04-nested-call-argument/logs",
+    )
 )
+TARGET = Path(os.environ.get("CARGO_TARGET_DIR", ROOT / "target"))
 TEST = [
     "cargo",
     "test",
