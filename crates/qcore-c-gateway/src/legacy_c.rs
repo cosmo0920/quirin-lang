@@ -3641,16 +3641,24 @@ impl Parser<'_> {
         if let Some((call_index, call_end)) =
             crate::legacy_condition_call::unconditional_call_span(&texts)
         {
+            // This widening is for calls backed by a declared API contract.
+            // A locally defined callee may acquire a provisional summary
+            // during fixed-point analysis; treating that summary as the
+            // declaration premise would weaken W4's pointer-actual boundary
+            // for recursive expressions such as `1 + counted(p)`.
+            let externally_declared = find_function_body(self.tokens, texts[call_index]).is_none();
             let outside = texts[..call_index]
                 .iter()
                 .chain(texts[call_end..].iter())
                 .copied()
                 .collect::<Vec<_>>();
-            if crate::typed_field_access::is_scalar_operand_expression(
-                &outside,
-                &self.typed_model,
-                &self.typed_types,
-            ) {
+            if externally_declared
+                && crate::typed_field_access::is_scalar_operand_expression(
+                    &outside,
+                    &self.typed_model,
+                    &self.typed_types,
+                )
+            {
                 let restore = self.next_site;
                 let instruction = self.classify_simple(&expression[call_index..call_end]);
                 let admitted = matches!(
