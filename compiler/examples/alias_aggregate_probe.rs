@@ -219,7 +219,7 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             if !alias_reads.is_empty() {
                 text.push_str(&format!(" alias{}", alias_reads.len()));
             }
-            if let Some(nested) = nested {
+            for nested in nested {
                 text.push_str(&format!(" nested={}", nested.function));
             }
             text
