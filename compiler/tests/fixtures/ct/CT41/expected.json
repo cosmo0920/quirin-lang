@@ -10,6 +10,10 @@
     "plain.c": "plain_no_synchronization",
     "release_acquire.c": "ordered_payload",
     "relaxed_store.c": "store_not_release",
-    "relaxed_load.c": "load_not_acquire"
+    "relaxed_load.c": "load_not_acquire",
+    "qualified_atomic.c": "qualifier_on_atomic_unsupported"
+  },
+  "language_boundary": {
+    "volatile_atomic_ops.c": "not_valid_c11"
   }
 }

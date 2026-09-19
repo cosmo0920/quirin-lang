@@ -6,6 +6,52 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`CT41-MAP` (2026-09-19).** A **second, independent** CT41 mapping was built
+from the same base and reached the same row; `CT41-PUBLICATION-MAPPING` landed
+and this card is what survives **reduction onto it**. It claims **no coverage**:
+CT41's row, stage evidence and bucket retirement are the landed card's, and this
+one adds no `ct_stage_evidence.json`. The agreement is the substance — both
+cards measured, separately, that the wave-9 attribution rule's clause (b) cannot
+be met literally for this case. They differed only in the exit: the landed card
+**supersedes** the clause for CT41 alone and says so in a routed constraint page,
+while this one read "the construct the scenario names" at the **mechanism**
+level and claimed the clause as written. **The superseding form is the more
+honest of the two and is what the project should carry** — a supersession is a
+visible, bounded, per-case declaration, whereas a mechanism-level reading is a
+silent general reinterpretation of the word "exactly" that any later multi-site
+control could lean on without saying so; whether clause (b) is read at token
+level with per-case supersessions or at construct level generally is left as a
+decision for the constraint page (`CT41-ATTRIBUTION-CLAUSE-SUPERSEDED-FOR-ONE-CASE`).
+Kept: **two controls** the landed fixture does not carry, each re-measured
+against the **landed** route (whose qualifier arms and memory-order reader both
+differ from the route this card first measured) and each derived from the
+accepting control by one declaration substitution, which the runner now asserts.
+`qualified_atomic.c` (`volatile _Atomic int`) refuses `UnsupportedAtomicFlag` —
+the flag-type arm neither qualifier refusal reaches, and a live regression pin on
+the landed exact match, since widening it to `contains("_Atomic")` **issues a
+happens-before certificate** for a flag this route does not model.
+`volatile_atomic_ops.c` is **not valid C11** — Clang refuses `address argument to
+atomic operation must be a pointer to _Atomic type` — so it gets its own
+`language_boundary` block rather than riding a loop that requires every artifact
+to be admissible C; it is the measurement that makes the landed supersession
+checkable rather than assertable, since the one-token alternative does not exist
+in the language. Six mutations, all red through assertions, every file restored
+sha256-identical. Dropped as duplicates: the manifest row, the STATUS coverage
+rows, `MAPPED_CASES`/stage-vocabulary edits, three controls, and **all ten Python
+repairs** — main's `unmap_ct41()` reached the same fix independently. Kept from
+that work is the **finding** plus one hazard main does not record: on a tree
+where the mapping card's retirement was the only one,
+`test_retiring_a_still_unmapped_case_fails_closed` could pass through the *wrong
+rule*, a test reaching its refusal not thereby testing its own
+(`CT-UNMAPPED-LABEL-MACHINERY-HAS-NO-LIVE-INSTANCE`). Seven residuals registered
+and two dropped by name after re-verification against main — including
+`CT41-PROOF-NOT-BOUND-TO-THE-CASE-ARTIFACT`, whose content the merge **changed**:
+the landed `non_atomic_completion_has_no_payload_path` is a theorem about CT41's
+own case class, so the gap is no longer a missing theorem but the artifact
+binding, and a CT41 proof leg is now a realistic next card. Follow-ups
+**262 → 269**; coverage, proof and sanitized-native counts all **unmoved**.
+[Evidence](../../reports/ct41-map/README.md).
+
 **`CT41-PUBLICATION-MAPPING` (2026-09-19).** CT41's original volatile
 completion case now executes through the bounded C publication route: volatile
 and plain refuse, release/acquire checks, and either relaxed arm refuses.
