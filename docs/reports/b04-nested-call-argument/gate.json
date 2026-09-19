@@ -1,0 +1,13 @@
+{
+  "note": "B04 isolated standing gate on a4771926 plus report-only edits: 4,817 passed / 0 failed / 10 ignored over 246 result summaries and 244 targets. All eight recorded command exits are zero. Provider 122 is carried, not remeasured: B04 changes neither providers nor qcore-schemas. Python ran against the pre-regeneration committed matrix and passed because B04 adds no audit file or tracker change; a private --out matrix regeneration with this measured gate also passed, followed by the same 305-test Python suite. Clang presence is recorded beside this file. Raw per-command logs and exits are under /home/cosmo/Documents/GitHub/qcore-c/private/b-series/b04/gate-final/.",
+  "workspace_tests": 4817,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 305,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 145,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
