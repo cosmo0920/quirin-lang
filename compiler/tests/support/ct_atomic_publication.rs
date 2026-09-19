@@ -20,8 +20,18 @@ pub(super) fn run(case: &ManifestCase) {
             "bounds": [1, 1],
             "controls": {
                 "plain.c": "plain_no_synchronization", "release_acquire.c": "ordered_payload",
-                "relaxed_store.c": "store_not_release", "relaxed_load.c": "load_not_acquire"
-            }
+                "relaxed_store.c": "store_not_release", "relaxed_load.c": "load_not_acquire",
+                // Card `CT41-MAP`: the two arms the landed control set does not
+                // reach. Neither duplicates one above; each is measured below.
+                "qualified_atomic.c": "qualifier_on_atomic_unsupported"
+            },
+            // Card `CT41-MAP`. A control that is deliberately NOT valid C11, so
+            // it cannot ride the loop below, whose first act is to require the
+            // artifact to be admissible C in its own right. It is the
+            // measurement behind this fixture's shape rather than an
+            // attribution: see the runner's own comment at the block that
+            // drives it.
+            "language_boundary": { "volatile_atomic_ops.c": "not_valid_c11" }
         })
     );
     assert_eq!(case.route.as_deref(), Some("atomic_publication"));
@@ -72,7 +82,9 @@ pub(super) fn run(case: &ManifestCase) {
         .unwrap()
         .map(|entry| entry.unwrap().file_name().into_string().unwrap())
         .collect();
+    let boundary = expected["language_boundary"].as_object().unwrap();
     let mut wanted_files: BTreeSet<_> = controls.keys().cloned().collect();
+    wanted_files.extend(boundary.keys().cloned());
     wanted_files.extend(["case.c".into(), "expected.json".into()]);
     assert_eq!(actual_files, wanted_files);
     if !legacy_clang_available("CT41") {
@@ -105,6 +117,44 @@ pub(super) fn run(case: &ManifestCase) {
         fs::read_to_string(directory.join("relaxed_load.c")).unwrap(),
         atomic.replace("memory_order_acquire", "memory_order_relaxed")
     );
+    // Card `CT41-MAP`: the two added controls are derived from the accepting
+    // control by a single declaration substitution each, so what they change is
+    // the flag's TYPE and nothing else.
+    assert_eq!(
+        fs::read_to_string(directory.join("qualified_atomic.c")).unwrap(),
+        atomic.replace("static _Atomic int done", "static volatile _Atomic int done"),
+        "the qualified-atomic control changes only the flag declaration"
+    );
+    assert_eq!(
+        fs::read_to_string(directory.join("volatile_atomic_ops.c")).unwrap(),
+        atomic.replace("static _Atomic int done", "static volatile int done"),
+        "the language-boundary control changes only the flag declaration"
+    );
+
+    // Card `CT41-MAP`. The landed attribution replaces the flag PROTOCOL and
+    // says so; this block measures WHY the alternative -- replacing the
+    // qualifier alone, one token, and reaching the accepting side -- does not
+    // exist to be chosen. C11 admits no atomic operation on a volatile
+    // non-atomic object, so `release_acquire.c` with `_Atomic` written
+    // `volatile` is not a program at all. It is therefore checked as a language
+    // fact, never used as CT41's attribution: a parser rejection is exactly the
+    // "the projection cannot express this at all" answer the historical control
+    // clause excludes.
+    for (file, outcome) in boundary {
+        assert_eq!(outcome.as_str().unwrap(), "not_valid_c11");
+        let source = fs::read_to_string(directory.join(file)).unwrap();
+        let error = validate_unrestricted_c11(&C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        })
+        .expect_err("a language-boundary control is not admissible C11");
+        assert!(
+            format!("{error:?}").contains(
+                "address argument to atomic operation must be a pointer to _Atomic type"
+            ),
+            "CT41 {file}: C itself must refuse this, and for the stated reason"
+        );
+    }
 
     for (file, outcome) in std::iter::once(("case.c", "volatile_no_synchronization")).chain(
         controls
@@ -154,6 +204,21 @@ pub(super) fn run(case: &ManifestCase) {
                 result,
                 Err(AtomicPublicationRefusal::Model(
                     ModelRefusal::LoadIsNotAcquire
+                ))
+            ),
+            // Card `CT41-MAP`: the flag-type arm neither qualifier refusal
+            // reaches. A `volatile _Atomic int` IS a synchronization primitive,
+            // so reporting it under the volatile arm would state something false
+            // of it; and this route models exactly `_Atomic(int)`, so admitting
+            // it would widen the shape. It refuses as the fail-closed third
+            // answer, which is what bounds the volatile arm to a flag that is
+            // not atomic -- the discrimination the historical `typed_source`
+            // qualifier branch cannot make (it refuses `volatile`, `_Atomic`
+            // and `restrict` in one branch with one message, unchanged here).
+            "qualifier_on_atomic_unsupported" => assert_eq!(
+                result,
+                Err(AtomicPublicationRefusal::Source(
+                    SourceRefusal::UnsupportedAtomicFlag
                 ))
             ),
             "ordered_payload" => {
