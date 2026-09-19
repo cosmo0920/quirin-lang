@@ -60,11 +60,11 @@ separately.
 
 ## Last integrated gate
 
-The [CT integration gate](reports/ct-remaining-implementation/gate.json) records
+The [CT rebase gate](reports/ct-remaining-implementation/rebase-gate/gate.json) records
 **4,808 Rust passed, 0 failed, 10 ignored; 246 result summaries over 244 targets;
 145 Lean audits; 305 Python tests**, clean fmt/clippy and both probes exit 0.
 Clang 21.1.8 was recorded in the measuring worktree. **122 provider tests are
-carried Unix evidence, not re-measured.** [Run identity and private logs](reports/ct-remaining-implementation/README.md#integration-and-validation)
+carried Unix evidence, not re-measured.** [Run identity and private logs](reports/ct-remaining-implementation/README.md#rebase-onto-main)
 bind these measurements to the checked source; they are not promises about
 another host or a later tree.
 

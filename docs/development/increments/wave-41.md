@@ -6,6 +6,14 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`CT-INTEGRATION-REBASE` (2026-09-19).** Rebased the published CT branch onto
+main `026314c8`, preserving reviewed CT conflict resolutions and main’s TSAN
+evidence. Code, fixtures, scripts and Lean proofs are unchanged from `a0584a50`;
+original checkpoint measurements remain intact. Fresh standing gate: **4,808
+Rust passed / 0 failed / 10 ignored; 145 Lean audits; 305 Python tests**, all
+required exits 0. Coverage and 263 follow-ups are unchanged.
+[Rebase identities and evidence](../../reports/ct-remaining-implementation/README.md#rebase-onto-main).
+
 **`CT-REMAINING-IMPLEMENTATION` (2026-09-19).** Six Sol medium agents in two
 waves implemented and reviewed CT10 field-footprint checking, CT24 real
 cleanup/task-ledger composition, and CT41's bounded atomic-publication

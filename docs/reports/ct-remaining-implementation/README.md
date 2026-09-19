@@ -113,3 +113,28 @@ reason map retains `_derivation` metadata after its last case retires. The
 assertion now checks the empty case list and absence of the CT24 row; evidence
 data was unchanged. The failed check and corrected rerun are retained as
 `reconciliation.log` and `reconciliation-final.log` in the same private run.
+
+## Rebase onto main
+
+On 2026-09-19 the published branch `a0584a50` was rebased, preserving its
+merge topology, onto main `026314c8`. Replayed conflicts retain the reviewed
+CT integration results and main’s TSAN evidence. Code, tests, fixtures,
+scripts and Lean proofs are byte-identical to the published CT branch.
+The [resolution record](rebase-gate/resolution.json) records both identities,
+the local backup and the exact pre-evidence tree delta.
+
+The integration section above describes the original publication checkpoint;
+its ancestry statement applies to that original branch. Rewriting history maps
+its source checkpoint `72a648f1` to `fd673475`. Original gate files remain
+unchanged. A fresh [rebase gate](rebase-gate/gate.json) and
+[captured facts](rebase-gate/gate-facts.json) measure rebased head `637ef1a3`:
+**4,808 Rust passed, 0 failed, 10 ignored; 145 Lean audits; 305 Python tests**.
+All commands listed in the original gate table returned 0 again; Rust produced
+246 summaries across 235 Running targets and 9 doc-test sections. Python was
+verified after matrix regeneration. The same Cargo environment was used,
+and Clang was invoked again in this worktree. Provider 122 remains carried
+evidence. Private command logs and captured exits are under
+`/home/cosmo/Documents/GitHub/qcore-c/private/ct-remaining/integration/private/ct-integration/rebase-gate-20260919T101431Z/`.
+
+Coverage and the 263 registered follow-ups are unchanged. This rebases the CT
+branch onto main; it does not merge that branch into main.
