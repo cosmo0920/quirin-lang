@@ -1,0 +1,24 @@
+   Compiling qcore-c-gateway v0.1.0 (/tmp/agent-b04/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.40s
+     Running tests/constructor_residuals.rs (/home/cosmo/Documents/GitHub/qcore-c/private/b-series/targets/b04/debug/deps/constructor_residuals-03525a51c2599f02)
+
+running 1 test
+test every_sibling_keeps_its_borrow_liveness_obligation ... FAILED
+
+failures:
+
+---- every_sibling_keeps_its_borrow_liveness_obligation stdout ----
+
+thread 'every_sibling_keeps_its_borrow_liveness_obligation' (663) panicked at crates/qcore-c-gateway/tests/constructor_residuals.rs:419:5:
+assertion `left != right` failed
+  left: Safe
+ right: Safe
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    every_sibling_keeps_its_borrow_liveness_obligation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 21 filtered out; finished in 0.15s
+
+error: test failed, to rerun pass `-p qcore-c-gateway --test constructor_residuals`
