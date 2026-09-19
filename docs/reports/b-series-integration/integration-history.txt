@@ -1,3 +1,11 @@
+409703b3e45e6958c2de0e3cc14a71c3d472fd98 Merge B01 final evidence; regenerate combined matrix separately
+eed5951574de9b73fa04c250612dc0cec603fde2 Close isolated B04 evidence: 4817 Rust, 145 Lean, 305 Python
+74045400a2a0154b8f0bf58060ae1e6a14a3f611 Record guarded B02 corpus delta and both forecast corrections
+70433f90a4aaf06880d79f57eaef7d654871f935 Keep B02 and B03 call lowering outside local provisional-summary inference
+6949e76dbcf03b5f283dd616d3e53ce7badbf636 Remove single-element test loop flagged by Clippy
+0c3c42ab3d01a72304a3b7431fbfbd8858722cc7 Deliberately update O04 sibling-call pin and preserve deeper-nesting refusal
+aa087cd62661a83b6d63947207e85c61e1b75cd4 Restrict B01 embedded scalar calls to external declarations; retain recursive pointer refusal
+159848ddddd220662ab2d14205235243514843bb Complete B04 downstream Lean adaptation and retain mutation evidence
 77443afeb236a3818a4044fba6e6e2465a43a39e Integrate bounded B04 neutral sibling calls; mutation and combined gates pending
 70017e35273d6678111337512ddcdab296ff6df7 Integrate reviewed B01 return evaluation; combined gate pending
 914d460d158b464aed4048b4527c9126520a7785 Import completed B03 isolated gate; regenerate shared matrix after combined gate

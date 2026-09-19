@@ -1,0 +1,123 @@
+{
+  "unit_counts": {
+    "before": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    },
+    "after": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    }
+  },
+  "function_counts": {
+    "before": {
+      "Unknown": 4537,
+      "Safe": 213,
+      "Unsafe": 84
+    },
+    "after": {
+      "Unknown": 4536,
+      "Safe": 214,
+      "Unsafe": 84
+    }
+  },
+  "diagnostic_counts": {
+    "before": {
+      "leak": 272,
+      "summary_conflict": 1,
+      "unknown_alias": 4309,
+      "unsupported": 49753
+    },
+    "after": {
+      "leak": 272,
+      "summary_conflict": 1,
+      "unknown_alias": 4309,
+      "unsupported": 49747
+    }
+  },
+  "unit_moves": [],
+  "function_moves": [
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_down"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    }
+  ],
+  "leaves_removed": [
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_content_copy",
+        3166,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_write",
+        3464,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_stats.c",
+        "cio_stats_get",
+        2126,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_down",
+        19975,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_set_up",
+        19982,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_set_up_down",
+        19960,
+        "unsupported",
+        "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      "count": 1
+    }
+  ],
+  "leaves_added": []
+}

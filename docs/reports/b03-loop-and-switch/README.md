@@ -203,3 +203,16 @@ The proposed global rule in §8 is declined as worded: older neutral-expression
 rules can already admit shapes outside that sentence. The integration lands an
 explicitly scoped B01–B03 additional-lowering rule instead and records this
 choice in its reconciliation ledger. No existing neutral admission is revoked.
+
+## 11. Shared boundary correction — 2026-09-20
+
+Integration review reproduced an additional admission through a local
+provisional neutral summary in a recursive condition. B02 follow-up `35564d32`
+therefore narrows the shared `condition_call_instruction` used by B02 and B03:
+its extracted callee must have no definition in the translation unit. The
+five-position regression covers `if`, `while`, `for`, `do`/`while` and `switch`.
+Existing independently modeled neutral conditions retain their own rules.
+This correction introduces no B03 corpus withdrawal: the final combined delta
+contains only return and branch-condition leaves. The final combined gate and
+source binding are recorded in the B-series integration report and this card's
+`integration-gate.json`; the isolated gate above remains its historical record.

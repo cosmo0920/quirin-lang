@@ -1,6 +1,6 @@
 # Current status and evidence boundaries
 
-Re-derived on 2026-09-19 from the sources below. This is the concise status
+Re-derived on 2026-09-20 from the sources below. This is the concise status
 authority routed by `AGENTS.md`; reports own the underlying evidence. Update
 numbers from those sources, not from an older summary. History belongs in the
 [increment records](development/increments/README.md).
@@ -13,9 +13,9 @@ numbers from those sources, not from an older summary. History belongs in the
 | CT cases mapped | **50/50**; none unmapped | [Manifest](reevaluation/ct_manifest.json) |
 | CT case-bound proof | **5/50**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
 | CT gated sanitized-native | **10/50, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
-| Cycle 19 units | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only**, 185 total | [Corpus baseline](reports/w37-corpus-contracts-4/README.md) |
-| Projected functions | **213 Safe / 84 provisional Unsafe / 4,537 Unknown**, 4,834 total | Same baseline |
-| Corpus diagnostics | leak **272**; unknown_alias **4,309**; double_release **0**; unsupported **49,753**; summary_conflict **1** | Same baseline, `artifacts/diagnostics.json.gz` |
+| Cycle 19 units | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only**, 185 total | [B-series corpus](reports/b-series-integration/README.md) |
+| Projected functions | **221 Safe / 84 provisional Unsafe / 4,529 Unknown**, 4,834 total | Same baseline |
+| Corpus diagnostics | leak **272**; unknown_alias **4,309**; double_release **0**; unsupported **49,735**; summary_conflict **1** | Same baseline, `artifacts/diagnostics.json.gz` |
 | Contract corpus | **88** modules; **59** resource-v1 declarations; **33** manifest-selected | `contract/qcore/`, [selection](../contract/cycle19-resource-contracts.json) and pinned tests |
 | Registered follow-ups | **269** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
@@ -37,7 +37,7 @@ can run on other hosts without implying sanitizer execution there.
 **Raw units remain unpromoted.** `flb_input_chunk_create` is function-level Safe;
 the production `input_chunk_get` residual remains Unknown. Provisional Unsafe
 findings are not validated upstream defects. Unknowns stay in the denominator.
-The baseline is `docs/reports/w37-corpus-contracts-4/artifacts/`; an arbiter must
+The baseline is `docs/reports/b-series-integration/artifacts/`; an arbiter must
 reproduce its predecessor's verdict-bearing artifacts byte-for-byte and
 attribute every delta. The chain and leaf identities are preserved in the
 individual reports, [wave history](development/increments/README.md), and
@@ -60,11 +60,11 @@ separately.
 
 ## Last integrated gate
 
-The [CT41 mapping gate](reports/ct41-publication-mapping/gate.json) records
-**4,812 Rust passed, 0 failed, 10 ignored; 246 result summaries over 244 targets;
-145 Lean audits; 305 Python tests**, clean fmt/clippy and both probes exit 0.
+The [B01–B04 integration gate](reports/b-series-integration/gate.json) records
+**4,845 Rust passed, 0 failed, 10 ignored; 248 result summaries over 246 targets;
+148 Lean audits; 305 Python tests**, clean fmt/clippy and both probes exit 0.
 Clang 21.1.8 was recorded in the measuring worktree. **122 provider tests are
-carried Unix evidence, not re-measured.** [Run identity and private logs](reports/ct41-publication-mapping/README.md#validation)
+carried Unix evidence, not re-measured.** [Run identity and private logs](reports/b-series-integration/README.md#final-standing-gate)
 bind these measurements to the checked source; they are not promises about
 another host or a later tree.
 

@@ -1,0 +1,13 @@
+{
+  "note": "Final combined source 18b142b8d055a385985c68b392f449d60d3e2b99; 4845 Rust passed, 0 failed, 10 ignored; 248 strict summaries across 246 targets (237 running and 9 doc). All standing commands exit 0. 148 Lean audits. Python count is finalized by the post-regeneration run recorded in gate-facts.json. Provider 122 is carried Unix evidence, not remeasured. Actual Clang recording captured in this checkout during this run. Logs: /home/cosmo/Documents/GitHub/qcore-c/private/b-series/final-validated-gate/. Earlier failed/intermediate runs remain disclosed in README.md. No full-language conformance or raw-unit promotion claimed.",
+  "workspace_tests": 4845,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 305,
+  "lean_audits": 148,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

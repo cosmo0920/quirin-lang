@@ -6700,11 +6700,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Card B02-BRANCH-CONDITION at ec3a86e0. Full standing gate run outside ptrace so LeakSanitizer could execute: submodule 0, 4825 Rust passed / 0 failed / 10 ignored over 247 result summaries and 245 targets, fmt 0, clippy 0, both reevaluation examples 0, 146 Lean audits 0. The matrix was regenerated with this gate, then 305 Python tests passed, exit 0. Provider 122 is carried, not remeasured: this card changes only qcore-c-gateway Rust/tests, one Lean model/audit and its report. Clang was invoked in this worktree during this run and its recording is beside this file. The earlier sandboxed run is preserved privately as incomplete and invalid: LeakSanitizer refused ptrace and the run was interrupted before cargo wrote an aggregate exit; no figure is carried from it. Full language conformance remains false; the corpus measurement moves one projected function, not a unit promotion or an upstream defect claim.",
-  "workspace_tests": 4825,
+  "note": "Final combined source 18b142b8d055a385985c68b392f449d60d3e2b99; 4845 Rust passed, 0 failed, 10 ignored; 248 strict summaries across 246 targets (237 running and 9 doc). All standing commands exit 0. 148 Lean audits. Python count is finalized by the post-regeneration run recorded in gate-facts.json. Provider 122 is carried Unix evidence, not remeasured. Actual Clang recording captured in this checkout during this run. Logs: /home/cosmo/Documents/GitHub/qcore-c/private/b-series/final-validated-gate/. Earlier failed/intermediate runs remain disclosed in README.md. No full-language conformance or raw-unit promotion claimed.",
+  "workspace_tests": 4845,
   "provider_tests": 122,
   "python_evidence_validator_tests": 305,
-  "lean_audits": 146,
+  "lean_audits": 148,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6777,6 +6777,7 @@
    "AuditLifetimeCorrespondence.lean",
    "AuditLiteralArgumentPremise.lean",
    "AuditLoopBudget.lean",
+   "AuditLoopSwitchCallEvaluation.lean",
    "AuditLoopWindows.lean",
    "AuditMayAlias.lean",
    "AuditMemberAddress.lean",
@@ -6816,6 +6817,7 @@
    "AuditRegionJoinsLoan.lean",
    "AuditRegionTaskCredit.lean",
    "AuditReturnCallCustody.lean",
+   "AuditReturnExpressionEvaluation.lean",
    "AuditReturnPositionEscape.lean",
    "AuditScalarRouteExitEdge.lean",
    "AuditSingleEmissionRoute.lean",
@@ -6859,7 +6861,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/b02-branch-condition/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/b-series-integration/gate.json)"
  },
  "named_followups": [
   {

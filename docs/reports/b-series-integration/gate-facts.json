@@ -1,0 +1,140 @@
+{
+  "source_commit": "18b142b8d055a385985c68b392f449d60d3e2b99",
+  "start": "2026-09-19T16:43:21.447037+00:00",
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+  "environment": {
+    "CARGO_BUILD_JOBS": "3",
+    "QCORE_CLANG": null,
+    "RUSTFLAGS": null,
+    "CARGO_TARGET_DIR": "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/targets/b03"
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.13,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/final-validated-gate/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.04,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/final-validated-gate/clang-version.log"
+    },
+    {
+      "name": "cargo-test",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "seconds": 1259.49,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/final-validated-gate/cargo-test.log"
+    },
+    {
+      "name": "cargo-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 1.77,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/final-validated-gate/cargo-fmt.log"
+    },
+    {
+      "name": "cargo-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 11.28,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/final-validated-gate/cargo-clippy.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.07,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/final-validated-gate/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.4,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/final-validated-gate/reevaluation-followup.log"
+    },
+    {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "seconds": 16.67,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/final-validated-gate/lean-audits.log"
+    },
+    {
+      "name": "python-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "tests": 305,
+      "seconds": 14.45,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/b-series/final-validated-gate/python-tests.log",
+      "order": "after final acceptance-matrix regeneration"
+    }
+  ],
+  "rust": {
+    "passed": 4845,
+    "failed": 0,
+    "ignored": 10,
+    "result_summaries": 248,
+    "running_targets": 237,
+    "doc_targets": 9
+  },
+  "end": "2026-09-19T17:04:51.332242+00:00"
+}

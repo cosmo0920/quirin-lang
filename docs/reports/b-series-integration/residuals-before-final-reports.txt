@@ -1,0 +1,219 @@
+
+  BASE-TYPE-READER-UNMEASURED
+      written in  docs/development/increments/wave-36.md
+      written in  docs/development/increments/wave-37.md
+
+  CHECKPOINT-PAGE-SPLIT
+      written in  docs/development/increments/wave-40.md
+
+  COMPOSED-VIEW-WINDOW-INERT
+      written in  docs/agents/buffers-records.md (standing constraints)
+      written in  docs/development/increments/wave-40.md
+      written in  docs/development/increments/wave-41.md
+      mentioned in docs/agents/buffers-records.md - a RULE, not a tracker
+
+  CONSTANT-DO-WHILE-JOINED-PROVENANCE-REACH
+      written in  docs/agents/gateway.md (standing constraints)
+      written in  docs/development/increments/wave-35.md
+      written in  docs/development/increments/wave-37.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  CT-COMPOSED-NATIVE-ROWS
+      written in  docs/development/increments/wave-32.md
+      written in  docs/development/increments/wave-40.md
+
+  CT-INTEGRATION-REBASE
+      written in  docs/development/increments/wave-41.md
+
+  CT-NATIVE-CREDIT
+      written in  docs/development/increments/wave-40.md
+
+  CT-PROOF-LEG-2
+      written in  docs/development/increments/wave-30.md
+      written in  docs/development/increments/wave-31.md
+      written in  docs/development/increments/wave-32.md
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  CT-WIRE-LANE-2
+      written in  docs/development/increments/wave-28.md
+      written in  docs/development/increments/wave-37.md
+
+  CT-WIRE-LANE-3
+      written in  docs/development/increments/wave-31.md
+      written in  docs/development/increments/wave-32.md
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  CT01-PROOF-LEG
+      written in  docs/development/increments/wave-29.md
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  CT07-TWO-THREAD-REMAP
+      written in  docs/development/increments/wave-36.md
+
+  CT10-BYTE-ENCODING-UNSOUND
+      written in  docs/development/increments/wave-37.md
+
+  CT10-SOURCE-LAYOUT
+      written in  docs/agents/diagnostics.md (standing constraints)
+      mentioned in docs/agents/diagnostics.md - a RULE, not a tracker
+
+  CT22-CT-MAPPING
+      written in  docs/development/increments/wave-28.md
+
+  CT22-WIRE
+      written in  docs/development/increments/wave-29.md
+      written in  docs/development/increments/wave-32.md
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  CT24-CLEANUP-PREEMPTED
+      written in  docs/agents/diagnostics.md (standing constraints)
+      written in  docs/development/increments/wave-30.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+      mentioned in docs/agents/diagnostics.md - a RULE, not a tracker
+
+  CT24-CLEANUP-TASK-COMPOSITION
+      written in  docs/agents/diagnostics.md (standing constraints)
+      mentioned in docs/agents/diagnostics.md - a RULE, not a tracker
+
+  CT41-PUBLICATION-MAPPING
+      written in  docs/development/increments/wave-41.md
+
+  CT42-CELL-DERIVED-PREMISE
+      written in  docs/agents/io.md (standing constraints)
+      written in  docs/development/increments/wave-31.md
+      written in  docs/development/increments/wave-39.md
+      mentioned in docs/agents/io.md - a RULE, not a tracker
+
+  CT42-CELL-UDP-QUEUE
+      written in  docs/agents/io.md (standing constraints)
+      written in  docs/development/increments/wave-31.md
+      written in  docs/development/increments/wave-39.md
+      mentioned in docs/agents/io.md - a RULE, not a tracker
+
+  CT42-MAP
+      written in  docs/development/increments/wave-39.md
+
+  CT46-SENDSYNC
+      written in  docs/development/increments/wave-29.md
+
+  DOCS-COMPACT-5-EXAMPLES-HOST-GATE
+      written in  docs/development/increments/wave-32.md
+
+  DOCS-COMPACT-5-MIGRATED-SECTION-CLAUSE
+      written in  docs/development/increments/wave-32.md
+
+  DOCS-COMPACT-9
+      written in  docs/development/increments/wave-40.md
+
+  DOCS-STRUCTURE-COMPRESSION
+      written in  docs/development/increments/wave-40.md
+
+  EVENT-V1-WINDOWS-AFUNIX
+      written in  docs/development/increments/wave-23.md
+
+  JOINED-PROVENANCE-DECLINE-INDISTINGUISHABLE
+      written in  docs/development/increments/wave-37.md
+
+  JOINED-PROVENANCE-FACTS-NAME-NOTHING
+      written in  docs/development/increments/wave-35.md
+      written in  docs/development/increments/wave-36.md
+
+  JOINED-PROVENANCE-FIXED-POINT-BOUND-UNMEASURED
+      written in  docs/development/increments/wave-37.md
+
+  LEAN-AUDIT-GATE-KEY-OPTIONAL
+      written in  docs/development/increments/wave-38.md
+
+  LOOPWINDOWS-ADMITTED-SHAPES-TAUTOLOGY
+      written in  docs/development/increments/wave-41.md
+
+  MAIN-GUARD-UNACTIVATED
+      written in  docs/development/increments/wave-36.md
+      written in  docs/development/increments/wave-37.md
+
+  OWNED-FIELD-BOUNDARIES-ARE-ABSENCE
+      written in  docs/development/increments/wave-40.md
+      written in  docs/development/increments/wave-41.md
+
+  OWNED-FIELD-WINDOWS-RUN
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+      written in  docs/development/platform-evidence.md (standing constraints)
+      mentioned in docs/development/platform-evidence.md - a RULE, not a tracker
+
+  OWNERSHIP-COPY-OP-UNPRODUCED
+      written in  docs/development/increments/wave-40.md
+      written in  docs/development/increments/wave-41.md
+
+  RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED
+      written in  docs/agents/operations.md (standing constraints)
+      written in  docs/development/increments/wave-36.md
+      written in  docs/development/increments/wave-37.md
+      mentioned in docs/agents/operations.md - a RULE, not a tracker
+
+  RED-AS-REQUIRED
+      written in  docs/development/increments/wave-39.md
+      written in  docs/development/increments/wave-41.md
+
+  REGION-JOINS-DUTIES
+      written in  docs/agents/diagnostics.md (standing constraints)
+      written in  docs/agents/effects.md (standing constraints)
+      written in  docs/development/increments/wave-28.md
+      written in  docs/development/increments/wave-29.md
+      written in  docs/development/increments/wave-30.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+      mentioned in docs/agents/diagnostics.md, docs/agents/effects.md - a RULE, not a tracker
+
+  SWEEP-RESIDUALS-PROSE-ONLY-ITEMS
+      written in  docs/development/increments/wave-37.md
+
+  SWEEP-RESIDUALS-SCANS-REPORTS-ONLY
+      written in  docs/development/increments/wave-35.md
+
+  TASK-ROUTE-TSAN-SEGV-PRIORITY
+      written in  docs/development/increments/wave-37.md
+
+  TSAN-SUBJECTS-ARE-TWINS-NOT-FIXTURES
+      written in  docs/development/increments/wave-39.md
+
+  VERIFIER-HOST-ROW-DISPOSITION
+      written in  docs/development/increments/wave-35.md
+
+  W29-CORPUS-CONTRACTS
+      written in  docs/development/increments/wave-29.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  W32-SWEEP-MATRIX-EDIT-LOST-AT-MERGE
+      written in  docs/development/increments/wave-35.md
+
+  W36-W37-MUTATION-HARNESSES-UNSHIPPED
+      written in  docs/agents/operations.md (standing constraints)
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+      written in  docs/development/increments/wave-40.md
+      mentioned in docs/agents/operations.md - a RULE, not a tracker
+
+  W4-RECSUM-ALREADY-LANDED
+      written in  docs/development/increments/wave-30.md
+
+  W4-RECSUM-CONSTRAINT-4
+      written in  docs/development/increments/wave-30.md
+
+  W4-RECURSIVE-SUMMARIES
+      written in  docs/development/increments/wave-30.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  WAVE-34-CLOSE-UNSWEPT
+      written in  docs/development/increments/wave-35.md
+
+  WAVE-38-CLOSE
+      written in  docs/development/increments/wave-38.md
+
+  WLT-EXERCISE-TSAN-TEST-SILENT-ARMS
+      written in  docs/development/increments/wave-39.md
+
+54 residual-shaped names the tracker (docs/reviews/r0_3/acceptance_matrix.json:named_followups) does not carry.
+Scanned: the named card reports, docs/development/increments/, and the standing-constraints text of AGENTS.md, CLAUDE.md, docs/agents/README.md, docs/agents/buffers-records.md, docs/agents/concurrency.md, docs/agents/diagnostics.md, docs/agents/effects.md, docs/agents/evidence.md, docs/agents/gateway.md, docs/agents/io.md, docs/agents/operations.md, docs/agents/providers.md, docs/agents/source-identity.md, docs/agents/source-routes.md, docs/agents/validation.md, docs/development/platform-evidence.md.
+Candidates for a human eye; this tool classifies none of them.

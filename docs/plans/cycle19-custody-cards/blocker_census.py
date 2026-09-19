@@ -23,7 +23,7 @@ import pathlib
 import re
 import sys
 
-DEFAULT = "docs/reports/w37-corpus-contracts-4/artifacts"
+DEFAULT = "docs/reports/b-series-integration/artifacts"
 
 
 def normalise(text):

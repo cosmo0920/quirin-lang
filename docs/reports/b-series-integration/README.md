@@ -51,13 +51,13 @@ checked; this list itself is not verification evidence.
 
 ## Integration state
 
-Implementation, review, combined measurement and standing validation are pending.
+Implementation, review and combined measurement are complete. The final standing gate is recorded below; main integration follows this evidence commit.
 
 ## Integration review and merge attribution
 
 The source merges are reachable commits: B02 `340d0b9d`, B03 `e73e96a2`,
-B01 `70017e35`, and B04 `77443afe`. The corpus audit uses
-`77443afeb236a3818a4044fba6e6e2465a43a39e`. The first combined build found a
+B01 `70017e35`, and B04 `77443afe`. The intermediate corpus audit used
+`77443afeb236a3818a4044fba6e6e2465a43a39e`; final measurement uses `18b142b8`. The first combined build found a
 missed diagnostic-example consumer of B04's `Option` → `Vec` change; the
 integrator changed its printer to iterate every nested call. This does not
 change analyzer semantics. The final standing gate records the corrected
@@ -115,3 +115,69 @@ run is therefore intermediate evidence; the repaired analyzer is remeasured.
 B04 intentionally changes the old O04 sibling-call refusal; its source-level pin
 must become a positive sibling case while retaining the deeper-nesting refusal.
 The original failing logs remain separate from the final gate.
+
+
+## Final corpus result and prediction miss
+
+The repaired audit at `18b142b8` exited 0. It measured **221 Safe / 84
+provisional Unsafe / 4,529 Unknown projected functions**: eight Unknown → Safe,
+zero other function moves and zero unit moves. Units remain **2 Safe / 42
+provisional Unsafe / 137 Unknown / 4 data-only**, with raw units unpromoted.
+Diagnostics are leak **272**, unknown_alias **4,309**, unsupported **49,735**,
+summary_conflict **1**. Against the byte-reproduced baseline, **18 leaves are
+removed and none added or exchanged**. B01 contributes twelve return leaves
+and seven movers; guarded B02 contributes six branch leaves and
+`flb_input_chunk_down`. B03 and B04 contribute no corpus delta.
+
+The original combined forecast got all eight mover identities right but missed
+the final leaf count: **57 predicted, 18 measured**. Its first intermediate run
+matched 57, but the local-definition guards restored 39 branch refusals. The
+full coordinate multiset is in `artifacts/guard-correction-delta.json`; this is
+a scope correction, not an unexplained re-pin. B01's original zero-move
+forecast and B02's original wrong mover name remain visible in their reports.
+
+All five final artifacts are archived with deterministic gzip, full hashes,
+source commit, binary hash and command in `artifacts/`. `chunk-contracts`,
+`source`, `source-effects` and `contracts` are byte-identical to the integrator's
+fresh BEFORE; only `diagnostics` changes. Private final raw artifacts and log:
+`/home/cosmo/Documents/GitHub/qcore-c/private/b-series/repaired-after/`.
+The intermediate `combined-after/` run remains private and is not the final
+baseline. The final blocker census is `blocker-census.txt`; the dominant
+indirect+branch pair remains **196** functions. No registered follow-up retires,
+and the 269-entry registry and CT mapping/proof/native counts remain unchanged.
+Full-language conformance remains false.
+
+## Final standing gate
+
+Frozen source `18b142b8d055a385985c68b392f449d60d3e2b99` passed the complete
+combined gate: **4,845 Rust passed / 0 failed / 10 ignored**, **248 strict
+result summaries across 246 targets** (237 running plus 9 doc), and **148 Lean
+audits**. The source hashes in `source-hashes.json` still match after all report
+merges. Submodule initialization, workspace tests with `--no-fail-fast`, fmt,
+all-target Clippy with `-D warnings`, both reevaluation examples and Lean all
+exited 0. Exact command arrays, timings and private absolute log paths are in
+`gate-facts.json`. The run used an elevated process outside the sandbox's ptrace
+restriction so LeakSanitizer could execute, without disabling it.
+
+The acceptance matrix is regenerated from `gate.json`, then the Python evidence
+suite passed **305 tests**, exit 0, against that matrix. Its captured result is in `gate-facts.json`.
+The 122 provider tests are carried evidence, not a new provider run. Clang
+21.1.8 was invoked in this checkout during the combined gate. Every B card has
+an `integration-gate.json`; its note distinguishes the card's borrowed colocated
+Clang recording from this actual combined recording. Isolated gates remain
+frozen with their own counts. The failed compiled intermediate gate measured
+4,840 passed / 2 failed / 10 ignored; its failures and repairs above are retained,
+not counted as final validation.
+
+The four report reconciliation lists are decided item by item in
+`reconciliation.json`, including explicit declines of overbroad amendment text
+and standalone increment proposals. No follow-up retires and no umbrella
+residual is introduced. Attribution is independently checked by
+`scripts/verify_attribution.py`; its output is archived in `artifacts/attribution.txt`.
+
+The residual sweeps before and after final report reconciliation are byte-identical;
+the archived `residuals-*.txt` retain the existing untracked-name inventory. No
+retirement or new unresolved name is hidden by this integration. Reconciliation
+checks pass for all 27 items and 26 content claims. An initial reconciliation
+check rejected the deferred-decision enum `open`; changing it to the supported
+`deferred` spelling preserved every ground and the repeated check passed.

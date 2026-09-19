@@ -1,0 +1,6 @@
+PASS: final diagnostic multiset delta equals the sum of the four isolated deltas.
+PASS: final function moves equal their disjoint union; no unit moves or added leaves.
+b01: 12 removed leaves; 7 function moves
+b02: 6 removed leaves; 1 function moves
+b03: 0 removed leaves; 0 function moves
+b04: 0 removed leaves; 0 function moves
