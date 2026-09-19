@@ -138,6 +138,16 @@ and the Lean admission includes the same external-declaration premise and
 refusal theorem.  This correction records the discovered boundary; it does not
 rewrite the pre-AFTER prediction or add a post-hoc expectation.
 
+Before running the corrected isolated AFTER, the prior 45 removed coordinates
+were reclassified against the pinned source definitions.  The guard is expected
+to retain 21 same-translation-unit call leaves (2 cmetrics, 7 lz4frame, 2
+lz4hc, 1 librdkafka admin, 4 chunkio and 5 Fluent Bit input-chunk leaves), for
+**24 removed / 0 added** branch-condition leaves.  The verdict forecast remains
+one function movement, `flb_input_chunk_down` Unknown→Safe, because its
+`cio_chunk_is_up` callee is external to that translation unit.  This forecast
+was recorded at source commit `35564d32` before the corrected audit; the audit
+below tests it rather than defining it.
+
 ## Retained limitation and integrator reconciliation list
 
 No registered entry retires.  The largest measured boundary remains the 196
