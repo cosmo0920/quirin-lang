@@ -2,8 +2,8 @@
 //! expressions, through the real Clang-backed gateway.
 
 use qcore_c_gateway::legacy_c::{
-    AnalysisStatus, C11TranslationUnit, LegacyDiagnosticKind, ResourceContracts,
-    UnrestrictedLegacyResult, analyze_unrestricted_c11,
+    AnalysisStatus, C11TranslationUnit, LegacyCfg, LegacyDiagnosticKind, LegacyInstruction,
+    ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
@@ -38,6 +38,7 @@ fn contracts() -> ResourceContracts {
 struct Run {
     status: AnalysisStatus,
     diagnostics: Vec<LegacyDiagnosticKind>,
+    cfg: LegacyCfg,
 }
 
 impl Run {
@@ -88,6 +89,7 @@ fn run(body: &str) -> Run {
             .iter()
             .map(|diagnostic| diagnostic.kind.clone())
             .collect(),
+        cfg: function.cfg.clone(),
     }
 }
 
@@ -177,4 +179,102 @@ fn conditionally_evaluated_and_post_release_accesses_stay_refused() {
         let run = run(body);
         assert!(run.unsupported().contains(&LOOP.to_owned()), "{run:?}");
     }
+}
+
+#[test]
+fn continue_paths_revisit_the_call_and_for_runs_its_increment_first() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "void subject(void) {
+            void *p = q_alloc();
+            while (r_borrow_code(p)) {
+                continue;
+            }
+            q_free(p);
+        }",
+        "void subject(void) {
+            void *p = q_alloc();
+            do {
+                continue;
+            } while (r_borrow_code(p));
+            q_free(p);
+        }",
+    ] {
+        let run = run(body);
+        let header = run
+            .cfg
+            .nodes
+            .iter()
+            .position(|node| {
+                matches!(&node.instruction,
+                LegacyInstruction::ContractCall { function, .. } if function == "r_borrow_code")
+            })
+            .expect("condition call node");
+        let continue_node = run
+            .cfg
+            .nodes
+            .iter()
+            .find(|node| {
+                matches!(node.instruction, LegacyInstruction::NoOp) && node.successors == [header]
+            })
+            .expect("continue node");
+        assert_eq!(continue_node.successors, [header], "{run:?}");
+    }
+
+    let run = run("void subject(void) {
+            void *p = q_alloc(); unsigned long n = 0;
+            for (; r_borrow_code(p); n = n + 1) {
+                continue;
+            }
+            q_free(p);
+        }");
+    let header = run
+        .cfg
+        .nodes
+        .iter()
+        .position(|node| {
+            matches!(&node.instruction,
+            LegacyInstruction::ContractCall { function, .. } if function == "r_borrow_code")
+        })
+        .expect("condition call node");
+    let increment = run
+        .cfg
+        .nodes
+        .iter()
+        .position(|node| {
+            matches!(&node.instruction,
+            LegacyInstruction::ForgetScalar { destination } if destination == "n")
+        })
+        .expect("for increment node");
+    let continue_node = run
+        .cfg
+        .nodes
+        .iter()
+        .find(|node| {
+            matches!(node.instruction, LegacyInstruction::NoOp) && node.successors == [increment]
+        })
+        .expect("continue node");
+    assert_eq!(continue_node.successors, [increment], "{run:?}");
+    assert_eq!(run.cfg.nodes[increment].successors, [header], "{run:?}");
+}
+
+#[test]
+fn do_while_break_exits_before_the_condition_call() {
+    if !clang_available() {
+        return;
+    }
+    let run = run("void subject(void) {
+            void *p = q_alloc();
+            do { break; } while (r_release_code(p));
+        }");
+    assert!(!run.unsupported().contains(&DO_WHILE.to_owned()), "{run:?}");
+    assert_eq!(run.double_releases(), 0, "{run:?}");
+    assert!(
+        run.diagnostics
+            .iter()
+            .any(|kind| matches!(kind, LegacyDiagnosticKind::Leak { .. })),
+        "break must bypass the post-test call: {run:?}"
+    );
 }

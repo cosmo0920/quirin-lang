@@ -5,87 +5,108 @@ C controlling expression.
 
 The gateway admits a call only after a lexical check establishes that it is
 unconditionally evaluated within the controlling expression and the remaining
-expression is custody-neutral. This module models the other half of the rule:
-where the resulting call instruction sits in the CFG. A `while`/`for` call is
-the loop header, a `do`/`while` call is the post-body header, and a `switch`
-call is the one dispatch node. Thus back edges revisit the call while switch
-arms do not, and both loop successors remain present.
+expression is custody-neutral. This module models where the call instruction
+sits in the CFG. It distinguishes normal condition termination from an abrupt
+`break`/`return`, because an abrupt body exit skips the next condition test.
 
 This is an abstract rule theorem. Faithful C extraction and correspondence to
 the Rust CFG builder remain review-maintained premises (constraint 28).
 -/
 
-inductive Position where
-  | preTestLoop
-  | postTestLoop
-  | switchDispatch
+inductive LoopKind where
+  | whileLoop
+  | forLoop
+  | doWhileLoop
   deriving DecidableEq, Repr
 
-/-- Number of controlling-expression evaluations for an execution with the
-given number of completed loop-body iterations. A post-test execution has at
-least one body iteration; that premise is stated where the formula is used. -/
-def evaluations : Position → Nat → Nat
-  | .preTestLoop, bodyIterations => bodyIterations + 1
-  | .postTestLoop, bodyIterations => bodyIterations
-  | .switchDispatch, _ => 1
+inductive ExitKind where
+  | conditionFalse
+  | abruptBodyExit
+  deriving DecidableEq, Repr
 
-/-- The modeled contract effect appears once per controlling-expression
-evaluation; it is never erased into a neutral branch node. -/
-def effectTrace (effect : Nat) (position : Position) (bodyIterations : Nat) :
-    List Nat :=
-  List.replicate (evaluations position bodyIterations) effect
+/-- Number of condition evaluations on a path that enters the body `entries`
+times. A pre-test loop evaluates before each entry and once more only when its
+condition terminates the loop. A post-test loop evaluates after each normally
+completed body; an abrupt final body exit skips that last evaluation. -/
+def evaluations (kind : LoopKind) (exit : ExitKind) (entries : Nat) : Nat :=
+  match kind, exit with
+  | .whileLoop, .conditionFalse => entries + 1
+  | .forLoop, .conditionFalse => entries + 1
+  | .whileLoop, .abruptBodyExit => entries
+  | .forLoop, .abruptBodyExit => entries
+  | .doWhileLoop, .conditionFalse => entries
+  | .doWhileLoop, .abruptBodyExit => entries - 1
 
-theorem a_pre_test_loop_evaluates_before_entry_and_after_each_iteration
-    (iterations : Nat) :
-    evaluations .preTestLoop iterations = iterations + 1 := by
+/-- One effect record per visit to the modeled call node. -/
+def effectTrace (effect : Nat) (kind : LoopKind) (exit : ExitKind)
+    (bodyEntries : Nat) : List Nat :=
+  List.replicate (evaluations kind exit bodyEntries) effect
+
+theorem pre_test_normal_exit_has_one_final_evaluation
+    (kind : LoopKind) (isPre : kind ≠ .doWhileLoop) (entries : Nat) :
+    evaluations kind .conditionFalse entries = entries + 1 := by
+  cases kind <;> simp_all [evaluations]
+
+theorem pre_test_abrupt_exit_has_no_final_evaluation
+    (kind : LoopKind) (isPre : kind ≠ .doWhileLoop) (entries : Nat) :
+    evaluations kind .abruptBodyExit entries = entries := by
+  cases kind <;> simp_all [evaluations]
+
+theorem post_test_normal_exit_evaluates_after_every_body
+    (entries : Nat) :
+    evaluations .doWhileLoop .conditionFalse entries = entries := by
   rfl
 
-theorem a_post_test_loop_evaluates_after_every_completed_iteration
-    {iterations : Nat} (oneOrMore : 0 < iterations) :
-    evaluations .postTestLoop iterations = iterations := by
-  cases iterations with
-  | zero => cases Nat.not_lt_zero 0 oneOrMore
-  | succ n => rfl
+theorem post_test_abrupt_exit_skips_the_last_evaluation
+    {entries : Nat} (entered : 0 < entries) :
+    evaluations .doWhileLoop .abruptBodyExit entries + 1 = entries := by
+  simp [evaluations, Nat.sub_add_cancel (by omega : 1 ≤ entries)]
 
-theorem a_switch_evaluates_exactly_once (armsTaken : Nat) :
-    evaluations .switchDispatch armsTaken = 1 := by
-  rfl
-
-theorem every_visit_applies_the_modeled_effect
-    (effect : Nat) (position : Position) (iterations : Nat) :
-    (effectTrace effect position iterations).length =
-      evaluations position iterations := by
+theorem every_condition_visit_applies_the_modeled_effect
+    (effect : Nat) (kind : LoopKind) (exit : ExitKind) (entries : Nat) :
+    (effectTrace effect kind exit entries).length = evaluations kind exit entries := by
   simp [effectTrace]
 
-/-- The loop header retains both alternatives. The condition call changes the
-instruction at the header, not its exit/back-edge rule. -/
-def loopSuccessors (bodyEntry continuation : Nat) : List Nat :=
+/-- The condition node remains a two-way branch. Modeling the call changes its
+instruction, never its exit/back-edge policy. -/
+def conditionSuccessors (bodyEntry continuation : Nat) : List Nat :=
   [bodyEntry, continuation]
 
 theorem a_modeled_call_never_removes_the_loop_exit
     (bodyEntry continuation : Nat) :
-    continuation ∈ loopSuccessors bodyEntry continuation := by
-  simp [loopSuccessors]
+    continuation ∈ conditionSuccessors bodyEntry continuation := by
+  simp [conditionSuccessors]
 
-theorem a_modeled_call_keeps_the_loop_back_edge
+theorem a_modeled_call_keeps_the_loop_body_edge
     (bodyEntry continuation : Nat) :
-    bodyEntry ∈ loopSuccessors bodyEntry continuation := by
-  simp [loopSuccessors]
+    bodyEntry ∈ conditionSuccessors bodyEntry continuation := by
+  simp [conditionSuccessors]
 
-/-- A continue in every loop kind targets the controlling-expression node.
-For a post-test loop this is after the body; for a pre-test loop it is before
-the next possible body execution. -/
-def continueTarget (conditionNode : Nat) : Nat := conditionNode
+/-- The CFG route taken by `continue`. A `for` loop executes its increment
+node before revisiting the condition call; `while` and `do`/`while` revisit the
+condition call directly. -/
+def continueRoute (kind : LoopKind) (incrementNode conditionNode : Nat) : List Nat :=
+  match kind with
+  | .forLoop => [incrementNode, conditionNode]
+  | .whileLoop | .doWhileLoop => [conditionNode]
 
-theorem continue_revisits_the_call (conditionNode : Nat) :
-    evaluations .preTestLoop (continueTarget conditionNode + 1) =
-      conditionNode + 2 := by
-  simp [continueTarget, evaluations]
+theorem every_continue_route_revisits_the_call
+    (kind : LoopKind) (incrementNode conditionNode : Nat) :
+    conditionNode ∈ continueRoute kind incrementNode conditionNode := by
+  cases kind <;> simp [continueRoute]
 
-/-- Switch dispatch has no edge from an arm back to the call node. Its one
-evaluation is independent of the number of case labels. -/
-theorem case_count_cannot_repeat_switch_evaluation (caseCount : Nat) :
-    (effectTrace 0 .switchDispatch caseCount).length = 1 := by
-  simp [effectTrace, evaluations]
+theorem a_for_continue_runs_increment_before_the_call
+    (incrementNode conditionNode : Nat) :
+    continueRoute .forLoop incrementNode conditionNode =
+      [incrementNode, conditionNode] := by
+  rfl
+
+/-- Switch dispatch evaluates its controlling expression exactly once; case
+count and fallthrough do not create an edge back to the dispatch call. -/
+def switchEffectTrace (effect : Nat) : List Nat := [effect]
+
+theorem switch_dispatch_applies_the_effect_once (effect : Nat) :
+    (switchEffectTrace effect).count effect = 1 := by
+  simp [switchEffectTrace]
 
 end QCore.LoopSwitchCallEvaluation
