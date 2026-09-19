@@ -126,11 +126,13 @@ asserted. Registered as `TSAN-COHORT-TRIGGER-CATCH-COST`.
 Checked the four ways wave 39 checked it, plus a published hash table:
 
 1. `git diff --stat 463fa6e8 -- crates/qcore-core/src/ crates/qcore-frontend/src/
-   compiler/src/ examples/` is **empty** (`artifacts/emission-diff.txt`). The
-   whole card's `git diff --name-only` against the base is three files:
-   `compiler/tests/task_route_tsan.rs`, `tests/support/thread_sanitizer.rs`,
-   `docs/reports/tsan-failure-arms/README.md` (plus this directory's new
-   artifacts).
+   compiler/src/ examples/` is **empty** — the zero-byte
+   `artifacts/emission-diff.txt`. The card's whole `git diff --name-only`
+   against the base touches exactly **two** source files, both test support:
+   `compiler/tests/task_route_tsan.rs` and `tests/support/thread_sanitizer.rs`.
+   Everything else it touches is documentation and trackers: this report
+   directory, `docs/development/increments/{README.md,wave-41.md}`, `AGENTS.md`'s
+   follow-on count and `docs/reviews/r0_3/acceptance_matrix.json`.
 2. `the_binding_changes_no_emitted_byte`: for all six task-route subjects the
    emitted C is deterministic, mentions none of `qcore_tsan_`, `qcore_forced_`,
    `QCORE_TSAN_DROP_JOIN` and — added by this card — **`QCORE_TSAN_FAILURE`** and
@@ -332,7 +334,7 @@ baseline_before_rc 0   baseline_after_rc 0   restore_sha256_rc 0
 | 8 | `arm_control_injected` — inject into the success-arm control | test | `without_the_injection_the_same_subject_takes_the_success_arm` | RED-AS-REQUIRED |
 | 9 | `hook_visible_to_tsan` — re-instrument the header | rule | `the_forcing_header_stays_invisible_to_thread_sanitizer` | RED-AS-REQUIRED |
 | 10 | `hook_mutex_reintroduced` — add a visible primitive | rule | same | RED-AS-REQUIRED |
-| 11 | `visible_mutation_without_the_lock` — take the lock out of the mutated park | rule | `a_visible_forcing_header_would_hide_the_overlap_…` | RED-AS-REQUIRED |
+| 11 | `visible_mutation_without_the_lock` — take **both halves of the lock pair** out of the mutated park | rule | `a_visible_forcing_header_would_hide_the_overlap_…` | RED-AS-REQUIRED |
 | 12 | `no_byte_change_new_symbols` — ask for a symbol the emitted C has | test | `the_binding_changes_no_emitted_byte` | RED-AS-REQUIRED |
 
 Mutations 3 and 4 re-establish, on this card's own call shapes, the non-vacuity
@@ -349,11 +351,98 @@ of its own worker count makes the reverse schedule realise *creation* order
 assertion fails — which is the measurement that the cohort count, and not
 something else, drives the release.
 
+**A mutation that first reddened for the wrong reason, and what was done about
+it.** Mutation 11's first form removed only the `qcore_forced_lock()` line from
+the mutated park loop, leaving its `qcore_forced_unlock()` unmatched; the program
+then forced no schedule at all and the test reddened on its
+"the mutated header must still force a schedule, or the row measures nothing"
+guard rather than on the race assertion — a red that would have proved nothing
+about the mechanism. It was fixed to move the **matched pair** (a second
+substitution, `run_case_2`), and now reddens on the intended assertion, with the
+visible header **reporting** the overlap and the trace
+`start 2 / leave 2 / start 1 / …` present
+(`artifacts/visible_mutation_without_the_lock.log`). That is the measurement
+naming the park-through-the-lock as the mechanism.
+
+**The sweep in this report is the run against the formatted tree.** The gate's
+`cargo fmt` step reflowed seven whitespace regions of
+`compiler/tests/task_route_tsan.rs` (§6); every anchor the sweep depends on was
+re-verified present exactly once afterwards, and the whole sweep was then
+**re-run end to end** so no verdict here rests on pre-format text. The
+catch-rate table of §5.1 is a runtime measurement over emitted programs, which
+rustfmt cannot move, and the suite is green before and after the reflow.
+
 ## 6. Gate
 
-`docs/reports/tsan-failure-arms/gate.json`, with `gate/` beside it. The
-`clang` recording was made in this worktree (`clang-version.txt`,
-`clang-version.exit`), not borrowed.
+`gate.json`, with `gate/` beside it holding every step's own exit file. One
+**detached** full gate (`setsid -f` on `scripts/gate.sh`, no `trap '' TERM`,
+every exit to its own file, no pipe), polled by a bounded foreground loop on its
+`DONE` marker, at `3deba6ea` — the tip carrying every code change of this card.
+`git submodule update --init --recursive` ran at the start of the card, exit 0,
+`third_party/libevent` at `d82464a2`.
+
+```
+4731 passed / 0 failed / 10 ignored   over 238 result summaries
+                                      ("test result: FAILED" 0 times)
+cargo-test 0   fmt 1   clippy 0   probe 0   followup 0   lean 0   python 1
+fmt-post 0     clippy-post 0      regen 0   python-post 0   clang-version 0
+141 Lean audits ("Passed 141 Lean audits"; proof/Audit*.lean is 141 on disk)
+Python 303 OK                     provider 122 carried
+cargo test 06:53:18Z → 07:15:48Z, whole gate → 07:18:07Z
+disk 247G free at start, 115G at end (three sibling worktrees building)
+```
+
+No row failed, so **no isolated constraint-16 re-verification was required and
+none is claimed**.
+
+**Two steps exited nonzero in the detached run and both are reported rather than
+smoothed over.**
+
+* **`fmt` exit 1** — seven rustfmt diffs, every one whitespace in this card's own
+  `compiler/tests/task_route_tsan.rs` (a call reflowed onto one line, three
+  string lists rewrapped, two assert arguments wrapped). No behaviour and no
+  assertion text moved. Repaired with `cargo fmt --all`; the workspace re-checks
+  clean (`gate/fmt-post.exit` 0) and clippy re-runs clean
+  (`gate/clippy-post.exit` 0). The `cargo_fmt`/`cargo_clippy` figures in
+  `gate.json` are those re-runs; the `cargo test` figure is the detached run's,
+  which compiled and ran the identical assertions before the reflow. The
+  mutation sweep was **re-run in full** against the formatted tree (§5.2).
+* **`python` exit 1** — it ran against the tree in which this card had already
+  edited `named_followups` (257 → 258) and not yet regenerated, and the one
+  failure was
+  `CommittedMatrixIsSelfConsistent::test_each_derived_dimension_matches_the_section_it_counts`
+  (`257 != 258`) — `D02-DIMENSIONS-FOLLOWUP-COUNT`'s tripwire doing its job, the
+  shape the wave-36 through wave-39 closes each recorded. The repair is the
+  regeneration with **this** `gate.json`
+  (`--gate docs/reports/tsan-failure-arms/gate.json`, `gate/regen.exit` 0,
+  `artifacts/regen.log`), and the Python figure recorded is the re-run after it:
+  303 OK (`gate/python-post.exit` 0).
+
+**The `clang` recording was made in this worktree** — `gate/clang-version.txt`
+is `clang --version` with `QCORE_CLANG` unset, exit 0, run by this card's own
+gate script — not borrowed from another card
+(`CLANG-RECORDING-UNBOUND-TO-ITS-RUN`).
+
+**Provider 122 carried, not re-measured:**
+`git diff --name-only 463fa6e8 HEAD -- providers/ crates/qcore-schemas/` is
+empty and `qcore-schemas` is still 14.0.0, so constraint 18 is not engaged.
+
+**Deltas against the wave-40 close's 4,727 / 10 ignored / 303 Python / 141
+Lean:** workspace passed **+4**, all in `compiler/tests/task_route_tsan.rs`
+(`every_failure_arm_runs_clean_and_says_which_arm_it_took`,
+`without_the_injection_the_same_subject_takes_the_success_arm`,
+`the_forcing_header_stays_invisible_to_thread_sanitizer`,
+`a_visible_forcing_header_would_hide_the_overlap_which_is_why_the_shipped_one_is_not`);
+ignored **+0** — the measurement harness is the same single ignored row,
+extended rather than added to; the renamed
+`a_join_deleted_is_caught_by_the_cohort_trigger` moves no count; Python **+0**;
+Lean **+0**, because no semantic surface moved.
+
+**Changes landing after the gate's tip,** named rather than glossed: this
+report's sections 5.2 and 6, the regenerated matrix, the wave-41 increment
+paragraph's final wording and this card's artifacts. No test in this tree reads
+a report README, `AGENTS.md` or the matrix's prose; the Python suite was re-run
+green after the regeneration, and `fmt`/`clippy` after the reflow.
 
 ## 7. Residuals and retirements
 
@@ -527,9 +616,12 @@ Every item below is an item.
     `compiler/tests/task_route_tsan.rs` and
     `compiler/tests/write_lend_tasks_exercise.rs`. It touched the first two;
     `write_lend_tasks_exercise.rs` is **unmodified** (its only use of the support
-    module is `PTHREAD_BINDING` and `run`, whose signatures are unchanged). No
-    file owned by a sibling card was touched; `git diff --name-only` against the
-    base is three files plus this report directory.
+    module is `PTHREAD_BINDING` and `run`, whose signatures are unchanged, as is
+    `crates/qcore-core/tests/unit/mutex_c_emit.rs`'s use of `run`). No file owned
+    by a sibling card was touched: `git diff --name-only` against the base names
+    two source files, this report directory, the two increment files,
+    `AGENTS.md`'s follow-on count and the matrix — nothing in `crates/`,
+    `compiler/src/`, `examples/`, `proof/`, `providers/` or `contract/`.
 11. **Wave-39 archive overlap, disclosed:** two of `docs/reports/tsan-rows-2/
     artifacts/mutate.sh`'s seventeen entries (`rows_unbound`,
     `gate_opened_after_all`) no longer apply verbatim to the current tree,

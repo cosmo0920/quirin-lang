@@ -51,6 +51,29 @@ run_case() {
     touch "$root/$file"
 }
 
+# Same, with two substitutions applied to one file -- for a mutation that must
+# move a matched pair (a lock and its unlock) or it reddens for the wrong reason.
+run_case_2() {
+    name=$1; file=$2; from1=$3; to1=$4; from2=$5; to2=$6; test=$7
+    cp "$root/$file" "$out/$name.orig"
+    sed -e "s|$from1|$to1|" -e "s|$from2|$to2|" "$out/$name.orig" > "$root/$file"
+    if cmp -s "$out/$name.orig" "$root/$file"; then
+        echo "MUTATION-DID-NOT-APPLY" > "$out/$name.verdict"
+    else
+        touch "$root/$file"
+        cargo test -p qcore-compiler --test task_route_tsan "$test" \
+            > "$out/$name.log" 2>&1
+        echo "$?" > "$out/$name.rc"
+        if [ "$(cat "$out/$name.rc")" = 0 ]; then
+            echo "VACUOUS-ARM-STILL-GREEN" > "$out/$name.verdict"
+        else
+            echo "RED-AS-REQUIRED" > "$out/$name.verdict"
+        fi
+    fi
+    cp "$out/$name.orig" "$root/$file"
+    touch "$root/$file"
+}
+
 # ---------------------------------------------------------------------------
 # 1. THE RULE: the cohort trigger itself. Neutralise the condition so the gate
 #    opens only at a join again, and the repaired arm of
@@ -137,14 +160,17 @@ run_case hook_mutex_reintroduced "$HOOK" \
     the_forcing_header_stays_invisible_to_thread_sanitizer
 
 # 11. THE RULE: the invisibility mutation's own teeth. Take the lock back out
-#     of the mutated park loop -- so a released worker no longer learns of its
-#     release by acquiring what the releasing worker released -- and the
-#     behavioural half must fail, because the visible header would then REPORT
-#     the overlap. This is the measurement that names the park-through-the-lock
-#     as the mechanism, rather than instrumentation alone.
-run_case visible_mutation_without_the_lock "$HOOK" \
+#     of the mutated park loop -- BOTH halves of the pair, so the mutated park
+#     is a plain relaxed spin and not an unmatched unlock -- and a released
+#     worker no longer learns of its release by acquiring what the releasing
+#     worker released. The behavioural half must then fail, because the visible
+#     header REPORTS the overlap again. This is the measurement that names the
+#     park-through-the-lock as the mechanism, rather than instrumentation alone.
+run_case_2 visible_mutation_without_the_lock "$HOOK" \
     '            "        qcore_forced_lock();\\n",' \
     '            "        /* no lock */\\n",' \
+    '            "        qcore_forced_unlock();\\n",' \
+    '            "        /* no unlock */\\n",' \
     a_visible_forcing_header_would_hide_the_overlap_which_is_why_the_shipped_one_is_not
 
 # 12. Zero-byte-change: the new forbidden-symbol list is live. Ask for a string

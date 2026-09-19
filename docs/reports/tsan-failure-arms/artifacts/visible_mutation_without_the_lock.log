@@ -1,0 +1,68 @@
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a85862ec04e13cdb8/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.07s
+     Running tests/task_route_tsan.rs (target/debug/deps/task_route_tsan-fe5701d2c006b5dc)
+
+running 1 test
+test a_visible_forcing_header_would_hide_the_overlap_which_is_why_the_shipped_one_is_not ... FAILED
+
+failures:
+
+---- a_visible_forcing_header_would_hide_the_overlap_which_is_why_the_shipped_one_is_not stdout ----
+
+thread 'a_visible_forcing_header_would_hide_the_overlap_which_is_why_the_shipped_one_is_not' (2858190) panicked at compiler/tests/task_route_tsan.rs:1144:5:
+assertion `left == right` failed: a forcing header whose release is visible to ThreadSanitizer should hide the overlap under the reverse schedule — this is TSAN-FORCED-HARNESS-SYNC-INVISIBILITY's own measurement:
+QCORE_FORCED start 2
+QCORE_FORCED leave 2
+QCORE_FORCED start 1
+==================
+WARNING: ThreadSanitizer: data race (pid=2859344)
+  Write of size 1 at 0x720400000008 by thread T1:
+    #0 qcore_buffer_byte_write /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:400:48 (module+0xeac8d) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #1 qcore_task_fn_0 /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:496:5 (module+0xeaed0) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #2 qcore_task_trampoline /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:435:22 (module+0xebe6f) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #3 qcore_forced_trampoline /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/force.h:159:14 (module+0xed139) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #4 qcore_tsan_trampoline /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/bind.h:18:30 (module+0xed3e1) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+
+  Previous write of size 1 at 0x720400000008 by thread T2:
+    #0 qcore_buffer_byte_write /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:400:48 (module+0xeac8d) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #1 qcore_task_fn_0 /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:496:5 (module+0xeaed0) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #2 qcore_task_trampoline /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:435:22 (module+0xebe6f) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #3 qcore_forced_trampoline /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/force.h:159:14 (module+0xed139) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #4 qcore_tsan_trampoline /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/bind.h:18:30 (module+0xed3e1) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+
+  Location is heap block of size 16 at 0x720400000000 allocated by main thread:
+    #0 malloc <null> (module+0x63244) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #1 qcore_buffer_new /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:366:35 (module+0xea986) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #2 qcore_task_fn_1 /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:516:24 (module+0xeb06e) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #3 main /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:584:39 (module+0xea3da) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+
+  Thread T1 (tid=2859412, running) created by main thread at:
+    #0 pthread_create <null> (module+0x655ce) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #1 qcore_tsan_thread_create /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/bind.h:29:9 (module+0xed025) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #2 qcore_forced_create /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/force.h:186:15 (module+0xebce8) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #3 qcore_task_start /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:452:9 (module+0xea63f) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #4 qcore_task_fn_1 /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:524:22 (module+0xeb106) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #5 main /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:584:39 (module+0xea3da) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+
+  Thread T2 (tid=2859413, finished) created by main thread at:
+    #0 pthread_create <null> (module+0x655ce) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #1 qcore_tsan_thread_create /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/bind.h:29:9 (module+0xed025) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #2 qcore_forced_create /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/force.h:186:15 (module+0xebce8) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #3 qcore_task_start /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:452:9 (module+0xea63f) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #4 qcore_task_fn_1 /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:535:22 (module+0xeb232) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+    #5 main /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:584:39 (module+0xea3da) (BuildId: 7be7235104ad60a3ca60a9e5bc8f0039c5c99fb5)
+
+SUMMARY: ThreadSanitizer: data race /tmp/qcore-task-route-tsan-visible-sync-forced-reverse-no-failure-2858189/module.c:400:48 in qcore_buffer_byte_write
+==================
+
+  left: 2
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_visible_forcing_header_would_hide_the_overlap_which_is_why_the_shipped_one_is_not
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 1.29s
+
+error: test failed, to rerun pass `-p qcore-compiler --test task_route_tsan`

@@ -1,0 +1,22 @@
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a85862ec04e13cdb8/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.91s
+     Running tests/task_route_tsan.rs (target/debug/deps/task_route_tsan-fe5701d2c006b5dc)
+
+running 1 test
+test the_forcing_header_stays_invisible_to_thread_sanitizer ... FAILED
+
+failures:
+
+---- the_forcing_header_stays_invisible_to_thread_sanitizer stdout ----
+
+thread 'the_forcing_header_stays_invisible_to_thread_sanitizer' (2851515) panicked at compiler/tests/task_route_tsan.rs:1048:5:
+the uninstrumented attribute macro must keep its definition
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    the_forcing_header_stays_invisible_to_thread_sanitizer
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p qcore-compiler --test task_route_tsan`

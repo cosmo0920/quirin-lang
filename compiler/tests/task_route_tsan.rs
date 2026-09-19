@@ -218,12 +218,7 @@ fn reference_stdout(module: &CompiledModule) -> String {
 /// against a rendering rather than against a description of one.
 fn reference_stdout_scripted(module: &CompiledModule, script: &TaskExecutionScript) -> String {
     let observation = if let Some(composed) = module.checked.as_composed_tasks() {
-        execute_with_source_lines(
-            composed.tasks(),
-            script,
-            &BTreeMap::new(),
-            composed.sites(),
-        )
+        execute_with_source_lines(composed.tasks(), script, &BTreeMap::new(), composed.sites())
     } else if let Some(tasks) = module.checked.as_scoped_tasks() {
         execute_with_source_lines(tasks, script, &BTreeMap::new(), &[])
     } else {
@@ -880,7 +875,10 @@ fn failure_arms() -> [Arm; 2] {
             cohort: 1,
             // The first lease really was taken out and the second creation
             // really refused: the recovery arm, named by the program.
-            present: &["QCORE_BUFFER_LEASE 1 1 0 2\n", "QCORE_TASK_CREATE_FAILED 0\n"],
+            present: &[
+                "QCORE_BUFFER_LEASE 1 1 0 2\n",
+                "QCORE_TASK_CREATE_FAILED 0\n",
+            ],
             absent: &[
                 "QCORE_BUFFER_LEASE 2 1 2 4",
                 "QCORE_BUFFER_BYTE_WRITE 2 1 2 9",
@@ -1048,12 +1046,22 @@ fn without_the_injection_the_same_subject_takes_the_success_arm() {
 fn the_forcing_header_stays_invisible_to_thread_sanitizer() {
     let header = thread_sanitizer::SCHEDULE_FORCING;
     assert!(
-        header.contains("#define QCORE_FORCED_UNINSTRUMENTED __attribute__((no_sanitize(\"thread\")))"),
+        header.contains(
+            "#define QCORE_FORCED_UNINSTRUMENTED __attribute__((no_sanitize(\"thread\")))"
+        ),
         "the uninstrumented attribute macro must keep its definition"
     );
     for forbidden in [
-        "pthread_mutex", "pthread_cond", "pthread_barrier", "pthread_rwlock", "sem_wait",
-        "mtx_lock", "mtx_init", "cnd_wait", "cnd_signal", "cnd_broadcast",
+        "pthread_mutex",
+        "pthread_cond",
+        "pthread_barrier",
+        "pthread_rwlock",
+        "sem_wait",
+        "mtx_lock",
+        "mtx_init",
+        "cnd_wait",
+        "cnd_signal",
+        "cnd_broadcast",
     ] {
         assert!(
             !header.contains(forbidden),
@@ -1085,7 +1093,9 @@ fn the_forcing_header_stays_invisible_to_thread_sanitizer() {
     // …and the check is not vacuous: it really did find the definitions.
     let definitions = lines
         .iter()
-        .filter(|line| line.contains("static") && line.contains("qcore_forced_") && line.ends_with('{'))
+        .filter(|line| {
+            line.contains("static") && line.contains("qcore_forced_") && line.ends_with('{')
+        })
         .count();
     assert!(
         definitions >= 8,
@@ -1112,7 +1122,8 @@ fn the_forcing_header_stays_invisible_to_thread_sanitizer() {
 /// 39 measured makes this row panic rather than silently pass.
 #[test]
 fn a_visible_forcing_header_would_hide_the_overlap_which_is_why_the_shipped_one_is_not() {
-    let visible = thread_sanitizer::with_visible_synchronization(thread_sanitizer::SCHEDULE_FORCING);
+    let visible =
+        thread_sanitizer::with_visible_synchronization(thread_sanitizer::SCHEDULE_FORCING);
     let overlapping = prepared(&with_overlapping_writers(&emitted(CT07_CASE)));
 
     let hidden = Row {
@@ -1382,7 +1393,8 @@ fn measure_catch_rates_for_the_report() {
 
     // The invisibility property: the same overlap text under the shipped
     // header and under the hook_visible_to_tsan mutation of it.
-    let visible = thread_sanitizer::with_visible_synchronization(thread_sanitizer::SCHEDULE_FORCING);
+    let visible =
+        thread_sanitizer::with_visible_synchronization(thread_sanitizer::SCHEDULE_FORCING);
     let overlapping = prepared(&with_overlapping_writers(&ct07));
     let mut invisibility = Vec::new();
     for schedule in Schedule::FORCED {
