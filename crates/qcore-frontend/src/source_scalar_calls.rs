@@ -64,6 +64,12 @@ pub fn has_scalar_calls(p: &SourceProgram) -> bool {
             }))
     })
 }
+/// Function-style printing selects this profile only after specialized routes.
+pub fn has_print_calls(p: &SourceProgram) -> bool {
+    p.lexical_tokens()
+        .windows(2)
+        .any(|ts| word(&ts[0]) == Some("print") && symbol(&ts[1], Symbol::LeftParen))
+}
 struct Reader<'a> {
     tokens: Vec<&'a Token>,
     at: usize,
@@ -265,14 +271,23 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
         r.need(Symbol::RightParen)?;
         r.need(Symbol::Arrow)?;
         let result = r.ty()?;
-        // Empty annotations preserve the sequential contract gate. Any declared
-        // effect or nonempty contract is refused, never silently erased.
-        for clause in ["effects", "contract"] {
-            if r.tokens.get(r.at).and_then(|t| word(t)) == Some(clause) {
-                r.at += 1;
-                r.need(Symbol::LeftBrace)?;
-                r.need(Symbol::RightBrace)?;
+        let mut declared_io = None;
+        if r.tokens.get(r.at).and_then(|t| word(t)) == Some("effects") {
+            r.at += 1;
+            r.need(Symbol::LeftBrace)?;
+            declared_io = Some(false);
+            if !r.peek(Symbol::RightBrace) {
+                if r.name()? != "io" {
+                    return Err(r.bad("only the io effect is supported"));
+                }
+                declared_io = Some(true);
             }
+            r.need(Symbol::RightBrace)?;
+        }
+        if r.tokens.get(r.at).and_then(|t| word(t)) == Some("contract") {
+            r.at += 1;
+            r.need(Symbol::LeftBrace)?;
+            r.need(Symbol::RightBrace)?;
         }
         r.need(Symbol::LeftBrace)?;
         let parameters = r.locals.len();
@@ -290,6 +305,14 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
                     r.need(Symbol::Semicolon)?;
                     r.need(Symbol::RightBrace)?;
                     break;
+                }
+                Some("print") => {
+                    r.at += 1;
+                    r.need(Symbol::LeftParen)?;
+                    let e = r.expression(0, 0)?;
+                    r.need(Symbol::RightParen)?;
+                    r.need(Symbol::Semicolon)?;
+                    statements.push(Statement::Print(e));
                 }
                 Some("let") => {
                     r.at += 1;
@@ -322,6 +345,7 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
             return Err(r.bad("unsupported tokens or statements after return"));
         }
         functions.push(Function {
+            declared_io,
             parameters,
             result,
             statements,

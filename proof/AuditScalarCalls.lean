@@ -14,3 +14,9 @@ import QCore.ScalarCalls
 
 #print axioms QCore.ScalarCalls.increment_41_returns_42
 #print axioms QCore.ScalarCalls.unit_call_not_integer
+
+#print axioms QCore.ScalarCalls.show_42_returns_and_prints
+#print axioms QCore.ScalarCalls.direct_print_requires_io
+#print axioms QCore.ScalarCalls.callee_io_requires_io
+#print axioms QCore.ScalarCalls.explicit_empty_refuses_io
+#print axioms QCore.ScalarCalls.inferred_or_explicit_io_admitted

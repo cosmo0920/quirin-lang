@@ -838,7 +838,7 @@ impl CheckedSourceModule {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SourceExecutionProfile {
-    /// Pure i32/unit functions with checked arithmetic and acyclic direct calls.
+    /// I32/unit functions with checked arithmetic, direct calls and explicit std.io.
     ScalarCallsV1,
     SequentialCleanupV1,
     ScopedCopyTasksV1,
@@ -1438,6 +1438,9 @@ pub fn compile_files_with_registry(
     // that sockets and spawns keeps its `Q600`.
     if qcore_frontend::source_socket::has_source_socket(&parsed) {
         return compile_socket_source(&parsed, &typed, mode, options, &ranges);
+    }
+    if qcore_frontend::source_scalar_calls::has_print_calls(&parsed) {
+        return compile_scalar_calls(&parsed, &typed, mode, options, &ranges);
     }
     if qcore_frontend::source_std_io::has_source_std_io(&parsed) {
         return compile_std_io_source(&parsed, &typed, mode, options, &ranges);

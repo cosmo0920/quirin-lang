@@ -2,8 +2,11 @@ use qcore_compiler::{
     CheckedSourceModule, CompileOptions, SourceExecutionProfile, SourceFile, compile_files,
 };
 use qcore_core::{
+    c_program::{self, Entry},
     cfg::ExecutionOutcome,
+    io_emit,
     scalar_calls::{self, Op},
+    scalar_calls_c_emit,
 };
 fn compile(s: &str) -> Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>> {
     compile_files(
@@ -18,6 +21,15 @@ fn value(s: &str) -> i32 {
         ExecutionOutcome::Ok { value, .. } => value,
         _ => panic!("normal scalar outcome"),
     }
+}
+fn observation(s: &str) -> scalar_calls::Observation {
+    let m = compile(s).unwrap();
+    assert_eq!(m.execution_profile, SourceExecutionProfile::ScalarCallsV1);
+    let CheckedSourceModule::ScalarCalls(checked) = &m.checked else {
+        panic!("scalar-call checker result")
+    };
+    let entry = checked.program().functions.len() - 1;
+    checked.observe(entry, &[]).unwrap()
 }
 fn refuse(s: &str, needle: &str) {
     let e = compile(s).unwrap_err();
@@ -137,13 +149,56 @@ fn unit_calls_and_empty_annotations_are_explicit() {
         0
     );
     refuse(
-        "fn f(x:i32)->i32 effects {io} {return x;} fn main()->i32{return f(0);}",
-        "RightBrace",
+        "fn f(x:i32)->i32 effects {alloc} {return x;} fn main()->i32{return f(0);}",
+        "only the io effect",
     );
     refuse(
         "fn f(x:i32)->i32 contract {ensures normal true;} {return x;} fn main()->i32{return f(0);}",
         "no scalar-call consumer",
     );
+}
+#[test]
+fn print_requires_std_io_and_an_i32_operand() {
+    refuse("fn main()->i32{let f=42;print(f);return f;}", "std.io");
+    refuse(
+        "import std.io; fn unit()->unit{return;} fn main()->i32{print(unit());return 0;}",
+        "print requires i32",
+    );
+    refuse(
+        "import std.io; fn main()->i32{print(missing);return 0;}",
+        "unknown name",
+    );
+}
+#[test]
+fn print_effect_is_inferred_or_declared_and_propagates_to_callers() {
+    let inferred =
+        "import std.io; fn show(x:i32)->i32{print(x);return x;} fn main()->i32{return show(42);}";
+    let observed = observation(inferred);
+    assert_eq!(observed.value, Some(42));
+    assert_eq!(observed.stdout, vec![42]);
+
+    assert_eq!(
+        value(
+            "import std.io; fn show(x:i32)->i32 effects {io}{print(x);return x;} fn main()->i32 effects {io}{return show(42);}"
+        ),
+        42
+    );
+    refuse(
+        "import std.io; fn show(x:i32)->i32{print(x);return x;} fn main()->i32 effects {}{return show(42);}",
+        "io effect required",
+    );
+    refuse(
+        "import std.io; fn show(x:i32)->i32 effects {}{print(x);return x;} fn main()->i32{return show(42);}",
+        "io effect required",
+    );
+}
+#[test]
+fn print_observation_preserves_argument_and_statement_order() {
+    let observed = observation(
+        "import std.io; fn show(x:i32)->i32{print(x);return x;} fn add(a:i32,b:i32)->i32{return a+b;} fn main()->i32{let f=add(show(20),show(22));print(f);return f;}",
+    );
+    assert_eq!(observed.value, Some(42));
+    assert_eq!(observed.stdout, vec![20, 22, 42]);
 }
 #[test]
 fn entry_free_library_checks_types_without_claiming_arithmetic_safety() {
@@ -233,7 +288,11 @@ fn native_calls_match_reference_under_sanitizers() {
     let dir = std::env::temp_dir().join(format!("qcore-scalar-calls-{}", std::process::id()));
     fs::create_dir_all(&dir).unwrap();
     let m = compile(include_str!("../../examples/scalar/calls.qcore")).unwrap();
-    let source = m.c_source.unwrap();
+    let source = m
+        .c_source
+        .unwrap()
+        .replace("int main(void)", "int checked_entry(void)")
+        + "\nint main(void) { return q_scalar_fn_2() == 42 ? 0 : 87; }\n";
     assert!(source.contains("q_scalar_fn_0(v") || source.contains("q_scalar_fn_0(t"));
     fs::write(dir.join("main.c"), source).unwrap();
     let compiler = std::env::var("QCORE_CLANG").unwrap_or("clang".into());
@@ -254,7 +313,76 @@ fn native_calls_match_reference_under_sanitizers() {
     assert!(o.status.success(), "{}", String::from_utf8_lossy(&o.stderr));
     let o = Command::new(dir.join("main")).output().unwrap();
     assert!(o.status.success(), "{}", String::from_utf8_lossy(&o.stderr));
-    assert_eq!(String::from_utf8_lossy(&o.stdout), "OK 42\n");
+    assert!(o.stdout.is_empty());
+    assert!(o.stderr.is_empty());
+    fs::remove_dir_all(dir).unwrap();
+}
+
+#[cfg(unix)]
+#[test]
+fn composed_printing_emits_one_main_and_uses_the_shared_io_path() {
+    use std::{fs, process::Command};
+    let m = compile(
+        "import std.io; fn show(x:i32)->i32{print(x);return x;} fn add(a:i32,b:i32)->i32{return a+b;} fn main()->i32{let f=add(show(20),show(22));print(f);return f;}",
+    )
+    .unwrap();
+    let CheckedSourceModule::ScalarCalls(checked) = &m.checked else {
+        panic!("scalar-call checker result")
+    };
+    let fragments = scalar_calls_c_emit::fragments(checked);
+    assert!(
+        fragments
+            .iter()
+            .all(|fragment| c_program::entry_definitions(&fragment.text).is_empty())
+    );
+    let shared_io = [
+        io_emit::stdio_include_fragment(),
+        io_emit::io_prelude_fragment(),
+    ];
+    let merged = c_program::merge(&[&fragments, &shared_io]);
+    assert!(c_program::conflicting_keys(&merged).is_empty());
+    assert_eq!(
+        merged
+            .iter()
+            .filter(|fragment| fragment.key == io_emit::IO_PRELUDE_KEY)
+            .count(),
+        1
+    );
+    let mut body = scalar_calls_c_emit::entry_body(checked, 2).unwrap();
+    body.push_str("    ");
+    body.push_str(&io_emit::write_line(
+        qcore_core::std_io::Stream::Out,
+        "%\" PRId32 \"",
+        &["INT32_C(99)"],
+    ));
+    body.push('\n');
+    assert!(c_program::entry_definitions(&body).is_empty());
+    let source = c_program::assemble(&merged, &Entry::source_route(body));
+    assert_eq!(c_program::entry_definitions(&source).len(), 1);
+    assert!(io_emit::direct_stdio_calls(&source).is_empty());
+
+    let dir = std::env::temp_dir().join(format!("qcore-scalar-compose-{}", std::process::id()));
+    fs::create_dir_all(&dir).unwrap();
+    fs::write(dir.join("main.c"), source).unwrap();
+    let compiler = std::env::var("QCORE_CLANG").unwrap_or("clang".into());
+    let o = Command::new(compiler)
+        .args([
+            "-std=c11",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-fsanitize=address,undefined",
+            "-fno-sanitize-recover=all",
+        ])
+        .arg(dir.join("main.c"))
+        .arg("-o")
+        .arg(dir.join("main"))
+        .output()
+        .expect("Clang is required for this native check");
+    assert!(o.status.success(), "{}", String::from_utf8_lossy(&o.stderr));
+    let o = Command::new(dir.join("main")).output().unwrap();
+    assert!(o.status.success(), "{}", String::from_utf8_lossy(&o.stderr));
+    assert_eq!(o.stdout, b"20\n22\n42\n99\n");
     assert!(o.stderr.is_empty());
     fs::remove_dir_all(dir).unwrap();
 }
@@ -404,7 +532,7 @@ fn native_arithmetic_guards_refuse_faults_in_uncalled_helpers() {
         assert!(o.status.success(), "{}", String::from_utf8_lossy(&o.stderr));
         let o = Command::new(dir.join("main")).output().unwrap();
         assert_eq!(o.status.code(), Some(86));
-        assert_eq!(o.stderr, b"scalar arithmetic fault\n");
+        assert!(o.stderr.is_empty());
         assert!(o.stdout.is_empty());
     }
     fs::remove_dir_all(dir).unwrap();

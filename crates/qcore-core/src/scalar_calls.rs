@@ -1,4 +1,4 @@
-//! Pure scalar calls: total type checking, acyclic calls, bounded closed execution.
+//! Scalar calls with explicit std.io printing: total type checking, acyclic calls, bounded closed execution.
 //! Checked arithmetic has no wraparound or C undefined-behavior interpretation.
 use std::collections::BTreeSet;
 
@@ -31,9 +31,12 @@ pub enum Expr {
 pub enum Statement {
     Let(Expr),
     Evaluate(Expr),
+    Print(Expr),
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Function {
+    /// None infers the effect; Some(false) is an explicit empty effect row.
+    pub declared_io: Option<bool>,
     pub parameters: usize,
     pub result: Type,
     pub statements: Vec<Statement>,
@@ -58,6 +61,12 @@ fn bad(function: usize, message: &str) -> Refusal {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Checked {
     program: Program,
+    io_functions: BTreeSet<usize>,
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Observation {
+    pub value: Option<i32>,
+    pub stdout: Vec<i32>,
 }
 impl Checked {
     pub fn program(&self) -> &Program {
@@ -65,14 +74,23 @@ impl Checked {
     }
     /// One closed invocation, not a theorem of overflow freedom for all inputs.
     pub fn run(&self, entry: usize, arguments: &[i32]) -> Result<Option<i32>, Refusal> {
+        self.observe(entry, arguments).map(|o| o.value)
+    }
+    pub fn io_functions(&self) -> &BTreeSet<usize> {
+        &self.io_functions
+    }
+    pub fn observe(&self, entry: usize, arguments: &[i32]) -> Result<Observation, Refusal> {
         let mut budget = MAX_STEPS;
-        self.call(entry, arguments, &mut budget, 0)
+        let mut stdout = Vec::new();
+        let value = self.call(entry, arguments, &mut budget, &mut stdout, 0)?;
+        Ok(Observation { value, stdout })
     }
     fn call(
         &self,
         id: usize,
         args: &[i32],
         budget: &mut usize,
+        stdout: &mut Vec<i32>,
         depth: usize,
     ) -> Result<Option<i32>, Refusal> {
         if depth > MAX_DEPTH {
@@ -89,15 +107,17 @@ impl Checked {
         let mut locals = args.to_vec();
         for s in &f.statements {
             let e = match s {
-                Statement::Let(e) | Statement::Evaluate(e) => e,
+                Statement::Let(e) | Statement::Evaluate(e) | Statement::Print(e) => e,
             };
-            let value = self.eval(id, e, &locals, budget, depth)?;
+            let value = self.eval(id, e, &locals, budget, stdout, depth)?;
             if matches!(s, Statement::Let(_)) {
                 locals.push(value.ok_or_else(|| bad(id, "unit local"))?);
+            } else if matches!(s, Statement::Print(_)) {
+                stdout.push(value.ok_or_else(|| bad(id, "print requires i32"))?);
             }
         }
         match &f.returned {
-            Some(e) => self.eval(id, e, &locals, budget, depth),
+            Some(e) => self.eval(id, e, &locals, budget, stdout, depth),
             None => Ok(None),
         }
     }
@@ -107,13 +127,14 @@ impl Checked {
         e: &Expr,
         locals: &[i32],
         budget: &mut usize,
+        stdout: &mut Vec<i32>,
         depth: usize,
     ) -> Result<Option<i32>, Refusal> {
         *budget = budget
             .checked_sub(1)
             .ok_or_else(|| bad(id, "scalar execution step bound exceeded"))?;
         let mut scalar = |e: &Expr| {
-            self.eval(id, e, locals, budget, depth)?
+            self.eval(id, e, locals, budget, stdout, depth)?
                 .ok_or_else(|| bad(id, "expected i32"))
         };
         Ok(match e {
@@ -137,7 +158,7 @@ impl Checked {
                     .iter()
                     .map(&mut scalar)
                     .collect::<Result<Vec<_>, _>>()?;
-                self.call(*f, &args, budget, depth + 1)?
+                self.call(*f, &args, budget, stdout, depth + 1)?
             }
         })
     }
@@ -211,6 +232,7 @@ pub fn check(program: Program) -> Result<Checked, Refusal> {
         return Err(bad(0, "scalar function count bound exceeded"));
     }
     let mut graph = Vec::new();
+    let mut io_functions = BTreeSet::new();
     let mut nodes = 0;
     for (id, f) in program.functions.iter().enumerate() {
         if f.parameters > MAX_NODES || f.statements.len() > MAX_NODES {
@@ -220,9 +242,15 @@ pub fn check(program: Program) -> Result<Checked, Refusal> {
         let mut edges = BTreeSet::new();
         for s in &f.statements {
             let e = match s {
-                Statement::Let(e) | Statement::Evaluate(e) => e,
+                Statement::Let(e) | Statement::Evaluate(e) | Statement::Print(e) => e,
             };
             let t = ty(&program, id, e, locals, &mut edges, &mut nodes, 0)?;
+            if matches!(s, Statement::Print(_)) {
+                if t != Type::I32 {
+                    return Err(bad(id, "print requires i32"));
+                }
+                io_functions.insert(id);
+            }
             if matches!(s, Statement::Let(_)) {
                 if t != Type::I32 {
                     return Err(bad(id, "immutable locals require i32"));
@@ -269,5 +297,21 @@ pub fn check(program: Program) -> Result<Checked, Refusal> {
     for id in 0..graph.len() {
         visit(id, &graph, &mut BTreeSet::new(), &mut done)?;
     }
-    Ok(Checked { program })
+    let mut order = (0..graph.len()).collect::<Vec<_>>();
+    order.sort_by_key(|id| done[*id]);
+    for id in order {
+        if graph[id].iter().any(|callee| io_functions.contains(callee)) {
+            io_functions.insert(id);
+        }
+        if program.functions[id].declared_io == Some(false) && io_functions.contains(&id) {
+            return Err(bad(
+                id,
+                "io effect required by print or a source callee is not permitted",
+            ));
+        }
+    }
+    Ok(Checked {
+        program,
+        io_functions,
+    })
 }

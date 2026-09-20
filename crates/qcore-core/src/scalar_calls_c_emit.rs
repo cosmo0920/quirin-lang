@@ -1,5 +1,8 @@
-//! C11 lowering retains calls and left-to-right evaluation; no constant-result stub.
+//! Composable C11 scalar-call lowering. Only source `print(...)` emits I/O;
+//! the shared c_program assembler owns the one C main function.
+use crate::c_program::{self, Fragment, Section};
 use crate::scalar_calls::{Checked, Expr, Op, Refusal, Statement, Type};
+use crate::{io_emit, std_io::Stream};
 use std::fmt::Write;
 struct Emitter<'a> {
     checked: &'a Checked,
@@ -53,13 +56,22 @@ impl Emitter<'_> {
         name
     }
 }
-pub fn emit(checked: &Checked, entry: usize) -> Result<String, Refusal> {
-    // Refuse an invalid entry or failed closed observation before emitting.
-    checked.run(entry, &[])?;
+/// File-scope contribution only; no entry point. Common I/O fragments retain
+/// their established keys so c_program::merge deduplicates them. Callers can inspect conflicting_keys before merging. This does not establish cross-profile call typing.
+pub fn fragments(checked: &Checked) -> Vec<Fragment> {
+    let mut pieces = vec![Fragment::new(
+        Section::Includes,
+        "scalar-calls.includes",
+        "#include <stdint.h>\n#include <inttypes.h>\n#include <stdlib.h>\n",
+    )];
+    if !checked.io_functions().is_empty() {
+        pieces.push(io_emit::stdio_include_fragment());
+        pieces.push(io_emit::io_prelude_fragment());
+    }
     let mut e = Emitter {
         checked,
         text: String::from(
-            "#include <stdint.h>\n#include <inttypes.h>\n#include <stdio.h>\n#include <stdlib.h>\n\nstatic int32_t q_scalar_narrow(int64_t n) {\n    if (n < INT32_MIN || n > INT32_MAX) { fputs(\"scalar arithmetic fault\\n\", stderr); exit(86); }\n    return (int32_t)n;\n}\nstatic int32_t q_scalar_div(int32_t a, int32_t b, int rem) {\n    if (b == 0 || (a == INT32_MIN && b == -1)) { fputs(\"scalar arithmetic fault\\n\", stderr); exit(86); }\n    return rem ? a % b : a / b;\n}\n",
+            "static int32_t q_scalar_narrow(int64_t n) {\n    if (n < INT32_MIN || n > INT32_MAX) { exit(86); }\n    return (int32_t)n;\n}\nstatic int32_t q_scalar_div(int32_t a, int32_t b, int rem) {\n    if (b == 0 || (a == INT32_MIN && b == -1)) { exit(86); }\n    return rem ? a % b : a / b;\n}\n",
         ),
         next: 0,
     };
@@ -104,6 +116,15 @@ pub fn emit(checked: &Checked, entry: usize) -> Result<String, Refusal> {
                         writeln!(e.text, "    (void){v};").unwrap();
                     }
                 }
+                Statement::Print(expr) => {
+                    let v = e.expr(expr);
+                    writeln!(
+                        e.text,
+                        "    {}",
+                        io_emit::write_line(Stream::Out, "%\" PRId32 \"", &[&v])
+                    )
+                    .unwrap();
+                }
             }
         }
         match &f.returned {
@@ -119,19 +140,33 @@ pub fn emit(checked: &Checked, entry: usize) -> Result<String, Refusal> {
         }
         writeln!(e.text, "}}").unwrap();
     }
-    writeln!(
+    pieces.push(Fragment::new(
+        Section::FileScope,
+        "scalar-calls.definitions",
         e.text,
-        "int main(void) {{\n    (void)&q_scalar_narrow;\n    (void)&q_scalar_div;"
-    )
-    .unwrap();
+    ));
+    pieces
+}
+/// Entry contribution, without a C main declaration or closing brace.
+pub fn entry_body(checked: &Checked, entry: usize) -> Result<String, Refusal> {
+    checked.run(entry, &[])?;
+    let mut body = String::from("    (void)&q_scalar_narrow;\n    (void)&q_scalar_div;\n");
     for id in 0..checked.program().functions.len() {
-        writeln!(e.text, "    (void)&q_scalar_fn_{id};").unwrap();
+        writeln!(body, "    (void)&q_scalar_fn_{id};").unwrap();
     }
-    if checked.program().functions[entry].result == Type::I32 {
-        writeln!(e.text,"    int32_t result = q_scalar_fn_{entry}();\n    printf(\"OK %\" PRId32 \"\\n\", result);").unwrap();
-    } else {
-        writeln!(e.text, "    q_scalar_fn_{entry}();\n    puts(\"OK 0\");").unwrap();
-    }
-    writeln!(e.text, "    return 0;\n}}").unwrap();
-    Ok(e.text)
+    writeln!(body, "    (void)q_scalar_fn_{entry}();").unwrap();
+    Ok(body)
+}
+pub fn emit(checked: &Checked, entry: usize) -> Result<String, Refusal> {
+    let body = entry_body(checked, entry)?;
+    Ok(c_program::assemble(
+        &fragments(checked),
+        &c_program::Entry {
+            lead: String::new(),
+            brace: c_program::BraceStyle::Allman,
+            prologue: String::new(),
+            body,
+            epilogue: "    return 0;\n}\n".into(),
+        },
+    ))
 }
