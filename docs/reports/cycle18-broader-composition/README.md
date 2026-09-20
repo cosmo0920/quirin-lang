@@ -25,6 +25,15 @@ full `SourceSummary` for `cb_event`, and `(function, revision, paths)` for the
 wait and timeout projections. The distinct encodings are explicit; relabeling
 one digest as another refuses.
 
+The wait-failure family retains its own constructor-private source projection.
+Its observations are replayed against that projection, and Quirin compares
+canonical digests of the complete source-summary and contract maps with the
+observed-wait projection. Equal revision/profile labels cannot bridge divergent
+maps. Its selected Monkey source, build and compile-task identities must also
+equal the wait context's identities. The timeout family independently joins its
+exact callback digest and requires the same selected Monkey source/build bytes;
+its native observer and Libevent build remain separately identified.
+
 The executable policy is
 `contract/qcore/monkey/cycle18_composition.qcore`. It receives primitive source
 revision, profile, library, role, path-count, source/build/compile-task, context,
@@ -95,7 +104,7 @@ bounded evidence families join.
 `proof/QCore/Cycle18Composition.lean` models exact 4/3/1 inventory, revision,
 profile, source/build and evidence joins, the invariant eight-path denominator,
 source-digest substitution refusal, always-Unknown publication, and exact
-caller-size allocation extent. `proof/AuditCycle18Composition.lean` audits seven
+caller-size allocation extent. `proof/AuditCycle18Composition.lean` audits eight
 theorems. The Lean model abstracts checked strings and digests as positive
 naturals. Rust performs concrete parsing, canonical SHA-256 checks, source
 projection and evidence replay. Their correspondence is maintained by review;
@@ -107,11 +116,13 @@ Commands use `CARGO_BUILD_JOBS=2`. Private logs are under
 `private/cycle18-composition/` in the card worktree.
 
 - `cargo test -p qcore-verification --lib cycle18_composition -- --nocapture`:
-  4 passed, 0 failed. The cases cover exact 3-callback/8-path source inventory,
+  5 passed, 0 failed. The cases cover exact 3-callback/8-path source inventory,
   literal caller extent, nonliteral/zero/identity refusal, and policy refusal of
-  `Safe` or a shortened obligation list.
+  `Safe` or a shortened obligation list. A fixture-derived control also creates
+  two constructor-private wait projections with the same revision/profile and
+  source-summary map but different contract maps; the cross-family join refuses.
 - `lake build QCore.Cycle18Composition`: 2 jobs passed.
-- `lake env lean AuditCycle18Composition.lean`: seven theorem audits emitted;
+- `lake env lean AuditCycle18Composition.lean`: eight theorem audits emitted;
   no project axiom or placeholder was added.
 
 The root integrator owns the complete workspace standing gate and the real
@@ -129,6 +140,9 @@ configured aggregate replay. This lane does not claim those runs.
 - Supply wait-failure and timeout source/build/compile-task identities from the
   configured file snapshots. They are declared provenance premises, not
   attestation.
+- Retain the wait-failure projection separately from the observed-wait
+  projection and pass both into the aggregate. Do not replay one family's
+  observations against the other family's source token.
 - Regenerate the acceptance matrix so its derived Lean audit list/count includes
   `AuditCycle18Composition.lean`; do not hand-edit the derived section.
 - Update the Monkey contract corpus count/pins for

@@ -38,6 +38,12 @@ contract {
     ensures normal wait_libevent_profile == payload_libevent_profile;
 };
 
+extern fn wait_failure_source_join() -> unit
+contract {
+    ensures normal observed_summary_map == failure_summary_map;
+    ensures normal observed_contract_map == failure_contract_map;
+};
+
 extern fn evidence_join() -> unit
 contract {
     ensures normal checked_callback_families == 3;
@@ -71,11 +77,16 @@ contract {
     ensures normal failure_compile_task != "";
     ensures normal failure_source != "";
     ensures normal failure_build != "";
+    ensures normal failure_compile_task == wait_context_compile_task;
+    ensures normal failure_source == wait_context_monkey_source;
+    ensures normal failure_build == wait_context_monkey_build;
     ensures normal timeout_identity_revision == aggregate_source_revision;
     ensures normal timeout_identity_profile == aggregate_profile;
     ensures normal timeout_compile_task != "";
     ensures normal timeout_source != "";
     ensures normal timeout_build != "";
+    ensures normal timeout_source == wait_context_monkey_source;
+    ensures normal timeout_build == wait_context_monkey_build;
 };
 
 extern fn caller_size_bound() -> unit
