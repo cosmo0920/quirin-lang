@@ -208,6 +208,18 @@ pub enum LegacyInstruction {
     ForgetScalar {
         destination: String,
     },
+    /// An exactly-shaped scalar store through a record pointer this function
+    /// may bind.  Unlike the unbound scalar-field no-op, transfer must prove
+    /// that `base` denotes one settled, live, non-null identity with no
+    /// unresolved effect before the store is admitted.  The scalar member and
+    /// scalar-only right-hand side carry no tracked identity, so a successful
+    /// transfer changes none of the pointer, custody or field-link maps.
+    ScalarMemberStore {
+        base: String,
+        /// The same C02-P-ALIAS obligation as every other modeled read through
+        /// a declared record pointer.
+        alias_read: Option<AliasPeers>,
+    },
     /// A store into an admitted field of an aggregate this function tracks
     /// whose stored value carries no tracked identity (O00 blocker B08): a
     /// scalar expression into a scalar member, or a declared pointer this
@@ -3927,6 +3939,22 @@ impl Parser<'_> {
                 alias_read: None,
             };
         }
+        // W42-INDIRECT-ACCESS: the bounded counterpart of the scalar-field
+        // no-op below.  A base this function may bind cannot be erased under
+        // premise 8; lower it to an explicit instruction so transfer can
+        // require the identity to be settled and live at this program point.
+        if !contains_call(tokens)
+            && let Some(base) = crate::typed_field_access::scalar_member_store_base(
+                &texts,
+                &self.typed_model,
+                &self.typed_types,
+            )
+        {
+            return LegacyInstruction::ScalarMemberStore {
+                base: base.to_owned(),
+                alias_read: self.read_alias(Some(base)),
+            };
+        }
         // One typed exception to the lexical indirect-access gate below: a
         // direct scalar-field access whose declared types make it
         // custody-neutral. Scalar destinations still lose their old facts. The whitelist is
@@ -7251,7 +7279,40 @@ fn transfer(
             alias,
             diagnostics,
         ),
+        LegacyInstruction::ScalarMemberStore {
+            alias_read: Some(read),
+            ..
+        } => require_unaliased_reads(
+            function,
+            node.line,
+            std::slice::from_ref(read),
+            &state,
+            &context.caller_sites,
+            alias,
+            diagnostics,
+        ),
         _ => {}
+    }
+    // W42-INDIRECT-ACCESS: a scalar destination store dereferences its base.
+    // Require one settled live identity after the may-alias obligation above,
+    // without mutating any projection map.  Every declined shape has already
+    // retained the lexical refusal; this is the flow-sensitive refusal for the
+    // one typed shape the classifier lowered explicitly.
+    if let LegacyInstruction::ScalarMemberStore { base, .. } = &node.instruction
+        && !scalar_member_store_base_resolves(&state, base)
+    {
+        diagnostics.insert(LegacyDiagnostic {
+            function: function.to_owned(),
+            line: node.line,
+            kind: LegacyDiagnosticKind::UnknownAlias {
+                variable: base.clone(),
+            },
+        });
+        // The unresolved dereference refuses this function, but the typed
+        // statement still writes only a scalar field from a scalar-only RHS.
+        // It cannot rebind any pointer or resource identity, so retain the
+        // incoming frame and keep later residual/double-release evidence.
+        return state;
     }
     // O00 blocker B08: every store into an admitted aggregate field requires
     // its aggregate to resolve, here and now, to exactly one live identity
@@ -7466,6 +7527,7 @@ fn transfer(
         LegacyInstruction::ForgetScalar { destination } => {
             state.pointers.remove(destination);
         }
+        LegacyInstruction::ScalarMemberStore { .. } => {}
         LegacyInstruction::AggregateStore { place } => {
             // The stored value carries no tracked identity, so the member binds
             // nothing. Whatever it previously linked is unlinked below, which
@@ -7673,6 +7735,26 @@ fn resolved_aggregate_owner(
         return None;
     }
     (state.resources.get(&site) == Some(&LIVE)).then_some(site)
+}
+
+/// Whether a scalar member-store base denotes one identity that is safe to
+/// dereference at this point.  Caller provenance is immaterial: unlike an
+/// aggregate link store, this instruction neither creates nor transfers an
+/// identity.  Nullability, ambiguity, release/escape and unresolved effects
+/// all refuse.
+fn scalar_member_store_base_resolves(state: &AbstractState, base: &str) -> bool {
+    let Some(pointer) = state.pointers.get(base) else {
+        return false;
+    };
+    if pointer.unknown || pointer.may_be_null || pointer.targets.len() != 1 {
+        return false;
+    }
+    let Some(site) = pointer.targets.first() else {
+        return false;
+    };
+    !state.nullable_sites.contains(site)
+        && !state.unresolved_effect_sites.contains(site)
+        && state.resources.get(site) == Some(&LIVE)
 }
 
 #[allow(clippy::too_many_arguments)]
