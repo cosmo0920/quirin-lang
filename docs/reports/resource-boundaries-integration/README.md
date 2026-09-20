@@ -47,3 +47,9 @@ The [baseline](source-baseline.json) measures 555 tracked source files:
 307 pass `check`, 152 emit successfully, and none time out. These fixture
 counts are not language conformance or production safety coverage. Final
 comparison and per-change dispositions remain pending.
+
+The [fresh C corpus replay](corpus-baseline-run.json) exits 0 and reproduces
+all five pinned artifacts [byte for byte](corpus-baseline-identity.json).
+The source code is unchanged from base `119115de`; the measured successor
+`2511ddb7` adds only this wave’s planning/report files. Private replay outputs
+are in `private/resource-boundaries/corpus-before/`.
