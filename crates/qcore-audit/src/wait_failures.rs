@@ -192,7 +192,9 @@ pub fn run_wait_failures_config(path: &Path) -> Result<(), String> {
     prepare_wait_failures(path)?.publish()
 }
 
-pub(crate) fn prepare_wait_failures(path: &Path) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::Failures>, String> {
+pub(crate) fn prepare_wait_failures(
+    path: &Path,
+) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::Failures>, String> {
     let config_bytes = read(path)?;
     let config: WaitFailuresConfig =
         serde_json::from_slice(&config_bytes).map_err(|e| e.to_string())?;
@@ -283,10 +285,13 @@ pub(crate) fn prepare_wait_failures(path: &Path) -> Result<crate::cycle18_inputs
     });
     crate::cycle18_inputs::PreparedAudit::new(
         aggregate_identity,
-        crate::cycle18_inputs::Failures { observations: bytes(6).to_vec() },
+        crate::cycle18_inputs::Failures {
+            observations: bytes(6).to_vec(),
+        },
         report,
         serde_json::to_vec_pretty(&report_value).map_err(|e| e.to_string())?,
-        protected_files, source.protected_directories,
+        protected_files,
+        source.protected_directories,
     )
 }
 

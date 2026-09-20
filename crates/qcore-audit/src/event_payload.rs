@@ -51,7 +51,9 @@ pub fn run_event_payload_config(path: &Path) -> Result<(), String> {
     prepare_event_payload(path)?.publish()
 }
 
-pub(crate) fn prepare_event_payload(path: &Path) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::Payload>, String> {
+pub(crate) fn prepare_event_payload(
+    path: &Path,
+) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::Payload>, String> {
     let config_bytes = read(path)?;
     let config: EventPayloadConfig =
         serde_json::from_slice(&config_bytes).map_err(|e| e.to_string())?;
@@ -379,9 +381,18 @@ pub(crate) fn prepare_event_payload(path: &Path) -> Result<crate::cycle18_inputs
     let report = serde_json::json!({"schema_version":1,"status":"bounded_payload_checked","context":context,"payload":checked,"limitations":["Exclusive write authority is caller-declared","Runtime and linkage evidence is producer-supplied","Four bounded executions; no universal safety or aggregate acceptance promotion"]});
     crate::cycle18_inputs::PreparedAudit::new(
         aggregate_identity,
-        crate::cycle18_inputs::Payload { projection, context: admitted, observations, bindings, allocation, authority: config.authority, summaries: source.summaries },
+        crate::cycle18_inputs::Payload {
+            projection,
+            context: admitted,
+            observations,
+            bindings,
+            allocation,
+            authority: config.authority,
+            summaries: source.summaries,
+        },
         resolve(&config.report),
         serde_json::to_vec_pretty(&report).map_err(|e| e.to_string())?,
-        files, directories,
+        files,
+        directories,
     )
 }

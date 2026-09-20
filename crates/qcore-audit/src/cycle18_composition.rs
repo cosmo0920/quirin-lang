@@ -34,10 +34,15 @@ fn identity(source: &SourceIdentity) -> Cycle18PreparedSourceIdentity {
 }
 
 fn selected<'a>(sources: &'a [SourceSummary], name: &str) -> Result<&'a SourceSummary, String> {
-    let matches = sources.iter().filter(|source| source.function() == name).collect::<Vec<_>>();
+    let matches = sources
+        .iter()
+        .filter(|source| source.function() == name)
+        .collect::<Vec<_>>();
     match matches.as_slice() {
         [source] => Ok(source),
-        _ => Err(format!("expected exactly one independently imported {name}")),
+        _ => Err(format!(
+            "expected exactly one independently imported {name}"
+        )),
     }
 }
 
@@ -57,7 +62,8 @@ pub fn run_cycle18_composition_config(path: &Path) -> Result<(), String> {
     let wait = crate::observed_wait::prepare_observed_wait(&resolve(&config.observed_wait))?;
     let failures = crate::wait_failures::prepare_wait_failures(&resolve(&config.wait_failures))?;
     let payload = crate::event_payload::prepare_event_payload(&resolve(&config.event_payload))?;
-    let timeout = crate::timeout_teardown::prepare_timeout_teardown(&resolve(&config.timeout_teardown))?;
+    let timeout =
+        crate::timeout_teardown::prepare_timeout_teardown(&resolve(&config.timeout_teardown))?;
     let failure_identity = identity(&failures.source_identity);
     let timeout_identity = identity(&timeout.source_identity);
     let callback = declared_event_payload_callback(&payload.evidence.authority);
@@ -87,7 +93,8 @@ pub fn run_cycle18_composition_config(path: &Path) -> Result<(), String> {
         timeout_identity: &timeout_identity,
         // No configured production caller inventory has been established.
         caller_summaries: &[],
-    }).map_err(|error| error.to_string())?;
+    })
+    .map_err(|error| error.to_string())?;
     let mut protected = vec![path.to_path_buf(), policy_path.clone()];
     let mut directories = Vec::new();
     for (files, dirs) in [
@@ -122,5 +129,8 @@ pub fn run_cycle18_composition_config(path: &Path) -> Result<(), String> {
             "Runtime and linkage evidence remains producer-supplied, not attestation"
         ]
     });
-    crate::wait_failures::write_atomic(&destination, &serde_json::to_vec_pretty(&report).map_err(|error| error.to_string())?)
+    crate::wait_failures::write_atomic(
+        &destination,
+        &serde_json::to_vec_pretty(&report).map_err(|error| error.to_string())?,
+    )
 }

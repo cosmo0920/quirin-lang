@@ -433,7 +433,9 @@ pub fn run_timeout_teardown_config(path: &Path) -> Result<(), String> {
     prepare_timeout_teardown(path)?.publish()
 }
 
-pub(crate) fn prepare_timeout_teardown(path: &Path) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::Timeout>, String> {
+pub(crate) fn prepare_timeout_teardown(
+    path: &Path,
+) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::Timeout>, String> {
     let config: TimeoutTeardownConfig =
         serde_json::from_slice(&read(path)?).map_err(|e| e.to_string())?;
     if config.schema_version != 1 || config.artifact.is_empty() {
@@ -590,9 +592,14 @@ pub(crate) fn prepare_timeout_teardown(path: &Path) -> Result<crate::cycle18_inp
     });
     crate::cycle18_inputs::PreparedAudit::new(
         aggregate_identity,
-        crate::cycle18_inputs::Timeout { projection, evidence, summaries: source.summaries },
+        crate::cycle18_inputs::Timeout {
+            projection,
+            evidence,
+            summaries: source.summaries,
+        },
         report,
         serde_json::to_vec_pretty(&report_value).map_err(|e| e.to_string())?,
-        protected_files, protected_directories,
+        protected_files,
+        protected_directories,
     )
 }

@@ -157,7 +157,9 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
     prepare_observed_wait(path)?.publish()
 }
 
-pub(crate) fn prepare_observed_wait(path: &Path) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::ObservedWait>, String> {
+pub(crate) fn prepare_observed_wait(
+    path: &Path,
+) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::ObservedWait>, String> {
     let config: ObservedWaitConfig =
         serde_json::from_slice(&read(path)?).map_err(|error| error.to_string())?;
     if config.schema_version != 1 {
@@ -411,10 +413,17 @@ pub(crate) fn prepare_observed_wait(path: &Path) -> Result<crate::cycle18_inputs
     });
     crate::cycle18_inputs::PreparedAudit::new(
         aggregate_identity,
-        crate::cycle18_inputs::ObservedWait { projection, context: admitted, observations, bindings, summaries: source.summaries },
+        crate::cycle18_inputs::ObservedWait {
+            projection,
+            context: admitted,
+            observations,
+            bindings,
+            summaries: source.summaries,
+        },
         resolve(&config.report),
         serde_json::to_vec_pretty(&report).map_err(|e| e.to_string())?,
-        protected_files, protected_directories,
+        protected_files,
+        protected_directories,
     )
 }
 

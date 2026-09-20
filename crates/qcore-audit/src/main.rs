@@ -16,9 +16,13 @@ fn main() -> ExitCode {
             eprintln!("usage: quirin-audit cycle18-composition CONFIG.json");
             return ExitCode::FAILURE;
         }
-        return match qcore_audit::cycle18_composition::run_cycle18_composition_config(&PathBuf::from(config)) {
+        return match qcore_audit::cycle18_composition::run_cycle18_composition_config(
+            &PathBuf::from(config),
+        ) {
             Ok(()) => {
-                println!("Bounded Cycle 18 evidence joined; aggregate remains Unknown. Report written.");
+                println!(
+                    "Bounded Cycle 18 evidence joined; aggregate remains Unknown. Report written."
+                );
                 ExitCode::SUCCESS
             }
             Err(error) => {
