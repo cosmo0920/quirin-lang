@@ -6,8 +6,8 @@ use crate::certificate_context::{
 use crate::compile_db::CompileTaskIdentity;
 use crate::report::AuditReport;
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, LegacyCError, LegacyProgramSummary, PreparedTranslationUnit,
-    SourceDefinitionInventory, SourceLineMap, UnrestrictedLegacyResult,
+    AnalysisStatus, C11TranslationUnit, LegacyCError, LegacyProgramSummary,
+    PreparedTranslationUnit, SourceDefinitionInventory, SourceLineMap, UnrestrictedLegacyResult,
     analyze_prepared_translation_unit, analyze_unrestricted_c11_with_inventory,
     map_preprocessed_lines, validate_unrestricted_c11,
 };
@@ -219,11 +219,18 @@ pub fn project_prepared_unit(
             })();
             match admission {
                 Ok(bound) => Ok(UnrestrictedLegacyResult::Safe(bound.certificate)),
-                Err(reason) => Ok(UnrestrictedLegacyResult::Unknown {
-                    preprocessed_source: certificate.preprocessed_source,
-                    reason: format!("certificate context binding refused: {reason}"),
-                    partial: Some(certificate.summary),
-                }),
+                Err(reason) => {
+                    let mut summary = certificate.summary;
+                    summary.status = AnalysisStatus::Unknown;
+                    for function in summary.functions.values_mut() {
+                        function.status = AnalysisStatus::Unknown;
+                    }
+                    Ok(UnrestrictedLegacyResult::Unknown {
+                        preprocessed_source: certificate.preprocessed_source,
+                        reason: format!("certificate context binding refused: {reason}"),
+                        partial: Some(summary),
+                    })
+                }
             }
         }
         other => other,

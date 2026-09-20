@@ -396,4 +396,15 @@ fn configured_projection_retains_a_refused_context_as_unknown() {
     assert_eq!(counts.safe_units, 0);
     assert_eq!(counts.unknown_units, 1);
     assert_eq!(counts.source_functions, 2);
+    let report_path = fixture.root.join("context-refusal.json");
+    report.write(&report_path).unwrap();
+    let report: serde_json::Value =
+        serde_json::from_slice(&fs::read(report_path).unwrap()).unwrap();
+    let unit = &report["units"][0];
+    assert_eq!(unit["status"], "Unknown");
+    assert_eq!(unit["source_functions"].as_array().unwrap().len(), 2);
+    assert_eq!(unit["not_projected"].as_array().unwrap().len(), 0);
+    let functions = unit["functions"].as_array().unwrap();
+    assert_eq!(functions.len(), 2);
+    assert!(functions.iter().all(|row| row["status"] == "Unknown"));
 }
