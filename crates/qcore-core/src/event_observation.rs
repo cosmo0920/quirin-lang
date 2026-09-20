@@ -118,8 +118,20 @@ pub struct TimedWaitObservationContext {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TimedWaitObservationCertificate {
-    pub context: TimedWaitObservationContext,
-    pub checked_records: usize,
+    context: TimedWaitObservationContext,
+    checked_records: usize,
+}
+
+impl TimedWaitObservationCertificate {
+    #[must_use]
+    pub const fn context(&self) -> &TimedWaitObservationContext {
+        &self.context
+    }
+
+    #[must_use]
+    pub const fn checked_records(&self) -> usize {
+        self.checked_records
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

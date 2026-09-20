@@ -85,7 +85,8 @@ fn trace() -> EventObservationTrace {
 #[test]
 fn a_complete_timed_wait_trace_binds_every_identity() {
     let certificate = check_timed_wait_observation(&trace(), &context()).unwrap();
-    assert_eq!(certificate.checked_records, 11);
+    assert_eq!(certificate.checked_records(), 11);
+    assert_eq!(certificate.context(), &context());
 }
 
 #[test]
