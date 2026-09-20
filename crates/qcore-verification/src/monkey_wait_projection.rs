@@ -94,29 +94,43 @@ pub enum WaitSourceProjectionError {
     LifecyclePathMismatch(String),
 }
 
-fn approved_summary_digests(name: &str) -> &'static [&'static str] {
-    match name {
-        WAIT_CALLBACK => &["8308bac83724f6f2417f6d22bbf3e65afbbf491b8ad91b4a9217b1aebd22efdc"],
-        "_mk_event_loop_create" => &[
-            // Existing focused fixture.
+fn approved_summary_set(digests: &BTreeMap<String, String>) -> bool {
+    let common = [
+        (
+            WAIT_CALLBACK,
+            "8308bac83724f6f2417f6d22bbf3e65afbbf491b8ad91b4a9217b1aebd22efdc",
+        ),
+        (
+            "_mk_event_wait_with_flags",
+            "3637e3f8ddfb6ae389d571a05f13bb9e32e675e95bfb4d5134ee8ab73923ff1f",
+        ),
+        (
+            "_mk_event_loop_destroy",
+            "c0d3215c02ed7f421f725596fbcee27547d0cf2a5f8534aa532f794cbd9a5e0e",
+        ),
+    ];
+    let expected = |create: &str, wait: &str| {
+        common
+            .into_iter()
+            .chain([
+                ("_mk_event_loop_create", create),
+                ("_mk_event_wait_2", wait),
+            ])
+            .map(|(name, digest)| (name.to_owned(), digest.to_owned()))
+            .collect::<BTreeMap<_, _>>()
+    };
+    // The focused fixture and production translation unit are independently
+    // pinned as whole sets. Summaries from the two artifacts cannot be mixed.
+    *digests
+        == expected(
             "2e32d6c7bbc40031c0f9828031d1591478cc2d556c2504dcf4f2687b0943214d",
-            // Pinned production translation unit recorded by this card.
-            "d1c48805630eacec138b0ed1eae834195815b9e4ce61a731c40ac3fd46bc7756",
-        ],
-        "_mk_event_wait_with_flags" => {
-            &["3637e3f8ddfb6ae389d571a05f13bb9e32e675e95bfb4d5134ee8ab73923ff1f"]
-        }
-        "_mk_event_wait_2" => &[
-            // Existing focused fixture.
             "88d9d6f2d7dad652503bd218ac9fad80c8c16afc53beb8ec0e174e2232628dff",
-            // Pinned production translation unit recorded by this card.
-            "69511d42a65bbed00f7c54e2890cc641578cf60029260893a8aa2db585bca4bd",
-        ],
-        "_mk_event_loop_destroy" => {
-            &["c0d3215c02ed7f421f725596fbcee27547d0cf2a5f8534aa532f794cbd9a5e0e"]
-        }
-        _ => &[],
-    }
+        )
+        || *digests
+            == expected(
+                "d1c48805630eacec138b0ed1eae834195815b9e4ce61a731c40ac3fd46bc7756",
+                "69511d42a65bbed00f7c54e2890cc641578cf60029260893a8aa2db585bca4bd",
+            )
 }
 
 /// Parsed declarations that state the contract-expressible half of the slice.
@@ -643,14 +657,14 @@ pub fn project_monkey_timed_wait_source<'a>(
         ))
         .expect("constructor-private typed source summaries always serialize");
         let digest = sha256_hex(&encoded);
-        if !approved_summary_digests(name).contains(&digest.as_str()) {
-            return Err(WaitSourceProjectionError::SourceArtifactMismatch(
-                name.into(),
-            ));
-        }
         validate_lifecycle_shape(name, &summary.paths()[selected_path].operations)?;
         digests.insert(name.into(), digest);
         selected.insert(name.into(), selected_path);
+    }
+    if !approved_summary_set(&digests) {
+        return Err(WaitSourceProjectionError::SourceArtifactMismatch(
+            "selected summary set".into(),
+        ));
     }
 
     let callback = by_name[WAIT_CALLBACK];

@@ -171,6 +171,7 @@ import QCore.ChunkSource
 #print axioms QCore.MonkeyWaitProjection.callback_effect_substitution_is_rejected
 #print axioms QCore.MonkeyWaitProjection.missing_event_free_is_rejected
 #print axioms QCore.MonkeyWaitProjection.missing_callback_contract_is_rejected
+#print axioms QCore.MonkeyWaitProjection.substituted_source_identity_is_rejected
 
 #print axioms QCore.CallbackSource.accepted_storage_start_is_fresh
 #print axioms QCore.CallbackSource.accepted_storage_start_retains_existing
