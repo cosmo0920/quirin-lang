@@ -20,6 +20,22 @@ contract {
     ensures normal cb_event_profile == expected_profile;
     ensures normal cb_timeout_profile == expected_profile;
     ensures normal cb_wait_profile == expected_profile;
+    ensures normal cb_event_library == "monkey";
+    ensures normal cb_timeout_library == "monkey";
+    ensures normal cb_wait_library == "monkey";
+    ensures normal cb_event_role == "Callback";
+    ensures normal cb_timeout_role == "Callback";
+    ensures normal cb_wait_role == "Callback";
+};
+
+extern fn context_identity_join() -> unit
+contract {
+    ensures normal wait_source_revision == payload_source_revision;
+    ensures normal wait_source_revision == aggregate_source_revision;
+    ensures normal wait_monkey_profile == payload_monkey_profile;
+    ensures normal wait_monkey_profile == aggregate_profile;
+    ensures normal wait_libevent_revision == payload_libevent_revision;
+    ensures normal wait_libevent_profile == payload_libevent_profile;
 };
 
 extern fn evidence_join() -> unit
