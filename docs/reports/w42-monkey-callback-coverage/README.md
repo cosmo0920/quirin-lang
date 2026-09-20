@@ -134,3 +134,14 @@ worktree's successful gate.
    directory. The isolated production run was stopped during the shared tmpfs
    pressure event before it reached the Monkey sidecar writer; integration owns
    the required combined AFTER and artifact parity check.
+
+## Integration confirmation — 2026-09-20
+
+Merged through `9233f8b0b50f07bc4ac5367b1859fbdd4cf621a6`; combined source `f3f99df5d2dcdf27e9b73ecd81dd7fe126419ca4`
+passed **4,863 Rust / 149 Lean / 313 Python**, zero failures,
+with fmt, Clippy, both probes and the isolated host checks green. The
+[integration gate](integration-gate.json) retains the combined measurement;
+its colocated Clang record is explicitly borrowed from this card, while the
+[combined report](../w42-priority-integration/README.md) carries the actual
+combined recording, pinned AFTER, exact attribution and remaining limits.
+The isolated checkpoint above remains unchanged.

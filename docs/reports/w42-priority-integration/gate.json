@@ -1,0 +1,13 @@
+{
+  "note": "Combined Rust/Lean source f3f99df5d2dcdf27e9b73ecd81dd7fe126419ca4; 4863 Rust passed, 0 failed, 10 ignored; 250 strict summaries across 248 targets (239 running and 9 doc). 149 Lean audits. Five workspace host-sensitive rows each passed in isolation. Provider122 is carried Unix evidence, not remeasured. Actual Clang recording captured in this measuring checkout. Private logs: /home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/. Post-regeneration Python count measured; all standing commands exit0. No full-language conformance or raw-unit promotion claimed.",
+  "workspace_tests": 4863,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 313,
+  "lean_audits": 149,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

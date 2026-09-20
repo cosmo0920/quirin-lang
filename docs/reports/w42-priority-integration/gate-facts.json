@@ -1,0 +1,337 @@
+{
+  "source_commit": "f3f99df5d2dcdf27e9b73ecd81dd7fe126419ca4",
+  "start": "2026-09-20T03:17:09.685460+00:00",
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "RUST_TEST_THREADS": "2",
+    "QCORE_CLANG": null,
+    "RUSTFLAGS": null,
+    "CARGO_TARGET_DIR": null
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.02,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.02,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/clang-version.log"
+    },
+    {
+      "name": "cargo-test",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "seconds": 1429.84,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/cargo-test.log"
+    },
+    {
+      "name": "cargo-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 2.47,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/cargo-fmt.log"
+    },
+    {
+      "name": "cargo-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 13.62,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/cargo-clippy.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.1,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.47,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/reevaluation-followup.log"
+    },
+    {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "seconds": 20.81,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/lean-audits.log"
+    },
+    {
+      "name": "isolated-process-lifecycle",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "cycle20_verifier_plugins",
+        "vp04_vp07_vp08_process_lifecycle_and_payload_budgets",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.44,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/isolated-process-lifecycle.log",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "name": "isolated-process-limit",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "enforced_process_limits",
+        "a_declared_process_limit_stops_the_fixture_from_forking",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.56,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/isolated-process-limit.log",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "name": "isolated-memory-limit",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "enforced_process_limits",
+        "memory_growth_beyond_the_declared_limit_is_bounded",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 0.09,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/isolated-memory-limit.log",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "name": "isolated-confined-write",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "confined_process_execution",
+        "a_confined_fixture_cannot_write_outside_the_admitted_paths",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 0.06,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/isolated-confined-write.log",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "name": "isolated-closed-input",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "standalone_host",
+        "closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.87,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/isolated-closed-input.log",
+      "passed": 1,
+      "failed": 0
+    }
+  ],
+  "rust": {
+    "passed": 4863,
+    "failed": 0,
+    "ignored": 10,
+    "result_summaries": 250,
+    "running_targets": 239,
+    "doc_targets": 9
+  },
+  "end": "2026-09-20T03:41:42.066621+00:00",
+  "post_regeneration_python": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "source_commit": "016df072c89b8d9439da45293fd5b9f8374b2020",
+    "matrix_sha256": "6b1463e9dbd7852d9ca094148402b81cce357b7da566d111cd3f54c8cece9ccc",
+    "start": "2026-09-20T03:42:28.722390+00:00",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/python-after-final-matrix.log",
+    "exit": 0,
+    "end": "2026-09-20T03:42:47.001774+00:00",
+    "passed": 313,
+    "log_sha256": "fc137e5e331b0fd0891fc34037c66686c43199adb84de752cc78f78c29a837df"
+  },
+  "matrix_regenerations": [
+    {
+      "command": [
+        "python3",
+        "docs/reports/remaining-d02/build_matrix.py",
+        ".",
+        "--gate",
+        "docs/reports/w42-priority-integration/gate.json"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/matrix-regeneration-pending.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/remaining-d02/build_matrix.py",
+        ".",
+        "--gate",
+        "docs/reports/w42-priority-integration/gate.json"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/matrix-regeneration-final.log"
+    }
+  ],
+  "python_runs": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "source_commit": "016df072c89b8d9439da45293fd5b9f8374b2020",
+      "matrix_sha256": "9e53a5cf9b6b58bf96fda0248d59f86a04aebbb2a9ef14d0fe6cc7e752d9599d",
+      "start": "2026-09-20T03:41:54.506539+00:00",
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/python-after-provisional-matrix.log",
+      "exit": 0,
+      "end": "2026-09-20T03:42:12.855434+00:00",
+      "passed": 313,
+      "log_sha256": "9907c0460445886976f966c24cf31996399a2c5b0a9bd7c66fc9f7b4188f18aa"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "source_commit": "016df072c89b8d9439da45293fd5b9f8374b2020",
+      "matrix_sha256": "6b1463e9dbd7852d9ca094148402b81cce357b7da566d111cd3f54c8cece9ccc",
+      "start": "2026-09-20T03:42:28.722390+00:00",
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/python-after-final-matrix.log",
+      "exit": 0,
+      "end": "2026-09-20T03:42:47.001774+00:00",
+      "passed": 313,
+      "log_sha256": "fc137e5e331b0fd0891fc34037c66686c43199adb84de752cc78f78c29a837df"
+    }
+  ],
+  "reconciliation_checks": [
+    {
+      "command": [
+        "python3",
+        "scripts/reconciliation_sweep.py",
+        ".",
+        "--cards",
+        "w42-indirect-access",
+        "w42-monkey-callback-coverage",
+        "w42-unprojected-definitions",
+        "--check",
+        "docs/reports/w42-priority-integration/reconciliation.json"
+      ],
+      "exit": 1,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/reconciliation-check.log"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/reconciliation_sweep.py",
+        ".",
+        "--cards",
+        "w42-indirect-access",
+        "w42-monkey-callback-coverage",
+        "w42-unprojected-definitions",
+        "--check",
+        "docs/reports/w42-priority-integration/reconciliation.json"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/reconciliation-check-final.log"
+    }
+  ]
+}

@@ -63,11 +63,12 @@ separately.
 
 ## Last integrated gate
 
-The [B01–B04 integration gate](reports/b-series-integration/gate.json) records
-**4,845 Rust passed, 0 failed, 10 ignored; 248 result summaries over 246 targets;
-148 Lean audits; 305 Python tests**, clean fmt/clippy and both probes exit 0.
+The [W42 priority integration gate](reports/w42-priority-integration/gate.json) records
+**4,863 Rust passed, 0 failed, 10 ignored; 250 result summaries over 248 targets;
+149 Lean audits; 313 Python tests**, clean fmt/clippy and both probes exit 0.
+Five core-workspace host-sensitive rows also passed separately in isolation.
 Clang 21.1.8 was recorded in the measuring worktree. **122 provider tests are
-carried Unix evidence, not re-measured.** [Run identity and private logs](reports/b-series-integration/README.md#final-standing-gate)
+carried Unix evidence, not re-measured.** [Run identity and private logs](reports/w42-priority-integration/README.md#final-standing-gate)
 bind these measurements to the checked source; they are not promises about
 another host or a later tree.
 

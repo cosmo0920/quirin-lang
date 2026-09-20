@@ -170,3 +170,14 @@ failed result row.
 4. When choosing follow-up syntax work, use the blocker census reach and sole
    counts above; do not treat excluded-platform definitions as cheap Linux
    additions.
+
+## Integration confirmation — 2026-09-20
+
+Merged through `f4fc9e8a6edb1999d3bacb2a9981b73ab181f105`; combined source `f3f99df5d2dcdf27e9b73ecd81dd7fe126419ca4`
+passed **4,863 Rust / 149 Lean / 313 Python**, zero failures,
+with fmt, Clippy, both probes and the isolated host checks green. The
+[integration gate](integration-gate.json) retains the combined measurement;
+its colocated Clang record is explicitly borrowed from this card, while the
+[combined report](../w42-priority-integration/README.md) carries the actual
+combined recording, pinned AFTER, exact attribution and remaining limits.
+The isolated checkpoint above remains unchanged.

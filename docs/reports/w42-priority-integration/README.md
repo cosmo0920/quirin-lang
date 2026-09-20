@@ -46,8 +46,10 @@ revision and uncompressed artifact digest.
 
 ## Integration status
 
-Implementation and review are in progress. Final changes, measured deltas,
-gate results and reconciliation decisions must be recorded before completion.
+All three reviewed cards are integrated. The combined pinned audit and full
+standing gate passed at source `f3f99df5d2dcdf27e9b73ecd81dd7fe126419ca4`. The syntax
+slice, callback accounting and definition census are complete at the boundaries
+below; Cycle 19 and its remaining certificates are not complete.
 
 ## Implementation boundaries and review
 
@@ -162,3 +164,60 @@ evidence. Its exact previous contents are preserved in
 [previous-corpus-row.json](previous-corpus-row.json); the current row now uses
 this integration's primary artifacts. No historical report or archive was
 rewritten.
+
+## Final standing gate
+
+The [gate](gate.json) and [command facts](gate-facts.json) bind the full run to
+source `f3f99df5d2dcdf27e9b73ecd81dd7fe126419ca4`. The [release build](release-build.json)
+and pinned audit also exited **0**. The gate ran outside ptrace with
+LeakSanitizer enabled, `CARGO_BUILD_JOBS=2` and `RUST_TEST_THREADS=2`.
+
+| Command | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | pinned submodules initialized |
+| `clang --version` | 0 | actual Clang 21.1.8 recording in this checkout |
+| `cargo test --workspace --no-fail-fast` | 0 | **4,863 passed / 0 failed / 10 ignored**, 250 strict summaries over 248 targets (239 running + 9 doc) |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --all-targets -- -D warnings` | 0 | clean |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | passed |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | passed |
+| `python3 scripts/check_lean_audits.py --jobs 2` | 0 | **149 audits**; no project axioms or placeholders |
+| five isolated workspace host checks | 0 each | **1 passed / 0 failed each**, exact commands in facts |
+| matrix regeneration using this `gate.json` | 0 | 149 audit files, 271 follow-ups |
+| `python3 -m unittest discover -s scripts/tests` after final regeneration | 0 | **313 tests** |
+
+Private logs and direct exits are under `/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/`.
+The Python suite ran after the provisional regeneration and again after the
+final gate record was regenerated into the matrix; both direct exits were 0.
+The final Python facts include the validated matrix digest. **122 provider
+workspace tests are carried Unix evidence, not remeasured**; the separate
+provider mutation row is likewise carried. The five applicable core-workspace
+host-sensitive rows were each rerun in isolation without deadline changes.
+The inherited summary-count and Clang-recording mechanism limitations remain.
+The 10 ignored tests retain their host/profile boundaries, including the known
+Windows pin-agreement issue.
+
+No combined gate failure was hidden or replaced. The card reports preserve
+and disclose the sandboxed LSan-under-ptrace failures, the scalar-store probe
+exhaustiveness build failure, and the excluded intermediate corpus runs. All
+published final counts come from the corrected runs, not those attempts.
+
+## Reconciliation and remaining work
+
+[Reconciliation](reconciliation.json) records all **15** swept items and their
+verified locations: the final check exited **0**, verifying **23 content claims**.
+The initial check caught **11** omitted carried decisions; all remain explicitly
+deferred in the corrected record. Both check logs are retained under the
+private gate directory as `reconciliation-check.log` and
+`reconciliation-check-final.log`. No existing follow-up is retired. The residual sweep
+reports **54 historical residual-shaped candidates**, with no untracked name
+introduced by these three card reports; the scanner classifies none of them.
+The reports each receive an `integration-gate.json` with the combined count and
+an explicit disclosure that their colocated Clang recording is borrowed from
+their isolated card; this report's Clang recording is the actual combined one.
+
+`W42-CHUNK-LIFECYCLE-CERT` remains queued with the input-chunk and nested
+ChunkIO teardown conditions. `MONKEY-CALLBACK-CYCLE18-COMPOSITION` remains
+open despite complete accounting. General indirect access and static-helper
+summaries also remain open. This is a prioritized implementation increment,
+not a whole-wave cadence close or Cycle 19 completion.
