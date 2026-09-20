@@ -565,7 +565,11 @@ fn invalid_parameter_bindings_and_types_are_rejected() {
 #[test]
 fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     let contracts = load_resource_contract_manifest(&manifest()).unwrap();
-    let source = "void test(void) { void *p = malloc(8); free(p); }";
+    let source = concat!(
+        "void *malloc(unsigned long size);\n",
+        "void free(void *pointer);\n",
+        "void test(void) { void *p = malloc(8); free(p); }",
+    );
     let unit = C11TranslationUnit {
         source,
         ..C11TranslationUnit::default()

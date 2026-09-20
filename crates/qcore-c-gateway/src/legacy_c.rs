@@ -1141,7 +1141,7 @@ pub struct LegacyCertificateDefinition {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LegacyCertificateScopeEvidence {
     /// Every definition in the authoritative preprocessed source is selected.
-    PreprocessedTranslationUnit,
+    PreprocessedTranslationUnit { raw_source: String },
     /// Main-source selection is reconstructed from the raw source and the
     /// line-marked preprocessing whose include-depth flags decide attribution.
     MainSourceDefinitions {
@@ -1265,7 +1265,9 @@ fn certificate_input_identity(
     request: &LegacyCertificateRequest,
 ) -> LegacyCertificateInputIdentity {
     let (raw, scope_evidence) = match evidence {
-        LegacyCertificateScopeEvidence::PreprocessedTranslationUnit => ("", preprocessed_source),
+        LegacyCertificateScopeEvidence::PreprocessedTranslationUnit { raw_source } => {
+            (raw_source.as_str(), preprocessed_source)
+        }
         LegacyCertificateScopeEvidence::MainSourceDefinitions {
             raw_source,
             line_marked_source,
@@ -1348,10 +1350,17 @@ fn build_certificate_scope_from_evidence(
     request: LegacyCertificateRequest,
 ) -> Result<LegacyCertificateScope, String> {
     let (names, evidence) = match function_scope {
-        LegacyFunctionScope::PreprocessedTranslationUnit => (
-            preprocessed_definition_names(preprocessed_source)?,
-            LegacyCertificateScopeEvidence::PreprocessedTranslationUnit,
-        ),
+        LegacyFunctionScope::PreprocessedTranslationUnit => {
+            let raw = raw_source.ok_or_else(|| {
+                "preprocessed-unit certificate scope carries no raw source evidence".to_owned()
+            })?;
+            (
+                preprocessed_definition_names(preprocessed_source)?,
+                LegacyCertificateScopeEvidence::PreprocessedTranslationUnit {
+                    raw_source: raw.to_owned(),
+                },
+            )
+        }
         LegacyFunctionScope::MainSourceDefinitions => {
             let raw = raw_source.ok_or_else(|| {
                 "main-source certificate scope carries no raw source evidence".to_owned()
@@ -1805,7 +1814,7 @@ pub fn check_legacy_safety_certificate(
     ) {
         (
             LegacyFunctionScope::PreprocessedTranslationUnit,
-            LegacyCertificateScopeEvidence::PreprocessedTranslationUnit,
+            LegacyCertificateScopeEvidence::PreprocessedTranslationUnit { .. },
         ) => preprocessed_definition_names(&certificate.preprocessed_source)?,
         (
             LegacyFunctionScope::MainSourceDefinitions,

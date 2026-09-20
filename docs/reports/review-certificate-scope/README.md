@@ -58,6 +58,7 @@ boundary directly:
 | duplicate a selected name | replay rejects noncanonical denominator |
 | relabel one selected row Excluded or Unknown | replay rejects Safe coverage |
 | change the scope enum without changing evidence | replay rejects the label/evidence mismatch |
+| mutate raw source, marked evidence or ordered request fields | replay rejects content pairing or recomputed identity mismatch |
 | substitute a coherent smaller certificate and its own digest/evidence | structural replay accepts it as its own artifact; caller-held intended context rejects it |
 | change only a selected unit's header | main-source denominator stays explicitly partial; input identity changes and the old certificate does not match |
 | retain a raw-only `#if 0` definition or a K&R definition | issuance remains Unknown, never Safe |

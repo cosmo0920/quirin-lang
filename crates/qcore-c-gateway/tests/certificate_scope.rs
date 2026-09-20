@@ -6,8 +6,8 @@ use std::fs;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, LegacyCError, LegacyCertificateCoverage, LegacyFunctionScope,
-    ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+    C11TranslationUnit, LegacyCError, LegacyCertificateCoverage, LegacyCertificateScopeEvidence,
+    LegacyFunctionScope, ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
     check_legacy_safety_certificate, check_legacy_safety_certificate_for,
     legacy_certificate_expected_context,
 };
@@ -112,6 +112,57 @@ fn scope_label_tampering_is_rejected() {
         check_legacy_safety_certificate(&certificate)
             .unwrap_err()
             .contains("scope evidence")
+    );
+}
+
+#[test]
+fn retained_source_evidence_and_request_mutations_are_rejected() {
+    if !clang_available() {
+        return;
+    }
+    let original = certificate(
+        "void alpha(void) { return; }\n",
+        LegacyFunctionScope::MainSourceDefinitions,
+    )
+    .expect("Clang was available");
+
+    let mut raw_changed = original.clone();
+    let LegacyCertificateScopeEvidence::MainSourceDefinitions { raw_source, .. } =
+        &mut raw_changed.target_scope.evidence
+    else {
+        panic!("main-source certificate retained the wrong evidence kind");
+    };
+    raw_source.push_str("/* mutation */\n");
+    assert!(
+        check_legacy_safety_certificate(&raw_changed)
+            .unwrap_err()
+            .contains("input identity")
+    );
+
+    let mut marked_changed = original.clone();
+    let LegacyCertificateScopeEvidence::MainSourceDefinitions {
+        line_marked_source, ..
+    } = &mut marked_changed.target_scope.evidence
+    else {
+        panic!("main-source certificate retained the wrong evidence kind");
+    };
+    line_marked_source.push_str("int injected;\n");
+    assert!(
+        check_legacy_safety_certificate(&marked_changed)
+            .unwrap_err()
+            .contains("does not match the analyzed input")
+    );
+
+    let mut request_changed = original;
+    request_changed
+        .target_scope
+        .request
+        .definitions
+        .push("UNUSED_MUTATION=1".into());
+    assert!(
+        check_legacy_safety_certificate(&request_changed)
+            .unwrap_err()
+            .contains("input identity")
     );
 }
 
