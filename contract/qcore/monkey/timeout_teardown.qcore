@@ -23,6 +23,11 @@ contract {
     ensures normal source_summary_digest == "4787d6d5025421959b0f5c746fe0ff2916001f8a9b88f39d73b8d416ae0b2155";
 };
 
+extern fn cb_timeout_teardown_path() -> unit
+contract {
+    ensures normal (path_calls == "send,__errno_location,perror,evutil_closesocket,event_del,event_free,mk_mem_free") or (path_calls == "send,__errno_location,evutil_closesocket,event_del,event_free,mk_mem_free");
+};
+
 extern fn libevent_self_teardown() -> unit
 contract {
     ensures normal libevent_revision == "d82464a277d0f42703702c4dfd9af6af38595a83";

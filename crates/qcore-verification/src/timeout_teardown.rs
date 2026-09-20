@@ -164,20 +164,17 @@ pub fn project_cb_timeout_source(
         .map(|calls| calls.join(","))
         .collect::<Vec<_>>()
         .join(";");
-    let cleanup = [
-        "evutil_closesocket",
-        "event_del",
-        "event_free",
-        "mk_mem_free",
-    ];
     let teardown_paths = sequences
         .iter()
         .enumerate()
         .filter_map(|(index, calls)| {
-            calls
-                .windows(cleanup.len())
-                .any(|window| window.iter().map(String::as_str).eq(cleanup))
-                .then_some(index)
+            check_typed_contract_facts(
+                &contracts.source,
+                "cb_timeout_teardown_path",
+                &[("path_calls", ContractFact::Text(calls.join(",")))],
+            )
+            .is_ok()
+            .then_some(index)
         })
         .collect::<Vec<_>>();
     let teardown_text = teardown_paths
