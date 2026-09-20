@@ -99,6 +99,14 @@ and distinguish genuine definitions from any raw enumerator false positives.
 The field's inclusion of build-excluded definitions does not classify each
 individual absence. No current unit or function safety claim grows from it.
 
+Lifecycle starting evidence is already substantial: the B-series
+`chunk-contracts.json.gz` inventories **66** input-chunk functions (1 checked
+field contract, 65 Unknown) and **30** functions in `cio_chunk.c` (2 checked
+field contracts, 28 Unknown), alongside **21** backend-teardown records.
+Its scope explicitly excludes a whole-unit lifecycle certificate. Reuse and
+bind these records where their premises apply; neither their existence nor
+their count discharges the remaining lifecycle gate.
+
 Priority for this dispatch is the bounded indirect-store rule alongside B02,
 callback accounting, then the definition census. Chunk lifecycle follows with
 its own source inventory and certificate dependencies; static-helper summary

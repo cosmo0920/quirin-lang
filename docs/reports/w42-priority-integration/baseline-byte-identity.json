@@ -1,0 +1,32 @@
+{
+  "diagnostics": {
+    "baseline_sha256": "2545039c8252d5ac2c313e98104b59293e701dd1743d88ee5a659c37c345732b",
+    "fresh_sha256": "2545039c8252d5ac2c313e98104b59293e701dd1743d88ee5a659c37c345732b",
+    "byte_identical": true,
+    "bytes": 13826071
+  },
+  "chunk-contracts": {
+    "baseline_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+    "fresh_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+    "byte_identical": true,
+    "bytes": 4186178
+  },
+  "contracts": {
+    "baseline_sha256": "9de748ce56d2c614f251411f88e50a8b8a50c7dbff935216515e873a3c081f32",
+    "fresh_sha256": "9de748ce56d2c614f251411f88e50a8b8a50c7dbff935216515e873a3c081f32",
+    "byte_identical": true,
+    "bytes": 181752
+  },
+  "source-effects": {
+    "baseline_sha256": "0bda08ad86da01b133bcf0397ee39d7b7cd145a1265c1cb66df2747e6aa4fc9b",
+    "fresh_sha256": "0bda08ad86da01b133bcf0397ee39d7b7cd145a1265c1cb66df2747e6aa4fc9b",
+    "byte_identical": true,
+    "bytes": 118505
+  },
+  "source": {
+    "baseline_sha256": "ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529",
+    "fresh_sha256": "ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529",
+    "byte_identical": true,
+    "bytes": 1663934
+  }
+}
