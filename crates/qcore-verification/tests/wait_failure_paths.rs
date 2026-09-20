@@ -134,7 +134,8 @@ fn incomplete_or_mutated_native_evidence_fails_closed() {
     }
     let projection = projection();
     let baseline: serde_json::Value = serde_json::from_slice(EVIDENCE).unwrap();
-    let mutations: Vec<Box<dyn Fn(&mut serde_json::Value)>> = vec![
+    type Mutation = Box<dyn Fn(&mut serde_json::Value)>;
+    let mutations: Vec<Mutation> = vec![
         Box::new(|value| {
             value.as_array_mut().unwrap().pop();
         }),
@@ -147,6 +148,7 @@ fn incomplete_or_mutated_native_evidence_fails_closed() {
                 .unwrap()
                 .remove("timeout_activated");
         }),
+        Box::new(|value| value[5]["outcome"] = "unsafe".into()),
         Box::new(|value| value[0]["source_revision"] = "changed".into()),
         Box::new(|value| value[1]["trace"][2] = "changed".into()),
     ];

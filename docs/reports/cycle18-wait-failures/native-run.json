@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "command": "python3 scripts/cycle18_timed_wait_failures.py --output measure/cycle18-wait-failures-native-5",
+  "exit": 0,
+  "compiler": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "sanitizers": ["address", "undefined", "leak"],
+  "harness_sha256": "fa7ba40560ed0e9ee02965a06863e1e1eaec2b97e54476bcb1287f9b75a231fa",
+  "wrapper_fixture_sha256": "c8b4338888b7482379862eec59dd7402f8ef1310d72bc2afdb049f527e5dd7ae",
+  "private_observations_sha256": "a626752777cc1a95ab79cfcf133d7fd41c95473bb7a5391cd4e39b4f92265b1f",
+  "committed_observations_sha256": "89144ea71da52618a7458c87c9bda998b74e4c768c91c9b65e20368a3f5f2e5f",
+  "semantic_json_diff_exit": 0,
+  "scope": "approved wrapper fixture plus stubbed dependency fault model; not a real Libevent execution",
+  "private_log_directory": "measure/cycle18-wait-failures-native-5"
+}

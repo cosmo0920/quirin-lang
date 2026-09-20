@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scope": "delegated focused gate; root integrator owns the combined standing gate",
+  "commands": [
+    {"command": "cargo fmt --all -- --check", "exit": 0, "log": "measure/cycle18-wait-failures-focused-final-3/fmt.log"},
+    {"command": "cargo clippy -p qcore-verification --all-targets -- -D warnings", "exit": 0, "log": "measure/cycle18-wait-failures-focused-final-3/clippy.log"},
+    {"command": "cargo test -p qcore-verification --test wait_failure_paths --test monkey_wait_projection -- --nocapture", "exit": 0, "result": "7 passed, 0 failed, 1 ignored", "log": "measure/cycle18-wait-failures-focused-final-3/rust.log"},
+    {"command": "cd proof && lake build QCore.WaitFailurePaths && lake env lean AuditWaitFailurePaths.lean", "exit": 0, "result": "7 audited theorems", "log": "measure/cycle18-wait-failures-focused-final-3/lean.log"},
+    {"command": "python3 scripts/cycle18_timed_wait_failures.py --output measure/cycle18-wait-failures-native-5", "exit": 0, "result": "6 complete observations; ASan/UBSan/LSan clean outside ptrace", "log": "measure/cycle18-wait-failures-native-5"}
+  ]
+}
