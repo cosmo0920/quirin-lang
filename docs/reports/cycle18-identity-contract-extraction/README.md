@@ -27,7 +27,10 @@ contract clause.
 the exact compiled policy bytes. The explicit
 `check_observed_wait_composition_with_policy` override names caller-selected
 policy as trusted configuration and requires the admitted context to bind its
-exact bytes. A policy swap under a stale context refuses before replay.
+exact bytes. That equality is immutable admission performed before policy
+execution, so deleting or weakening the policy's self-binding clause cannot
+authorize changed bytes. A policy swap under a stale context refuses before
+replay.
 `observed_wait_bounds` derives run, dispatcher, event-identity and record counts
 from the trace; policy clauses decide whether those actual counts are in the
 supported one-run/one-dispatcher/one-event/eleven-record profile.
@@ -43,6 +46,8 @@ The focused integration test preserves the baseline accepted fixture and all
 pre-existing context/assumption/payload refusals. It additionally establishes:
 
 - changing the policy bytes under the default context refuses;
+- deleting the policy's own observation-rules equality clause under the stale
+  default context still refuses before the changed policy executes;
 - rebinding a policy mutation that requires `attested_runtime_evidence` still
   refuses the unchanged producer-supplied observation fact;
 - coherently rebinding a mutated `records_bound_actual == 12` clause refuses the

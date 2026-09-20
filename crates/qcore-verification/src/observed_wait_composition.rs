@@ -215,6 +215,12 @@ pub fn check_observed_wait_composition_with_policy(
     let expected_source_rules_sha256 =
         qcore_schemas::sha256_hex(qcore_c_gateway::typed_source::DEFAULT_SOURCE_RULES.as_bytes());
     let expected_observation_rules_sha256 = wait_observation_rules_digest_with_policy(policy);
+    // Policy identity is immutable admission, checked before policy execution.
+    // A caller-selected policy cannot delete or weaken the clause that would
+    // otherwise have been responsible for binding its own bytes.
+    if context.observation_rules_sha256() != expected_observation_rules_sha256 {
+        return Err("selected wait identity policy does not match admitted context".into());
+    }
     let expected_profile_digest = source
         .profile_assumptions()
         .get("profile_digest")
