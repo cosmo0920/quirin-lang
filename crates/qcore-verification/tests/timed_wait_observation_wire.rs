@@ -56,6 +56,8 @@ fn fixture() -> (Vec<u8>, Vec<u8>) {
 fn decodes_complete_identity_bound_trace() {
     let (observations, bindings) = fixture();
     let decoded = decode_timed_wait_observation(&observations, &bindings).unwrap();
+    let binding: Value = serde_json::from_slice(&bindings).unwrap();
+    assert_eq!(decoded.semantic_profile, binding["profile"].as_str().unwrap());
     assert_eq!(decoded.trace.records.len(), 11);
     assert_eq!(decoded.context.event.id, 20);
     assert_eq!(decoded.source_apis.len(), 2);
