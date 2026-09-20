@@ -1,0 +1,29 @@
+{
+  "note": "Integrator review findings; final validation and resolution evidence are pending.",
+  "findings": [
+    {
+      "card": "resource-helper-functions",
+      "finding": "Initial helper signatures used task-route Buffer for std.buffer byte storage, conflating distinct resource models.",
+      "resolution": "Use own<bytes>/borrow<bytes>/lend<bytes>; refuse task Buffer on the helper route and test the distinction.",
+      "status": "plan corrected; implementation pending"
+    },
+    {
+      "card": "resource-helper-functions",
+      "finding": "A closed entry observation alone cannot justify helpers for arbitrary resource arguments.",
+      "resolution": "Derive per-helper extent obligations and check every instantiated call; explicitly refuse uncalled helpers in this bounded closed profile and retain effect/custody checks.",
+      "status": "accepted plan; implementation pending"
+    },
+    {
+      "card": "source-annotation-enforcement",
+      "finding": "Legacy qcore_acquire establishes ResourceId custody without a nominal payload type, so accepting a claimed own<T> annotation would invent typing evidence.",
+      "resolution": "Reject explicit acquisition annotations until the operation publishes a nominal type; keep inferred custody unchanged.",
+      "status": "implemented at b91cea0d; full validation pending"
+    },
+    {
+      "card": "certificate-context-binding",
+      "finding": "The initial public bound-certificate wrapper compared stored trust identity with expected identity without rederiving it from the presented certificate's contracts, allowing stale wrapper trust after coherent certificate substitution.",
+      "resolution": "Recompute contract/trust binding at admission, check profile identity against compile-task dependency identity, and test coherent valid-certificate substitution with retained old wrapper trust.",
+      "status": "requested"
+    }
+  ]
+}

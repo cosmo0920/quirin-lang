@@ -43,4 +43,7 @@ The [source harness](measure_source_compatibility.py) snapshots the CLI and a
 fixed inventory of tracked `.qcore`/`.qc` files, recording check results and
 hashes of emitted bytes. Later files are not silently added to the comparison
 denominator. Private outputs live under `private/resource-boundaries/`.
-Measurements and final dispositions will be recorded after execution.
+The [baseline](source-baseline.json) measures 555 tracked source files:
+307 pass `check`, 152 emit successfully, and none time out. These fixture
+counts are not language conformance or production safety coverage. Final
+comparison and per-change dispositions remain pending.
