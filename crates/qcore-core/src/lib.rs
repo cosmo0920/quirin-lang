@@ -43,6 +43,7 @@ pub mod ownership;
 pub mod prelude;
 pub mod research_closure;
 pub mod resource_calls;
+pub mod resource_calls_c_emit;
 pub mod resource_flow;
 pub mod socket_address;
 pub mod socket_event;

@@ -408,6 +408,29 @@ fn analyze_function(
                         ));
                     }
                 }
+                if summary.effects.contains(&Effect::Alloc) {
+                    let moved = arguments
+                        .iter()
+                        .filter_map(|argument| match argument {
+                            Argument::Move(name) => Some(name.as_str()),
+                            _ => None,
+                        })
+                        .collect::<BTreeSet<_>>();
+                    let retained = owned_names(&bindings)
+                        .into_iter()
+                        .filter(|name| !moved.contains(name.as_str()))
+                        .collect::<Vec<_>>();
+                    if !retained.is_empty() {
+                        return Err(bad(
+                            function,
+                            statement,
+                            format!(
+                                "helper allocation failure would strand caller-owned bytes: {}",
+                                retained.join(", ")
+                            ),
+                        ));
+                    }
+                }
                 let mut actual_extents = Vec::with_capacity(arguments.len());
                 for (index, (argument, parameter)) in
                     arguments.iter().zip(&target.parameters).enumerate()
@@ -548,7 +571,34 @@ fn analyze_function(
                     ));
                 }
                 match value {
-                    ReturnValue::Unit | ReturnValue::Scalar(_) => {
+                    ReturnValue::Unit => {
+                        let live = owned_names(&bindings);
+                        if !live.is_empty() {
+                            return Err(bad(
+                                function,
+                                statement,
+                                format!("normal exit leaves owned bytes live: {}", live.join(", ")),
+                            ));
+                        }
+                    }
+                    ReturnValue::Scalar(BufferOperand::Literal(_)) => {
+                        let live = owned_names(&bindings);
+                        if !live.is_empty() {
+                            return Err(bad(
+                                function,
+                                statement,
+                                format!("normal exit leaves owned bytes live: {}", live.join(", ")),
+                            ));
+                        }
+                    }
+                    ReturnValue::Scalar(BufferOperand::Scalar(name)) => {
+                        if !matches!(bindings.get(name), Some(Binding::Scalar)) {
+                            return Err(bad(
+                                function,
+                                statement,
+                                "scalar return requires a live i32 binding",
+                            ));
+                        }
                         let live = owned_names(&bindings);
                         if !live.is_empty() {
                             return Err(bad(
@@ -661,6 +711,20 @@ fn graph(program: &Program) -> Result<(Vec<BTreeSet<usize>>, Vec<usize>), Refusa
     for id in 0..program.functions.len() {
         visit(id, &graph, &mut active, &mut done, &mut order)?;
     }
+    // `done` makes cycle detection linear, but it must not make the depth bound
+    // depend on declaration order. `order` is postorder, so every callee depth
+    // is available before its caller's longest-path depth is computed.
+    let mut depths = vec![1usize; graph.len()];
+    for id in &order {
+        depths[*id] = 1 + graph[*id]
+            .iter()
+            .map(|callee| depths[*callee])
+            .max()
+            .unwrap_or(0);
+        if depths[*id] > MAX_CALL_DEPTH {
+            return Err(bad(*id, 0, "resource helper call depth bound exceeded"));
+        }
+    }
     Ok((graph, order))
 }
 
@@ -671,6 +735,12 @@ struct Expansion {
     next_resource: ResourceId,
     next_call: usize,
     expanded: usize,
+}
+
+enum ExpandedReturn {
+    Unit,
+    Scalar(String),
+    Owned { place: String, physical: String },
 }
 
 fn rename_operand(operand: &BufferOperand, names: &BTreeMap<String, String>) -> BufferOperand {
@@ -689,9 +759,9 @@ impl Expansion {
         function: usize,
         mut names: BTreeMap<String, String>,
         mut owned_places: BTreeMap<String, String>,
-    ) -> Result<Option<(String, String)>, Refusal> {
+    ) -> Result<ExpandedReturn, Refusal> {
         let f = &program.functions[function];
-        let mut returned = None;
+        let mut returned = ExpandedReturn::Unit;
         for (statement, item) in f.statements.iter().enumerate() {
             self.expanded = self.expanded.checked_add(1).ok_or_else(|| {
                 bad(
@@ -908,9 +978,17 @@ impl Expansion {
                     self.ownership.extend(body);
                     if let Some(binding) = binding {
                         if target.result == Type::OwnedBytes {
-                            let (returned_place, physical) = child_return.ok_or_else(|| {
-                                bad(function, statement, "missing expanded owned return")
-                            })?;
+                            let ExpandedReturn::Owned {
+                                place: returned_place,
+                                physical,
+                            } = child_return
+                            else {
+                                return Err(bad(
+                                    function,
+                                    statement,
+                                    "missing expanded owned return",
+                                ));
+                            };
                             let result_place = format!("$call{call}_result_{binding}");
                             self.ownership.push(OwnershipOp::Move {
                                 from: returned_place,
@@ -918,20 +996,47 @@ impl Expansion {
                             });
                             names.insert(binding.clone(), physical);
                             owned_places.insert(binding.clone(), result_place);
+                        } else if target.result == Type::I32 {
+                            let ExpandedReturn::Scalar(physical) = child_return else {
+                                return Err(bad(
+                                    function,
+                                    statement,
+                                    "missing expanded scalar return",
+                                ));
+                            };
+                            names.insert(binding.clone(), physical);
                         }
                     }
                 }
                 Statement::Return(ReturnValue::Move(name)) => {
-                    returned = Some((
-                        owned_places.get(name).cloned().ok_or_else(|| {
+                    returned = ExpandedReturn::Owned {
+                        place: owned_places.get(name).cloned().ok_or_else(|| {
                             bad(function, statement, "missing expanded owned return place")
                         })?,
-                        names.get(name).cloned().ok_or_else(|| {
+                        physical: names.get(name).cloned().ok_or_else(|| {
                             bad(function, statement, "missing expanded owned return value")
                         })?,
-                    ));
+                    };
                 }
-                Statement::Return(ReturnValue::Unit | ReturnValue::Scalar(_)) => {}
+                Statement::Return(ReturnValue::Scalar(value)) => {
+                    let physical = match value {
+                        BufferOperand::Scalar(name) => {
+                            names.get(name).cloned().ok_or_else(|| {
+                                bad(function, statement, "missing expanded scalar return value")
+                            })?
+                        }
+                        BufferOperand::Literal(value) => {
+                            let name = format!("$f{function}_c{}_ret{statement}", self.next_call);
+                            self.events.push(BufferEvent::Bind {
+                                binding: name.clone(),
+                                value: *value,
+                            });
+                            name
+                        }
+                    };
+                    returned = ExpandedReturn::Scalar(physical);
+                }
+                Statement::Return(ReturnValue::Unit) => returned = ExpandedReturn::Unit,
             }
         }
         Ok(returned)

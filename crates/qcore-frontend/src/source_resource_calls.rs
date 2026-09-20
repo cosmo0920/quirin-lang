@@ -9,8 +9,9 @@ use std::collections::BTreeMap;
 use qcore_core::resource_calls::{
     Argument, Function, Parameter, Program, ReturnValue, Statement, Type,
 };
-use qcore_core::std_buffer::BufferOperand;
+use qcore_core::std_buffer::{BufferEvent, BufferOperand};
 use qcore_core::typed_errors::{Effect, EffectRow};
+use qcore_core::usage::Usage;
 
 use crate::frontend::{DeclarationKind, SemanticPass, SourceDiagnostic, SourceProgram};
 use crate::lexer::{Span, Symbol, Token, TokenKind};
@@ -49,18 +50,26 @@ fn tokens_for(program: &SourceProgram, span: Span) -> Vec<&Token> {
         .collect()
 }
 
-fn parameter_type(source: &str, usage_one: bool) -> Option<Type> {
-    match (source.trim(), usage_one) {
-        ("i32", false) => Some(Type::I32),
-        ("own<bytes>", true) => Some(Type::OwnedBytes),
-        ("borrow<bytes>", false) => Some(Type::ReadBytes),
-        ("lend<bytes>", false) => Some(Type::WriteBytes),
+fn parameter_type(source: &str, usage: Option<Usage>) -> Option<Type> {
+    let compact = source
+        .chars()
+        .filter(|ch| !ch.is_whitespace())
+        .collect::<String>();
+    match (compact.as_str(), usage) {
+        ("i32", None) => Some(Type::I32),
+        ("own<bytes>", Some(Usage::ONE)) => Some(Type::OwnedBytes),
+        ("borrow<bytes>", None) => Some(Type::ReadBytes),
+        ("lend<bytes>", None) => Some(Type::WriteBytes),
         _ => None,
     }
 }
 
 fn result_type(source: &str) -> Option<Type> {
-    match source.trim() {
+    let compact = source
+        .chars()
+        .filter(|ch| !ch.is_whitespace())
+        .collect::<String>();
+    match compact.as_str() {
         "unit" => Some(Type::Unit),
         "i32" => Some(Type::I32),
         "own<bytes>" => Some(Type::OwnedBytes),
@@ -68,18 +77,15 @@ fn result_type(source: &str) -> Option<Type> {
     }
 }
 
-fn declared_effects(
-    tokens: &[TokenKind],
-    span: Span,
-) -> Result<Option<EffectRow>, SourceDiagnostic> {
+fn declared_effects(tokens: &[&Token], span: Span) -> Result<Option<EffectRow>, SourceDiagnostic> {
     let Some(index) = tokens
         .iter()
-        .position(|token| matches!(token, TokenKind::Word(word) if word == "effects"))
+        .position(|token| matches!(&token.kind, TokenKind::Word(word) if word == "effects"))
     else {
         return Ok(None);
     };
     if !matches!(
-        tokens.get(index + 1),
+        tokens.get(index + 1).map(|token| &token.kind),
         Some(TokenKind::Symbol(Symbol::LeftBrace))
     ) {
         return Err(diagnostic(span, "an effects row requires `{ ... }`"));
@@ -87,7 +93,7 @@ fn declared_effects(
     let mut effects = Vec::new();
     let mut cursor = index + 2;
     loop {
-        match tokens.get(cursor) {
+        match tokens.get(cursor).map(|token| &token.kind) {
             Some(TokenKind::Symbol(Symbol::RightBrace)) => break,
             Some(TokenKind::Word(name)) => {
                 effects.push(match name.as_str() {
@@ -101,7 +107,10 @@ fn declared_effects(
                     }
                 });
                 cursor += 1;
-                if matches!(tokens.get(cursor), Some(TokenKind::Symbol(Symbol::Comma))) {
+                if matches!(
+                    tokens.get(cursor).map(|token| &token.kind),
+                    Some(TokenKind::Symbol(Symbol::Comma))
+                ) {
                     cursor += 1;
                 }
             }
@@ -145,9 +154,15 @@ fn parse_arguments(
                 Argument::Borrow(name.to_owned())
             }
             Some("lend") => {
-                let name = word(tokens.get(at + 1).copied())
-                    .ok_or_else(|| diagnostic(span, "`lend` requires an owned bytes name"))?;
-                at += 2;
+                if !symbol(tokens.get(at + 1).copied(), Symbol::LeftParen) {
+                    return Err(diagnostic(span, "a write-loan argument is `lend(NAME)`"));
+                }
+                let name = word(tokens.get(at + 2).copied())
+                    .ok_or_else(|| diagnostic(span, "`lend(NAME)` requires an owned bytes name"))?;
+                if !symbol(tokens.get(at + 3).copied(), Symbol::RightParen) {
+                    return Err(diagnostic(span, "`lend(NAME)` is not closed"));
+                }
+                at += 4;
                 Argument::Lend(name.to_owned())
             }
             _ => {
@@ -173,6 +188,7 @@ fn parse_call(
     tokens: &[&Token],
     span: Span,
     functions: &BTreeMap<String, usize>,
+    shadowed: &BTreeMap<String, ()>,
 ) -> Result<Option<Statement>, SourceDiagnostic> {
     let (binding, name_at) = if word(tokens.first().copied()) == Some("let") {
         let Some(binding) = word(tokens.get(1).copied()) else {
@@ -188,6 +204,12 @@ fn parse_call(
     let Some(name) = word(tokens.get(name_at).copied()) else {
         return Ok(None);
     };
+    if shadowed.contains_key(name) && functions.contains_key(name) {
+        return Err(diagnostic(
+            span,
+            "a local or parameter shadows this helper; indirect calls are unsupported",
+        ));
+    }
     let Some(&callee) = functions.get(name) else {
         return Ok(None);
     };
@@ -234,16 +256,24 @@ fn parse_return(tokens: &[&Token], span: Span) -> Result<Option<Statement>, Sour
 pub fn has_resource_calls(program: &SourceProgram) -> bool {
     program.declarations.iter().any(|declaration| {
         declaration.value.kind == DeclarationKind::Function
-            && (declaration
+            && (declaration.value.parameters.iter().any(|parameter| {
+                parameter
+                    .type_source
+                    .chars()
+                    .filter(|ch| !ch.is_whitespace())
+                    .collect::<String>()
+                    .ends_with("<bytes>")
+            }) || declaration
                 .value
-                .parameters
-                .iter()
-                .any(|parameter| parameter.type_source.trim().ends_with("<bytes>"))
-                || declaration
-                    .value
-                    .result_type
-                    .as_ref()
-                    .is_some_and(|result| result.source.trim() == "own<bytes>"))
+                .result_type
+                .as_ref()
+                .is_some_and(|result| {
+                    result
+                        .source
+                        .chars()
+                        .filter(|ch| !ch.is_whitespace())
+                        .eq("own<bytes>".chars())
+                }))
     })
 }
 
@@ -284,11 +314,8 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
         }
         let mut parameters = Vec::new();
         for parameter in &declaration.value.parameters {
-            let usage_one = parameter
-                .usage
-                .as_ref()
-                .is_some_and(|usage| usage.value == qcore_core::usage::Usage::ONE);
-            let Some(ty) = parameter_type(&parameter.type_source, usage_one) else {
+            let usage = parameter.usage.as_ref().map(|usage| usage.value);
+            let Some(ty) = parameter_type(&parameter.type_source, usage) else {
                 diagnostics.push(diagnostic(
                     parameter.type_span,
                     "parameters require i32, own<bytes> use one, borrow<bytes>, or lend<bytes>; task Buffer is a distinct resource",
@@ -312,19 +339,30 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
             ));
             continue;
         };
-        let effects = match declared_effects(&declaration.value.tokens, scope) {
+        let Some(body) = &declaration.value.body else {
+            diagnostics.push(diagnostic(scope, "resource helper requires a body"));
+            continue;
+        };
+        let header = tokens_for(
+            program,
+            Span {
+                start: declaration.span.start,
+                end: body.span.start,
+            },
+        );
+        let effects = match declared_effects(&header, scope) {
             Ok(effects) => effects,
             Err(error) => {
                 diagnostics.push(error);
                 continue;
             }
         };
-        let Some(body) = &declaration.value.body else {
-            diagnostics.push(diagnostic(scope, "resource helper requires a body"));
-            continue;
-        };
         let mut body_ir = Vec::new();
         let mut spans = Vec::new();
+        let mut shadowed = parameters
+            .iter()
+            .map(|parameter| (parameter.name.clone(), ()))
+            .collect::<BTreeMap<_, _>>();
         for source_statement in &body.statements {
             if !source_statement.value.nested_blocks().is_empty() {
                 diagnostics.push(diagnostic(
@@ -336,7 +374,8 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
             let tokens = tokens_for(program, source_statement.span);
             let parsed = match parse_return(&tokens, source_statement.span) {
                 Ok(Some(statement)) => Ok(statement),
-                Ok(None) => match parse_call(&tokens, source_statement.span, &functions) {
+                Ok(None) => match parse_call(&tokens, source_statement.span, &functions, &shadowed)
+                {
                     Ok(Some(statement)) => Ok(statement),
                     Ok(None) => match crate::source_std_buffer::buffer_statement(
                         program,
@@ -355,6 +394,21 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
             };
             match parsed {
                 Ok(statement) => {
+                    match &statement {
+                        Statement::Buffer(BufferEvent::Bind { binding, .. })
+                        | Statement::Buffer(BufferEvent::Acquire { name: binding, .. })
+                        | Statement::Buffer(BufferEvent::Load { binding, .. })
+                        | Statement::Buffer(BufferEvent::Extent { binding, .. }) => {
+                            shadowed.insert(binding.clone(), ());
+                        }
+                        Statement::Call {
+                            binding: Some(binding),
+                            ..
+                        } => {
+                            shadowed.insert(binding.clone(), ());
+                        }
+                        _ => {}
+                    }
                     body_ir.push(statement);
                     spans.push(source_statement.span);
                 }

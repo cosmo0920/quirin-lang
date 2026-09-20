@@ -27,25 +27,28 @@ fn owned_round_trip_and_borrowed_processing_use_both_existing_checkers() {
     let inspect = function(
         "inspect",
         vec![parameter("x", Type::ReadBytes)],
-        Type::Unit,
+        Type::I32,
         vec![
             Statement::Buffer(BufferEvent::Load {
                 binding: "seen".into(),
                 name: "x".into(),
                 index: BufferOperand::Literal(0),
             }),
-            Statement::Return(ReturnValue::Unit),
+            Statement::Return(ReturnValue::Scalar(BufferOperand::Scalar("seen".into()))),
         ],
     );
     let fill = function(
         "fill",
-        vec![parameter("x", Type::WriteBytes)],
+        vec![
+            parameter("x", Type::WriteBytes),
+            parameter("value", Type::I32),
+        ],
         Type::Unit,
         vec![
             Statement::Buffer(BufferEvent::Store {
                 name: "x".into(),
                 index: BufferOperand::Literal(0),
-                value: BufferOperand::Literal(42),
+                value: BufferOperand::Scalar("value".into()),
             }),
             Statement::Return(ReturnValue::Unit),
         ],
@@ -56,14 +59,17 @@ fn owned_round_trip_and_borrowed_processing_use_both_existing_checkers() {
         Type::OwnedBytes,
         vec![
             Statement::Call {
-                binding: None,
+                binding: Some("seen".into()),
                 callee: 0,
                 arguments: vec![Argument::Borrow("x".into())],
             },
             Statement::Call {
                 binding: None,
                 callee: 1,
-                arguments: vec![Argument::Lend("x".into())],
+                arguments: vec![
+                    Argument::Lend("x".into()),
+                    Argument::Scalar(BufferOperand::Scalar("seen".into())),
+                ],
             },
             Statement::Return(ReturnValue::Move("x".into())),
         ],
@@ -97,7 +103,7 @@ fn owned_round_trip_and_borrowed_processing_use_both_existing_checkers() {
     })
     .unwrap();
     assert_eq!(checked.minimum_extents(0), Some([1].as_slice()));
-    assert_eq!(checked.minimum_extents(1), Some([1].as_slice()));
+    assert_eq!(checked.minimum_extents(1), Some([1, 0].as_slice()));
     assert_eq!(checked.certificate().releases.len(), 1);
     assert!(
         checked
@@ -326,4 +332,156 @@ fn acyclic_dag_expansion_is_bounded_before_it_can_grow_exponentially() {
     })
     .unwrap_err();
     assert_eq!(refusal.message, "resource helper expansion bound exceeded");
+}
+
+#[test]
+fn declaration_order_cannot_hide_a_call_chain_over_the_depth_bound() {
+    let mut functions = vec![function(
+        "leaf",
+        vec![],
+        Type::Unit,
+        vec![Statement::Return(ReturnValue::Unit)],
+    )];
+    for level in 1..=MAX_CALL_DEPTH {
+        functions.push(function(
+            &format!("f{level}"),
+            vec![],
+            Type::Unit,
+            vec![
+                Statement::Call {
+                    binding: None,
+                    callee: level - 1,
+                    arguments: vec![],
+                },
+                Statement::Return(ReturnValue::Unit),
+            ],
+        ));
+    }
+    let entry = functions.len() - 1;
+    assert_eq!(
+        check(Program { functions, entry }).unwrap_err().message,
+        "resource helper call depth bound exceeded"
+    );
+}
+
+#[test]
+fn caller_owned_value_may_not_survive_an_allocating_helper_failure() {
+    let make = function(
+        "make",
+        vec![],
+        Type::OwnedBytes,
+        vec![
+            Statement::Buffer(BufferEvent::Acquire {
+                name: "x".into(),
+                extent: 1,
+            }),
+            Statement::Return(ReturnValue::Move("x".into())),
+        ],
+    );
+    let main = function(
+        "main",
+        vec![],
+        Type::Unit,
+        vec![
+            Statement::Buffer(BufferEvent::Acquire {
+                name: "b".into(),
+                extent: 1,
+            }),
+            Statement::Call {
+                binding: Some("x".into()),
+                callee: 0,
+                arguments: vec![],
+            },
+            Statement::Buffer(BufferEvent::Release { name: "x".into() }),
+            Statement::Buffer(BufferEvent::Release { name: "b".into() }),
+            Statement::Return(ReturnValue::Unit),
+        ],
+    );
+    assert!(
+        check(Program {
+            functions: vec![make, main],
+            entry: 1
+        })
+        .unwrap_err()
+        .message
+        .contains("strand caller-owned bytes")
+    );
+}
+
+#[test]
+fn borrowed_owner_may_not_survive_allocation_failure_inside_helper() {
+    let helper = function(
+        "helper",
+        vec![parameter("view", Type::ReadBytes)],
+        Type::OwnedBytes,
+        vec![
+            Statement::Buffer(BufferEvent::Acquire {
+                name: "x".into(),
+                extent: 1,
+            }),
+            Statement::Return(ReturnValue::Move("x".into())),
+        ],
+    );
+    let main = function(
+        "main",
+        vec![],
+        Type::Unit,
+        vec![
+            Statement::Buffer(BufferEvent::Acquire {
+                name: "b".into(),
+                extent: 1,
+            }),
+            Statement::Call {
+                binding: Some("x".into()),
+                callee: 0,
+                arguments: vec![Argument::Borrow("b".into())],
+            },
+            Statement::Buffer(BufferEvent::Release { name: "x".into() }),
+            Statement::Buffer(BufferEvent::Release { name: "b".into() }),
+            Statement::Return(ReturnValue::Unit),
+        ],
+    );
+    assert!(
+        check(Program {
+            functions: vec![helper, main],
+            entry: 1
+        })
+        .unwrap_err()
+        .message
+        .contains("strand caller-owned bytes")
+    );
+}
+
+#[test]
+fn scalar_return_must_name_a_live_scalar_even_when_the_caller_discards_it() {
+    let bad_helper = function(
+        "bad",
+        vec![],
+        Type::I32,
+        vec![Statement::Return(ReturnValue::Scalar(
+            BufferOperand::Scalar("missing".into()),
+        ))],
+    );
+    let main = function(
+        "main",
+        vec![],
+        Type::Unit,
+        vec![
+            Statement::Call {
+                binding: Some("ignored".into()),
+                callee: 0,
+                arguments: vec![],
+            },
+            Statement::Return(ReturnValue::Unit),
+        ],
+    );
+    assert!(
+        check(Program {
+            functions: vec![bad_helper, main],
+            entry: 1
+        })
+        .unwrap_err()
+        .message
+        .contains("live i32 binding")
+    );
 }
