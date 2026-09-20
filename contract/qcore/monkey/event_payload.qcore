@@ -1,0 +1,44 @@
+module contract;
+
+// Executable policy for CYCLE18-CB-EVENT-PAYLOAD-BOUNDARY. Rust derives these
+// facts from a sealed typed-C SourceSummary and from exact observation/binding
+// bytes held by a validated composition context. Storage extent and exclusive
+// write authority remain explicit contextual premises; this policy does not
+// manufacture allocation provenance or a universal safety verdict.
+extern fn cb_event_source_projection() -> unit
+contract {
+    ensures normal function == "cb_event";
+    ensures normal path_count == 4;
+    ensures normal writes_per_path == "4,4,4,4";
+    ensures normal event_identity == "param[2]";
+    ensures normal map_identity == "load(param[2].data)";
+    ensures normal context_identity == "load(load(param[2].data).ctx)";
+    ensures normal fired_base_identity == "load(load(load(param[2].data).ctx).fired)";
+    ensures normal fired_index_identity == "load(load(load(param[2].data).ctx).fired_count)";
+    ensures normal allocation_function == "mk_mem_alloc_z";
+    ensures normal allocation_argument == "sizeof(struct mk_event)*param[0]";
+    ensures normal fired_store == "ctx.fired=allocation";
+    ensures normal queue_size_store == "ctx.queue_size=param[0]";
+};
+
+extern fn contextual_payload_boundary() -> unit
+contract {
+    ensures normal checked_paths == selected_paths;
+};
+
+extern fn contextual_payload_access() -> unit
+contract {
+    ensures normal index >= 0;
+    ensures normal index < capacity;
+    ensures normal index < signed_max;
+    ensures normal capacity > 0;
+    ensures normal element_size > 0;
+    ensures normal offset == index * element_size;
+    ensures normal extent == capacity * element_size;
+    ensures normal offset < extent;
+    ensures normal target == fired_base + offset;
+    ensures normal context_identity == authority_context;
+    ensures normal fired_base == authority_fired_base;
+    ensures normal fired_fields == "data,fd,mask";
+    ensures normal context_fields == "fired_count";
+};
