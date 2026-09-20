@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "source_set": "cycle18-task-handoff",
+  "pins": {
+    "fixture": {
+      "git_commit": "229578d8ad617803bed3f02bcc1f0f59251d560d",
+      "clean_paths": [],
+      "description": "checked-in bounded callback task-handoff fixture"
+    }
+  },
+  "libraries": {
+    "fixture": {
+      "pin": "fixture",
+      "source_roots": [],
+      "audited_files": [],
+      "source_witnesses": [],
+      "permitted_mechanisms": [],
+      "operation_summaries": {},
+      "api_dispositions": {},
+      "accepted_builds": [],
+      "required_evidence": [],
+      "typed_import": {
+        "functions": {
+          "cycle18_taskful_callback": "callback",
+          "cycle18_taskful_after_return": "wrapper"
+        },
+        "records": [],
+        "sizeof_types": [],
+        "signature_constraints": {
+          "cycle18_taskful_callback": {
+            "result": "void",
+            "parameters": ["int", "short", "void *"]
+          },
+          "cycle18_taskful_after_return": {
+            "result": "void",
+            "parameters": []
+          }
+        },
+        "restricted_calls": [
+          "abort",
+          "qcore_task_spawn",
+          "qcore_defer_register",
+          "qcore_task_release",
+          "qcore_task_cancel_request",
+          "qcore_task_wait_cancel_ack",
+          "qcore_task_join",
+          "qcore_defer_start",
+          "qcore_defer_complete",
+          "qcore_argument_drop",
+          "qcore_callback_teardown",
+          "qcore_observe_callback_enter",
+          "qcore_observe_callback_exit",
+          "record_prefix",
+          "record_suffix",
+          "fputs"
+        ]
+      },
+      "callback_summaries": {},
+      "boolean_field_models": [],
+      "provider": null
+    }
+  },
+  "resource_contract_manifest": null,
+  "provider_manifests": []
+}

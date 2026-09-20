@@ -1,0 +1,60 @@
+module contract;
+
+// Executable policy for the complete selected Monkey callback inventory and
+// the declared task/defer effects of every opaque callee in its eight paths.
+
+extern fn selected_callbacks() -> unit
+contract {
+    ensures normal source_revision == "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
+    ensures normal callback_names == "cb_event,cb_timeout,cb_wait_2_timeout";
+    ensures normal path_counts == "4,3,1";
+    ensures normal total_paths == 8;
+};
+
+extern fn selected_callback_identity() -> unit
+contract {
+    ensures normal (callback == "cb_event") or (callback == "cb_timeout") or (callback == "cb_wait_2_timeout");
+    ensures normal (signature == "void (int, short, void *)") or (signature == "void (evutil_socket_t, short, void *)");
+    ensures normal library == "monkey";
+    ensures normal source_set == "fluent-bit";
+    ensures normal import_role == "Callback";
+    ensures normal profile_digest != "";
+};
+
+extern fn effect_errno_location() -> unit
+contract { ensures normal callee == "__errno_location"; ensures normal task_spawn == 0; ensures normal defer == 0; };
+extern fn effect_event_del() -> unit
+contract { ensures normal callee == "event_del"; ensures normal task_spawn == 0; ensures normal defer == 0; };
+extern fn effect_event_free() -> unit
+contract { ensures normal callee == "event_free"; ensures normal task_spawn == 0; ensures normal defer == 0; };
+extern fn effect_evutil_closesocket() -> unit
+contract { ensures normal callee == "evutil_closesocket"; ensures normal task_spawn == 0; ensures normal defer == 0; };
+extern fn effect_mk_mem_free() -> unit
+contract { ensures normal callee == "mk_mem_free"; ensures normal task_spawn == 0; ensures normal defer == 0; };
+extern fn effect_perror() -> unit
+contract { ensures normal callee == "perror"; ensures normal task_spawn == 0; ensures normal defer == 0; };
+extern fn effect_send() -> unit
+contract { ensures normal callee == "send"; ensures normal task_spawn == 0; ensures normal defer == 0; };
+
+extern fn bounded_no_task_observation() -> unit
+contract {
+    ensures normal selected_callback_count == 3;
+    ensures normal observed_callback_count == 3;
+    ensures normal task_action_count == 0;
+    ensures normal deferred_action_count == 0;
+    ensures normal callback_boundaries_complete == 1;
+    ensures normal task_lifecycle_complete == 1;
+    ensures normal deferred_lifecycle_complete == 1;
+};
+
+extern fn taskful_fixture_source() -> unit
+contract {
+    ensures normal callback == "cycle18_taskful_callback";
+    ensures normal callback_calls == "qcore_task_spawn(1,10,100,1);qcore_defer_register(1,20,100,1)";
+    ensures normal after_calls == "qcore_task_release(10);qcore_task_cancel_request(1,10);qcore_task_wait_cancel_ack(10);qcore_task_join(1,10);qcore_defer_start(20);qcore_defer_complete(20);qcore_argument_drop(100);qcore_callback_teardown(1)";
+    ensures normal callback_id == 1;
+    ensures normal task_id == 10;
+    ensures normal work_id == 20;
+    ensures normal argument_id == 100;
+    ensures normal retains_argument == 1;
+};

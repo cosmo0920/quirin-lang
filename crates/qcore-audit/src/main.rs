@@ -7,6 +7,50 @@ fn main() -> ExitCode {
         eprintln!("usage: quirin-audit CONFIG.json");
         return ExitCode::FAILURE;
     };
+    if path == "callback-task-handoff" {
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: quirin-audit callback-task-handoff CONFIG.json");
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: quirin-audit callback-task-handoff CONFIG.json");
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::callback_task_handoff::run_callback_task_handoff_config(
+            &PathBuf::from(config),
+        ) {
+            Ok(()) => {
+                println!("Bounded callback task-handoff obligations checked; report written.");
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("callback-task-handoff audit rejected (Unknown): {error}");
+                ExitCode::FAILURE
+            }
+        };
+    }
+    if path == "callback-task-handoff-fixture" {
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: quirin-audit callback-task-handoff-fixture CONFIG.json");
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: quirin-audit callback-task-handoff-fixture CONFIG.json");
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::callback_task_handoff::run_taskful_fixture_config(&PathBuf::from(
+            config,
+        )) {
+            Ok(()) => {
+                println!("Bounded taskful callback handoff checked; report written.");
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("taskful callback handoff audit rejected (Unknown): {error}");
+                ExitCode::FAILURE
+            }
+        };
+    }
     if path == "timeout-teardown" {
         let Some(config) = arguments.next() else {
             eprintln!("usage: quirin-audit timeout-teardown CONFIG.json");

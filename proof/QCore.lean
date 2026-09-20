@@ -206,5 +206,6 @@ import QCore.MonkeyWaitSourcePolicy
 import QCore.WaitFailurePaths
 import QCore.EventPayloadBoundary
 import QCore.TimeoutTeardown
+import QCore.CallbackTaskHandoff
 
 /-! The executable formal core of QCore-C revision 0.1. -/
