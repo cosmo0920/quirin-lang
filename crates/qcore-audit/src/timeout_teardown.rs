@@ -590,6 +590,7 @@ pub(crate) fn prepare_timeout_teardown(
             "Runtime and linkage records are producer-supplied evidence, not attestation",
             "The peer endpoint close belongs to the enclosing caller, not cb_timeout"]
     });
+    let monkey_revision = aggregate_identity.revision.clone();
     crate::cycle18_inputs::PreparedAudit::new(
         aggregate_identity,
         crate::cycle18_inputs::Timeout {
@@ -602,4 +603,9 @@ pub(crate) fn prepare_timeout_teardown(
         protected_files,
         protected_directories,
     )
+    .map(|prepared| {
+        prepared
+            .with_checkout_revision(resolve(base, &config.fluent_checkout), monkey_revision)
+            .with_checkout_revision(resolve(base, &config.libevent_checkout), libevent_revision)
+    })
 }

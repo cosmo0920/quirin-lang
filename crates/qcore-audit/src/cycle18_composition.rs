@@ -8,6 +8,7 @@ use qcore_verification::cycle18_composition::{
 };
 use qcore_verification::event_payload::{EventPayloadEvidence, declared_event_payload_callback};
 use serde::Deserialize;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -44,6 +45,23 @@ fn selected<'a>(sources: &'a [SourceSummary], name: &str) -> Result<&'a SourceSu
             "expected exactly one independently imported {name}"
         )),
     }
+}
+
+fn require_publishable_aggregate(
+    joined: &BTreeSet<String>,
+    refused: &BTreeMap<String, String>,
+) -> Result<(), String> {
+    let expected = BTreeSet::from([
+        "cb_event".to_owned(),
+        "cb_timeout".to_owned(),
+        "cb_wait_2_timeout".to_owned(),
+    ]);
+    if joined != &expected || !refused.is_empty() {
+        return Err(format!(
+            "aggregate publication requires exactly {expected:?} with no refused evidence; joined={joined:?}, refused={refused:?}"
+        ));
+    }
+    Ok(())
 }
 
 pub fn run_cycle18_composition_config(path: &Path) -> Result<(), String> {
@@ -96,6 +114,10 @@ pub fn run_cycle18_composition_config(path: &Path) -> Result<(), String> {
         caller_summaries: &[],
     })
     .map_err(|error| error.to_string())?;
+    require_publishable_aggregate(
+        &aggregate.joined_evidence_families,
+        &aggregate.refused_evidence_families,
+    )?;
     let mut protected = vec![path.to_path_buf(), policy_path.clone()];
     let mut directories = Vec::new();
     for (files, dirs) in [
@@ -108,6 +130,14 @@ pub fn run_cycle18_composition_config(path: &Path) -> Result<(), String> {
         directories.extend(dirs.iter().cloned());
     }
     let destination = resolve(&config.report);
+    for leaf_report in [
+        wait.report(),
+        failures.report(),
+        payload.report(),
+        timeout.report(),
+    ] {
+        crate::observed_wait::reject_report_destination_alias(&destination, leaf_report)?;
+    }
     crate::observed_wait::reject_report_aliases(&destination, &protected, &directories)?;
     wait.recheck()?;
     failures.recheck()?;
@@ -134,4 +164,29 @@ pub fn run_cycle18_composition_config(path: &Path) -> Result<(), String> {
         &destination,
         &serde_json::to_vec_pretty(&report).map_err(|error| error.to_string())?,
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn partial_evidence_join_refuses_aggregate_publication() {
+        let partial = BTreeSet::from(["cb_event".into(), "cb_timeout".into()]);
+        assert!(require_publishable_aggregate(&partial, &BTreeMap::new()).is_err());
+
+        let exact = BTreeSet::from([
+            "cb_event".into(),
+            "cb_timeout".into(),
+            "cb_wait_2_timeout".into(),
+        ]);
+        assert!(require_publishable_aggregate(&exact, &BTreeMap::new()).is_ok());
+        assert!(
+            require_publishable_aggregate(
+                &exact,
+                &BTreeMap::from([("timeout".into(), "refused".into())]),
+            )
+            .is_err()
+        );
+    }
 }

@@ -302,7 +302,7 @@ pub(crate) fn prepare_event_payload(
             monkey_source_sha256: source.source_sha256.clone(),
             monkey_profile_sha256: source.profile.manifest_digest().into(),
             monkey_build_sha256: source.build_sha256.clone(),
-            libevent_revision: revision,
+            libevent_revision: revision.clone(),
             libevent_source_sha256: sha256_hex(
                 &serde_json::to_vec(&bundle.files).map_err(|e| e.to_string())?,
             ),
@@ -378,11 +378,12 @@ pub(crate) fn prepare_event_payload(
     let mut directories = source.protected_directories;
     directories.extend([
         resolve(&config.libevent_profile),
-        checkout,
+        checkout.clone(),
         resolve(&config.libevent_build),
     ]);
     reject_report_aliases(&resolve(&config.report), &files, &directories)?;
     let report = serde_json::json!({"schema_version":1,"status":"bounded_payload_checked","context":context,"payload":checked,"limitations":["Exclusive write authority is caller-declared","Runtime and linkage evidence is producer-supplied","Four bounded executions; no universal safety or aggregate acceptance promotion"]});
+    let monkey_revision = aggregate_identity.revision.clone();
     crate::cycle18_inputs::PreparedAudit::new(
         aggregate_identity,
         crate::cycle18_inputs::Payload {
@@ -399,4 +400,9 @@ pub(crate) fn prepare_event_payload(
         files,
         directories,
     )
+    .map(|prepared| {
+        prepared
+            .with_checkout_revision(resolve(&config.fluent_checkout), monkey_revision)
+            .with_checkout_revision(checkout, revision)
+    })
 }

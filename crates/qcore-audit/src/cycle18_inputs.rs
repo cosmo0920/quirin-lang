@@ -8,6 +8,7 @@ use qcore_verification::timeout_teardown::{
     TimeoutTeardownEvidence, TimeoutTeardownSourceProjection,
 };
 use std::path::PathBuf;
+use std::process::Command;
 
 pub(crate) struct SourceIdentity {
     pub revision: String,
@@ -68,6 +69,7 @@ pub(crate) struct PreparedAudit<T> {
     pub protected_files: Vec<PathBuf>,
     pub protected_directories: Vec<PathBuf>,
     snapshots: Vec<(PathBuf, String)>,
+    checkout_revisions: Vec<(PathBuf, String)>,
 }
 
 impl<T> PreparedAudit<T> {
@@ -95,7 +97,17 @@ impl<T> PreparedAudit<T> {
             protected_files,
             protected_directories,
             snapshots,
+            checkout_revisions: Vec::new(),
         })
+    }
+
+    pub fn with_checkout_revision(mut self, checkout: PathBuf, revision: String) -> Self {
+        self.checkout_revisions.push((checkout, revision));
+        self
+    }
+
+    pub fn report(&self) -> &std::path::Path {
+        &self.report
     }
 
     pub fn recheck(&self) -> Result<(), String> {
@@ -103,6 +115,25 @@ impl<T> PreparedAudit<T> {
             let actual = std::fs::read(path).map_err(|error| error.to_string())?;
             if sha256_hex(&actual) != *expected {
                 return Err(format!("prepared audit input changed: {}", path.display()));
+            }
+        }
+        for (checkout, expected) in &self.checkout_revisions {
+            let output = Command::new("git")
+                .arg("-C")
+                .arg(checkout)
+                .args(["rev-parse", "--verify", "HEAD^{commit}"])
+                .output()
+                .map_err(|error| format!("{}: {error}", checkout.display()))?;
+            if !output.status.success()
+                || String::from_utf8(output.stdout)
+                    .map_err(|error| error.to_string())?
+                    .trim()
+                    != expected
+            {
+                return Err(format!(
+                    "prepared audit checkout revision changed: {}",
+                    checkout.display()
+                ));
             }
         }
         Ok(())
@@ -182,6 +213,67 @@ mod tests {
         .unwrap();
         assert!(audit.publish().unwrap_err().contains("aliases"));
         assert_eq!(std::fs::read(&input).unwrap(), b"verified evidence");
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn changed_checkout_revision_refuses_even_when_selected_bytes_are_unchanged() {
+        let root = directory();
+        let input = root.join("input");
+        let output = root.join("output");
+        std::fs::write(&input, b"verified evidence").unwrap();
+        let git = |arguments: &[&str]| {
+            let status = Command::new("git")
+                .args(arguments)
+                .current_dir(&root)
+                .status()
+                .unwrap();
+            assert!(status.success());
+        };
+        git(&["init", "-q"]);
+        git(&["add", "input"]);
+        git(&[
+            "-c",
+            "user.name=QCore Test",
+            "-c",
+            "user.email=qcore@example.invalid",
+            "commit",
+            "-qm",
+            "initial",
+        ]);
+        let revision = String::from_utf8(
+            Command::new("git")
+                .args(["rev-parse", "HEAD"])
+                .current_dir(&root)
+                .output()
+                .unwrap()
+                .stdout,
+        )
+        .unwrap()
+        .trim()
+        .to_owned();
+        let audit = PreparedAudit::new(
+            identity(),
+            (),
+            output.clone(),
+            b"report".to_vec(),
+            vec![input],
+            vec![],
+        )
+        .unwrap()
+        .with_checkout_revision(root.clone(), revision);
+        git(&[
+            "-c",
+            "user.name=QCore Test",
+            "-c",
+            "user.email=qcore@example.invalid",
+            "commit",
+            "--allow-empty",
+            "-qm",
+            "identity changed",
+        ]);
+        assert!(audit.recheck().unwrap_err().contains("revision changed"));
+        assert!(!output.exists());
         std::fs::remove_dir_all(root).unwrap();
     }
 }

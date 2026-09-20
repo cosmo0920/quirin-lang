@@ -46,7 +46,7 @@ fn read(path: &Path) -> Result<Vec<u8>, String> {
     fs::read(path).map_err(|error| format!("{}: {error}", path.display()))
 }
 
-fn report_destination(path: &Path) -> Result<PathBuf, String> {
+pub(crate) fn report_destination(path: &Path) -> Result<PathBuf, String> {
     report_destination_with_depth(path, 0)
 }
 
@@ -146,6 +146,23 @@ pub(crate) fn reject_report_aliases(
                 directory.display()
             ));
         }
+    }
+    Ok(())
+}
+
+/// Refuse two report destinations that resolve to the same planned path or
+/// existing file. Unlike protected evidence, either report may not exist yet.
+pub(crate) fn reject_report_destination_alias(
+    report: &Path,
+    protected_report: &Path,
+) -> Result<(), String> {
+    let destination = report_destination(report)?;
+    let protected_destination = report_destination(protected_report)?;
+    if destination == protected_destination || same_existing_file(report, protected_report) {
+        return Err(format!(
+            "aggregate report aliases prepared leaf report: {}",
+            protected_report.display()
+        ));
     }
     Ok(())
 }
@@ -354,7 +371,7 @@ pub(crate) fn prepare_observed_wait(
             monkey_source_sha256: source.source_sha256,
             monkey_profile_sha256: source.profile.manifest_digest().into(),
             monkey_build_sha256: source.build_sha256,
-            libevent_revision: revision,
+            libevent_revision: revision.clone(),
             libevent_source_sha256: sha256_hex(
                 &serde_json::to_vec(&bundle.files).map_err(|e| e.to_string())?,
             ),
@@ -425,6 +442,7 @@ pub(crate) fn prepare_observed_wait(
             "One observed success path; unobserved failure paths remain Unknown",
             "No callback coverage or Cycle 18 acceptance promotion"]
     });
+    let monkey_revision = aggregate_identity.revision.clone();
     crate::cycle18_inputs::PreparedAudit::new(
         aggregate_identity,
         crate::cycle18_inputs::ObservedWait {
@@ -439,11 +457,16 @@ pub(crate) fn prepare_observed_wait(
         protected_files,
         protected_directories,
     )
+    .map(|prepared| {
+        prepared
+            .with_checkout_revision(resolve(&config.fluent_checkout), monkey_revision)
+            .with_checkout_revision(checkout, revision)
+    })
 }
 
 #[cfg(test)]
 mod tests {
-    use super::reject_report_aliases;
+    use super::{reject_report_aliases, reject_report_destination_alias};
     use std::fs;
     use std::path::{Path, PathBuf};
     use std::sync::atomic::{AtomicU64, Ordering};
@@ -525,5 +548,24 @@ mod tests {
             reject_report_aliases(&dangling_symbolic, &[], std::slice::from_ref(&protected),)
                 .is_err()
         );
+    }
+
+    #[test]
+    fn planned_leaf_report_alias_is_refused_before_either_report_exists() {
+        let scratch = Scratch::new();
+        let report = scratch.path().join("report.json");
+        assert!(reject_report_destination_alias(&report, &report).is_err());
+        assert!(!report.exists());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn existing_hard_linked_leaf_report_alias_is_refused() {
+        let scratch = Scratch::new();
+        let leaf = scratch.path().join("leaf.json");
+        let aggregate = scratch.path().join("aggregate.json");
+        fs::write(&leaf, b"leaf").unwrap();
+        fs::hard_link(&leaf, &aggregate).unwrap();
+        assert!(reject_report_destination_alias(&aggregate, &leaf).is_err());
     }
 }
