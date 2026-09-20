@@ -39,6 +39,14 @@ lifetimes end. Generation 1 is assigned by the observer to each singleton
 creation/lifetime in this profile; reuse and later generations are outside this
 profile.
 
+Interposition changes the literal Libevent registration: `qcore_event_new`
+registers `observed_callback` and the dispatcher buffer, then the trampoline
+invokes the captured source callback with its captured source argument. The
+trace callback and argument identities describe that checked logical source
+registration and forwarding, not the literal callback/argument stored in the
+instrumented Libevent event. Instrumentation transparency is therefore an
+explicit trusted premise of this observation.
+
 The reproduced Linux run built and linked `libevent_core.a` from the actual
 `third_party/libevent` revision
 `d82464a277d0f42703702c4dfd9af6af38595a83`, with Clang 21.1.8 and address and
@@ -51,6 +59,12 @@ Monkey source with the pinned Cycle 18 Libevent include paths before bundled
 paths. It labels that object as a source-configuration witness, not as a linked
 Monkey archive. The linked harness object contains the included Monkey source
 and has its own digest.
+
+The Libevent build has thread support configured, but the executable links only
+`libevent_core.a`: it neither links a pthread adapter archive nor calls
+`evthread_use_pthreads`. The harness uses `pthread_self` only to capture the
+single dispatcher identity. This run supplies no cross-thread Libevent or
+cross-context safety evidence.
 
 Reproduce from the repository root, substituting private output directories:
 
