@@ -26,6 +26,7 @@ pub mod filesystem_chunk_close_composition;
 pub mod frame_source;
 pub mod memory_close_composition;
 pub mod monkey_wait_projection;
+pub mod native_platform_matrix;
 pub mod source_effect;
 pub mod teardown_source;
 pub mod timed_wait_observation_wire;
