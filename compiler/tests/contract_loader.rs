@@ -777,8 +777,8 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // and `librdkafka/topic_partition.qcore`. Every one of the ten
     // declarations is the NEUTRAL ELEMENT — every formal borrowed, result
     // none — so none can contradict a faithful derived summary.
-    // 93 -> 95: Cycle 18 aggregate/platform policies belong to the typed interpreter.
-    assert_eq!(modules.len(), 95, "corpus module count");
+    // 93 -> 96: Cycle 18 aggregate/platform/task policies belong to the typed interpreter.
+    assert_eq!(modules.len(), 96, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -886,7 +886,7 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // All 34 Cycle 18 typed-policy declarations are deliberately rejected by resource-v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (33, 59, 195)
+        (33, 59, 207)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

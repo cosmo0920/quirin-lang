@@ -82,7 +82,7 @@ including cross-topic rules, before editing; the index is not a substitute.
     from a **frozen** archive rather than from disk
     (`corpus.contract_modules_per_directory`, `corpus.contract_clause_pin`, both
     from card B00's ledger) and therefore describe the 59-module checkpoint
-    beside a live corpus (93 after Cycle 18 priority-one integration) — recorded as
+    beside a live corpus (96 after Cycle 18 broader integration) — recorded as
     `D02-B00-LEDGER-SNAPSHOT`, to be repaired by
     publishing provenance beside them, never by editing the archive.
     `wave9-gen-reason`, `wave17-gen-ctreasons`, `wave17-corpus`.

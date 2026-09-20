@@ -540,6 +540,50 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/callback_binding.qcore", "binding_call_arguments", 2),
     ("monkey/callback_binding.qcore", "binding_call_interval", 3),
     ("monkey/callback_binding.qcore", "binding_runtime_effect", 2),
+    (
+        "monkey/callback_task_handoff.qcore",
+        "selected_callbacks",
+        4,
+    ),
+    (
+        "monkey/callback_task_handoff.qcore",
+        "selected_callback_identity",
+        6,
+    ),
+    (
+        "monkey/callback_task_handoff.qcore",
+        "effect_errno_location",
+        3,
+    ),
+    ("monkey/callback_task_handoff.qcore", "effect_event_del", 3),
+    ("monkey/callback_task_handoff.qcore", "effect_event_free", 3),
+    (
+        "monkey/callback_task_handoff.qcore",
+        "effect_evutil_closesocket",
+        3,
+    ),
+    (
+        "monkey/callback_task_handoff.qcore",
+        "effect_mk_mem_free",
+        3,
+    ),
+    ("monkey/callback_task_handoff.qcore", "effect_perror", 3),
+    ("monkey/callback_task_handoff.qcore", "effect_send", 3),
+    (
+        "monkey/callback_task_handoff.qcore",
+        "bounded_no_task_observation",
+        7,
+    ),
+    (
+        "monkey/callback_task_handoff.qcore",
+        "taskful_fixture_source",
+        16,
+    ),
+    (
+        "monkey/callback_task_handoff.qcore",
+        "taskful_fixture_primitives",
+        12,
+    ),
     ("monkey/composition.qcore", "evutil_socketpair", 3),
     ("monkey/composition.qcore", "evutil_socket_geterror", 2),
     // Deliberate pin update (card O03-U5): the superseded
@@ -626,7 +670,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     (
         "monkey/native_platform_matrix.qcore",
         "native_platform_source_identity",
-        1,
+        3,
     ),
     (
         "monkey/native_platform_matrix.qcore",
@@ -921,8 +965,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // and the `set_result` / `otlp_kvpair_list_destroy` /
     // `destroy_context_list` families, with every reading published in
     // `docs/reports/w37-corpus-contracts-4/README.md`.
-    // 93 -> 95: Cycle 18 aggregate and native platform executable policies.
-    assert_eq!(sources.len(), 95, "unexpected contract corpus size");
+    // 93 -> 96: Cycle 18 aggregate, platform and task-handoff executable policies.
+    assert_eq!(sources.len(), 96, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

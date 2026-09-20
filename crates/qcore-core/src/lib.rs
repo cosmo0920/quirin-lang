@@ -13,6 +13,7 @@ pub mod ast;
 pub mod atomic_publication;
 pub mod c_emit;
 pub mod c_program;
+pub mod callback_task_handoff;
 pub mod capacity_boundary;
 pub mod cfg;
 pub mod chunk_integrity;

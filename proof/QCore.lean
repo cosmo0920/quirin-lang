@@ -208,5 +208,6 @@ import QCore.EventPayloadBoundary
 import QCore.TimeoutTeardown
 import QCore.Cycle18Composition
 import QCore.NativePlatformMatrix
+import QCore.CallbackTaskHandoff
 
 /-! The executable formal core of QCore-C revision 0.1. -/
