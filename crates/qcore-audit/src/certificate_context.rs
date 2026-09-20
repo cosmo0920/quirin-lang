@@ -102,12 +102,12 @@ pub struct ExpectedAuditCertificateContext {
 /// configured audit orchestration. Contract identity is derived from the
 /// certificate's analyzed contract environment, never supplied as a string.
 pub fn bind_audit_legacy_safety_certificate(
-    certificate: LegacySafetyCertificate,
+    certificate: &LegacySafetyCertificate,
     compile_task_identity: CompileTaskIdentity,
     source_profile_sha256: &str,
     contract_trust_policy: AuditContractTrustPolicy,
 ) -> Result<AuditBoundLegacySafetyCertificate, String> {
-    compile_task_identity.validate_certificate_binding(&certificate)?;
+    compile_task_identity.validate_certificate_binding(certificate)?;
     let trust_context = AuditTrustContextIdentity::derive(
         &certificate.contracts,
         source_profile_sha256,
@@ -115,7 +115,7 @@ pub fn bind_audit_legacy_safety_certificate(
     )?;
     trust_context.validate_compile_task(&compile_task_identity)?;
     Ok(AuditBoundLegacySafetyCertificate {
-        certificate,
+        certificate: certificate.clone(),
         compile_task_identity,
         trust_context,
     })

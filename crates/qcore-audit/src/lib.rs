@@ -29,7 +29,7 @@ use qcore_schemas::profile::{LibraryProfile, UnitSelection, WitnessCheck};
 use serde::{Deserialize, Serialize};
 
 use compile_db::{CompileEntry, compile_entries, compiler_options};
-use projection::AuditCounts;
+use projection::{AuditCounts, PreparedAuditCertificateContext};
 use report::{AuditReport, UnitRefusal};
 
 #[derive(Debug, Deserialize)]
@@ -428,8 +428,10 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
                 &file,
                 &prepared,
                 &contracts,
-                &identity,
-                &source_profile_sha256,
+                PreparedAuditCertificateContext {
+                    compile_task_identity: &identity,
+                    source_profile_sha256: &source_profile_sha256,
+                },
                 &mut report,
                 &mut counts,
             )?;

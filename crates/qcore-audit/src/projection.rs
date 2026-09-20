@@ -47,6 +47,12 @@ pub struct AuditCounts {
     pub line_marked_preprocessing_elapsed_us: u64,
 }
 
+/// Audit-owned context supplied beside one immutable prepared unit.
+pub struct PreparedAuditCertificateContext<'a> {
+    pub compile_task_identity: &'a CompileTaskIdentity,
+    pub source_profile_sha256: &'a str,
+}
+
 /// The summary a result carries, whatever its verdict.
 fn summary_of(
     result: &Result<UnrestrictedLegacyResult, LegacyCError>,
@@ -154,11 +160,14 @@ pub fn project_prepared_unit(
     file: &str,
     prepared: &PreparedTranslationUnit,
     contracts: &ResourceContracts,
-    compile_task_identity: &CompileTaskIdentity,
-    source_profile_sha256: &str,
+    certificate_context: PreparedAuditCertificateContext<'_>,
     report: &mut AuditReport,
     counts: &mut AuditCounts,
 ) -> Result<(), String> {
+    let PreparedAuditCertificateContext {
+        compile_task_identity,
+        source_profile_sha256,
+    } = certificate_context;
     let metrics = prepared.metrics();
     counts.prepared_units += 1;
     counts.preparation_clang_invocations += usize::from(metrics.clang_invocations());
@@ -191,21 +200,31 @@ pub fn project_prepared_unit(
     let result = match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
             let policy = AuditContractTrustPolicy::DeclaredSourcesAreTrustedAssumptions;
-            let expected = expected_audit_certificate_context(
-                prepared,
-                compile_task_identity.clone(),
-                contracts,
-                source_profile_sha256,
-                policy,
-            )?;
-            let bound = bind_audit_legacy_safety_certificate(
-                certificate,
-                compile_task_identity.clone(),
-                source_profile_sha256,
-                policy,
-            )?;
-            check_audit_legacy_safety_certificate_for(&bound, &expected)?;
-            Ok(UnrestrictedLegacyResult::Safe(bound.certificate))
+            let admission = (|| {
+                let expected = expected_audit_certificate_context(
+                    prepared,
+                    compile_task_identity.clone(),
+                    contracts,
+                    source_profile_sha256,
+                    policy,
+                )?;
+                let bound = bind_audit_legacy_safety_certificate(
+                    &certificate,
+                    compile_task_identity.clone(),
+                    source_profile_sha256,
+                    policy,
+                )?;
+                check_audit_legacy_safety_certificate_for(&bound, &expected)?;
+                Ok::<_, String>(bound)
+            })();
+            match admission {
+                Ok(bound) => Ok(UnrestrictedLegacyResult::Safe(bound.certificate)),
+                Err(reason) => Ok(UnrestrictedLegacyResult::Unknown {
+                    preprocessed_source: certificate.preprocessed_source,
+                    reason: format!("certificate context binding refused: {reason}"),
+                    partial: Some(certificate.summary),
+                }),
+            }
         }
         other => other,
     };

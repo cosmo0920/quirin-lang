@@ -10,6 +10,10 @@ use qcore_audit::certificate_context::{
 use qcore_audit::compile_db::{
     CompileEntry, CompileTaskIdentity, EffectiveInput, compile_task_identity, compiler_options,
 };
+use qcore_audit::projection::{
+    AuditCounts, PreparedAuditCertificateContext, project_prepared_unit,
+};
+use qcore_audit::report::AuditReport;
 use qcore_c_gateway::ClangIdentity;
 use qcore_c_gateway::legacy_c::{
     C11TranslationUnit, LegacyFunctionScope, UnrestrictedLegacyResult,
@@ -158,7 +162,7 @@ fn audit_acceptance_binds_compile_contract_profile_and_trust_context() {
     };
     let policy = AuditContractTrustPolicy::DeclaredSourcesAreTrustedAssumptions;
     let bound =
-        bind_audit_legacy_safety_certificate(certificate, identity.clone(), &profile, policy)
+        bind_audit_legacy_safety_certificate(&certificate, identity.clone(), &profile, policy)
             .unwrap();
     let expected = expected_audit_certificate_context(
         &prepared,
@@ -330,7 +334,7 @@ fn coherent_substitution_and_missing_provenance_fail_closed() {
         other => panic!("expected substituted Safe: {other:?}"),
     };
     let substituted_bound = bind_audit_legacy_safety_certificate(
-        substituted_certificate,
+        &substituted_certificate,
         substituted_identity,
         &profile,
         policy,
@@ -355,4 +359,41 @@ fn coherent_substitution_and_missing_provenance_fail_closed() {
         .unwrap_err()
         .contains("resource_contract_manifest")
     );
+}
+
+#[test]
+fn configured_projection_retains_a_refused_context_as_unknown() {
+    let Some(fixture) = Fixture::new() else {
+        return;
+    };
+    let contracts = fixture.contracts(CONTRACT);
+    let recorded_profile = digest("profile-v1");
+    let mismatched_profile = digest("profile-v2");
+    let unit = fixture.unit();
+    let prepared = prepare_translation_unit(&unit);
+    let identity = fixture.identity(
+        &fixture.entry(&[]),
+        &unit,
+        &prepared,
+        dependencies(&digest("contract-v1"), &recorded_profile),
+    );
+    let mut report = AuditReport::new("fixture-revision");
+    let mut counts = AuditCounts::default();
+    project_prepared_unit(
+        "fixture",
+        "src/unit.c",
+        &prepared,
+        &contracts,
+        PreparedAuditCertificateContext {
+            compile_task_identity: &identity,
+            source_profile_sha256: &mismatched_profile,
+        },
+        &mut report,
+        &mut counts,
+    )
+    .expect("a context refusal is a recorded Unknown, not a run abort");
+    assert_eq!(counts.units, 1);
+    assert_eq!(counts.safe_units, 0);
+    assert_eq!(counts.unknown_units, 1);
+    assert_eq!(counts.source_functions, 2);
 }

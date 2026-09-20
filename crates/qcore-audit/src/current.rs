@@ -15,7 +15,7 @@ use qcore_schemas::profile::{LibraryProfile, UnitSelection};
 use serde_json::{Value, json};
 
 use crate::compile_db::{CompileEntry, EffectiveInput, compile_task_identity, compiler_options};
-use crate::projection::{AuditCounts, project_prepared_unit};
+use crate::projection::{AuditCounts, PreparedAuditCertificateContext, project_prepared_unit};
 use crate::report::{AuditReport, UnitRefusal};
 
 /// Keep distinct commands, deduplicating only identical file/directory/command
@@ -215,8 +215,10 @@ impl CurrentAudit {
                     &file,
                     &prepared,
                     &self.contracts,
-                    &identity,
-                    &self.source_profile_sha256,
+                    PreparedAuditCertificateContext {
+                        compile_task_identity: &identity,
+                        source_profile_sha256: &self.source_profile_sha256,
+                    },
                     &mut self.report,
                     &mut self.counts,
                 )?;
