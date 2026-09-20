@@ -11,9 +11,6 @@ import subprocess
 
 LIBEVENT_REVISION = "d82464a277d0f42703702c4dfd9af6af38595a83"
 MONKEY_REVISION = "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
-KINDS = ["base_create", "event_new", "event_add", "dispatch_begin", "activate",
-         "callback_enter", "callback_exit", "dispatch_end", "event_free",
-         "argument_end", "base_free"]
 
 
 def run(command, *, cwd=None, env=None, stdout=None, timeout=300):

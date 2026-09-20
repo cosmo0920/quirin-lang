@@ -7,6 +7,20 @@ fn main() -> ExitCode {
         eprintln!("usage: quirin-audit CONFIG.json");
         return ExitCode::FAILURE;
     };
+    if path == "event-payload" {
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: quirin-audit event-payload CONFIG.json");
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: quirin-audit event-payload CONFIG.json");
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::event_payload::run_event_payload_config(&PathBuf::from(config)) {
+            Ok(()) => { println!("Bounded cb_event payload checked; report written."); ExitCode::SUCCESS }
+            Err(error) => { eprintln!("event-payload audit rejected (Unknown): {error}"); ExitCode::FAILURE }
+        };
+    }
     if path == "observed-wait" {
         let Some(config) = arguments.next() else {
             eprintln!("usage: quirin-audit observed-wait CONFIG.json");
