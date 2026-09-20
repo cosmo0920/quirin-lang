@@ -94,7 +94,7 @@ all observation requirements and the existing event lifecycle replay accepts
 the assembled program. Missing, reordered, duplicated, unauthenticated or
 identity-mismatched observations remain `Unknown`.
 
-## Reconciliation
+## Integrator reconciliation list
 
 No global acceptance matrix, status ledger, history page, provider, schema or
 profile changed. Existing QCore contracts were sufficient, so the pinned
