@@ -6,6 +6,7 @@
 //! gateway imports and trusted witness replay. Specialized native observation
 //! composition remains with the existing compatibility adapter.
 
+pub mod certificate_context;
 pub mod compile_db;
 pub mod current;
 pub mod projection;
@@ -328,6 +329,10 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
                 .ok_or("source profile reports no digest")?,
         ),
     ]);
+    let source_profile_sha256 = task_dependencies
+        .get("source_profile")
+        .cloned()
+        .expect("source profile dependency was inserted");
     if let Some(head) = &selected_head {
         task_dependencies.insert(
             "source_revision_selection".into(),
@@ -411,7 +416,7 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             )?;
             compile_tasks.push(serde_json::json!({
                 "library": library, "file": file,
-                "identity_sha256": identity.digest()?, "identity": identity,
+                "identity_sha256": identity.digest()?, "identity": &identity,
             }));
             // Unit E01-F1: enumerate once, here, and hand the *same* inventory
             // to the resource projection, the report and the source-contract
@@ -423,6 +428,8 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
                 &file,
                 &prepared,
                 &contracts,
+                &identity,
+                &source_profile_sha256,
                 &mut report,
                 &mut counts,
             )?;

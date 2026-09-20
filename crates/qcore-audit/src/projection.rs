@@ -1,4 +1,9 @@
 //! Provider-independent projection; Unknown stays in the report denominator.
+use crate::certificate_context::{
+    AuditContractTrustPolicy, bind_audit_legacy_safety_certificate,
+    check_audit_legacy_safety_certificate_for, expected_audit_certificate_context,
+};
+use crate::compile_db::CompileTaskIdentity;
 use crate::report::AuditReport;
 use qcore_c_gateway::legacy_c::{
     C11TranslationUnit, LegacyCError, LegacyProgramSummary, PreparedTranslationUnit,
@@ -149,6 +154,8 @@ pub fn project_prepared_unit(
     file: &str,
     prepared: &PreparedTranslationUnit,
     contracts: &ResourceContracts,
+    compile_task_identity: &CompileTaskIdentity,
+    source_profile_sha256: &str,
     report: &mut AuditReport,
     counts: &mut AuditCounts,
 ) -> Result<(), String> {
@@ -181,6 +188,27 @@ pub fn project_prepared_unit(
     }
     counts.source_functions += source_functions.len();
     let result = analyze_prepared_translation_unit(prepared, &source_functions[0], contracts);
+    let result = match result {
+        Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
+            let policy = AuditContractTrustPolicy::DeclaredSourcesAreTrustedAssumptions;
+            let expected = expected_audit_certificate_context(
+                prepared,
+                compile_task_identity.clone(),
+                contracts,
+                source_profile_sha256,
+                policy,
+            )?;
+            let bound = bind_audit_legacy_safety_certificate(
+                certificate,
+                compile_task_identity.clone(),
+                source_profile_sha256,
+                policy,
+            )?;
+            check_audit_legacy_safety_certificate_for(&bound, &expected)?;
+            Ok(UnrestrictedLegacyResult::Safe(bound.certificate))
+        }
+        other => other,
+    };
     record_projection(
         ProjectionContext {
             library,

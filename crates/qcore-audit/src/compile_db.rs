@@ -3,7 +3,7 @@
 use qcore_c_gateway::ClangIdentity;
 use qcore_c_gateway::legacy_c::{
     C11TranslationUnit, CCompilerDialect, CFrontendFlag, CPreprocessorOption, CSourceInput,
-    LegacyFunctionScope,
+    LegacyFunctionScope, LegacySafetyCertificate,
 };
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -184,6 +184,123 @@ impl CompileTaskIdentity {
 
     pub fn dependencies(&self) -> &BTreeMap<String, String> {
         &self.dependencies
+    }
+
+    pub fn dependency(&self, name: &str) -> Option<&str> {
+        self.dependencies.get(name).map(String::as_str)
+    }
+
+    /// Refuse an incomplete task identity at a certificate admission boundary.
+    ///
+    /// Ordinary report generation also records rejected preprocessing tasks,
+    /// but a `Safe` certificate can only be bound to an accepted task whose
+    /// compiler, target, build request, effective input and two audit trust
+    /// dependencies are all present. Equality between two incomplete records
+    /// is not provenance.
+    pub fn validate_for_certificate(&self) -> Result<(), String> {
+        let is_sha256 = |digest: &str| {
+            digest.len() == 64 && digest.bytes().all(|byte| byte.is_ascii_hexdigit())
+        };
+        if self.schema_version != COMPILE_TASK_IDENTITY_VERSION {
+            return Err("unsupported compile-task identity version".into());
+        }
+        if self.compiler.program().is_empty()
+            || self.compiler.version().is_empty()
+            || self.compiler.target().is_empty()
+        {
+            return Err(
+                "compile-task identity has incomplete compiler or target provenance".into(),
+            );
+        }
+        if self.declared_driver.is_empty()
+            || self.directory.as_os_str().is_empty()
+            || self.file.as_os_str().is_empty()
+            || self.arguments.is_empty()
+        {
+            return Err("compile-task identity has incomplete build provenance".into());
+        }
+        if !is_sha256(&self.raw_source_sha256)
+            || self
+                .preprocessed_source_sha256
+                .as_deref()
+                .is_none_or(|digest| !is_sha256(digest))
+            || self.preprocessing_error.is_some()
+        {
+            return Err("compile-task identity has no accepted effective input provenance".into());
+        }
+        for required in ["resource_contract_manifest", "source_profile"] {
+            let digest = self.dependencies.get(required).ok_or_else(|| {
+                format!("compile-task identity is missing `{required}` provenance")
+            })?;
+            if !is_sha256(digest) {
+                return Err(format!(
+                    "compile-task identity has malformed `{required}` provenance"
+                ));
+            }
+        }
+        if self
+            .dependencies
+            .iter()
+            .any(|(name, digest)| name.is_empty() || digest.is_empty())
+        {
+            return Err("compile-task identity has an empty dependency provenance field".into());
+        }
+        Ok(())
+    }
+
+    /// Check that this otherwise complete task identity describes the gateway
+    /// request and retained artifacts inside `certificate`.
+    pub fn validate_certificate_binding(
+        &self,
+        certificate: &LegacySafetyCertificate,
+    ) -> Result<(), String> {
+        self.validate_for_certificate()?;
+        let input = &certificate.target_scope.input_identity;
+        let request = &certificate.target_scope.request;
+        if self.raw_source_sha256 != input.raw_source_sha256
+            || self.preprocessed_source_sha256.as_deref()
+                != Some(input.preprocessed_source_sha256.as_str())
+            || self.dialect != dialect_name(certificate.dialect)
+            || self.function_scope != scope_name(certificate.function_scope)
+            || self.source_input != request.input
+            || self.preprocessor_options != request.preprocessor_options
+            || self.include_paths != request.include_paths
+            || self.definitions != request.definitions
+        {
+            return Err(
+                "compile-task identity does not describe the certificate gateway request and artifacts"
+                    .into(),
+            );
+        }
+        Ok(())
+    }
+
+    /// Check an expected task against the prepared request and artifacts it is
+    /// meant to authorize, before looking at any presented certificate.
+    pub fn validate_prepared_binding(
+        &self,
+        prepared: &qcore_c_gateway::legacy_c::PreparedTranslationUnit,
+    ) -> Result<(), String> {
+        self.validate_for_certificate()?;
+        let preprocessed = prepared
+            .preprocessed_source()
+            .map_err(|error| error.to_string())?;
+        let preprocessed_sha256 = qcore_schemas::sha256_hex(preprocessed.as_bytes());
+        if self.raw_source_sha256 != qcore_schemas::sha256_hex(prepared.raw_source().as_bytes())
+            || self.preprocessed_source_sha256.as_deref() != Some(preprocessed_sha256.as_str())
+            || self.dialect != dialect_name(prepared.dialect())
+            || self.function_scope != scope_name(prepared.function_scope())
+            || &self.source_input != prepared.input()
+            || self.preprocessor_options != prepared.preprocessor_options()
+            || self.include_paths != prepared.include_paths()
+            || self.definitions != prepared.definitions()
+        {
+            return Err(
+                "compile-task identity does not describe the expected prepared request and artifacts"
+                    .into(),
+            );
+        }
+        Ok(())
     }
 }
 

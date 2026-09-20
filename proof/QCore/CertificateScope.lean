@@ -21,6 +21,8 @@ namespace QCore.CertificateScope
 
 abbrev Name := String
 abbrev InputIdentity := String
+abbrev CompileTaskIdentity := String
+abbrev TrustContextIdentity := String
 
 inductive Coverage where
   | analyzedSafe
@@ -45,12 +47,18 @@ structure Certificate where
   rows : List Row
   inventoryDigest : InventoryDigest
   inputIdentity : InputIdentity
+  /-- Logical content of the audit-owned full compile-task record. -/
+  compileTaskIdentity : CompileTaskIdentity
+  /-- Logical content of the declared contract/profile/trust environment. -/
+  trustContextIdentity : TrustContextIdentity
   deriving DecidableEq, Repr
 
 structure ExpectedContext where
   targets : List Name
   inventoryDigest : InventoryDigest
   inputIdentity : InputIdentity
+  compileTaskIdentity : CompileTaskIdentity
+  trustContextIdentity : TrustContextIdentity
   deriving DecidableEq, Repr
 
 def structurallyAccepts (certificate : Certificate) : Bool :=
@@ -62,7 +70,9 @@ def acceptsFor (certificate : Certificate) (expected : ExpectedContext) : Bool :
   structurallyAccepts certificate &&
   certificate.evidenceTargets == expected.targets &&
   certificate.inventoryDigest == expected.inventoryDigest &&
-  certificate.inputIdentity == expected.inputIdentity
+  certificate.inputIdentity == expected.inputIdentity &&
+  certificate.compileTaskIdentity == expected.compileTaskIdentity &&
+  certificate.trustContextIdentity == expected.trustContextIdentity
 
 /-! ## General containment properties -/
 
@@ -97,7 +107,7 @@ theorem contextual_acceptance_binds_expected_targets
     (accepted : acceptsFor certificate expected = true) :
     certificate.evidenceTargets = expected.targets := by
   simp [acceptsFor] at accepted
-  exact accepted.1.1.2
+  exact accepted.1.1.1.1.2
 
 /-- Context-bound acceptance also identifies the effective artifact/request
 identity with the caller's expected identity. -/
@@ -105,6 +115,24 @@ theorem contextual_acceptance_binds_expected_input
     (certificate : Certificate) (expected : ExpectedContext)
     (accepted : acceptsFor certificate expected = true) :
     certificate.inputIdentity = expected.inputIdentity := by
+  simp [acceptsFor] at accepted
+  exact accepted.1.1.2
+
+/-- Context-bound acceptance identifies the complete audit task provenance
+record with the independently derived expected record. -/
+theorem contextual_acceptance_binds_expected_compile_task
+    (certificate : Certificate) (expected : ExpectedContext)
+    (accepted : acceptsFor certificate expected = true) :
+    certificate.compileTaskIdentity = expected.compileTaskIdentity := by
+  simp [acceptsFor] at accepted
+  exact accepted.1.2
+
+/-- Context-bound acceptance identifies the declared contract/profile/trust
+environment with the independently derived caller expectation. -/
+theorem contextual_acceptance_binds_expected_trust_context
+    (certificate : Certificate) (expected : ExpectedContext)
+    (accepted : acceptsFor certificate expected = true) :
+    certificate.trustContextIdentity = expected.trustContextIdentity := by
   simp [acceptsFor] at accepted
   exact accepted.2
 
@@ -124,6 +152,18 @@ theorem unequal_expected_input_rejects
     acceptsFor certificate expected = false := by
   simp [acceptsFor, different]
 
+theorem unequal_expected_compile_task_rejects
+    (certificate : Certificate) (expected : ExpectedContext)
+    (different : certificate.compileTaskIdentity ≠ expected.compileTaskIdentity) :
+    acceptsFor certificate expected = false := by
+  simp [acceptsFor, different]
+
+theorem unequal_expected_trust_context_rejects
+    (certificate : Certificate) (expected : ExpectedContext)
+    (different : certificate.trustContextIdentity ≠ expected.trustContextIdentity) :
+    acceptsFor certificate expected = false := by
+  simp [acceptsFor, different]
+
 /-- Removing a target row while retaining the source evidence cannot pass the
 structural replay, even if the compatibility checked set was reduced with it. -/
 theorem scope_reduction_is_rejected :
@@ -131,7 +171,9 @@ theorem scope_reduction_is_rejected :
       { evidenceTargets := ["alpha", "beta"]
         rows := analyzedRows ["alpha"]
         inventoryDigest := analyzedRows ["alpha"]
-        inputIdentity := "input-a" } = false := by
+        inputIdentity := "input-a"
+        compileTaskIdentity := "task-a"
+        trustContextIdentity := "trust-a" } = false := by
   decide
 
 /-- Duplicate target names are not a larger denominator; canonical replay
@@ -141,7 +183,9 @@ theorem duplicate_targets_are_rejected :
       { evidenceTargets := ["alpha", "alpha"]
         rows := analyzedRows ["alpha", "alpha"]
         inventoryDigest := analyzedRows ["alpha", "alpha"]
-        inputIdentity := "input-a" } = false := by
+        inputIdentity := "input-a"
+        compileTaskIdentity := "task-a"
+        trustContextIdentity := "trust-a" } = false := by
   decide
 
 /-- An excluded or Unknown definition cannot be hidden inside a Safe
@@ -151,7 +195,9 @@ theorem unresolved_coverage_is_rejected :
       { evidenceTargets := ["alpha"]
         rows := [{ name := "alpha", coverage := .unknown "not projected" }]
         inventoryDigest := [{ name := "alpha", coverage := .unknown "not projected" }]
-        inputIdentity := "input-a" } = false := by
+        inputIdentity := "input-a"
+        compileTaskIdentity := "task-a"
+        trustContextIdentity := "trust-a" } = false := by
   decide
 
 /-- A smaller artifact can be structurally valid for its own evidence. This is
@@ -161,7 +207,9 @@ theorem a_coherent_smaller_artifact_is_structurally_distinct :
       { evidenceTargets := ["alpha"]
         rows := analyzedRows ["alpha"]
         inventoryDigest := analyzedRows ["alpha"]
-        inputIdentity := "input-b" }
+        inputIdentity := "input-b"
+        compileTaskIdentity := "task-b"
+        trustContextIdentity := "trust-b" }
     structurallyAccepts smaller = true := by
   decide
 
@@ -172,11 +220,15 @@ theorem expected_context_rejects_coherent_scope_replacement :
       { evidenceTargets := ["alpha"]
         rows := analyzedRows ["alpha"]
         inventoryDigest := analyzedRows ["alpha"]
-        inputIdentity := "input-b" }
+        inputIdentity := "input-b"
+        compileTaskIdentity := "task-b"
+        trustContextIdentity := "trust-b" }
     let intended : ExpectedContext :=
       { targets := ["alpha", "beta"]
         inventoryDigest := analyzedRows ["alpha", "beta"]
-        inputIdentity := "input-a" }
+        inputIdentity := "input-a"
+        compileTaskIdentity := "task-a"
+        trustContextIdentity := "trust-a" }
     acceptsFor smaller intended = false := by
   decide
 
@@ -187,11 +239,15 @@ theorem changed_effective_input_is_rejected :
       { evidenceTargets := ["alpha"]
         rows := analyzedRows ["alpha"]
         inventoryDigest := analyzedRows ["alpha"]
-        inputIdentity := "header-v1" }
+        inputIdentity := "header-v1"
+        compileTaskIdentity := "task-a"
+        trustContextIdentity := "trust-a" }
     let changedHeader : ExpectedContext :=
       { targets := ["alpha"]
         inventoryDigest := analyzedRows ["alpha"]
-        inputIdentity := "header-v2" }
+        inputIdentity := "header-v2"
+        compileTaskIdentity := "task-a"
+        trustContextIdentity := "trust-a" }
     acceptsFor certificate changedHeader = false := by
   decide
 
@@ -202,12 +258,54 @@ theorem complete_matching_scope_is_accepted :
       { evidenceTargets := ["alpha", "beta"]
         rows := analyzedRows ["alpha", "beta"]
         inventoryDigest := analyzedRows ["alpha", "beta"]
-        inputIdentity := "input-a" }
+        inputIdentity := "input-a"
+        compileTaskIdentity := "task-a"
+        trustContextIdentity := "trust-a" }
     let expected : ExpectedContext :=
       { targets := ["alpha", "beta"]
         inventoryDigest := analyzedRows ["alpha", "beta"]
-        inputIdentity := "input-a" }
+        inputIdentity := "input-a"
+        compileTaskIdentity := "task-a"
+        trustContextIdentity := "trust-a" }
     acceptsFor certificate expected = true := by
+  decide
+
+/-- A coherent certificate under a different compile task is structurally
+valid for itself but refused for the caller's task. -/
+theorem changed_compile_task_is_rejected :
+    let certificate : Certificate :=
+      { evidenceTargets := ["alpha"]
+        rows := analyzedRows ["alpha"]
+        inventoryDigest := analyzedRows ["alpha"]
+        inputIdentity := "input-a"
+        compileTaskIdentity := "compiler-target-build-b"
+        trustContextIdentity := "trust-a" }
+    let expected : ExpectedContext :=
+      { targets := ["alpha"]
+        inventoryDigest := analyzedRows ["alpha"]
+        inputIdentity := "input-a"
+        compileTaskIdentity := "compiler-target-build-a"
+        trustContextIdentity := "trust-a" }
+    acceptsFor certificate expected = false := by
+  decide
+
+/-- Matching source and compilation identities do not authorize a different
+declared contract/profile/trust environment. -/
+theorem changed_trust_context_is_rejected :
+    let certificate : Certificate :=
+      { evidenceTargets := ["alpha"]
+        rows := analyzedRows ["alpha"]
+        inventoryDigest := analyzedRows ["alpha"]
+        inputIdentity := "input-a"
+        compileTaskIdentity := "task-a"
+        trustContextIdentity := "contracts-profile-b" }
+    let expected : ExpectedContext :=
+      { targets := ["alpha"]
+        inventoryDigest := analyzedRows ["alpha"]
+        inputIdentity := "input-a"
+        compileTaskIdentity := "task-a"
+        trustContextIdentity := "contracts-profile-a" }
+    acceptsFor certificate expected = false := by
   decide
 
 end QCore.CertificateScope
