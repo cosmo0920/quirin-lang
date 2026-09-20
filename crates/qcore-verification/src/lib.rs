@@ -19,6 +19,7 @@ pub mod callback_coverage;
 pub mod cleanup_replay_source;
 pub mod composition_source;
 pub mod counter_source;
+pub mod cycle18_composition;
 pub mod event_composition_context;
 pub mod event_payload;
 pub mod file_close_composition;

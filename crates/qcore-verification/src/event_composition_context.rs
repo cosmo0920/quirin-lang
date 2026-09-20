@@ -317,13 +317,53 @@ impl EventCompositionContext {
     }
 
     #[must_use]
+    pub fn monkey_source_sha256(&self) -> &str {
+        &self.monkey_source_sha256
+    }
+
+    #[must_use]
     pub fn monkey_profile_sha256(&self) -> &str {
         &self.monkey_profile_sha256
     }
 
     #[must_use]
+    pub fn monkey_build_sha256(&self) -> &str {
+        &self.monkey_build_sha256
+    }
+
+    #[must_use]
+    pub fn libevent_revision(&self) -> &str {
+        &self.libevent_revision
+    }
+
+    #[must_use]
+    pub fn libevent_source_sha256(&self) -> &str {
+        &self.libevent_source_sha256
+    }
+
+    #[must_use]
     pub fn libevent_profile_sha256(&self) -> &str {
         &self.libevent_profile_sha256
+    }
+
+    #[must_use]
+    pub fn libevent_build_sha256(&self) -> &str {
+        &self.libevent_build_sha256
+    }
+
+    #[must_use]
+    pub fn observer_binary_sha256(&self) -> &str {
+        &self.observer_binary_sha256
+    }
+
+    #[must_use]
+    pub fn observer_harness_sha256(&self) -> &str {
+        &self.observer_harness_sha256
+    }
+
+    #[must_use]
+    pub fn linked_libraries_sha256(&self) -> &BTreeMap<String, String> {
+        &self.linked_libraries_sha256
     }
 
     #[must_use]
