@@ -102,6 +102,31 @@ pub(crate) fn load_wait_source(
     monkey_inputs: &Path,
     observer_compile_database: &Path,
 ) -> Result<WaitSourceInputs, String> {
+    load_monkey_source(
+        profile_directory,
+        fluent_checkout,
+        monkey_inputs,
+        observer_compile_database,
+        &[
+            "cb_wait_2_timeout",
+            "_mk_event_loop_create",
+            "_mk_event_wait_with_flags",
+            "_mk_event_wait_2",
+            "_mk_event_loop_destroy",
+        ],
+    )
+}
+
+/// Reuse the same pinned compilation and immutable input identity for an
+/// explicitly selected set of callback/wrapper summaries. The consuming
+/// verification policy must independently require its complete inventory.
+pub(crate) fn load_monkey_source(
+    profile_directory: &Path,
+    fluent_checkout: &Path,
+    monkey_inputs: &Path,
+    observer_compile_database: &Path,
+    selected: &[&str],
+) -> Result<WaitSourceInputs, String> {
     let profile = load_profile_directory(profile_directory).map_err(|e| e.to_string())?;
     let pin = profile
         .manifest()
@@ -192,13 +217,6 @@ pub(crate) fn load_wait_source(
         &ClangIdentity::capture()?,
         dependencies,
     )?;
-    let selected = [
-        "cb_wait_2_timeout",
-        "_mk_event_loop_create",
-        "_mk_event_wait_with_flags",
-        "_mk_event_wait_2",
-        "_mk_event_loop_destroy",
-    ];
     let mut summaries = Vec::new();
     for role in [ImportRole::Callback, ImportRole::Wrapper] {
         for result in
