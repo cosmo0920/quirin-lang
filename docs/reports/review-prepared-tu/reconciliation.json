@@ -1,0 +1,26 @@
+{
+  "card": "REVIEW-PREPARED-TU",
+  "items": [
+    {
+      "target": "certificate-scope integration",
+      "verdict": "deferred",
+      "ground": "owned by the parallel certificate-scope card; consume PreparedTranslationUnit retained raw, marked and request evidence without a new Clang run"
+    },
+    {
+      "target": "docs/reports/quirin-review-integration/preparation-measurement.json",
+      "verdict": "noted",
+      "ground": "integration report owns the independent before/after commands, timings, RSS and byte-parity artifacts"
+    },
+    {
+      "target": "docs/STATUS.md and current increment",
+      "verdict": "declined",
+      "ground": "no verdict, evidence coverage, corpus, CT, contract or conformance figure changed"
+    },
+    {
+      "target": "O2/O3 typed AST and CFG caching",
+      "verdict": "deferred",
+      "ground": "outside O1 within-run preprocessing, inventory and coordinate sharing"
+    }
+  ]
+}
+

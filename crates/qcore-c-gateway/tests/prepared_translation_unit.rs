@@ -10,7 +10,17 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 const CONTRACTS: &str = include_str!("fixtures/contracts/q_base.qcore");
 
 fn clang_available() -> bool {
-    qcore_c_gateway::clang_command().is_ok()
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG is invalid: {reason}"
+            );
+            eprintln!("skipping prepared-TU tests: {reason}");
+            false
+        }
+    }
 }
 
 fn contracts() -> ResourceContracts {

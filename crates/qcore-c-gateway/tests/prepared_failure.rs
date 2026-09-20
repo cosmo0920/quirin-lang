@@ -11,7 +11,14 @@ use qcore_c_gateway::legacy_c::{
 fn a_rejected_preparation_is_not_retried_into_a_verdict() {
     let real = match qcore_c_gateway::clang_command() {
         Ok(command) => command.get_program().to_owned(),
-        Err(_) => return,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG is invalid: {reason}"
+            );
+            eprintln!("skipping prepared-TU failure test: {reason}");
+            return;
+        }
     };
     let root = std::env::temp_dir().join(format!("qcore-prepared-failure-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&root);
