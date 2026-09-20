@@ -20,6 +20,14 @@ use crate::contract_observation::{
     ObservationVerdict, check_contract_facts as rule, check_contract_observation,
 };
 use crate::external_integration::PINNED_FLUENT_BIT_REVISION;
+use qcore_schemas::profile::ImportRole;
+pub use qcore_verification::callback_coverage::{
+    CallbackCoverage as MonkeyCallbackCoverage,
+    CallbackCoverageReport as MonkeyCallbackCoverageReport, Cycle18CallbackStatus,
+};
+use qcore_verification::callback_coverage::{
+    CallbackExecutionEvidence, CallbackSourceInventory, account_callback_coverage,
+};
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
@@ -117,6 +125,67 @@ pub struct MonkeyBindingReport {
     pub callbacks: Vec<CallbackBindingReport>,
     pub unknown: Vec<String>,
     pub static_certificate: bool,
+}
+
+fn callback_inventory() -> Result<(BTreeSet<String>, BTreeMap<String, String>), String> {
+    let profile =
+        crate::source_profiles::load_profile(crate::source_profiles::FLUENT_BIT_SOURCE_SET)
+            .map_err(|error| error.to_string())?;
+    let library = profile
+        .library("monkey")
+        .ok_or("source profile has no Monkey library")?;
+    let typed = library
+        .typed_import
+        .as_ref()
+        .ok_or("Monkey library has no typed import profile")?;
+    let selected = typed
+        .functions
+        .iter()
+        .filter_map(|(name, role)| (*role == ImportRole::Callback).then_some(name.clone()))
+        .collect::<BTreeSet<_>>();
+    let mut assumptions = profile.assumptions();
+    assumptions.insert("library".into(), "monkey".into());
+    Ok((selected, assumptions))
+}
+
+/// Bind the profile-derived callback denominator to source import and optional
+/// native replay evidence. This never promotes replay to a Cycle 18
+/// certificate; the missing source-to-event-program composition is retained on
+/// every selected callback.
+pub fn account_monkey_callbacks(
+    summaries: &[MonkeySourceResult],
+    binding: Option<&MonkeyBindingReport>,
+) -> Result<MonkeyCallbackCoverageReport, String> {
+    let (selected, assumptions) = callback_inventory()?;
+    let inventory = summaries
+        .iter()
+        .map(|source| match source {
+            MonkeySourceResult::Summary(summary) => CallbackSourceInventory {
+                function: summary.function().to_owned(),
+                source_revision: Some(summary.source_revision().to_owned()),
+                selected_paths: Some(summary.paths().len()),
+                unknown_reason: None,
+            },
+            MonkeySourceResult::Unknown { function, reason } => CallbackSourceInventory {
+                function: function.clone(),
+                source_revision: None,
+                selected_paths: None,
+                unknown_reason: Some(reason.clone()),
+            },
+        })
+        .collect();
+    let evidence = binding.map(|binding| {
+        binding
+            .callbacks
+            .iter()
+            .map(|row| CallbackExecutionEvidence {
+                function: row.function.clone(),
+                checked_paths: row.checked_paths.clone(),
+                checked_executions: row.checked_executions,
+            })
+            .collect()
+    });
+    account_callback_coverage(&selected, assumptions, inventory, evidence)
 }
 
 /// Native QCore policy for the replay boundary, separate from callback postconditions.
@@ -773,6 +842,7 @@ pub fn check_monkey_bindings_with_rules(
         ],
         static_certificate: false,
     };
+    let (selected_callbacks, _) = callback_inventory()?;
     let mut names = BTreeSet::new();
     for source in summaries {
         let (name, summary, reason) = match source {
@@ -781,7 +851,7 @@ pub fn check_monkey_bindings_with_rules(
                 (function.as_str(), None, Some(reason.clone()))
             }
         };
-        if !["cb_event", "cb_timeout", "cb_wait_2_timeout"].contains(&name) || !names.insert(name) {
+        if !selected_callbacks.contains(name) || !names.insert(name) {
             return Err("invalid callback source set".into());
         }
         let mut result = CallbackBindingReport {
@@ -908,7 +978,7 @@ pub fn check_monkey_bindings_with_rules(
         }
         report.callbacks.push(result);
     }
-    if names.len() != 3 {
+    if names.len() != selected_callbacks.len() {
         return Err("missing callback source result".into());
     }
     Ok(report)

@@ -284,6 +284,20 @@ fn expanded_native_run_covers_all_paths_and_labels_injected_failure() {
     assert!(!report.static_certificate);
     assert!(!report.unknown.is_empty());
 
+    let coverage = account_monkey_callbacks(&source, Some(&report)).unwrap();
+    assert_eq!(coverage.selected_callbacks, 3);
+    assert_eq!(coverage.accounted_callbacks, 3);
+    assert_eq!(coverage.selected_paths, 8);
+    assert_eq!(coverage.checked_paths, 8);
+    assert!(coverage.callbacks.iter().all(|row| {
+        row.missing_paths.is_empty()
+            && matches!(
+                &row.cycle18_composition,
+                Cycle18CallbackStatus::Unknown { reason }
+                    if reason.contains("no source-to-Cycle18 EventProgram")
+            )
+    }));
+
     let mut rows: Vec<Json> = bindings
         .lines()
         .map(|line| serde_json::from_str(line).unwrap())
@@ -305,4 +319,25 @@ fn expanded_native_run_covers_all_paths_and_labels_injected_failure() {
         )
         .is_err()
     );
+}
+
+#[test]
+fn selected_callbacks_are_accounted_without_the_optional_native_directory() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let source = import(SOURCE);
+    let coverage = account_monkey_callbacks(&source, None).unwrap();
+    assert_eq!(coverage.selected_callbacks, coverage.accounted_callbacks);
+    assert_eq!(coverage.selected_paths, 8);
+    assert_eq!(coverage.checked_paths, 0);
+    assert!(coverage.callbacks.iter().all(|row| {
+        row.selected_paths == Some(row.missing_paths.len())
+            && row.checked_paths.is_empty()
+            && matches!(
+                &row.cycle18_composition,
+                Cycle18CallbackStatus::Unknown { reason }
+                    if reason.contains("was not supplied")
+            )
+    }));
 }
