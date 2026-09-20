@@ -32,6 +32,11 @@ pub use location::{
     map_preprocessed_lines, unlocated_site,
 };
 
+#[path = "legacy_preparation.rs"]
+mod preparation;
+
+pub use preparation::{PreparationMetrics, PreparedTranslationUnit, prepare_translation_unit};
+
 #[path = "legacy_recursion.rs"]
 pub(crate) mod recursion;
 
@@ -1565,6 +1570,69 @@ pub fn analyze_unrestricted_c11_with_inventory(
     #[cfg(feature = "indirect-census")]
     crate::indirect_census::next_unit();
     let preprocessed_source = validate_unrestricted_c11(unit)?;
+    let line_marked_source = match unit.function_scope {
+        LegacyFunctionScope::PreprocessedTranslationUnit => None,
+        LegacyFunctionScope::MainSourceDefinitions => {
+            enumeration::preprocess_with_line_markers(unit).ok()
+        }
+    };
+    analyze_preprocessed_unrestricted_c11(
+        preprocessed_source,
+        unit.dialect,
+        unit.function_scope,
+        unit.source.to_owned(),
+        line_marked_source,
+        certificate_request(unit),
+        entry,
+        contracts,
+        source_functions,
+    )
+}
+
+/// Analyze one unit from the immutable preprocessing, syntax, inventory and
+/// coordinate preparation already shared by the audit driver.
+pub fn analyze_prepared_translation_unit(
+    prepared: &PreparedTranslationUnit,
+    entry: &str,
+    contracts: &ResourceContracts,
+) -> Result<UnrestrictedLegacyResult, LegacyCError> {
+    let source_functions = match prepared.function_scope() {
+        LegacyFunctionScope::PreprocessedTranslationUnit => None,
+        LegacyFunctionScope::MainSourceDefinitions => {
+            Some(prepared.inventory().definitions().to_vec())
+        }
+    };
+    #[cfg(feature = "indirect-census")]
+    crate::indirect_census::next_unit();
+    analyze_preprocessed_unrestricted_c11(
+        prepared.preprocessed_source().to_owned(),
+        prepared.dialect(),
+        prepared.function_scope(),
+        prepared.raw_source().to_owned(),
+        prepared.line_marked_source().map(str::to_owned),
+        LegacyCertificateRequest {
+            include_paths: prepared.include_paths().to_vec(),
+            definitions: prepared.definitions().to_vec(),
+            preprocessor_options: prepared.preprocessor_options().to_vec(),
+            input: prepared.input().clone(),
+        },
+        entry,
+        contracts,
+        source_functions,
+    )
+}
+
+fn analyze_preprocessed_unrestricted_c11(
+    preprocessed_source: String,
+    dialect: CCompilerDialect,
+    function_scope: LegacyFunctionScope,
+    raw_source: String,
+    line_marked_source: Option<String>,
+    request: LegacyCertificateRequest,
+    entry: &str,
+    contracts: &ResourceContracts,
+    source_functions: Option<Vec<String>>,
+) -> Result<UnrestrictedLegacyResult, LegacyCError> {
     let analysis = match analyze_legacy_c_translation_unit_selected_partial(
         &preprocessed_source,
         entry,
@@ -1653,7 +1721,14 @@ pub fn analyze_unrestricted_c11_with_inventory(
                     });
                 }
             }
-            let target_scope = match build_certificate_scope(unit, &preprocessed_source) {
+            let target_scope = match build_certificate_scope_from_evidence(
+                dialect,
+                function_scope,
+                &preprocessed_source,
+                Some(&raw_source),
+                line_marked_source.as_deref(),
+                request,
+            ) {
                 Ok(scope) => scope,
                 Err(reason) => {
                     return Ok(UnrestrictedLegacyResult::Unknown {
@@ -1670,8 +1745,8 @@ pub fn analyze_unrestricted_c11_with_inventory(
                 preprocessed_source,
                 entry: summary.entry.clone(),
                 contracts: contracts.clone(),
-                dialect: unit.dialect,
-                function_scope: unit.function_scope,
+                dialect,
+                function_scope,
                 summary,
                 target_scope,
                 checked_functions,
@@ -1712,75 +1787,7 @@ fn unresolved_projection_reason(summary: &LegacyProgramSummary) -> String {
 /// Preprocess and syntax-check an unrestricted C translation unit without
 /// requiring it to contain an executable function body.
 pub fn validate_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<String, LegacyCError> {
-    let mut command = crate::clang::command().map_err(LegacyCError::ProductionParserUnavailable)?;
-    command.args(["-x", "c", unit.dialect.clang_argument(), "-E", "-P"]);
-    for include in &unit.include_paths {
-        command.arg(format!("-I{include}"));
-    }
-    for definition in &unit.definitions {
-        command.arg(format!("-D{definition}"));
-    }
-    for option in &unit.preprocessor_options {
-        option.append_to(&mut command);
-    }
-    let piped = unit.append_primary_input(&mut command)?;
-    let mut child = command
-        .stdin(if piped { Stdio::piped() } else { Stdio::null() })
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
-    if piped {
-        child
-            .stdin
-            .take()
-            .ok_or_else(|| LegacyCError::ProductionParserUnavailable("missing stdin".into()))?
-            .write_all(unit.source.as_bytes())
-            .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
-    }
-    let output = child
-        .wait_with_output()
-        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
-    if !output.status.success() {
-        return Err(LegacyCError::ProductionParserRejected(
-            String::from_utf8_lossy(&output.stderr).trim().to_owned(),
-        ));
-    }
-    let preprocessed_source = String::from_utf8_lossy(&output.stdout).into_owned();
-    reject_filename_sensitive_constructs(&preprocessed_source, &unit.input)?;
-    let mut syntax_command =
-        crate::clang::command().map_err(LegacyCError::ProductionParserUnavailable)?;
-    unit.append_frontend_flags(&mut syntax_command);
-    let mut syntax = syntax_command
-        .args([
-            "-x",
-            "c",
-            unit.dialect.clang_argument(),
-            "-fsyntax-only",
-            "-",
-        ])
-        .stdin(Stdio::piped())
-        .stdout(Stdio::null())
-        .stderr(Stdio::piped())
-        .spawn()
-        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
-    syntax
-        .stdin
-        .take()
-        .ok_or_else(|| LegacyCError::ProductionParserUnavailable("missing syntax stdin".into()))?
-        .write_all(preprocessed_source.as_bytes())
-        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
-    let syntax_output = syntax
-        .wait_with_output()
-        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
-    if !syntax_output.status.success() {
-        return Err(LegacyCError::ProductionParserRejected(
-            String::from_utf8_lossy(&syntax_output.stderr)
-                .trim()
-                .to_owned(),
-        ));
-    }
-    Ok(preprocessed_source)
+    preparation::validate_plain_and_syntax(unit).map(|(source, _, _)| source)
 }
 
 /// Independent structural check for an unrestricted-C `Safe` result.

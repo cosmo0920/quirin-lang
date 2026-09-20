@@ -1,8 +1,9 @@
 //! Provider-independent projection; Unknown stays in the report denominator.
 use crate::report::AuditReport;
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, LegacyCError, LegacyProgramSummary, SourceDefinitionInventory,
-    SourceLineMap, UnrestrictedLegacyResult, analyze_unrestricted_c11_with_inventory,
+    C11TranslationUnit, LegacyCError, LegacyProgramSummary, PreparedTranslationUnit,
+    SourceDefinitionInventory, SourceLineMap, UnrestrictedLegacyResult,
+    analyze_prepared_translation_unit, analyze_unrestricted_c11_with_inventory,
     map_preprocessed_lines, validate_unrestricted_c11,
 };
 use qcore_schemas::contract::ResourceContracts;
@@ -144,6 +145,121 @@ pub fn project_unit(
     // never read by the analysis: `result` above is already settled.
     let locations = origin_coordinates(unit, &result);
     let detail = report.record(library, file, source_functions, &result, locations.as_ref());
+    report.record_enumeration(inventory);
+    match result {
+        Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
+            counts.safe_units += 1;
+            counts.projected_functions += certificate.checked_functions.len();
+            println!(
+                "  {library}/{file}: Safe ({}/{})",
+                certificate.checked_functions.len(),
+                source_functions.len()
+            );
+        }
+        Ok(UnrestrictedLegacyResult::Unsafe(summary)) => {
+            counts.unsafe_units += 1;
+            counts.projected_functions += summary.functions.len();
+            println!(
+                "  {library}/{file}: Unsafe ({}/{})",
+                summary.functions.len(),
+                source_functions.len()
+            );
+        }
+        Ok(UnrestrictedLegacyResult::Unknown {
+            reason, partial, ..
+        }) => {
+            counts.unknown_units += 1;
+            let projected = partial
+                .as_ref()
+                .map_or(0, |summary| summary.functions.len());
+            counts.projected_functions += projected;
+            println!(
+                "  {library}/{file}: Unknown ({projected}/{}): {reason}",
+                source_functions.len()
+            );
+        }
+        Err(error) => {
+            counts.gateway_failures += 1;
+            println!("  {library}/{file}: gateway failure: {error}");
+        }
+    }
+    for line in detail {
+        println!("    {line}");
+    }
+    Ok(())
+}
+
+/// Project a unit from the preparation already used for compile-task identity,
+/// denominator inventory and diagnostic coordinates.
+pub fn project_prepared_unit(
+    library: &str,
+    file: &str,
+    prepared: &PreparedTranslationUnit,
+    contracts: &ResourceContracts,
+    report: &mut AuditReport,
+    counts: &mut AuditCounts,
+) -> Result<(), String> {
+    let inventory = prepared.inventory();
+    counts.units += 1;
+    counts.absent_from_raw_scan_definitions += inventory.absent_from_raw_scan().len();
+    counts.unanalyzable_definitions += inventory.unanalyzable().len();
+    if !inventory.is_complete() {
+        counts.enumeration_refused_units += 1;
+    }
+    let source_functions = inventory.definitions();
+    if source_functions.is_empty() {
+        counts.data_only_units += 1;
+        report.record_data_only(library, file, None);
+        report.record_enumeration(inventory);
+        println!("  {library}/{file}: data-only gateway pass");
+        return Ok(());
+    }
+    counts.source_functions += source_functions.len();
+    let result = analyze_prepared_translation_unit(prepared, &source_functions[0], contracts);
+    record_projection(
+        library,
+        file,
+        inventory,
+        source_functions,
+        result,
+        Some(prepared.locations()),
+        report,
+        counts,
+    )
+}
+
+fn record_projection(
+    library: &str,
+    file: &str,
+    inventory: &SourceDefinitionInventory,
+    source_functions: &[String],
+    result: Result<UnrestrictedLegacyResult, LegacyCError>,
+    prepared_locations: Option<&SourceLineMap>,
+    report: &mut AuditReport,
+    counts: &mut AuditCounts,
+) -> Result<(), String> {
+    let result = match result {
+        Ok(UnrestrictedLegacyResult::Safe(certificate)) if !inventory.supports_unit_safe() => {
+            counts.withheld_safe_units += 1;
+            Ok(UnrestrictedLegacyResult::Unknown {
+                preprocessed_source: certificate.preprocessed_source,
+                reason: inventory
+                    .withheld_safe_reason()
+                    .unwrap_or_else(|| "enumeration completeness refused".to_owned()),
+                partial: Some(certificate.summary),
+            })
+        }
+        other => other,
+    };
+    let locations = prepared_locations.filter(|_| {
+        summary_of(&result).is_some_and(|summary| {
+            summary
+                .functions
+                .values()
+                .any(|function| !function.diagnostics.is_empty())
+        })
+    });
+    let detail = report.record(library, file, source_functions, &result, locations);
     report.record_enumeration(inventory);
     match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
