@@ -70,7 +70,8 @@ The following is the supported canonical body syntax, not a claim that every pos
 
 ```ebnf
 body          = "{", {statement}, "}" ;
-statement     = acquisition | check | direct_call | drop | move | return ;
+statement     = acquisition | constant | check | direct_call | drop | move | return ;
+constant      = "let", IDENT, [ ":", "i32" ], "=", [ "-" ], NAT, ";" ;
 acquisition   = "let", IDENT, "=", "qcore_acquire", "(", RESOURCE_ID,
                 ",", BOOL, ",", ERROR_NAME, ")", ";" ;
 check         = "qcore_check", "(", BOOL, ",", ERROR_NAME, ")", ";" ;
@@ -80,6 +81,13 @@ move          = "move", RESOURCE_BINDING, ";" ;
 return        = "return", [ ["-"], NAT ], ";" ;
 BOOL          = "true" | "false" ;
 ```
+
+The optional `i32` annotation on an integer literal binding is checked against
+the lowered value. Mismatched or unsupported explicit annotations and malformed
+local heads refuse at Q020. `qcore_acquire` publishes a custody identity without
+a nominal result type; annotations on its binding, including `own<T>`, refuse
+until the operation supplies that evidence. Error-region nesting does not bypass
+this check. Local usage annotations retain Q100.
 
 `RESOURCE_ID` must fit `u32`. `ERROR_NAME` must be declared; when no error declarations exist the driver provides its default `Failure` case. Resource bindings must satisfy ownership and cleanup checks. A `move` transfers to the abstract result payload; it does not simply release an external endpoint. A unit result uses bare return, represented as zero in the reduced ABI. An i32 result requires its signed literal; the separate custody payload is explicitly identified in compilation result metadata.
 
@@ -2096,7 +2104,7 @@ the emitted C is byte-identical to the hand-swapped twin's, and no checked model
 sees a negation. The three bitwise operators `|`, `^` and `&` are admitted in
 **one** position — a parenthesized comparison operand — over signed 32-bit
 literals and names bound to one. A `NAME` atom is a **check-time constant
-binding**, `let NAME = INTEGER;`, admitted at the top level of a sequential
+binding**, `let NAME [: i32] = INTEGER;`, admitted at the top level of a sequential
 entry body and substituted for its value here; a name that denotes a resource
 identity is refused, so no custody-bearing value gains a position in this tier.
 

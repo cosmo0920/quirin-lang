@@ -1109,6 +1109,14 @@ entry, plus a missing `std.io` import or an effect row that excludes derived IO.
 Nonempty source contracts retain Q021 and an empty contract remains admissible.
 No diagnostic code is allocated; existing routes retain their codes.
 
+`SOURCE-ANNOTATION-ENFORCEMENT` extends Q020 to executable local annotation
+compatibility, unsupported explicit local types, malformed local heads before
+`=`, and an owned annotation whose operation publishes no nominal payload.
+The legacy sequential integer literal binding admits an optional matching
+`i32` annotation. `qcore_acquire` establishes custody without a nominal payload
+type, so every explicit result annotation refuses, including `own<T>`.
+Q100 still owns local usage annotations, including those inside error regions.
+
 ### L21.1 Reason categories for uncovered obligations
 
 Every `Unknown` row carries a free-text `reason` today: `DerivationIncomplete.reason` on a `VerificationTask`, `ChunkSourceResult::Unknown { reason }` from a source importer, and the per-unit `"reason"` field of an audit report. Free text is not queryable and does not distinguish a defect in the analysed source from a failure of the machine analysing it. The following closed vocabulary is normative for classifying such a row. It is **implemented** (2026-09-08, card REASON-CODES): the vocabulary is published as `qcore_schemas::reason`, `DerivationIncomplete` carries a required `category` field named at construction, and audit-report units and source-contract functions carry a classified `reason_code` that fails closed to `null` rather than defaulting a category. The implementation constraints recorded below remain the rules for extending either carrier; the four archived 185-unit artifacts predate the field and move only at CORPUS-REPIN.
