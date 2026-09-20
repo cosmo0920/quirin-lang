@@ -368,6 +368,20 @@ struct RawHalf {
 /// historical raw scan, with the completeness claim explicitly refused.
 #[must_use]
 pub fn enumerate_source_definitions(unit: &C11TranslationUnit<'_>) -> SourceDefinitionInventory {
+    let marked = preprocess_with_line_markers(unit);
+    inventory_from_line_marked_result(unit, marked.as_deref())
+}
+
+/// Build the main-source inventory from a line-marked preprocessing already
+/// produced for this unit.
+///
+/// The prepared-translation-unit path calls this after retaining the exact
+/// marked output. Keeping the raw scan here ensures the shared path has the
+/// same fail-closed union and refusal behavior as [`enumerate_source_definitions`].
+pub(crate) fn inventory_from_line_marked_result(
+    unit: &C11TranslationUnit<'_>,
+    marked: Result<&str, &LegacyCError>,
+) -> SourceDefinitionInventory {
     let scan = legacy_c_source_scan(unit.source);
     let raw = RawHalf {
         names: scan.definitions().to_vec(),
@@ -377,8 +391,8 @@ pub fn enumerate_source_definitions(unit: &C11TranslationUnit<'_>) -> SourceDefi
             .map(|refusal| EnumerationRefusal::from_conditional(*refusal))
             .collect(),
     };
-    match preprocess_with_line_markers(unit) {
-        Ok(marked) => inventory_from_marked(&raw, &marked),
+    match marked {
+        Ok(marked) => inventory_from_marked(&raw, marked),
         Err(_) => {
             SourceDefinitionInventory::raw_only(&raw, EnumerationRefusal::ExpansionUnavailable)
         }
@@ -402,42 +416,55 @@ pub fn enumerate_source_definitions(unit: &C11TranslationUnit<'_>) -> SourceDefi
 pub(crate) fn preprocess_with_line_markers(
     unit: &C11TranslationUnit<'_>,
 ) -> Result<String, LegacyCError> {
-    let mut command = crate::clang::command().map_err(LegacyCError::ProductionParserUnavailable)?;
-    command.args(["-x", "c", unit.dialect.clang_argument(), "-E"]);
-    for include in &unit.include_paths {
-        command.arg(format!("-I{include}"));
-    }
-    for definition in &unit.definitions {
-        command.arg(format!("-D{definition}"));
-    }
-    for option in &unit.preprocessor_options {
-        option.append_to(&mut command);
-    }
-    let piped = unit.append_primary_input(&mut command)?;
-    let mut child = command
-        .stdin(if piped { Stdio::piped() } else { Stdio::null() })
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
-    if piped {
-        use std::io::Write;
-        child
-            .stdin
-            .take()
-            .ok_or_else(|| LegacyCError::ProductionParserUnavailable("missing stdin".into()))?
-            .write_all(unit.source.as_bytes())
+    preprocess_with_line_markers_counted(unit).0
+}
+
+/// The line-marked preprocessing plus whether Clang was successfully spawned.
+pub(crate) fn preprocess_with_line_markers_counted(
+    unit: &C11TranslationUnit<'_>,
+) -> (Result<String, LegacyCError>, bool) {
+    let mut spawned = false;
+    let result = (|| {
+        let mut command =
+            crate::clang::command().map_err(LegacyCError::ProductionParserUnavailable)?;
+        command.args(["-x", "c", unit.dialect.clang_argument(), "-E"]);
+        for include in &unit.include_paths {
+            command.arg(format!("-I{include}"));
+        }
+        for definition in &unit.definitions {
+            command.arg(format!("-D{definition}"));
+        }
+        for option in &unit.preprocessor_options {
+            option.append_to(&mut command);
+        }
+        let piped = unit.append_primary_input(&mut command)?;
+        let mut child = command
+            .stdin(if piped { Stdio::piped() } else { Stdio::null() })
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
             .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
-    }
-    let output = child
-        .wait_with_output()
-        .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
-    if !output.status.success() {
-        return Err(LegacyCError::ProductionParserRejected(
-            String::from_utf8_lossy(&output.stderr).trim().to_owned(),
-        ));
-    }
-    Ok(String::from_utf8_lossy(&output.stdout).into_owned())
+        spawned = true;
+        if piped {
+            use std::io::Write;
+            child
+                .stdin
+                .take()
+                .ok_or_else(|| LegacyCError::ProductionParserUnavailable("missing stdin".into()))?
+                .write_all(unit.source.as_bytes())
+                .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+        }
+        let output = child
+            .wait_with_output()
+            .map_err(|error| LegacyCError::ProductionParserUnavailable(error.to_string()))?;
+        if !output.status.success() {
+            return Err(LegacyCError::ProductionParserRejected(
+                String::from_utf8_lossy(&output.stderr).trim().to_owned(),
+            ));
+        }
+        Ok(String::from_utf8_lossy(&output.stdout).into_owned())
+    })();
+    (result, spawned)
 }
 
 /// A token of line-marked preprocessed output together with the *include

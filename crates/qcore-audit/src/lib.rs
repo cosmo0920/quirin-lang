@@ -19,9 +19,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, LegacyFunctionScope, enumerate_source_definitions,
-};
+use qcore_c_gateway::legacy_c::{C11TranslationUnit, LegacyFunctionScope};
 use qcore_contract::contract_loader::load_resource_contract_manifest;
 use qcore_contract::profile_loader::{
     LoadedProfile, load_audited_bundle, load_profile_directory, verify_pin,
@@ -30,7 +28,7 @@ use qcore_schemas::profile::{LibraryProfile, UnitSelection, WitnessCheck};
 use serde::{Deserialize, Serialize};
 
 use compile_db::{CompileEntry, compile_entries, compiler_options};
-use projection::{AuditCounts, project_unit};
+use projection::AuditCounts;
 use report::{AuditReport, UnitRefusal};
 
 #[derive(Debug, Deserialize)]
@@ -395,14 +393,18 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             // bytes: a used header, a generated configuration header or an
             // admitted macro option changes the analyzed code with the selected
             // `.c` file untouched.
-            let effective = qcore_c_gateway::legacy_c::validate_unrestricted_c11(&unit)
-                .map_err(|error| error.to_string());
+            let prepared = qcore_c_gateway::legacy_c::prepare_translation_unit(&unit);
+            let preparation_error = prepared.validation_error().map(ToString::to_string);
             let identity = compile_db::compile_task_identity(
                 &entry,
                 &unit,
-                match &effective {
-                    Ok(text) => compile_db::EffectiveInput::Accepted(text),
-                    Err(error) => compile_db::EffectiveInput::Rejected(error),
+                match prepared.preprocessed_source() {
+                    Ok(source) => compile_db::EffectiveInput::Accepted(source),
+                    Err(_) => compile_db::EffectiveInput::Rejected(
+                        preparation_error
+                            .as_deref()
+                            .expect("rejected preparation has an error"),
+                    ),
                 },
                 &compiler,
                 task_dependencies.clone(),
@@ -415,18 +417,17 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             // to the resource projection, the report and the source-contract
             // route. Two independent computations of the denominator could
             // disagree; one cannot.
-            let inventory = enumerate_source_definitions(&unit);
-            project_unit(
+            let inventory = prepared.inventory();
+            projection::project_prepared_unit(
                 library,
                 &file,
-                &unit,
-                &inventory,
+                &prepared,
                 &contracts,
                 &mut report,
                 &mut counts,
             )?;
             if let Some(audit) = &mut source_contracts {
-                audit.analyze_unit(library, &file, &unit, &inventory, &profile);
+                audit.analyze_unit(library, &file, &unit, inventory, &profile);
             }
         }
     }

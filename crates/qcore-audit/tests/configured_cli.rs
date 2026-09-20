@@ -114,12 +114,75 @@ impl Fixture {
             .output()
             .unwrap()
     }
+
     fn mutate(&self, path: &str, change: impl FnOnce(&mut Value)) {
         let path = self.0.join(path);
         let mut value = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
         change(&mut value);
         fs::write(path, value.to_string()).unwrap();
     }
+}
+
+#[cfg(unix)]
+#[test]
+fn one_configured_unit_runs_each_preparation_stage_once() {
+    use std::os::unix::fs::PermissionsExt;
+
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new("void subject(void) { return; }\n");
+    let real = qcore_c_gateway::clang_command()
+        .unwrap()
+        .get_program()
+        .to_owned();
+    let wrapper = fixture.0.join("counting-clang");
+    let log = fixture.0.join("clang-invocations.log");
+    fs::write(
+        &wrapper,
+        "#!/bin/sh\nprintf '%s\\n' \"$*\" >> \"$QCORE_TEST_LOG\"\nexec \"$QCORE_TEST_REAL_CLANG\" \"$@\"\n",
+    )
+    .unwrap();
+    let mut permissions = fs::metadata(&wrapper).unwrap().permissions();
+    permissions.set_mode(0o755);
+    fs::set_permissions(&wrapper, permissions).unwrap();
+    let output = Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
+        .current_dir(&fixture.0)
+        .arg(fixture.0.join("audit.json"))
+        .env("QCORE_CLANG", &wrapper)
+        .env("QCORE_TEST_LOG", &log)
+        .env("QCORE_TEST_REAL_CLANG", &real)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let invocations = fs::read_to_string(&log).unwrap();
+    let actions = invocations
+        .lines()
+        .filter(|line| !line.contains("--version") && !line.contains("-dumpmachine"))
+        .collect::<Vec<_>>();
+    let plain = actions
+        .iter()
+        .filter(|line| line.contains(" -E ") && line.contains(" -P "))
+        .count();
+    let marked = actions
+        .iter()
+        .filter(|line| line.contains(" -E ") && !line.contains(" -P "))
+        .count();
+    let syntax = actions
+        .iter()
+        .filter(|line| line.contains(" -fsyntax-only "))
+        .count();
+    assert_eq!((plain, syntax, marked), (1, 1, 1), "{actions:#?}");
+    assert!(
+        String::from_utf8_lossy(&output.stdout)
+            .contains("preparation: 1 unit(s), 3 Clang invocation(s)"),
+        "{}",
+        String::from_utf8_lossy(&output.stdout)
+    );
 }
 impl Drop for Fixture {
     fn drop(&mut self) {
