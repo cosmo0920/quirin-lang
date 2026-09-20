@@ -212,8 +212,9 @@ pub enum LegacyInstruction {
     /// may bind.  Unlike the unbound scalar-field no-op, transfer must prove
     /// that `base` denotes one settled, live, non-null identity with no
     /// unresolved effect before the store is admitted.  The scalar member and
-    /// scalar-only right-hand side carry no tracked identity, so a successful
-    /// transfer changes none of the pointer, custody or field-link maps.
+    /// scalar-only right-hand side carry no tracked identity, so both an
+    /// accepted store and a refusal carrying `UnknownAlias` preserve the
+    /// pointer, custody, field-link and scalar-fact maps.
     ScalarMemberStore {
         base: String,
         /// The same C02-P-ALIAS obligation as every other modeled read through
