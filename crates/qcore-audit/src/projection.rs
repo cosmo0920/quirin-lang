@@ -129,10 +129,12 @@ pub fn project_unit(
     // never read by the analysis: `result` above is already settled.
     let locations = origin_coordinates(unit, &result);
     record_projection(
-        library,
-        file,
-        inventory,
-        source_functions,
+        ProjectionContext {
+            library,
+            file,
+            inventory,
+            source_functions,
+        },
         result,
         locations.as_ref(),
         report,
@@ -180,10 +182,12 @@ pub fn project_prepared_unit(
     counts.source_functions += source_functions.len();
     let result = analyze_prepared_translation_unit(prepared, &source_functions[0], contracts);
     record_projection(
-        library,
-        file,
-        inventory,
-        source_functions,
+        ProjectionContext {
+            library,
+            file,
+            inventory,
+            source_functions,
+        },
         result,
         Some(prepared.locations()),
         report,
@@ -200,16 +204,26 @@ fn record_inventory(inventory: &SourceDefinitionInventory, counts: &mut AuditCou
     }
 }
 
+struct ProjectionContext<'a> {
+    library: &'a str,
+    file: &'a str,
+    inventory: &'a SourceDefinitionInventory,
+    source_functions: &'a [String],
+}
+
 fn record_projection(
-    library: &str,
-    file: &str,
-    inventory: &SourceDefinitionInventory,
-    source_functions: &[String],
+    context: ProjectionContext<'_>,
     result: Result<UnrestrictedLegacyResult, LegacyCError>,
     prepared_locations: Option<&SourceLineMap>,
     report: &mut AuditReport,
     counts: &mut AuditCounts,
 ) -> Result<(), String> {
+    let ProjectionContext {
+        library,
+        file,
+        inventory,
+        source_functions,
+    } = context;
     let result = match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) if !inventory.supports_unit_safe() => {
             counts.withheld_safe_units += 1;
