@@ -167,8 +167,12 @@ struct SourceInventory {
     profile_sha256: String,
     callback_revisions: BTreeMap<String, String>,
     callback_profiles: BTreeMap<String, String>,
+    callback_path_counts: BTreeMap<String, usize>,
+    callback_libraries: BTreeMap<String, String>,
+    callback_roles: BTreeMap<String, String>,
     callback_source_sha256: BTreeMap<String, String>,
     wait_callback_projection_sha256: String,
+    timeout_callback_projection_sha256: String,
     inventory_sha256: String,
 }
 
@@ -211,40 +215,49 @@ fn source_inventory(
     let mut callback_source_sha256 = BTreeMap::new();
     let mut callback_revisions = BTreeMap::new();
     let mut callback_profiles = BTreeMap::new();
+    let mut callback_path_counts = BTreeMap::new();
+    let mut callback_libraries = BTreeMap::new();
+    let mut callback_roles = BTreeMap::new();
     let mut wait_callback_projection_sha256 = String::new();
-    for (name, paths) in CALLBACKS {
+    let mut timeout_callback_projection_sha256 = String::new();
+    for (name, _expected_paths) in CALLBACKS {
         let summary = by_name[name];
         let summary_profile = summary
             .profile_assumptions()
             .get("profile_digest")
             .cloned()
             .unwrap_or_default();
-        if summary.paths().len() != paths
-            || summary
-                .profile_assumptions()
-                .get("library")
-                .map(String::as_str)
-                != Some("monkey")
-            || summary
-                .profile_assumptions()
-                .get("typed_import_role")
-                .map(String::as_str)
-                != Some("Callback")
-            || summary_profile.len() != 64
-        {
+        if summary_profile.len() != 64 {
             return Err(Cycle18CompositionError::SourceInventory(format!(
-                "{name} does not match the exact path/source/profile inventory"
+                "{name} has no canonical source profile digest"
             )));
         }
         callback_revisions.insert(name.into(), summary.source_revision().into());
         callback_profiles.insert(name.into(), summary_profile);
+        callback_path_counts.insert(name.into(), summary.paths().len());
+        callback_libraries.insert(
+            name.into(),
+            summary
+                .profile_assumptions()
+                .get("library")
+                .cloned()
+                .unwrap_or_default(),
+        );
+        callback_roles.insert(
+            name.into(),
+            summary
+                .profile_assumptions()
+                .get("typed_import_role")
+                .cloned()
+                .unwrap_or_default(),
+        );
         let bytes = serde_json::to_vec(summary).map_err(|error| {
             Cycle18CompositionError::SourceInventory(format!(
                 "cannot encode {name} summary: {error}"
             ))
         })?;
         callback_source_sha256.insert(name.into(), sha256_hex(&bytes));
-        if name == "cb_wait_2_timeout" {
+        if matches!(name, "cb_wait_2_timeout" | "cb_timeout") {
             let bytes = serde_json::to_vec(&(
                 summary.function(),
                 summary.source_revision(),
@@ -255,7 +268,11 @@ fn source_inventory(
                     "cannot encode wait callback projection: {error}"
                 ))
             })?;
-            wait_callback_projection_sha256 = sha256_hex(&bytes);
+            if name == "cb_wait_2_timeout" {
+                wait_callback_projection_sha256 = sha256_hex(&bytes);
+            } else {
+                timeout_callback_projection_sha256 = sha256_hex(&bytes);
+            }
         }
     }
     let inventory_sha256 = sha256_hex(
@@ -272,8 +289,12 @@ fn source_inventory(
         profile_sha256,
         callback_revisions,
         callback_profiles,
+        callback_path_counts,
+        callback_libraries,
+        callback_roles,
         callback_source_sha256,
         wait_callback_projection_sha256,
+        timeout_callback_projection_sha256,
         inventory_sha256,
     })
 }
@@ -425,39 +446,38 @@ fn contexts_join(
 ) -> Result<BTreeMap<String, String>, String> {
     let wait = wait.context();
     let payload = payload.context();
-    for (field, left, right) in [
-        (
-            "fluent_bit_revision",
-            wait.fluent_bit_revision(),
-            payload.fluent_bit_revision(),
-        ),
-        (
-            "monkey_profile_sha256",
-            wait.monkey_profile_sha256(),
-            payload.monkey_profile_sha256(),
-        ),
-        (
-            "libevent_revision",
-            wait.libevent_revision(),
-            payload.libevent_revision(),
-        ),
-        (
-            "libevent_profile_sha256",
-            wait.libevent_profile_sha256(),
-            payload.libevent_profile_sha256(),
-        ),
-    ] {
-        if left != right {
-            return Err(format!("wait/payload context {field} mismatch"));
-        }
-    }
-    if wait.fluent_bit_revision() != inventory.revision
-        || wait.monkey_profile_sha256() != inventory.profile_sha256
-    {
-        return Err(
-            "contexts do not match the independently derived source revision/profile".into(),
-        );
-    }
+    check_typed_contract_facts(
+        CYCLE18_COMPOSITION_POLICY,
+        "context_identity_join",
+        &[
+            ("wait_source_revision", text(wait.fluent_bit_revision())),
+            (
+                "payload_source_revision",
+                text(payload.fluent_bit_revision()),
+            ),
+            ("aggregate_source_revision", text(&inventory.revision)),
+            ("wait_monkey_profile", text(wait.monkey_profile_sha256())),
+            (
+                "payload_monkey_profile",
+                text(payload.monkey_profile_sha256()),
+            ),
+            ("aggregate_profile", text(&inventory.profile_sha256)),
+            ("wait_libevent_revision", text(wait.libevent_revision())),
+            (
+                "payload_libevent_revision",
+                text(payload.libevent_revision()),
+            ),
+            (
+                "wait_libevent_profile",
+                text(wait.libevent_profile_sha256()),
+            ),
+            (
+                "payload_libevent_profile",
+                text(payload.libevent_profile_sha256()),
+            ),
+        ],
+    )
+    .map_err(|error| format!("context identity policy refused: {error}"))?;
     let mut identities = BTreeMap::new();
     for (prefix, context) in [("wait", wait), ("payload", payload)] {
         for (name, value) in [
@@ -548,13 +568,35 @@ pub fn check_cycle18_composition(
         &[
             (
                 "callback_names",
-                text("cb_event,cb_timeout,cb_wait_2_timeout"),
+                text(
+                    inventory
+                        .callback_path_counts
+                        .keys()
+                        .cloned()
+                        .collect::<Vec<_>>()
+                        .join(","),
+                ),
             ),
-            ("callback_count", integer(3)),
-            ("selected_path_count", integer(8)),
-            ("cb_event_paths", integer(4)),
-            ("cb_timeout_paths", integer(3)),
-            ("cb_wait_2_timeout_paths", integer(1)),
+            (
+                "callback_count",
+                integer(inventory.callback_path_counts.len()),
+            ),
+            (
+                "selected_path_count",
+                integer(inventory.callback_path_counts.values().sum()),
+            ),
+            (
+                "cb_event_paths",
+                integer(inventory.callback_path_counts["cb_event"]),
+            ),
+            (
+                "cb_timeout_paths",
+                integer(inventory.callback_path_counts["cb_timeout"]),
+            ),
+            (
+                "cb_wait_2_timeout_paths",
+                integer(inventory.callback_path_counts["cb_wait_2_timeout"]),
+            ),
             (
                 "cb_event_revision",
                 text(&inventory.callback_revisions["cb_event"]),
@@ -581,6 +623,27 @@ pub fn check_cycle18_composition(
                 text(&inventory.callback_profiles["cb_wait_2_timeout"]),
             ),
             ("expected_profile", text(&inventory.profile_sha256)),
+            (
+                "cb_event_library",
+                text(&inventory.callback_libraries["cb_event"]),
+            ),
+            (
+                "cb_timeout_library",
+                text(&inventory.callback_libraries["cb_timeout"]),
+            ),
+            (
+                "cb_wait_library",
+                text(&inventory.callback_libraries["cb_wait_2_timeout"]),
+            ),
+            ("cb_event_role", text(&inventory.callback_roles["cb_event"])),
+            (
+                "cb_timeout_role",
+                text(&inventory.callback_roles["cb_timeout"]),
+            ),
+            (
+                "cb_wait_role",
+                text(&inventory.callback_roles["cb_wait_2_timeout"]),
+            ),
         ],
     )?;
 
@@ -754,7 +817,7 @@ pub fn check_cycle18_composition(
             .get("profile_digest")
             == Some(&inventory.profile_sha256)
         && input.timeout_source.source_summary_digest()
-            == inventory.callback_source_sha256["cb_timeout"]
+            == inventory.timeout_callback_projection_sha256
         && input.timeout_source.path_call_sequences().len() == 3;
     if !timeout_digest_matches {
         refused.insert(
@@ -848,7 +911,7 @@ pub fn check_cycle18_composition(
                 ),
                 (
                     "expected_timeout_callback_digest",
-                    text(&inventory.callback_source_sha256["cb_timeout"]),
+                    text(&inventory.timeout_callback_projection_sha256),
                 ),
                 (
                     "wait_context_revision",
