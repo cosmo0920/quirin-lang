@@ -1786,6 +1786,44 @@ pub(crate) fn is_scalar_field_noop(
     matches!(scalar_statement_accesses(texts, model, types), Some(count) if count > 0)
 }
 
+/// The base of one exactly-shaped scalar member store through a record pointer
+/// this function may bind to a tracked identity.
+///
+/// This is deliberately disjoint from [`is_scalar_field_noop`]'s premise 8.
+/// That rule may erase an access only when the base can never carry custody;
+/// this rule admits a bound base only as an explicit instruction whose
+/// flow-sensitive transfer rechecks the base's live identity.  The syntax is
+/// exactly `BASE -> FIELD = RHS`: one selection, one simple assignment, a
+/// scalar field, and a scalar-only right-hand side with no access of its own.
+/// Calls, member chains, subscripts, dereferences, pointer fields and a second
+/// assignment all remain refused.
+pub(crate) fn scalar_member_store_base<'a>(
+    texts: &'a [&'a str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> Option<&'a str> {
+    let [base, "-", ">", field, "=", right @ ..] = texts else {
+        return None;
+    };
+    if !is_name(base) || !is_name(field) || !types.may_bind(base) {
+        return None;
+    }
+    let Some(DeclaredType::RecordPointer(tag)) = types.declared_type(base) else {
+        return None;
+    };
+    if !model.scalar_field(tag, field)
+        || right.is_empty()
+        || right.contains(&"=")
+        || right
+            .windows(2)
+            .any(|pair| matches!(pair, ["+", "+"] | ["-", "-"]))
+        || scalar_statement_accesses(right, model, types) != Some(0)
+    {
+        return None;
+    }
+    Some(base)
+}
+
 /// Whether a statement operates only on declared scalar variables, enumeration
 /// constants and numeric literals, with no member access at all.
 ///
@@ -2241,6 +2279,36 @@ mod tests {
             &model,
             &types
         ));
+    }
+
+    #[test]
+    fn a_bound_base_has_a_separate_exact_scalar_store_route() {
+        let model = model(R);
+        let types = FunctionTypes::read(
+            &model,
+            &texts("struct r * s , int n"),
+            &texts("s = make ( ) ;"),
+            &BTreeSet::new(),
+        );
+        assert_eq!(
+            scalar_member_store_base(&texts("s -> a = n + 1"), &model, &types),
+            Some("s")
+        );
+        for refused in [
+            "s -> p = n",
+            "s -> a += n",
+            "s -> a = s -> a",
+            "s -> a = n [ 0 ]",
+            "s -> a = * n",
+            "s -> a = n ++",
+            "s -> a = ( n = 1 )",
+        ] {
+            assert_eq!(
+                scalar_member_store_base(&texts(refused), &model, &types),
+                None,
+                "refused: {refused}"
+            );
+        }
     }
 
     #[test]
