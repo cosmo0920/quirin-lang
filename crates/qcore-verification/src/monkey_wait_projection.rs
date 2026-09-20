@@ -9,47 +9,35 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_c_gateway::typed_source::{SourceOperation, SourceSummary};
+use qcore_frontend::frontend::{
+    SourceContractClauseKind, SourceContractExitSelector, parse_source_program,
+};
 use qcore_schemas::sha256_hex;
 use serde::Serialize;
 
 pub const MONKEY_SOURCE_REVISION: &str = "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
 pub const WAIT_CALLBACK: &str = "cb_wait_2_timeout";
 
-const REQUIRED_SUMMARIES: [(&str, &str, usize, usize, &str); 5] = [
-    (
-        WAIT_CALLBACK,
-        "void (evutil_socket_t, short, void *)",
-        1,
-        0,
-        "8308bac83724f6f2417f6d22bbf3e65afbbf491b8ad91b4a9217b1aebd22efdc",
-    ),
-    (
-        "_mk_event_loop_create",
-        "void *(int)",
-        4,
-        3,
-        "e0e344755d708e5057a947b2048ef9203d33f71dbc5bdffe7a3a019466af25e8",
-    ),
+const REQUIRED_SUMMARIES: [(&str, &str, usize, usize); 5] = [
+    (WAIT_CALLBACK, "void (evutil_socket_t, short, void *)", 1, 0),
+    ("_mk_event_loop_create", "void *(int)", 4, 3),
     (
         "_mk_event_wait_with_flags",
         "int (struct mk_event_loop *, int)",
         1,
         0,
-        "de51bcb5a96786c5f474afdc4a36bc71a8aa7adaee0875f24eefc828e42bdd58",
     ),
     (
         "_mk_event_wait_2",
         "int (struct mk_event_loop *, int)",
         3,
         2,
-        "620ebb4a36f4ae9f33ea6f9e92605769d7d1ce4d7dc75d527d9a5f1245213743",
     ),
     (
         "_mk_event_loop_destroy",
         "void (struct mk_event_ctx *)",
         1,
         0,
-        "539a3cf14a83a6f7f8a09bb3370250c0019d354dbd39bb98115fb0930ef093dd",
     ),
 ];
 
@@ -76,8 +64,19 @@ pub enum WaitObservationRequirement {
     BaseFree,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum WaitCallbackSemantics {
+    BorrowedNoEffectNoTasks,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum WaitSourceProjectionError {
+    ContractParse(String),
+    MissingContractDeclaration(String),
+    DuplicateContractDeclaration(String),
+    MissingContractBlock(String),
+    ContractClauseMismatch(String),
     MissingSummary(String),
     DuplicateSummary(String),
     UnexpectedSummary(String),
@@ -85,9 +84,221 @@ pub enum WaitSourceProjectionError {
     ProfileAssumptionsMismatch(String),
     SignatureMismatch(String),
     PathCountMismatch(String),
-    SourceArtifactMismatch(String),
+    SourceShapeMismatch(String),
     CallbackIsNotSoleReturn,
     LifecyclePathMismatch(String),
+}
+
+/// Parsed declarations that state the contract-expressible half of the slice.
+///
+/// Construction is total-or-reject over the five declarations used by this
+/// projection. The declarations remain assumptions until their clauses are
+/// checked against the independently imported source summaries below.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct MonkeyWaitContracts {
+    contract_digests: BTreeMap<String, String>,
+}
+
+impl MonkeyWaitContracts {
+    pub fn parse(
+        wrapper_contract: &str,
+        composition_contract: &str,
+    ) -> Result<Self, WaitSourceProjectionError> {
+        let wrapper = parse_source_program(wrapper_contract)
+            .map_err(|error| WaitSourceProjectionError::ContractParse(error.to_string()))?;
+        let composition = parse_source_program(composition_contract)
+            .map_err(|error| WaitSourceProjectionError::ContractParse(error.to_string()))?;
+
+        check_contract_declaration(
+            &wrapper,
+            "_mk_event_loop_create",
+            &[
+                (
+                    ClauseExit::Requires,
+                    "selected_unix_libevent_source_profile",
+                ),
+                (
+                    ClauseExit::Normal,
+                    "initialization_or_context_allocation_failure_returns_null",
+                ),
+                (
+                    ClauseExit::Normal,
+                    "event_base_new_result_is_stored_without_a_null_test",
+                ),
+                (
+                    ClauseExit::Normal,
+                    "fired_allocation_failure_frees_context_without_base_free",
+                ),
+                (
+                    ClauseExit::Normal,
+                    "successful_return_sets_queue_size_and_returns_context",
+                ),
+            ],
+        )?;
+        check_contract_declaration(
+            &wrapper,
+            "_mk_event_wait_with_flags",
+            &[
+                (
+                    ClauseExit::Requires,
+                    "selected_unix_libevent_source_profile",
+                ),
+                (ClauseExit::Normal, "fired_count_is_cleared_before_dispatch"),
+                (ClauseExit::Normal, "dispatch_result_is_ignored"),
+                (
+                    ClauseExit::Normal,
+                    "final_fired_count_is_copied_to_loop_and_returned",
+                ),
+            ],
+        )?;
+        check_contract_declaration(
+            &wrapper,
+            "_mk_event_wait_2",
+            &[
+                (
+                    ClauseExit::Requires,
+                    "selected_unix_libevent_source_profile",
+                ),
+                (
+                    ClauseExit::Normal,
+                    "infinite_and_zero_wait_paths_delegate_without_timer_creation",
+                ),
+                (ClauseExit::Normal, "timed_wait_uses_explicit_stack_timeval"),
+                (
+                    ClauseExit::Normal,
+                    "timeout_event_creation_and_registration_results_are_not_checked",
+                ),
+                (
+                    ClauseExit::Normal,
+                    "timed_wait_calls_event_free_after_dispatch_and_returns_dispatch_result",
+                ),
+            ],
+        )?;
+        check_contract_declaration(
+            &wrapper,
+            "_mk_event_loop_destroy",
+            &[
+                (
+                    ClauseExit::Requires,
+                    "selected_unix_libevent_source_profile",
+                ),
+                (
+                    ClauseExit::Requires,
+                    "context_and_children_have_valid_destruction_provenance",
+                ),
+                (
+                    ClauseExit::Normal,
+                    "calls_base_free_then_fired_free_then_context_free",
+                ),
+                (
+                    ClauseExit::Normal,
+                    "nested_event_and_map_custody_still_requires_composition",
+                ),
+            ],
+        )?;
+        check_contract_declaration(
+            &composition,
+            WAIT_CALLBACK,
+            &[
+                (ClauseExit::Requires, "callback_argument_is_borrowed"),
+                (ClauseExit::Normal, "callback_has_no_resource_effect"),
+            ],
+        )?;
+
+        Ok(Self {
+            contract_digests: BTreeMap::from([
+                (
+                    "monkey/wrapper_paths.qcore".into(),
+                    sha256_hex(wrapper_contract.as_bytes()),
+                ),
+                (
+                    "monkey/composition.qcore".into(),
+                    sha256_hex(composition_contract.as_bytes()),
+                ),
+            ]),
+        })
+    }
+
+    pub fn contract_digests(&self) -> &BTreeMap<String, String> {
+        &self.contract_digests
+    }
+
+    fn required_observations(&self) -> Vec<WaitObservationRequirement> {
+        vec![
+            WaitObservationRequirement::BaseCreateSuccess,
+            WaitObservationRequirement::EventCreateSuccess {
+                callback: WAIT_CALLBACK.into(),
+                flags: 0x01,
+                descriptor_absent: true,
+                priority_required: true,
+            },
+            WaitObservationRequirement::EventAddSuccess,
+            WaitObservationRequirement::DispatchBegin,
+            WaitObservationRequirement::TimeoutActivation,
+            WaitObservationRequirement::CallbackEnter,
+            WaitObservationRequirement::CallbackExit,
+            WaitObservationRequirement::DispatchEnd,
+            WaitObservationRequirement::EventFree,
+            WaitObservationRequirement::ArgumentScopeEnd,
+            WaitObservationRequirement::BaseFree,
+        ]
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+enum ClauseExit {
+    Requires,
+    Normal,
+}
+
+fn check_contract_declaration(
+    program: &qcore_frontend::frontend::SourceProgram,
+    name: &str,
+    expected: &[(ClauseExit, &str)],
+) -> Result<(), WaitSourceProjectionError> {
+    let declarations: Vec<_> = program
+        .declarations
+        .iter()
+        .filter(|declaration| declaration.value.name == name)
+        .collect();
+    let declaration = match declarations.as_slice() {
+        [] => {
+            return Err(WaitSourceProjectionError::MissingContractDeclaration(
+                name.into(),
+            ));
+        }
+        [declaration] => declaration,
+        _ => {
+            return Err(WaitSourceProjectionError::DuplicateContractDeclaration(
+                name.into(),
+            ));
+        }
+    };
+    let contract = declaration
+        .value
+        .function_contract
+        .as_ref()
+        .ok_or_else(|| WaitSourceProjectionError::MissingContractBlock(name.into()))?;
+    let actual = contract
+        .clauses
+        .iter()
+        .map(|clause| {
+            let exit = match &clause.value.kind {
+                SourceContractClauseKind::Requires => ClauseExit::Requires,
+                SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal) => {
+                    ClauseExit::Normal
+                }
+                _ => return None,
+            };
+            Some((exit, clause.value.expression_source.trim()))
+        })
+        .collect::<Option<Vec<_>>>();
+    if actual.as_deref() != Some(expected) {
+        return Err(WaitSourceProjectionError::ContractClauseMismatch(
+            name.into(),
+        ));
+    }
+    Ok(())
 }
 
 /// Constructor-private evidence that the exact pinned source artifacts imply
@@ -99,6 +310,8 @@ pub struct MonkeyWaitSourceProjection {
     source_summary_digests: BTreeMap<String, String>,
     selected_path_indices: BTreeMap<String, usize>,
     required_observations: Vec<WaitObservationRequirement>,
+    contract_digests: BTreeMap<String, String>,
+    callback_semantics: WaitCallbackSemantics,
 }
 
 impl MonkeyWaitSourceProjection {
@@ -120,6 +333,14 @@ impl MonkeyWaitSourceProjection {
 
     pub fn required_observations(&self) -> &[WaitObservationRequirement] {
         &self.required_observations
+    }
+
+    pub fn contract_digests(&self) -> &BTreeMap<String, String> {
+        &self.contract_digests
+    }
+
+    pub fn callback_semantics(&self) -> WaitCallbackSemantics {
+        self.callback_semantics
     }
 }
 
@@ -163,10 +384,7 @@ fn validate_lifecycle_shape(
             ],
             true,
         ),
-        "_mk_event_loop_destroy" => (
-            &["event_base_free", "mk_mem_free", "mk_mem_free"],
-            false,
-        ),
+        "_mk_event_loop_destroy" => (&["event_base_free", "mk_mem_free", "mk_mem_free"], false),
         _ => return Ok(()),
     };
     if calls(selected_path) != expected_calls || !ends_with_return(selected_path, returns_value) {
@@ -177,13 +395,76 @@ fn validate_lifecycle_shape(
     Ok(())
 }
 
+fn validate_complete_shape(
+    name: &str,
+    summary: &SourceSummary,
+) -> Result<(), WaitSourceProjectionError> {
+    let expected: &[(&[&str], usize)] = match name {
+        WAIT_CALLBACK => &[(&[], 1)],
+        "_mk_event_loop_create" => &[
+            (&["_mk_event_init"], 4),
+            (&["_mk_event_init", "mk_mem_alloc_z"], 7),
+            (
+                &[
+                    "_mk_event_init",
+                    "mk_mem_alloc_z",
+                    "event_base_new",
+                    "mk_mem_alloc_z",
+                    "mk_mem_free",
+                ],
+                14,
+            ),
+            (
+                &[
+                    "_mk_event_init",
+                    "mk_mem_alloc_z",
+                    "event_base_new",
+                    "mk_mem_alloc_z",
+                ],
+                14,
+            ),
+        ],
+        "_mk_event_wait_with_flags" => &[(&["event_base_loop"], 10)],
+        "_mk_event_wait_2" => &[
+            (&["_mk_event_wait_with_flags"], 13),
+            (&["_mk_event_wait_with_flags"], 14),
+            (
+                &[
+                    "event_new",
+                    "event_add",
+                    "_mk_event_wait_with_flags",
+                    "event_free",
+                ],
+                20,
+            ),
+        ],
+        "_mk_event_loop_destroy" => &[(&["event_base_free", "mk_mem_free", "mk_mem_free"], 6)],
+        _ => &[],
+    };
+    if summary.paths().len() != expected.len()
+        || summary
+            .paths()
+            .iter()
+            .zip(expected)
+            .any(|(path, (expected_calls, operation_count))| {
+                path.operations.len() != *operation_count
+                    || calls(&path.operations) != *expected_calls
+            })
+    {
+        return Err(WaitSourceProjectionError::SourceShapeMismatch(name.into()));
+    }
+    Ok(())
+}
+
 /// Derive the source half of one timed-wait composition.
 ///
-/// Exactly the five required summaries are accepted. Their serialized digests
-/// pin the complete imported operations, including every unselected failure
-/// path, so a body substitution cannot pass by preserving only a call list.
+/// Exactly the five required summaries are accepted. All source paths retain
+/// their expected operation counts and call order. Canonical digests of the
+/// complete imported paths are exposed so the outer source-identity audit can
+/// bind these obligations to its independently pinned translation unit.
 pub fn project_monkey_timed_wait_source<'a>(
     summaries: impl IntoIterator<Item = &'a SourceSummary>,
+    contracts: &MonkeyWaitContracts,
 ) -> Result<MonkeyWaitSourceProjection, WaitSourceProjectionError> {
     let required_names = REQUIRED_SUMMARIES
         .iter()
@@ -211,7 +492,10 @@ pub fn project_monkey_timed_wait_source<'a>(
         || common_assumptions
             .get("profile_digest")
             .is_none_or(|digest| digest.is_empty())
-        || callback_assumptions.get("typed_import_role").map(String::as_str) != Some("Callback")
+        || callback_assumptions
+            .get("typed_import_role")
+            .map(String::as_str)
+            != Some("Callback")
     {
         return Err(WaitSourceProjectionError::ProfileAssumptionsMismatch(
             WAIT_CALLBACK.into(),
@@ -220,12 +504,14 @@ pub fn project_monkey_timed_wait_source<'a>(
 
     let mut digests = BTreeMap::new();
     let mut selected = BTreeMap::new();
-    for (name, signature, path_count, selected_path, expected_digest) in REQUIRED_SUMMARIES {
+    for (name, signature, path_count, selected_path) in REQUIRED_SUMMARIES {
         let summary = by_name
             .get(name)
             .ok_or_else(|| WaitSourceProjectionError::MissingSummary(name.into()))?;
         if summary.source_revision() != MONKEY_SOURCE_REVISION {
-            return Err(WaitSourceProjectionError::SourceRevisionMismatch(name.into()));
+            return Err(WaitSourceProjectionError::SourceRevisionMismatch(
+                name.into(),
+            ));
         }
         if summary.signature() != signature
             && !(name == WAIT_CALLBACK && summary.signature() == "void (int, short, void *)")
@@ -235,6 +521,7 @@ pub fn project_monkey_timed_wait_source<'a>(
         if summary.paths().len() != path_count {
             return Err(WaitSourceProjectionError::PathCountMismatch(name.into()));
         }
+        validate_complete_shape(name, summary)?;
         let mut assumptions = summary.profile_assumptions().clone();
         let role = assumptions.remove("typed_import_role");
         if assumptions != common_assumptions
@@ -260,11 +547,8 @@ pub fn project_monkey_timed_wait_source<'a>(
             summary.source_revision(),
             summary.paths(),
         ))
-            .expect("constructor-private typed source summaries always serialize");
+        .expect("constructor-private typed source summaries always serialize");
         let digest = sha256_hex(&encoded);
-        if digest != expected_digest {
-            return Err(WaitSourceProjectionError::SourceArtifactMismatch(name.into()));
-        }
         validate_lifecycle_shape(name, &summary.paths()[selected_path].operations)?;
         digests.insert(name.into(), digest);
         selected.insert(name.into(), selected_path);
@@ -280,23 +564,8 @@ pub fn project_monkey_timed_wait_source<'a>(
         profile_assumptions: common_assumptions,
         source_summary_digests: digests,
         selected_path_indices: selected,
-        required_observations: vec![
-            WaitObservationRequirement::BaseCreateSuccess,
-            WaitObservationRequirement::EventCreateSuccess {
-                callback: WAIT_CALLBACK.into(),
-                flags: 0x01,
-                descriptor_absent: true,
-                priority_required: true,
-            },
-            WaitObservationRequirement::EventAddSuccess,
-            WaitObservationRequirement::DispatchBegin,
-            WaitObservationRequirement::TimeoutActivation,
-            WaitObservationRequirement::CallbackEnter,
-            WaitObservationRequirement::CallbackExit,
-            WaitObservationRequirement::DispatchEnd,
-            WaitObservationRequirement::EventFree,
-            WaitObservationRequirement::ArgumentScopeEnd,
-            WaitObservationRequirement::BaseFree,
-        ],
+        required_observations: contracts.required_observations(),
+        contract_digests: contracts.contract_digests.clone(),
+        callback_semantics: WaitCallbackSemantics::BorrowedNoEffectNoTasks,
     })
 }

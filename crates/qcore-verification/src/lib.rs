@@ -15,7 +15,6 @@ pub mod reactor_source;
 
 pub mod call_use_source;
 pub mod callback_coverage;
-pub mod monkey_wait_projection;
 pub mod cleanup_replay_source;
 pub mod composition_source;
 pub mod counter_source;
@@ -23,6 +22,7 @@ pub mod file_close_composition;
 pub mod filesystem_chunk_close_composition;
 pub mod frame_source;
 pub mod memory_close_composition;
+pub mod monkey_wait_projection;
 pub mod source_effect;
 pub mod teardown_source;
 pub mod unmap_composition;

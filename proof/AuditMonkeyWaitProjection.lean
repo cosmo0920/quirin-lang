@@ -1,0 +1,11 @@
+import QCore.MonkeyWaitProjection
+
+#print axioms QCore.MonkeyWaitProjection.accepted_projection_has_exact_source
+#print axioms QCore.MonkeyWaitProjection.accepted_projection_has_exact_observation_obligations
+#print axioms QCore.MonkeyWaitProjection.accepted_callback_is_the_sole_return_path
+#print axioms QCore.MonkeyWaitProjection.exact_source_is_accepted
+#print axioms QCore.MonkeyWaitProjection.accepted_projection_has_exact_contracts
+#print axioms QCore.MonkeyWaitProjection.missing_lifecycle_source_is_rejected
+#print axioms QCore.MonkeyWaitProjection.callback_effect_substitution_is_rejected
+#print axioms QCore.MonkeyWaitProjection.missing_event_free_is_rejected
+#print axioms QCore.MonkeyWaitProjection.missing_callback_contract_is_rejected

@@ -8,9 +8,14 @@ use qcore_contract::profile_loader::load_source_set_profile;
 use qcore_schemas::profile::ImportRole;
 use qcore_verification::monkey_wait_projection::*;
 
-const CALLBACKS: &str =
-    include_str!("../../../compiler/tests/fixtures/monkey/callbacks.c");
+const CALLBACKS: &str = include_str!("../../../compiler/tests/fixtures/monkey/callbacks.c");
 const WRAPPERS: &str = include_str!("../../../compiler/tests/fixtures/monkey/wrappers.c");
+const WRAPPER_CONTRACT: &str = include_str!("../../../contract/qcore/monkey/wrapper_paths.qcore");
+const COMPOSITION_CONTRACT: &str = include_str!("../../../contract/qcore/monkey/composition.qcore");
+
+fn contracts() -> MonkeyWaitContracts {
+    MonkeyWaitContracts::parse(WRAPPER_CONTRACT, COMPOSITION_CONTRACT).unwrap()
+}
 
 fn wrapper_source() -> String {
     format!(
@@ -61,13 +66,16 @@ fn summary<'a>(results: &'a [SourceResult], name: &str) -> &'a SourceSummary {
 fn project(callback_source: &str, wrapper_source: &str) -> MonkeyWaitSourceProjection {
     let callbacks = import(callback_source, ImportRole::Callback);
     let wrappers = import(wrapper_source, ImportRole::Wrapper);
-    project_monkey_timed_wait_source([
-        summary(&callbacks, WAIT_CALLBACK),
-        summary(&wrappers, "_mk_event_loop_create"),
-        summary(&wrappers, "_mk_event_wait_with_flags"),
-        summary(&wrappers, "_mk_event_wait_2"),
-        summary(&wrappers, "_mk_event_loop_destroy"),
-    ])
+    project_monkey_timed_wait_source(
+        [
+            summary(&callbacks, WAIT_CALLBACK),
+            summary(&wrappers, "_mk_event_loop_create"),
+            summary(&wrappers, "_mk_event_wait_with_flags"),
+            summary(&wrappers, "_mk_event_wait_2"),
+            summary(&wrappers, "_mk_event_loop_destroy"),
+        ],
+        &contracts(),
+    )
     .unwrap()
 }
 
@@ -81,9 +89,17 @@ fn exact_imported_source_derives_the_bounded_native_obligations() {
     assert_eq!(projection.source_revision(), MONKEY_SOURCE_REVISION);
     assert_eq!(projection.source_summary_digests().len(), 5);
     assert_eq!(projection.selected_path_indices()[WAIT_CALLBACK], 0);
-    assert_eq!(projection.selected_path_indices()["_mk_event_loop_create"], 3);
+    assert_eq!(
+        projection.selected_path_indices()["_mk_event_loop_create"],
+        3
+    );
     assert_eq!(projection.selected_path_indices()["_mk_event_wait_2"], 2);
     assert_eq!(projection.required_observations().len(), 11);
+    assert_eq!(projection.contract_digests().len(), 2);
+    assert_eq!(
+        projection.callback_semantics(),
+        WaitCallbackSemantics::BorrowedNoEffectNoTasks
+    );
     assert_eq!(
         projection.required_observations()[1],
         WaitObservationRequirement::EventCreateSuccess {
@@ -115,31 +131,37 @@ fn body_and_lifecycle_substitutions_do_not_project() {
     let callbacks = import(&changed_callback, ImportRole::Callback);
     let wrapper_source = wrapper_source();
     let wrappers = import(&wrapper_source, ImportRole::Wrapper);
-    let result = project_monkey_timed_wait_source([
-        summary(&callbacks, WAIT_CALLBACK),
-        summary(&wrappers, "_mk_event_loop_create"),
-        summary(&wrappers, "_mk_event_wait_with_flags"),
-        summary(&wrappers, "_mk_event_wait_2"),
-        summary(&wrappers, "_mk_event_loop_destroy"),
-    ]);
+    let result = project_monkey_timed_wait_source(
+        [
+            summary(&callbacks, WAIT_CALLBACK),
+            summary(&wrappers, "_mk_event_loop_create"),
+            summary(&wrappers, "_mk_event_wait_with_flags"),
+            summary(&wrappers, "_mk_event_wait_2"),
+            summary(&wrappers, "_mk_event_loop_destroy"),
+        ],
+        &contracts(),
+    );
     assert!(matches!(
         result,
-        Err(WaitSourceProjectionError::SourceArtifactMismatch(name)) if name == WAIT_CALLBACK
+        Err(WaitSourceProjectionError::SourceShapeMismatch(name)) if name == WAIT_CALLBACK
     ));
 
     let changed_wrappers = wrapper_source.replacen("event_free(timeout_event);", "", 1);
     let callbacks = import(CALLBACKS, ImportRole::Callback);
     let wrappers = import(&changed_wrappers, ImportRole::Wrapper);
-    let result = project_monkey_timed_wait_source([
-        summary(&callbacks, WAIT_CALLBACK),
-        summary(&wrappers, "_mk_event_loop_create"),
-        summary(&wrappers, "_mk_event_wait_with_flags"),
-        summary(&wrappers, "_mk_event_wait_2"),
-        summary(&wrappers, "_mk_event_loop_destroy"),
-    ]);
+    let result = project_monkey_timed_wait_source(
+        [
+            summary(&callbacks, WAIT_CALLBACK),
+            summary(&wrappers, "_mk_event_loop_create"),
+            summary(&wrappers, "_mk_event_wait_with_flags"),
+            summary(&wrappers, "_mk_event_wait_2"),
+            summary(&wrappers, "_mk_event_loop_destroy"),
+        ],
+        &contracts(),
+    );
     assert!(matches!(
         result,
-        Err(WaitSourceProjectionError::SourceArtifactMismatch(name)) if name == "_mk_event_wait_2"
+        Err(WaitSourceProjectionError::SourceShapeMismatch(name)) if name == "_mk_event_wait_2"
     ));
 }
 
@@ -151,12 +173,15 @@ fn incomplete_or_foreign_summary_sets_fail_closed() {
     let callbacks = import(CALLBACKS, ImportRole::Callback);
     let wrapper_source = wrapper_source();
     let wrappers = import(&wrapper_source, ImportRole::Wrapper);
-    let incomplete = project_monkey_timed_wait_source([
-        summary(&callbacks, WAIT_CALLBACK),
-        summary(&wrappers, "_mk_event_loop_create"),
-        summary(&wrappers, "_mk_event_wait_with_flags"),
-        summary(&wrappers, "_mk_event_wait_2"),
-    ]);
+    let incomplete = project_monkey_timed_wait_source(
+        [
+            summary(&callbacks, WAIT_CALLBACK),
+            summary(&wrappers, "_mk_event_loop_create"),
+            summary(&wrappers, "_mk_event_wait_with_flags"),
+            summary(&wrappers, "_mk_event_wait_2"),
+        ],
+        &contracts(),
+    );
     assert_eq!(
         incomplete,
         Err(WaitSourceProjectionError::MissingSummary(
@@ -164,10 +189,13 @@ fn incomplete_or_foreign_summary_sets_fail_closed() {
         ))
     );
 
-    let duplicate = project_monkey_timed_wait_source([
-        summary(&callbacks, WAIT_CALLBACK),
-        summary(&callbacks, WAIT_CALLBACK),
-    ]);
+    let duplicate = project_monkey_timed_wait_source(
+        [
+            summary(&callbacks, WAIT_CALLBACK),
+            summary(&callbacks, WAIT_CALLBACK),
+        ],
+        &contracts(),
+    );
     assert_eq!(
         duplicate,
         Err(WaitSourceProjectionError::DuplicateSummary(
@@ -175,14 +203,68 @@ fn incomplete_or_foreign_summary_sets_fail_closed() {
         ))
     );
 
-    let foreign = project_monkey_timed_wait_source([
-        summary(&callbacks, WAIT_CALLBACK),
-        summary(&callbacks, "cb_event"),
-    ]);
+    let foreign = project_monkey_timed_wait_source(
+        [
+            summary(&callbacks, WAIT_CALLBACK),
+            summary(&callbacks, "cb_event"),
+        ],
+        &contracts(),
+    );
     assert_eq!(
         foreign,
         Err(WaitSourceProjectionError::UnexpectedSummary(
             "cb_event".into()
+        ))
+    );
+}
+
+#[test]
+fn configured_pinned_translation_unit_matches_the_fixture_projection() {
+    let Ok(path) = std::env::var("QCORE_MONKEY_PREPROCESSED") else {
+        return;
+    };
+    if qcore_c_gateway::clang_command().is_err() {
+        return;
+    }
+    let source = std::fs::read_to_string(path).unwrap();
+    let callbacks = import(&source, ImportRole::Callback);
+    let wrappers = import(&source, ImportRole::Wrapper);
+    let projection = project_monkey_timed_wait_source(
+        [
+            summary(&callbacks, WAIT_CALLBACK),
+            summary(&wrappers, "_mk_event_loop_create"),
+            summary(&wrappers, "_mk_event_wait_with_flags"),
+            summary(&wrappers, "_mk_event_wait_2"),
+            summary(&wrappers, "_mk_event_loop_destroy"),
+        ],
+        &contracts(),
+    )
+    .unwrap();
+    assert_eq!(projection.source_revision(), MONKEY_SOURCE_REVISION);
+    assert_eq!(projection.source_summary_digests().len(), 5);
+}
+
+#[test]
+fn missing_or_substituted_contract_semantics_fail_closed() {
+    let missing = WRAPPER_CONTRACT.replace(
+        "    ensures normal timed_wait_calls_event_free_after_dispatch_and_returns_dispatch_result;\n",
+        "",
+    );
+    assert_eq!(
+        MonkeyWaitContracts::parse(&missing, COMPOSITION_CONTRACT),
+        Err(WaitSourceProjectionError::ContractClauseMismatch(
+            "_mk_event_wait_2".into()
+        ))
+    );
+
+    let substituted = COMPOSITION_CONTRACT.replace(
+        "callback_has_no_resource_effect",
+        "callback_may_release_resources",
+    );
+    assert_eq!(
+        MonkeyWaitContracts::parse(WRAPPER_CONTRACT, &substituted),
+        Err(WaitSourceProjectionError::ContractClauseMismatch(
+            WAIT_CALLBACK.into()
         ))
     );
 }
