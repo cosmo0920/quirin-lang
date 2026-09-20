@@ -33,6 +33,13 @@ pub struct AuditCounts {
     /// established, or carried a definition nothing read. The unit is published
     /// `Unknown`; the per-function rows are unchanged.
     pub withheld_safe_units: usize,
+    /// Per-run preparation measurements. Durations are observed wall time for
+    /// the three shared stages, summed across units; they are not speedup claims.
+    pub prepared_units: usize,
+    pub preparation_clang_invocations: usize,
+    pub plain_preprocessing_elapsed_us: u64,
+    pub syntax_validation_elapsed_us: u64,
+    pub line_marked_preprocessing_elapsed_us: u64,
 }
 
 /// The summary a result carries, whatever its verdict.
@@ -91,12 +98,7 @@ pub fn project_unit(
     report: &mut AuditReport,
     counts: &mut AuditCounts,
 ) -> Result<(), String> {
-    counts.units += 1;
-    counts.absent_from_raw_scan_definitions += inventory.absent_from_raw_scan().len();
-    counts.unanalyzable_definitions += inventory.unanalyzable().len();
-    if !inventory.is_complete() {
-        counts.enumeration_refused_units += 1;
-    }
+    record_inventory(inventory, counts);
     let source_functions = inventory.definitions();
     if source_functions.is_empty() {
         counts.data_only_units += 1;
@@ -119,24 +121,6 @@ pub fn project_unit(
         contracts,
         Some(inventory),
     );
-    // Fail-closed (unit E01-F1): a whole-unit `Safe` claim is a claim over the
-    // *declared main-source scope*. It cannot stand when that scope was not
-    // established, or when it carries a definition no analysis read. The
-    // per-function rows below are untouched — nothing is downgraded except the
-    // unit-level claim, and only with the ground named in `reason`.
-    let result = match result {
-        Ok(UnrestrictedLegacyResult::Safe(certificate)) if !inventory.supports_unit_safe() => {
-            counts.withheld_safe_units += 1;
-            Ok(UnrestrictedLegacyResult::Unknown {
-                preprocessed_source: certificate.preprocessed_source,
-                reason: inventory
-                    .withheld_safe_reason()
-                    .unwrap_or_else(|| "enumeration completeness refused".to_owned()),
-                partial: Some(certificate.summary),
-            })
-        }
-        other => other,
-    };
     // Card GATEWAY-C-LOCATION: the original `file:line` every diagnostic of
     // this unit is presented at. Derived only where there is a diagnostic to
     // attribute, from the *authoritative* preprocessed text — the bytes the
@@ -144,49 +128,16 @@ pub fn project_unit(
     // describe the text it was built against. This publishes no verdict and is
     // never read by the analysis: `result` above is already settled.
     let locations = origin_coordinates(unit, &result);
-    let detail = report.record(library, file, source_functions, &result, locations.as_ref());
-    report.record_enumeration(inventory);
-    match result {
-        Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
-            counts.safe_units += 1;
-            counts.projected_functions += certificate.checked_functions.len();
-            println!(
-                "  {library}/{file}: Safe ({}/{})",
-                certificate.checked_functions.len(),
-                source_functions.len()
-            );
-        }
-        Ok(UnrestrictedLegacyResult::Unsafe(summary)) => {
-            counts.unsafe_units += 1;
-            counts.projected_functions += summary.functions.len();
-            println!(
-                "  {library}/{file}: Unsafe ({}/{})",
-                summary.functions.len(),
-                source_functions.len()
-            );
-        }
-        Ok(UnrestrictedLegacyResult::Unknown {
-            reason, partial, ..
-        }) => {
-            counts.unknown_units += 1;
-            let projected = partial
-                .as_ref()
-                .map_or(0, |summary| summary.functions.len());
-            counts.projected_functions += projected;
-            println!(
-                "  {library}/{file}: Unknown ({projected}/{}): {reason}",
-                source_functions.len()
-            );
-        }
-        Err(error) => {
-            counts.gateway_failures += 1;
-            println!("  {library}/{file}: gateway failure: {error}");
-        }
-    }
-    for line in detail {
-        println!("    {line}");
-    }
-    Ok(())
+    record_projection(
+        library,
+        file,
+        inventory,
+        source_functions,
+        result,
+        locations.as_ref(),
+        report,
+        counts,
+    )
 }
 
 /// Project a unit from the preparation already used for compile-task identity,
@@ -199,19 +150,31 @@ pub fn project_prepared_unit(
     report: &mut AuditReport,
     counts: &mut AuditCounts,
 ) -> Result<(), String> {
+    let metrics = prepared.metrics();
+    counts.prepared_units += 1;
+    counts.preparation_clang_invocations += usize::from(metrics.clang_invocations());
+    counts.plain_preprocessing_elapsed_us = counts
+        .plain_preprocessing_elapsed_us
+        .saturating_add(metrics.plain_preprocessing.elapsed_us);
+    counts.syntax_validation_elapsed_us = counts
+        .syntax_validation_elapsed_us
+        .saturating_add(metrics.syntax_validation.elapsed_us);
+    counts.line_marked_preprocessing_elapsed_us = counts
+        .line_marked_preprocessing_elapsed_us
+        .saturating_add(metrics.line_marked_preprocessing.elapsed_us);
     let inventory = prepared.inventory();
-    counts.units += 1;
-    counts.absent_from_raw_scan_definitions += inventory.absent_from_raw_scan().len();
-    counts.unanalyzable_definitions += inventory.unanalyzable().len();
-    if !inventory.is_complete() {
-        counts.enumeration_refused_units += 1;
-    }
+    record_inventory(inventory, counts);
     let source_functions = inventory.definitions();
     if source_functions.is_empty() {
         counts.data_only_units += 1;
-        report.record_data_only(library, file, None);
+        report.record_data_only(library, file, prepared.validation_error());
         report.record_enumeration(inventory);
-        println!("  {library}/{file}: data-only gateway pass");
+        if let Some(error) = prepared.validation_error() {
+            counts.gateway_failures += 1;
+            println!("  {library}/{file}: data-only gateway failure: {error}");
+        } else {
+            println!("  {library}/{file}: data-only gateway pass");
+        }
         return Ok(());
     }
     counts.source_functions += source_functions.len();
@@ -226,6 +189,15 @@ pub fn project_prepared_unit(
         report,
         counts,
     )
+}
+
+fn record_inventory(inventory: &SourceDefinitionInventory, counts: &mut AuditCounts) {
+    counts.units += 1;
+    counts.absent_from_raw_scan_definitions += inventory.absent_from_raw_scan().len();
+    counts.unanalyzable_definitions += inventory.unanalyzable().len();
+    if !inventory.is_complete() {
+        counts.enumeration_refused_units += 1;
+    }
 }
 
 fn record_projection(

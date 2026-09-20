@@ -19,9 +19,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, LegacyFunctionScope, enumerate_source_definitions,
-};
+use qcore_c_gateway::legacy_c::{C11TranslationUnit, LegacyFunctionScope};
 use qcore_contract::contract_loader::load_resource_contract_manifest;
 use qcore_contract::profile_loader::{
     LoadedProfile, load_audited_bundle, load_profile_directory, verify_pin,
@@ -30,7 +28,7 @@ use qcore_schemas::profile::{LibraryProfile, UnitSelection, WitnessCheck};
 use serde::{Deserialize, Serialize};
 
 use compile_db::{CompileEntry, compile_entries, compiler_options};
-use projection::{AuditCounts, project_unit};
+use projection::AuditCounts;
 use report::{AuditReport, UnitRefusal};
 
 #[derive(Debug, Deserialize)]
@@ -396,14 +394,12 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             // admitted macro option changes the analyzed code with the selected
             // `.c` file untouched.
             let prepared = qcore_c_gateway::legacy_c::prepare_translation_unit(&unit);
-            let preparation_error = prepared.as_ref().err().map(ToString::to_string);
+            let preparation_error = prepared.validation_error().map(ToString::to_string);
             let identity = compile_db::compile_task_identity(
                 &entry,
                 &unit,
-                match &prepared {
-                    Ok(prepared) => {
-                        compile_db::EffectiveInput::Accepted(prepared.preprocessed_source())
-                    }
+                match prepared.preprocessed_source() {
+                    Ok(source) => compile_db::EffectiveInput::Accepted(source),
                     Err(_) => compile_db::EffectiveInput::Rejected(
                         preparation_error
                             .as_deref()
@@ -421,33 +417,15 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             // to the resource projection, the report and the source-contract
             // route. Two independent computations of the denominator could
             // disagree; one cannot.
-            let inventory;
-            let inventory = match &prepared {
-                Ok(prepared) => prepared.inventory(),
-                Err(_) => {
-                    inventory = enumerate_source_definitions(&unit);
-                    &inventory
-                }
-            };
-            match &prepared {
-                Ok(prepared) => projection::project_prepared_unit(
-                    library,
-                    &file,
-                    prepared,
-                    &contracts,
-                    &mut report,
-                    &mut counts,
-                )?,
-                Err(_) => project_unit(
-                    library,
-                    &file,
-                    &unit,
-                    inventory,
-                    &contracts,
-                    &mut report,
-                    &mut counts,
-                )?,
-            }
+            let inventory = prepared.inventory();
+            projection::project_prepared_unit(
+                library,
+                &file,
+                &prepared,
+                &contracts,
+                &mut report,
+                &mut counts,
+            )?;
             if let Some(audit) = &mut source_contracts {
                 audit.analyze_unit(library, &file, &unit, inventory, &profile);
             }
