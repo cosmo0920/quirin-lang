@@ -1,0 +1,3894 @@
+{
+  "card": "W42-UNPROJECTED-DEFINITIONS",
+  "classification_counts": {
+    "enumerator-false-positive": 0,
+    "pinned-build-exclusion": 87,
+    "projection-defect": 0,
+    "unresolved": 0
+  },
+  "compile_evidence": [
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "cio_winapi_error_print": []
+            },
+            "dump_bytes": 459036,
+            "exit": 0,
+            "normalized_dump_sha256": "d5501f03936bd96c41751403daa7e886299d5edfa7d9a7c0da5f22c8822e543a"
+          },
+          "command_sha256": "3c5246f170070f430b3d9dc13ce480a89cdbbfb87427cbfba24ede8800da7983",
+          "compile_database_index": 285,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/chunkio/src",
+          "preprocess": {
+            "active_bytes": 86081,
+            "active_sha256": "25fbece359972d6e565b052e595e902dcd6fcf1ccdcfb902cf77c05add8dbd23",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_65_1"
+            ],
+            "stderr_sha256": "aeb3d9a4a39e636fd49d1807bd530214a39284f1e1aff172568c0770a262e64e",
+            "token_stream_sha256": "c14a21351eaae932282822ebdce66039860c3a5b7f90aff01193126cb1f3a5fb"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "cio_log.c",
+      "library": "chunkio",
+      "source_sha256": "bb1cbeb73eb8869414aaa46461c3fb7307c3f7a2f32242532819d32dcc5dadb4",
+      "source_suffix": "lib/chunkio/src/cio_log.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "cio_os_win32_make_recursive_path": []
+            },
+            "dump_bytes": 422074,
+            "exit": 0,
+            "normalized_dump_sha256": "f5ffde82312858927a1f2101998aca8dd6ace5df37738c1f8b31f7715580f3be"
+          },
+          "command_sha256": "a96422635fb0d2ce36a7cabb525be98d2b57cfcf596ed66f863d6b1215f5d32b",
+          "compile_database_index": 284,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/chunkio/src",
+          "preprocess": {
+            "active_bytes": 90212,
+            "active_sha256": "349881dec3c6e5c974d37a2ccd215a7318500832cfa171ca309581cfd518c6f1",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_52_1"
+            ],
+            "stderr_sha256": "ea7872972b63085f22851f2513d060d3abe85312c13c38abb574d2d845791a54",
+            "token_stream_sha256": "0d6d2713d97c2eb6a4848dd88ee15e653fd6e627e0cc91e3d7240a961d6c674d"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "cio_os.c",
+      "library": "chunkio",
+      "source_sha256": "e1f59195148d4b2b23114917b0d446b9f50edf53ce5b769ee9753b522f75e21f",
+      "source_suffix": "lib/chunkio/src/cio_os.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "cio_utils_recursive_delete_handler": []
+            },
+            "dump_bytes": 499943,
+            "exit": 0,
+            "normalized_dump_sha256": "84b9ffa056fef66db7beaf8fc4d6325c8fd65876fd148d956c198c13641e15d6"
+          },
+          "command_sha256": "d76fc0be57748b59633afcc33d2e5122a6bfe451cd3af7c097d30742fa63912b",
+          "compile_database_index": 291,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/chunkio/src",
+          "preprocess": {
+            "active_bytes": 91622,
+            "active_sha256": "4a2bdd1c6cc2a6fc47325ce8eacbb017aa3295211e55684e5ab0dc9155b905d4",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_37_0"
+            ],
+            "stderr_sha256": "3686f80793a1fc63d0af2195b6a6371da26b13f7305b16374fb4ea3b69dd6ec2",
+            "token_stream_sha256": "f0b514beaef594f609cd7b8a57796f72994549eb692767a2b02dd8bdff783412"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "cio_utils.c",
+      "library": "chunkio",
+      "source_sha256": "2da002df9b57e1e6a976451a859ca801cef678c88c16d7226d199f4fee2261f6",
+      "source_suffix": "lib/chunkio/src/cio_utils.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "cmt_winapi_error_print": []
+            },
+            "dump_bytes": 3035260,
+            "exit": 0,
+            "normalized_dump_sha256": "d387f77e09d5f9079de35c10e85279da726679fe8fc64676bf19d1dde6aa29cf"
+          },
+          "command_sha256": "e9b3433a9a07144f03aed3c973bea88e47c15e779030dcc67504179aceded1f6",
+          "compile_database_index": 104,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/cmetrics/src",
+          "preprocess": {
+            "active_bytes": 271226,
+            "active_sha256": "c782ae8da573023e5bab51b12b40ee9b7cbab7dc2239f89e52c338728c214e29",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_69_1"
+            ],
+            "stderr_sha256": "3176a48f02fb7abf1da233938c1bd15e1cdeebf61380a54b4a4b06f830b688ab",
+            "token_stream_sha256": "47ffcdbb2dbcbec40838af1301eabbb6836f3466f95cb988ec2a40fec8eea548"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "cmt_log.c",
+      "library": "cmetrics",
+      "source_sha256": "24b5598382a05902561d47fd52ad6875858933ebff16734398bb622a754ead7b",
+      "source_suffix": "lib/cmetrics/src/cmt_log.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "ctr_winapi_error_print": []
+            },
+            "dump_bytes": 3899651,
+            "exit": 0,
+            "normalized_dump_sha256": "7ebe0e14d795daaf714ee5f57f08453040aaea4d25c047619c33a43b7758463b"
+          },
+          "command_sha256": "aefe20a0e7c18514b54acf6b3276d9071414bd34dd67bca48d729b50911cbbfc",
+          "compile_database_index": 135,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/ctraces/src",
+          "preprocess": {
+            "active_bytes": 333379,
+            "active_sha256": "2b83693db58b6ee8ad3348afcb9df8c5c3b7aff243017a1a55e16760b15718aa",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_66_1"
+            ],
+            "stderr_sha256": "c9a22431070d4d09e659afb8f52eaeccc90c154840969aab9e57c5bc6e79e1f7",
+            "token_stream_sha256": "9a973dc4140d7e8bf6feab78396b1718350681988ba3790a395ccf0e05c465a3"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "ctr_log.c",
+      "library": "ctraces",
+      "source_sha256": "80fd12cbbf09b5df971b14946114d21b7607da6148ea4e7ae2d73b31c7fe45a5",
+      "source_suffix": "lib/ctraces/src/ctr_log.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "sb_get_releasable_output_queue_space": [],
+              "sb_release_output_queue_space": []
+            },
+            "dump_bytes": 9627689,
+            "exit": 0,
+            "normalized_dump_sha256": "54c9d3b39b6ad0ba2ace1f8d760d850570c16bdb04a970fa8d82bfaedc40354b"
+          },
+          "command_sha256": "080a775a5ce0a438fa29579893f7b07e634e51580b11431751f2191fa0dc5ad8",
+          "compile_database_index": 939,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src",
+          "preprocess": {
+            "active_bytes": 898534,
+            "active_sha256": "f1c0489263c0f0082531422ac0a107aa40b3f558254ea3a8f8934e2eff7660c3",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_430_0"
+            ],
+            "stderr_sha256": "e4a626be5848e67ce10c3c228570907d95e29a3db3cc7d8e72a6c5caf17744cb",
+            "token_stream_sha256": "b110075a1d41e28db9ab260b8989ba988b836b35e9a6bf1d6178935474c233ea"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        },
+        {
+          "ast": {
+            "definitions": {
+              "sb_get_releasable_output_queue_space": [],
+              "sb_release_output_queue_space": []
+            },
+            "dump_bytes": 9627689,
+            "exit": 0,
+            "normalized_dump_sha256": "54c9d3b39b6ad0ba2ace1f8d760d850570c16bdb04a970fa8d82bfaedc40354b"
+          },
+          "command_sha256": "ded72d25c49de746c29b7595e1913b50e1c9a40d13a9a90e344b2fd82db6c0ef",
+          "compile_database_index": 1084,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src",
+          "preprocess": {
+            "active_bytes": 898534,
+            "active_sha256": "f1c0489263c0f0082531422ac0a107aa40b3f558254ea3a8f8934e2eff7660c3",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_430_0"
+            ],
+            "stderr_sha256": "e4a626be5848e67ce10c3c228570907d95e29a3db3cc7d8e72a6c5caf17744cb",
+            "token_stream_sha256": "b110075a1d41e28db9ab260b8989ba988b836b35e9a6bf1d6178935474c233ea"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "flb_input_chunk.c",
+      "library": "fluent-bit-chunk",
+      "source_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+      "source_suffix": "src/flb_input_chunk.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "internal_free": [],
+              "internal_malloc": [],
+              "internal_realloc": []
+            },
+            "dump_bytes": 1716417,
+            "exit": 0,
+            "normalized_dump_sha256": "268e895e295a6236d80a792ba00de63e6cf13694ff366ce938666bff874cc42d"
+          },
+          "command_sha256": "db0aa2d23d21d389dbacc7d785d8bee146095ee82f0c15752d11504a22270230",
+          "compile_database_index": 417,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 155555,
+            "active_sha256": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_163_1"
+            ],
+            "stderr_sha256": "219013e958504b23d0e16176043f05196eb7e8e51af6a5086b2daf845d8b3aa3",
+            "token_stream_sha256": "6408329cc315d05a9c3a830fb9ae1b050ea5dceae6127829d17af4c4c7f11d5a"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "cJSON.c",
+      "library": "librdkafka",
+      "source_sha256": "fdb11f529efe3ad55b04d3c59c3c2f668cf4b68bd93feed23d51ee89841e0a90",
+      "source_suffix": "lib/librdkafka-2.15.0/src/cJSON.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "pb_validate_utf8": []
+            },
+            "dump_bytes": 237982,
+            "exit": 0,
+            "normalized_dump_sha256": "1dca7c7acf74d007e5b789f473ebb7fb28bacf1ad04afb9f28302eabea016266"
+          },
+          "command_sha256": "1c8b80e07196aeac19bb44f310e91739261ce628144377149e375894555da05e",
+          "compile_database_index": 396,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 23808,
+            "active_sha256": "252baa2cf80eb9deea4304d0a58b462b6142cef0e90bbf8d743edd2c214a24eb",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_324_1"
+            ],
+            "stderr_sha256": "e4705318f3a6f43e05e0eff02d16cc379ac72fb8ef65c1d8ccfeff3360eea5da",
+            "token_stream_sha256": "9d41f28284ca640c2d8efeb9f82e89c70d1cffb5ed6bd75dcc46f3a5828e8549"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "nanopb/pb_common.c",
+      "library": "librdkafka",
+      "source_sha256": "41f0950b97a79ab5fd1186d609681c2293f2b2f29e3a0efb7a3b0ebb0fddd790",
+      "source_suffix": "lib/librdkafka-2.15.0/src/nanopb/pb_common.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "allocate_field": [],
+              "initialize_pointer_field": [],
+              "pb_decode_double_as_float": [],
+              "pb_release_single_field": [],
+              "pb_release_union_field": []
+            },
+            "dump_bytes": 717493,
+            "exit": 0,
+            "normalized_dump_sha256": "7bd4bd064258f09aed98926573f866520bc0e9e18df716d8e5116ee7878df7af"
+          },
+          "command_sha256": "a0b8bc37f03d526476be3729fb68760cb5a4c308468b211c34876d4519104698",
+          "compile_database_index": 395,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 51082,
+            "active_sha256": "cb28e3a5f200aed5f5bb9097c2fef33d61ed4cc3461d74916190b44dd5202eae",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_1195_1",
+              "W42_BRANCH_1661_1",
+              "W42_BRANCH_556_1"
+            ],
+            "stderr_sha256": "8ab393bc42534a698bf0a0288b02fb600f708a6789ecd331e267d55d44cf1839",
+            "token_stream_sha256": "748dfad393436a3d730cac96a6f6ab555168a15f1a048a0cb0925825e4b45e1f"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "nanopb/pb_decode.c",
+      "library": "librdkafka",
+      "source_sha256": "362fd88bc261529b72d92ef0ed1b484738fdddd7dc816982829442d849ca6a7b",
+      "source_suffix": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "pb_encode_float_as_double": []
+            },
+            "dump_bytes": 484743,
+            "exit": 0,
+            "normalized_dump_sha256": "4084866b81c1d3991376e682f2bd635d04d5c6b2fac7e0718021f9305016da65"
+          },
+          "command_sha256": "49c8a16de7312870f172af7948d1e1fcbad12454f32856f6d11ba8131e725db0",
+          "compile_database_index": 394,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 39661,
+            "active_sha256": "f42f7c076b161429f5b13b63eb6db3c76c6acaedba68327c2266c32bdb03312a",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_953_1"
+            ],
+            "stderr_sha256": "f6ce8e442b4074a7cddfaa514b1c64c6bde76482b5252871658af28fe287f900",
+            "token_stream_sha256": "d9170c66510cb903905aa80e7a1af45ef4b8b64b3d7f8a628d03d583a3204ad5"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "nanopb/pb_encode.c",
+      "library": "librdkafka",
+      "source_sha256": "696352ece4e2c0534ab5acb4dd47cca363e0e25e76ccd9e48e275a2ba8140082",
+      "source_suffix": "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "base64_encoding_conversion": []
+            },
+            "dump_bytes": 3277668,
+            "exit": 0,
+            "normalized_dump_sha256": "43b1af83a5c342a5094f35b18444b21ac7eebe1b2dc32b0a45939c7ff38ee355"
+          },
+          "command_sha256": "5a3696a5fad1c46b69a00fd6ad6341032d08c7b96536790b64cdc8a80f4aea1f",
+          "compile_database_index": 344,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 615846,
+            "active_sha256": "ead1b9bc62310657d57e632a2d0ab999506afdf0282cd4ce70601d6038a95c66",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_31_0"
+            ],
+            "stderr_sha256": "d9b00eeb38e170b3f833b716f4877575020ee1056445ab9df14e291678821318",
+            "token_stream_sha256": "250646e0f2b24e9cf576bcc0dc12648a43b811242968c3d2589a42a69e0e493d"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "rdbase64.c",
+      "library": "librdkafka",
+      "source_sha256": "758a846bb9fcc4d2388579c8d5bd9d7887a0abc04f5f772c2dc320bc41c68cd6",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdbase64.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "rd_kafka_print_ssl_errors": []
+            },
+            "dump_bytes": 8348354,
+            "exit": 0,
+            "normalized_dump_sha256": "6bc908483602fc57f8cec5b16da9324066c7a92d0c8338698f5fefca438f4d2e"
+          },
+          "command_sha256": "1add6386bd72dea0225377ae8721112f5834a66c0448e75e6ed9476a604c231c",
+          "compile_database_index": 383,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 1109187,
+            "active_sha256": "7e519776890b22280e62dec29ca9337c60f1f223bfd1e9afea2e5cb18a74803b",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_101_1",
+              "W42_BRANCH_39_0"
+            ],
+            "stderr_sha256": "969217cbea0bfa43d07f5ff6ef3d5d317149714b979eef3c2798209eef2b2e47",
+            "token_stream_sha256": "23d34201fb5cbc96021c5838b87a1ac98a6f8310cfccd3a9a86d9d5ac5d13601"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "rdkafka_cert.c",
+      "library": "librdkafka",
+      "source_sha256": "364d5e58ce22a3cff046a90c717c6c996502aead17b6b9974d5dcc6b4fe84d3d",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdkafka_cert.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "rd_kafka_ssl_win_load_cert_store": [],
+              "rd_kafka_ssl_win_load_cert_stores": [],
+              "rd_kafka_transport_libcrypto_THREADID_callback": [],
+              "rd_kafka_transport_ssl_lock_cb": []
+            },
+            "dump_bytes": 9135098,
+            "exit": 0,
+            "normalized_dump_sha256": "9428f2a638a8ad057281f505586fd05e92104ec56f988f6203f476c87e4030df"
+          },
+          "command_sha256": "058f9f2c00989816743167a165978cdce9255ee67182b28ddb31ce85f0e05d7a",
+          "compile_database_index": 418,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 1154231,
+            "active_sha256": "0cc7f18dc5c6d9f57bcd544c170cba9a0adfabb10c8b094b935daa159fd16b8b",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_2037_1",
+              "W42_BRANCH_2051_1",
+              "W42_BRANCH_859_1"
+            ],
+            "stderr_sha256": "30ed2fac984e96610171be5a51037b340f4d2100b934d344bd0ac655d784d411",
+            "token_stream_sha256": "05fd9c7d06c0c1c453922969baba972fd15c477948b192073807408e4b542677"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "rdkafka_ssl.c",
+      "library": "librdkafka",
+      "source_sha256": "bafad53316abe13a435b3d10f49aefc8834652bc9c53461c5bf251e8ad722b5f",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "PartitionMovements_isSticky": [],
+              "hasCycles": []
+            },
+            "dump_bytes": 13498772,
+            "exit": 0,
+            "normalized_dump_sha256": "7932d8da7a3fc8fbea781af5b00d3006c927feadd061d02430fc1309db1bec51"
+          },
+          "command_sha256": "64d507c5e95138ad4e1e3ff3ec8158e14cde18c24cad2413c8ff7318610dcb77",
+          "compile_database_index": 370,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 1490964,
+            "active_sha256": "5206f60860c8df23ee8823932d0af834b081003fa5551a013a00fed0870bd3b7",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_453_1"
+            ],
+            "stderr_sha256": "da6e8f8aa9e02308886625a569ecd81ca8cc1d3113b48736063214ba571a304b",
+            "token_stream_sha256": "1fdbe9118dba7b70b41b4a2cdfbe0f52e71dca755f481681602707edd6777630"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "rdkafka_sticky_assignor.c",
+      "library": "librdkafka",
+      "source_sha256": "744c0a3bef98df1a1fa5f6ad5c062c1215ade701af15106f3ff19e443f5ae88e",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "rd_kafka_transport_events2wsa": [],
+              "rd_kafka_transport_get_wsa_events": [],
+              "rd_kafka_transport_io_serve_win32": [],
+              "rd_kafka_transport_poll_set_wsa": [],
+              "rd_kafka_transport_set_blocked": [],
+              "rd_kafka_transport_term": [],
+              "rd_kafka_transport_wsa2events": []
+            },
+            "dump_bytes": 8617756,
+            "exit": 0,
+            "normalized_dump_sha256": "36d85dc212c1f12f32f289557de9acaa7104300cb5f08dc1c08f08189e2cab58"
+          },
+          "command_sha256": "9b6ceaa56021569e2166753b4d818765f215c952f6b4519131ebd60064d0a482",
+          "compile_database_index": 375,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 1126455,
+            "active_sha256": "2ee8f1c2f1b44869fd3bf51d6e3e3c947e0c1d61c9e681f9cef7b754094e57f7",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_1206_1",
+              "W42_BRANCH_1275_1",
+              "W42_BRANCH_1290_1",
+              "W42_BRANCH_791_1"
+            ],
+            "stderr_sha256": "5bef4bf278f2500a44fce4efa180f27c968b9264e822ee6527024a9fd543bc2c",
+            "token_stream_sha256": "3b063bfc5f976ff95746b5d464340bb0d7f9eee2a7f6f8e186e2389f95006a74"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "rdkafka_transport.c",
+      "library": "librdkafka",
+      "source_sha256": "9e2c024e061a63c96958af11c5657f35b73233f0ec3334b8bddbcf08645c353e",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdkafka_transport.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "rd_rand_bytes_by_rand_s": []
+            },
+            "dump_bytes": 2140008,
+            "exit": 0,
+            "normalized_dump_sha256": "3f0e968335b13a8be7d8aff10e663940c4d8407a4ac7ac6b9896f0342fb5082e"
+          },
+          "command_sha256": "b94f1d12c005bc07aded5c5d8fc2bff4daf257418a3d200564f838c2bcf06619",
+          "compile_database_index": 404,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 377288,
+            "active_sha256": "30673e5964ab81c97e103b6b23b8ca99b471e1f2c8bfc41b04ce773ed378418d",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_91_1"
+            ],
+            "stderr_sha256": "edfa855adfdb43e96dbc8a4843cd5100db302692d586f8aa5a3814baeb8d6918",
+            "token_stream_sha256": "b7f62695a4002218af8cf5d93a53188c1f23ac85e823b5d4c2d7253ba2c1a433"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "rdrand.c",
+      "library": "librdkafka",
+      "source_sha256": "002d908310b93b2150763de1631611e1f1b8be004079a21e7672d31e65eb1cc7",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdrand.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "rd_ut_QueryPerformanceCounter": [],
+              "rd_ut_QueryPerformanceFrequency": [],
+              "rd_ut_coverage": [],
+              "rd_ut_coverage_check": [],
+              "unittest_rdclock": []
+            },
+            "dump_bytes": 8613732,
+            "exit": 0,
+            "normalized_dump_sha256": "06d02e875e79e3a7d42e63f8daa2e5c9fb2d6637b4aef2ebde434cb50e85146d"
+          },
+          "command_sha256": "c952dba258d5d9f69ac0b5fcc898eed64b6916479dbd282d8a5bdc6f72b83825",
+          "compile_database_index": 407,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 1123413,
+            "active_sha256": "40d24491751f5fb6aa134f28985d9d0ea8ddfbdd3e0a1258e5763142d3f676ca",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_358_1",
+              "W42_BRANCH_62_1"
+            ],
+            "stderr_sha256": "3806e32d7352546db3a2fdd4609d4bf85182e19b025cbe1b5b1a8e37a6fe6668",
+            "token_stream_sha256": "1931e9f828710d8fd458b9775ee430ee292750297936a4992b9b3b87f557e2fb"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "rdunittest.c",
+      "library": "librdkafka",
+      "source_sha256": "6bf4e30b8f38792d626c0475ad05a79c434079cbac7628f5c487493c1408e883",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdunittest.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "rd_clz": [],
+              "rd_ctz": [],
+              "rd_ctz64": [],
+              "sink_peek_no_sg": []
+            },
+            "dump_bytes": 8716701,
+            "exit": 0,
+            "normalized_dump_sha256": "515785c91c038313774fd2d409299967852486c4150cf0212ec1cfcc6e3b0927"
+          },
+          "command_sha256": "ed99475a2206522e248a44e045736e00d6193668afc6c2ab5b802d4a75cfeac4",
+          "compile_database_index": 413,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 1105002,
+            "active_sha256": "b55e2d57795c91751bae1e10a1ca127ef3fc2bf61a4a3149ec2e46b67a02bd75",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_162_2",
+              "W42_BRANCH_355_0"
+            ],
+            "stderr_sha256": "70a927e3b75273189a804a0fcea159675df11daa2a364378fba66caf4ebc8eaa",
+            "token_stream_sha256": "123dfb460832143d6ebda02f534335a63c9bf71f1c34ec03c0f8c17166646e35"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "snappy.c",
+      "library": "librdkafka",
+      "source_sha256": "46502b689e60d441d430f42889f287766df393db919afef6d8a56fabd5af7043",
+      "source_suffix": "lib/librdkafka-2.15.0/src/snappy.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "_cnd_timedwait_win32": [],
+              "_thrd_wrapper_function": [],
+              "_tinycthread_tss_callback": [],
+              "_tinycthread_tss_cleanup": [],
+              "_tthread_timespec_get": [],
+              "call_once": [],
+              "cnd_broadcast": [],
+              "cnd_destroy": [],
+              "cnd_init": [],
+              "cnd_signal": [],
+              "cnd_timedwait": [],
+              "cnd_wait": [],
+              "mtx_destroy": [],
+              "mtx_init": [],
+              "mtx_lock": [],
+              "mtx_timedlock": [],
+              "mtx_trylock": [],
+              "mtx_unlock": [],
+              "thrd_create": [],
+              "thrd_current": [],
+              "thrd_detach": [],
+              "thrd_equal": [],
+              "thrd_exit": [],
+              "thrd_join": [],
+              "thrd_sleep": [],
+              "thrd_yield": [],
+              "tss_create": [],
+              "tss_delete": [],
+              "tss_get": [],
+              "tss_set": []
+            },
+            "dump_bytes": 673606,
+            "exit": 0,
+            "normalized_dump_sha256": "4490115d5a6e473fb2e3b84d4b75d6d51b9869a2bd70cb80e0844c8bd4fb8001"
+          },
+          "command_sha256": "ea0db68311fe355e16aafb709ed5d38132cce115b7756495d7a1ce9430e613bb",
+          "compile_database_index": 414,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 132666,
+            "active_sha256": "5f221c55a91e95ca14d36d2c9293a3fb86bdc732531ea105fcab52e5ab8372a9",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_28_1"
+            ],
+            "stderr_sha256": "423c9bdc49c8bbb4e05236e82f2a909241da5e0dfcbe2be891a233c6f6d03df1",
+            "token_stream_sha256": "e2c0810d3df93225d9ed1257016e0f3a48f0aa094abdeebded77526f22c9a7d6"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "tinycthread.c",
+      "library": "librdkafka",
+      "source_sha256": "3d2ff8e4251f63ac6c7a7345ba4e16719ff5e9f8369e1dc432c3af0624d1a449",
+      "source_suffix": "lib/librdkafka-2.15.0/src/tinycthread.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "cnd_wait_enter": [],
+              "cnd_wait_exit": []
+            },
+            "dump_bytes": 785266,
+            "exit": 0,
+            "normalized_dump_sha256": "97028a5b38afce6ceb1c0b86e52f4b0d4394dc35bcb99548726abf41c1ba62bb"
+          },
+          "command_sha256": "c261cd6070a74ad918b837e6a0c30d621eddd60866e2e42478e36e19136549bc",
+          "compile_database_index": 415,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/librdkafka-2.15.0/src",
+          "preprocess": {
+            "active_bytes": 140678,
+            "active_sha256": "dc459957ded88be8e6ebed8ad3c74dec7ad24e42c601b72354689c4f39d85bc6",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_74_1"
+            ],
+            "stderr_sha256": "168e162e7f0bba0bca90b799d0b5ac37e1ac63f973873fd76f6376df4187a8db",
+            "token_stream_sha256": "e9c3788cd4707193a518a1e4238b5299c79425f1617d16805eaf9c520a8b5918"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "tinycthread_extra.c",
+      "library": "librdkafka",
+      "source_sha256": "10f0e2fde02a5598e14e1abc331cee2654cb1cba2fd5235dd4af612a82ec8fd7",
+      "source_suffix": "lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+    },
+    {
+      "compile_database": "monkey",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "memmem": [],
+              "memrchr": [],
+              "strcasestr": [],
+              "strndup": []
+            },
+            "dump_bytes": 699142,
+            "exit": 0,
+            "normalized_dump_sha256": "afd78b36907e05bb62cdd84781bea19732a1abb8d96b0271778ceacd087b0a28"
+          },
+          "command_sha256": "700f40a1b3d40edd66e2629c81b25b58532129478f1d41e930343b075ec99365",
+          "compile_database_index": 4,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/mk_core",
+          "preprocess": {
+            "active_bytes": 109011,
+            "active_sha256": "a53fe26d13d74ef35df781ae285c2760f42765b3fa742dd48dc560659d992cce",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_36_1",
+              "W42_BRANCH_52_1",
+              "W42_BRANCH_94_1"
+            ],
+            "stderr_sha256": "2974dd53ae6c4befc54d0469f7340033c30d3cccfd5e162f6a1ae967abfa9ec1",
+            "token_stream_sha256": "427fae2de63e724c08c191d89c484ae066fd1b6b1181100baa4e2b62119822df"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "mk_core/mk_string.c",
+      "library": "monkey-libevent",
+      "source_sha256": "9c3cb46b8be931c25796c92211439c363bc152a19d2fdd9e889ebaff04e5d90d",
+      "source_suffix": "mk_core/mk_string.c"
+    },
+    {
+      "compile_database": "monkey",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "gettimeofday": [],
+              "localtime_r": [],
+              "mk_utils_print_errno": [],
+              "mk_utils_trace": []
+            },
+            "dump_bytes": 577634,
+            "exit": 0,
+            "normalized_dump_sha256": "7e8c9e57dea148ce592779a07a624668edd10bdd9ed02e8c514ad3953917bedb"
+          },
+          "command_sha256": "f9c669a9ae3de6d0276b9671ca57a22dd60cec714874e647362c56ac4c8dc4d9",
+          "compile_database_index": 7,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/mk_core",
+          "preprocess": {
+            "active_bytes": 121985,
+            "active_sha256": "8c2aacccfae5e7c0610bbc3703f2d907812967d3b5c7fee329bcbc74a6633cb9",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_35_0",
+              "W42_BRANCH_89_1"
+            ],
+            "stderr_sha256": "b009ceda0325fff1f02a7399e606100dd5e846b3f715d653e5a713664d8af7df",
+            "token_stream_sha256": "e189be699bacc346a22b2eaf71fe2505b0e1a119218176e1ef7ccf37a637247a"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "mk_core/mk_utils.c",
+      "library": "monkey-libevent",
+      "source_sha256": "ed344a6545799d7dfd0b69073d7410bed9ca8c6bedff9f64d7adc068e9fed6c3",
+      "source_suffix": "mk_core/mk_utils.c"
+    },
+    {
+      "compile_database": "monkey",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "gmtime_r": [],
+              "localtime_r": []
+            },
+            "dump_bytes": 1327204,
+            "exit": 0,
+            "normalized_dump_sha256": "2d6c414696b1ac80206745f92f77e0bad99d928e6cba5e47e0cd2f298381fa05"
+          },
+          "command_sha256": "704a27b0e1d46c063f5df2ea6d9b52fd3a924819acb3041882f81c8f96c237f8",
+          "compile_database_index": 134,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/mk_server",
+          "preprocess": {
+            "active_bytes": 159822,
+            "active_sha256": "50dceb4c5e55878fe4837bf8f5b54176cf3391dc3dd86069e0df8d14fec20220",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_33_1"
+            ],
+            "stderr_sha256": "dcff30be063b91dac6c3e0eeb08444d5243bd149c06dcb9deaf760f1eb894f59",
+            "token_stream_sha256": "1e065901a944638ee459e4c137413414d707efa777d7432bfd66aa959c37fe48"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "mk_server/mk_clock.c",
+      "library": "monkey-libevent",
+      "source_sha256": "7197f65657d4bbd9fe1b9a47e67b6254d67a9403e171508ea086a90ba3a54ea7",
+      "source_suffix": "mk_server/mk_clock.c"
+    },
+    {
+      "compile_database": "monkey",
+      "entries": [
+        {
+          "ast": {
+            "definitions": {
+              "gmtime_r": [],
+              "localtime_r": [],
+              "timegm": []
+            },
+            "dump_bytes": 1842237,
+            "exit": 0,
+            "normalized_dump_sha256": "008701a86ff67264a95163cb24b7106b6f398abc7554a863711a0c7bd9c08b18"
+          },
+          "command_sha256": "f0ab1d72afede07e5ab197b820fe823c9242d15702185c6d94375f40b5bdf4f8",
+          "compile_database_index": 126,
+          "compiler": {
+            "executable": "/usr/bin/clang",
+            "version_first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+            "version_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+          },
+          "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/mk_server",
+          "preprocess": {
+            "active_bytes": 250372,
+            "active_sha256": "601a3be82622dbd5e521133d811a580348faaa28bf6501a7a654ad3c95e038f9",
+            "exit": 0,
+            "instrumented_token_stream_equals_uninstrumented": true,
+            "selected_branch_markers": [
+              "W42_BRANCH_55_1"
+            ],
+            "stderr_sha256": "b029b2454158694df808b4e6a4ae41e5d3c894079ea405fbdc2ac42983868490",
+            "token_stream_sha256": "16a091aa836f5c7c6ec2b402bef7c59992b07e0f5b18e5e24a920204d655870b"
+          },
+          "transport": "compiler_options_compatibility/HistoricalStdin"
+        }
+      ],
+      "file": "mk_server/mk_utils.c",
+      "library": "monkey-libevent",
+      "source_sha256": "9853b77bca880ca761c8e204409f956f9c0257205413d906b40202033612d517",
+      "source_suffix": "mk_server/mk_utils.c"
+    }
+  ],
+  "definitions": [
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 0,
+      "file": "cio_log.c",
+      "function": "cio_winapi_error_print",
+      "library": "chunkio",
+      "source_sites": [
+        {
+          "body_open_line": 67,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 65,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 66
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 1,
+      "file": "cio_os.c",
+      "function": "cio_os_win32_make_recursive_path",
+      "library": "chunkio",
+      "source_sites": [
+        {
+          "body_open_line": 53,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 52,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 53
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 2,
+      "file": "cio_utils.c",
+      "function": "cio_utils_recursive_delete_handler",
+      "library": "chunkio",
+      "source_sites": [
+        {
+          "body_open_line": 102,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 37,
+                  "selected_branch": 0,
+                  "source_branch": 1,
+                  "source_directive": "else",
+                  "source_expression": ""
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 99
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 3,
+      "file": "cmt_log.c",
+      "function": "cmt_winapi_error_print",
+      "library": "cmetrics",
+      "source_sites": [
+        {
+          "body_open_line": 71,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 69,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 70
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 4,
+      "file": "ctr_log.c",
+      "function": "ctr_winapi_error_print",
+      "library": "ctraces",
+      "source_sites": [
+        {
+          "body_open_line": 68,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 66,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 67
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 5,
+      "file": "flb_input_chunk.c",
+      "function": "sb_get_releasable_output_queue_space",
+      "library": "fluent-bit-chunk",
+      "source_sites": [
+        {
+          "body_open_line": 443,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 430,
+                  "selected_branch": 0,
+                  "source_branch": 1,
+                  "source_directive": "else",
+                  "source_expression": ""
+                }
+              ]
+            },
+            {
+              "entry": 1,
+              "excluding_branches": [
+                {
+                  "group_line": 430,
+                  "selected_branch": 0,
+                  "source_branch": 1,
+                  "source_directive": "else",
+                  "source_expression": ""
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 441
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": null,
+      "unit_status": "Unsafe"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 5,
+      "file": "flb_input_chunk.c",
+      "function": "sb_release_output_queue_space",
+      "library": "fluent-bit-chunk",
+      "source_sites": [
+        {
+          "body_open_line": 449,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 430,
+                  "selected_branch": 0,
+                  "source_branch": 1,
+                  "source_directive": "else",
+                  "source_expression": ""
+                }
+              ]
+            },
+            {
+              "entry": 1,
+              "excluding_branches": [
+                {
+                  "group_line": 430,
+                  "selected_branch": 0,
+                  "source_branch": 1,
+                  "source_directive": "else",
+                  "source_expression": ""
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 447
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": null,
+      "unit_status": "Unsafe"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 6,
+      "file": "cJSON.c",
+      "function": "internal_free",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 170,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 163,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "defined(_MSC_VER)"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 169
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 6,
+      "file": "cJSON.c",
+      "function": "internal_malloc",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 166,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 163,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "defined(_MSC_VER)"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 165
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 6,
+      "file": "cJSON.c",
+      "function": "internal_realloc",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 174,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 163,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "defined(_MSC_VER)"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 173
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 7,
+      "file": "nanopb/pb_common.c",
+      "function": "pb_validate_utf8",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 335,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 324,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "PB_VALIDATE_UTF8"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 334
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 8,
+      "file": "nanopb/pb_decode.c",
+      "function": "allocate_field",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 562,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 556,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "PB_ENABLE_MALLOC"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 561
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 8,
+      "file": "nanopb/pb_decode.c",
+      "function": "initialize_pointer_field",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 608,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 556,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "PB_ENABLE_MALLOC"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 607
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 8,
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_decode_double_as_float",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 1663,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 1661,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "PB_CONVERT_DOUBLE_FLOAT"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 1662
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 8,
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_release_single_field",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 1229,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 1195,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "PB_ENABLE_MALLOC"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 1228
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 8,
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_release_union_field",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 1199,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 1195,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "PB_ENABLE_MALLOC"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 1198
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 9,
+      "file": "nanopb/pb_encode.c",
+      "function": "pb_encode_float_as_double",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 955,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 953,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "PB_CONVERT_DOUBLE_FLOAT"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 954
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 10,
+      "file": "rdbase64.c",
+      "function": "base64_encoding_conversion",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 42,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 31,
+                  "selected_branch": 0,
+                  "source_branch": 1,
+                  "source_directive": "else",
+                  "source_expression": ""
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 40
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 11,
+      "file": "rdkafka_cert.c",
+      "function": "rd_kafka_print_ssl_errors",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 105,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 101,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "OPENSSL_VERSION_NUMBER < 0x30000000"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 105
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 12,
+      "file": "rdkafka_ssl.c",
+      "function": "rd_kafka_ssl_win_load_cert_store",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 867,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 859,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 864
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 12,
+      "file": "rdkafka_ssl.c",
+      "function": "rd_kafka_ssl_win_load_cert_stores",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 956,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 859,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 953
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 12,
+      "file": "rdkafka_ssl.c",
+      "function": "rd_kafka_transport_libcrypto_THREADID_callback",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 2053,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 2051,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "HAVE_OPENSSL_CRYPTO_THREADID_SET_CALLBACK"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 2053
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 12,
+      "file": "rdkafka_ssl.c",
+      "function": "rd_kafka_transport_ssl_lock_cb",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 2039,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 2037,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "OPENSSL_VERSION_NUMBER < 0x10100000L"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 2039
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 13,
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "PartitionMovements_isSticky",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 464,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 453,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "FIXME"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 463
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 13,
+      "file": "rdkafka_sticky_assignor.c",
+      "function": "hasCycles",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 455,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 453,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "FIXME"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 455
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 14,
+      "file": "rdkafka_transport.c",
+      "function": "rd_kafka_transport_events2wsa",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 817,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 791,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 816
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 14,
+      "file": "rdkafka_transport.c",
+      "function": "rd_kafka_transport_get_wsa_events",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 835,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 791,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 835
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 14,
+      "file": "rdkafka_transport.c",
+      "function": "rd_kafka_transport_io_serve_win32",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 889,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 791,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 887
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 14,
+      "file": "rdkafka_transport.c",
+      "function": "rd_kafka_transport_poll_set_wsa",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 1211,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 1206,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 1210
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 14,
+      "file": "rdkafka_transport.c",
+      "function": "rd_kafka_transport_set_blocked",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 1284,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 1275,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 1283
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 14,
+      "file": "rdkafka_transport.c",
+      "function": "rd_kafka_transport_term",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 1297,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 1290,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "0"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 1297
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 14,
+      "file": "rdkafka_transport.c",
+      "function": "rd_kafka_transport_wsa2events",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 795,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 791,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 795
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 15,
+      "file": "rdrand.c",
+      "function": "rd_rand_bytes_by_rand_s",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 92,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 91,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 92
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 16,
+      "file": "rdunittest.c",
+      "function": "rd_ut_QueryPerformanceCounter",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 376,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 358,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "RD_UNITTEST_QPC_OVERRIDES"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 376
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 16,
+      "file": "rdunittest.c",
+      "function": "rd_ut_QueryPerformanceFrequency",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 371,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 358,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "RD_UNITTEST_QPC_OVERRIDES"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 371
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 16,
+      "file": "rdunittest.c",
+      "function": "rd_ut_coverage",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 70,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 62,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "ENABLE_CODECOV"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 70
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 16,
+      "file": "rdunittest.c",
+      "function": "rd_ut_coverage_check",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 77,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 62,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "ENABLE_CODECOV"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 77
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 16,
+      "file": "rdunittest.c",
+      "function": "unittest_rdclock",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 381,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 358,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "RD_UNITTEST_QPC_OVERRIDES"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 381
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 17,
+      "file": "snappy.c",
+      "function": "rd_clz",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 172,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 162,
+                  "selected_branch": 2,
+                  "source_branch": 1,
+                  "source_directive": "elif",
+                  "source_expression": "defined(__SUNPRO_C) // Solaris Studio compiler on sun"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 172
+        },
+        {
+          "body_open_line": 219,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 162,
+                  "selected_branch": 2,
+                  "source_branch": 3,
+                  "source_directive": "else",
+                  "source_expression": ""
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 219
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": null,
+      "unit_status": "Unsafe"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 17,
+      "file": "snappy.c",
+      "function": "rd_ctz",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 185,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 162,
+                  "selected_branch": 2,
+                  "source_branch": 1,
+                  "source_directive": "elif",
+                  "source_expression": "defined(__SUNPRO_C) // Solaris Studio compiler on sun"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 185
+        },
+        {
+          "body_open_line": 227,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 162,
+                  "selected_branch": 2,
+                  "source_branch": 3,
+                  "source_directive": "else",
+                  "source_expression": ""
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 227
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": null,
+      "unit_status": "Unsafe"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 17,
+      "file": "snappy.c",
+      "function": "rd_ctz64",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 199,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 162,
+                  "selected_branch": 2,
+                  "source_branch": 1,
+                  "source_directive": "elif",
+                  "source_expression": "defined(__SUNPRO_C) // Solaris Studio compiler on sun"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 199
+        },
+        {
+          "body_open_line": 235,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 162,
+                  "selected_branch": 2,
+                  "source_branch": 3,
+                  "source_directive": "else",
+                  "source_expression": ""
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 235
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": null,
+      "unit_status": "Unsafe"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 17,
+      "file": "snappy.c",
+      "function": "sink_peek_no_sg",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 475,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 355,
+                  "selected_branch": 0,
+                  "source_branch": 1,
+                  "source_directive": "else",
+                  "source_expression": ""
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 474
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": null,
+      "unit_status": "Unsafe"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "_cnd_timedwait_win32",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 391,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 390
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "_thrd_wrapper_function",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 562,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 560
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "_tinycthread_tss_callback",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 522,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 521
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "_tinycthread_tss_cleanup",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 487,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 487
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "_tthread_timespec_get",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 864,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 863
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "call_once",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 894,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 893
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "cnd_broadcast",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 365,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 364
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "cnd_destroy",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 323,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 322
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "cnd_init",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 294,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 293
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "cnd_signal",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 340,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 339
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "cnd_timedwait",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 447,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 446
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "cnd_wait",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 438,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 437
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "mtx_destroy",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 95,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 94
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "mtx_init",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 62,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 61
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "mtx_lock",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 111,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 110
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "mtx_timedlock",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 141,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 140
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "mtx_trylock",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 236,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 235
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "mtx_unlock",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 268,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 267
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "thrd_create",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 591,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 590
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "thrd_current",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 627,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 626
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "thrd_detach",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 636,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 635
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "thrd_equal",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 647,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 646
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "thrd_exit",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 656,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 655
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "thrd_join",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 670,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 669
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "thrd_sleep",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 705,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 704
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "thrd_yield",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 739,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 738
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "tss_create",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 748,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 747
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "tss_delete",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 766,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 765
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "tss_get",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 803,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 802
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 18,
+      "file": "tinycthread.c",
+      "function": "tss_set",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 817,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 28,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!WITH_C11THREADS"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 816
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "incomplete-obligation-coverage",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 19,
+      "file": "tinycthread_extra.c",
+      "function": "cnd_wait_enter",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 75,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 74,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 75
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 19,
+      "file": "tinycthread_extra.c",
+      "function": "cnd_wait_exit",
+      "library": "librdkafka",
+      "source_sites": [
+        {
+          "body_open_line": 82,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 74,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 82
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 20,
+      "file": "mk_core/mk_string.c",
+      "function": "memmem",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 55,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 52,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifndef",
+                  "source_expression": "MK_HAVE_MEMMEM"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 53
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": null,
+      "unit_status": "Unsafe"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 20,
+      "file": "mk_core/mk_string.c",
+      "function": "memrchr",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 38,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 36,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "if",
+                  "source_expression": "!defined(MK_HAVE_MEMRCHR)"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 37
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": null,
+      "unit_status": "Unsafe"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 20,
+      "file": "mk_core/mk_string.c",
+      "function": "strcasestr",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 114,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 94,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 113
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": null,
+      "unit_status": "Unsafe"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 20,
+      "file": "mk_core/mk_string.c",
+      "function": "strndup",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 96,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 94,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 95
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": null,
+      "unit_status": "Unsafe"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 21,
+      "file": "mk_core/mk_utils.c",
+      "function": "gettimeofday",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 55,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 35,
+                  "selected_branch": 0,
+                  "source_branch": 1,
+                  "source_directive": "elif",
+                  "source_expression": "defined (_WIN32)"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 54
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 21,
+      "file": "mk_core/mk_utils.c",
+      "function": "localtime_r",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 42,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 35,
+                  "selected_branch": 0,
+                  "source_branch": 1,
+                  "source_directive": "elif",
+                  "source_expression": "defined (_WIN32)"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 41
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 21,
+      "file": "mk_core/mk_utils.c",
+      "function": "mk_utils_print_errno",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 168,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 89,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "MK_HAVE_TRACE"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 167
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 21,
+      "file": "mk_core/mk_utils.c",
+      "function": "mk_utils_trace",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 102,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 89,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "MK_HAVE_TRACE"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 100
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 22,
+      "file": "mk_server/mk_clock.c",
+      "function": "gmtime_r",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 42,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 33,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 41
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 22,
+      "file": "mk_server/mk_clock.c",
+      "function": "localtime_r",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 35,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 33,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 34
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 23,
+      "file": "mk_server/mk_utils.c",
+      "function": "gmtime_r",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 64,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 55,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 63
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 23,
+      "file": "mk_server/mk_utils.c",
+      "function": "localtime_r",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 57,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 55,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 56
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    },
+    {
+      "classification": "pinned-build-exclusion",
+      "compile_evidence_index": 23,
+      "file": "mk_server/mk_utils.c",
+      "function": "timegm",
+      "library": "monkey-libevent",
+      "source_sites": [
+        {
+          "body_open_line": 71,
+          "compile_entries": [
+            {
+              "entry": 0,
+              "excluding_branches": [
+                {
+                  "group_line": 55,
+                  "selected_branch": 1,
+                  "source_branch": 0,
+                  "source_directive": "ifdef",
+                  "source_expression": "_WIN32"
+                }
+              ]
+            }
+          ],
+          "raw_definition_syntax_verified": true,
+          "source_line": 70
+        }
+      ],
+      "typed_ast_definitions": [],
+      "unit_reason_code": "unsupported-syntax",
+      "unit_status": "Unknown"
+    }
+  ],
+  "denominators": {
+    "projected_definitions": 4834,
+    "source_definitions": 4921,
+    "units": 185,
+    "unprojected_definitions": 87,
+    "unprojected_units": 24
+  },
+  "identity": {
+    "anchors_sha256": "856f3e8bf2d148146b0f4bdf087017bbde983956c36400d56993b6ceaee2f40d",
+    "compile_databases": {
+      "fluent-bit": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+        "sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78"
+      },
+      "monkey": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+        "sha256": "85cc996712bbd35675340b8b863b6ebc716cb94552253f2a6ad0288db920f331"
+      }
+    },
+    "diagnostics_json_sha256": "2545039c8252d5ac2c313e98104b59293e701dd1743d88ee5a659c37c345732b",
+    "diagnostics_path": "docs/reports/b-series-integration/artifacts/diagnostics.json.gz",
+    "diagnostics_sha256": "cc9e5ebc2a330191d74965b64c5c9a4acb80407f4e1ec10ab333516871960949",
+    "fluent_bit_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "run_identity": {
+      "binary_sha256": "85c8208326f1f234cc49644f582710fcb2ba7b30bfae60ba25359f184191847a",
+      "exit": 0,
+      "path": "docs/reports/b-series-integration/artifacts/run.json",
+      "sha256": "a65fdb14dfda7dccd316698e8dbe21539cd4063dd71866cb42f77e96f53d2db1",
+      "source_commit": "18b142b8d055a385985c68b392f449d60d3e2b99"
+    }
+  },
+  "meaning": {
+    "enumerator-false-positive": "the enumerator row has no anchored raw function-definition token form",
+    "pinned-build-exclusion": "every anchored raw definition site is in a branch for which the exact pinned compile entry emitted a different branch marker, and no typed AST definition survived",
+    "projection-defect": "reserved for a definition proved active under the historical importer transport and absent from its projection; a full compile-database AST alone does not establish this category",
+    "unit_reason_codes": "whole-unit Unknown reasons; they are not assigned to individual missing definitions",
+    "unresolved": "neither positive classification was established"
+  },
+  "measurement_only": true,
+  "raw_definition_site_census": {
+    "enumerator_false_positives": 0,
+    "verified_definition_names": 87
+  },
+  "schema_version": 1,
+  "unit_identity_reconciliation": {
+    "basename_collision": {
+      "basename": "mk_utils.c",
+      "units": [
+        "monkey-libevent/mk_core/mk_utils.c",
+        "monkey-libevent/mk_server/mk_utils.c"
+      ]
+    },
+    "distinct_basenames": 23,
+    "library_and_relative_file_units": 24
+  },
+  "unit_reason_census": {
+    "incomplete-obligation-coverage": 1,
+    "no_reason_code": 48,
+    "unsupported-syntax": 136
+  }
+}

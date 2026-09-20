@@ -1,0 +1,24 @@
+{
+  "note": "W42-UNPROJECTED-DEFINITIONS measurement gate on commit 10f2e486, 2026-09-20. The authoritative elevated workspace run kept sanitizers enabled and completed with 4,845 passed / 0 failed / 10 ignored over 248 result summaries, exit 0. A preceding sandboxed attempt is deliberately preserved at measure/w42-gate-22d3056e/workspace-tests.log: LeakSanitizer could not ptrace under the sandbox, it printed 4,743 passed / 102 failed / 10 ignored across 248 summaries, and the owning session was interrupted with exit 130 after its output was complete; none of its failures or counts are used as the gate result. The elevated run is measure/w42-gate-22d3056e/workspace-tests-elevated.log. Submodule initialization, fmt, clippy, both reevaluation examples, 148 Lean audits, and 313 Python tests all exited 0; private logs share that directory. Provider 122 is carried, not re-measured: no provider, schema, or package path changed. Clang was recorded in this worktree beside this file. This card is measurement only and promotes no verdict.",
+  "commands": [
+    {"command": "git submodule update --init --recursive", "exit": 0, "log": "measure/w42-gate-22d3056e/submodules.log"},
+    {"command": "CARGO_BUILD_JOBS=1 CARGO_PROFILE_DEV_DEBUG=0 CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/build-targets/census cargo test --workspace --no-fail-fast", "exit": 0, "log": "measure/w42-gate-22d3056e/workspace-tests-elevated.log"},
+    {"command": "cargo fmt --all -- --check", "exit": 0, "log": "measure/w42-gate-22d3056e/fmt.log"},
+    {"command": "CARGO_BUILD_JOBS=1 CARGO_PROFILE_DEV_DEBUG=0 CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/build-targets/census cargo clippy --all-targets -- -D warnings", "exit": 0, "log": "measure/w42-gate-22d3056e/clippy.log"},
+    {"command": "CARGO_BUILD_JOBS=1 CARGO_PROFILE_DEV_DEBUG=0 CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/build-targets/census cargo run -p qcore-compiler --example reevaluation_probe", "exit": 0, "log": "measure/w42-gate-22d3056e/reevaluation-probe.log"},
+    {"command": "CARGO_BUILD_JOBS=1 CARGO_PROFILE_DEV_DEBUG=0 CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/build-targets/census cargo run -p qcore-compiler --example reevaluation_followup", "exit": 0, "log": "measure/w42-gate-22d3056e/reevaluation-followup.log"},
+    {"command": "LEAN_NUM_THREADS=1 python3 scripts/check_lean_audits.py", "exit": 0, "log": "measure/w42-gate-22d3056e/lean-audits.log"},
+    {"command": "python3 -m unittest discover -s scripts/tests", "exit": 0, "log": "measure/w42-gate-22d3056e/python-tests.log"},
+    {"command": "clang --version", "exit": 0, "log": "docs/reports/w42-unprojected-definitions/clang-version.txt"}
+  ],
+  "workspace_tests": 4845,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 313,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "pass",
+  "lean_audits": 148,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

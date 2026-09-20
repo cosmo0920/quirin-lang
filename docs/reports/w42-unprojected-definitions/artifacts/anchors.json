@@ -1,0 +1,468 @@
+{
+  "expected": {
+    "projected_definitions": 4834,
+    "source_definitions": 4921,
+    "units": 185,
+    "unprojected_definitions": 87,
+    "unprojected_units": 24
+  },
+  "schema_version": 1,
+  "units": [
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "cmt_winapi_error_print": [
+          70
+        ]
+      },
+      "file": "cmt_log.c",
+      "library": "cmetrics",
+      "source_suffix": "lib/cmetrics/src/cmt_log.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "ctr_winapi_error_print": [
+          67
+        ]
+      },
+      "file": "ctr_log.c",
+      "library": "ctraces",
+      "source_suffix": "lib/ctraces/src/ctr_log.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "internal_free": [
+          169
+        ],
+        "internal_malloc": [
+          165
+        ],
+        "internal_realloc": [
+          173
+        ]
+      },
+      "file": "cJSON.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/cJSON.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "pb_validate_utf8": [
+          334
+        ]
+      },
+      "file": "nanopb/pb_common.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/nanopb/pb_common.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "allocate_field": [
+          561
+        ],
+        "initialize_pointer_field": [
+          607
+        ],
+        "pb_decode_double_as_float": [
+          1662
+        ],
+        "pb_release_single_field": [
+          1228
+        ],
+        "pb_release_union_field": [
+          1198
+        ]
+      },
+      "file": "nanopb/pb_decode.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "pb_encode_float_as_double": [
+          954
+        ]
+      },
+      "file": "nanopb/pb_encode.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "base64_encoding_conversion": [
+          40
+        ]
+      },
+      "file": "rdbase64.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdbase64.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "rd_kafka_print_ssl_errors": [
+          105
+        ]
+      },
+      "file": "rdkafka_cert.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdkafka_cert.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "rd_kafka_ssl_win_load_cert_store": [
+          864
+        ],
+        "rd_kafka_ssl_win_load_cert_stores": [
+          953
+        ],
+        "rd_kafka_transport_libcrypto_THREADID_callback": [
+          2053
+        ],
+        "rd_kafka_transport_ssl_lock_cb": [
+          2039
+        ]
+      },
+      "file": "rdkafka_ssl.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "PartitionMovements_isSticky": [
+          463
+        ],
+        "hasCycles": [
+          455
+        ]
+      },
+      "file": "rdkafka_sticky_assignor.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "rd_kafka_transport_events2wsa": [
+          816
+        ],
+        "rd_kafka_transport_get_wsa_events": [
+          835
+        ],
+        "rd_kafka_transport_io_serve_win32": [
+          887
+        ],
+        "rd_kafka_transport_poll_set_wsa": [
+          1210
+        ],
+        "rd_kafka_transport_set_blocked": [
+          1283
+        ],
+        "rd_kafka_transport_term": [
+          1297
+        ],
+        "rd_kafka_transport_wsa2events": [
+          795
+        ]
+      },
+      "file": "rdkafka_transport.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdkafka_transport.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "rd_rand_bytes_by_rand_s": [
+          92
+        ]
+      },
+      "file": "rdrand.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdrand.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "rd_ut_QueryPerformanceCounter": [
+          376
+        ],
+        "rd_ut_QueryPerformanceFrequency": [
+          371
+        ],
+        "rd_ut_coverage": [
+          70
+        ],
+        "rd_ut_coverage_check": [
+          77
+        ],
+        "unittest_rdclock": [
+          381
+        ]
+      },
+      "file": "rdunittest.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/rdunittest.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "rd_clz": [
+          172,
+          219
+        ],
+        "rd_ctz": [
+          185,
+          227
+        ],
+        "rd_ctz64": [
+          199,
+          235
+        ],
+        "sink_peek_no_sg": [
+          474
+        ]
+      },
+      "file": "snappy.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/snappy.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "_cnd_timedwait_win32": [
+          390
+        ],
+        "_thrd_wrapper_function": [
+          560
+        ],
+        "_tinycthread_tss_callback": [
+          521
+        ],
+        "_tinycthread_tss_cleanup": [
+          487
+        ],
+        "_tthread_timespec_get": [
+          863
+        ],
+        "call_once": [
+          893
+        ],
+        "cnd_broadcast": [
+          364
+        ],
+        "cnd_destroy": [
+          322
+        ],
+        "cnd_init": [
+          293
+        ],
+        "cnd_signal": [
+          339
+        ],
+        "cnd_timedwait": [
+          446
+        ],
+        "cnd_wait": [
+          437
+        ],
+        "mtx_destroy": [
+          94
+        ],
+        "mtx_init": [
+          61
+        ],
+        "mtx_lock": [
+          110
+        ],
+        "mtx_timedlock": [
+          140
+        ],
+        "mtx_trylock": [
+          235
+        ],
+        "mtx_unlock": [
+          267
+        ],
+        "thrd_create": [
+          590
+        ],
+        "thrd_current": [
+          626
+        ],
+        "thrd_detach": [
+          635
+        ],
+        "thrd_equal": [
+          646
+        ],
+        "thrd_exit": [
+          655
+        ],
+        "thrd_join": [
+          669
+        ],
+        "thrd_sleep": [
+          704
+        ],
+        "thrd_yield": [
+          738
+        ],
+        "tss_create": [
+          747
+        ],
+        "tss_delete": [
+          765
+        ],
+        "tss_get": [
+          802
+        ],
+        "tss_set": [
+          816
+        ]
+      },
+      "file": "tinycthread.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/tinycthread.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "cnd_wait_enter": [
+          75
+        ],
+        "cnd_wait_exit": [
+          82
+        ]
+      },
+      "file": "tinycthread_extra.c",
+      "library": "librdkafka",
+      "source_suffix": "lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "cio_winapi_error_print": [
+          66
+        ]
+      },
+      "file": "cio_log.c",
+      "library": "chunkio",
+      "source_suffix": "lib/chunkio/src/cio_log.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "cio_os_win32_make_recursive_path": [
+          53
+        ]
+      },
+      "file": "cio_os.c",
+      "library": "chunkio",
+      "source_suffix": "lib/chunkio/src/cio_os.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "cio_utils_recursive_delete_handler": [
+          99
+        ]
+      },
+      "file": "cio_utils.c",
+      "library": "chunkio",
+      "source_suffix": "lib/chunkio/src/cio_utils.c"
+    },
+    {
+      "compile_database": "fluent-bit",
+      "definitions": {
+        "sb_get_releasable_output_queue_space": [
+          441
+        ],
+        "sb_release_output_queue_space": [
+          447
+        ]
+      },
+      "file": "flb_input_chunk.c",
+      "library": "fluent-bit-chunk",
+      "source_suffix": "src/flb_input_chunk.c"
+    },
+    {
+      "compile_database": "monkey",
+      "definitions": {
+        "memmem": [
+          53
+        ],
+        "memrchr": [
+          37
+        ],
+        "strcasestr": [
+          113
+        ],
+        "strndup": [
+          95
+        ]
+      },
+      "file": "mk_core/mk_string.c",
+      "library": "monkey-libevent",
+      "source_suffix": "mk_core/mk_string.c"
+    },
+    {
+      "compile_database": "monkey",
+      "definitions": {
+        "gettimeofday": [
+          54
+        ],
+        "localtime_r": [
+          41
+        ],
+        "mk_utils_print_errno": [
+          167
+        ],
+        "mk_utils_trace": [
+          100
+        ]
+      },
+      "file": "mk_core/mk_utils.c",
+      "library": "monkey-libevent",
+      "source_suffix": "mk_core/mk_utils.c"
+    },
+    {
+      "compile_database": "monkey",
+      "definitions": {
+        "gmtime_r": [
+          41
+        ],
+        "localtime_r": [
+          34
+        ]
+      },
+      "file": "mk_server/mk_clock.c",
+      "library": "monkey-libevent",
+      "source_suffix": "mk_server/mk_clock.c"
+    },
+    {
+      "compile_database": "monkey",
+      "definitions": {
+        "gmtime_r": [
+          63
+        ],
+        "localtime_r": [
+          56
+        ],
+        "timegm": [
+          70
+        ]
+      },
+      "file": "mk_server/mk_utils.c",
+      "library": "monkey-libevent",
+      "source_suffix": "mk_server/mk_utils.c"
+    }
+  ]
+}
