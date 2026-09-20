@@ -54,6 +54,20 @@ def lifecycle : List (EventDriven.Lifecycle × EventDriven.TransitionKind ×
   (.running, .callbackExitOneShot, .idle),
   (.idle, .free, .freed)]
 
+structure JoinAssumptions where
+  threads : String
+  observationTrust : String
+  linkageTrust : String
+  nativeRunManifestSha256Valid : Bool
+  deriving DecidableEq, Repr
+
+def requiredJoinAssumptions : JoinAssumptions := {
+  threads := "pthreads"
+  observationTrust := "producer_supplied_runtime_evidence"
+  linkageTrust := "producer_supplied_selected_artifact_linkage"
+  nativeRunManifestSha256Valid := true
+}
+
 def requiredKind : MonkeyWaitProjection.RequiredObservation → EventObservation.Kind
   | .baseCreateSuccess => .baseCreate
   | .eventCreateTimeoutNoDescriptorWithPriority => .eventNew
@@ -88,17 +102,33 @@ theorem fresh_name_is_injective_on_selected_domain
   simp only [List.mem_singleton] at leftSelected rightSelected
   exact leftSelected.trans rightSelected.symm
 
-def project (trace : EventObservation.Trace) (context : EventObservation.Context) :
+def project (trace : EventObservation.Trace) (context : EventObservation.Context)
+    (assumptions : JoinAssumptions) :
     Option (ModelEvent × List (EventDriven.Lifecycle × EventDriven.TransitionKind ×
       EventDriven.Lifecycle)) :=
-  match EventObservation.check trace context with
-  | none => none
-  | some _ => some (renameEvent context.event, lifecycle)
+  if assumptions = requiredJoinAssumptions then
+    match EventObservation.check trace context with
+    | none => none
+    | some _ => some (renameEvent context.event, lifecycle)
+  else none
+
+theorem accepted_replay_requires_exact_join_assumptions
+    {trace : EventObservation.Trace} {context : EventObservation.Context}
+    {assumptions : JoinAssumptions}
+    {result : ModelEvent × List (EventDriven.Lifecycle × EventDriven.TransitionKind ×
+      EventDriven.Lifecycle)}
+    (accepted : project trace context assumptions = some result) :
+    assumptions = requiredJoinAssumptions := by
+  unfold project at accepted
+  split at accepted
+  · assumption
+  · contradiction
 
 theorem accepted_projection_retains_callback_identity
     {trace : EventObservation.Trace} {context : EventObservation.Context}
     {result : ModelEvent × List (EventDriven.Lifecycle × EventDriven.TransitionKind ×
-      EventDriven.Lifecycle)} (accepted : project trace context = some result) :
+      EventDriven.Lifecycle)}
+    (accepted : project trace context requiredJoinAssumptions = some result) :
     ((trace.records.drop 5).head?).bind EventObservation.Record.event =
       some context.event := by
   unfold project at accepted
@@ -106,5 +136,21 @@ theorem accepted_projection_retains_callback_identity
   | none => simp [checked] at accepted
   | some certificate =>
     exact EventObservation.accepted_callback_binds_expected_event_generation checked
+
+def wrongThreads : JoinAssumptions :=
+  { requiredJoinAssumptions with threads := "single" }
+
+def invalidManifest : JoinAssumptions :=
+  { requiredJoinAssumptions with nativeRunManifestSha256Valid := false }
+
+theorem substituted_thread_assumption_refuses
+    (trace : EventObservation.Trace) (context : EventObservation.Context) :
+    project trace context wrongThreads = none := by
+  simp [project, wrongThreads, requiredJoinAssumptions]
+
+theorem invalid_manifest_identity_refuses
+    (trace : EventObservation.Trace) (context : EventObservation.Context) :
+    project trace context invalidManifest = none := by
+  simp [project, invalidManifest, requiredJoinAssumptions]
 
 end QCore.ObservedWaitComposition

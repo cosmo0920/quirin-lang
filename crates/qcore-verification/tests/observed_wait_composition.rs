@@ -133,9 +133,19 @@ fn fixture() -> (Vec<u8>, Vec<u8>) {
 }
 
 fn input(source: &MonkeyWaitSourceProjection) -> EventCompositionContextInput {
+    // These fixture digests are deliberately synthetic. The public verifier is
+    // a conditional replay boundary; qcore-audit separately hashes and
+    // snapshots configured files before calling it.
     let digest = "a".repeat(64);
     let mut assumptions = BTreeMap::from([
         ("backend".into(), "epoll".into()),
+        ("threads".into(), REQUIRED_THREADS.into()),
+        (
+            "observation_trust".into(),
+            REQUIRED_OBSERVATION_TRUST.into(),
+        ),
+        ("linkage_trust".into(), REQUIRED_LINKAGE_TRUST.into()),
+        ("native_run_manifest_sha256".into(), "c".repeat(64)),
         ("source_file.mk_core/mk_event.c".into(), digest.clone()),
         (
             "source_file.mk_core/mk_event_libevent.c".into(),
@@ -184,7 +194,7 @@ fn input(source: &MonkeyWaitSourceProjection) -> EventCompositionContextInput {
 }
 
 #[test]
-fn complete_join_replays_lifecycle_and_rejects_cross_component_substitutions() {
+fn conditional_replay_rejects_context_and_assumption_substitutions() {
     // Source summary creation requires the real Clang importer. CI requires Clang.
     let source = project(CALLBACKS, &wrapper_source());
     let (observations, bindings) = fixture();
@@ -199,10 +209,17 @@ fn complete_join_replays_lifecycle_and_rejects_cross_component_substitutions() {
     let report = serde_json::to_value(result).unwrap();
     assert_eq!(report["checked_operations"], 11);
     assert_eq!(report["checked_records"], 11);
+    assert_eq!(report["claim"], CONDITIONAL_REPLAY_CLAIM);
+    assert!(report["caller_prepared_context_sha256"].is_string());
+    assert!(report.get("context_sha256").is_none());
     assert_eq!(report["identity_mapping"]["event"][0], 0x1_0000_0014_u64);
     assert_eq!(report["identity_mapping"]["event"][2], 1);
     for key in [
         "backend",
+        "threads",
+        "observation_trust",
+        "linkage_trust",
+        "native_run_manifest_sha256",
         "source_file.mk_core/mk_event.c",
         "source_summary.cb_wait_2_timeout",
         "contract.monkey/composition.qcore",
@@ -216,6 +233,28 @@ fn complete_join_replays_lifecycle_and_rejects_cross_component_substitutions() {
             "{key}"
         );
     }
+    for key in [
+        "threads",
+        "observation_trust",
+        "linkage_trust",
+        "native_run_manifest_sha256",
+    ] {
+        let mut changed = input(&source);
+        changed.assumptions.remove(key);
+        let context = EventCompositionContext::derive(changed, payload).unwrap();
+        let admitted = check_event_composition_context_for(&context, payload, &context).unwrap();
+        assert!(
+            check_observed_wait_composition(&source, &admitted, &observations, &bindings).is_err(),
+            "missing {key}"
+        );
+    }
+    let mut changed = input(&source);
+    changed
+        .assumptions
+        .insert("native_run_manifest_sha256".into(), "not-a-sha256".into());
+    let context = EventCompositionContext::derive(changed, payload).unwrap();
+    let admitted = check_event_composition_context_for(&context, payload, &context).unwrap();
+    assert!(check_observed_wait_composition(&source, &admitted, &observations, &bindings).is_err());
     let mut changed = input(&source);
     changed.bounds.insert("runs".into(), 2);
     let context = EventCompositionContext::derive(changed, payload).unwrap();

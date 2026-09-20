@@ -65,6 +65,25 @@ the sealed projection, identity-bearing observation and complete event model.
 The result is `observed_composition_checked`, not a universal `Safe` verdict.
 The normal `quirin-audit CONFIG.json` route retains its existing behavior.
 
+## Conditional public join
+
+`check_observed_wait_composition` is a conditional replay boundary. Its caller
+must prepare the artifact identities; a matching context hash only identifies
+that caller-prepared context and does not attest the compiler, observer,
+libraries, linkage, host or run manifest. The join requires exact `pthreads`,
+`producer_supplied_runtime_evidence`, and
+`producer_supplied_selected_artifact_linkage` assumptions plus a syntactically
+valid `native_run_manifest_sha256`. It then checks source/context equality,
+decodes the exact trace and replays the event lifecycle. The serialized result
+labels its claim `caller_prepared_artifact_identity_conditional_replay` and
+names its context digest `caller_prepared_context_sha256`.
+
+The configured audit remains the evidence-producing caller: it hashes and
+snapshots every selected file, verifies the run manifest against those files,
+and rereads them after replay. The generic verification API deliberately does
+not reproduce that filesystem provenance and accepts syntactically valid
+caller-prepared compile, build, observer and library identities as premises.
+
 ## Explicit trust and formal limits
 
 The native producer supplies runtime observations and the selected artifacts'
@@ -147,3 +166,10 @@ output-preservation review fixes, so the final corrected-code gate is recorded
 separately. The isolated admission card also discloses an exact-tip workspace
 run with one host-sensitive fork/Broken pipe failure and its isolated 12/12
 rerun; that rerun does not change the full attempt's exit 101.
+## Integrator reconciliation list
+
+- Retain the configured audit's independent file hashing, run-manifest checks
+  and post-replay snapshots; the public replay result cannot replace them.
+- Treat `caller_prepared_context_sha256` as identity equality only.
+- Keep unobserved allocation and registration failures `Unknown` and make no
+  callback-denominator or Cycle 18 aggregate promotion from this single run.

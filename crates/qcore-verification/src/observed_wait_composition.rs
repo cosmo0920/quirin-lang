@@ -1,7 +1,10 @@
-//! Join sealed source evidence with an identity-checked, bounded observed run.
+//! Conditionally replay a bounded observed run against sealed source evidence.
 //!
-//! Success is conditional on producer-supplied observations and the recorded
-//! build identity. It is neither an all-path source verdict nor attestation.
+//! The caller must prepare artifact identities independently. This module
+//! checks their syntax and equality where they meet source/observation data;
+//! it does not attest the named compiler, binaries, libraries, linkage, host,
+//! or native run manifest. Success is a conditional replay result, neither an
+//! all-path source verdict nor artifact attestation.
 
 use crate::event_composition_context::ValidatedEventCompositionContext;
 use crate::monkey_wait_projection::{
@@ -19,7 +22,11 @@ use serde::Serialize;
 use std::collections::{BTreeMap, BTreeSet};
 
 pub const OBSERVED_WAIT_PROFILE: &str = "cycle18.timed_wait.single_dispatcher.v1";
-pub const OBSERVED_WAIT_RULES: &str = "v1: exact eleven identity-bearing records; one dispatcher; timeout-only borrowed argument; no payload, descriptor, task or synchronization; source/context/payload equality; event kernel replay";
+pub const OBSERVED_WAIT_RULES: &str = "v2: exact eleven identity-bearing records; one dispatcher; timeout-only borrowed argument; no payload, descriptor, task or synchronization; source/context/payload equality; exact pthread/runtime-observation/linkage premises; valid native-run-manifest digest; caller-prepared artifact identity; conditional event kernel replay";
+pub const REQUIRED_THREADS: &str = "pthreads";
+pub const REQUIRED_OBSERVATION_TRUST: &str = "producer_supplied_runtime_evidence";
+pub const REQUIRED_LINKAGE_TRUST: &str = "producer_supplied_selected_artifact_linkage";
+pub const CONDITIONAL_REPLAY_CLAIM: &str = "caller_prepared_artifact_identity_conditional_replay";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct SingleDispatcher;
@@ -29,10 +36,12 @@ impl ReactorProfile for SingleDispatcher {
     }
 }
 
-/// Constructor-private result of the complete join, with no safety verdict.
+/// Constructor-private conditional replay result, with no safety verdict or
+/// artifact-attestation claim.
 #[derive(Debug, Serialize)]
 pub struct ObservedWaitComposition {
-    context_sha256: String,
+    claim: &'static str,
+    caller_prepared_context_sha256: String,
     checked_records: usize,
     checked_operations: usize,
     selected_paths: BTreeMap<String, usize>,
@@ -41,6 +50,25 @@ pub struct ObservedWaitComposition {
     identity_mapping: BTreeMap<String, (u64, u32, u32)>,
 }
 
+impl ObservedWaitComposition {
+    #[must_use]
+    pub const fn claim(&self) -> &'static str {
+        self.claim
+    }
+}
+
+fn is_sha256(value: &str) -> bool {
+    value.len() == 64
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+}
+
+/// Replay one exact observed lifecycle under caller-prepared artifact identity
+/// premises. A successful return confirms the bounded source/trace/model join;
+/// it does not authenticate any digest or establish that the named artifacts
+/// produced the bytes. Configured callers must derive and snapshot those
+/// identities independently before invoking this function.
 pub fn check_observed_wait_composition(
     source: &MonkeyWaitSourceProjection,
     admitted: &ValidatedEventCompositionContext,
@@ -48,6 +76,24 @@ pub fn check_observed_wait_composition(
     bindings: &[u8],
 ) -> Result<ObservedWaitComposition, String> {
     let context = admitted.context();
+    if context.assumptions().get("threads").map(String::as_str) != Some(REQUIRED_THREADS)
+        || context
+            .assumptions()
+            .get("observation_trust")
+            .map(String::as_str)
+            != Some(REQUIRED_OBSERVATION_TRUST)
+        || context
+            .assumptions()
+            .get("linkage_trust")
+            .map(String::as_str)
+            != Some(REQUIRED_LINKAGE_TRUST)
+        || context
+            .assumptions()
+            .get("native_run_manifest_sha256")
+            .is_none_or(|digest| !is_sha256(digest))
+    {
+        return Err("missing or unsupported conditional replay assumption".into());
+    }
     if context.contracts_sha256()
         != qcore_schemas::sha256_hex(
             &serde_json::to_vec(source.contract_digests()).map_err(|e| e.to_string())?,
@@ -197,7 +243,8 @@ pub fn check_observed_wait_composition(
         return Err("event program did not discharge the observed lifecycle".into());
     }
     Ok(ObservedWaitComposition {
-        context_sha256: admitted.context_sha256(),
+        claim: CONDITIONAL_REPLAY_CLAIM,
+        caller_prepared_context_sha256: admitted.context_sha256(),
         checked_records: observed.checked_records(),
         checked_operations: checked.checked_operations,
         selected_paths: source.selected_path_indices().clone(),
