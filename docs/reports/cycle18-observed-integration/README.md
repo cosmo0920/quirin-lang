@@ -127,3 +127,23 @@ sanitizer spellings still refuse. The first end-to-end attempt refused `-MMD`
 before that explicit support was added; the second exited 0. An earlier WIP
 compile failed before the agent modules were exported; neither failure is
 counted as a passing gate.
+
+## Review corrections
+
+Review found that operation counts alone allowed same-count operand, field and
+guard substitutions. The source projection now also requires a complete
+canonical typed-summary digest vector matching one reviewed fixture or the
+pinned production artifact, without mixing the two sets. This is an explicitly
+bounded artifact recognizer; it is not general symbolic discharge of arbitrary
+implementations satisfying the same contract. New descriptor, field and guard
+mutations exercise refusal. The actual native configuration preprocesses to
+the reviewed production vector.
+
+The [initial combined gate](initial-gate-facts.json) measured `b1ad525a`:
+4,953 Rust passed, 0 failed, 11 ignored; 262 summaries, 251 running targets
+and nine doc-test sections; 156 Lean audits. Every recorded command exited 0.
+It preceded the complete-summary correction and final public-boundary and
+output-preservation review fixes, so the final corrected-code gate is recorded
+separately. The isolated admission card also discloses an exact-tip workspace
+run with one host-sensitive fork/Broken pipe failure and its isolated 12/12
+rerun; that rerun does not change the full attempt's exit 101.
