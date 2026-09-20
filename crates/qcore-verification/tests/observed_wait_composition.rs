@@ -7,6 +7,7 @@ use qcore_schemas::{profile::ImportRole, sha256_hex};
 use qcore_verification::event_composition_context::*;
 use qcore_verification::monkey_wait_projection::*;
 use qcore_verification::observed_wait_composition::*;
+use qcore_verification::timed_wait_observation_wire::decode_timed_wait_observation;
 use serde_json::{Value, json};
 use std::collections::BTreeMap;
 use std::path::PathBuf;
@@ -132,19 +133,30 @@ fn fixture() -> (Vec<u8>, Vec<u8>) {
     (observations, bindings)
 }
 
-fn input(source: &MonkeyWaitSourceProjection) -> EventCompositionContextInput {
+fn input_with_policy(
+    source: &MonkeyWaitSourceProjection,
+    policy: &str,
+    observations: &[u8],
+    bindings: &[u8],
+) -> EventCompositionContextInput {
     // These fixture digests are deliberately synthetic. The public verifier is
     // a conditional replay boundary; qcore-audit separately hashes and
     // snapshots configured files before calling it.
     let digest = "a".repeat(64);
     let mut assumptions = BTreeMap::from([
         ("backend".into(), "epoll".into()),
-        ("threads".into(), REQUIRED_THREADS.into()),
+        (
+            "threads".into(),
+            wait_identity_policy_text("threads").unwrap(),
+        ),
         (
             "observation_trust".into(),
-            REQUIRED_OBSERVATION_TRUST.into(),
+            wait_identity_policy_text("observation_trust").unwrap(),
         ),
-        ("linkage_trust".into(), REQUIRED_LINKAGE_TRUST.into()),
+        (
+            "linkage_trust".into(),
+            wait_identity_policy_text("linkage_trust").unwrap(),
+        ),
         ("native_run_manifest_sha256".into(), "c".repeat(64)),
         ("source_file.mk_core/mk_event.c".into(), digest.clone()),
         (
@@ -160,14 +172,13 @@ fn input(source: &MonkeyWaitSourceProjection) -> EventCompositionContextInput {
     }
     EventCompositionContextInput {
         artifact: "fixture-run".into(),
-        semantic_profile: OBSERVED_WAIT_PROFILE.into(),
+        semantic_profile: observed_wait_profile().unwrap(),
         scope: source.selected_path_indices().keys().cloned().collect(),
-        bounds: BTreeMap::from([
-            ("dispatchers".into(), 1),
-            ("events".into(), 1),
-            ("records".into(), 11),
-            ("runs".into(), 1),
-        ]),
+        bounds: observed_wait_bounds(
+            &decode_timed_wait_observation(observations, bindings)
+                .unwrap()
+                .trace,
+        ),
         assumptions,
         source_compile_task_sha256: digest.clone(),
         fluent_bit_revision: source.source_revision().into(),
@@ -182,7 +193,7 @@ fn input(source: &MonkeyWaitSourceProjection) -> EventCompositionContextInput {
         source_rules_sha256: sha256_hex(
             qcore_c_gateway::typed_source::DEFAULT_SOURCE_RULES.as_bytes(),
         ),
-        observation_rules_sha256: sha256_hex(OBSERVED_WAIT_RULES.as_bytes()),
+        observation_rules_sha256: wait_observation_rules_digest_with_policy(policy),
         observer_binary_sha256: digest.clone(),
         observer_harness_sha256: digest.clone(),
         linked_libraries_sha256: BTreeMap::from([
@@ -191,6 +202,14 @@ fn input(source: &MonkeyWaitSourceProjection) -> EventCompositionContextInput {
         ]),
         observation_trust: DeclaredObservationTrust::ProducerSuppliedRuntimeEvidence,
     }
+}
+
+fn input(
+    source: &MonkeyWaitSourceProjection,
+    observations: &[u8],
+    bindings: &[u8],
+) -> EventCompositionContextInput {
+    input_with_policy(source, DEFAULT_WAIT_IDENTITY_POLICY, observations, bindings)
 }
 
 #[test]
@@ -202,7 +221,8 @@ fn conditional_replay_rejects_context_and_assumption_substitutions() {
         observations: &observations,
         bindings: &bindings,
     };
-    let context = EventCompositionContext::derive(input(&source), payload).unwrap();
+    let context =
+        EventCompositionContext::derive(input(&source, &observations, &bindings), payload).unwrap();
     let admitted = check_event_composition_context_for(&context, payload, &context).unwrap();
     let result =
         check_observed_wait_composition(&source, &admitted, &observations, &bindings).unwrap();
@@ -224,7 +244,7 @@ fn conditional_replay_rejects_context_and_assumption_substitutions() {
         "source_summary.cb_wait_2_timeout",
         "contract.monkey/composition.qcore",
     ] {
-        let mut changed = input(&source);
+        let mut changed = input(&source, &observations, &bindings);
         changed.assumptions.insert(key.into(), "unrelated".into());
         let context = EventCompositionContext::derive(changed, payload).unwrap();
         let admitted = check_event_composition_context_for(&context, payload, &context).unwrap();
@@ -239,7 +259,7 @@ fn conditional_replay_rejects_context_and_assumption_substitutions() {
         "linkage_trust",
         "native_run_manifest_sha256",
     ] {
-        let mut changed = input(&source);
+        let mut changed = input(&source, &observations, &bindings);
         changed.assumptions.remove(key);
         let context = EventCompositionContext::derive(changed, payload).unwrap();
         let admitted = check_event_composition_context_for(&context, payload, &context).unwrap();
@@ -248,14 +268,14 @@ fn conditional_replay_rejects_context_and_assumption_substitutions() {
             "missing {key}"
         );
     }
-    let mut changed = input(&source);
+    let mut changed = input(&source, &observations, &bindings);
     changed
         .assumptions
         .insert("native_run_manifest_sha256".into(), "not-a-sha256".into());
     let context = EventCompositionContext::derive(changed, payload).unwrap();
     let admitted = check_event_composition_context_for(&context, payload, &context).unwrap();
     assert!(check_observed_wait_composition(&source, &admitted, &observations, &bindings).is_err());
-    let mut changed = input(&source);
+    let mut changed = input(&source, &observations, &bindings);
     changed.bounds.insert("runs".into(), 2);
     let context = EventCompositionContext::derive(changed, payload).unwrap();
     let wrong_bound = check_event_composition_context_for(&context, payload, &context).unwrap();
@@ -287,10 +307,146 @@ fn conditional_replay_rejects_context_and_assumption_substitutions() {
         observations: &malformed,
         bindings: &malformed_bindings,
     };
-    let context = EventCompositionContext::derive(input(&source), payload).unwrap();
+    let context =
+        EventCompositionContext::derive(input(&source, &observations, &bindings), payload).unwrap();
     let admitted = check_event_composition_context_for(&context, payload, &context).unwrap();
     assert!(
         check_observed_wait_composition(&source, &admitted, &malformed, &malformed_bindings)
             .is_err()
     );
+}
+
+#[test]
+fn declarative_identity_policy_is_load_bearing_and_exactly_bound() {
+    let source = project(CALLBACKS, &wrapper_source());
+    let (observations, bindings) = fixture();
+    let payload = EventCompositionPayload {
+        observations: &observations,
+        bindings: &bindings,
+    };
+
+    let default_context =
+        EventCompositionContext::derive(input(&source, &observations, &bindings), payload).unwrap();
+    let default_admitted =
+        check_event_composition_context_for(&default_context, payload, &default_context).unwrap();
+
+    // Even a semantically inert byte change is a different caller-selected
+    // policy and cannot run under a context prepared for the bundled policy.
+    let byte_changed = format!("{DEFAULT_WAIT_IDENTITY_POLICY}\n// caller-selected variant\n");
+    assert!(
+        check_observed_wait_composition_with_policy(
+            &source,
+            &default_admitted,
+            &observations,
+            &bindings,
+            &byte_changed,
+        )
+        .is_err()
+    );
+
+    // Rebinding policy identity does not manufacture a producer fact. The
+    // fixture still reports producer-supplied runtime evidence, so a policy
+    // mutation demanding attested evidence refuses.
+    let stronger_trust = DEFAULT_WAIT_IDENTITY_POLICY.replace(
+        "observation_trust == \"producer_supplied_runtime_evidence\"",
+        "observation_trust == \"attested_runtime_evidence\"",
+    );
+    let stronger_context = EventCompositionContext::derive(
+        input_with_policy(&source, &stronger_trust, &observations, &bindings),
+        payload,
+    )
+    .unwrap();
+    let stronger_admitted =
+        check_event_composition_context_for(&stronger_context, payload, &stronger_context).unwrap();
+    assert!(
+        check_observed_wait_composition_with_policy(
+            &source,
+            &stronger_admitted,
+            &observations,
+            &bindings,
+            &stronger_trust,
+        )
+        .is_err()
+    );
+
+    // Rebinding the context to a clause mutation proves the policy is
+    // executed: the record bound previously accepted by Rust is now refused.
+    let changed_clause = DEFAULT_WAIT_IDENTITY_POLICY.replace(
+        "ensures normal records_bound_actual == 11;",
+        "ensures normal records_bound_actual == 12;",
+    );
+    let changed_context = EventCompositionContext::derive(
+        input_with_policy(&source, &changed_clause, &observations, &bindings),
+        payload,
+    )
+    .unwrap();
+    let changed_admitted =
+        check_event_composition_context_for(&changed_context, payload, &changed_context).unwrap();
+    assert!(
+        check_observed_wait_composition_with_policy(
+            &source,
+            &changed_admitted,
+            &observations,
+            &bindings,
+            &changed_clause,
+        )
+        .is_err()
+    );
+
+    // A policy can never hide an observation it requires. The typed engine
+    // rejects the absent primitive instead of treating it as false or empty.
+    let missing_fact = DEFAULT_WAIT_IDENTITY_POLICY.replace(
+        "ensures normal records_bound_actual == 11;",
+        "ensures normal missing_primitive == 11;",
+    );
+    let missing_context = EventCompositionContext::derive(
+        input_with_policy(&source, &missing_fact, &observations, &bindings),
+        payload,
+    )
+    .unwrap();
+    let missing_admitted =
+        check_event_composition_context_for(&missing_context, payload, &missing_context).unwrap();
+    assert!(
+        check_observed_wait_composition_with_policy(
+            &source,
+            &missing_admitted,
+            &observations,
+            &bindings,
+            &missing_fact,
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn observed_bounds_are_derived_from_trace_data() {
+    let (observations, bindings) = fixture();
+    let decoded = decode_timed_wait_observation(&observations, &bindings).unwrap();
+    assert_eq!(
+        observed_wait_bounds(&decoded.trace),
+        BTreeMap::from([
+            ("dispatchers".into(), 1),
+            ("events".into(), 1),
+            ("records".into(), 11),
+            ("runs".into(), 1),
+        ])
+    );
+
+    let mut mixed = decoded.trace.clone();
+    mixed.records[5].run = 2;
+    mixed.records[5].dispatcher = 4;
+    if let qcore_core::event_observation::EventObservationAction::CallbackEnter { event, .. } =
+        &mut mixed.records[5].action
+    {
+        event.id += 1;
+    } else {
+        panic!("fixture callback-enter record moved");
+    }
+    let mixed_bounds = observed_wait_bounds(&mixed);
+    assert_eq!(mixed_bounds["runs"], 2);
+    assert_eq!(mixed_bounds["dispatchers"], 2);
+    assert_eq!(mixed_bounds["events"], 2);
+
+    mixed.records.pop();
+    assert_eq!(observed_wait_bounds(&mixed)["records"], 10);
 }
