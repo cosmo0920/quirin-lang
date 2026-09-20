@@ -1,0 +1,306 @@
+{
+  "time": "20260920T131024Z",
+  "archive": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z",
+  "removed": [
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-policy-engine",
+      "tip": "66a469d97162902d52cbf1932f08b59aa97c97a2",
+      "evidence_links": [
+        "private"
+      ]
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-source-policy",
+      "tip": "3d0ee92d",
+      "evidence_links": [
+        "measure"
+      ],
+      "note": "Agent final report preceded completion of its package rerun. Post-removal hash check detected continued writes. Final log is retained, including missing-source/test failures; isolated package pass claim is superseded by root remeasurement. Move-time bytes had matched before removal; this manifest records settled post-run bytes."
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy",
+      "tip": "c79923d3fe3d2be25c84fe83b0331a1c843c1eeb",
+      "evidence_links": [
+        "measure"
+      ]
+    }
+  ],
+  "retained": [
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/next-wave-candidates-c-sources-18bd37",
+      "reason": "External Claude and shell sessions remain live (PIDs 2499436 and 2499577); no deletion."
+    }
+  ],
+  "preserved": [
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-policy-engine/private/cycle18-contract-facts/cargo-clippy.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-policy-engine/private/cycle18-contract-facts/cargo-clippy.log",
+      "sha256": "9d4105f348d96cda623a081e667f3b077a7f3bf8899931c7b7d16645b64192d1",
+      "bytes": 214
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-policy-engine/private/cycle18-contract-facts/cargo-fmt.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-policy-engine/private/cycle18-contract-facts/cargo-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-policy-engine/private/cycle18-contract-facts/cargo-test.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-policy-engine/private/cycle18-contract-facts/cargo-test.log",
+      "sha256": "62ac7d7a4acb8213e749d1c0437811a44ac062b7dabab46fbf56bb033224b441",
+      "bytes": 2700
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-policy-engine/private/cycle18-contract-facts/check-lean-audits.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-policy-engine/private/cycle18-contract-facts/check-lean-audits.log",
+      "sha256": "aa2ca7a18136b9f1596432780305ed8962578b17facfcd6a62d7c37434c1cc95",
+      "bytes": 477115
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-policy-engine/private/cycle18-contract-facts/lean-audit.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-policy-engine/private/cycle18-contract-facts/lean-audit.log",
+      "sha256": "83ae3a385deb6f5438fd924b21e89a032e98df5b3dd715f43c9f2d1f33f54813",
+      "bytes": 919
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-source-policy/measure/cycle18-source-contract-extraction/check-lean-audits.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-source-policy/measure/cycle18-source-contract-extraction/check-lean-audits.log",
+      "sha256": "873985f381519b53b75a5e9707f66b366d33676f3164da72f06f2dab14cd02f3",
+      "bytes": 10717
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-source-policy/measure/cycle18-source-contract-extraction/clippy.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-source-policy/measure/cycle18-source-contract-extraction/clippy.log",
+      "sha256": "b3a54b3c703368bfcb85f57354595d334f2c4f93812ce087469c2dedaa876e62",
+      "bytes": 222
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-source-policy/measure/cycle18-source-contract-extraction/fmt.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-source-policy/measure/cycle18-source-contract-extraction/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-source-policy/measure/cycle18-source-contract-extraction/lean-audit.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-source-policy/measure/cycle18-source-contract-extraction/lean-audit.log",
+      "sha256": "f509c8343f1e5336806a7442ccd1b1c4939e2bb04d65d685d465190eb1f535e7",
+      "bytes": 659
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-source-policy/measure/cycle18-source-contract-extraction/lean-build.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-source-policy/measure/cycle18-source-contract-extraction/lean-build.log",
+      "sha256": "46a0a74e4f003a4ef3b259469eda69b6d911cd780bed0d24d9655eed0b819246",
+      "bytes": 39
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-source-policy/measure/cycle18-source-contract-extraction/qcore-verification-test.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-source-policy/measure/cycle18-source-contract-extraction/qcore-verification-test.log",
+      "sha256": "ae9c01daa78d1f8edff103ce41e978629807dd100aeea72cdc1ed1f9067c92de",
+      "bytes": 34600
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-2.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-2.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-2.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-2.log",
+      "sha256": "e053138acc2eaedf024adf133735c1926c203a041b6237f6db00b2dbe0102952",
+      "bytes": 655
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-final.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-final.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-final.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-final.log",
+      "sha256": "26698b677357034cab6465455cb621108c36a6733b9c650c42f938be4dba7a70",
+      "bytes": 999
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-final2.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-final2.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-final2.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-final2.log",
+      "sha256": "459afcd5e32936ff23ed3f177b25198d3c309ae629459590f4b29d0a6775a717",
+      "bytes": 655
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-policy-admission.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-policy-admission.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-policy-admission.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/cargo-test-policy-admission.log",
+      "sha256": "fe8fcee0ece8a54a14ce74ec44d0d257e654add8d40113b44aa67f9c66da9221",
+      "bytes": 655
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/cargo-test.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/cargo-test.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/cargo-test.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/cargo-test.log",
+      "sha256": "aeb8d3ce4f6b0726085d2974fbdc579ced2cd5d0542f1ed2de2cd613daf7a3ad",
+      "bytes": 1878
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/clippy-final.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/clippy-final.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/clippy-final.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/clippy-final.log",
+      "sha256": "12ed32b0f242bf1d24313c5266d583d1aa364cf60d20839aba691dff27cf9f07",
+      "bytes": 514
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/clippy-policy-admission.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/clippy-policy-admission.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/clippy-policy-admission.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/clippy-policy-admission.log",
+      "sha256": "467df418ac91e7611e82271066a8be4148e7c70c9f0781b3c010375d853c9832",
+      "bytes": 224
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/clippy.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/clippy.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/clippy.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/clippy.log",
+      "sha256": "7f1a8edd54d579a0cb2e47575c7e0e3d3e9bfebf889829c4c690d89bc835282a",
+      "bytes": 1292
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/fmt-final.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/fmt-final.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/fmt-final.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/fmt-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/fmt.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/fmt.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/fmt.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean-audit-final.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean-audit-final.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean-audit-final.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean-audit-final.log",
+      "sha256": "339a2c896429fd7f2020bdcb5aea125e0d59eb2cc53ab5f42ef793a108a9facb",
+      "bytes": 1757
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean-audit-policy-admission.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean-audit-policy-admission.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean-audit-policy-admission.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean-audit-policy-admission.log",
+      "sha256": "1487dde58032661459171fd681a13fede5f791e3187a6eea9aa81609d359990f",
+      "bytes": 1879
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean-audit.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean-audit.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean-audit.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean-audit.log",
+      "sha256": "339a2c896429fd7f2020bdcb5aea125e0d59eb2cc53ab5f42ef793a108a9facb",
+      "bytes": 1757
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean-build-2.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean-build-2.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean-build-2.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean-build-2.log",
+      "sha256": "c1a5edaf4f580ccd9088f19fcf7559efc28b17af3eba6d0f6260b2412aa1be36",
+      "bytes": 93
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean-build.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean-build.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean-build.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean-build.log",
+      "sha256": "b785eeed32be0296cae2e59908d0c6543e37bcefbd2bf62484223cf098f7b243",
+      "bytes": 93
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean-policy-admission.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean-policy-admission.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean-policy-admission.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean-policy-admission.log",
+      "sha256": "690e70c343a57093c5de2bef4d331de4e089c5b4efb74f2d9b5f9008c141c05a",
+      "bytes": 92
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean.exit",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean.exit",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2
+    },
+    {
+      "old_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-identity-policy/measure/identity-policy/lean.log",
+      "saved_path": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-extraction-20260920T131024Z/agent-cycle18-identity-policy/measure/identity-policy/lean.log",
+      "sha256": "31faa21f1338fb18f3cd10fb704f72cb1851240acef0015bfbefb79e93fff981",
+      "bytes": 392
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "archive": "docs/reports/w42-priority-integration/artifacts/source.json.gz",
+    "measured": "private/cycle18-contract-extraction/final-corpus/monkey-source.json",
+    "bytes": 1665950,
+    "sha256": "bf9b1cacf3c822795f544d9b4b63da4625a926d7d746316929da12b761b6bb0d",
+    "byte_identical": true
+  },
+  {
+    "archive": "docs/reports/w42-priority-integration/artifacts/diagnostics.json.gz",
+    "measured": "private/cycle18-contract-extraction/final-corpus/resource-diagnostics.json",
+    "bytes": 13817505,
+    "sha256": "041b7f2193c8ef02c72346aed48dcfd657be1c1b36e74b0f243e55d80ac4b059",
+    "byte_identical": true
+  },
+  {
+    "archive": "docs/reports/w42-priority-integration/artifacts/chunk-contracts.json.gz",
+    "measured": "private/cycle18-contract-extraction/final-corpus/resource-diagnostics.chunk-contracts.json",
+    "bytes": 4186178,
+    "sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+    "byte_identical": true
+  },
+  {
+    "archive": "docs/reports/w42-priority-integration/artifacts/contracts.json.gz",
+    "measured": "private/cycle18-contract-extraction/final-corpus/resource-diagnostics.contracts.json",
+    "bytes": 181752,
+    "sha256": "9de748ce56d2c614f251411f88e50a8b8a50c7dbff935216515e873a3c081f32",
+    "byte_identical": true
+  },
+  {
+    "archive": "docs/reports/w42-priority-integration/artifacts/source-effects.json.gz",
+    "measured": "private/cycle18-contract-extraction/final-corpus/resource-diagnostics.source-effects.json",
+    "bytes": 118505,
+    "sha256": "0bda08ad86da01b133bcf0397ee39d7b7cd145a1265c1cb66df2747e6aa4fc9b",
+    "byte_identical": true
+  }
+]
