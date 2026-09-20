@@ -74,35 +74,27 @@
         }
       ]
     },
-    "review-certificate-scope#integrator-reconciliation-list#1": {
+    "review-certificate-scope#integrator-reconciliation-list#6": {
       "verdict": "applied",
-      "note": "Landed the source-identity rule with the structural/authentication distinction.",
+      "note": "Merge order and adapter preserve exact prepared artifacts; final independent benchmark checks actual Clang actions.",
       "verify": [
         {
-          "file": "docs/agents/source-identity.md",
-          "contains": "This discharges `E01-TAIL-CERT-SCOPE`"
-        },
-        {
-          "file": "docs/agents/source-identity.md",
-          "contains": "Structural self-consistency is distinct from intended-target authentication."
+          "file": "crates/qcore-c-gateway/src/legacy_c.rs",
+          "contains": "prepared.line_marked_source().map(str::to_owned),"
         }
       ]
     },
-    "review-certificate-scope#integrator-reconciliation-list#2": {
+    "review-certificate-scope#integrator-reconciliation-list#5": {
       "verdict": "applied",
-      "note": "Registered both residuals with their requested discharge conditions.",
+      "note": "Registered report provenance under the parent enumeration follow-up and two new residuals; no registered entry retired.",
       "verify": [
         {
           "file": "docs/reviews/r0_3/acceptance_matrix.json",
-          "contains": "bind the expected certificate context to CompileTaskIdentity, including compiler/target/environment and dependency provenance, and exercise a mismatch."
-        },
-        {
-          "file": "docs/reviews/r0_3/acceptance_matrix.json",
-          "contains": "a caller-held expected contract/profile/trust identity is compared and a mismatch is exercised."
+          "contains": "E01-TAIL-CERT-SCOPE is discharged at the reconstructible target-scope and caller-held expected-context boundary by review-certificate-scope."
         }
       ]
     },
-    "review-certificate-scope#integrator-reconciliation-list#3": {
+    "review-certificate-scope#integrator-reconciliation-list#4": {
       "verdict": "applied",
       "note": "Public APIs are implemented and re-exported.",
       "verify": [
@@ -116,25 +108,37 @@
         }
       ]
     },
-    "review-certificate-scope#integrator-reconciliation-list#4": {
+    "review-certificate-scope#integrator-reconciliation-list#3": {
       "verdict": "applied",
-      "note": "Registered report provenance under the parent enumeration follow-up and two new residuals; no registered entry retired.",
+      "note": "Registered both residuals with their requested discharge conditions.",
       "verify": [
         {
           "file": "docs/reviews/r0_3/acceptance_matrix.json",
-          "contains": "E01-TAIL-CERT-SCOPE is discharged at the reconstructible target-scope and caller-held expected-context boundary by review-certificate-scope."
+          "contains": "bind the expected certificate context to CompileTaskIdentity, including compiler/target/environment and dependency provenance, and exercise a mismatch."
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "a caller-held expected contract/profile/trust identity is compared and a mismatch is exercised."
         }
       ]
     },
-    "review-certificate-scope#integrator-reconciliation-list#5": {
+    "review-certificate-scope#integrator-reconciliation-list#2": {
       "verdict": "applied",
-      "note": "Merge order and adapter preserve exact prepared artifacts; final independent benchmark checks actual Clang actions.",
+      "note": "Landed the source-identity rule with the structural/authentication distinction.",
       "verify": [
         {
-          "file": "crates/qcore-c-gateway/src/legacy_c.rs",
-          "contains": "prepared.line_marked_source().map(str::to_owned),"
+          "file": "docs/agents/source-identity.md",
+          "contains": "This discharges `E01-TAIL-CERT-SCOPE`"
+        },
+        {
+          "file": "docs/agents/source-identity.md",
+          "contains": "Structural self-consistency is distinct from intended-target authentication."
         }
       ]
+    },
+    "review-certificate-scope#integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "Prepared dependencies were merged first. Scope code through af88325b and final report d69420e0 are integrated; dependency cherry-picks are not counted as new scope work."
     }
   },
   "no_section": {},

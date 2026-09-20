@@ -6725,10 +6725,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Rust source 455108be2bc64830b386a7ebd6c8d8f217eb0e4c; 4884 passed, 0 failed, 10 ignored; 251 result summaries over 249 targets (240 running and 9 doc). Initial full Lean build found import placement after a module doc comment; import-only correction 62129bd2b51d432a0e6a94dd2f7195753ba0587b, followed by all 150 Lean audits exit0. Rust files unchanged by that correction. Five required workspace host-sensitive rows passed individually. Provider122 is carried Unix evidence, not remeasured. Clang was recorded in this checkout. Private logs: /home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/. Post-regeneration Python suite: 313 passed, exit0. All final standing commands pass; the initial Lean import-order failure and its successful retry remain separately recorded. No full-language conformance or C-corpus promotion claimed.",
-  "workspace_tests": 4884,
+  "note": "Combined integration at Rust source 02b037df3ec44cf9cb96cd188d256dc9815e93e0: 4895 passed, 0 failed, 10 ignored; 254 result summaries over 252 targets. Mechanical lint cleanup af88325b was integrated after the Rust test binaries were built, without semantic change; final fmt/clippy/probes and focused gateway/audit checks validate it. All final commands exit 0; Lean 151, Python 317. Five host-sensitive rows also passed individually. Provider122 is carried Unix evidence, not remeasured. Actual Clang recording from this checkout is included. Full commands, identities, private paths and prior agent failures are disclosed in README.md and validation-run.json. No corpus, CT or full-conformance promotion.",
+  "workspace_tests": 4895,
   "provider_tests": 122,
-  "python_evidence_validator_tests": 313,
+  "python_evidence_validator_tests": 317,
   "lean_audits": 151,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
@@ -6889,7 +6889,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/quirin-review-integration/gate.json)"
  },
  "named_followups": [
   {

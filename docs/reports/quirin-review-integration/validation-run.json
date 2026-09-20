@@ -1,0 +1,311 @@
+{
+  "source_commit": "02b037df3ec44cf9cb96cd188d256dc9815e93e0",
+  "start": "2026-09-20T06:43:08.440695+00:00",
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "RUST_TEST_THREADS": "2",
+    "QCORE_CLANG": null,
+    "RUSTFLAGS": null,
+    "CARGO_TARGET_DIR": null
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.022,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.01,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/clang-version.log"
+    },
+    {
+      "name": "cargo-test",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "seconds": 1459.082,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/cargo-test.log"
+    },
+    {
+      "name": "cargo-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 1.776,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/cargo-fmt.log"
+    },
+    {
+      "name": "cargo-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 15.39,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/cargo-clippy.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 2.057,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.862,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/reevaluation-followup.log"
+    },
+    {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "seconds": 16.443,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/lean-audits.log"
+    },
+    {
+      "name": "isolated-process-lifecycle",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "cycle20_verifier_plugins",
+        "vp04_vp07_vp08_process_lifecycle_and_payload_budgets",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.91,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/isolated-process-lifecycle.log"
+    },
+    {
+      "name": "isolated-process-limit",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "enforced_process_limits",
+        "a_declared_process_limit_stops_the_fixture_from_forking",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.544,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/isolated-process-limit.log"
+    },
+    {
+      "name": "isolated-memory-limit",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "enforced_process_limits",
+        "memory_growth_beyond_the_declared_limit_is_bounded",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 0.093,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/isolated-memory-limit.log"
+    },
+    {
+      "name": "isolated-confined-write",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "confined_process_execution",
+        "a_confined_fixture_cannot_write_outside_the_admitted_paths",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 0.058,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/isolated-confined-write.log"
+    },
+    {
+      "name": "isolated-closed-input",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "standalone_host",
+        "closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.576,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/combined-gate/isolated-closed-input.log"
+    }
+  ],
+  "rust": {
+    "passed": 4895,
+    "failed": 0,
+    "ignored": 10,
+    "result_summaries": 254,
+    "running_targets": 243,
+    "doc_targets": 9
+  },
+  "end": "2026-09-20T07:08:09.271439+00:00",
+  "final_code_commit": "f9843c15a3e6d07697171c470604e46e06e3a426",
+  "post_gate_steps": [
+    {
+      "name": "gateway-focused",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--test",
+        "certificate_scope",
+        "--test",
+        "prepared_translation_unit",
+        "--test",
+        "prepared_failure"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/final-checks/gateway-focused.log"
+    },
+    {
+      "name": "audit-focused",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "configured_cli"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/final-checks/audit-focused.log"
+    },
+    {
+      "name": "matrix-premeasurement",
+      "command": [
+        "python3",
+        "docs/reports/remaining-d02/build_matrix.py",
+        "."
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/final-checks/matrix-premeasurement.log"
+    },
+    {
+      "name": "python-measurement",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/final-checks/python-measurement.log"
+    },
+    {
+      "name": "matrix-final-corrected",
+      "command": [
+        "python3",
+        "docs/reports/remaining-d02/build_matrix.py",
+        ".",
+        "--gate",
+        "docs/reports/quirin-review-integration/gate.json"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/final-checks/matrix-final-corrected.log"
+    },
+    {
+      "name": "python-final",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/final-checks/python-final.log"
+    }
+  ],
+  "rejected_post_gate_attempts": [
+    {
+      "name": "matrix-final",
+      "command": [
+        "python3",
+        "docs/reports/remaining-d02/build_matrix.py",
+        ".",
+        "--gate",
+        "docs/reports/quirin-review-integration/gate.json"
+      ],
+      "exit": 1,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/final-checks/matrix-final.log"
+    }
+  ],
+  "rejected_attempt_resolution": "Matrix generator rejected three extra descriptive gate keys; counts remain in note and run record. Unsupported keys removed; corrected regeneration and post-regeneration Python suite pass."
+}

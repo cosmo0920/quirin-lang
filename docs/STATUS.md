@@ -63,17 +63,17 @@ separately.
 
 ## Latest validated gate
 
-The [scalar-call gate](reports/source-scalar-calls-v1/gate.json) records
-**4,884 Rust passed, 0 failed, 10 ignored; 251 result summaries over 249 targets;
-150 Lean audits; 313 Python tests**, clean fmt/clippy and both probes exit 0.
+The [review integration gate](reports/quirin-review-integration/gate.json) records
+**4,895 Rust passed, 0 failed, 10 ignored; 254 result summaries over 252 targets;
+151 Lean audits; 317 Python tests**, clean fmt/clippy and both probes exit 0.
 Five core-workspace host-sensitive rows also passed separately in isolation.
 Clang 21.1.8 was recorded in the measuring checkout. **122 provider tests are
-carried Unix evidence, not re-measured.** [Run identity and private logs](reports/source-scalar-calls-v1/README.md#final-standing-gate)
-disclose the initial Lean import-placement failure and successful import-only
-correction/retry. Scalar calls now check explicit i32/unit values and direct
-acyclic calls, with source-authored `std.io` printing and one composed C main.
-This is a bounded source-profile extension; C projection measurements and
-full-conformance status are unchanged.
+carried Unix evidence, not remeasured.** [Run identities and private logs](reports/quirin-review-integration/README.md#final-standing-gate)
+disclose the full Rust source identity, subsequent mechanical lint cleanup and
+final focused checks, plus earlier per-card failed/superseded attempts.
+Audit cancellation, immutable TU preparation and independently reconstructed
+certificate scope are integrated. All five pinned corpus artifacts remain
+byte-identical; C projection, CT and full-conformance measurements are unchanged.
 
 The ignored F02 Windows pin-agreement test is red by design on `--ignored`;
 Linux green does not repair it. Host/load-sensitive tests and their reporting

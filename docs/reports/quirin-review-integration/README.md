@@ -22,9 +22,9 @@ medium reasoning, as requested.
    mismatched or incompletely analyzed scopes must fail closed. Pair the Rust
    rule with an audited Lean model and explicit correspondence premises.
 
-The integrator reviews all three cards, merges them sequentially, measures
-combined corpus parity and runs the standing gate. A card report or a green
-isolated suite does not constitute a completed integration.
+The three cards are integrated on `codex/quirin-priority-gaps-20260920`.
+Independent review, corpus parity, preparation measurement, reconciliation and
+the combined standing gate are complete. `main` was not advanced.
 
 ## Verified baseline
 
@@ -119,7 +119,70 @@ contract/profile/trust binding remain registered as
 registered entry: the parent is annotated with its discharge, and remains open.
 No registered entry is retired.
 
-The [reconciliation record](reconciliation.json) addresses all 13 items from
+The [reconciliation record](reconciliation.json) addresses all 14 items from
 the three cards. The residual sweep returns 55 pre-existing historical or
 rule-only candidates outside these cards; it is not evidence that those names
 are discharged. Both new review residuals are tracked.
+
+## Final standing gate
+
+The [gate](gate.json) and [complete run record](validation-run.json) distinguish
+the full Rust measurement from the final mechanical lint cleanup. The full
+Rust run compiled integrated source `02b037df`; `af88325b`, merged as
+`e2d2f734`, subsequently removed an unnecessary temporary and borrow and added
+two documented local lint allowances. It changes no branch, verdict, evidence
+or public result representation. Final formatting, linting, probes, gateway
+and audit regression checks validate that cleanup. The already successful full
+Rust suite and corpus measurements were not repeated for those mechanical edits.
+
+**4895 Rust passed, 0 failed, 10 ignored; 254 result summaries
+over 252 targets; 151 Lean audits; 317 Python tests.**
+
+| Command | Exit | Private log under `private/quirin-review/` |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | `combined-gate/submodules.log` |
+| `clang --version` | 0 | `combined-gate/clang-version.log` |
+| `cargo test --workspace --no-fail-fast` | 0 | `combined-gate/cargo-test.log` |
+| `cargo fmt --all -- --check` | 0 | `combined-gate/cargo-fmt.log` |
+| `cargo clippy --all-targets -- -D warnings` | 0 | `combined-gate/cargo-clippy.log` |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | `combined-gate/reevaluation-probe.log` |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | `combined-gate/reevaluation-followup.log` |
+| `python3 scripts/check_lean_audits.py --jobs 2` | 0 | `combined-gate/lean-audits.log` |
+| `cargo test -p qcore-compiler --test cycle20_verifier_plugins vp04_vp07_vp08_process_lifecycle_and_payload_budgets -- --exact --test-threads=1` | 0 | `combined-gate/isolated-process-lifecycle.log` |
+| `cargo test -p qcore-verifier-host --test enforced_process_limits a_declared_process_limit_stops_the_fixture_from_forking -- --exact --test-threads=1` | 0 | `combined-gate/isolated-process-limit.log` |
+| `cargo test -p qcore-verifier-host --test enforced_process_limits memory_growth_beyond_the_declared_limit_is_bounded -- --exact --test-threads=1` | 0 | `combined-gate/isolated-memory-limit.log` |
+| `cargo test -p qcore-verifier-host --test confined_process_execution a_confined_fixture_cannot_write_outside_the_admitted_paths -- --exact --test-threads=1` | 0 | `combined-gate/isolated-confined-write.log` |
+| `cargo test -p qcore-verifier-host --test standalone_host closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request -- --exact --test-threads=1` | 0 | `combined-gate/isolated-closed-input.log` |
+| `cargo test -p qcore-c-gateway --test certificate_scope --test prepared_translation_unit --test prepared_failure` | 0 | `final-checks/gateway-focused.log` |
+| `cargo test -p qcore-audit --test configured_cli` | 0 | `final-checks/audit-focused.log` |
+| `python3 docs/reports/remaining-d02/build_matrix.py .` | 0 | `final-checks/matrix-premeasurement.log` |
+| `python3 -m unittest discover -s scripts/tests` | 0 | `final-checks/python-measurement.log` |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/quirin-review-integration/gate.json` | 0 | `final-checks/matrix-final-corrected.log` |
+| `python3 -m unittest discover -s scripts/tests` | 0 | `final-checks/python-final.log` |
+
+The two successful matrix regenerations explain the two Python runs: the first measures
+the suite after updating derived sections, and the second verifies the matrix
+with the measured integrated gate. Clang 21.1.8 was recorded in this checkout.
+Final focused checks pass 10 gateway tests and 17 configured-audit CLI tests
+(27 passed, 0 failed, 0 ignored). The five isolated host-sensitive checks all
+pass and are additional controls,
+not additions to the workspace count. **Provider 122 is carried Unix evidence,
+not remeasured**; provider and schema sources are unchanged.
+
+The first measured-gate regeneration exited 1 because three descriptive keys
+were outside the generator schema. Those counts remain in the note and run
+record; removing the unsupported keys made regeneration pass without changing
+any measurement or gate rule. The rejected command is preserved in
+`private/quirin-review/final-checks/matrix-final.log` and the run record.
+
+Per-card reports retain the earlier failed or superseded attempts: sandbox
+LeakSanitizer/host-restriction failures, the scope semantic diagnostic-order
+regression and its correction, interrupted scope runs, initial Clippy errors,
+and stale-matrix Python failure. None is counted as a passing gate. The combined
+run is unrestricted so native sanitizer and host-isolation tests can execute.
+The initial reconciliation check required renumbering after the scope report
+added its commit-provenance paragraph; the final check passes all 14 items and
+15 file-content claims (`private/quirin-review/reconciliation-final-check.log`,
+exit 0). Historical reports and the preceding 33,809-byte increment remain
+unchanged. No optimistic fallback, reduced Unknown denominator or conformance
+promotion is introduced.
