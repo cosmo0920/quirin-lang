@@ -6725,11 +6725,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Combined integration at Rust source 02b037df3ec44cf9cb96cd188d256dc9815e93e0: 4895 passed, 0 failed, 10 ignored; 254 result summaries over 252 targets. Mechanical lint cleanup af88325b was integrated after the Rust test binaries were built, without semantic change; final fmt/clippy/probes and focused gateway/audit checks validate it. All final commands exit 0; Lean 151, Python 317. Five host-sensitive rows also passed individually. Provider122 is carried Unix evidence, not remeasured. Actual Clang recording from this checkout is included. Full commands, identities, private paths and prior agent failures are disclosed in README.md and validation-run.json. No corpus, CT or full-conformance promotion.",
-  "workspace_tests": 4895,
+  "note": "RESOURCE-HELPER-FUNCTIONS isolated branch gate, 2026-09-20. The full Rust run began after semantic tip ccfcdca7 and after an independent clean-tip seven-probe header/type review. The only working-tree delta was report wording distinguishing the Q020 expansion budget from internal Q056 construction failures; no source changed during the run. git submodule update --init --recursive exited 0 first and checked out the pinned libevent revision. cargo test used CARGO_BUILD_JOBS=2, --workspace and --no-fail-fast outside the sandbox because LeakSanitizer ptrace is blocked inside it: 4,919 passed, 0 failed, 10 ignored over 255 strict result summaries; no FAILED summary, so no isolation retry. fmt, clippy, both reevaluation probes and 152 Lean audits exited 0. The first 317-test Python run exited 1 only because the committed derived Lean-audit count was 151 while this branch has 152; build_matrix.py regenerated the derived matrix with this gate, then the same 317-test suite passed. Clang was recorded in this worktree beside this gate. Provider 122 is carried, not rerun: providers/ and qcore-schemas are unchanged from 119115de. Private logs and exact exits are under private/resource-helper-functions/gate-595ea6b3/. This profile promotes no corpus verdict or full-language claim.",
+  "workspace_tests": 4919,
   "provider_tests": 122,
   "python_evidence_validator_tests": 317,
-  "lean_audits": 151,
+  "lean_audits": 152,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6842,6 +6842,7 @@
    "AuditRegionJoinsDuties.lean",
    "AuditRegionJoinsLoan.lean",
    "AuditRegionTaskCredit.lean",
+   "AuditResourceCalls.lean",
    "AuditReturnCallCustody.lean",
    "AuditReturnExpressionEvaluation.lean",
    "AuditReturnPositionEscape.lean",
@@ -6887,9 +6888,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "complete",
+  "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/quirin-review-integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/resource-helper-functions/gate.json)"
  },
  "named_followups": [
   {

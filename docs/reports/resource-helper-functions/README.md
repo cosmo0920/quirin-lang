@@ -104,8 +104,10 @@ shape conditions use OrdinaryTypes Q020; an empty contract block is unsupported
 resource-helper header syntax at Q020, while a nonempty sequential source
 contract retains Q021; unsupported grades use Usage Q100. A malformed inherited buffer
 statement uses StandardBuffer Q051. Core extent obligations use Q053, inherited
-custody refusals Q054, independent certificate/expansion failures Q056 and
-transitive effect-row refusals Q057. Tests pin representative Q020, Q053, Q054,
+custody refusals Q054, internal expansion construction or independent
+certificate failures Q056 and transitive effect-row refusals Q057. Declared
+shape and budget refusals, including the expanded-item limit, remain Q020.
+Tests pin representative Q020, Q053, Q054,
 Q057 and Q100 paths so resource syntax, usage, extent, custody and effects do
 not collapse into one buffer-shape diagnostic.
 
@@ -127,28 +129,50 @@ reverse-declared chain beyond depth 64, and an invalid scalar return binding.
 End-to-end tests cover routing, distinct task `Buffer`, whitespace-normalized
 types, usage grades, shadowed calls, effects and diagnostic attribution. On
 Linux and macOS, a Clang AddressSanitizer/UndefinedBehaviorSanitizer harness
-calls the emitted `process` helper directly and asserts both returned extent
-and byte value before releasing it; a silent unit entry is not the observation.
+initializes a byte to 17, calls the emitted `fill` helper with 42, then calls
+the emitted `process` helper and asserts both returned extent and the changed
+byte value before releasing it. A silent unit entry is not the observation.
 
-Focused pre-gate results at commit `780e72de` plus the diagnostic/docs working
-tree were: core resource-call tests 11/11, compiler resource-helper tests 10/10,
-and the Lean module/audit green with only the project's permitted `propext` and
-`Quot.sound`. The final standing-gate measurement and exact private log paths
-are recorded in `gate.json` and the section below after the semantic tip is
-fixed.
+## Standing gate
+
+The isolated full gate measured semantic tip `ccfcdca7`; the only working-tree
+delta was this report's diagnostic wording, and no source changed during the
+run. `git submodule update --init --recursive` ran first and exited 0. The Rust
+suite ran outside the sandbox with `CARGO_BUILD_JOBS=2 cargo test --workspace
+--no-fail-fast`: **4,919 passed, 0 failed, 10 ignored** across 255 strict result
+summaries, exit 0. There was no failed summary and no isolated retry.
+
+`cargo fmt --all -- --check`, `cargo clippy --all-targets -- -D warnings`, and
+both reevaluation probes exited 0. The Lean audit runner used `--jobs 2` and
+passed 152/152 audits, exit 0. The first 317-test Python run exited 1 only on
+the derived matrix's carried Lean count, 151 instead of this branch's 152;
+`build_matrix.py --gate docs/reports/resource-helper-functions/gate.json`
+regenerated the derived fields and exited 0, after which the same 317-test
+suite passed, exit 0.
+
+The actual Clang recording is beside `gate.json`; its first line is `Ubuntu
+clang version 21.1.8 (6ubuntu1)`. Provider 122 is carried rather than rerun
+because this branch changes neither `providers/` nor `crates/qcore-schemas/`.
+Exact logs and exit files are preserved under
+`private/resource-helper-functions/gate-595ea6b3/`. The independent post-fix
+header/type reprobe manifest is under the review worktree at
+`private/resource-helper-review/20260920T-review-after-ccfcdca7/MANIFEST.md`.
 
 ## Residuals
 
-1. **RESOURCE-HELPERS-GENERAL-ABI.** This is a closed executable profile, not a general resource-capable function
-   type system or separately compiled library ABI.
-2. **RESOURCE-HELPERS-UNCALLED-PROOF.** Every resource helper must be reachable from the selected entry. Universal
-   argument proofs for uncalled/public helpers remain unimplemented.
-3. **RESOURCE-HELPERS-SUBLOANS.** Loans cover a whole buffer for one call. Range subloans, returned borrows,
-   stored loans and relending need a richer lifetime/path model.
-4. **RESOURCE-HELPERS-TYPED-ERRORS.** Allocation failure has one process-exit behavior. Typed errors, recovery and
-   resource payloads require a checked per-error-edge cleanup model.
-5. **RESOURCE-HELPERS-C-REFINEMENT.** Lean covers the bounded decision rules, not parser extraction, graph
-   flattening or C refinement end to end.
+1. **RESOURCE-HELPERS-GENERAL-ABI.** This is a closed executable profile, not a
+   general resource-capable function type system or separately compiled ABI.
+2. **RESOURCE-HELPERS-UNCALLED-PROOF.** Every resource helper must be reachable
+   from the selected entry. Universal argument proofs for uncalled/public
+   helpers remain unimplemented.
+3. **RESOURCE-HELPERS-SUBLOANS.** Loans cover a whole buffer for one call. Range
+   subloans, returned borrows, stored loans and relending need a richer
+   lifetime/path model.
+4. **RESOURCE-HELPERS-TYPED-ERRORS.** Allocation failure has one process-exit
+   behavior. Typed errors, recovery and resource payloads require a checked
+   per-error-edge cleanup model.
+5. **RESOURCE-HELPERS-C-REFINEMENT.** Lean covers the bounded decision rules,
+   not parser extraction, graph flattening or C refinement end to end.
 
 ## Integrator reconciliation
 
@@ -166,5 +190,12 @@ fixed.
    card owns resource helper lowering, checking and C emission. If integration
    adopts the shared parser later, preserve the exact `bytes`/`Buffer`
    distinction and the explicit `None` versus unsupported-grade refusal tests.
-5. After reconciliation, run the full standing gate once on the combined tip;
+5. Add the integration follow-up's `TypedResourceBytes` result-profile tag for
+   normal `own<bytes>` function returns. Its authority is the checked helper
+   graph; it must not imply typed error payload support.
+6. Add the integration follow-up's early `1..=MAX_EXTENT` acquire guard before
+   delegated buffer checking, including its oversized direct-IR regression.
+   The standalone buffer route's later allocation boundary is a separate
+   pre-existing residual.
+7. After reconciliation, run the full standing gate once on the combined tip;
    the gate here measures only this isolated resource-helper branch.
