@@ -49,6 +49,35 @@ revision and uncompressed artifact digest.
 Implementation and review are in progress. Final changes, measured deltas,
 gate results and reconciliation decisions must be recorded before completion.
 
+## Implementation boundaries and review
+
+The scalar-store slice admits only an exact scalar `BASE->FIELD = RHS`
+assignment through a declared record pointer that this function may bind.
+The RHS cannot contain a call, assignment, increment/decrement or another
+memory access. Transfer retains the existing alias-read obligation and
+requires one known, non-null, live identity without nullable or unresolved
+markers. Both successful and flow-refused stores preserve the resource
+projection frame; a refusal retains `UnknownAlias`. This is the new
+[gateway rule 5g](../../agents/gateway.md#constraint-5g), not a general
+indirect-access implementation.
+
+Review caught an RHS mutation boundary and a later overbroad frame poison.
+The latter suppressed four baseline leaks in an intermediate run; that run
+is preserved in the card's private evidence and excluded from acceptance.
+The corrected source regression requires an unrelated allocation's `Leak(q)`
+to remain alongside the refused store's `UnknownAlias(p)`. The independent
+[review record](review.json) found no additional concrete defects in the
+corrected rule, tests and abstract Lean model. Review is not extraction proof.
+
+Callback accounting derives its three selected callbacks from the loaded
+forced-Libevent profile. Missing, duplicate, extra or malformed inventory and
+evidence rows reject the operation. The normal audit now emits an explicit
+Cycle 18 `Unknown` reason for every callback without requiring optional native
+replay. The focused replay test accounts for all eight selected source paths,
+but all three callbacks remain Unknown because no source-to-`EventProgram`
+projection or composed certificate exists. This is tracked as
+`MONKEY-CALLBACK-CYCLE18-COMPOSITION`.
+
 ## Independent coverage confirmation
 
 The integrator independently replayed the census at worker checkpoint
