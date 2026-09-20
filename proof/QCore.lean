@@ -47,6 +47,7 @@ import QCore.CleanupVocabulary
 import QCore.CleanupOutcome
 import QCore.CallbackBinding
 import QCore.CallbackCoverage
+import QCore.MonkeyWaitProjection
 import QCore.CallbackSource
 import QCore.Index
 import QCore.QuantIndexBinding
@@ -58,6 +59,8 @@ import QCore.Metatheory
 import QCore.ErrorRegion
 import QCore.EventDriven
 import QCore.EventCompositionContext
+import QCore.EventObservation
+import QCore.ObservedWaitComposition
 import QCore.ExternalIntegration
 import QCore.MonkeyEvent
 import QCore.ChunkLifecycle

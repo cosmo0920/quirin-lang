@@ -19,6 +19,7 @@ import QCore.CounterSource
 import QCore.FieldDestructor
 import QCore.CallbackBinding
 import QCore.CallbackCoverage
+import QCore.MonkeyWaitProjection
 import QCore.CallbackSource
 import QCore.DescriptorObservation
 import QCore.QuantIndexBinding
@@ -160,6 +161,16 @@ import QCore.ChunkSource
 #print axioms QCore.CallbackCoverage.omitted_selected_callback_is_not_accounted
 #print axioms QCore.CallbackCoverage.duplicate_callback_is_not_accounted
 #print axioms QCore.CallbackCoverage.unselected_callback_is_not_accounted
+
+#print axioms QCore.MonkeyWaitProjection.accepted_projection_has_exact_source
+#print axioms QCore.MonkeyWaitProjection.accepted_projection_has_exact_observation_obligations
+#print axioms QCore.MonkeyWaitProjection.accepted_callback_is_the_sole_return_path
+#print axioms QCore.MonkeyWaitProjection.exact_source_is_accepted
+#print axioms QCore.MonkeyWaitProjection.accepted_projection_has_exact_contracts
+#print axioms QCore.MonkeyWaitProjection.missing_lifecycle_source_is_rejected
+#print axioms QCore.MonkeyWaitProjection.callback_effect_substitution_is_rejected
+#print axioms QCore.MonkeyWaitProjection.missing_event_free_is_rejected
+#print axioms QCore.MonkeyWaitProjection.missing_callback_contract_is_rejected
 
 #print axioms QCore.CallbackSource.accepted_storage_start_is_fresh
 #print axioms QCore.CallbackSource.accepted_storage_start_retains_existing

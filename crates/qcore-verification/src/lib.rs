@@ -10,6 +10,7 @@ pub mod obligation_derivation;
 pub mod verify_dispatch;
 pub mod witness_replay;
 
+pub mod observed_wait_composition;
 pub mod reactor_callback;
 pub mod reactor_source;
 
@@ -23,8 +24,10 @@ pub mod file_close_composition;
 pub mod filesystem_chunk_close_composition;
 pub mod frame_source;
 pub mod memory_close_composition;
+pub mod monkey_wait_projection;
 pub mod source_effect;
 pub mod teardown_source;
+pub mod timed_wait_observation_wire;
 pub mod unmap_composition;
 pub mod unsupported_close_composition;
 
