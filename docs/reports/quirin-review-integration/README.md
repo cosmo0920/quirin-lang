@@ -66,8 +66,25 @@ wrapper overhead, host load and small fixtures preclude a total speedup or
 memory-reduction claim. Raw logs and binary snapshots are in
 `private/quirin-review/preparation-comparison/`.
 
-This measurement precedes certificate-scope integration. The combined version
-must also preserve the three-action Safe path by using retained scope evidence.
+The [combined-code measurement](combined-preparation-measurement.json) repeats
+all three fixtures at `ed913c29` (code unchanged from `02b037df`) and confirms
+exactly the same 5/8/6→3 actions, metadata counts and byte-identical JSON
+outputs after certificate-scope integration. The Safe path introduces no extra
+Clang process. Combined-run RSS spans 83,596–84,568 KiB; no speed or memory
+reduction is claimed. Private evidence is in
+`private/quirin-review/preparation-combined/`.
+
+## Combined corpus parity
+
+The [release replay](combined-run.json) exits 0 and reproduces all five frozen
+W42 artifacts byte for byte, also matching the independent pre-change baseline.
+[SHA-256 identities](combined-byte-identity.json) and the standard
+[five-artifact semantic diff](combined-corpus-diff.json) preserve the comparison.
+Release build, replay, diff, audit CLI build and preparation measurement all exit
+0; commands and exits are in
+`private/quirin-review/combined-measurements/facts.json`. Corpus outputs and
+replay logs are in `private/quirin-review/combined-after/`. No Safe/Unsafe/Unknown,
+contract, diagnostic, coverage or conformance count changes.
 
 ## Remaining review scope
 
