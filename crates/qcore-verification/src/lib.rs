@@ -15,6 +15,7 @@ pub mod reactor_source;
 
 pub mod call_use_source;
 pub mod callback_coverage;
+pub mod monkey_wait_projection;
 pub mod cleanup_replay_source;
 pub mod composition_source;
 pub mod counter_source;
