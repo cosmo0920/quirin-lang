@@ -105,6 +105,7 @@ pub struct Cycle18CompositionInput<'a> {
     /// Exactly the three callback summaries. Their order is irrelevant.
     pub callback_summaries: [&'a SourceSummary; 3],
     pub wait_source: &'a MonkeyWaitSourceProjection,
+    pub wait_failure_source: &'a MonkeyWaitSourceProjection,
     pub wait_context: &'a ValidatedEventCompositionContext,
     pub wait_observations: &'a [u8],
     pub wait_bindings: &'a [u8],
@@ -539,6 +540,39 @@ fn validate_wait_failures(cases: &[CheckedWaitFailureCase]) -> Result<BTreeSet<S
         .collect())
 }
 
+fn canonical_map_sha256(map: &BTreeMap<String, String>) -> String {
+    sha256_hex(&serde_json::to_vec(map).expect("string identity maps always serialize"))
+}
+
+fn check_wait_failure_source_join(
+    observed: &MonkeyWaitSourceProjection,
+    failure: &MonkeyWaitSourceProjection,
+) -> Result<(), String> {
+    check_typed_contract_facts(
+        CYCLE18_COMPOSITION_POLICY,
+        "wait_failure_source_join",
+        &[
+            (
+                "observed_summary_map",
+                text(canonical_map_sha256(observed.source_summary_digests())),
+            ),
+            (
+                "failure_summary_map",
+                text(canonical_map_sha256(failure.source_summary_digests())),
+            ),
+            (
+                "observed_contract_map",
+                text(canonical_map_sha256(observed.contract_digests())),
+            ),
+            (
+                "failure_contract_map",
+                text(canonical_map_sha256(failure.contract_digests())),
+            ),
+        ],
+    )
+    .map_err(|error| format!("wait failure source policy refused: {error}"))
+}
+
 fn validate_wait_composition(
     value: &ObservedWaitComposition,
     context: &ValidatedEventCompositionContext,
@@ -713,6 +747,8 @@ pub fn check_cycle18_composition(
             "wait projection does not match the independent callback inventory".into(),
         );
     } else {
+        let failure_projection_join =
+            check_wait_failure_source_join(input.wait_source, input.wait_failure_source);
         match (
             check_observed_wait_composition(
                 input.wait_source,
@@ -720,7 +756,10 @@ pub fn check_cycle18_composition(
                 input.wait_observations,
                 input.wait_bindings,
             ),
-            check_wait_failure_paths(input.wait_source, input.wait_failure_observations),
+            failure_projection_join.and_then(|()| {
+                check_wait_failure_paths(input.wait_failure_source, input.wait_failure_observations)
+                    .map_err(|error| format!("failure replay: {error:?}"))
+            }),
         ) {
             (Ok(observed), Ok(cases)) => {
                 match (
@@ -752,11 +791,7 @@ pub fn check_cycle18_composition(
                     observed
                         .err()
                         .map(|error| format!("observed replay: {error}"))
-                        .or_else(|| {
-                            failures
-                                .err()
-                                .map(|error| format!("failure replay: {error:?}"))
-                        })
+                        .or_else(|| failures.err())
                         .unwrap_or_else(|| "wait evidence refused".into()),
                 );
             }
@@ -982,6 +1017,18 @@ pub fn check_cycle18_composition(
                     text(&input.wait_failure_identity.build_sha256),
                 ),
                 (
+                    "wait_context_compile_task",
+                    text(wait_context.source_compile_task_sha256()),
+                ),
+                (
+                    "wait_context_monkey_source",
+                    text(wait_context.monkey_source_sha256()),
+                ),
+                (
+                    "wait_context_monkey_build",
+                    text(wait_context.monkey_build_sha256()),
+                ),
+                (
                     "timeout_identity_revision",
                     text(&input.timeout_identity.source_revision),
                 ),
@@ -1142,6 +1189,78 @@ mod tests {
         }
     }
 
+    fn selected_summary<'a>(results: &'a [SourceResult], name: &str) -> &'a SourceSummary {
+        results
+            .iter()
+            .find_map(|result| match result {
+                SourceResult::Summary(summary) if summary.function() == name => Some(summary),
+                _ => None,
+            })
+            .unwrap()
+    }
+
+    fn wait_projection(contract_suffix: &str) -> Option<MonkeyWaitSourceProjection> {
+        if qcore_c_gateway::clang_command().is_err() {
+            return None;
+        }
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let profile =
+            load_source_set_profile(&root.join("contract/profiles"), "fluent-bit").unwrap();
+        let callbacks = include_str!("../../../compiler/tests/fixtures/monkey/callbacks.c");
+        let wrappers = format!(
+            "{}\n{}",
+            include_str!("../../../compiler/tests/fixtures/monkey/wrappers.c"),
+            r#"
+int event_base_loop(struct event_base *, int);
+int _mk_event_wait_with_flags(struct mk_event_loop *loop, int flags)
+{
+    struct mk_event_ctx *ctx = loop->data;
+    ctx->fired_count = 0;
+    event_base_loop(ctx->base, flags);
+    loop->n_events = ctx->fired_count;
+    return loop->n_events;
+}
+"#
+        );
+        let import = |source: &str, role| {
+            import_source_functions_from_profile(
+                &C11TranslationUnit {
+                    source,
+                    ..Default::default()
+                },
+                crate::monkey_wait_projection::monkey_source_revision(),
+                &profile,
+                "monkey",
+                role,
+            )
+            .unwrap()
+        };
+        let callbacks = import(callbacks, ImportRole::Callback);
+        let wrappers = import(&wrappers, ImportRole::Wrapper);
+        let wrapper_contract = format!(
+            "{}\n{contract_suffix}",
+            include_str!("../../../contract/qcore/monkey/wrapper_paths.qcore")
+        );
+        let contracts = crate::monkey_wait_projection::MonkeyWaitContracts::parse(
+            &wrapper_contract,
+            include_str!("../../../contract/qcore/monkey/composition.qcore"),
+        )
+        .unwrap();
+        Some(
+            crate::monkey_wait_projection::project_monkey_timed_wait_source(
+                [
+                    selected_summary(&callbacks, "cb_wait_2_timeout"),
+                    selected_summary(&wrappers, "_mk_event_loop_create"),
+                    selected_summary(&wrappers, "_mk_event_wait_with_flags"),
+                    selected_summary(&wrappers, "_mk_event_wait_2"),
+                    selected_summary(&wrappers, "_mk_event_loop_destroy"),
+                ],
+                &contracts,
+            )
+            .unwrap(),
+        )
+    }
+
     #[test]
     fn sealed_callback_inventory_derives_three_callbacks_and_eight_paths() {
         if qcore_c_gateway::clang_command().is_err() {
@@ -1188,6 +1307,33 @@ mod tests {
             ])
             .is_err()
         );
+    }
+
+    #[test]
+    fn failure_projection_contract_map_cannot_cross_at_same_source_identity() {
+        let Some(observed) = wait_projection("") else {
+            return;
+        };
+        let failure =
+            wait_projection("// independently changed configured contract bytes").unwrap();
+        assert_eq!(
+            observed.source_revision(),
+            failure.source_revision(),
+            "control must retain the same revision"
+        );
+        assert_eq!(
+            observed.profile_assumptions(),
+            failure.profile_assumptions(),
+            "control must retain the same profile"
+        );
+        assert_eq!(
+            observed.source_summary_digests(),
+            failure.source_summary_digests(),
+            "control changes the contract map, not source summaries"
+        );
+        assert_ne!(observed.contract_digests(), failure.contract_digests());
+        check_wait_failure_source_join(&observed, &observed).unwrap();
+        assert!(check_wait_failure_source_join(&observed, &failure).is_err());
     }
 
     #[test]

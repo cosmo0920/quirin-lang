@@ -40,6 +40,10 @@ structure EvidenceJoin where
   waitCallbackSource : Nat
   payloadCallbackSource : Nat
   timeoutCallbackSource : Nat
+  observedWaitSummaryMap : Nat
+  failureWaitSummaryMap : Nat
+  observedWaitContractMap : Nat
+  failureWaitContractMap : Nat
   waitRevision : Nat
   payloadRevision : Nat
   timeoutRevision : Nat
@@ -49,6 +53,10 @@ structure EvidenceJoin where
   waitBuild : Nat
   payloadBuild : Nat
   timeoutBuild : Nat
+  waitMonkeySource : Nat
+  failureMonkeySource : Nat
+  timeoutMonkeySource : Nat
+  failureMonkeyBuild : Nat
   payloadCheckedPaths : Nat
   waitCheckedPaths : Nat
   timeoutSourcePaths : Nat
@@ -59,6 +67,10 @@ def evidenceMatches (inventory : Inventory) (evidence : EvidenceJoin) : Bool :=
   evidence.waitCallbackSource == inventory.wait.source &&
   evidence.payloadCallbackSource == inventory.event.source &&
   evidence.timeoutCallbackSource == inventory.timeout.source &&
+  evidence.observedWaitSummaryMap != 0 &&
+  evidence.observedWaitSummaryMap == evidence.failureWaitSummaryMap &&
+  evidence.observedWaitContractMap != 0 &&
+  evidence.observedWaitContractMap == evidence.failureWaitContractMap &&
   evidence.waitRevision == inventory.event.revision &&
   evidence.payloadRevision == inventory.event.revision &&
   evidence.timeoutRevision == inventory.event.revision &&
@@ -67,6 +79,11 @@ def evidenceMatches (inventory : Inventory) (evidence : EvidenceJoin) : Bool :=
   evidence.timeoutProfile == inventory.event.profile &&
   evidence.waitBuild != 0 && evidence.payloadBuild != 0 &&
   evidence.timeoutBuild != 0 && evidence.payloadCheckedPaths == 4 &&
+  evidence.waitMonkeySource != 0 &&
+  evidence.waitMonkeySource == evidence.failureMonkeySource &&
+  evidence.waitMonkeySource == evidence.timeoutMonkeySource &&
+  evidence.waitBuild == evidence.failureMonkeyBuild &&
+  evidence.waitBuild == evidence.timeoutBuild &&
   evidence.waitCheckedPaths == 1 && evidence.timeoutSourcePaths == 3 &&
   evidence.timeoutCheckedExecutions == 1
 
@@ -119,6 +136,19 @@ theorem accepted_evidence_joins_each_callback
     evidence.waitCallbackSource = inventory.wait.source ∧
       evidence.payloadCallbackSource = inventory.event.source ∧
       evidence.timeoutCallbackSource = inventory.timeout.source := by
+  have matched := (accepted_facts result).2
+  simp only [evidenceMatches, Bool.and_eq_true, bne_iff_ne,
+    beq_iff_eq] at matched
+  omega
+
+theorem accepted_failure_projection_matches_observed_wait
+    {inventory : Inventory} {evidence : EvidenceJoin}
+    {certificate : AggregateCertificate}
+    (result : check inventory evidence = some certificate) :
+    evidence.observedWaitSummaryMap = evidence.failureWaitSummaryMap ∧
+      evidence.observedWaitContractMap = evidence.failureWaitContractMap ∧
+      evidence.waitMonkeySource = evidence.failureMonkeySource ∧
+      evidence.waitBuild = evidence.failureMonkeyBuild := by
   have matched := (accepted_facts result).2
   simp only [evidenceMatches, Bool.and_eq_true, bne_iff_ne,
     beq_iff_eq] at matched
