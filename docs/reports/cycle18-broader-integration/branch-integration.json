@@ -1,0 +1,23 @@
+{
+  "before_commit": "b2fb0946",
+  "after_commit": "4c67ccf96a680e1593c1286cc24c1df49a0bde14",
+  "before_tree": "a53760ad9d0acd2d8a4032ea7bbcc3c44aa2627b",
+  "after_tree": "a53760ad9d0acd2d8a4032ea7bbcc3c44aa2627b",
+  "branches": [
+    {
+      "branch": "codex/cycle18-native-platform-matrix",
+      "tip": "823625a70c78514be61bd84cd05fe11eacf55cd5",
+      "ancestor_of_integration": true
+    },
+    {
+      "branch": "codex/cycle18-broader-composition",
+      "tip": "baa13d5dffffa5071a2842a118ffde389828ae6c",
+      "ancestor_of_integration": true
+    },
+    {
+      "branch": "codex/agent-cycle18-task-handoff",
+      "tip": "b0bc702a0daf28bbef40c8a549aae9f17165be28",
+      "ancestor_of_integration": true
+    }
+  ]
+}

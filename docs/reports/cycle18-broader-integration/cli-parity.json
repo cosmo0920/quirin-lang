@@ -5,7 +5,7 @@
     "command": [
       "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/baseline/quirin-audit",
       "observed-wait",
-      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/legacy-cli-parity/baseline/config.json"
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/final-legacy-cli-parity/baseline/config.json"
     ],
     "exit": 0,
     "report_sha256": "108c4977ab0c8b8d3621b5abeaebd84b68b5ba87b8bae264284904dc12c5a861",
@@ -13,8 +13,8 @@
       "/usr/bin/python3",
       "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/cycle18-observed-integration/check_negative_controls.py",
       "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/baseline/quirin-audit",
-      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/legacy-cli-parity/baseline/config.json",
-      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/legacy-cli-parity/baseline/negative-controls"
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/final-legacy-cli-parity/baseline/config.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/final-legacy-cli-parity/baseline/negative-controls"
     ],
     "negative_runner_exit": 0,
     "negative_outcomes": [
@@ -52,11 +52,11 @@
   },
   "extracted": {
     "binary": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
-    "binary_sha256": "90fb6f0d6137e93c661fc4db8ff0085c9855576d7471fbf1c3213a073be5e56f",
+    "binary_sha256": "07236818601a4b94ecbffd3187a82fa5b56994e2bd0eaaf8976769daff59f916",
     "command": [
       "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
       "observed-wait",
-      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/legacy-cli-parity/extracted/config.json"
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/final-legacy-cli-parity/extracted/config.json"
     ],
     "exit": 0,
     "report_sha256": "108c4977ab0c8b8d3621b5abeaebd84b68b5ba87b8bae264284904dc12c5a861",
@@ -64,8 +64,8 @@
       "/usr/bin/python3",
       "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/cycle18-observed-integration/check_negative_controls.py",
       "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
-      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/legacy-cli-parity/extracted/config.json",
-      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/legacy-cli-parity/extracted/negative-controls"
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/final-legacy-cli-parity/extracted/config.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/final-legacy-cli-parity/extracted/negative-controls"
     ],
     "negative_runner_exit": 0,
     "negative_outcomes": [

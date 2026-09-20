@@ -83,7 +83,7 @@
     },
     "verdict": "unknown"
   },
-  "aggregate_config_sha256": "8b1ccd834aaa3473f673e27132c4b05659507c58b2491bba85ea0f8efe692dbc",
+  "aggregate_config_sha256": "460aa444d6d48820236dd3e2c645bd666fb311ca76436e1b1c56c45425beacae",
   "limitations": [
     "Aggregate remains Unknown; bounded evidence is not full callback safety",
     "No complete production caller inventory or universal null/size bound is claimed",

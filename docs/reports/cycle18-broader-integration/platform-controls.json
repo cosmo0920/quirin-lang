@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "controls": [
+    {
+      "name": "rehashed_core_pthreads_role_swap",
+      "exit": 1,
+      "refused": true,
+      "stderr": "native-platform-matrix audit rejected (Unknown): address,undefined,leak compile/link argv mismatch"
+    },
+    {
+      "name": "rehashed_compile_archive_role_relabel",
+      "exit": 1,
+      "refused": true,
+      "stderr": "native-platform-matrix audit rejected (Unknown): address,undefined,leak compile_commands identity mismatch"
+    },
+    {
+      "name": "rehashed_same_thread_identity",
+      "exit": 1,
+      "refused": true,
+      "stderr": "native-platform-matrix audit rejected (Unknown): observed_row: observed contract violation: dispatch_thread != activating_thread"
+    },
+    {
+      "name": "observer_transparency_assertion",
+      "exit": 1,
+      "refused": true,
+      "stderr": "native-platform-matrix audit rejected (Unknown): observed_row: observed contract violation: observer_transparency == \"not_claimed\""
+    },
+    {
+      "name": "generic_probe_relabelled_as_monkey",
+      "exit": 1,
+      "refused": true,
+      "stderr": "native-platform-matrix audit rejected (Unknown): unsupported native platform matrix"
+    }
+  ]
+}

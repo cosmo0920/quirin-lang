@@ -1,0 +1,623 @@
+{
+  "integration_commit": "4c67ccf96a680e1593c1286cc24c1df49a0bde14",
+  "branches": [
+    {
+      "branch": "card-chained-tail",
+      "tip": "8069a992173f34d233875002baf31d8a5a567539",
+      "delete_exit": 0,
+      "output": "Deleted branch card-chained-tail (was 8069a992).\n"
+    },
+    {
+      "branch": "card/stability-reeval-2",
+      "tip": "60958bf04e1c1dd279654ce5d7f41e1a389d3838",
+      "delete_exit": 0,
+      "output": "Deleted branch card/stability-reeval-2 (was 60958bf0).\n"
+    },
+    {
+      "branch": "claude/archive-codebase-targz-425b3c",
+      "tip": "0fd35ba98134c64df7fd1d4ca3cd4318ace73ee9",
+      "delete_exit": 0,
+      "output": "Deleted branch claude/archive-codebase-targz-425b3c (was 0fd35ba9).\n"
+    },
+    {
+      "branch": "claude/docs-compact-6",
+      "tip": "09fecb26994404da1ffc20d2ebd0f1d6054e227e",
+      "delete_exit": 0,
+      "output": "Deleted branch claude/docs-compact-6 (was 09fecb26).\n"
+    },
+    {
+      "branch": "claude/vibrant-curie-9f9380",
+      "tip": "474f27afa5c1b8ef2c42c4297a437afffa35c332",
+      "delete_exit": 0,
+      "output": "Deleted branch claude/vibrant-curie-9f9380 (was 474f27af).\n"
+    },
+    {
+      "branch": "claude/wave-19-hatch-opening-4f24e4",
+      "tip": "c7c0a3c2334d26e2f59e3abe468df73a74f3e431",
+      "delete_exit": 0,
+      "output": "Deleted branch claude/wave-19-hatch-opening-4f24e4 (was c7c0a3c2).\n"
+    },
+    {
+      "branch": "claude/wave-23-hatch-opening-f8b35d",
+      "tip": "dda43a3eff3554a5fbc3ca56cb65ceaa9a3808f9",
+      "delete_exit": 0,
+      "output": "Deleted branch claude/wave-23-hatch-opening-f8b35d (was dda43a3e).\n"
+    },
+    {
+      "branch": "codex/agent-cycle18-task-handoff",
+      "tip": "b0bc702a0daf28bbef40c8a549aae9f17165be28",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/agent-cycle18-task-handoff (was b0bc702a).\n"
+    },
+    {
+      "branch": "codex/b-series-integration",
+      "tip": "7f7e045f11eab969bb857aafa53a98e036d1be0a",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/b-series-integration (was 7f7e045f).\n"
+    },
+    {
+      "branch": "codex/b01-return-expression",
+      "tip": "b0c737b461c38a0b172d7f36f759d8ec5d6ccde8",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/b01-return-expression (was b0c737b4).\n"
+    },
+    {
+      "branch": "codex/b02-branch-condition",
+      "tip": "c5622aabf12dd3f3507d94abe81d87b3e445807e",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/b02-branch-condition (was c5622aab).\n"
+    },
+    {
+      "branch": "codex/b03-loop-switch",
+      "tip": "410ce895eeea8011ba9d8f7de1b712e12fc2c938",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/b03-loop-switch (was 410ce895).\n"
+    },
+    {
+      "branch": "codex/b04-nested-call",
+      "tip": "89949410cef103ab7fd1565e0642c2e59b848d08",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/b04-nested-call (was 89949410).\n"
+    },
+    {
+      "branch": "codex/certificate-context-binding",
+      "tip": "e1ee80e0287e7372568b34fe3d7d370d836f77be",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/certificate-context-binding (was e1ee80e0).\n"
+    },
+    {
+      "branch": "codex/ct-remaining-integration",
+      "tip": "d69954ab6a44a049d53e43015f39f7df5be6b261",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/ct-remaining-integration (was d69954ab).\n"
+    },
+    {
+      "branch": "codex/ct10-source-layout",
+      "tip": "d3991353dfffa8760cec30ccff1587c149cac6bb",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/ct10-source-layout (was d3991353).\n"
+    },
+    {
+      "branch": "codex/ct24-composition",
+      "tip": "e2533e62c4d20ea4f534496a192878e445212eac",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/ct24-composition (was e2533e62).\n"
+    },
+    {
+      "branch": "codex/ct41-mapping",
+      "tip": "044c08007fb1020f2f1d94e19ab119007b746355",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/ct41-mapping (was 044c0800).\n"
+    },
+    {
+      "branch": "codex/ct41-sync-model",
+      "tip": "8f5faa5660a340d374143ea32aa24a7a0db3120a",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/ct41-sync-model (was 8f5faa56).\n"
+    },
+    {
+      "branch": "codex/cycle18-admission",
+      "tip": "9f4d601d85b023c31f60362e90aa3cff400c83f8",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/cycle18-admission (was 9f4d601d).\n"
+    },
+    {
+      "branch": "codex/cycle18-broader-composition",
+      "tip": "baa13d5dffffa5071a2842a118ffde389828ae6c",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/cycle18-broader-composition (was baa13d5d).\n"
+    },
+    {
+      "branch": "codex/cycle18-composition-20260920",
+      "tip": "c4d3f1873fbc937e36d47af4dd23d199d732cd91",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/cycle18-composition-20260920 (was c4d3f187).\n"
+    },
+    {
+      "branch": "codex/cycle18-contract-extraction-20260920",
+      "tip": "0ee32b2d64ad72568b3d02ae5c1db0b21ef060fc",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/cycle18-contract-extraction-20260920 (was 0ee32b2d).\n"
+    },
+    {
+      "branch": "codex/cycle18-identity-policy",
+      "tip": "c79923d3fe3d2be25c84fe83b0331a1c843c1eeb",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/cycle18-identity-policy (was c79923d3).\n"
+    },
+    {
+      "branch": "codex/cycle18-native-platform-matrix",
+      "tip": "823625a70c78514be61bd84cd05fe11eacf55cd5",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/cycle18-native-platform-matrix (was 823625a7).\n"
+    },
+    {
+      "branch": "codex/cycle18-observer",
+      "tip": "434892b9873f2904ad6ff752ad2ca68eb507b505",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/cycle18-observer (was 434892b9).\n"
+    },
+    {
+      "branch": "codex/cycle18-policy-engine",
+      "tip": "66a469d97162902d52cbf1932f08b59aa97c97a2",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/cycle18-policy-engine (was 66a469d9).\n"
+    },
+    {
+      "branch": "codex/cycle18-priority1-20260920",
+      "tip": "562399956bf0b14ee2ecd9b2da1a4c5cbbc1bcb5",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/cycle18-priority1-20260920 (was 56239995).\n"
+    },
+    {
+      "branch": "codex/cycle18-projection",
+      "tip": "5961b7a571dd5d693ca9d12f6d688ba346fe3856",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/cycle18-projection (was 5961b7a5).\n"
+    },
+    {
+      "branch": "codex/cycle18-source-policy",
+      "tip": "3d0ee92da9d1287d8d491455ca1f24644707b037",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/cycle18-source-policy (was 3d0ee92d).\n"
+    },
+    {
+      "branch": "codex/cycle19-priority-wave",
+      "tip": "5030833e04d65284a8eb98004485a8711004c4eb",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/cycle19-priority-wave (was 5030833e).\n"
+    },
+    {
+      "branch": "codex/quirin-priority-gaps-20260920",
+      "tip": "b42ca7631d10b75e354b2b234d0b34e166172127",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/quirin-priority-gaps-20260920 (was b42ca763).\n"
+    },
+    {
+      "branch": "codex/resource-boundaries-20260920",
+      "tip": "cfcb28ccac003700b111127c8c64343afc968676",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/resource-boundaries-20260920 (was cfcb28cc).\n"
+    },
+    {
+      "branch": "codex/resource-helper-functions",
+      "tip": "f3e3deed3b988dcf65515fbbffbc99bc5e38020a",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/resource-helper-functions (was f3e3deed).\n"
+    },
+    {
+      "branch": "codex/review-cert-scope",
+      "tip": "d69420e0daae0064f9a1a54e288776dad993be63",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/review-cert-scope (was d69420e0).\n"
+    },
+    {
+      "branch": "codex/review-prepared-tu",
+      "tip": "682a83573923afe3c857df1290857f5e2a9a57c5",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/review-prepared-tu (was 682a8357).\n"
+    },
+    {
+      "branch": "codex/review-runner",
+      "tip": "f0c24e780b6b858c312383e9df27525dab0ce671",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/review-runner (was f0c24e78).\n"
+    },
+    {
+      "branch": "codex/source-annotation-enforcement",
+      "tip": "2a96e16e80d05f108fd2aa1a08804476a46d287c",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/source-annotation-enforcement (was 2a96e16e).\n"
+    },
+    {
+      "branch": "codex/source-scalar-calls-v1",
+      "tip": "e61a7472c83ec5ab7c5a844889b50b0714c57f6a",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/source-scalar-calls-v1 (was e61a7472).\n"
+    },
+    {
+      "branch": "codex/w42-indirect-access",
+      "tip": "08f0a2f28c1fc62e2756b9ebb9997eb50b8c5f7a",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/w42-indirect-access (was 08f0a2f2).\n"
+    },
+    {
+      "branch": "codex/w42-monkey-coverage",
+      "tip": "173685876031b576c6c75d97ce0ba0a28cd8b43e",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/w42-monkey-coverage (was 17368587).\n"
+    },
+    {
+      "branch": "codex/w42-unprojected-census",
+      "tip": "59e0efa9f5aeee7fcde2360bfc0eebbbd7d3a0a2",
+      "delete_exit": 0,
+      "output": "Deleted branch codex/w42-unprojected-census (was 59e0efa9).\n"
+    },
+    {
+      "branch": "ct07-two-thread-proof-leg",
+      "tip": "c44e87c2ff19de6e473ae48869f4e4e1995071d0",
+      "delete_exit": 0,
+      "output": "Deleted branch ct07-two-thread-proof-leg (was c44e87c2).\n"
+    },
+    {
+      "branch": "ct41-map-reduced",
+      "tip": "16d277677b7320b9a11a7eb95b75e703138ec1d1",
+      "delete_exit": 0,
+      "output": "Deleted branch ct41-map-reduced (was 16d27767).\n"
+    },
+    {
+      "branch": "ct42-cell-route",
+      "tip": "2507b6a5f3c7a3cfc76b83220f44a7258d7e1d5d",
+      "delete_exit": 0,
+      "output": "Deleted branch ct42-cell-route (was 2507b6a5).\n"
+    },
+    {
+      "branch": "loops-on-composed-routes",
+      "tip": "ae054a61a32c951ec646abd3d1bcc814ba4a6f4d",
+      "delete_exit": 0,
+      "output": "Deleted branch loops-on-composed-routes (was ae054a61).\n"
+    },
+    {
+      "branch": "tsan-rows-2",
+      "tip": "51d3a94c95ee65b11348e6145fa0cfffbd36aee6",
+      "delete_exit": 0,
+      "output": "Deleted branch tsan-rows-2 (was 51d3a94c).\n"
+    },
+    {
+      "branch": "worktree-agent-a0bee2f2fe68d6434",
+      "tip": "25c79f92e444f5db5bcb4654d1d4cb0e7c54fb39",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a0bee2f2fe68d6434 (was 25c79f92).\n"
+    },
+    {
+      "branch": "worktree-agent-a11a08da17a2734fa",
+      "tip": "1ddebdce935a35ba5ea6e75b870053d896697260",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a11a08da17a2734fa (was 1ddebdce).\n"
+    },
+    {
+      "branch": "worktree-agent-a1204a1a083d35165",
+      "tip": "afd78dcf04df309f9a8c46baaf08a8a6a567d62f",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a1204a1a083d35165 (was afd78dcf).\n"
+    },
+    {
+      "branch": "worktree-agent-a15c6a44ca3495a0e",
+      "tip": "e878b362571f9d797d1d6da6c39429bb2d803333",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a15c6a44ca3495a0e (was e878b362).\n"
+    },
+    {
+      "branch": "worktree-agent-a169a5e9421edcb6d",
+      "tip": "da532616d747dd519aa574086840ffa8dd6d9b9b",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a169a5e9421edcb6d (was da532616).\n"
+    },
+    {
+      "branch": "worktree-agent-a310b80d397bfb2a1",
+      "tip": "91c4dd0d1568c8f228e1436ca90179d60a1148be",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a310b80d397bfb2a1 (was 91c4dd0d).\n"
+    },
+    {
+      "branch": "worktree-agent-a3636f128ae9c837d",
+      "tip": "2ef29867694d3f51692a3a773f885bd518d1b892",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a3636f128ae9c837d (was 2ef29867).\n"
+    },
+    {
+      "branch": "worktree-agent-a40aa758d95732b25",
+      "tip": "b43f3e63e6d999ec323710508faec3ab77731872",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a40aa758d95732b25 (was b43f3e63).\n"
+    },
+    {
+      "branch": "worktree-agent-a4a21f66e1140e0dc",
+      "tip": "a300a39dcea26cec49f44c4f93a7a0e7388550ad",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a4a21f66e1140e0dc (was a300a39d).\n"
+    },
+    {
+      "branch": "worktree-agent-a4b9c03fd33dec337",
+      "tip": "148eef799c2ce0a8b73d77e828c2306271bac57a",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a4b9c03fd33dec337 (was 148eef79).\n"
+    },
+    {
+      "branch": "worktree-agent-a4cbacb7550cfda4a",
+      "tip": "1e71af84f7e27ced9818d444786355088f245b42",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a4cbacb7550cfda4a (was 1e71af84).\n"
+    },
+    {
+      "branch": "worktree-agent-a501978ba40d1cc3b",
+      "tip": "dd95f7d1472a5be350fb49b0b7c3b5397e13cdea",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a501978ba40d1cc3b (was dd95f7d1).\n"
+    },
+    {
+      "branch": "worktree-agent-a52a81a2f3ecff0f0",
+      "tip": "4e8e5bb3b56d9f8db153826887d99486a3b246fa",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a52a81a2f3ecff0f0 (was 4e8e5bb3).\n"
+    },
+    {
+      "branch": "worktree-agent-a52d84e64f0582c5d",
+      "tip": "3a7f799a01bcf5d0b8927fbf63f134533700cf3a",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a52d84e64f0582c5d (was 3a7f799a).\n"
+    },
+    {
+      "branch": "worktree-agent-a55f4b4e45c0faa05",
+      "tip": "e878b362571f9d797d1d6da6c39429bb2d803333",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a55f4b4e45c0faa05 (was e878b362).\n"
+    },
+    {
+      "branch": "worktree-agent-a622e5e5b029083b4",
+      "tip": "a300a39dcea26cec49f44c4f93a7a0e7388550ad",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a622e5e5b029083b4 (was a300a39d).\n"
+    },
+    {
+      "branch": "worktree-agent-a69d74b0429ebd4bd",
+      "tip": "97eb4987892adb445204324236b3819f14d765b7",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a69d74b0429ebd4bd (was 97eb4987).\n"
+    },
+    {
+      "branch": "worktree-agent-a6ed4bb9a3825e6c5",
+      "tip": "b2ddaeb9bf26543ba8ecb9c0cc7499e7c1786dd4",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a6ed4bb9a3825e6c5 (was b2ddaeb9).\n"
+    },
+    {
+      "branch": "worktree-agent-a6f7ff6074a83fba9",
+      "tip": "2fe90cefda246b85ac55168b3bf778bbdd198c66",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a6f7ff6074a83fba9 (was 2fe90cef).\n"
+    },
+    {
+      "branch": "worktree-agent-a76c6498ff5fdcfe3",
+      "tip": "b6c0660195dbdad695ad936dc5e2a48567f2a0df",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a76c6498ff5fdcfe3 (was b6c06601).\n"
+    },
+    {
+      "branch": "worktree-agent-a804f32be59c1a41a",
+      "tip": "709f082e268c72c11b3abacd4313bf9b2b3aa533",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a804f32be59c1a41a (was 709f082e).\n"
+    },
+    {
+      "branch": "worktree-agent-a84a3e316e3f73a50",
+      "tip": "6ab4185cf1e7bc67a57c9cd332dcefe1564f9ef6",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a84a3e316e3f73a50 (was 6ab4185c).\n"
+    },
+    {
+      "branch": "worktree-agent-a85862ec04e13cdb8",
+      "tip": "7caf8587b2984b536acfdf4bff930476462c6456",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a85862ec04e13cdb8 (was 7caf8587).\n"
+    },
+    {
+      "branch": "worktree-agent-a882c757f1dff9ed4",
+      "tip": "200993f6d767042fe04629eaf775302664e7a150",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a882c757f1dff9ed4 (was 200993f6).\n"
+    },
+    {
+      "branch": "worktree-agent-a8fa7a21eda224263",
+      "tip": "0526d8d7d0e1c101c3afb03b1d374d4a0e05f1d2",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a8fa7a21eda224263 (was 0526d8d7).\n"
+    },
+    {
+      "branch": "worktree-agent-a929f1fa667d46266",
+      "tip": "3e75df07461904a697fe9eacbdd683868ae5f3e1",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a929f1fa667d46266 (was 3e75df07).\n"
+    },
+    {
+      "branch": "worktree-agent-a941833997eae71fb",
+      "tip": "4cc3626e966312206b626b1154206d96aa0ebdc8",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a941833997eae71fb (was 4cc3626e).\n"
+    },
+    {
+      "branch": "worktree-agent-a97c1234aee283bf1",
+      "tip": "d6c70d90ad5c5ac90192d9154bec4bca036e2e48",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a97c1234aee283bf1 (was d6c70d90).\n"
+    },
+    {
+      "branch": "worktree-agent-a9936abd188804098",
+      "tip": "85b80d3f5db5d88a24903f935761e6237ee8d5d8",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a9936abd188804098 (was 85b80d3f).\n"
+    },
+    {
+      "branch": "worktree-agent-a9c60dd2bdcbfe5fd",
+      "tip": "4179728476f316aea55465109b6f7cd283f2c820",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a9c60dd2bdcbfe5fd (was 41797284).\n"
+    },
+    {
+      "branch": "worktree-agent-a9db0b7d394902ed3",
+      "tip": "60958bf04e1c1dd279654ce5d7f41e1a389d3838",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a9db0b7d394902ed3 (was 60958bf0).\n"
+    },
+    {
+      "branch": "worktree-agent-a9f76f09d48115623",
+      "tip": "2f04b2154f6bc35317f8ebebc29b9951770d30b3",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-a9f76f09d48115623 (was 2f04b215).\n"
+    },
+    {
+      "branch": "worktree-agent-aa0a01a14ef0e4522",
+      "tip": "e01693707b43fb9d4ce14a8539629ad38bd5ca24",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-aa0a01a14ef0e4522 (was e0169370).\n"
+    },
+    {
+      "branch": "worktree-agent-aa6b3fc137d4f001d",
+      "tip": "cc7dbe782e43cbada70e30394e9acb40e0ab404f",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-aa6b3fc137d4f001d (was cc7dbe78).\n"
+    },
+    {
+      "branch": "worktree-agent-aaf143f9007e31eec",
+      "tip": "c8fd58f187282a2d4dbf8edae6aff9de54b262ed",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-aaf143f9007e31eec (was c8fd58f1).\n"
+    },
+    {
+      "branch": "worktree-agent-ab8d4bc3f1d3e10ad",
+      "tip": "e878b362571f9d797d1d6da6c39429bb2d803333",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-ab8d4bc3f1d3e10ad (was e878b362).\n"
+    },
+    {
+      "branch": "worktree-agent-ab90a2f0aedf7e4ea",
+      "tip": "9e1c166bbff6ab9a4170f6abdf2671a7e4b737ea",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-ab90a2f0aedf7e4ea (was 9e1c166b).\n"
+    },
+    {
+      "branch": "worktree-agent-abd12f2f3e2e2c8fd",
+      "tip": "06277497f724e3746719a7ff4508cea2daf1176c",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-abd12f2f3e2e2c8fd (was 06277497).\n"
+    },
+    {
+      "branch": "worktree-agent-ac5c249e32fa73606",
+      "tip": "1052f8ce6ac83f098844bd60e46a13e97ac88ddc",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-ac5c249e32fa73606 (was 1052f8ce).\n"
+    },
+    {
+      "branch": "worktree-agent-ace7f82db34843e21",
+      "tip": "9196c31530f81014cdadd0a4106556edf4c160c2",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-ace7f82db34843e21 (was 9196c315).\n"
+    },
+    {
+      "branch": "worktree-agent-ad35af03690b9af3d",
+      "tip": "e878b362571f9d797d1d6da6c39429bb2d803333",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-ad35af03690b9af3d (was e878b362).\n"
+    },
+    {
+      "branch": "worktree-agent-ad6f2c3fa035947d9",
+      "tip": "29b9d0bb2290caaead783edd2c6360ef78e81658",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-ad6f2c3fa035947d9 (was 29b9d0bb).\n"
+    },
+    {
+      "branch": "worktree-agent-ae1ae642470269be8",
+      "tip": "98957720dbcb49b33eb1e0edc7817cf61d5e8b5e",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-ae1ae642470269be8 (was 98957720).\n"
+    },
+    {
+      "branch": "worktree-agent-ae267574ed4f22b74",
+      "tip": "a2ee722713b800fdadfa762bc8c53701b4a8498c",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-ae267574ed4f22b74 (was a2ee7227).\n"
+    },
+    {
+      "branch": "worktree-agent-ae8c514e4518ad359",
+      "tip": "4d1fad18d919f4dec4c13d6578107ca450570acb",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-ae8c514e4518ad359 (was 4d1fad18).\n"
+    },
+    {
+      "branch": "worktree-agent-af66d2616e13457cf",
+      "tip": "0579369db98a57a0f5077246d0c42245393f0b4f",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-af66d2616e13457cf (was 0579369d).\n"
+    },
+    {
+      "branch": "worktree-agent-af6b58d79bc5eea00",
+      "tip": "7d2f9fe2ee48568b59199c48bb0f3288e03f9996",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-af6b58d79bc5eea00 (was 7d2f9fe2).\n"
+    },
+    {
+      "branch": "worktree-agent-afc1310cba4160354",
+      "tip": "24505b83f91ccef0be04e72d975c10cabeb6865c",
+      "delete_exit": 0,
+      "output": "Deleted branch worktree-agent-afc1310cba4160354 (was 24505b83).\n"
+    }
+  ],
+  "skipped_checked_out": [
+    {
+      "branch": "claude/next-wave-candidates-c-sources-18bd37",
+      "tip": "37bc90046beb478da481933a342217107f4de2df"
+    },
+    {
+      "branch": "codex/cycle18-broader-20260921",
+      "tip": "4c67ccf96a680e1593c1286cc24c1df49a0bde14"
+    },
+    {
+      "branch": "main",
+      "tip": "229578d8ad617803bed3f02bcc1f0f59251d560d"
+    }
+  ],
+  "worktrees": [
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/.agents/agent-cycle18-composition",
+      "tip": "baa13d5dffffa5071a2842a118ffde389828ae6c",
+      "file_count": 24,
+      "bytes": 62751,
+      "agent_reported_no_jobs": true,
+      "remove_exit": 0,
+      "remove_output": ""
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/.agents/agent-cycle18-platform-matrix",
+      "tip": "823625a70c78514be61bd84cd05fe11eacf55cd5",
+      "file_count": 339,
+      "bytes": 117661564,
+      "agent_reported_no_jobs": true,
+      "remove_exit": 0,
+      "remove_output": ""
+    },
+    {
+      "path": "/tmp/agent-cycle18-task-handoff",
+      "tip": "b0bc702a0daf28bbef40c8a549aae9f17165be28",
+      "file_count": 22,
+      "bytes": 1769721,
+      "agent_reported_no_jobs": true,
+      "remove_exit": 0,
+      "remove_output": ""
+    }
+  ],
+  "inventory_path": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/sweep.json",
+  "inventory_sha256": "8364e9d18daf4d89c2080761be5cd512bf6ee895b146fe3c9f02743cb49f06aa",
+  "backed_up_files": 385,
+  "backed_up_bytes": 119494036,
+  "branches_deleted": 95
+}
