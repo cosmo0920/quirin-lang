@@ -98,4 +98,3 @@ gate record.
   file list include `AuditEventCompositionContext.lean`; this card deliberately
   does not own that global matrix.
 - `docs/STATUS.md`, the callback coverage report and corpus counts are unchanged.
-
