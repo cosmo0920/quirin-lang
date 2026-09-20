@@ -1,0 +1,56 @@
+{
+  "card": "cycle18-source-contract-extraction",
+  "base": "c4d3f1873fbc937e36d47af4dd23d199d732cd91",
+  "policy_module": "monkey/wait_source_policy.qcore",
+  "policy_declarations": 13,
+  "policy_clauses": 102,
+  "old_required_source_functions": [
+    "cb_wait_2_timeout",
+    "_mk_event_loop_create",
+    "_mk_event_wait_with_flags",
+    "_mk_event_wait_2",
+    "_mk_event_loop_destroy"
+  ],
+  "new_required_source_functions": [
+    "cb_wait_2_timeout",
+    "_mk_event_loop_create",
+    "_mk_event_wait_with_flags",
+    "_mk_event_wait_2",
+    "_mk_event_loop_destroy"
+  ],
+  "old_selected_path_indices": {
+    "cb_wait_2_timeout": 0,
+    "_mk_event_loop_create": 3,
+    "_mk_event_wait_with_flags": 0,
+    "_mk_event_wait_2": 2,
+    "_mk_event_loop_destroy": 0
+  },
+  "new_selected_path_indices": {
+    "cb_wait_2_timeout": 0,
+    "_mk_event_loop_create": 3,
+    "_mk_event_wait_with_flags": 0,
+    "_mk_event_wait_2": 2,
+    "_mk_event_loop_destroy": 0
+  },
+  "old_approved_artifact_vectors": 2,
+  "new_approved_artifact_vectors": 2,
+  "artifact_vectors_may_mix": false,
+  "old_required_observations": 11,
+  "new_required_observations": 11,
+  "old_contract_digest_keys": [
+    "monkey/wrapper_paths.qcore",
+    "monkey/composition.qcore"
+  ],
+  "new_contract_digest_keys": [
+    "monkey/wrapper_paths.qcore",
+    "monkey/composition.qcore",
+    "monkey/wait_source_policy.qcore"
+  ],
+  "frozen_contract_bytes_changed": false,
+  "same_count_source_mutations_refused": 3,
+  "policy_mutations_refused": {
+    "declarations": 13,
+    "clauses": 102,
+    "total": 115
+  }
+}
