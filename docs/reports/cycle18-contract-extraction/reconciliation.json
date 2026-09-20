@@ -8,7 +8,7 @@
     "cycle18-contract-extraction"
   ],
   "verify_applied": true,
-  "note": "Cycle 18 contract extraction reconciliation at the integrated source/identity/predicate-engine tree. The base-inclusive frozen observed-integration card is retained by reference to its own reconciliation record; new-card claims are measured against the current tree. Full standing-gate dispositions remain explicitly deferred until the integrator records the measured combined gate.",
+  "note": "Cycle 18 contract extraction reconciliation at the integrated source/identity/predicate-engine tree. The base-inclusive frozen observed-integration card is retained by reference to its own reconciliation record; new-card claims are measured against the current tree. The corrected combined gate is recorded; earlier failed/interrupted attempts remain separately disclosed.",
   "verdicts": {
     "cycle18-contract-facts#integrator-reconciliation-list#1": {
       "verdict": "applied",
@@ -53,8 +53,26 @@
       ]
     },
     "cycle18-contract-facts#integrator-reconciliation-list#4": {
-      "verdict": "deferred",
-      "note": "integrator will fill after measured gate"
+      "verdict": "applied",
+      "note": "The complete corrected merged gate, aggregate Lean imports, corpus pins, ledger and increment record are published with failures from earlier attempts preserved.",
+      "verify": [
+        {
+          "file": "docs/reports/cycle18-contract-extraction/gate.json",
+          "contains": "\"standing_gate\": \"complete\""
+        },
+        {
+          "file": "docs/STATUS.md",
+          "contains": "4,968 Rust passed, 0 failed, 11 ignored"
+        },
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.MonkeyWaitSourcePolicy"
+        },
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.TypedContractFacts"
+        }
+      ]
     },
     "cycle18-identity-contract-extraction#integrator-reconciliation-list#1": {
       "verdict": "applied",
@@ -117,8 +135,26 @@
       ]
     },
     "cycle18-identity-contract-extraction#integrator-reconciliation-list#5": {
-      "verdict": "deferred",
-      "note": "integrator will fill after measured gate"
+      "verdict": "applied",
+      "note": "The complete corrected merged gate, aggregate Lean imports, corpus pins, ledger and increment record are published with failures from earlier attempts preserved.",
+      "verify": [
+        {
+          "file": "docs/reports/cycle18-contract-extraction/gate.json",
+          "contains": "\"standing_gate\": \"complete\""
+        },
+        {
+          "file": "docs/STATUS.md",
+          "contains": "4,968 Rust passed, 0 failed, 11 ignored"
+        },
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.MonkeyWaitSourcePolicy"
+        },
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.TypedContractFacts"
+        }
+      ]
     },
     "cycle18-observed-integration#integrator-reconciliation-list#1": {
       "verdict": "noted",

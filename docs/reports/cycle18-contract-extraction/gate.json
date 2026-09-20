@@ -1,0 +1,13 @@
+{
+  "note": "CYCLE18-CONTRACT-EXTRACTION corrected combined gate at 5c3ccc0913433621a8701bee501bc58f1deddb28. Rust 4968 passed / 0 failed / 11 ignored, 263 summaries, 252 running targets and 9 doc sections. All standing steps and five isolated host-sensitive checks exit 0; Lean 158. Clang measured in this checkout. Python after matrix regeneration: 317 tests, exit 0. Provider 122 is carried unchanged Unix evidence, not rerun. Initial root run failed the stale resource-loader inventory pin; the corrected complete run is separate. Source-agent interrupted package rerun and isolated Lean registration failure remain disclosed. Logs: private/cycle18-contract-extraction/corrected-gate-20260920/. No verdict or coverage promotion.",
+  "workspace_tests": 4968,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 317,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 158,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

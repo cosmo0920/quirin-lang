@@ -1,7 +1,7 @@
 # Cycle 18 executable contract extraction
 
 Base: `c4d3f1873fbc937e36d47af4dd23d199d732cd91`.
-Status: implementation integrated; combined validation in progress.
+Status: complete; corrected combined gate and parity checks passed.
 
 The user requested that source and identity checks remaining in Rust be
 extracted into Quirin contracts. Three GPT-5.6 Sol agents at medium reasoning
@@ -117,3 +117,36 @@ A complete corrected gate is measured separately; no failure is hidden or
 converted into a pass. The first run used two build jobs and four test threads;
 the corrected run uses two build jobs and eight test threads on this 16-CPU
 host, with the five host-sensitive rows again run separately with one thread.
+
+## Final standing gate
+
+The corrected gate at `5c3ccc0913433621a8701bee501bc58f1deddb28` passes:
+**4,968 Rust passed, 0 failed, 11 ignored; 263 result summaries across 252
+running targets and nine doc-test sections; 158 Lean audits; 317 Python tests**.
+[Gate](gate.json) and [commands, exits and run identity](gate-facts.json) retain
+the measured source and every non-Python command. Private logs are under
+`private/cycle18-contract-extraction/corrected-gate-20260920/`.
+
+| Command | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | pinned submodules present |
+| `cargo test --workspace --no-fail-fast` | 0 | 4,968 passed, 0 failed, 11 ignored |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --all-targets -- -D warnings` | 0 | clean |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | expected result |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | expected result |
+| `python3 scripts/check_lean_audits.py --jobs 2` | 0 | 158 audits |
+| five isolated host-sensitive tests listed in `gate-facts.json` | 0 each | each row passed |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/cycle18-contract-extraction/gate.json` | 0 | regenerated ledger |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 317 tests after regeneration |
+
+Clang 21.1.8 was recorded in the measuring checkout. The 122 provider tests
+remain carried Unix evidence; provider code/schema did not change. Python
+output and exits are `python-tests.log`/`.exit`; matrix outputs and exits are
+`matrix.log`/`.exit` and `matrix-final.log`/`.exit` in the same private run.
+The final generator passes update the measured Python note and retain a
+repository-relative gate provenance path; the Python suite is repeated against
+that final ledger (`python-final.log`). The 16 swept reconciliation items have explicit dispositions and
+checked applied claims. The residual scan includes historical/prose candidates;
+this extraction introduces no new residual or retirement. The ledger remains
+at 284 named follow-ups, with callback, CT and full-conformance counts unchanged.
