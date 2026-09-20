@@ -172,6 +172,7 @@ pub mod resource_accounting;
 pub mod epoch_accounting;
 pub mod epoch_credit_recovery;
 
+pub mod event_observation;
 pub mod event_reactor;
 
 pub mod region_task_credit;
