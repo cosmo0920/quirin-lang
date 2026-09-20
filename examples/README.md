@@ -7,7 +7,7 @@ workspace test that compares its output with the reference execution — and eve
 transcript printed in a README is read out of that file by a test, so no page
 here can drift from what its programs do.
 
-One published program deliberately emits nothing:
+One published program deliberately emits no C:
 [`events/write_interest.qcore`](events/write_interest.qcore) is the event
 route's check-only arm, accepted and checked in full but not executed, and its
 page says so. It is the only one.
@@ -24,6 +24,7 @@ page says so. It is the only one.
 | [strings/](strings/) | Immutable UTF-8 views, slices, text reaching a stream, text a program computes — and a `for` inside the `std.buffer` composition | `source.string.v1` |
 | [sockets/](sockets/) | Checked TCP and UDP over loopback, both ends in one program — with a kernel-chosen port, or over a **declared** IPv4/IPv6 address and port | `source.socket.v1` |
 | [http/](http/) | A checked, executed HTTP/1.1 subset — including a `Content-Length` the program computes — and the same bytes written by hand | `source.http.v1`, `source.socket.v1` |
+| [scalar/](scalar/) | i32/unit helpers, typed immutable locals, checked arithmetic, nested direct calls, and explicit `std.io` output | `source.scalar-calls.v1` |
 | [loops/](loops/) | The bounded counted loop `for i in 0..n`, the bulk buffer copy it was landed for, and a loop beside a write lend | `source.loop.v1` on `source.buffer.v1` |
 | [records/](records/) | The first aggregate type: `type NAME { … }`, construction, field reads — a plain copyable value, shown alone and beside an owned buffer | `source.record.v1` on `source.buffer.v1` |
 
@@ -43,6 +44,7 @@ ones no other file does and references the rest rather than building them twice:
 
 | Directory | Native runner |
 |---|---|
+| scalar/ | `cargo test -p qcore-compiler --test source_scalar_calls` |
 | stdio/, pipes/, branching/, extern/, unsafe-linkage/, loops/ (`buffer_copy`), records/ | `cargo test -p qcore-compiler --test examples_suite` |
 | loops/ (`lend_fill`), strings/ (`looped_fill`) | `cargo test -p qcore-compiler --test loops_on_composed_routes` |
 | threads/ | `cargo test -p qcore-compiler --test thread_examples` |

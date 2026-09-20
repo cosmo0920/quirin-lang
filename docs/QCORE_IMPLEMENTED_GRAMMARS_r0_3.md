@@ -101,22 +101,27 @@ fn main() -> i32 {
 
 This example does not demonstrate arbitrary allocation ABI support. Source references: `compiler/src/driver.rs:390–610, 724–767, 775–932`.
 
-## G02s. Pure scalar functions (`source.scalar-calls.v1`)
+<a id="g02s-pure-scalar-functions-sourcescalar-callsv1"></a>
+
+## G02s. Scalar functions and explicit output (`source.scalar-calls.v1`)
 
 `SOURCE-SCALAR-CALLS-V1` adds the executable subset below. This profile is
-selected after specialized profiles by a nonliteral return/local, an annotated
-local, or an argument-taking statement call to a declared source function.
-Sequential resource intrinsics retain their previous route. It adds no tokens
-or reserved words and does not widen the other profiles.
+selected after specialized profiles and before the legacy standard-IO route
+when retained tokens contain the function-style `print(` form. Otherwise a
+nonliteral return/local, an annotated local, or an argument-taking statement
+call to a declared source function selects it. Sequential resource intrinsics
+retain their previous route. It adds no tokens or reserved words and does not
+widen the other profiles.
 
 ```ebnf
 function = "fn", NAME, "(", [parameter, {",", parameter}], ")", "->", result,
-           ["effects", "{", "}"], ["contract", "{", "}"],
+           ["effects", "{", ["io"], "}"], ["contract", "{", "}"],
            "{", {statement}, "return", [expression], ";", "}" ;
 parameter = NAME, ":", "i32" ;
 result = "i32" | "unit" ;
 statement = "let", NAME, [":", "i32"], "=", expression, ";"
-          | call, ";" ;
+          | call, ";"
+          | "print", "(", expression, ")", ";" ;
 expression = product, {("+" | "-"), product} ;
 product = unary, {("*" | "/" | "%"), unary} ;
 unary = "-", unary | NAT | NAME | call | "(", expression, ")" ;
@@ -130,20 +135,39 @@ function, and initializers resolve before binding. All functions end with one
 explicit return. Operands/arguments evaluate left to right; binary operators
 associate left. Literal magnitudes must fit signed i32, including -2147483648.
 
+`print(EXPRESSION);` evaluates one i32 expression and writes its decimal value
+followed by one newline to standard output. The source file must declare
+`import std.io;`; `std.fmt` is neither required nor consulted because this form
+has no rendering selector. An absent effect row infers `io` from a direct print
+or transitively from a called function. `effects {io}` explicitly permits it,
+while `effects {}` explicitly excludes it and therefore refuses any direct or
+transitive IO. Every other effect name is outside this profile. Output follows
+ordinary statement order and the left-to-right argument order above.
+
 Arithmetic is checked: overflow and zero division refuse the closed entry at
 check time. MIN/-1 division and remainder both refuse. Division truncates toward
 zero. Emitted C retains calls and guards arithmetic, exiting 86 on a fault;
-a library check makes no claim that every possible argument is overflow-free.
-An executable entry has no parameters. Library modules check definitions but
-publish neither a closed observation nor standalone C.
+a fault writes nothing to either stream, and a source program without a print
+writes nothing. A library check makes no claim that every possible argument is
+overflow-free. An executable entry has no parameters. Library modules check
+definitions but publish neither a closed observation nor standalone C.
+
+The C backend exposes file-scope fragments plus an entry-body contribution.
+Those fragments contain no entry-point definition; the shared
+`c_program::assemble` step emits exactly one `main`. Merging fragments uses the
+established keys for the common IO include and prelude, so the prelude is
+deduplicated before assembly. This is emission composition, not general
+cross-profile source-call composition: a scalar function still cannot call a
+function owned by another execution profile.
 
 Limits are 256 functions, expression/call depth 64, 16,384 IR expression nodes,
 16,384 tokens per function, and 100,000 evaluated expression steps. Parser nesting
 and each left-associated binary chain also have a limit of 64. Exceeding any
-limit refuses; no truncation is performed. Control flow, effects, ownership,
-usage annotations, generic/indirect calls, and cross-profile composition remain
-outside this subset. Unsupported ordinary forms use Q020; nonempty contracts
-retain Q021. [Implementation and evidence](reports/source-scalar-calls-v1/README.md).
+limit refuses; no truncation is performed. Control flow, non-IO effects,
+ownership, usage annotations, generic/indirect calls, and cross-profile call
+composition remain outside this subset. Unsupported ordinary forms use Q020;
+nonempty contracts retain Q021.
+[Implementation and evidence](reports/source-scalar-calls-v1/README.md).
 
 ## G02a. Scoped-copy task execution
 

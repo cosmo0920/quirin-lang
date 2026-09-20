@@ -195,11 +195,20 @@ with direct field-write captures; other routes retain their existing rules.
 See the [CT10 census](../reports/ct10-source-layout/README.md) and
 [CT24 scope](../reports/ct24-cleanup-task-composition/README.md).
 
-### SOURCE-SCALAR-CALLS-V1 — pure source functions
+### SOURCE-SCALAR-CALLS-V1 — scalar source functions and explicit output
 
 Adds zero reserved words/tokens. The selector follows existing specialized
-profiles and must preserve sequential resource intrinsics, literal-only legacy
-programs and unsupported control-flow diagnostic pins. Read retained tokens,
-check every definition, and never treat a closed entry observation as proof for
-all possible function arguments. Resource/effect composition requires another
-checked extension; it is not implied by the scalar-call syntax.
+profiles; function-style `print(` selects it before the legacy standard-IO
+route. The selector must preserve sequential resource intrinsics, literal-only
+legacy programs and unsupported control-flow diagnostic pins. Read retained
+tokens, check every definition, and never treat a closed entry observation as
+proof for all possible function arguments. `print(EXPR);` is this route's one
+output statement: it requires the same file's `import std.io;`, prints one
+evaluated i32 plus a newline to stdout, and does not require `std.fmt`. An absent
+effect row infers direct and transitive `io`; `effects {io}` permits it and
+explicit `effects {}` refuses it. The emitter contributes `c_program` fragments
+and an entry body, and one shared assembly emits exactly one `main`; common IO
+fragments retain their keys and deduplicate on merge. A print-free program and
+an arithmetic-fault exit are silent. This emission interface is not general
+cross-profile call composition; resource composition and non-IO effects require
+another checked extension.

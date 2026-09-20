@@ -184,8 +184,8 @@ Canonical conditions: specification §L21; scopes: [effects](effects.md) and
 
 ### SOURCE-SCALAR-CALLS-V1 amendment
 
-OrdinaryTypes Q020 now also covers the pure scalar-call profile's admission,
-type/arity, recursion, bounds and closed arithmetic failures. Q021 retains the
+OrdinaryTypes Q020 now also covers the scalar-call profile's admission,
+type/arity, required I/O effects, recursion, bounds and closed arithmetic failures. Q021 retains the
 nonempty contract refusal; no new code or pass is allocated. This is one further
 instance of the namespace rule on the existing Q020/Q021 band (twenty-three
 instances on the carried ten bands, not a fresh re-derivation of earlier entries).
