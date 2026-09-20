@@ -1,0 +1,171 @@
+{
+  "card": "RESOURCE-BOUNDARIES-INTEGRATION",
+  "verify_applied": true,
+  "verdicts": {
+    "certificate-context-binding#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Retired the registered provenance row after the full existing compilation identity was bound.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "absent": "\"id\": \"CERT-SCOPE-COMPILETASK-PROVENANCE\""
+        }
+      ]
+    },
+    "certificate-context-binding#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Retired the registered expected-trust row after presented-certificate trust was independently rederived.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "absent": "\"id\": \"CERT-SCOPE-EXPECTED-TRUST-CONTEXT\""
+        }
+      ]
+    },
+    "certificate-context-binding#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Removed exactly two rows, added eight bounded follow-ups, and updated tracker/status bookkeeping.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "**279**"
+        }
+      ]
+    },
+    "certificate-context-binding#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Preserved the isolated card measurement; the merged tree receives an independently measured combined gate.",
+      "verify": [
+        {
+          "file": "docs/reports/resource-boundaries-integration/gate.json",
+          "contains": "153"
+        }
+      ]
+    },
+    "resource-helper-functions#integrator-reconciliation#1": {
+      "verdict": "applied",
+      "note": "Merged annotation dependency first.",
+      "verify": [
+        {
+          "file": "crates/qcore-frontend/src/lib.rs",
+          "contains": "pub mod source_annotation;"
+        }
+      ]
+    },
+    "resource-helper-functions#integrator-reconciliation#2": {
+      "verdict": "applied",
+      "note": "Retained both frontend exports.",
+      "verify": [
+        {
+          "file": "crates/qcore-frontend/src/lib.rs",
+          "contains": "pub mod source_resource_calls;"
+        }
+      ]
+    },
+    "resource-helper-functions#integrator-reconciliation#3": {
+      "verdict": "applied",
+      "note": "Merged shared driver structurally, preserving both routes and gates.",
+      "verify": [
+        {
+          "file": "crates/qcore-verification/src/driver.rs",
+          "contains": "ResourceCallsV1"
+        },
+        {
+          "file": "crates/qcore-verification/src/driver.rs",
+          "contains": "source_annotation"
+        },
+        {
+          "file": "crates/qcore-verification/src/driver.rs",
+          "contains": "resource_calls: Some(Box::new(checked))"
+        }
+      ]
+    },
+    "resource-helper-functions#integrator-reconciliation#4": {
+      "verdict": "applied",
+      "note": "Kept separate parsers and exact bytes/Buffer refusal coverage.",
+      "verify": [
+        {
+          "file": "compiler/tests/resource_helper_functions.rs",
+          "contains": "task_buffer_is_not_the_extent_carrying_bytes_type"
+        }
+      ]
+    },
+    "resource-helper-functions#integrator-reconciliation#5": {
+      "verdict": "applied",
+      "note": "Added normal owned-byte metadata with checked graph authority and explicit error-payload nonclaim.",
+      "verify": [
+        {
+          "file": "crates/qcore-verification/src/driver.rs",
+          "contains": "custody_payloads: CustodyPayloadProfile::TypedResourceBytes"
+        }
+      ]
+    },
+    "resource-helper-functions#integrator-reconciliation#6": {
+      "verdict": "applied",
+      "note": "Added early extent guard and direct-IR boundary regression; registered standalone cost residual.",
+      "verify": [
+        {
+          "file": "crates/qcore-core/src/resource_calls.rs",
+          "contains": "if !(1..=std_buffer::MAX_EXTENT).contains(extent)"
+        }
+      ]
+    },
+    "resource-helper-functions#integrator-reconciliation#7": {
+      "verdict": "applied",
+      "note": "Measured combined tip and published integration gate beside the isolated report.",
+      "verify": [
+        {
+          "file": "docs/reports/resource-helper-functions/integration-gate.json",
+          "contains": "153"
+        }
+      ]
+    },
+    "source-annotation-enforcement#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Applied canonical Q020 condition amendment without changing Q100 ownership.",
+      "verify": [
+        {
+          "file": "docs/QCORE_SPEC_r0_3.md",
+          "contains": "`SOURCE-ANNOTATION-ENFORCEMENT` extends Q020"
+        }
+      ]
+    },
+    "source-annotation-enforcement#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Recorded matching legacy i32 and acquisition annotation refusal.",
+      "verify": [
+        {
+          "file": "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+          "contains": "let NAME [: i32] = INTEGER;"
+        }
+      ]
+    },
+    "source-annotation-enforcement#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Preserved both sibling routes and exports.",
+      "verify": [
+        {
+          "file": "crates/qcore-frontend/src/lib.rs",
+          "contains": "pub mod source_annotation;"
+        },
+        {
+          "file": "crates/qcore-frontend/src/lib.rs",
+          "contains": "pub mod source_resource_calls;"
+        }
+      ]
+    },
+    "source-annotation-enforcement#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Regenerated derived Lean count and measured combined gate; corpus/CT evidence remains separate.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "\"lean_audits\": 153"
+        }
+      ]
+    }
+  },
+  "no_section": {
+    "resource-boundaries-integration": "This is the integration record itself; its three constituent cards supply the reconciled lists."
+  }
+}

@@ -6725,8 +6725,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "SOURCE-ANNOTATION-ENFORCEMENT isolated gate at b0774443 plus the committed report skeleton. `git submodule update --init --recursive` exited 0 first. The full `CARGO_BUILD_JOBS=2 cargo test --workspace --no-fail-fast` ran outside the restrictive sandbox so LeakSanitizer could use ptrace: raw result 4,903 passed / 1 failed / 10 ignored over 255 strict result summaries and 253 targets (244 Running + 9 doc-test sections), exit 101. The one failure was constraint 16's named `a_confined_fixture_cannot_write_outside_the_admitted_paths`, with its recorded `Broken pipe (os error 32)` versus expected `Terminated` signature. It passed immediately in isolation on the same binaries with `--exact --test-threads=1`, exit 0, so the reconciled published figure is 4,904 passed / 0 unresolved failed / 10 ignored. No card-local test failed. fmt 0; clippy 0; both reevaluation examples 0; 152 Lean audits with `--jobs 2`, exit 0. The Python suite first measured 317 tests and exited 1 only because the committed matrix still carried 151 rather than 152 Lean audits; this gate regenerates the derived matrix, after which the required post-regeneration run is green. Clang was invoked in this worktree during this run; its recording and exit are in this report's gate directory. Provider 122 is carried Unix evidence, not remeasured: this card changes frontend/verification source and tests, one Lean module/audit and its report, with no provider or schema path changed. Private logs: private/source-annotation-enforcement/gate-20260920-1/. No corpus, contract, unit, function, CT, sanitized-native or provider figure moves; full language conformance remains false.",
-  "workspace_tests": 4904,
+  "note": "RESOURCE-BOUNDARIES-INTEGRATION measured semantic tip c6d05402fe1a96e0c7e54cad61350cd5a0ac3407 after helper merge dd8515e9 and reviewed metadata/early-extent follow-ups. Submodules first, exit 0. Full cargo test --workspace --no-fail-fast outside the restrictive sandbox with CARGO_BUILD_JOBS=2 and RUST_TEST_THREADS=4: 4932 passed, 0 failed, 10 ignored, 257 strict summaries, 246 Running targets plus 9 doc-test sections, exit 0. fmt, all-target clippy -D warnings, both probes and 153 Lean audits (--jobs 2) exit 0. Five named host-sensitive isolated tests also exit 0. Python is run after this matrix regeneration and recorded alongside. Actual Clang recording comes from this combined run, not the isolated card. Provider 122 is carried Unix evidence, not rerun; providers and schemas are unchanged. An earlier extra helper-target run inside the sandbox had 11 pass/1 LeakSanitizer ptrace failure, exit 101; the full native target here passes 12/12. Private logs: private/resource-boundaries/combined-gate-1/. All five pinned corpus artifacts are byte-identical, and CT/full-conformance claims are unchanged.",
+  "workspace_tests": 4932,
   "provider_tests": 122,
   "python_evidence_validator_tests": 317,
   "lean_audits": 153,
@@ -6891,7 +6891,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/docs/reports/resource-boundaries-integration/gate.json)"
  },
  "named_followups": [
   {

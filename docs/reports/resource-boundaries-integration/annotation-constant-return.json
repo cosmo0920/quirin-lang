@@ -1,0 +1,19 @@
+{
+  "source": "error Failure { Failed; } fn main() -> i32 { let n: i32 = 3; let r = qcore_acquire(1, true, Failure); drop r; return 0; }",
+  "source_sha256": "d65cecf0788e83edebc890eb110b2ae0880951e03ba6f1b0afb60159d1e2f693",
+  "results": {
+    "before": {
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-constant-return/matching-legacy.qcore:1:46: Q500: `let` must use `qcore_acquire(resource_id, succeeds, ErrorType)` in the executable subset\nerror Failure { Failed; } fn main() -> i32 { let n: i32 = 3; let r = qcore_acquire(1, true, Failure); drop r; return 0; }\n                                             ^\n",
+      "binary_sha256": "74b62cf1217946ea7b566bcdbcdd5058801d6e049fc660d21ba3d67321ecd269"
+    },
+    "after": {
+      "exit": 0,
+      "stdout": "checked 1 function(s); entry `main`\n",
+      "stderr": "",
+      "binary_sha256": "050f2fb5ef4422d0b75cf2e4f83e5ce600cccfb229849973bab0ac78c82afcf6"
+    }
+  },
+  "note": "The earlier eight-case probe returned a local name on the legacy route; that return remains unsupported. This isolates the annotation by returning a supported literal."
+}

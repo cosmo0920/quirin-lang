@@ -63,17 +63,21 @@ separately.
 
 ## Latest validated gate
 
-The [review integration gate](reports/quirin-review-integration/gate.json) records
-**4,895 Rust passed, 0 failed, 10 ignored; 254 result summaries over 252 targets;
-151 Lean audits; 317 Python tests**, clean fmt/clippy and both probes exit 0.
-Five core-workspace host-sensitive rows also passed separately in isolation.
-Clang 21.1.8 was recorded in the measuring checkout. **122 provider tests are
-carried Unix evidence, not remeasured.** [Run identities and private logs](reports/quirin-review-integration/README.md#final-standing-gate)
-disclose the full Rust source identity, subsequent mechanical lint cleanup and
-final focused checks, plus earlier per-card failed/superseded attempts.
-Audit cancellation, immutable TU preparation and independently reconstructed
-certificate scope are integrated. All five pinned corpus artifacts remain
-byte-identical; C projection, CT and full-conformance measurements are unchanged.
+The [resource-boundary integration gate](reports/resource-boundaries-integration/gate.json)
+records **4,932 Rust passed, 0 failed, 10 ignored; 257 result summaries over
+255 targets; 153 Lean audits; 317 Python tests**, clean fmt/clippy and both
+probes exit 0. Five named host-sensitive rows also passed separately in
+isolation. Clang 21.1.8 was recorded in the measuring checkout. **122 provider
+tests are carried Unix evidence, not remeasured.** [Run identities and private
+logs](reports/resource-boundaries-integration/README.md#final-standing-gate)
+disclose all commands and exits, including the earlier sandbox-only sanitizer
+failure and isolated-card attempts.
+
+Bounded direct resource helper calls, executable local annotation enforcement
+and independent certificate compilation/trust-context binding are integrated.
+All five pinned corpus artifacts remain byte-identical. The fixed 555-source
+comparison changes only three deliberately refused annotation fixtures;
+C projection, CT and full-conformance measurements are unchanged.
 
 The ignored F02 Windows pin-agreement test is red by design on `--ignored`;
 Linux green does not repair it. Host/load-sensitive tests and their reporting

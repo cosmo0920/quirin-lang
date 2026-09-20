@@ -1,101 +1,117 @@
 {
-  "note": "Integrator review findings; final validation and resolution evidence are pending.",
+  "note": "Integrator and independent-agent review findings. All resolutions are implemented; final combined validation is recorded by the adjacent gate and report.",
   "findings": [
     {
       "card": "resource-helper-functions",
       "finding": "Initial helper signatures used task-route Buffer for std.buffer byte storage, conflating distinct resource models.",
       "resolution": "Use own<bytes>/borrow<bytes>/lend<bytes>; refuse task Buffer on the helper route and test the distinction.",
-      "status": "implemented at f140f171; final validation pending"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented at f140f171; final validation pending"
     },
     {
       "card": "resource-helper-functions",
       "finding": "A closed entry observation alone cannot justify helpers for arbitrary resource arguments.",
       "resolution": "Derive per-helper extent obligations and check every instantiated call; explicitly refuse uncalled helpers in this bounded closed profile and retain effect/custody checks.",
-      "status": "implemented at f140f171; final validation pending"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented at f140f171; final validation pending"
     },
     {
       "card": "source-annotation-enforcement",
       "finding": "Legacy qcore_acquire establishes ResourceId custody without a nominal payload type, so accepting a claimed own<T> annotation would invent typing evidence.",
       "resolution": "Reject explicit acquisition annotations until the operation publishes a nominal type; keep inferred custody unchanged.",
-      "status": "implemented at b91cea0d; full validation pending"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented at b91cea0d; full validation pending"
     },
     {
       "card": "certificate-context-binding",
       "finding": "The initial public bound-certificate wrapper compared stored trust identity with expected identity without rederiving it from the presented certificate's contracts, allowing stale wrapper trust after coherent certificate substitution.",
       "resolution": "Recompute contract/trust binding at admission, check profile identity against compile-task dependency identity, and test coherent valid-certificate substitution with retained old wrapper trust.",
-      "status": "implemented and reviewed at 18348057; isolated final gate passed"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented and reviewed at 18348057; isolated final gate passed"
     },
     {
       "card": "resource-helper-functions",
       "finding": "Core checkpoint does not propagate scalar returns during expansion and DFS visitation can undercount a reverse-ordered call chain.",
       "resolution": "Propagate scalar call results and enforce actual call depth independently of DFS visitation order.",
-      "status": "implemented at f140f171; final validation pending"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented at f140f171; final validation pending"
     },
     {
       "card": "resource-helper-functions",
       "finding": "Allocation failure checks confined to local owned bindings can miss ownership retained in a caller across an allocating helper.",
       "resolution": "Reject transitive allocating calls with surviving caller custody unless generated cleanup covers the failure exit.",
-      "status": "implemented at f140f171; final validation pending"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented at f140f171; final validation pending"
     },
     {
       "card": "source-annotation-enforcement",
       "finding": "Initial matching-i32 test used the existing scalar route rather than the modified legacy annotation arm.",
       "resolution": "Drive legacy route with acquisition/drop and pin its profile and inferred-twin emitted/reference behavior.",
-      "status": "implemented at b0774443; 7 focused tests passed"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented at b0774443; 7 focused tests passed"
     },
     {
       "card": "resource-helper-functions",
       "finding": "A native zero exit on output-free unit programs cannot detect wrong helper result data.",
       "resolution": "Add a native observable-value check for generated helper bytes/scalar returns, alongside structural emission checks and model evidence.",
-      "status": "implemented at f140f171; final validation pending"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented at f140f171; final validation pending"
     },
     {
       "card": "resource-helper-functions",
       "finding": "Parameter lowering conflated omitted usage with unsupported explicit grades, and calls could resolve a global helper shadowed by a local/parameter.",
       "resolution": "Retain usage presence and refuse unsupported explicit grades; refuse shadowed direct calls. Whitespace-normalized resource type selection and header-only effect parsing also preserve source meaning.",
-      "status": "implemented at f140f171; focused compiler 10/10 and core 11/11 passed"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented at f140f171; focused compiler 10/10 and core 11/11 passed"
     },
     {
       "card": "certificate-context-binding",
       "finding": "New binding failures initially aborted a whole audit; a first Unknown downgrade retained partial function-level Safe statuses despite rejected compilation/trust context.",
       "resolution": "Preserve the selected denominator as Unknown without retaining Safe function claims; exercise serialized report and per-unit counts.",
-      "status": "implemented and reviewed at 18348057; isolated final gate passed"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented and reviewed at 18348057; isolated final gate passed"
     },
     {
       "card": "resource-helper-functions",
       "finding": "Independent annotation-agent review found unsupported trailing function-header tokens and duplicate effect rows could be ignored after the first valid effects block.",
       "resolution": "Consume the complete admitted signature grammar and refuse residual tokens and duplicate rows with compiler regressions.",
-      "status": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
     },
     {
       "card": "resource-helper-functions",
       "finding": "Expansion charged source statements but not every generated scalar-argument binding or ownership operation, allowing high-arity call DAGs to exceed the stated event budget.",
       "resolution": "Charge generated events/operations and test high-arity DAG expansion without truncation.",
-      "status": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
     },
     {
       "card": "resource-helper-functions",
       "finding": "Diagnostic attribution initially guessed categories from message substrings and used Event-owned Q058 for helper admission/reference failures.",
       "resolution": "Carry typed refusal categories and map directly to the existing ordinary/buffer namespaces; remove helper use of Q058.",
-      "status": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
     },
     {
       "card": "resource-helper-functions",
       "finding": "Independent compiled-CLI probes showed whitespace compaction merged distinct type identifier tokens, accepting split bytes and i32 names.",
       "resolution": "Recognize exact type token sequences across parameters, results and route selection; test split identifiers refuse while punctuation spacing remains valid.",
-      "status": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
     },
     {
       "card": "resource-helper-functions",
       "finding": "The published SourceResultProfile still tags a module with owned-byte helper returns as NoResourcePayloads, although the checked resource-call graph retains those result types.",
       "resolution": "Introduce a resource-byte custody metadata tag and point consumers to the checked call graph; pin it in the helper integration test.",
-      "status": "planned integration follow-up; no change to admitted programs or emitted C"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "planned integration follow-up; no change to admitted programs or emitted C"
     },
     {
       "card": "resource-helper-functions",
       "finding": "The new helper checker delegates acquisition extents to std_buffer, whose value step records an out-of-range error but still creates a byte vector of the requested size before returning refusal. This is a code-review finding; no OOM experiment was run.",
       "resolution": "Reject helper acquisition extents outside the existing 1..=MAX_EXTENT range before expansion/delegated value checking, with boundary regressions. Track the pre-existing standalone std.buffer cost boundary separately.",
-      "status": "planned integration follow-up; accepted program semantics unchanged"
+      "status": "implemented in combined tip c6d05402; full Rust/Lean/lint/probe gate passed",
+      "prior_resolution_checkpoint": "planned integration follow-up; accepted program semantics unchanged"
     }
   ]
 }

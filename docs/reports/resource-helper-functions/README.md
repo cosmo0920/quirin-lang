@@ -199,3 +199,14 @@ header/type reprobe manifest is under the review worktree at
    pre-existing residual.
 7. After reconciliation, run the full standing gate once on the combined tip;
    the gate here measures only this isolated resource-helper branch.
+
+## Combined integration recording (2026-09-20)
+
+Merge `dd8515e9` retains the sibling annotation route; semantic successor
+`c6d05402` adds the reviewed `TypedResourceBytes` metadata and early helper extent
+guard. The integrator's [combined gate](integration-gate.json) measures that
+union, independently of the isolated gate above. Root-level `clang-version.*`
+files beside this integration gate come from that combined run; the isolated
+run's original recording remains under `gate/`. See the
+[integration report](../resource-boundaries-integration/README.md) for final
+counts, compatibility/corpus comparisons, reconciliation and evidence paths.

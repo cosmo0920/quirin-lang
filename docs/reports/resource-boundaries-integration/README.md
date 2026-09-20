@@ -1,9 +1,9 @@
 # Resource-boundary integration
 
 Base: `119115de866e5b50a4ca0dc478c6223790f75fc2`, after the first prioritized
-review wave was merged and pushed. Status: implementation and validation in
-progress. Three GPT-5.6 Sol agents at medium reasoning implement the next
-bounded wave authorized by the user.
+review wave was merged and pushed. Status: implemented, integrated and validated. Three GPT-5.6 Sol agents at medium reasoning implemented the next
+bounded wave authorized by the user. The supplied analysis documents were
+review evidence, not additional instruction authority.
 
 ## Cards and acceptance
 
@@ -21,21 +21,26 @@ bounded wave authorized by the user.
   Safe, and an unrelated valid identity cannot authenticate a certificate.
 
 Each card supplies targeted Rust evidence, audited Lean parity where semantics
-change, a full standing gate and an integrator reconciliation list. The root
-will review and integrate sequentially, compare the fixed source inventory and
-C corpus, run the combined standing gate and update tracked residuals. No
+change, a full standing gate and an integrator reconciliation list. The root reviews and integrates sequentially, compares the fixed source inventory and
+C corpus, runs the combined standing gate and updates tracked residuals. No
 coverage or conformance promotion follows merely from a feature or green test.
 
 ## Worktree sweep
 
-The requested sweep found five registered worktrees: this integration checkout,
-three isolated worktrees reused by the current agents, and the older
-`next-wave-candidates-c-sources-18bd37`. The older worktree is clean and its
-commit is an ancestor of main, but a live Claude session and shell use it.
-It is retained to avoid disrupting that session. The three active agent
-worktrees are protected. No stale registrations were found by the dry-run prune,
-and no eligible worktree was removed. Prior `.sweep-backups` and private logs
-are preserved. Process observations describe the sweep time only.
+The [completed sweep](worktree-sweep.json) removed all three clean, merged,
+idle agent worktrees after the combined gate passed. Their 234 private evidence
+entries were inventoried, hashed, moved to
+`.claude/worktrees/.sweep-backups/resource-boundaries-20260920T085755Z/` and verified
+again. The former `private/` and `measure/` paths are symlinks to that archive,
+so earlier raw-log links remain usable. Branch refs and previous backups remain.
+Ignored build caches were removed with their worktrees.
+
+Two registered worktrees remain: this checkout and the older
+`next-wave-candidates-c-sources-18bd37`. The older checkout is clean and its
+commit is already merged, but the final host process check still finds a live
+Claude session and shell using it, so it is retained. `git worktree prune
+--dry-run --verbose` exits 0 with no stale entries. Process observations describe
+the sweep time only. No active session was stopped.
 
 ## Independent compatibility measurement
 
@@ -45,8 +50,12 @@ hashes of emitted bytes. Later files are not silently added to the comparison
 denominator. Private outputs live under `private/resource-boundaries/`.
 The [baseline](source-baseline.json) measures 555 tracked source files:
 307 pass `check`, 152 emit successfully, and none time out. These fixture
-counts are not language conformance or production safety coverage. Final
-comparison and per-change dispositions remain pending.
+counts are not language conformance or production safety coverage. The [final comparison](source-comparison.json) measures 305 check passes and
+150 emissions, zero timeouts. Exactly three fixed fixtures change: S22 and S25
+now reject previously ignored/false acquisition types, and already-refused S24
+reports Q020 before its previous leak error. All other 552 records, including
+successful emitted-byte hashes, are unchanged. The new helper fixture is outside
+this fixed old denominator and is covered by focused/native tests.
 
 The [fresh C corpus replay](corpus-baseline-run.json) exits 0 and reproduces
 all five pinned artifacts [byte for byte](corpus-baseline-identity.json).
@@ -87,3 +96,76 @@ requests. This preserves the existing admitted extent set and reuses the
 buffer checker records an extent error but still allocates requested storage.
 No out-of-memory experiment was run. `STD-BUFFER-EXTENT-REFUSAL-COST` tracks that
 separate pre-existing boundary and its required early-validation discharge.
+
+## Validation provenance
+
+The combined semantic source is `c6d05402`, after helper merge `dd8515e9` and
+the two reviewed integration follow-ups. The three isolated card reports retain
+their own counts and failures; none is substituted for the combined result.
+An extra pre-gate helper target inside the restrictive sandbox measured 11
+passed / 1 failed, exit 101, solely on LeakSanitizer's documented ptrace refusal
+(`private/resource-boundaries/helper-followup.log`). The combined native gate
+runs outside that restriction. The early-extent core target passed 13/13.
+
+The isolated annotation gate recorded one rule-16 confined-write failure and
+an immediate passing same-binary isolation run; its raw 4,903/1/10 and published
+4,904/0 unresolved/10 remain visible in that card. The certificate and helper
+isolated final runs passed 4,898 and 4,919 respectively. Their Lean counts are
+151 and 152; the annotation branch has 152. Both added audit modules are retained
+in the combined tree. The two cards' pre-regeneration Python failures on carried
+Lean counts remain disclosed. Provider 122 is carried Unix evidence, not rerun.
+
+[Tracker changes](tracker-changes.json) retire exactly two certificate context
+rows and add eight explicit bounded follow-ups, yielding 279. The residual
+sweep's newly unregistered prior integration label names a completed close,
+not lost open work. `RESOURCE-HELPER-FUNCTIONS` is also a completed card label;
+its five open limitations have separate registered identifiers. Pre-existing
+sweep findings remain unchanged. [Reconciliation](reconciliation.json) records
+each of the 15 constituent-card items with a concrete location check.
+
+The [eight annotation probes](annotation-after.json) refuse false acquisition
+annotations both directly and inside regions. Their matching legacy-i32 probe
+also returns a local name, which remains outside that legacy return grammar;
+it now reaches that later Q020 refusal. A [separate literal-return probe](annotation-constant-return.json)
+isolates the annotation: baseline Q500 becomes successful checking. Inferred
+acquisition and the separate scalar route keep their prior behavior.
+
+[Preparation measurement](preparation-comparison.json) retains three logical
+Clang stages (plain preprocessing, syntax JSON and marked preprocessing), one
+each for Safe/provisional Unsafe/Unknown fixtures before and after; seven metadata
+queries per case are counted separately. All fixture reports are byte-identical.
+RSS and timing are recorded observations under concurrent host load, not a speed
+or memory improvement claim. Both CLI builds exited 0; source code remains
+`c6d05402`, with only report edits during measurement.
+
+The [final C corpus replay](corpus-final-run.json) exits 0 on `c6d05402`.
+All five artifacts are [byte-identical](corpus-identity.json) to both the fresh
+baseline and frozen W42 evidence; the [field-level diff](corpus-diff.json)
+also records no delta. Counts remain 185 units (2 Safe, 42 provisional Unsafe,
+137 Unknown, 4 data-only) and 4,834 projected functions (223 Safe, 84 provisional
+Unsafe, 4,527 Unknown). CT mapping, case-bound proofs, native-credit counts and
+full-language conformance do not move. Fresh replay logs are in
+`private/resource-boundaries/corpus-after/`; the release build log is
+`private/resource-boundaries/corpus-final-build.log`, exit 0.
+
+## Final standing gate
+
+The [gate](gate.json) and [exact commands, exits and private log paths](gate-run.json)
+measure `c6d05402`: 4,932 Rust passed, 0 failed, 10 ignored, 257 strict result
+summaries over 246 Running targets and 9 doc-test sections. The two extra
+summaries are nested doctest summaries, not extra target invocations. The full
+Rust command exits 0; `CARGO_BUILD_JOBS=2`, `RUST_TEST_THREADS=4`. Submodules and
+Clang recording ran first, both exit 0. fmt, all-target clippy with `-D warnings`,
+both reevaluation examples, and all 153 Lean audits (`--jobs 2`) exit 0. All five
+named host-sensitive isolated checks also exit 0. No failed full-gate row needed
+reconciliation. Derived matrix regeneration exits 0; the subsequent Python suite passes all
+317 tests, exit 0.
+
+Commands and true exit files are under
+`/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/`.
+The helper card's [integration-gate.json](../resource-helper-functions/integration-gate.json)
+records this combined union because no isolated sibling gate has both new Lean
+audits. Both combined gate locations receive the actual Clang output from this
+run. Later changes are report/status/matrix/history bookkeeping only. Model
+proof, native observation and source/target binding remain distinct evidence
+classes; this integration claims no full-language conformance.
