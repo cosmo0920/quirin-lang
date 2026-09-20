@@ -25,10 +25,11 @@ nonliteral shapes refuse.
 
 ## Accepted and refused surface
 
-The selected declaration is exactly one safe, argument-free
+The selected declaration's lexed header is exactly one safe, argument-free
 `extern fn NAME() -> unit` with a contract, no body and no effects block. Only
 `requires` and `ensures normal` are evaluated, and at least one normal
-postcondition is required. The strictness belongs to the new typed API; the
+postcondition is required. Lexing makes comment trivia immaterial while any
+generic, parameter, effect or unsafe header token refuses. The strictness belongs to the new typed API; the
 legacy `check_contract_facts` and `check_contract_observation` paths retain
 their existing behavior.
 
@@ -54,7 +55,7 @@ language grammar.
 Focused Rust tests cover text/source mutations, escape decoding including a
 JSON string, type mismatches, missing names in both Boolean arms, duplicate
 facts, ordered/arithmetic text refusals, declaration-shape mutations, bounds,
-overflow and equality of typed versus legacy numeric results. The crate run
+overflow, comment trivia, extra header tokens and equality of typed versus legacy numeric results. The crate run
 reported 19 passed, 0 failed and 0 ignored across four test binaries, plus zero
 doctests.
 
@@ -72,6 +73,7 @@ existing string decoder remain review premises.
 | `cargo fmt --all -- --check` | 0 | clean | `private/cycle18-contract-facts/cargo-fmt.log` |
 | `cargo clippy -p qcore-contract --all-targets -- -D warnings` | 0 | clean | `private/cycle18-contract-facts/cargo-clippy.log` |
 | `cd proof && lake env lean AuditTypedContractFacts.lean` | 0 | 11 theorem closures printed | `private/cycle18-contract-facts/lean-audit.log` |
+| `python3 scripts/check_lean_audits.py` | 0 | 157/157 audit files passed | `private/cycle18-contract-facts/check-lean-audits.log` |
 
 The combined standing gate, probes and Python suite are integrator-owned for
 the merged source-policy and identity-policy result.
