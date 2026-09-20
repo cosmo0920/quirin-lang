@@ -1,0 +1,9 @@
+import QCore.MonkeyWaitSourcePolicy
+
+#print axioms QCore.MonkeyWaitSourcePolicy.exact_fixture_is_accepted
+#print axioms QCore.MonkeyWaitSourcePolicy.accepted_has_pinned_revision
+#print axioms QCore.MonkeyWaitSourcePolicy.mixed_artifact_vector_is_rejected
+#print axioms QCore.MonkeyWaitSourcePolicy.changed_selected_path_is_rejected
+#print axioms QCore.MonkeyWaitSourcePolicy.missing_summary_is_rejected
+#print axioms QCore.MonkeyWaitSourcePolicy.changed_call_sequence_is_rejected
+#print axioms QCore.MonkeyWaitSourcePolicy.changed_contract_clause_is_rejected

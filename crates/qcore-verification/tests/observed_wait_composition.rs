@@ -49,7 +49,7 @@ fn import(source: &str, role: ImportRole) -> Vec<SourceResult> {
             source,
             ..Default::default()
         },
-        MONKEY_SOURCE_REVISION,
+        monkey_source_revision(),
         &profile(),
         "monkey",
         role,
@@ -72,7 +72,7 @@ fn project(callback_source: &str, wrapper_source: &str) -> MonkeyWaitSourceProje
     let wrappers = import(wrapper_source, ImportRole::Wrapper);
     project_monkey_timed_wait_source(
         [
-            summary(&callbacks, WAIT_CALLBACK),
+            summary(&callbacks, wait_callback()),
             summary(&wrappers, "_mk_event_loop_create"),
             summary(&wrappers, "_mk_event_wait_with_flags"),
             summary(&wrappers, "_mk_event_wait_2"),
