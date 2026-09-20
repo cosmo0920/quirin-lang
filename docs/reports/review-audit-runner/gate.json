@@ -1,0 +1,13 @@
+{
+  "note": "REVIEW-AUDIT-RUNNER at c9216d0342637b6f113335368d15c6fd5a556108. Full standing gate rerun outside the restrictive sandbox after an honestly retained sandbox run exited 101 because LeakSanitizer reported ptrace interference. The successful run used CARGO_BUILD_JOBS=2 and Lean --jobs 2; all steps exited 0. Workspace: 4,884 passed / 0 failed / 10 ignored, 251 strict result summaries over 249 targets. Lean: 150 audits. Python: 317 tests. Both probes, fmt and clippy passed. Submodule initialization verified pinned libevent d82464a2. Clang 21.1.8 was recorded by this card in this worktree. Provider 122 is carried Unix evidence because providers/ and crates/qcore-schemas are unchanged. No verdict, coverage, corpus, CT or conformance figure moves. Private logs: measure/review-audit-runner-c9216d03-escalated/. Details and the failed sandbox measurement are in README.md.",
+  "workspace_tests": 4884,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 317,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "pass",
+  "lean_audits": 150,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
