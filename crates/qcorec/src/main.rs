@@ -204,6 +204,9 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     if command == "check" {
         if let Some(entry) = &module.entry {
             let profile = match module.execution_profile {
+                qcore_compiler::SourceExecutionProfile::ScalarCallsV1 => {
+                    "; source.scalar-calls.v1: i32/unit calls; checked arithmetic; explicit std.io; closed entry observation"
+                }
                 qcore_compiler::SourceExecutionProfile::ScopedReadSharesV1 => {
                     "; scoped owned-buffer tasks with counted read shares (Linux/macOS/Windows threads)"
                 }

@@ -1,0 +1,48 @@
+{
+  "cards": [
+    "source-scalar-calls-v1"
+  ],
+  "verdicts": {
+    "source-scalar-calls-v1#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+          "contains": "## G02s. Scalar functions and explicit output"
+        },
+        {
+          "file": "docs/QCORE_SPEC_r0_3.md",
+          "contains": "### L14.0. Scalar source calls and explicit standard output"
+        },
+        {
+          "file": "docs/agents/diagnostics.md",
+          "contains": "### SOURCE-SCALAR-CALLS-V1 amendment"
+        }
+      ],
+      "note": "The grammar, specification, source route and diagnostic condition amendments landed together."
+    },
+    "source-scalar-calls-v1#integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "IF-RUNTIME-CONDITION remains carried in PIPE-OPERATOR-O and AGGREGATE-ACROSS-CALL in AGGREGATES-O; this scalar/stdio profile closes neither."
+    },
+    "source-scalar-calls-v1#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Measured gate counts published, R04 evidence updated without full-conformance promotion, matrix regenerated and Python checked afterward.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "4,884 Rust passed, 0 failed, 10 ignored"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "\"workspace_tests\": 4884"
+        },
+        {
+          "file": "docs/development/increments/wave-41.md",
+          "contains": "**`SOURCE-SCALAR-CALLS-V1` (2026-09-20).**"
+        }
+      ]
+    }
+  },
+  "verify_applied": true
+}

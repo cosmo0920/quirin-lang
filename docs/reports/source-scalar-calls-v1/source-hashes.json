@@ -1,0 +1,19 @@
+{
+  "source_commit": "62129bd2b51d432a0e6a94dd2f7195753ba0587b",
+  "sha256": {
+    "compiler/tests/source_scalar_calls.rs": "4bfab86942942094ab14ad17676a847eaf16078988bb4820b7ca4c79563fed6a",
+    "crates/qcore-core/src/lib.rs": "788291a4bab729bc4af492ea6a7ea0f082ba8021ee49c88e3cfbbf8794041605",
+    "crates/qcore-core/src/scalar_calls.rs": "e55733e1202925a669c836893cb14cb8a193f39cef47f602c26c9d52826999ab",
+    "crates/qcore-core/src/scalar_calls_c_emit.rs": "babf538d76e0f205cf1806a29c0f3aa72317418dec6d2df73c01f6de6dc5c198",
+    "crates/qcore-frontend/src/lib.rs": "8b4334971d97626bd6795679408c1ea4d8a8339518625a0f2755035158912485",
+    "crates/qcore-frontend/src/source_scalar_calls.rs": "1fccafeafae0081354b262cfb4c992803dff5ed6b0c48a70138478da2628a0e6",
+    "crates/qcore-verification/src/driver.rs": "1a9c430b81ec8fd1c024eac7fc2c2c3f6fba83eaee4e465c296e66102c302137",
+    "crates/qcorec/src/main.rs": "17c6a0134598730d5004446c2c1367f74fc6de565ffbc1ed340450eb6ff5f012",
+    "examples/scalar/calls.qcore": "0084f7ca21eb3772ad114fd1d4ae21028446b3a680cdd23a476bbd724653b45a",
+    "proof/AuditScalarCalls.lean": "2d08fec37ab98eba447f0fae8871dbff9f26323aa5162a91e4bef5dd2c51150d",
+    "proof/QCore.lean": "258006bb37b4ec3bbc4cde5ad28d2532da59f2c15b602e1b11e909e4b8103d16",
+    "proof/QCore/ScalarCalls.lean": "12a073f253e1d3617758bfff868f940d8ee33edf996573dde96024e815069230",
+    "examples/scalar/printing.qcore": "cdd14e9125b695f4f2f988f4738efcd539e21435b0d12a12a5b86e6fbbde63f2"
+  },
+  "rust_gate_source_commit": "455108be2bc64830b386a7ebd6c8d8f217eb0e4c"
+}

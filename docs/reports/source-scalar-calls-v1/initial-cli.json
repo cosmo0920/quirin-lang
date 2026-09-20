@@ -1,0 +1,52 @@
+{
+  "source_commit": "93a95f4c985c4fc90d3c11e631ffed9ae9ed5772",
+  "example_sha256": "0084f7ca21eb3772ad114fd1d4ae21028446b3a680cdd23a476bbd724653b45a",
+  "emitted_c_sha256": "84bcfbb995973f47e8b212591fd87a0d00b141c7cf40cb8fe6ee13e68b3350e1",
+  "commands": [
+    {
+      "command": [
+        "target/debug/quirin",
+        "check",
+        "examples/scalar/calls.qcore"
+      ],
+      "exit": 0,
+      "stdout": "checked 3 function(s); entry `main`; source.scalar-calls.v1: pure i32/unit calls; checked arithmetic; closed entry observation\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "target/debug/quirin",
+        "emit",
+        "-o",
+        "private/source-scalar-calls-v1/example.c",
+        "examples/scalar/calls.qcore"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "private/source-scalar-calls-v1/example.c",
+        "-o",
+        "private/source-scalar-calls-v1/example"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "private/source-scalar-calls-v1/example"
+      ],
+      "exit": 0,
+      "stdout": "OK 42\n",
+      "stderr": ""
+    }
+  ]
+}

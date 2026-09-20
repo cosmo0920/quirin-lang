@@ -1,0 +1,12 @@
+fn increment(x: i32) -> i32 {
+    return x + 1;
+}
+fn combine(a: i32, b: i32) -> i32 {
+    let total: i32 = a * 2 + b;
+    return total;
+}
+fn main() -> i32 {
+    let first = increment(20);
+    let second = increment(0);
+    return combine(first, second) - 1;
+}

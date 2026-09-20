@@ -46,3 +46,5 @@ pub use whole_program::{
     FunctionSummary as WholeFunctionSummary, ParameterOwnership, check_whole_program,
     check_whole_program_with_externs,
 };
+
+pub mod source_scalar_calls;

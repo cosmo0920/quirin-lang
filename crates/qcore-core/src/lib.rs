@@ -181,3 +181,7 @@ pub mod task_execution;
 pub mod task_trace_relation;
 
 pub mod transfer;
+
+pub mod scalar_calls;
+
+pub mod scalar_calls_c_emit;

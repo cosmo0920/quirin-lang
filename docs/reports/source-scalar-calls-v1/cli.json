@@ -1,0 +1,111 @@
+{
+  "source_commit": "455108be2bc64830b386a7ebd6c8d8f217eb0e4c",
+  "examples": [
+    {
+      "source": "examples/scalar/calls.qcore",
+      "example_sha256": "0084f7ca21eb3772ad114fd1d4ae21028446b3a680cdd23a476bbd724653b45a",
+      "emitted_c_sha256": "63ba5b91e7fe806361e3c7c0c418ea3d6a29e448e00c8c3cec6d791e63f06f68",
+      "main_definitions": 1,
+      "commands": [
+        {
+          "command": [
+            "target/debug/quirin",
+            "check",
+            "examples/scalar/calls.qcore"
+          ],
+          "exit": 0,
+          "stdout": "checked 3 function(s); entry `main`; source.scalar-calls.v1: i32/unit calls; checked arithmetic; explicit std.io; closed entry observation\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "target/debug/quirin",
+            "emit",
+            "-o",
+            "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/cli-final/calls.c",
+            "examples/scalar/calls.qcore"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "clang",
+            "-std=c11",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/cli-final/calls.c",
+            "-o",
+            "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/cli-final/calls"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/cli-final/calls"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "source": "examples/scalar/printing.qcore",
+      "example_sha256": "cdd14e9125b695f4f2f988f4738efcd539e21435b0d12a12a5b86e6fbbde63f2",
+      "emitted_c_sha256": "21b774f7b271a8477e021d90e1e3007a592dd641cba647a7e2f8a2657319c1ed",
+      "main_definitions": 1,
+      "commands": [
+        {
+          "command": [
+            "target/debug/quirin",
+            "check",
+            "examples/scalar/printing.qcore"
+          ],
+          "exit": 0,
+          "stdout": "checked 2 function(s); entry `main`; source.scalar-calls.v1: i32/unit calls; checked arithmetic; explicit std.io; closed entry observation\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "target/debug/quirin",
+            "emit",
+            "-o",
+            "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/cli-final/printing.c",
+            "examples/scalar/printing.qcore"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "clang",
+            "-std=c11",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/cli-final/printing.c",
+            "-o",
+            "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/cli-final/printing"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/cli-final/printing"
+          ],
+          "exit": 0,
+          "stdout": "42\n",
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

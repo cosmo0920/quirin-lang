@@ -552,6 +552,33 @@ about the C implementation. See
 the [extern-call evidence](reports/extern-call-v1/README.md) and the
 [out/stored extension](reports/extern-call-f1/README.md).
 
+### L14.0. Scalar source calls and explicit standard output
+
+`source.scalar-calls.v1` checks i32/unit functions with immutable scalar locals,
+direct acyclic calls, checked arithmetic and the explicit `print(EXPRESSION);`
+statement. The statement requires the file-local `import std.io;`, accepts one
+i32 expression, and writes that value in decimal followed by one newline to
+standard output. It does not require `std.fmt`; this form has no selectable
+rendering. Its exact grammar and bounds are in implemented grammars §G02s.
+
+Every definition MUST be type-checked; uncalled bodies MUST NOT bypass type,
+annotation, effect or recursion checks. An omitted effect row infers `io`
+through both a direct print and a call to an IO function. `effects {io}` admits
+that derived effect; an explicit `effects {}` MUST refuse a direct or transitive
+IO effect. No other effect is admitted by this profile.
+
+A closed entry observation establishes only that invocation's result and its
+ordered standard-output lines, not arithmetic safety for every argument to
+every function. Library mode publishes no closed observation. Emission MUST
+retain the call/value semantics and avoid signed C undefined behavior,
+including MIN/-1 remainder. A program with no source print is silent, and an
+arithmetic guard exits with status 86 without writing a diagnostic. The scalar
+backend contributes file-scope fragments and an entry body to the shared
+`c_program` mechanism; one `c_program::assemble` emits exactly one C `main`, and
+the common IO prelude is deduplicated by fragment key. This mechanism does not
+admit calls across source execution profiles. Ownership-bearing calls, runtime
+control flow and general effect/contract elaboration remain unsupported.
+
 ### L14.1. Unchecked linkage
 
 An external library that has **no contract at all** MAY be linked, under an
@@ -1074,6 +1101,13 @@ the same declared bit-field storage-unit identity. Bit offsets and widths are
 retained but cannot establish disjointness. All bounded source-shape,
 worker-body, capture, join and successful-window grammar refusals remain
 `Q600` under the `Concurrency` pass.
+
+`SOURCE-SCALAR-CALLS-V1` extends the existing OrdinaryTypes pass's Q020
+conditions to scalar-call type/arity errors, unsupported bounded-profile forms,
+cycles, syntax/execution bounds, and checked arithmetic failure on the closed
+entry, plus a missing `std.io` import or an effect row that excludes derived IO.
+Nonempty source contracts retain Q021 and an empty contract remains admissible.
+No diagnostic code is allocated; existing routes retain their codes.
 
 ### L21.1 Reason categories for uncovered obligations
 

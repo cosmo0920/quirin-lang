@@ -1,0 +1,11 @@
+import std.io;
+
+fn sum(a: i32, b: i32) -> i32 {
+    return a + b;
+}
+
+fn main() -> i32 {
+    let f = sum(20, 22);
+    print(f);
+    return f;
+}
