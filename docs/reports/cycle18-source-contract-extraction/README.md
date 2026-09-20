@@ -16,6 +16,15 @@ five wrapper/composition declaration headers and exact clause sequences; the
 existing `wrapper_paths.qcore` and `composition.qcore` files remain byte
 unchanged.
 
+Each wrapper/composition declaration is submitted to the generic evaluator as
+one vector containing only actual derived facts. No expected header or clause
+value is substituted into that vector. A focused relational regression uses a
+policy of the form `header_matches or clauses_match` and changes both actual
+halves; it refuses. This guards against a split check in which supplying the
+desired clause while checking the header, then the desired header while
+checking the clause, could make two partial evaluations pass even though the
+complete actual relationship is false.
+
 The module admits two complete canonical digest vectors: the focused fixture
 and the production translation unit. The common three digests are checked
 individually and the two varying digests are checked as a paired disjunction,
@@ -57,6 +66,32 @@ wrapper/composition declarations, observation identity, and whole-vector
 artifact choice. Its audited theorems accept the exact fixture and reject a
 mixed digest vector, selected-path substitution, missing summary, changed call
 sequence, and changed contract clause without project axioms or placeholders.
+
+## Focused validation
+
+- `cargo test -p qcore-verification --no-fail-fast`: exit 0, 301 passed,
+  0 failed, 1 ignored. This includes the 115 policy mutants and the separate
+  full-actual-vector relational regression. Private log:
+  `measure/cycle18-source-contract-extraction/qcore-verification-test.log`.
+- `cargo fmt --all -- --check`: exit 0. Private log:
+  `measure/cycle18-source-contract-extraction/fmt.log`.
+- `cargo clippy -p qcore-verification --all-targets -- -D warnings`: exit 0.
+  Private log: `measure/cycle18-source-contract-extraction/clippy.log`.
+- `lake build QCore.MonkeyWaitSourcePolicy` followed by
+  `lake env lean AuditMonkeyWaitSourcePolicy.lean`: both exit 0; the seven
+  printed theorems use only the permitted Lean foundations. Private logs:
+  `measure/cycle18-source-contract-extraction/lean-build.log` and
+  `measure/cycle18-source-contract-extraction/lean-audit.log`.
+- `python3 scripts/check_lean_audits.py`: exit 1 in this isolated card
+  worktree after the 206-target library build passed, because the shared
+  predicate-engine module `QCore.TypedContractFacts` was not yet registered in
+  the root-owned `proof/QCore.lean`; its audit therefore had no `.olean`.
+  This is an integration dependency, not a source-policy audit failure. Private
+  log: `measure/cycle18-source-contract-extraction/check-lean-audits.log`.
+
+The root integrator owns the full standing gate and aggregate Lean-module
+registration. The configured production preprocessed-input test remains
+ignored unless `QCORE_MONKEY_PREPROCESSED` is supplied.
 
 ## Integrator reconciliation list
 
