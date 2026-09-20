@@ -110,7 +110,7 @@ fn has_multiple_hard_links(_path: &Path) -> bool {
 /// Refuse a report destination that can overwrite any evidence used by the
 /// audit. Canonical paths catch lexical and symbolic-link aliases; Unix file
 /// identity additionally catches hard links to individually selected inputs.
-fn reject_report_aliases(
+pub(crate) fn reject_report_aliases(
     report: &Path,
     protected_files: &[PathBuf],
     protected_directories: &[PathBuf],

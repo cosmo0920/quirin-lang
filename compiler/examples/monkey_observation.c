@@ -347,6 +347,28 @@ static void observed_mem_free(void *pointer)
     mk_mem_free(pointer);
 }
 
+#ifdef QCORE_CB_EVENT_ONLY
+struct payload_allocation { void *pointer; size_t bytes; };
+static struct payload_allocation payload_allocations[16];
+static unsigned int payload_allocation_count;
+static void *observed_mem_alloc_z(size_t bytes)
+{
+    void *pointer = mk_mem_alloc_z(bytes);
+    assert(payload_allocation_count < 16);
+    payload_allocations[payload_allocation_count++] =
+        (struct payload_allocation) {pointer, bytes};
+    return pointer;
+}
+static size_t allocated_bytes(void *pointer)
+{
+    for (unsigned int i = 0; i < payload_allocation_count; i++) {
+        if (payload_allocations[i].pointer == pointer) return payload_allocations[i].bytes;
+    }
+    abort();
+}
+#define mk_mem_alloc_z observed_mem_alloc_z
+#endif
+
 #define __errno_location observed_errno_location
 #define perror observed_perror
 #define mk_mem_free observed_mem_free
@@ -374,6 +396,9 @@ static void observed_mem_free(void *pointer)
 #undef __errno_location
 #undef perror
 #undef mk_mem_free
+#ifdef QCORE_CB_EVENT_ONLY
+#undef mk_mem_alloc_z
+#endif
 
 /* Read actual typed objects before/after the callback; never dereference a freed map.
  * Ordinary reads/writes between these snapshots are reconstructed from source
@@ -399,6 +424,7 @@ static void snapshot(struct observed_callback *entry)
         cell(map, "ctx", "struct mk_event_ctx *", (long) ctx, &count);
         cell(ctx, "fired", "struct mk_event *", (long) ctx->fired, &count);
         cell(ctx, "fired_count", "int", ctx->fired_count, &count);
+        cell(ctx, "queue_size", "unsigned long", (long) ctx->queue_size, &count);
         for (int i = 0; i < ctx->queue_size; i++) {
             cell(&ctx->fired[i], "fd", "int", ctx->fired[i].fd, &count);
             cell(&ctx->fired[i], "mask", "unsigned int", ctx->fired[i].mask, &count);
@@ -441,6 +467,59 @@ static void binding_end(struct observed_callback *entry)
     errno = saved_errno;
 }
 
+#ifdef QCORE_CB_EVENT_ONLY
+/* This mode emits the complete dedicated cb_event run, never a filtered
+ * fragment of the broader callback observation below. */
+int main(void)
+{
+    struct mk_event channel = {0};
+    struct mk_event_loop *loop;
+    struct mk_event_ctx *ctx;
+    int reader, writer;
+    const int requested_capacity = 8;
+    const short flags[] = {EV_READ, EV_WRITE, EV_READ | EV_WRITE, EV_TIMEOUT};
+    const unsigned int masks[] = {MK_EVENT_READ, MK_EVENT_WRITE,
+                                 MK_EVENT_READ | MK_EVENT_WRITE, 0};
+    bindings = fopen(getenv("QCORE_MONKEY_BINDINGS"), "w");
+    assert(bindings != NULL);
+    setvbuf(stdout, NULL, _IONBF, 0);
+    loop = mk_event_loop_create(requested_capacity);
+    assert(loop != NULL);
+    ctx = loop->data;
+    FILE *runtime = fopen(getenv("QCORE_CB_EVENT_RUNTIME"), "w");
+    assert(runtime != NULL);
+    fprintf(runtime, "{\"backend\":\"%s\",\"dispatcher_count\":1}\n", event_base_get_method(ctx->base));
+    assert(fclose(runtime) == 0);
+    FILE *allocation = fopen(getenv("QCORE_CB_EVENT_ALLOCATION"), "w");
+    assert(allocation != NULL);
+    fprintf(allocation,
+            "{\"schema_version\":1,\"context_object\":%lu,\"fired_base\":%lu,"
+            "\"fired_capacity\":%lu,\"fired_element_size\":%lu,"
+            "\"fired_allocation_bytes\":%lu,\"loop_size_argument\":%d,"
+            "\"context_allocation_bytes\":%lu,\"sizeof_context\":%lu}\n",
+            (unsigned long) ctx, (unsigned long) ctx->fired,
+            (unsigned long) ctx->queue_size, (unsigned long) sizeof(struct mk_event),
+            (unsigned long) allocated_bytes(ctx->fired), requested_capacity,
+            (unsigned long) allocated_bytes(ctx), (unsigned long) sizeof(*ctx));
+    assert(fclose(allocation) == 0);
+    MK_EVENT_ZERO(&channel);
+    assert(mk_event_channel_create(loop, &reader, &writer, &channel) == 0);
+    struct ev_map *map = channel.data;
+    for (unsigned int i = 0; i < 4; i++) {
+        event_active(map->event, flags[i], 1);
+        assert(mk_event_wait_2(loop, 0) == 1);
+        assert(ctx->fired[0].data == &channel && ctx->fired[0].mask == masks[i]);
+    }
+    assert(mk_event_channel_destroy(loop, reader, writer, &channel) == 0);
+    mk_event_loop_destroy(loop);
+    assert(seen_event == 4 && seen_timeout == 0 && seen_wait_timeout == 0);
+    for (unsigned int i = 0; i < callback_count; i++) assert(callbacks[i].freed);
+    for (unsigned int i = 0; i < descriptor_count; i++) assert(!descriptors[i].live);
+    record("completed", 0, "", 0);
+    assert(fclose(bindings) == 0);
+    return 0;
+}
+#else
 int main(void)
 {
     struct mk_event_loop *loop;
@@ -529,3 +608,5 @@ int main(void)
     assert(fclose(bindings) == 0);
     return 0;
 }
+
+#endif
