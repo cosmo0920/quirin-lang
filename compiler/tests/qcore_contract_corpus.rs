@@ -553,6 +553,25 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/composition.qcore", "cb_timeout", 4),
     ("monkey/composition.qcore", "cb_wait_2_timeout", 2),
     ("monkey/composition.qcore", "check_monkey_composition", 13),
+    // Deliberate Cycle 18 executable policy pins.
+    ("monkey/cycle18_composition.qcore", "callback_inventory", 18),
+    (
+        "monkey/cycle18_composition.qcore",
+        "context_identity_join",
+        6,
+    ),
+    (
+        "monkey/cycle18_composition.qcore",
+        "wait_failure_source_join",
+        2,
+    ),
+    ("monkey/cycle18_composition.qcore", "evidence_join", 41),
+    ("monkey/cycle18_composition.qcore", "caller_size_bound", 8),
+    (
+        "monkey/cycle18_composition.qcore",
+        "aggregate_acceptance",
+        11,
+    ),
     (
         "monkey/descriptor_observation.qcore",
         "observation_socketpair",
@@ -603,6 +622,49 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/memory.qcore", "mk_mem_alloc", 3),
     ("monkey/memory.qcore", "mk_mem_alloc_z", 3),
     ("monkey/memory.qcore", "mk_mem_free", 3),
+    // Deliberate Cycle 18 executable policy pins.
+    (
+        "monkey/native_platform_matrix.qcore",
+        "native_platform_source_identity",
+        1,
+    ),
+    (
+        "monkey/native_platform_matrix.qcore",
+        "linux_epoll_asan_profile",
+        7,
+    ),
+    (
+        "monkey/native_platform_matrix.qcore",
+        "linux_poll_asan_profile",
+        7,
+    ),
+    (
+        "monkey/native_platform_matrix.qcore",
+        "linux_select_asan_profile",
+        7,
+    ),
+    (
+        "monkey/native_platform_matrix.qcore",
+        "macos_kqueue_asan_profile",
+        7,
+    ),
+    (
+        "monkey/native_platform_matrix.qcore",
+        "windows_win32_asan_profile",
+        7,
+    ),
+    (
+        "monkey/native_platform_matrix.qcore",
+        "windows_iocp_asan_profile",
+        7,
+    ),
+    (
+        "monkey/native_platform_matrix.qcore",
+        "linux_epoll_tsan_profile",
+        7,
+    ),
+    ("monkey/native_platform_matrix.qcore", "observed_row", 14),
+    ("monkey/native_platform_matrix.qcore", "unknown_row", 4),
     ("monkey/timeout_teardown.qcore", "source_identity", 4),
     ("monkey/timeout_teardown.qcore", "cb_timeout_source", 7),
     (
@@ -859,8 +921,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // and the `set_result` / `otlp_kvpair_list_destroy` /
     // `destroy_context_list` families, with every reading published in
     // `docs/reports/w37-corpus-contracts-4/README.md`.
-    // 90 -> 93: Cycle 18 failure, payload and self-teardown executable policies.
-    assert_eq!(sources.len(), 93, "unexpected contract corpus size");
+    // 93 -> 95: Cycle 18 aggregate and native platform executable policies.
+    assert_eq!(sources.len(), 95, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

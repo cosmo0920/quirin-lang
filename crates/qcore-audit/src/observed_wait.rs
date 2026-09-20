@@ -154,6 +154,12 @@ pub(crate) fn reject_report_aliases(
 /// premise that their producer accurately recorded execution and linkage.
 /// Hashes identify the selected artifacts; they do not attest that premise.
 pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
+    prepare_observed_wait(path)?.publish()
+}
+
+pub(crate) fn prepare_observed_wait(
+    path: &Path,
+) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::ObservedWait>, String> {
     let config: ObservedWaitConfig =
         serde_json::from_slice(&read(path)?).map_err(|error| error.to_string())?;
     if config.schema_version != 1 {
@@ -199,6 +205,7 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
         &resolve(&config.monkey_inputs),
         &resolve(&config.source_compile_database),
     )?;
+    let aggregate_identity = crate::cycle18_inputs::SourceIdentity::from_source(&source)?;
     let mut protected_files = source.protected_files.clone();
     protected_files.extend([
         path.to_path_buf(),
@@ -231,6 +238,12 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
         .map_err(|e| format!("source projection refused: {e:?}"))?;
     let libevent =
         load_profile_directory(&resolve(&config.libevent_profile)).map_err(|e| e.to_string())?;
+    let library_profile_path = libevent.directory().join("profile.json");
+    protected_files.push(library_profile_path.clone());
+    snapshots.push((
+        library_profile_path,
+        libevent.manifest_text().as_bytes().to_vec(),
+    ));
     let library = libevent
         .library("libevent")
         .ok_or("missing Libevent library profile")?;
@@ -252,8 +265,16 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
     let bundle = load_audited_bundle(library, &checkout, &revision)
         .map_err(|e| format!("Libevent source identity refused: {e:?}"))?;
     protected_files.extend(bundle.files.keys().map(|file| checkout.join(file)));
+    snapshots.extend(
+        bundle
+            .files
+            .iter()
+            .map(|(file, contents)| (checkout.join(file), contents.as_bytes().to_vec())),
+    );
     let build = resolve(&config.libevent_build);
     let cache = read(&build.join("CMakeCache.txt"))?;
+    protected_files.push(build.join("CMakeCache.txt"));
+    snapshots.push((build.join("CMakeCache.txt"), cache.clone()));
     if manifest["libevent"]["cmake_cache_sha256"].as_str() != Some(sha256_hex(&cache).as_str()) {
         return Err("native manifest build configuration mismatch".into());
     }
@@ -404,11 +425,20 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
             "One observed success path; unobserved failure paths remain Unknown",
             "No callback coverage or Cycle 18 acceptance promotion"]
     });
-    fs::write(
+    crate::cycle18_inputs::PreparedAudit::new(
+        aggregate_identity,
+        crate::cycle18_inputs::ObservedWait {
+            projection,
+            context: admitted,
+            observations,
+            bindings,
+            summaries: source.summaries,
+        },
         resolve(&config.report),
         serde_json::to_vec_pretty(&report).map_err(|e| e.to_string())?,
+        protected_files,
+        protected_directories,
     )
-    .map_err(|e| e.to_string())
 }
 
 #[cfg(test)]

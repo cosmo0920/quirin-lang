@@ -1,0 +1,43 @@
+name: Cycle 18 native platform matrix
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/cycle18-native-platform-matrix.yml'
+      - 'contract/qcore/monkey/native_platform_matrix.qcore'
+      - 'crates/qcore-audit/src/native_platform_matrix.rs'
+      - 'crates/qcore-audit/tests/fixtures/native_platform_probe.c'
+      - 'crates/qcore-verification/src/native_platform_matrix.rs'
+      - 'scripts/cycle18_native_platform_matrix.py'
+      - 'scripts/check_cycle18_platform_controls.py'
+  pull_request:
+    paths:
+      - '.github/workflows/cycle18-native-platform-matrix.yml'
+      - 'contract/qcore/monkey/native_platform_matrix.qcore'
+      - 'crates/qcore-audit/src/native_platform_matrix.rs'
+      - 'crates/qcore-audit/tests/fixtures/native_platform_probe.c'
+      - 'crates/qcore-verification/src/native_platform_matrix.rs'
+      - 'scripts/cycle18_native_platform_matrix.py'
+      - 'scripts/check_cycle18_platform_controls.py'
+
+permissions:
+  contents: read
+
+jobs:
+  linux-selected-backends:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out pinned Libevent source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Build and observe epoll, poll, select, and supported TSan
+        run: python3 scripts/cycle18_native_platform_matrix.py --output "$RUNNER_TEMP/cycle18-native-platform-matrix"
+      - name: Check source, build, linkage, runtime, and policy identities
+        run: cargo run -p qcore-audit --bin quirin-audit -- native-platform-matrix "$RUNNER_TEMP/cycle18-native-platform-matrix/audit-config.json"
+      - name: Refuse rehashed role and semantic substitutions
+        run: python3 scripts/check_cycle18_platform_controls.py --config "$RUNNER_TEMP/cycle18-native-platform-matrix/audit-config.json" --quirin-audit target/debug/quirin-audit --output "$RUNNER_TEMP/cycle18-native-platform-matrix/negative-controls.json"

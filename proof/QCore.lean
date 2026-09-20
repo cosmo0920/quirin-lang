@@ -206,5 +206,7 @@ import QCore.MonkeyWaitSourcePolicy
 import QCore.WaitFailurePaths
 import QCore.EventPayloadBoundary
 import QCore.TimeoutTeardown
+import QCore.Cycle18Composition
+import QCore.NativePlatformMatrix
 
 /-! The executable formal core of QCore-C revision 0.1. -/

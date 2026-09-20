@@ -48,6 +48,12 @@ fn read(path: &Path) -> Result<Vec<u8>, String> {
 }
 
 pub fn run_event_payload_config(path: &Path) -> Result<(), String> {
+    prepare_event_payload(path)?.publish()
+}
+
+pub(crate) fn prepare_event_payload(
+    path: &Path,
+) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::Payload>, String> {
     let config_bytes = read(path)?;
     let config: EventPayloadConfig =
         serde_json::from_slice(&config_bytes).map_err(|e| e.to_string())?;
@@ -170,6 +176,7 @@ pub fn run_event_payload_config(path: &Path) -> Result<(), String> {
         &resolve(&config.source_compile_database),
         &selected,
     )?;
+    let aggregate_identity = crate::cycle18_inputs::SourceIdentity::from_source(&source)?;
     let summary = |name| {
         source
             .summaries
@@ -184,6 +191,10 @@ pub fn run_event_payload_config(path: &Path) -> Result<(), String> {
         };
     let libevent =
         load_profile_directory(&resolve(&config.libevent_profile)).map_err(|e| e.to_string())?;
+    snapshots.insert(
+        libevent.directory().join("profile.json"),
+        libevent.manifest_text().as_bytes().to_vec(),
+    );
     let library = libevent
         .library("libevent")
         .ok_or("missing libevent profile")?;
@@ -372,8 +383,20 @@ pub fn run_event_payload_config(path: &Path) -> Result<(), String> {
     ]);
     reject_report_aliases(&resolve(&config.report), &files, &directories)?;
     let report = serde_json::json!({"schema_version":1,"status":"bounded_payload_checked","context":context,"payload":checked,"limitations":["Exclusive write authority is caller-declared","Runtime and linkage evidence is producer-supplied","Four bounded executions; no universal safety or aggregate acceptance promotion"]});
-    crate::wait_failures::write_atomic(
-        &resolve(&config.report),
-        &serde_json::to_vec_pretty(&report).map_err(|e| e.to_string())?,
+    crate::cycle18_inputs::PreparedAudit::new(
+        aggregate_identity,
+        crate::cycle18_inputs::Payload {
+            projection,
+            context: admitted,
+            observations,
+            bindings,
+            allocation,
+            authority: config.authority,
+            summaries: source.summaries,
+        },
+        resolve(&config.report),
+        serde_json::to_vec_pretty(&report).map_err(|e| e.to_string())?,
+        files,
+        directories,
     )
 }
