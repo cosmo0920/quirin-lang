@@ -1,0 +1,86 @@
+[
+  {
+    "command": "wait-failures",
+    "runs": [
+      {
+        "argv": [
+          "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/baseline/quirin-audit",
+          "wait-failures",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/integrated-route-parity/wait-failures/baseline/config.json"
+        ],
+        "exit": 0,
+        "binary_sha256": "025ff89a8d46a6296fbfd29deb7b979f17adda417633af7f6e2cafaabc2d570a"
+      },
+      {
+        "argv": [
+          "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+          "wait-failures",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/integrated-route-parity/wait-failures/current/config.json"
+        ],
+        "exit": 0,
+        "binary_sha256": "90fb6f0d6137e93c661fc4db8ff0085c9855576d7471fbf1c3213a073be5e56f"
+      }
+    ],
+    "byte_identical": true,
+    "report_sha256": [
+      "092ef5e1eccc60324877a7233b45d687e2631e9a9d52b4971e66ceaa1235ce8f",
+      "092ef5e1eccc60324877a7233b45d687e2631e9a9d52b4971e66ceaa1235ce8f"
+    ]
+  },
+  {
+    "command": "event-payload",
+    "runs": [
+      {
+        "argv": [
+          "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/baseline/quirin-audit",
+          "event-payload",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/integrated-route-parity/event-payload/baseline/config.json"
+        ],
+        "exit": 0,
+        "binary_sha256": "025ff89a8d46a6296fbfd29deb7b979f17adda417633af7f6e2cafaabc2d570a"
+      },
+      {
+        "argv": [
+          "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+          "event-payload",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/integrated-route-parity/event-payload/current/config.json"
+        ],
+        "exit": 0,
+        "binary_sha256": "90fb6f0d6137e93c661fc4db8ff0085c9855576d7471fbf1c3213a073be5e56f"
+      }
+    ],
+    "byte_identical": true,
+    "report_sha256": [
+      "ffc1ef2688fd4f9e7da06af97c14892b43d5381541fed0668c1b3d75902ca53e",
+      "ffc1ef2688fd4f9e7da06af97c14892b43d5381541fed0668c1b3d75902ca53e"
+    ]
+  },
+  {
+    "command": "timeout-teardown",
+    "runs": [
+      {
+        "argv": [
+          "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/baseline/quirin-audit",
+          "timeout-teardown",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/integrated-route-parity/timeout-teardown/baseline/config.json"
+        ],
+        "exit": 0,
+        "binary_sha256": "025ff89a8d46a6296fbfd29deb7b979f17adda417633af7f6e2cafaabc2d570a"
+      },
+      {
+        "argv": [
+          "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+          "timeout-teardown",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/integrated-route-parity/timeout-teardown/current/config.json"
+        ],
+        "exit": 0,
+        "binary_sha256": "90fb6f0d6137e93c661fc4db8ff0085c9855576d7471fbf1c3213a073be5e56f"
+      }
+    ],
+    "byte_identical": true,
+    "report_sha256": [
+      "214b7f08bbf7fa1ca44d772d177ced524c8e09f7f1348cb6456e4fba82a58fe9",
+      "214b7f08bbf7fa1ca44d772d177ced524c8e09f7f1348cb6456e4fba82a58fe9"
+    ]
+  }
+]

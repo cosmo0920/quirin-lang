@@ -1,0 +1,117 @@
+{
+  "baseline": {
+    "binary": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/baseline/quirin-audit",
+    "binary_sha256": "025ff89a8d46a6296fbfd29deb7b979f17adda417633af7f6e2cafaabc2d570a",
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/baseline/quirin-audit",
+      "observed-wait",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/legacy-cli-parity/baseline/config.json"
+    ],
+    "exit": 0,
+    "report_sha256": "108c4977ab0c8b8d3621b5abeaebd84b68b5ba87b8bae264284904dc12c5a861",
+    "negative_runner_command": [
+      "/usr/bin/python3",
+      "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/cycle18-observed-integration/check_negative_controls.py",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/baseline/quirin-audit",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/legacy-cli-parity/baseline/config.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/legacy-cli-parity/baseline/negative-controls"
+    ],
+    "negative_runner_exit": 0,
+    "negative_outcomes": [
+      {
+        "control": "callback-generation",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "missing-record",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "invented-synchronization",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "unsupported-backend",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "owned-callback-contract",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "artifact-substitution",
+        "exit": 1,
+        "report_created": false
+      }
+    ]
+  },
+  "extracted": {
+    "binary": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+    "binary_sha256": "90fb6f0d6137e93c661fc4db8ff0085c9855576d7471fbf1c3213a073be5e56f",
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+      "observed-wait",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/legacy-cli-parity/extracted/config.json"
+    ],
+    "exit": 0,
+    "report_sha256": "108c4977ab0c8b8d3621b5abeaebd84b68b5ba87b8bae264284904dc12c5a861",
+    "negative_runner_command": [
+      "/usr/bin/python3",
+      "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/cycle18-observed-integration/check_negative_controls.py",
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/legacy-cli-parity/extracted/config.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/legacy-cli-parity/extracted/negative-controls"
+    ],
+    "negative_runner_exit": 0,
+    "negative_outcomes": [
+      {
+        "control": "callback-generation",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "missing-record",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "invented-synchronization",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "unsupported-backend",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "owned-callback-contract",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "artifact-substitution",
+        "exit": 1,
+        "report_created": false
+      }
+    ]
+  },
+  "comparison": {
+    "status_identical": true,
+    "composition_fields_identical": [
+      "claim",
+      "checked_records",
+      "checked_operations",
+      "selected_paths",
+      "identity_mapping"
+    ],
+    "negative_outcomes_identical": true,
+    "context_differences": {},
+    "note": "Policy digests and their aggregate/context identities are expected to change; they do not represent changed lifecycle results or expanded coverage."
+  }
+}
