@@ -78,6 +78,9 @@ pub enum HandoffOperation {
     CallbackExit {
         callback: CallbackId,
     },
+    /// Release custody represented by this handoff. For `Shared` this releases
+    /// only this model's share; it does not assert that global storage is freed.
+    /// A `BorrowedFrame` is caller-owned and this operation refuses it.
     DropArgument {
         argument: ArgumentId,
     },
@@ -126,6 +129,7 @@ pub enum HandoffDiagnostic {
         callback: CallbackId,
         argument: ArgumentId,
     },
+    BorrowedArgumentCannotDrop(ArgumentId),
     ArgumentAlreadyDropped(ArgumentId),
 }
 
@@ -406,6 +410,9 @@ pub fn check_callback_task_handoff(
                     .ok_or(HandoffDiagnostic::UnknownArgument(argument))?;
                 if !argument_record.live {
                     return Err(HandoffDiagnostic::ArgumentAlreadyDropped(argument));
+                }
+                if argument_record.lifetime == ArgumentLifetime::BorrowedFrame {
+                    return Err(HandoffDiagnostic::BorrowedArgumentCannotDrop(argument));
                 }
                 if callbacks
                     .values()

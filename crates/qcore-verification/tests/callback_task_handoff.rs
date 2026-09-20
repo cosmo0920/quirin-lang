@@ -11,7 +11,7 @@ use qcore_verification::callback_task_handoff::{
     CallbackTaskHandoffError, CallbackTaskObservation, CallbackTaskObservationAction as Action,
     CallbackTaskObservationBundle, check_callback_task_observations,
     check_taskful_callback_observations, project_callback_task_source,
-    project_taskful_callback_source,
+    project_taskful_callback_source, taskful_fixture_contract,
 };
 use qcore_verification::monkey_wait_projection::monkey_source_revision;
 
@@ -55,16 +55,17 @@ fn summaries(results: &[SourceResult]) -> Vec<SourceSummary> {
 
 fn taskful_imported(source: &str, role: ImportRole) -> Vec<SourceSummary> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let contract = taskful_fixture_contract().unwrap();
     let profile =
-        load_source_set_profile(&root.join("contract/profiles"), "cycle18-task-handoff").unwrap();
+        load_source_set_profile(&root.join("contract/profiles"), &contract.source_set).unwrap();
     import_source_functions_from_profile(
         &C11TranslationUnit {
             source,
             ..Default::default()
         },
-        "229578d8ad617803bed3f02bcc1f0f59251d560d",
+        &contract.source_revision,
         &profile,
-        "fixture",
+        &contract.library,
         role,
     )
     .unwrap()
@@ -282,7 +283,13 @@ fn taskful_source_and_native_pthread_run_match_exactly() {
     }
     let callback = taskful_imported(TASKFUL_SOURCE, ImportRole::Callback);
     let after = taskful_imported(TASKFUL_SOURCE, ImportRole::Wrapper);
-    let projection = project_taskful_callback_source(&callback[0], &after[0]).unwrap();
+    let projection = project_taskful_callback_source(
+        "compiler/tests/fixtures/cycle18_task_handoff.c",
+        &qcore_schemas::sha256_hex(TASKFUL_SOURCE.as_bytes()),
+        &callback[0],
+        &after[0],
+    )
+    .unwrap();
     assert_eq!(projection.operations().len(), 12);
 
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
@@ -330,5 +337,50 @@ fn taskful_source_identity_arguments_are_load_bearing() {
     let changed = TASKFUL_SOURCE.replacen("qcore_task_join(1, 10);", "qcore_task_join(1, 11);", 1);
     let callback = taskful_imported(&changed, ImportRole::Callback);
     let after = taskful_imported(&changed, ImportRole::Wrapper);
-    assert!(project_taskful_callback_source(&callback[0], &after[0]).is_err());
+    assert!(
+        project_taskful_callback_source(
+            "compiler/tests/fixtures/cycle18_task_handoff.c",
+            &qcore_schemas::sha256_hex(changed.as_bytes()),
+            &callback[0],
+            &after[0]
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn taskful_artifact_identity_is_accepted_only_by_quirin() {
+    if qcore_c_gateway::clang_command().is_err() {
+        return;
+    }
+    let callback = taskful_imported(TASKFUL_SOURCE, ImportRole::Callback);
+    let after = taskful_imported(TASKFUL_SOURCE, ImportRole::Wrapper);
+    assert!(matches!(
+        project_taskful_callback_source(
+            "another.c",
+            &qcore_schemas::sha256_hex(TASKFUL_SOURCE.as_bytes()),
+            &callback[0],
+            &after[0]
+        ),
+        Err(CallbackTaskHandoffError::Source(_))
+    ));
+}
+
+#[test]
+fn taskful_source_bytes_are_pinned_even_when_imported_summaries_are_unchanged() {
+    if qcore_c_gateway::clang_command().is_err() {
+        return;
+    }
+    let changed = TASKFUL_SOURCE.replace("released = 1;", "released = 2;");
+    let callback = taskful_imported(&changed, ImportRole::Callback);
+    let after = taskful_imported(&changed, ImportRole::Wrapper);
+    assert!(matches!(
+        project_taskful_callback_source(
+            "compiler/tests/fixtures/cycle18_task_handoff.c",
+            &qcore_schemas::sha256_hex(changed.as_bytes()),
+            &callback[0],
+            &after[0]
+        ),
+        Err(CallbackTaskHandoffError::Source(_))
+    ));
 }

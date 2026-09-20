@@ -167,6 +167,24 @@ fn frame_borrow_cannot_escape_into_post_return_work() {
 }
 
 #[test]
+fn frame_borrow_cannot_be_reported_as_dropped_after_return() {
+    let operations = [
+        Op::CallbackEnter {
+            callback: 1,
+            argument: 9,
+            argument_lifetime: ArgumentLifetime::BorrowedFrame,
+        },
+        Op::CallbackExit { callback: 1 },
+        Op::DropArgument { argument: 9 },
+        Op::Teardown { callback: 1 },
+    ];
+    assert_eq!(
+        check_callback_task_handoff(&operations),
+        Err(HandoffDiagnostic::BorrowedArgumentCannotDrop(9))
+    );
+}
+
+#[test]
 fn argument_liveness_and_exclusive_identity_are_enforced() {
     let unknown_drop = [Op::DropArgument { argument: 9 }];
     assert_eq!(
@@ -302,4 +320,26 @@ fn undropped_owned_custody_is_explicit_in_certificate() {
     ]);
     let certificate = check_callback_task_handoff(&operations).unwrap();
     assert_eq!(certificate.remaining_argument_custody, [9]);
+}
+
+#[test]
+fn remaining_custody_is_canonical_by_argument_identity() {
+    let operations = [
+        Op::CallbackEnter {
+            callback: 1,
+            argument: 200,
+            argument_lifetime: ArgumentLifetime::Owned,
+        },
+        Op::CallbackExit { callback: 1 },
+        Op::Teardown { callback: 1 },
+        Op::CallbackEnter {
+            callback: 2,
+            argument: 100,
+            argument_lifetime: ArgumentLifetime::Owned,
+        },
+        Op::CallbackExit { callback: 2 },
+        Op::Teardown { callback: 2 },
+    ];
+    let certificate = check_callback_task_handoff(&operations).unwrap();
+    assert_eq!(certificate.remaining_argument_custody, [100, 200]);
 }

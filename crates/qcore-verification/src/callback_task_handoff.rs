@@ -299,8 +299,46 @@ pub struct CallbackTaskObservationCertificate {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TaskfulCallbackSourceProjection {
     operations: Vec<HandoffOperation>,
+    callback_name: String,
     source_digest: String,
     policy_digest: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct TaskfulFixtureContract {
+    pub artifact: String,
+    pub callback: String,
+    pub after_function: String,
+    pub source_revision: String,
+    pub source_sha256: String,
+    pub library: String,
+    pub source_set: String,
+    pub callback_role: String,
+    pub after_role: String,
+}
+
+fn taskful_text(function: &str, fact: &str) -> Result<String, CallbackTaskHandoffError> {
+    match literal(function, fact)? {
+        ContractFact::Text(value) => Ok(value),
+        ContractFact::Integer(_) => Err(CallbackTaskHandoffError::Policy(format!(
+            "taskful policy fact `{fact}` is not text"
+        ))),
+    }
+}
+
+/// Load the fixture and profile identities from the executable Quirin policy.
+pub fn taskful_fixture_contract() -> Result<TaskfulFixtureContract, CallbackTaskHandoffError> {
+    Ok(TaskfulFixtureContract {
+        artifact: taskful_text("taskful_fixture_source", "artifact")?,
+        callback: taskful_text("taskful_fixture_source", "callback")?,
+        after_function: taskful_text("taskful_fixture_source", "after_function")?,
+        source_revision: taskful_text("taskful_fixture_source", "source_revision")?,
+        source_sha256: taskful_text("taskful_fixture_source", "source_sha256")?,
+        library: taskful_text("taskful_fixture_source", "library")?,
+        source_set: taskful_text("taskful_fixture_source", "source_set")?,
+        callback_role: taskful_text("taskful_fixture_source", "callback_role")?,
+        after_role: taskful_text("taskful_fixture_source", "after_role")?,
+    })
 }
 
 impl TaskfulCallbackSourceProjection {
@@ -329,6 +367,7 @@ fn integer_argument(value: &SourceValue) -> Result<u32, CallbackTaskHandoffError
 
 fn exact_call_sequence(
     summary: &SourceSummary,
+    ignored_calls: &BTreeSet<String>,
 ) -> Result<Vec<(String, Vec<u32>)>, CallbackTaskHandoffError> {
     let [path] = summary.paths() else {
         return Err(CallbackTaskHandoffError::Source(
@@ -343,10 +382,7 @@ fn exact_call_sequence(
                 arguments,
                 ..
             } => {
-                if matches!(
-                    function.as_str(),
-                    "qcore_observe_callback_enter" | "qcore_observe_callback_exit"
-                ) {
+                if ignored_calls.contains(function) {
                     continue;
                 }
                 let arguments = arguments
@@ -370,30 +406,32 @@ fn exact_call_sequence(
 
 /// Project the separate bounded taskful C fixture into the generic kernel.
 pub fn project_taskful_callback_source(
+    artifact: &str,
+    source_sha256: &str,
     callback: &SourceSummary,
     after_return: &SourceSummary,
 ) -> Result<TaskfulCallbackSourceProjection, CallbackTaskHandoffError> {
-    if callback.function() != "cycle18_taskful_callback"
-        || after_return.function() != "cycle18_taskful_after_return"
-        || callback.source_revision() != "229578d8ad617803bed3f02bcc1f0f59251d560d"
-        || after_return.source_revision() != callback.source_revision()
-    {
+    if after_return.source_revision() != callback.source_revision() {
         return Err(CallbackTaskHandoffError::Source(
-            "unexpected taskful fixture source identity".into(),
+            "taskful fixture functions have different source revisions".into(),
         ));
     }
-    for summary in [callback, after_return] {
-        let assumptions = summary.profile_assumptions();
-        if assumptions.get("library").map(String::as_str) != Some("fixture")
-            || assumptions.get("source_set").map(String::as_str) != Some("cycle18-task-handoff")
-        {
-            return Err(CallbackTaskHandoffError::Source(
-                "taskful fixture profile identity mismatch".into(),
-            ));
-        }
-    }
-    let callback_calls = exact_call_sequence(callback)?;
-    let after_calls = exact_call_sequence(after_return)?;
+    let primitive = |name| taskful_text("taskful_fixture_primitives", name);
+    let spawn = primitive("spawn")?;
+    let defer_register = primitive("defer_register")?;
+    let task_start = primitive("task_start")?;
+    let cancel_request = primitive("cancel_request")?;
+    let cancel_ack = primitive("cancel_ack")?;
+    let task_join = primitive("task_join")?;
+    let deferred_start = primitive("deferred_start")?;
+    let deferred_complete = primitive("deferred_complete")?;
+    let argument_drop = primitive("argument_drop")?;
+    let teardown = primitive("teardown")?;
+    let ignored_calls = [primitive("observe_enter")?, primitive("observe_exit")?]
+        .into_iter()
+        .collect();
+    let callback_calls = exact_call_sequence(callback, &ignored_calls)?;
+    let after_calls = exact_call_sequence(after_return, &ignored_calls)?;
     let render_calls = |calls: &[(String, Vec<u32>)]| {
         calls
             .iter()
@@ -410,11 +448,66 @@ pub fn project_taskful_callback_source(
             .collect::<Vec<_>>()
             .join(";")
     };
+    let callback_assumptions = callback.profile_assumptions();
+    let after_assumptions = after_return.profile_assumptions();
+    let fact = |assumptions: &BTreeMap<String, String>, name: &str| {
+        assumptions.get(name).cloned().ok_or_else(|| {
+            CallbackTaskHandoffError::Source(format!("taskful fixture lacks `{name}` identity"))
+        })
+    };
+    let first = callback_calls
+        .iter()
+        .find(|(name, _)| name == &spawn)
+        .ok_or_else(|| {
+            CallbackTaskHandoffError::Source("taskful callback has no spawn call".into())
+        })?;
+    let second = callback_calls
+        .iter()
+        .find(|(name, _)| name == &defer_register)
+        .ok_or_else(|| {
+            CallbackTaskHandoffError::Source("taskful callback has no deferred call".into())
+        })?;
+    let source_integer = |call: &(String, Vec<u32>), index: usize, name: &str| {
+        call.1.get(index).copied().ok_or_else(|| {
+            CallbackTaskHandoffError::Source(format!("taskful source lacks `{name}` argument"))
+        })
+    };
+    let callback_id = source_integer(first, 0, "callback_id")?;
+    let task_id = source_integer(first, 1, "task_id")?;
+    let argument_id = source_integer(first, 2, "argument_id")?;
+    let retains_argument = source_integer(first, 3, "retains_argument")?;
+    let work_id = source_integer(second, 1, "work_id")?;
     check_typed_contract_facts(
         CALLBACK_TASK_HANDOFF_POLICY,
         "taskful_fixture_source",
         &[
+            ("artifact", ContractFact::Text(artifact.into())),
             ("callback", ContractFact::Text(callback.function().into())),
+            (
+                "after_function",
+                ContractFact::Text(after_return.function().into()),
+            ),
+            (
+                "source_revision",
+                ContractFact::Text(callback.source_revision().into()),
+            ),
+            ("source_sha256", ContractFact::Text(source_sha256.into())),
+            (
+                "library",
+                ContractFact::Text(fact(callback_assumptions, "library")?),
+            ),
+            (
+                "source_set",
+                ContractFact::Text(fact(callback_assumptions, "source_set")?),
+            ),
+            (
+                "callback_role",
+                ContractFact::Text(fact(callback_assumptions, "typed_import_role")?),
+            ),
+            (
+                "after_role",
+                ContractFact::Text(fact(after_assumptions, "typed_import_role")?),
+            ),
             (
                 "callback_calls",
                 ContractFact::Text(render_calls(&callback_calls)),
@@ -423,70 +516,86 @@ pub fn project_taskful_callback_source(
                 "after_calls",
                 ContractFact::Text(render_calls(&after_calls)),
             ),
-            ("callback_id", ContractFact::Integer(1)),
-            ("task_id", ContractFact::Integer(10)),
-            ("work_id", ContractFact::Integer(20)),
-            ("argument_id", ContractFact::Integer(100)),
-            ("retains_argument", ContractFact::Integer(1)),
+            ("callback_id", ContractFact::Integer(callback_id.into())),
+            ("task_id", ContractFact::Integer(task_id.into())),
+            ("work_id", ContractFact::Integer(work_id.into())),
+            ("argument_id", ContractFact::Integer(argument_id.into())),
+            (
+                "retains_argument",
+                ContractFact::Integer(retains_argument.into()),
+            ),
         ],
     )
     .map_err(CallbackTaskHandoffError::Source)?;
-    let expected_callback = vec![
-        ("qcore_task_spawn".to_owned(), vec![1, 10, 100, 1]),
-        ("qcore_defer_register".to_owned(), vec![1, 20, 100, 1]),
-    ];
-    let expected_after = vec![
-        ("qcore_task_release".to_owned(), vec![10]),
-        ("qcore_task_cancel_request".to_owned(), vec![1, 10]),
-        ("qcore_task_wait_cancel_ack".to_owned(), vec![10]),
-        ("qcore_task_join".to_owned(), vec![1, 10]),
-        ("qcore_defer_start".to_owned(), vec![20]),
-        ("qcore_defer_complete".to_owned(), vec![20]),
-        ("qcore_argument_drop".to_owned(), vec![100]),
-        ("qcore_callback_teardown".to_owned(), vec![1]),
-    ];
-    if callback_calls != expected_callback || after_calls != expected_after {
-        return Err(CallbackTaskHandoffError::Source(
-            "taskful fixture call identities or arguments changed".into(),
-        ));
-    }
-    let operations = vec![
-        HandoffOperation::CallbackEnter {
-            callback: 1,
-            argument: 100,
-            argument_lifetime: ArgumentLifetime::Owned,
-        },
-        HandoffOperation::SpawnTask {
-            callback: 1,
-            task: 10,
-            retains_argument: true,
-        },
-        HandoffOperation::RegisterDeferred {
-            callback: 1,
-            work: 20,
-            retains_argument: true,
-        },
-        HandoffOperation::CallbackExit { callback: 1 },
-        HandoffOperation::StartTask { task: 10 },
-        HandoffOperation::RequestCancel {
-            callback: 1,
-            task: 10,
-        },
-        HandoffOperation::AcknowledgeCancel { task: 10 },
-        HandoffOperation::JoinTask {
-            callback: 1,
-            task: 10,
-        },
-        HandoffOperation::StartDeferred { work: 20 },
-        HandoffOperation::CompleteDeferred { work: 20 },
-        HandoffOperation::DropArgument { argument: 100 },
-        HandoffOperation::Teardown { callback: 1 },
-    ];
+    let mut operations = vec![HandoffOperation::CallbackEnter {
+        callback: callback_id,
+        argument: argument_id,
+        argument_lifetime: ArgumentLifetime::Owned,
+    }];
+    let lower = |name: &str,
+                 arguments: &[u32]|
+     -> Result<HandoffOperation, CallbackTaskHandoffError> {
+        match (name, arguments) {
+            (name, &[callback, task, _, retains]) if name == spawn => {
+                Ok(HandoffOperation::SpawnTask {
+                    callback,
+                    task,
+                    retains_argument: retains == 1,
+                })
+            }
+            (name, &[callback, work, _, retains]) if name == defer_register => {
+                Ok(HandoffOperation::RegisterDeferred {
+                    callback,
+                    work,
+                    retains_argument: retains == 1,
+                })
+            }
+            (name, &[task]) if name == task_start => Ok(HandoffOperation::StartTask { task }),
+            (name, &[callback, task]) if name == cancel_request => {
+                Ok(HandoffOperation::RequestCancel { callback, task })
+            }
+            (name, &[task]) if name == cancel_ack => {
+                Ok(HandoffOperation::AcknowledgeCancel { task })
+            }
+            (name, &[callback, task]) if name == task_join => {
+                Ok(HandoffOperation::JoinTask { callback, task })
+            }
+            (name, &[work]) if name == deferred_start => {
+                Ok(HandoffOperation::StartDeferred { work })
+            }
+            (name, &[work]) if name == deferred_complete => {
+                Ok(HandoffOperation::CompleteDeferred { work })
+            }
+            (name, &[argument]) if name == argument_drop => {
+                Ok(HandoffOperation::DropArgument { argument })
+            }
+            (name, &[callback]) if name == teardown => Ok(HandoffOperation::Teardown { callback }),
+            _ => Err(CallbackTaskHandoffError::Source(format!(
+                "unsupported taskful call `{name}`"
+            ))),
+        }
+    };
+    operations.extend(
+        callback_calls
+            .iter()
+            .map(|(name, args)| lower(name, args))
+            .collect::<Result<Vec<_>, _>>()?,
+    );
+    operations.push(HandoffOperation::CallbackExit {
+        callback: callback_id,
+    });
+    operations.extend(
+        after_calls
+            .iter()
+            .map(|(name, args)| lower(name, args))
+            .collect::<Result<Vec<_>, _>>()?,
+    );
     let source_digest = sha256_hex(&serde_json::to_vec(&(callback, after_return)).map_err(
         |error| CallbackTaskHandoffError::Source(format!("cannot encode taskful fixture: {error}")),
     )?);
     Ok(TaskfulCallbackSourceProjection {
         operations,
+        callback_name: callback.function().into(),
         source_digest,
         policy_digest: sha256_hex(CALLBACK_TASK_HANDOFF_POLICY.as_bytes()),
     })
@@ -532,101 +641,115 @@ pub fn check_taskful_callback_observations(
             "taskful records lack thread identity or causal-replay labelling".into(),
         ));
     }
-    let callback_thread = bundle.records[0].thread;
-    let worker_thread = bundle.records[4].thread;
-    if callback_thread == worker_thread
-        || [0usize, 1, 2, 3, 5, 7, 8, 9, 10, 11]
-            .into_iter()
-            .any(|index| bundle.records[index].thread != callback_thread)
-        || [4usize, 6]
-            .into_iter()
-            .any(|index| bundle.records[index].thread != worker_thread)
+    let callback_threads = bundle
+        .records
+        .iter()
+        .filter(|record| {
+            !matches!(
+                record.action,
+                CallbackTaskObservationAction::TaskStart { .. }
+                    | CallbackTaskObservationAction::TaskCancelAck { .. }
+            )
+        })
+        .filter_map(|record| record.thread)
+        .collect::<BTreeSet<_>>();
+    let worker_threads = bundle
+        .records
+        .iter()
+        .filter(|record| {
+            matches!(
+                record.action,
+                CallbackTaskObservationAction::TaskStart { .. }
+                    | CallbackTaskObservationAction::TaskCancelAck { .. }
+            )
+        })
+        .filter_map(|record| record.thread)
+        .collect::<BTreeSet<_>>();
+    if callback_threads.len() != 1
+        || worker_threads.len() != 1
+        || callback_threads == worker_threads
     {
         return Err(CallbackTaskHandoffError::Observation(
             "taskful worker/callback thread identities do not match causal roles".into(),
         ));
     }
     let mut observed = Vec::new();
-    for row in &bundle.records {
+    for (row, expected) in bundle.records.iter().zip(&source.operations) {
         if row.schema_version != 1 {
             return Err(CallbackTaskHandoffError::Observation(
                 "unsupported taskful observation record".into(),
             ));
         }
-        let operation = match &row.action {
-            CallbackTaskObservationAction::CallbackEnter { callback, argument }
-                if callback == "cycle18_taskful_callback" =>
-            {
+        let matches_source = match (&row.action, expected) {
+            (
+                CallbackTaskObservationAction::CallbackEnter { callback, argument },
                 HandoffOperation::CallbackEnter {
-                    callback: 1,
-                    argument: *argument,
-                    argument_lifetime: ArgumentLifetime::Owned,
-                }
-            }
-            CallbackTaskObservationAction::TaskSpawn { callback, task }
-                if callback == "cycle18_taskful_callback" =>
-            {
+                    argument: source_argument,
+                    ..
+                },
+            ) => callback == &source.callback_name && argument == source_argument,
+            (
+                CallbackTaskObservationAction::TaskSpawn { callback, task },
                 HandoffOperation::SpawnTask {
-                    callback: 1,
-                    task: *task,
-                    retains_argument: true,
-                }
-            }
-            CallbackTaskObservationAction::DeferredRegister { callback, work }
-                if callback == "cycle18_taskful_callback" =>
-            {
+                    task: source_task, ..
+                },
+            ) => callback == &source.callback_name && task == source_task,
+            (
+                CallbackTaskObservationAction::DeferredRegister { callback, work },
                 HandoffOperation::RegisterDeferred {
-                    callback: 1,
-                    work: *work,
-                    retains_argument: true,
-                }
-            }
-            CallbackTaskObservationAction::CallbackExit { callback }
-                if callback == "cycle18_taskful_callback" =>
-            {
-                HandoffOperation::CallbackExit { callback: 1 }
-            }
-            CallbackTaskObservationAction::TaskStart { task } => {
-                HandoffOperation::StartTask { task: *task }
-            }
-            CallbackTaskObservationAction::TaskCancelRequest { callback, task }
-                if callback == "cycle18_taskful_callback" =>
-            {
+                    work: source_work, ..
+                },
+            ) => callback == &source.callback_name && work == source_work,
+            (
+                CallbackTaskObservationAction::CallbackExit { callback },
+                HandoffOperation::CallbackExit { .. },
+            )
+            | (
+                CallbackTaskObservationAction::Teardown { callback },
+                HandoffOperation::Teardown { .. },
+            ) => callback == &source.callback_name,
+            (
+                CallbackTaskObservationAction::TaskStart { task },
+                HandoffOperation::StartTask { task: source_task },
+            )
+            | (
+                CallbackTaskObservationAction::TaskCancelAck { task },
+                HandoffOperation::AcknowledgeCancel { task: source_task },
+            )
+            | (
+                CallbackTaskObservationAction::TaskJoin { task },
+                HandoffOperation::JoinTask {
+                    task: source_task, ..
+                },
+            ) => task == source_task,
+            (
+                CallbackTaskObservationAction::TaskCancelRequest { callback, task },
                 HandoffOperation::RequestCancel {
-                    callback: 1,
-                    task: *task,
-                }
-            }
-            CallbackTaskObservationAction::TaskCancelAck { task } => {
-                HandoffOperation::AcknowledgeCancel { task: *task }
-            }
-            CallbackTaskObservationAction::TaskJoin { task } => HandoffOperation::JoinTask {
-                callback: 1,
-                task: *task,
-            },
-            CallbackTaskObservationAction::DeferredStart { work } => {
-                HandoffOperation::StartDeferred { work: *work }
-            }
-            CallbackTaskObservationAction::DeferredComplete { work } => {
-                HandoffOperation::CompleteDeferred { work: *work }
-            }
-            CallbackTaskObservationAction::ArgumentDrop { argument } => {
+                    task: source_task, ..
+                },
+            ) => callback == &source.callback_name && task == source_task,
+            (
+                CallbackTaskObservationAction::DeferredStart { work },
+                HandoffOperation::StartDeferred { work: source_work },
+            )
+            | (
+                CallbackTaskObservationAction::DeferredComplete { work },
+                HandoffOperation::CompleteDeferred { work: source_work },
+            ) => work == source_work,
+            (
+                CallbackTaskObservationAction::ArgumentDrop { argument },
                 HandoffOperation::DropArgument {
-                    argument: *argument,
-                }
-            }
-            CallbackTaskObservationAction::Teardown { callback }
-                if callback == "cycle18_taskful_callback" =>
-            {
-                HandoffOperation::Teardown { callback: 1 }
-            }
-            _ => {
-                return Err(CallbackTaskHandoffError::Observation(
-                    "unsupported taskful observation action".into(),
-                ));
-            }
+                    argument: source_argument,
+                },
+            ) => argument == source_argument,
+            _ => false,
         };
-        observed.push(operation);
+        if !matches_source {
+            return Err(CallbackTaskHandoffError::Observation(
+                "taskful observation action differs from source-derived operation".into(),
+            ));
+        }
+        observed.push(expected.clone());
     }
     if observed != source.operations {
         return Err(CallbackTaskHandoffError::Observation(
@@ -644,7 +767,7 @@ pub fn check_taskful_callback_observations(
         evidence_version: CALLBACK_TASK_HANDOFF_EVIDENCE_VERSION.into(),
         source_digest: source.source_digest.clone(),
         policy_digest: source.policy_digest.clone(),
-        callbacks_observed: vec!["cycle18_taskful_callback".into()],
+        callbacks_observed: vec![source.callback_name.clone()],
         observation_count: bundle.records.len(),
         no_task_or_deferred_action_observed: false,
     })

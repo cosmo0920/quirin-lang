@@ -1,28 +1,49 @@
 # Cycle 18 callback task handoff
 
-This card adds a generic callback/task/deferred-work lifetime kernel and a
-source-bound no-task disposition for the current selected Monkey callbacks. It
-does not promote aggregate Cycle 18 acceptance.
+This card adds an executable callback/task/deferred-work lifetime boundary. It
+combines a generic Rust kernel, a keyed Lean trace model, source-derived
+operations for a bounded pthread fixture, a fresh native run, and a separate
+no-task disposition for the current selected Monkey callbacks. It does not
+promote aggregate Cycle 18 acceptance.
 
 ## Scope and result
 
-`qcore-core::callback_task_handoff` now checks callback entry and return,
-task spawn/start/complete, cancellation request/acknowledgement, join,
-post-return deferred work, argument retention/drop and teardown. A callback may
-return while a task or deferred item remains live. Teardown succeeds only after
-every task reaches `Joined` and every deferred item reaches `Completed`.
-Owned callback arguments may cross the return boundary and remain explicit in
-`remaining_argument_custody`; shared arguments may be shared; a frame borrow
-cannot be retained by either kind of work. Identities are single-use within the
-checked operation sequence.
+`qcore-core::callback_task_handoff` checks callback entry and return, task
+spawn/start/complete, cancellation request/acknowledgement, join, post-return
+deferred work, argument retention/drop, and teardown. Callback return may
+precede task join and deferred completion. Teardown requires every owned task to
+be joined and every owned deferred item to be complete. Owned/shared argument
+custody can cross return; frame borrows cannot escape. The certificate reports
+any remaining custody instead of implying release.
 
-The state machine refuses completion before start, join before completion or a
-cancellation acknowledgement, completion racing a cancellation request,
-unknown/duplicate identities, duplicate teardown, argument reuse after drop,
-and argument drop while a callback or retained work can still use it. Deferred
-work has no cancellation transition in this profile; it must run and complete.
+Dropping a shared argument records release of this callback handoff model's own
+shared custody; it does not claim that global shared storage was freed. A frame
+borrow expires at callback return and can never be reported as dropped by the
+callback owner.
 
-The source projection covers all three role-selected Monkey callbacks and all
+The state machine refuses completion before start, join before completion or
+cancel acknowledgement, completion after cancellation request, wrong owners,
+unknown or reused identities, duplicate teardown, argument reuse after drop,
+an attempted frame-borrow drop, and drop while active or retained work can use
+the argument. Deferred work has no cancellation transition in this profile and
+must complete.
+
+`compiler/tests/fixtures/cycle18_task_handoff.c` supplies the bounded positive
+source instance. Typed source projection derives exact helper calls and integer
+identities from `cycle18_taskful_callback` and
+`cycle18_taskful_after_return`. The Linux pthread run executes a worker after
+callback return, records distinct callback/worker pthread identities, observes
+cancel acknowledgement and join, runs deferred work after return, drops the
+owned argument, and tears down. Its twelve source-derived operations exactly
+match the strict observation bundle and pass the generic kernel.
+
+The native JSON is emitted after the pthread join as `causal_replay`. Its row
+order is a checked replay of source operations and explicit synchronization
+edges; it is not a claim about unsynchronized physical execution order or race
+freedom. The claim is lifetime/custody only and does not include payload
+permissions.
+
+The source projection also covers all three selected Monkey callbacks and all
 eight imported paths:
 
 | Callback | Imported paths | Task/defer disposition |
@@ -31,83 +52,106 @@ eight imported paths:
 | `cb_timeout` | 3 | no task/defer effect after complete callee resolution |
 | `cb_wait_2_timeout` | 1 | no calls and no task/defer effect |
 
-Every opaque call in those paths must resolve to one unique effect declaration
-in `contract/qcore/monkey/callback_task_handoff.qcore`. The executable policy
-contains 10 declarations and 38 clauses. Unknown calls, scan-loop effects,
-profile/role/source identity mismatch, missing callbacks or changed path counts
-refuse. The policy declarations are trusted effect assumptions; spelling a call
-does not prove its implementation.
+Every opaque Monkey call must resolve to one unique effect declaration. Missing
+or ambiguous callees, unsupported source effects, changed identities, roles,
+arguments, calls, or path counts refuse. These declarations are explicit
+trusted effect contracts; API spelling alone is not evidence. The executable
+policy has 12 declarations and 66 clauses. The taskful declaration owns the
+artifact, revision, source set, library, import roles, exact call vectors and
+integer identities, and the exact fixture source digest; its primitive
+declaration owns every helper spelling.
+Rust extracts those facts and applies the generic state machine.
 
-The bounded observation checker requires a strict bundle whose producer names
-all three completeness capabilities: callback boundaries, task lifecycle and
-deferred lifecycle. It refuses any task/deferred action, incomplete or
-duplicated callback windows, out-of-order records, and calls outside that
-callback's source-derived callee set. Capability completeness and producer
-truth remain explicit premises. The previously retained Cycle 18 native
-observer did not declare task/deferred lifecycle completeness, so this card
-does not reinterpret its absence of task records as evidence.
+The Monkey observation boundary requires callback-boundary, task-lifecycle, and
+deferred-lifecycle completeness. The retained production archives do not
+carry those capabilities, so this card does not reinterpret missing actions as
+universal absence. The no-task result is source-derived for three callbacks and
+eight paths and observation-bounded only when a capable producer supplies the
+strict bundle.
 
-`QCore.CallbackTaskHandoff` is matching audited Lean for the transition rules:
-frame-borrow escape, argument identity/liveness, cancellation acknowledgement,
-start-before-completion, cancellation/completion refusal, joined-task and
-completed-deferred teardown, and explicit remaining owned custody. The Lean to
-Rust correspondence remains review-maintained under standing constraint 28.
+`QCore.CallbackTaskHandoff` now includes a keyed whole-trace state machine, not
+only pointwise transition predicates. It models callback/task/deferred/argument
+maps, owner checks, identity non-reuse, retained argument drop, frame-borrow
+drop refusal, canonical certificate ordering, teardown, operation sequencing,
+and certificate construction. The audited positive trace
+constructs the exact fixture certificate; audited negative traces cover wrong
+owners, identity reuse, retention, and premature teardown. Lean/Rust
+correspondence remains review-maintained under standing constraint 28.
 
-## Audit route
+## Audit route and provenance
 
-`quirin-audit callback-task-handoff CONFIG.json` loads the pinned, configured
-Monkey typed source through the existing source-input boundary, rechecks the
-bundled policy bytes, consumes the strict observation bundle, re-runs source
-identity before publication, refuses report aliases to inputs and writes an
-atomic report carrying artifact, property, semantic profile, scope, bounds,
-assumptions and evidence version.
+`quirin-audit callback-task-handoff-fixture CONFIG.json` reimports both fixture
+functions from the pinned source profile, projects their exact operations,
+requires an exact observation match, runs the kernel, and publishes an atomic
+report. Its strict producer manifest binds the fixture, selected profile,
+policy, actual gateway compiler program/full version/target, exact sanitizer
+compile argv, binary bytes, exact run argv and exit, stdout/empty-stderr bytes,
+the explicit `ASAN_OPTIONS=detect_leaks=0` run environment, observation bytes,
+and callback/worker thread identities. Leak detection is disabled because it
+cannot run under the supervised host's ptrace boundary; the claim is
+AddressSanitizer/UBSan only. The audit protects
+and rechecks the manifest, profile file and directory, source, policy,
+observation, binary, compiler, and configuration, and refuses report aliases.
+The profile pin is `cc3910a46594d839aad6a83bd8fe45fca769e20e`, the first commit
+that contains the exact fixture bytes; it is not the older Cycle 18 base.
+Producer truth and the declared helper effects remain explicit trust bounds.
+
+`quirin-audit callback-task-handoff CONFIG.json` is the corresponding configured
+Monkey route. It loads pinned typed source, verifies the bundled policy,
+consumes a strict capability-bearing bundle, rechecks all source inputs, and
+publishes the same verdict-contract fields.
 
 ## Validation
 
-The final focused commands, exits and private logs are recorded in
-`gate.json`. The focused result is 10 core tests, 7 verification tests, a clean
-all-target audit build, formatting, and 16 audited Lean theorems. The worktree's
-first mistakenly broad Cargo selector also ran the `qcore-core` library's
-host-sensitive native rows: 1,000 passed and six failed because this isolated
-run did not satisfy those rows' host setup. That attempt is not used as card
-evidence; focused reruns pass, and the integrator owns the standing gate.
+Final commands, exits, counts, and private log paths are recorded in
+`gate.json`. The native producer was compiled with pthreads and
+AddressSanitizer/UBSan, exited zero, and produced empty sanitizer stderr.
+Focused Rust tests cover positive post-return handoff and negative owner,
+identity, transition, capability, source-call and observation substitutions.
+The Lean audit contains 26 placeholder-free theorem audits. The integrator owns
+the standing full gate.
+
+`run-evidence.sh OUTPUT_DIRECTORY` is the shipped bounded reproduction route.
+It builds and runs the native producer, constructs the joined manifest, runs
+the configured positive audit, and writes separate logs for five refusing
+controls. The observation, helper-body source and profile controls recompute
+the affected manifest hashes; the helper-body control keeps the imported call
+summaries unchanged and is refused by the Quirin source digest. The stderr
+control also recomputes its hash and proves that
+nonempty raw stderr refuses; the artifact control exercises Quirin-owned
+artifact acceptance. The archived JSON is the fresh positive output of that
+route. The private output and per-control logs are named in `gate.json`.
+
+A mistakenly broad early Cargo selector ran host-sensitive `qcore-core` native
+rows without their required host setup: 1,000 passed and six failed. That run
+is not evidence for this card; all final commands are focused.
 
 ## Residual discharge conditions
 
-- **`CYCLE18-TASK-OBSERVER-CAPABILITY`.** Deploy task/deferred lifecycle hooks
-  in the native observer, bind their producer/build identity, run all three
-  selected callbacks and feed that complete bundle through the configured
-  audit. Until then the observation arm is a usable rejecting boundary, not a
-  native coverage claim.
-- **`CYCLE18-TASK-HANDOFF-SOURCE-POSITIVE`.** Bind a real supported callback
-  whose imported source invokes a declared task API, derive its captures and
-  argument lifetime, and join that source projection to task/deferred native
-  actions. Generic model tests are not application evidence.
+- **`CYCLE18-TASK-HANDOFF-PRODUCTION-POSITIVE`.** Bind the taskful projection
+  and capable native producer to a supported production callback. Monkey is
+  task-free under declared effects; the positive taskful instance is the
+  checked-in generic fixture.
 - **`CYCLE18-TASK-CANCEL-RACE`.** Define and prove arbitration for completion
-  racing a cancellation request, then add source and observation vocabulary.
-  The current profile refuses that transition.
-- **`CYCLE18-DEFERRED-CANCELLATION`.** Add a deferred-work cancellation and
-  acknowledgement protocol or keep requiring run-to-completion. No implicit
-  cancellation is inferred.
-- **`CYCLE18-TASK-EFFECT-DERIVATION`.** Replace trusted per-callee effect
-  declarations with checked body/provider derivation. Unknown callees already
-  refuse.
-- **`CYCLE18-TASK-EVENT-COMPOSITION`.** Bind the generic callback identity and
-  quiescence result to the selected `event_reactor` event generation before an
-  aggregate event-program certificate can use it.
+  racing cancellation. The current profile refuses that transition.
+- **`CYCLE18-DEFERRED-CANCELLATION`.** Add a deferred cancellation and
+  acknowledgement protocol or retain the run-to-completion restriction.
+- **`CYCLE18-TASK-EFFECT-DERIVATION`.** Replace trusted helper/callee effect
+  declarations with checked body or provider derivation.
+- **`CYCLE18-TASK-EVENT-COMPOSITION`.** Bind the handoff certificate to the
+  selected `event_reactor` event generation before aggregate use.
+- **`CYCLE18-TASK-NATIVE-GENERALIZATION`.** Replace the bounded fixture producer
+  with a reusable instrumentation route while preserving manifest and
+  completeness semantics.
 
 ## Integrator reconciliation list
 
-1. Update the contract corpus pin by **+1 module / +38 clauses** for
-   `contract/qcore/monkey/callback_task_handoff.qcore`; do not alter resource
-   selection counts.
-2. Register the new Lean audit in merged audit counts and preserve
-   `proof/QCore.lean`'s import.
+1. Update the contract corpus pin by **+1 module / +66 clauses** for
+   `contract/qcore/monkey/callback_task_handoff.qcore`; resource selections do
+   not change.
+2. Register 26 new Lean theorem audits and preserve `proof/QCore.lean`'s import.
 3. Carry the six residual names above into the acceptance matrix or record a
-   grounded disposition for each. This card retires no existing matrix entry
-   by itself.
-4. Keep status at no aggregate Cycle 18 promotion. The source result is three
-   callbacks/eight paths with declared no-task effects; it is not positive
-   callback/task execution evidence.
-5. Reconcile the new `qcore-audit` CLI route with sibling command additions if
-   `crates/qcore-audit/src/main.rs` conflicts during integration.
+   grounded disposition for each.
+4. Keep status at no aggregate Cycle 18 promotion. The bounded taskful fixture
+   establishes the generic mechanism; it is not production taskful coverage.
+5. Reconcile both `qcore-audit` CLI routes with sibling command additions.

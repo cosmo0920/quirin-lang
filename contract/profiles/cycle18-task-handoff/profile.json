@@ -3,7 +3,7 @@
   "source_set": "cycle18-task-handoff",
   "pins": {
     "fixture": {
-      "git_commit": "229578d8ad617803bed3f02bcc1f0f59251d560d",
+      "git_commit": "cc3910a46594d839aad6a83bd8fe45fca769e20e",
       "clean_paths": [],
       "description": "checked-in bounded callback task-handoff fixture"
     }

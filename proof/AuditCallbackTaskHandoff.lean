@@ -24,11 +24,15 @@ open QCore.CallbackTaskHandoff
 #print axioms duplicate_deferred_identity_refuses
 #print axioms wrong_task_owner_refuses
 #print axioms retained_argument_cannot_drop
+#print axioms borrowed_frame_cannot_drop_after_return
 #print axioms teardown_requires_join_and_completion
 #print axioms undropped_argument_is_in_constructed_certificate
+#print axioms remaining_custody_is_canonical_by_argument_identity
 
 example : taskStep .running .cancelRequested = true := by decide
 example : taskStep .cancelRequested .joined = false := by decide
 example : deferredStep .running .completed = true := by decide
 example : quiescent ⟨false, [], []⟩ = false := by decide
 example : checkTrace taskfulAcceptedTrace = some ⟨[1], [10], [20], [100], []⟩ := by decide
+example : run [.callbackEnter 1 100 .borrowedFrame, .callbackExit 1,
+  .dropArgument 100] = none := by decide

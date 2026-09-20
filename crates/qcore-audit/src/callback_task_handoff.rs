@@ -1,5 +1,6 @@
 //! Configured audit for the Cycle 18 callback task-handoff boundary.
 
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -12,7 +13,7 @@ use qcore_verification::callback_task_handoff::{
     CALLBACK_TASK_HANDOFF_EVIDENCE_VERSION, CALLBACK_TASK_HANDOFF_POLICY,
     CallbackTaskObservationBundle, check_callback_task_observations,
     check_taskful_callback_observations, project_callback_task_source,
-    project_taskful_callback_source,
+    project_taskful_callback_source, taskful_fixture_contract,
 };
 use serde::{Deserialize, Serialize};
 
@@ -43,6 +44,7 @@ pub struct TaskfulFixtureConfig {
     pub policy: PathBuf,
     pub observations: PathBuf,
     pub observer_binary: PathBuf,
+    pub runtime_stderr: PathBuf,
     pub compiler: PathBuf,
     pub run_manifest: PathBuf,
     pub report: PathBuf,
@@ -63,6 +65,7 @@ struct TaskfulRunManifest {
     compile_argv: Vec<String>,
     binary_sha256: String,
     run_argv: Vec<String>,
+    run_environment: BTreeMap<String, String>,
     run_exit: i32,
     runtime_stdout_sha256: String,
     runtime_stderr_sha256: String,
@@ -217,30 +220,58 @@ pub fn run_taskful_fixture_config(path: &Path) -> Result<(), String> {
     let policy_path = resolve(base, &config.policy);
     let observation_path = resolve(base, &config.observations);
     let binary_path = resolve(base, &config.observer_binary);
+    let stderr_path = resolve(base, &config.runtime_stderr);
     let compiler_path = resolve(base, &config.compiler);
     let manifest_path = resolve(base, &config.run_manifest);
     let report_path = resolve(base, &config.report);
-    let source_bytes = fs::read(&source_path).map_err(|error| error.to_string())?;
+    let source_bytes =
+        fs::read(&source_path).map_err(|error| format!("read taskful source: {error}"))?;
     let source_text = std::str::from_utf8(&source_bytes).map_err(|error| error.to_string())?;
-    let policy_bytes = fs::read(&policy_path).map_err(|error| error.to_string())?;
+    let policy_bytes =
+        fs::read(&policy_path).map_err(|error| format!("read taskful policy: {error}"))?;
     if policy_bytes != CALLBACK_TASK_HANDOFF_POLICY.as_bytes() {
         return Err("configured callback task-handoff policy differs from the verifier".into());
     }
-    let observation_bytes = fs::read(&observation_path).map_err(|error| error.to_string())?;
+    let observation_bytes = fs::read(&observation_path)
+        .map_err(|error| format!("read taskful observations: {error}"))?;
     let observations: CallbackTaskObservationBundle =
         serde_json::from_slice(&observation_bytes).map_err(|error| error.to_string())?;
-    let binary_bytes = fs::read(&binary_path).map_err(|error| error.to_string())?;
+    let binary_bytes =
+        fs::read(&binary_path).map_err(|error| format!("read taskful observer binary: {error}"))?;
+    let stderr_bytes =
+        fs::read(&stderr_path).map_err(|error| format!("read taskful runtime stderr: {error}"))?;
     if binary_bytes.is_empty() {
         return Err("taskful observer binary is empty".into());
     }
-    let manifest_bytes = fs::read(&manifest_path).map_err(|error| error.to_string())?;
+    let manifest_bytes =
+        fs::read(&manifest_path).map_err(|error| format!("read taskful run manifest: {error}"))?;
     let manifest: TaskfulRunManifest =
         serde_json::from_slice(&manifest_bytes).map_err(|error| error.to_string())?;
-    let profile_path = profile_directory.join("profile.json");
-    let profile_bytes = fs::read(&profile_path).map_err(|error| error.to_string())?;
-    let compiler_identity = qcore_c_gateway::ClangIdentity::capture()?;
-    let source_name = source_path.to_string_lossy().into_owned();
-    let binary_name = binary_path.to_string_lossy().into_owned();
+    let fixture_contract = taskful_fixture_contract()
+        .map_err(|error| format!("load taskful fixture policy: {error:?}"))?;
+    if config.artifact != fixture_contract.artifact {
+        return Err("configured taskful artifact differs from the policy".into());
+    }
+    let source_sha256 = sha256_hex(&source_bytes);
+    if source_sha256 != fixture_contract.source_sha256 {
+        return Err("configured taskful source bytes differ from the policy".into());
+    }
+    let selected_profile_directory = profile_directory.join(&fixture_contract.source_set);
+    let profile_path = selected_profile_directory.join("profile.json");
+    let profile_bytes =
+        fs::read(&profile_path).map_err(|error| format!("read taskful profile: {error}"))?;
+    let compiler_identity = qcore_c_gateway::ClangIdentity::capture()
+        .map_err(|error| format!("capture taskful compiler: {error}"))?;
+    let source_name = source_path
+        .canonicalize()
+        .map_err(|error| format!("resolve taskful source: {error}"))?
+        .to_string_lossy()
+        .into_owned();
+    let binary_name = binary_path
+        .canonicalize()
+        .map_err(|error| format!("resolve taskful observer binary: {error}"))?
+        .to_string_lossy()
+        .into_owned();
     let compiler_name = compiler_path.to_string_lossy().into_owned();
     let expected_compile_argv = vec![
         compiler_name.clone(),
@@ -255,41 +286,100 @@ pub fn run_taskful_fixture_config(path: &Path) -> Result<(), String> {
         "-o".into(),
         binary_name.clone(),
     ];
-    if manifest.schema_version != 1
-        || manifest.platform != "linux"
-        || manifest.threading != "pthreads"
-        || manifest.source_sha256 != sha256_hex(&source_bytes)
-        || manifest.profile_sha256 != sha256_hex(&profile_bytes)
-        || manifest.policy_sha256 != sha256_hex(&policy_bytes)
-        || manifest.binary_sha256 != sha256_hex(&binary_bytes)
-        || manifest.observations_sha256 != sha256_hex(&observation_bytes)
-        || manifest.runtime_stdout_sha256 != manifest.observations_sha256
-        || manifest.runtime_stderr_sha256 != sha256_hex(b"")
-        || manifest.run_exit != 0
-        || manifest.compile_argv != expected_compile_argv
-        || manifest.run_argv != [binary_name]
-        || manifest.compiler_program != compiler_identity.program()
-        || manifest.compiler_version != compiler_identity.version()
-        || manifest.compiler_target != compiler_identity.target()
-        || manifest.compiler_program != compiler_name
-        || manifest.callback_thread == manifest.worker_thread
-    {
-        return Err("taskful producer manifest does not match configured inputs/run".into());
+    let expected_run_environment = [("ASAN_OPTIONS".to_owned(), "detect_leaks=0".to_owned())]
+        .into_iter()
+        .collect();
+    let mismatches = [
+        ("schema", manifest.schema_version != 1),
+        ("platform", manifest.platform != "linux"),
+        ("threading", manifest.threading != "pthreads"),
+        (
+            "source",
+            manifest.source_sha256 != sha256_hex(&source_bytes),
+        ),
+        (
+            "profile",
+            manifest.profile_sha256 != sha256_hex(&profile_bytes),
+        ),
+        (
+            "policy",
+            manifest.policy_sha256 != sha256_hex(&policy_bytes),
+        ),
+        (
+            "binary",
+            manifest.binary_sha256 != sha256_hex(&binary_bytes),
+        ),
+        (
+            "observations",
+            manifest.observations_sha256 != sha256_hex(&observation_bytes),
+        ),
+        (
+            "stdout",
+            manifest.runtime_stdout_sha256 != manifest.observations_sha256,
+        ),
+        (
+            "stderr",
+            manifest.runtime_stderr_sha256 != sha256_hex(&stderr_bytes) || !stderr_bytes.is_empty(),
+        ),
+        ("run_exit", manifest.run_exit != 0),
+        (
+            "compile_argv",
+            manifest.compile_argv != expected_compile_argv,
+        ),
+        ("run_argv", manifest.run_argv != [binary_name]),
+        (
+            "run_environment",
+            manifest.run_environment != expected_run_environment,
+        ),
+        (
+            "compiler_program",
+            manifest.compiler_program != compiler_identity.program(),
+        ),
+        (
+            "compiler_version",
+            manifest.compiler_version != compiler_identity.version(),
+        ),
+        (
+            "compiler_target",
+            manifest.compiler_target != compiler_identity.target(),
+        ),
+        (
+            "configured_compiler",
+            manifest.compiler_program != compiler_name,
+        ),
+        (
+            "threads",
+            manifest.callback_thread == manifest.worker_thread,
+        ),
+    ]
+    .into_iter()
+    .filter_map(|(name, mismatch)| mismatch.then_some(name))
+    .collect::<Vec<_>>();
+    if !mismatches.is_empty() {
+        return Err(format!(
+            "taskful producer manifest does not match configured inputs/run: {}",
+            mismatches.join(", ")
+        ));
     }
-    let profile = load_source_set_profile(&profile_directory, "cycle18-task-handoff")
-        .map_err(|error| error.to_string())?;
+    let profile = load_source_set_profile(&profile_directory, &fixture_contract.source_set)
+        .map_err(|error| format!("load taskful profile: {error}"))?;
+    let import_role = |role: &str| match role {
+        "Callback" => Ok(ImportRole::Callback),
+        "Wrapper" => Ok(ImportRole::Wrapper),
+        _ => Err(format!("unsupported taskful import role `{role}`")),
+    };
     let import = |role| {
         import_source_functions_from_profile(
             &C11TranslationUnit {
                 source: source_text,
                 ..Default::default()
             },
-            "229578d8ad617803bed3f02bcc1f0f59251d560d",
+            &fixture_contract.source_revision,
             &profile,
-            "fixture",
+            &fixture_contract.library,
             role,
         )
-        .map_err(|error| error.to_string())?
+        .map_err(|error| format!("import taskful source: {error}"))?
         .into_iter()
         .map(|result| match result {
             SourceResult::Summary(summary) => Ok(summary),
@@ -299,13 +389,19 @@ pub fn run_taskful_fixture_config(path: &Path) -> Result<(), String> {
         })
         .collect::<Result<Vec<_>, String>>()
     };
-    let callbacks = import(ImportRole::Callback)?;
-    let wrappers = import(ImportRole::Wrapper)?;
+    let callbacks = import(import_role(&fixture_contract.callback_role)?)?;
+    let wrappers = import(import_role(&fixture_contract.after_role)?)?;
     let ([callback], [after_return]) = (callbacks.as_slice(), wrappers.as_slice()) else {
         return Err("taskful fixture did not import exactly one callback and wrapper".into());
     };
-    let projection = project_taskful_callback_source(callback, after_return)
-        .map_err(|error| format!("taskful source projection refused: {error:?}"))?;
+    if callback.function() != fixture_contract.callback
+        || after_return.function() != fixture_contract.after_function
+    {
+        return Err("taskful imported function names differ from the policy".into());
+    }
+    let projection =
+        project_taskful_callback_source(&config.artifact, &source_sha256, callback, after_return)
+            .map_err(|error| format!("taskful source projection refused: {error:?}"))?;
     let certificate = check_taskful_callback_observations(&projection, &observations)
         .map_err(|error| format!("taskful observation refused: {error:?}"))?;
     let callback_threads = observations
@@ -335,6 +431,7 @@ pub fn run_taskful_fixture_config(path: &Path) -> Result<(), String> {
         policy_path.clone(),
         observation_path.clone(),
         binary_path.clone(),
+        stderr_path.clone(),
         compiler_path.clone(),
         manifest_path.clone(),
         profile_path.clone(),
@@ -342,13 +439,14 @@ pub fn run_taskful_fixture_config(path: &Path) -> Result<(), String> {
     reject_report_aliases(
         &report_path,
         &protected,
-        std::slice::from_ref(&profile_directory),
+        std::slice::from_ref(&selected_profile_directory),
     )?;
     if fs::read(&config_path).map_err(|error| error.to_string())? != config_bytes
         || fs::read(&source_path).map_err(|error| error.to_string())? != source_bytes
         || fs::read(&policy_path).map_err(|error| error.to_string())? != policy_bytes
         || fs::read(&observation_path).map_err(|error| error.to_string())? != observation_bytes
         || fs::read(&binary_path).map_err(|error| error.to_string())? != binary_bytes
+        || fs::read(&stderr_path).map_err(|error| error.to_string())? != stderr_bytes
         || fs::read(&manifest_path).map_err(|error| error.to_string())? != manifest_bytes
         || fs::read(&profile_path).map_err(|error| error.to_string())? != profile_bytes
         || qcore_c_gateway::ClangIdentity::capture()? != compiler_identity

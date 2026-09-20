@@ -273,7 +273,8 @@ def step (state : TraceState) : Operation → Option TraceState
       match lookup argument state.arguments with
       | some record =>
           let active := state.callbacks.any fun (_, cb) => cb.argument == argument && cb.running
-          if !record.live || active || taskRetains state argument || deferredRetains state argument then none
+          if !record.live || record.lifetime == .borrowedFrame || active ||
+              taskRetains state argument || deferredRetains state argument then none
           else some { state with
             arguments := replace argument { record with live := false } state.arguments
             dropped := state.dropped ++ [argument] }
@@ -300,6 +301,14 @@ structure TraceCertificate where
   remainingArgumentCustody : List ArgumentId
   deriving DecidableEq, Repr
 
+def insertArgumentId (value : ArgumentId) : List ArgumentId → List ArgumentId
+  | [] => [value]
+  | head :: tail => if value ≤ head then value :: head :: tail
+      else head :: insertArgumentId value tail
+
+def sortArgumentIds (values : List ArgumentId) : List ArgumentId :=
+  values.foldl (fun sorted value => insertArgumentId value sorted) []
+
 def finish (state : TraceState) : Option TraceCertificate :=
   let incomplete := state.callbacks.any fun (callback, record) =>
     record.running || !state.tornDown.contains callback
@@ -308,7 +317,7 @@ def finish (state : TraceState) : Option TraceCertificate :=
     tasksJoined := state.joined
     deferredCompleted := state.deferredCompleted
     argumentsDropped := state.dropped
-    remainingArgumentCustody := state.arguments.filterMap fun (argument, record) =>
+    remainingArgumentCustody := sortArgumentIds <| state.arguments.filterMap fun (argument, record) =>
       if record.live && record.lifetime != .borrowedFrame then some argument else none }
 
 def checkTrace (operations : List Operation) : Option TraceCertificate :=
@@ -350,6 +359,10 @@ theorem retained_argument_cannot_drop :
     run [.callbackEnter 1 100 .owned, .spawnTask 1 10 true,
       .callbackExit 1, .dropArgument 100] = none := by decide
 
+theorem borrowed_frame_cannot_drop_after_return :
+    run [.callbackEnter 1 100 .borrowedFrame, .callbackExit 1,
+      .dropArgument 100, .teardown 1] = none := by decide
+
 theorem teardown_requires_join_and_completion :
     run [.callbackEnter 1 100 .owned, .spawnTask 1 10 true,
       .registerDeferred 1 20 true, .callbackExit 1, .teardown 1] = none := by decide
@@ -357,5 +370,10 @@ theorem teardown_requires_join_and_completion :
 theorem undropped_argument_is_in_constructed_certificate :
     checkTrace [.callbackEnter 1 100 .owned, .callbackExit 1, .teardown 1] =
       some ⟨[1], [], [], [], [100]⟩ := by decide
+
+theorem remaining_custody_is_canonical_by_argument_identity :
+    checkTrace [.callbackEnter 1 200 .owned, .callbackExit 1, .teardown 1,
+      .callbackEnter 2 100 .owned, .callbackExit 2, .teardown 2] =
+      some ⟨[1, 2], [], [], [], [100, 200]⟩ := by decide
 
 end QCore.CallbackTaskHandoff

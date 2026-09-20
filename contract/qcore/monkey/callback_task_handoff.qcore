@@ -49,7 +49,15 @@ contract {
 
 extern fn taskful_fixture_source() -> unit
 contract {
+    ensures normal artifact == "compiler/tests/fixtures/cycle18_task_handoff.c";
     ensures normal callback == "cycle18_taskful_callback";
+    ensures normal after_function == "cycle18_taskful_after_return";
+    ensures normal source_revision == "cc3910a46594d839aad6a83bd8fe45fca769e20e";
+    ensures normal source_sha256 == "99096d4ea8edd59f90f93abf1ec33eb0559e441eb5672d4e556f21d1e43b4076";
+    ensures normal library == "fixture";
+    ensures normal source_set == "cycle18-task-handoff";
+    ensures normal callback_role == "Callback";
+    ensures normal after_role == "Wrapper";
     ensures normal callback_calls == "qcore_task_spawn(1,10,100,1);qcore_defer_register(1,20,100,1)";
     ensures normal after_calls == "qcore_task_release(10);qcore_task_cancel_request(1,10);qcore_task_wait_cancel_ack(10);qcore_task_join(1,10);qcore_defer_start(20);qcore_defer_complete(20);qcore_argument_drop(100);qcore_callback_teardown(1)";
     ensures normal callback_id == 1;
@@ -57,4 +65,20 @@ contract {
     ensures normal work_id == 20;
     ensures normal argument_id == 100;
     ensures normal retains_argument == 1;
+};
+
+extern fn taskful_fixture_primitives() -> unit
+contract {
+    ensures normal spawn == "qcore_task_spawn";
+    ensures normal defer_register == "qcore_defer_register";
+    ensures normal task_start == "qcore_task_release";
+    ensures normal cancel_request == "qcore_task_cancel_request";
+    ensures normal cancel_ack == "qcore_task_wait_cancel_ack";
+    ensures normal task_join == "qcore_task_join";
+    ensures normal deferred_start == "qcore_defer_start";
+    ensures normal deferred_complete == "qcore_defer_complete";
+    ensures normal argument_drop == "qcore_argument_drop";
+    ensures normal teardown == "qcore_callback_teardown";
+    ensures normal observe_enter == "qcore_observe_callback_enter";
+    ensures normal observe_exit == "qcore_observe_callback_exit";
 };
