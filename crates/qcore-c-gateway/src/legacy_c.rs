@@ -1193,8 +1193,10 @@ pub struct LegacyCertificateScope {
 
 /// Caller-held expectation for the artifact, target denominator and scope a
 /// certificate is allowed to describe. A checker that needs to authenticate
-/// the intended audit target supplies this independently of the certificate;
+/// the intended artifact target supplies this independently of the certificate;
 /// copying it out of the certificate proves only structural self-consistency.
+/// Compiler/build provenance and the caller-intended contract/profile trust
+/// context remain external to this target-scope record.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LegacyCertificateExpectedContext {
     pub inventory_sha256: String,
@@ -1412,7 +1414,7 @@ fn build_certificate_scope_from_evidence(
     })
 }
 
-/// Independently derive the expected certificate context from the intended
+/// Independently derive the expected artifact/scope context from the intended
 /// translation unit. Persist this beside the audit request (or derive it again)
 /// and pass it to [`check_legacy_safety_certificate_for`] when the intended
 /// scope, rather than certificate self-consistency alone, must be authenticated.
@@ -1865,16 +1867,6 @@ pub fn check_legacy_safety_certificate(
     {
         return Err("certificate target inventory digest does not match its rows".into());
     }
-    let expected_identity = certificate_input_identity(
-        certificate.dialect,
-        certificate.function_scope,
-        &certificate.preprocessed_source,
-        &certificate.target_scope.evidence,
-        &certificate.target_scope.request,
-    );
-    if certificate.target_scope.input_identity != expected_identity {
-        return Err("certificate effective input identity does not match its artifacts".into());
-    }
     let selected = match certificate.function_scope {
         LegacyFunctionScope::PreprocessedTranslationUnit => None,
         LegacyFunctionScope::MainSourceDefinitions => Some(target_names.as_slice()),
@@ -1905,6 +1897,16 @@ pub fn check_legacy_safety_certificate(
     }
     if recomputed.summary != certificate.summary {
         return Err("program summary does not match the preprocessed source".into());
+    }
+    let expected_identity = certificate_input_identity(
+        certificate.dialect,
+        certificate.function_scope,
+        &certificate.preprocessed_source,
+        &certificate.target_scope.evidence,
+        &certificate.target_scope.request,
+    );
+    if certificate.target_scope.input_identity != expected_identity {
+        return Err("certificate effective input identity does not match its artifacts".into());
     }
     if certificate.summary.status != AnalysisStatus::Safe {
         return Err("program summary is not Safe".into());

@@ -30,7 +30,8 @@ coherently substituted smaller source is a different, internally valid input.
 context from the caller's `C11TranslationUnit`, and
 `check_legacy_safety_certificate_for` requires the certificate to match it.
 Callers requiring target authentication retain or rederive that context rather
-than copying it out of the certificate.
+than copying it out of the certificate. This authenticates the intended
+artifact/request/scope, not the complete verdict authorization context.
 
 `MainSourceDefinitions` remains an explicit legitimate partial scope: header
 definitions are excluded by the scope label and include-depth attribution,
@@ -85,7 +86,10 @@ resistance, faithful Clang extraction and Rust–Lean correspondence remain
 premises. The certificate request identity does not replace audit-level build
 provenance: compiler executable/version, target environment, filesystem/header
 provenance and checkout identity remain the external `CompileTaskIdentity`
-boundary.
+boundary. The caller-intended contract/profile/trust environment also remains
+external. Ordinary replay checks the certificate's own contract source
+assumptions, but the expected target context does not compare those contracts
+with a separately held caller expectation.
 
 ## Residuals and discharge conditions
 
@@ -97,6 +101,10 @@ boundary.
   (compiler identity, target/environment and dependency provenance) and a
   mismatch test. The present API deliberately calls its inner record a gateway
   request/artifact identity and makes no full-build attestation claim.
+- `CERT-SCOPE-EXPECTED-TRUST-CONTEXT` remains open. Discharge requires a
+  caller-held expected contract/profile/trust identity and a mismatch test;
+  rechecking the certificate's own contract sources is structural containment,
+  not proof that the caller intended that contract environment.
 - SHA-256 collision resistance, faithful C extraction and Rust–Lean
   correspondence remain stated trust premises under standing constraint 28;
   this card does not relabel them proofs.
@@ -119,6 +127,9 @@ worktree submodule initialization is part of that run.
    bind the expected certificate context to `CompileTaskIdentity`, including
    compiler/target/environment and dependency provenance, and exercise a
    mismatch. Do not describe the inner digest as full build provenance.
+   Also add `CERT-SCOPE-EXPECTED-TRUST-CONTEXT`, discharged only when a
+   caller-held expected contract/profile/trust identity is compared and a
+   mismatch is exercised.
 3. **Public interface:** `LegacySafetyCertificate` gains `target_scope`;
    `LegacyCertificate{Coverage,Definition,ScopeEvidence,InputIdentity,Request,
    Scope,ExpectedContext}`, `legacy_certificate_expected_context` and

@@ -186,8 +186,8 @@ pub use legacy_c::{
     UnanalyzableForm, UnrestrictedLegacyResult, analyze_legacy_c,
     analyze_legacy_c_translation_unit, analyze_legacy_c11, analyze_unrestricted_c11,
     analyze_unrestricted_c11_with_inventory, check_legacy_safety_certificate,
-    check_legacy_safety_certificate_for, enumerate_source_definitions,
-    legacy_c_source_functions, legacy_certificate_expected_context, validate_unrestricted_c11,
+    check_legacy_safety_certificate_for, enumerate_source_definitions, legacy_c_source_functions,
+    legacy_certificate_expected_context, validate_unrestricted_c11,
 };
 pub use lexer::{LexError, Span, Token, TokenKind, lex};
 pub use native_concurrency::{
