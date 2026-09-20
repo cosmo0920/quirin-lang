@@ -279,7 +279,7 @@ fn missing_or_substituted_contract_semantics_fail_closed() {
     );
     assert_eq!(
         MonkeyWaitContracts::parse(WRAPPER_CONTRACT, &owned_callback),
-        Err(WaitSourceProjectionError::ContractHeaderMismatch(
+        Err(WaitSourceProjectionError::ContractClauseMismatch(
             wait_callback().into()
         ))
     );
@@ -291,7 +291,7 @@ fn missing_or_substituted_contract_semantics_fail_closed() {
     );
     assert_eq!(
         MonkeyWaitContracts::parse(WRAPPER_CONTRACT, &effectful_callback),
-        Err(WaitSourceProjectionError::ContractHeaderMismatch(
+        Err(WaitSourceProjectionError::ContractClauseMismatch(
             wait_callback().into()
         ))
     );

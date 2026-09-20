@@ -378,12 +378,7 @@ fn check_contract_declaration(
         .ok_or_else(|| WaitSourceProjectionError::ContractClauseMismatch(name.into()))?
         .join("|");
     let policy_function = format!("contract_{name}");
-    let literal = |fact: &str| {
-        contract_fact_literal(source_policy, &policy_function, fact)
-            .map_err(WaitSourceProjectionError::SourcePolicy)
-    };
-    let expected_clause_sequence = literal("clause_sequence")?;
-    let header_facts = vec![
+    let actual_facts = vec![
         (
             "declaration_is_extern",
             ContractFact::Integer(i128::from(
@@ -427,28 +422,9 @@ fn check_contract_declaration(
             ContractFact::Text(parameter_usages.clone()),
         ),
         ("result_type", ContractFact::Text(result_type.clone())),
-        ("clause_sequence", expected_clause_sequence),
-    ];
-    if check_typed_contract_facts(source_policy, &policy_function, &header_facts).is_err() {
-        return Err(WaitSourceProjectionError::ContractHeaderMismatch(
-            name.into(),
-        ));
-    }
-    let clause_facts = vec![
-        ("declaration_is_extern", literal("declaration_is_extern")?),
-        ("declaration_has_body", literal("declaration_has_body")?),
-        ("declaration_is_unsafe", literal("declaration_is_unsafe")?),
-        (
-            "declaration_has_effects",
-            literal("declaration_has_effects")?,
-        ),
-        ("parameter_names", literal("parameter_names")?),
-        ("parameter_types", literal("parameter_types")?),
-        ("parameter_usages", literal("parameter_usages")?),
-        ("result_type", literal("result_type")?),
         ("clause_sequence", ContractFact::Text(clause_sequence)),
     ];
-    if check_typed_contract_facts(source_policy, &policy_function, &clause_facts).is_err() {
+    if check_typed_contract_facts(source_policy, &policy_function, &actual_facts).is_err() {
         return Err(WaitSourceProjectionError::ContractClauseMismatch(
             name.into(),
         ));
@@ -788,6 +764,30 @@ int _mk_event_wait_with_flags(struct mk_event_loop *loop, int flags)
         changed.push_str(replacement);
         changed.push_str(&source[offset + needle.len()..]);
         changed
+    }
+
+    #[test]
+    fn contract_policy_checks_one_full_actual_fact_vector() {
+        let expected_clause =
+            "requires:callback_argument_is_borrowed|normal:callback_has_no_resource_effect";
+        let policy = WAIT_SOURCE_POLICY
+            .replace(
+                "    ensures normal parameter_names == \"callback_argument\";\n",
+                "",
+            )
+            .replace(
+                &format!("    ensures normal clause_sequence == \"{expected_clause}\";\n"),
+                &format!(
+                    "    ensures normal (parameter_names == \"callback_argument\") or (clause_sequence == \"{expected_clause}\");\n"
+                ),
+            );
+        let changed = COMPOSITION_CONTRACT.replace("callback_argument", "changed_argument");
+        assert_eq!(
+            MonkeyWaitContracts::parse_with_source_policy(WRAPPER_CONTRACT, &changed, &policy,),
+            Err(WaitSourceProjectionError::ContractClauseMismatch(
+                wait_callback().into()
+            ))
+        );
     }
 
     #[test]
