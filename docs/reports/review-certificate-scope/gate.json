@@ -1,6 +1,13 @@
 {
-  "card": "E01-TAIL-CERT-SCOPE",
-  "base": "a8f2048d",
-  "standing_gate": "pending final measurement",
-  "note": "Final exits, counts and private log paths are filled only from the completed worktree-private run."
+  "note": "Certificate-scope card, 2026-09-20. The full workspace run at 9c270eb7869fa594399eec814b38e80ceb8236f5 completed with 4,895 passed, 0 failed and 10 ignored over 254 strict test-result summaries. The only later source commit, af88325b7cf035bd5f0f7003dee530d0a1730228, makes four Clippy-only cleanups: two expression simplifications and two documented localized lint allowances preserving the public by-value result and explicit private evidence boundary. At that final card tip, five directly affected test binaries completed with 54 passed, 0 failed and 1 ignored; fmt, workspace/all-target Clippy, both reevaluation probes, 151 Lean audits and 313 Python tests all exited 0. The integration gate re-runs the full workspace at the final combined tip. Initial submodule initialization failed only because sandboxing denied the linked worktree git-module directory; the approved retry exited 0 at pinned libevent d82464a2. Initial sandbox Rust and later superseded Rust attempts are retained and are not counted. The initial Clippy run exposed the four corrected findings. The initial Python run correctly rejected the stale 150-audit derived matrix; regeneration preserved carried fields and changed only the audit count/list, after which all 313 passed. One mistyped nonexistent follow-up example is retained separately and is not a gate attempt. Provider 122 is carried, not remeasured; provider/schema packages are unchanged. No corpus, CT or conformance count is promoted. Private logs: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-review-cert-scope/measure/review-certificate-scope-final/.",
+  "workspace_tests": 4895,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 313,
+  "lean_audits": 151,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "pass; full Rust precedes mechanical Clippy cleanup, with affected tests and all remaining steps at final card tip; integration owns final combined full-Rust replay",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
 }
