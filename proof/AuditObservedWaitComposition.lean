@@ -18,3 +18,4 @@ import QCore.ObservedWaitComposition
 #print axioms QCore.ObservedWaitComposition.a_substituted_policy_digest_refuses
 #print axioms QCore.ObservedWaitComposition.a_missing_callback_identity_refuses
 #print axioms QCore.ObservedWaitComposition.a_mutated_record_clause_refuses_the_eleven_record_profile
+#print axioms QCore.ObservedWaitComposition.deleting_the_self_binding_clause_cannot_bypass_stale_context

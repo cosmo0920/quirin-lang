@@ -344,6 +344,24 @@ fn declarative_identity_policy_is_load_bearing_and_exactly_bound() {
         .is_err()
     );
 
+    // Deleting the policy's own digest-equality clause cannot bypass the
+    // immutable selected-policy admission check under a stale context.
+    let missing_self_binding = DEFAULT_WAIT_IDENTITY_POLICY.replace(
+        "    ensures normal observation_rules_sha256_actual == observation_rules_sha256_expected;\n",
+        "",
+    );
+    assert_ne!(missing_self_binding, DEFAULT_WAIT_IDENTITY_POLICY);
+    assert!(
+        check_observed_wait_composition_with_policy(
+            &source,
+            &default_admitted,
+            &observations,
+            &bindings,
+            &missing_self_binding,
+        )
+        .is_err()
+    );
+
     // Rebinding policy identity does not manufacture a producer fact. The
     // fixture still reports producer-supplied runtime evidence, so a policy
     // mutation demanding attested evidence refuses.

@@ -259,4 +259,18 @@ theorem a_mutated_record_clause_refuses_the_eleven_record_profile
     (facts.recordBound == 12) = false := by
   simp [records]
 
+/-! The selected policy's byte identity is admitted before any policy clause
+is executed. This relation is deliberately outside `waitIdentityPolicyAdmitted`:
+deleting a policy's self-binding clause cannot authorize its own bytes. -/
+
+def selectedPolicyIdentityAdmitted
+    (contextDigest selectedPolicyDigest : String) : Bool :=
+  decide (contextDigest = selectedPolicyDigest)
+
+theorem deleting_the_self_binding_clause_cannot_bypass_stale_context
+    (contextDigest selectedPolicyDigest : String)
+    (stale : contextDigest ≠ selectedPolicyDigest) :
+    selectedPolicyIdentityAdmitted contextDigest selectedPolicyDigest = false := by
+  simp [selectedPolicyIdentityAdmitted, stale]
+
 end QCore.ObservedWaitComposition
