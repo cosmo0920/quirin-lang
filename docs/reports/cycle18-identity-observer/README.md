@@ -29,11 +29,15 @@ The native harness includes the authenticated Monkey `mk_event.c` from Fluent
 Bit revision `66910c10a4d7eafa810b84229cf2dcf7b0f26f97` and interposes its Libevent
 calls. It calls the real source wrapper and observes actual base, event,
 argument, callback target, callback flags, priority, return values and backend.
+The `Activate` record is derived from callback delivery with observed
+`EV_TIMEOUT`; the hook does not claim to observe Libevent's internal active
+queue transition.
 The callback writes only to a fixed-size thread-local buffer. It performs no
 allocation, lock or stdio; the harness flushes after `event_base_free`. Pointer
-values are the run-local identities. Generation 1 is assigned by the observer
-to each of the three single-creation slots; reuse and later generations are
-outside this profile.
+values are the run-local identities and are converted to integers before their
+lifetimes end. Generation 1 is assigned by the observer to each singleton
+creation/lifetime in this profile; reuse and later generations are outside this
+profile.
 
 The reproduced Linux run built and linked `libevent_core.a` from the actual
 `third_party/libevent` revision

@@ -56,6 +56,7 @@ struct observer_buffer {
     struct event *event;
     void (*callback)(evutil_socket_t, short, void *);
     void *callback_argument;
+    uintptr_t argument_identity;
     int callback_matches;
 };
 
@@ -115,9 +116,9 @@ static void qcore_event_base_free(struct event_base *base)
 {
     struct observation record = {0};
 
+    record.base = (uintptr_t) base;
     event_base_free(base);
     record.kind = OBS_BASE_FREE;
-    record.base = (uintptr_t) base;
     append_observation(record);
 }
 
@@ -133,6 +134,7 @@ static struct event *qcore_event_new(struct event_base *base,
 
     buffer->callback = callback;
     buffer->callback_argument = argument;
+    buffer->argument_identity = (uintptr_t) argument;
     buffer->callback_matches = callback == cb_wait_2_timeout;
     event = event_new(base, fd, flags, observed_callback, buffer);
     buffer->event = event;
@@ -179,9 +181,9 @@ static void qcore_event_free(struct event *event)
 {
     struct observation record = {0};
 
+    record.event = (uintptr_t) event;
     event_free(event);
     record.kind = OBS_EVENT_FREE;
-    record.event = (uintptr_t) event;
     append_observation(record);
 }
 
@@ -207,7 +209,7 @@ int mk_event_wait_2(struct mk_event_loop *loop, int timeout)
     int result = qcore_source_mk_event_wait_2(loop, timeout);
 
     record.kind = OBS_ARGUMENT_END;
-    record.argument = (uintptr_t) active_observer->callback_argument;
+    record.argument = active_observer->argument_identity;
     append_observation(record);
     return result;
 }

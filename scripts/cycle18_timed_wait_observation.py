@@ -16,12 +16,14 @@ KINDS = ["base_create", "event_new", "event_add", "dispatch_begin", "activate",
          "argument_end", "base_free"]
 
 
-def run(command, *, cwd=None, env=None, stdout=None):
-    subprocess.run(command, cwd=cwd, env=env, stdout=stdout, check=True)
+def run(command, *, cwd=None, env=None, stdout=None, timeout=300):
+    subprocess.run(command, cwd=cwd, env=env, stdout=stdout, check=True,
+                   timeout=timeout)
 
 
 def output(command, *, cwd=None):
-    return subprocess.check_output(command, cwd=cwd, text=True).strip()
+    return subprocess.check_output(command, cwd=cwd, text=True,
+                                   timeout=30).strip()
 
 
 def digest_bytes(value):
@@ -120,7 +122,7 @@ def main():
     environment["ASAN_OPTIONS"] = "detect_leaks=1:halt_on_error=1"
     environment["UBSAN_OPTIONS"] = "halt_on_error=1:print_stacktrace=1"
     with observations_path.open("wb") as stream:
-        run([str(executable)], env=environment, stdout=stream)
+        run([str(executable)], env=environment, stdout=stream, timeout=30)
     records = [json.loads(line) for line in observations_path.read_text().splitlines()]
     if len(records) != 11 or [record["action"]["kind"] for record in records] != KINDS:
         raise SystemExit("native observer did not emit the exact bounded trace")
