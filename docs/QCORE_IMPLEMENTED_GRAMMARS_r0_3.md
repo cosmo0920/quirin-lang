@@ -101,6 +101,50 @@ fn main() -> i32 {
 
 This example does not demonstrate arbitrary allocation ABI support. Source references: `compiler/src/driver.rs:390–610, 724–767, 775–932`.
 
+## G02s. Pure scalar functions (`source.scalar-calls.v1`)
+
+`SOURCE-SCALAR-CALLS-V1` adds the executable subset below. This profile is
+selected after specialized profiles by a nonliteral return/local, an annotated
+local, or an argument-taking statement call to a declared source function.
+Sequential resource intrinsics retain their previous route. It adds no tokens
+or reserved words and does not widen the other profiles.
+
+```ebnf
+function = "fn", NAME, "(", [parameter, {",", parameter}], ")", "->", result,
+           ["effects", "{", "}"], ["contract", "{", "}"],
+           "{", {statement}, "return", [expression], ";", "}" ;
+parameter = NAME, ":", "i32" ;
+result = "i32" | "unit" ;
+statement = "let", NAME, [":", "i32"], "=", expression, ";"
+          | call, ";" ;
+expression = product, {("+" | "-"), product} ;
+product = unary, {("*" | "/" | "%"), unary} ;
+unary = "-", unary | NAT | NAME | call | "(", expression, ")" ;
+call = FUNCTION_NAME, "(", [expression, {",", expression}], ")" ;
+```
+
+Every parameter/local is i32; unit calls cannot occupy an integer position.
+Every definition is checked, including uncalled bodies. Calls must be direct
+and the entire graph acyclic. Locals are immutable, nonshadowing within each
+function, and initializers resolve before binding. All functions end with one
+explicit return. Operands/arguments evaluate left to right; binary operators
+associate left. Literal magnitudes must fit signed i32, including -2147483648.
+
+Arithmetic is checked: overflow and zero division refuse the closed entry at
+check time. MIN/-1 division and remainder both refuse. Division truncates toward
+zero. Emitted C retains calls and guards arithmetic, exiting 86 on a fault;
+a library check makes no claim that every possible argument is overflow-free.
+An executable entry has no parameters. Library modules check definitions but
+publish neither a closed observation nor standalone C.
+
+Limits are 256 functions, expression/call depth 64, 16,384 IR expression nodes,
+16,384 tokens per function, and 100,000 evaluated expression steps. Parser nesting
+and each left-associated binary chain also have a limit of 64. Exceeding any
+limit refuses; no truncation is performed. Control flow, effects, ownership,
+usage annotations, generic/indirect calls, and cross-profile composition remain
+outside this subset. Unsupported ordinary forms use Q020; nonempty contracts
+retain Q021. [Implementation and evidence](reports/source-scalar-calls-v1/README.md).
+
 ## G02a. Scoped-copy task execution
 
 `source.tasks.copy.v1` uses the ordinary compiler commands and requires exactly

@@ -552,6 +552,18 @@ about the C implementation. See
 the [extern-call evidence](reports/extern-call-v1/README.md) and the
 [out/stored extension](reports/extern-call-f1/README.md).
 
+### L14.0. Pure scalar source calls
+
+`source.scalar-calls.v1` checks pure i32/unit functions with immutable scalar
+locals, direct acyclic calls, and checked arithmetic. Its exact grammar and
+bounds are in implemented grammars §G02s. Every definition MUST be type-checked;
+uncalled bodies MUST NOT bypass type, annotation or recursion checks. A closed
+entry observation establishes only that invocation's result, not arithmetic
+safety for every argument to every function. Library mode publishes no closed
+observation. Emission MUST retain the call/value semantics and avoid signed C
+undefined behavior, including MIN/-1 remainder. Ownership-bearing calls,
+runtime control flow and general effect/contract elaboration remain unsupported.
+
 ### L14.1. Unchecked linkage
 
 An external library that has **no contract at all** MAY be linked, under an
@@ -1074,6 +1086,12 @@ the same declared bit-field storage-unit identity. Bit offsets and widths are
 retained but cannot establish disjointness. All bounded source-shape,
 worker-body, capture, join and successful-window grammar refusals remain
 `Q600` under the `Concurrency` pass.
+
+`SOURCE-SCALAR-CALLS-V1` extends the existing OrdinaryTypes pass's Q020
+conditions to scalar-call type/arity errors, unsupported pure-profile forms,
+cycles, syntax/execution bounds, and checked arithmetic failure on the closed
+entry. Nonempty source contracts retain Q021 and an empty contract remains
+admissible. No diagnostic code is allocated; existing routes retain their codes.
 
 ### L21.1 Reason categories for uncovered obligations
 

@@ -185,6 +185,7 @@ pub enum BitfieldTaskAssumption {
 /// modules never carry a sequential CFG with their task operations erased.
 #[derive(Clone, Debug)]
 pub enum CheckedSourceModule {
+    ScalarCalls(Box<qcore_core::scalar_calls::Checked>),
     Sequential(Box<CheckedProgram>),
     ScopedTasks(Box<task_execution::CheckedTaskModule>),
     BitfieldTasks(Box<CheckedBitfieldTaskModule>),
@@ -492,6 +493,7 @@ pub struct ComposedRegionEvidence {
 impl CheckedSourceModule {
     pub fn as_sequential(&self) -> Option<&CheckedProgram> {
         match self {
+            Self::ScalarCalls(_) => None,
             Self::Sequential(program) => Some(program),
             Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -516,7 +518,8 @@ impl CheckedSourceModule {
     /// ask for the composition and see the accounting half beside it.
     pub fn as_scoped_tasks(&self) -> Option<&task_execution::CheckedTaskModule> {
         match self {
-            Self::Sequential(_)
+            Self::ScalarCalls(_)
+            | Self::Sequential(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
@@ -536,7 +539,8 @@ impl CheckedSourceModule {
 
     pub fn as_checked_mutex_guards(&self) -> Option<&CheckedMutexGuardModule> {
         match self {
-            Self::Sequential(_)
+            Self::ScalarCalls(_)
+            | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedEpochBound(_)
@@ -559,7 +563,8 @@ impl CheckedSourceModule {
     /// `as_scoped_tasks` does.
     pub fn as_checked_epoch_bound(&self) -> Option<&CheckedEpochModule> {
         match self {
-            Self::Sequential(_)
+            Self::ScalarCalls(_)
+            | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
@@ -579,7 +584,8 @@ impl CheckedSourceModule {
 
     pub fn as_composed_epoch_tasks(&self) -> Option<&ComposedEpochModule> {
         match self {
-            Self::Sequential(_)
+            Self::ScalarCalls(_)
+            | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
@@ -599,7 +605,8 @@ impl CheckedSourceModule {
 
     pub fn as_extern_calls(&self) -> Option<&CheckedExternModule> {
         match self {
-            Self::Sequential(_)
+            Self::ScalarCalls(_)
+            | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
@@ -619,7 +626,8 @@ impl CheckedSourceModule {
 
     pub fn as_standard_io(&self) -> Option<&CheckedStdIoModule> {
         match self {
-            Self::Sequential(_)
+            Self::ScalarCalls(_)
+            | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
@@ -644,7 +652,8 @@ impl CheckedSourceModule {
     /// one must ask for the composition and see the other beside it.
     pub fn as_composed(&self) -> Option<&CheckedComposedModule> {
         match self {
-            Self::Sequential(_)
+            Self::ScalarCalls(_)
+            | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
@@ -670,7 +679,8 @@ impl CheckedSourceModule {
     /// `tasks()` from it, with the placed lines in view beside it.
     pub fn as_composed_tasks(&self) -> Option<&composed_tasks::CheckedComposedTaskModule> {
         match self {
-            Self::Sequential(_)
+            Self::ScalarCalls(_)
+            | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
@@ -691,7 +701,8 @@ impl CheckedSourceModule {
     /// The checked byte-buffer evidence (card `STD-BUFFER`).
     pub fn as_standard_buffer(&self) -> Option<&CheckedBufferModule> {
         match self {
-            Self::Sequential(_)
+            Self::ScalarCalls(_)
+            | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
@@ -712,7 +723,8 @@ impl CheckedSourceModule {
     /// The checked string-view evidence (card `STRING-SLICE`).
     pub fn as_standard_string(&self) -> Option<&CheckedStringModule> {
         match self {
-            Self::Sequential(_)
+            Self::ScalarCalls(_)
+            | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
@@ -733,7 +745,8 @@ impl CheckedSourceModule {
     /// The checked socket evidence (card `QUIRIN-SOCKET-V1`).
     pub fn as_standard_socket(&self) -> Option<&CheckedSocketModule> {
         match self {
-            Self::Sequential(_)
+            Self::ScalarCalls(_)
+            | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
@@ -754,7 +767,8 @@ impl CheckedSourceModule {
     /// The checked HTTP evidence (card `HTTP-QUIRIN-V1`).
     pub fn as_standard_http(&self) -> Option<&CheckedHttpModule> {
         match self {
-            Self::Sequential(_)
+            Self::ScalarCalls(_)
+            | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
@@ -774,6 +788,7 @@ impl CheckedSourceModule {
 
     pub fn function_count(&self) -> usize {
         match self {
+            Self::ScalarCalls(program) => program.program().functions.len(),
             Self::Sequential(program) => program.functions.len(),
             Self::ScopedTasks(program) => program.module().functions.len(),
             // This route checks one footprint property over retained writes;
@@ -823,6 +838,8 @@ impl CheckedSourceModule {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SourceExecutionProfile {
+    /// Pure i32/unit functions with checked arithmetic and acyclic direct calls.
+    ScalarCallsV1,
     SequentialCleanupV1,
     ScopedCopyTasksV1,
     ScopedOwnedTasksV1,
@@ -1424,6 +1441,9 @@ pub fn compile_files_with_registry(
     }
     if qcore_frontend::source_std_io::has_source_std_io(&parsed) {
         return compile_std_io_source(&parsed, &typed, mode, options, &ranges);
+    }
+    if qcore_frontend::source_scalar_calls::has_scalar_calls(&parsed) {
+        return compile_scalar_calls(&parsed, &typed, mode, options, &ranges);
     }
     let error_names = parsed
         .declarations
@@ -6769,4 +6789,79 @@ pub fn format_diagnostic(diagnostic: &FileDiagnostic) -> String {
         output.push('^');
     }
     output
+}
+
+/// Typed pure source calls retain their own evidence rather than an erased CFG.
+fn compile_scalar_calls(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    use qcore_core::scalar_calls::{self, Type};
+    let lowered = qcore_frontend::source_scalar_calls::lower(parsed)
+        .map_err(|e| vec![map_diagnostic(e, ranges)])?;
+    let report = |e: scalar_calls::Refusal| {
+        vec![map_raw_diagnostic(
+            "Q020",
+            SemanticPass::OrdinaryTypes,
+            lowered
+                .spans
+                .get(e.function)
+                .copied()
+                .unwrap_or(Span { start: 0, end: 0 }),
+            format!("source.scalar-calls.v1: {}", e.message),
+            ranges,
+        )]
+    };
+    let checked = scalar_calls::check(lowered.program).map_err(report)?;
+    let scalar_results = lowered
+        .names
+        .iter()
+        .cloned()
+        .zip(checked.program().functions.iter().map(|f| match f.result {
+            Type::I32 => ExecutableResultType::I32,
+            Type::Unit => ExecutableResultType::Unit,
+        }))
+        .collect();
+    let (entry, c_source, reference_observation) = if mode == SourceModuleMode::Executable {
+        let name = select_entry(typed, options).map_err(|e| vec![e])?;
+        let id = lowered
+            .names
+            .iter()
+            .position(|n| n == &name)
+            .expect("selected source entry");
+        let value = checked.run(id, &[]).map_err(report)?.unwrap_or(0);
+        let c = qcore_core::scalar_calls_c_emit::emit(&checked, id).map_err(report)?;
+        (
+            Some(name),
+            Some(c),
+            Some(ExecutionObservation {
+                outcome: qcore_core::cfg::ExecutionOutcome::Ok {
+                    value,
+                    payload: Vec::new(),
+                },
+                trace: Vec::new(),
+            }),
+        )
+    } else {
+        (None, None, None)
+    };
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::ScalarCalls(Box::new(checked)),
+        execution_profile: SourceExecutionProfile::ScalarCallsV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile: SourceResultProfile {
+            scalar_results,
+            owned_buffer_results: BTreeSet::new(),
+            custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+        },
+        entry,
+        c_source,
+        reference_observation,
+        source_map: Vec::new(),
+        extern_observation: None,
+    })
 }

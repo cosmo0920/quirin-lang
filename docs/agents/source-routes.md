@@ -194,3 +194,12 @@ captures. Neither adds a reserved word. CT10 selects only explicit layouts
 with direct field-write captures; other routes retain their existing rules.
 See the [CT10 census](../reports/ct10-source-layout/README.md) and
 [CT24 scope](../reports/ct24-cleanup-task-composition/README.md).
+
+### SOURCE-SCALAR-CALLS-V1 — pure source functions
+
+Adds zero reserved words/tokens. The selector follows existing specialized
+profiles and must preserve sequential resource intrinsics, literal-only legacy
+programs and unsupported control-flow diagnostic pins. Read retained tokens,
+check every definition, and never treat a closed entry observation as proof for
+all possible function arguments. Resource/effect composition requires another
+checked extension; it is not implied by the scalar-call syntax.
