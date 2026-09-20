@@ -587,6 +587,70 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/memory.qcore", "mk_mem_alloc_z", 3),
     ("monkey/memory.qcore", "mk_mem_free", 3),
     (
+        "monkey/wait_identity_policy.qcore",
+        "wait_identity_context",
+        23,
+    ),
+    (
+        "monkey/wait_identity_policy.qcore",
+        "wait_identity_entry",
+        1,
+    ),
+    (
+        "monkey/wait_identity_policy.qcore",
+        "wait_observed_profile",
+        5,
+    ),
+    ("monkey/wait_source_policy.qcore", "source_identity", 4),
+    (
+        "monkey/wait_source_policy.qcore",
+        "wait_projection_identity",
+        4,
+    ),
+    ("monkey/wait_source_policy.qcore", "cb_wait_2_timeout", 9),
+    (
+        "monkey/wait_source_policy.qcore",
+        "contract_cb_wait_2_timeout",
+        9,
+    ),
+    (
+        "monkey/wait_source_policy.qcore",
+        "_mk_event_loop_create",
+        9,
+    ),
+    (
+        "monkey/wait_source_policy.qcore",
+        "contract__mk_event_loop_create",
+        9,
+    ),
+    (
+        "monkey/wait_source_policy.qcore",
+        "_mk_event_wait_with_flags",
+        9,
+    ),
+    (
+        "monkey/wait_source_policy.qcore",
+        "contract__mk_event_wait_with_flags",
+        9,
+    ),
+    ("monkey/wait_source_policy.qcore", "_mk_event_wait_2", 9),
+    (
+        "monkey/wait_source_policy.qcore",
+        "contract__mk_event_wait_2",
+        9,
+    ),
+    (
+        "monkey/wait_source_policy.qcore",
+        "_mk_event_loop_destroy",
+        9,
+    ),
+    (
+        "monkey/wait_source_policy.qcore",
+        "contract__mk_event_loop_destroy",
+        9,
+    ),
+    ("monkey/wait_source_policy.qcore", "artifact_set", 4),
+    (
         "monkey/wrapper_paths.qcore",
         "mk_event_libevent_socketpair",
         3,
@@ -737,7 +801,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // and the `set_result` / `otlp_kvpair_list_destroy` /
     // `destroy_context_list` families, with every reading published in
     // `docs/reports/w37-corpus-contracts-4/README.md`.
-    assert_eq!(sources.len(), 88, "unexpected contract corpus size");
+    // 88 -> 90: executable Cycle 18 source and identity policies.
+    assert_eq!(sources.len(), 90, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

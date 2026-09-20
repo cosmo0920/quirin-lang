@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 88,
+  "contract_modules": 90,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6725,11 +6725,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CYCLE18-OBSERVED-INTEGRATION measured corrected semantic tip 7b146cc7ac77678423dc7e98ae83ac7aefd31f54. Full cargo test --workspace --no-fail-fast outside ptrace restrictions, CARGO_BUILD_JOBS=2 RUST_TEST_THREADS=4: 4957 passed / 0 failed / 11 ignored, 262 summaries, 251 Running targets plus 9 doc-test sections, exit 0. Submodule init, fmt, all-target clippy -D warnings, both probes, 156 Lean audits (--jobs 2) and five isolated host-sensitive tests exit 0. Clang recorded in this measuring checkout. Python after matrix regeneration: 317 tests, exit 0. Provider 122 is carried Unix evidence, not rerun; provider code and schema are unchanged. Prior root gate before source/public/output corrections is separate; isolated admission host-sensitive exit101 and observer sandbox LSan failures remain disclosed, not converted into passes. Logs: private/cycle18-observed-integration/final-gate-20260920/. One conditional observed timed-wait replay, no Safe or callback-coverage promotion; five followups added, none retired.",
-  "workspace_tests": 4957,
+  "note": "CYCLE18-CONTRACT-EXTRACTION corrected combined gate at 5c3ccc0913433621a8701bee501bc58f1deddb28. Rust 4968 passed / 0 failed / 11 ignored, 263 summaries, 252 running targets and 9 doc sections. All standing steps and five isolated host-sensitive checks exit 0; Lean 158. Clang measured in this checkout. Python after matrix regeneration: 317 tests, exit 0. Provider 122 is carried unchanged Unix evidence, not rerun. Initial root run failed the stale resource-loader inventory pin; the corrected complete run is separate. Source-agent interrupted package rerun and isolated Lean registration failure remain disclosed. Logs: private/cycle18-contract-extraction/corrected-gate-20260920/. No verdict or coverage promotion.",
+  "workspace_tests": 4968,
   "provider_tests": 122,
   "python_evidence_validator_tests": 317,
-  "lean_audits": 156,
+  "lean_audits": 158,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6810,6 +6810,7 @@
    "AuditMemberAddress.lean",
    "AuditMemberAddressReader.lean",
    "AuditMonkeyWaitProjection.lean",
+   "AuditMonkeyWaitSourcePolicy.lean",
    "AuditMutexInvariant.lean",
    "AuditMutexShareCross.lean",
    "AuditMutexShareCrossArms.lean",
@@ -6880,6 +6881,7 @@
    "AuditTeardownAdmission.lean",
    "AuditTransferability.lean",
    "AuditTwoDerivationAdmission.lean",
+   "AuditTypedContractFacts.lean",
    "AuditTypedefProjection.lean",
    "AuditUncheckedLinkage.lean",
    "AuditVariadicNested.lean",
@@ -6894,7 +6896,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cycle18-observed-integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cycle18-contract-extraction/gate.json)"
  },
  "named_followups": [
   {

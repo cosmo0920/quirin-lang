@@ -10,7 +10,7 @@ use qcore_verification::monkey_wait_projection::{
     MonkeyWaitContracts, project_monkey_timed_wait_source,
 };
 use qcore_verification::observed_wait_composition::{
-    OBSERVED_WAIT_PROFILE, OBSERVED_WAIT_RULES, check_observed_wait_composition,
+    check_observed_wait_composition, observed_wait_bounds, wait_observation_rules_digest,
 };
 use qcore_verification::timed_wait_observation_wire::decode_timed_wait_observation;
 use serde::Deserialize;
@@ -277,6 +277,8 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
     let observations = read(&resolve(&config.observations))?;
     let bindings = read(&resolve(&config.bindings))?;
     let decoded = decode_timed_wait_observation(&observations, &bindings)?;
+    let observed_bounds = observed_wait_bounds(&decoded.trace);
+    let semantic_profile = decoded.semantic_profile;
     let backend = decoded.context.backend;
     if !library.accepted_builds.iter().any(|candidate| {
         candidate.backend == backend
@@ -286,6 +288,9 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
         return Err("observed backend/build is outside the accepted Libevent profile".into());
     }
     let mut assumptions = source.profile.assumptions();
+    // These labels describe this producer/build's actual evidence class.
+    // Never fill observed facts from the policy's desired values: doing so
+    // would manufacture agreement when a contract asks for stronger trust.
     assumptions.insert("backend".into(), backend);
     assumptions.insert("threads".into(), "pthreads".into());
     assumptions.insert(
@@ -319,14 +324,9 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
     let context = EventCompositionContext::derive(
         EventCompositionContextInput {
             artifact: config.artifact,
-            semantic_profile: OBSERVED_WAIT_PROFILE.into(),
+            semantic_profile,
             scope: projection.selected_path_indices().keys().cloned().collect(),
-            bounds: BTreeMap::from([
-                ("dispatchers".into(), 1),
-                ("events".into(), 1),
-                ("records".into(), 11),
-                ("runs".into(), 1),
-            ]),
+            bounds: observed_bounds,
             assumptions,
             source_compile_task_sha256: compile_task_digest.clone(),
             fluent_bit_revision: source.revision,
@@ -345,7 +345,7 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
             source_rules_sha256: sha256_hex(
                 qcore_c_gateway::typed_source::DEFAULT_SOURCE_RULES.as_bytes(),
             ),
-            observation_rules_sha256: sha256_hex(OBSERVED_WAIT_RULES.as_bytes()),
+            observation_rules_sha256: wait_observation_rules_digest(),
             observer_binary_sha256: sha256_hex(&read(&resolve(&config.observer_binary))?),
             observer_harness_sha256: sha256_hex(&read(&resolve(&config.observer_harness))?),
             linked_libraries_sha256: BTreeMap::from([

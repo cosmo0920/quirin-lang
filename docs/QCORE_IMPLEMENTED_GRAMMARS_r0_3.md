@@ -2515,7 +2515,9 @@ the selected declarations for `_mk_event_loop_create`, `_mk_event_wait_2`,
 from `monkey/wrapper_paths.qcore` and `monkey/composition.qcore`. The consumer
 requires the supported extern signatures, parameter usage/ownership, return
 types and exact `requires`/`ensures normal` clauses, with no body, `unsafe` or
-effects block. Missing, duplicate, added or changed selected clauses refuse.
+effects block. The executable `wait_source_policy.qcore` declares those
+expectations over derived declaration facts. Missing, duplicate, added or
+changed selected clauses refuse.
 It checks the named predicates against typed C paths and derives native
 obligations; these identifiers do not become arbitrary executable predicates
 in the G06 arithmetic interpreter. Contract acceptance alone emits no safety
@@ -2523,6 +2525,42 @@ verdict. One complete identity-bearing observation and event-kernel replay are
 required for the separate bounded observed-composition artifact. Source:
 `crates/qcore-verification/src/monkey_wait_projection.rs`; bounds and remaining
 paths: [observed integration](reports/cycle18-observed-integration/README.md).
+
+### G06b. Typed executable policy predicates
+
+`check_typed_contract_facts` extends G06 for an explicitly selected policy
+consumer. A fact is either an `i128` integer or UTF-8 text. Its primary grammar
+additionally admits double-quoted string literals. Literals decode the existing
+`source.string.v1` escapes before comparison. Text supports same-type `==` and
+`!=` only; text ordering, arithmetic and direct Boolean use reject, and there
+is no text/integer coercion. Boolean operators still evaluate both operands.
+The legacy numeric API and G06 grammar remain unchanged.
+
+The selected declaration must have the exact lexed header
+`extern fn NAME() -> unit contract`, ignoring comment trivia. Parameters,
+generics, effects, unsafe qualifiers, bodies and non-unit results reject.
+Only `requires` and `ensures normal` clauses are supported, with at least one
+postcondition. Duplicate facts, missing facts, unsupported syntax, type errors,
+false preconditions, false postconditions and overflow all reject.
+
+The typed consumer bounds source text at 64 KiB, facts at 256, function/fact
+names at 256 bytes and text values at 4096 bytes. The predicate limits remain
+512 non-EOF tokens and depth 64. These are consumer limits, not new general
+language-conformance claims.
+
+`contract_fact_literal(source, function, fact) -> Result<ContractFact, String>`
+reads exactly one standalone `ensures normal FACT == LITERAL` clause from a
+strict policy declaration. It accepts text and signed integer literals and
+rejects missing, duplicate exact or conditional forms. Reading a literal does
+not establish any supplied fact or discharge the other clauses; callers still
+check the complete selected policy against independently derived facts.
+
+The timed-wait consumers use `monkey/wait_source_policy.qcore` for source and
+contract-shape acceptance and `monkey/wait_identity_policy.qcore` for context,
+digest, bound and observed-profile relationships. Policy bytes are bound into
+the resulting context. Source extraction and runtime observations supply facts;
+the desired literals in a policy cannot manufacture the corresponding observed
+values. See [extraction and parity](reports/cycle18-contract-extraction/README.md).
 
 ## G07. Extended grammar and conformance
 

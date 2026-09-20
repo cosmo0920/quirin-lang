@@ -20,7 +20,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Raw source coverage | **4,921 definitions / 4,834 projected / 87 pinned-build exclusions**, across **24 full-path units** | [Verified census](reports/w42-unprojected-definitions/README.md); combined inventory unchanged |
 | Monkey callback accounting | **3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown**; 8 source paths | [Callback report](reports/w42-monkey-callback-coverage/README.md); ordinary audit checks 0/8 native paths, optional focused replay 8/8 |
 | Observed Monkey timed wait | **1 instrumented Linux epoll success run**, 11 identity records and 11 model operations; conditional replay, no coverage promotion | [Observed integration](reports/cycle18-observed-integration/README.md) |
-| Contract corpus | **88** modules; **59** resource-v1 declarations; **33** manifest-selected | `contract/qcore/`, [selection](../contract/cycle19-resource-contracts.json) and pinned tests |
+| Contract corpus | **90** modules; **59** resource-v1 declarations; **33** manifest-selected | `contract/qcore/`, [selection](../contract/cycle19-resource-contracts.json) and pinned tests |
 | Registered follow-ups | **284** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
@@ -64,22 +64,24 @@ separately.
 
 ## Latest validated gate
 
-The [observed-composition integration gate](reports/cycle18-observed-integration/gate.json)
-records **4,957 Rust passed, 0 failed, 11 ignored; 262 result summaries over
-260 targets; 156 Lean audits; 317 Python tests**, clean fmt/clippy and both
+The [executable-contract extraction gate](reports/cycle18-contract-extraction/gate.json)
+records **4,968 Rust passed, 0 failed, 11 ignored; 263 result summaries over
+261 targets; 158 Lean audits; 317 Python tests**, clean fmt/clippy and both
 probes exit 0. Five named host-sensitive rows also passed separately in
 isolation. Clang 21.1.8 was recorded in the measuring checkout. **122 provider
 tests are carried Unix evidence, not remeasured.** [Run identities and private
-logs](reports/cycle18-observed-integration/README.md#final-standing-gate)
-disclose commands, exits and the separate earlier/isolated attempts.
+logs](reports/cycle18-contract-extraction/README.md#final-standing-gate)
+disclose commands, exits and the earlier failed/interrupted attempts.
 
-The observed timed-wait route consumes existing QCore wrapper/callback
-contracts, exact pinned C summaries and an identity-bearing native trace.
-Its public result is conditional on independently prepared artifact identities
-and producer runtime/linkage evidence; it is not attestation or all-path Safe.
-All five pinned corpus artifacts remain byte-identical. Five narrower Cycle 18
-follow-ups are registered, none retired; callback, CT and full-conformance
-measurements remain unchanged.
+Timed-wait source signatures, declaration shapes, approved digest vectors and
+identity/profile/bound relationships now execute from two Quirin policy
+modules. The typed interpreter uses independently derived integer/text facts,
+and generic admission binds the selected policy bytes before evaluation.
+One accepted CLI replay and six refusing controls agree with the saved
+baseline; all five pinned corpus artifacts remain byte-identical. The result
+remains conditional on caller-prepared identities and producer runtime/linkage
+evidence. This extraction adds no follow-ups or retirements and promotes no
+callback coverage, CT case or full-conformance claim.
 
 The ignored F02 Windows pin-agreement test is red by design on `--ignored`;
 Linux green does not repair it. Host/load-sensitive tests and their reporting

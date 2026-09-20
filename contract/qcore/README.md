@@ -291,8 +291,17 @@ continue to label the wrapper behavioral specifications as unverified; the
 new explicitly configured observed-wait report is separate. These three modules
 are intentionally outside the declarative resource-projection manifest: their
 predicates are not approximated as acquire/release annotations. Corpus tests pin
-all declarations and clauses across 25 modules; mutation regressions exercise
+all declarations and clauses across the live corpus; mutation regressions exercise
 every extracted policy. See the [extraction report](../../docs/reports/cycle19-contract-extraction/README.md).
+
+The executable timed-wait policies `monkey/wait_source_policy.qcore` and
+`monkey/wait_identity_policy.qcore` now select source signatures, contract
+shapes, complete summary vectors, revision/callback facts, context identities,
+trust labels and observed bounds. They use typed integer/text predicates;
+Rust supplies extracted facts and generic hashing, decoding and event replay.
+Both policies are hash-bound and remain outside the resource manifest. The
+corpus contains 90 modules; the resource manifest selection is unchanged.
+See [extraction parity](../../docs/reports/cycle18-contract-extraction/README.md).
 
 `chunkio/memory_backend.qcore` is checked against the complete typed
 `cio_memfs_close` body over nine nullable ownership states. The shared field

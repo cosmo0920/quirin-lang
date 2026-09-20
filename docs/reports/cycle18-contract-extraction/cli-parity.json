@@ -1,0 +1,171 @@
+{
+  "baseline": {
+    "binary": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-contract-extraction/baseline/quirin-audit",
+    "binary_sha256": "3b672c79bcbd62476f62e91814f67bbe8d13b92127627464f7feb5249a8c3958",
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-contract-extraction/baseline/quirin-audit",
+      "observed-wait",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-contract-extraction/cli-parity/baseline/config.json"
+    ],
+    "exit": 0,
+    "report_sha256": "8255390be548cb81cbcca5d968fa8bcfec1af4f1f5854df14cbe7a40b3c15a93",
+    "negative_runner_command": [
+      "/usr/bin/python3",
+      "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/cycle18-observed-integration/check_negative_controls.py",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-contract-extraction/baseline/quirin-audit",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-contract-extraction/cli-parity/baseline/config.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-contract-extraction/cli-parity/baseline/negative-controls"
+    ],
+    "negative_runner_exit": 0,
+    "negative_outcomes": [
+      {
+        "control": "callback-generation",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "missing-record",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "invented-synchronization",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "unsupported-backend",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "owned-callback-contract",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "artifact-substitution",
+        "exit": 1,
+        "report_created": false
+      }
+    ]
+  },
+  "extracted": {
+    "binary": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+    "binary_sha256": "7f1246329e9ee97d462aa2e6a3a9a35274fb1389fa5e87539d49ca57a675ae47",
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+      "observed-wait",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-contract-extraction/cli-parity/extracted/config.json"
+    ],
+    "exit": 0,
+    "report_sha256": "108c4977ab0c8b8d3621b5abeaebd84b68b5ba87b8bae264284904dc12c5a861",
+    "negative_runner_command": [
+      "/usr/bin/python3",
+      "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/cycle18-observed-integration/check_negative_controls.py",
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-contract-extraction/cli-parity/extracted/config.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-contract-extraction/cli-parity/extracted/negative-controls"
+    ],
+    "negative_runner_exit": 0,
+    "negative_outcomes": [
+      {
+        "control": "callback-generation",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "missing-record",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "invented-synchronization",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "unsupported-backend",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "owned-callback-contract",
+        "exit": 1,
+        "report_created": false
+      },
+      {
+        "control": "artifact-substitution",
+        "exit": 1,
+        "report_created": false
+      }
+    ]
+  },
+  "comparison": {
+    "status_identical": true,
+    "composition_fields_identical": [
+      "claim",
+      "checked_records",
+      "checked_operations",
+      "selected_paths",
+      "identity_mapping"
+    ],
+    "negative_outcomes_identical": true,
+    "context_differences": {
+      "contracts_sha256": {
+        "before": "45be2160217173268b4e6c5ff93d0422804c66386f0e3876ad8b63753722dd53",
+        "after": "3cb55f24c4627884ef00cb06c33788defdc734f46ee5638b8c16cd769ba5f57b"
+      },
+      "observation_rules_sha256": {
+        "before": "d0bbdad4a6c8f8b6c727bbbfdb97ca4592c0b155777bd00abb3fb5d3a222f6f7",
+        "after": "235d7e938d794c42b773aa23d2a0cae864410c71a8650d0b915b065e103d5446"
+      },
+      "assumptions": {
+        "before": {
+          "backend": "epoll",
+          "contract.monkey/composition.qcore": "ee16fa5d7b8bd36f355397045a7c12545db28392eaad113b454f862096215e73",
+          "contract.monkey/wrapper_paths.qcore": "c5c51240aafc42b293f715113c76706e656ac51548b1be065536c83f6167bdb0",
+          "linkage_trust": "producer_supplied_selected_artifact_linkage",
+          "native_run_manifest_sha256": "31ffb57ed0ef98563e845768936d4a383e6f3b6f11aeaee6497bb2769b5b438d",
+          "observation_trust": "producer_supplied_runtime_evidence",
+          "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+          "profile_digest": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+          "schema_version": "1",
+          "source_file.mk_core/mk_event.c": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382",
+          "source_file.mk_core/mk_event_libevent.c": "25df48e0974032a0e1482535daafee931bfafb3d2a28bad015b46f048a68cf1c",
+          "source_set": "fluent-bit",
+          "source_summary._mk_event_loop_create": "d1c48805630eacec138b0ed1eae834195815b9e4ce61a731c40ac3fd46bc7756",
+          "source_summary._mk_event_loop_destroy": "c0d3215c02ed7f421f725596fbcee27547d0cf2a5f8534aa532f794cbd9a5e0e",
+          "source_summary._mk_event_wait_2": "69511d42a65bbed00f7c54e2890cc641578cf60029260893a8aa2db585bca4bd",
+          "source_summary._mk_event_wait_with_flags": "3637e3f8ddfb6ae389d571a05f13bb9e32e675e95bfb4d5134ee8ab73923ff1f",
+          "source_summary.cb_wait_2_timeout": "8308bac83724f6f2417f6d22bbf3e65afbbf491b8ad91b4a9217b1aebd22efdc",
+          "threads": "pthreads",
+          "trust": "declared source-set assumptions, not verified upstream behavior"
+        },
+        "after": {
+          "backend": "epoll",
+          "contract.monkey/composition.qcore": "ee16fa5d7b8bd36f355397045a7c12545db28392eaad113b454f862096215e73",
+          "contract.monkey/wait_source_policy.qcore": "b78d56857a059c96d0d748e8dd6a4c3ee9bbf527c21e17f3ce9ebcad4fe0c393",
+          "contract.monkey/wrapper_paths.qcore": "c5c51240aafc42b293f715113c76706e656ac51548b1be065536c83f6167bdb0",
+          "linkage_trust": "producer_supplied_selected_artifact_linkage",
+          "native_run_manifest_sha256": "31ffb57ed0ef98563e845768936d4a383e6f3b6f11aeaee6497bb2769b5b438d",
+          "observation_trust": "producer_supplied_runtime_evidence",
+          "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+          "profile_digest": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+          "schema_version": "1",
+          "source_file.mk_core/mk_event.c": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382",
+          "source_file.mk_core/mk_event_libevent.c": "25df48e0974032a0e1482535daafee931bfafb3d2a28bad015b46f048a68cf1c",
+          "source_set": "fluent-bit",
+          "source_summary._mk_event_loop_create": "d1c48805630eacec138b0ed1eae834195815b9e4ce61a731c40ac3fd46bc7756",
+          "source_summary._mk_event_loop_destroy": "c0d3215c02ed7f421f725596fbcee27547d0cf2a5f8534aa532f794cbd9a5e0e",
+          "source_summary._mk_event_wait_2": "69511d42a65bbed00f7c54e2890cc641578cf60029260893a8aa2db585bca4bd",
+          "source_summary._mk_event_wait_with_flags": "3637e3f8ddfb6ae389d571a05f13bb9e32e675e95bfb4d5134ee8ab73923ff1f",
+          "source_summary.cb_wait_2_timeout": "8308bac83724f6f2417f6d22bbf3e65afbbf491b8ad91b4a9217b1aebd22efdc",
+          "threads": "pthreads",
+          "trust": "declared source-set assumptions, not verified upstream behavior"
+        }
+      }
+    },
+    "note": "Policy digests and their aggregate/context identities are expected to change; they do not represent changed lifecycle results or expanded coverage."
+  }
+}

@@ -1,0 +1,291 @@
+{
+  "wave": 42,
+  "cards": [
+    "cycle18-contract-facts",
+    "cycle18-identity-contract-extraction",
+    "cycle18-observed-integration",
+    "cycle18-source-contract-extraction",
+    "cycle18-contract-extraction"
+  ],
+  "verify_applied": true,
+  "note": "Cycle 18 contract extraction reconciliation at the integrated source/identity/predicate-engine tree. The base-inclusive frozen observed-integration card is retained by reference to its own reconciliation record; new-card claims are measured against the current tree. The corrected combined gate is recorded; earlier failed/interrupted attempts remain separately disclosed.",
+  "verdicts": {
+    "cycle18-contract-facts#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "The typed extension is documented beside G06 while the legacy numeric grammar is explicitly retained.",
+      "verify": [
+        {
+          "file": "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+          "contains": "### G06b. Typed executable policy predicates"
+        },
+        {
+          "file": "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+          "contains": "The legacy numeric API and G06 grammar remain unchanged."
+        },
+        {
+          "file": "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+          "contains": "Text supports same-type `==` and `!=` only; text ordering, arithmetic and direct Boolean use reject, and there is no text/integer coercion."
+        }
+      ]
+    },
+    "cycle18-contract-facts#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "The public literal accessor and its total-or-reject exact-clause boundary are documented in G06b.",
+      "verify": [
+        {
+          "file": "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+          "contains": "`contract_fact_literal(source, function, fact) -> Result<ContractFact, String>`"
+        },
+        {
+          "file": "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+          "contains": "reads exactly one standalone `ensures normal FACT == LITERAL` clause"
+        }
+      ]
+    },
+    "cycle18-contract-facts#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "All six consumer bounds are explicit in the implemented grammar record.",
+      "verify": [
+        {
+          "file": "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+          "contains": "The typed consumer bounds source text at 64 KiB, facts at 256, function/fact names at 256 bytes and text values at 4096 bytes. The predicate limits remain 512 non-EOF tokens and depth 64."
+        }
+      ]
+    },
+    "cycle18-contract-facts#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "The complete corrected merged gate, aggregate Lean imports, corpus pins, ledger and increment record are published with failures from earlier attempts preserved.",
+      "verify": [
+        {
+          "file": "docs/reports/cycle18-contract-extraction/gate.json",
+          "contains": "\"standing_gate\": \"complete\""
+        },
+        {
+          "file": "docs/STATUS.md",
+          "contains": "4,968 Rust passed, 0 failed, 11 ignored"
+        },
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.MonkeyWaitSourcePolicy"
+        },
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.TypedContractFacts"
+        }
+      ]
+    },
+    "cycle18-identity-contract-extraction#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "The shared typed fact engine and strict literal accessor are present once in qcore-contract and consumed by the identity card; no duplicate implementation was retained.",
+      "verify": [
+        {
+          "file": "crates/qcore-contract/src/contract_observation.rs",
+          "contains": "pub fn check_typed_contract_facts("
+        },
+        {
+          "file": "crates/qcore-contract/src/contract_observation.rs",
+          "contains": "pub fn contract_fact_literal("
+        },
+        {
+          "file": "crates/qcore-verification/src/observed_wait_composition.rs",
+          "contains": "ContractFact, check_typed_contract_facts, contract_fact_literal,"
+        }
+      ]
+    },
+    "cycle18-identity-contract-extraction#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "The configured audit derives bounds from decoded trace data and binds the framed observation-rules plus policy digest.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/observed_wait.rs",
+          "contains": "let observed_bounds = observed_wait_bounds(&decoded.trace);"
+        },
+        {
+          "file": "crates/qcore-audit/src/observed_wait.rs",
+          "contains": "observation_rules_sha256: wait_observation_rules_digest(),"
+        }
+      ]
+    },
+    "cycle18-identity-contract-extraction#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "The integrated observed-wait test now obtains revision and callback values through the source-policy accessors.",
+      "verify": [
+        {
+          "file": "crates/qcore-verification/tests/observed_wait_composition.rs",
+          "contains": "monkey_source_revision(),"
+        },
+        {
+          "file": "crates/qcore-verification/tests/observed_wait_composition.rs",
+          "contains": "summary(&callbacks, wait_callback()),"
+        }
+      ]
+    },
+    "cycle18-identity-contract-extraction#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "The observation identity policy remains outside the resource-contract selection manifest while its separate corpus pin is retained.",
+      "verify": [
+        {
+          "file": "contract/cycle19-resource-contracts.json",
+          "absent": "monkey/wait_identity_policy.qcore"
+        },
+        {
+          "file": "compiler/tests/qcore_contract_corpus.rs",
+          "contains": "\"monkey/wait_identity_policy.qcore\""
+        }
+      ]
+    },
+    "cycle18-identity-contract-extraction#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "The complete corrected merged gate, aggregate Lean imports, corpus pins, ledger and increment record are published with failures from earlier attempts preserved.",
+      "verify": [
+        {
+          "file": "docs/reports/cycle18-contract-extraction/gate.json",
+          "contains": "\"standing_gate\": \"complete\""
+        },
+        {
+          "file": "docs/STATUS.md",
+          "contains": "4,968 Rust passed, 0 failed, 11 ignored"
+        },
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.MonkeyWaitSourcePolicy"
+        },
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.TypedContractFacts"
+        }
+      ]
+    },
+    "cycle18-observed-integration#integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "Previously reconciled as applied in docs/reports/cycle18-observed-integration/reconciliation.json; that frozen predecessor record owns the configured-audit hashing, manifest and snapshot verification claims. This sweep preserves it by reference."
+    },
+    "cycle18-observed-integration#integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "Previously reconciled as applied in docs/reports/cycle18-observed-integration/reconciliation.json; that frozen predecessor record owns the conditional replay claim verification. This sweep preserves it by reference."
+    },
+    "cycle18-observed-integration#integrator-reconciliation-list#3": {
+      "verdict": "noted",
+      "note": "Previously reconciled as applied in docs/reports/cycle18-observed-integration/reconciliation.json; that frozen predecessor record owns the Unknown failure-path and no-promotion disposition. This sweep preserves it by reference."
+    },
+    "cycle18-source-contract-extraction#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "The new source policy is pinned in the global corpus table and described with the executable timed-wait policies in the corpus guide.",
+      "verify": [
+        {
+          "file": "compiler/tests/qcore_contract_corpus.rs",
+          "contains": "\"monkey/wait_source_policy.qcore\""
+        },
+        {
+          "file": "contract/qcore/README.md",
+          "contains": "The executable timed-wait policies `monkey/wait_source_policy.qcore` and `monkey/wait_identity_policy.qcore`"
+        }
+      ]
+    },
+    "cycle18-source-contract-extraction#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Sibling integration uses the policy-backed revision and callback accessors rather than the retired literals.",
+      "verify": [
+        {
+          "file": "crates/qcore-verification/src/monkey_wait_projection.rs",
+          "contains": "pub fn monkey_source_revision() -> &'static str"
+        },
+        {
+          "file": "crates/qcore-verification/src/monkey_wait_projection.rs",
+          "contains": "pub fn wait_callback() -> &'static str"
+        },
+        {
+          "file": "crates/qcore-verification/tests/observed_wait_composition.rs",
+          "contains": "summary(&callbacks, wait_callback()),"
+        }
+      ]
+    },
+    "cycle18-source-contract-extraction#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "The projection contract digest map includes the exact source-policy bytes under the stable policy path.",
+      "verify": [
+        {
+          "file": "crates/qcore-verification/src/monkey_wait_projection.rs",
+          "contains": "\"monkey/wait_source_policy.qcore\".into(), sha256_hex(source_policy.as_bytes())"
+        }
+      ]
+    },
+    "cycle18-source-contract-extraction#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "The shared predicate-engine prerequisite is present once in qcore-contract; source projection imports and uses that API rather than duplicating it.",
+      "verify": [
+        {
+          "file": "crates/qcore-contract/src/contract_observation.rs",
+          "contains": "pub enum ContractFact"
+        },
+        {
+          "file": "crates/qcore-verification/src/monkey_wait_projection.rs",
+          "contains": "check_typed_contract_facts, contract_fact_literal"
+        }
+      ]
+    }
+  },
+  "deferred_decisions": {
+    "note": "The eleven decisions left open by the wave-40 close are re-listed so this reconciliation cannot expire them by silence. This bounded Cycle 18 extraction integration does not decide any of them; their detailed evidence remains in the frozen wave-40 close record.",
+    "items": [
+      {
+        "name": "CT10-REASON-ROW",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; Cycle 18 contract extraction changes no CT10 reason-row policy and supplies no basis to decide it."
+      },
+      {
+        "name": "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close as a user decision; this extraction reconciliation is not a compaction-cadence measurement."
+      },
+      {
+        "name": "EXAMPLES-STYLE-SLICE-FANOUT",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; the Cycle 18 extraction cards do not change the examples directory or measure its style-slice fanout."
+      },
+      {
+        "name": "F02-WINDOWS-PIN-RUN",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this Linux-hosted extraction integration supplies no user-validated Windows F02 pin run."
+      },
+      {
+        "name": "INDIRECT-CENSUS-FEATURE-UNBUILT",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; these contract-policy changes neither add a feature-building CI job nor decide the instrumentation is disposable."
+      },
+      {
+        "name": "MATRIX-RECORDED-BY-DECISION",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close as a provenance-schema decision; this extraction reconciliation neither backfills recorded_by nor makes it optional."
+      },
+      {
+        "name": "MATRIX-UPDATED-STALE-AT-WAVE-27",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; the Cycle 18 extraction integration does not decide the acceptance-matrix updated-field convention."
+      },
+      {
+        "name": "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this extraction integration adds no platform-run evidence and does not choose the registration arm."
+      },
+      {
+        "name": "Q-NAMESPACE-DECISION",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; the contract-policy work allocates no diagnostic code and does not choose a future namespace."
+      },
+      {
+        "name": "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this record uses the existing sweep and does not define or implement a prose-only residual mutation gate."
+      },
+      {
+        "name": "SYNC-RULE-TOOLING-COMMIT-SCOPE",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this bounded reconciliation does not decide the synchronization rule for structural integrator commits."
+      }
+    ]
+  },
+  "no_section": {
+    "cycle18-contract-extraction": "Integrator-owned aggregate close; its implementation, parity, gate and cleanup obligations are recorded directly in this report rather than an integrator handoff section."
+  }
+}

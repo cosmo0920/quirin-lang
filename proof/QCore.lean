@@ -61,6 +61,7 @@ import QCore.EventDriven
 import QCore.EventCompositionContext
 import QCore.EventObservation
 import QCore.ObservedWaitComposition
+import QCore.TypedContractFacts
 import QCore.ExternalIntegration
 import QCore.MonkeyEvent
 import QCore.ChunkLifecycle
@@ -200,5 +201,7 @@ import QCore.JoinedProvenanceRoundBound
 
 import QCore.ScalarCalls
 import QCore.ResourceCalls
+
+import QCore.MonkeyWaitSourcePolicy
 
 /-! The executable formal core of QCore-C revision 0.1. -/

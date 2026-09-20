@@ -45,7 +45,7 @@ fn import(source: &str, role: ImportRole) -> Vec<SourceResult> {
             source,
             ..Default::default()
         },
-        MONKEY_SOURCE_REVISION,
+        monkey_source_revision(),
         &profile(),
         "monkey",
         role,
@@ -68,7 +68,7 @@ fn project(callback_source: &str, wrapper_source: &str) -> MonkeyWaitSourceProje
     let wrappers = import(wrapper_source, ImportRole::Wrapper);
     project_monkey_timed_wait_source(
         [
-            summary(&callbacks, WAIT_CALLBACK),
+            summary(&callbacks, wait_callback()),
             summary(&wrappers, "_mk_event_loop_create"),
             summary(&wrappers, "_mk_event_wait_with_flags"),
             summary(&wrappers, "_mk_event_wait_2"),
@@ -86,16 +86,21 @@ fn exact_imported_source_derives_the_bounded_native_obligations() {
     }
     let wrappers = wrapper_source();
     let projection = project(CALLBACKS, &wrappers);
-    assert_eq!(projection.source_revision(), MONKEY_SOURCE_REVISION);
+    assert_eq!(projection.source_revision(), monkey_source_revision());
     assert_eq!(projection.source_summary_digests().len(), 5);
-    assert_eq!(projection.selected_path_indices()[WAIT_CALLBACK], 0);
+    assert_eq!(projection.selected_path_indices()[wait_callback()], 0);
     assert_eq!(
         projection.selected_path_indices()["_mk_event_loop_create"],
         3
     );
     assert_eq!(projection.selected_path_indices()["_mk_event_wait_2"], 2);
     assert_eq!(projection.required_observations().len(), 11);
-    assert_eq!(projection.contract_digests().len(), 2);
+    assert_eq!(projection.contract_digests().len(), 3);
+    assert!(
+        projection
+            .contract_digests()
+            .contains_key("monkey/wait_source_policy.qcore")
+    );
     assert_eq!(
         projection.callback_semantics(),
         WaitCallbackSemantics::BorrowedNoEffectNoTasks
@@ -103,7 +108,7 @@ fn exact_imported_source_derives_the_bounded_native_obligations() {
     assert_eq!(
         projection.required_observations()[1],
         WaitObservationRequirement::EventCreateSuccess {
-            callback: WAIT_CALLBACK.into(),
+            callback: wait_callback().into(),
             flags: 1,
             descriptor_absent: true,
             priority_required: true,
@@ -133,7 +138,7 @@ fn body_and_lifecycle_substitutions_do_not_project() {
     let wrappers = import(&wrapper_source, ImportRole::Wrapper);
     let result = project_monkey_timed_wait_source(
         [
-            summary(&callbacks, WAIT_CALLBACK),
+            summary(&callbacks, wait_callback()),
             summary(&wrappers, "_mk_event_loop_create"),
             summary(&wrappers, "_mk_event_wait_with_flags"),
             summary(&wrappers, "_mk_event_wait_2"),
@@ -143,7 +148,7 @@ fn body_and_lifecycle_substitutions_do_not_project() {
     );
     assert!(matches!(
         result,
-        Err(WaitSourceProjectionError::SourceShapeMismatch(name)) if name == WAIT_CALLBACK
+        Err(WaitSourceProjectionError::SourceShapeMismatch(name)) if name == wait_callback()
     ));
 
     let changed_wrappers = wrapper_source.replacen("event_free(timeout_event);", "", 1);
@@ -151,7 +156,7 @@ fn body_and_lifecycle_substitutions_do_not_project() {
     let wrappers = import(&changed_wrappers, ImportRole::Wrapper);
     let result = project_monkey_timed_wait_source(
         [
-            summary(&callbacks, WAIT_CALLBACK),
+            summary(&callbacks, wait_callback()),
             summary(&wrappers, "_mk_event_loop_create"),
             summary(&wrappers, "_mk_event_wait_with_flags"),
             summary(&wrappers, "_mk_event_wait_2"),
@@ -175,7 +180,7 @@ fn incomplete_or_foreign_summary_sets_fail_closed() {
     let wrappers = import(&wrapper_source, ImportRole::Wrapper);
     let incomplete = project_monkey_timed_wait_source(
         [
-            summary(&callbacks, WAIT_CALLBACK),
+            summary(&callbacks, wait_callback()),
             summary(&wrappers, "_mk_event_loop_create"),
             summary(&wrappers, "_mk_event_wait_with_flags"),
             summary(&wrappers, "_mk_event_wait_2"),
@@ -191,21 +196,21 @@ fn incomplete_or_foreign_summary_sets_fail_closed() {
 
     let duplicate = project_monkey_timed_wait_source(
         [
-            summary(&callbacks, WAIT_CALLBACK),
-            summary(&callbacks, WAIT_CALLBACK),
+            summary(&callbacks, wait_callback()),
+            summary(&callbacks, wait_callback()),
         ],
         &contracts(),
     );
     assert_eq!(
         duplicate,
         Err(WaitSourceProjectionError::DuplicateSummary(
-            WAIT_CALLBACK.into()
+            wait_callback().into()
         ))
     );
 
     let foreign = project_monkey_timed_wait_source(
         [
-            summary(&callbacks, WAIT_CALLBACK),
+            summary(&callbacks, wait_callback()),
             summary(&callbacks, "cb_event"),
         ],
         &contracts(),
@@ -231,7 +236,7 @@ fn configured_pinned_translation_unit_matches_the_fixture_projection() {
     let wrappers = import(&source, ImportRole::Wrapper);
     let projection = project_monkey_timed_wait_source(
         [
-            summary(&callbacks, WAIT_CALLBACK),
+            summary(&callbacks, wait_callback()),
             summary(&wrappers, "_mk_event_loop_create"),
             summary(&wrappers, "_mk_event_wait_with_flags"),
             summary(&wrappers, "_mk_event_wait_2"),
@@ -240,7 +245,7 @@ fn configured_pinned_translation_unit_matches_the_fixture_projection() {
         &contracts(),
     )
     .unwrap();
-    assert_eq!(projection.source_revision(), MONKEY_SOURCE_REVISION);
+    assert_eq!(projection.source_revision(), monkey_source_revision());
     assert_eq!(projection.source_summary_digests().len(), 5);
 }
 
@@ -264,7 +269,7 @@ fn missing_or_substituted_contract_semantics_fail_closed() {
     assert_eq!(
         MonkeyWaitContracts::parse(WRAPPER_CONTRACT, &substituted),
         Err(WaitSourceProjectionError::ContractClauseMismatch(
-            WAIT_CALLBACK.into()
+            wait_callback().into()
         ))
     );
 
@@ -274,8 +279,8 @@ fn missing_or_substituted_contract_semantics_fail_closed() {
     );
     assert_eq!(
         MonkeyWaitContracts::parse(WRAPPER_CONTRACT, &owned_callback),
-        Err(WaitSourceProjectionError::ContractHeaderMismatch(
-            WAIT_CALLBACK.into()
+        Err(WaitSourceProjectionError::ContractClauseMismatch(
+            wait_callback().into()
         ))
     );
 
@@ -286,8 +291,8 @@ fn missing_or_substituted_contract_semantics_fail_closed() {
     );
     assert_eq!(
         MonkeyWaitContracts::parse(WRAPPER_CONTRACT, &effectful_callback),
-        Err(WaitSourceProjectionError::ContractHeaderMismatch(
-            WAIT_CALLBACK.into()
+        Err(WaitSourceProjectionError::ContractClauseMismatch(
+            wait_callback().into()
         ))
     );
 }
@@ -312,7 +317,7 @@ fn same_count_operand_field_and_guard_substitutions_fail_closed() {
         let wrappers = import(&wrapper_source, ImportRole::Wrapper);
         let result = project_monkey_timed_wait_source(
             [
-                summary(&callbacks, WAIT_CALLBACK),
+                summary(&callbacks, wait_callback()),
                 summary(&wrappers, "_mk_event_loop_create"),
                 summary(&wrappers, "_mk_event_wait_with_flags"),
                 summary(&wrappers, "_mk_event_wait_2"),

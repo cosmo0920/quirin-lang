@@ -11,8 +11,12 @@ use crate::monkey_wait_projection::{
     MonkeyWaitSourceProjection, WaitCallbackSemantics, WaitObservationRequirement as Requirement,
 };
 use crate::timed_wait_observation_wire::decode_timed_wait_observation;
+use qcore_contract::contract_observation::{
+    ContractFact, check_typed_contract_facts, contract_fact_literal,
+};
 use qcore_core::event_observation::{
-    EventObservationAction as Action, check_timed_wait_observation,
+    EventObservationAction as Action, EventObservationTrace, ObservationIdentity,
+    check_timed_wait_observation,
 };
 use qcore_core::event_reactor::{
     ActivationReason, ArgumentMode, CallbackSummary, EventFlags, EventKey, EventOperation as Op,
@@ -21,11 +25,9 @@ use qcore_core::event_reactor::{
 use serde::Serialize;
 use std::collections::{BTreeMap, BTreeSet};
 
-pub const OBSERVED_WAIT_PROFILE: &str = "cycle18.timed_wait.single_dispatcher.v1";
 pub const OBSERVED_WAIT_RULES: &str = "v2: exact eleven identity-bearing records; one dispatcher; timeout-only borrowed argument; no payload, descriptor, task or synchronization; source/context/payload equality; exact pthread/runtime-observation/linkage premises; valid native-run-manifest digest; caller-prepared artifact identity; conditional event kernel replay";
-pub const REQUIRED_THREADS: &str = "pthreads";
-pub const REQUIRED_OBSERVATION_TRUST: &str = "producer_supplied_runtime_evidence";
-pub const REQUIRED_LINKAGE_TRUST: &str = "producer_supplied_selected_artifact_linkage";
+pub const DEFAULT_WAIT_IDENTITY_POLICY: &str =
+    include_str!("../../../contract/qcore/monkey/wait_identity_policy.qcore");
 pub const CONDITIONAL_REPLAY_CLAIM: &str = "caller_prepared_artifact_identity_conditional_replay";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -57,11 +59,113 @@ impl ObservedWaitComposition {
     }
 }
 
-fn is_sha256(value: &str) -> bool {
-    value.len() == 64
-        && value
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+/// Read one exact literal expectation from the default declarative policy.
+/// This rejects duplicate, absent, compound or non-literal clauses.
+pub fn wait_identity_policy_fact(fact: &str) -> Result<ContractFact, String> {
+    contract_fact_literal(DEFAULT_WAIT_IDENTITY_POLICY, "wait_identity_context", fact)
+}
+
+/// Read one exact text expectation without maintaining a second Rust copy.
+pub fn wait_identity_policy_text(fact: &str) -> Result<String, String> {
+    match wait_identity_policy_fact(fact)? {
+        ContractFact::Text(value) => Ok(value),
+        ContractFact::Integer(_) => Err(format!("wait identity fact {fact} is not text")),
+    }
+}
+
+/// Semantic profile selected by the bundled identity policy.
+pub fn observed_wait_profile() -> Result<String, String> {
+    wait_identity_policy_text("semantic_profile")
+}
+
+/// Identity of the operational observation rules and the exact declarative
+/// policy bytes compiled into this verifier. The framing prevents a boundary
+/// ambiguity between the two inputs.
+#[must_use]
+pub fn wait_observation_rules_digest() -> String {
+    wait_observation_rules_digest_with_policy(DEFAULT_WAIT_IDENTITY_POLICY)
+}
+
+/// Derive the observation-rule identity for an explicitly caller-selected
+/// policy. This exists for fail-closed mutation tests and configured callers;
+/// choosing different policy bytes is a trusted caller action, and the
+/// admitted context must bind those exact bytes before they can be evaluated.
+#[must_use]
+pub fn wait_observation_rules_digest_with_policy(policy: &str) -> String {
+    let mut framed = Vec::with_capacity(32 + OBSERVED_WAIT_RULES.len() + policy.len());
+    framed.extend_from_slice(b"qcore.wait-observation-rules.v1\0");
+    framed.extend_from_slice(&(OBSERVED_WAIT_RULES.len() as u64).to_be_bytes());
+    framed.extend_from_slice(OBSERVED_WAIT_RULES.as_bytes());
+    framed.extend_from_slice(&(policy.len() as u64).to_be_bytes());
+    framed.extend_from_slice(policy.as_bytes());
+    qcore_schemas::sha256_hex(&framed)
+}
+
+fn text(value: impl Into<String>) -> ContractFact {
+    ContractFact::Text(value.into())
+}
+
+fn integer(value: impl Into<i128>) -> ContractFact {
+    ContractFact::Integer(value.into())
+}
+
+/// Mechanically count the identities present in an observed trace. These are
+/// actual data facts; the declarative policy separately decides which counts
+/// its bounded profile accepts.
+#[must_use]
+pub fn observed_wait_bounds(trace: &EventObservationTrace) -> BTreeMap<String, u64> {
+    let runs = trace
+        .records
+        .iter()
+        .map(|record| record.run)
+        .collect::<BTreeSet<_>>();
+    let dispatchers = trace
+        .records
+        .iter()
+        .map(|record| record.dispatcher)
+        .collect::<BTreeSet<_>>();
+    let mut events = BTreeSet::<ObservationIdentity>::new();
+    for record in &trace.records {
+        match &record.action {
+            Action::EventNew { event, .. }
+            | Action::EventAdd { event, .. }
+            | Action::Activate { event, .. }
+            | Action::CallbackEnter { event, .. }
+            | Action::CallbackExit { event, .. }
+            | Action::EventFree { event } => {
+                events.insert(*event);
+            }
+            Action::BaseCreate { .. }
+            | Action::DispatchBegin { .. }
+            | Action::DispatchEnd { .. }
+            | Action::ArgumentEnd { .. }
+            | Action::BaseFree { .. } => {}
+        }
+    }
+    BTreeMap::from([
+        ("dispatchers".into(), dispatchers.len() as u64),
+        ("events".into(), events.len() as u64),
+        ("records".into(), trace.records.len() as u64),
+        ("runs".into(), runs.len() as u64),
+    ])
+}
+
+fn check_identity_entry(
+    policy: &str,
+    kind: &str,
+    name: &str,
+    actual: Option<&String>,
+    expected: &str,
+) -> Result<(), String> {
+    check_typed_contract_facts(
+        policy,
+        "wait_identity_entry",
+        &[
+            ("identity_actual", text(actual.cloned().unwrap_or_default())),
+            ("identity_expected", text(expected)),
+        ],
+    )
+    .map_err(|error| format!("{kind} identity mismatch: {name}: {error}"))
 }
 
 /// Replay one exact observed lifecycle under caller-prepared artifact identity
@@ -75,85 +179,228 @@ pub fn check_observed_wait_composition(
     observations: &[u8],
     bindings: &[u8],
 ) -> Result<ObservedWaitComposition, String> {
+    check_observed_wait_composition_with_policy(
+        source,
+        admitted,
+        observations,
+        bindings,
+        DEFAULT_WAIT_IDENTITY_POLICY,
+    )
+}
+
+/// Replay with explicitly caller-selected declarative policy bytes.
+///
+/// The caller's selection is trusted configuration, not evidence. Admission
+/// still refuses unless the validated context was prepared with the digest of
+/// these exact bytes and [`OBSERVED_WAIT_RULES`].
+pub fn check_observed_wait_composition_with_policy(
+    source: &MonkeyWaitSourceProjection,
+    admitted: &ValidatedEventCompositionContext,
+    observations: &[u8],
+    bindings: &[u8],
+    policy: &str,
+) -> Result<ObservedWaitComposition, String> {
     let context = admitted.context();
-    if context.assumptions().get("threads").map(String::as_str) != Some(REQUIRED_THREADS)
-        || context
-            .assumptions()
-            .get("observation_trust")
-            .map(String::as_str)
-            != Some(REQUIRED_OBSERVATION_TRUST)
-        || context
-            .assumptions()
-            .get("linkage_trust")
-            .map(String::as_str)
-            != Some(REQUIRED_LINKAGE_TRUST)
-        || context
-            .assumptions()
-            .get("native_run_manifest_sha256")
-            .is_none_or(|digest| !is_sha256(digest))
-    {
-        return Err("missing or unsupported conditional replay assumption".into());
+    let decoded = decode_timed_wait_observation(observations, bindings)?;
+    let actual_bounds = observed_wait_bounds(&decoded.trace);
+    let assumptions = context.assumptions();
+    let empty = String::new();
+    let assumption = |name: &str| assumptions.get(name).unwrap_or(&empty).clone();
+    let expected_scope: BTreeSet<_> = source.selected_path_indices().keys().cloned().collect();
+    let actual_scope = serde_json::to_string(context.scope()).map_err(|e| e.to_string())?;
+    let expected_scope = serde_json::to_string(&expected_scope).map_err(|e| e.to_string())?;
+    let expected_contracts_sha256 = qcore_schemas::sha256_hex(
+        &serde_json::to_vec(source.contract_digests()).map_err(|e| e.to_string())?,
+    );
+    let expected_source_rules_sha256 =
+        qcore_schemas::sha256_hex(qcore_c_gateway::typed_source::DEFAULT_SOURCE_RULES.as_bytes());
+    let expected_observation_rules_sha256 = wait_observation_rules_digest_with_policy(policy);
+    // Policy identity is immutable admission, checked before policy execution.
+    // A caller-selected policy cannot delete or weaken the clause that would
+    // otherwise have been responsible for binding its own bytes.
+    if context.observation_rules_sha256() != expected_observation_rules_sha256 {
+        return Err("selected wait identity policy does not match admitted context".into());
     }
-    if context.contracts_sha256()
-        != qcore_schemas::sha256_hex(
-            &serde_json::to_vec(source.contract_digests()).map_err(|e| e.to_string())?,
-        )
-        || context.source_rules_sha256()
-            != qcore_schemas::sha256_hex(
-                qcore_c_gateway::typed_source::DEFAULT_SOURCE_RULES.as_bytes(),
-            )
-        || context.observation_rules_sha256()
-            != qcore_schemas::sha256_hex(OBSERVED_WAIT_RULES.as_bytes())
-    {
-        return Err("composition rule or contract identity mismatch".into());
-    }
-    if qcore_schemas::sha256_hex(observations) != context.observations_sha256()
-        || qcore_schemas::sha256_hex(bindings) != context.bindings_sha256()
-    {
-        return Err("observed composition payload mismatch".into());
-    }
-    if context.semantic_profile() != OBSERVED_WAIT_PROFILE
-        || context.fluent_bit_revision() != source.source_revision()
-        || source
-            .profile_assumptions()
-            .get("profile_digest")
-            .map(String::as_str)
-            != Some(context.monkey_profile_sha256())
-        || context.scope() != &source.selected_path_indices().keys().cloned().collect()
-        || context.bounds()
-            != &BTreeMap::from([
-                ("dispatchers".into(), 1),
-                ("events".into(), 1),
-                ("records".into(), 11),
-                ("runs".into(), 1),
-            ])
-    {
-        return Err("source projection does not match admitted context".into());
-    }
+    let expected_profile_digest = source
+        .profile_assumptions()
+        .get("profile_digest")
+        .cloned()
+        .unwrap_or_default();
+    check_typed_contract_facts(
+        policy,
+        "wait_identity_context",
+        &[
+            ("semantic_profile", text(context.semantic_profile())),
+            ("threads", text(assumption("threads"))),
+            ("observation_trust", text(assumption("observation_trust"))),
+            ("linkage_trust", text(assumption("linkage_trust"))),
+            (
+                "native_run_manifest_sha256_length",
+                integer(
+                    assumptions
+                        .get("native_run_manifest_sha256")
+                        .map_or(0, |digest| digest.len()) as i128,
+                ),
+            ),
+            (
+                "native_run_manifest_invalid_lower_hex_count",
+                integer(
+                    assumptions
+                        .get("native_run_manifest_sha256")
+                        .map_or(0, |digest| {
+                            digest
+                                .bytes()
+                                .filter(|byte| {
+                                    !(byte.is_ascii_digit() || (b'a'..=b'f').contains(byte))
+                                })
+                                .count()
+                        }) as i128,
+                ),
+            ),
+            ("contracts_sha256_actual", text(context.contracts_sha256())),
+            ("contracts_sha256_expected", text(expected_contracts_sha256)),
+            (
+                "source_rules_sha256_actual",
+                text(context.source_rules_sha256()),
+            ),
+            (
+                "source_rules_sha256_expected",
+                text(expected_source_rules_sha256),
+            ),
+            (
+                "observation_rules_sha256_actual",
+                text(context.observation_rules_sha256()),
+            ),
+            (
+                "observation_rules_sha256_expected",
+                text(expected_observation_rules_sha256),
+            ),
+            (
+                "observations_sha256_actual",
+                text(qcore_schemas::sha256_hex(observations)),
+            ),
+            (
+                "observations_sha256_expected",
+                text(context.observations_sha256()),
+            ),
+            (
+                "bindings_sha256_actual",
+                text(qcore_schemas::sha256_hex(bindings)),
+            ),
+            ("bindings_sha256_expected", text(context.bindings_sha256())),
+            (
+                "fluent_bit_revision_actual",
+                text(context.fluent_bit_revision()),
+            ),
+            (
+                "fluent_bit_revision_expected",
+                text(source.source_revision()),
+            ),
+            (
+                "monkey_profile_sha256_actual",
+                text(context.monkey_profile_sha256()),
+            ),
+            (
+                "monkey_profile_sha256_expected",
+                text(expected_profile_digest),
+            ),
+            ("scope_actual", text(actual_scope)),
+            ("scope_expected", text(expected_scope)),
+            ("bound_entry_count", integer(context.bounds().len() as i128)),
+            (
+                "dispatchers_bound_actual",
+                integer(i128::from(actual_bounds["dispatchers"])),
+            ),
+            (
+                "dispatchers_bound_declared",
+                integer(i128::from(
+                    *context.bounds().get("dispatchers").unwrap_or(&0),
+                )),
+            ),
+            (
+                "events_bound_actual",
+                integer(i128::from(actual_bounds["events"])),
+            ),
+            (
+                "events_bound_declared",
+                integer(i128::from(*context.bounds().get("events").unwrap_or(&0))),
+            ),
+            (
+                "records_bound_actual",
+                integer(i128::from(actual_bounds["records"])),
+            ),
+            (
+                "records_bound_declared",
+                integer(i128::from(*context.bounds().get("records").unwrap_or(&0))),
+            ),
+            (
+                "runs_bound_actual",
+                integer(i128::from(actual_bounds["runs"])),
+            ),
+            (
+                "runs_bound_declared",
+                integer(i128::from(*context.bounds().get("runs").unwrap_or(&0))),
+            ),
+        ],
+    )?;
     for (name, digest) in source.source_summary_digests() {
-        if context.assumptions().get(&format!("source_summary.{name}")) != Some(digest) {
-            return Err(format!("source summary context mismatch: {name}"));
-        }
+        check_identity_entry(
+            policy,
+            "source summary context",
+            name,
+            context.assumptions().get(&format!("source_summary.{name}")),
+            digest,
+        )?;
     }
     for (name, digest) in source.contract_digests() {
-        if context.assumptions().get(&format!("contract.{name}")) != Some(digest) {
-            return Err(format!("source contract context mismatch: {name}"));
-        }
+        check_identity_entry(
+            policy,
+            "source contract context",
+            name,
+            context.assumptions().get(&format!("contract.{name}")),
+            digest,
+        )?;
     }
-    let decoded = decode_timed_wait_observation(observations, bindings)?;
     for (path, digest) in &decoded.source_apis {
-        if context.assumptions().get(&format!("source_file.{path}")) != Some(digest) {
-            return Err(format!("observer source identity mismatch: {path}"));
-        }
+        check_identity_entry(
+            policy,
+            "observer source",
+            path,
+            context.assumptions().get(&format!("source_file.{path}")),
+            digest,
+        )?;
     }
     let native = &decoded.context;
-    if context.assumptions().get("backend") != Some(&native.backend)
-        || native.callback != "cb_wait_2_timeout"
-        || native.flags != EventFlags::TIMEOUT
-        || source.required_observations().len() != 11
-    {
-        return Err("unsupported observed wait profile".into());
-    }
+    let (expected_callback, expected_flags) = source
+        .required_observations()
+        .iter()
+        .find_map(|requirement| match requirement {
+            Requirement::EventCreateSuccess {
+                callback, flags, ..
+            } => Some((callback.as_str(), *flags)),
+            _ => None,
+        })
+        .unwrap_or(("", 0));
+    check_typed_contract_facts(
+        policy,
+        "wait_observed_profile",
+        &[
+            ("backend_actual", text(&native.backend)),
+            ("backend_expected", text(assumption("backend"))),
+            ("callback_actual", text(&native.callback)),
+            ("callback_expected", text(expected_callback)),
+            ("flags_actual", integer(i128::from(native.flags))),
+            ("flags_expected", integer(i128::from(expected_flags))),
+            (
+                "source_requirement_count",
+                integer(source.required_observations().len() as i128),
+            ),
+            (
+                "observed_record_count",
+                integer(decoded.trace.records.len() as i128),
+            ),
+        ],
+    )?;
     let observed = check_timed_wait_observation(&decoded.trace, native)
         .map_err(|error| format!("observation refused: {error:?}"))?;
     // There is exactly one identity per typed namespace. Assigning the fresh

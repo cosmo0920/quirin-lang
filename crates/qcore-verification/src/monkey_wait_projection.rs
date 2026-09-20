@@ -7,8 +7,12 @@
 //! boundary must bind before Cycle 18 checking can run.
 
 use std::collections::{BTreeMap, BTreeSet};
+use std::sync::LazyLock;
 
 use qcore_c_gateway::typed_source::{SourceOperation, SourceSummary};
+use qcore_contract::contract_observation::{
+    ContractFact, check_typed_contract_facts, contract_fact_literal,
+};
 use qcore_core::usage::Usage;
 use qcore_frontend::frontend::{
     DeclarationKind, SourceContractClauseKind, SourceContractExitSelector, parse_source_program,
@@ -18,31 +22,36 @@ use qcore_frontend::source_extern::normalize_type;
 use qcore_schemas::sha256_hex;
 use serde::Serialize;
 
-pub const MONKEY_SOURCE_REVISION: &str = "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
-pub const WAIT_CALLBACK: &str = "cb_wait_2_timeout";
+const WAIT_SOURCE_POLICY: &str =
+    include_str!("../../../contract/qcore/monkey/wait_source_policy.qcore");
+const SOURCE_IDENTITY_POLICY: &str = "source_identity";
+const PROJECTION_IDENTITY_POLICY: &str = "wait_projection_identity";
+const ARTIFACT_SET_POLICY: &str = "artifact_set";
 
-const REQUIRED_SUMMARIES: [(&str, &str, usize, usize); 5] = [
-    (WAIT_CALLBACK, "void (evutil_socket_t, short, void *)", 1, 0),
-    ("_mk_event_loop_create", "void *(int)", 4, 3),
-    (
-        "_mk_event_wait_with_flags",
-        "int (struct mk_event_loop *, int)",
-        1,
-        0,
-    ),
-    (
-        "_mk_event_wait_2",
-        "int (struct mk_event_loop *, int)",
-        3,
-        2,
-    ),
-    (
-        "_mk_event_loop_destroy",
-        "void (struct mk_event_ctx *)",
-        1,
-        0,
-    ),
-];
+fn bundled_text_fact(function: &str, fact: &str) -> String {
+    match contract_fact_literal(WAIT_SOURCE_POLICY, function, fact) {
+        Ok(ContractFact::Text(value)) => value,
+        Ok(ContractFact::Integer(_)) => {
+            panic!("bundled Monkey wait policy fact `{fact}` is not text")
+        }
+        Err(error) => panic!("bundled Monkey wait policy is invalid: {error}"),
+    }
+}
+
+static BUNDLED_SOURCE_REVISION: LazyLock<String> =
+    LazyLock::new(|| bundled_text_fact(SOURCE_IDENTITY_POLICY, "source_revision"));
+static BUNDLED_WAIT_CALLBACK: LazyLock<String> =
+    LazyLock::new(|| bundled_text_fact(PROJECTION_IDENTITY_POLICY, "wait_callback"));
+
+/// Pinned revision declared by the bundled executable source policy.
+pub fn monkey_source_revision() -> &'static str {
+    &BUNDLED_SOURCE_REVISION
+}
+
+/// Timed-wait callback declared by the bundled executable source policy.
+pub fn wait_callback() -> &'static str {
+    &BUNDLED_WAIT_CALLBACK
+}
 
 /// Facts that must come from one independently checked native execution.
 /// Source establishes their order and expected values, never their success.
@@ -81,6 +90,7 @@ pub enum WaitSourceProjectionError {
     MissingContractBlock(String),
     ContractHeaderMismatch(String),
     ContractClauseMismatch(String),
+    SourcePolicy(String),
     MissingSummary(String),
     DuplicateSummary(String),
     UnexpectedSummary(String),
@@ -94,45 +104,6 @@ pub enum WaitSourceProjectionError {
     LifecyclePathMismatch(String),
 }
 
-fn approved_summary_set(digests: &BTreeMap<String, String>) -> bool {
-    let common = [
-        (
-            WAIT_CALLBACK,
-            "8308bac83724f6f2417f6d22bbf3e65afbbf491b8ad91b4a9217b1aebd22efdc",
-        ),
-        (
-            "_mk_event_wait_with_flags",
-            "3637e3f8ddfb6ae389d571a05f13bb9e32e675e95bfb4d5134ee8ab73923ff1f",
-        ),
-        (
-            "_mk_event_loop_destroy",
-            "c0d3215c02ed7f421f725596fbcee27547d0cf2a5f8534aa532f794cbd9a5e0e",
-        ),
-    ];
-    let expected = |create: &str, wait: &str| {
-        common
-            .into_iter()
-            .chain([
-                ("_mk_event_loop_create", create),
-                ("_mk_event_wait_2", wait),
-            ])
-            .map(|(name, digest)| (name.to_owned(), digest.to_owned()))
-            .collect::<BTreeMap<_, _>>()
-    };
-    // The focused fixture and production translation unit are independently
-    // pinned as whole sets. Summaries from the two artifacts cannot be mixed.
-    *digests
-        == expected(
-            "2e32d6c7bbc40031c0f9828031d1591478cc2d556c2504dcf4f2687b0943214d",
-            "88d9d6f2d7dad652503bd218ac9fad80c8c16afc53beb8ec0e174e2232628dff",
-        )
-        || *digests
-            == expected(
-                "d1c48805630eacec138b0ed1eae834195815b9e4ce61a731c40ac3fd46bc7756",
-                "69511d42a65bbed00f7c54e2890cc641578cf60029260893a8aa2db585bca4bd",
-            )
-}
-
 /// Parsed declarations that state the contract-expressible half of the slice.
 ///
 /// Construction is total-or-reject over the five declarations used by this
@@ -141,6 +112,43 @@ fn approved_summary_set(digests: &BTreeMap<String, String>) -> bool {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct MonkeyWaitContracts {
     contract_digests: BTreeMap<String, String>,
+    source_policy: String,
+    source_functions: BTreeSet<String>,
+    source_revision: String,
+    wait_callback: String,
+    event_flags: u16,
+    descriptor_absent: bool,
+    priority_required: bool,
+}
+
+fn policy_text_fact(
+    source: &str,
+    function: &str,
+    fact: &str,
+) -> Result<String, WaitSourceProjectionError> {
+    match contract_fact_literal(source, function, fact)
+        .map_err(WaitSourceProjectionError::SourcePolicy)?
+    {
+        ContractFact::Text(value) => Ok(value),
+        ContractFact::Integer(_) => Err(WaitSourceProjectionError::SourcePolicy(format!(
+            "policy fact `{fact}` must be text"
+        ))),
+    }
+}
+
+fn policy_integer_fact(
+    source: &str,
+    function: &str,
+    fact: &str,
+) -> Result<i128, WaitSourceProjectionError> {
+    match contract_fact_literal(source, function, fact)
+        .map_err(WaitSourceProjectionError::SourcePolicy)?
+    {
+        ContractFact::Integer(value) => Ok(value),
+        ContractFact::Text(_) => Err(WaitSourceProjectionError::SourcePolicy(format!(
+            "policy fact `{fact}` must be an integer"
+        ))),
+    }
 }
 
 impl MonkeyWaitContracts {
@@ -148,136 +156,100 @@ impl MonkeyWaitContracts {
         wrapper_contract: &str,
         composition_contract: &str,
     ) -> Result<Self, WaitSourceProjectionError> {
+        Self::parse_with_source_policy(wrapper_contract, composition_contract, WAIT_SOURCE_POLICY)
+    }
+
+    fn parse_with_source_policy(
+        wrapper_contract: &str,
+        composition_contract: &str,
+        source_policy: &str,
+    ) -> Result<Self, WaitSourceProjectionError> {
         let wrapper = parse_source_program(wrapper_contract)
             .map_err(|error| WaitSourceProjectionError::ContractParse(error.to_string()))?;
         let composition = parse_source_program(composition_contract)
             .map_err(|error| WaitSourceProjectionError::ContractParse(error.to_string()))?;
-
-        check_contract_declaration(
-            &wrapper,
-            "_mk_event_loop_create",
-            ContractHeader {
-                parameters: &[("size", "i32", false)],
-                result: "ptr<mut,EventContext>",
-            },
+        let policy = parse_source_program(source_policy)
+            .map_err(|error| WaitSourceProjectionError::SourcePolicy(error.to_string()))?;
+        let source_revision =
+            policy_text_fact(source_policy, SOURCE_IDENTITY_POLICY, "source_revision")?;
+        let wait_callback =
+            policy_text_fact(source_policy, PROJECTION_IDENTITY_POLICY, "wait_callback")?;
+        let event_flags =
+            policy_integer_fact(source_policy, PROJECTION_IDENTITY_POLICY, "event_flags")?;
+        let descriptor_absent = policy_integer_fact(
+            source_policy,
+            PROJECTION_IDENTITY_POLICY,
+            "descriptor_absent",
+        )?;
+        let priority_required = policy_integer_fact(
+            source_policy,
+            PROJECTION_IDENTITY_POLICY,
+            "priority_required",
+        )?;
+        let event_flags = u16::try_from(event_flags).map_err(|_| {
+            WaitSourceProjectionError::SourcePolicy("event_flags is outside u16".into())
+        })?;
+        let policy_bool = |name: &str, value: i128| {
+            if value == 0 || value == 1 {
+                Ok(value != 0)
+            } else {
+                Err(WaitSourceProjectionError::SourcePolicy(format!(
+                    "{name} must be zero or one"
+                )))
+            }
+        };
+        let descriptor_absent = policy_bool("descriptor_absent", descriptor_absent)?;
+        let priority_required = policy_bool("priority_required", priority_required)?;
+        // Validate policy-derived projection values eagerly. Source identity
+        // is evaluated later against independently imported summary facts.
+        check_typed_contract_facts(
+            source_policy,
+            PROJECTION_IDENTITY_POLICY,
             &[
+                ("wait_callback", ContractFact::Text(wait_callback.clone())),
                 (
-                    ClauseExit::Requires,
-                    "selected_unix_libevent_source_profile",
+                    "event_flags",
+                    ContractFact::Integer(i128::from(event_flags)),
                 ),
                 (
-                    ClauseExit::Normal,
-                    "initialization_or_context_allocation_failure_returns_null",
+                    "descriptor_absent",
+                    ContractFact::Integer(i128::from(descriptor_absent)),
                 ),
                 (
-                    ClauseExit::Normal,
-                    "event_base_new_result_is_stored_without_a_null_test",
-                ),
-                (
-                    ClauseExit::Normal,
-                    "fired_allocation_failure_frees_context_without_base_free",
-                ),
-                (
-                    ClauseExit::Normal,
-                    "successful_return_sets_queue_size_and_returns_context",
+                    "priority_required",
+                    ContractFact::Integer(i128::from(priority_required)),
                 ),
             ],
-        )?;
-        check_contract_declaration(
-            &wrapper,
-            "_mk_event_wait_with_flags",
-            ContractHeader {
-                parameters: &[
-                    ("loop", "borrow<'call,mut,EventLoop>", true),
-                    ("flags", "i32", false),
-                ],
-                result: "i32",
-            },
-            &[
-                (
-                    ClauseExit::Requires,
-                    "selected_unix_libevent_source_profile",
-                ),
-                (ClauseExit::Normal, "fired_count_is_cleared_before_dispatch"),
-                (ClauseExit::Normal, "dispatch_result_is_ignored"),
-                (
-                    ClauseExit::Normal,
-                    "final_fired_count_is_copied_to_loop_and_returned",
-                ),
-            ],
-        )?;
-        check_contract_declaration(
-            &wrapper,
-            "_mk_event_wait_2",
-            ContractHeader {
-                parameters: &[
-                    ("loop", "borrow<'call,mut,EventLoop>", true),
-                    ("timeout", "i32", false),
-                ],
-                result: "i32",
-            },
-            &[
-                (
-                    ClauseExit::Requires,
-                    "selected_unix_libevent_source_profile",
-                ),
-                (
-                    ClauseExit::Normal,
-                    "infinite_and_zero_wait_paths_delegate_without_timer_creation",
-                ),
-                (ClauseExit::Normal, "timed_wait_uses_explicit_stack_timeval"),
-                (
-                    ClauseExit::Normal,
-                    "timeout_event_creation_and_registration_results_are_not_checked",
-                ),
-                (
-                    ClauseExit::Normal,
-                    "timed_wait_calls_event_free_after_dispatch_and_returns_dispatch_result",
-                ),
-            ],
-        )?;
-        check_contract_declaration(
-            &wrapper,
-            "_mk_event_loop_destroy",
-            ContractHeader {
-                parameters: &[("ctx", "own<EventContext>", true)],
-                result: "unit",
-            },
-            &[
-                (
-                    ClauseExit::Requires,
-                    "selected_unix_libevent_source_profile",
-                ),
-                (
-                    ClauseExit::Requires,
-                    "context_and_children_have_valid_destruction_provenance",
-                ),
-                (
-                    ClauseExit::Normal,
-                    "calls_base_free_then_fired_free_then_context_free",
-                ),
-                (
-                    ClauseExit::Normal,
-                    "nested_event_and_map_custody_still_requires_composition",
-                ),
-            ],
-        )?;
-        check_contract_declaration(
-            &composition,
-            WAIT_CALLBACK,
-            ContractHeader {
-                parameters: &[(
-                    "callback_argument",
-                    "borrow<'callback,const,MonkeyCallbackArgument>",
-                    true,
-                )],
-                result: "unit",
-            },
-            &[
-                (ClauseExit::Requires, "callback_argument_is_borrowed"),
-                (ClauseExit::Normal, "callback_has_no_resource_effect"),
-            ],
-        )?;
+        )
+        .map_err(WaitSourceProjectionError::SourcePolicy)?;
+        let reserved = [
+            SOURCE_IDENTITY_POLICY,
+            PROJECTION_IDENTITY_POLICY,
+            ARTIFACT_SET_POLICY,
+        ];
+        let source_functions = policy
+            .declarations
+            .iter()
+            .map(|declaration| declaration.value.name.clone())
+            .filter(|name| !reserved.contains(&name.as_str()) && !name.starts_with("contract_"))
+            .collect::<BTreeSet<_>>();
+        if source_functions.is_empty()
+            || reserved.iter().any(|name| {
+                policy
+                    .declarations
+                    .iter()
+                    .filter(|declaration| declaration.value.name == *name)
+                    .count()
+                    != 1
+            })
+        {
+            return Err(WaitSourceProjectionError::SourcePolicy(
+                "source policy has an incomplete or duplicate declaration set".into(),
+            ));
+        }
+        for name in &source_functions {
+            check_contract_declaration([&wrapper, &composition], source_policy, name)?;
+        }
 
         Ok(Self {
             contract_digests: BTreeMap::from([
@@ -289,7 +261,18 @@ impl MonkeyWaitContracts {
                     "monkey/composition.qcore".into(),
                     sha256_hex(composition_contract.as_bytes()),
                 ),
+                (
+                    "monkey/wait_source_policy.qcore".into(),
+                    sha256_hex(source_policy.as_bytes()),
+                ),
             ]),
+            source_policy: source_policy.into(),
+            source_functions,
+            source_revision,
+            wait_callback,
+            event_flags,
+            descriptor_absent,
+            priority_required,
         })
     }
 
@@ -301,10 +284,10 @@ impl MonkeyWaitContracts {
         vec![
             WaitObservationRequirement::BaseCreateSuccess,
             WaitObservationRequirement::EventCreateSuccess {
-                callback: WAIT_CALLBACK.into(),
-                flags: 0x01,
-                descriptor_absent: true,
-                priority_required: true,
+                callback: self.wait_callback.clone(),
+                flags: self.event_flags,
+                descriptor_absent: self.descriptor_absent,
+                priority_required: self.priority_required,
             },
             WaitObservationRequirement::EventAddSuccess,
             WaitObservationRequirement::DispatchBegin,
@@ -319,27 +302,14 @@ impl MonkeyWaitContracts {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-enum ClauseExit {
-    Requires,
-    Normal,
-}
-
-#[derive(Clone, Copy)]
-struct ContractHeader<'a> {
-    parameters: &'a [(&'a str, &'a str, bool)],
-    result: &'a str,
-}
-
 fn check_contract_declaration(
-    program: &qcore_frontend::frontend::SourceProgram,
+    programs: [&qcore_frontend::frontend::SourceProgram; 2],
+    source_policy: &str,
     name: &str,
-    header: ContractHeader<'_>,
-    expected: &[(ClauseExit, &str)],
 ) -> Result<(), WaitSourceProjectionError> {
-    let declarations: Vec<_> = program
-        .declarations
-        .iter()
+    let declarations: Vec<_> = programs
+        .into_iter()
+        .flat_map(|program| &program.declarations)
         .filter(|declaration| declaration.value.name == name)
         .collect();
     let declaration = match declarations.as_slice() {
@@ -360,48 +330,101 @@ fn check_contract_declaration(
         .function_contract
         .as_ref()
         .ok_or_else(|| WaitSourceProjectionError::MissingContractBlock(name.into()))?;
-    let header_matches = declaration.value.kind == DeclarationKind::ExternFunction
-        && declaration.value.body.is_none()
-        && !declaration.value.tokens.iter().any(
-            |token| matches!(token, TokenKind::Word(word) if word == "unsafe" || word == "effects"),
+    let parameter_names = declaration
+        .value
+        .parameters
+        .iter()
+        .map(|parameter| parameter.name.value.as_str())
+        .collect::<Vec<_>>()
+        .join(",");
+    let parameter_types = declaration
+        .value
+        .parameters
+        .iter()
+        .map(|parameter| normalize_type(&parameter.type_source))
+        .collect::<Vec<_>>()
+        .join(",");
+    let parameter_usages = declaration
+        .value
+        .parameters
+        .iter()
+        .map(
+            |parameter| match parameter.usage.as_ref().map(|usage| usage.value) {
+                None => "none",
+                Some(Usage::ONE) => "one",
+                Some(_) => "other",
+            },
         )
-        && declaration.value.parameters.len() == header.parameters.len()
-        && declaration
-            .value
-            .parameters
-            .iter()
-            .zip(header.parameters)
-            .all(|(actual, (expected_name, expected_type, requires_one))| {
-                actual.name.value == *expected_name
-                    && normalize_type(&actual.type_source) == *expected_type
-                    && actual.usage.as_ref().map(|usage| usage.value)
-                        == requires_one.then_some(Usage::ONE)
-            })
-        && declaration
-            .value
-            .result_type
-            .as_ref()
-            .is_some_and(|result| normalize_type(&result.source) == header.result);
-    if !header_matches {
-        return Err(WaitSourceProjectionError::ContractHeaderMismatch(
-            name.into(),
-        ));
-    }
-    let actual = contract
+        .collect::<Vec<_>>()
+        .join(",");
+    let result_type = declaration
+        .value
+        .result_type
+        .as_ref()
+        .map(|result| normalize_type(&result.source))
+        .unwrap_or_default();
+    let clause_sequence = contract
         .clauses
         .iter()
         .map(|clause| {
             let exit = match &clause.value.kind {
-                SourceContractClauseKind::Requires => ClauseExit::Requires,
-                SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal) => {
-                    ClauseExit::Normal
-                }
+                SourceContractClauseKind::Requires => "requires",
+                SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal) => "normal",
                 _ => return None,
             };
-            Some((exit, clause.value.expression_source.trim()))
+            Some(format!("{exit}:{}", clause.value.expression_source.trim()))
         })
-        .collect::<Option<Vec<_>>>();
-    if actual.as_deref() != Some(expected) {
+        .collect::<Option<Vec<_>>>()
+        .ok_or_else(|| WaitSourceProjectionError::ContractClauseMismatch(name.into()))?
+        .join("|");
+    let policy_function = format!("contract_{name}");
+    let actual_facts = vec![
+        (
+            "declaration_is_extern",
+            ContractFact::Integer(i128::from(
+                declaration.value.kind == DeclarationKind::ExternFunction,
+            )),
+        ),
+        (
+            "declaration_has_body",
+            ContractFact::Integer(i128::from(declaration.value.body.is_some())),
+        ),
+        (
+            "declaration_is_unsafe",
+            ContractFact::Integer(i128::from(
+                declaration
+                    .value
+                    .tokens
+                    .iter()
+                    .any(|token| matches!(token, TokenKind::Word(word) if word == "unsafe")),
+            )),
+        ),
+        (
+            "declaration_has_effects",
+            ContractFact::Integer(i128::from(
+                declaration
+                    .value
+                    .tokens
+                    .iter()
+                    .any(|token| matches!(token, TokenKind::Word(word) if word == "effects")),
+            )),
+        ),
+        (
+            "parameter_names",
+            ContractFact::Text(parameter_names.clone()),
+        ),
+        (
+            "parameter_types",
+            ContractFact::Text(parameter_types.clone()),
+        ),
+        (
+            "parameter_usages",
+            ContractFact::Text(parameter_usages.clone()),
+        ),
+        ("result_type", ContractFact::Text(result_type.clone())),
+        ("clause_sequence", ContractFact::Text(clause_sequence)),
+    ];
+    if check_typed_contract_facts(source_policy, &policy_function, &actual_facts).is_err() {
         return Err(WaitSourceProjectionError::ContractClauseMismatch(
             name.into(),
         ));
@@ -461,107 +484,70 @@ fn calls(path: &[SourceOperation]) -> Vec<&str> {
         .collect()
 }
 
-fn ends_with_return(path: &[SourceOperation], value: bool) -> bool {
-    matches!(
-        path.last(),
-        Some(SourceOperation::ReturnValue { .. }) if value
-    ) || matches!(path.last(), Some(SourceOperation::Return) if !value)
+fn call_sequence(path: &[SourceOperation]) -> String {
+    calls(path).join(",")
 }
 
-fn validate_lifecycle_shape(
-    name: &str,
-    selected_path: &[SourceOperation],
-) -> Result<(), WaitSourceProjectionError> {
-    let (expected_calls, returns_value): (&[&str], bool) = match name {
-        "_mk_event_loop_create" => (
-            &[
-                "_mk_event_init",
-                "mk_mem_alloc_z",
-                "event_base_new",
-                "mk_mem_alloc_z",
-            ],
-            true,
-        ),
-        "_mk_event_wait_with_flags" => (&["event_base_loop"], true),
-        "_mk_event_wait_2" => (
-            &[
-                "event_new",
-                "event_add",
-                "_mk_event_wait_with_flags",
-                "event_free",
-            ],
-            true,
-        ),
-        "_mk_event_loop_destroy" => (&["event_base_free", "mk_mem_free", "mk_mem_free"], false),
-        _ => return Ok(()),
-    };
-    if calls(selected_path) != expected_calls || !ends_with_return(selected_path, returns_value) {
-        return Err(WaitSourceProjectionError::LifecyclePathMismatch(
-            name.to_owned(),
-        ));
+fn return_kind(path: &[SourceOperation]) -> &'static str {
+    match path.last() {
+        Some(SourceOperation::Return) => "return",
+        Some(SourceOperation::ReturnValue { .. }) => "return_value",
+        _ => "other",
     }
-    Ok(())
 }
 
-fn validate_complete_shape(
-    name: &str,
+fn summary_policy_facts(
     summary: &SourceSummary,
-) -> Result<(), WaitSourceProjectionError> {
-    let expected: &[(&[&str], usize)] = match name {
-        WAIT_CALLBACK => &[(&[], 1)],
-        "_mk_event_loop_create" => &[
-            (&["_mk_event_init"], 4),
-            (&["_mk_event_init", "mk_mem_alloc_z"], 7),
-            (
-                &[
-                    "_mk_event_init",
-                    "mk_mem_alloc_z",
-                    "event_base_new",
-                    "mk_mem_alloc_z",
-                    "mk_mem_free",
-                ],
-                14,
+    import_role: &str,
+    selected_path_index: usize,
+) -> Vec<(&'static str, ContractFact)> {
+    let selected = &summary.paths()[selected_path_index].operations;
+    vec![
+        ("signature", ContractFact::Text(summary.signature().into())),
+        (
+            "path_count",
+            ContractFact::Integer(summary.paths().len() as i128),
+        ),
+        ("import_role", ContractFact::Text(import_role.into())),
+        (
+            "path_operation_counts",
+            ContractFact::Text(
+                summary
+                    .paths()
+                    .iter()
+                    .map(|path| path.operations.len().to_string())
+                    .collect::<Vec<_>>()
+                    .join(","),
             ),
-            (
-                &[
-                    "_mk_event_init",
-                    "mk_mem_alloc_z",
-                    "event_base_new",
-                    "mk_mem_alloc_z",
-                ],
-                14,
+        ),
+        (
+            "path_call_sequences",
+            ContractFact::Text(
+                summary
+                    .paths()
+                    .iter()
+                    .map(|path| call_sequence(&path.operations))
+                    .collect::<Vec<_>>()
+                    .join(";"),
             ),
-        ],
-        "_mk_event_wait_with_flags" => &[(&["event_base_loop"], 10)],
-        "_mk_event_wait_2" => &[
-            (&["_mk_event_wait_with_flags"], 13),
-            (&["_mk_event_wait_with_flags"], 14),
-            (
-                &[
-                    "event_new",
-                    "event_add",
-                    "_mk_event_wait_with_flags",
-                    "event_free",
-                ],
-                20,
-            ),
-        ],
-        "_mk_event_loop_destroy" => &[(&["event_base_free", "mk_mem_free", "mk_mem_free"], 6)],
-        _ => &[],
-    };
-    if summary.paths().len() != expected.len()
-        || summary
-            .paths()
-            .iter()
-            .zip(expected)
-            .any(|(path, (expected_calls, operation_count))| {
-                path.operations.len() != *operation_count
-                    || calls(&path.operations) != *expected_calls
-            })
-    {
-        return Err(WaitSourceProjectionError::SourceShapeMismatch(name.into()));
-    }
-    Ok(())
+        ),
+        (
+            "selected_path_index",
+            ContractFact::Integer(selected_path_index as i128),
+        ),
+        (
+            "selected_operation_count",
+            ContractFact::Integer(selected.len() as i128),
+        ),
+        (
+            "selected_calls",
+            ContractFact::Text(call_sequence(selected)),
+        ),
+        (
+            "selected_return_kind",
+            ContractFact::Text(return_kind(selected).into()),
+        ),
+    ]
 }
 
 /// Derive the source half of one timed-wait composition.
@@ -574,14 +560,10 @@ pub fn project_monkey_timed_wait_source<'a>(
     summaries: impl IntoIterator<Item = &'a SourceSummary>,
     contracts: &MonkeyWaitContracts,
 ) -> Result<MonkeyWaitSourceProjection, WaitSourceProjectionError> {
-    let required_names = REQUIRED_SUMMARIES
-        .iter()
-        .map(|(name, ..)| *name)
-        .collect::<BTreeSet<_>>();
     let mut by_name = BTreeMap::new();
     for summary in summaries {
         let name = summary.function();
-        if !required_names.contains(name) {
+        if !contracts.source_functions.contains(name) {
             return Err(WaitSourceProjectionError::UnexpectedSummary(name.into()));
         }
         if by_name.insert(name, summary).is_some() {
@@ -589,61 +571,79 @@ pub fn project_monkey_timed_wait_source<'a>(
         }
     }
 
-    let callback_assumptions = by_name
-        .get(WAIT_CALLBACK)
-        .ok_or_else(|| WaitSourceProjectionError::MissingSummary(WAIT_CALLBACK.into()))?
-        .profile_assumptions();
-    let mut common_assumptions = callback_assumptions.clone();
-    common_assumptions.remove("typed_import_role");
-    if common_assumptions.get("library").map(String::as_str) != Some("monkey")
-        || common_assumptions.get("source_set").map(String::as_str) != Some("fluent-bit")
-        || common_assumptions
-            .get("profile_digest")
-            .is_none_or(|digest| digest.is_empty())
-        || callback_assumptions
-            .get("typed_import_role")
-            .map(String::as_str)
-            != Some("Callback")
-    {
-        return Err(WaitSourceProjectionError::ProfileAssumptionsMismatch(
-            WAIT_CALLBACK.into(),
-        ));
+    for name in &contracts.source_functions {
+        if !by_name.contains_key(name.as_str()) {
+            return Err(WaitSourceProjectionError::MissingSummary(name.clone()));
+        }
     }
+    let first = contracts
+        .source_functions
+        .iter()
+        .next()
+        .and_then(|name| by_name.get(name.as_str()))
+        .expect("a parsed wait policy has at least one source function");
+    let mut common_assumptions = first.profile_assumptions().clone();
+    common_assumptions.remove("typed_import_role");
 
     let mut digests = BTreeMap::new();
     let mut selected = BTreeMap::new();
-    for (name, signature, path_count, selected_path) in REQUIRED_SUMMARIES {
-        let summary = by_name
-            .get(name)
-            .ok_or_else(|| WaitSourceProjectionError::MissingSummary(name.into()))?;
-        if summary.source_revision() != MONKEY_SOURCE_REVISION {
-            return Err(WaitSourceProjectionError::SourceRevisionMismatch(
-                name.into(),
-            ));
-        }
-        if summary.signature() != signature
-            && !(name == WAIT_CALLBACK && summary.signature() == "void (int, short, void *)")
-        {
-            return Err(WaitSourceProjectionError::SignatureMismatch(name.into()));
-        }
-        if summary.paths().len() != path_count {
-            return Err(WaitSourceProjectionError::PathCountMismatch(name.into()));
-        }
-        validate_complete_shape(name, summary)?;
+    for name in &contracts.source_functions {
+        let summary = by_name[name.as_str()];
         let mut assumptions = summary.profile_assumptions().clone();
-        let role = assumptions.remove("typed_import_role");
-        if assumptions != common_assumptions
-            || role.as_deref()
-                != Some(if name == WAIT_CALLBACK {
-                    "Callback"
-                } else {
-                    "Wrapper"
-                })
-        {
+        let role = assumptions
+            .remove("typed_import_role")
+            .ok_or_else(|| WaitSourceProjectionError::ProfileAssumptionsMismatch(name.clone()))?;
+        if assumptions != common_assumptions {
             return Err(WaitSourceProjectionError::ProfileAssumptionsMismatch(
-                name.into(),
+                name.clone(),
             ));
         }
+        check_typed_contract_facts(
+            &contracts.source_policy,
+            SOURCE_IDENTITY_POLICY,
+            &[
+                (
+                    "source_revision",
+                    ContractFact::Text(summary.source_revision().into()),
+                ),
+                (
+                    "library",
+                    ContractFact::Text(assumptions.get("library").cloned().unwrap_or_default()),
+                ),
+                (
+                    "source_set",
+                    ContractFact::Text(assumptions.get("source_set").cloned().unwrap_or_default()),
+                ),
+                (
+                    "profile_digest",
+                    ContractFact::Text(
+                        assumptions
+                            .get("profile_digest")
+                            .cloned()
+                            .unwrap_or_default(),
+                    ),
+                ),
+            ],
+        )
+        .map_err(|_| WaitSourceProjectionError::SourceRevisionMismatch(name.clone()))?;
+
+        let accepted_paths = summary
+            .paths()
+            .iter()
+            .enumerate()
+            .filter_map(|(path_index, _)| {
+                check_typed_contract_facts(
+                    &contracts.source_policy,
+                    name,
+                    &summary_policy_facts(summary, &role, path_index),
+                )
+                .is_ok()
+                .then_some(path_index)
+            })
+            .collect::<Vec<_>>();
+        let [selected_path] = accepted_paths.as_slice() else {
+            return Err(WaitSourceProjectionError::SourceShapeMismatch(name.clone()));
+        };
         // Profile assumptions are checked separately and may legitimately gain
         // unrelated declarations. The profile importer already enforces the
         // callback signature constraint. The artifact digest pins source
@@ -657,23 +657,28 @@ pub fn project_monkey_timed_wait_source<'a>(
         ))
         .expect("constructor-private typed source summaries always serialize");
         let digest = sha256_hex(&encoded);
-        validate_lifecycle_shape(name, &summary.paths()[selected_path].operations)?;
-        digests.insert(name.into(), digest);
-        selected.insert(name.into(), selected_path);
+        digests.insert(name.clone(), digest);
+        selected.insert(name.clone(), *selected_path);
     }
-    if !approved_summary_set(&digests) {
-        return Err(WaitSourceProjectionError::SourceArtifactMismatch(
-            "selected summary set".into(),
-        ));
-    }
-
-    let callback = by_name[WAIT_CALLBACK];
-    if callback.paths()[0].operations.as_slice() != [SourceOperation::Return] {
-        return Err(WaitSourceProjectionError::CallbackIsNotSoleReturn);
-    }
+    let digest_facts = digests
+        .iter()
+        .map(|(name, digest)| (format!("digest_{name}"), ContractFact::Text(digest.clone())))
+        .collect::<Vec<_>>();
+    let digest_fact_refs = digest_facts
+        .iter()
+        .map(|(name, value)| (name.as_str(), value.clone()))
+        .collect::<Vec<_>>();
+    check_typed_contract_facts(
+        &contracts.source_policy,
+        ARTIFACT_SET_POLICY,
+        &digest_fact_refs,
+    )
+    .map_err(|_| {
+        WaitSourceProjectionError::SourceArtifactMismatch("selected summary set".into())
+    })?;
 
     Ok(MonkeyWaitSourceProjection {
-        source_revision: MONKEY_SOURCE_REVISION.into(),
+        source_revision: contracts.source_revision.clone(),
         profile_assumptions: common_assumptions,
         source_summary_digests: digests,
         selected_path_indices: selected,
@@ -681,4 +686,194 @@ pub fn project_monkey_timed_wait_source<'a>(
         contract_digests: contracts.contract_digests.clone(),
         callback_semantics: WaitCallbackSemantics::BorrowedNoEffectNoTasks,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::path::PathBuf;
+
+    use qcore_c_gateway::legacy_c::C11TranslationUnit;
+    use qcore_c_gateway::typed_source::{SourceResult, import_source_functions_from_profile};
+    use qcore_contract::profile_loader::load_source_set_profile;
+    use qcore_schemas::profile::ImportRole;
+
+    const CALLBACKS: &str = include_str!("../../../compiler/tests/fixtures/monkey/callbacks.c");
+    const WRAPPERS: &str = include_str!("../../../compiler/tests/fixtures/monkey/wrappers.c");
+    const WRAPPER_CONTRACT: &str =
+        include_str!("../../../contract/qcore/monkey/wrapper_paths.qcore");
+    const COMPOSITION_CONTRACT: &str =
+        include_str!("../../../contract/qcore/monkey/composition.qcore");
+
+    fn wrapper_source() -> String {
+        format!(
+            "{WRAPPERS}\n{}",
+            r#"
+int event_base_loop(struct event_base *, int);
+int _mk_event_wait_with_flags(struct mk_event_loop *loop, int flags)
+{
+    struct mk_event_ctx *ctx = loop->data;
+    ctx->fired_count = 0;
+    event_base_loop(ctx->base, flags);
+    loop->n_events = ctx->fired_count;
+    return loop->n_events;
+}
+"#
+        )
+    }
+
+    fn imported(source: &str, role: ImportRole) -> Vec<SourceResult> {
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let profile =
+            load_source_set_profile(&root.join("contract/profiles"), "fluent-bit").unwrap();
+        import_source_functions_from_profile(
+            &C11TranslationUnit {
+                source,
+                ..Default::default()
+            },
+            monkey_source_revision(),
+            &profile,
+            "monkey",
+            role,
+        )
+        .unwrap()
+    }
+
+    fn summary<'a>(results: &'a [SourceResult], name: &str) -> &'a SourceSummary {
+        results
+            .iter()
+            .find_map(|result| match result {
+                SourceResult::Summary(summary) if summary.function() == name => Some(summary),
+                _ => None,
+            })
+            .unwrap_or_else(|| panic!("missing summary {name}"))
+    }
+
+    fn replace_occurrence(
+        source: &str,
+        needle: &str,
+        occurrence: usize,
+        replacement: &str,
+    ) -> String {
+        let (offset, _) = source
+            .match_indices(needle)
+            .nth(occurrence)
+            .unwrap_or_else(|| panic!("missing occurrence {occurrence} of `{needle}`"));
+        let mut changed = String::with_capacity(source.len() - needle.len() + replacement.len());
+        changed.push_str(&source[..offset]);
+        changed.push_str(replacement);
+        changed.push_str(&source[offset + needle.len()..]);
+        changed
+    }
+
+    #[test]
+    fn contract_policy_checks_one_full_actual_fact_vector() {
+        let expected_clause =
+            "requires:callback_argument_is_borrowed|normal:callback_has_no_resource_effect";
+        let policy = WAIT_SOURCE_POLICY
+            .replace(
+                "    ensures normal parameter_names == \"callback_argument\";\n",
+                "",
+            )
+            .replace(
+                &format!("    ensures normal clause_sequence == \"{expected_clause}\";\n"),
+                &format!(
+                    "    ensures normal (parameter_names == \"callback_argument\") or (clause_sequence == \"{expected_clause}\");\n"
+                ),
+            );
+        let changed = COMPOSITION_CONTRACT.replace("callback_argument", "changed_argument");
+        assert_eq!(
+            MonkeyWaitContracts::parse_with_source_policy(WRAPPER_CONTRACT, &changed, &policy,),
+            Err(WaitSourceProjectionError::ContractClauseMismatch(
+                wait_callback().into()
+            ))
+        );
+    }
+
+    #[test]
+    fn every_source_policy_declaration_and_clause_is_load_bearing() {
+        if qcore_c_gateway::clang_command().is_err() {
+            return;
+        }
+        let callbacks = imported(CALLBACKS, ImportRole::Callback);
+        let wrappers = imported(&wrapper_source(), ImportRole::Wrapper);
+        let source_summaries = [
+            summary(&callbacks, wait_callback()),
+            summary(&wrappers, "_mk_event_loop_create"),
+            summary(&wrappers, "_mk_event_wait_with_flags"),
+            summary(&wrappers, "_mk_event_wait_2"),
+            summary(&wrappers, "_mk_event_loop_destroy"),
+        ];
+        let policy = parse_source_program(WAIT_SOURCE_POLICY).unwrap();
+        let declarations = policy
+            .declarations
+            .iter()
+            .map(|declaration| declaration.value.name.clone())
+            .collect::<Vec<_>>();
+        let clauses = policy
+            .declarations
+            .iter()
+            .flat_map(|declaration| {
+                declaration
+                    .value
+                    .function_contract
+                    .as_ref()
+                    .unwrap()
+                    .clauses
+                    .iter()
+                    .map(|clause| clause.value.expression_source.clone())
+            })
+            .collect::<Vec<_>>();
+
+        for name in declarations {
+            let original = format!("extern fn {name}(");
+            let changed = format!("extern fn removed_{name}(");
+            let mutant = WAIT_SOURCE_POLICY.replacen(&original, &changed, 1);
+            assert_ne!(
+                mutant, WAIT_SOURCE_POLICY,
+                "declaration mutation missed {name}"
+            );
+            let result = MonkeyWaitContracts::parse_with_source_policy(
+                WRAPPER_CONTRACT,
+                COMPOSITION_CONTRACT,
+                &mutant,
+            )
+            .and_then(|contracts| {
+                project_monkey_timed_wait_source(source_summaries, &contracts).map(|_| contracts)
+            });
+            assert!(
+                result.is_err(),
+                "renamed policy declaration `{name}` accepted"
+            );
+        }
+
+        let mut seen_expressions = BTreeMap::<String, usize>::new();
+        for expression in clauses {
+            let original = format!("ensures normal {expression};");
+            let occurrence = seen_expressions.entry(original.clone()).or_default();
+            let mutant = replace_occurrence(
+                WAIT_SOURCE_POLICY,
+                &original,
+                *occurrence,
+                "ensures normal false;",
+            );
+            *occurrence += 1;
+            assert_ne!(
+                mutant, WAIT_SOURCE_POLICY,
+                "clause mutation missed `{expression}`"
+            );
+            let result = MonkeyWaitContracts::parse_with_source_policy(
+                WRAPPER_CONTRACT,
+                COMPOSITION_CONTRACT,
+                &mutant,
+            )
+            .and_then(|contracts| {
+                project_monkey_timed_wait_source(source_summaries, &contracts).map(|_| contracts)
+            });
+            assert!(
+                result.is_err(),
+                "disabled policy clause `{expression}` accepted"
+            );
+        }
+    }
 }

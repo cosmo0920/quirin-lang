@@ -17,6 +17,8 @@ const MAX_BINDING_BYTES: usize = 32 * 1024;
 
 #[derive(Debug)]
 pub struct DecodedTimedWaitObservation {
+    /// Profile actually carried by the validated wire binding.
+    pub semantic_profile: String,
     pub trace: EventObservationTrace,
     pub context: TimedWaitObservationContext,
     pub source_apis: BTreeMap<String, String>,
@@ -337,6 +339,7 @@ pub fn decode_timed_wait_observation(
     check_timed_wait_observation(&trace, &context)
         .map_err(|error| format!("observation trace rejected: {error:?}"))?;
     Ok(DecodedTimedWaitObservation {
+        semantic_profile: binding.profile,
         trace,
         context,
         source_apis,
