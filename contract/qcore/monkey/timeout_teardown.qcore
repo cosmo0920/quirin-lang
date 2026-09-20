@@ -1,0 +1,42 @@
+module contract;
+
+// Executable policy for cb_timeout's running-callback self teardown.  Rust
+// derives these facts from a sealed SourceSummary, pinned Libevent bytes, and
+// an independently supplied native evidence record.
+
+extern fn source_identity() -> unit
+contract {
+    ensures normal source_revision == "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
+    ensures normal library == "monkey";
+    ensures normal source_set == "fluent-bit";
+    ensures normal profile_digest != "";
+};
+
+extern fn cb_timeout_source() -> unit
+contract {
+    ensures normal (signature == "void (int, short, void *)") or (signature == "void (evutil_socket_t, short, void *)");
+    ensures normal import_role == "Callback";
+    ensures normal path_count == 3;
+    ensures normal path_operation_counts == "21,20,10";
+    ensures normal path_call_sequences == "send,__errno_location,perror,evutil_closesocket,event_del,event_free,mk_mem_free;send,__errno_location,evutil_closesocket,event_del,event_free,mk_mem_free;send";
+    ensures normal teardown_path_indices == "0,1";
+    ensures normal source_summary_digest == "4787d6d5025421959b0f5c746fe0ff2916001f8a9b88f39d73b8d416ae0b2155";
+};
+
+extern fn libevent_self_teardown() -> unit
+contract {
+    ensures normal libevent_revision == "d82464a277d0f42703702c4dfd9af6af38595a83";
+    ensures normal event_c_digest == "3506c3c54cfde9934a42526dbd4a9fbacc98f65068dbb038209f71eb9a63e346";
+    ensures normal event_free_delete_call == "event_del(ev)";
+    ensures normal event_del_mode == "EVENT_DEL_AUTOBLOCK";
+    ensures normal wait_guard == "!EVBASE_IN_THREAD(base)";
+};
+
+extern fn teardown_obligations() -> unit
+contract {
+    ensures normal callback == "cb_timeout";
+    ensures normal event_descriptor_absent == 1;
+    ensures normal same_dispatcher == 1;
+    ensures normal native_trace == "callback_enter,close_socket,event_del,event_free,map_free,callback_exit";
+    ensures normal event_map_descriptor_custody_distinct == 1;
+};

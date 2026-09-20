@@ -693,6 +693,7 @@ struct EventState {
     lifecycle: EventLifecycle,
     active_reasons: BTreeSet<ActivationReason>,
     nonblocking_delete: bool,
+    current_callback_delete: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -874,6 +875,7 @@ pub fn check_event_program<P: ReactorProfile>(
                             lifecycle: EventLifecycle::Idle,
                             active_reasons: BTreeSet::new(),
                             nonblocking_delete: false,
+                            current_callback_delete: false,
                         },
                     );
                 }
@@ -898,7 +900,12 @@ pub fn check_event_program<P: ReactorProfile>(
                     {
                         state.lifecycle = EventLifecycle::Pending;
                     }
-                    Some(state) if state.lifecycle == EventLifecycle::Freed => {
+                    Some(state)
+                        if matches!(
+                            state.lifecycle,
+                            EventLifecycle::Freed | EventLifecycle::SelfTeardown
+                        ) =>
+                    {
                         diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                             operation: operation_index,
                         });
@@ -919,6 +926,7 @@ pub fn check_event_program<P: ReactorProfile>(
                     if !matches!(
                         state.lifecycle,
                         EventLifecycle::Freed
+                            | EventLifecycle::SelfTeardown
                             | EventLifecycle::Finalizing
                             | EventLifecycle::Finalized
                     ) && state.summary.trigger_reasons.contains(reason) =>
@@ -938,7 +946,12 @@ pub fn check_event_program<P: ReactorProfile>(
                         }
                     }
                 }
-                Some(state) if state.lifecycle == EventLifecycle::Freed => {
+                Some(state)
+                    if matches!(
+                        state.lifecycle,
+                        EventLifecycle::Freed | EventLifecycle::SelfTeardown
+                    ) =>
+                {
                     diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                         operation: operation_index,
                     });
@@ -1050,7 +1063,9 @@ pub fn check_event_program<P: ReactorProfile>(
                 Some(state)
                     if !matches!(
                         state.lifecycle,
-                        EventLifecycle::Freed | EventLifecycle::Finalized
+                        EventLifecycle::Freed
+                            | EventLifecycle::SelfTeardown
+                            | EventLifecycle::Finalized
                     ) =>
                 {
                     state.active_reasons.clear();
@@ -1075,6 +1090,7 @@ pub fn check_event_program<P: ReactorProfile>(
                             && base.running_callback == Some(CallbackContext::Event(*event))
                         {
                             state.nonblocking_delete = true;
+                            state.current_callback_delete = true;
                             state.active_reasons.clear();
                         } else {
                             diagnostics.insert(EventDiagnostic::L06NotQuiescent {
@@ -1135,6 +1151,7 @@ pub fn check_event_program<P: ReactorProfile>(
                     Some(state) if state.lifecycle == EventLifecycle::Running => {
                         let base = bases.get(&state.base).expect("checked base");
                         if state.nonblocking_delete
+                            && state.current_callback_delete
                             && state.descriptor.is_none()
                             && base.dispatcher == Some(*dispatcher)
                             && base.running_callback == Some(CallbackContext::Event(*event))
