@@ -57,6 +57,26 @@ impl ObservedWaitComposition {
     pub const fn claim(&self) -> &'static str {
         self.claim
     }
+
+    #[must_use]
+    pub fn caller_prepared_context_sha256(&self) -> &str {
+        &self.caller_prepared_context_sha256
+    }
+
+    #[must_use]
+    pub const fn checked_records(&self) -> usize {
+        self.checked_records
+    }
+
+    #[must_use]
+    pub const fn checked_operations(&self) -> usize {
+        self.checked_operations
+    }
+
+    #[must_use]
+    pub fn selected_paths(&self) -> &BTreeMap<String, usize> {
+        &self.selected_paths
+    }
 }
 
 /// Read one exact literal expectation from the default declarative policy.
