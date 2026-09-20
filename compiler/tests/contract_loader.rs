@@ -777,7 +777,8 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // and `librdkafka/topic_partition.qcore`. Every one of the ten
     // declarations is the NEUTRAL ELEMENT — every formal borrowed, result
     // none — so none can contradict a faithful derived summary.
-    assert_eq!(modules.len(), 88, "corpus module count");
+    // 88 -> 90: Cycle 18 executable policies belong to the typed interpreter.
+    assert_eq!(modules.len(), 90, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -882,9 +883,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // releases and is a fact about what the post-W36 cover frontier still held.
     // The rejected count is unchanged in all twelve cases, because every added
     // module is entirely v1.
+    // The 16 new policy declarations are deliberately rejected by resource-v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (33, 59, 145)
+        (33, 59, 161)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())
