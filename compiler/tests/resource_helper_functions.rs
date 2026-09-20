@@ -27,6 +27,14 @@ fn refusal(source: &str) -> String {
         .join("\n")
 }
 
+fn refusal_codes(source: &str) -> Vec<String> {
+    compile(source)
+        .expect_err("fixture must refuse")
+        .into_iter()
+        .map(|diagnostic| diagnostic.code)
+        .collect()
+}
+
 #[test]
 fn allocation_processing_owned_return_use_and_release_cross_real_functions() {
     let module = compile(ROUND_TRIP).unwrap();
@@ -50,6 +58,7 @@ fn allocation_processing_owned_return_use_and_release_cross_real_functions() {
 fn task_buffer_is_not_the_extent_carrying_bytes_type() {
     let source = ROUND_TRIP.replace("borrow<bytes>", "borrow<Buffer>");
     assert!(refusal(&source).contains("task Buffer is a distinct resource"));
+    assert!(refusal_codes(&source).iter().any(|code| code == "Q020"));
 }
 
 #[test]
@@ -67,11 +76,14 @@ fn spaced_bytes_types_stay_on_the_resource_helper_route() {
 #[test]
 fn explicit_non_one_and_borrow_usage_grades_refuse() {
     let owned = ROUND_TRIP.replace("own<bytes> use one", "own<bytes> use zero");
-    assert!(refusal(&owned).contains("parameters require"));
+    assert!(refusal(&owned).contains("requires `use one`"));
+    assert!(refusal_codes(&owned).iter().any(|code| code == "Q100"));
     let borrowed = ROUND_TRIP.replace("borrow<bytes>", "borrow<bytes> use zero");
-    assert!(refusal(&borrowed).contains("parameters require"));
+    assert!(refusal(&borrowed).contains("ungraded"));
+    assert!(refusal_codes(&borrowed).iter().any(|code| code == "Q100"));
     let scalar = ROUND_TRIP.replace("byte: i32", "byte: i32 use zero");
-    assert!(refusal(&scalar).contains("parameters require"));
+    assert!(refusal(&scalar).contains("ungraded"));
+    assert!(refusal_codes(&scalar).iter().any(|code| code == "Q100"));
 }
 
 #[test]
@@ -104,9 +116,7 @@ fn indirect_mutation_requires_the_callers_explicit_effect_row() {
 
 #[test]
 fn call_site_extent_obligation_is_checked() {
-    let source = ROUND_TRIP
-        .replace("value[0] = byte", "value[1] = byte")
-        .replace("let input = bytes(1)", "let input = bytes(1)");
+    let source = ROUND_TRIP.replace("value[0] = byte", "value[1] = byte");
     assert!(refusal(&source).contains("requires extent 2"));
 }
 
@@ -133,7 +143,7 @@ fn same_owner_cannot_be_lent_and_borrowed_in_one_call() {
     assert!(refusal(&source).contains("incompatible owned/borrow modes"));
 }
 
-#[cfg(unix)]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 #[test]
 fn emitted_real_helpers_execute_under_address_and_undefined_sanitizers() {
     use std::process::Command;

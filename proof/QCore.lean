@@ -194,5 +194,6 @@ import QCore.JoinedProvenanceCallFrames
 import QCore.JoinedProvenanceRoundBound
 
 import QCore.ScalarCalls
+import QCore.ResourceCalls
 
 /-! The executable formal core of QCore-C revision 0.1. -/

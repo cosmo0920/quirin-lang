@@ -33,13 +33,30 @@ fn symbol(token: Option<&Token>, expected: Symbol) -> bool {
     token.is_some_and(|token| token.kind == TokenKind::Symbol(expected))
 }
 
-fn diagnostic(span: Span, message: impl Into<String>) -> SourceDiagnostic {
+fn diagnostic(
+    code: &'static str,
+    pass: SemanticPass,
+    span: Span,
+    message: impl Into<String>,
+) -> SourceDiagnostic {
     SourceDiagnostic {
-        code: "Q051",
-        pass: SemanticPass::StandardBuffer,
+        code,
+        pass,
         span,
         message: format!("source.resource-calls.v1: {}", message.into()),
     }
+}
+
+fn ordinary(span: Span, message: impl Into<String>) -> SourceDiagnostic {
+    diagnostic("Q020", SemanticPass::OrdinaryTypes, span, message)
+}
+
+fn buffer_shape(span: Span, message: impl Into<String>) -> SourceDiagnostic {
+    diagnostic("Q051", SemanticPass::StandardBuffer, span, message)
+}
+
+fn usage_diagnostic(span: Span, message: impl Into<String>) -> SourceDiagnostic {
+    diagnostic("Q100", SemanticPass::Usage, span, message)
 }
 
 fn tokens_for(program: &SourceProgram, span: Span) -> Vec<&Token> {
@@ -88,7 +105,7 @@ fn declared_effects(tokens: &[&Token], span: Span) -> Result<Option<EffectRow>, 
         tokens.get(index + 1).map(|token| &token.kind),
         Some(TokenKind::Symbol(Symbol::LeftBrace))
     ) {
-        return Err(diagnostic(span, "an effects row requires `{ ... }`"));
+        return Err(ordinary(span, "an effects row requires `{ ... }`"));
     }
     let mut effects = Vec::new();
     let mut cursor = index + 2;
@@ -100,7 +117,7 @@ fn declared_effects(tokens: &[&Token], span: Span) -> Result<Option<EffectRow>, 
                     "alloc" => Effect::Alloc,
                     "mut" => Effect::Mut,
                     _ => {
-                        return Err(diagnostic(
+                        return Err(ordinary(
                             span,
                             format!("effect `{name}` is outside resource-calls.v1"),
                         ));
@@ -114,7 +131,7 @@ fn declared_effects(tokens: &[&Token], span: Span) -> Result<Option<EffectRow>, 
                     cursor += 1;
                 }
             }
-            _ => return Err(diagnostic(span, "this effects row is not closed")),
+            _ => return Err(ordinary(span, "this effects row is not closed")),
         }
     }
     Ok(Some(EffectRow::new(effects)))
@@ -143,31 +160,31 @@ fn parse_arguments(
         let argument = match word(tokens.get(at).copied()) {
             Some("move") => {
                 let name = word(tokens.get(at + 1).copied())
-                    .ok_or_else(|| diagnostic(span, "`move` requires an owned bytes name"))?;
+                    .ok_or_else(|| ordinary(span, "`move` requires an owned bytes name"))?;
                 at += 2;
                 Argument::Move(name.to_owned())
             }
             Some("borrow") => {
                 let name = word(tokens.get(at + 1).copied())
-                    .ok_or_else(|| diagnostic(span, "`borrow` requires an owned bytes name"))?;
+                    .ok_or_else(|| ordinary(span, "`borrow` requires an owned bytes name"))?;
                 at += 2;
                 Argument::Borrow(name.to_owned())
             }
             Some("lend") => {
                 if !symbol(tokens.get(at + 1).copied(), Symbol::LeftParen) {
-                    return Err(diagnostic(span, "a write-loan argument is `lend(NAME)`"));
+                    return Err(ordinary(span, "a write-loan argument is `lend(NAME)`"));
                 }
                 let name = word(tokens.get(at + 2).copied())
-                    .ok_or_else(|| diagnostic(span, "`lend(NAME)` requires an owned bytes name"))?;
+                    .ok_or_else(|| ordinary(span, "`lend(NAME)` requires an owned bytes name"))?;
                 if !symbol(tokens.get(at + 3).copied(), Symbol::RightParen) {
-                    return Err(diagnostic(span, "`lend(NAME)` is not closed"));
+                    return Err(ordinary(span, "`lend(NAME)` is not closed"));
                 }
                 at += 4;
                 Argument::Lend(name.to_owned())
             }
             _ => {
                 let (value, next) = operand(tokens, at)
-                    .ok_or_else(|| diagnostic(span, "unsupported helper argument"))?;
+                    .ok_or_else(|| ordinary(span, "unsupported helper argument"))?;
                 at = next;
                 Argument::Scalar(value)
             }
@@ -178,7 +195,7 @@ fn parse_arguments(
             continue;
         }
         if !symbol(tokens.get(at).copied(), Symbol::RightParen) {
-            return Err(diagnostic(span, "helper argument list is not closed"));
+            return Err(ordinary(span, "helper argument list is not closed"));
         }
         return Ok((arguments, at + 1));
     }
@@ -205,7 +222,7 @@ fn parse_call(
         return Ok(None);
     };
     if shadowed.contains_key(name) && functions.contains_key(name) {
-        return Err(diagnostic(
+        return Err(ordinary(
             span,
             "a local or parameter shadows this helper; indirect calls are unsupported",
         ));
@@ -218,7 +235,7 @@ fn parse_call(
     }
     let (arguments, next) = parse_arguments(tokens, name_at + 2, span)?;
     if !symbol(tokens.get(next).copied(), Symbol::Semicolon) || next + 1 != tokens.len() {
-        return Err(diagnostic(span, "direct helper call is not closed"));
+        return Err(ordinary(span, "direct helper call is not closed"));
     }
     Ok(Some(Statement::Call {
         binding,
@@ -245,7 +262,7 @@ fn parse_return(tokens: &[&Token], span: Span) -> Result<Option<Statement>, Sour
     {
         ReturnValue::Scalar(operand)
     } else {
-        return Err(diagnostic(
+        return Err(ordinary(
             span,
             "return is bare, scalar, or `return move NAME;`",
         ));
@@ -289,7 +306,7 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
         .map(|(index, declaration)| (declaration.value.name.clone(), index))
         .collect::<BTreeMap<_, _>>();
     let Some(&entry) = functions.get(entry) else {
-        return Err(vec![diagnostic(
+        return Err(vec![ordinary(
             Span { start: 0, end: 0 },
             "selected entry is not a function",
         )]);
@@ -307,6 +324,8 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
             .is_some_and(|contract| !contract.clauses.is_empty())
         {
             diagnostics.push(diagnostic(
+                "Q021",
+                SemanticPass::OrdinaryTypes,
                 scope,
                 "source contracts have no resource-call consumer",
             ));
@@ -316,10 +335,26 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
         for parameter in &declaration.value.parameters {
             let usage = parameter.usage.as_ref().map(|usage| usage.value);
             let Some(ty) = parameter_type(&parameter.type_source, usage) else {
-                diagnostics.push(diagnostic(
-                    parameter.type_span,
-                    "parameters require i32, own<bytes> use one, borrow<bytes>, or lend<bytes>; task Buffer is a distinct resource",
-                ));
+                let compact = parameter
+                    .type_source
+                    .chars()
+                    .filter(|ch| !ch.is_whitespace())
+                    .collect::<String>();
+                let grade_error = matches!(
+                    compact.as_str(),
+                    "i32" | "own<bytes>" | "borrow<bytes>" | "lend<bytes>"
+                );
+                diagnostics.push(if grade_error {
+                    usage_diagnostic(
+                        parameter.type_span,
+                        "own<bytes> requires `use one`; i32 and byte loans are ungraded",
+                    )
+                } else {
+                    ordinary(
+                        parameter.type_span,
+                        "parameters require i32, own<bytes> use one, borrow<bytes>, or lend<bytes>; task Buffer is a distinct resource",
+                    )
+                });
                 continue;
             };
             parameters.push(Parameter {
@@ -333,14 +368,11 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
             .as_ref()
             .and_then(|result| result_type(&result.source))
         else {
-            diagnostics.push(diagnostic(
-                scope,
-                "result requires unit, i32, or own<bytes>",
-            ));
+            diagnostics.push(ordinary(scope, "result requires unit, i32, or own<bytes>"));
             continue;
         };
         let Some(body) = &declaration.value.body else {
-            diagnostics.push(diagnostic(scope, "resource helper requires a body"));
+            diagnostics.push(ordinary(scope, "resource helper requires a body"));
             continue;
         };
         let header = tokens_for(
@@ -365,7 +397,7 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
             .collect::<BTreeMap<_, _>>();
         for source_statement in &body.statements {
             if !source_statement.value.nested_blocks().is_empty() {
-                diagnostics.push(diagnostic(
+                diagnostics.push(ordinary(
                     source_statement.span,
                     "resource-calls.v1 has no branches or loops",
                 ));
@@ -382,8 +414,8 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
                         source_statement.span,
                     ) {
                         Some(Ok(event)) => Ok(Statement::Buffer(event)),
-                        Some(Err(message)) => Err(diagnostic(source_statement.span, message)),
-                        None => Err(diagnostic(
+                        Some(Err(message)) => Err(buffer_shape(source_statement.span, message)),
+                        None => Err(ordinary(
                             source_statement.span,
                             "unsupported resource helper statement",
                         )),
