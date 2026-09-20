@@ -13,6 +13,7 @@ pub mod current;
 pub mod cycle18_composition;
 mod cycle18_inputs;
 pub mod event_payload;
+pub mod native_platform_matrix;
 pub mod observed_wait;
 mod observed_wait_inputs;
 pub mod projection;

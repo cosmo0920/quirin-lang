@@ -53,6 +53,28 @@ fn main() -> ExitCode {
             }
         };
     }
+    if path == "native-platform-matrix" {
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: quirin-audit native-platform-matrix CONFIG.json");
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: quirin-audit native-platform-matrix CONFIG.json");
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::native_platform_matrix::run_native_platform_matrix_config(
+            &PathBuf::from(config),
+        ) {
+            Ok(()) => {
+                println!("Cycle 18 native platform matrix checked; bounded report written.");
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("native-platform-matrix audit rejected (Unknown): {error}");
+                ExitCode::FAILURE
+            }
+        };
+    }
     if path == "event-payload" {
         let Some(config) = arguments.next() else {
             eprintln!("usage: quirin-audit event-payload CONFIG.json");

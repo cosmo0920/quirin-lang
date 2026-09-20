@@ -1,0 +1,6 @@
+import QCore.NativePlatformMatrix
+
+#print axioms QCore.NativePlatformMatrix.selected_matrix_is_total_and_fail_closed
+#print axioms QCore.NativePlatformMatrix.carried_history_does_not_promote
+#print axioms QCore.NativePlatformMatrix.current_tsan_row_requires_join
+#print axioms QCore.NativePlatformMatrix.transparency_claim_refuses
