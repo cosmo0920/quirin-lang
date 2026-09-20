@@ -1,0 +1,13 @@
+{
+  "note": "Cycle 18 observed-composition context admission, measured in the isolated card worktree. The semantic implementation/Lean tip f39f253a passed a complete workspace run with 4939 passed, 0 failed and 10 ignored across 258 strict test-result summaries. Getter-only tip bd4f7be9 then exercised the complete workspace but exited 101 because the host-sensitive enforced_process_limits fork test reported Broken pipe: that binary had 11 passed and 1 failed; its immediate isolated rerun passed 12/12. This record does not relabel the exact-tip repeat green. Final exact-tip workspace coverage comes from the integration branch's combined gate. The Python suite passed after scratch regeneration recognized 154 Lean audits; the committed global matrix was restored for integrator reconciliation. Provider packages were unchanged and provider tests were not rerun. Private logs: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-admission/private/cycle18-composition-admission-gate-20260920/.",
+  "workspace_tests": 4939,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 317,
+  "lean_audits": 154,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "semantic tip passed; getter-only exact-tip repeat exited 101 on one host-sensitive process-limit test and its isolated rerun passed 12/12; integration combined gate required",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
