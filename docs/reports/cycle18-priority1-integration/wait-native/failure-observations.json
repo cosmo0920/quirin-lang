@@ -1,0 +1,133 @@
+[
+  {
+    "base_created": false,
+    "base_freed": false,
+    "context_freed": false,
+    "event_add_argument_nonnull": false,
+    "event_add_result": 0,
+    "event_free_argument_nonnull": false,
+    "path": "_mk_event_loop_create",
+    "returned_context_base_nonnull": false,
+    "returned_dispatch_result": false,
+    "returned_null": true,
+    "scenario": "context_allocation_failure",
+    "schema_version": 1,
+    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "timeout_activated": false,
+    "trace": [
+      "event_init",
+      "context_alloc"
+    ]
+  },
+  {
+    "base_created": false,
+    "base_freed": false,
+    "context_freed": false,
+    "event_add_argument_nonnull": false,
+    "event_add_result": 0,
+    "event_free_argument_nonnull": false,
+    "path": "_mk_event_loop_create",
+    "returned_context_base_nonnull": false,
+    "returned_dispatch_result": false,
+    "returned_null": false,
+    "scenario": "base_creation_failure",
+    "schema_version": 1,
+    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "timeout_activated": false,
+    "trace": [
+      "event_init",
+      "context_alloc",
+      "event_base_new",
+      "fired_alloc"
+    ]
+  },
+  {
+    "base_created": true,
+    "base_freed": false,
+    "context_freed": true,
+    "event_add_argument_nonnull": false,
+    "event_add_result": 0,
+    "event_free_argument_nonnull": false,
+    "path": "_mk_event_loop_create",
+    "returned_context_base_nonnull": false,
+    "returned_dispatch_result": false,
+    "returned_null": true,
+    "scenario": "fired_allocation_failure",
+    "schema_version": 1,
+    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "timeout_activated": false,
+    "trace": [
+      "event_init",
+      "context_alloc",
+      "event_base_new",
+      "fired_alloc",
+      "context_free"
+    ]
+  },
+  {
+    "base_created": false,
+    "base_freed": false,
+    "context_freed": false,
+    "event_add_argument_nonnull": false,
+    "event_add_result": -1,
+    "event_free_argument_nonnull": false,
+    "path": "_mk_event_wait_2",
+    "returned_context_base_nonnull": false,
+    "returned_dispatch_result": true,
+    "returned_null": false,
+    "scenario": "timer_creation_failure",
+    "schema_version": 1,
+    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "timeout_activated": false,
+    "trace": [
+      "event_new",
+      "event_add",
+      "dispatch",
+      "event_free"
+    ]
+  },
+  {
+    "base_created": false,
+    "base_freed": false,
+    "context_freed": false,
+    "event_add_argument_nonnull": true,
+    "event_add_result": -1,
+    "event_free_argument_nonnull": true,
+    "path": "_mk_event_wait_2",
+    "returned_context_base_nonnull": false,
+    "returned_dispatch_result": true,
+    "returned_null": false,
+    "scenario": "timer_registration_failure",
+    "schema_version": 1,
+    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "timeout_activated": false,
+    "trace": [
+      "event_new",
+      "event_add",
+      "dispatch",
+      "event_free"
+    ]
+  },
+  {
+    "base_created": false,
+    "base_freed": false,
+    "context_freed": false,
+    "event_add_argument_nonnull": true,
+    "event_add_result": 0,
+    "event_free_argument_nonnull": true,
+    "path": "_mk_event_wait_2",
+    "returned_context_base_nonnull": false,
+    "returned_dispatch_result": true,
+    "returned_null": false,
+    "scenario": "success_observation",
+    "schema_version": 1,
+    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "timeout_activated": true,
+    "trace": [
+      "event_new",
+      "event_add",
+      "dispatch",
+      "event_free"
+    ]
+  }
+]

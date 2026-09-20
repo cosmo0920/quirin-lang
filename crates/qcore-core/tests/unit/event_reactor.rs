@@ -71,6 +71,171 @@ fn one_shot(base: u32, event: EventKey, argument: u32) -> EventProgram<TestProfi
     }
 }
 
+fn callback_self_teardown() -> EventProgram<TestProfile> {
+    let event = key(41);
+    EventProgram {
+        live_arguments: BTreeSet::from([90]),
+        operations: vec![
+            EventOperation::CreateSocketPair {
+                descriptors: Some((7, 8)),
+            },
+            EventOperation::CreateBase {
+                base: 4,
+                profile: TestProfile(true),
+            },
+            EventOperation::Assign {
+                event,
+                base: 4,
+                descriptor: None,
+                flags: EventFlags::new(0),
+                priority: 0,
+                summary: summary(90, ActivationReason::Timeout),
+            },
+            EventOperation::Add { event },
+            EventOperation::BeginDispatch {
+                base: 4,
+                dispatcher: 12,
+            },
+            EventOperation::Activate {
+                event,
+                reason: ActivationReason::Timeout,
+                cross_thread: false,
+            },
+            EventOperation::CallbackEnter {
+                event,
+                reason: ActivationReason::Timeout,
+            },
+            EventOperation::CloseSocket {
+                descriptor: 8,
+                succeeds: true,
+                declared_failure: None,
+            },
+            EventOperation::DeleteCurrentCallback {
+                event,
+                dispatcher: 12,
+            },
+            EventOperation::FreeCurrentCallbackEvent {
+                event,
+                dispatcher: 12,
+            },
+            EventOperation::DropArgument { argument: 90 },
+            EventOperation::CallbackExit { event },
+            EventOperation::EndDispatch { base: 4 },
+            EventOperation::CloseSocket {
+                descriptor: 7,
+                succeeds: true,
+                declared_failure: None,
+            },
+            EventOperation::FreeBase { base: 4 },
+        ],
+    }
+}
+
+#[test]
+fn current_callback_teardown_keeps_event_map_and_descriptors_distinct() {
+    let certificate = check_event_program(&callback_self_teardown(), &[TestProfile(true)]).unwrap();
+    assert_eq!(certificate.freed_events, BTreeSet::from([key(41)]));
+    assert_eq!(certificate.dropped_arguments, BTreeSet::from([90]));
+    assert_eq!(certificate.closed_descriptors, BTreeSet::from([7, 8]));
+}
+
+#[test]
+fn ordinary_free_while_running_remains_refused() {
+    let mut program = callback_self_teardown();
+    program.operations[9] = EventOperation::FreeEvent { event: key(41) };
+    assert!(
+        check_event_program(&program, &[TestProfile(true)])
+            .unwrap_err()
+            .iter()
+            .any(|diagnostic| matches!(
+                diagnostic,
+                EventDiagnostic::L06NotQuiescent { operation: 9 }
+            ))
+    );
+}
+
+#[test]
+fn callback_self_teardown_requires_delete_same_dispatcher_and_no_event_descriptor() {
+    let mut wrong_dispatcher = callback_self_teardown();
+    wrong_dispatcher.operations[8] = EventOperation::DeleteCurrentCallback {
+        event: key(41),
+        dispatcher: 99,
+    };
+    assert!(check_event_program(&wrong_dispatcher, &[TestProfile(true)]).is_err());
+
+    let mut missing_delete = callback_self_teardown();
+    missing_delete.operations.remove(8);
+    assert!(check_event_program(&missing_delete, &[TestProfile(true)]).is_err());
+
+    let mut borrowed_descriptor = callback_self_teardown();
+    if let EventOperation::Assign { descriptor, .. } = &mut borrowed_descriptor.operations[2] {
+        *descriptor = Some(8);
+    }
+    assert!(check_event_program(&borrowed_descriptor, &[TestProfile(true)]).is_err());
+
+    let mut generic_nonblocking_delete = callback_self_teardown();
+    generic_nonblocking_delete.operations[8] = EventOperation::Delete {
+        event: key(41),
+        mode: DeleteMode::Nonblocking,
+    };
+    assert!(check_event_program(&generic_nonblocking_delete, &[TestProfile(true)]).is_err());
+}
+
+#[test]
+fn self_torn_down_event_cannot_be_resurrected_or_released_twice() {
+    for invalid in [
+        EventOperation::Delete {
+            event: key(41),
+            mode: DeleteMode::Ordinary,
+        },
+        EventOperation::Add { event: key(41) },
+        EventOperation::Activate {
+            event: key(41),
+            reason: ActivationReason::Timeout,
+            cross_thread: false,
+        },
+        EventOperation::FreeEvent { event: key(41) },
+        EventOperation::FreeCurrentCallbackEvent {
+            event: key(41),
+            dispatcher: 12,
+        },
+    ] {
+        let mut program = callback_self_teardown();
+        program.operations.insert(10, invalid);
+        assert!(check_event_program(&program, &[TestProfile(true)]).is_err());
+    }
+
+    let mut wrong_exit = callback_self_teardown();
+    wrong_exit.operations[11] = EventOperation::CallbackExit { event: key(99) };
+    assert!(check_event_program(&wrong_exit, &[TestProfile(true)]).is_err());
+
+    let mut post_drop_access = callback_self_teardown();
+    post_drop_access.operations.insert(
+        11,
+        EventOperation::Access {
+            context: CallbackContext::Event(key(41)),
+            payload: 7,
+            kind: PayloadAccessKind::Write,
+            synchronized: false,
+        },
+    );
+    assert!(
+        check_event_program(&post_drop_access, &[TestProfile(true)])
+            .unwrap_err()
+            .iter()
+            .any(|diagnostic| matches!(
+                diagnostic,
+                EventDiagnostic::L02ArgumentLifetime { operation: 11, .. }
+            ))
+    );
+
+    let mut double_map_free = callback_self_teardown();
+    double_map_free
+        .operations
+        .insert(11, EventOperation::DropArgument { argument: 90 });
+    assert!(check_event_program(&double_map_free, &[TestProfile(true)]).is_err());
+}
+
 #[test]
 fn generic_callback_custody_requires_explicit_profile_selection() {
     let program = one_shot(1, key(1), 9);

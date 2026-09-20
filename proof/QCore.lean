@@ -203,5 +203,8 @@ import QCore.ScalarCalls
 import QCore.ResourceCalls
 
 import QCore.MonkeyWaitSourcePolicy
+import QCore.WaitFailurePaths
+import QCore.EventPayloadBoundary
+import QCore.TimeoutTeardown
 
 /-! The executable formal core of QCore-C revision 0.1. -/

@@ -10,12 +10,15 @@
 pub mod certificate_context;
 pub mod compile_db;
 pub mod current;
+pub mod event_payload;
 pub mod observed_wait;
 mod observed_wait_inputs;
 pub mod projection;
 pub mod report;
 mod source_audit;
 pub mod source_contract;
+pub mod timeout_teardown;
+pub mod wait_failures;
 pub use source_audit::{SourceContractAuditConfig, SourceContractLibrary};
 
 use std::collections::{BTreeMap, BTreeSet};

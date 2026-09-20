@@ -1,0 +1,327 @@
+{
+  "wave": 42,
+  "cards": [
+    "cycle18-contract-facts",
+    "cycle18-event-payload",
+    "cycle18-identity-contract-extraction",
+    "cycle18-source-contract-extraction",
+    "cycle18-timeout-teardown",
+    "cycle18-wait-failures",
+    "cycle18-priority1-integration",
+    "cycle18-contract-extraction"
+  ],
+  "verify_applied": true,
+  "note": "Three priority-one bounded capabilities integrated; previous extraction items are base-inclusive historical discovery. Full composition and platform/task residuals remain tracked.",
+  "verdicts": {
+    "cycle18-contract-facts#integrator-reconciliation-list#1": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-contract-facts#integrator-reconciliation-list#2": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-contract-facts#integrator-reconciliation-list#3": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-contract-facts#integrator-reconciliation-list#4": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-event-payload#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "crates/qcore-verification/src/lib.rs",
+          "contains": "pub mod event_payload;"
+        }
+      ]
+    },
+    "cycle18-event-payload#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "compiler/tests/qcore_contract_corpus.rs",
+          "contains": "\"monkey/event_payload.qcore\""
+        },
+        {
+          "file": "compiler/tests/contract_loader.rs",
+          "contains": "(33, 59, 179)"
+        }
+      ]
+    },
+    "cycle18-event-payload#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.EventPayloadBoundary"
+        }
+      ]
+    },
+    "cycle18-event-payload#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/event_payload.rs",
+          "contains": "check_event_payload_boundary("
+        },
+        {
+          "file": "crates/qcore-audit/src/event_payload.rs",
+          "contains": "load_monkey_source("
+        }
+      ]
+    },
+    "cycle18-event-payload#integrator-reconciliation-list#5": {
+      "verdict": "superseded",
+      "note": "Native command, raw outputs, hashes and controls are archived once in the combined integration report; the lane links that authoritative evidence instead of duplicating it.",
+      "verify": [
+        {
+          "file": "docs/reports/cycle18-priority1-integration/README.md",
+          "contains": "Final payload run 6 adds typed artifact roles and labels controlled activation;"
+        }
+      ]
+    },
+    "cycle18-event-payload#integrator-reconciliation-list#6": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "docs/reports/cycle18-priority1-integration/cli-parity.json",
+          "contains": "\"status_identical\": true"
+        },
+        {
+          "file": "docs/reports/cycle18-priority1-integration/corpus-bytes.json",
+          "contains": "\"byte_identical\": true"
+        }
+      ]
+    },
+    "cycle18-identity-contract-extraction#integrator-reconciliation-list#1": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-identity-contract-extraction#integrator-reconciliation-list#2": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-identity-contract-extraction#integrator-reconciliation-list#3": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-identity-contract-extraction#integrator-reconciliation-list#4": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-identity-contract-extraction#integrator-reconciliation-list#5": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-source-contract-extraction#integrator-reconciliation-list#1": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-source-contract-extraction#integrator-reconciliation-list#2": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-source-contract-extraction#integrator-reconciliation-list#3": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-source-contract-extraction#integrator-reconciliation-list#4": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery of the previous completed extraction: reconciled in cycle18-contract-extraction/reconciliation.json. This integration preserves those source/identity/predicate policies and records new parity; it does not rerun that card as new work."
+    },
+    "cycle18-timeout-teardown#integrator-reconciliation-list#1": {
+      "verdict": "superseded",
+      "note": "The root added the map-write-descriptor equality after review, deliberately pinning 5 declarations/38 clauses instead of the lane handoff 37. The integration amendment explains the extra clause.",
+      "verify": [
+        {
+          "file": "compiler/tests/qcore_contract_corpus.rs",
+          "contains": "\"teardown_obligations\", 21"
+        }
+      ]
+    },
+    "cycle18-timeout-teardown#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.TimeoutTeardown"
+        }
+      ]
+    },
+    "cycle18-timeout-teardown#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/main.rs",
+          "contains": "timeout_teardown::run_timeout_teardown_config"
+        }
+      ]
+    },
+    "cycle18-timeout-teardown#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/timeout_teardown.rs",
+          "contains": "The peer endpoint close belongs to the enclosing caller, not cb_timeout"
+        }
+      ]
+    },
+    "cycle18-timeout-teardown#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "281"
+        },
+        {
+          "file": "docs/development/increments/wave-41-continuation.md",
+          "contains": "CYCLE18-PRIORITY1-INTEGRATION"
+        }
+      ]
+    },
+    "cycle18-timeout-teardown#integrator-reconciliation-list#6": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "docs/reports/cycle18-priority1-integration/gate.json",
+          "contains": "\"standing_gate\": \"complete\""
+        },
+        {
+          "file": "docs/reports/cycle18-priority1-integration/corpus-bytes.json",
+          "contains": "\"byte_identical\": true"
+        }
+      ]
+    },
+    "cycle18-wait-failures#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "compiler/tests/qcore_contract_corpus.rs",
+          "contains": "\"monkey/wait_failure_policy.qcore\""
+        }
+      ]
+    },
+    "cycle18-wait-failures#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.WaitFailurePaths"
+        }
+      ]
+    },
+    "cycle18-wait-failures#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/wait_failures.rs",
+          "contains": "check_wait_failure_paths("
+        }
+      ]
+    },
+    "cycle18-wait-failures#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "Remaining obligations include real-backend registration failure/liveness"
+        }
+      ]
+    },
+    "cycle18-wait-failures#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "Integrated in the concrete files checked below, with combined evidence owned by cycle18-priority1-integration.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "281"
+        },
+        {
+          "file": "docs/reports/cycle18-priority1-integration/gate.json",
+          "contains": "\"standing_gate\": \"complete\""
+        }
+      ]
+    }
+  },
+  "no_section": {
+    "cycle18-priority1-integration": "Root integration owns this reconciliation and records its evidence directly; no delegated carry section.",
+    "cycle18-contract-extraction": "Previous frozen root close; its own reconciliation.json is authoritative."
+  },
+  "deferred_decisions": {
+    "note": "Eleven historical decisions remain open. This bounded priority-one integration does not resolve them; detailed evidence remains in the frozen wave-40 close and prior extraction record.",
+    "items": [
+      {
+        "name": "CT10-REASON-ROW",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; Cycle 18 contract priority-one changes no CT10 reason-row policy and supplies no basis to decide it."
+      },
+      {
+        "name": "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close as a user decision; this priority-one reconciliation is not a compaction-cadence measurement."
+      },
+      {
+        "name": "EXAMPLES-STYLE-SLICE-FANOUT",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; the Cycle 18 priority-one cards do not change the examples directory or measure its style-slice fanout."
+      },
+      {
+        "name": "F02-WINDOWS-PIN-RUN",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this Linux-hosted priority-one integration supplies no user-validated Windows F02 pin run."
+      },
+      {
+        "name": "INDIRECT-CENSUS-FEATURE-UNBUILT",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; these contract-policy changes neither add a feature-building CI job nor decide the instrumentation is disposable."
+      },
+      {
+        "name": "MATRIX-RECORDED-BY-DECISION",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close as a provenance-schema decision; this priority-one reconciliation neither backfills recorded_by nor makes it optional."
+      },
+      {
+        "name": "MATRIX-UPDATED-STALE-AT-WAVE-27",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; the Cycle 18 priority-one integration does not decide the acceptance-matrix updated-field convention."
+      },
+      {
+        "name": "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this priority-one integration adds no platform-run evidence and does not choose the registration arm."
+      },
+      {
+        "name": "Q-NAMESPACE-DECISION",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; the contract-policy work allocates no diagnostic code and does not choose a future namespace."
+      },
+      {
+        "name": "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this record uses the existing sweep and does not define or implement a prose-only residual mutation gate."
+      },
+      {
+        "name": "SYNC-RULE-TOOLING-COMMIT-SCOPE",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this bounded reconciliation does not decide the synchronization rule for structural integrator commits."
+      }
+    ]
+  }
+}

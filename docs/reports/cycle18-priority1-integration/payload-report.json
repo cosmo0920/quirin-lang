@@ -1,0 +1,127 @@
+{
+  "context": {
+    "artifact": "fluent-bit/lib/monkey/mk_core/mk_event_libevent.c",
+    "assumptions": {
+      "activation_scope": "Controlled event_active flags exercise payload branches; no readiness/timer or event-lifecycle composition claim",
+      "event_payload_allocation_evidence_sha256": "8443e22eff336cd07f369a1795fc93a15b6d17f1f3875455b36a536fc03ed922",
+      "event_payload_allocation_summary_sha256": "0eb76b1c1383b22c3265dafde04d37aa5957fa359b47689fd6cc492d2c7801b0",
+      "event_payload_authority_sha256": "2b7c095373c9ca5c21e74e37de1185c6055c94f8893d3eb0d5998b132e08029b",
+      "event_payload_callback_summary_sha256": "7e458fddf9331949a1acf1e4dd47dd1dd2d4095962496caf68bb23f1c00d8751",
+      "event_payload_contract_sha256": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a",
+      "event_payload_source_summary_sha256": "018680e88a7499737f249373531d80a8c6d51805c4c6d90abf64389dfe853f9d",
+      "native_run_manifest_sha256": "aef9b64af76c8fa54954ea3f6d144175c9e51cc1c8889ad6ca74f7fe35ea39fd",
+      "observation_authority": "producer-supplied runtime and linkage evidence; not attestation",
+      "payload_write_authority": "caller-declared exclusive authority over selected context and fired storage",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior"
+    },
+    "bindings_sha256": "5282de5772c729a592fb38023573f8ab2360f842a8e70131d37629a46d482f66",
+    "bounds": {
+      "callback_executions": 4,
+      "source_paths": 4
+    },
+    "contracts_sha256": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a",
+    "evidence_version": "qcore.cycle18.observed-composition.v1",
+    "fluent_bit_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "libevent_build_sha256": "8e118b6cc659519f619e047c32ead50521ae8b05597a83d0e4811f712ea40b1d",
+    "libevent_profile_sha256": "fb7f0a8771137c8ebfc0d67c0d874793837d7dc22249bc3ea3d226b4d0e3f38f",
+    "libevent_revision": "d82464a277d0f42703702c4dfd9af6af38595a83",
+    "libevent_source_sha256": "3d579512ed2e7b551378b96b9519b51a274f56498d96ad01c3027f5cd567427a",
+    "linked_libraries_sha256": {
+      "libevent": "44d8286b5bc31bb598949b45a09603f548dab6c1575644bed92c2fe0d334477c",
+      "monkey": "c6474da4c8edf0d65fdcc7b49afcbdeb281726993bf40b27ba2a907bccf2bbcc"
+    },
+    "monkey_build_sha256": "a68a573c2252cb39e022634c23001307376a77057ee2e10dbc96494a7e5a89c2",
+    "monkey_profile_sha256": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+    "monkey_source_sha256": "ec4206f18c9e74b570ebf3f8958b6cfcb054315f97abcf9c9bdd83efb7a62855",
+    "observation_rules_sha256": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a",
+    "observation_trust": "producer_supplied_runtime_evidence",
+    "observations_sha256": "75702d712d6e4671a804e658581ee4803c587e9601a6757ac075c501e0e05284",
+    "observer_binary_sha256": "c18d2c4ea04ce4ef3c91cdbdd8678670632bff881df2e3f68fea24df3255dc18",
+    "observer_harness_sha256": "8ef2f1d7108edf3c0402db430f949f1c41cee85d669def1f9ffa10d169f7665c",
+    "property": "cycle18-observed-callback-composition",
+    "schema_version": 1,
+    "scope": [
+      "cb_event"
+    ],
+    "semantic_profile": "monkey-forced-libevent+linux-epoll",
+    "source_compile_task_sha256": "fb9524769fff44a29ed0b49c30e60061d8fcb4789fe0a9e4898a666522174bfc",
+    "source_rules_sha256": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23"
+  },
+  "limitations": [
+    "Exclusive write authority is caller-declared",
+    "Runtime and linkage evidence is producer-supplied",
+    "Four bounded executions; no universal safety or aggregate acceptance promotion"
+  ],
+  "payload": {
+    "accounted_non_cb_event_bindings": 0,
+    "accounted_observation_records": 26,
+    "allocation_evidence_sha256": "8443e22eff336cd07f369a1795fc93a15b6d17f1f3875455b36a536fc03ed922",
+    "allocation_summary_sha256": "0eb76b1c1383b22c3265dafde04d37aa5957fa359b47689fd6cc492d2c7801b0",
+    "artifact": "fluent-bit/lib/monkey/mk_core/mk_event_libevent.c",
+    "assumptions": {
+      "activation_scope": "Controlled event_active flags exercise payload branches; no readiness/timer or event-lifecycle composition claim",
+      "event_payload_allocation_evidence_sha256": "8443e22eff336cd07f369a1795fc93a15b6d17f1f3875455b36a536fc03ed922",
+      "event_payload_allocation_summary_sha256": "0eb76b1c1383b22c3265dafde04d37aa5957fa359b47689fd6cc492d2c7801b0",
+      "event_payload_authority_sha256": "2b7c095373c9ca5c21e74e37de1185c6055c94f8893d3eb0d5998b132e08029b",
+      "event_payload_callback_summary_sha256": "7e458fddf9331949a1acf1e4dd47dd1dd2d4095962496caf68bb23f1c00d8751",
+      "event_payload_contract_sha256": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a",
+      "event_payload_source_summary_sha256": "018680e88a7499737f249373531d80a8c6d51805c4c6d90abf64389dfe853f9d",
+      "native_run_manifest_sha256": "aef9b64af76c8fa54954ea3f6d144175c9e51cc1c8889ad6ca74f7fe35ea39fd",
+      "observation_authority": "producer-supplied runtime and linkage evidence; not attestation",
+      "payload_storage_extent": "source-sized native allocation record joined to complete callback snapshots",
+      "payload_write_authority": "caller-declared exclusive callback-interval field authority",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+      "schema_version": "1",
+      "source_import": "sealed typed C importer; faithful Clang/C extraction remains a premise",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior"
+    },
+    "bounds": {
+      "checked_executions": 4,
+      "fired_capacity": 8,
+      "fired_element_size": 72,
+      "selected_paths": 4
+    },
+    "caller_prepared_context_sha256": "dc8872d1234d3f797e6b8fb9725355187699af6b3cd36baf602a2520f1cf2c6d",
+    "checked_executions": 4,
+    "checked_path_indices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "contextual_capacity": 8,
+    "contextual_element_size": 72,
+    "contract_sha256": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a",
+    "derived_identity_chain": {
+      "context": "load(load(param[2].data).ctx)",
+      "event": "param[2]",
+      "fired_base": "load(load(load(param[2].data).ctx).fired)",
+      "fired_index": "load(load(load(param[2].data).ctx).fired_count)",
+      "map": "load(param[2].data)"
+    },
+    "evidence_version": "qcore.cycle18.cb-event-payload.v1",
+    "property": "cb-event-payload-boundary",
+    "scope": [
+      "cb_event"
+    ],
+    "selected_paths": 4,
+    "semantic_profile": "monkey-forced-libevent+linux-epoll",
+    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "source_summary_sha256": "018680e88a7499737f249373531d80a8c6d51805c4c6d90abf64389dfe853f9d",
+    "universal_safety_certificate": false,
+    "writes_per_path": [
+      4,
+      4,
+      4,
+      4
+    ]
+  },
+  "schema_version": 1,
+  "status": "bounded_payload_checked"
+}

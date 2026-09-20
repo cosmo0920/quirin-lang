@@ -1,0 +1,9 @@
+import QCore.WaitFailurePaths
+
+#print axioms QCore.WaitFailurePaths.exact_inventory_and_findings_are_accepted
+#print axioms QCore.WaitFailurePaths.missing_creation_path_is_rejected
+#print axioms QCore.WaitFailurePaths.registration_failure_cannot_be_promoted_to_unsafe
+#print axioms QCore.WaitFailurePaths.success_observation_cannot_discharge_the_inventory
+#print axioms QCore.WaitFailurePaths.every_unsafe_finding_has_harness_evidence
+#print axioms QCore.WaitFailurePaths.registration_failure_remains_unknown
+#print axioms QCore.WaitFailurePaths.successful_observation_remains_unknown

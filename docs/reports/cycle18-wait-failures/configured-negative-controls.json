@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "controls": [
+    {"name":"harness-substitution","exit":1,"reason":"configured harness, header or wrapper fixture differs from audited repository bytes"},
+    {"name":"header-substitution","exit":1,"reason":"configured harness, header or wrapper fixture differs from audited repository bytes"},
+    {"name":"fixture-substitution","exit":1,"reason":"configured harness, header or wrapper fixture differs from audited repository bytes"},
+    {"name":"policy-substitution","exit":1,"reason":"configured failure policy differs from executable bundled policy"},
+    {"name":"missing-required-evidence","exit":1,"reason":"strict evidence decode reports missing timeout_activated after manifest hash recomputation"},
+    {"name":"invented-real-libevent-class","exit":1,"reason":"unsupported timed-wait failure manifest or evidence class"},
+    {"name":"source-revision-substitution","exit":1,"reason":"unsupported timed-wait failure manifest or evidence class"},
+    {"name":"unknown-config-field","exit":1,"reason":"deny_unknown_fields rejects accept_any_failure"},
+    {"name":"report-alias","exit":1,"reason":"report destination aliases verified observation input; protected bytes remain unchanged"}
+  ]
+}

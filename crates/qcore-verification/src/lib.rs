@@ -20,6 +20,7 @@ pub mod cleanup_replay_source;
 pub mod composition_source;
 pub mod counter_source;
 pub mod event_composition_context;
+pub mod event_payload;
 pub mod file_close_composition;
 pub mod filesystem_chunk_close_composition;
 pub mod frame_source;
@@ -28,6 +29,7 @@ pub mod monkey_wait_projection;
 pub mod source_effect;
 pub mod teardown_source;
 pub mod timed_wait_observation_wire;
+pub mod timeout_teardown;
 pub mod unmap_composition;
 pub mod unsupported_close_composition;
 

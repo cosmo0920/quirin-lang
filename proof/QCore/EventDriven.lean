@@ -22,6 +22,7 @@ inductive Lifecycle where
   | pending
   | active
   | running
+  | selfTeardown
   | finalizing
   | finalized
   | freed
@@ -36,6 +37,9 @@ inductive TransitionKind where
   | callbackExitPersistent
   | deleteBlocking
   | deleteNonblocking
+  | deleteCurrentCallback
+  | freeCurrentCallback
+  | callbackExitSelfTeardown
   | finalize
   | free
   deriving DecidableEq, Repr
@@ -58,6 +62,9 @@ def legalLifecycle : Lifecycle → TransitionKind → Lifecycle → Bool
   | .pending, .deleteNonblocking, .idle => true
   | .active, .deleteNonblocking, .idle => true
   | .running, .deleteNonblocking, .running => true
+  | .running, .deleteCurrentCallback, .running => true
+  | .running, .freeCurrentCallback, .selfTeardown => true
+  | .selfTeardown, .callbackExitSelfTeardown, .freed => true
   | .idle, .finalize, .finalized => true
   | .finalizing, .finalize, .finalized => true
   | .idle, .free, .freed => true

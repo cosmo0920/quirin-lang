@@ -1,0 +1,13 @@
+{
+  "note": "CYCLE18-PRIORITY1-INTEGRATION corrected gate at a3ee8c9ffe7f96e7caf1bdc1e0ecfb82ab504134: Rust 4991 passed / 0 failed / 11 ignored, 266 summaries, 255 running targets and 9 doc sections; 161 Lean audits; 317 Python tests after matrix regeneration. All standing commands and five isolated host-sensitive controls exit 0. Clang measured in this checkout. Provider 122 is carried Unix evidence, not remeasured. Initial gate failed the forbidden qcore-audit to qcore-core dependency and is preserved separately; dependency rule kept intact and model construction moved to qcore-verification. Logs: private/cycle18-priority1/corrected-gate-20260920/. No corpus, callback-composition or CT promotion.",
+  "workspace_tests": 4991,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 317,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 161,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

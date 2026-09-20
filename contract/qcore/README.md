@@ -300,8 +300,18 @@ shapes, complete summary vectors, revision/callback facts, context identities,
 trust labels and observed bounds. They use typed integer/text predicates;
 Rust supplies extracted facts and generic hashing, decoding and event replay.
 Both policies are hash-bound and remain outside the resource manifest. The
-corpus contains 90 modules; the resource manifest selection is unchanged.
+corpus contains 93 modules; the resource manifest selection is unchanged.
 See [extraction parity](../../docs/reports/cycle18-contract-extraction/README.md).
+
+Cycle 18 priority-one policies add `monkey/wait_failure_policy.qcore`,
+`monkey/event_payload.qcore` and `monkey/timeout_teardown.qcore`. Their typed
+predicates classify source-fault-model cases, relate allocation/index/write
+authority facts, and check running-callback teardown identities and custody.
+The configured `quirin-audit wait-failures`, `event-payload`, and
+`timeout-teardown` commands bind their selected source and observation inputs.
+These policies remain outside resource-v1: 33 selected modules and 59 declarations
+are unchanged; 179 declarations are rejected by that separate interpreter.
+[Bounds and integration evidence](../../docs/reports/cycle18-priority1-integration/README.md).
 
 `chunkio/memory_backend.qcore` is checked against the complete typed
 `cio_memfs_close` body over nine nullable ownership states. The shared field

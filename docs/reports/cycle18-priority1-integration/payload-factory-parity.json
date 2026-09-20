@@ -1,0 +1,11 @@
+{
+  "command": [
+    "target/debug/quirin-audit",
+    "event-payload",
+    "private/cycle18-priority1/payload-config.json"
+  ],
+  "exit": 0,
+  "before_sha256": "ffc1ef2688fd4f9e7da06af97c14892b43d5381541fed0668c1b3d75902ca53e",
+  "after_sha256": "ffc1ef2688fd4f9e7da06af97c14892b43d5381541fed0668c1b3d75902ca53e",
+  "byte_identical": true
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "control": "map-write-descriptor",
+    "exit": 1,
+    "reason": "timeout-teardown audit rejected (Unknown): timeout teardown refused: Evidence(\"teardown_obligations: observed contract violation: callback_descriptor == map_write_descriptor\")",
+    "observations_unchanged": true
+  },
+  {
+    "control": "event-cell-object",
+    "exit": 1,
+    "reason": "timeout-teardown audit rejected (Unknown): map snapshot lacks unique typed event cell",
+    "observations_unchanged": true
+  },
+  {
+    "control": "map-free-pointer",
+    "exit": 1,
+    "reason": "timeout-teardown audit rejected (Unknown): map-free pointer differs from callback argument",
+    "observations_unchanged": true
+  },
+  {
+    "control": "exit-thread",
+    "exit": 1,
+    "reason": "timeout-teardown audit rejected (Unknown): callback teardown changed base, dispatcher or thread",
+    "observations_unchanged": true
+  },
+  {
+    "control": "duplicate-sequence",
+    "exit": 1,
+    "reason": "timeout-teardown audit rejected (Unknown): observation sequences are not globally unique and ordered",
+    "observations_unchanged": true
+  },
+  {
+    "control": "role-substitution",
+    "exit": 1,
+    "reason": "timeout-teardown audit rejected (Unknown): native artifact role mismatch: observer_binary",
+    "observations_unchanged": true
+  },
+  {
+    "control": "report-alias",
+    "exit": 1,
+    "reason": "timeout-teardown audit rejected (Unknown): report aliases a verified input",
+    "observations_unchanged": true
+  }
+]

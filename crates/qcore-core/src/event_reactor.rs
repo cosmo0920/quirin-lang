@@ -168,6 +168,10 @@ pub enum EventLifecycle {
     Pending,
     Active,
     Running,
+    /// The event allocation was released by its own running callback after
+    /// same-dispatcher deletion.  The callback frame remains live until its
+    /// matching `CallbackExit`; event custody is already gone.
+    SelfTeardown,
     Finalizing,
     Finalized,
     Freed,
@@ -452,11 +456,28 @@ pub enum EventOperation<P> {
         event: EventKey,
         mode: DeleteMode,
     },
+    /// `event_del` issued by the callback that is currently running on this
+    /// dispatcher.  Libevent's `EVENT_DEL_AUTOBLOCK` does not wait when
+    /// `EVBASE_IN_THREAD(base)` is true, unlike an ordinary cross-thread
+    /// delete.  Keeping this operation distinct preserves `Delete`'s existing
+    /// running-callback refusal.
+    DeleteCurrentCallback {
+        event: EventKey,
+        dispatcher: ExecutionContextId,
+    },
     Finalize {
         event: EventKey,
     },
     FreeEvent {
         event: EventKey,
+    },
+    /// Release an event from its own callback after
+    /// `DeleteCurrentCallback`.  The event must not borrow a descriptor; map
+    /// and descriptor custody remain separate obligations.  Ordinary
+    /// `FreeEvent` continues to refuse every running callback.
+    FreeCurrentCallbackEvent {
+        event: EventKey,
+        dispatcher: ExecutionContextId,
     },
     /// A successful socket-pair creation creates two distinct owned
     /// descriptors. `None` is its failure branch and creates no custody.
@@ -672,6 +693,7 @@ struct EventState {
     lifecycle: EventLifecycle,
     active_reasons: BTreeSet<ActivationReason>,
     nonblocking_delete: bool,
+    current_callback_delete: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -853,6 +875,7 @@ pub fn check_event_program<P: ReactorProfile>(
                             lifecycle: EventLifecycle::Idle,
                             active_reasons: BTreeSet::new(),
                             nonblocking_delete: false,
+                            current_callback_delete: false,
                         },
                     );
                 }
@@ -877,7 +900,12 @@ pub fn check_event_program<P: ReactorProfile>(
                     {
                         state.lifecycle = EventLifecycle::Pending;
                     }
-                    Some(state) if state.lifecycle == EventLifecycle::Freed => {
+                    Some(state)
+                        if matches!(
+                            state.lifecycle,
+                            EventLifecycle::Freed | EventLifecycle::SelfTeardown
+                        ) =>
+                    {
                         diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                             operation: operation_index,
                         });
@@ -898,6 +926,7 @@ pub fn check_event_program<P: ReactorProfile>(
                     if !matches!(
                         state.lifecycle,
                         EventLifecycle::Freed
+                            | EventLifecycle::SelfTeardown
                             | EventLifecycle::Finalizing
                             | EventLifecycle::Finalized
                     ) && state.summary.trigger_reasons.contains(reason) =>
@@ -917,7 +946,12 @@ pub fn check_event_program<P: ReactorProfile>(
                         }
                     }
                 }
-                Some(state) if state.lifecycle == EventLifecycle::Freed => {
+                Some(state)
+                    if matches!(
+                        state.lifecycle,
+                        EventLifecycle::Freed | EventLifecycle::SelfTeardown
+                    ) =>
+                {
                     diagnostics.insert(EventDiagnostic::L01UseAfterFree {
                         operation: operation_index,
                     });
@@ -982,7 +1016,12 @@ pub fn check_event_program<P: ReactorProfile>(
                 }
             }
             EventOperation::CallbackExit { event } => match events.get_mut(event) {
-                Some(state) if state.lifecycle == EventLifecycle::Running => {
+                Some(state)
+                    if matches!(
+                        state.lifecycle,
+                        EventLifecycle::Running | EventLifecycle::SelfTeardown
+                    ) =>
+                {
                     let base = &mut bases.get_mut(&state.base).expect("checked base");
                     if base.running_callback != Some(CallbackContext::Event(*event)) {
                         diagnostics.insert(EventDiagnostic::L00InvalidLifecycle {
@@ -990,7 +1029,9 @@ pub fn check_event_program<P: ReactorProfile>(
                         });
                     } else {
                         base.running_callback = None;
-                        state.lifecycle = if state.nonblocking_delete {
+                        state.lifecycle = if state.lifecycle == EventLifecycle::SelfTeardown {
+                            EventLifecycle::Freed
+                        } else if state.nonblocking_delete {
                             EventLifecycle::Finalizing
                         } else if !state.active_reasons.is_empty() {
                             EventLifecycle::Active
@@ -1022,7 +1063,9 @@ pub fn check_event_program<P: ReactorProfile>(
                 Some(state)
                     if !matches!(
                         state.lifecycle,
-                        EventLifecycle::Freed | EventLifecycle::Finalized
+                        EventLifecycle::Freed
+                            | EventLifecycle::SelfTeardown
+                            | EventLifecycle::Finalized
                     ) =>
                 {
                     state.active_reasons.clear();
@@ -1039,6 +1082,29 @@ pub fn check_event_program<P: ReactorProfile>(
                     });
                 }
             },
+            EventOperation::DeleteCurrentCallback { event, dispatcher } => {
+                match events.get_mut(event) {
+                    Some(state) if state.lifecycle == EventLifecycle::Running => {
+                        let base = bases.get(&state.base).expect("checked base");
+                        if base.dispatcher == Some(*dispatcher)
+                            && base.running_callback == Some(CallbackContext::Event(*event))
+                        {
+                            state.nonblocking_delete = true;
+                            state.current_callback_delete = true;
+                            state.active_reasons.clear();
+                        } else {
+                            diagnostics.insert(EventDiagnostic::L06NotQuiescent {
+                                operation: operation_index,
+                            });
+                        }
+                    }
+                    _ => {
+                        diagnostics.insert(EventDiagnostic::L06NotQuiescent {
+                            operation: operation_index,
+                        });
+                    }
+                }
+            }
             EventOperation::Finalize { event } => match events.get_mut(event) {
                 Some(state)
                     if matches!(
@@ -1080,6 +1146,32 @@ pub fn check_event_program<P: ReactorProfile>(
                     });
                 }
             },
+            EventOperation::FreeCurrentCallbackEvent { event, dispatcher } => {
+                match events.get_mut(event) {
+                    Some(state) if state.lifecycle == EventLifecycle::Running => {
+                        let base = bases.get(&state.base).expect("checked base");
+                        if state.nonblocking_delete
+                            && state.current_callback_delete
+                            && state.descriptor.is_none()
+                            && base.dispatcher == Some(*dispatcher)
+                            && base.running_callback == Some(CallbackContext::Event(*event))
+                        {
+                            state.lifecycle = EventLifecycle::SelfTeardown;
+                            freed_events.insert(*event);
+                            observed = ObservedKind::Teardown;
+                        } else {
+                            diagnostics.insert(EventDiagnostic::L06NotQuiescent {
+                                operation: operation_index,
+                            });
+                        }
+                    }
+                    _ => {
+                        diagnostics.insert(EventDiagnostic::L06NotQuiescent {
+                            operation: operation_index,
+                        });
+                    }
+                }
+            }
             EventOperation::CreateSocketPair { descriptors } => {
                 if let Some((first, second)) = descriptors {
                     if *first < 0
@@ -1497,7 +1589,10 @@ pub fn check_event_program<P: ReactorProfile>(
             },
             EventOperation::DropArgument { argument } => {
                 let referenced = events.values().any(|event| {
-                    event.lifecycle != EventLifecycle::Freed && event.summary.argument == *argument
+                    !matches!(
+                        event.lifecycle,
+                        EventLifecycle::Freed | EventLifecycle::SelfTeardown
+                    ) && event.summary.argument == *argument
                 }) || bevs
                     .values()
                     .any(|bev| !bev.freed && bev.argument == *argument);

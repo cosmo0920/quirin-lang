@@ -576,6 +576,23 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     // Card CONSTRUCTOR-RESIDUALS, continued. Four clauses: the marker, two
     // borrowed pointers and the unit result.
+    (
+        "monkey/event_payload.qcore",
+        "cb_event_source_projection",
+        12,
+    ),
+    (
+        "monkey/event_payload.qcore",
+        "contextual_payload_boundary",
+        1,
+    ),
+    ("monkey/event_payload.qcore", "contextual_authority", 13),
+    ("monkey/event_payload.qcore", "native_allocation", 8),
+    (
+        "monkey/event_payload.qcore",
+        "contextual_payload_access",
+        13,
+    ),
     ("monkey/intrusive_list.qcore", "mk_list_add", 4),
     // Card W36-CORPUS-CONTRACTS-3: this card's ONE variadic declaration, the
     // `fluent_bit/logging.qcore` shape one library over — five clauses because
@@ -586,6 +603,47 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/memory.qcore", "mk_mem_alloc", 3),
     ("monkey/memory.qcore", "mk_mem_alloc_z", 3),
     ("monkey/memory.qcore", "mk_mem_free", 3),
+    ("monkey/timeout_teardown.qcore", "source_identity", 4),
+    ("monkey/timeout_teardown.qcore", "cb_timeout_source", 7),
+    (
+        "monkey/timeout_teardown.qcore",
+        "cb_timeout_teardown_path",
+        1,
+    ),
+    ("monkey/timeout_teardown.qcore", "libevent_self_teardown", 5),
+    ("monkey/timeout_teardown.qcore", "teardown_obligations", 21),
+    ("monkey/wait_failure_policy.qcore", "loop_init_failure", 6),
+    (
+        "monkey/wait_failure_policy.qcore",
+        "context_allocation_failure",
+        7,
+    ),
+    (
+        "monkey/wait_failure_policy.qcore",
+        "base_creation_failure",
+        8,
+    ),
+    (
+        "monkey/wait_failure_policy.qcore",
+        "fired_allocation_failure",
+        10,
+    ),
+    (
+        "monkey/wait_failure_policy.qcore",
+        "timer_creation_failure",
+        9,
+    ),
+    (
+        "monkey/wait_failure_policy.qcore",
+        "timer_registration_failure",
+        10,
+    ),
+    (
+        "monkey/wait_failure_policy.qcore",
+        "success_observation",
+        10,
+    ),
+    ("monkey/wait_failure_policy.qcore", "loop_size_bounds", 6),
     (
         "monkey/wait_identity_policy.qcore",
         "wait_identity_context",
@@ -801,8 +859,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // and the `set_result` / `otlp_kvpair_list_destroy` /
     // `destroy_context_list` families, with every reading published in
     // `docs/reports/w37-corpus-contracts-4/README.md`.
-    // 88 -> 90: executable Cycle 18 source and identity policies.
-    assert_eq!(sources.len(), 90, "unexpected contract corpus size");
+    // 90 -> 93: Cycle 18 failure, payload and self-teardown executable policies.
+    assert_eq!(sources.len(), 93, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

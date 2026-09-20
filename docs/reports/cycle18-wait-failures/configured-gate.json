@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "commands": [
+    {"command":"cargo fmt --all -- --check","exit":0,"log":"measure/wait-failures-integration-focused-2/fmt.log"},
+    {"command":"cargo clippy -p qcore-audit --all-targets -- -D warnings","exit":0,"log":"measure/wait-failures-integration-focused-2/clippy.log"},
+    {"command":"cargo test -p qcore-audit wait_failures -- --nocapture","exit":0,"result":"4 passed, 0 failed; unrelated tests filtered","log":"measure/wait-failures-integration-focused-2/rust.log"},
+    {"command":"target/debug/quirin-audit wait-failures measure/wait-failures-cli-3/config.json","exit":0,"result":"8 cases: 3 bounded Unsafe, 5 Unknown; explicit instrumented-source-model class","report_sha256":"092ef5e1eccc60324877a7233b45d687e2631e9a9d52b4971e66ceaa1235ce8f","log":"measure/wait-failures-cli-3"},
+    {"command":"python3 docs/reports/cycle18-wait-failures/check_configured_negative_controls.py --binary target/debug/quirin-audit --config measure/wait-failures-cli-3/config.json --output measure/wait-failures-negative-4","exit":0,"result":"9/9 controls refused with exit 1","log":"measure/wait-failures-negative-4"}
+  ]
+}

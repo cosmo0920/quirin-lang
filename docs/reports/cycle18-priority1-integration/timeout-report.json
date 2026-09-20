@@ -1,0 +1,122 @@
+{
+  "artifact": "monkey/cb_timeout",
+  "certificate": {
+    "artifact": "monkey/cb_timeout",
+    "assumptions": [
+      "native identifiers and close results are independently observed",
+      "Libevent event.c and Monkey source match their pinned digests",
+      "the caller separately closes the peer endpoint before callback dispatch"
+    ],
+    "bounds": "one event, one map argument, one socket pair, one callback activation",
+    "checked_operations": 15,
+    "closed_descriptors": [
+      7,
+      8
+    ],
+    "dropped_map_argument": 4,
+    "evidence_version": "cycle18.timeout-self-teardown.v1",
+    "freed_event": {
+      "generation": 1,
+      "id": 4
+    },
+    "property": "running-callback self teardown retires its event, map, and write endpoint exactly once",
+    "scope": "source path 0 and one bounded native callback trace",
+    "semantic_profile": "fluent-bit/monkey/libevent"
+  },
+  "identities": {
+    "manifest_sha256": "33b05d1c117fd1c55f8ce0709d44425e00b13ea65564a1112042f036b6e80699",
+    "monkey_build_sha256": "b4827bf0b1f9172fed2c937da9a656eec8d4f3bae11f29f2e244280df0975fa7",
+    "monkey_source_sha256": "ec4206f18c9e74b570ebf3f8958b6cfcb054315f97abcf9c9bdd83efb7a62855",
+    "source_compile_task_sha256": "b2f128ce9de930a5d5d4f46919b4bd3517964423cbfc23ebe072ad39658c4725"
+  },
+  "limitations": [
+    "One bounded native callback execution, not whole-program safety",
+    "Runtime and linkage records are producer-supplied evidence, not attestation",
+    "The peer endpoint close belongs to the enclosing caller, not cb_timeout"
+  ],
+  "native_evidence": {
+    "base": 2,
+    "callback": "cb_timeout",
+    "callback_close": {
+      "result": "success"
+    },
+    "callback_descriptor": 8,
+    "callback_enter_sequence": 51,
+    "callback_exit_sequence": 56,
+    "close_function": "evutil_closesocket",
+    "close_sequence": 53,
+    "contract_digest": "516fa1fee1732f3523a373f625333f87df7ca89239569ccbbf4ece7d37800e27",
+    "delete_dispatcher": 1,
+    "delete_event_id": 4,
+    "delete_operation": "event_del",
+    "delete_sequence": 54,
+    "dispatcher": 1,
+    "event_descriptor": null,
+    "event_generation": 1,
+    "event_id": 4,
+    "event_pointer": 134843136344896,
+    "exit_dispatcher": 1,
+    "exit_event_id": 4,
+    "exit_operation": "callback_exit",
+    "free_dispatcher": 1,
+    "free_event_id": 4,
+    "free_operation": "event_free",
+    "free_sequence": 55,
+    "libevent_event_c_digest": "3506c3c54cfde9934a42526dbd4a9fbacc98f65068dbb038209f71eb9a63e346",
+    "map_argument": 4,
+    "map_free_function": "mk_mem_free",
+    "map_free_sequence": 55,
+    "map_write_descriptor": 8,
+    "native_map_address": 134224661053792,
+    "path_index": 0,
+    "peer_close": {
+      "result": "success"
+    },
+    "peer_descriptor": 7,
+    "source_summary_digest": "ba528a16a79d673073f734f07367436f7c024d1a204a598e75300ab70b4261a4"
+  },
+  "schema_version": 1,
+  "source": {
+    "callback": "cb_timeout",
+    "contract_digest": "516fa1fee1732f3523a373f625333f87df7ca89239569ccbbf4ece7d37800e27",
+    "libevent_event_c_digest": "3506c3c54cfde9934a42526dbd4a9fbacc98f65068dbb038209f71eb9a63e346",
+    "path_call_sequences": [
+      [
+        "send",
+        "__errno_location",
+        "perror",
+        "evutil_closesocket",
+        "event_del",
+        "event_free",
+        "mk_mem_free"
+      ],
+      [
+        "send",
+        "__errno_location",
+        "evutil_closesocket",
+        "event_del",
+        "event_free",
+        "mk_mem_free"
+      ],
+      [
+        "send"
+      ]
+    ],
+    "profile_assumptions": {
+      "library": "monkey",
+      "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "profile_digest": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+      "schema_version": "1",
+      "source_set": "fluent-bit",
+      "trust": "declared source-set assumptions, not verified upstream behavior",
+      "typed_import_role": "Callback"
+    },
+    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "source_summary_digest": "ba528a16a79d673073f734f07367436f7c024d1a204a598e75300ab70b4261a4",
+    "teardown_path_indices": [
+      0,
+      1
+    ]
+  },
+  "status": "timeout_self_teardown_checked"
+}

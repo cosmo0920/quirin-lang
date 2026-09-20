@@ -1,0 +1,32 @@
+{
+  "time": 1789914825.1601968,
+  "archived_manifest": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/.sweep-backups/cycle18-priority1-20260920/manifest.json",
+  "preserved_files": 234,
+  "process_check": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-priority1/worktree-process-check.json",
+  "removed": [
+    {
+      "worktree": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-event-payload",
+      "head": "ed68e9e9dfb765cbc366599060e97044eec734f8",
+      "exit": 0,
+      "output": "",
+      "force_reason": "Initialized submodules; clean tracked tree, agent final handoff and process check complete."
+    },
+    {
+      "worktree": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-wait-failures",
+      "head": "7d53b6837f2f937381c000bef0416e6eb9d3312b",
+      "exit": 0,
+      "output": "",
+      "force_reason": "Initialized submodules; clean tracked tree, agent final handoff and process check complete."
+    },
+    {
+      "worktree": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-timeout-teardown",
+      "head": "ca05db047f1e5bf84aacd2d57acf7da09644aeb6",
+      "exit": 0,
+      "output": "",
+      "force_reason": "Initialized submodules; clean tracked tree, agent final handoff and process check complete."
+    }
+  ],
+  "retained": "next-wave-candidates-c-sources-18bd37 external worktree retained",
+  "preserved_bytes": 7365994,
+  "note": "Agent branches retained for commit provenance. Three completed worktrees removed; external worktree retained. Native timeout temporary source/build/evidence directories remain available."
+}

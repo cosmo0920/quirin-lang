@@ -1,0 +1,68 @@
+[
+  {
+    "control": "missing-allocation-field",
+    "exit": 1,
+    "reason": "event-payload audit rejected (Unknown): missing field `context_allocation_bytes` at line 1 column 212",
+    "observations_unchanged": true
+  },
+  {
+    "control": "allocation-extent",
+    "exit": 1,
+    "reason": "event-payload audit rejected (Unknown): native_allocation: observed contract violation: allocation_bytes == capacity * element_size",
+    "observations_unchanged": true
+  },
+  {
+    "control": "wrong-storage-authority",
+    "exit": 1,
+    "reason": "event-payload audit rejected (Unknown): callback identity, extent, or index is outside contextual authority",
+    "observations_unchanged": true
+  },
+  {
+    "control": "missing-write-field",
+    "exit": 1,
+    "reason": "event-payload audit rejected (Unknown): contextual_authority: observed contract violation: fired_fields == \"data,fd,mask\"",
+    "observations_unchanged": true
+  },
+  {
+    "control": "callback-thread",
+    "exit": 1,
+    "reason": "event-payload audit rejected (Unknown): callback binding lacks an exact observation enter/exit interval",
+    "observations_unchanged": true
+  },
+  {
+    "control": "duplicate-binding",
+    "exit": 1,
+    "reason": "event-payload audit rejected (Unknown): callback bindings do not account for every observed interval",
+    "observations_unchanged": true
+  },
+  {
+    "control": "missing-path",
+    "exit": 1,
+    "reason": "event-payload audit rejected (Unknown): callback bindings do not account for every observed interval",
+    "observations_unchanged": true
+  },
+  {
+    "control": "backend",
+    "exit": 1,
+    "reason": "event-payload audit rejected (Unknown): native backend outside profile",
+    "observations_unchanged": true
+  },
+  {
+    "control": "role-substitution",
+    "exit": 1,
+    "reason": "event-payload audit rejected (Unknown): native artifact role mismatch: observer_binary",
+    "observations_unchanged": true
+  },
+  {
+    "control": "extra-execution",
+    "exit": 1,
+    "reason": "event-payload audit rejected (Unknown): dedicated run includes unrelated callbacks",
+    "observations_unchanged": true
+  },
+  {
+    "control": "report-alias",
+    "exit": 1,
+    "reason": "event-payload audit rejected (Unknown): report destination aliases verified input: /home/cosmo/Documents/GitHub/qcore-c/private/cycle18-priority1/native-payload/output-6/observations.jsonl",
+    "observations_unchanged": true
+  }
+]
