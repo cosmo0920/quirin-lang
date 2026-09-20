@@ -128,6 +128,41 @@ Commands use `CARGO_BUILD_JOBS=2`. Private logs are under
 The root integrator owns the complete workspace standing gate and the real
 configured aggregate replay. This lane does not claim those runs.
 
+## Publication review correction (2026-09-21)
+
+The final configured consumer now fails closed before writing its aggregate
+report unless `joined_evidence_families` is exactly `{cb_event, cb_timeout,
+cb_wait_2_timeout}` and `refused_evidence_families` is empty. The successful
+bounded result remains `Unknown`; this publication guard does not promote a
+callback or the aggregate.
+
+The aggregate output is also compared with all four prepared leaf-report
+destinations using the same symbolic-path normalization and existing-file
+identity checks as the evidence-output guard. This rejects a shared planned
+path before either report exists and rejects existing hard-link aliases. Each
+prepared leaf now retains the already verified Fluent Bit revision, and the
+three Libevent-backed leaves also retain their already verified Libevent
+revision. Publication re-runs `git rev-parse --verify HEAD^{commit}` against
+those retained expectations after all four sequential preparations, so a
+checkout commit change refuses even when every selected file byte is unchanged.
+
+Focused correction validation used the private target at
+`/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/publication-target`
+and logs under
+`/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/publication-review/`:
+
+- `cargo test -p qcore-audit --no-fail-fast`: exit 0; 91 passed, 0 failed,
+  0 ignored across unit and integration targets. The new controls cover a
+  partial join, a nonempty refusal map, planned and hard-linked leaf-report
+  aliases, and a checkout revision change with unchanged selected bytes.
+- `cargo clippy -p qcore-audit --all-targets -- -D warnings`: exit 0.
+- `cargo fmt --all -- --check`: exit 0.
+- `git diff --check`: exit 0.
+
+The complete workspace standing gate and configured aggregate replay remain
+pending on the root integration tree after all publication lanes and matrix
+regeneration are merged.
+
 ## Integrator reconciliation list
 
 - Wire the configured consumer by preparing the three source projections and

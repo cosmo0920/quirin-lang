@@ -283,6 +283,7 @@ pub(crate) fn prepare_wait_failures(
         "limitations": ["Stubbed dependency fault outcomes, not a real Libevent execution",
             "Unknown rows remain in the denominator", "No callback or aggregate Cycle 18 promotion"]
     });
+    let monkey_revision = aggregate_identity.revision.clone();
     crate::cycle18_inputs::PreparedAudit::new(
         aggregate_identity,
         crate::cycle18_inputs::Failures {
@@ -294,6 +295,9 @@ pub(crate) fn prepare_wait_failures(
         protected_files,
         source.protected_directories,
     )
+    .map(|prepared| {
+        prepared.with_checkout_revision(resolve(&config.fluent_checkout), monkey_revision)
+    })
 }
 
 #[cfg(test)]
