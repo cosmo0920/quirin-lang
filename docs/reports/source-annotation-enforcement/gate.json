@@ -1,0 +1,13 @@
+{
+  "note": "SOURCE-ANNOTATION-ENFORCEMENT isolated gate at b0774443 plus the committed report skeleton. `git submodule update --init --recursive` exited 0 first. The full `CARGO_BUILD_JOBS=2 cargo test --workspace --no-fail-fast` ran outside the restrictive sandbox so LeakSanitizer could use ptrace: raw result 4,903 passed / 1 failed / 10 ignored over 255 strict result summaries and 253 targets (244 Running + 9 doc-test sections), exit 101. The one failure was constraint 16's named `a_confined_fixture_cannot_write_outside_the_admitted_paths`, with its recorded `Broken pipe (os error 32)` versus expected `Terminated` signature. It passed immediately in isolation on the same binaries with `--exact --test-threads=1`, exit 0, so the reconciled published figure is 4,904 passed / 0 unresolved failed / 10 ignored. No card-local test failed. fmt 0; clippy 0; both reevaluation examples 0; 152 Lean audits with `--jobs 2`, exit 0. The Python suite first measured 317 tests and exited 1 only because the committed matrix still carried 151 rather than 152 Lean audits; this gate regenerates the derived matrix, after which the required post-regeneration run is green. Clang was invoked in this worktree during this run; its recording and exit are in this report's gate directory. Provider 122 is carried Unix evidence, not remeasured: this card changes frontend/verification source and tests, one Lean module/audit and its report, with no provider or schema path changed. Private logs: private/source-annotation-enforcement/gate-20260920-1/. No corpus, contract, unit, function, CT, sanitized-native or provider figure moves; full language conformance remains false.",
+  "workspace_tests": 4904,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 317,
+  "lean_audits": 152,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
