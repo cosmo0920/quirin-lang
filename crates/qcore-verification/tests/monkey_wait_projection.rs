@@ -291,3 +291,41 @@ fn missing_or_substituted_contract_semantics_fail_closed() {
         ))
     );
 }
+
+#[test]
+fn same_count_operand_field_and_guard_substitutions_fail_closed() {
+    if qcore_c_gateway::clang_command().is_err() {
+        return;
+    }
+    let mutations = [
+        ("event_new descriptor", "ctx->base, -1,", "ctx->base, -2,"),
+        (
+            "wait result field",
+            "loop->n_events = ctx->fired_count;",
+            "loop->n_events = ctx->queue_size;",
+        ),
+        ("timeout guard", "timeout == -1", "timeout == -2"),
+    ];
+    for (label, from, to) in mutations {
+        let wrapper_source = wrapper_source().replacen(from, to, 1);
+        let callbacks = import(CALLBACKS, ImportRole::Callback);
+        let wrappers = import(&wrapper_source, ImportRole::Wrapper);
+        let result = project_monkey_timed_wait_source(
+            [
+                summary(&callbacks, WAIT_CALLBACK),
+                summary(&wrappers, "_mk_event_loop_create"),
+                summary(&wrappers, "_mk_event_wait_with_flags"),
+                summary(&wrappers, "_mk_event_wait_2"),
+                summary(&wrappers, "_mk_event_loop_destroy"),
+            ],
+            &contracts(),
+        );
+        assert!(
+            matches!(
+                result,
+                Err(WaitSourceProjectionError::SourceArtifactMismatch(_))
+            ),
+            "{label} unexpectedly projected: {result:?}"
+        );
+    }
+}
