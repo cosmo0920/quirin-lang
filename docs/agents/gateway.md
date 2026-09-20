@@ -255,6 +255,25 @@ including cross-topic rules, before editing; the index is not a substitute.
     they do not establish arbitrary runtime purity or whole-C correctness.
     [B04 evidence](../reports/b04-nested-call-argument/README.md).
 
+<a id="constraint-5g"></a>
+
+5g. **W42-INDIRECT-ACCESS adds one route disjoint from the existing unbound
+    scalar-field no-op:** an exact `BASE->FIELD = RHS` statement may lower to
+    `ScalarMemberStore` only when `FunctionTypes::may_bind(BASE)` is true,
+    `BASE` is a declared record pointer, `FIELD` is a declared scalar field,
+    and `RHS` is nonempty, scalar-only, contains no
+    member/chain/subscript/dereference/call/assignment, and contains no
+    increment or decrement. Transfer retains the existing same-type
+    alias-read obligation and admits the store only when `BASE` resolves to
+    exactly one known, non-null, live identity with neither nullable nor
+    unresolved-effect markers. The scalar destination and scalar-only RHS
+    cannot rebind tracked identity, so both admitted stores and flow-refused
+    stores preserve pointer, custody, field-link, and scalar-fact maps; a flow
+    refusal still records `UnknownAlias` and keeps the function non-Safe.
+    Pointer fields remain refused by this route; shapes outside this
+    conjunction retain their prior handling, including the separate unbound
+    scalar-field no-op. See [the card report](../reports/w42-indirect-access/README.md).
+
 <a id="constraint-6"></a>
 
 <!-- preserved:constraint-6:start -->
