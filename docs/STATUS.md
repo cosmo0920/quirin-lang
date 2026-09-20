@@ -61,16 +61,19 @@ correspondence remain premises maintained by review. See
 artifact binding, source coverage, native observations and host conditions
 separately.
 
-## Last integrated gate
+## Latest validated gate
 
-The [W42 priority integration gate](reports/w42-priority-integration/gate.json) records
-**4,863 Rust passed, 0 failed, 10 ignored; 250 result summaries over 248 targets;
-149 Lean audits; 313 Python tests**, clean fmt/clippy and both probes exit 0.
+The [scalar-call gate](reports/source-scalar-calls-v1/gate.json) records
+**4,884 Rust passed, 0 failed, 10 ignored; 251 result summaries over 249 targets;
+150 Lean audits; 313 Python tests**, clean fmt/clippy and both probes exit 0.
 Five core-workspace host-sensitive rows also passed separately in isolation.
-Clang 21.1.8 was recorded in the measuring worktree. **122 provider tests are
-carried Unix evidence, not re-measured.** [Run identity and private logs](reports/w42-priority-integration/README.md#final-standing-gate)
-bind these measurements to the checked source; they are not promises about
-another host or a later tree.
+Clang 21.1.8 was recorded in the measuring checkout. **122 provider tests are
+carried Unix evidence, not re-measured.** [Run identity and private logs](reports/source-scalar-calls-v1/README.md#final-standing-gate)
+disclose the initial Lean import-placement failure and successful import-only
+correction/retry. Scalar calls now check explicit i32/unit values and direct
+acyclic calls, with source-authored `std.io` printing and one composed C main.
+This is a bounded source-profile extension; C projection measurements and
+full-conformance status are unchanged.
 
 The ignored F02 Windows pin-agreement test is red by design on `--ignored`;
 Linux green does not repair it. Host/load-sensitive tests and their reporting

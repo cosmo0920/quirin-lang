@@ -393,40 +393,47 @@
    "area": "frontend",
    "acceptance_status": "partially_repaired",
    "status_changed_by_wave": true,
-   "status_change_cause": "The status is unchanged; the recorded remaining_boundary was a verbatim copy of R02's task-lifetime text (B02, 'Ledger-quality drift found in R04') and is replaced with the boundary V03 measured for this requirement.",
-   "implemented_profile": "SequentialCleanupV1 (i32/unit results) and ScopedOwnedTasksV1 / ScopedCopyTasksV1 (i32, unit, own<Buffer> results)",
+   "status_change_cause": "The status is unchanged; the recorded remaining_boundary was a verbatim copy of R02's task-lifetime text (B02, 'Ledger-quality drift found in R04') and is replaced with the boundary V03 measured for this requirement. SOURCE-SCALAR-CALLS-V1 adds a bounded source profile; acceptance remains partially_repaired, not full ordinary-type conformance.",
+   "implemented_profile": "SequentialCleanupV1 (i32/unit results) and ScopedOwnedTasksV1 / ScopedCopyTasksV1 (i32, unit, own<Buffer> results); source.scalar-calls.v1 (typed i32 parameters/locals, i32/unit results, direct acyclic calls and explicit std.io printing)",
    "entry_points": [
     "crates/qcore-frontend/src/frontend.rs:149-155",
     "crates/qcore-frontend/src/source_tasks.rs:103-118,230-251",
-    "crates/qcore-verification/src/driver.rs::compile_files"
+    "crates/qcore-verification/src/driver.rs::compile_files",
+    "crates/qcore-frontend/src/source_scalar_calls.rs::lower",
+    "crates/qcore-core/src/scalar_calls.rs::{check,Checked::observe}",
+    "crates/qcore-core/src/scalar_calls_c_emit.rs::{fragments,entry_body,emit}"
    ],
    "support": {
     "source": {
      "status": "executed",
-     "test_stage": "cargo test -p qcore-compiler --lib review_r04, -p qcore-frontend --lib review_r04",
-     "note": "the sequential rows are pinned; V03 records that none of the task-profile Q020 signature rows is pinned by any existing test."
+     "test_stage": "cargo test -p qcore-compiler --lib review_r04, -p qcore-frontend --lib review_r04; cargo test -p qcore-compiler --test source_scalar_calls (21)",
+     "note": "the sequential rows are pinned; V03 records that none of the task-profile Q020 signature rows is pinned by any existing test. The added scalar profile checks all definitions, call arity/result/local types, IO requirements, recursion and closed arithmetic; existing profile pins remain unchanged."
     },
     "model": {
-     "status": "not_applicable",
-     "note": "a source-typing requirement."
+     "status": "executed",
+     "test_stage": "compiler/tests/source_scalar_calls.rs::bounded_arithmetic_matches_widened_reference and lean_arithmetic_vectors_match_the_rust_kernel",
+     "note": "500 checked arithmetic boundary combinations and eight Lean/Rust agreement vectors; source tests also execute the core call evaluator. This is not a proof of type-checker soundness."
     },
     "observation": {
-     "status": "recorded_not_gated",
-     "test_stage": "docs/reports/remaining-v03/probe_results.tsv (71 live CLI probes, 12 exit 0 / 59 exit 1 / 0 crashes)",
-     "note": "probe sources are archived under docs/reports/remaining-v03/probes/; nothing in the standing gate replays them."
+     "status": "executed",
+     "test_stage": "compiler/tests/source_scalar_calls.rs native_calls_match_reference_under_sanitizers, composed_printing_emits_one_main_and_uses_the_shared_io_path, native_arithmetic_guards_refuse_faults_in_uncalled_helpers",
+     "note": "Sanitized emitted C checks computed42 with silent streams, ordered explicit IO and single-main composition, plus five guarded arithmetic faults. Prior V03 CLI probes remain recorded_not_gated."
     },
     "mechanized": {
-     "status": "absent"
+     "status": "executed",
+     "test_stage": "proof/AuditScalarCalls.lean",
+     "note": "Checked arithmetic, arity/frame preservation, acyclic ranks, relational calls with ordered stdout observations, IO row rules and unit result separation. Source/Rust/model correspondence remains a review premise; no whole-compiler refinement theorem."
     }
    },
    "wave_evidence": [
     "docs/reports/remaining-v03/README.md",
-    "docs/reports/remaining-b02/README.md"
+    "docs/reports/remaining-b02/README.md",
+    "docs/reports/source-scalar-calls-v1/README.md"
    ],
    "prior_evidence": [
     "docs/reports/r0-3-source-validation/README.md"
    ],
-   "remaining_boundary": "Only i32 and unit are typed in the sequential executable subset; own<Buffer> is added by the task profile and every other result type rejects at Q020. B02's residual flag is superseded: inconsistent exits are guarded by Q202/Q020 and call/result mismatch by Q020/Q013, not only by Q500. Four Q500-only rows remain named (V03 Q500-1..Q500-4). Two acceptance boundaries are recorded rather than repaired: sequential-subset parameter type names are structurally classified and not resolved (V03 B-1) and local type annotations are accepted and not interpreted (V03 B-2); both are inert in that subset and both reject in the task profile."
+   "remaining_boundary": "Only i32 and unit are typed in the sequential executable subset; own<Buffer> is added by the task profile and every other result type rejects at Q020. B02's residual flag is superseded: inconsistent exits are guarded by Q202/Q020 and call/result mismatch by Q020/Q013, not only by Q500. Four Q500-only rows remain named (V03 Q500-1..Q500-4). Two acceptance boundaries are recorded rather than repaired: sequential-subset parameter type names are structurally classified and not resolved (V03 B-1) and local type annotations are accepted and not interpreted (V03 B-2); both are inert in that subset and both reject in the task profile. SOURCE-SCALAR-CALLS-V1 supersedes the parameter/local-annotation omission only for its selected profile: it interprets i32 parameter and local annotations, and refuses all others. Existing profiles retain their boundaries. Runtime branches, generic/recursive/indirect calls, mutation, resource/aggregate call values and general cross-profile call composition remain outside this extension; only explicit std.io printing composes with scalar calls."
   },
   {
    "id": "R05",
@@ -6718,11 +6725,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Combined Rust/Lean source f3f99df5d2dcdf27e9b73ecd81dd7fe126419ca4; 4863 Rust passed, 0 failed, 10 ignored; 250 strict summaries across 248 targets (239 running and 9 doc). 149 Lean audits. Five workspace host-sensitive rows each passed in isolation. Provider122 is carried Unix evidence, not remeasured. Actual Clang recording captured in this measuring checkout. Private logs: /home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/combined-gate/. Post-regeneration Python count measured; all standing commands exit0. No full-language conformance or raw-unit promotion claimed.",
-  "workspace_tests": 4863,
+  "note": "Rust source 455108be2bc64830b386a7ebd6c8d8f217eb0e4c; 4884 passed, 0 failed, 10 ignored; 251 result summaries over 249 targets (240 running and 9 doc). Initial full Lean build found import placement after a module doc comment; import-only correction 62129bd2b51d432a0e6a94dd2f7195753ba0587b, followed by all 150 Lean audits exit0. Rust files unchanged by that correction. Five required workspace host-sensitive rows passed individually. Provider122 is carried Unix evidence, not remeasured. Clang was recorded in this checkout. Private logs: /home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/. Post-regeneration Python suite: 313 passed, exit0. All final standing commands pass; the initial Lean import-order failure and its successful retry remain separately recorded. No full-language conformance or C-corpus promotion claimed.",
+  "workspace_tests": 4884,
   "provider_tests": 122,
   "python_evidence_validator_tests": 313,
-  "lean_audits": 149,
+  "lean_audits": 150,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6837,6 +6844,7 @@
    "AuditReturnCallCustody.lean",
    "AuditReturnExpressionEvaluation.lean",
    "AuditReturnPositionEscape.lean",
+   "AuditScalarCalls.lean",
    "AuditScalarMemberStore.lean",
    "AuditScalarRouteExitEdge.lean",
    "AuditSingleEmissionRoute.lean",
@@ -6880,7 +6888,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w42-priority-integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/source-scalar-calls-v1/gate.json)"
  },
  "named_followups": [
   {

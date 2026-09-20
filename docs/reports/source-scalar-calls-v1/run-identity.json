@@ -1,0 +1,267 @@
+{
+  "initial_full_gate": {
+    "source_commit": "455108be2bc64830b386a7ebd6c8d8f217eb0e4c",
+    "started": "2026-09-20T04:51:56.845605+00:00",
+    "steps": [
+      {
+        "name": "submodule",
+        "command": [
+          "git",
+          "submodule",
+          "update",
+          "--init",
+          "--recursive"
+        ],
+        "exit": 0,
+        "seconds": 0.022,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/gate-final/submodule.log"
+      },
+      {
+        "name": "clang",
+        "command": [
+          "clang",
+          "--version"
+        ],
+        "exit": 0,
+        "seconds": 0.013,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/gate-final/clang.log"
+      },
+      {
+        "name": "rust",
+        "command": [
+          "cargo",
+          "test",
+          "--workspace",
+          "--no-fail-fast"
+        ],
+        "exit": 0,
+        "seconds": 944.699,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/gate-final/rust.log"
+      },
+      {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit": 0,
+        "seconds": 1.701,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/gate-final/fmt.log"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit": 0,
+        "seconds": 9.688,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/gate-final/clippy.log"
+      },
+      {
+        "name": "probe",
+        "command": [
+          "cargo",
+          "run",
+          "-p",
+          "qcore-compiler",
+          "--example",
+          "reevaluation_probe"
+        ],
+        "exit": 0,
+        "seconds": 0.081,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/gate-final/probe.log"
+      },
+      {
+        "name": "followup",
+        "command": [
+          "cargo",
+          "run",
+          "-p",
+          "qcore-compiler",
+          "--example",
+          "reevaluation_followup"
+        ],
+        "exit": 0,
+        "seconds": 0.415,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/gate-final/followup.log"
+      },
+      {
+        "name": "lean",
+        "command": [
+          "python3",
+          "scripts/check_lean_audits.py",
+          "--jobs",
+          "2"
+        ],
+        "exit": 1,
+        "seconds": 2.021,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/gate-final/lean.log"
+      }
+    ],
+    "finished": "2026-09-20T05:07:55.488378+00:00"
+  },
+  "rust_counts": {
+    "summaries": 251,
+    "passed": 4884,
+    "failed": 0,
+    "ignored": 10,
+    "running_targets": 240,
+    "doctest_targets": 9
+  },
+  "lean_retry": {
+    "source_commit": "62129bd2b51d432a0e6a94dd2f7195753ba0587b",
+    "command": [
+      "python3",
+      "scripts/check_lean_audits.py",
+      "--jobs",
+      "2"
+    ],
+    "exit": 0,
+    "audits": 150,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/lean-final-rerun.log"
+  },
+  "host_isolation": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "cycle20_verifier_plugins",
+        "vp04_vp07_vp08_process_lifecycle_and_payload_budgets",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "seconds": 1.422,
+      "log": "private/source-scalar-calls-v1/isolated-final/vp04_vp07_vp08_process_lifecycle_and_payload_budgets.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "enforced_process_limits",
+        "a_declared_process_limit_stops_the_fixture_from_forking",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "seconds": 1.546,
+      "log": "private/source-scalar-calls-v1/isolated-final/a_declared_process_limit_stops_the_fixture_from_forking.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "enforced_process_limits",
+        "memory_growth_beyond_the_declared_limit_is_bounded",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "seconds": 0.091,
+      "log": "private/source-scalar-calls-v1/isolated-final/memory_growth_beyond_the_declared_limit_is_bounded.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "confined_process_execution",
+        "a_confined_fixture_cannot_write_outside_the_admitted_paths",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "seconds": 0.055,
+      "log": "private/source-scalar-calls-v1/isolated-final/a_confined_fixture_cannot_write_outside_the_admitted_paths.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "standalone_host",
+        "closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "seconds": 1.554,
+      "log": "private/source-scalar-calls-v1/isolated-final/closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request.log"
+    }
+  ],
+  "publication": [
+    {
+      "command": [
+        "python3",
+        "docs/reports/remaining-d02/build_matrix.py",
+        ".",
+        "--gate",
+        "docs/reports/source-scalar-calls-v1/gate.json"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/matrix-final.log"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/python-final.log"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/reconciliation_sweep.py",
+        ".",
+        "--cards",
+        "source-scalar-calls-v1",
+        "--check",
+        "docs/reports/source-scalar-calls-v1/reconciliation.json"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/source-scalar-calls-v1/reconcile-final.log"
+    }
+  ],
+  "python_tests": 313,
+  "residual_sweep": {
+    "before": 54,
+    "after": 55,
+    "added": [
+      "SOURCE-SCALAR-CALLS-V1"
+    ],
+    "classification": "Completed card, discharged by this report; not an open follow-up. Existing 54 candidates unchanged. No tracker retirement.",
+    "before_log": "private/source-scalar-calls-v1/residuals-final.txt",
+    "after_log": "private/source-scalar-calls-v1/residuals-close.txt"
+  }
+}

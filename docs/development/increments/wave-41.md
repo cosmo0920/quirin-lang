@@ -6,6 +6,23 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`SOURCE-SCALAR-CALLS-V1` (2026-09-20).** Implemented explicit i32/unit source
+functions, immutable i32 locals, checked arithmetic, direct acyclic calls and
+value returns, plus user-requested `import std.io; print(expr);` for an evaluated
+i32 and newline. I/O effects propagate through calls and explicit empty rows
+refuse them. The backend contributes fragments and an entry body to the existing
+C assembler, emits one main, and prints no automatic result/fault diagnostics.
+Three GPT-5.6 Sol medium subtasks supplied focused tests, documentation and an
+independent implementation review. The scalar model and audited Lean cover
+arithmetic, call/frame behavior, output order and effect-row rules; correspondence
+remains a review premise. Final gate: 4,884 Rust passed / 0 failed / 10 ignored,
+150 Lean audits, 313 Python tests, clean fmt/clippy and both probes exit 0; five
+host-sensitive workspace rows also pass in isolation. The initial full Lean
+build found an import after module documentation; import-only commit 62129bd2
+corrected it and the complete Lean gate passed. Earlier interrupted/failing runs
+are preserved. R04 remains partially repaired, 271 follow-ups are carried, and
+C projection counts/provider122 are not remeasured. [Report and precise run identity](../../reports/source-scalar-calls-v1/README.md).
+
 **`W42-PRIORITY-INTEGRATION` (2026-09-20).** Three GPT-5.6 Sol medium agents
 implemented a bounded scalar-member-store rule, total Monkey callback
 accounting and a positive build-exclusion census. The syntax rule retains

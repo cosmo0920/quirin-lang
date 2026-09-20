@@ -1,0 +1,61 @@
+{
+  "base": "418af31dfa4567085f68882d7fab7d2e69a042c7",
+  "implementation": "455108be2bc64830b386a7ebd6c8d8f217eb0e4c",
+  "reviewed_paths": [
+    "compiler/tests/source_scalar_calls.rs",
+    "crates/qcore-core/src/lib.rs",
+    "crates/qcore-core/src/scalar_calls.rs",
+    "crates/qcore-core/src/scalar_calls_c_emit.rs",
+    "crates/qcore-frontend/src/lib.rs",
+    "crates/qcore-frontend/src/source_scalar_calls.rs",
+    "crates/qcore-verification/src/driver.rs",
+    "crates/qcorec/src/main.rs",
+    "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+    "docs/QCORE_SPEC_r0_3.md",
+    "docs/agents/diagnostics.md",
+    "docs/agents/source-routes.md",
+    "docs/reports/source-scalar-calls-v1/README.md",
+    "examples/README.md",
+    "examples/scalar/README.md",
+    "examples/scalar/calls.qcore",
+    "examples/scalar/printing.qcore",
+    "proof/AuditScalarCalls.lean",
+    "proof/QCore.lean",
+    "proof/QCore/ScalarCalls.lean"
+  ],
+  "findings": [
+    {
+      "finding": "Statement selector mistook while(condition) for a function call.",
+      "resolution": "Require the statement head to name a declared source function; existing Q500 refusal and usage-grade pins are tested."
+    },
+    {
+      "finding": "Broad qcore_ prefix exclusion would reserve user function names implicitly.",
+      "resolution": "Only qcore_acquire and qcore_check keep the old route; qcore_user is exercised."
+    },
+    {
+      "finding": "The initial scalar emitter wrote its own main and printed an automatic OK banner/fault message.",
+      "resolution": "Use c_program fragments and a single entry body; remove automatic stream output; route source print(expr) through shared std.io helper fragments. Native regression covers one main, silent success/fault, and output order."
+    }
+  ],
+  "boundaries": [
+    "All definitions receive ordinary type checks; only the closed entry is executed by the reference evaluator.",
+    "Lean arithmetic and relational call semantics are models; no source/Rust extraction theorem is claimed.",
+    "Existing specialized profiles retain precedence; only the explicit std.io extension is admitted, not general resource/profile call composition."
+  ],
+  "keyword_tokens_added": 0,
+  "corpus_remeasured": false,
+  "independent_review": {
+    "model": "GPT-5.6 Sol",
+    "reasoning": "medium",
+    "source_commit": "455108be2bc64830b386a7ebd6c8d8f217eb0e4c",
+    "scope": [
+      "source selector and lowering",
+      "transitive IO effects",
+      "evaluation order",
+      "C arithmetic guards",
+      "shared single-main composition"
+    ],
+    "result": "No remaining concrete correctness blocker found.",
+    "retracted_finding": "An alleged zero-argument call bypass was checked with the exact arithmetic-fault reproducer; it refuses Q020 because the callee computation selects scalar globally. No code change was justified."
+  }
+}

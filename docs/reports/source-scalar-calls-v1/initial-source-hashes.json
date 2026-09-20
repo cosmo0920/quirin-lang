@@ -1,0 +1,17 @@
+{
+  "source_commit": "93a95f4c985c4fc90d3c11e631ffed9ae9ed5772",
+  "sha256": {
+    "compiler/tests/source_scalar_calls.rs": "8c1b63588f29bf771613b53fbd501c52465e701f20f0d874175f2c69c49b88a0",
+    "crates/qcore-core/src/lib.rs": "788291a4bab729bc4af492ea6a7ea0f082ba8021ee49c88e3cfbbf8794041605",
+    "crates/qcore-core/src/scalar_calls.rs": "37521d48e574968e4140fe878a8343e2d0557b6ca246fe31f4a3c849265891b5",
+    "crates/qcore-core/src/scalar_calls_c_emit.rs": "ea9d2b64e2adc0b0e91f10892ee6b1b71f6af307f261eb968daa2116645ab604",
+    "crates/qcore-frontend/src/lib.rs": "8b4334971d97626bd6795679408c1ea4d8a8339518625a0f2755035158912485",
+    "crates/qcore-frontend/src/source_scalar_calls.rs": "a10dab91e4a44ce5ad06999d18980d38c2febaf0134cab85825ae46bc19c81a9",
+    "crates/qcore-verification/src/driver.rs": "c9956e61c93634be88dbf1a92cf3a0e81a6199561f4f06ac39130a1c4a6090bb",
+    "crates/qcorec/src/main.rs": "0af4cc785ae31b0d56c3efbad168b914186e7b025ab4a8938b3de860fde5cdba",
+    "examples/scalar/calls.qcore": "0084f7ca21eb3772ad114fd1d4ae21028446b3a680cdd23a476bbd724653b45a",
+    "proof/AuditScalarCalls.lean": "2761b177169bc97740853c3ab2bc84fa82aa45f7951e9d03182546f82eacc8cf",
+    "proof/QCore.lean": "8d03d5efd74a6fdf09c6c06345d9507d3c4146d2b82380bc44198a91fcc1d2e4",
+    "proof/QCore/ScalarCalls.lean": "688f79d97c11f1e98bd3d5903b1fec94df0e11ad58b894d906d72649015d8a85"
+  }
+}
