@@ -1,0 +1,41 @@
+{
+  "note": "Integrator review findings and requested corrections; not a final gate or proof of Rust extraction.",
+  "findings": [
+    {
+      "card": "review-audit-runner",
+      "finding": "The reuse regression mocked run_step and bypassed the supervisor; the stopped-before-spawn boundary also needed a distinct control.",
+      "requested_resolution": "Execute actual harmless children on reuse, and assert no Popen after stop.",
+      "status": "requested"
+    },
+    {
+      "card": "review-prepared-tu",
+      "finding": "A failed preparation fell back to project_unit and retried validation; a transient failure could produce a report inconsistent with rejected compile-task identity.",
+      "requested_resolution": "Retain the original error in projection and prove a failing-once compiler cannot retry to Safe.",
+      "status": "requested"
+    },
+    {
+      "card": "review-prepared-tu",
+      "finding": "Certificate-scope integration could add a second marked preprocessing pass to Safe issuance.",
+      "requested_resolution": "Construct scope evidence from the immutable prepared snapshot.",
+      "status": "requested"
+    },
+    {
+      "card": "review-certificate-scope",
+      "finding": "A self-carried inventory digest alone establishes consistency, not the caller intended scope.",
+      "requested_resolution": "Provide independently derived caller context and reject coherent smaller-certificate substitution.",
+      "status": "implemented-pending-validation"
+    },
+    {
+      "card": "review-certificate-scope",
+      "finding": "Initial Lean statements were concrete witnesses only.",
+      "requested_resolution": "Prove general coverage and expected-context containment for arbitrary certificates in addition to concrete controls.",
+      "status": "requested"
+    },
+    {
+      "card": "review-certificate-scope",
+      "finding": "Retained text hashes omit request options that can change interpretation without changing text.",
+      "requested_resolution": "Bind relevant ordered request options and clearly separate artifact scope identity from complete compiler provenance.",
+      "status": "implemented-pending-validation"
+    }
+  ]
+}
