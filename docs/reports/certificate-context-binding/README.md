@@ -129,7 +129,7 @@ private logs:
 | `python3 scripts/check_lean_audits.py --jobs 2` | `0`; 151/151 audits | `lean.log` |
 | `python3 -m unittest discover -s scripts/tests` | `0`; 317 tests | `python.log` |
 
-The first complete workspace run at `bc01012d` also passed 4,898 / 0 / 10,
+The first complete workspace run at `bc01012d` passed 4,897 / 0 / 10,
 but is a superseded baseline because review subsequently strengthened refusal
 reporting. The first attempted final run after that review was interrupted
 explicitly when a second review found retained Safe function rows under an
