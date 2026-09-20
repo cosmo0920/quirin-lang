@@ -395,14 +395,20 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             // bytes: a used header, a generated configuration header or an
             // admitted macro option changes the analyzed code with the selected
             // `.c` file untouched.
-            let effective = qcore_c_gateway::legacy_c::validate_unrestricted_c11(&unit)
-                .map_err(|error| error.to_string());
+            let prepared = qcore_c_gateway::legacy_c::prepare_translation_unit(&unit);
+            let preparation_error = prepared.as_ref().err().map(ToString::to_string);
             let identity = compile_db::compile_task_identity(
                 &entry,
                 &unit,
-                match &effective {
-                    Ok(text) => compile_db::EffectiveInput::Accepted(text),
-                    Err(error) => compile_db::EffectiveInput::Rejected(error),
+                match &prepared {
+                    Ok(prepared) => {
+                        compile_db::EffectiveInput::Accepted(prepared.preprocessed_source())
+                    }
+                    Err(_) => compile_db::EffectiveInput::Rejected(
+                        preparation_error
+                            .as_deref()
+                            .expect("rejected preparation has an error"),
+                    ),
                 },
                 &compiler,
                 task_dependencies.clone(),
@@ -415,18 +421,35 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             // to the resource projection, the report and the source-contract
             // route. Two independent computations of the denominator could
             // disagree; one cannot.
-            let inventory = enumerate_source_definitions(&unit);
-            project_unit(
-                library,
-                &file,
-                &unit,
-                &inventory,
-                &contracts,
-                &mut report,
-                &mut counts,
-            )?;
+            let inventory;
+            let inventory = match &prepared {
+                Ok(prepared) => prepared.inventory(),
+                Err(_) => {
+                    inventory = enumerate_source_definitions(&unit);
+                    &inventory
+                }
+            };
+            match &prepared {
+                Ok(prepared) => projection::project_prepared_unit(
+                    library,
+                    &file,
+                    prepared,
+                    &contracts,
+                    &mut report,
+                    &mut counts,
+                )?,
+                Err(_) => project_unit(
+                    library,
+                    &file,
+                    &unit,
+                    inventory,
+                    &contracts,
+                    &mut report,
+                    &mut counts,
+                )?,
+            }
             if let Some(audit) = &mut source_contracts {
-                audit.analyze_unit(library, &file, &unit, &inventory, &profile);
+                audit.analyze_unit(library, &file, &unit, inventory, &profile);
             }
         }
     }

@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 use qcore_c_gateway::ClangIdentity;
 use qcore_c_gateway::legacy_c::{
     C11TranslationUnit, LegacyFunctionScope, enumerate_source_definitions,
-    legacy_c_source_functions, validate_unrestricted_c11,
+    legacy_c_source_functions, prepare_translation_unit,
 };
 use qcore_contract::contract_loader::load_resource_contract_manifest;
 use qcore_contract::profile_loader::{LoadedProfile, sha256_hex};
@@ -16,7 +16,7 @@ use qcore_schemas::profile::{LibraryProfile, UnitSelection};
 use serde_json::{Value, json};
 
 use crate::compile_db::{CompileEntry, EffectiveInput, compile_task_identity, compiler_options};
-use crate::projection::{AuditCounts, project_unit};
+use crate::projection::{AuditCounts, project_prepared_unit, project_unit};
 use crate::report::{AuditReport, UnitRefusal};
 
 /// Keep distinct commands, deduplicating only identical file/directory/command
@@ -190,33 +190,51 @@ impl CurrentAudit {
         })();
         match prepared {
             Ok(unit) => {
-                let effective = validate_unrestricted_c11(&unit).map_err(|error| error.to_string());
+                let prepared = prepare_translation_unit(&unit);
+                let preparation_error = prepared.as_ref().err().map(ToString::to_string);
                 let identity = compile_task_identity(
                     entry,
                     &unit,
-                    match &effective {
-                        Ok(text) => EffectiveInput::Accepted(text),
-                        Err(error) => EffectiveInput::Rejected(error),
+                    match &prepared {
+                        Ok(prepared) => EffectiveInput::Accepted(prepared.preprocessed_source()),
+                        Err(_) => EffectiveInput::Rejected(
+                            preparation_error
+                                .as_deref()
+                                .expect("rejected preparation has an error"),
+                        ),
                     },
                     &self.compiler,
                     self.dependencies.clone(),
                 )?;
                 configuration["compile_task_identity"] =
                     serde_json::to_value(identity).map_err(|error| error.to_string())?;
-                // Unit E01-F1: the enumerated denominator replaces the raw
-                // token scan wherever a unit exists to preprocess. The scan
-                // above stays as the *fallback* denominator for a
-                // configuration that never became a unit.
-                let inventory = enumerate_source_definitions(&unit);
-                project_unit(
-                    library,
-                    &file,
-                    &unit,
-                    &inventory,
-                    &self.contracts,
-                    &mut self.report,
-                    &mut self.counts,
-                )?;
+                match prepared {
+                    Ok(prepared) => {
+                        project_prepared_unit(
+                            library,
+                            &file,
+                            &prepared,
+                            &self.contracts,
+                            &mut self.report,
+                            &mut self.counts,
+                        )?;
+                    }
+                    Err(_) => {
+                        // Preserve the historical fail-closed report shape for
+                        // a rejected preparation. The success path above is the
+                        // shared three-invocation pipeline.
+                        let inventory = enumerate_source_definitions(&unit);
+                        project_unit(
+                            library,
+                            &file,
+                            &unit,
+                            &inventory,
+                            &self.contracts,
+                            &mut self.report,
+                            &mut self.counts,
+                        )?;
+                    }
+                }
             }
             Err(refusal) => {
                 self.counts.units += 1;
