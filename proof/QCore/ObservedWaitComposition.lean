@@ -1,5 +1,6 @@
 import QCore.EventObservation
 import QCore.EventDriven
+import QCore.MonkeyWaitProjection
 
 namespace QCore.ObservedWaitComposition
 
@@ -45,6 +46,23 @@ def lifecycle : List (EventDriven.Lifecycle × EventDriven.TransitionKind ×
   (.active, .callbackEnter, .running),
   (.running, .callbackExitOneShot, .idle),
   (.idle, .free, .freed)]
+
+def requiredKind : MonkeyWaitProjection.RequiredObservation → EventObservation.Kind
+  | .baseCreateSuccess => .baseCreate
+  | .eventCreateTimeoutNoDescriptorWithPriority => .eventNew
+  | .eventAddSuccess => .eventAdd
+  | .dispatchBegin => .dispatchBegin
+  | .timeoutActivation => .activateTimeout
+  | .callbackEnter => .callbackEnterTimeout
+  | .callbackExit => .callbackExit
+  | .dispatchEnd => .dispatchEnd
+  | .eventFree => .eventFree
+  | .argumentScopeEnd => .argumentEnd
+  | .baseFree => .baseFree
+
+theorem source_obligations_match_observation_sequence (context : EventObservation.Context) :
+    MonkeyWaitProjection.requiredObservations.map requiredKind =
+      (EventObservation.expected context).map EventObservation.Record.kind := rfl
 
 theorem projected_lifecycle_is_legal :
     lifecycle.all (fun (before, kind, after) =>
