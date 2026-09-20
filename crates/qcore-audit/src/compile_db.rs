@@ -632,6 +632,9 @@ fn frontend_flag(word: &str) -> Option<CFrontendFlag> {
         "-Wno-pragmas" => CFrontendFlag::NoPragmas,
         "-Wno-void-pointer-to-enum-cast" => CFrontendFlag::NoVoidPointerToEnumCast,
         "-fno-strict-aliasing" => CFrontendFlag::NoStrictAliasing,
+        "-ffunction-sections" => CFrontendFlag::FunctionSections,
+        "-fdata-sections" => CFrontendFlag::DataSections,
+        "-fsanitize=address,undefined" => CFrontendFlag::AddressUndefinedSanitizers,
         // A level is preprocessing-visible, so it is named exactly. Bare `-O`,
         // `-Ofast` and every other spelling stay refused rather than being
         // folded onto a neighbouring level.

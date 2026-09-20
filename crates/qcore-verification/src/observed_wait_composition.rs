@@ -59,6 +59,11 @@ pub fn check_observed_wait_composition(
             return Err(format!("source summary context mismatch: {name}"));
         }
     }
+    for (name, digest) in source.contract_digests() {
+        if context.assumptions().get(&format!("contract.{name}")) != Some(digest) {
+            return Err(format!("source contract context mismatch: {name}"));
+        }
+    }
     let decoded = decode_timed_wait_observation(observations, bindings)?;
     for (path, digest) in &decoded.source_apis {
         if context.assumptions().get(&format!("source_file.{path}")) != Some(digest) {

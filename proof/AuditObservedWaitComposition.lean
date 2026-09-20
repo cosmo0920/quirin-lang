@@ -1,0 +1,9 @@
+import QCore.ObservedWaitComposition
+
+#print axioms QCore.ObservedWaitComposition.observer_flags_round_trip
+#print axioms QCore.ObservedWaitComposition.unsupported_thread_sanitizer_refuses
+
+#print axioms QCore.ObservedWaitComposition.projected_lifecycle_is_legal
+#print axioms QCore.ObservedWaitComposition.model_generation_preserves_native_generation
+#print axioms QCore.ObservedWaitComposition.fresh_name_is_injective_on_selected_domain
+#print axioms QCore.ObservedWaitComposition.accepted_projection_retains_callback_identity
