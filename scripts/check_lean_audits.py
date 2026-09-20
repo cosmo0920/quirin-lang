@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the pinned Lean project and run every audit with bounded, visible steps."""
 import argparse
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import math
 import os
 from pathlib import Path
@@ -36,12 +36,6 @@ def default_jobs():
     return min(os.cpu_count() or 1, 8)
 
 
-# Every child this run has started and not yet reaped. A worker thread cannot
-# observe the main thread's Ctrl-C, so an interrupt stops the trees from here.
-_active = set()
-_active_lock = threading.Lock()
-
-
 def stop_process_tree(process):
     """Do not leave Lake's Lean workers running after a timeout or Ctrl-C."""
     if os.name == "posix":
@@ -68,14 +62,46 @@ def stop_process_tree(process):
     process.wait()
 
 
-def stop_active_process_trees():
-    with _active_lock:
-        running = list(_active)
-    for process in running:
-        stop_process_tree(process)
+class RunStopped(Exception):
+    """A worker reached the spawn boundary after its audit run was stopped."""
 
 
-def run_step(command, *, cwd, label, timeout, heartbeat, output=None, quiet=False):
+class ChildSupervisor:
+    """Make child creation and cancellation one synchronized lifecycle.
+
+    Holding the lock through Popen and registration is deliberate. Once
+    ``stop`` has set the stopped flag, no worker can pass the flag check and
+    create an unregistered child. If Popen is already in progress, ``stop``
+    waits for registration and includes that child in its termination set.
+    """
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._active = set()
+        self._stopped = False
+
+    def spawn(self, command, **kwargs):
+        with self._lock:
+            if self._stopped:
+                raise RunStopped("audit run stopped before child creation")
+            process = subprocess.Popen(command, **kwargs)
+            self._active.add(process)
+            return process
+
+    def discard(self, process):
+        with self._lock:
+            self._active.discard(process)
+
+    def stop(self):
+        with self._lock:
+            self._stopped = True
+            running = list(self._active)
+        for process in running:
+            stop_process_tree(process)
+
+
+def run_step(command, *, cwd, label, timeout, heartbeat, output=None, quiet=False,
+             supervisor=None):
     """Run one bounded child.
 
     `output` captures the child's streams into a file instead of inheriting this
@@ -86,12 +112,11 @@ def run_step(command, *, cwd, label, timeout, heartbeat, output=None, quiet=Fals
     if not quiet:
         print(f"Starting {label} (limit {timeout:g}s)", flush=True)
     started = time.monotonic()
-    process = subprocess.Popen(
+    owner = supervisor or ChildSupervisor()
+    process = owner.spawn(
         command, cwd=cwd, start_new_session=os.name == "posix",
         stdout=output, stderr=subprocess.STDOUT if output is not None else None,
     )
-    with _active_lock:
-        _active.add(process)
     try:
         while True:
             remaining = timeout - (time.monotonic() - started)
@@ -110,8 +135,7 @@ def run_step(command, *, cwd, label, timeout, heartbeat, output=None, quiet=Fals
         stop_process_tree(process)
         raise
     finally:
-        with _active_lock:
-            _active.discard(process)
+        owner.discard(process)
     elapsed = time.monotonic() - started
     if not quiet:
         print(f"Passed {label} in {elapsed:.1f}s", flush=True)
@@ -140,6 +164,8 @@ def run_audits_in_parallel(proof, audits, args, jobs):
     in audit order, so the transcript does not depend on completion order, and a
     failure still stops the whole run with that audit's own output shown.
     """
+    supervisor = ChildSupervisor()
+
     def one(index, audit):
         label = f"{audit.name} ({index}/{len(audits)})"
         with tempfile.TemporaryFile(mode="w+") as captured:
@@ -147,35 +173,59 @@ def run_audits_in_parallel(proof, audits, args, jobs):
                 elapsed = run_step(
                     audit_command(audit.name), cwd=proof, label=label,
                     timeout=args.audit_timeout, heartbeat=args.heartbeat,
-                    output=captured, quiet=True,
+                    output=captured, quiet=True, supervisor=supervisor,
                 )
             except (OSError, TimeoutError, subprocess.CalledProcessError) as error:
                 captured.seek(0)
                 raise AuditFailure(error, captured.read()) from None
             captured.seek(0)
-            return label, elapsed, captured.read()
+            return index, label, elapsed, captured.read()
 
     print(f"Starting {len(audits)} audits, {jobs} at a time "
           f"(limit {args.audit_timeout:g}s each)", flush=True)
     pool = ThreadPoolExecutor(max_workers=jobs)
-    futures = [pool.submit(one, index, audit) for index, audit in enumerate(audits, 1)]
+    futures = []
+    results = {}
+    failure = None
     try:
-        for future in futures:
-            label, elapsed, text = future.result()
-            if text:
-                print(text, end="", flush=True)
-            print(f"Passed {label} in {elapsed:.1f}s", flush=True)
+        for index, audit in enumerate(audits, 1):
+            futures.append(pool.submit(one, index, audit))
+        for future in as_completed(futures):
+            try:
+                index, label, elapsed, text = future.result()
+                results[index] = (label, elapsed, text)
+            except BaseException as error:
+                failure = error
+                supervisor.stop()
+                for pending in futures:
+                    pending.cancel()
+                break
     except BaseException as error:
+        failure = error
+        supervisor.stop()
         for pending in futures:
             pending.cancel()
-        stop_active_process_trees()
-        if isinstance(error, AuditFailure):
-            if error.output:
-                print(error.output, end="", flush=True)
-            raise error.cause
-        raise
     finally:
-        pool.shutdown(wait=False)
+        # Collection is part of the cancellation contract: after this returns,
+        # no worker remains able to create or own a child for this audit run.
+        pool.shutdown(wait=True, cancel_futures=True)
+
+    if failure is not None:
+        # Workers stopped by the supervisor are consequences of the first
+        # observed failure. Preserve the causal failure and its captured log.
+        if isinstance(failure, AuditFailure):
+            if failure.output:
+                print(failure.output, end="", flush=True)
+            raise failure.cause
+        raise failure
+
+    # Detection follows completion order above; successful transcript replay
+    # remains stable for CI logs and archived evidence.
+    for index in range(1, len(audits) + 1):
+        label, elapsed, text = results[index]
+        if text:
+            print(text, end="", flush=True)
+        print(f"Passed {label} in {elapsed:.1f}s", flush=True)
 
 
 def check_audits(proof, args):
