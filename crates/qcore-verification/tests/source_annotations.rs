@@ -1,6 +1,8 @@
 use qcore_core::{ExecutionOutcome, TraceEvent};
 use qcore_frontend::frontend::SemanticPass;
-use qcore_verification::driver::{CompileOptions, SourceFile, compile_files_with_registry};
+use qcore_verification::driver::{
+    CompileOptions, SourceExecutionProfile, SourceFile, compile_files_with_registry,
+};
 use qcore_verifier_host::VerifierRegistry;
 
 fn compile(
@@ -24,8 +26,12 @@ fn refusal(source: &str) -> qcore_verification::driver::FileDiagnostic {
 
 #[test]
 fn a_matching_i32_annotation_is_checked_and_erases_from_emission() {
-    let annotated = compile("fn main() -> i32 { let n: i32 = 3; return n; }").unwrap();
-    let inferred = compile("fn main() -> i32 { let n = 3; return n; }").unwrap();
+    let annotated = compile("error Failure { Failed; } fn main() -> i32 { let n: i32 = 3; let r = qcore_acquire(1, true, Failure); drop r; return 3; }").unwrap();
+    let inferred = compile("error Failure { Failed; } fn main() -> i32 { let n = 3; let r = qcore_acquire(1, true, Failure); drop r; return 3; }").unwrap();
+    assert_eq!(
+        annotated.execution_profile,
+        SourceExecutionProfile::SequentialCleanupV1
+    );
     assert_eq!(
         annotated.reference_observation,
         inferred.reference_observation
@@ -36,14 +42,23 @@ fn a_matching_i32_annotation_is_checked_and_erases_from_emission() {
 #[test]
 fn scalar_mismatch_and_unsupported_annotation_refuse_at_ordinary_types() {
     for source in [
-        "fn main() -> i32 { let n: unit = 3; return n; }",
-        "fn main() -> i32 { let n: Widget = 3; return n; }",
-        "fn main() -> i32 { let n Widget = 3; return n; }",
+        "error Failure { Failed; } fn main() -> i32 { let n: unit = 3; let r = qcore_acquire(1, true, Failure); drop r; return 3; }",
+        "error Failure { Failed; } fn main() -> i32 { let n: Widget = 3; let r = qcore_acquire(1, true, Failure); drop r; return 3; }",
+        "error Failure { Failed; } fn main() -> i32 { let n Widget = 3; let r = qcore_acquire(1, true, Failure); drop r; return 3; }",
     ] {
         let diagnostic = refusal(source);
         assert_eq!(diagnostic.code, "Q020", "{diagnostic:?}");
         assert_eq!(diagnostic.pass, SemanticPass::OrdinaryTypes);
     }
+}
+
+#[test]
+fn scalar_call_annotation_behavior_remains_compatible() {
+    let module = compile("fn main() -> i32 { let n: i32 = 3; return n; }").unwrap();
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::ScalarCallsV1
+    );
 }
 
 #[test]
