@@ -25,6 +25,13 @@ pub fn native_platform_source_revision() -> Result<String, String> {
     literal("native_platform_source_identity", "libevent_revision")
 }
 
+pub fn native_platform_historical_digest() -> Result<String, String> {
+    literal(
+        "native_platform_source_identity",
+        "historical_validation_sha256",
+    )
+}
+
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum PlatformRowStatus {
@@ -149,7 +156,9 @@ pub fn check_native_platform_matrix(
     matrix: NativePlatformMatrix,
     expected_harness_sha256: &str,
 ) -> Result<CheckedNativePlatformMatrix, String> {
-    if matrix.schema_version != 1 || matrix.artifact.is_empty() {
+    if matrix.schema_version != 1
+        || matrix.artifact != literal("native_platform_source_identity", "artifact")?
+    {
         return Err("unsupported native platform matrix".into());
     }
     let policies = matrix
@@ -189,6 +198,7 @@ pub fn check_native_platform_matrix(
         match &row.historical_native_result {
             Some(history)
                 if valid_sha256(&history.source_document_sha256)
+                    && history.source_document_sha256 == native_platform_historical_digest()?
                     && history.source_revision == native_platform_source_revision()?
                     && history.recorded_result == historical_label => {}
             None if historical_label.is_empty() => {}
@@ -312,7 +322,7 @@ mod tests {
     use super::*;
     fn history(label: &str) -> HistoricalNativeResult {
         HistoricalNativeResult {
-            source_document_sha256: "f".repeat(64),
+            source_document_sha256: native_platform_historical_digest().unwrap(),
             source_revision: native_platform_source_revision().unwrap(),
             recorded_result: label.into(),
         }
@@ -320,7 +330,7 @@ mod tests {
     fn matrix() -> NativePlatformMatrix {
         NativePlatformMatrix {
             schema_version: 1,
-            artifact: "libevent/platforms".into(),
+            artifact: "libevent/generic-cross-thread-activation".into(),
             rows: REQUIRED_PROFILES
                 .iter()
                 .map(|policy| {
@@ -386,6 +396,12 @@ mod tests {
     fn substituted_backend_refuses() {
         let mut value = matrix();
         value.rows[0].dimensions.backend = "poll".into();
+        assert!(check_native_platform_matrix(value, &"a".repeat(64)).is_err());
+    }
+    #[test]
+    fn substituted_artifact_refuses() {
+        let mut value = matrix();
+        value.artifact = "monkey/callback-composition".into();
         assert!(check_native_platform_matrix(value, &"a".repeat(64)).is_err());
     }
     #[test]

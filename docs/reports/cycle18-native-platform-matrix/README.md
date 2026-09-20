@@ -14,7 +14,14 @@ executables, CMake caches, compilation databases, raw runtime records, run manif
 historical validation record. It rereads inputs before atomic publication and
 refuses report aliases, including hard links and output inside the source tree.
 Configure/build/compile/link argument vectors are checked positionally against
-the selected paths; a basename or unrelated define cannot satisfy a role.
+the selected paths, and the compiler's full version output is freshly read from
+that exact executable. Compilation-database entries bind the exact compiler and
+source path, and their core/pthread object roles must exactly cover the members
+of the selected archives; a basename or unrelated define cannot satisfy a role.
+The policy pins the published artifact label and historical-record digest. The
+selected Libevent checkout must also be clean, including untracked and ignored
+files, both before and after the audit. The audit snapshots and rereads every
+source named by the compilation database as a separate during-audit check.
 
 The Linux measurement used pinned Libevent
 `d82464a277d0f42703702c4dfd9af6af38595a83`, Clang 21.1.8, Linux
@@ -48,8 +55,9 @@ primitive source/build/runtime identities, host/backend, three thread IDs,
 callback reason and counts. Hashes identify producer-supplied artifacts but do
 not attest the producer.
 
-The policy adds ten declarations and 68 clauses. Matching audited Lean models
-cover fail-closed carried history, current joined evidence and transparency.
+The policy adds ten declarations and 70 clauses. Matching audited Lean models
+cover the seven unique profiles, exact dimensions, primitive source/build/runtime
+joins, fail-closed carried history and observer transparency.
 Rust-to-Lean correspondence remains review-maintained under constraint 28.
 
 The reproducible runner is `scripts/cycle18_native_platform_matrix.py`; the
@@ -62,20 +70,23 @@ subdirectory.
 |---|---|
 | `python3 scripts/cycle18_native_platform_matrix.py --output measure/cycle18-native-platform-matrix` | 0; three ASan/UBSan/LSan processes and one TSan process |
 | `cargo run -p qcore-audit --bin quirin-audit -- native-platform-matrix measure/cycle18-native-platform-matrix/audit-config.json` | 0; four observed / three Unknown |
-| `python3 scripts/check_cycle18_platform_controls.py ...` | 0; three rehashed controls each refused with audit exit 1 |
-| `cargo test -p qcore-verification -p qcore-audit native_platform_matrix --no-fail-fast` | 0; 6 focused tests passed |
+| `python3 scripts/check_cycle18_platform_controls.py ...` | 0; five rehashed controls each refused with audit exit 1 |
+| `cargo test -p qcore-verification -p qcore-audit native_platform_matrix --no-fail-fast` | 0; 2 audit and 6 verification tests passed |
 | `cargo fmt --all -- --check` | 0 |
 | `cargo clippy -p qcore-verification -p qcore-audit --all-targets -- -D warnings` | 0 |
 | `lake build QCore.NativePlatformMatrix` | 0 |
-| `lake env lean AuditNativePlatformMatrix.lean` | 0; no project axioms; `propext` only on one Boolean theorem |
+| `lake env lean AuditNativePlatformMatrix.lean` | 0; no project axioms; only allowed `propext` / `Quot.sound` appear |
+| `cargo test -p qcore-compiler --test qcore_contract_corpus` | 101; 1 passed, 2 expected shared-pin failures: measured 94 modules versus pinned 93, plus the new structured entries |
 
 Final native hashes are in the private configured report. Common ASan/UBSan/LSan
 executable: `faae850ac480553054e710b6e7ec526071b8684e6e140393b61c77d8ad3a4654`;
 TSan executable: `cb2824d1a72043f41d1547ba5c5fc049840decaeb50a920032acd621b06e9960`;
 probe source: `a2ee320c04c2b8f2834f6bb6a0b571d11e32a895ce08e13e5720778fff12250d`.
-The controls rehashed a core/pthread archive-role swap, a raw same-thread
-runtime plus its manifest, and an observer-transparency assertion. They reached
-the exact argv, primitive Quirin identity and transparency gates respectively.
+The controls rehashed a core/pthread archive-role swap, a compilation-database
+object-role relabel, and a raw same-thread runtime plus its manifest; two more
+controls asserted observer transparency and relabelled the generic artifact as
+Monkey evidence. They reached the exact argv, archive membership, primitive
+Quirin identity, transparency and artifact-identity gates respectively.
 
 ## Remaining host blockers
 
@@ -90,7 +101,8 @@ the exact argv, primitive Quirin identity and transparency gates respectively.
 ## Integrator reconciliation list
 
 - Update the shared `contract/qcore` corpus pins for the added ten-declaration,
-  68-clause policy.
+  70-clause policy. The focused corpus run measured 94 modules versus the
+  shared pin of 93 and also requires the ten new structured declaration rows.
 - Keep `CYCLE18-NATIVE-PLATFORM-MATRIX` registered, or replace it with explicit
   macOS/kqueue and Windows/WIN32+IOCP current-join residuals.
 - Do not change Monkey callback accounting, Cycle 18 aggregate status, CT

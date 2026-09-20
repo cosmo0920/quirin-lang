@@ -75,10 +75,16 @@ def main():
     output.mkdir(parents=True, exist_ok=True)
     if run(["git", "-C", str(source), "rev-parse", "HEAD"], capture=True) != REVISION:
         raise SystemExit("pinned Libevent source revision mismatch")
+    source_status_command = [
+        "git", "-C", str(source), "status", "--porcelain=v1",
+        "--untracked-files=all", "--ignored",
+    ]
+    if run(source_status_command, capture=True):
+        raise SystemExit("pinned Libevent source worktree is not clean")
     compiler_path = shutil.which(args.compiler)
     if compiler_path is None:
         raise SystemExit(f"compiler not found: {args.compiler}")
-    compiler_version = run([compiler_path, "--version"], capture=True).splitlines()[0]
+    compiler_version = run([compiler_path, "--version"], capture=True)
     sanitizer_flags = "-fsanitize=address,undefined -fno-omit-frame-pointer"
     configure = [
         "cmake", "-S", str(source), "-B", str(build), "-DCMAKE_BUILD_TYPE=Debug",
@@ -216,6 +222,8 @@ def main():
               "executable":str(tsan_executable),"runtime_records":["runtime-epoll-tsan.json"],"run_manifest":"run-manifest-tsan.json"}],
               "report":"checked-report.json"}
     (output / "audit-config.json").write_text(json.dumps(config, indent=2) + "\n")
+    if run(["git", "-C", str(source), "rev-parse", "HEAD"], capture=True) != REVISION or run(source_status_command, capture=True):
+        raise SystemExit("pinned Libevent source identity changed during measurement")
     print(output / "matrix.json")
 
 
