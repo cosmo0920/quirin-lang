@@ -84,9 +84,39 @@ vacuous statement shapes.
 
 ## 5. Standing gate
 
-Pending the final measured run.  The gate will record the exact commands,
-exits, counts, Clang invocation and worktree-private log directory here and in
-`gate.json`.
+The final run is recorded under the unique worktree-private directory
+`private/source-annotation-enforcement/gate-20260920-1/`; every command writes a
+separate log and exit file.  `gate.json` carries only accepted generator keys,
+and the Clang recording made in this checkout is committed in this report's
+`gate/` directory.
+
+| Command | Exit and result |
+|---|---|
+| `git submodule update --init --recursive` | 0 |
+| `clang --version` | 0; Ubuntu clang 21.1.8 |
+| `CARGO_BUILD_JOBS=2 cargo test --workspace --no-fail-fast` | 101; raw 4,903 passed, 1 failed, 10 ignored; 255 result summaries over 253 targets (244 `Running` plus 9 doc-test sections) |
+| isolated `a_confined_fixture_cannot_write_outside_the_admitted_paths --exact --test-threads=1` | 0; 1 passed |
+| `cargo fmt --all -- --check` | 0 |
+| `CARGO_BUILD_JOBS=2 cargo clippy --all-targets -- -D warnings` | 0 |
+| `CARGO_BUILD_JOBS=2 cargo run -p qcore-compiler --example reevaluation_probe` | 0; zero failed expectations |
+| `CARGO_BUILD_JOBS=2 cargo run -p qcore-compiler --example reevaluation_followup` | 0; zero failed expectations |
+| `python3 scripts/check_lean_audits.py --jobs 2` | 0; 152 audits |
+| Python suite before derived regeneration | 1; 317 ran, one expected stale-matrix failure (`151 != 152` Lean audits) |
+| matrix generator with this report's `gate.json` | 0; 152 audits re-derived |
+| `python3 -m unittest discover -s scripts/tests` after regeneration | 0; 317 ran, `OK` |
+
+The full Rust run's sole red row is constraint 16's named load-sensitive
+confined-write test.  It produced the rule's exact recorded signature:
+`Broken pipe (os error 32)` where the assertion expected `Terminated`.  The same
+row passed immediately in isolation on the same binaries.  The reconciled
+published result is therefore **4,904 passed, 0 unresolved failed, 10 ignored**.
+Every card-local annotation test was green in the full run.  No test, pin or
+assertion was weakened.
+
+Provider 122 is carried Unix evidence and was not remeasured: this card changes
+no provider or schema path.  No corpus, contract, unit, function, CT,
+sanitized-native or provider figure moves, and full language conformance
+remains false.
 
 ## 6. Integrator reconciliation list
 
