@@ -219,10 +219,10 @@ fn incomplete_or_foreign_summary_sets_fail_closed() {
 }
 
 #[test]
+#[ignore = "requires QCORE_MONKEY_PREPROCESSED from the pinned compile command"]
 fn configured_pinned_translation_unit_matches_the_fixture_projection() {
-    let Ok(path) = std::env::var("QCORE_MONKEY_PREPROCESSED") else {
-        return;
-    };
+    let path = std::env::var("QCORE_MONKEY_PREPROCESSED")
+        .expect("QCORE_MONKEY_PREPROCESSED must name the pinned preprocessed translation unit");
     if qcore_c_gateway::clang_command().is_err() {
         return;
     }
@@ -264,6 +264,29 @@ fn missing_or_substituted_contract_semantics_fail_closed() {
     assert_eq!(
         MonkeyWaitContracts::parse(WRAPPER_CONTRACT, &substituted),
         Err(WaitSourceProjectionError::ContractClauseMismatch(
+            WAIT_CALLBACK.into()
+        ))
+    );
+
+    let owned_callback = COMPOSITION_CONTRACT.replace(
+        "callback_argument: borrow<'callback, const, MonkeyCallbackArgument> use one",
+        "callback_argument: own<MonkeyCallbackArgument> use one",
+    );
+    assert_eq!(
+        MonkeyWaitContracts::parse(WRAPPER_CONTRACT, &owned_callback),
+        Err(WaitSourceProjectionError::ContractHeaderMismatch(
+            WAIT_CALLBACK.into()
+        ))
+    );
+
+    let effectful_callback = COMPOSITION_CONTRACT.replacen(
+        "extern fn cb_wait_2_timeout(\n    callback_argument: borrow<'callback, const, MonkeyCallbackArgument> use one\n) -> unit\ncontract {",
+        "extern fn cb_wait_2_timeout(\n    callback_argument: borrow<'callback, const, MonkeyCallbackArgument> use one\n) -> unit\neffects { io }\ncontract {",
+        1,
+    );
+    assert_eq!(
+        MonkeyWaitContracts::parse(WRAPPER_CONTRACT, &effectful_callback),
+        Err(WaitSourceProjectionError::ContractHeaderMismatch(
             WAIT_CALLBACK.into()
         ))
     );

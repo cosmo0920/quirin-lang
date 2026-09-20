@@ -9,9 +9,12 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_c_gateway::typed_source::{SourceOperation, SourceSummary};
+use qcore_core::usage::Usage;
 use qcore_frontend::frontend::{
-    SourceContractClauseKind, SourceContractExitSelector, parse_source_program,
+    DeclarationKind, SourceContractClauseKind, SourceContractExitSelector, parse_source_program,
 };
+use qcore_frontend::lexer::TokenKind;
+use qcore_frontend::source_extern::normalize_type;
 use qcore_schemas::sha256_hex;
 use serde::Serialize;
 
@@ -76,6 +79,7 @@ pub enum WaitSourceProjectionError {
     MissingContractDeclaration(String),
     DuplicateContractDeclaration(String),
     MissingContractBlock(String),
+    ContractHeaderMismatch(String),
     ContractClauseMismatch(String),
     MissingSummary(String),
     DuplicateSummary(String),
@@ -112,6 +116,10 @@ impl MonkeyWaitContracts {
         check_contract_declaration(
             &wrapper,
             "_mk_event_loop_create",
+            ContractHeader {
+                parameters: &[("size", "i32", false)],
+                result: "ptr<mut,EventContext>",
+            },
             &[
                 (
                     ClauseExit::Requires,
@@ -138,6 +146,13 @@ impl MonkeyWaitContracts {
         check_contract_declaration(
             &wrapper,
             "_mk_event_wait_with_flags",
+            ContractHeader {
+                parameters: &[
+                    ("loop", "borrow<'call,mut,EventLoop>", true),
+                    ("flags", "i32", false),
+                ],
+                result: "i32",
+            },
             &[
                 (
                     ClauseExit::Requires,
@@ -154,6 +169,13 @@ impl MonkeyWaitContracts {
         check_contract_declaration(
             &wrapper,
             "_mk_event_wait_2",
+            ContractHeader {
+                parameters: &[
+                    ("loop", "borrow<'call,mut,EventLoop>", true),
+                    ("timeout", "i32", false),
+                ],
+                result: "i32",
+            },
             &[
                 (
                     ClauseExit::Requires,
@@ -177,6 +199,10 @@ impl MonkeyWaitContracts {
         check_contract_declaration(
             &wrapper,
             "_mk_event_loop_destroy",
+            ContractHeader {
+                parameters: &[("ctx", "own<EventContext>", true)],
+                result: "unit",
+            },
             &[
                 (
                     ClauseExit::Requires,
@@ -199,6 +225,14 @@ impl MonkeyWaitContracts {
         check_contract_declaration(
             &composition,
             WAIT_CALLBACK,
+            ContractHeader {
+                parameters: &[(
+                    "callback_argument",
+                    "borrow<'callback,const,MonkeyCallbackArgument>",
+                    true,
+                )],
+                result: "unit",
+            },
             &[
                 (ClauseExit::Requires, "callback_argument_is_borrowed"),
                 (ClauseExit::Normal, "callback_has_no_resource_effect"),
@@ -251,9 +285,16 @@ enum ClauseExit {
     Normal,
 }
 
+#[derive(Clone, Copy)]
+struct ContractHeader<'a> {
+    parameters: &'a [(&'a str, &'a str, bool)],
+    result: &'a str,
+}
+
 fn check_contract_declaration(
     program: &qcore_frontend::frontend::SourceProgram,
     name: &str,
+    header: ContractHeader<'_>,
     expected: &[(ClauseExit, &str)],
 ) -> Result<(), WaitSourceProjectionError> {
     let declarations: Vec<_> = program
@@ -279,6 +320,33 @@ fn check_contract_declaration(
         .function_contract
         .as_ref()
         .ok_or_else(|| WaitSourceProjectionError::MissingContractBlock(name.into()))?;
+    let header_matches = declaration.value.kind == DeclarationKind::ExternFunction
+        && declaration.value.body.is_none()
+        && !declaration.value.tokens.iter().any(
+            |token| matches!(token, TokenKind::Word(word) if word == "unsafe" || word == "effects"),
+        )
+        && declaration.value.parameters.len() == header.parameters.len()
+        && declaration
+            .value
+            .parameters
+            .iter()
+            .zip(header.parameters)
+            .all(|(actual, (expected_name, expected_type, requires_one))| {
+                actual.name.value == *expected_name
+                    && normalize_type(&actual.type_source) == *expected_type
+                    && actual.usage.as_ref().map(|usage| usage.value)
+                        == requires_one.then_some(Usage::ONE)
+            })
+        && declaration
+            .value
+            .result_type
+            .as_ref()
+            .is_some_and(|result| normalize_type(&result.source) == header.result);
+    if !header_matches {
+        return Err(WaitSourceProjectionError::ContractHeaderMismatch(
+            name.into(),
+        ));
+    }
     let actual = contract
         .clauses
         .iter()
