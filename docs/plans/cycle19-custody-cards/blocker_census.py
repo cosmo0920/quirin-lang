@@ -23,7 +23,7 @@ import pathlib
 import re
 import sys
 
-DEFAULT = "docs/reports/b-series-integration/artifacts"
+DEFAULT = "docs/reports/w42-priority-integration/artifacts"
 
 
 def normalise(text):

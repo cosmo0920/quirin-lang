@@ -20,6 +20,21 @@ has its prerequisite. The current input baseline is
 older census below. **W42-CHUNK-LIFECYCLE-CERT remains queued**; its acceptance
 criteria are specified below. Dispatch is not completion.
 
+Measured implementation, later 2026-09-20: the [combined W42 arbiter](../../reports/w42-priority-integration/README.md)
+confirms the bounded scalar-store slice, total Monkey callback accounting and
+the 87-definition census. Two functions move Unknown→Safe; no unit moves.
+The syntax slice removes 362 indirect-access refusals and two downstream call
+refusals, with 350 direct alias exchanges and seven downstream alias additions.
+This does not close general indirect access or either lifecycle certificate.
+All three Monkey callbacks carry explicit Unknown composition reasons.
+The [fresh blocker census](../../reports/w42-priority-integration/blocker-census.txt)
+has 4,527 Unknown functions: 969 have one distinct blocker and 1,029 have two.
+Remaining indirect access reaches 3,149 Unknown functions (271 sole-blocked);
+return-expression refusals reach 1,109 (465 sole-blocked), and uncontracted
+calls reach 2,444 (151 sole-blocked). These counts size follow-up work; they do
+not prove a shape admissible. The recorded plan below remains its historical
+checkpoint, while the combined report owns current measurements and gate status.
+
 ## What the census changes about card sizing
 
 Of the **4,537** Unknown functions, only **990** have a single distinct blocker and **1,030** have

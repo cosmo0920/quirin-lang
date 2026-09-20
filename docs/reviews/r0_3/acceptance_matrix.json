@@ -6626,7 +6626,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "C-GATEWAY-WAVE final source, 2026-09-13. Fresh BEFORE reproduces wave-30 diagnostics and chunk-contracts byte for byte. AFTER has no unit status moves and no Safe promotions; four scalar counter helpers withdraw Safe to Unknown, and the existing constant-do-while CFG abstraction exposes one provisional repeated-release row. Functions: 146 Safe / 85 provisional Unsafe / 4603 Unknown. Leak 266 to 272: six added, no baseline leak leaves removed; four intermediate missing leaves restored by scalar-assignment hardening. unknown_alias 4208, unsupported 50155, double_release 1. All five stages and every changed leaf are archived; the other four artifacts remain byte-identical across stages. The production input_chunk_get residual remains Unknown. All previous corpus archives stay frozen; matrix-before.json.gz preserves the prior hand-carried checkpoint.",
+   "note": "W42 priority integration, 2026-09-20. Same-checkout BEFORE reproduces all five B-series artifacts byte for byte. Combined AFTER matches the isolated scalar-store diagnostics exactly: two functions Unknown to Safe, zero unit moves, 362 lexical plus2 downstream call refusals removed,350 direct alias exchanges and7 downstream alias additions. Leak272 preserved. Three other artifacts are byte-identical; Monkey changes only schema and callback accounting. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous hand-carried checkpoint preserved in docs/reports/w42-priority-integration/previous-corpus-row.json.",
    "units": 185,
    "safe": 2,
    "provisional_unsafe": 42,
@@ -6635,16 +6635,24 @@
    "projected_functions": 4834,
    "leak_diagnostics": 272,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/c-gateway-wave/artifacts/",
-   "source": "docs/reports/c-gateway-wave/README.md; preceding baseline docs/reports/w4-recursive-summaries/artifacts/",
-   "unknown_alias_diagnostics": 4208,
-   "unsupported_diagnostics": 50155,
-   "double_release_diagnostics": 1,
+   "baseline": "docs/reports/w42-priority-integration/artifacts/",
+   "source": "docs/reports/w42-priority-integration/README.md; preceding baseline docs/reports/b-series-integration/artifacts/",
+   "unknown_alias_diagnostics": 4665,
+   "unsupported_diagnostics": 49371,
+   "double_release_diagnostics": 0,
    "function_statuses": {
-    "safe": 146,
-    "provisional_unsafe": 85,
-    "unknown": 4603
-   }
+    "safe": 223,
+    "provisional_unsafe": 84,
+    "unknown": 4527
+   },
+   "source_definitions": 4921,
+   "unprojected_definitions": 87,
+   "unit_reason_codes": {
+    "unsupported-syntax": 136,
+    "none": 48,
+    "incomplete-obligation-coverage": 1
+   },
+   "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
   },
   "configured_cmetrics_audit": {
    "checked_function_contracts": 1,
@@ -6661,6 +6669,16 @@
    "data_only": 0,
    "gateway_failures": 0,
    "source": "docs/reports/remaining-g03/README.md"
+  },
+  "cycle19_monkey_callback_coverage": {
+   "selected_callbacks": 3,
+   "selected_paths": 8,
+   "ordinary_audit_checked_native_paths": 0,
+   "optional_focused_replay_checked_native_paths": 8,
+   "cycle18_composed": 0,
+   "cycle18_unknown": 3,
+   "source": "docs/reports/w42-priority-integration/attribution.json; docs/reports/w42-monkey-callback-coverage/README.md",
+   "note": "Total profile-selected accounting is not event composition; native paths are observations, not a universal certificate."
   }
  },
  "workspace": {

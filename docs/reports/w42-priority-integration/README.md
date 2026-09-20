@@ -93,3 +93,72 @@ The gap spans **24 full-path units**, or **23 distinct basenames**. In
 particular, the two Monkey `mk_utils.c` paths must not be counted as one unit.
 This measurement resolves the build-exclusion question without promoting any
 function or unit verdict.
+
+## Combined corpus result
+
+The release audit at `f3f99df5d2dcdf27e9b73ecd81dd7fe126419ca4` exited **0**. The final
+[run identity](artifacts/run.json), [artifact digests](artifacts/manifest.json),
+[attribution checks](attribution.json) and [exact leaf delta](artifacts/delta.json.gz)
+record the result. All five raw artifacts are archived under `artifacts/`.
+
+| Measure | BEFORE | Combined AFTER |
+|---|---:|---:|
+| Safe functions | 221 | 223 |
+| provisional Unsafe functions | 84 | 84 |
+| Unknown functions | 4,529 | 4,527 |
+| unsupported diagnostics | 49,735 | 49,371 |
+| unknown_alias diagnostics | 4,309 | 4,665 |
+| leak diagnostics | 272 | 272 |
+| summary_conflict diagnostics | 1 | 1 |
+
+Units remain **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only**.
+The unit reasons remain **136 unsupported-syntax / 1 incomplete-obligation-coverage
+/ 48 without a reason code**. The exact source inventory is unchanged:
+**4,921 raw definitions / 4,834 projected functions / 87 build exclusions**.
+
+Only `ctraces/ctr_span.c::ctr_span_start_ts` and
+`ctraces/ctr_span.c::ctr_span_start` move Unknown to Safe. The diagnostic
+multiset removes **365** leaves and adds **357**, a net reduction of **8**:
+**362** indirect-access refusals and **2** downstream uncontracted-call
+refusals are removed, alongside one prior unresolved-`ctx` alias reason.
+There are **350 exact-coordinate exchanges**, **12** other lexical removals,
+and **seven downstream alias additions** in `mk_http_parser`. This is a
+measured prediction miss: the frozen forecast expected 349 lexical removals,
+zero exchanges and one mover. It does not validate the historical proxy's
+whole population; both indirect-census follow-ups remain registered.
+
+The combined diagnostics match the corrected isolated scalar-store output
+**byte for byte**. The ChunkIO contracts, selected contracts and source-effects
+artifacts match the root BEFORE **byte for byte**, with no path normalization.
+The Monkey source sidecar differs only in schema **2→3** and the new
+`callback_coverage` field: **3/3 callbacks accounted**, **8 selected paths**,
+**0 checked native paths** in this no-binding run, and **3 explicit Unknown**
+reasons. The source/build/profile identity remains attached. Optional focused
+replay covers 8/8 paths, but neither route produces an event-composition
+certificate.
+
+The same-checkout result matters: the isolated worker's absolute contract
+source-map keys and derived boolean-field identities differ with its worktree
+path. Those raw differences remain disclosed in the card report; they are not
+silently normalized into a byte-parity claim.
+
+Reproduction commands (exit **0** each):
+
+```sh
+python3 docs/reports/w42-priority-integration/scripts/compare.py private/w42-priority/baseline/resource-diagnostics.json private/w42-priority/final-after/resource-diagnostics.json
+python3 docs/reports/w42-priority-integration/scripts/verify_integration.py private/w42-priority/baseline private/w42-priority/final-after /tmp/agent-w42-indirect/private/w42-priority/after-frame-final
+python3 docs/plans/cycle19-custody-cards/blocker_census.py docs/reports/w42-priority-integration/artifacts
+```
+
+The fresh [blocker census](blocker-census.txt) sizes future syntax work. The
+87 excluded definitions are not cheap additions to this pinned Linux build.
+All 269 prior follow-ups are retained; the lifecycle and callback-composition
+entries bring the ledger to **271**. No raw unit is promoted, provisional
+Unsafe remains unvalidated, and full-language conformance remains false.
+
+The matrix's hand-maintained `cycle19_raw_units` row still described the older
+C-GATEWAY-WAVE checkpoint although current status had advanced to B-series
+evidence. Its exact previous contents are preserved in
+[previous-corpus-row.json](previous-corpus-row.json); the current row now uses
+this integration's primary artifacts. No historical report or archive was
+rewritten.
