@@ -79,6 +79,30 @@ The annotation finding also requires route-specific treatment: the scalar-call
 profile checks its annotations, while older executable profiles retain their
 documented boundaries. This integration does not claim those features complete.
 
+TU-wide typed declaration/AST indexing and correctly keyed CFG reuse remain open.
+
 Full language conformance remains false. CT mapping, case-bound model proofs,
 native observations and C projection coverage remain distinct evidence classes.
 No provisional Unsafe finding is a validated upstream defect claim.
+
+## Reconciliation and measurement boundaries
+
+Configured C audits share one immutable preparation snapshot across identity,
+inventory, analysis and reporting; measured logical Clang actions are 5→3 Safe,
+8→3 provisional Unsafe and 6→3 Unknown with byte-identical JSON artifacts; no
+total-speed or RSS reduction is claimed.
+
+The canonical validation policy records the runner cancellation rule. The
+source-identity policy records reconstructed certificate scope and separately
+held expected context. Full compiler/build provenance and caller-intended
+contract/profile/trust binding remain registered as
+`CERT-SCOPE-COMPILETASK-PROVENANCE` and
+`CERT-SCOPE-EXPECTED-TRUST-CONTEXT`. The matrix now carries 273 follow-ups.
+`E01-TAIL-CERT-SCOPE` was a boundary named under `E01-F1-O`, not a separately
+registered entry: the parent is annotated with its discharge, and remains open.
+No registered entry is retired.
+
+The [reconciliation record](reconciliation.json) addresses all 13 items from
+the three cards. The residual sweep returns 55 pre-existing historical or
+rule-only candidates outside these cards; it is not evidence that those names
+are discharged. Both new review residuals are tracked.
