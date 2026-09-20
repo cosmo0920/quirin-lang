@@ -1,0 +1,39 @@
+{
+  "compile_commands": {
+    "path": "build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "sha256": "85cc996712bbd35675340b8b863b6ebc716cb94552253f2a6ad0288db920f331"
+  },
+  "source": {
+    "path": "build/cycle19/c-gateway-wave-pin/monkey/monkey-source/mk_core/mk_event.c",
+    "sha256": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382"
+  },
+  "preprocessed": {
+    "private_path": "/tmp/qcore-monkey-mk-event.preprocessed.c",
+    "sha256": "15cc779a7e95393241a8c2001e8e7ef84e8dd1838fcb444359abf23ccd97ecb0"
+  },
+  "cycle18_native_preprocessed": {
+    "private_path": "private/cycle18-observed-integration/native-source.preprocessed.c",
+    "sha256": "15cc779a7e95393241a8c2001e8e7ef84e8dd1838fcb444359abf23ccd97ecb0",
+    "preprocess_manifest_sha256": "9f360e57f31c5843cdd12b67e382f21ffa981f1f46d4973cbe85b28435fb9877"
+  },
+  "typed_summary_sets": {
+    "fixture": {
+      "_mk_event_loop_create": "2e32d6c7bbc40031c0f9828031d1591478cc2d556c2504dcf4f2687b0943214d",
+      "_mk_event_loop_destroy": "c0d3215c02ed7f421f725596fbcee27547d0cf2a5f8534aa532f794cbd9a5e0e",
+      "_mk_event_wait_2": "88d9d6f2d7dad652503bd218ac9fad80c8c16afc53beb8ec0e174e2232628dff",
+      "_mk_event_wait_with_flags": "3637e3f8ddfb6ae389d571a05f13bb9e32e675e95bfb4d5134ee8ab73923ff1f",
+      "cb_wait_2_timeout": "8308bac83724f6f2417f6d22bbf3e65afbbf491b8ad91b4a9217b1aebd22efdc"
+    },
+    "production": {
+      "_mk_event_loop_create": "d1c48805630eacec138b0ed1eae834195815b9e4ce61a731c40ac3fd46bc7756",
+      "_mk_event_loop_destroy": "c0d3215c02ed7f421f725596fbcee27547d0cf2a5f8534aa532f794cbd9a5e0e",
+      "_mk_event_wait_2": "69511d42a65bbed00f7c54e2890cc641578cf60029260893a8aa2db585bca4bd",
+      "_mk_event_wait_with_flags": "3637e3f8ddfb6ae389d571a05f13bb9e32e675e95bfb4d5134ee8ab73923ff1f",
+      "cb_wait_2_timeout": "8308bac83724f6f2417f6d22bbf3e65afbbf491b8ad91b4a9217b1aebd22efdc"
+    }
+  },
+  "contracts": {
+    "monkey/composition.qcore": "ee16fa5d7b8bd36f355397045a7c12545db28392eaad113b454f862096215e73",
+    "monkey/wrapper_paths.qcore": "c5c51240aafc42b293f715113c76706e656ac51548b1be065536c83f6167bdb0"
+  }
+}

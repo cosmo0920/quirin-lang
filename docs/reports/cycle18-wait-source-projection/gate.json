@@ -1,0 +1,39 @@
+{
+  "measured_commit": "63f9dfe51c6a77ec50155bbcd80656da9e26a47f",
+  "private_log_directory": "measure/cycle18-wait-source-projection-20260920T093138Z",
+  "commands": [
+    {
+      "command": "CARGO_BUILD_JOBS=2 RUST_TEST_THREADS=4 cargo test -p qcore-verification --test monkey_wait_projection -- --nocapture",
+      "exit": 0,
+      "counts": {"passed": 5, "failed": 0, "ignored": 1},
+      "log": "measure/cycle18-wait-source-projection-20260920T093138Z/focused-rust.log"
+    },
+    {
+      "command": "QCORE_MONKEY_PREPROCESSED=private/cycle18-observed-integration/native-source.preprocessed.c CARGO_BUILD_JOBS=2 RUST_TEST_THREADS=4 cargo test -p qcore-verification --test monkey_wait_projection configured_pinned_translation_unit_matches_the_fixture_projection -- --ignored --nocapture",
+      "exit": 0,
+      "counts": {"passed": 1, "failed": 0, "ignored": 0},
+      "log": "measure/cycle18-wait-source-projection-20260920T093138Z/production-native-source.log"
+    },
+    {"command": "cargo fmt --all -- --check", "exit": 0, "log": "measure/cycle18-wait-source-projection-20260920T093138Z/cargo-fmt.log"},
+    {"command": "CARGO_BUILD_JOBS=2 cargo clippy --all-targets -- -D warnings", "exit": 0, "log": "measure/cycle18-wait-source-projection-20260920T093138Z/cargo-clippy.log"},
+    {"command": "CARGO_BUILD_JOBS=2 cargo run -p qcore-compiler --example reevaluation_probe", "exit": 0, "log": "measure/cycle18-wait-source-projection-20260920T093138Z/reevaluation-probe.log"},
+    {"command": "CARGO_BUILD_JOBS=2 cargo run -p qcore-compiler --example reevaluation_followup", "exit": 0, "log": "measure/cycle18-wait-source-projection-20260920T093138Z/reevaluation-followup.log"},
+    {"command": "python3 scripts/check_lean_audits.py --jobs 2", "exit": 0, "counts": {"passed": 154, "failed": 0}, "log": "measure/cycle18-wait-source-projection-20260920T093138Z/lean-audits.log"},
+    {
+      "command": "python3 -m unittest discover -s scripts/tests",
+      "exit": 1,
+      "counts": {"run": 317, "failures": 1},
+      "reason": "The global committed matrix still records 153 Lean audits; this card adds audit 154. Root owns matrix regeneration and the final combined gate.",
+      "log": "measure/cycle18-wait-source-projection-20260920T093138Z/python-tests.log"
+    }
+  ],
+  "workspace_test": {
+    "status": "superseded",
+    "reason": "Two local full-workspace runs were cancelled after semantic review required later source-identity corrections. Root owns the final full combined gate at the corrected integration tip."
+  },
+  "clang": {
+    "exit": 0,
+    "first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+    "log": "measure/cycle18-wait-source-projection-20260920T093138Z/clang-version.txt"
+  }
+}
