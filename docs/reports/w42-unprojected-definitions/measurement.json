@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "card": "W42-UNPROJECTED-DEFINITIONS",
+  "source_commit": "f7b010de",
+  "commands": [
+    {
+      "name": "focused_tests",
+      "command": "python3 -m unittest scripts.tests.test_w42_unprojected_census",
+      "exit": 0,
+      "tests": 8
+    },
+    {
+      "name": "census_a",
+      "command": "python3 -B scripts/w42_unprojected_census.py --diagnostics docs/reports/b-series-integration/artifacts/diagnostics.json.gz --run-identity docs/reports/b-series-integration/artifacts/run.json --anchors docs/reports/w42-unprojected-definitions/artifacts/anchors.json --compile-db fluent-bit=/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json --compile-db monkey=/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json --output /tmp/w42-census-a.json",
+      "exit": 0,
+      "output_sha256": "299af9521e1ea67952186f7cb2fee55139926be391b1df906f9f8db28aab129e"
+    },
+    {
+      "name": "census_b",
+      "command": "python3 -B scripts/w42_unprojected_census.py --diagnostics docs/reports/b-series-integration/artifacts/diagnostics.json.gz --run-identity docs/reports/b-series-integration/artifacts/run.json --anchors docs/reports/w42-unprojected-definitions/artifacts/anchors.json --compile-db fluent-bit=/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json --compile-db monkey=/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json --output /tmp/w42-census-b.json",
+      "exit": 0,
+      "output_sha256": "299af9521e1ea67952186f7cb2fee55139926be391b1df906f9f8db28aab129e"
+    },
+    {
+      "name": "byte_reproducibility",
+      "command": "cmp /tmp/w42-census-a.json /tmp/w42-census-b.json",
+      "exit": 0
+    }
+  ],
+  "shipped_sha256": {
+    "scripts/w42_unprojected_census.py": "874f96dd04a7dbe2509defa6201c8a181ac7f8f7e5c132b27086e4cdd83eccbf",
+    "scripts/tests/test_w42_unprojected_census.py": "f2d58a580d4d80c9bccd0edc7da03172f1ef164a3143690b7bdacb8e1d36b9b0",
+    "artifacts/anchors.json": "856f3e8bf2d148146b0f4bdf087017bbde983956c36400d56993b6ceaee2f40d",
+    "artifacts/census.json": "299af9521e1ea67952186f7cb2fee55139926be391b1df906f9f8db28aab129e"
+  },
+  "result": {
+    "enumerated_source_definitions": 4921,
+    "projected_definitions": 4834,
+    "unprojected_definitions": 87,
+    "path_qualified_units": 24,
+    "distinct_basenames": 23,
+    "pinned_build_exclusions": 87,
+    "enumerator_false_positives": 0,
+    "projection_defects": 0,
+    "unresolved": 0
+  }
+}
