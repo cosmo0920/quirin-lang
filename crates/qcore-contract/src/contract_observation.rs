@@ -90,7 +90,7 @@ pub fn check_typed_contract_facts(
     let [declaration] = declarations.as_slice() else {
         return Err(format!("expected one declaration of {function}"));
     };
-    validate_typed_policy_declaration(source, declaration)?;
+    validate_typed_policy_declaration(declaration)?;
     let contract = declaration
         .value
         .function_contract
@@ -161,7 +161,7 @@ pub fn contract_fact_literal(
     let [declaration] = declarations.as_slice() else {
         return Err(format!("expected one declaration of {function}"));
     };
-    validate_typed_policy_declaration(source, declaration)?;
+    validate_typed_policy_declaration(declaration)?;
     let contract = declaration
         .value
         .function_contract
@@ -220,7 +220,6 @@ pub fn contract_fact_literal(
 }
 
 fn validate_typed_policy_declaration(
-    source: &str,
     declaration: &qcore_frontend::frontend::Located<qcore_frontend::frontend::SourceDeclaration>,
 ) -> Result<(), String> {
     if declaration.value.kind != DeclarationKind::ExternFunction {
@@ -240,19 +239,21 @@ fn validate_typed_policy_declaration(
     if result.tokens.as_slice() != [TokenKind::Word("unit".into())] {
         return Err("contract policy function requires a unit result".into());
     }
-    if declaration.value.tokens.first() == Some(&TokenKind::Word("unsafe".into())) {
-        return Err("contract policy function must not be unsafe".into());
-    }
-    let contract = declaration
-        .value
-        .function_contract
-        .as_ref()
-        .ok_or("missing contract")?;
-    if !source[result.span.end..contract.span.start]
-        .trim()
-        .is_empty()
-    {
-        return Err("contract policy function must not declare effects".into());
+    let expected_header = [
+        TokenKind::Word("extern".into()),
+        TokenKind::Word("fn".into()),
+        TokenKind::Word(declaration.value.name.clone()),
+        TokenKind::Symbol(Symbol::LeftParen),
+        TokenKind::Symbol(Symbol::RightParen),
+        TokenKind::Symbol(Symbol::Arrow),
+        TokenKind::Word("unit".into()),
+        TokenKind::Word("contract".into()),
+        TokenKind::Symbol(Symbol::LeftBrace),
+    ];
+    if !declaration.value.tokens.starts_with(&expected_header) {
+        return Err(
+            "contract policy requires the exact `extern fn NAME() -> unit contract` header".into(),
+        );
     }
     Ok(())
 }

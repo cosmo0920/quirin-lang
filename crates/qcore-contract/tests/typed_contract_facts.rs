@@ -142,9 +142,19 @@ fn duplicate_missing_and_wrongly_typed_facts_refuse() {
 
 #[test]
 fn strict_policy_declaration_shape_refuses_every_relaxation() {
+    assert!(
+        check_typed_contract_facts(
+            "extern fn p() -> unit /* trivia is not syntax */ contract { ensures normal true; };",
+            "p",
+            &[],
+        )
+        .is_ok()
+    );
     for source in [
         "fn p() -> unit contract { ensures normal true; } {}",
         "unsafe extern fn p() -> unit contract { ensures normal true; };",
+        "extern fn p() -> unit unsafe contract { ensures normal true; };",
+        "extern fn p<T>() -> unit contract { ensures normal true; };",
         "extern fn p(value: i32) -> unit contract { ensures normal true; };",
         "extern fn p() -> i32 contract { ensures normal true; };",
         "extern fn p() -> unit effects { unsafe } contract { ensures normal true; };",
