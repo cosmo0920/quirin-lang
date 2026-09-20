@@ -73,6 +73,10 @@ need `providers/package.py` build + verify (constraint 18).
 CI builds `proof/lean-toolchain` with Lean and runs every `Audit*.lean` via
 `scripts/check_lean_audits.py`, which builds from the pinned proof directory
 under finite time limits and cleans up workers on timeout or cancellation.
+Parallel audit cancellation synchronizes stopped-state inspection,
+child spawn and registration; failures are observed in completion order,
+while successful logs are replayed in audit order, and every pending or
+running worker is collected before return.
 `AuditAll.lean` checks the compiled QCore axiom closure, allowing only
 `propext`, `Classical.choice` and `Quot.sound`; stale audit names and warnings
 fail the gate, including library-build warnings under the pinned Lean 4.34.0.

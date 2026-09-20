@@ -1,8 +1,9 @@
 //! Provider-independent projection; Unknown stays in the report denominator.
 use crate::report::AuditReport;
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, LegacyCError, LegacyProgramSummary, SourceDefinitionInventory,
-    SourceLineMap, UnrestrictedLegacyResult, analyze_unrestricted_c11_with_inventory,
+    C11TranslationUnit, LegacyCError, LegacyProgramSummary, PreparedTranslationUnit,
+    SourceDefinitionInventory, SourceLineMap, UnrestrictedLegacyResult,
+    analyze_prepared_translation_unit, analyze_unrestricted_c11_with_inventory,
     map_preprocessed_lines, validate_unrestricted_c11,
 };
 use qcore_schemas::contract::ResourceContracts;
@@ -32,6 +33,13 @@ pub struct AuditCounts {
     /// established, or carried a definition nothing read. The unit is published
     /// `Unknown`; the per-function rows are unchanged.
     pub withheld_safe_units: usize,
+    /// Per-run preparation measurements. Durations are observed wall time for
+    /// the three shared stages, summed across units; they are not speedup claims.
+    pub prepared_units: usize,
+    pub preparation_clang_invocations: usize,
+    pub plain_preprocessing_elapsed_us: u64,
+    pub syntax_validation_elapsed_us: u64,
+    pub line_marked_preprocessing_elapsed_us: u64,
 }
 
 /// The summary a result carries, whatever its verdict.
@@ -90,12 +98,7 @@ pub fn project_unit(
     report: &mut AuditReport,
     counts: &mut AuditCounts,
 ) -> Result<(), String> {
-    counts.units += 1;
-    counts.absent_from_raw_scan_definitions += inventory.absent_from_raw_scan().len();
-    counts.unanalyzable_definitions += inventory.unanalyzable().len();
-    if !inventory.is_complete() {
-        counts.enumeration_refused_units += 1;
-    }
+    record_inventory(inventory, counts);
     let source_functions = inventory.definitions();
     if source_functions.is_empty() {
         counts.data_only_units += 1;
@@ -118,11 +121,109 @@ pub fn project_unit(
         contracts,
         Some(inventory),
     );
-    // Fail-closed (unit E01-F1): a whole-unit `Safe` claim is a claim over the
-    // *declared main-source scope*. It cannot stand when that scope was not
-    // established, or when it carries a definition no analysis read. The
-    // per-function rows below are untouched — nothing is downgraded except the
-    // unit-level claim, and only with the ground named in `reason`.
+    // Card GATEWAY-C-LOCATION: the original `file:line` every diagnostic of
+    // this unit is presented at. Derived only where there is a diagnostic to
+    // attribute, from the *authoritative* preprocessed text — the bytes the
+    // analyzer's own line numbers index — so a coordinate can only ever
+    // describe the text it was built against. This publishes no verdict and is
+    // never read by the analysis: `result` above is already settled.
+    let locations = origin_coordinates(unit, &result);
+    record_projection(
+        ProjectionContext {
+            library,
+            file,
+            inventory,
+            source_functions,
+        },
+        result,
+        locations.as_ref(),
+        report,
+        counts,
+    )
+}
+
+/// Project a unit from the preparation already used for compile-task identity,
+/// denominator inventory and diagnostic coordinates.
+pub fn project_prepared_unit(
+    library: &str,
+    file: &str,
+    prepared: &PreparedTranslationUnit,
+    contracts: &ResourceContracts,
+    report: &mut AuditReport,
+    counts: &mut AuditCounts,
+) -> Result<(), String> {
+    let metrics = prepared.metrics();
+    counts.prepared_units += 1;
+    counts.preparation_clang_invocations += usize::from(metrics.clang_invocations());
+    counts.plain_preprocessing_elapsed_us = counts
+        .plain_preprocessing_elapsed_us
+        .saturating_add(metrics.plain_preprocessing.elapsed_us);
+    counts.syntax_validation_elapsed_us = counts
+        .syntax_validation_elapsed_us
+        .saturating_add(metrics.syntax_validation.elapsed_us);
+    counts.line_marked_preprocessing_elapsed_us = counts
+        .line_marked_preprocessing_elapsed_us
+        .saturating_add(metrics.line_marked_preprocessing.elapsed_us);
+    let inventory = prepared.inventory();
+    record_inventory(inventory, counts);
+    let source_functions = inventory.definitions();
+    if source_functions.is_empty() {
+        counts.data_only_units += 1;
+        report.record_data_only(library, file, prepared.validation_error());
+        report.record_enumeration(inventory);
+        if let Some(error) = prepared.validation_error() {
+            counts.gateway_failures += 1;
+            println!("  {library}/{file}: data-only gateway failure: {error}");
+        } else {
+            println!("  {library}/{file}: data-only gateway pass");
+        }
+        return Ok(());
+    }
+    counts.source_functions += source_functions.len();
+    let result = analyze_prepared_translation_unit(prepared, &source_functions[0], contracts);
+    record_projection(
+        ProjectionContext {
+            library,
+            file,
+            inventory,
+            source_functions,
+        },
+        result,
+        Some(prepared.locations()),
+        report,
+        counts,
+    )
+}
+
+fn record_inventory(inventory: &SourceDefinitionInventory, counts: &mut AuditCounts) {
+    counts.units += 1;
+    counts.absent_from_raw_scan_definitions += inventory.absent_from_raw_scan().len();
+    counts.unanalyzable_definitions += inventory.unanalyzable().len();
+    if !inventory.is_complete() {
+        counts.enumeration_refused_units += 1;
+    }
+}
+
+struct ProjectionContext<'a> {
+    library: &'a str,
+    file: &'a str,
+    inventory: &'a SourceDefinitionInventory,
+    source_functions: &'a [String],
+}
+
+fn record_projection(
+    context: ProjectionContext<'_>,
+    result: Result<UnrestrictedLegacyResult, LegacyCError>,
+    prepared_locations: Option<&SourceLineMap>,
+    report: &mut AuditReport,
+    counts: &mut AuditCounts,
+) -> Result<(), String> {
+    let ProjectionContext {
+        library,
+        file,
+        inventory,
+        source_functions,
+    } = context;
     let result = match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) if !inventory.supports_unit_safe() => {
             counts.withheld_safe_units += 1;
@@ -136,14 +237,15 @@ pub fn project_unit(
         }
         other => other,
     };
-    // Card GATEWAY-C-LOCATION: the original `file:line` every diagnostic of
-    // this unit is presented at. Derived only where there is a diagnostic to
-    // attribute, from the *authoritative* preprocessed text — the bytes the
-    // analyzer's own line numbers index — so a coordinate can only ever
-    // describe the text it was built against. This publishes no verdict and is
-    // never read by the analysis: `result` above is already settled.
-    let locations = origin_coordinates(unit, &result);
-    let detail = report.record(library, file, source_functions, &result, locations.as_ref());
+    let locations = prepared_locations.filter(|_| {
+        summary_of(&result).is_some_and(|summary| {
+            summary
+                .functions
+                .values()
+                .any(|function| !function.diagnostics.is_empty())
+        })
+    });
+    let detail = report.record(library, file, source_functions, &result, locations);
     report.record_enumeration(inventory);
     match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) => {

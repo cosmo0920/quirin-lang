@@ -199,6 +199,10 @@ pub struct SourceLineMap {
 }
 
 impl SourceLineMap {
+    pub(crate) fn expansion_unavailable() -> Self {
+        Self::refused(LocationRefusal::ExpansionUnavailable)
+    }
+
     /// The original coordinate of one preprocessed line, or `None` when this
     /// unit has no established coordinate for it.
     #[must_use]

@@ -1,0 +1,235 @@
+{
+  "binaries": {
+    "before": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/before-quirin-audit",
+      "sha256": "22f11f774afad650fef2d7a7c052ba52145e31b75bc496494da8c8c5f5e649e9",
+      "source_revision": "a8f2048da91d5bdf9532394faed7c75587812153"
+    },
+    "after": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/after-quirin-audit",
+      "sha256": "d90db1d85b5c733f2754c5081045310b592a557098359c735cc7974520d9487e",
+      "source_revision": "ed913c291ff1a21529ef4ebcfbfd7ae0dac4a9e9"
+    }
+  },
+  "cases": {
+    "Safe": {
+      "before": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Safe/before-rss.txt",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/before-quirin-audit",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Safe/audit.json"
+        ],
+        "exit": 0,
+        "stages": {
+          "plain": {
+            "invocations": 2,
+            "seconds": 0.028752334008459002
+          },
+          "syntax": {
+            "invocations": 2,
+            "seconds": 0.02591725398087874
+          },
+          "marked": {
+            "invocations": 1,
+            "seconds": 0.013318623008672148
+          },
+          "metadata": {
+            "invocations": 9,
+            "seconds": 0.11185251903953031
+          }
+        },
+        "stdout": "  sample/src/unit.c: Safe (1/1)\n1 units: 1 Safe / 0 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures\n",
+        "rss_observation": "\tCommand being timed: \"/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/before-quirin-audit /home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Safe/audit.json\"\n\tUser time (seconds): 0.33\n\tSystem time (seconds): 0.15\n\tPercent of CPU this job got: 99%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.49\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 83612\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 4\n\tMinor (reclaiming a frame) page faults: 68215\n\tVoluntary context switches: 325\n\tInvoluntary context switches: 49\n\tSwaps: 0\n\tFile system inputs: 1128\n\tFile system outputs: 40\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "artifacts": {
+          "report.assumptions.json": "2c864d4b8355c023a3ee10c1f550209ae4f382e8a052c35cf2ffa1a2e155472c",
+          "report.json": "836eb2e5ff652ee71aa06426ffc76af06d58527979fc22fa80a4bf4639ecd3e7"
+        }
+      },
+      "after": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Safe/after-rss.txt",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/after-quirin-audit",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Safe/audit.json"
+        ],
+        "exit": 0,
+        "stages": {
+          "plain": {
+            "invocations": 1,
+            "seconds": 0.014004462980665267
+          },
+          "syntax": {
+            "invocations": 1,
+            "seconds": 0.013527445960789919
+          },
+          "marked": {
+            "invocations": 1,
+            "seconds": 0.014116664009634405
+          },
+          "metadata": {
+            "invocations": 7,
+            "seconds": 0.08168449596269056
+          }
+        },
+        "stdout": "  sample/src/unit.c: Safe (1/1)\n1 units: 1 Safe / 0 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures\npreparation: 1 unit(s), 3 Clang invocation(s); -E -P 64021 us / syntax 70119 us / line markers 68425 us\n",
+        "rss_observation": "\tCommand being timed: \"/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/after-quirin-audit /home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Safe/audit.json\"\n\tUser time (seconds): 0.23\n\tSystem time (seconds): 0.11\n\tPercent of CPU this job got: 100%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.34\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 83596\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 48640\n\tVoluntary context switches: 229\n\tInvoluntary context switches: 38\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 40\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "artifacts": {
+          "report.assumptions.json": "2c864d4b8355c023a3ee10c1f550209ae4f382e8a052c35cf2ffa1a2e155472c",
+          "report.json": "836eb2e5ff652ee71aa06426ffc76af06d58527979fc22fa80a4bf4639ecd3e7"
+        }
+      },
+      "artifacts_byte_identical": true
+    },
+    "Unsafe": {
+      "before": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Unsafe/before-rss.txt",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/before-quirin-audit",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Unsafe/audit.json"
+        ],
+        "exit": 0,
+        "stages": {
+          "plain": {
+            "invocations": 3,
+            "seconds": 0.04122878290945664
+          },
+          "syntax": {
+            "invocations": 3,
+            "seconds": 0.04600658599520102
+          },
+          "marked": {
+            "invocations": 2,
+            "seconds": 0.02938065503258258
+          },
+          "metadata": {
+            "invocations": 12,
+            "seconds": 0.13697317597689107
+          }
+        },
+        "stdout": "  sample/src/unit.c: Unsafe (1/1)\n    resource diagnostics: leak=1\n    subject: preprocessed line 0: leak: live obligation acquired at src/unit.c:1\n1 units: 0 Safe / 1 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures\n",
+        "rss_observation": "\tCommand being timed: \"/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/before-quirin-audit /home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Unsafe/audit.json\"\n\tUser time (seconds): 0.44\n\tSystem time (seconds): 0.23\n\tPercent of CPU this job got: 99%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.68\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 84568\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 3\n\tMinor (reclaiming a frame) page faults: 96810\n\tVoluntary context switches: 315\n\tInvoluntary context switches: 75\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 40\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "artifacts": {
+          "report.assumptions.json": "1d4e0aa05821e3e99724bcfbd311a5468aa6593a4f2b4440d6e133278b142273",
+          "report.json": "4f32c0e0b10d45cc93a0fc14f44318478b8c277ae692c0bafd2c1cda26feb767"
+        }
+      },
+      "after": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Unsafe/after-rss.txt",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/after-quirin-audit",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Unsafe/audit.json"
+        ],
+        "exit": 0,
+        "stages": {
+          "plain": {
+            "invocations": 1,
+            "seconds": 0.015921035024803132
+          },
+          "syntax": {
+            "invocations": 1,
+            "seconds": 0.01540985400788486
+          },
+          "marked": {
+            "invocations": 1,
+            "seconds": 0.013116594986058772
+          },
+          "metadata": {
+            "invocations": 7,
+            "seconds": 0.08206212596269324
+          }
+        },
+        "stdout": "  sample/src/unit.c: Unsafe (1/1)\n    resource diagnostics: leak=1\n    subject: preprocessed line 0: leak: live obligation acquired at src/unit.c:1\n1 units: 0 Safe / 1 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures\npreparation: 1 unit(s), 3 Clang invocation(s); -E -P 77824 us / syntax 69924 us / line markers 68602 us\n",
+        "rss_observation": "\tCommand being timed: \"/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/after-quirin-audit /home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Unsafe/audit.json\"\n\tUser time (seconds): 0.23\n\tSystem time (seconds): 0.11\n\tPercent of CPU this job got: 100%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.35\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 84568\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 48667\n\tVoluntary context switches: 204\n\tInvoluntary context switches: 38\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 40\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "artifacts": {
+          "report.assumptions.json": "1d4e0aa05821e3e99724bcfbd311a5468aa6593a4f2b4440d6e133278b142273",
+          "report.json": "4f32c0e0b10d45cc93a0fc14f44318478b8c277ae692c0bafd2c1cda26feb767"
+        }
+      },
+      "artifacts_byte_identical": true
+    },
+    "Unknown": {
+      "before": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Unknown/before-rss.txt",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/before-quirin-audit",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Unknown/audit.json"
+        ],
+        "exit": 0,
+        "stages": {
+          "plain": {
+            "invocations": 2,
+            "seconds": 0.024997787026222795
+          },
+          "syntax": {
+            "invocations": 2,
+            "seconds": 0.024204254965297878
+          },
+          "marked": {
+            "invocations": 2,
+            "seconds": 0.02739897894207388
+          },
+          "metadata": {
+            "invocations": 10,
+            "seconds": 0.12086131301475689
+          }
+        },
+        "stdout": "  sample/src/unit.c: Unknown (1/1): resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)\n    resource diagnostics: unsupported=1\n    subject: src/unit.c:1: unsupported: unmodeled call, aggregate or indirect access in branch condition\n1 units: 0 Safe / 0 provisional Unsafe / 1 Unknown / 0 data-only / 0 gateway failures\n",
+        "rss_observation": "\tCommand being timed: \"/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/before-quirin-audit /home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Unknown/audit.json\"\n\tUser time (seconds): 0.36\n\tSystem time (seconds): 0.17\n\tPercent of CPU this job got: 99%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.53\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 84192\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 77747\n\tVoluntary context switches: 457\n\tInvoluntary context switches: 56\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 40\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "artifacts": {
+          "report.assumptions.json": "4c2fb0c2e455888392b233cf6a268399e011bdb6c148e027f9f5d96c586e1689",
+          "report.json": "9abe80146afe9469b5e2ff9425aec0cfa2fe9ffe15c409a8a529d8f05603a7d3"
+        }
+      },
+      "after": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Unknown/after-rss.txt",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/after-quirin-audit",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Unknown/audit.json"
+        ],
+        "exit": 0,
+        "stages": {
+          "plain": {
+            "invocations": 1,
+            "seconds": 0.011560788960196078
+          },
+          "syntax": {
+            "invocations": 1,
+            "seconds": 0.014757678960449994
+          },
+          "marked": {
+            "invocations": 1,
+            "seconds": 0.013903993996791542
+          },
+          "metadata": {
+            "invocations": 7,
+            "seconds": 0.08230221591657028
+          }
+        },
+        "stdout": "  sample/src/unit.c: Unknown (1/1): resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)\n    resource diagnostics: unsupported=1\n    subject: src/unit.c:1: unsupported: unmodeled call, aggregate or indirect access in branch condition\n1 units: 0 Safe / 0 provisional Unsafe / 1 Unknown / 0 data-only / 0 gateway failures\npreparation: 1 unit(s), 3 Clang invocation(s); -E -P 60968 us / syntax 74081 us / line markers 71449 us\n",
+        "rss_observation": "\tCommand being timed: \"/home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/after-quirin-audit /home/cosmo/Documents/GitHub/qcore-c/private/quirin-review/preparation-combined/Unknown/audit.json\"\n\tUser time (seconds): 0.23\n\tSystem time (seconds): 0.10\n\tPercent of CPU this job got: 100%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.34\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 84124\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 6\n\tMinor (reclaiming a frame) page faults: 48804\n\tVoluntary context switches: 427\n\tInvoluntary context switches: 48\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 40\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "artifacts": {
+          "report.assumptions.json": "4c2fb0c2e455888392b233cf6a268399e011bdb6c148e027f9f5d96c586e1689",
+          "report.json": "9abe80146afe9469b5e2ff9425aec0cfa2fe9ffe15c409a8a529d8f05603a7d3"
+        }
+      },
+      "artifacts_byte_identical": true
+    }
+  }
+}

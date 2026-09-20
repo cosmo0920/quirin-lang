@@ -1,0 +1,18 @@
+{
+  "card": "REVIEW-PREPARED-TU",
+  "note": "Review priority O1. Full standing gate on prepared-TU tip 9e62c19b plus test-only explicit-QCORE_CLANG honesty edits. The counted workspace run was unrestricted because sandbox instrumentation makes LeakSanitizer refuse native tests. Two sandbox attempts are preserved as incomplete/invalid environment observations and are not counted. No verdict, corpus, CT, contract or language-conformance figure moves. Provider packages and qcore-schemas are unchanged; provider 122 is carried, not remeasured. Evidence: docs/reports/review-prepared-tu/README.md and docs/reports/quirin-review-integration/preparation-measurement.json.",
+  "workspace_tests": 4888,
+  "workspace_tests_ignored": 10,
+  "workspace_tests_failed": 0,
+  "workspace_result_summaries": 253,
+  "provider_tests": 122,
+  "provider_tests_status": "carried; provider and qcore-schemas sources unchanged",
+  "python_evidence_validator_tests": 313,
+  "lean_audits": 150,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "pass",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

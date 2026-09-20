@@ -1,0 +1,21 @@
+import QCore.CertificateScope
+
+-- Card E01-TAIL-CERT-SCOPE. Structural replay reconstructs the complete
+-- selected denominator from retained source evidence. Authentication of the
+-- intended audit additionally uses a caller-held expected context.
+
+#print axioms QCore.CertificateScope.structural_acceptance_has_exact_coverage
+#print axioms QCore.CertificateScope.structural_acceptance_has_no_duplicate_targets
+#print axioms QCore.CertificateScope.structural_acceptance_binds_inventory_digest
+#print axioms QCore.CertificateScope.contextual_acceptance_binds_expected_targets
+#print axioms QCore.CertificateScope.contextual_acceptance_binds_expected_input
+#print axioms QCore.CertificateScope.unequal_expected_denominator_rejects
+#print axioms QCore.CertificateScope.unequal_expected_input_rejects
+
+#print axioms QCore.CertificateScope.scope_reduction_is_rejected
+#print axioms QCore.CertificateScope.duplicate_targets_are_rejected
+#print axioms QCore.CertificateScope.unresolved_coverage_is_rejected
+#print axioms QCore.CertificateScope.a_coherent_smaller_artifact_is_structurally_distinct
+#print axioms QCore.CertificateScope.expected_context_rejects_coherent_scope_replacement
+#print axioms QCore.CertificateScope.changed_effective_input_is_rejected
+#print axioms QCore.CertificateScope.complete_matching_scope_is_accepted

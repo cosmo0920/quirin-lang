@@ -8,6 +8,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import unittest
 from unittest.mock import patch
@@ -58,6 +59,18 @@ class RunnerTests(unittest.TestCase):
                 label="failure", timeout=5, heartbeat=1,
             )
         self.assertEqual(caught.exception.returncode, 7)
+
+    def test_stopped_supervisor_refuses_before_popen(self):
+        supervisor = checks.ChildSupervisor()
+        supervisor.stop()
+        with patch.object(checks.subprocess, "Popen") as popen:
+            with self.assertRaises(checks.RunStopped):
+                checks.run_step(
+                    [sys.executable, "-c", "raise SystemExit(99)"], cwd=Path.cwd(),
+                    label="stopped fixture", timeout=5, heartbeat=1,
+                    supervisor=supervisor,
+                )
+        popen.assert_not_called()
 
     @unittest.skipUnless(os.name == "posix", "POSIX process-group cleanup")
     def test_timeout_kills_descendant_even_when_it_ignores_term(self):
@@ -180,6 +193,102 @@ class ParallelAuditTests(unittest.TestCase):
                     checks.check_audits(self.proof, self.args)
         self.assertIn("Audit3 said why", printed.getvalue())
         self.assertNotIn("Passed 6 Lean audits", printed.getvalue())
+
+    @unittest.skipUnless(os.name == "posix", "POSIX process-group cleanup")
+    def test_later_failure_interrupts_an_earlier_slow_audit_promptly(self):
+        scripts = {
+            "Audit1.lean": "import time; time.sleep(5)",
+            "Audit2.lean": "import time; time.sleep(.05); raise SystemExit(7)",
+        }
+
+        def command(name):
+            return [sys.executable, "-c", scripts.get(name, "import time; time.sleep(5)")]
+
+        started = time.monotonic()
+        with patch.object(checks, "audit_command", side_effect=command):
+            with self.assertRaises(subprocess.CalledProcessError) as caught:
+                checks.check_audits(self.proof, self.args)
+        elapsed = time.monotonic() - started
+        self.assertEqual(caught.exception.returncode, 7)
+        self.assertLess(elapsed, 1.5, "failure waited for the first submitted audit")
+
+    @unittest.skipUnless(os.name == "posix", "POSIX process-group cleanup")
+    def test_cancellation_collects_a_spawn_already_in_progress_and_run_is_reusable(self):
+        marker = self.proof / "late-child-escaped"
+        late_spawn_gate = self.proof / "late-spawn-entered"
+        late_spawn_entered = threading.Event()
+        real_popen = subprocess.Popen
+
+        scripts = {
+            "Audit1.lean": (
+                "import time; from pathlib import Path; "
+                f"gate=Path({str(late_spawn_gate)!r}); "
+                "deadline=time.monotonic()+2; "
+                "\nwhile not gate.exists() and time.monotonic() < deadline: time.sleep(.01)"
+                "\nraise SystemExit(9)"
+            ),
+            "Audit2.lean": (
+                "import time; from pathlib import Path; time.sleep(.3); "
+                f"Path({str(marker)!r}).touch()"
+            ),
+        }
+
+        def command(name):
+            body = scripts.get(name, "import time; time.sleep(5)")
+            return [sys.executable, "-c", body, name]
+
+        def delayed_popen(command, **kwargs):
+            if command[-1] == "Audit2.lean":
+                late_spawn_entered.set()
+                late_spawn_gate.touch()
+                # Force the failure handler to meet this worker at the exact
+                # spawn boundary. It must wait, register, terminate and reap.
+                time.sleep(.2)
+            return real_popen(command, **kwargs)
+
+        with patch.object(checks, "audit_command", side_effect=command):
+            with patch.object(checks.subprocess, "Popen", side_effect=delayed_popen):
+                with self.assertRaises(subprocess.CalledProcessError) as caught:
+                    checks.check_audits(self.proof, self.args)
+        self.assertEqual(caught.exception.returncode, 9)
+        self.assertTrue(late_spawn_entered.is_set(), "fixture did not drive late spawn")
+        time.sleep(.5)
+        self.assertFalse(marker.exists(), "a child started or survived after failure return")
+
+        # Cancellation state belongs to one run; drive six real children
+        # through the following run's fresh supervisor and observe each one.
+        def reuse_command(name):
+            reuse_marker = self.proof / f"reuse-{name}"
+            return [sys.executable, "-c", f"from pathlib import Path; Path({str(reuse_marker)!r}).touch()"]
+
+        with patch.object(checks, "audit_command", side_effect=reuse_command):
+            checks.check_audits(self.proof, self.args)
+        self.assertEqual(
+            sorted(path.name.removeprefix("reuse-") for path in self.proof.glob("reuse-*")),
+            sorted(self.names),
+        )
+
+    @unittest.skipUnless(os.name == "posix", "POSIX process-group cleanup")
+    def test_submission_failure_collects_started_workers(self):
+        original_submit = checks.ThreadPoolExecutor.submit
+        submissions = 0
+
+        def fail_third_submit(executor, *args, **kwargs):
+            nonlocal submissions
+            submissions += 1
+            if submissions == 3:
+                raise RuntimeError("fixture submission failure")
+            return original_submit(executor, *args, **kwargs)
+
+        def command(name):
+            return [sys.executable, "-c", "import time; time.sleep(5)", name]
+
+        started = time.monotonic()
+        with patch.object(checks, "audit_command", side_effect=command):
+            with patch.object(checks.ThreadPoolExecutor, "submit", new=fail_third_submit):
+                with self.assertRaisesRegex(RuntimeError, "fixture submission failure"):
+                    checks.check_audits(self.proof, self.args)
+        self.assertLess(time.monotonic() - started, 1.5)
 
     def test_worker_count_never_exceeds_the_audits_present(self):
         self.args.jobs = 999

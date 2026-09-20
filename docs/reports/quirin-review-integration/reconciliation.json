@@ -1,0 +1,151 @@
+{
+  "card": "QUIRIN-REVIEW-INTEGRATION",
+  "verify_applied": true,
+  "verdicts": {
+    "review-audit-runner#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Landed the proposed sentence verbatim in the canonical validation policy.",
+      "verify": [
+        {
+          "file": "docs/agents/validation.md",
+          "contains": "Parallel audit cancellation synchronizes stopped-state inspection, child spawn and registration; failures are observed in completion order, while successful logs are replayed in audit order, and every pending or running worker is collected before return."
+        }
+      ]
+    },
+    "review-audit-runner#integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "Runner changes no coverage or verdict measurement. STATUS latest gate is updated only from the independent combined gate."
+    },
+    "review-audit-runner#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "The single review integration increment includes the runner and final combined gate.",
+      "verify": [
+        {
+          "file": "docs/development/increments/wave-41-continuation.md",
+          "contains": "QUIRIN-REVIEW-INTEGRATION"
+        }
+      ]
+    },
+    "review-audit-runner#integrator-reconciliation-list#4": {
+      "verdict": "noted",
+      "note": "No runner tracking entry was added or retired; R1/R2 are external review labels."
+    },
+    "review-prepared-tu#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "PreparedTU merged before scope; integrated scope adapter reads retained evidence.",
+      "verify": [
+        {
+          "file": "crates/qcore-c-gateway/src/legacy_c.rs",
+          "contains": "prepared.raw_source().to_owned(),"
+        },
+        {
+          "file": "crates/qcore-c-gateway/src/legacy_c.rs",
+          "contains": "prepared.line_marked_source().map(str::to_owned),"
+        }
+      ]
+    },
+    "review-prepared-tu#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Independent baseline and final combined measurements are held by the integration report.",
+      "verify": [
+        {
+          "file": "docs/reports/quirin-review-integration/README.md",
+          "contains": "Independent preparation measurement"
+        }
+      ]
+    },
+    "review-prepared-tu#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "The proposed measured-boundary text is retained in the integration report. Global validation counts are independently measured; coverage remains unchanged.",
+      "verify": [
+        {
+          "file": "docs/reports/quirin-review-integration/README.md",
+          "contains": "Configured C audits share one immutable preparation snapshot across identity, inventory, analysis and reporting; measured logical Clang actions are 5\u21923 Safe, 8\u21923 provisional Unsafe and 6\u21923 Unknown with byte-identical JSON artifacts; no total-speed or RSS reduction is claimed."
+        }
+      ]
+    },
+    "review-prepared-tu#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Explicit optimization follow-ons remain in the integration report.",
+      "verify": [
+        {
+          "file": "docs/reports/quirin-review-integration/README.md",
+          "contains": "TU-wide typed declaration/AST indexing and correctly keyed CFG reuse remain open."
+        }
+      ]
+    },
+    "review-certificate-scope#integrator-reconciliation-list#6": {
+      "verdict": "applied",
+      "note": "Merge order and adapter preserve exact prepared artifacts; final independent benchmark checks actual Clang actions.",
+      "verify": [
+        {
+          "file": "crates/qcore-c-gateway/src/legacy_c.rs",
+          "contains": "prepared.line_marked_source().map(str::to_owned),"
+        }
+      ]
+    },
+    "review-certificate-scope#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "Registered report provenance under the parent enumeration follow-up and two new residuals; no registered entry retired.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "E01-TAIL-CERT-SCOPE is discharged at the reconstructible target-scope and caller-held expected-context boundary by review-certificate-scope."
+        }
+      ]
+    },
+    "review-certificate-scope#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Public APIs are implemented and re-exported.",
+      "verify": [
+        {
+          "file": "crates/qcore-c-gateway/src/legacy_c.rs",
+          "contains": "pub target_scope: LegacyCertificateScope,"
+        },
+        {
+          "file": "compiler/src/lib.rs",
+          "contains": "check_legacy_safety_certificate_for"
+        }
+      ]
+    },
+    "review-certificate-scope#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Registered both residuals with their requested discharge conditions.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "bind the expected certificate context to CompileTaskIdentity, including compiler/target/environment and dependency provenance, and exercise a mismatch."
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "a caller-held expected contract/profile/trust identity is compared and a mismatch is exercised."
+        }
+      ]
+    },
+    "review-certificate-scope#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Landed the source-identity rule with the structural/authentication distinction.",
+      "verify": [
+        {
+          "file": "docs/agents/source-identity.md",
+          "contains": "This discharges `E01-TAIL-CERT-SCOPE`"
+        },
+        {
+          "file": "docs/agents/source-identity.md",
+          "contains": "Structural self-consistency is distinct from intended-target authentication."
+        }
+      ]
+    },
+    "review-certificate-scope#integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "Prepared dependencies were merged first. Scope code through af88325b and final report d69420e0 are integrated; dependency cherry-picks are not counted as new scope work."
+    }
+  },
+  "no_section": {},
+  "residual_sweep": {
+    "log": "private/quirin-review/residuals-after.log",
+    "exit": 0,
+    "untracked_candidates": 55,
+    "disposition": "No new review residual is untracked. The 55 candidates are existing historical, rule-only or prior-close names outside the three selected cards; this sweep does not assert their discharge. E01-TAIL-CERT-SCOPE is a child boundary mentioned under E01-F1-O, not a separate registered entry; its discharge updates the parent without retiring it. Two new explicit residuals are registered."
+  }
+}
