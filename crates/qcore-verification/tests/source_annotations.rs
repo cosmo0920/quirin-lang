@@ -1,3 +1,4 @@
+use qcore_core::{ExecutionOutcome, TraceEvent};
 use qcore_frontend::frontend::SemanticPass;
 use qcore_verification::driver::{CompileOptions, SourceFile, compile_files_with_registry};
 use qcore_verifier_host::VerifierRegistry;
@@ -65,12 +66,34 @@ fn region_acquisitions_cannot_bypass_the_annotation_gate() {
             "error Failure {{ Failed; }} fn main() -> i32 {{ error region R {{ let r{head} = qcore_acquire(1, true, Failure); qcore_check(false, Failure); }} catch (Failure) quant open R as pack {{ discharge pack; }} return 0; }}"
         )
     };
-    compile(&source("")).unwrap();
+    let untyped = compile(&source("")).unwrap();
+    let observation = untyped.reference_observation.unwrap();
+    assert_eq!(
+        observation.outcome,
+        ExecutionOutcome::Ok {
+            value: 0,
+            payload: Vec::new()
+        }
+    );
+    assert_eq!(
+        observation.trace,
+        vec![TraceEvent::Acquire(1), TraceEvent::Release(1)]
+    );
+    assert!(untyped.c_source.unwrap().contains("q_release(&q_res_1"));
     for head in [": i32", ": Widget", ": own<File>"] {
         let diagnostic = refusal(&source(head));
         assert_eq!(diagnostic.code, "Q020", "{diagnostic:?}");
         assert_eq!(diagnostic.pass, SemanticPass::OrdinaryTypes);
     }
+}
+
+#[test]
+fn post_desugaring_tokens_do_not_bypass_annotation_checking() {
+    let diagnostic = refusal(
+        "error Failure { Failed; } fn main() -> i32 { let r: i32 = 1 |> qcore_acquire(true, Failure); drop r; return 0; }",
+    );
+    assert_eq!(diagnostic.code, "Q036", "{diagnostic:?}");
+    assert_eq!(diagnostic.pass, SemanticPass::Pipe);
 }
 
 #[test]

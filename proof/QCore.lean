@@ -28,6 +28,7 @@ import QCore.ContextualCustody
 import QCore.NeutralFrameRecursion
 import QCore.NeutralPrefixPreservation
 import QCore.SourceValidation
+import QCore.SourceAnnotation
 import QCore.VerifierEvidenceV2
 import QCore.GuardedDelete
 import QCore.UnsupportedClose
