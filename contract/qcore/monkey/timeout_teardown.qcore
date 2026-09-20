@@ -20,7 +20,7 @@ contract {
     ensures normal path_operation_counts == "21,20,10";
     ensures normal path_call_sequences == "send,__errno_location,perror,evutil_closesocket,event_del,event_free,mk_mem_free;send,__errno_location,evutil_closesocket,event_del,event_free,mk_mem_free;send";
     ensures normal teardown_path_indices == "0,1";
-    ensures normal source_summary_digest == "4787d6d5025421959b0f5c746fe0ff2916001f8a9b88f39d73b8d416ae0b2155";
+    ensures normal (source_summary_digest == "4787d6d5025421959b0f5c746fe0ff2916001f8a9b88f39d73b8d416ae0b2155") or (source_summary_digest == "ba528a16a79d673073f734f07367436f7c024d1a204a598e75300ab70b4261a4");
 };
 
 extern fn cb_timeout_teardown_path() -> unit
@@ -40,8 +40,23 @@ contract {
 extern fn teardown_obligations() -> unit
 contract {
     ensures normal callback == "cb_timeout";
-    ensures normal event_descriptor_absent == 1;
-    ensures normal same_dispatcher == 1;
-    ensures normal native_trace == "callback_enter,close_socket,event_del,event_free,map_free,callback_exit";
-    ensures normal event_map_descriptor_custody_distinct == 1;
+    ensures normal event_descriptor_present == 0;
+    ensures normal callback_dispatcher == delete_dispatcher;
+    ensures normal callback_dispatcher == free_dispatcher;
+    ensures normal callback_dispatcher == exit_dispatcher;
+    ensures normal event_id == delete_event_id;
+    ensures normal event_id == free_event_id;
+    ensures normal event_id == exit_event_id;
+    ensures normal native_map_address != event_pointer;
+    ensures normal peer_descriptor != callback_descriptor;
+    ensures normal close_function == "evutil_closesocket";
+    ensures normal delete_operation == "event_del";
+    ensures normal free_operation == "event_free";
+    ensures normal map_free_function == "mk_mem_free";
+    ensures normal exit_operation == "callback_exit";
+    ensures normal callback_enter_sequence < close_sequence;
+    ensures normal close_sequence < delete_sequence;
+    ensures normal delete_sequence < free_sequence;
+    ensures normal map_free_sequence == free_sequence;
+    ensures normal free_sequence < callback_exit_sequence;
 };

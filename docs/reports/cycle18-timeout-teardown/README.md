@@ -10,13 +10,13 @@ socket descriptors remain separate custody items.
 ## Source and policy boundary
 
 `contract/qcore/monkey/timeout_teardown.qcore` is executable acceptance policy.
-It has five declarations and 22 clauses, in this order:
+It has five declarations and 37 clauses, in this order:
 
 1. `source_identity` — 4 clauses.
 2. `cb_timeout_source` — 7 clauses.
 3. `cb_timeout_teardown_path` — 1 clause.
 4. `libevent_self_teardown` — 5 clauses.
-5. `teardown_obligations` — 5 clauses.
+5. `teardown_obligations` — 20 clauses.
 
 Rust derives the callback signature, all three path operation counts, complete
 call vectors, qualifying path indices, and the canonical summary digest from a
@@ -38,33 +38,52 @@ is distinct from the generic blocking and nonblocking delete vocabulary.
 The source projection only states obligations.  `TimeoutTeardownEvidence` is a
 strict, unknown-field-refusing record that binds the Monkey summary digest,
 Libevent digest, policy digest, selected teardown path, exact native callback
-trace, resource identities, and observed close outcomes.  Failed close results
+steps, resource identities, and observed close outcomes.  The contract compares
+primitive facts: nullable descriptor state; callback/delete/free/exit event and
+dispatcher identities; event/map pointers; peer/write descriptors; operation
+names; and each sequence edge.  Rust does not submit an `accepted_source`,
+`same_dispatcher`, or `custody_distinct` boolean.  Failed close results
 are classified by the existing platform relation; an unpinned failure remains
 refused, while a pinned Linux failure that retires the number can discharge the
 descriptor obligation.
 
 The callback retires only pipe endpoint 1.  Endpoint 0 remains caller-owned.
-The bounded checker therefore accepts a separate `peer_close` observation to
-finish the enclosing kernel trace, and the returned certificate records that
-separation as an assumption.  It does not credit the peer close to `cb_timeout`.
+The bounded checker therefore accepts the separate `peer_close` observation
+that precedes callback dispatch and causes the send failure; the returned
+certificate records that separation as an assumption.  It does not credit the
+peer close to `cb_timeout`.
 
 ## Native evidence boundary
 
-No new native execution was produced in this worktree.  The already archived
-Cycle 19 observation has two concrete self-teardown executions:
+A fresh disposable Fluent Bit checkout at `66910c10…` and forced-Libevent
+Monkey build ran the repository's sanitized `monkey_observation.c` adapter.
+The adapter includes the actual pinned `mk_event.c`, invokes the original
+`cb_timeout` function pointer, and links the freshly built real `libmk_core.a`
+and `libevent.a`.  AddressSanitizer, UndefinedBehaviorSanitizer, and leak
+detection all remained enabled.  The first sandboxed attempt was preserved and
+failed with `SIGABRT` because local socket operations were denied.  The approved
+unsandboxed rerun exited 0.
 
-- `docs/reports/cycle19-native-rules/monkey_observation.jsonl`, sequences
-  51–56, event 4: callback enter, event delete, event free, callback exit.
-- The same file, sequences 73–78, event 7: callback enter, event delete, event
-  free, callback exit.
-- `docs/reports/cycle19-native-rules/monkey_bindings.jsonl` records the matching
-  `evutil_closesocket`, `event_del`, `event_free`, and `mk_mem_free` calls and
-  successful close results for both executions.
+The fresh run contains two real self-teardown executions.  The configured audit
+selected the non-injected execution at sequence 51: event 4, map address
+`134224661053792`, peer descriptor 7 closed by the caller, write descriptor 8
+closed by the callback, `event_del` at 54, `event_free` and `mk_mem_free` at 55,
+and callback exit at 56.  It matched production source path 0 and produced a
+15-operation bounded reactor certificate.  A second execution at sequence 73
+matches source path 1 and is retained in the raw artifacts.
 
-The integration owner must parse those observations (or a fresh equivalent)
-through the configured audit.  The unit tests exercise the strict evidence
-boundary and platform relation; they are not a replacement for that configured
-native binding.
+Private artifact SHA-256 values:
+
+- observer executable: `107e1a7a22b701b03a34223b1b07f4b19b2129aaf81d0e418000b3c880dcac63`
+- observations: `b7af7b443cc11ecda357681608e74ce345dce19ad1a11e4eaf91e7b4daf45cb1`
+- binding sidecar: `12f8aa654d2e0b2489012b79fd769b9e561b9cea47f72336ba33b703611946b1`
+
+`qcore-audit::timeout_teardown` loads the sealed production `cb_timeout`
+summary with `load_monkey_source`, verifies the linked Libevent source against
+the pinned checkout, validates a manifest over the observer, source, policy,
+raw outputs, and linked library, derives every primitive evidence fact from the
+raw JSONL records, re-reads source/profile/build and selected artifact bytes,
+rejects report aliases, then writes the bounded report.
 
 ## Negative controls
 
@@ -72,8 +91,12 @@ The Rust model refuses ordinary `FreeEvent` during a callback, generic
 nonblocking delete as authorization for self-free, wrong dispatchers, an event
 descriptor borrow, duplicate event/map release, delete/add/activate after event
 self-free, wrong callback exit, and payload access after map release.  Evidence
-tests refuse reordered traces, aliased peer/write descriptors, unpinned close
-failure, source cleanup reordering, and unknown JSON fields.  The Lean audit
+tests mutate every primitive QCore relationship, and also refuse aliased
+peer/write descriptors, unpinned close failure, source cleanup reordering, and
+unknown JSON fields.  Configured negative runs recomputed their manifest hashes
+and then refused a changed dispatcher, changed map-free pointer, duplicate
+sequence, and output alias; these reached semantic/alias checks rather than
+stopping at metadata hashes.  The Lean audit
 checks the matching positive transition and rejects ordinary free, blocking
 delete, activation, or a second free from `selfTeardown`.
 
@@ -84,12 +107,16 @@ All logs below are unique to this run and live outside the repository at
 
 | Command | Exit | Result | Log |
 |---|---:|---|---|
-| `cargo test -p qcore-core event_reactor --lib` | 0 | 17 passed, 0 failed | `core-event-reactor.log` |
-| `cargo test -p qcore-verification --test timeout_teardown` | 0 | 5 passed, 0 failed | `verification-timeout-teardown.log` |
-| `cargo clippy -p qcore-core -p qcore-verification --tests -- -D warnings` | 0 | clean | `clippy.log` |
-| `cargo fmt --all -- --check` | 0 | clean | `fmt.log` |
-| `lake build QCore.EventDriven QCore.TimeoutTeardown` | 0 | 3 jobs built | `lean-build.log` |
-| `lake env lean AuditTimeoutTeardown.lean` | 0 | audit accepted | `lean-audit.log` |
+| `cargo test -p qcore-core event_reactor --lib` | 0 | 17 passed, 0 failed | `core-event-reactor-final.log` |
+| `cargo test -p qcore-verification --test timeout_teardown` | 0 | 6 passed, 0 failed | `verification-timeout-teardown-final.log` |
+| `cargo test -p qcore-audit timeout_teardown` | 0 | audit targets compiled; name filter selected 0 tests | `audit-timeout-teardown.log` |
+| `cargo clippy -p qcore-core -p qcore-verification -p qcore-audit --tests --examples -- -D warnings` | 0 | clean | `clippy-final.log` |
+| `cargo fmt --all -- --check` | 0 | clean | `fmt-final.log` |
+| `lake build QCore.EventDriven QCore.TimeoutTeardown` | 0 | 3 jobs built | `lean-build-final.log` |
+| `lake env lean AuditTimeoutTeardown.lean` | 0 | audit accepted | `lean-audit-final.log` |
+| fresh forced-Libevent native build and sanitized observer | 0 | actual `cb_timeout` paths 0 and 1 executed | `native-prepare.log`, `native-build.log`, `native-unsandboxed-run.log` |
+| configured timeout audit, sequence 51 | 0 | production path 0 and native evidence checked | `configured-timeout-audit-final.log` |
+| dispatcher / map pointer / sequence / alias controls | 1 each | expected semantic refusals | `negative-*/audit.log`, `configured-alias-negative.log` |
 
 The global contract-corpus test is intentionally left to integration because
 the integrator owns its declaration/clause pins.  The repository-wide standing
@@ -98,12 +125,12 @@ gate and configured native parity are also integration responsibilities.
 ## Integrator reconciliation list
 
 - Add `monkey/timeout_teardown.qcore` to the corpus pin table as 5 declarations
-  and 22 clauses, preserving the declaration order above.
+  and 37 clauses, preserving the declaration order above.
 - Register `QCore.TimeoutTeardown` in `proof/QCore.lean` and run the full Lean
   audit/no-placeholder gate.
-- Wire the configured audit to the actual pinned Monkey and Libevent sources
-  and to strict native observation parsing; pass the observed Libevent revision
-  into `project_cb_timeout_source`.
+- Add the root-owned `quirin-audit timeout-teardown` dispatch to
+  `run_timeout_teardown_config`; the temporary focused example demonstrates the
+  same public route and may be removed during reconciliation.
 - Keep peer endpoint cleanup classified as enclosing caller evidence, not a
   callback-source action.
 - Update the acceptance matrix, status, increment record, and global exports as

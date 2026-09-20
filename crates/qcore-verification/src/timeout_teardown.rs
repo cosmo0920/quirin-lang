@@ -36,7 +36,6 @@ fn text_fact(source: &str, function: &str, fact: &str) -> Result<String, Timeout
 pub struct TimeoutTeardownContracts {
     source: String,
     callback: String,
-    native_trace: Vec<String>,
 }
 
 impl TimeoutTeardownContracts {
@@ -48,10 +47,6 @@ impl TimeoutTeardownContracts {
         Ok(Self {
             source: source.into(),
             callback: text_fact(source, "teardown_obligations", "callback")?,
-            native_trace: text_fact(source, "teardown_obligations", "native_trace")?
-                .split(',')
-                .map(str::to_owned)
-                .collect(),
         })
     }
 }
@@ -68,7 +63,6 @@ pub struct TimeoutTeardownSourceProjection {
     contract_digest: String,
     teardown_path_indices: Vec<usize>,
     path_call_sequences: Vec<Vec<String>>,
-    required_native_trace: Vec<String>,
 }
 
 impl TimeoutTeardownSourceProjection {
@@ -90,8 +84,8 @@ impl TimeoutTeardownSourceProjection {
     pub fn teardown_path_indices(&self) -> &[usize] {
         &self.teardown_path_indices
     }
-    pub fn required_native_trace(&self) -> &[String] {
-        &self.required_native_trace
+    pub fn path_call_sequences(&self) -> &[Vec<String>] {
+        &self.path_call_sequences
     }
 }
 
@@ -270,7 +264,6 @@ pub fn project_cb_timeout_source(
         contract_digest: sha256_hex(contracts.source.as_bytes()),
         teardown_path_indices: teardown_paths,
         path_call_sequences: sequences,
-        required_native_trace: contracts.native_trace.clone(),
     })
 }
 
@@ -292,14 +285,34 @@ pub struct TimeoutTeardownEvidence {
     pub libevent_event_c_digest: String,
     pub contract_digest: String,
     pub path_index: usize,
-    pub native_trace: Vec<String>,
+    pub callback: String,
     pub base: u32,
     pub event_id: u32,
     pub event_generation: u32,
     pub dispatcher: u32,
     pub map_argument: u32,
+    pub native_map_address: u64,
+    pub event_pointer: u64,
+    pub event_descriptor: Option<i32>,
     pub peer_descriptor: i32,
     pub callback_descriptor: i32,
+    pub delete_event_id: u32,
+    pub free_event_id: u32,
+    pub exit_event_id: u32,
+    pub delete_dispatcher: u32,
+    pub free_dispatcher: u32,
+    pub exit_dispatcher: u32,
+    pub callback_enter_sequence: u64,
+    pub close_sequence: u64,
+    pub delete_sequence: u64,
+    pub free_sequence: u64,
+    pub map_free_sequence: u64,
+    pub callback_exit_sequence: u64,
+    pub close_function: String,
+    pub delete_operation: String,
+    pub free_operation: String,
+    pub map_free_function: String,
+    pub exit_operation: String,
     pub callback_close: CloseObservation,
     pub peer_close: CloseObservation,
 }
@@ -366,27 +379,114 @@ pub fn check_timeout_teardown_evidence(
         || !projection
             .teardown_path_indices
             .contains(&evidence.path_index)
-        || evidence.native_trace != projection.required_native_trace
-        || evidence.peer_descriptor == evidence.callback_descriptor
+        || evidence.native_map_address == 0
+        || evidence.event_pointer == 0
     {
-        return Err(TimeoutTeardownError::Evidence("evidence does not bind the projected source, policy, path, trace, and distinct descriptors".into()));
+        return Err(TimeoutTeardownError::Evidence(
+            "evidence does not bind the projected source, policy, path, and native identities"
+                .into(),
+        ));
     }
     check_typed_contract_facts(
         &projection.policy_source,
         "teardown_obligations",
         &[
-            ("callback", ContractFact::Text(projection.callback.clone())),
-            ("event_descriptor_absent", ContractFact::Integer(1)),
-            ("same_dispatcher", ContractFact::Integer(1)),
+            ("callback", ContractFact::Text(evidence.callback.clone())),
             (
-                "native_trace",
-                ContractFact::Text(evidence.native_trace.join(",")),
+                "event_descriptor_present",
+                ContractFact::Integer(i128::from(evidence.event_descriptor.is_some())),
             ),
             (
-                "event_map_descriptor_custody_distinct",
-                ContractFact::Integer(i128::from(
-                    evidence.peer_descriptor != evidence.callback_descriptor,
-                )),
+                "callback_dispatcher",
+                ContractFact::Integer(i128::from(evidence.dispatcher)),
+            ),
+            (
+                "delete_dispatcher",
+                ContractFact::Integer(i128::from(evidence.delete_dispatcher)),
+            ),
+            (
+                "free_dispatcher",
+                ContractFact::Integer(i128::from(evidence.free_dispatcher)),
+            ),
+            (
+                "exit_dispatcher",
+                ContractFact::Integer(i128::from(evidence.exit_dispatcher)),
+            ),
+            (
+                "event_id",
+                ContractFact::Integer(i128::from(evidence.event_id)),
+            ),
+            (
+                "delete_event_id",
+                ContractFact::Integer(i128::from(evidence.delete_event_id)),
+            ),
+            (
+                "free_event_id",
+                ContractFact::Integer(i128::from(evidence.free_event_id)),
+            ),
+            (
+                "exit_event_id",
+                ContractFact::Integer(i128::from(evidence.exit_event_id)),
+            ),
+            (
+                "native_map_address",
+                ContractFact::Integer(i128::from(evidence.native_map_address)),
+            ),
+            (
+                "event_pointer",
+                ContractFact::Integer(i128::from(evidence.event_pointer)),
+            ),
+            (
+                "peer_descriptor",
+                ContractFact::Integer(i128::from(evidence.peer_descriptor)),
+            ),
+            (
+                "callback_descriptor",
+                ContractFact::Integer(i128::from(evidence.callback_descriptor)),
+            ),
+            (
+                "close_function",
+                ContractFact::Text(evidence.close_function.clone()),
+            ),
+            (
+                "delete_operation",
+                ContractFact::Text(evidence.delete_operation.clone()),
+            ),
+            (
+                "free_operation",
+                ContractFact::Text(evidence.free_operation.clone()),
+            ),
+            (
+                "map_free_function",
+                ContractFact::Text(evidence.map_free_function.clone()),
+            ),
+            (
+                "exit_operation",
+                ContractFact::Text(evidence.exit_operation.clone()),
+            ),
+            (
+                "callback_enter_sequence",
+                ContractFact::Integer(i128::from(evidence.callback_enter_sequence)),
+            ),
+            (
+                "close_sequence",
+                ContractFact::Integer(i128::from(evidence.close_sequence)),
+            ),
+            (
+                "delete_sequence",
+                ContractFact::Integer(i128::from(evidence.delete_sequence)),
+            ),
+            (
+                "free_sequence",
+                ContractFact::Integer(i128::from(evidence.free_sequence)),
+            ),
+            (
+                "map_free_sequence",
+                ContractFact::Integer(i128::from(evidence.map_free_sequence)),
+            ),
+            (
+                "callback_exit_sequence",
+                ContractFact::Integer(i128::from(evidence.callback_exit_sequence)),
             ),
         ],
     )
@@ -421,6 +521,10 @@ pub fn check_timeout_teardown_evidence(
             base: evidence.base,
             dispatcher: evidence.dispatcher,
         },
+        // `cb_timeout` owns only pipe[1]. The caller closes pipe[0] to make the
+        // send fail before dispatching this callback; this evidence is kept
+        // outside the callback trace and merely completes the enclosing model.
+        close_operation(evidence.peer_descriptor, &evidence.peer_close),
         EventOperation::Activate {
             event,
             reason: ActivationReason::Timeout,
@@ -446,7 +550,6 @@ pub fn check_timeout_teardown_evidence(
         EventOperation::EndDispatch {
             base: evidence.base,
         },
-        close_operation(evidence.peer_descriptor, &evidence.peer_close),
         EventOperation::FreeBase {
             base: evidence.base,
         },
@@ -471,7 +574,7 @@ pub fn check_timeout_teardown_evidence(
         assumptions: vec![
             "native identifiers and close results are independently observed".into(),
             "Libevent event.c and Monkey source match their pinned digests".into(),
-            "the caller separately closes the retained peer endpoint after callback scope".into(),
+            "the caller separately closes the peer endpoint before callback dispatch".into(),
         ],
         evidence_version: "cycle18.timeout-self-teardown.v1".into(),
         checked_operations: certificate.checked_operations,
@@ -492,24 +595,61 @@ mod policy_tests {
     fn every_obligation_literal_is_load_bearing() {
         for (needle, replacement) in [
             (
-                "event_descriptor_absent == 1",
-                "event_descriptor_absent == 0",
+                "event_descriptor_present == 0",
+                "event_descriptor_present == 1",
             ),
-            ("same_dispatcher == 1", "same_dispatcher == 0"),
             (
-                "event_map_descriptor_custody_distinct == 1",
-                "event_map_descriptor_custody_distinct == 0",
+                "callback_dispatcher == delete_dispatcher",
+                "callback_dispatcher != delete_dispatcher",
+            ),
+            (
+                "native_map_address != event_pointer",
+                "native_map_address == event_pointer",
             ),
         ] {
             let changed = POLICY.replace(needle, replacement);
             let contracts = TimeoutTeardownContracts::parse_policy(&changed).unwrap();
-            assert!(check_typed_contract_facts(&contracts.source, "teardown_obligations", &[
-                ("callback", ContractFact::Text("cb_timeout".into())),
-                ("event_descriptor_absent", ContractFact::Integer(1)),
-                ("same_dispatcher", ContractFact::Integer(1)),
-                ("native_trace", ContractFact::Text("callback_enter,close_socket,event_del,event_free,map_free,callback_exit".into())),
-                ("event_map_descriptor_custody_distinct", ContractFact::Integer(1)),
-            ]).is_err());
+            let facts = primitive_test_facts();
+            assert!(
+                check_typed_contract_facts(&contracts.source, "teardown_obligations", &facts)
+                    .is_err()
+            );
         }
+    }
+
+    fn primitive_test_facts() -> Vec<(&'static str, ContractFact)> {
+        vec![
+            ("callback", ContractFact::Text("cb_timeout".into())),
+            ("event_descriptor_present", ContractFact::Integer(0)),
+            ("callback_dispatcher", ContractFact::Integer(1)),
+            ("delete_dispatcher", ContractFact::Integer(1)),
+            ("free_dispatcher", ContractFact::Integer(1)),
+            ("exit_dispatcher", ContractFact::Integer(1)),
+            ("event_id", ContractFact::Integer(4)),
+            ("delete_event_id", ContractFact::Integer(4)),
+            ("free_event_id", ContractFact::Integer(4)),
+            ("exit_event_id", ContractFact::Integer(4)),
+            ("native_map_address", ContractFact::Integer(400)),
+            ("event_pointer", ContractFact::Integer(500)),
+            ("peer_descriptor", ContractFact::Integer(7)),
+            ("callback_descriptor", ContractFact::Integer(8)),
+            (
+                "close_function",
+                ContractFact::Text("evutil_closesocket".into()),
+            ),
+            ("delete_operation", ContractFact::Text("event_del".into())),
+            ("free_operation", ContractFact::Text("event_free".into())),
+            (
+                "map_free_function",
+                ContractFact::Text("mk_mem_free".into()),
+            ),
+            ("exit_operation", ContractFact::Text("callback_exit".into())),
+            ("callback_enter_sequence", ContractFact::Integer(51)),
+            ("close_sequence", ContractFact::Integer(53)),
+            ("delete_sequence", ContractFact::Integer(54)),
+            ("free_sequence", ContractFact::Integer(55)),
+            ("map_free_sequence", ContractFact::Integer(55)),
+            ("callback_exit_sequence", ContractFact::Integer(56)),
+        ]
     }
 }

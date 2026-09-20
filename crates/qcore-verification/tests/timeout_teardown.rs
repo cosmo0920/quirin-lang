@@ -56,14 +56,34 @@ fn evidence(projection: &TimeoutTeardownSourceProjection) -> TimeoutTeardownEvid
         libevent_event_c_digest: projection.libevent_event_c_digest().into(),
         contract_digest: projection.contract_digest().into(),
         path_index: 1,
-        native_trace: projection.required_native_trace().to_vec(),
+        callback: "cb_timeout".into(),
         base: 2,
         event_id: 4,
         event_generation: 1,
         dispatcher: 1,
         map_argument: 400,
+        native_map_address: 400,
+        event_pointer: 500,
+        event_descriptor: None,
         peer_descriptor: 7,
         callback_descriptor: 8,
+        delete_event_id: 4,
+        free_event_id: 4,
+        exit_event_id: 4,
+        delete_dispatcher: 1,
+        free_dispatcher: 1,
+        exit_dispatcher: 1,
+        callback_enter_sequence: 51,
+        close_sequence: 53,
+        delete_sequence: 54,
+        free_sequence: 55,
+        map_free_sequence: 55,
+        callback_exit_sequence: 56,
+        close_function: "evutil_closesocket".into(),
+        delete_operation: "event_del".into(),
+        free_operation: "event_free".into(),
+        map_free_function: "mk_mem_free".into(),
+        exit_operation: "callback_exit".into(),
         callback_close: CloseObservation::Success,
         peer_close: CloseObservation::Success,
     }
@@ -76,17 +96,6 @@ fn sealed_source_and_pinned_libevent_derive_both_teardown_paths() {
     }
     let projection = projection();
     assert_eq!(projection.teardown_path_indices(), &[0, 1]);
-    assert_eq!(
-        projection.required_native_trace(),
-        [
-            "callback_enter",
-            "close_socket",
-            "event_del",
-            "event_free",
-            "map_free",
-            "callback_exit"
-        ]
-    );
 }
 
 #[test]
@@ -144,7 +153,7 @@ fn source_order_and_evidence_binding_are_load_bearing() {
 
     let projection = projection();
     let mut wrong = evidence(&projection);
-    wrong.native_trace.swap(2, 3);
+    std::mem::swap(&mut wrong.delete_sequence, &mut wrong.free_sequence);
     assert!(check_timeout_teardown_evidence(&projection, &wrong).is_err());
     let mut same_descriptor = evidence(&projection);
     same_descriptor.peer_descriptor = same_descriptor.callback_descriptor;
@@ -153,6 +162,83 @@ fn source_order_and_evidence_binding_are_load_bearing() {
 
 #[test]
 fn evidence_json_refuses_unknown_fields() {
-    let value = r#"{"source_summary_digest":"x","libevent_event_c_digest":"x","contract_digest":"x","path_index":0,"native_trace":[],"base":1,"event_id":1,"event_generation":1,"dispatcher":1,"map_argument":1,"peer_descriptor":3,"callback_descriptor":4,"callback_close":{"result":"success"},"peer_close":{"result":"success"},"claimed_safe":true}"#;
-    assert!(serde_json::from_str::<TimeoutTeardownEvidence>(value).is_err());
+    if qcore_c_gateway::clang_command().is_err() {
+        return;
+    }
+    let mut value = serde_json::to_value(evidence(&projection())).unwrap();
+    value
+        .as_object_mut()
+        .unwrap()
+        .insert("claimed_safe".into(), serde_json::json!(true));
+    assert!(serde_json::from_value::<TimeoutTeardownEvidence>(value).is_err());
+}
+
+#[test]
+fn every_primitive_native_relationship_is_load_bearing() {
+    if qcore_c_gateway::clang_command().is_err() {
+        return;
+    }
+    let projection = projection();
+    let baseline = evidence(&projection);
+    let mut mutations = Vec::new();
+    let mut changed = baseline.clone();
+    changed.event_descriptor = Some(9);
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.delete_dispatcher = 2;
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.free_dispatcher = 2;
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.exit_dispatcher = 2;
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.delete_event_id = 5;
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.free_event_id = 5;
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.exit_event_id = 5;
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.event_pointer = changed.native_map_address;
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.peer_descriptor = changed.callback_descriptor;
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.close_function = "close".into();
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.delete_operation = "event_free".into();
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.free_operation = "event_del".into();
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.map_free_function = "free".into();
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.exit_operation = "callback_enter".into();
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.close_sequence = changed.callback_enter_sequence;
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.delete_sequence = changed.close_sequence;
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.free_sequence = changed.delete_sequence;
+    mutations.push(changed);
+    let mut changed = baseline.clone();
+    changed.map_free_sequence += 1;
+    mutations.push(changed);
+    let mut changed = baseline;
+    changed.callback_exit_sequence = changed.free_sequence;
+    mutations.push(changed);
+    for changed in mutations {
+        assert!(check_timeout_teardown_evidence(&projection, &changed).is_err());
+    }
 }
