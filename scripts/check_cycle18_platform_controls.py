@@ -57,6 +57,28 @@ def main():
         selected["run_manifest"] = str(manifest_path)
         cases.append(("rehashed_core_pthreads_role_swap", swapped))
 
+        compile_role = copy.deepcopy(baseline)
+        selected = compile_role["artifact_sets"][0]
+        compile_commands = json.loads(pathlib.Path(selected["compile_commands"]).read_text())
+        core_entry = next(
+            entry for entry in compile_commands
+            if entry["output"] == "CMakeFiles/event_core_static.dir/event.c.o"
+        )
+        core_entry["output"] = "CMakeFiles/event_static.dir/event.c.o"
+        core_entry["command"] = core_entry["command"].replace(
+            "CMakeFiles/event_core_static.dir/event.c.o",
+            "CMakeFiles/event_static.dir/event.c.o",
+        )
+        compile_path = directory / "relabelled-compile-commands.json"
+        write(compile_path, compile_commands)
+        selected["compile_commands"] = str(compile_path)
+        manifest = json.loads(pathlib.Path(selected["run_manifest"]).read_text())
+        manifest["artifacts_sha256"]["compile_commands"] = digest(compile_path)
+        manifest_path = directory / "compile-role-manifest.json"
+        write(manifest_path, manifest)
+        selected["run_manifest"] = str(manifest_path)
+        cases.append(("rehashed_compile_archive_role_relabel", compile_role))
+
         same_thread = copy.deepcopy(baseline)
         same_matrix = copy.deepcopy(matrix)
         row = next(row for row in same_matrix["rows"] if row["policy"] == "linux_epoll_asan_profile")
@@ -85,6 +107,14 @@ def main():
         write(matrix_path, transparent_matrix)
         transparent["matrix"] = str(matrix_path)
         cases.append(("observer_transparency_assertion", transparent))
+
+        relabelled = copy.deepcopy(baseline)
+        relabelled_matrix = copy.deepcopy(matrix)
+        relabelled_matrix["artifact"] = "monkey/callback-composition"
+        matrix_path = directory / "relabelled-artifact-matrix.json"
+        write(matrix_path, relabelled_matrix)
+        relabelled["matrix"] = str(matrix_path)
+        cases.append(("generic_probe_relabelled_as_monkey", relabelled))
 
         for name, config in cases:
             config["report"] = str(directory / f"{name}-report.json")

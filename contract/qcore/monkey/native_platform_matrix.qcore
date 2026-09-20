@@ -2,6 +2,8 @@ module contract;
 
 extern fn native_platform_source_identity() -> unit contract {
     ensures normal libevent_revision == "d82464a277d0f42703702c4dfd9af6af38595a83";
+    ensures normal artifact == "libevent/generic-cross-thread-activation";
+    ensures normal historical_validation_sha256 == "f0717d75797037234bdf0aefb7b7738c5ee0d1bcdec527ffe4738f0e5cc76c44";
 };
 
 extern fn linux_epoll_asan_profile() -> unit contract {

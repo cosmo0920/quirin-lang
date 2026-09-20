@@ -1,6 +1,12 @@
 import QCore.NativePlatformMatrix
 
-#print axioms QCore.NativePlatformMatrix.selected_matrix_is_total_and_fail_closed
+#print axioms QCore.NativePlatformMatrix.required_profiles_are_seven_and_unique
+#print axioms QCore.NativePlatformMatrix.valid_matrix_has_exact_profiles
+#print axioms QCore.NativePlatformMatrix.selected_matrix_is_valid
+#print axioms QCore.NativePlatformMatrix.all_unknown_matrix_is_valid
+#print axioms QCore.NativePlatformMatrix.profile_relabel_refuses
+#print axioms QCore.NativePlatformMatrix.same_thread_refuses
+#print axioms QCore.NativePlatformMatrix.compiler_substitution_refuses
+#print axioms QCore.NativePlatformMatrix.artifact_substitution_refuses
 #print axioms QCore.NativePlatformMatrix.carried_history_does_not_promote
-#print axioms QCore.NativePlatformMatrix.current_tsan_row_requires_join
 #print axioms QCore.NativePlatformMatrix.transparency_claim_refuses
