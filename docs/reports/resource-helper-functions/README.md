@@ -60,18 +60,24 @@ is not general typed-error cleanup support.
 
 The C emitter retains real helper functions. Owned values cross by value, read
 loans use pointers to const byte descriptors, write loans use mutable pointers,
-and the caller's moved descriptor is poisoned immediately after argument
-evaluation. The generated bounds and allocation checks remain runtime witnesses
+and the caller's moved descriptor is poisoned after the helper returns. The
+generated bounds and allocation checks remain runtime witnesses
 of decisions already made by the checker.
 
 ## Acceptance boundary
 
-The profile accepts at most 256 reachable functions, call depth 64, 16,384
-source IR statements and 32,768 expanded statements. It supports `i32`, `unit`,
-`own<bytes> use one`, `borrow<bytes>` and `lend<bytes>` parameters; unit, i32
+The profile accepts at most 256 reachable functions, 256 parameters per
+function, call depth 64, 16,384 source IR statements and 32,768 expanded items.
+An expanded item is a visited statement, emitted buffer event, or generated
+ownership operation, including each literal-argument bind and loan wrapper. It
+supports `i32`, grade-one `own<bytes>`, `borrow<bytes>` and `lend<bytes>`
+parameters; unit, i32
 and owned-byte results; direct calls; and the flat standard-buffer operations.
+The existing grade-one spellings `use one`, `use 1` and `use [1,1]` are
+semantically equivalent and accepted; non-one grades refuse at Q100.
 The effect row is absent/inferred or an explicit subset of `alloc, mut` that
-contains every derived direct and indirect effect.
+contains every derived direct and indirect effect. It uses explicit comma
+separators, no trailing comma, appears once, and consumes the complete header.
 
 It explicitly refuses:
 
@@ -86,15 +92,17 @@ It explicitly refuses:
 * allocation failure that could leave an already-live owner without custody;
 * source contracts and general typed-error payloads.
 
-All bounds refuse without truncation. The expanded-event bound is enforced
-during expansion, so a call DAG that invokes the next helper twice cannot grow
-exponentially up to the depth limit.
+All bounds refuse without truncation. The expanded-item bound is charged before
+generated argument events and operations are appended, so a high-arity call DAG
+that invokes the next helper twice cannot grow exponentially up to the depth
+limit.
 
 ## Diagnostic attribution
 
 This card allocates no code or semantic pass. Frontend signature, call and graph
-shape conditions use OrdinaryTypes Q020; a nonempty sequential source contract
-retains Q021; unsupported grades use Usage Q100. A malformed inherited buffer
+shape conditions use OrdinaryTypes Q020; an empty contract block is unsupported
+resource-helper header syntax at Q020, while a nonempty sequential source
+contract retains Q021; unsupported grades use Usage Q100. A malformed inherited buffer
 statement uses StandardBuffer Q051. Core extent obligations use Q053, inherited
 custody refusals Q054, independent certificate/expansion failures Q056 and
 transitive effect-row refusals Q057. Tests pin representative Q020, Q053, Q054,
@@ -113,7 +121,8 @@ model rather than a new equality-shaped theorem.
 
 Rust unit tests cover the ownership path and adversarial controls: repeated
 owner aliasing, stale moves, local and transitive allocation failure, uncalled
-helpers, call-site minimum extents, an exponentially expanding DAG, a
+helpers, call-site minimum extents, an exponentially expanding DAG, a repeated
+high-arity DAG that multiplies generated argument events and operations, a
 reverse-declared chain beyond depth 64, and an invalid scalar return binding.
 End-to-end tests cover routing, distinct task `Buffer`, whitespace-normalized
 types, usage grades, shadowed calls, effects and diagnostic attribution. On
@@ -130,15 +139,15 @@ fixed.
 
 ## Residuals
 
-1. This is a closed executable profile, not a general resource-capable function
+1. **RESOURCE-HELPERS-GENERAL-ABI.** This is a closed executable profile, not a general resource-capable function
    type system or separately compiled library ABI.
-2. Every resource helper must be reachable from the selected entry. Universal
+2. **RESOURCE-HELPERS-UNCALLED-PROOF.** Every resource helper must be reachable from the selected entry. Universal
    argument proofs for uncalled/public helpers remain unimplemented.
-3. Loans cover a whole buffer for one call. Range subloans, returned borrows,
+3. **RESOURCE-HELPERS-SUBLOANS.** Loans cover a whole buffer for one call. Range subloans, returned borrows,
    stored loans and relending need a richer lifetime/path model.
-4. Allocation failure has one process-exit behavior. Typed errors, recovery and
+4. **RESOURCE-HELPERS-TYPED-ERRORS.** Allocation failure has one process-exit behavior. Typed errors, recovery and
    resource payloads require a checked per-error-edge cleanup model.
-5. Lean covers the bounded decision rules, not parser extraction, graph
+5. **RESOURCE-HELPERS-C-REFINEMENT.** Lean covers the bounded decision rules, not parser extraction, graph
    flattening or C refinement end to end.
 
 ## Integrator reconciliation
@@ -159,4 +168,3 @@ fixed.
    distinction and the explicit `None` versus unsupported-grade refusal tests.
 5. After reconciliation, run the full standing gate once on the combined tip;
    the gate here measures only this isolated resource-helper branch.
-

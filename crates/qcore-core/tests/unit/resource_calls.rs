@@ -148,6 +148,7 @@ fn one_owner_cannot_be_moved_and_borrowed_in_the_same_call() {
     })
     .unwrap_err();
     assert!(refusal.message.contains("incompatible owned/borrow modes"));
+    assert_eq!(refusal.category, RefusalCategory::Ownership);
 }
 
 #[test]
@@ -287,15 +288,13 @@ fn call_site_must_discharge_the_helpers_minimum_extent() {
             Statement::Return(ReturnValue::Unit),
         ],
     );
-    assert!(
-        check(Program {
-            functions: vec![helper, main],
-            entry: 1
-        })
-        .unwrap_err()
-        .message
-        .contains("requires extent 3")
-    );
+    let refusal = check(Program {
+        functions: vec![helper, main],
+        entry: 1,
+    })
+    .unwrap_err();
+    assert!(refusal.message.contains("requires extent 3"));
+    assert_eq!(refusal.category, RefusalCategory::Extent);
 }
 
 #[test]
@@ -331,7 +330,69 @@ fn acyclic_dag_expansion_is_bounded_before_it_can_grow_exponentially() {
         entry: 15,
     })
     .unwrap_err();
-    assert_eq!(refusal.message, "resource helper expansion bound exceeded");
+    assert_eq!(
+        refusal.message,
+        "resource helper expanded-item bound exceeded"
+    );
+}
+
+#[test]
+fn high_arity_repeated_dag_charges_generated_events_and_operations() {
+    let parameters = (0..MAX_PARAMETERS)
+        .map(|index| parameter(&format!("p{index}"), Type::I32))
+        .collect::<Vec<_>>();
+    let arguments = (0..MAX_PARAMETERS)
+        .map(|_| Argument::Scalar(BufferOperand::Literal(0)))
+        .collect::<Vec<_>>();
+    let mut functions = vec![function(
+        "leaf",
+        parameters,
+        Type::Unit,
+        vec![Statement::Return(ReturnValue::Unit)],
+    )];
+    functions.push(function(
+        "fan",
+        vec![],
+        Type::Unit,
+        vec![
+            Statement::Call {
+                binding: None,
+                callee: 0,
+                arguments: arguments.clone(),
+            },
+            Statement::Call {
+                binding: None,
+                callee: 0,
+                arguments,
+            },
+            Statement::Return(ReturnValue::Unit),
+        ],
+    ));
+    for level in 2..=7 {
+        functions.push(function(
+            &format!("fan{level}"),
+            vec![],
+            Type::Unit,
+            vec![
+                Statement::Call {
+                    binding: None,
+                    callee: level - 1,
+                    arguments: vec![],
+                },
+                Statement::Call {
+                    binding: None,
+                    callee: level - 1,
+                    arguments: vec![],
+                },
+                Statement::Return(ReturnValue::Unit),
+            ],
+        ));
+    }
+    let entry = functions.len() - 1;
+    assert_eq!(
+        check(Program { functions, entry }).unwrap_err().message,
+        "resource helper expanded-item bound exceeded"
+    );
 }
 
 #[test]

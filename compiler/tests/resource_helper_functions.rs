@@ -76,7 +76,7 @@ fn spaced_bytes_types_stay_on_the_resource_helper_route() {
 #[test]
 fn explicit_non_one_and_borrow_usage_grades_refuse() {
     let owned = ROUND_TRIP.replace("own<bytes> use one", "own<bytes> use zero");
-    assert!(refusal(&owned).contains("requires `use one`"));
+    assert!(refusal(&owned).contains("requires grade one"));
     assert!(refusal_codes(&owned).iter().any(|code| code == "Q100"));
     let borrowed = ROUND_TRIP.replace("borrow<bytes>", "borrow<bytes> use zero");
     assert!(refusal(&borrowed).contains("ungraded"));
@@ -84,6 +84,43 @@ fn explicit_non_one_and_borrow_usage_grades_refuse() {
     let scalar = ROUND_TRIP.replace("byte: i32", "byte: i32 use zero");
     assert!(refusal(&scalar).contains("ungraded"));
     assert!(refusal_codes(&scalar).iter().any(|code| code == "Q100"));
+}
+
+#[test]
+fn equivalent_grade_one_spellings_are_accepted() {
+    for grade in ["use 1", "use [1,1]"] {
+        let source = ROUND_TRIP.replace("use one", grade);
+        assert_eq!(
+            compile(&source).unwrap().execution_profile,
+            SourceExecutionProfile::ResourceCallsV1
+        );
+    }
+}
+
+#[test]
+fn complete_headers_and_token_structural_types_are_required() {
+    let cases = [
+        ROUND_TRIP.replace(
+            "fn main() -> unit effects { alloc, mut }",
+            "fn main() -> unit effects { alloc, mut } use zero",
+        ),
+        ROUND_TRIP.replace(
+            "fn main() -> unit effects { alloc, mut }",
+            "fn main() -> unit effects { alloc, mut } effects { mut }",
+        ),
+        ROUND_TRIP.replace("effects { alloc, mut }", "effects { alloc mut }"),
+        ROUND_TRIP.replace("effects { alloc, mut }", "effects { alloc, mut, }"),
+        ROUND_TRIP.replace(
+            "fn main() -> unit effects { alloc, mut }",
+            "fn main() -> unit effects { alloc, mut } contract { }",
+        ),
+        ROUND_TRIP.replacen("borrow<bytes>", "borrow<by tes>", 1),
+        ROUND_TRIP.replacen("byte: i32", "byte: i 32", 1),
+        ROUND_TRIP.replacen("-> own<bytes>", "-> own<by tes>", 1),
+    ];
+    for source in cases {
+        assert!(compile(&source).is_err(), "malformed header was accepted");
+    }
 }
 
 #[test]
@@ -168,7 +205,8 @@ fn emitted_real_helpers_execute_under_address_and_undefined_sanitizers() {
         .replace("int main(void)", "int checked_entry(void)")
         + "\nint main(void) {\n\
                qcore_bytes input = qcore_bytes_new((size_t) 1u);\n\
-               qcore_bytes_store(input.data, input.len, (size_t) 0u, INT32_C(42));\n\
+               qcore_bytes_store(input.data, input.len, (size_t) 0u, INT32_C(17));\n\
+               qcore_f1(&input, INT32_C(42));\n\
                qcore_bytes output = qcore_f2(input);\n\
                input.data = NULL; input.len = 0u;\n\
                int ok = output.len == (size_t) 1u &&\n\

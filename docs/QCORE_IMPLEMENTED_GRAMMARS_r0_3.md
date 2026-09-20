@@ -181,9 +181,10 @@ angle brackets is insignificant.
 
 ```ebnf
 parameter = NAME, ":", ("i32"
-          | "own", "<", "bytes", ">", "use", "one"
+          | "own", "<", "bytes", ">", "use", grade-one
           | "borrow", "<", "bytes", ">"
           | "lend", "<", "bytes", ">") ;
+grade-one = "one" | "1" | "[", "1", ",", "1", "]" ;
 result = "unit" | "i32" | "own", "<", "bytes", ">" ;
 argument = scalar-operand | "move", NAME | "borrow", NAME
          | "lend", "(", NAME, ")" ;
@@ -212,22 +213,28 @@ the existing standard-buffer checker and certificate recheck.
 
 The derived effect row contains `alloc` and/or `mut`, transitively. An absent
 row infers them. An explicit row must contain all derived effects; no other
-effect is supported. Allocation failure exits with status 86 and has no error
+effect is supported. An explicit row uses commas between effects, permits no
+trailing comma, appears at most once and consumes the rest of the header;
+residual header tokens refuse. Allocation failure exits with status 86 and has no error
 payload in this profile. Therefore an allocation or allocation-performing call
 is admitted only when its failure cannot strand another live owner in the
 caller or callee. This is an allocation-failure cleanup condition, not general
 typed-error support.
 
-Limits are 256 functions, call depth 64, 16,384 source IR statements, and
-32,768 expanded statements. All limits refuse rather than truncate. The
-expanded-statement bound applies while flattening the call DAG, so repeated
-calls cannot cause exponential work under the depth bound. Branches, loops,
+Limits are 256 functions, 256 parameters per function, call depth 64, 16,384
+source IR statements, and 32,768 expanded items. An expanded item is one
+visited statement, emitted buffer event, or generated ownership operation,
+including literal-argument binds and loan wrappers. All limits refuse rather
+than truncate. The expanded-item bound applies while flattening the call DAG,
+so repeated high-arity calls cannot cause exponential work under the depth
+bound. Branches, loops,
 records, extern calls, task `Buffer`, source contracts, local usage forms other
 than `own<bytes> use one`, borrowed results, computed extents and indices, and
 cross-profile calls remain outside this subset.
 
 The profile allocates no diagnostic code. Ordinary signature, call-graph and
-shape refusals use Q020; nonempty source contracts retain Q021; invalid usage
+shape refusals use Q020; an empty contract block is an unsupported header at
+Q020 and nonempty source contracts retain Q021; invalid usage
 grades use Q100. Buffer statement shape uses Q051, extent obligations Q053,
 inherited custody refusals Q054, certificate recheck failures Q056 and missing
 transitive effects Q057. The Lean module proves bounded decision lemmas for

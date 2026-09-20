@@ -15,9 +15,10 @@ use crate::std_buffer::{
 use crate::typed_errors::{Effect, EffectRow};
 
 pub const MAX_FUNCTIONS: usize = 256;
+pub const MAX_PARAMETERS: usize = 256;
 pub const MAX_CALL_DEPTH: usize = 64;
 pub const MAX_STATEMENTS: usize = 16_384;
-pub const MAX_EXPANDED_STATEMENTS: usize = 32_768;
+pub const MAX_EXPANDED_ITEMS: usize = 32_768;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Type {
@@ -77,18 +78,54 @@ pub struct Program {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+pub enum RefusalCategory {
+    Ordinary,
+    Extent,
+    Ownership,
+    Certificate,
+    Effects,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Refusal {
     pub function: usize,
     pub statement: usize,
+    pub category: RefusalCategory,
     pub message: String,
 }
 
 fn bad(function: usize, statement: usize, message: impl Into<String>) -> Refusal {
+    categorized_bad(function, statement, RefusalCategory::Ordinary, message)
+}
+
+fn categorized_bad(
+    function: usize,
+    statement: usize,
+    category: RefusalCategory,
+    message: impl Into<String>,
+) -> Refusal {
     Refusal {
         function,
         statement,
+        category,
         message: message.into(),
     }
+}
+
+fn extent_bad(function: usize, statement: usize, message: impl Into<String>) -> Refusal {
+    categorized_bad(function, statement, RefusalCategory::Extent, message)
+}
+
+fn ownership_bad(function: usize, statement: usize, message: impl Into<String>) -> Refusal {
+    categorized_bad(function, statement, RefusalCategory::Ownership, message)
+}
+
+fn certificate_bad(function: usize, statement: usize, message: impl Into<String>) -> Refusal {
+    categorized_bad(function, statement, RefusalCategory::Certificate, message)
+}
+
+fn effects_bad(function: usize, statement: usize, message: impl Into<String>) -> Refusal {
+    categorized_bad(function, statement, RefusalCategory::Effects, message)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -170,14 +207,18 @@ fn note_access(
     match (binding, write) {
         (Binding::Owned(_), _) | (Binding::Write(_), _) | (Binding::Read(_), false) => {}
         (Binding::Read(_), true) => {
-            return Err(bad(
+            return Err(ownership_bad(
                 function,
                 statement,
                 "a borrow<bytes> parameter grants read authority only",
             ));
         }
-        (Binding::Moved, _) => return Err(bad(function, statement, "use after owned move")),
-        (Binding::Dropped, _) => return Err(bad(function, statement, "use after drop")),
+        (Binding::Moved, _) => {
+            return Err(ownership_bad(function, statement, "use after owned move"));
+        }
+        (Binding::Dropped, _) => {
+            return Err(ownership_bad(function, statement, "use after drop"));
+        }
         (Binding::Scalar, _) => {
             return Err(bad(
                 function,
@@ -194,7 +235,7 @@ fn note_access(
         )
     })?;
     match binding {
-        Binding::Owned(Extent::Exact(extent)) if required > *extent => Err(bad(
+        Binding::Owned(Extent::Exact(extent)) if required > *extent => Err(extent_bad(
             function,
             statement,
             format!("byte index requires extent {required}, but this buffer has extent {extent}"),
@@ -262,7 +303,7 @@ fn analyze_function(
                 }
                 BufferEvent::Acquire { name, extent } => {
                     if !owned_names(&bindings).is_empty() {
-                        return Err(bad(
+                        return Err(ownership_bad(
                             function,
                             statement,
                             "allocation failure would leave an owned bytes value without custody; release it before allocating",
@@ -318,7 +359,7 @@ fn analyze_function(
                         source,
                         Binding::Owned(_) | Binding::Read(_) | Binding::Write(_)
                     ) {
-                        return Err(bad(
+                        return Err(ownership_bad(
                             function,
                             statement,
                             "extent requires a live bytes value",
@@ -335,16 +376,26 @@ fn analyze_function(
                     match slot {
                         Binding::Owned(_) => *slot = Binding::Dropped,
                         Binding::Read(_) | Binding::Write(_) => {
-                            return Err(bad(
+                            return Err(ownership_bad(
                                 function,
                                 statement,
                                 "a borrowed bytes parameter cannot be dropped",
                             ));
                         }
                         Binding::Moved => {
-                            return Err(bad(function, statement, "drop after owned move"));
+                            return Err(ownership_bad(
+                                function,
+                                statement,
+                                "drop after owned move",
+                            ));
                         }
-                        _ => return Err(bad(function, statement, "drop requires owned bytes")),
+                        _ => {
+                            return Err(ownership_bad(
+                                function,
+                                statement,
+                                "drop requires owned bytes",
+                            ));
+                        }
                     }
                 }
                 BufferEvent::Return => {
@@ -399,7 +450,7 @@ fn analyze_function(
                     let owns = modes.contains(&Type::OwnedBytes);
                     let writes = modes.contains(&Type::WriteBytes);
                     if (owns && modes.len() > 1) || (writes && modes.len() > 1) {
-                        return Err(bad(
+                        return Err(ownership_bad(
                             function,
                             statement,
                             format!(
@@ -421,7 +472,7 @@ fn analyze_function(
                         .filter(|name| !moved.contains(name.as_str()))
                         .collect::<Vec<_>>();
                     if !retained.is_empty() {
-                        return Err(bad(
+                        return Err(ownership_bad(
                             function,
                             statement,
                             format!(
@@ -448,12 +499,12 @@ fn analyze_function(
                                 bad(function, statement, "unknown owned argument")
                             })?;
                             let extent = binding_extent(slot).ok_or_else(|| {
-                                bad(function, statement, "move requires live owned bytes")
+                                ownership_bad(function, statement, "move requires live owned bytes")
                             })?;
                             if let Extent::Exact(value) = extent
                                 && value < summary.minimum_extents[index]
                             {
-                                return Err(bad(
+                                return Err(extent_bad(
                                     function,
                                     statement,
                                     format!(
@@ -474,12 +525,16 @@ fn analyze_function(
                                 bad(function, statement, "unknown borrowed argument")
                             })?;
                             let extent = binding_extent(slot).ok_or_else(|| {
-                                bad(function, statement, "borrow requires live owned bytes")
+                                ownership_bad(
+                                    function,
+                                    statement,
+                                    "borrow requires live owned bytes",
+                                )
                             })?;
                             if let Extent::Exact(value) = extent
                                 && value < summary.minimum_extents[index]
                             {
-                                return Err(bad(
+                                return Err(extent_bad(
                                     function,
                                     statement,
                                     format!(
@@ -527,7 +582,7 @@ fn analyze_function(
                             bad(function, statement, "owned helper result must be bound")
                         })?;
                         let extent = match summary.returned_extent.as_ref().ok_or_else(|| {
-                            bad(
+                            certificate_bad(
                                 function,
                                 statement,
                                 "owned helper has no owned return summary",
@@ -535,7 +590,7 @@ fn analyze_function(
                         })? {
                             ReturnExtent::Parameter(parameter) => {
                                 actual_extents[*parameter].clone().ok_or_else(|| {
-                                    bad(
+                                    ownership_bad(
                                         function,
                                         statement,
                                         "owned return is not an owned argument",
@@ -574,7 +629,7 @@ fn analyze_function(
                     ReturnValue::Unit => {
                         let live = owned_names(&bindings);
                         if !live.is_empty() {
-                            return Err(bad(
+                            return Err(ownership_bad(
                                 function,
                                 statement,
                                 format!("normal exit leaves owned bytes live: {}", live.join(", ")),
@@ -584,7 +639,7 @@ fn analyze_function(
                     ReturnValue::Scalar(BufferOperand::Literal(_)) => {
                         let live = owned_names(&bindings);
                         if !live.is_empty() {
-                            return Err(bad(
+                            return Err(ownership_bad(
                                 function,
                                 statement,
                                 format!("normal exit leaves owned bytes live: {}", live.join(", ")),
@@ -601,7 +656,7 @@ fn analyze_function(
                         }
                         let live = owned_names(&bindings);
                         if !live.is_empty() {
-                            return Err(bad(
+                            return Err(ownership_bad(
                                 function,
                                 statement,
                                 format!("normal exit leaves owned bytes live: {}", live.join(", ")),
@@ -610,10 +665,10 @@ fn analyze_function(
                     }
                     ReturnValue::Move(name) => {
                         let slot = bindings.get_mut(name).ok_or_else(|| {
-                            bad(function, statement, "unknown owned return binding")
+                            ownership_bad(function, statement, "unknown owned return binding")
                         })?;
                         let extent = binding_extent(slot).ok_or_else(|| {
-                            bad(
+                            ownership_bad(
                                 function,
                                 statement,
                                 "owned return requires live owned bytes",
@@ -626,7 +681,7 @@ fn analyze_function(
                         *slot = Binding::Moved;
                         let live = owned_names(&bindings);
                         if !live.is_empty() {
-                            return Err(bad(
+                            return Err(ownership_bad(
                                 function,
                                 statement,
                                 format!(
@@ -652,7 +707,7 @@ fn analyze_function(
     if let Some(declared) = &f.declared_effects
         && !effects.is_subset_of(declared)
     {
-        return Err(bad(
+        return Err(effects_bad(
             function,
             f.statements.len(),
             "derived helper effects are not contained in the explicit effect row",
@@ -734,7 +789,7 @@ struct Expansion {
     ownership: Vec<OwnershipOp>,
     next_resource: ResourceId,
     next_call: usize,
-    expanded: usize,
+    expanded_items: usize,
 }
 
 enum ExpandedReturn {
@@ -753,6 +808,24 @@ fn rename_operand(operand: &BufferOperand, names: &BTreeMap<String, String>) -> 
 }
 
 impl Expansion {
+    fn charge(&mut self, function: usize, statement: usize, items: usize) -> Result<(), Refusal> {
+        self.expanded_items = self.expanded_items.checked_add(items).ok_or_else(|| {
+            bad(
+                function,
+                statement,
+                "resource helper expanded-item bound exceeded",
+            )
+        })?;
+        if self.expanded_items > MAX_EXPANDED_ITEMS {
+            return Err(bad(
+                function,
+                statement,
+                "resource helper expanded-item bound exceeded",
+            ));
+        }
+        Ok(())
+    }
+
     fn expand(
         &mut self,
         program: &Program,
@@ -763,23 +836,11 @@ impl Expansion {
         let f = &program.functions[function];
         let mut returned = ExpandedReturn::Unit;
         for (statement, item) in f.statements.iter().enumerate() {
-            self.expanded = self.expanded.checked_add(1).ok_or_else(|| {
-                bad(
-                    function,
-                    statement,
-                    "resource helper expansion bound exceeded",
-                )
-            })?;
-            if self.expanded > MAX_EXPANDED_STATEMENTS {
-                return Err(bad(
-                    function,
-                    statement,
-                    "resource helper expansion bound exceeded",
-                ));
-            }
+            self.charge(function, statement, 1)?;
             match item {
                 Statement::Buffer(event) => match event {
                     BufferEvent::Bind { binding, value } => {
+                        self.charge(function, statement, 1)?;
                         let renamed =
                             format!("$f{function}_c{}_s{statement}_{binding}", self.next_call);
                         names.insert(binding.clone(), renamed.clone());
@@ -789,6 +850,7 @@ impl Expansion {
                         });
                     }
                     BufferEvent::Acquire { name, extent } => {
+                        self.charge(function, statement, 2)?;
                         let renamed =
                             format!("$f{function}_c{}_s{statement}_{name}", self.next_call);
                         names.insert(name.clone(), renamed.clone());
@@ -806,11 +868,12 @@ impl Expansion {
                         self.next_resource += 1;
                     }
                     BufferEvent::Store { name, index, value } => {
+                        self.charge(function, statement, 2)?;
                         let physical = names.get(name).cloned().ok_or_else(|| {
-                            bad(function, statement, "missing expanded bytes binding")
+                            certificate_bad(function, statement, "missing expanded bytes binding")
                         })?;
                         let place = owned_places.get(name).cloned().ok_or_else(|| {
-                            bad(function, statement, "missing expanded custody binding")
+                            certificate_bad(function, statement, "missing expanded custody binding")
                         })?;
                         let index = rename_operand(index, &names);
                         let value = rename_operand(value, &names);
@@ -832,11 +895,12 @@ impl Expansion {
                         name,
                         index,
                     } => {
+                        self.charge(function, statement, 2)?;
                         let physical = names.get(name).cloned().ok_or_else(|| {
-                            bad(function, statement, "missing expanded bytes binding")
+                            certificate_bad(function, statement, "missing expanded bytes binding")
                         })?;
                         let place = owned_places.get(name).cloned().ok_or_else(|| {
-                            bad(function, statement, "missing expanded custody binding")
+                            certificate_bad(function, statement, "missing expanded custody binding")
                         })?;
                         let renamed =
                             format!("$f{function}_c{}_s{statement}_{binding}", self.next_call);
@@ -856,11 +920,12 @@ impl Expansion {
                         });
                     }
                     BufferEvent::Extent { binding, name } => {
+                        self.charge(function, statement, 2)?;
                         let physical = names.get(name).cloned().ok_or_else(|| {
-                            bad(function, statement, "missing expanded bytes binding")
+                            certificate_bad(function, statement, "missing expanded bytes binding")
                         })?;
                         let place = owned_places.get(name).cloned().ok_or_else(|| {
-                            bad(function, statement, "missing expanded custody binding")
+                            certificate_bad(function, statement, "missing expanded custody binding")
                         })?;
                         let renamed =
                             format!("$f{function}_c{}_s{statement}_{binding}", self.next_call);
@@ -877,8 +942,9 @@ impl Expansion {
                         });
                     }
                     BufferEvent::Release { name } => {
+                        self.charge(function, statement, 2)?;
                         let place = owned_places.get(name).cloned().ok_or_else(|| {
-                            bad(function, statement, "missing expanded owned binding")
+                            certificate_bad(function, statement, "missing expanded owned binding")
                         })?;
                         self.events.push(BufferEvent::Release {
                             name: names.get(name).cloned().unwrap_or_else(|| place.clone()),
@@ -886,7 +952,7 @@ impl Expansion {
                         self.ownership.push(OwnershipOp::Drop(place));
                     }
                     _ => {
-                        return Err(bad(
+                        return Err(certificate_bad(
                             function,
                             statement,
                             "unsupported expanded buffer event",
@@ -898,6 +964,22 @@ impl Expansion {
                     callee,
                     arguments,
                 } => {
+                    let generated_arguments = arguments
+                        .iter()
+                        .filter(|argument| {
+                            matches!(
+                                argument,
+                                Argument::Scalar(BufferOperand::Literal(_))
+                                    | Argument::Move(_)
+                                    | Argument::Borrow(_)
+                                    | Argument::Lend(_)
+                            )
+                        })
+                        .count();
+                    let generated_result = usize::from(
+                        binding.is_some() && program.functions[*callee].result == Type::OwnedBytes,
+                    );
+                    self.charge(function, statement, generated_arguments + generated_result)?;
                     let call = self.next_call;
                     self.next_call += 1;
                     let target = &program.functions[*callee];
@@ -921,13 +1003,17 @@ impl Expansion {
                                 child_names.insert(
                                     parameter.name.clone(),
                                     names.get(name).cloned().ok_or_else(|| {
-                                        bad(function, statement, "missing scalar argument")
+                                        certificate_bad(
+                                            function,
+                                            statement,
+                                            "missing scalar argument",
+                                        )
                                     })?,
                                 );
                             }
                             Argument::Move(name) => {
                                 let from = owned_places.get(name).cloned().ok_or_else(|| {
-                                    bad(function, statement, "missing owned argument")
+                                    certificate_bad(function, statement, "missing owned argument")
                                 })?;
                                 let to = format!("$call{call}_owned{index}");
                                 self.ownership.push(OwnershipOp::Move {
@@ -942,7 +1028,7 @@ impl Expansion {
                             }
                             Argument::Borrow(name) | Argument::Lend(name) => {
                                 let owner = owned_places.get(name).cloned().ok_or_else(|| {
-                                    bad(function, statement, "missing borrowed owner")
+                                    certificate_bad(function, statement, "missing borrowed owner")
                                 })?;
                                 let borrower = format!("$call{call}_loan{index}");
                                 child_names.insert(
@@ -983,7 +1069,7 @@ impl Expansion {
                                 physical,
                             } = child_return
                             else {
-                                return Err(bad(
+                                return Err(certificate_bad(
                                     function,
                                     statement,
                                     "missing expanded owned return",
@@ -998,7 +1084,7 @@ impl Expansion {
                             owned_places.insert(binding.clone(), result_place);
                         } else if target.result == Type::I32 {
                             let ExpandedReturn::Scalar(physical) = child_return else {
-                                return Err(bad(
+                                return Err(certificate_bad(
                                     function,
                                     statement,
                                     "missing expanded scalar return",
@@ -1011,10 +1097,18 @@ impl Expansion {
                 Statement::Return(ReturnValue::Move(name)) => {
                     returned = ExpandedReturn::Owned {
                         place: owned_places.get(name).cloned().ok_or_else(|| {
-                            bad(function, statement, "missing expanded owned return place")
+                            certificate_bad(
+                                function,
+                                statement,
+                                "missing expanded owned return place",
+                            )
                         })?,
                         physical: names.get(name).cloned().ok_or_else(|| {
-                            bad(function, statement, "missing expanded owned return value")
+                            certificate_bad(
+                                function,
+                                statement,
+                                "missing expanded owned return value",
+                            )
                         })?,
                     };
                 }
@@ -1022,10 +1116,15 @@ impl Expansion {
                     let physical = match value {
                         BufferOperand::Scalar(name) => {
                             names.get(name).cloned().ok_or_else(|| {
-                                bad(function, statement, "missing expanded scalar return value")
+                                certificate_bad(
+                                    function,
+                                    statement,
+                                    "missing expanded scalar return value",
+                                )
                             })?
                         }
                         BufferOperand::Literal(value) => {
+                            self.charge(function, statement, 1)?;
                             let name = format!("$f{function}_c{}_ret{statement}", self.next_call);
                             self.events.push(BufferEvent::Bind {
                                 binding: name.clone(),
@@ -1049,6 +1148,13 @@ pub fn check(program: Program) -> Result<Checked, Refusal> {
     }
     if program.entry >= program.functions.len() {
         return Err(bad(0, 0, "entry is not a function"));
+    }
+    if program
+        .functions
+        .iter()
+        .any(|function| function.parameters.len() > MAX_PARAMETERS)
+    {
+        return Err(bad(0, 0, "resource helper parameter bound exceeded"));
     }
     if program
         .functions
@@ -1092,9 +1198,10 @@ pub fn check(program: Program) -> Result<Checked, Refusal> {
         .collect::<Vec<_>>();
     let mut expansion = Expansion::default();
     expansion.expand(&program, program.entry, BTreeMap::new(), BTreeMap::new())?;
+    expansion.charge(program.entry, entry.statements.len(), 1)?;
     expansion.events.push(BufferEvent::Return);
     ownership::check_ownership(&expansion.ownership).map_err(|error| {
-        bad(
+        ownership_bad(
             program.entry,
             entry.statements.len(),
             format!("ownership checker refused the call expansion: {error}"),
@@ -1112,7 +1219,7 @@ pub fn check(program: Program) -> Result<Checked, Refusal> {
         events: expansion.events,
     };
     let certificate = std_buffer::check_buffer_program(&flattened).map_err(|errors| {
-        bad(
+        certificate_bad(
             program.entry,
             entry.statements.len(),
             format!(
@@ -1122,7 +1229,7 @@ pub fn check(program: Program) -> Result<Checked, Refusal> {
         )
     })?;
     std_buffer::recheck_buffer_certificate(&flattened, &certificate).map_err(|error| {
-        bad(
+        certificate_bad(
             program.entry,
             entry.statements.len(),
             format!("buffer certificate recheck failed: {error}"),

@@ -5475,31 +5475,15 @@ fn compile_std_io_source(
 /// ordinary signature/graph conditions stay at Q020, extent arithmetic at
 /// Q053, inherited custody at Q054, certificate construction at Q056, and
 /// transitive effect rows at Q057.
-fn resource_call_refusal_attribution(message: &str) -> (&'static str, SemanticPass) {
-    if message.contains("expanded") || message.contains("certificate") {
-        ("Q056", SemanticPass::StandardBuffer)
-    } else if message.contains("extent") {
-        ("Q053", SemanticPass::StandardBuffer)
-    } else if message.contains("effect") {
-        ("Q057", SemanticPass::StandardBuffer)
-    } else if [
-        "owned",
-        "owner",
-        "borrow",
-        "lend",
-        "drop",
-        "move",
-        "live resource",
-        "allocation failure",
-        "custody",
-        "binding already exists",
-    ]
-    .iter()
-    .any(|needle| message.contains(needle))
-    {
-        ("Q054", SemanticPass::StandardBuffer)
-    } else {
-        ("Q020", SemanticPass::OrdinaryTypes)
+fn resource_call_refusal_attribution(
+    category: &resource_calls::RefusalCategory,
+) -> (&'static str, SemanticPass) {
+    match category {
+        resource_calls::RefusalCategory::Ordinary => ("Q020", SemanticPass::OrdinaryTypes),
+        resource_calls::RefusalCategory::Extent => ("Q053", SemanticPass::StandardBuffer),
+        resource_calls::RefusalCategory::Ownership => ("Q054", SemanticPass::StandardBuffer),
+        resource_calls::RefusalCategory::Certificate => ("Q056", SemanticPass::StandardBuffer),
+        resource_calls::RefusalCategory::Effects => ("Q057", SemanticPass::StandardBuffer),
     }
 }
 
@@ -5512,9 +5496,12 @@ fn compile_resource_call_source(
     ranges: &[FileRange],
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     if mode != SourceModuleMode::Executable {
-        return Err(vec![plain_diagnostic(
-            "Q058",
-            "entry-free resource helper modules are outside resource-calls.v1",
+        return Err(vec![map_raw_diagnostic(
+            "Q020",
+            SemanticPass::OrdinaryTypes,
+            Span { start: 0, end: 0 },
+            "entry-free resource helper modules are outside resource-calls.v1".to_owned(),
+            ranges,
         )]);
     }
     let entry = select_entry(typed, options).map_err(|error| vec![error])?;
@@ -5533,7 +5520,7 @@ fn compile_resource_call_source(
             .copied()
             .or_else(|| lowered.function_spans.get(error.function).copied())
             .unwrap_or(Span { start: 0, end: 0 });
-        let (code, pass) = resource_call_refusal_attribution(&error.message);
+        let (code, pass) = resource_call_refusal_attribution(&error.category);
         vec![map_raw_diagnostic(
             code,
             pass,
@@ -5559,9 +5546,12 @@ fn compile_resource_call_source(
     let reference_observation =
         std_buffer_c_emit::interpret_buffer_program(&buffer_lowered.program, &certificate)
             .map_err(|refusal| {
-                vec![plain_diagnostic(
-                    "Q058",
+                vec![map_raw_diagnostic(
+                    "Q056",
+                    SemanticPass::StandardBuffer,
+                    scope_span,
                     format!("resource helper reference execution refused: {refusal:?}"),
+                    ranges,
                 )]
             })?;
     let c_source = resource_calls_c_emit::emit(&checked);

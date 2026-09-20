@@ -67,51 +67,68 @@ fn tokens_for(program: &SourceProgram, span: Span) -> Vec<&Token> {
         .collect()
 }
 
-fn parameter_type(source: &str, usage: Option<Usage>) -> Option<Type> {
-    let compact = source
-        .chars()
-        .filter(|ch| !ch.is_whitespace())
-        .collect::<String>();
-    match (compact.as_str(), usage) {
-        ("i32", None) => Some(Type::I32),
-        ("own<bytes>", Some(Usage::ONE)) => Some(Type::OwnedBytes),
-        ("borrow<bytes>", None) => Some(Type::ReadBytes),
-        ("lend<bytes>", None) => Some(Type::WriteBytes),
+fn resource_type_tokens(tokens: &[&Token]) -> Option<Type> {
+    match tokens {
+        [head, less, bytes, greater]
+            if matches!(&less.kind, TokenKind::Symbol(Symbol::Less))
+                && matches!(&bytes.kind, TokenKind::Word(name) if name == "bytes")
+                && matches!(&greater.kind, TokenKind::Symbol(Symbol::Greater)) =>
+        {
+            match word(Some(head)) {
+                Some("own") => Some(Type::OwnedBytes),
+                Some("borrow") => Some(Type::ReadBytes),
+                Some("lend") => Some(Type::WriteBytes),
+                _ => None,
+            }
+        }
         _ => None,
     }
 }
 
-fn result_type(source: &str) -> Option<Type> {
-    let compact = source
-        .chars()
-        .filter(|ch| !ch.is_whitespace())
-        .collect::<String>();
-    match compact.as_str() {
-        "unit" => Some(Type::Unit),
-        "i32" => Some(Type::I32),
-        "own<bytes>" => Some(Type::OwnedBytes),
+fn parameter_type(tokens: &[&Token], usage: Option<Usage>) -> Option<Type> {
+    match (tokens, resource_type_tokens(tokens), usage) {
+        ([token], _, None) if word(Some(token)) == Some("i32") => Some(Type::I32),
+        (_, Some(Type::OwnedBytes), Some(Usage::ONE)) => Some(Type::OwnedBytes),
+        (_, Some(Type::ReadBytes), None) => Some(Type::ReadBytes),
+        (_, Some(Type::WriteBytes), None) => Some(Type::WriteBytes),
+        _ => None,
+    }
+}
+
+fn result_type(tokens: &[&Token]) -> Option<Type> {
+    match (tokens, resource_type_tokens(tokens)) {
+        ([token], _) if word(Some(token)) == Some("unit") => Some(Type::Unit),
+        ([token], _) if word(Some(token)) == Some("i32") => Some(Type::I32),
+        (_, Some(Type::OwnedBytes)) => Some(Type::OwnedBytes),
         _ => None,
     }
 }
 
 fn declared_effects(tokens: &[&Token], span: Span) -> Result<Option<EffectRow>, SourceDiagnostic> {
-    let Some(index) = tokens
-        .iter()
-        .position(|token| matches!(&token.kind, TokenKind::Word(word) if word == "effects"))
-    else {
+    if tokens.is_empty() {
         return Ok(None);
-    };
+    }
+    if word(tokens.first().copied()) != Some("effects") {
+        return Err(ordinary(
+            span,
+            "unsupported tokens follow the function result",
+        ));
+    }
     if !matches!(
-        tokens.get(index + 1).map(|token| &token.kind),
+        tokens.get(1).map(|token| &token.kind),
         Some(TokenKind::Symbol(Symbol::LeftBrace))
     ) {
         return Err(ordinary(span, "an effects row requires `{ ... }`"));
     }
     let mut effects = Vec::new();
-    let mut cursor = index + 2;
+    let mut cursor = 2;
+    let mut need_effect = false;
     loop {
         match tokens.get(cursor).map(|token| &token.kind) {
-            Some(TokenKind::Symbol(Symbol::RightBrace)) => break,
+            Some(TokenKind::Symbol(Symbol::RightBrace)) if !need_effect => {
+                cursor += 1;
+                break;
+            }
             Some(TokenKind::Word(name)) => {
                 effects.push(match name.as_str() {
                     "alloc" => Effect::Alloc,
@@ -129,10 +146,21 @@ fn declared_effects(tokens: &[&Token], span: Span) -> Result<Option<EffectRow>, 
                     Some(TokenKind::Symbol(Symbol::Comma))
                 ) {
                     cursor += 1;
+                    need_effect = true;
+                } else if matches!(
+                    tokens.get(cursor).map(|token| &token.kind),
+                    Some(TokenKind::Symbol(Symbol::RightBrace))
+                ) {
+                    need_effect = false;
+                } else {
+                    return Err(ordinary(span, "effects are separated by commas"));
                 }
             }
             _ => return Err(ordinary(span, "this effects row is not closed")),
         }
+    }
+    if cursor != tokens.len() {
+        return Err(ordinary(span, "unsupported tokens follow the effects row"));
     }
     Ok(Some(EffectRow::new(effects)))
 }
@@ -274,22 +302,14 @@ pub fn has_resource_calls(program: &SourceProgram) -> bool {
     program.declarations.iter().any(|declaration| {
         declaration.value.kind == DeclarationKind::Function
             && (declaration.value.parameters.iter().any(|parameter| {
-                parameter
-                    .type_source
-                    .chars()
-                    .filter(|ch| !ch.is_whitespace())
-                    .collect::<String>()
-                    .ends_with("<bytes>")
+                resource_type_tokens(&tokens_for(program, parameter.type_span)).is_some()
             }) || declaration
                 .value
                 .result_type
                 .as_ref()
                 .is_some_and(|result| {
-                    result
-                        .source
-                        .chars()
-                        .filter(|ch| !ch.is_whitespace())
-                        .eq("own<bytes>".chars())
+                    resource_type_tokens(&tokens_for(program, result.span))
+                        == Some(Type::OwnedBytes)
                 }))
     })
 }
@@ -317,37 +337,31 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
     let mut diagnostics = Vec::new();
     for declaration in declarations {
         let scope = declaration.span;
-        if declaration
-            .value
-            .function_contract
-            .as_ref()
-            .is_some_and(|contract| !contract.clauses.is_empty())
-        {
-            diagnostics.push(diagnostic(
-                "Q021",
-                SemanticPass::OrdinaryTypes,
-                scope,
-                "source contracts have no resource-call consumer",
-            ));
+        if let Some(contract) = declaration.value.function_contract.as_ref() {
+            diagnostics.push(if contract.clauses.is_empty() {
+                ordinary(scope, "contract blocks are outside resource-calls.v1")
+            } else {
+                diagnostic(
+                    "Q021",
+                    SemanticPass::OrdinaryTypes,
+                    scope,
+                    "source contracts have no resource-call consumer",
+                )
+            });
             continue;
         }
         let mut parameters = Vec::new();
         for parameter in &declaration.value.parameters {
             let usage = parameter.usage.as_ref().map(|usage| usage.value);
-            let Some(ty) = parameter_type(&parameter.type_source, usage) else {
-                let compact = parameter
-                    .type_source
-                    .chars()
-                    .filter(|ch| !ch.is_whitespace())
-                    .collect::<String>();
-                let grade_error = matches!(
-                    compact.as_str(),
-                    "i32" | "own<bytes>" | "borrow<bytes>" | "lend<bytes>"
-                );
+            let type_tokens = tokens_for(program, parameter.type_span);
+            let Some(ty) = parameter_type(&type_tokens, usage) else {
+                let grade_error = (type_tokens.len() == 1
+                    && word(type_tokens.first().copied()) == Some("i32"))
+                    || resource_type_tokens(&type_tokens).is_some();
                 diagnostics.push(if grade_error {
                     usage_diagnostic(
                         parameter.type_span,
-                        "own<bytes> requires `use one`; i32 and byte loans are ungraded",
+                        "own<bytes> requires grade one; i32 and byte loans are ungraded",
                     )
                 } else {
                     ordinary(
@@ -362,11 +376,11 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
                 ty,
             });
         }
-        let Some(result) = declaration
-            .value
-            .result_type
-            .as_ref()
-            .and_then(|result| result_type(&result.source))
+        let result_source = declaration.value.result_type.as_ref();
+        let Some(result) = result_source
+            .map(|result| tokens_for(program, result.span))
+            .as_deref()
+            .and_then(result_type)
         else {
             diagnostics.push(ordinary(scope, "result requires unit, i32, or own<bytes>"));
             continue;
@@ -382,7 +396,12 @@ pub fn lower(program: &SourceProgram, entry: &str) -> Result<Lowered, Vec<Source
                 end: body.span.start,
             },
         );
-        let effects = match declared_effects(&header, scope) {
+        let result_end = result_source.unwrap().span.end;
+        let suffix = header
+            .into_iter()
+            .filter(|token| token.span.start >= result_end)
+            .collect::<Vec<_>>();
+        let effects = match declared_effects(&suffix, scope) {
             Ok(effects) => effects,
             Err(error) => {
                 diagnostics.push(error);
