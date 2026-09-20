@@ -288,6 +288,25 @@ pub struct EventPayloadWriteAuthority {
     pub fired_payload: PayloadId,
 }
 
+/// Build the narrow callback model from the caller's declared payload authority.
+/// This records a premise; the later boundary still checks both authority and
+/// observed source effects. Audit orchestration does not construct core IR.
+#[must_use]
+pub fn declared_event_payload_callback(authority: &EventPayloadWriteAuthority) -> CallbackSummary {
+    use qcore_core::event_reactor::{ActivationReason, ArgumentMode, PayloadAccessKind};
+    CallbackSummary {
+        argument: authority.callback_argument,
+        argument_mode: ArgumentMode::Borrowed,
+        trigger_reasons: BTreeSet::from([ActivationReason::Read, ActivationReason::Write]),
+        payload_authority: BTreeMap::from([
+            (authority.context_payload, PayloadAccessKind::Write),
+            (authority.fired_payload, PayloadAccessKind::Write),
+        ]),
+        may_defer: false,
+        may_spawn_tasks: false,
+    }
+}
+
 /// Constructor-private source projection.  Callers cannot build source
 /// authority from serialized or hand-authored operation rows.
 #[derive(Clone, Debug, Serialize)]

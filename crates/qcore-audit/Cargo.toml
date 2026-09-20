@@ -12,7 +12,6 @@ name = "quirin-audit"
 path = "src/main.rs"
 
 [dependencies]
-qcore-core = { path = "../qcore-core", version = "0.1.0" }
 qcore-c-gateway = { path = "../qcore-c-gateway", version = "0.1.0" }
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
 qcore-schemas = { path = "../qcore-schemas", version = "14.0.0" }

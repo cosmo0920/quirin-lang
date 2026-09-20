@@ -2,9 +2,7 @@
 use crate::observed_wait::reject_report_aliases;
 use crate::observed_wait_inputs::load_monkey_source;
 use qcore_contract::profile_loader::{load_audited_bundle, load_profile_directory, verify_pin};
-use qcore_core::event_reactor::{
-    ActivationReason, ArgumentMode, CallbackSummary, PayloadAccessKind,
-};
+
 use qcore_schemas::sha256_hex;
 use qcore_verification::event_composition_context::{
     DeclaredObservationTrust, EventCompositionContext, EventCompositionContextInput,
@@ -248,17 +246,8 @@ pub fn run_event_payload_config(path: &Path) -> Result<(), String> {
     let observations = read(&resolve(&config.observations))?;
     let bindings = read(&resolve(&config.bindings))?;
     let allocation = read(&resolve(&config.allocation))?;
-    let model = CallbackSummary {
-        argument: config.authority.callback_argument,
-        argument_mode: ArgumentMode::Borrowed,
-        trigger_reasons: BTreeSet::from([ActivationReason::Read, ActivationReason::Write]),
-        payload_authority: BTreeMap::from([
-            (config.authority.context_payload, PayloadAccessKind::Write),
-            (config.authority.fired_payload, PayloadAccessKind::Write),
-        ]),
-        may_defer: false,
-        may_spawn_tasks: false,
-    };
+    let model =
+        qcore_verification::event_payload::declared_event_payload_callback(&config.authority);
     let mut assumptions = source.profile.assumptions();
     assumptions.extend(event_payload_context_bindings(
         &projection,
