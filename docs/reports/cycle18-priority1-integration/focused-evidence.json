@@ -1,0 +1,16 @@
+{
+  "wait_cli": 0,
+  "timeout_cli": 0,
+  "payload_cli": 0,
+  "payload_controls": 11,
+  "timeout_controls": 7,
+  "legacy_cli_positive": 1,
+  "legacy_cli_negative": 6,
+  "root_source_commit": "a3ee8c9ffe7f96e7caf1bdc1e0ecfb82ab504134",
+  "policy_inventory": {
+    "modules": 3,
+    "declarations": 18,
+    "clauses": 151
+  },
+  "reported_counts_are_bounded": true
+}

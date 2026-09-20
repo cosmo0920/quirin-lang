@@ -1,0 +1,145 @@
+{
+  "artifact": "cycle18-timed-wait-failure-paths",
+  "cases": [
+    {
+      "artifact": "approved Monkey wrapper fixture with stubbed dependency fault model",
+      "assumptions": [
+        "fixture digest is bound by the sealed source projection",
+        "stub results model permitted dependency failures"
+      ],
+      "bounds": "loop size 2; one dispatcher; fixed stub dependency outcomes",
+      "evidence_class": "instrumented_source_harness",
+      "evidence_version": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
+      "outcome": "unknown",
+      "property": "caller_handles_null_loop",
+      "reason": "the wrapper returns null and downstream caller handling is outside this source slice",
+      "scenario": "context_allocation_failure",
+      "scope": "one source-preserving harness scenario; no real Libevent behavior claim",
+      "semantic_profile": "fluent-bit/unix-libevent source projection"
+    },
+    {
+      "artifact": "approved Monkey wrapper fixture with stubbed dependency fault model",
+      "assumptions": [
+        "fixture digest is bound by the sealed source projection",
+        "stub results model permitted dependency failures"
+      ],
+      "bounds": "loop size 2; one dispatcher; fixed stub dependency outcomes",
+      "evidence_class": "instrumented_source_harness",
+      "evidence_version": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
+      "outcome": "unsafe",
+      "property": "nonnull_loop_has_live_event_base",
+      "reason": "the source-preserving fault model returns a nonnull context whose base is null",
+      "scenario": "base_creation_failure",
+      "scope": "one source-preserving harness scenario; no real Libevent behavior claim",
+      "semantic_profile": "fluent-bit/unix-libevent source projection"
+    },
+    {
+      "artifact": "approved Monkey wrapper fixture with stubbed dependency fault model",
+      "assumptions": [
+        "fixture digest is bound by the sealed source projection",
+        "stub results model permitted dependency failures"
+      ],
+      "bounds": "loop size 2; one dispatcher; fixed stub dependency outcomes",
+      "evidence_class": "instrumented_source_harness",
+      "evidence_version": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
+      "outcome": "unsafe",
+      "property": "created_event_base_is_released",
+      "reason": "the source-preserving fault model frees the context without freeing its created event base",
+      "scenario": "fired_allocation_failure",
+      "scope": "one source-preserving harness scenario; no real Libevent behavior claim",
+      "semantic_profile": "fluent-bit/unix-libevent source projection"
+    },
+    {
+      "artifact": "approved Monkey wrapper fixture with stubbed dependency fault model",
+      "assumptions": [
+        "fixture digest is bound by the sealed source projection",
+        "stub results model permitted dependency failures"
+      ],
+      "bounds": "loop size 2; one dispatcher; fixed stub dependency outcomes",
+      "evidence_class": "instrumented_source_harness",
+      "evidence_version": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
+      "outcome": "unsafe",
+      "property": "null_event_is_not_used",
+      "reason": "the source-preserving fault model forwards the null creation result to event_add and event_free",
+      "scenario": "timer_creation_failure",
+      "scope": "one source-preserving harness scenario; no real Libevent behavior claim",
+      "semantic_profile": "fluent-bit/unix-libevent source projection"
+    },
+    {
+      "artifact": "approved Monkey wrapper fixture with stubbed dependency fault model",
+      "assumptions": [
+        "fixture digest is bound by the sealed source projection",
+        "stub results model permitted dependency failures"
+      ],
+      "bounds": "loop size 2; one dispatcher; fixed stub dependency outcomes",
+      "evidence_class": "instrumented_source_harness",
+      "evidence_version": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
+      "outcome": "unknown",
+      "property": "failed_timer_registration_preserves_wait_semantics",
+      "reason": "the registration error is ignored while backend liveness and timeout behavior remain unproved",
+      "scenario": "timer_registration_failure",
+      "scope": "one source-preserving harness scenario; no real Libevent behavior claim",
+      "semantic_profile": "fluent-bit/unix-libevent source projection"
+    },
+    {
+      "artifact": "approved Monkey wrapper fixture with stubbed dependency fault model",
+      "assumptions": [
+        "fixture digest is bound by the sealed source projection",
+        "stub results model permitted dependency failures"
+      ],
+      "bounds": "loop size 2; one dispatcher; fixed stub dependency outcomes",
+      "evidence_class": "instrumented_source_harness",
+      "evidence_version": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
+      "outcome": "unknown",
+      "property": "all_failure_paths_safe",
+      "reason": "one successful harness execution does not discharge source-derived failure paths",
+      "scenario": "success_observation",
+      "scope": "one source-preserving harness scenario; no real Libevent behavior claim",
+      "semantic_profile": "fluent-bit/unix-libevent source projection"
+    },
+    {
+      "artifact": "sealed complete Monkey source path inventory",
+      "assumptions": [
+        "opaque call reachability is not established"
+      ],
+      "bounds": "four imported loop-create paths",
+      "evidence_class": "source_model",
+      "evidence_version": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
+      "outcome": "unknown",
+      "property": "initialization_failure_reachability",
+      "reason": "the imported CFG retains an opaque-call branch whose Unix-profile reachability is unproved",
+      "scenario": "loop_init_failure",
+      "scope": "source-model path only",
+      "semantic_profile": "fluent-bit/unix-libevent source projection"
+    },
+    {
+      "artifact": "sealed complete Monkey source path inventory",
+      "assumptions": [
+        "no caller range proof is supplied"
+      ],
+      "bounds": "four imported loop-create paths",
+      "evidence_class": "source_model",
+      "evidence_version": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
+      "outcome": "unknown",
+      "property": "fired_allocation_extent_is_in_bounds",
+      "reason": "the imported paths do not prove the caller size or multiplication bound",
+      "scenario": "loop_size_bounds",
+      "scope": "source-model allocation extent only",
+      "semantic_profile": "fluent-bit/unix-libevent source projection"
+    }
+  ],
+  "evidence_class": "instrumented_source_model_not_real_libevent_execution",
+  "failure_policy_sha256": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
+  "limitations": [
+    "Stubbed dependency fault outcomes, not a real Libevent execution",
+    "Unknown rows remain in the denominator",
+    "No callback or aggregate Cycle 18 promotion"
+  ],
+  "manifest_sha256": "d9ef03bc47338980b1ec915bcedc6b3167d6b327ddd402b0e2ac360f976fdd80",
+  "schema_version": 1,
+  "source_build_sha256": "a68a573c2252cb39e022634c23001307376a77057ee2e10dbc96494a7e5a89c2",
+  "source_compile_task_sha256": "bb6f0695e641a3cafec189224b2e425cf5ac99dd625f1dc8bbf3c92b8bcea109",
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_sha256": "ec4206f18c9e74b570ebf3f8958b6cfcb054315f97abcf9c9bdd83efb7a62855",
+  "status": "timed_wait_failure_paths_checked"
+}

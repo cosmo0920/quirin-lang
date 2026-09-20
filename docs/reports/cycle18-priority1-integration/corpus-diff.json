@@ -1,0 +1,188 @@
+{
+  "archived": "docs/reports/w42-priority-integration/artifacts",
+  "artifacts": {
+    "chunk-contracts": {
+      "archived_present": true,
+      "backend_teardown": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 21,
+          "before": 21,
+          "changed": 0,
+          "removed": 0
+        },
+        "removed": []
+      },
+      "envelope": {},
+      "measured_present": true,
+      "results": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 96,
+          "before": 96,
+          "changed": 0,
+          "removed": 0
+        },
+        "removed": []
+      },
+      "status_after": {
+        "checked": 3,
+        "unknown": 93
+      },
+      "status_before": {
+        "checked": 3,
+        "unknown": 93
+      }
+    },
+    "contracts": {
+      "archived_present": true,
+      "audit_selection": {
+        "fields": {},
+        "libraries": {
+          "added": [],
+          "changed": [],
+          "counts": {
+            "added": 0,
+            "after": 5,
+            "before": 5,
+            "changed": 0,
+            "removed": 0
+          },
+          "removed": []
+        },
+        "parsed": true
+      },
+      "keys": {},
+      "manifest": {
+        "fields": {},
+        "modules": {
+          "added": [],
+          "changed": [],
+          "counts": {
+            "added": 0,
+            "after": 33,
+            "before": 33,
+            "changed": 0,
+            "removed": 0
+          },
+          "removed": []
+        },
+        "parsed": true
+      },
+      "measured_present": true,
+      "sources": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 33,
+          "before": 33,
+          "changed": 0,
+          "removed": 0
+        },
+        "keying": "module path below contract/",
+        "removed": []
+      }
+    },
+    "diagnostics": {
+      "archived_present": true,
+      "envelope": {},
+      "measured_present": true,
+      "reason_code_after": {
+        "None": 48,
+        "incomplete-obligation-coverage": 1,
+        "unsupported-syntax": 136
+      },
+      "reason_code_before": {
+        "None": 48,
+        "incomplete-obligation-coverage": 1,
+        "unsupported-syntax": 136
+      },
+      "status_after": {
+        "Safe": 2,
+        "Unknown": 137,
+        "Unsafe": 42,
+        "data_only": 4
+      },
+      "status_before": {
+        "Safe": 2,
+        "Unknown": 137,
+        "Unsafe": 42,
+        "data_only": 4
+      },
+      "units": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 185,
+          "before": 185,
+          "changed": 0,
+          "removed": 0
+        },
+        "removed": []
+      }
+    },
+    "source": {
+      "archived_present": true,
+      "callbacks": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 3,
+          "before": 3,
+          "changed": 0,
+          "removed": 0
+        },
+        "removed": []
+      },
+      "envelope": {},
+      "measured_present": true,
+      "wrappers": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 15,
+          "before": 15,
+          "changed": 0,
+          "removed": 0
+        },
+        "removed": []
+      }
+    },
+    "source-effects": {
+      "archived_present": true,
+      "envelope": {},
+      "measured_present": true,
+      "results": {
+        "added": [],
+        "changed": [],
+        "counts": {
+          "added": 0,
+          "after": 96,
+          "before": 96,
+          "changed": 0,
+          "removed": 0
+        },
+        "removed": []
+      },
+      "status_after": {
+        "checked_function_contract": 3,
+        "unknown": 93
+      },
+      "status_before": {
+        "checked_function_contract": 3,
+        "unknown": 93
+      }
+    }
+  },
+  "card": "CORPUS-REPIN",
+  "measured": "private/cycle18-priority1/corpus-corrected",
+  "schema_version": 2
+}

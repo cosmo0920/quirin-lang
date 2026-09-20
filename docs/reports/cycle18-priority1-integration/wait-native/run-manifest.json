@@ -1,0 +1,43 @@
+{
+  "command": [
+    "/usr/bin/clang",
+    "-std=gnu17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-Wno-unused-variable",
+    "-Wno-sign-compare",
+    "-fsanitize=address,undefined",
+    "-g",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-wait-failures/compiler/examples/cycle18_timed_wait_failures.c",
+    "-o",
+    "measure/cycle18-wait-failures-native-6/cycle18_timed_wait_failures"
+  ],
+  "compiler": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "executable": "measure/cycle18-wait-failures-native-6/cycle18_timed_wait_failures",
+  "executable_sha256": "85b1f98a59e16d75230355f115e94d6a26e8c0f5e67d1759b4af00c01486a273",
+  "harness": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-wait-failures/compiler/examples/cycle18_timed_wait_failures.c",
+  "harness_header": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-wait-failures/compiler/examples/cycle18_timed_wait_failures.h",
+  "harness_header_sha256": "7a08a361e8552d47ca533446187a30b5c428150c9ca12af7f1129f714b893679",
+  "harness_sha256": "b603fee4b0323295f5afad3310bfff0185e364f7848b83b0e8481eca8af39738",
+  "host": "Linux-7.0.0-31-generic-x86_64-with-glibc2.43",
+  "observations": "measure/cycle18-wait-failures-native-6/failure-observations.json",
+  "observations_sha256": "a626752777cc1a95ab79cfcf133d7fd41c95473bb7a5391cd4e39b4f92265b1f",
+  "schema_version": 1,
+  "scope": {
+    "dependency_behavior": "stubbed fault model; not a Libevent execution",
+    "faults": [
+      "context_allocation_failure",
+      "base_creation_failure",
+      "fired_allocation_failure",
+      "timer_creation_failure",
+      "timer_registration_failure"
+    ],
+    "source_body": "compiler/tests/fixtures/monkey/wrappers.c",
+    "success_is_all_path_safe": false
+  },
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "status": "bounded_fault_injection",
+  "wrapper_fixture": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-cycle18-wait-failures/compiler/tests/fixtures/monkey/wrappers.c",
+  "wrapper_fixture_sha256": "c8b4338888b7482379862eec59dd7402f8ef1310d72bc2afdb049f527e5dd7ae"
+}

@@ -13,7 +13,7 @@ def main():
     a=p.parse_args(); a.output.mkdir(parents=True,exist_ok=False)
     original=json.loads(a.config.read_text())
     results=[]
-    for name in ['missing-allocation-field','allocation-extent','wrong-storage-authority','missing-write-field','callback-thread','duplicate-binding','missing-path','backend','report-alias']:
+    for name in ['missing-allocation-field','allocation-extent','wrong-storage-authority','missing-write-field','callback-thread','duplicate-binding','missing-path','backend','role-substitution','extra-execution','report-alias']:
         out=(a.output/name).resolve();out.mkdir()
         c=copy.deepcopy(original);m=json.loads(pathlib.Path(c['run_manifest']).read_text())
         def replace(field,data):
@@ -35,6 +35,19 @@ def main():
             if name=='duplicate-binding':rows.append(next(r for r in rows if r['kind']=='callback'))
             else: rows.pop()
             replace('bindings',('\n'.join(map(json.dumps,rows))+'\n').encode())
+        elif name=='role-substitution':
+            c['observer_binary']=c['libevent_library']
+        elif name=='extra-execution':
+            rows=[json.loads(s) for s in pathlib.Path(c['bindings']).read_text().splitlines()]
+            b=copy.deepcopy(next(r for r in reversed(rows) if r['kind']=='callback'))
+            observations=[json.loads(s) for s in pathlib.Path(c['observations']).read_text().splitlines()]
+            new_enter=copy.deepcopy(next(r for r in observations if r['sequence']==b['enter']))
+            new_exit=copy.deepcopy(next(r for r in observations if r['sequence']==b['exit']))
+            high=max(r['sequence'] for r in observations)
+            new_enter['sequence']=high+1;new_exit['sequence']=high+2
+            b['enter']=high+1;b['exit']=high+2;rows.append(b);observations.extend([new_enter,new_exit])
+            replace('bindings',('\n'.join(map(json.dumps,rows))+'\n').encode())
+            replace('observations',('\n'.join(map(json.dumps,observations))+'\n').encode())
         elif name=='backend':
             v={'backend':'unsupported','dispatcher_count':1};m['runtime']=v
             replace('runtime',json.dumps(v).encode())

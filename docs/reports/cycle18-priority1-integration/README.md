@@ -1,6 +1,6 @@
 # Cycle 18 priority-one integration
 
-Base: `a54aa8ab`. Status: implementation in progress.
+Base: `a54aa8ab`. Status: bounded priority-one implementation complete; aggregate Cycle 18 acceptance remains open.
 
 The user authorized the three priority-one follow-ups: timed-wait creation and
 registration failures, all-path `cb_event` payload bounds/write authority, and
@@ -161,3 +161,34 @@ and are retained in `private/cycle18-priority1/layering-fix-{check,test}.log`;
 `layering-fix-test-2.log` is the passing focused run. A separate complete gate
 is required for the corrected tree; the original attempt is not counted as a
 passing gate.
+
+After the layering correction, the configured payload command exited 0 and its
+complete report remained [byte-identical](payload-factory-parity.json), including
+context and model identities. The policy and checking behavior were unchanged.
+
+## Final standing gate
+
+The corrected [gate](gate.json) at `a3ee8c9ffe7f96e7caf1bdc1e0ecfb82ab504134` records
+**4,991 Rust passed, 0 failed, 11 ignored; 266 result summaries over 264 targets; 161 Lean audits; 317 Python tests**. The workspace run used
+`cargo test --workspace --no-fail-fast`, `CARGO_BUILD_JOBS=2` and
+`RUST_TEST_THREADS=8`, outside the ptrace sandbox. All standing commands exited
+0: recursive submodule update, workspace tests, fmt, Clippy, both reevaluation
+examples, `check_lean_audits.py --jobs 2`, and the Python suite after matrix
+regeneration. Five host-sensitive process/memory/confinement rows also exited 0
+in separate single-test runs. The 122 provider count is carried Unix evidence,
+not remeasured. [Exact commands, exits, timings and counts](gate-facts.json)
+point to private logs under
+`private/cycle18-priority1/corrected-gate-20260920/`; Python logs are
+`private/cycle18-priority1/python-final.log` with a separate captured exit file.
+
+The [initial failed gate](initial-gate-facts.json) is preserved: 4,990 Rust passed,
+1 failed, 11 ignored; workspace exit 101 solely for the forbidden dependency
+edge. Its later standing commands passed after the layering correction was
+made, so it is not presented as a coherent passing tip. The corrected full run
+is the acceptance measurement. The post-correction corpus replay likewise
+reproduced all five baseline artifacts byte-for-byte.
+
+The matrix now contains 281 registered follow-ups. [Reconciliation](reconciliation.json)
+covers all 30 swept items, including base-inclusive historical extraction items;
+[the residual sweep](residual-sweep.json) classifies only discharged priority-one
+names newly absent from the tracker. No remaining obligation is silently removed.

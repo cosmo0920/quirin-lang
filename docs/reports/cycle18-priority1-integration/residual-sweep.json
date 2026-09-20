@@ -1,0 +1,12 @@
+{
+  "new_untracked_names": [
+    "CYCLE18-CB-EVENT-PAYLOAD-BOUNDARY",
+    "CYCLE18-TIMED-WAIT-FAILURE-PATHS"
+  ],
+  "removed_untracked_names": [],
+  "classification": {
+    "CYCLE18-TIMED-WAIT-FAILURE-PATHS": "discharged by cycle18-priority1-integration; remaining Unknown obligations retained by MONKEY-CALLBACK-CYCLE18-COMPOSITION",
+    "CYCLE18-CB-EVENT-PAYLOAD-BOUNDARY": "discharged bounded payload property by cycle18-priority1-integration; full composition remains tracked",
+    "CYCLE18-CB-TIMEOUT-SELF-TEARDOWN": "discharged bounded source/native Rust+Lean teardown by cycle18-priority1-integration"
+  }
+}

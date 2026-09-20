@@ -129,3 +129,13 @@ acceptance matrix, increment record and configured-audit route.
    does not retire it.
 6. Preserve default-corpus and observed-wait outcomes unless the separately
    measured payload property justifies a distinct result.
+
+## Integration evidence
+
+The root's [combined integration report](../cycle18-priority1-integration/README.md)
+owns the final dedicated native run, typed artifact-role binding, exact
+four-execution limit, eleven configured refusal controls and frozen corpus/CLI
+parity. Its `payload-native/` directory archives the command manifest, actual
+allocation/backend records and complete observations/bindings. Controlled
+`event_active` flags exercise source branches; this does not establish natural
+readiness/timer reachability or full event-lifecycle composition.

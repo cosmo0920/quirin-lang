@@ -137,3 +137,15 @@ gate and configured native parity are also integration responsibilities.
   required by the integration branch.
 - Run the complete workspace/corpus/CLI parity gate after all sibling commits
   and pins are reconciled.
+
+## Integration amendment
+
+The root review added one executable equality tying the closed descriptor to
+the selected map's typed `pipe[1]` snapshot; event-pointer snapshots likewise
+require that exact map object and C type. The integrated policy is therefore
+5 declarations / 38 clauses, superseding this lane's 37-clause handoff. A Rust
+negative control and an audited Lean endpoint-equality condition defend the
+join. Artifact roles are explicit and report publication uses an atomic rename.
+The actual native harness translation unit was sanitized; linked support
+archives retain their recorded build configuration, so no whole-library
+sanitizer claim is inferred. The combined report owns final counts and parity.

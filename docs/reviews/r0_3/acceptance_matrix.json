@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 284
+  "named_followups": 281
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 90,
+  "contract_modules": 93,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6725,11 +6725,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CYCLE18-CONTRACT-EXTRACTION corrected combined gate at 5c3ccc0913433621a8701bee501bc58f1deddb28. Rust 4968 passed / 0 failed / 11 ignored, 263 summaries, 252 running targets and 9 doc sections. All standing steps and five isolated host-sensitive checks exit 0; Lean 158. Clang measured in this checkout. Python after matrix regeneration: 317 tests, exit 0. Provider 122 is carried unchanged Unix evidence, not rerun. Initial root run failed the stale resource-loader inventory pin; the corrected complete run is separate. Source-agent interrupted package rerun and isolated Lean registration failure remain disclosed. Logs: private/cycle18-contract-extraction/corrected-gate-20260920/. No verdict or coverage promotion.",
-  "workspace_tests": 4968,
+  "note": "CYCLE18-PRIORITY1-INTEGRATION corrected gate at a3ee8c9ffe7f96e7caf1bdc1e0ecfb82ab504134: Rust 4991 passed / 0 failed / 11 ignored, 266 summaries, 255 running targets and 9 doc sections; 161 Lean audits; 317 Python tests after matrix regeneration. All standing commands and five isolated host-sensitive controls exit 0. Clang measured in this checkout. Provider 122 is carried Unix evidence, not remeasured. Initial gate failed the forbidden qcore-audit to qcore-core dependency and is preserved separately; dependency rule kept intact and model construction moved to qcore-verification. Logs: private/cycle18-priority1/corrected-gate-20260920/. No corpus, callback-composition or CT promotion.",
+  "workspace_tests": 4991,
   "provider_tests": 122,
   "python_evidence_validator_tests": 317,
-  "lean_audits": 158,
+  "lean_audits": 161,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6793,6 +6793,7 @@
    "AuditEpochSourceLowering.lean",
    "AuditErrorPayload.lean",
    "AuditEventCompositionContext.lean",
+   "AuditEventPayloadBoundary.lean",
    "AuditExternCall.lean",
    "AuditFixedScalarQuery.lean",
    "AuditFrameHelperTask.lean",
@@ -6879,6 +6880,7 @@
    "AuditTaskTraceLeaseBoundary.lean",
    "AuditTaskTraceRelation.lean",
    "AuditTeardownAdmission.lean",
+   "AuditTimeoutTeardown.lean",
    "AuditTransferability.lean",
    "AuditTwoDerivationAdmission.lean",
    "AuditTypedContractFacts.lean",
@@ -6886,6 +6888,7 @@
    "AuditUncheckedLinkage.lean",
    "AuditVariadicNested.lean",
    "AuditW4.lean",
+   "AuditWaitFailurePaths.lean",
    "AuditWriteLend.lean",
    "AuditWriteLendTasks.lean",
    "AuditWriteLendTasksExercise.lean"
@@ -6896,7 +6899,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cycle18-contract-extraction/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cycle18-priority1-integration/gate.json)"
  },
  "named_followups": [
   {
@@ -8724,7 +8727,7 @@
   {
    "id": "MONKEY-CALLBACK-CYCLE18-COMPOSITION",
    "title": "Compose the selected Monkey callbacks with Cycle 18 event semantics",
-   "why": "All three selected callbacks and their eight source paths remain accounted but Unknown for full Cycle 18 composition. CYCLE18-OBSERVED-INTEGRATION now joins contract-backed timed-wait source obligations with one identity-bearing instrumented success run and event-kernel replay; that bounded observed artifact does not discharge the original all-callback/all-relevant-path property. Discharge: source/build/profile-bound composition for every selected callback and relevant path, exact inventory coverage and negative controls; uncovered callbacks retain individual Unknown reasons.",
+   "why": "All three selected callbacks and their eight source paths remain accounted but Unknown for full Cycle 18 composition. CYCLE18-OBSERVED-INTEGRATION now joins contract-backed timed-wait source obligations with one identity-bearing instrumented success run and event-kernel replay; that bounded observed artifact does not discharge the original all-callback/all-relevant-path property. Discharge: source/build/profile-bound composition for every selected callback and relevant path, exact inventory coverage and negative controls; uncovered callbacks retain individual Unknown reasons. Priority-one integration adds bounded failure classification, four-path payload checks under explicit exclusive authority, and same-dispatcher timeout teardown; it does not discharge full composition. Remaining obligations include real-backend registration failure/liveness, initialization reachability, caller null/size handling, general payload allocation and authority provenance, natural activation reachability, and all relevant callback paths. Runtime/linkage recording and faithful source extraction remain premises.",
    "source": "docs/reports/w42-monkey-callback-coverage/README.md",
    "recorded_by": "W42-MONKEY-CALLBACK-COVERAGE"
   },
@@ -8783,27 +8786,6 @@
    "why": "The standalone std_buffer value step records ExtentOutOfRange but still allocates vec![0; extent] before returning refusal. The resource-helper integration adds an early guard for its new route. Discharge the remaining standalone boundary by checking invalid extents before materialization, including nested supported event paths, with bounded-cost refusal regressions. This is a reviewed cost/availability boundary, not an observed Safe misclassification.",
    "source": "docs/reports/resource-boundaries-integration/README.md",
    "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
-  },
-  {
-   "id": "CYCLE18-TIMED-WAIT-FAILURE-PATHS",
-   "title": "Account for timed-wait allocation and registration failures",
-   "why": "The observed timed-wait route admits one success execution. Discharge: derive and check the relevant creation/registration failure paths from source and explicit native/model evidence, retaining Unknown where effects are unproven and issuing Unsafe only for a validated reachable violation; never infer all-path safety from successful observations.",
-   "source": "docs/reports/cycle18-observed-integration/README.md",
-   "recorded_by": "CYCLE18-OBSERVED-INTEGRATION"
-  },
-  {
-   "id": "CYCLE18-CB-EVENT-PAYLOAD-BOUNDARY",
-   "title": "Derive cb_event payload bounds and write authority",
-   "why": "Discharge: source-derived identities, storage extents, array bounds and write permissions for every cb_event path, joined to its event/context evidence with negative controls. The return-only timed callback supplies none of this payload evidence.",
-   "source": "docs/reports/cycle18-observed-integration/README.md",
-   "recorded_by": "CYCLE18-OBSERVED-INTEGRATION"
-  },
-  {
-   "id": "CYCLE18-CB-TIMEOUT-SELF-TEARDOWN",
-   "title": "Compose cb_timeout self-teardown and distinct custody",
-   "why": "Discharge: implement and audit the matching Rust/Lean running-callback teardown relation and source projection, separately accounting for event, map and descriptor custody and the platform-qualified close result. Do not waive the existing FreeEvent lifecycle refusal.",
-   "source": "docs/reports/cycle18-observed-integration/README.md",
-   "recorded_by": "CYCLE18-OBSERVED-INTEGRATION"
   },
   {
    "id": "CYCLE18-CALLBACK-TASK-HANDOFF",
