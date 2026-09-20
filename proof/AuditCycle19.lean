@@ -18,6 +18,7 @@ import QCore.ListUnlink
 import QCore.CounterSource
 import QCore.FieldDestructor
 import QCore.CallbackBinding
+import QCore.CallbackCoverage
 import QCore.CallbackSource
 import QCore.DescriptorObservation
 import QCore.QuantIndexBinding
@@ -154,6 +155,11 @@ import QCore.ChunkSource
 #print axioms QCore.CallbackBinding.native_path_has_native_execution
 #print axioms QCore.CallbackBinding.injected_path_is_observed_but_not_native
 #print axioms QCore.CallbackBinding.native_path_is_observed
+
+#print axioms QCore.CallbackCoverage.every_current_account_is_unknown
+#print axioms QCore.CallbackCoverage.omitted_selected_callback_is_not_accounted
+#print axioms QCore.CallbackCoverage.duplicate_callback_is_not_accounted
+#print axioms QCore.CallbackCoverage.unselected_callback_is_not_accounted
 
 #print axioms QCore.CallbackSource.accepted_storage_start_is_fresh
 #print axioms QCore.CallbackSource.accepted_storage_start_retains_existing
