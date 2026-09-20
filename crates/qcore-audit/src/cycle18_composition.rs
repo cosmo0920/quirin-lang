@@ -78,6 +78,7 @@ pub fn run_cycle18_composition_config(path: &Path) -> Result<(), String> {
         wait_observations: &wait.evidence.observations,
         wait_bindings: &wait.evidence.bindings,
         wait_failure_observations: &failures.evidence.observations,
+        wait_failure_source: &failures.evidence.projection,
         payload_source: &payload.evidence.projection,
         payload_context: &payload.evidence.context,
         payload_evidence: EventPayloadEvidence {

@@ -262,6 +262,7 @@ pub(crate) fn load_monkey_source(
         ],
         protected_files: {
             protected_files.extend([
+                profile_directory.join("profile.json"),
                 monkey_inputs.to_path_buf(),
                 observer_compile_database.to_path_buf(),
                 database_path.to_path_buf(),

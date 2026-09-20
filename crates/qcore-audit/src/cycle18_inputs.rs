@@ -56,6 +56,7 @@ pub(crate) struct Timeout {
 }
 
 pub(crate) struct Failures {
+    pub projection: MonkeyWaitSourceProjection,
     pub observations: Vec<u8>,
 }
 

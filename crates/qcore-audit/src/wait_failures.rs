@@ -286,6 +286,7 @@ pub(crate) fn prepare_wait_failures(
     crate::cycle18_inputs::PreparedAudit::new(
         aggregate_identity,
         crate::cycle18_inputs::Failures {
+            projection,
             observations: bytes(6).to_vec(),
         },
         report,
