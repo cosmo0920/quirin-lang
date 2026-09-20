@@ -1,8 +1,13 @@
 //! Provider-independent projection; Unknown stays in the report denominator.
+use crate::certificate_context::{
+    AuditContractTrustPolicy, bind_audit_legacy_safety_certificate,
+    check_audit_legacy_safety_certificate_for, expected_audit_certificate_context,
+};
+use crate::compile_db::CompileTaskIdentity;
 use crate::report::AuditReport;
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, LegacyCError, LegacyProgramSummary, PreparedTranslationUnit,
-    SourceDefinitionInventory, SourceLineMap, UnrestrictedLegacyResult,
+    AnalysisStatus, C11TranslationUnit, LegacyCError, LegacyProgramSummary,
+    PreparedTranslationUnit, SourceDefinitionInventory, SourceLineMap, UnrestrictedLegacyResult,
     analyze_prepared_translation_unit, analyze_unrestricted_c11_with_inventory,
     map_preprocessed_lines, validate_unrestricted_c11,
 };
@@ -40,6 +45,12 @@ pub struct AuditCounts {
     pub plain_preprocessing_elapsed_us: u64,
     pub syntax_validation_elapsed_us: u64,
     pub line_marked_preprocessing_elapsed_us: u64,
+}
+
+/// Audit-owned context supplied beside one immutable prepared unit.
+pub struct PreparedAuditCertificateContext<'a> {
+    pub compile_task_identity: &'a CompileTaskIdentity,
+    pub source_profile_sha256: &'a str,
 }
 
 /// The summary a result carries, whatever its verdict.
@@ -149,9 +160,14 @@ pub fn project_prepared_unit(
     file: &str,
     prepared: &PreparedTranslationUnit,
     contracts: &ResourceContracts,
+    certificate_context: PreparedAuditCertificateContext<'_>,
     report: &mut AuditReport,
     counts: &mut AuditCounts,
 ) -> Result<(), String> {
+    let PreparedAuditCertificateContext {
+        compile_task_identity,
+        source_profile_sha256,
+    } = certificate_context;
     let metrics = prepared.metrics();
     counts.prepared_units += 1;
     counts.preparation_clang_invocations += usize::from(metrics.clang_invocations());
@@ -181,6 +197,44 @@ pub fn project_prepared_unit(
     }
     counts.source_functions += source_functions.len();
     let result = analyze_prepared_translation_unit(prepared, &source_functions[0], contracts);
+    let result = match result {
+        Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
+            let policy = AuditContractTrustPolicy::DeclaredSourcesAreTrustedAssumptions;
+            let admission = (|| {
+                let expected = expected_audit_certificate_context(
+                    prepared,
+                    compile_task_identity.clone(),
+                    contracts,
+                    source_profile_sha256,
+                    policy,
+                )?;
+                let bound = bind_audit_legacy_safety_certificate(
+                    &certificate,
+                    compile_task_identity.clone(),
+                    source_profile_sha256,
+                    policy,
+                )?;
+                check_audit_legacy_safety_certificate_for(&bound, &expected)?;
+                Ok::<_, String>(bound)
+            })();
+            match admission {
+                Ok(bound) => Ok(UnrestrictedLegacyResult::Safe(bound.certificate)),
+                Err(reason) => {
+                    let mut summary = certificate.summary;
+                    summary.status = AnalysisStatus::Unknown;
+                    for function in summary.functions.values_mut() {
+                        function.status = AnalysisStatus::Unknown;
+                    }
+                    Ok(UnrestrictedLegacyResult::Unknown {
+                        preprocessed_source: certificate.preprocessed_source,
+                        reason: format!("certificate context binding refused: {reason}"),
+                        partial: Some(summary),
+                    })
+                }
+            }
+        }
+        other => other,
+    };
     record_projection(
         ProjectionContext {
             library,

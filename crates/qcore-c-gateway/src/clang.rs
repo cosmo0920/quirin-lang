@@ -30,6 +30,26 @@ pub struct ClangIdentity {
 }
 
 impl ClangIdentity {
+    /// Construct a provenance record from values captured by an external audit
+    /// coordinator. This records a claim; it does not attest the executable or
+    /// prove equivalence to a compilation-database driver.
+    pub fn recorded(
+        program: impl Into<String>,
+        version: impl Into<String>,
+        target: impl Into<String>,
+    ) -> Result<Self, String> {
+        let identity = Self {
+            program: program.into(),
+            version: version.into(),
+            target: target.into(),
+        };
+        if identity.program.is_empty() || identity.version.is_empty() || identity.target.is_empty()
+        {
+            return Err("recorded Clang identity has an empty program, version or target".into());
+        }
+        Ok(identity)
+    }
+
     /// Ask the discovered Clang for its own version and default target.
     pub fn capture() -> Result<Self, String> {
         let mut version_command = command()?;
@@ -60,11 +80,7 @@ impl ClangIdentity {
         if !version.contains("clang version") || target.is_empty() {
             return Err("Clang reported incomplete version or target identity".into());
         }
-        Ok(Self {
-            program,
-            version,
-            target,
-        })
+        Self::recorded(program, version, target)
     }
 
     /// The resolved executable name or path, exactly as the gateway invokes it.

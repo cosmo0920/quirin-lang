@@ -9,8 +9,12 @@ import QCore.CertificateScope
 #print axioms QCore.CertificateScope.structural_acceptance_binds_inventory_digest
 #print axioms QCore.CertificateScope.contextual_acceptance_binds_expected_targets
 #print axioms QCore.CertificateScope.contextual_acceptance_binds_expected_input
+#print axioms QCore.CertificateScope.contextual_acceptance_binds_expected_compile_task
+#print axioms QCore.CertificateScope.contextual_acceptance_binds_expected_trust_context
 #print axioms QCore.CertificateScope.unequal_expected_denominator_rejects
 #print axioms QCore.CertificateScope.unequal_expected_input_rejects
+#print axioms QCore.CertificateScope.unequal_expected_compile_task_rejects
+#print axioms QCore.CertificateScope.unequal_expected_trust_context_rejects
 
 #print axioms QCore.CertificateScope.scope_reduction_is_rejected
 #print axioms QCore.CertificateScope.duplicate_targets_are_rejected
@@ -19,3 +23,5 @@ import QCore.CertificateScope
 #print axioms QCore.CertificateScope.expected_context_rejects_coherent_scope_replacement
 #print axioms QCore.CertificateScope.changed_effective_input_is_rejected
 #print axioms QCore.CertificateScope.complete_matching_scope_is_accepted
+#print axioms QCore.CertificateScope.changed_compile_task_is_rejected
+#print axioms QCore.CertificateScope.changed_trust_context_is_rejected
