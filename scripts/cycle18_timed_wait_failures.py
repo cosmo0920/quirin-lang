@@ -18,6 +18,7 @@ def main():
     args.output.mkdir(parents=True, exist_ok=True)
     root = pathlib.Path(__file__).resolve().parents[1]
     source = root / "compiler/examples/cycle18_timed_wait_failures.c"
+    header = root / "compiler/examples/cycle18_timed_wait_failures.h"
     wrapper_fixture = root / "compiler/tests/fixtures/monkey/wrappers.c"
     exe = args.output / "cycle18_timed_wait_failures"
     command = [args.cc, "-std=gnu17", "-Wall", "-Wextra", "-Werror",
@@ -38,6 +39,7 @@ def main():
         "source_revision": REVISION, "host": platform.platform(),
         "compiler": subprocess.check_output([args.cc, "--version"], text=True).splitlines()[0],
         "command": command, "harness": str(source), "harness_sha256": digest(source),
+        "harness_header": str(header), "harness_header_sha256": digest(header),
         "wrapper_fixture": str(wrapper_fixture),
         "wrapper_fixture_sha256": digest(wrapper_fixture),
         "executable": str(exe), "executable_sha256": digest(exe),

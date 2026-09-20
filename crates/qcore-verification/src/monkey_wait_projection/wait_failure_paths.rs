@@ -9,6 +9,10 @@ use serde::{Deserialize, Serialize};
 
 const POLICY: &str = include_str!("../../../../contract/qcore/monkey/wait_failure_policy.qcore");
 
+pub fn wait_failure_policy_digest() -> String {
+    sha256_hex(POLICY.as_bytes())
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum WaitFailureOutcome {

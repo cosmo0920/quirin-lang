@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "cycle18_timed_wait_failures.h"
+
 #include "../tests/fixtures/monkey/wrappers.c"
 
 struct event { int marker; };
@@ -88,12 +90,13 @@ static void print_create(const char *name, enum scenario selected,
 {
     struct mk_event_ctx *ctx;
     reset(selected); ctx = _mk_event_loop_create(2);
-    printf("{\"schema_version\":1,\"source_revision\":\"66910c10a4d7eafa810b84229cf2dcf7b0f26f97\","
+    printf("{\"schema_version\":%d,\"source_revision\":\"%s\","
            "\"scenario\":\"%s\",\"path\":\"_mk_event_loop_create\","
            "\"trace\":[%s],\"returned_null\":%s,\"returned_context_base_nonnull\":%s,"
            "\"base_created\":%s,\"base_freed\":%s,\"context_freed\":%s,"
            "\"returned_dispatch_result\":false,\"event_add_argument_nonnull\":false,"
            "\"event_free_argument_nonnull\":false,\"event_add_result\":0,\"timeout_activated\":false}",
+           QCORE_WAIT_FAILURE_SCHEMA_VERSION, QCORE_WAIT_FAILURE_SOURCE_REVISION,
            name, trace, ctx == NULL ? "true" : "false",
            ctx != NULL && ctx->base != NULL ? "true" : "false",
            base_created ? "true" : "false", base_freed ? "true" : "false",
@@ -104,14 +107,16 @@ static void print_wait(const char *name, enum scenario selected)
 {
     struct mk_event_ctx ctx = {0}; struct mk_event_loop loop = {&ctx, 0}; int result;
     reset(selected); result = _mk_event_wait_2(&loop, 2);
-    printf("{\"schema_version\":1,\"source_revision\":\"66910c10a4d7eafa810b84229cf2dcf7b0f26f97\","
+    printf("{\"schema_version\":%d,\"source_revision\":\"%s\","
            "\"scenario\":\"%s\",\"path\":\"_mk_event_wait_2\","
            "\"trace\":[\"event_new\",\"event_add\",\"dispatch\",\"event_free\"],"
            "\"returned_dispatch_result\":%s,\"event_add_argument_nonnull\":%s,"
            "\"event_free_argument_nonnull\":%s,\"event_add_result\":%d,"
            "\"timeout_activated\":%s,\"returned_null\":false,"
            "\"returned_context_base_nonnull\":false,\"base_created\":false,"
-           "\"base_freed\":false,\"context_freed\":false}", name, result == 7 ? "true" : "false",
+           "\"base_freed\":false,\"context_freed\":false}",
+           QCORE_WAIT_FAILURE_SCHEMA_VERSION, QCORE_WAIT_FAILURE_SOURCE_REVISION,
+           name, result == 7 ? "true" : "false",
            add_nonnull ? "true" : "false", free_nonnull ? "true" : "false", add_result,
            activated ? "true" : "false");
 }

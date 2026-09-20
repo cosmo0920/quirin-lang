@@ -25,7 +25,7 @@ use serde::Serialize;
 mod wait_failure_paths;
 pub use wait_failure_paths::{
     CheckedWaitFailureCase, WaitFailureError, WaitFailureEvidenceClass, WaitFailureObservation,
-    WaitFailureOutcome, check_wait_failure_paths,
+    WaitFailureOutcome, check_wait_failure_paths, wait_failure_policy_digest,
 };
 
 const WAIT_SOURCE_POLICY: &str =

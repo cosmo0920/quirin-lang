@@ -43,7 +43,7 @@ presented as upstream defects.
 The dedicated C harness includes the approved wrapper fixture verbatim and
 stubs dependency results to drive context allocation, base creation, fired
 allocation, timer creation and timer registration failures plus a success
-control. The runner binds both the harness and included fixture digests,
+control. The runner binds the harness source, its identity header and included fixture digests,
 compiles with Clang ASan/UBSan, enables LSan, requires the exact six-scenario
 set, and records that dependency behavior is stubbed. The final run is
 [recorded here](native-run.json); its semantically identical committed payload
@@ -73,7 +73,7 @@ The final [focused gate](gate.json) records:
 
 Private final logs are under
 `measure/cycle18-wait-failures-focused-final-3/` and
-`measure/cycle18-wait-failures-native-5/`. Earlier unique attempts are retained:
+`measure/cycle18-wait-failures-native-6/`. Earlier unique attempts are retained:
 native attempts 1 and 2 exited 1 on fixture warning diagnostics; attempt 3
 exited 1 because LSan cannot run under ptrace; attempt 4 exited 0 but used the
 superseded caller-supplied outcome schema. Focused attempt 1 recorded fmt 1,
@@ -99,3 +99,51 @@ counted as passing evidence.
 - Update the root-owned acceptance matrix, status/increment record, corpus
   documentation and final reconciliation record. No existing frozen artifact
   was edited by this card.
+
+## Configured audit integration
+
+The follow-on integration adds `quirin-audit wait-failures CONFIG.json`. The
+configured route independently loads the pinned real Monkey translation unit
+and its complete typed summaries through the shared source loader. That loader
+checks the pinned checkout, source copies, generated sources and headers,
+compilation databases, build cache and effective compile task. The route then
+parses the exact wrapper/composition contracts and requires the configured
+failure policy to equal the executable policy bundled into the verifier.
+
+The selected run manifest must bind the repository-exact harness, the approved
+wrapper fixture and strict observation bytes. It must label dependency behavior
+`stubbed fault model; not a Libevent execution` and explicitly deny all-path
+safety. A source revision mismatch or an invented real-Libevent evidence class
+refuses. The report records the source compile task, source/build identities,
+manifest and policy digests and the full verdict tuples.
+
+The route protects its configuration, source inputs, contracts, policy,
+harness, header, fixture, observations and manifest from direct, symbolic and hard-link
+report aliases. It reloads the real source and rereads every retained snapshot
+after checking. Only then does it write and fsync an adjacent new temporary
+file and atomically rename it to the report destination.
+
+The final configured run exited 0 and produced eight cases: three bounded
+source-harness `Unsafe` properties and five `Unknown` cases, under the top-level
+class `instrumented_source_model_not_real_libevent_execution`. The report SHA-256
+is `092ef5e1eccc60324877a7233b45d687e2631e9a9d52b4971e66ceaa1235ce8f`.
+The [configured focused gate](configured-gate.json) records fmt, Clippy and four
+Rust protection tests at exit 0. The shipped configured-control runner drove
+[nine refusals](configured-negative-controls.json): harness, header, fixture and policy
+substitution; missing semantic evidence with the manifest hash recomputed;
+invented real-Libevent classification; source revision substitution; an unknown
+configuration field; and a report alias. Each CLI exited 1 and no report was
+published. Final private logs are under `measure/wait-failures-cli-3/`,
+`measure/wait-failures-negative-4/` and
+`measure/wait-failures-integration-focused-2/`.
+
+### Configured integration reconciliation
+
+- Merge `crates/qcore-audit/src/wait_failures.rs` and resolve the isolated
+  `lib.rs`/`main.rs` module and command arms with sibling configured routes.
+- Preserve the existing `observed-wait` behavior; this route shares only the
+  pinned source loader and does not weaken its runtime/linkage checks.
+- The configured route now supplies the independently hashed source/evidence
+  join requested by the original reconciliation list. The root integrator can
+  retire `CYCLE18-TIMED-WAIT-FAILURE-PATHS` while retaining the five emitted
+  `Unknown` cases and the real-Libevent limitation.

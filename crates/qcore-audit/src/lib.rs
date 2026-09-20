@@ -17,6 +17,7 @@ pub mod projection;
 pub mod report;
 mod source_audit;
 pub mod source_contract;
+pub mod wait_failures;
 pub use source_audit::{SourceContractAuditConfig, SourceContractLibrary};
 
 use std::collections::{BTreeMap, BTreeSet};

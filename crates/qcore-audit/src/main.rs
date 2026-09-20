@@ -41,6 +41,26 @@ fn main() -> ExitCode {
             }
         };
     }
+    if path == "wait-failures" {
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: quirin-audit wait-failures CONFIG.json");
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: quirin-audit wait-failures CONFIG.json");
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::wait_failures::run_wait_failures_config(&PathBuf::from(config)) {
+            Ok(()) => {
+                println!("Timed-wait failure paths checked; bounded report written.");
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("wait-failures audit rejected (Unknown): {error}");
+                ExitCode::FAILURE
+            }
+        };
+    }
     if arguments.next().is_some() {
         eprintln!("usage: quirin-audit CONFIG.json");
         return ExitCode::FAILURE;
