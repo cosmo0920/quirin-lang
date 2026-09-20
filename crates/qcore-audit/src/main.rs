@@ -22,6 +22,14 @@ fn main() -> ExitCode {
                 counts.data_only_units,
                 counts.gateway_failures
             );
+            println!(
+                "preparation: {} unit(s), {} Clang invocation(s); -E -P {} us / syntax {} us / line markers {} us",
+                counts.prepared_units,
+                counts.preparation_clang_invocations,
+                counts.plain_preprocessing_elapsed_us,
+                counts.syntax_validation_elapsed_us,
+                counts.line_marked_preprocessing_elapsed_us,
+            );
             if counts.gateway_failures == 0 {
                 ExitCode::SUCCESS
             } else {

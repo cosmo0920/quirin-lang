@@ -35,7 +35,10 @@ pub use location::{
 #[path = "legacy_preparation.rs"]
 mod preparation;
 
-pub use preparation::{PreparationMetrics, PreparedTranslationUnit, prepare_translation_unit};
+pub use preparation::{
+    PreparationMetrics, PreparationStageMetrics, PreparationStageOutcome, PreparedTranslationUnit,
+    prepare_translation_unit,
+};
 
 #[path = "legacy_recursion.rs"]
 pub(crate) mod recursion;
@@ -1596,6 +1599,10 @@ pub fn analyze_prepared_translation_unit(
     entry: &str,
     contracts: &ResourceContracts,
 ) -> Result<UnrestrictedLegacyResult, LegacyCError> {
+    let preprocessed_source = prepared
+        .preprocessed_source()
+        .map_err(Clone::clone)?
+        .to_owned();
     let source_functions = match prepared.function_scope() {
         LegacyFunctionScope::PreprocessedTranslationUnit => None,
         LegacyFunctionScope::MainSourceDefinitions => {
@@ -1605,7 +1612,7 @@ pub fn analyze_prepared_translation_unit(
     #[cfg(feature = "indirect-census")]
     crate::indirect_census::next_unit();
     analyze_preprocessed_unrestricted_c11(
-        prepared.preprocessed_source().to_owned(),
+        preprocessed_source,
         prepared.dialect(),
         prepared.function_scope(),
         prepared.raw_source().to_owned(),

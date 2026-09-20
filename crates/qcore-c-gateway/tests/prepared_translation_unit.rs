@@ -56,14 +56,14 @@ fn prepared_analysis_preserves_safe_unsafe_and_unknown_results() {
     for (expected, source) in cases {
         let unit = unit(source);
         let baseline = analyze_unrestricted_c11(&unit, "subject", &contracts()).unwrap();
-        let prepared = prepare_translation_unit(&unit).unwrap();
+        let prepared = prepare_translation_unit(&unit);
         let shared = analyze_prepared_translation_unit(&prepared, "subject", &contracts()).unwrap();
         assert_eq!(verdict(&baseline), expected, "baseline case {expected}");
         assert_eq!(
             shared, baseline,
             "prepared case {expected} moved its result"
         );
-        assert_eq!(prepared.metrics().clang_invocations, 3);
+        assert_eq!(prepared.metrics().clang_invocations(), 3);
     }
 }
 
@@ -92,21 +92,23 @@ fn one_preparation_shares_exact_forms_inventory_and_macro_header_coordinates() {
         input: CSourceInput::HistoricalStdin,
         ..C11TranslationUnit::default()
     };
-    let prepared = prepare_translation_unit(&unit).unwrap();
+    let prepared = prepare_translation_unit(&unit);
     assert_eq!(prepared.inventory().definitions(), ["subject"]);
     assert!(prepared.line_marked_source().is_some());
     assert!(
         prepared
             .preprocessed_source()
+            .unwrap()
             .contains("void subject(void)")
     );
     assert_ne!(
-        prepared.preprocessed_source(),
+        prepared.preprocessed_source().unwrap(),
         prepared.line_marked_source().unwrap(),
         "the marked form must be retained separately, never reconstructed"
     );
     let line = prepared
         .preprocessed_source()
+        .unwrap()
         .split('\n')
         .position(|line| line.contains("void subject(void)"))
         .unwrap()
@@ -114,6 +116,6 @@ fn one_preparation_shares_exact_forms_inventory_and_macro_header_coordinates() {
     let origin = prepared.locations().original(line).unwrap();
     assert_eq!(origin.depth, 0, "macro expansion is at its invocation site");
     assert_eq!(origin.line, 2);
-    assert_eq!(prepared.metrics().clang_invocations, 3);
+    assert_eq!(prepared.metrics().clang_invocations(), 3);
     let _ = std::fs::remove_dir_all(root);
 }

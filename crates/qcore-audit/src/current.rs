@@ -6,8 +6,7 @@ use std::path::{Path, PathBuf};
 
 use qcore_c_gateway::ClangIdentity;
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, LegacyFunctionScope, enumerate_source_definitions,
-    legacy_c_source_functions, prepare_translation_unit,
+    C11TranslationUnit, LegacyFunctionScope, legacy_c_source_functions, prepare_translation_unit,
 };
 use qcore_contract::contract_loader::load_resource_contract_manifest;
 use qcore_contract::profile_loader::{LoadedProfile, sha256_hex};
@@ -16,7 +15,7 @@ use qcore_schemas::profile::{LibraryProfile, UnitSelection};
 use serde_json::{Value, json};
 
 use crate::compile_db::{CompileEntry, EffectiveInput, compile_task_identity, compiler_options};
-use crate::projection::{AuditCounts, project_prepared_unit, project_unit};
+use crate::projection::{AuditCounts, project_prepared_unit};
 use crate::report::{AuditReport, UnitRefusal};
 
 /// Keep distinct commands, deduplicating only identical file/directory/command
@@ -191,12 +190,12 @@ impl CurrentAudit {
         match prepared {
             Ok(unit) => {
                 let prepared = prepare_translation_unit(&unit);
-                let preparation_error = prepared.as_ref().err().map(ToString::to_string);
+                let preparation_error = prepared.validation_error().map(ToString::to_string);
                 let identity = compile_task_identity(
                     entry,
                     &unit,
-                    match &prepared {
-                        Ok(prepared) => EffectiveInput::Accepted(prepared.preprocessed_source()),
+                    match prepared.preprocessed_source() {
+                        Ok(source) => EffectiveInput::Accepted(source),
                         Err(_) => EffectiveInput::Rejected(
                             preparation_error
                                 .as_deref()
@@ -208,33 +207,14 @@ impl CurrentAudit {
                 )?;
                 configuration["compile_task_identity"] =
                     serde_json::to_value(identity).map_err(|error| error.to_string())?;
-                match prepared {
-                    Ok(prepared) => {
-                        project_prepared_unit(
-                            library,
-                            &file,
-                            &prepared,
-                            &self.contracts,
-                            &mut self.report,
-                            &mut self.counts,
-                        )?;
-                    }
-                    Err(_) => {
-                        // Preserve the historical fail-closed report shape for
-                        // a rejected preparation. The success path above is the
-                        // shared three-invocation pipeline.
-                        let inventory = enumerate_source_definitions(&unit);
-                        project_unit(
-                            library,
-                            &file,
-                            &unit,
-                            &inventory,
-                            &self.contracts,
-                            &mut self.report,
-                            &mut self.counts,
-                        )?;
-                    }
-                }
+                project_prepared_unit(
+                    library,
+                    &file,
+                    &prepared,
+                    &self.contracts,
+                    &mut self.report,
+                    &mut self.counts,
+                )?;
             }
             Err(refusal) => {
                 self.counts.units += 1;
@@ -271,6 +251,14 @@ impl CurrentAudit {
             self.counts.unknown_units,
             self.counts.data_only_units,
             self.counts.gateway_failures
+        );
+        println!(
+            "preparation: {} unit(s), {} Clang invocation(s); -E -P {} us / syntax {} us / line markers {} us",
+            self.counts.prepared_units,
+            self.counts.preparation_clang_invocations,
+            self.counts.plain_preprocessing_elapsed_us,
+            self.counts.syntax_validation_elapsed_us,
+            self.counts.line_marked_preprocessing_elapsed_us,
         );
         if let Some(path) = path {
             if let Some(parent) = path.parent() {
