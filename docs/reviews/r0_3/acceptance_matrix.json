@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 278
+  "named_followups": 279
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -8769,6 +8769,13 @@
    "title": "Bind resource call extraction and C emission to the formal model",
    "why": "Lean covers bounded decision rules. Parser extraction, graph flattening and C refinement are review premises. Discharge requires a binding/refinement argument across those boundaries.",
    "source": "docs/reports/resource-helper-functions/README.md",
+   "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+  },
+  {
+   "id": "STD-BUFFER-EXTENT-REFUSAL-COST",
+   "title": "Refuse invalid standalone buffer extents before materializing byte storage",
+   "why": "The standalone std_buffer value step records ExtentOutOfRange but still allocates vec![0; extent] before returning refusal. The resource-helper integration adds an early guard for its new route. Discharge the remaining standalone boundary by checking invalid extents before materialization, including nested supported event paths, with bounded-cost refusal regressions. This is a reviewed cost/availability boundary, not an observed Safe misclassification.",
+   "source": "docs/reports/resource-boundaries-integration/README.md",
    "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
   }
  ],

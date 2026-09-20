@@ -84,6 +84,18 @@
       "finding": "Independent compiled-CLI probes showed whitespace compaction merged distinct type identifier tokens, accepting split bytes and i32 names.",
       "resolution": "Recognize exact type token sequences across parameters, results and route selection; test split identifiers refuse while punctuation spacing remains valid.",
       "status": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
+    },
+    {
+      "card": "resource-helper-functions",
+      "finding": "The published SourceResultProfile still tags a module with owned-byte helper returns as NoResourcePayloads, although the checked resource-call graph retains those result types.",
+      "resolution": "Introduce a resource-byte custody metadata tag and point consumers to the checked call graph; pin it in the helper integration test.",
+      "status": "planned integration follow-up; no change to admitted programs or emitted C"
+    },
+    {
+      "card": "resource-helper-functions",
+      "finding": "The new helper checker delegates acquisition extents to std_buffer, whose value step records an out-of-range error but still creates a byte vector of the requested size before returning refusal. This is a code-review finding; no OOM experiment was run.",
+      "resolution": "Reject helper acquisition extents outside the existing 1..=MAX_EXTENT range before expansion/delegated value checking, with boundary regressions. Track the pre-existing standalone std.buffer cost boundary separately.",
+      "status": "planned integration follow-up; accepted program semantics unchanged"
     }
   ]
 }
