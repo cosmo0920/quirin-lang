@@ -1108,6 +1108,91 @@ pub enum LegacyFunctionScope {
     MainSourceDefinitions,
 }
 
+/// Per-definition coverage carried by a whole-unit certificate.
+///
+/// A `Safe` certificate currently admits only [`Self::AnalyzedSafe`]. The
+/// other variants make an excluded or unresolved row explicit if a future
+/// deliberately partial scope needs to retain it; certificate replay refuses
+/// either variant rather than silently removing it from the denominator.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum LegacyCertificateCoverage {
+    AnalyzedSafe,
+    Excluded { reason: String },
+    Unknown { reason: String },
+}
+
+/// One member of the certificate's complete selected target inventory.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LegacyCertificateDefinition {
+    pub name: String,
+    pub coverage: LegacyCertificateCoverage,
+}
+
+/// The source artifacts from which an independent checker reconstructs the
+/// selected target denominator.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum LegacyCertificateScopeEvidence {
+    /// Every definition in the authoritative preprocessed source is selected.
+    PreprocessedTranslationUnit,
+    /// Main-source selection is reconstructed from the raw source and the
+    /// line-marked preprocessing whose include-depth flags decide attribution.
+    MainSourceDefinitions {
+        raw_source: String,
+        line_marked_source: String,
+    },
+}
+
+/// Effective input identity bound into the certificate scope. These values are
+/// recomputed from retained artifacts during replay; none is trusted as a
+/// caller assertion.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LegacyCertificateInputIdentity {
+    pub raw_source_sha256: String,
+    pub preprocessed_source_sha256: String,
+    pub scope_evidence_sha256: String,
+    pub analysis_request_sha256: String,
+    pub dialect: CCompilerDialect,
+    pub function_scope: LegacyFunctionScope,
+}
+
+/// Owned gateway request fields that can affect preprocessing, parsing or
+/// typed interpretation. Retaining them lets replay recompute the request
+/// digest. Compiler executable/version, target headers and filesystem
+/// provenance remain the external `CompileTaskIdentity` boundary; this record
+/// does not claim to replace full build provenance.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LegacyCertificateRequest {
+    pub include_paths: Vec<String>,
+    pub definitions: Vec<String>,
+    pub preprocessor_options: Vec<CPreprocessorOption>,
+    pub input: CSourceInput,
+}
+
+/// The complete intended target scope and its coverage denominator.
+///
+/// `inventory_sha256` is a stable digest of the canonical definition rows.
+/// Replay first reconstructs those rows independently from `evidence`, then
+/// compares both the rows and digest. A reduced, duplicated or relabelled
+/// inventory therefore cannot become a smaller `Safe` claim.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LegacyCertificateScope {
+    pub definitions: Vec<LegacyCertificateDefinition>,
+    pub inventory_sha256: String,
+    pub input_identity: LegacyCertificateInputIdentity,
+    pub request: LegacyCertificateRequest,
+    pub evidence: LegacyCertificateScopeEvidence,
+}
+
+/// Caller-held expectation for the artifact, target denominator and scope a
+/// certificate is allowed to describe. A checker that needs to authenticate
+/// the intended audit target supplies this independently of the certificate;
+/// copying it out of the certificate proves only structural self-consistency.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LegacyCertificateExpectedContext {
+    pub inventory_sha256: String,
+    pub input_identity: LegacyCertificateInputIdentity,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LegacySafetyCertificate {
     pub preprocessed_source: String,
@@ -1116,6 +1201,11 @@ pub struct LegacySafetyCertificate {
     pub dialect: CCompilerDialect,
     pub function_scope: LegacyFunctionScope,
     pub summary: LegacyProgramSummary,
+    /// Complete selected target inventory, independently reconstructible from
+    /// the retained scope evidence.
+    pub target_scope: LegacyCertificateScope,
+    /// Compatibility index of analysed rows. Replay derives this from
+    /// `target_scope`; it is never accepted as the coverage denominator.
     pub checked_functions: Vec<String>,
     /// Interprocedural custody summaries the analysis relied on (W4). Only
     /// [`ContractTrust::InferredValidated`] records appear here; declared
@@ -1133,6 +1223,195 @@ pub enum UnrestrictedLegacyResult {
         reason: String,
         partial: Option<LegacyProgramSummary>,
     },
+}
+
+fn digest_field(bytes: &mut Vec<u8>, value: &[u8]) {
+    bytes.extend_from_slice(&(value.len() as u64).to_be_bytes());
+    bytes.extend_from_slice(value);
+}
+
+fn certificate_inventory_sha256(rows: &[LegacyCertificateDefinition]) -> String {
+    let mut bytes = b"qcore.legacy-c.certificate-scope.v1\0".to_vec();
+    for row in rows {
+        digest_field(&mut bytes, row.name.as_bytes());
+        match &row.coverage {
+            LegacyCertificateCoverage::AnalyzedSafe => bytes.push(0),
+            LegacyCertificateCoverage::Excluded { reason } => {
+                bytes.push(1);
+                digest_field(&mut bytes, reason.as_bytes());
+            }
+            LegacyCertificateCoverage::Unknown { reason } => {
+                bytes.push(2);
+                digest_field(&mut bytes, reason.as_bytes());
+            }
+        }
+    }
+    qcore_schemas::sha256_hex(&bytes)
+}
+
+fn certificate_input_identity(
+    dialect: CCompilerDialect,
+    function_scope: LegacyFunctionScope,
+    preprocessed_source: &str,
+    evidence: &LegacyCertificateScopeEvidence,
+    request: &LegacyCertificateRequest,
+) -> LegacyCertificateInputIdentity {
+    let (raw, scope_evidence) = match evidence {
+        LegacyCertificateScopeEvidence::PreprocessedTranslationUnit => ("", preprocessed_source),
+        LegacyCertificateScopeEvidence::MainSourceDefinitions {
+            raw_source,
+            line_marked_source,
+        } => (raw_source.as_str(), line_marked_source.as_str()),
+    };
+    let mut request_bytes = serde_json::to_vec(&(
+        &request.include_paths,
+        &request.definitions,
+        &request.preprocessor_options,
+        &request.input,
+    ))
+    .expect("certificate request fields are serializable");
+    request_bytes.push(match dialect {
+        CCompilerDialect::C11 => 0,
+        CCompilerDialect::Gnu99 => 1,
+        CCompilerDialect::Gnu11 => 2,
+        CCompilerDialect::Gnu17 => 3,
+    });
+    request_bytes.push(match function_scope {
+        LegacyFunctionScope::PreprocessedTranslationUnit => 0,
+        LegacyFunctionScope::MainSourceDefinitions => 1,
+    });
+    LegacyCertificateInputIdentity {
+        raw_source_sha256: qcore_schemas::sha256_hex(raw.as_bytes()),
+        preprocessed_source_sha256: qcore_schemas::sha256_hex(preprocessed_source.as_bytes()),
+        scope_evidence_sha256: qcore_schemas::sha256_hex(scope_evidence.as_bytes()),
+        analysis_request_sha256: qcore_schemas::sha256_hex(&request_bytes),
+        dialect,
+        function_scope,
+    }
+}
+
+fn certificate_request(unit: &C11TranslationUnit<'_>) -> LegacyCertificateRequest {
+    LegacyCertificateRequest {
+        include_paths: unit.include_paths.clone(),
+        definitions: unit.definitions.clone(),
+        preprocessor_options: unit.preprocessor_options.clone(),
+        input: unit.input.clone(),
+    }
+}
+
+fn preprocessed_definition_names(source: &str) -> Result<Vec<String>, String> {
+    let scan = function_names(&tokenize(source), &[]);
+    if let Some(refusal) = scan.refusals().first() {
+        return Err(format!(
+            "preprocessed target inventory cannot be established: {}",
+            refusal.reason()
+        ));
+    }
+    Ok(scan.definitions().to_vec())
+}
+
+fn build_certificate_scope(
+    unit: &C11TranslationUnit<'_>,
+    preprocessed_source: &str,
+) -> Result<LegacyCertificateScope, String> {
+    let marked = match unit.function_scope {
+        LegacyFunctionScope::PreprocessedTranslationUnit => None,
+        LegacyFunctionScope::MainSourceDefinitions => Some(
+            enumeration::preprocess_with_line_markers(unit)
+                .map_err(|error| format!("certificate scope preprocessing failed: {error}"))?,
+        ),
+    };
+    build_certificate_scope_from_evidence(
+        unit.dialect,
+        unit.function_scope,
+        preprocessed_source,
+        Some(unit.source),
+        marked.as_deref(),
+        certificate_request(unit),
+    )
+}
+
+fn build_certificate_scope_from_evidence(
+    dialect: CCompilerDialect,
+    function_scope: LegacyFunctionScope,
+    preprocessed_source: &str,
+    raw_source: Option<&str>,
+    line_marked_source: Option<&str>,
+    request: LegacyCertificateRequest,
+) -> Result<LegacyCertificateScope, String> {
+    let (names, evidence) = match function_scope {
+        LegacyFunctionScope::PreprocessedTranslationUnit => (
+            preprocessed_definition_names(preprocessed_source)?,
+            LegacyCertificateScopeEvidence::PreprocessedTranslationUnit,
+        ),
+        LegacyFunctionScope::MainSourceDefinitions => {
+            let raw = raw_source.ok_or_else(|| {
+                "main-source certificate scope carries no raw source evidence".to_owned()
+            })?;
+            let marked = line_marked_source.ok_or_else(|| {
+                "main-source certificate scope carries no line-marked evidence".to_owned()
+            })?;
+            let line_map = location::map_marked_preprocessing(&marked, preprocessed_source);
+            if let Some(refusal) = line_map.refusals().first() {
+                return Err(format!(
+                    "certificate scope evidence does not match the analyzed input: {}",
+                    refusal.reason()
+                ));
+            }
+            let inventory = enumeration::source_definition_inventory_from_evidence(raw, marked);
+            if !inventory.supports_unit_safe() {
+                return Err(inventory
+                    .withheld_safe_reason()
+                    .unwrap_or_else(|| "certificate target inventory is incomplete".to_owned()));
+            }
+            (
+                inventory.definitions().to_vec(),
+                LegacyCertificateScopeEvidence::MainSourceDefinitions {
+                    raw_source: raw.to_owned(),
+                    line_marked_source: marked.to_owned(),
+                },
+            )
+        }
+    };
+    let definitions = names
+        .into_iter()
+        .map(|name| LegacyCertificateDefinition {
+            name,
+            coverage: LegacyCertificateCoverage::AnalyzedSafe,
+        })
+        .collect::<Vec<_>>();
+    Ok(LegacyCertificateScope {
+        inventory_sha256: certificate_inventory_sha256(&definitions),
+        input_identity: certificate_input_identity(
+            dialect,
+            function_scope,
+            preprocessed_source,
+            &evidence,
+            &request,
+        ),
+        request,
+        definitions,
+        evidence,
+    })
+}
+
+/// Independently derive the expected certificate context from the intended
+/// translation unit. Persist this beside the audit request (or derive it again)
+/// and pass it to [`check_legacy_safety_certificate_for`] when the intended
+/// scope, rather than certificate self-consistency alone, must be authenticated.
+pub fn legacy_certificate_expected_context(
+    unit: &C11TranslationUnit<'_>,
+) -> Result<LegacyCertificateExpectedContext, LegacyCError> {
+    let preprocessed_source = validate_unrestricted_c11(unit)?;
+    let scope = build_certificate_scope(unit, &preprocessed_source).map_err(|reason| {
+        LegacyCError::ProductionParserRejected(format!(
+            "certificate target scope could not be established: {reason}"
+        ))
+    })?;
+    Ok(LegacyCertificateExpectedContext {
+        inventory_sha256: scope.inventory_sha256,
+        input_identity: scope.input_identity,
+    })
 }
 
 impl fmt::Display for LegacyCError {
@@ -1374,6 +1653,18 @@ pub fn analyze_unrestricted_c11_with_inventory(
                     });
                 }
             }
+            let target_scope = match build_certificate_scope(unit, &preprocessed_source) {
+                Ok(scope) => scope,
+                Err(reason) => {
+                    return Ok(UnrestrictedLegacyResult::Unknown {
+                        preprocessed_source,
+                        reason: format!(
+                            "certificate target scope could not be established: {reason}"
+                        ),
+                        partial: Some(summary),
+                    });
+                }
+            };
             let checked_functions = summary.functions.keys().cloned().collect::<Vec<_>>();
             let certificate = LegacySafetyCertificate {
                 preprocessed_source,
@@ -1382,6 +1673,7 @@ pub fn analyze_unrestricted_c11_with_inventory(
                 dialect: unit.dialect,
                 function_scope: unit.function_scope,
                 summary,
+                target_scope,
                 checked_functions,
                 summaries,
             };
@@ -1496,11 +1788,76 @@ pub fn check_legacy_safety_certificate(
     certificate: &LegacySafetyCertificate,
 ) -> Result<(), String> {
     crate::contract_loader::check_source_assumptions(&certificate.contracts)?;
+    let target_names = match (
+        &certificate.function_scope,
+        &certificate.target_scope.evidence,
+    ) {
+        (
+            LegacyFunctionScope::PreprocessedTranslationUnit,
+            LegacyCertificateScopeEvidence::PreprocessedTranslationUnit,
+        ) => preprocessed_definition_names(&certificate.preprocessed_source)?,
+        (
+            LegacyFunctionScope::MainSourceDefinitions,
+            LegacyCertificateScopeEvidence::MainSourceDefinitions {
+                raw_source,
+                line_marked_source,
+            },
+        ) => {
+            let line_map = location::map_marked_preprocessing(
+                line_marked_source,
+                &certificate.preprocessed_source,
+            );
+            if let Some(refusal) = line_map.refusals().first() {
+                return Err(format!(
+                    "certificate scope evidence does not match the analyzed input: {}",
+                    refusal.reason()
+                ));
+            }
+            let inventory = enumeration::source_definition_inventory_from_evidence(
+                raw_source,
+                line_marked_source,
+            );
+            if !inventory.supports_unit_safe() {
+                return Err(inventory
+                    .withheld_safe_reason()
+                    .unwrap_or_else(|| "certificate target inventory is incomplete".to_owned()));
+            }
+            inventory.definitions().to_vec()
+        }
+        _ => return Err("certificate scope evidence does not match its scope label".into()),
+    };
+    let expected_rows = target_names
+        .iter()
+        .cloned()
+        .map(|name| LegacyCertificateDefinition {
+            name,
+            coverage: LegacyCertificateCoverage::AnalyzedSafe,
+        })
+        .collect::<Vec<_>>();
+    if certificate.target_scope.definitions != expected_rows {
+        return Err(
+            "certificate target inventory or per-definition coverage does not match its scope evidence"
+                .into(),
+        );
+    }
+    if certificate.target_scope.inventory_sha256
+        != certificate_inventory_sha256(&certificate.target_scope.definitions)
+    {
+        return Err("certificate target inventory digest does not match its rows".into());
+    }
+    let expected_identity = certificate_input_identity(
+        certificate.dialect,
+        certificate.function_scope,
+        &certificate.preprocessed_source,
+        &certificate.target_scope.evidence,
+        &certificate.target_scope.request,
+    );
+    if certificate.target_scope.input_identity != expected_identity {
+        return Err("certificate effective input identity does not match its artifacts".into());
+    }
     let selected = match certificate.function_scope {
         LegacyFunctionScope::PreprocessedTranslationUnit => None,
-        LegacyFunctionScope::MainSourceDefinitions => {
-            Some(certificate.checked_functions.as_slice())
-        }
+        LegacyFunctionScope::MainSourceDefinitions => Some(target_names.as_slice()),
     };
     let recomputed = analyze_legacy_c_translation_unit_selected_partial(
         &certificate.preprocessed_source,
@@ -1538,6 +1895,9 @@ pub fn check_legacy_safety_certificate(
         .keys()
         .cloned()
         .collect::<Vec<_>>();
+    if names != target_names {
+        return Err("program summary does not cover the complete certificate target scope".into());
+    }
     if certificate.checked_functions != names {
         return Err("checked function index is not canonical".into());
     }
@@ -1553,6 +1913,28 @@ pub fn check_legacy_safety_certificate(
         {
             return Err(format!("function `{name}` retains an unknown instruction"));
         }
+    }
+    Ok(())
+}
+
+/// Recheck a certificate and bind it to a caller-held intended audit context.
+///
+/// The ordinary recheck proves that the certificate is internally consistent
+/// with its retained source evidence. This stronger entry point additionally
+/// prevents a coherent replacement of that evidence, inventory and digest
+/// from being accepted as the caller's original target.
+pub fn check_legacy_safety_certificate_for(
+    certificate: &LegacySafetyCertificate,
+    expected: &LegacyCertificateExpectedContext,
+) -> Result<(), String> {
+    check_legacy_safety_certificate(certificate)?;
+    if certificate.target_scope.inventory_sha256 != expected.inventory_sha256 {
+        return Err("certificate target denominator differs from the expected audit scope".into());
+    }
+    if certificate.target_scope.input_identity != expected.input_identity {
+        return Err(
+            "certificate effective input identity differs from the expected audit input".into(),
+        );
     }
     Ok(())
 }

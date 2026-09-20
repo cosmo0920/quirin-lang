@@ -125,6 +125,7 @@ import QCore.PackageIdentity
 import QCore.RegionTaskCredit
 import QCore.AggregateComposition
 import QCore.DenominatorCoverage
+import QCore.CertificateScope
 import QCore.EnumerationAttribution
 import QCore.SourceCoordinate
 import QCore.SourceEnumeration
@@ -195,4 +196,3 @@ import QCore.JoinedProvenanceRoundBound
 import QCore.ScalarCalls
 
 /-! The executable formal core of QCore-C revision 0.1. -/
-

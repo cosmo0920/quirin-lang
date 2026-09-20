@@ -91,27 +91,28 @@ fn aggregate_certificate_contains_all_six_discharges() {
 
 #[test]
 fn aggregate_closure_rejects_loop_evidence_mutated_from_exact_to_maximum() {
-    use crate::legacy_c::{AnalysisStatus, LegacyProgramSummary, LegacySafetyCertificate};
+    if !crate::test_support::clang_available() {
+        return;
+    }
 
     let constraints = vec![InferenceConstraint::Owns { identity: 1 }];
     let inference = infer_principal(&constraints).unwrap();
     let body = Flow::acquire(q(1), q(1));
     let loop_summary = summarize_general_loop(&body, LoopBoundEvidence::Exact(2)).unwrap();
-    // The aggregate closure checks the loop certificate before it reaches any
-    // other evidence, so this placeholder is never inspected.
-    let legacy = LegacySafetyCertificate {
-        preprocessed_source: String::new(),
-        entry: "subject".to_owned(),
-        contracts: crate::legacy_c::ResourceContracts::default(),
-        dialect: crate::legacy_c::CCompilerDialect::default(),
-        function_scope: crate::legacy_c::LegacyFunctionScope::default(),
-        summary: LegacyProgramSummary {
-            entry: "subject".to_owned(),
-            status: AnalysisStatus::Safe,
-            functions: BTreeMap::new(),
-        },
-        checked_functions: Vec::new(),
-        summaries: Vec::new(),
+    // The aggregate closure checks the loop certificate before it reaches the
+    // legacy evidence. Keep that evidence real anyway, so public certificate
+    // construction cannot bypass its scope invariants.
+    let unit = C11TranslationUnit {
+        source: "void subject(void) { return; }",
+        ..C11TranslationUnit::default()
+    };
+    let legacy = match analyze_unrestricted_c11(
+        &unit,
+        "subject",
+        &crate::legacy_c::ResourceContracts::default(),
+    ) {
+        Ok(UnrestrictedLegacyResult::Safe(certificate)) => certificate,
+        other => panic!("fixture did not produce a legacy certificate: {other:?}"),
     };
     let mut forged = loop_summary.clone();
     forged.evidence = LoopBoundEvidence::AtMost(2);

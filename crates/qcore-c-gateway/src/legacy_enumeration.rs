@@ -368,7 +368,31 @@ struct RawHalf {
 /// historical raw scan, with the completeness claim explicitly refused.
 #[must_use]
 pub fn enumerate_source_definitions(unit: &C11TranslationUnit<'_>) -> SourceDefinitionInventory {
-    let scan = legacy_c_source_scan(unit.source);
+    match preprocess_with_line_markers(unit) {
+        Ok(marked) => source_definition_inventory_from_evidence(unit.source, &marked),
+        Err(_) => source_definition_inventory_without_expansion(unit.source),
+    }
+}
+
+/// Reconstruct the main-source denominator from the two artifacts that decide
+/// it: the raw primary source and the line-marked preprocessing. Certificate
+/// replay uses this path so it does not trust a stored target list and does not
+/// need to invoke Clang again.
+pub(crate) fn source_definition_inventory_from_evidence(
+    source: &str,
+    marked: &str,
+) -> SourceDefinitionInventory {
+    let raw = raw_half(source);
+    inventory_from_marked(&raw, marked)
+}
+
+fn source_definition_inventory_without_expansion(source: &str) -> SourceDefinitionInventory {
+    let raw = raw_half(source);
+    SourceDefinitionInventory::raw_only(&raw, EnumerationRefusal::ExpansionUnavailable)
+}
+
+fn raw_half(source: &str) -> RawHalf {
+    let scan = legacy_c_source_scan(source);
     let raw = RawHalf {
         names: scan.definitions().to_vec(),
         refusals: scan
@@ -377,12 +401,7 @@ pub fn enumerate_source_definitions(unit: &C11TranslationUnit<'_>) -> SourceDefi
             .map(|refusal| EnumerationRefusal::from_conditional(*refusal))
             .collect(),
     };
-    match preprocess_with_line_markers(unit) {
-        Ok(marked) => inventory_from_marked(&raw, &marked),
-        Err(_) => {
-            SourceDefinitionInventory::raw_only(&raw, EnumerationRefusal::ExpansionUnavailable)
-        }
-    }
+    raw
 }
 
 /// Preprocess the unit a second time, keeping Clang's line markers.
