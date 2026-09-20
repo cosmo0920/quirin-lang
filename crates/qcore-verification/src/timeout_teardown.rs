@@ -296,6 +296,7 @@ pub struct TimeoutTeardownEvidence {
     pub event_descriptor: Option<i32>,
     pub peer_descriptor: i32,
     pub callback_descriptor: i32,
+    pub map_write_descriptor: i32,
     pub delete_event_id: u32,
     pub free_event_id: u32,
     pub exit_event_id: u32,
@@ -392,6 +393,10 @@ pub fn check_timeout_teardown_evidence(
         "teardown_obligations",
         &[
             ("callback", ContractFact::Text(evidence.callback.clone())),
+            (
+                "map_write_descriptor",
+                ContractFact::Integer(i128::from(evidence.map_write_descriptor)),
+            ),
             (
                 "event_descriptor_present",
                 ContractFact::Integer(i128::from(evidence.event_descriptor.is_some())),
@@ -633,6 +638,7 @@ mod policy_tests {
             ("event_pointer", ContractFact::Integer(500)),
             ("peer_descriptor", ContractFact::Integer(7)),
             ("callback_descriptor", ContractFact::Integer(8)),
+            ("map_write_descriptor", ContractFact::Integer(8)),
             (
                 "close_function",
                 ContractFact::Text("evutil_closesocket".into()),

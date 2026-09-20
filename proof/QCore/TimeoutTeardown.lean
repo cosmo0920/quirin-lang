@@ -16,10 +16,12 @@ structure Evidence where
   callbackExited : Bool
   trace : List Nat
   expectedTrace : List Nat
+  mapWriteDescriptor : Nat
+  closedDescriptor : Nat
   deriving DecidableEq, Repr
 
 def Evidence.Valid (evidence : Evidence) : Prop :=
-  evidence.callbackRunning = true ∧
+  (evidence.callbackRunning = true ∧
   evidence.sameDispatcher = true ∧
   evidence.currentCallbackDeleted = true ∧
   evidence.eventDescriptorAbsent = true ∧
@@ -28,7 +30,8 @@ def Evidence.Valid (evidence : Evidence) : Prop :=
   evidence.writeEndpointRetired = true ∧
   evidence.peerEndpointHandledByCaller = true ∧
   evidence.callbackExited = true ∧
-  evidence.trace = evidence.expectedTrace
+  evidence.trace = evidence.expectedTrace) ∧
+  evidence.mapWriteDescriptor = evidence.closedDescriptor
 
 instance (evidence : Evidence) : Decidable evidence.Valid := by
   unfold Evidence.Valid
@@ -55,7 +58,7 @@ theorem accepted_self_teardown_has_distinct_custody
     evidence.mapFreedOnce = true ∧
     evidence.writeEndpointRetired = true ∧
     evidence.peerEndpointHandledByCaller = true := by
-  have valid := checked_valid result
+  have valid := (checked_valid result).1
   exact ⟨valid.2.2.2.2.1, valid.2.2.2.2.2.1,
     valid.2.2.2.2.2.2.1, valid.2.2.2.2.2.2.2.1⟩
 
@@ -66,14 +69,20 @@ theorem accepted_self_teardown_is_same_dispatcher_and_deleted
     evidence.sameDispatcher = true ∧
     evidence.currentCallbackDeleted = true ∧
     evidence.eventDescriptorAbsent = true := by
-  have valid := checked_valid result
+  have valid := (checked_valid result).1
   exact ⟨valid.1, valid.2.1, valid.2.2.1, valid.2.2.2.1⟩
 
 theorem accepted_trace_exits_callback
     {evidence : Evidence} {certificate : Certificate}
     (result : check evidence = some certificate) :
     evidence.callbackExited = true ∧ evidence.trace = evidence.expectedTrace := by
-  have valid := checked_valid result
+  have valid := (checked_valid result).1
   exact ⟨valid.2.2.2.2.2.2.2.2.1, valid.2.2.2.2.2.2.2.2.2⟩
+
+theorem accepted_close_matches_map_write_endpoint
+    {evidence : Evidence} {certificate : Certificate}
+    (result : check evidence = some certificate) :
+    evidence.mapWriteDescriptor = evidence.closedDescriptor := by
+  exact (checked_valid result).2
 
 end QCore.TimeoutTeardown

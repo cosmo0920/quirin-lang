@@ -51,6 +51,7 @@ version = "0.1.0"
 dependencies = [
  "qcore-c-gateway",
  "qcore-contract",
+ "qcore-core",
  "qcore-schemas",
  "qcore-verification",
  "qcore-verifier-host",

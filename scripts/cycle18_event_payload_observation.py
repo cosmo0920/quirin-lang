@@ -45,6 +45,8 @@ def main():
     parser.add_argument("--output", type=pathlib.Path, required=True)
     parser.add_argument("--cc", default="/usr/bin/clang")
     args = parser.parse_args()
+    for name in ["monkey_inputs", "monkey_source", "monkey_build", "libevent_source", "libevent_build", "output"]:
+        setattr(args, name, getattr(args, name).resolve())
 
     if platform.system() != "Linux":
         raise SystemExit("the first cb_event payload observer profile supports Linux only")
@@ -155,6 +157,16 @@ def main():
     write_json(manifest_path, {
         "schema_version": 1, "status": "observed_success",
         "profile": "cycle18.cb_event.single_dispatcher.v1",
+        "roles": {k: str(v.resolve()) for k, v in {
+            "monkey_inputs": args.monkey_inputs,
+            "source_compile_database": args.output / "source-compile-commands.json",
+            "configuration_object": monkey_object,
+            "observations": observations_path, "bindings": bindings_path,
+            "allocation": allocation_path, "runtime": runtime_path,
+            "observer_binary": executable, "observer_harness": harness_source,
+            "monkey_object": harness_object, "monkey_support_object": monkey_library,
+            "libevent_library": library,
+        }.items()},
         "host": {"system": platform.system(), "release": platform.release(),
                  "machine": platform.machine()},
         "compiler": {"path": args.cc, "version": output([args.cc, "--version"]).splitlines()[0]},
@@ -171,6 +183,7 @@ def main():
         "observer": {"callback_stdio": True, "callback_snapshots": True,
                      "instrumentation_changes_timing": True,
                      "production_layout": True, "fault_injection": False,
+                     "activation": "controlled event_active flags; not readiness or timer evidence",
                      "monkey_support_object_sanitized": True,
                      "callback_translation_unit_and_libevent_sanitized": True},
         "runtime": json.loads(runtime_path.read_text()),

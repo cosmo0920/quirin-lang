@@ -159,7 +159,7 @@ fn reject_aliases(report: &Path, files: &[PathBuf], directories: &[PathBuf]) -> 
     Ok(())
 }
 
-fn write_atomic(path: &Path, bytes: &[u8]) -> Result<(), String> {
+pub(crate) fn write_atomic(path: &Path, bytes: &[u8]) -> Result<(), String> {
     let parent = path.parent().unwrap_or(Path::new("."));
     let name = path
         .file_name()

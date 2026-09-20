@@ -25,3 +25,31 @@ condition and preserves all names previously tracked by it. Callback/task handof
 and expanded native platform acceptance are outside this priority-one scope.
 Existing corpus/observed-wait outcomes are baseline evidence, not permission to
 claim aggregate Cycle 18 completion.
+
+## Integration review and native evidence
+
+The integrator required a distinct current-callback deletion authorization and
+reviewed every prior lifecycle operation against the new self-teardown state.
+Ordinary delete, add, activation and free cannot resurrect or release that state
+a second time. Callback frame lifetime remains separate from the released event
+and map. The caller-owned peer descriptor is an explicit enclosing observation,
+not a synthetic close appended to make the model pass.
+
+The dedicated `QCORE_CB_EVENT_ONLY` harness mode executes the pinned Monkey
+translation unit with real sanitized Libevent and the real sanitized Monkey
+`mk_utils.c` support implementation. Four flag combinations exercise all four
+`cb_event` paths, with actual typed snapshots, allocation call sizes, element
+stride, queue size and backend observation. This producer performs callback
+stdio and snapshots and changes timing; it is not the fixed-buffer timed-wait
+observer. Runtime/linkage accuracy and exclusive storage ownership remain
+explicit premises.
+
+Native payload run 5 exited 0 under ASan/UBSan/LSan, with Linux epoll, capacity 8,
+72-byte fired elements, 576-byte fired allocation and 32-byte context. Its files
+and dependency inventory are under
+`private/cycle18-priority1/native-payload/output-5/`; command output is
+`private/cycle18-priority1/native-payload/run-5.log`. Earlier attempts are
+retained: run 1 lacked the Monkey diagnostic support symbol; run 2 selected an
+archive absent from this build; run 3's native binary succeeded but the runner
+read the wrong event schema key and exited 1. Run 4 passed before the explicit
+backend sidecar was added. These attempts are not final gate evidence.

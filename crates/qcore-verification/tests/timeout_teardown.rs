@@ -67,6 +67,7 @@ fn evidence(projection: &TimeoutTeardownSourceProjection) -> TimeoutTeardownEvid
         event_descriptor: None,
         peer_descriptor: 7,
         callback_descriptor: 8,
+        map_write_descriptor: 8,
         delete_event_id: 4,
         free_event_id: 4,
         exit_event_id: 4,
@@ -241,4 +242,12 @@ fn every_primitive_native_relationship_is_load_bearing() {
     for changed in mutations {
         assert!(check_timeout_teardown_evidence(&projection, &changed).is_err());
     }
+}
+
+#[test]
+fn closed_descriptor_must_be_the_callback_maps_write_endpoint() {
+    let projection = projection();
+    let mut evidence = evidence(&projection);
+    evidence.map_write_descriptor += 1;
+    assert!(check_timeout_teardown_evidence(&projection, &evidence).is_err());
 }

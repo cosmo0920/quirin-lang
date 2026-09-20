@@ -40,6 +40,7 @@ contract {
 extern fn teardown_obligations() -> unit
 contract {
     ensures normal callback == "cb_timeout";
+    ensures normal callback_descriptor == map_write_descriptor;
     ensures normal event_descriptor_present == 0;
     ensures normal callback_dispatcher == delete_dispatcher;
     ensures normal callback_dispatcher == free_dispatcher;

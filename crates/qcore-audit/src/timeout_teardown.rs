@@ -111,13 +111,30 @@ fn derive_evidence(
     let event = number(binding, "event")?;
     let exit = number(binding, "exit")?;
     let native_map_address = number(binding, "argument")?;
-    let event_pointer = binding["before"]
+    let before = binding["before"]
         .as_array()
-        .ok_or("callback before-snapshot is absent")?
-        .iter()
-        .find(|field| field["field"] == "event")
-        .and_then(|field| field["value"].as_u64())
+        .ok_or("callback before-snapshot is absent")?;
+    let map_cell = |field: &str, c_type: &str| -> Result<&Value, String> {
+        let matches = before
+            .iter()
+            .filter(|cell| {
+                cell["object"] == native_map_address
+                    && cell["field"] == field
+                    && cell["c_type"] == c_type
+            })
+            .collect::<Vec<_>>();
+        let [cell] = matches.as_slice() else {
+            return Err(format!("map snapshot lacks unique typed {field} cell"));
+        };
+        Ok(&cell["value"])
+    };
+    let event_pointer = map_cell("event", "struct event *")?
+        .as_u64()
         .ok_or("callback event pointer is absent")?;
+    let map_write_descriptor = map_cell("pipe[1]", "int")?
+        .as_i64()
+        .and_then(|v| i32::try_from(v).ok())
+        .ok_or("callback write descriptor is absent")?;
     let calls = binding["calls"]
         .as_array()
         .ok_or("callback calls are absent")?;
@@ -355,6 +372,7 @@ fn derive_evidence(
         event_descriptor: None,
         peer_descriptor,
         callback_descriptor,
+        map_write_descriptor,
         delete_event_id: u32::try_from(number(&delete_observation["action"], "event")?)
             .map_err(|_| "delete event outside u32")?,
         free_event_id: u32::try_from(number(&free_observation["action"], "event")?)
@@ -457,6 +475,30 @@ pub fn run_timeout_teardown_config(path: &Path) -> Result<(), String> {
             return Err(format!("native manifest does not bind {key}"));
         }
     }
+    for (role, configured) in [
+        ("monkey_inputs", &config.monkey_inputs),
+        ("source_compile_database", &config.source_compile_database),
+        ("linked_libevent_event_c", &config.linked_libevent_event_c),
+        ("timeout_contract", &config.timeout_contract),
+        ("observations", &config.observations),
+        ("bindings", &config.bindings),
+        ("observer_binary", &config.observer_binary),
+        ("observer_harness", &config.observer_harness),
+        ("libevent_library", &config.libevent_library),
+    ] {
+        let recorded = manifest["roles"][role]
+            .as_str()
+            .ok_or_else(|| format!("missing artifact role {role}"))?;
+        if Path::new(recorded)
+            .canonicalize()
+            .map_err(|e| e.to_string())?
+            != resolve(base, configured)
+                .canonicalize()
+                .map_err(|e| e.to_string())?
+        {
+            return Err(format!("native artifact role mismatch: {role}"));
+        }
+    }
     let source = load_monkey_source(
         &resolve(base, &config.monkey_profile),
         &resolve(base, &config.fluent_checkout),
@@ -541,9 +583,8 @@ pub fn run_timeout_teardown_config(path: &Path) -> Result<(), String> {
             "Runtime and linkage records are producer-supplied evidence, not attestation",
             "The peer endpoint close belongs to the enclosing caller, not cb_timeout"]
     });
-    fs::write(
-        report,
-        serde_json::to_vec_pretty(&report_value).map_err(|e| e.to_string())?,
+    crate::wait_failures::write_atomic(
+        &report,
+        &serde_json::to_vec_pretty(&report_value).map_err(|e| e.to_string())?,
     )
-    .map_err(|e| e.to_string())
 }
