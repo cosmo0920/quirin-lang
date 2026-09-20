@@ -9,6 +9,7 @@
 pub mod certificate_context;
 pub mod compile_db;
 pub mod current;
+pub mod observed_wait;
 mod observed_wait_inputs;
 pub mod projection;
 pub mod report;

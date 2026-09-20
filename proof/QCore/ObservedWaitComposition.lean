@@ -25,6 +25,13 @@ theorem observer_flags_round_trip (flag : ObserverFlag) :
 theorem unsupported_thread_sanitizer_refuses :
     parseObserverFlag "-fsanitize=thread" = none := by decide
 
+def dependencyOutputsAdmitted (modes outputs : Nat) : Bool :=
+  (modes == 0 && outputs == 0) || (modes == 1 && outputs == 1)
+
+theorem unpaired_dependency_output_refuses :
+    dependencyOutputsAdmitted 0 1 = false ∧
+      dependencyOutputsAdmitted 1 0 = false := by decide
+
 /-! Semantic model of the bounded Rust join. Native identities are retained
 before fresh model names are assigned. Hash computation, C import, contract
 parsing and native observation truth remain external boundaries; this module

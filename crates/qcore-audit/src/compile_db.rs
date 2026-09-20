@@ -718,6 +718,8 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
     let mut inputs = 0;
     let mut compile = 0;
     let mut outputs = 0;
+    let mut dependency_modes = 0;
+    let mut dependency_outputs = 0;
     let mut explicit_dialect = false;
     let mut frontend_flags = false;
     while cursor < words.len() {
@@ -796,6 +798,20 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
                 "gnu17" => CCompilerDialect::Gnu17,
                 other => return Err(format!("unsupported compilation dialect `{other}`")),
             };
+        } else if word == "-MMD" {
+            // Dependency-file emission is an output action, like -o. Keep it
+            // in the compile-task identity but do not overwrite build outputs
+            // during the gateway's preprocessing and syntax-only phases.
+            dependency_modes += 1;
+        } else if word == "-MF" {
+            cursor += 1;
+            let value = words
+                .get(cursor)
+                .ok_or("missing dependency output argument")?;
+            if value.is_empty() || value.starts_with('-') || value.contains('$') {
+                return Err("invalid dependency output argument".into());
+            }
+            dependency_outputs += 1;
         } else if word == "-o" {
             cursor += 1;
             let value = words.get(cursor).ok_or("missing compile output argument")?;
@@ -824,6 +840,9 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
         return Err(
             "compile command requires one -c, one source input and at most one output".into(),
         );
+    }
+    if !matches!((dependency_modes, dependency_outputs), (0, 0) | (1, 1)) {
+        return Err("dependency outputs require exactly one paired -MMD and -MF".into());
     }
     options.input = CSourceInput::DeclaredFile {
         spelled: spelled_input.ok_or("compile command has no recorded source input")?,

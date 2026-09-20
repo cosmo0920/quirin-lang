@@ -10,6 +10,7 @@ pub mod obligation_derivation;
 pub mod verify_dispatch;
 pub mod witness_replay;
 
+pub mod observed_wait_composition;
 pub mod reactor_callback;
 pub mod reactor_source;
 
