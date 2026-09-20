@@ -1,0 +1,10 @@
+import QCore.EventCompositionContext
+
+#print axioms QCore.EventCompositionContext.accepted_context_is_complete
+#print axioms QCore.EventCompositionContext.accepted_context_equals_caller_expected
+#print axioms QCore.EventCompositionContext.accepted_context_rederives_payload
+#print axioms QCore.EventCompositionContext.unequal_context_rejects
+#print axioms QCore.EventCompositionContext.scope_substitution_rejects
+#print axioms QCore.EventCompositionContext.observation_payload_substitution_rejects
+#print axioms QCore.EventCompositionContext.binding_payload_substitution_rejects
+#print axioms QCore.EventCompositionContext.context_validation_remains_unknown
