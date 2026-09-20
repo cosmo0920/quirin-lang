@@ -24,9 +24,9 @@ use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger
 use qcore_core::usage::{Usage, UsageExpr};
 use qcore_core::{ExecutionObservation, emit_c11_with_log_level, extern_c_emit, extern_call};
 use qcore_core::{
-    composed_std_io, composed_std_io_c_emit, composed_tasks, std_buffer, std_buffer_c_emit,
-    std_event, std_event_c_emit, std_http, std_http_c_emit, std_io, std_io_c_emit, std_socket,
-    std_socket_c_emit, std_string, std_string_c_emit,
+    composed_std_io, composed_std_io_c_emit, composed_tasks, resource_calls, resource_calls_c_emit,
+    std_buffer, std_buffer_c_emit, std_event, std_event_c_emit, std_http, std_http_c_emit, std_io,
+    std_io_c_emit, std_socket, std_socket_c_emit, std_string, std_string_c_emit,
 };
 use qcore_frontend::frontend::{
     DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceBlock, SourceDeclaration,
@@ -290,6 +290,9 @@ pub enum CheckedSourceModule {
 pub struct CheckedBufferModule {
     pub lowered: qcore_frontend::source_std_buffer::LoweredBufferModule,
     pub certificate: std_buffer::BufferCertificate,
+    /// Present only for `source.resource-calls.v1`: the retained typed call
+    /// graph and its ownership expansion beside the ordinary buffer evidence.
+    pub resource_calls: Option<Box<resource_calls::Checked>>,
 }
 
 /// A checked `source.string.v1` module (card `STRING-SLICE`).
@@ -723,6 +726,11 @@ impl CheckedSourceModule {
         }
     }
 
+    pub fn as_resource_calls(&self) -> Option<&resource_calls::Checked> {
+        self.as_standard_buffer()
+            .and_then(|module| module.resource_calls.as_deref())
+    }
+
     /// The checked string-view evidence (card `STRING-SLICE`).
     pub fn as_standard_string(&self) -> Option<&CheckedStringModule> {
         match self {
@@ -822,7 +830,10 @@ impl CheckedSourceModule {
             Self::ComposedTasks(module) => module.tasks().module().functions.len(),
             // And likewise for the byte buffer: one flat entry is lowered, and
             // the profile admits no calls at all.
-            Self::StandardBuffer(_) => 1,
+            Self::StandardBuffer(module) => module
+                .resource_calls
+                .as_ref()
+                .map_or(1, |checked| checked.function_count()),
             // And likewise for the string view: one flat entry is lowered, and
             // the profile admits no calls at all.
             Self::StandardString(_) => 1,
@@ -843,6 +854,10 @@ impl CheckedSourceModule {
 pub enum SourceExecutionProfile {
     /// I32/unit functions with checked arithmetic, direct calls and explicit std.io.
     ScalarCallsV1,
+    /// A closed acyclic source call graph over extent-carrying `bytes` values,
+    /// with owned moves and whole-buffer read/write loans checked through the
+    /// existing ownership IR and byte-buffer checker.
+    ResourceCallsV1,
     SequentialCleanupV1,
     ScopedCopyTasksV1,
     ScopedOwnedTasksV1,
@@ -1351,6 +1366,9 @@ pub fn compile_files_with_registry(
     // selected above it, so a module that declares a record and spawns, calls
     // out or dispatches keeps that route's existing refusal — measured, not
     // assumed.
+    if qcore_frontend::source_resource_calls::has_resource_calls(&parsed) {
+        return compile_resource_call_source(&parsed, &typed, mode, options, &ranges);
+    }
     if qcore_frontend::source_std_buffer::has_source_buffer(&parsed)
         || qcore_frontend::source_record::has_source_record(&parsed)
     {
@@ -5486,6 +5504,127 @@ fn compile_std_io_source(
     })
 }
 
+/// Attribute the helper graph's refusal to the existing pass that owns the
+/// condition. The resource-call profile allocates no diagnostic namespace:
+/// ordinary signature/graph conditions stay at Q020, extent arithmetic at
+/// Q053, inherited custody at Q054, certificate construction at Q056, and
+/// transitive effect rows at Q057.
+fn resource_call_refusal_attribution(
+    category: &resource_calls::RefusalCategory,
+) -> (&'static str, SemanticPass) {
+    match category {
+        resource_calls::RefusalCategory::Ordinary => ("Q020", SemanticPass::OrdinaryTypes),
+        resource_calls::RefusalCategory::Extent => ("Q053", SemanticPass::StandardBuffer),
+        resource_calls::RefusalCategory::Ownership => ("Q054", SemanticPass::StandardBuffer),
+        resource_calls::RefusalCategory::Certificate => ("Q056", SemanticPass::StandardBuffer),
+        resource_calls::RefusalCategory::Effects => ("Q057", SemanticPass::StandardBuffer),
+    }
+}
+
+/// Compile one closed `source.resource-calls.v1` module.
+fn compile_resource_call_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![map_raw_diagnostic(
+            "Q020",
+            SemanticPass::OrdinaryTypes,
+            Span { start: 0, end: 0 },
+            "entry-free resource helper modules are outside resource-calls.v1".to_owned(),
+            ranges,
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let lowered =
+        qcore_frontend::source_resource_calls::lower(parsed, &entry).map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        })?;
+    let checked = resource_calls::check(lowered.program).map_err(|error| {
+        let span = lowered
+            .statement_spans
+            .get(error.function)
+            .and_then(|spans| spans.get(error.statement))
+            .copied()
+            .or_else(|| lowered.function_spans.get(error.function).copied())
+            .unwrap_or(Span { start: 0, end: 0 });
+        let (code, pass) = resource_call_refusal_attribution(&error.category);
+        vec![map_raw_diagnostic(
+            code,
+            pass,
+            span,
+            format!("source.resource-calls.v1: {}", error.message),
+            ranges,
+        )]
+    })?;
+    let flattened = checked.flattened().clone();
+    let certificate = checked.certificate().clone();
+    let scope_span = lowered
+        .function_spans
+        .get(checked.program().entry)
+        .copied()
+        .unwrap_or(Span { start: 0, end: 0 });
+    let event_spans = vec![scope_span; flattened.events.len()];
+    let buffer_lowered = qcore_frontend::source_std_buffer::LoweredBufferModule {
+        entry: entry.clone(),
+        program: flattened,
+        event_spans,
+        scope_span,
+    };
+    let reference_observation =
+        std_buffer_c_emit::interpret_buffer_program(&buffer_lowered.program, &certificate)
+            .map_err(|refusal| {
+                vec![map_raw_diagnostic(
+                    "Q056",
+                    SemanticPass::StandardBuffer,
+                    scope_span,
+                    format!("resource helper reference execution refused: {refusal:?}"),
+                    ranges,
+                )]
+            })?;
+    let c_source = resource_calls_c_emit::emit(&checked);
+    let mut scalar_results = BTreeMap::new();
+    for function in &checked.program().functions {
+        match function.result {
+            resource_calls::Type::Unit => {
+                scalar_results.insert(function.name.clone(), ExecutableResultType::Unit);
+            }
+            resource_calls::Type::I32 => {
+                scalar_results.insert(function.name.clone(), ExecutableResultType::I32);
+            }
+            resource_calls::Type::OwnedBytes
+            | resource_calls::Type::ReadBytes
+            | resource_calls::Type::WriteBytes => {}
+        }
+    }
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::StandardBuffer(Box::new(CheckedBufferModule {
+            lowered: buffer_lowered,
+            certificate,
+            resource_calls: Some(Box::new(checked)),
+        })),
+        execution_profile: SourceExecutionProfile::ResourceCallsV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile: SourceResultProfile {
+            scalar_results,
+            owned_buffer_results: BTreeSet::new(),
+            custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+        },
+        entry: Some(entry),
+        c_source: Some(c_source),
+        source_map: Vec::new(),
+        reference_observation: None,
+        extern_observation: Some(reference_observation),
+    })
+}
+
 /// Compile one `source.buffer.v1` module (card `STD-BUFFER`).
 ///
 /// The route emits real, self-contained C and has a real reference execution,
@@ -5574,6 +5713,7 @@ fn compile_buffer_source(
         checked: CheckedSourceModule::StandardBuffer(Box::new(CheckedBufferModule {
             lowered,
             certificate,
+            resource_calls: None,
         })),
         execution_profile: SourceExecutionProfile::StandardBufferV1,
         declaration_count: typed.declarations.len(),

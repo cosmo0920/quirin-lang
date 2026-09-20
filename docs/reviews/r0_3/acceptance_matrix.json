@@ -6729,7 +6729,7 @@
   "workspace_tests": 4904,
   "provider_tests": 122,
   "python_evidence_validator_tests": 317,
-  "lean_audits": 152,
+  "lean_audits": 153,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6842,6 +6842,7 @@
    "AuditRegionJoinsDuties.lean",
    "AuditRegionJoinsLoan.lean",
    "AuditRegionTaskCredit.lean",
+   "AuditResourceCalls.lean",
    "AuditReturnCallCustody.lean",
    "AuditReturnExpressionEvaluation.lean",
    "AuditReturnPositionEscape.lean",
