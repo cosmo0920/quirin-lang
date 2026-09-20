@@ -80,7 +80,7 @@ Private logs are under
 `gate.json`, `clang-version.txt` and `clang-version.exit` preserve the public
 gate record.
 
-## Residuals and reconciliation
+## Integrator reconciliation list
 
 - The downstream join must independently derive its expected identities from
   configured files and immutable prepared inputs. Presented metadata cannot be
@@ -98,3 +98,9 @@ gate record.
   file list include `AuditEventCompositionContext.lean`; this card deliberately
   does not own that global matrix.
 - `docs/STATUS.md`, the callback coverage report and corpus counts are unchanged.
+
+## Residuals
+
+The context token does not attest runtime provenance, prove unobserved paths,
+or discharge general task/deferral semantics. Those limits remain open after
+the integrator consumes the card.

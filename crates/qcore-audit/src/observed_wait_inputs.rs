@@ -32,6 +32,11 @@ pub(crate) struct WaitSourceInputs {
     pub source_sha256: String,
     pub build_sha256: String,
     pub source_files: BTreeMap<String, String>,
+    /// Directories whose contents contributed to the prepared source identity.
+    /// An audit report must not be written through any path inside them.
+    pub protected_directories: Vec<PathBuf>,
+    /// Individual configured inputs outside the protected directories.
+    pub protected_files: Vec<PathBuf>,
 }
 
 pub(crate) fn read_json(path: &Path) -> Result<(Vec<u8>, Value), String> {
@@ -134,6 +139,12 @@ pub(crate) fn load_wait_source(
     } else {
         BTreeMap::new()
     };
+    let mut protected_files = source_hashes
+        .keys()
+        .chain(generated.keys())
+        .map(|name| source_root.join(name))
+        .chain(headers.keys().map(|name| build_root.join(name)))
+        .collect::<Vec<_>>();
     let build_cache = fs::read(build_root.join("CMakeCache.txt")).map_err(|e| e.to_string())?;
     let database_path = Path::new(text(&manifest, "compile_database")?);
     let database_bytes = fs::read(database_path).map_err(|e| e.to_string())?;
@@ -225,5 +236,21 @@ pub(crate) fn load_wait_source(
         source_sha256,
         build_sha256,
         source_files: source_hashes,
+        protected_directories: vec![
+            profile_directory.to_path_buf(),
+            fluent_checkout.to_path_buf(),
+            source_root.clone(),
+            build_root.clone(),
+        ],
+        protected_files: {
+            protected_files.extend([
+                monkey_inputs.to_path_buf(),
+                observer_compile_database.to_path_buf(),
+                database_path.to_path_buf(),
+                entry.file.clone(),
+                build_root.join("CMakeCache.txt"),
+            ]);
+            protected_files
+        },
     })
 }

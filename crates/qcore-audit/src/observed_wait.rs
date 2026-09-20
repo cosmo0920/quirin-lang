@@ -46,6 +46,110 @@ fn read(path: &Path) -> Result<Vec<u8>, String> {
     fs::read(path).map_err(|error| format!("{}: {error}", path.display()))
 }
 
+fn report_destination(path: &Path) -> Result<PathBuf, String> {
+    report_destination_with_depth(path, 0)
+}
+
+fn report_destination_with_depth(path: &Path, symlink_depth: usize) -> Result<PathBuf, String> {
+    if symlink_depth > 16 {
+        return Err(format!(
+            "too many symbolic links in report path: {}",
+            path.display()
+        ));
+    }
+    if fs::symlink_metadata(path).is_ok_and(|metadata| metadata.file_type().is_symlink()) {
+        let target = fs::read_link(path)
+            .map_err(|error| format!("cannot read report symlink {}: {error}", path.display()))?;
+        let target = if target.is_absolute() {
+            target
+        } else {
+            path.parent().unwrap_or(Path::new(".")).join(target)
+        };
+        return report_destination_with_depth(&target, symlink_depth + 1);
+    }
+    if path.exists() {
+        return path
+            .canonicalize()
+            .map_err(|error| format!("cannot resolve report path {}: {error}", path.display()));
+    }
+    let name = path
+        .file_name()
+        .ok_or_else(|| format!("report path has no file name: {}", path.display()))?;
+    let parent = path.parent().unwrap_or(Path::new("."));
+    parent
+        .canonicalize()
+        .map(|parent| parent.join(name))
+        .map_err(|error| format!("cannot resolve report parent {}: {error}", parent.display()))
+}
+
+#[cfg(unix)]
+fn same_existing_file(left: &Path, right: &Path) -> bool {
+    let (Ok(left), Ok(right)) = (fs::metadata(left), fs::metadata(right)) else {
+        return false;
+    };
+    use std::os::unix::fs::MetadataExt;
+    left.dev() == right.dev() && left.ino() == right.ino()
+}
+
+#[cfg(not(unix))]
+fn same_existing_file(_left: &Path, _right: &Path) -> bool {
+    false
+}
+
+#[cfg(unix)]
+fn has_multiple_hard_links(path: &Path) -> bool {
+    use std::os::unix::fs::MetadataExt;
+    fs::metadata(path).is_ok_and(|metadata| metadata.nlink() > 1)
+}
+
+#[cfg(not(unix))]
+fn has_multiple_hard_links(_path: &Path) -> bool {
+    false
+}
+
+/// Refuse a report destination that can overwrite any evidence used by the
+/// audit. Canonical paths catch lexical and symbolic-link aliases; Unix file
+/// identity additionally catches hard links to individually selected inputs.
+fn reject_report_aliases(
+    report: &Path,
+    protected_files: &[PathBuf],
+    protected_directories: &[PathBuf],
+) -> Result<(), String> {
+    let destination = report_destination(report)?;
+    if has_multiple_hard_links(report) {
+        return Err("report destination has multiple hard links".into());
+    }
+    for input in protected_files {
+        let canonical = input.canonicalize().map_err(|error| {
+            format!(
+                "cannot resolve protected input {}: {error}",
+                input.display()
+            )
+        })?;
+        if destination == canonical || same_existing_file(report, input) {
+            return Err(format!(
+                "report destination aliases verified input: {}",
+                input.display()
+            ));
+        }
+    }
+    for directory in protected_directories {
+        let canonical = directory.canonicalize().map_err(|error| {
+            format!(
+                "cannot resolve protected directory {}: {error}",
+                directory.display()
+            )
+        })?;
+        if destination.starts_with(&canonical) {
+            return Err(format!(
+                "report destination is inside verified input directory: {}",
+                directory.display()
+            ));
+        }
+    }
+    Ok(())
+}
+
 /// The caller selects the artifacts. The report explicitly retains the trust
 /// premise that their producer accurately recorded execution and linkage.
 /// Hashes identify the selected artifacts; they do not attest that premise.
@@ -95,6 +199,25 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
         &resolve(&config.monkey_inputs),
         &resolve(&config.source_compile_database),
     )?;
+    let mut protected_files = source.protected_files.clone();
+    protected_files.extend([
+        path.to_path_buf(),
+        resolve(&config.wrapper_contract),
+        resolve(&config.composition_contract),
+        resolve(&config.observations),
+        resolve(&config.bindings),
+        resolve(&config.observer_binary),
+        resolve(&config.observer_harness),
+        resolve(&config.monkey_object),
+        resolve(&config.libevent_library),
+        resolve(&config.run_manifest),
+    ]);
+    let mut protected_directories = source.protected_directories.clone();
+    protected_directories.extend([
+        resolve(&config.libevent_profile),
+        resolve(&config.libevent_checkout),
+        resolve(&config.libevent_build),
+    ]);
     let compile_task_digest = source.compile_task.digest()?;
     let source_snapshot = (source.source_sha256.clone(), source.build_sha256.clone());
     let wrapper_bytes = read(&resolve(&config.wrapper_contract))?;
@@ -128,6 +251,7 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
     }
     let bundle = load_audited_bundle(library, &checkout, &revision)
         .map_err(|e| format!("Libevent source identity refused: {e:?}"))?;
+    protected_files.extend(bundle.files.keys().map(|file| checkout.join(file)));
     let build = resolve(&config.libevent_build);
     let cache = read(&build.join("CMakeCache.txt"))?;
     if manifest["libevent"]["cmake_cache_sha256"].as_str() != Some(sha256_hex(&cache).as_str()) {
@@ -268,6 +392,11 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
             ));
         }
     }
+    reject_report_aliases(
+        &resolve(&config.report),
+        &protected_files,
+        &protected_directories,
+    )?;
     let report = serde_json::json!({
         "schema_version": 1, "status": "observed_composition_checked",
         "context": context, "composition": checked,
@@ -280,4 +409,91 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
         serde_json::to_vec_pretty(&report).map_err(|e| e.to_string())?,
     )
     .map_err(|e| e.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::reject_report_aliases;
+    use std::fs;
+    use std::path::{Path, PathBuf};
+    use std::sync::atomic::{AtomicU64, Ordering};
+
+    static NEXT_SCRATCH: AtomicU64 = AtomicU64::new(0);
+
+    struct Scratch(PathBuf);
+
+    impl Scratch {
+        fn new() -> Self {
+            let path = std::env::temp_dir().join(format!(
+                "qcore-observed-wait-report-alias-{}-{}",
+                std::process::id(),
+                NEXT_SCRATCH.fetch_add(1, Ordering::Relaxed)
+            ));
+            fs::create_dir(&path).unwrap();
+            Self(path)
+        }
+
+        fn path(&self) -> &Path {
+            &self.0
+        }
+    }
+
+    impl Drop for Scratch {
+        fn drop(&mut self) {
+            let _ = fs::remove_dir_all(&self.0);
+        }
+    }
+
+    #[test]
+    fn distinct_report_destination_is_accepted() {
+        let scratch = Scratch::new();
+        let input = scratch.path().join("input.json");
+        let protected = scratch.path().join("checkout");
+        let output = scratch.path().join("report.json");
+        fs::write(&input, b"input").unwrap();
+        fs::create_dir(&protected).unwrap();
+        assert!(reject_report_aliases(&output, &[input], &[protected]).is_ok());
+    }
+
+    #[test]
+    fn exact_input_and_protected_directory_destinations_are_refused() {
+        let scratch = Scratch::new();
+        let input = scratch.path().join("observations.jsonl");
+        let protected = scratch.path().join("checkout");
+        fs::write(&input, b"input").unwrap();
+        fs::create_dir(&protected).unwrap();
+        assert!(reject_report_aliases(&input, std::slice::from_ref(&input), &[]).is_err());
+        assert!(
+            reject_report_aliases(
+                &protected.join("new-report.json"),
+                &[],
+                std::slice::from_ref(&protected),
+            )
+            .is_err()
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn symbolic_and_hard_link_aliases_are_refused() {
+        use std::os::unix::fs::symlink;
+
+        let scratch = Scratch::new();
+        let input = scratch.path().join("bindings.json");
+        let symbolic = scratch.path().join("symbolic-report.json");
+        let dangling_symbolic = scratch.path().join("dangling-symbolic-report.json");
+        let hard = scratch.path().join("hard-report.json");
+        let protected = scratch.path().join("checkout");
+        fs::write(&input, b"input").unwrap();
+        fs::create_dir(&protected).unwrap();
+        symlink(&input, &symbolic).unwrap();
+        symlink(protected.join("future-report.json"), &dangling_symbolic).unwrap();
+        fs::hard_link(&input, &hard).unwrap();
+        assert!(reject_report_aliases(&symbolic, std::slice::from_ref(&input), &[]).is_err());
+        assert!(reject_report_aliases(&hard, std::slice::from_ref(&input), &[]).is_err());
+        assert!(
+            reject_report_aliases(&dangling_symbolic, &[], std::slice::from_ref(&protected),)
+                .is_err()
+        );
+    }
 }
