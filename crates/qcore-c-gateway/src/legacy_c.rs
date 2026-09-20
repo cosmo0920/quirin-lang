@@ -1696,13 +1696,10 @@ fn analyze_preprocessed_unrestricted_c11(
             // `Unsafe` still names its validated reachable violation and
             // `Unknown` is already the fail-closed answer, so neither moves.
             //
-            // This gate is at *issuance*, not at recheck. A
-            // `LegacySafetyCertificate` carries no record of the definition set
-            // it was selected over — `check_legacy_safety_certificate` takes
-            // `checked_functions` as the selection — so an independent checker
-            // cannot verify coverage against the audited scope. Recorded open
-            // as **E01-TAIL-CERT-SCOPE**; carrying the denominator in the
-            // certificate would change every certificate's shape and identity.
+            // Card **E01-TAIL-CERT-SCOPE** extends this issuance gate through
+            // replay: the certificate retains the exact evidence from which
+            // the selected denominator is reconstructed, and the checker never
+            // uses `checked_functions` as its target set.
             if let Some(selected) = source_functions.as_deref() {
                 let unread = selected
                     .iter()

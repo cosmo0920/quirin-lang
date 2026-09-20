@@ -72,7 +72,7 @@ theorem structural_acceptance_has_exact_coverage (certificate : Certificate)
     (accepted : structurallyAccepts certificate = true) :
     certificate.rows = analyzedRows certificate.evidenceTargets := by
   simp [structurallyAccepts] at accepted
-  exact accepted.2.1
+  exact accepted.1.2
 
 /-- Structural acceptance also establishes a canonical target denominator:
 duplicate names cannot inflate or ambiguously relabel coverage. -/
@@ -80,7 +80,7 @@ theorem structural_acceptance_has_no_duplicate_targets (certificate : Certificat
     (accepted : structurallyAccepts certificate = true) :
     certificate.evidenceTargets.Nodup := by
   simp [structurallyAccepts] at accepted
-  exact accepted.1
+  exact accepted.1.1
 
 /-- The inventory digest accepted structurally is exactly the canonical
 coverage rows, rather than a caller-selected independent assertion. -/
@@ -88,7 +88,7 @@ theorem structural_acceptance_binds_inventory_digest (certificate : Certificate)
     (accepted : structurallyAccepts certificate = true) :
     certificate.inventoryDigest = analyzedRows certificate.evidenceTargets := by
   simp [structurallyAccepts] at accepted
-  exact accepted.2.2.trans accepted.2.1
+  exact accepted.2.trans accepted.1.2
 
 /-- Context-bound acceptance identifies the reconstructed denominator with the
 one the caller held independently. -/
@@ -97,7 +97,7 @@ theorem contextual_acceptance_binds_expected_targets
     (accepted : acceptsFor certificate expected = true) :
     certificate.evidenceTargets = expected.targets := by
   simp [acceptsFor] at accepted
-  exact accepted.2.1
+  exact accepted.1.1.2
 
 /-- Context-bound acceptance also identifies the effective artifact/request
 identity with the caller's expected identity. -/
@@ -106,7 +106,7 @@ theorem contextual_acceptance_binds_expected_input
     (accepted : acceptsFor certificate expected = true) :
     certificate.inputIdentity = expected.inputIdentity := by
   simp [acceptsFor] at accepted
-  exact accepted.2.2.2
+  exact accepted.2
 
 /-- Any denominator disagreement rejects, for arbitrary certificates and
 contexts rather than only the concrete mutation witnesses below. -/

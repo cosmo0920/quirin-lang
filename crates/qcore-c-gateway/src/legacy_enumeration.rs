@@ -422,9 +422,9 @@ pub(crate) fn inventory_from_line_marked_result(
 ///
 /// This is the same command `validate_unrestricted_c11` builds, minus `-P` and
 /// minus the syntax phase. Its output is used only to attribute definitions to
-/// files; it is never published, never digested and never analysed, so the
-/// unit's `-E -P` `preprocessed_source` — and every identity bound to it — is
-/// unchanged by this module.
+/// files; it is never analysed. A Safe certificate now retains and digests the
+/// exact marked bytes as target-scope evidence, while the unit's `-E -P`
+/// `preprocessed_source` remains the authoritative analyzed text.
 ///
 /// Card **GATEWAY-C-LOCATION** shares this run with
 /// [`crate::legacy_c::location`], which reads the same markers for the
