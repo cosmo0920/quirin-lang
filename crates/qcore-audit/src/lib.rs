@@ -7,10 +7,14 @@
 //! mode joins contract-backed source obligations with one bounded native run;
 //! the existing compatibility adapters retain their original scopes.
 
+pub mod callback_task_handoff;
 pub mod certificate_context;
 pub mod compile_db;
 pub mod current;
+pub mod cycle18_composition;
+mod cycle18_inputs;
 pub mod event_payload;
+pub mod native_platform_matrix;
 pub mod observed_wait;
 mod observed_wait_inputs;
 pub mod projection;

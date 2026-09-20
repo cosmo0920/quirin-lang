@@ -1,0 +1,403 @@
+{
+  "wave": 42,
+  "cards": [
+    "cycle18-broader-composition",
+    "cycle18-native-platform-matrix",
+    "cycle18-task-handoff",
+    "cycle18-broader-integration",
+    "cycle18-priority1-integration",
+    "cycle18-event-payload",
+    "cycle18-timeout-teardown",
+    "cycle18-wait-failures"
+  ],
+  "verify_applied": true,
+  "note": "Broader Cycle 18 integration: bounded mechanisms added, full production and foreign-host acceptance remains tracked. Prior priority-one items are base-inclusive historical discovery, superseded by their completed reconciliation record.",
+  "verdicts": {
+    "cycle18-broader-composition#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/cycle18_composition.rs",
+          "contains": "prepare_observed_wait("
+        },
+        {
+          "file": "crates/qcore-audit/src/cycle18_composition.rs",
+          "contains": "prepare_event_payload("
+        }
+      ]
+    },
+    "cycle18-broader-composition#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/cycle18_composition.rs",
+          "contains": "require_publishable_aggregate("
+        },
+        {
+          "file": "docs/reports/cycle18-broader-integration/aggregate.json",
+          "contains": "\"joined_evidence_families\": 3"
+        }
+      ]
+    },
+    "cycle18-broader-composition#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/cycle18_composition.rs",
+          "contains": "Cycle18PreparedSourceIdentity"
+        },
+        {
+          "file": "docs/reports/cycle18-broader-integration/aggregate.json",
+          "contains": "\"runtime_provenance\""
+        }
+      ]
+    },
+    "cycle18-broader-composition#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/cycle18_composition.rs",
+          "contains": "wait_failure_source: &failures.evidence.projection"
+        }
+      ]
+    },
+    "cycle18-broader-composition#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "AuditCycle18Composition.lean"
+        }
+      ]
+    },
+    "cycle18-broader-composition#integrator-reconciliation-list#6": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "compiler/tests/qcore_contract_corpus.rs",
+          "contains": "\"monkey/cycle18_composition.qcore\""
+        }
+      ]
+    },
+    "cycle18-broader-composition#integrator-reconciliation-list#7": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "MONKEY-CALLBACK-CYCLE18-COMPOSITION"
+        },
+        {
+          "file": "docs/reports/cycle18-broader-integration/README.md",
+          "contains": "0/3 fully composed"
+        }
+      ]
+    },
+    "cycle18-broader-composition#integrator-reconciliation-list#8": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "docs/reports/cycle18-broader-composition/README.md",
+          "contains": "It is not an event-lifecycle certificate"
+        }
+      ]
+    },
+    "cycle18-broader-composition#integrator-reconciliation-list#9": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "docs/reports/cycle18-broader-integration/timeout-common-build.json",
+          "contains": "Only the selected native failed-send teardown path is joined."
+        }
+      ]
+    },
+    "cycle18-native-platform-matrix#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "compiler/tests/qcore_contract_corpus.rs",
+          "contains": "\"native_platform_source_identity\", 3"
+        },
+        {
+          "file": "compiler/tests/contract_loader.rs",
+          "contains": "(33, 59, 207)"
+        }
+      ]
+    },
+    "cycle18-native-platform-matrix#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "CYCLE18-NATIVE-PLATFORM-MATRIX"
+        }
+      ]
+    },
+    "cycle18-native-platform-matrix#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "docs/reports/cycle18-broader-integration/README.md",
+          "contains": "0/3 fully composed"
+        },
+        {
+          "file": "docs/STATUS.md",
+          "contains": "Full language conformance"
+        }
+      ]
+    },
+    "cycle18-native-platform-matrix#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "docs/reports/cycle18-broader-integration/platform.json",
+          "contains": "\"unknown_rows\": 3"
+        },
+        {
+          "file": "docs/reports/cycle18-broader-integration/README.md",
+          "contains": "Historical Linux/macOS/Windows"
+        }
+      ]
+    },
+    "cycle18-native-platform-matrix#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": ".github/workflows/cycle18-native-platform-matrix.yml",
+          "absent": "actions/upload-artifact"
+        },
+        {
+          "file": ".github/workflows/cycle18-native-platform-matrix.yml",
+          "contains": "native-platform-matrix"
+        }
+      ]
+    },
+    "cycle18-task-handoff#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "compiler/tests/qcore_contract_corpus.rs",
+          "contains": "\"monkey/callback_task_handoff.qcore\""
+        },
+        {
+          "file": "compiler/tests/contract_loader.rs",
+          "contains": "(33, 59, 207)"
+        }
+      ]
+    },
+    "cycle18-task-handoff#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.CallbackTaskHandoff"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "AuditCallbackTaskHandoff.lean"
+        }
+      ]
+    },
+    "cycle18-task-handoff#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "CYCLE18-TASK-HANDOFF-PRODUCTION-POSITIVE"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "CYCLE18-TASK-CANCEL-RACE"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "CYCLE18-DEFERRED-CANCELLATION"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "CYCLE18-TASK-EFFECT-DERIVATION"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "CYCLE18-TASK-EVENT-COMPOSITION"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "CYCLE18-TASK-NATIVE-GENERALIZATION"
+        }
+      ]
+    },
+    "cycle18-task-handoff#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "docs/reports/cycle18-broader-integration/README.md",
+          "contains": "no aggregate Cycle 18 promotion"
+        }
+      ]
+    },
+    "cycle18-task-handoff#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "Implemented and preserved at the concrete checked locations; new bounded evidence does not promote broad acceptance.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/main.rs",
+          "contains": "callback-task-handoff-fixture"
+        },
+        {
+          "file": "crates/qcore-audit/src/main.rs",
+          "contains": "callback-task-handoff"
+        }
+      ]
+    },
+    "cycle18-event-payload#integrator-reconciliation-list#1": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-event-payload#integrator-reconciliation-list#2": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-event-payload#integrator-reconciliation-list#3": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-event-payload#integrator-reconciliation-list#4": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-event-payload#integrator-reconciliation-list#5": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-event-payload#integrator-reconciliation-list#6": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-timeout-teardown#integrator-reconciliation-list#1": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-timeout-teardown#integrator-reconciliation-list#2": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-timeout-teardown#integrator-reconciliation-list#3": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-timeout-teardown#integrator-reconciliation-list#4": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-timeout-teardown#integrator-reconciliation-list#5": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-timeout-teardown#integrator-reconciliation-list#6": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-wait-failures#integrator-reconciliation-list#1": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-wait-failures#integrator-reconciliation-list#2": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-wait-failures#integrator-reconciliation-list#3": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-wait-failures#integrator-reconciliation-list#4": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    },
+    "cycle18-wait-failures#integrator-reconciliation-list#5": {
+      "verdict": "superseded",
+      "note": "Base-inclusive discovery from the frozen priority-one close. Its completed reconciliation.json owns these previous decisions; this close preserves those bounded routes and remeasures their parity."
+    }
+  },
+  "no_section": {
+    "cycle18-broader-integration": "Root integration owns this record and publishes evidence directly; no delegated reconciliation section.",
+    "cycle18-priority1-integration": "Frozen predecessor root close; its own reconciliation remains authoritative."
+  },
+  "deferred_decisions": {
+    "note": "Eleven historical decisions remain open. Broader Cycle 18 bounded Linux/native and model work does not resolve these independent policy and infrastructure decisions; frozen predecessor grounds are retained.",
+    "items": [
+      {
+        "name": "CT10-REASON-ROW",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; Cycle 18 contract priority-one changes no CT10 reason-row policy and supplies no basis to decide it."
+      },
+      {
+        "name": "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close as a user decision; this priority-one reconciliation is not a compaction-cadence measurement."
+      },
+      {
+        "name": "EXAMPLES-STYLE-SLICE-FANOUT",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; the Cycle 18 priority-one cards do not change the examples directory or measure its style-slice fanout."
+      },
+      {
+        "name": "F02-WINDOWS-PIN-RUN",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this Linux-hosted priority-one integration supplies no user-validated Windows F02 pin run."
+      },
+      {
+        "name": "INDIRECT-CENSUS-FEATURE-UNBUILT",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; these contract-policy changes neither add a feature-building CI job nor decide the instrumentation is disposable."
+      },
+      {
+        "name": "MATRIX-RECORDED-BY-DECISION",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close as a provenance-schema decision; this priority-one reconciliation neither backfills recorded_by nor makes it optional."
+      },
+      {
+        "name": "MATRIX-UPDATED-STALE-AT-WAVE-27",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; the Cycle 18 priority-one integration does not decide the acceptance-matrix updated-field convention."
+      },
+      {
+        "name": "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED",
+        "verdict": "deferred",
+        "ground": "New generic Cycle 18 Linux observations do not discharge the older platform-residual registration decision or supply current foreign-host observations. The existing decision remains open."
+      },
+      {
+        "name": "Q-NAMESPACE-DECISION",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; the contract-policy work allocates no diagnostic code and does not choose a future namespace."
+      },
+      {
+        "name": "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this record uses the existing sweep and does not define or implement a prose-only residual mutation gate."
+      },
+      {
+        "name": "SYNC-RULE-TOOLING-COMMIT-SCOPE",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this bounded reconciliation does not decide the synchronization rule for structural integrator commits."
+      }
+    ]
+  }
+}

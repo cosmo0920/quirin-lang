@@ -1,0 +1,265 @@
+{
+  "historical_validation_sha256": "f0717d75797037234bdf0aefb7b7738c5ee0d1bcdec527ffe4738f0e5cc76c44",
+  "limitations": [
+    "Observed rows are generic Libevent probes, not Monkey callback evidence",
+    "Observer transparency is not claimed",
+    "Carried historical native results do not satisfy current sanitizer/observer/artifact joins"
+  ],
+  "matrix": {
+    "artifact": "libevent/generic-cross-thread-activation",
+    "assumptions": [
+      "producer-supplied runtime and linkage identities identify the measured artifacts",
+      "observer instrumentation does not establish transparency",
+      "carried historical results do not substitute for current selected-observer evidence"
+    ],
+    "bounds": "selected host/backend/sanitizer/thread/observer rows; each current result stands only for its own dimensions",
+    "evidence_version": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2",
+    "property": "generic_libevent_cross_thread_activation",
+    "rows": [
+      {
+        "dimensions": {
+          "backend": "epoll",
+          "host": "linux",
+          "observer": "bounded_generic_libevent_probe",
+          "sanitizers": "address,undefined,leak",
+          "thread_adapter": "libevent_pthreads_initialized"
+        },
+        "evidence": {
+          "build": {
+            "command_sha256": "452b454448dfc1ed7bce96d7ba0f2333b5a33eaa13b2227c7fc15f57b48060b3",
+            "compiler_path": "/usr/bin/clang",
+            "compiler_version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin",
+            "executable_sha256": "faae850ac480553054e710b6e7ec526071b8684e6e140393b61c77d8ad3a4654",
+            "libevent_core_sha256": "d84bf34bbd98633499a58ca3b16e76879e2a9050cb0b7b47ab9e5302196d3bf1",
+            "libevent_pthreads_sha256": "8164397701079aab052b9af9ab5510c6735348354faeed16ee095cdff52bec8e"
+          },
+          "observer_scope": "generic_libevent_only",
+          "observer_transparency": "not_claimed",
+          "property": "generic_libevent_cross_thread_activation",
+          "runtime": {
+            "activating_thread": 1120896,
+            "activation_count": 1,
+            "callback_count": 1,
+            "callback_flags": 2,
+            "callback_thread": 1120895,
+            "dispatch_thread": 1120895,
+            "machine": "x86_64",
+            "process_exit": 0,
+            "release": "7.0.0-31-generic",
+            "selected_backend": "epoll",
+            "system": "Linux"
+          },
+          "source": {
+            "harness_sha256": "a2ee320c04c2b8f2834f6bb6a0b571d11e32a895ce08e13e5720778fff12250d",
+            "libevent_revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+          }
+        },
+        "historical_native_result": {
+          "recorded_result": "linux_full_native_84_of_84_passed",
+          "source_document_sha256": "f0717d75797037234bdf0aefb7b7738c5ee0d1bcdec527ffe4738f0e5cc76c44",
+          "source_revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+        },
+        "policy": "linux_epoll_asan_profile",
+        "reason": null,
+        "status": "observed"
+      },
+      {
+        "dimensions": {
+          "backend": "poll",
+          "host": "linux",
+          "observer": "bounded_generic_libevent_probe",
+          "sanitizers": "address,undefined,leak",
+          "thread_adapter": "libevent_pthreads_initialized"
+        },
+        "evidence": {
+          "build": {
+            "command_sha256": "452b454448dfc1ed7bce96d7ba0f2333b5a33eaa13b2227c7fc15f57b48060b3",
+            "compiler_path": "/usr/bin/clang",
+            "compiler_version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin",
+            "executable_sha256": "faae850ac480553054e710b6e7ec526071b8684e6e140393b61c77d8ad3a4654",
+            "libevent_core_sha256": "d84bf34bbd98633499a58ca3b16e76879e2a9050cb0b7b47ab9e5302196d3bf1",
+            "libevent_pthreads_sha256": "8164397701079aab052b9af9ab5510c6735348354faeed16ee095cdff52bec8e"
+          },
+          "observer_scope": "generic_libevent_only",
+          "observer_transparency": "not_claimed",
+          "property": "generic_libevent_cross_thread_activation",
+          "runtime": {
+            "activating_thread": 1120918,
+            "activation_count": 1,
+            "callback_count": 1,
+            "callback_flags": 2,
+            "callback_thread": 1120917,
+            "dispatch_thread": 1120917,
+            "machine": "x86_64",
+            "process_exit": 0,
+            "release": "7.0.0-31-generic",
+            "selected_backend": "poll",
+            "system": "Linux"
+          },
+          "source": {
+            "harness_sha256": "a2ee320c04c2b8f2834f6bb6a0b571d11e32a895ce08e13e5720778fff12250d",
+            "libevent_revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+          }
+        },
+        "historical_native_result": {
+          "recorded_result": "linux_full_native_84_of_84_passed",
+          "source_document_sha256": "f0717d75797037234bdf0aefb7b7738c5ee0d1bcdec527ffe4738f0e5cc76c44",
+          "source_revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+        },
+        "policy": "linux_poll_asan_profile",
+        "reason": null,
+        "status": "observed"
+      },
+      {
+        "dimensions": {
+          "backend": "select",
+          "host": "linux",
+          "observer": "bounded_generic_libevent_probe",
+          "sanitizers": "address,undefined,leak",
+          "thread_adapter": "libevent_pthreads_initialized"
+        },
+        "evidence": {
+          "build": {
+            "command_sha256": "452b454448dfc1ed7bce96d7ba0f2333b5a33eaa13b2227c7fc15f57b48060b3",
+            "compiler_path": "/usr/bin/clang",
+            "compiler_version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin",
+            "executable_sha256": "faae850ac480553054e710b6e7ec526071b8684e6e140393b61c77d8ad3a4654",
+            "libevent_core_sha256": "d84bf34bbd98633499a58ca3b16e76879e2a9050cb0b7b47ab9e5302196d3bf1",
+            "libevent_pthreads_sha256": "8164397701079aab052b9af9ab5510c6735348354faeed16ee095cdff52bec8e"
+          },
+          "observer_scope": "generic_libevent_only",
+          "observer_transparency": "not_claimed",
+          "property": "generic_libevent_cross_thread_activation",
+          "runtime": {
+            "activating_thread": 1120921,
+            "activation_count": 1,
+            "callback_count": 1,
+            "callback_flags": 2,
+            "callback_thread": 1120920,
+            "dispatch_thread": 1120920,
+            "machine": "x86_64",
+            "process_exit": 0,
+            "release": "7.0.0-31-generic",
+            "selected_backend": "select",
+            "system": "Linux"
+          },
+          "source": {
+            "harness_sha256": "a2ee320c04c2b8f2834f6bb6a0b571d11e32a895ce08e13e5720778fff12250d",
+            "libevent_revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+          }
+        },
+        "historical_native_result": {
+          "recorded_result": "linux_full_native_84_of_84_passed",
+          "source_document_sha256": "f0717d75797037234bdf0aefb7b7738c5ee0d1bcdec527ffe4738f0e5cc76c44",
+          "source_revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+        },
+        "policy": "linux_select_asan_profile",
+        "reason": null,
+        "status": "observed"
+      },
+      {
+        "dimensions": {
+          "backend": "kqueue",
+          "host": "macos",
+          "observer": "bounded_generic_libevent_probe",
+          "sanitizers": "address,undefined",
+          "thread_adapter": "libevent_pthreads_initialized"
+        },
+        "evidence": null,
+        "historical_native_result": {
+          "recorded_result": "macos_kqueue_21_of_21_and_full_65_of_65_passed",
+          "source_document_sha256": "f0717d75797037234bdf0aefb7b7738c5ee0d1bcdec527ffe4738f0e5cc76c44",
+          "source_revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+        },
+        "policy": "macos_kqueue_asan_profile",
+        "reason": "missing_current_kqueue_sanitizer_observer_artifact_join",
+        "status": "unknown"
+      },
+      {
+        "dimensions": {
+          "backend": "win32",
+          "host": "windows",
+          "observer": "bounded_generic_libevent_probe",
+          "sanitizers": "address",
+          "thread_adapter": "libevent_windows_threads_initialized"
+        },
+        "evidence": null,
+        "historical_native_result": {
+          "recorded_result": "windows_full_native_44_of_44_passed",
+          "source_document_sha256": "f0717d75797037234bdf0aefb7b7738c5ee0d1bcdec527ffe4738f0e5cc76c44",
+          "source_revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+        },
+        "policy": "windows_win32_asan_profile",
+        "reason": "missing_current_win32_sanitizer_observer_artifact_join",
+        "status": "unknown"
+      },
+      {
+        "dimensions": {
+          "backend": "iocp_profile",
+          "host": "windows",
+          "observer": "bounded_generic_libevent_probe",
+          "sanitizers": "address",
+          "thread_adapter": "libevent_windows_threads_initialized"
+        },
+        "evidence": null,
+        "historical_native_result": {
+          "recorded_result": "windows_iocp_21_of_21_passed",
+          "source_document_sha256": "f0717d75797037234bdf0aefb7b7738c5ee0d1bcdec527ffe4738f0e5cc76c44",
+          "source_revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+        },
+        "policy": "windows_iocp_asan_profile",
+        "reason": "missing_current_iocp_sanitizer_observer_artifact_join",
+        "status": "unknown"
+      },
+      {
+        "dimensions": {
+          "backend": "epoll",
+          "host": "linux",
+          "observer": "bounded_generic_libevent_probe",
+          "sanitizers": "thread",
+          "thread_adapter": "libevent_pthreads_initialized"
+        },
+        "evidence": {
+          "build": {
+            "command_sha256": "c38387c6c34b6873e16eba97bd8caffb9a8418b0a5e51b658665821a5c8ad7e2",
+            "compiler_path": "/usr/bin/clang",
+            "compiler_version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin",
+            "executable_sha256": "cb2824d1a72043f41d1547ba5c5fc049840decaeb50a920032acd621b06e9960",
+            "libevent_core_sha256": "ec96a51707fe1d9b8231c3407fd792b0b77f9c1677e07b858d73639e88e995d5",
+            "libevent_pthreads_sha256": "46a69e329ef5a2cb8a3b4e8704b0e8cd11d354074f23d5f8839bbd4d15da82c1"
+          },
+          "observer_scope": "generic_libevent_only",
+          "observer_transparency": "not_claimed",
+          "property": "generic_libevent_cross_thread_activation",
+          "runtime": {
+            "activating_thread": 1120978,
+            "activation_count": 1,
+            "callback_count": 1,
+            "callback_flags": 2,
+            "callback_thread": 1120976,
+            "dispatch_thread": 1120976,
+            "machine": "x86_64",
+            "process_exit": 0,
+            "release": "7.0.0-31-generic",
+            "selected_backend": "epoll",
+            "system": "Linux"
+          },
+          "source": {
+            "harness_sha256": "a2ee320c04c2b8f2834f6bb6a0b571d11e32a895ce08e13e5720778fff12250d",
+            "libevent_revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+          }
+        },
+        "historical_native_result": null,
+        "policy": "linux_epoll_tsan_profile",
+        "reason": null,
+        "status": "observed"
+      }
+    ],
+    "scope": "generic Libevent probes only; no Monkey callback or wrapper behavior",
+    "semantic_profile": "cycle18.native_platform_matrix.v1"
+  },
+  "observed_rows": 4,
+  "schema_version": 1,
+  "status": "native_platform_matrix_checked",
+  "unknown_rows": 3
+}

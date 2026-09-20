@@ -1,6 +1,6 @@
 # Current status and evidence boundaries
 
-Re-derived on 2026-09-20 from the sources below. This is the concise status
+Re-derived on 2026-09-21 from the sources below. This is the concise status
 authority routed by `AGENTS.md`; reports own the underlying evidence. Update
 numbers from those sources, not from an older summary. History belongs in the
 [increment records](development/increments/README.md).
@@ -21,7 +21,10 @@ numbers from those sources, not from an older summary. History belongs in the
 | Monkey callback accounting | **3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown**; 8 source paths | [Callback report](reports/w42-monkey-callback-coverage/README.md); ordinary audit checks 0/8 native paths, optional focused replay 8/8 |
 | Observed Monkey timed wait | **1 instrumented Linux epoll success run**, 11 identity records and 11 model operations; conditional replay, no coverage promotion | [Observed integration](reports/cycle18-observed-integration/README.md) |
 | Cycle 18 priority-one checks | **8 failure cases** (3 fault-model Unsafe / 5 Unknown); **4/4 payload paths** under explicit authority; **15-operation timeout teardown** | [Bounded integration](reports/cycle18-priority1-integration/README.md) |
-| Contract corpus | **93** modules; **59** resource-v1 declarations; **33** manifest-selected | `contract/qcore/`, [selection](../contract/cycle19-resource-contracts.json) and pinned tests |
+| Cycle 18 bounded aggregate | **3 joined families / 8 source paths / 7 unresolved obligations**, aggregate Unknown | [Broader integration](reports/cycle18-broader-integration/aggregate.json) |
+| Callback task handoff | **12 source-derived operations**, one Linux pthread fixture; production acceptance pending | [Integrated lifetime evidence](reports/cycle18-broader-integration/task-handoff.json) |
+| Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
+| Contract corpus | **96** modules; **59** resource-v1 declarations; **33** manifest-selected | `contract/qcore/`, [selection](../contract/cycle19-resource-contracts.json) and pinned tests |
 | Registered follow-ups | **281** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
@@ -65,27 +68,27 @@ separately.
 
 ## Latest validated gate
 
-The [priority-one integration gate](reports/cycle18-priority1-integration/gate.json)
-records **4,991 Rust passed, 0 failed, 11 ignored; 266 result summaries over 264 targets; 161 Lean audits; 317 Python tests**, clean fmt/clippy and both probes exit 0.
-Five named host-sensitive rows also passed separately in isolation. Clang 21.1.8
-was recorded in the measuring checkout. **122 provider tests are carried Unix
-evidence, not remeasured.** [Commands, exits and private logs](reports/cycle18-priority1-integration/README.md#final-standing-gate)
-retain the first failed layering gate and the complete corrected run separately.
+The [broader integration gate](reports/cycle18-broader-integration/gate.json)
+records **5,034 Rust passed, 0 failed, 11 ignored; 268 result summaries over 257 running targets and 9 doc sections; 164 Lean audits; 317 Python tests**, clean fmt/clippy and both probes exit 0.
+Five named host-sensitive rows also passed separately in isolation. Clang was
+recorded in the measuring checkout. **122 provider tests are carried Unix
+evidence, not remeasured.** [Commands, exits and private logs](reports/cycle18-broader-integration/README.md#final-standing-gate)
+retain the initial stale-profile-pin failure and complete corrected run separately.
 
-Three executable Quirin policies add 18 declarations and 151 clauses for
-failure classification, payload allocation/index/write authority and timeout
-self-teardown identities/custody. Native records, selected source and artifact
-roles are bound by three configured audit commands; missing or contradictory
-evidence refuses. Callback-model construction stays in the verification adapter,
-and the audit layer retains its existing dependency boundary.
+Three executable Quirin policies add **28 declarations and 222 clauses** for
+bounded callback evidence composition, task/deferred-work custody and native
+platform/source identity admission. The corpus grows deliberately to 96 modules;
+resource selection remains 33 modules/59 declarations. Source and identity
+acceptance predicates live in contracts, with generic Rust extraction/state
+operations and matching audited Lean models.
 
-The three priority-one follow-ups are discharged at their bounded scopes;
-281 follow-ups remain. Full callback composition, task/deferral obligations,
-general authority provenance and platform acceptance stay open. Runtime/linkage
-records and exclusive payload authority remain explicit premises. One accepted
-legacy CLI replay and six refusing controls agree with the baseline, and all
-five frozen corpus artifacts remain byte-identical. Callback, CT and aggregate
-conformance coverage are unchanged.
+All three broader follow-ups remain open; **281** follow-ups are registered.
+The aggregate joins three families over eight source paths but retains seven
+unresolved obligations. The twelve-operation taskful instance is a bounded
+fixture. Four current Linux platform observations cover generic Libevent;
+three foreign-host rows remain Unknown. One accepted legacy CLI replay and six
+refusing controls agree with the baseline, and all five frozen corpus artifacts
+remain byte-identical. Callback, CT and aggregate conformance are unchanged.
 
 The ignored F02 Windows pin-agreement test is red by design on `--ignored`;
 Linux green does not repair it. Host/load-sensitive tests and their reporting

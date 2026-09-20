@@ -1,0 +1,26 @@
+[
+  {
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/aggregate-run-2.log",
+    "exit": 0,
+    "sha256": "b3160251b82844406b10f899525c49b2d31327b2b2395d420ab47d39b0e4e67f",
+    "interpretation": "Earlier compatible-field replay before the stricter same-build policy; retained, not final acceptance evidence."
+  },
+  {
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/aggregate-run-3.log",
+    "exit": 1,
+    "sha256": "9a4fa2d6432f3b5394ef1d7f2b054bade45549759b61365122a9d169e6c7936e",
+    "interpretation": "Stricter same-build policy refused the old timeout measurement from a distinct Monkey build."
+  },
+  {
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/aggregate-run-4.log",
+    "exit": 0,
+    "sha256": "9586544663864426f754c26ec1942f0a780e6da51a4e01899fcc53e2a6663216",
+    "interpretation": "Fresh compatible timeout measurement; all three bounded families joined, eight source paths, seven unresolved obligations, aggregate Unknown."
+  },
+  {
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/aggregate-final.log",
+    "exit": 0,
+    "sha256": "8aa8f92ccab2fc9b731085b5bdfdbc631e6d5af5f47abca8d6cb1a91ad14fdbc",
+    "interpretation": "Final strict configured publication replay after exact-family, leaf-report preservation and checkout-revision guards; three bounded families joined, aggregate Unknown."
+  }
+]

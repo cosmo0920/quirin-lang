@@ -1,0 +1,19 @@
+{
+  "cards": [
+    "cycle18-broader-composition",
+    "cycle18-native-platform-matrix",
+    "cycle18-task-handoff",
+    "cycle18-broader-integration",
+    "cycle18-priority1-integration",
+    "cycle18-event-payload",
+    "cycle18-timeout-teardown",
+    "cycle18-wait-failures"
+  ],
+  "before_count": 62,
+  "after_count": 62,
+  "added": [],
+  "removed": [],
+  "note": "No tracker entries retired. Historical residuals retain their existing decisions; this equality is not a discharge.",
+  "before_log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/residuals-before-final.json",
+  "after_log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/residuals-after-final.json"
+}

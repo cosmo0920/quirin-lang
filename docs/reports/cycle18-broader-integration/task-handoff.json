@@ -1,0 +1,42 @@
+{
+  "artifact": "compiler/tests/fixtures/cycle18_task_handoff.c",
+  "assumptions": [
+    "faithful typed C extraction",
+    "declared helper effect contracts",
+    "observer capability completeness and producer truth",
+    "Lean-model-to-Rust correspondence"
+  ],
+  "bounds": [
+    "lifetime/custody only; no payload permission or race-freedom claim",
+    "fixture semantics do not imply Monkey or other production callbacks spawn tasks"
+  ],
+  "certificate": {
+    "callbacks_observed": [
+      "cycle18_taskful_callback"
+    ],
+    "evidence_version": "qcore.cycle18.callback-task-handoff.v1",
+    "no_task_or_deferred_action_observed": false,
+    "observation_count": 12,
+    "policy_digest": "be5964f3d8f390516bd53209ec3132503a65d3bf7833d5183f0e5eb13c2d663e",
+    "source_digest": "f1e6c9631dd055cae2a4d17115fb113ae6efbb9b1cf51d2de6308cd0aa6fb821"
+  },
+  "evidence_version": "qcore.cycle18.callback-task-handoff.v1",
+  "identities": {
+    "compiler": {
+      "program": "/usr/bin/clang",
+      "target": "x86_64-pc-linux-gnu",
+      "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+    },
+    "observations_sha256": "51285c636fc19c0e8c0f5197c8a6c5909c5ee09f4f212464b8764ae50ee38a3e",
+    "observer_binary_sha256": "5e019890b8cbc3194465ad137f5f75f731029a01491bda5d44bdd6726381bfe8",
+    "policy_sha256": "be5964f3d8f390516bd53209ec3132503a65d3bf7833d5183f0e5eb13c2d663e",
+    "producer_manifest_sha256": "92d7c684627d9cf5fe351216283ebad08368df10fca05216c77c07c83238fead",
+    "source_sha256": "99096d4ea8edd59f90f93abf1ec33eb0559e441eb5672d4e556f21d1e43b4076",
+    "source_summary_sha256": "f1e6c9631dd055cae2a4d17115fb113ae6efbb9b1cf51d2de6308cd0aa6fb821"
+  },
+  "property": "callback-task-handoff-and-deferred-work-lifetime",
+  "schema_version": 1,
+  "scope": "one checked-in taskful callback fixture and one Linux pthread observation",
+  "semantic_profile": "cycle18.callback-task-handoff.pthread-fixture.v1",
+  "status": "bounded_taskful_callback_handoff_checked"
+}

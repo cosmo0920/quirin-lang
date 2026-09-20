@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "platform": "linux",
+  "threading": "pthreads",
+  "source_sha256": "99096d4ea8edd59f90f93abf1ec33eb0559e441eb5672d4e556f21d1e43b4076",
+  "profile_sha256": "a3b29adae11fcf94a9e8c6dbb8f4e45ebbb9a007ea599542d8e0c6b6a52b15f6",
+  "policy_sha256": "be5964f3d8f390516bd53209ec3132503a65d3bf7833d5183f0e5eb13c2d663e",
+  "compiler_program": "/usr/bin/clang",
+  "compiler_version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin",
+  "compiler_target": "x86_64-pc-linux-gnu",
+  "compile_argv": [
+    "/usr/bin/clang",
+    "-std=c11",
+    "-pthread",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-Wno-unused-parameter",
+    "-fsanitize=address,undefined",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/tests/fixtures/cycle18_task_handoff.c",
+    "-o",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/task-handoff-evidence-root/taskful-observer"
+  ],
+  "binary_sha256": "5e019890b8cbc3194465ad137f5f75f731029a01491bda5d44bdd6726381bfe8",
+  "run_argv": [
+    "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/task-handoff-evidence-root/taskful-observer"
+  ],
+  "run_environment": {
+    "ASAN_OPTIONS": "detect_leaks=0"
+  },
+  "run_exit": 0,
+  "runtime_stdout_sha256": "51285c636fc19c0e8c0f5197c8a6c5909c5ee09f4f212464b8764ae50ee38a3e",
+  "runtime_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "observations_sha256": "51285c636fc19c0e8c0f5197c8a6c5909c5ee09f4f212464b8764ae50ee38a3e",
+  "callback_thread": 140410929320320,
+  "worker_thread": 136012835583680
+}

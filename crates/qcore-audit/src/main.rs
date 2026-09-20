@@ -7,6 +7,74 @@ fn main() -> ExitCode {
         eprintln!("usage: quirin-audit CONFIG.json");
         return ExitCode::FAILURE;
     };
+    if path == "callback-task-handoff" {
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: quirin-audit callback-task-handoff CONFIG.json");
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: quirin-audit callback-task-handoff CONFIG.json");
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::callback_task_handoff::run_callback_task_handoff_config(
+            &PathBuf::from(config),
+        ) {
+            Ok(()) => {
+                println!("Bounded callback task-handoff obligations checked; report written.");
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("callback-task-handoff audit rejected (Unknown): {error}");
+                ExitCode::FAILURE
+            }
+        };
+    }
+    if path == "callback-task-handoff-fixture" {
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: quirin-audit callback-task-handoff-fixture CONFIG.json");
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: quirin-audit callback-task-handoff-fixture CONFIG.json");
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::callback_task_handoff::run_taskful_fixture_config(&PathBuf::from(
+            config,
+        )) {
+            Ok(()) => {
+                println!("Bounded taskful callback handoff checked; report written.");
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("taskful callback handoff audit rejected (Unknown): {error}");
+                ExitCode::FAILURE
+            }
+        };
+    }
+    if path == "cycle18-composition" {
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: quirin-audit cycle18-composition CONFIG.json");
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: quirin-audit cycle18-composition CONFIG.json");
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::cycle18_composition::run_cycle18_composition_config(
+            &PathBuf::from(config),
+        ) {
+            Ok(()) => {
+                println!(
+                    "Bounded Cycle 18 evidence joined; aggregate remains Unknown. Report written."
+                );
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("Cycle 18 composition rejected (Unknown): {error}");
+                ExitCode::FAILURE
+            }
+        };
+    }
     if path == "timeout-teardown" {
         let Some(config) = arguments.next() else {
             eprintln!("usage: quirin-audit timeout-teardown CONFIG.json");
@@ -25,6 +93,28 @@ fn main() -> ExitCode {
             }
             Err(error) => {
                 eprintln!("timeout-teardown audit rejected (Unknown): {error}");
+                ExitCode::FAILURE
+            }
+        };
+    }
+    if path == "native-platform-matrix" {
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: quirin-audit native-platform-matrix CONFIG.json");
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: quirin-audit native-platform-matrix CONFIG.json");
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::native_platform_matrix::run_native_platform_matrix_config(
+            &PathBuf::from(config),
+        ) {
+            Ok(()) => {
+                println!("Cycle 18 native platform matrix checked; bounded report written.");
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("native-platform-matrix audit rejected (Unknown): {error}");
                 ExitCode::FAILURE
             }
         };

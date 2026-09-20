@@ -46,7 +46,7 @@ fn read(path: &Path) -> Result<Vec<u8>, String> {
     fs::read(path).map_err(|error| format!("{}: {error}", path.display()))
 }
 
-fn report_destination(path: &Path) -> Result<PathBuf, String> {
+pub(crate) fn report_destination(path: &Path) -> Result<PathBuf, String> {
     report_destination_with_depth(path, 0)
 }
 
@@ -150,10 +150,33 @@ pub(crate) fn reject_report_aliases(
     Ok(())
 }
 
+/// Refuse two report destinations that resolve to the same planned path or
+/// existing file. Unlike protected evidence, either report may not exist yet.
+pub(crate) fn reject_report_destination_alias(
+    report: &Path,
+    protected_report: &Path,
+) -> Result<(), String> {
+    let destination = report_destination(report)?;
+    let protected_destination = report_destination(protected_report)?;
+    if destination == protected_destination || same_existing_file(report, protected_report) {
+        return Err(format!(
+            "aggregate report aliases prepared leaf report: {}",
+            protected_report.display()
+        ));
+    }
+    Ok(())
+}
+
 /// The caller selects the artifacts. The report explicitly retains the trust
 /// premise that their producer accurately recorded execution and linkage.
 /// Hashes identify the selected artifacts; they do not attest that premise.
 pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
+    prepare_observed_wait(path)?.publish()
+}
+
+pub(crate) fn prepare_observed_wait(
+    path: &Path,
+) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::ObservedWait>, String> {
     let config: ObservedWaitConfig =
         serde_json::from_slice(&read(path)?).map_err(|error| error.to_string())?;
     if config.schema_version != 1 {
@@ -199,6 +222,7 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
         &resolve(&config.monkey_inputs),
         &resolve(&config.source_compile_database),
     )?;
+    let aggregate_identity = crate::cycle18_inputs::SourceIdentity::from_source(&source)?;
     let mut protected_files = source.protected_files.clone();
     protected_files.extend([
         path.to_path_buf(),
@@ -231,6 +255,12 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
         .map_err(|e| format!("source projection refused: {e:?}"))?;
     let libevent =
         load_profile_directory(&resolve(&config.libevent_profile)).map_err(|e| e.to_string())?;
+    let library_profile_path = libevent.directory().join("profile.json");
+    protected_files.push(library_profile_path.clone());
+    snapshots.push((
+        library_profile_path,
+        libevent.manifest_text().as_bytes().to_vec(),
+    ));
     let library = libevent
         .library("libevent")
         .ok_or("missing Libevent library profile")?;
@@ -252,8 +282,16 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
     let bundle = load_audited_bundle(library, &checkout, &revision)
         .map_err(|e| format!("Libevent source identity refused: {e:?}"))?;
     protected_files.extend(bundle.files.keys().map(|file| checkout.join(file)));
+    snapshots.extend(
+        bundle
+            .files
+            .iter()
+            .map(|(file, contents)| (checkout.join(file), contents.as_bytes().to_vec())),
+    );
     let build = resolve(&config.libevent_build);
     let cache = read(&build.join("CMakeCache.txt"))?;
+    protected_files.push(build.join("CMakeCache.txt"));
+    snapshots.push((build.join("CMakeCache.txt"), cache.clone()));
     if manifest["libevent"]["cmake_cache_sha256"].as_str() != Some(sha256_hex(&cache).as_str()) {
         return Err("native manifest build configuration mismatch".into());
     }
@@ -333,7 +371,7 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
             monkey_source_sha256: source.source_sha256,
             monkey_profile_sha256: source.profile.manifest_digest().into(),
             monkey_build_sha256: source.build_sha256,
-            libevent_revision: revision,
+            libevent_revision: revision.clone(),
             libevent_source_sha256: sha256_hex(
                 &serde_json::to_vec(&bundle.files).map_err(|e| e.to_string())?,
             ),
@@ -404,16 +442,31 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
             "One observed success path; unobserved failure paths remain Unknown",
             "No callback coverage or Cycle 18 acceptance promotion"]
     });
-    fs::write(
+    let monkey_revision = aggregate_identity.revision.clone();
+    crate::cycle18_inputs::PreparedAudit::new(
+        aggregate_identity,
+        crate::cycle18_inputs::ObservedWait {
+            projection,
+            context: admitted,
+            observations,
+            bindings,
+            summaries: source.summaries,
+        },
         resolve(&config.report),
         serde_json::to_vec_pretty(&report).map_err(|e| e.to_string())?,
+        protected_files,
+        protected_directories,
     )
-    .map_err(|e| e.to_string())
+    .map(|prepared| {
+        prepared
+            .with_checkout_revision(resolve(&config.fluent_checkout), monkey_revision)
+            .with_checkout_revision(checkout, revision)
+    })
 }
 
 #[cfg(test)]
 mod tests {
-    use super::reject_report_aliases;
+    use super::{reject_report_aliases, reject_report_destination_alias};
     use std::fs;
     use std::path::{Path, PathBuf};
     use std::sync::atomic::{AtomicU64, Ordering};
@@ -495,5 +548,24 @@ mod tests {
             reject_report_aliases(&dangling_symbolic, &[], std::slice::from_ref(&protected),)
                 .is_err()
         );
+    }
+
+    #[test]
+    fn planned_leaf_report_alias_is_refused_before_either_report_exists() {
+        let scratch = Scratch::new();
+        let report = scratch.path().join("report.json");
+        assert!(reject_report_destination_alias(&report, &report).is_err());
+        assert!(!report.exists());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn existing_hard_linked_leaf_report_alias_is_refused() {
+        let scratch = Scratch::new();
+        let leaf = scratch.path().join("leaf.json");
+        let aggregate = scratch.path().join("aggregate.json");
+        fs::write(&leaf, b"leaf").unwrap();
+        fs::hard_link(&leaf, &aggregate).unwrap();
+        assert!(reject_report_destination_alias(&aggregate, &leaf).is_err());
     }
 }

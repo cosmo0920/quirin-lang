@@ -1,0 +1,32 @@
+[
+  {
+    "control": "observation",
+    "exit": 1,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/task-handoff-evidence-root/control-observation.log",
+    "diagnostic": "taskful callback handoff audit rejected (Unknown): taskful observation refused: Observation(\"taskful observation action differs from source-derived operation\")"
+  },
+  {
+    "control": "source",
+    "exit": 1,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/task-handoff-evidence-root/control-source.log",
+    "diagnostic": "taskful callback handoff audit rejected (Unknown): configured taskful source bytes differ from the policy"
+  },
+  {
+    "control": "profile",
+    "exit": 1,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/task-handoff-evidence-root/control-profile.log",
+    "diagnostic": "taskful callback handoff audit rejected (Unknown): import taskful source: profile has no Callback functions"
+  },
+  {
+    "control": "stderr",
+    "exit": 1,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/task-handoff-evidence-root/control-stderr.log",
+    "diagnostic": "taskful callback handoff audit rejected (Unknown): taskful producer manifest does not match configured inputs/run: stderr"
+  },
+  {
+    "control": "artifact",
+    "exit": 1,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/task-handoff-evidence-root/control-artifact.log",
+    "diagnostic": "taskful callback handoff audit rejected (Unknown): configured taskful artifact differs from the policy"
+  }
+]

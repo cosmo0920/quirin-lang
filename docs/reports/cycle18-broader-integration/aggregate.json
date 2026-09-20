@@ -1,0 +1,95 @@
+{
+  "aggregate": {
+    "artifact": "fluent-bit/monkey/libevent callback aggregate",
+    "assumptions": {
+      "lean_rust_correspondence": "matching Lean models are review-maintained, not extraction theorems",
+      "runtime_provenance": "validated digests identify presented bytes but do not attest execution",
+      "source_import": "faithful Clang/C extraction remains a declared premise"
+    },
+    "bounds": {
+      "callbacks": 3,
+      "joined_evidence_families": 3,
+      "source_paths": 8,
+      "unresolved_obligations": 7
+    },
+    "callback_source_sha256": {
+      "cb_event": "018680e88a7499737f249373531d80a8c6d51805c4c6d90abf64389dfe853f9d",
+      "cb_timeout": "70c6b5bac636d748e2ecde82cdaf653f58bac85d6a34740eaaff50017d04d604",
+      "cb_wait_2_timeout": "c7c670dbb52412be158af772f7755f401e407e23542cd5fad63ca75b5999d095"
+    },
+    "checked_caller_size_bounds": [],
+    "context_identities": {
+      "failure_build_sha256": "a68a573c2252cb39e022634c23001307376a77057ee2e10dbc96494a7e5a89c2",
+      "failure_profile_sha256": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+      "failure_source_compile_task_sha256": "bb6f0695e641a3cafec189224b2e425cf5ac99dd625f1dc8bbf3c92b8bcea109",
+      "failure_source_sha256": "ec4206f18c9e74b570ebf3f8958b6cfcb054315f97abcf9c9bdd83efb7a62855",
+      "payload_context_sha256": "dc8872d1234d3f797e6b8fb9725355187699af6b3cd36baf602a2520f1cf2c6d",
+      "payload_libevent_build_sha256": "8e118b6cc659519f619e047c32ead50521ae8b05597a83d0e4811f712ea40b1d",
+      "payload_libevent_profile_sha256": "fb7f0a8771137c8ebfc0d67c0d874793837d7dc22249bc3ea3d226b4d0e3f38f",
+      "payload_libevent_source_sha256": "3d579512ed2e7b551378b96b9519b51a274f56498d96ad01c3027f5cd567427a",
+      "payload_monkey_build_sha256": "a68a573c2252cb39e022634c23001307376a77057ee2e10dbc96494a7e5a89c2",
+      "payload_monkey_profile_sha256": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+      "payload_monkey_source_sha256": "ec4206f18c9e74b570ebf3f8958b6cfcb054315f97abcf9c9bdd83efb7a62855",
+      "payload_observer_binary_sha256": "c18d2c4ea04ce4ef3c91cdbdd8678670632bff881df2e3f68fea24df3255dc18",
+      "payload_observer_harness_sha256": "8ef2f1d7108edf3c0402db430f949f1c41cee85d669def1f9ffa10d169f7665c",
+      "payload_source_compile_task_sha256": "fb9524769fff44a29ed0b49c30e60061d8fcb4789fe0a9e4898a666522174bfc",
+      "timeout_build_sha256": "a68a573c2252cb39e022634c23001307376a77057ee2e10dbc96494a7e5a89c2",
+      "timeout_profile_sha256": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+      "timeout_source_compile_task_sha256": "bb6f0695e641a3cafec189224b2e425cf5ac99dd625f1dc8bbf3c92b8bcea109",
+      "timeout_source_sha256": "ec4206f18c9e74b570ebf3f8958b6cfcb054315f97abcf9c9bdd83efb7a62855",
+      "wait_context_sha256": "1ef3658de2bb3ebac52d9067dbd4e5bfbaf6fde3cb2c7a8b61cce4a08a53ee9f",
+      "wait_libevent_build_sha256": "6b539b0867027bdc3a81d1e93ccab264fac75010e7142148501d28aa480339de",
+      "wait_libevent_profile_sha256": "fb7f0a8771137c8ebfc0d67c0d874793837d7dc22249bc3ea3d226b4d0e3f38f",
+      "wait_libevent_source_sha256": "3d579512ed2e7b551378b96b9519b51a274f56498d96ad01c3027f5cd567427a",
+      "wait_monkey_build_sha256": "a68a573c2252cb39e022634c23001307376a77057ee2e10dbc96494a7e5a89c2",
+      "wait_monkey_profile_sha256": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+      "wait_monkey_source_sha256": "ec4206f18c9e74b570ebf3f8958b6cfcb054315f97abcf9c9bdd83efb7a62855",
+      "wait_observer_binary_sha256": "1a23bf4c119b4315fd00a6031b4ce6db89b18642deccd1e8bb46a2ca86201dbd",
+      "wait_observer_harness_sha256": "11b16ee97adb2ab557db49bba1f0d1376998f12e9caf0e1e72d271ac175e93f0",
+      "wait_source_compile_task_sha256": "bb6f0695e641a3cafec189224b2e425cf5ac99dd625f1dc8bbf3c92b8bcea109"
+    },
+    "evidence_version": "qcore.cycle18.callback-composition.v1",
+    "joined_evidence_families": [
+      "cb_event",
+      "cb_timeout",
+      "cb_wait_2_timeout"
+    ],
+    "policy_sha256": "76a4fc17604702c7b3fc012d75011f0d2e4abefb57f1a77406843b0c6f13e97b",
+    "profile_sha256": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+    "property": "monkey-cycle18-callback-composition",
+    "provisional_unsafe_scenarios": [
+      "base_creation_failure",
+      "fired_allocation_failure",
+      "timer_creation_failure"
+    ],
+    "refused_evidence_families": {},
+    "scope": [
+      "cb_event",
+      "cb_timeout",
+      "cb_wait_2_timeout"
+    ],
+    "semantic_profile": "fluent-bit/monkey/libevent",
+    "source_inventory_sha256": "aef0567e9ceb65215813eab764f09e10cde399d3f81d2546fa0281958393311b",
+    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "universal_safety_certificate": false,
+    "unresolved_obligations": {
+      "all_path_execution_coverage": "compose evidence for both cb_timeout teardown paths and its non-teardown success path",
+      "allocation_authority_provenance": "derive storage extent and exclusive callback write authority without caller declaration",
+      "caller_null_handling": "compose every production caller with the null loop/context return paths",
+      "caller_size_bounds": "derive the loop size and allocation multiplication bound from every production caller",
+      "initialization_reachability": "prove the opaque event_init branch unreachable or check it under the selected production profile",
+      "natural_activation_reachability": "observe or prove production readiness/timeout activation rather than controlled activation",
+      "registration_liveness": "establish behavior after timer registration failure against the selected backend"
+    },
+    "verdict": "unknown"
+  },
+  "aggregate_config_sha256": "460aa444d6d48820236dd3e2c645bd666fb311ca76436e1b1c56c45425beacae",
+  "limitations": [
+    "Aggregate remains Unknown; bounded evidence is not full callback safety",
+    "No complete production caller inventory or universal null/size bound is claimed",
+    "Each configured leaf audit was rerun; serialized leaf reports were not consumed",
+    "Runtime and linkage evidence remains producer-supplied, not attestation"
+  ],
+  "schema_version": 1,
+  "status": "cycle18_bounded_composition_checked"
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "control": "unknown_field",
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+      "cycle18-composition",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/aggregate-controls-final/unknown_field/config.json"
+    ],
+    "exit": 1,
+    "report_created": false,
+    "destination_unchanged": true,
+    "policy_unchanged": true
+  },
+  {
+    "control": "substituted_policy",
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+      "cycle18-composition",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/aggregate-controls-final/substituted_policy/config.json"
+    ],
+    "exit": 1,
+    "report_created": false,
+    "destination_unchanged": true,
+    "policy_unchanged": true
+  },
+  {
+    "control": "serialized_report_as_input",
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+      "cycle18-composition",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/aggregate-controls-final/serialized_report_as_input/config.json"
+    ],
+    "exit": 1,
+    "report_created": false,
+    "destination_unchanged": true,
+    "policy_unchanged": true
+  },
+  {
+    "control": "output_alias_policy",
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+      "cycle18-composition",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/aggregate-controls-final/output_alias_policy/config.json"
+    ],
+    "exit": 1,
+    "report_created": false,
+    "destination_unchanged": true,
+    "policy_unchanged": true
+  },
+  {
+    "control": "output_alias_leaf",
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+      "cycle18-composition",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-broader/aggregate-controls-final/output_alias_leaf/config.json"
+    ],
+    "exit": 1,
+    "report_created": false,
+    "destination_unchanged": true,
+    "policy_unchanged": true
+  }
+]

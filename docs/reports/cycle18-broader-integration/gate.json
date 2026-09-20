@@ -1,0 +1,13 @@
+{
+  "note": "CYCLE18-BROADER-INTEGRATION gate at 13923737ab94dd0c5e2655b59fdfc93a645adc12: Rust 5034 passed / 0 failed / 11 ignored, 268 summaries, 257 running targets and 9 doc sections; 164 Lean audits; 317 Python tests after matrix regeneration. All standing commands and five isolated host-sensitive controls exit 0. Clang measured in this checkout. Provider 122 is carried Unix evidence, not remeasured. The initial full gate failed its stale provider-profile inventory pin; the deliberate empty-profile correction is included in this complete rerun. Earlier interrupted corpus and quota-blocked focused runs are excluded and preserved separately. Logs: private/cycle18-broader/corrected-gate/. No corpus, callback-composition or CT promotion.",
+  "workspace_tests": 5034,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 317,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 164,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

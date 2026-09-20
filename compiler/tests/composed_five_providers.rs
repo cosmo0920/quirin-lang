@@ -92,6 +92,9 @@ fn the_default_registry_is_five_built_in_providers_assembled_from_two_profiles()
         BTreeMap::from([
             ("chunkio-core".to_owned(), Vec::new()),
             ("cmetrics-counter".to_owned(), Vec::new()),
+            // Cycle 18 task-handoff is a source-only fixture profile; it
+            // deliberately declares no provider and preserves the five-provider registry.
+            ("cycle18-task-handoff".to_owned(), Vec::new()),
             (
                 "fluent-bit".to_owned(),
                 vec![
