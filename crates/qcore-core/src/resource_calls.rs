@@ -302,6 +302,13 @@ fn analyze_function(
                     }
                 }
                 BufferEvent::Acquire { name, extent } => {
+                    if !(1..=std_buffer::MAX_EXTENT).contains(extent) {
+                        return Err(extent_bad(
+                            function,
+                            statement,
+                            "bytes acquisition extent is outside 1..=MAX_EXTENT",
+                        ));
+                    }
                     if !owned_names(&bindings).is_empty() {
                         return Err(ownership_bad(
                             function,

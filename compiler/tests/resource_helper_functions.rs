@@ -42,6 +42,10 @@ fn allocation_processing_owned_return_use_and_release_cross_real_functions() {
         module.execution_profile,
         SourceExecutionProfile::ResourceCallsV1
     );
+    assert_eq!(
+        module.result_profile.custody_payloads,
+        qcore_compiler::CustodyPayloadProfile::TypedResourceBytes
+    );
     assert_eq!(module.checked.function_count(), 4);
     let checked = module.checked.as_resource_calls().unwrap();
     assert_eq!(checked.minimum_extents(0), Some([1].as_slice()));
@@ -154,6 +158,10 @@ fn indirect_mutation_requires_the_callers_explicit_effect_row() {
 
 #[test]
 fn call_site_extent_obligation_is_checked() {
+    for extent in [0, 4097, i32::MAX] {
+        let source = ROUND_TRIP.replace("bytes(1)", &format!("bytes({extent})"));
+        assert!(refusal_codes(&source).iter().any(|code| code == "Q053"));
+    }
     let source = ROUND_TRIP.replace("value[0] = byte", "value[1] = byte");
     assert!(refusal(&source).contains("requires extent 2"));
     assert!(refusal_codes(&source).iter().any(|code| code == "Q053"));

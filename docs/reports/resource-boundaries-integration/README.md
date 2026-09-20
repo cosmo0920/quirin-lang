@@ -71,3 +71,19 @@ probes, not mutation counts. The before binary has a recorded hash but includes
 an uncommitted source diff; it has no exact tree binding. The after binary is
 bound to `ccfcdca7`. Both binary snapshots and original manifests remain in the
 reviewer's private evidence directories named by the result file.
+
+## Integration follow-ups
+
+The combined driver publishes `TypedResourceBytes` for ordinary owned-byte
+helper results. Consumers obtain actual signatures from the sealed checked
+helper graph; task-owned Buffer result names remain separate. This metadata
+does not claim typed error payloads.
+
+Helper acquisitions now reject extents outside `1..=MAX_EXTENT` before graph
+expansion and delegated value checking. Core tests cover zero, MAX+1 and
+`u32::MAX`, plus the admitted maximum; source tests require Q053 for oversized
+requests. This preserves the existing admitted extent set and reuses the
+`QCore.StdBuffer.admitsExtent` model. Code review found that the older standalone
+buffer checker records an extent error but still allocates requested storage.
+No out-of-memory experiment was run. `STD-BUFFER-EXTENT-REFUSAL-COST` tracks that
+separate pre-existing boundary and its required early-validation discharge.

@@ -27,7 +27,7 @@ theorem write_loan_permits_write : permits .writeLoan .write = true := by decide
 theorem scalar_never_permits_resource_access (access : Access) :
     permits .scalar access = false := by cases access <;> decide
 
-/-- One actual may be repeated only when every occurrence is a read loan. -/
+/-- One resource actual may be repeated only when every occurrence is a read loan. -/
 def aliasesCompatible (modes : List Mode) : Bool :=
   modes.all (· == .readLoan) || modes.length ≤ 1
 

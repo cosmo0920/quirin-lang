@@ -139,7 +139,8 @@ pub struct EmittedSourceMap {
 }
 
 /// Result typing records the sequential scalar/identity split separately from
-/// checked task-owned Buffer results. General owned/error payload types remain
+/// checked task-owned Buffer and ordinary owned-byte helper results.
+/// General owned/error payload types remain
 /// outside these bounded profiles.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SourceResultProfile {
@@ -160,6 +161,9 @@ pub enum CustodyPayloadProfile {
     NoResourcePayloads,
     /// Typed owned Buffer capture/result custody, checked against task slots.
     TypedTaskBuffers,
+    /// Normal owned-byte helper results; the sealed `as_resource_calls()` graph
+    /// retains their types. This does not admit typed error payloads.
+    TypedResourceBytes,
 }
 
 /// Checked evidence for `source.bitfield-concurrency.v1`.
@@ -5615,7 +5619,7 @@ fn compile_resource_call_source(
         result_profile: SourceResultProfile {
             scalar_results,
             owned_buffer_results: BTreeSet::new(),
-            custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+            custody_payloads: CustodyPayloadProfile::TypedResourceBytes,
         },
         entry: Some(entry),
         c_source: Some(c_source),

@@ -546,3 +546,30 @@ fn scalar_return_must_name_a_live_scalar_even_when_the_caller_discards_it() {
         .contains("live i32 binding")
     );
 }
+
+#[test]
+fn acquisition_extents_are_refused_before_value_allocation() {
+    let program = |extent| Program {
+        functions: vec![function(
+            "main",
+            vec![],
+            Type::Unit,
+            vec![
+                Statement::Buffer(BufferEvent::Acquire {
+                    name: "b".into(),
+                    extent,
+                }),
+                Statement::Buffer(BufferEvent::Release { name: "b".into() }),
+                Statement::Return(ReturnValue::Unit),
+            ],
+        )],
+        entry: 0,
+    };
+    for extent in [0, std_buffer::MAX_EXTENT + 1, u32::MAX] {
+        assert_eq!(
+            check(program(extent)).unwrap_err().category,
+            RefusalCategory::Extent
+        );
+    }
+    assert!(check(program(std_buffer::MAX_EXTENT)).is_ok());
+}

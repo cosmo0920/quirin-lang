@@ -1118,6 +1118,16 @@ The legacy sequential integer literal binding admits an optional matching
 type, so every explicit result annotation refuses, including `own<T>`.
 Q100 still owns local usage annotations, including those inside error regions.
 
+`RESOURCE-HELPER-FUNCTIONS` extends existing conditions to
+`source.resource-calls.v1`, allocating no code: Q020 owns unsupported helper
+shapes, complete-header/type admission, finite expansion bounds and empty
+source contracts; Q021 retains nonempty unenforced source contracts. Q053 owns
+extent obligations, including acquisition bounds checked before value storage
+allocation; Q054 owns custody/alias refusal; Q056 owns certificate construction
+or recheck failure; Q057 owns undeclared derived effects. These categories are
+carried structurally, never inferred from diagnostic message text. Q100 owns
+unsupported explicit usage grades. Q058 remains owned by the Event pass.
+
 ### L21.1 Reason categories for uncovered obligations
 
 Every `Unknown` row carries a free-text `reason` today: `DerivationIncomplete.reason` on a `VerificationTask`, `ChunkSourceResult::Unknown { reason }` from a source importer, and the per-unit `"reason"` field of an audit report. Free text is not queryable and does not distinguish a defect in the analysed source from a failure of the machine analysing it. The following closed vocabulary is normative for classifying such a row. It is **implemented** (2026-09-08, card REASON-CODES): the vocabulary is published as `qcore_schemas::reason`, `DerivationIncomplete` carries a required `category` field named at construction, and audit-report units and source-contract functions carry a classified `reason_code` that fails closed to `null` rather than defaulting a category. The implementation constraints recorded below remain the rules for extending either carrier; the four archived 185-unit artifacts predate the field and move only at CORPUS-REPIN.
