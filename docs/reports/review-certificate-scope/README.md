@@ -116,7 +116,48 @@ Final commands, exits, counts and private log paths are recorded in
 `measure/review-certificate-scope-final/`; no log is committed. The fresh
 worktree submodule initialization is part of that run.
 
+| Command | Exit and measured result | Private log |
+|---|---|---|
+| `git submodule update --init --recursive` | `1`: the sandbox denied the linked worktree's git-module directory; approved retry `0`, pinned libevent `d82464a2` | `submodule.log`, `submodule-retry.log` |
+| `clang --version` | `0`, Ubuntu clang 21.1.8 | `clang-version.txt` |
+| `CARGO_BUILD_JOBS=2 cargo test --workspace --no-fail-fast` | `0`; 4,895 passed, 0 failed, 10 ignored, 254 strict result summaries | `rust-escalated-final.log` |
+| five affected gateway test binaries after the mechanical Clippy cleanup | `0`; 54 passed, 0 failed, 1 ignored | `focused-final.log` |
+| `cargo fmt --all -- --check` | `0` | `fmt-final.log` |
+| `CARGO_BUILD_JOBS=2 cargo clippy --workspace --all-targets -- -D warnings` | `0` | `clippy-final.log` |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | `0`; zero failed expectations | `reevaluation-probe.log` |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | `0`; zero failed expectations | `reevaluation-followup.log` |
+| `python3 scripts/check_lean_audits.py --jobs 2` | `0`; 151/151 audits | `lean.log` |
+| `python3 -m unittest discover -s scripts/tests` | `0`; 313 tests | `python-final.log` |
+
+The full Rust run measured code tip `9c270eb7`. The only following source
+commit, `af88325b`, resolved the four Clippy findings by simplifying two
+expressions and adding two localized, documented lint allowances that preserve
+the public by-value result and explicit private PreparedTU evidence boundary.
+The affected certificate and semantic-replay binaries, and every other gate
+step, ran at `af88325b`; the integrator's combined gate owns the final full-Rust
+replay. This split is recorded rather than presenting the earlier Rust run as a
+measurement of the later tree.
+
+Rejected and superseded attempts remain distinct. `rust.log` was the sandboxed
+run stopped after host restrictions and diagnostic-order regressions were
+identified; `rust-escalated.log` was stopped when the final PreparedTU commit
+arrived. Neither contributes a count. The initial Clippy run exited 101 with
+the four findings repaired by `af88325b`. The first Python run executed all 313
+tests and exited 1 only because the committed derived Lean count was 150; the
+matrix generator preserved the carried sections and changed the derived audit
+count/list to 151, after which all 313 passed. A command naming nonexistent
+example `reevaluation_followup_probe` exited 101 and is retained as
+`reevaluation-followup-invalid.log`; it is not a gate attempt, and the required
+`reevaluation_followup` command passed.
+
 ## Integrator reconciliation list
+
+The scope-owned code/model commits are `517e58ba`, `55f32edd`, `5358072d`,
+`8ad203f5` and `af88325b`, followed by this report/gate commit. Commits
+`00344321`, `6fecb101`, `b316d08a` and `9c270eb7` are the PreparedTU dependency
+chain already owned by its card; they are not additional certificate-scope
+changes. Integration already consumed the combined code tip, so only this
+report/gate commit remains to reconcile.
 
 1. **Standing gateway/source-identity amendment:** record
    `E01-TAIL-CERT-SCOPE` discharged by the reconstructible certificate target

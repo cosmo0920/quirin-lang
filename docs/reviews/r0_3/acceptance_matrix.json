@@ -6729,7 +6729,7 @@
   "workspace_tests": 4884,
   "provider_tests": 122,
   "python_evidence_validator_tests": 313,
-  "lean_audits": 150,
+  "lean_audits": 151,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6747,6 +6747,7 @@
    "AuditCProgram.lean",
    "AuditCallUseAdmission.lean",
    "AuditCapacityBoundary.lean",
+   "AuditCertificateScope.lean",
    "AuditChainedAccess.lean",
    "AuditChainedTailActual.lean",
    "AuditChunkIntegrityObservation.lean",
