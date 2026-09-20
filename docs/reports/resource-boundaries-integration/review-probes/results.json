@@ -1,0 +1,122 @@
+{
+  "meaning": "Independent source-parser probes, not mutation counts or proof of whole-language conformance. Before binary includes an uncommitted working diff; only after has an exact source-commit binding.",
+  "before": {
+    "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-review-runner/private/resource-helper-review/20260920T-review-before",
+    "manifest_sha256": "49e6860461d681cff261ae67ed7b4d7a3257eb5cb855d6bc0d52e49bab81cb91",
+    "binary_sha256": "c088871e36f68bede9cf6cdf5725ea91ffb7230bbda1080cd1ed94d73b7e7d03",
+    "source": "595ea6b3 plus uncommitted diff; no exact tree binding"
+  },
+  "after": {
+    "directory": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-review-runner/private/resource-helper-review/20260920T-review-after-ccfcdca7",
+    "manifest_sha256": "c75d417c9e1e8b0feeb8695637e6b783554e5c7c9d60799a63d46486248c51a6",
+    "binary_sha256": "0d1714edc377dc7e55d2e44ed9abd0eddeceb0f1ddd125600aacc02b0624b861",
+    "source": "ccfcdca755fb69c5ca1eca3a4bf6dd4485fc2d61"
+  },
+  "probes": [
+    {
+      "input": "qcore-resource-effects-comma.qcore",
+      "sha256": "b25e4c712741143a3a5fd5b5dea44eaf57baa3e53fa693478a9c47861dc9d4c5",
+      "kind": "refusal regression",
+      "before": {
+        "exit": 0,
+        "stdout": "checked 4 function(s); entry `main`; source.resource-calls.v1: acyclic owned bytes moves and whole-buffer read/write loans\n",
+        "stderr": ""
+      },
+      "after": {
+        "exit": 1,
+        "stdout": "",
+        "stderr": "private/resource-helper-review/20260920T-review-after-ccfcdca7/qcore-resource-effects-comma.qcore:19:1: Q020: source.resource-calls.v1: effects are separated by commas\nfn main() -> unit effects { alloc mut } {\n^\n"
+      }
+    },
+    {
+      "input": "qcore-resource-empty-contract.qcore",
+      "sha256": "27521463d64e91dea6cb03a09ea119772ad280665f44823155e9d0f4ef9b7f6e",
+      "kind": "boundary observation",
+      "before": {
+        "exit": 0,
+        "stdout": "checked 4 function(s); entry `main`; source.resource-calls.v1: acyclic owned bytes moves and whole-buffer read/write loans\n",
+        "stderr": ""
+      },
+      "after": {
+        "exit": 1,
+        "stdout": "",
+        "stderr": "private/resource-helper-review/20260920T-review-after-ccfcdca7/qcore-resource-empty-contract.qcore:19:1: Q020: source.resource-calls.v1: contract blocks are outside resource-calls.v1\nfn main() -> unit effects { alloc, mut } contract { } {\n^\n"
+      }
+    },
+    {
+      "input": "qcore-resource-header-bypass.qcore",
+      "sha256": "e015039a76aa0611a20390a7f7564a0901305ac7dd4246a9c07f31d642bc8def",
+      "kind": "refusal regression",
+      "before": {
+        "exit": 0,
+        "stdout": "checked 4 function(s); entry `main`; source.resource-calls.v1: acyclic owned bytes moves and whole-buffer read/write loans\n",
+        "stderr": ""
+      },
+      "after": {
+        "exit": 1,
+        "stdout": "",
+        "stderr": "private/resource-helper-review/20260920T-review-after-ccfcdca7/qcore-resource-header-bypass.qcore:19:1: Q020: source.resource-calls.v1: unsupported tokens follow the effects row\nfn main() -> unit effects { alloc, mut } use zero {\n^\n"
+      }
+    },
+    {
+      "input": "qcore-resource-type-split-bytes.qcore",
+      "sha256": "e9da2de5d18734d27e6f525048917d0189304051a1b97c4ab33c45e812d7d0aa",
+      "kind": "refusal regression",
+      "before": {
+        "exit": 0,
+        "stdout": "checked 4 function(s); entry `main`; source.resource-calls.v1: acyclic owned bytes moves and whole-buffer read/write loans\n",
+        "stderr": ""
+      },
+      "after": {
+        "exit": 1,
+        "stdout": "",
+        "stderr": "private/resource-helper-review/20260920T-review-after-ccfcdca7/qcore-resource-type-split-bytes.qcore:13:19: Q020: source.resource-calls.v1: parameters require i32, own<bytes> use one, borrow<bytes>, or lend<bytes>; task Buffer is a distinct resource\nfn process(value: own < by tes > use one) -> own<bytes> {\n                  ^\n"
+      }
+    },
+    {
+      "input": "qcore-resource-type-split-i32.qcore",
+      "sha256": "88e52f2d164bd85785107f33bdfd3e60484f46d6e67371e4af99bd42c8e3d6d5",
+      "kind": "refusal regression",
+      "before": {
+        "exit": 0,
+        "stdout": "checked 4 function(s); entry `main`; source.resource-calls.v1: acyclic owned bytes moves and whole-buffer read/write loans\n",
+        "stderr": ""
+      },
+      "after": {
+        "exit": 1,
+        "stdout": "",
+        "stderr": "private/resource-helper-review/20260920T-review-after-ccfcdca7/qcore-resource-type-split-i32.qcore:8:35: Q020: source.resource-calls.v1: parameters require i32, own<bytes> use one, borrow<bytes>, or lend<bytes>; task Buffer is a distinct resource\nfn fill(value: lend<bytes>, byte: i 32) -> unit effects { mut } {\n                                  ^\n"
+      }
+    },
+    {
+      "input": "qcore-resource-usage-interval.qcore",
+      "sha256": "f6bcb2fca62a19ad590a80ec99dbcaa43089b6a7eee441c5cb1efcdbfc3a4dac",
+      "kind": "boundary observation",
+      "before": {
+        "exit": 0,
+        "stdout": "checked 4 function(s); entry `main`; source.resource-calls.v1: acyclic owned bytes moves and whole-buffer read/write loans\n",
+        "stderr": ""
+      },
+      "after": {
+        "exit": 0,
+        "stdout": "checked 4 function(s); entry `main`; source.resource-calls.v1: acyclic owned bytes moves and whole-buffer read/write loans\n",
+        "stderr": ""
+      }
+    },
+    {
+      "input": "qcore-resource-usage-numeric.qcore",
+      "sha256": "5a2943b2d8d817a0e6b4aaf4b3466866c43c0fdc5c07afc69778a7324e4ad488",
+      "kind": "boundary observation",
+      "before": {
+        "exit": 0,
+        "stdout": "checked 4 function(s); entry `main`; source.resource-calls.v1: acyclic owned bytes moves and whole-buffer read/write loans\n",
+        "stderr": ""
+      },
+      "after": {
+        "exit": 0,
+        "stdout": "checked 4 function(s); entry `main`; source.resource-calls.v1: acyclic owned bytes moves and whole-buffer read/write loans\n",
+        "stderr": ""
+      }
+    }
+  ]
+}

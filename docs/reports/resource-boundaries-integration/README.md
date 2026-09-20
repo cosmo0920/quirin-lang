@@ -53,3 +53,21 @@ all five pinned artifacts [byte for byte](corpus-baseline-identity.json).
 The source code is unchanged from base `119115de`; the measured successor
 `2511ddb7` adds only this wave’s planning/report files. Private replay outputs
 are in `private/resource-boundaries/corpus-before/`.
+
+## Independent helper review
+
+After completing its annotation card, that agent independently reviewed the
+helper frontend, core, emitter and focused tests. Compiled-CLI probes reproduced
+ignored trailing header annotations, missing effect separators, and whitespace
+normalization that merged split type identifiers. The fixes at `ccfcdca7`
+consume the supported header and recognize exact type tokens. The same inputs
+then refused at Q020. Existing usage spellings denoting grade one remain
+intentionally accepted; the new profile explicitly refuses empty contracts
+without changing the older sequential route's empty-contract behavior.
+
+[Inputs and exact before/after results](review-probes/results.json) preserve
+seven probes, including those two boundary observations. These are source
+probes, not mutation counts. The before binary has a recorded hash but includes
+an uncommitted source diff; it has no exact tree binding. The after binary is
+bound to `ccfcdca7`. Both binary snapshots and original manifests remain in the
+reviewer's private evidence directories named by the result file.

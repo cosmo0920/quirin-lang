@@ -1,0 +1,26 @@
+import std.buffer;
+
+fn inspect(value: borrow<bytes>) -> i32 {
+    let seen = value[0];
+    return seen;
+}
+
+fn fill(value: lend<bytes>, byte: i32) -> unit effects { mut } {
+    value[0] = byte;
+    return;
+}
+
+fn process(value: own<bytes> use one) -> own<bytes> {
+    let seen = inspect(borrow value);
+    fill(lend(value), seen);
+    return move value;
+}
+
+fn main() -> unit effects { alloc, mut } contract { } {
+    let input = bytes(1);
+    input[0] = 42;
+    let output = process(move input);
+    let answer = output[0];
+    drop output;
+    return;
+}

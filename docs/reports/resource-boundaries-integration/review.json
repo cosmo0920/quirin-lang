@@ -23,7 +23,7 @@
       "card": "certificate-context-binding",
       "finding": "The initial public bound-certificate wrapper compared stored trust identity with expected identity without rederiving it from the presented certificate's contracts, allowing stale wrapper trust after coherent certificate substitution.",
       "resolution": "Recompute contract/trust binding at admission, check profile identity against compile-task dependency identity, and test coherent valid-certificate substitution with retained old wrapper trust.",
-      "status": "implemented at bc01012d; final review and full validation pending"
+      "status": "implemented and reviewed at 18348057; isolated final gate passed"
     },
     {
       "card": "resource-helper-functions",
@@ -59,31 +59,31 @@
       "card": "certificate-context-binding",
       "finding": "New binding failures initially aborted a whole audit; a first Unknown downgrade retained partial function-level Safe statuses despite rejected compilation/trust context.",
       "resolution": "Preserve the selected denominator as Unknown without retaining Safe function claims; exercise serialized report and per-unit counts.",
-      "status": "requested"
+      "status": "implemented and reviewed at 18348057; isolated final gate passed"
     },
     {
       "card": "resource-helper-functions",
       "finding": "Independent annotation-agent review found unsupported trailing function-header tokens and duplicate effect rows could be ignored after the first valid effects block.",
       "resolution": "Consume the complete admitted signature grammar and refuse residual tokens and duplicate rows with compiler regressions.",
-      "status": "requested"
+      "status": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
     },
     {
       "card": "resource-helper-functions",
       "finding": "Expansion charged source statements but not every generated scalar-argument binding or ownership operation, allowing high-arity call DAGs to exceed the stated event budget.",
       "resolution": "Charge generated events/operations and test high-arity DAG expansion without truncation.",
-      "status": "in progress"
+      "status": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
     },
     {
       "card": "resource-helper-functions",
       "finding": "Diagnostic attribution initially guessed categories from message substrings and used Event-owned Q058 for helper admission/reference failures.",
       "resolution": "Carry typed refusal categories and map directly to the existing ordinary/buffer namespaces; remove helper use of Q058.",
-      "status": "in progress"
+      "status": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
     },
     {
       "card": "resource-helper-functions",
       "finding": "Independent compiled-CLI probes showed whitespace compaction merged distinct type identifier tokens, accepting split bytes and i32 names.",
       "resolution": "Recognize exact type token sequences across parameters, results and route selection; test split identifiers refuse while punctuation spacing remains valid.",
-      "status": "requested"
+      "status": "implemented at ccfcdca7; focused tests and independent CLI reprobe passed; final gate pending"
     }
   ]
 }
