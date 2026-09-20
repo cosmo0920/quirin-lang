@@ -77,9 +77,22 @@ Structural self-consistency is distinct from intended-target authentication.
 Consumers requiring the latter must compare with an independently held expected
 context using `check_legacy_safety_certificate_for`, rather than copying the
 expected context from the certificate. The inner request/artifact identity
-does not establish full compiler/build provenance or the caller's intended
-contract/profile/trust environment; those bindings remain tracked separately
-as `CERT-SCOPE-COMPILETASK-PROVENANCE` and
-`CERT-SCOPE-EXPECTED-TRUST-CONTEXT` in the acceptance matrix. Prepared audit
-paths use the exact retained raw, marked and plain preprocessing artifacts;
-they do not reprocess the input to manufacture certificate scope evidence.
+does not itself establish compiler/build provenance or the caller's intended
+contract/profile/trust environment. Configured audit paths additionally use
+`check_audit_legacy_safety_certificate_for`: the complete `CompileTaskIdentity`
+must match the caller-held record and the prepared request/artifacts, and exact
+contracts, retained contract sources, source profile and declared-assumption
+trust policy must match independently loaded expected inputs. Admission
+rederives trust identity from the presented certificate; a stale wrapper cannot
+authenticate substituted contracts. Missing or unequal context publishes
+Unknown for the unit and every affected function, retaining the denominator.
+
+This binding compares recorded provenance; it is not compiler-execution or
+environment attestation. It does not hash the compiler executable or each
+individual header, prove declared-driver equivalence, or verify trusted
+contract claims against library bodies. Header effects are bound through the
+retained preprocessed content. Prepared audit paths use the exact retained raw,
+marked and plain preprocessing artifacts; they do not reprocess the input to
+manufacture certificate scope evidence. See the
+[context-binding card](../reports/certificate-context-binding/README.md) for
+the measured boundary and remaining assumptions.
