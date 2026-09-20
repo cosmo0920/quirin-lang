@@ -102,6 +102,17 @@ and distinguish genuine definitions from any raw enumerator false positives.
 The field's inclusion of build-excluded definitions does not classify each
 individual absence. No current unit or function safety claim grows from it.
 
+The [W42 census](../../reports/w42-unprojected-definitions/README.md) subsequently
+classified all **87** as pinned historical-build exclusions, with **0**
+enumerator false positives, **0** established projection defects and **0**
+unresolved cases in this population. All **25** matching compile entries
+agree. The tool checks raw definition sites, positive conditional-branch
+evidence, equivalence of instrumented and uninstrumented token streams, and
+absence of those definitions from the typed AST under the historical stdin
+transport. This resolves the measured 87-entry question for this pinned build;
+it makes no claim about other build configurations or the analyzer's remaining
+syntax and certificate obligations.
+
 Lifecycle starting evidence is already substantial: the B-series
 `chunk-contracts.json.gz` inventories **66** input-chunk functions (1 checked
 field contract, 65 Unknown) and **30** functions in `cio_chunk.c` (2 checked
