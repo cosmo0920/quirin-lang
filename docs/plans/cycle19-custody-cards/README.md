@@ -93,7 +93,10 @@ The reported starting measurements are **136** Unknown units with
 `unsupported-syntax`, **1** with `incomplete-obligation-coverage`, and **48**
 units without a reason code (42 provisional Unsafe, 4 data-only and 2 Safe).
 The raw inventory lists **4,921** definitions against **4,834** projected
-functions; **87** definitions across **23** units are absent from projection.
+functions; **87** entries across **24** translation units are absent from
+projection. The earlier 23-unit claim collapsed the two distinct Monkey paths
+`mk_core/mk_utils.c` (4 entries) and `mk_server/mk_utils.c` (3 entries) under one
+basename; unit identities here include the full relative path.
 W42-UNPROJECTED-DEFINITIONS must reproduce these numbers from the artifacts
 and distinguish genuine definitions from any raw enumerator false positives.
 The field's inclusion of build-excluded definitions does not classify each

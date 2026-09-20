@@ -1,0 +1,768 @@
+{
+  "artifact": "docs/reports/b-series-integration/artifacts/chunk-contracts.json.gz",
+  "uncompressed_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "artifact_scope": "bounded field contracts; live/exclusive/Boolean domains and source/build/ABI identity assumed; no whole-unit lifecycle certificate",
+  "interpretation": "Field-contract statuses are not terminal lifecycle certificates; this inventory issues no safety judgment.",
+  "inventories": {
+    "chunkio": {
+      "functions": 30,
+      "field_contract_statuses": {
+        "unknown": 28,
+        "checked": 2
+      },
+      "rows": [
+        {
+          "file": "cio_chunk.c",
+          "function": "chunk_state_sync",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_close",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_close_stream",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_counter_total_add",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_counter_total_sub",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_counter_total_up_add",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_counter_total_up_sub",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_delete",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_down",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_get_content",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_get_content_copy",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_get_content_end_pos",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_get_content_size",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_get_real_size",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_hash",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_is_file",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_is_locked",
+          "status": "checked"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_is_up",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_lock",
+          "status": "unknown",
+          "reason": "unmodeled expression CallExpr",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_open",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_sync",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_tx_begin",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_tx_commit",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_tx_rollback",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_unlock",
+          "status": "checked"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_up",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_up_force",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_write",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_write_at",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "cio_chunk.c",
+          "function": "cio_version",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        }
+      ]
+    },
+    "fluent-bit-chunk": {
+      "functions": 66,
+      "field_contract_statuses": {
+        "unknown": 65,
+        "checked": 1
+      },
+      "rows": [
+        {
+          "file": "flb_input_chunk.c",
+          "function": "append_to_ring_buffer",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "destroy_chunk_raw",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_chunk_route_plugin_matches",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_append_raw",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_append_raw_local",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_create",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_destroy",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_destroy_corrupted",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_destroy_direct_routes",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_down",
+          "status": "unknown",
+          "reason": "unmodeled expression CallExpr",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_drop_task_route",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_find_space_new_data",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_flush",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_get_direct_routes",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_get_event_type",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_get_name",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_get_projected_write_size",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_get_real_size",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_get_size",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_get_tag",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_has_direct_routes",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_has_other_routes",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_has_overlimit_routes",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_is_mem_overlimit",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_is_storage_overlimit",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_is_task_safe_delete",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_is_up",
+          "status": "unknown",
+          "reason": "unmodeled expression CallExpr",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_map",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_output_size_subtract",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_output_would_exceed_limit",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_place_new_chunk",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_prefers_physical_delete",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_protect",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_release_lock",
+          "status": "checked"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_release_route",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_release_space",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_release_space_compound",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_ring_buffer_cleanup",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_ring_buffer_collector",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_ring_buffer_enqueue",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_safe_delete",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_set_limits",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_set_up",
+          "status": "unknown",
+          "reason": "unmodeled expression CallExpr",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_set_up_down",
+          "status": "unknown",
+          "reason": "unmodeled statement DeclStmt",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_total_size",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_update_output_instances",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_write",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_write_at",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "flb_input_chunk_write_header_v2",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "generate_chunk_name",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "get_input_chunk_record_count",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "get_input_chunk_source_name",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "input_chunk_append_raw",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "input_chunk_collect_output_references",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "input_chunk_get",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "input_chunk_has_magic_bytes",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "input_chunk_metadata_view",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "input_chunk_output_size_add",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "input_chunk_write_header",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "logs_tag_records_metrics_enabled",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "memrb_input_chunk_release_space",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "sb_get_releasable_output_queue_space",
+          "status": "unknown",
+          "reason": "expected one selected definition after preprocessing, found 0",
+          "reason_code": "incomplete-obligation-coverage"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "sb_release_output_queue_space",
+          "status": "unknown",
+          "reason": "expected one selected definition after preprocessing, found 0",
+          "reason_code": "incomplete-obligation-coverage"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "update_logs_tag_records_metrics",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        },
+        {
+          "file": "flb_input_chunk.c",
+          "function": "update_logs_tag_records_untracked",
+          "status": "unknown",
+          "reason": "outside single borrowed chunk / int-or-void-result source profile",
+          "reason_code": "unsupported-syntax"
+        }
+      ]
+    }
+  },
+  "backend_teardown_records": [
+    {
+      "kind": "parent_teardown",
+      "file": "chunkio.c"
+    },
+    {
+      "kind": "list_unlink",
+      "status": "checked_source_links"
+    },
+    {
+      "kind": "unsigned_counters",
+      "status": "checked_source_updates"
+    },
+    {
+      "kind": "memory_chunk_close",
+      "status": "checked_null_and_memory_paths"
+    },
+    {
+      "kind": "unsupported_chunk_close"
+    },
+    {
+      "kind": "filesystem_chunk_close"
+    },
+    {
+      "kind": "teardown_traversal",
+      "file": "cio_chunk.c"
+    },
+    {
+      "kind": "filesystem_call_results",
+      "file": "cio_file.c"
+    },
+    {
+      "kind": "filesystem_close_with_delete"
+    },
+    {
+      "kind": "filesystem_close_no_delete"
+    },
+    {
+      "kind": "filesystem_unmap_wrapper"
+    },
+    {
+      "kind": "filesystem_call_results",
+      "file": "cio_file_unix.c"
+    },
+    {
+      "kind": "filesystem_delete_outcomes"
+    },
+    {
+      "kind": "filesystem_delete_attempt"
+    },
+    {
+      "kind": "filesystem_native_outcomes"
+    },
+    {
+      "function": "cio_memfs_close",
+      "status": "checked_field_custody"
+    },
+    {
+      "kind": "teardown_traversal",
+      "file": "cio_stream.c"
+    },
+    {
+      "kind": "parent_teardown",
+      "file": "cio_stream.c"
+    },
+    {
+      "kind": "nested_memory_source"
+    },
+    {
+      "kind": "nested_cleanup_source"
+    },
+    {
+      "kind": "nested_unsupported_source"
+    }
+  ]
+}

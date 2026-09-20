@@ -35,6 +35,15 @@ Raw units remain unpromoted; provisional Unsafe results are not validated
 upstream defects. Lean gateway models retain the extraction and Rust-model
 correspondence premises in evidence rule 28.
 
+The [lifecycle evidence inventory](lifecycle-inventory.json), reproduced by
+`python3 docs/reports/w42-priority-integration/scripts/lifecycle_inventory.py
+docs/reports/b-series-integration/artifacts/chunk-contracts.json.gz`, separates
+the 66 input-chunk functions (1 checked field contract / 65 Unknown) from the
+30 `cio_chunk.c` functions (2 checked field contracts / 28 Unknown). It lists
+the 21 existing backend-teardown records without treating their presence as a
+complete lifecycle certificate. The script exited 0 and records the source
+revision and uncompressed artifact digest.
+
 ## Integration status
 
 Implementation and review are in progress. Final changes, measured deltas,
