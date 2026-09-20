@@ -240,7 +240,10 @@ pub(crate) fn prepare_observed_wait(
         load_profile_directory(&resolve(&config.libevent_profile)).map_err(|e| e.to_string())?;
     let library_profile_path = libevent.directory().join("profile.json");
     protected_files.push(library_profile_path.clone());
-    snapshots.push((library_profile_path, libevent.manifest_text().as_bytes().to_vec()));
+    snapshots.push((
+        library_profile_path,
+        libevent.manifest_text().as_bytes().to_vec(),
+    ));
     let library = libevent
         .library("libevent")
         .ok_or("missing Libevent library profile")?;
@@ -262,7 +265,12 @@ pub(crate) fn prepare_observed_wait(
     let bundle = load_audited_bundle(library, &checkout, &revision)
         .map_err(|e| format!("Libevent source identity refused: {e:?}"))?;
     protected_files.extend(bundle.files.keys().map(|file| checkout.join(file)));
-    snapshots.extend(bundle.files.iter().map(|(file, contents)| (checkout.join(file), contents.as_bytes().to_vec())));
+    snapshots.extend(
+        bundle
+            .files
+            .iter()
+            .map(|(file, contents)| (checkout.join(file), contents.as_bytes().to_vec())),
+    );
     let build = resolve(&config.libevent_build);
     let cache = read(&build.join("CMakeCache.txt"))?;
     protected_files.push(build.join("CMakeCache.txt"));

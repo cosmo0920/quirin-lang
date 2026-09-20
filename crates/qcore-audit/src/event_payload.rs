@@ -191,7 +191,10 @@ pub(crate) fn prepare_event_payload(
         };
     let libevent =
         load_profile_directory(&resolve(&config.libevent_profile)).map_err(|e| e.to_string())?;
-    snapshots.insert(libevent.directory().join("profile.json"), libevent.manifest_text().as_bytes().to_vec());
+    snapshots.insert(
+        libevent.directory().join("profile.json"),
+        libevent.manifest_text().as_bytes().to_vec(),
+    );
     let library = libevent
         .library("libevent")
         .ok_or("missing libevent profile")?;
