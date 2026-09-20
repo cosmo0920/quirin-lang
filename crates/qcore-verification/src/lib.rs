@@ -26,6 +26,7 @@ pub mod memory_close_composition;
 pub mod monkey_wait_projection;
 pub mod source_effect;
 pub mod teardown_source;
+pub mod timed_wait_observation_wire;
 pub mod unmap_composition;
 pub mod unsupported_close_composition;
 

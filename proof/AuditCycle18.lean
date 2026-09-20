@@ -1,4 +1,5 @@
 import QCore.EventDriven
+import QCore.EventObservation
 
 #print axioms QCore.EventDriven.accepted_transition_preserves_lifecycle
 #print axioms QCore.EventDriven.accepted_transition_is_generation_safe
@@ -13,3 +14,7 @@ import QCore.EventDriven
 #print axioms QCore.EventDriven.accepted_progress_claim_is_qualified_by_blocking
 #print axioms QCore.EventDriven.accepted_observation_refines_event_trace
 #print axioms QCore.EventDriven.combined_cycle18_safety
+#print axioms QCore.EventObservation.accepted_trace_is_exact
+#print axioms QCore.EventObservation.accepted_trace_has_no_invented_synchronization
+#print axioms QCore.EventObservation.accepted_callback_binds_expected_event_generation
+#print axioms QCore.EventObservation.changing_the_event_generation_changes_the_callback_record
