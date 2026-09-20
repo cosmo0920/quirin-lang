@@ -34,6 +34,9 @@ use qcore_frontend::frontend::{
     TypedSourceProgram, elaborate_source, parse_source_program,
 };
 use qcore_frontend::lexer::{Span, Symbol, Token, TokenKind};
+use qcore_frontend::source_annotation::{
+    ExecutableLocalType, check_local_annotation, local_binding_head,
+};
 use qcore_frontend::whole_program::{
     CallSite, CheckedProgram, FunctionSemantics, FunctionSummary, ParameterOwnership,
     check_whole_program,
@@ -2036,13 +2039,20 @@ impl FunctionLowering<'_> {
                             "local usage annotations are not supported in the executable subset",
                         ));
                     }
+                    let head = local_binding_head(&tokens).map_err(|message| {
+                        diagnostic(SemanticPass::OrdinaryTypes, statement.span, message)
+                    })?;
                     // Card `BITWISE-CONDITIONS`: a check-time constant integer
                     // binding, the decidable subset of `IF-CONDITION-BINDINGS`.
                     // Tried **after** `qcore_acquire` cannot match, and only at
                     // the top level of an entry body: an arm-local binding has
                     // no position after the join, so an arm (or a continuation
                     // hoisted into one, card `IF-ARMS`) keeps the refusal.
-                    if let Some(value) = parse_constant_binding(&tokens) {
+                    if let Some(value) = parse_constant_binding(&tokens, head.equal) {
+                        check_local_annotation(head.annotation.as_ref(), &ExecutableLocalType::I32)
+                            .map_err(|message| {
+                                diagnostic(SemanticPass::OrdinaryTypes, statement.span, message)
+                            })?;
                         if position.conditional() {
                             return Err(branch_diagnostic(
                                 "Q044",
@@ -2060,6 +2070,13 @@ impl FunctionLowering<'_> {
                     }
                     let (resource, succeeds, error) = parse_acquire(&tokens).ok_or_else(|| {
                         diagnostic(SemanticPass::CEmission, statement.span, "`let` must use `qcore_acquire(resource_id, succeeds, ErrorType)` in the executable subset")
+                    })?;
+                    check_local_annotation(
+                        head.annotation.as_ref(),
+                        &ExecutableLocalType::Owned { nominal: None },
+                    )
+                    .map_err(|message| {
+                        diagnostic(SemanticPass::OrdinaryTypes, statement.span, message)
                     })?;
                     // Card `IF-ARM-ACQUIRE-ATTRIBUTION`. An acquisition on one
                     // path leaves a resource-identity ledger the other path does
@@ -2507,6 +2524,20 @@ impl FunctionLowering<'_> {
                 StatementKind::Let {
                     binding: Some(binding),
                 } => {
+                    if tokens
+                        .iter()
+                        .take_while(|token| token.kind != TokenKind::Symbol(Symbol::Equal))
+                        .any(|token| matches!(&token.kind, TokenKind::Word(word) if word == "use"))
+                    {
+                        return Err(diagnostic(
+                            SemanticPass::Usage,
+                            body_statement.span,
+                            "local usage annotations are not supported in an executable error region",
+                        ));
+                    }
+                    let head = local_binding_head(&tokens).map_err(|message| {
+                        diagnostic(SemanticPass::OrdinaryTypes, body_statement.span, message)
+                    })?;
                     let Some((resource, succeeds, error)) = parse_acquire(&tokens) else {
                         return Err(region_refusal(
                             body_statement.span,
@@ -2515,6 +2546,13 @@ impl FunctionLowering<'_> {
                                 .to_owned(),
                         ));
                     };
+                    check_local_annotation(
+                        head.annotation.as_ref(),
+                        &ExecutableLocalType::Owned { nominal: None },
+                    )
+                    .map_err(|message| {
+                        diagnostic(SemanticPass::OrdinaryTypes, body_statement.span, message)
+                    })?;
                     if !succeeds {
                         return Err(region_refusal(
                             body_statement.span,
@@ -3448,28 +3486,24 @@ fn eat_symbol(tokens: &[Token], symbol: Symbol) -> Option<&[Token]> {
 /// Returned as `Some(value)` only for the exact shape `= INTEGER ;` or
 /// `= - INTEGER ;`; anything else keeps the executable subset's existing
 /// `qcore_acquire` refusal.
-fn parse_constant_binding(tokens: &[Token]) -> Option<i32> {
-    let kinds: Vec<&TokenKind> = tokens
+fn parse_constant_binding(tokens: &[Token], equal: usize) -> Option<i32> {
+    let kinds: Vec<&TokenKind> = tokens[equal..]
         .iter()
         .map(|token| &token.kind)
         .filter(|kind| **kind != TokenKind::Eof)
         .collect();
     match kinds.as_slice() {
         [
-            TokenKind::Word(keyword),
-            TokenKind::Word(_),
             TokenKind::Symbol(Symbol::Equal),
             TokenKind::Integer(value),
             TokenKind::Symbol(Symbol::Semicolon),
-        ] if keyword == "let" => value.parse().ok(),
+        ] => value.parse().ok(),
         [
-            TokenKind::Word(keyword),
-            TokenKind::Word(_),
             TokenKind::Symbol(Symbol::Equal),
             TokenKind::Symbol(Symbol::Minus),
             TokenKind::Integer(value),
             TokenKind::Symbol(Symbol::Semicolon),
-        ] if keyword == "let" => format!("-{value}").parse().ok(),
+        ] => format!("-{value}").parse().ok(),
         _ => None,
     }
 }

@@ -12,6 +12,7 @@ pub mod module_imports;
 pub mod parser;
 pub mod pipe;
 pub mod quant_index;
+pub mod source_annotation;
 pub mod source_bitfield_concurrency;
 pub mod source_composed;
 pub mod source_composed_tasks;
