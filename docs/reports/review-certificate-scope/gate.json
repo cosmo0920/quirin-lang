@@ -1,0 +1,6 @@
+{
+  "card": "E01-TAIL-CERT-SCOPE",
+  "base": "a8f2048d",
+  "standing_gate": "pending final measurement",
+  "note": "Final exits, counts and private log paths are filled only from the completed worktree-private run."
+}

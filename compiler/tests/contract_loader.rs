@@ -6,9 +6,9 @@ use qcore_compiler::contract_loader::{
     load_resource_contract_files, load_resource_contract_manifest, load_resource_contract_sources,
 };
 use qcore_compiler::{
-    AnalysisStatus, CCompilerDialect, ContractTrust, LegacyFunctionScope, LegacySafetyCertificate,
-    ResourceApiKind, ResourceContracts, ResourceFunctionContract, ResourceParameterMode as P,
-    ResourceReturnMode as R, ResourceSummaryRecord, analyze_legacy_c_translation_unit,
+    AnalysisStatus, C11TranslationUnit, ResourceApiKind, ResourceContracts,
+    ResourceFunctionContract, ResourceParameterMode as P, ResourceReturnMode as R,
+    UnrestrictedLegacyResult, analyze_legacy_c_translation_unit, analyze_unrestricted_c11,
     check_legacy_safety_certificate,
 };
 
@@ -565,23 +565,19 @@ fn invalid_parameter_bindings_and_types_are_rejected() {
 #[test]
 fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     let contracts = load_resource_contract_manifest(&manifest()).unwrap();
-    let source = "void test(void) { void *p = malloc(8); free(p); }";
-    let summary = analyze_legacy_c_translation_unit(source, "test", &contracts).unwrap();
-    let mut certificate = LegacySafetyCertificate {
-        preprocessed_source: source.into(),
-        entry: "test".into(),
-        contracts,
-        dialect: CCompilerDialect::C11,
-        function_scope: LegacyFunctionScope::PreprocessedTranslationUnit,
-        checked_functions: summary.functions.keys().cloned().collect(),
-        summary,
-        // `test` takes no parameters, releases its own acquisition, and
-        // returns nothing, so its validated summary is the neutral contract.
-        summaries: vec![ResourceSummaryRecord::new(
-            "test",
-            ContractTrust::InferredValidated,
-            ResourceFunctionContract::default(),
-        )],
+    let source = concat!(
+        "void *malloc(unsigned long size);\n",
+        "void free(void *pointer);\n",
+        "void test(void) { void *p = malloc(8); free(p); }",
+    );
+    let unit = C11TranslationUnit {
+        source,
+        ..C11TranslationUnit::default()
+    };
+    let Ok(UnrestrictedLegacyResult::Safe(mut certificate)) =
+        analyze_unrestricted_c11(&unit, "test", &contracts)
+    else {
+        panic!("fixture did not produce a Safe certificate");
     };
     check_legacy_safety_certificate(&certificate).unwrap();
     // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS; 9 -> 12 by card

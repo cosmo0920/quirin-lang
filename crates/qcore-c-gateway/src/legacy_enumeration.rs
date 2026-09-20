@@ -372,6 +372,36 @@ pub fn enumerate_source_definitions(unit: &C11TranslationUnit<'_>) -> SourceDefi
     inventory_from_line_marked_result(unit, marked.as_deref())
 }
 
+/// Reconstruct the main-source denominator from the two artifacts that decide
+/// it: the raw primary source and the line-marked preprocessing. Certificate
+/// replay uses this path so it does not trust a stored target list and does not
+/// need to invoke Clang again.
+pub(crate) fn source_definition_inventory_from_evidence(
+    source: &str,
+    marked: &str,
+) -> SourceDefinitionInventory {
+    let raw = raw_half(source);
+    inventory_from_marked(&raw, marked)
+}
+
+fn source_definition_inventory_without_expansion(source: &str) -> SourceDefinitionInventory {
+    let raw = raw_half(source);
+    SourceDefinitionInventory::raw_only(&raw, EnumerationRefusal::ExpansionUnavailable)
+}
+
+fn raw_half(source: &str) -> RawHalf {
+    let scan = legacy_c_source_scan(source);
+    let raw = RawHalf {
+        names: scan.definitions().to_vec(),
+        refusals: scan
+            .refusals()
+            .iter()
+            .map(|refusal| EnumerationRefusal::from_conditional(*refusal))
+            .collect(),
+    };
+    raw
+}
+
 /// Build the main-source inventory from a line-marked preprocessing already
 /// produced for this unit.
 ///
@@ -382,20 +412,9 @@ pub(crate) fn inventory_from_line_marked_result(
     unit: &C11TranslationUnit<'_>,
     marked: Result<&str, &LegacyCError>,
 ) -> SourceDefinitionInventory {
-    let scan = legacy_c_source_scan(unit.source);
-    let raw = RawHalf {
-        names: scan.definitions().to_vec(),
-        refusals: scan
-            .refusals()
-            .iter()
-            .map(|refusal| EnumerationRefusal::from_conditional(*refusal))
-            .collect(),
-    };
     match marked {
-        Ok(marked) => inventory_from_marked(&raw, marked),
-        Err(_) => {
-            SourceDefinitionInventory::raw_only(&raw, EnumerationRefusal::ExpansionUnavailable)
-        }
+        Ok(marked) => source_definition_inventory_from_evidence(unit.source, marked),
+        Err(_) => source_definition_inventory_without_expansion(unit.source),
     }
 }
 
@@ -403,9 +422,9 @@ pub(crate) fn inventory_from_line_marked_result(
 ///
 /// This is the same command `validate_unrestricted_c11` builds, minus `-P` and
 /// minus the syntax phase. Its output is used only to attribute definitions to
-/// files; it is never published, never digested and never analysed, so the
-/// unit's `-E -P` `preprocessed_source` — and every identity bound to it — is
-/// unchanged by this module.
+/// files; it is never analysed. A Safe certificate now retains and digests the
+/// exact marked bytes as target-scope evidence, while the unit's `-E -P`
+/// `preprocessed_source` remains the authoritative analyzed text.
 ///
 /// Card **GATEWAY-C-LOCATION** shares this run with
 /// [`crate::legacy_c::location`], which reads the same markers for the
