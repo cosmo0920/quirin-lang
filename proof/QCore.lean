@@ -58,6 +58,9 @@ import QCore.Lowering
 import QCore.Metatheory
 import QCore.ErrorRegion
 import QCore.EventDriven
+import QCore.EventCompositionContext
+import QCore.EventObservation
+import QCore.ObservedWaitComposition
 import QCore.ExternalIntegration
 import QCore.MonkeyEvent
 import QCore.ChunkLifecycle

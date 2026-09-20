@@ -895,6 +895,12 @@ pub enum CFrontendFlag {
     /// reproduced, and, exactly like [`Self::AssemblerNoExecStack`], no object
     /// or aliasing property is certified by admitting it.
     NoStrictAliasing,
+    /// Transport the native observer's section layout flags unchanged.
+    FunctionSections,
+    DataSections,
+    /// Exact bounded sanitizer selection. This affects `__has_feature`, so
+    /// dropping it would analyze a different preprocessor configuration.
+    AddressUndefinedSanitizers,
     /// `-O0` … `-Og`: transported because the level is visible to the
     /// preprocessor (see [`COptimizationLevel`]).
     Optimization(COptimizationLevel),
@@ -926,6 +932,9 @@ impl CFrontendFlag {
             Self::NoPragmas => command.arg("-Wno-pragmas"),
             Self::NoVoidPointerToEnumCast => command.arg("-Wno-void-pointer-to-enum-cast"),
             Self::NoStrictAliasing => command.arg("-fno-strict-aliasing"),
+            Self::FunctionSections => command.arg("-ffunction-sections"),
+            Self::DataSections => command.arg("-fdata-sections"),
+            Self::AddressUndefinedSanitizers => command.arg("-fsanitize=address,undefined"),
             Self::Optimization(level) => command.arg(level.spelling()),
         };
     }

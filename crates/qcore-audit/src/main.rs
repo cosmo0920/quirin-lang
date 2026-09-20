@@ -7,6 +7,26 @@ fn main() -> ExitCode {
         eprintln!("usage: quirin-audit CONFIG.json");
         return ExitCode::FAILURE;
     };
+    if path == "observed-wait" {
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: quirin-audit observed-wait CONFIG.json");
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: quirin-audit observed-wait CONFIG.json");
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::observed_wait::run_observed_wait_config(&PathBuf::from(config)) {
+            Ok(()) => {
+                println!("Observed timed-wait composition checked; bounded report written.");
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("observed-wait audit rejected (Unknown): {error}");
+                ExitCode::FAILURE
+            }
+        };
+    }
     if arguments.next().is_some() {
         eprintln!("usage: quirin-audit CONFIG.json");
         return ExitCode::FAILURE;
