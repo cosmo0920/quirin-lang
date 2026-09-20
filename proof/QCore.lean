@@ -47,6 +47,7 @@ import QCore.CleanupVocabulary
 import QCore.CleanupOutcome
 import QCore.CallbackBinding
 import QCore.CallbackCoverage
+import QCore.MonkeyWaitProjection
 import QCore.CallbackSource
 import QCore.Index
 import QCore.QuantIndexBinding
