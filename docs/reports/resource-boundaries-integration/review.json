@@ -60,6 +60,30 @@
       "finding": "New binding failures initially aborted a whole audit; a first Unknown downgrade retained partial function-level Safe statuses despite rejected compilation/trust context.",
       "resolution": "Preserve the selected denominator as Unknown without retaining Safe function claims; exercise serialized report and per-unit counts.",
       "status": "requested"
+    },
+    {
+      "card": "resource-helper-functions",
+      "finding": "Independent annotation-agent review found unsupported trailing function-header tokens and duplicate effect rows could be ignored after the first valid effects block.",
+      "resolution": "Consume the complete admitted signature grammar and refuse residual tokens and duplicate rows with compiler regressions.",
+      "status": "requested"
+    },
+    {
+      "card": "resource-helper-functions",
+      "finding": "Expansion charged source statements but not every generated scalar-argument binding or ownership operation, allowing high-arity call DAGs to exceed the stated event budget.",
+      "resolution": "Charge generated events/operations and test high-arity DAG expansion without truncation.",
+      "status": "in progress"
+    },
+    {
+      "card": "resource-helper-functions",
+      "finding": "Diagnostic attribution initially guessed categories from message substrings and used Event-owned Q058 for helper admission/reference failures.",
+      "resolution": "Carry typed refusal categories and map directly to the existing ordinary/buffer namespaces; remove helper use of Q058.",
+      "status": "in progress"
+    },
+    {
+      "card": "resource-helper-functions",
+      "finding": "Independent compiled-CLI probes showed whitespace compaction merged distinct type identifier tokens, accepting split bytes and i32 names.",
+      "resolution": "Recognize exact type token sequences across parameters, results and route selection; test split identifiers refuse while punctuation spacing remains valid.",
+      "status": "requested"
     }
   ]
 }

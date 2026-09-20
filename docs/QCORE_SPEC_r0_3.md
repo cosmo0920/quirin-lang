@@ -61,6 +61,7 @@ For documentation, this revision names the current boundaries as follows. These 
 |---|---|---|
 | `source.structural` | `parse_source_program`, `elaborate_source` | Broad structural syntax; selected name, usage-grade, and quantitative-index checks. |
 | `source.exec12` | `compile_files`, `quirin check`, `quirin emit` | Flat artificial resource operations, literal returns, and restricted direct calls. |
+| `source.resource-calls.v1` | `compile_files`, `quirin check`, `quirin emit` | Closed acyclic helper calls carrying owned `bytes`, whole-call read/write loans and scalar values; per-call extent, custody and effect checks. No general error recovery, returned loans or separately compiled resource ABI. |
 | `source.tasks.copy.v1` | `compile_files`, `quirin check`, `quirin emit` | Linux C11 threads or the emitted macOS/Windows compatibility subset; finite scalar-copy leaf workers, explicit joins, checked creation/error paths; no resources, loans or shared source memory. |
 | `source.extern-call.v1` | `compile_files` with an explicit `CompileOptions` extern contract selection | A flat sequential entry calling declared extern functions under admitted resource-contract v1 shapes; results are valid only relative to those declarations. No extents, no excluded C04 mode, no concurrent or error-region context. |
 | `source.nonexec` | The same driver with library/contract modes | Entry-free checking of declarations and supported bodies; no standalone C artifact. |
