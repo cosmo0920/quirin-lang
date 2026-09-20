@@ -3,8 +3,9 @@
 //! Pins, selected paths and contracts are declared inputs; no provider module
 //! is linked. Safe/Unsafe/Unknown remain the gateway's bounded projection
 //! verdicts. Configured process source-contract checks accept only sealed
-//! gateway imports and trusted witness replay. Specialized native observation
-//! composition remains with the existing compatibility adapter.
+//! gateway imports and trusted witness replay. The separate `observed-wait`
+//! mode joins contract-backed source obligations with one bounded native run;
+//! the existing compatibility adapters retain their original scopes.
 
 pub mod certificate_context;
 pub mod compile_db;

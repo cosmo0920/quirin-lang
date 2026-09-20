@@ -1,0 +1,47 @@
+{
+  "context": {
+    "argument": {
+      "generation": 1,
+      "id": 134961357128768
+    },
+    "backend": "epoll",
+    "base": {
+      "generation": 1,
+      "id": 136748084363392
+    },
+    "buffer": 134961360273440,
+    "callback": "cb_wait_2_timeout",
+    "dispatcher": 139359439537088,
+    "event": {
+      "generation": 1,
+      "id": 135786011689024
+    },
+    "flags": 1,
+    "priority": 0,
+    "run": 2896213
+  },
+  "observations": {
+    "path": "observations.jsonl",
+    "records": 11,
+    "sha256": "c5d141e1a62a776581c7794f2ed468221938763159b802c17605323831515a05"
+  },
+  "profile": "cycle18.timed_wait.single_dispatcher.v1",
+  "schema_version": 1,
+  "source_apis": [
+    {
+      "api": "mk_event_wait_2",
+      "path": "mk_core/mk_event.c",
+      "sha256": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382"
+    },
+    {
+      "api": "_mk_event_wait_2",
+      "path": "mk_core/mk_event_libevent.c",
+      "sha256": "25df48e0974032a0e1482535daafee931bfafb3d2a28bad015b46f048a68cf1c"
+    },
+    {
+      "api": "cb_wait_2_timeout",
+      "path": "mk_core/mk_event_libevent.c",
+      "sha256": "25df48e0974032a0e1482535daafee931bfafb3d2a28bad015b46f048a68cf1c"
+    }
+  ]
+}

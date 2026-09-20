@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "artifact": "cycle18-native-observed-timed-wait",
+  "monkey_profile": "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit",
+  "fluent_checkout": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+  "monkey_inputs": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/qcore-monkey-inputs.json",
+  "source_compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/source-compile-commands.json",
+  "libevent_profile": "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/libevent",
+  "libevent_checkout": "/home/cosmo/Documents/GitHub/qcore-c/third_party/libevent",
+  "libevent_build": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/libevent-build",
+  "wrapper_contract": "/home/cosmo/Documents/GitHub/qcore-c/contract/qcore/monkey/wrapper_paths.qcore",
+  "composition_contract": "/home/cosmo/Documents/GitHub/qcore-c/contract/qcore/monkey/composition.qcore",
+  "observations": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/observations.jsonl",
+  "bindings": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/bindings.json",
+  "observer_binary": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/cycle18_timed_wait_observation",
+  "observer_harness": "/home/cosmo/Documents/GitHub/qcore-c/compiler/examples/cycle18_timed_wait_observation.c",
+  "monkey_object": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/cycle18_timed_wait_observation.o",
+  "libevent_library": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/libevent-build/lib/libevent_core.a",
+  "run_manifest": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/run-manifest.json",
+  "report": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/observed-report.json"
+}

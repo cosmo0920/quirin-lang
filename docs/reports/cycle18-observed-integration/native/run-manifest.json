@@ -1,0 +1,128 @@
+{
+  "compiler": {
+    "path": "/usr/bin/clang",
+    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)"
+  },
+  "host": {
+    "machine": "x86_64",
+    "release": "7.0.0-31-generic",
+    "system": "Linux"
+  },
+  "libevent": {
+    "archive": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/libevent-build/lib/libevent_core.a",
+    "archive_sha256": "f6ae54271178a4913598155a6bc038f79cc697a099d05d66bfd4c2f945797b63",
+    "cmake_cache": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/libevent-build/CMakeCache.txt",
+    "cmake_cache_sha256": "6b539b0867027bdc3a81d1e93ccab264fac75010e7142148501d28aa480339de",
+    "cmake_command": [
+      "cmake",
+      "-S",
+      "/home/cosmo/Documents/GitHub/qcore-c/third_party/libevent",
+      "-B",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/libevent-build",
+      "-DCMAKE_BUILD_TYPE=Debug",
+      "-DEVENT__LIBRARY_TYPE=STATIC",
+      "-DEVENT__DISABLE_OPENSSL=ON",
+      "-DEVENT__DISABLE_MBEDTLS=ON",
+      "-DEVENT__DISABLE_TESTS=ON",
+      "-DEVENT__DISABLE_REGRESS=ON",
+      "-DEVENT__DISABLE_BENCHMARK=ON",
+      "-DEVENT__DISABLE_SAMPLES=ON",
+      "-DCMAKE_C_COMPILER=/usr/bin/clang",
+      "-DCMAKE_C_FLAGS=-fsanitize=address,undefined",
+      "-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined"
+    ],
+    "sanitizers": [
+      "address",
+      "undefined"
+    ],
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/third_party/libevent",
+    "source_revision": "d82464a277d0f42703702c4dfd9af6af38595a83"
+  },
+  "monkey": {
+    "configuration_object": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/mk_event.actual-libevent.o",
+    "configuration_object_sha256": "ee7ee978bd4310d448e989eaff84f26c687def2396948278d93348c2018031ab",
+    "dependency_file": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/mk_event.actual-libevent.d",
+    "dependency_file_sha256": "4ba72c373bad74239f970c39f424b8cc35295d70ed107ae685accf9d80939a4f",
+    "inputs_path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/qcore-monkey-inputs.json",
+    "inputs_sha256": "7e1e31e6e0899b367176df01c8425d1631d04b9eddfa092261b3d8a1af74290c",
+    "source_compile_commands": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/source-compile-commands.json",
+    "source_compile_commands_sha256": "fea1bfa00bbb2b5533421057d2a909b007dae9add7384b08ea8455646881f99b",
+    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+  },
+  "observer": {
+    "callback_allocation": false,
+    "callback_locking": false,
+    "callback_stdio": false,
+    "collection": "thread-local fixed 11-record dispatcher-owned buffer",
+    "compile_command": [
+      "/usr/bin/clang",
+      "-std=gnu17",
+      "-DMK_EVENT_LOOP_LIBEVENT",
+      "-DMK_THREADS_POSIX",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-fsanitize=address,undefined",
+      "-g",
+      "-I",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/libevent-build/include",
+      "-I",
+      "/home/cosmo/Documents/GitHub/qcore-c/third_party/libevent/include",
+      "-I",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/include/monkey",
+      "-I",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/include",
+      "-I",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-source/include/monkey",
+      "-I",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-source/include",
+      "-I",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-source/mk_core",
+      "-DQCORE_MONKEY_EVENT_SOURCE=\"/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-source/mk_core/mk_event.c\"",
+      "-MMD",
+      "-MF",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/cycle18_timed_wait_observation.d",
+      "-c",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/examples/cycle18_timed_wait_observation.c",
+      "-o",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/cycle18_timed_wait_observation.o"
+    ],
+    "dependency_file": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/cycle18_timed_wait_observation.d",
+    "dependency_file_sha256": "62f608fc4b2cde3ab94e6b6c44274e209cf84c0003d32ecd83ccad773c8e55b1",
+    "executable": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/cycle18_timed_wait_observation",
+    "executable_sha256": "1a23bf4c119b4315fd00a6031b4ce6db89b18642deccd1e8bb46a2ca86201dbd",
+    "flush": "after event base free",
+    "link_command": [
+      "/usr/bin/clang",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/cycle18_timed_wait_observation.o",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/libevent-build/lib/libevent_core.a",
+      "-Wl,--gc-sections",
+      "-Wl,-Map=/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/cycle18_timed_wait_observation.map",
+      "-fsanitize=address,undefined",
+      "-pthread",
+      "-o",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/cycle18_timed_wait_observation"
+    ],
+    "link_map": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/cycle18_timed_wait_observation.map",
+    "link_map_sha256": "2f622e161945aae0278c70167cef49d563bf89f96c8d11b22894dfb123dc06f4",
+    "object": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/cycle18_timed_wait_observation.o",
+    "object_sha256": "9f7a1b48e937f20cc53b65018de64f63517adc4c2e34db42df1cf3b0c57bb11b",
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/compiler/examples/cycle18_timed_wait_observation.c",
+    "source_sha256": "11b16ee97adb2ab557db49bba1f0d1376998f12e9caf0e1e72d271ac175e93f0"
+  },
+  "outputs": {
+    "bindings": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/bindings.json",
+    "bindings_sha256": "a84ae7e8126a1331dd7d2b2d2cdd05c1f8b7631de08f250fcd0699295073c695",
+    "observations": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output/observations.jsonl",
+    "observations_sha256": "c5d141e1a62a776581c7794f2ed468221938763159b802c17605323831515a05"
+  },
+  "schema_version": 1,
+  "scope": {
+    "backend": "epoll",
+    "dispatcher_count": 1,
+    "success_only": true,
+    "synchronization_edges": 0,
+    "timeout_milliseconds": 2,
+    "wrapper": "mk_event_wait_2"
+  },
+  "status": "observed_success"
+}

@@ -1,0 +1,20 @@
+{
+  "command": [
+    "python3",
+    "scripts/cycle18_timed_wait_observation.py",
+    "--monkey-inputs",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/qcore-monkey-inputs.json",
+    "--monkey-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-source",
+    "--monkey-build",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build",
+    "--libevent-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/third_party/libevent",
+    "--libevent-build",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/libevent-build",
+    "--output",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/output"
+  ],
+  "exit": 0,
+  "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/native/native.log"
+}

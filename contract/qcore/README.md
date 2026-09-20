@@ -275,14 +275,20 @@ The latest source findings are retained in three additional modules:
   It requires an explicit mutable Chunk borrow with `use one`, unit result,
   live-storage and exclusive-access premises. Changed values, unmentioned
   writes, unsupported predicates and signature mismatches reject the check.
-- `monkey/wrapper_paths.qcore`: **syntax-preserved behavioral specifications**
+- `monkey/wrapper_paths.qcore`: behavioral specifications
   for all 15 selected wrappers, including allocation/registration failures,
-  descriptor close calls, timed waits and the injection scan. These predicates
-  do not yet have behavioral/custody replay and do not issue a safety certificate.
-  A close/free call is not asserted to have discharged its resource obligation.
+  descriptor close calls, timed waits and the injection scan. The bounded
+  `observed-wait` audit now validates the exact declarations for loop creation,
+  timed wait, dispatch and loop destruction against imported source, together
+  with `composition.qcore`'s borrowed, no-resource-effect `cb_wait_2_timeout`.
+  It separately requires a complete observed success lifecycle before replaying
+  the event model. Other wrappers and unobserved failure paths remain outside
+  that consumer; a close/free call alone never establishes discharged custody.
+  [Contract and observation boundary](../../docs/reports/cycle18-observed-integration/README.md).
 
 The audit sidecars retain the exact executable source-policy/helper inputs and
-label the wrapper behavioral specifications as unverified. These three modules
+continue to label the wrapper behavioral specifications as unverified; the
+new explicitly configured observed-wait report is separate. These three modules
 are intentionally outside the declarative resource-projection manifest: their
 predicates are not approximated as acquire/release annotations. Corpus tests pin
 all declarations and clauses across 25 modules; mutation regressions exercise

@@ -2507,6 +2507,23 @@ A predicate is limited to 512 non-EOF tokens and the parser's depth-64 guard. Si
 
 Only `requires` and `ensures normal` envelopes are admitted by this consumer, with at least one postcondition. Function-call predicates, `old(...)`, `resource_*` calls, quant clauses, `&&`/`||`, typed errors and `any` exits do not extend this grammar. A missing fact or overflow errors even in `true or missing_fact`, and a malformed postcondition errors even when a precondition is false. Source: `crates/qcore-contract/src/contract_observation.rs`.
 
+### G06a. Bounded observed timed-wait contract consumer
+
+`quirin-audit observed-wait` uses the structural contract parser to load exactly
+the selected declarations for `_mk_event_loop_create`, `_mk_event_wait_2`,
+`_mk_event_wait_with_flags`, `_mk_event_loop_destroy` and `cb_wait_2_timeout`
+from `monkey/wrapper_paths.qcore` and `monkey/composition.qcore`. The consumer
+requires the supported extern signatures, parameter usage/ownership, return
+types and exact `requires`/`ensures normal` clauses, with no body, `unsafe` or
+effects block. Missing, duplicate, added or changed selected clauses refuse.
+It checks the named predicates against typed C paths and derives native
+obligations; these identifiers do not become arbitrary executable predicates
+in the G06 arithmetic interpreter. Contract acceptance alone emits no safety
+verdict. One complete identity-bearing observation and event-kernel replay are
+required for the separate bounded observed-composition artifact. Source:
+`crates/qcore-verification/src/monkey_wait_projection.rs`; bounds and remaining
+paths: [observed integration](reports/cycle18-observed-integration/README.md).
+
 ## G07. Extended grammar and conformance
 
 `QCORE_DESIGN_GRAMMAR_r0_3.bnf` collects the nineteen BNF blocks from revision 0.2, adding the current optional module header. It preserves the intended full language vocabulary, including source constructs without driver lowering. Its lexical terminal placeholders are `IDENTIFIER-TOKEN`, `INTEGER-TOKEN`, `FLOAT-TOKEN`, `STRING-TOKEN` and `CHAR-TOKEN`.

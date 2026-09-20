@@ -8719,7 +8719,7 @@
   {
    "id": "MONKEY-CALLBACK-CYCLE18-COMPOSITION",
    "title": "Compose the selected Monkey callbacks with Cycle 18 event semantics",
-   "why": "Callback accounting names all three selected callbacks and their eight source paths, but neither optional native replay nor a total inventory is a source-to-EventProgram projection or composed certificate. All three remain explicitly Unknown for Cycle 18 composition. Discharge: implement source/build/profile-bound projection and check a Cycle-18-composed certificate for every selected callback and relevant path, with exact inventory coverage and negative controls; uncovered callbacks retain individual Unknown reasons.",
+   "why": "All three selected callbacks and their eight source paths remain accounted but Unknown for full Cycle 18 composition. CYCLE18-OBSERVED-INTEGRATION now joins contract-backed timed-wait source obligations with one identity-bearing instrumented success run and event-kernel replay; that bounded observed artifact does not discharge the original all-callback/all-relevant-path property. Discharge: source/build/profile-bound composition for every selected callback and relevant path, exact inventory coverage and negative controls; uncovered callbacks retain individual Unknown reasons.",
    "source": "docs/reports/w42-monkey-callback-coverage/README.md",
    "recorded_by": "W42-MONKEY-CALLBACK-COVERAGE"
   },
@@ -8778,6 +8778,41 @@
    "why": "The standalone std_buffer value step records ExtentOutOfRange but still allocates vec![0; extent] before returning refusal. The resource-helper integration adds an early guard for its new route. Discharge the remaining standalone boundary by checking invalid extents before materialization, including nested supported event paths, with bounded-cost refusal regressions. This is a reviewed cost/availability boundary, not an observed Safe misclassification.",
    "source": "docs/reports/resource-boundaries-integration/README.md",
    "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+  },
+  {
+   "id": "CYCLE18-TIMED-WAIT-FAILURE-PATHS",
+   "title": "Account for timed-wait allocation and registration failures",
+   "why": "The observed timed-wait route admits one success execution. Discharge: derive and check the relevant creation/registration failure paths from source and explicit native/model evidence, retaining Unknown where effects are unproven and issuing Unsafe only for a validated reachable violation; never infer all-path safety from successful observations.",
+   "source": "docs/reports/cycle18-observed-integration/README.md",
+   "recorded_by": "CYCLE18-OBSERVED-INTEGRATION"
+  },
+  {
+   "id": "CYCLE18-CB-EVENT-PAYLOAD-BOUNDARY",
+   "title": "Derive cb_event payload bounds and write authority",
+   "why": "Discharge: source-derived identities, storage extents, array bounds and write permissions for every cb_event path, joined to its event/context evidence with negative controls. The return-only timed callback supplies none of this payload evidence.",
+   "source": "docs/reports/cycle18-observed-integration/README.md",
+   "recorded_by": "CYCLE18-OBSERVED-INTEGRATION"
+  },
+  {
+   "id": "CYCLE18-CB-TIMEOUT-SELF-TEARDOWN",
+   "title": "Compose cb_timeout self-teardown and distinct custody",
+   "why": "Discharge: implement and audit the matching Rust/Lean running-callback teardown relation and source projection, separately accounting for event, map and descriptor custody and the platform-qualified close result. Do not waive the existing FreeEvent lifecycle refusal.",
+   "source": "docs/reports/cycle18-observed-integration/README.md",
+   "recorded_by": "CYCLE18-OBSERVED-INTEGRATION"
+  },
+  {
+   "id": "CYCLE18-CALLBACK-TASK-HANDOFF",
+   "title": "Enforce callback task and deferral obligations",
+   "why": "Discharge: derive and enforce callback spawn/join/cancel and deferred-work lifetimes across source, model and observation. Declared may_spawn_tasks/may_defer flags alone establish no task lifecycle property.",
+   "source": "docs/reports/cycle18-observed-integration/README.md",
+   "recorded_by": "CYCLE18-OBSERVED-INTEGRATION"
+  },
+  {
+   "id": "CYCLE18-NATIVE-PLATFORM-MATRIX",
+   "title": "Complete the host-specific Cycle 18 native evidence matrix",
+   "why": "The dedicated Linux epoll run instruments the pinned event_core archive and harness only, with no initialized pthread adapter. Discharge: gate the required backend/platform and sanitizer/thread cases with attributable native evidence, including the deployed observer boundary; preserve Unknown for unavailable kqueue/Windows/other-host obligations and do not extrapolate instrumentation transparency.",
+   "source": "docs/reports/cycle18-observed-integration/README.md",
+   "recorded_by": "CYCLE18-OBSERVED-INTEGRATION"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

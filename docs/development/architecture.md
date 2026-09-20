@@ -62,6 +62,10 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
   prepared by `scripts/prepare_cycle19_clang_audit.py`,
   `scripts/prepare_cmetrics_clang_audit.py` and
   `scripts/prepare_libevent_core_audit.py`.
+- Bounded native composition: `quirin-audit observed-wait CONFIG.json` joins
+  selected Monkey QCore contracts, imported C source, independently loaded
+  build identities and one complete timed-wait observation. See the
+  [configuration and evidence boundary](../reports/cycle18-observed-integration/README.md).
 - Wave close: `scripts/reconciliation_sweep.py` sweeps each merged card's
   integrator-addressed section into individually addressable items and
   `--check`s the close's own `docs/reports/wave<N>-close/reconciliation.json`

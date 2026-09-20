@@ -1,0 +1,1 @@
+observed-wait audit rejected (Unknown): invalid observation bindings: unknown field `synchronization`, expected one of `schema_version`, `profile`, `observations`, `context`, `source_apis` at line 47 column 19
