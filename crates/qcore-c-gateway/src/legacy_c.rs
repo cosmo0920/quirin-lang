@@ -1225,6 +1225,10 @@ pub struct LegacySafetyCertificate {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+// The certificate deliberately carries its complete replay and scope evidence
+// by value in the stable public result API. Boxing only this variant would add
+// an unrelated compatibility break to a certificate-containment change.
+#[allow(clippy::large_enum_variant)]
 pub enum UnrestrictedLegacyResult {
     Safe(LegacySafetyCertificate),
     Unsafe(LegacyProgramSummary),
@@ -1370,7 +1374,7 @@ fn build_certificate_scope_from_evidence(
             let marked = line_marked_source.ok_or_else(|| {
                 "main-source certificate scope carries no line-marked evidence".to_owned()
             })?;
-            let line_map = location::map_marked_preprocessing(&marked, preprocessed_source);
+            let line_map = location::map_marked_preprocessing(marked, preprocessed_source);
             if let Some(refusal) = line_map.refusals().first() {
                 return Err(format!(
                     "certificate scope evidence does not match the analyzed input: {}",
@@ -1640,6 +1644,10 @@ pub fn analyze_prepared_translation_unit(
     )
 }
 
+// This private boundary spells out the exact retained PreparedTranslationUnit
+// evidence used by certificate issuance. Keeping the fields explicit avoids a
+// second, subtly different snapshot type at the trust boundary.
+#[allow(clippy::too_many_arguments)]
 fn analyze_preprocessed_unrestricted_c11(
     preprocessed_source: String,
     dialect: CCompilerDialect,
