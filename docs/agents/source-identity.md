@@ -61,3 +61,25 @@ including cross-topic rules, before editing; the index is not a substitute.
     coordinate. `gateway-c-location`.
 
 <!-- preserved:constraint-12a:end -->
+
+## Certificate target scope
+
+A legacy-C Safe certificate carries its complete selected target inventory and
+the retained source evidence from which the independent checker reconstructs
+that denominator. `checked_functions` is only a checked compatibility index;
+it must never define the intended target set. Every selected target requires
+an analyzed Safe row, with matching canonical inventory and request/artifact
+identities. A duplicate, omitted, excluded or Unknown selected row cannot
+support a Safe certificate. This discharges `E01-TAIL-CERT-SCOPE` at the
+[certificate-scope card's boundary](../reports/review-certificate-scope/README.md).
+
+Structural self-consistency is distinct from intended-target authentication.
+Consumers requiring the latter must compare with an independently held expected
+context using `check_legacy_safety_certificate_for`, rather than copying the
+expected context from the certificate. The inner request/artifact identity
+does not establish full compiler/build provenance or the caller's intended
+contract/profile/trust environment; those bindings remain tracked separately
+as `CERT-SCOPE-COMPILETASK-PROVENANCE` and
+`CERT-SCOPE-EXPECTED-TRUST-CONTEXT` in the acceptance matrix. Prepared audit
+paths use the exact retained raw, marked and plain preprocessing artifacts;
+they do not reprocess the input to manufacture certificate scope evidence.

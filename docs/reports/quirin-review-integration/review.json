@@ -36,6 +36,12 @@
       "finding": "Retained text hashes omit request options that can change interpretation without changing text.",
       "requested_resolution": "Bind relevant ordered request options and clearly separate artifact scope identity from complete compiler provenance.",
       "status": "implemented-pending-validation"
+    },
+    {
+      "card": "review-certificate-scope",
+      "finding": "Early artifact-digest rejection short-circuited existing semantic mutation tests and changed their pinned refusal reasons.",
+      "requested_resolution": "Preserve semantic replay and its pinned diagnostics, while enforcing all new identity checks before acceptance.",
+      "status": "requested"
     }
   ]
 }
