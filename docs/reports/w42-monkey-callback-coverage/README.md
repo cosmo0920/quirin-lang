@@ -111,6 +111,11 @@ The successful Rust workspace run used escalation so LeakSanitizer ran outside
 the sandbox ptrace restriction; no sanitizer option was disabled. Its measured
 revision before the report-only close was `af258e53`.
 
+The standard gate summary is serialized in `gate.json`. Exact commands,
+environment, exits, counts, source identity and private log paths are in
+`gate-facts.json`; `clang-version.txt` is the actual output captured by this
+worktree's successful gate.
+
 ## Integrator reconciliation list
 
 1. **Acceptance matrix:** register

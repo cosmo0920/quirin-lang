@@ -1,0 +1,132 @@
+{
+  "card": "W42-MONKEY-CALLBACK-COVERAGE",
+  "measured_date": "2026-09-20",
+  "source_identity": {
+    "baseline_commit": "f7b010de",
+    "measured_semantic_source_commit": "af258e53096372e22ed999b33afa20a180f4bfcc",
+    "evidence_report_commit_before_machine_readable_close": "3c34b57e",
+    "libevent_submodule_commit": "d82464a277d0f42703702c4dfd9af6af38595a83",
+    "worktree": "/tmp/agent-w42-monkey",
+    "branch": "codex/w42-monkey-coverage"
+  },
+  "environment": {
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "1",
+    "LAKE_JOBS": "1",
+    "QCORE_CLANG": null,
+    "RUSTFLAGS": null,
+    "target_path": "/tmp/agent-w42-monkey/target",
+    "target_backing_path": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/build-targets/monkey"
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": ["git", "submodule", "update", "--init", "--recursive"],
+      "exit": 0,
+      "log": null,
+      "result": "third_party/libevent at d82464a277d0f42703702c4dfd9af6af38595a83; task command output retained and git submodule status --recursive rechecked the pin"
+    },
+    {
+      "name": "cargo-test",
+      "command": ["cargo", "test", "--workspace", "--no-fail-fast"],
+      "command_environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "1"
+      },
+      "exit": 0,
+      "log": "/tmp/agent-w42-monkey/measure/w42-monkey-gate-20260920-escalated/cargo-test.log"
+    },
+    {
+      "name": "cargo-fmt",
+      "command": ["cargo", "fmt", "--all", "--", "--check"],
+      "exit": 0,
+      "log": "/tmp/agent-w42-monkey/measure/w42-monkey-gate-20260920-escalated/fmt.log"
+    },
+    {
+      "name": "cargo-clippy",
+      "command": ["cargo", "clippy", "--all-targets", "--", "-D", "warnings"],
+      "command_environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "1"
+      },
+      "exit": 0,
+      "log": "/tmp/agent-w42-monkey/measure/w42-monkey-gate-20260920-escalated/clippy.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": ["cargo", "run", "-p", "qcore-compiler", "--example", "reevaluation_probe"],
+      "command_environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "1"
+      },
+      "exit": 0,
+      "expectations_passed": 8,
+      "expectations_failed": 0,
+      "log": "/tmp/agent-w42-monkey/measure/w42-monkey-gate-20260920-escalated/probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": ["cargo", "run", "-p", "qcore-compiler", "--example", "reevaluation_followup"],
+      "command_environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_BUILD_JOBS": "1"
+      },
+      "exit": 0,
+      "expectations_passed": 11,
+      "expectations_failed": 0,
+      "log": "/tmp/agent-w42-monkey/measure/w42-monkey-gate-20260920-escalated/followup.log"
+    },
+    {
+      "name": "lean-audits",
+      "command": ["python3", "scripts/check_lean_audits.py"],
+      "command_environment": {"LAKE_JOBS": "1"},
+      "exit": 0,
+      "passed": 148,
+      "failed": 0,
+      "log": "/tmp/agent-w42-monkey/measure/w42-monkey-gate-20260920-escalated/lean-audits.log"
+    },
+    {
+      "name": "python-tests",
+      "command": ["python3", "-m", "unittest", "discover", "-s", "scripts/tests"],
+      "exit": 0,
+      "passed": 305,
+      "failed": 0,
+      "log": "/tmp/agent-w42-monkey/measure/w42-monkey-gate-20260920-escalated/python-tests.log"
+    },
+    {
+      "name": "clang-version",
+      "command": ["clang", "--version"],
+      "exit": 0,
+      "first_line": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+      "log": "/tmp/agent-w42-monkey/measure/w42-monkey-gate-20260920-escalated/clang-version.txt"
+    }
+  ],
+  "rust": {
+    "passed": 4851,
+    "failed": 0,
+    "ignored": 10,
+    "result_summaries": 249,
+    "running_targets": 238,
+    "doc_targets": 9,
+    "total_targets": 247
+  },
+  "provider": {
+    "tests": 122,
+    "status": "carried Unix evidence; not remeasured by this card"
+  },
+  "production_audit": {
+    "status": "pending combined integration AFTER",
+    "reason": "the isolated production run was stopped during shared tmpfs pressure before the Monkey sidecar writer"
+  },
+  "interrupted_run": {
+    "status": "not part of the successful gate",
+    "result_summaries_before_interrupt": 89,
+    "cause": "ten binaries reported LeakSanitizer does not work under ptrace in the sandbox",
+    "log": "/tmp/agent-w42-monkey/measure/w42-monkey-gate-20260920/cargo-test.log"
+  }
+}
