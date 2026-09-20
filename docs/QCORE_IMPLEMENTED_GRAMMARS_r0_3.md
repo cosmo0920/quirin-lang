@@ -70,7 +70,8 @@ The following is the supported canonical body syntax, not a claim that every pos
 
 ```ebnf
 body          = "{", {statement}, "}" ;
-statement     = acquisition | check | direct_call | drop | move | return ;
+statement     = acquisition | constant | check | direct_call | drop | move | return ;
+constant      = "let", IDENT, [ ":", "i32" ], "=", [ "-" ], NAT, ";" ;
 acquisition   = "let", IDENT, "=", "qcore_acquire", "(", RESOURCE_ID,
                 ",", BOOL, ",", ERROR_NAME, ")", ";" ;
 check         = "qcore_check", "(", BOOL, ",", ERROR_NAME, ")", ";" ;
@@ -80,6 +81,13 @@ move          = "move", RESOURCE_BINDING, ";" ;
 return        = "return", [ ["-"], NAT ], ";" ;
 BOOL          = "true" | "false" ;
 ```
+
+The optional `i32` annotation on an integer literal binding is checked against
+the lowered value. Mismatched or unsupported explicit annotations and malformed
+local heads refuse at Q020. `qcore_acquire` publishes a custody identity without
+a nominal result type; annotations on its binding, including `own<T>`, refuse
+until the operation supplies that evidence. Error-region nesting does not bypass
+this check. Local usage annotations retain Q100.
 
 `RESOURCE_ID` must fit `u32`. `ERROR_NAME` must be declared; when no error declarations exist the driver provides its default `Failure` case. Resource bindings must satisfy ownership and cleanup checks. A `move` transfers to the abstract result payload; it does not simply release an external endpoint. A unit result uses bare return, represented as zero in the reduced ABI. An i32 result requires its signed literal; the separate custody payload is explicitly identified in compilation result metadata.
 
@@ -168,6 +176,81 @@ ownership, usage annotations, generic/indirect calls, and cross-profile call
 composition remain outside this subset. Unsupported ordinary forms use Q020;
 nonempty contracts retain Q021.
 [Implementation and evidence](reports/source-scalar-calls-v1/README.md).
+
+<a id="g02r-resource-aware-functions-sourceresource-callsv1"></a>
+
+## G02r. Resource-aware byte helpers (`source.resource-calls.v1`)
+
+`source.resource-calls.v1` is a closed, executable extension for direct calls
+that carry `std.buffer` byte storage across source function boundaries. The
+type spelling is deliberately `bytes`: task execution's `Buffer` is a distinct
+fixed four-byte resource and is refused on this route. Whitespace inside the
+angle brackets is insignificant.
+
+```ebnf
+parameter = NAME, ":", ("i32"
+          | "own", "<", "bytes", ">", "use", grade-one
+          | "borrow", "<", "bytes", ">"
+          | "lend", "<", "bytes", ">") ;
+grade-one = "one" | "1" | "[", "1", ",", "1", "]" ;
+result = "unit" | "i32" | "own", "<", "bytes", ">" ;
+argument = scalar-operand | "move", NAME | "borrow", NAME
+         | "lend", "(", NAME, ")" ;
+call = FUNCTION_NAME, "(", [argument, {",", argument}], ")" ;
+return = "return", ";" | "return", scalar-operand, ";"
+       | "return", "move", NAME, ";" ;
+```
+
+Functions may also use the flat `source.buffer.v1` acquisition, extent, byte
+load/store and drop statements, plus `let NAME = call;` or an unbound unit
+call. Calls are direct. A local or parameter that shadows a helper name makes
+the apparent call indirect and therefore refuses. The graph must be acyclic,
+and every declared helper must be reachable from the selected entry; this v1
+profile does not claim universal checking of an uncalled public library.
+
+An owned argument transfers its one live slot and leaves the caller name stale.
+A read loan permits whole-buffer reads; a write loan permits reads and writes.
+Loans exist for one call and cannot be returned, stored, subloaned or relended.
+The same owner may occur more than once in one call only when every occurrence
+is a read loan. Each helper derives the minimum extent required of each byte
+parameter from its checked accesses and transitive calls; every call site must
+prove the actual extent meets that minimum. Owned results must be bound and
+are transferred back to the caller. All custody operations are projected onto
+the existing ownership checker, and the flattened byte events are checked by
+the existing standard-buffer checker and certificate recheck.
+
+The derived effect row contains `alloc` and/or `mut`, transitively. An absent
+row infers them. An explicit row must contain all derived effects; no other
+effect is supported. An explicit row uses commas between effects, permits no
+trailing comma, appears at most once and consumes the rest of the header;
+residual header tokens refuse. Allocation failure exits with status 86 and has no error
+payload in this profile. Therefore an allocation or allocation-performing call
+is admitted only when its failure cannot strand another live owner in the
+caller or callee. This is an allocation-failure cleanup condition, not general
+typed-error support.
+
+Limits are 256 functions, 256 parameters per function, call depth 64, 16,384
+source IR statements, and 32,768 expanded items. An expanded item is one
+visited statement, emitted buffer event, or generated ownership operation,
+including literal-argument binds and loan wrappers. All limits refuse rather
+than truncate. The expanded-item bound applies while flattening the call DAG,
+so repeated high-arity calls cannot cause exponential work under the depth
+bound. Branches, loops,
+records, extern calls, task `Buffer`, source contracts, local usage forms other
+than `own<bytes> use one`, borrowed results, computed extents and indices, and
+cross-profile calls remain outside this subset.
+
+The profile allocates no diagnostic code. Ordinary signature, call-graph and
+shape refusals use Q020; an empty contract block is an unsupported header at
+Q020 and nonempty source contracts retain Q021; invalid usage
+grades use Q100. Buffer statement shape uses Q051, extent obligations Q053,
+inherited custody refusals Q054, certificate recheck failures Q056 and missing
+transitive effects Q057. The Lean module proves bounded decision lemmas for
+alias compatibility, affine slots, extent composition, acyclicity, transitive
+effects and zero-owner allocation failure. It is not a proof of the complete
+frontend-to-C translation.
+
+[Implementation and evidence](reports/resource-helper-functions/README.md).
 
 ## G02a. Scoped-copy task execution
 
@@ -2096,7 +2179,7 @@ the emitted C is byte-identical to the hand-swapped twin's, and no checked model
 sees a negation. The three bitwise operators `|`, `^` and `&` are admitted in
 **one** position — a parenthesized comparison operand — over signed 32-bit
 literals and names bound to one. A `NAME` atom is a **check-time constant
-binding**, `let NAME = INTEGER;`, admitted at the top level of a sequential
+binding**, `let NAME [: i32] = INTEGER;`, admitted at the top level of a sequential
 entry body and substituted for its value here; a name that denotes a resource
 identity is refused, so no custody-bearing value gains a position in this tier.
 

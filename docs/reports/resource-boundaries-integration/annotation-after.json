@@ -1,0 +1,94 @@
+{
+  "source_commit": "c6d05402fe1a96e0c7e54cad61350cd5a0ac3407",
+  "binary_sha256": "050f2fb5ef4422d0b75cf2e4f83e5ce600cccfb229849973bab0ac78c82afcf6",
+  "cases": {
+    "inferred": {
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin",
+        "check",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/inferred.qcore"
+      ],
+      "exit": 0,
+      "stdout": "checked 1 function(s); entry `main`\n",
+      "stderr": "",
+      "source_sha256": "162fa6802404e8c45b21d772e16a2d1fe08d6388df2b19b9bdb55f66434654ea"
+    },
+    "acquire_i32": {
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin",
+        "check",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/acquire_i32.qcore"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/acquire_i32.qcore:1:46: Q020: local initializer does not match its explicit type annotation\nerror Failure { Failed; } fn main() -> i32 { let r: i32 = qcore_acquire(1, true, Failure); drop r; return 0; }\n                                             ^\n",
+      "source_sha256": "2a2fa150562f16e09bd6319b4af9659251bd18f1bbaa388ab53ca8a9ee84ffbd"
+    },
+    "acquire_owned": {
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin",
+        "check",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/acquire_owned.qcore"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/acquire_owned.qcore:1:46: Q020: this operation does not publish a nominal owned type, so its explicit `own<T>` annotation cannot be checked\nerror Failure { Failed; } fn main() -> i32 { let r: own<File> = qcore_acquire(1, true, Failure); drop r; return 0; }\n                                             ^\n",
+      "source_sha256": "836255e84c7976738a6ade0f622bc6884dab70ac67b118704b2464a0afc9692e"
+    },
+    "region_i32": {
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin",
+        "check",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/region_i32.qcore"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/region_i32.qcore:1:63: Q020: local initializer does not match its explicit type annotation\nerror Failure { Failed; } fn main() -> i32 { error region R { let r: i32 = qcore_acquire(1, true, Failure); qcore_check(false, Failure); } catch (Failure) quant open R as pack { discharge pack; } return 0; }\n                                                              ^\n",
+      "source_sha256": "2ca4c4574b626f58080334101d0b9f0aeba4b2dbdf8fbfaa80715f68ba304451"
+    },
+    "legacy_matching_i32": {
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin",
+        "check",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/legacy_matching_i32.qcore"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/legacy_matching_i32.qcore:1:111: Q020: an i32 result requires a signed 32-bit integer literal return\nerror Failure { Failed; } fn main() -> i32 { let n: i32 = 3; let r = qcore_acquire(1, true, Failure); drop r; return n; }\n                                                                                                              ^\n",
+      "source_sha256": "7145780a2957638fbe239118c64709267cf76fdb84deb0dd7a21cb66f0a5f9a0"
+    },
+    "legacy_mismatched_unit": {
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin",
+        "check",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/legacy_mismatched_unit.qcore"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/legacy_mismatched_unit.qcore:1:46: Q020: local initializer does not match its explicit type annotation\nerror Failure { Failed; } fn main() -> i32 { let n: unit = 3; let r = qcore_acquire(1, true, Failure); drop r; return n; }\n                                             ^\n",
+      "source_sha256": "1207f3224f68e5f91dbfe98f5bef7f3f20722b77728a6a4802b62323b53abf88"
+    },
+    "matching_i32": {
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin",
+        "check",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/matching_i32.qcore"
+      ],
+      "exit": 0,
+      "stdout": "checked 1 function(s); entry `main`; source.scalar-calls.v1: i32/unit calls; checked arithmetic; explicit std.io; closed entry observation\n",
+      "stderr": "",
+      "source_sha256": "80010e95d2dd885deb9ae2f4ddac0f37b2500e1bb24606efe069bcd51c58edba"
+    },
+    "mismatched_unit": {
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin",
+        "check",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/mismatched_unit.qcore"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/annotation-inputs/mismatched_unit.qcore:1:1: Q020: source.scalar-calls.v1: locals require i32\nfn main() -> i32 { let n: unit = 3; return n; }\n^\n",
+      "source_sha256": "7fcbd2ad8bea6e704640ea7e7c3f631b2c73bb1284d43b84efbcc904c368ba29"
+    }
+  }
+}

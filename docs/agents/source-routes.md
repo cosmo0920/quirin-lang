@@ -212,3 +212,20 @@ fragments retain their keys and deduplicate on merge. A print-free program and
 an arithmetic-fault exit are silent. This emission interface is not general
 cross-profile call composition; resource composition and non-IO effects require
 another checked extension.
+
+### RESOURCE-HELPER-FUNCTIONS — bounded resource calls
+
+`source.resource-calls.v1` carries extent-aware `bytes` through direct acyclic
+calls; task-route `Buffer` remains a distinct resource. Read retained source
+tokens, consume the complete supported signature, and preserve identifier
+boundaries when recognizing types. An explicit annotation is checked or
+refused, never erased by lowering. Check every helper and require its
+reachability from the closed entry. Propagate minimum extents and effects
+through calls, discharge each instantiated call's obligations, reject
+incompatible aliases and stale moves, and bound generated operations as well
+as call depth. An allocating call cannot strand caller-owned resources on
+failure. The emitted C retains real calls; the existing ownership and buffer
+checkers validate the expanded model. These checks and native observations do
+not establish universal helper arguments or end-to-end C refinement. Exact
+grammar, bounds, host conditions and residuals belong to the
+[resource-helper report](../reports/resource-helper-functions/README.md).

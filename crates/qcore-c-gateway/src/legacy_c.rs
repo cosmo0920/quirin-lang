@@ -1437,6 +1437,43 @@ pub fn legacy_certificate_expected_context(
     })
 }
 
+/// Derive the caller-held target context from the exact retained preparation
+/// products used by an audit run. This is the prepared-input counterpart of
+/// [`legacy_certificate_expected_context`]: it starts from the caller's
+/// prepared request and evidence, never from a presented certificate, and does
+/// not invoke Clang a second time.
+pub fn legacy_certificate_expected_context_from_prepared(
+    prepared: &PreparedTranslationUnit,
+) -> Result<LegacyCertificateExpectedContext, LegacyCError> {
+    let preprocessed_source = prepared
+        .preprocessed_source()
+        .map_err(Clone::clone)?
+        .to_owned();
+    let request = LegacyCertificateRequest {
+        include_paths: prepared.include_paths().to_vec(),
+        definitions: prepared.definitions().to_vec(),
+        preprocessor_options: prepared.preprocessor_options().to_vec(),
+        input: prepared.input().clone(),
+    };
+    let scope = build_certificate_scope_from_evidence(
+        prepared.dialect(),
+        prepared.function_scope(),
+        &preprocessed_source,
+        Some(prepared.raw_source()),
+        prepared.line_marked_source(),
+        request,
+    )
+    .map_err(|reason| {
+        LegacyCError::ProductionParserRejected(format!(
+            "certificate target scope could not be established: {reason}"
+        ))
+    })?;
+    Ok(LegacyCertificateExpectedContext {
+        inventory_sha256: scope.inventory_sha256,
+        input_identity: scope.input_identity,
+    })
+}
+
 impl fmt::Display for LegacyCError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {

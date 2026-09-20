@@ -1,0 +1,100 @@
+{
+  "before": 273,
+  "after": 279,
+  "retired": [
+    {
+      "entry": {
+        "id": "CERT-SCOPE-COMPILETASK-PROVENANCE",
+        "title": "Bind expected certificate scope to full compilation provenance",
+        "why": "The expected certificate context authenticates retained input/request/scope, not the complete build context. Discharge: bind the expected certificate context to CompileTaskIdentity, including compiler/target/environment and dependency provenance, and exercise a mismatch. Do not describe the inner digest as full build provenance.",
+        "source": "docs/reports/review-certificate-scope/README.md",
+        "recorded_by": "QUIRIN-REVIEW-INTEGRATION"
+      },
+      "discharged_by": "certificate-context-binding",
+      "scope": "Existing compile-task record and caller-held contract/profile/declared-trust identity; no machine/compiler execution attestation."
+    },
+    {
+      "entry": {
+        "id": "CERT-SCOPE-EXPECTED-TRUST-CONTEXT",
+        "title": "Bind certificate acceptance to the caller intended contract and trust context",
+        "why": "Ordinary replay checks the certificate own contract source assumptions. Expected target context does not compare those with a caller-held contract/profile/trust environment. Discharge: a caller-held expected contract/profile/trust identity is compared and a mismatch is exercised.",
+        "source": "docs/reports/review-certificate-scope/README.md",
+        "recorded_by": "QUIRIN-REVIEW-INTEGRATION"
+      },
+      "discharged_by": "certificate-context-binding",
+      "scope": "Existing compile-task record and caller-held contract/profile/declared-trust identity; no machine/compiler execution attestation."
+    }
+  ],
+  "added": [
+    {
+      "id": "ACQUIRE-NOMINAL-TYPE-UNPUBLISHED",
+      "title": "Publish a checked nominal type for legacy acquisitions",
+      "why": "Legacy qcore_acquire establishes custody without a nominal payload. Explicit own<T> annotations refuse. Discharge: publish the nominal result through a checked operation or callee declaration; the annotation cannot supply its own evidence.",
+      "source": "docs/reports/source-annotation-enforcement/README.md",
+      "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+    },
+    {
+      "id": "LOCAL-ANNOTATION-SURFACE-BOUNDED",
+      "title": "Connect additional executable annotation surfaces to checked value types",
+      "why": "This wave extends only legacy integer literal annotations; other routes retain exact grammars. Discharge for a widened route requires connecting its established value type to annotation compatibility and adding reference/emission evidence.",
+      "source": "docs/reports/source-annotation-enforcement/README.md",
+      "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+    },
+    {
+      "id": "RESOURCE-HELPERS-GENERAL-ABI",
+      "title": "Extend resource calls beyond the closed executable profile",
+      "why": "Direct acyclic resource helpers are not a general resource function type system or separately compiled ABI. Discharge requires checked call boundaries for separately compiled resource functions.",
+      "source": "docs/reports/resource-helper-functions/README.md",
+      "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+    },
+    {
+      "id": "RESOURCE-HELPERS-UNCALLED-PROOF",
+      "title": "Prove helper obligations for uncalled and public functions",
+      "why": "The bounded profile requires every helper to be reachable from the selected closed entry. Discharge requires universal argument obligations for uncalled/public helpers rather than closed-entry observations.",
+      "source": "docs/reports/resource-helper-functions/README.md",
+      "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+    },
+    {
+      "id": "RESOURCE-HELPERS-SUBLOANS",
+      "title": "Model resource helper subloans and returned borrows",
+      "why": "Loans cover a whole buffer for one call. Discharge requires checked lifetime/path rules for range subloans, returned/stored loans and relending.",
+      "source": "docs/reports/resource-helper-functions/README.md",
+      "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+    },
+    {
+      "id": "RESOURCE-HELPERS-TYPED-ERRORS",
+      "title": "Add resource helper typed errors and recovery",
+      "why": "Allocation failure has process-exit behavior and refuses surviving ownership. Discharge requires a checked per-error-edge cleanup model for typed errors, recovery and resource payloads.",
+      "source": "docs/reports/resource-helper-functions/README.md",
+      "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+    },
+    {
+      "id": "RESOURCE-HELPERS-C-REFINEMENT",
+      "title": "Bind resource call extraction and C emission to the formal model",
+      "why": "Lean covers bounded decision rules. Parser extraction, graph flattening and C refinement are review premises. Discharge requires a binding/refinement argument across those boundaries.",
+      "source": "docs/reports/resource-helper-functions/README.md",
+      "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+    },
+    {
+      "id": "STD-BUFFER-EXTENT-REFUSAL-COST",
+      "title": "Refuse invalid standalone buffer extents before materializing byte storage",
+      "why": "The standalone std_buffer value step records ExtentOutOfRange but still allocates vec![0; extent] before returning refusal. The resource-helper integration adds an early guard for its new route. Discharge the remaining standalone boundary by checking invalid extents before materialization, including nested supported event paths, with bounded-cost refusal regressions. This is a reviewed cost/availability boundary, not an observed Safe misclassification.",
+      "source": "docs/reports/resource-boundaries-integration/README.md",
+      "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+    }
+  ],
+  "retirement_sweep": {
+    "before_log": "private/resource-boundaries/residuals-before-retirement.json",
+    "after_log": "private/resource-boundaries/residuals-after-retirement.json",
+    "new_unregistered": [
+      "QUIRIN-REVIEW-INTEGRATION"
+    ],
+    "no_longer_unregistered": [
+      "ACQUIRE-NOMINAL-TYPE-UNPUBLISHED",
+      "LOCAL-ANNOTATION-SURFACE-BOUNDED",
+      "RESOURCE-BOUNDARIES-INTEGRATION",
+      "RESOURCE-HELPERS"
+    ],
+    "disposition": "The two retired certificate names remain explicitly referenced as discharged in E01-F1-O. The newly unregistered QUIRIN-REVIEW-INTEGRATION is the completed preceding close label, formerly present in the retired entries recorded_by fields, not open work. Annotation residuals now have registered entries; other pre-existing sweep findings are unchanged."
+  }
+}

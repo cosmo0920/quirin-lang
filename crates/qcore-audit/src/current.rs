@@ -15,7 +15,7 @@ use qcore_schemas::profile::{LibraryProfile, UnitSelection};
 use serde_json::{Value, json};
 
 use crate::compile_db::{CompileEntry, EffectiveInput, compile_task_identity, compiler_options};
-use crate::projection::{AuditCounts, project_prepared_unit};
+use crate::projection::{AuditCounts, PreparedAuditCertificateContext, project_prepared_unit};
 use crate::report::{AuditReport, UnitRefusal};
 
 /// Keep distinct commands, deduplicating only identical file/directory/command
@@ -79,6 +79,7 @@ pub struct CurrentAudit {
     compiler: ClangIdentity,
     contracts: ResourceContracts,
     dependencies: BTreeMap<String, String>,
+    source_profile_sha256: String,
     assumptions: Value,
     report: AuditReport,
     sources: BTreeSet<PathBuf>,
@@ -91,12 +92,13 @@ impl CurrentAudit {
         let revision = crate::checkout_head(&checkout)?;
         let contracts = load_resource_contract_manifest(manifest)?;
         let manifest_text = fs::read_to_string(manifest).map_err(|error| error.to_string())?;
+        let source_profile_sha256 = profile.manifest_digest().to_owned();
         let dependencies = BTreeMap::from([
             (
                 "source_revision_selection".into(),
                 sha256_hex(format!("checkout_head:{revision}").as_bytes()),
             ),
-            ("source_profile".into(), profile.manifest_digest().into()),
+            ("source_profile".into(), source_profile_sha256.clone()),
             (
                 "resource_contract_manifest".into(),
                 sha256_hex(manifest_text.as_bytes()),
@@ -125,6 +127,7 @@ impl CurrentAudit {
             compiler: ClangIdentity::capture()?,
             contracts,
             dependencies,
+            source_profile_sha256,
             assumptions,
             sources: BTreeSet::new(),
             counts: AuditCounts::default(),
@@ -206,12 +209,16 @@ impl CurrentAudit {
                     self.dependencies.clone(),
                 )?;
                 configuration["compile_task_identity"] =
-                    serde_json::to_value(identity).map_err(|error| error.to_string())?;
+                    serde_json::to_value(&identity).map_err(|error| error.to_string())?;
                 project_prepared_unit(
                     library,
                     &file,
                     &prepared,
                     &self.contracts,
+                    PreparedAuditCertificateContext {
+                        compile_task_identity: &identity,
+                        source_profile_sha256: &self.source_profile_sha256,
+                    },
                     &mut self.report,
                     &mut self.counts,
                 )?;

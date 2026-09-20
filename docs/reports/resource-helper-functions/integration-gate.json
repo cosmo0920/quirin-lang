@@ -1,0 +1,13 @@
+{
+  "note": "RESOURCE-BOUNDARIES-INTEGRATION measured semantic tip c6d05402fe1a96e0c7e54cad61350cd5a0ac3407 after helper merge dd8515e9 and reviewed metadata/early-extent follow-ups. Submodules first, exit 0. Full cargo test --workspace --no-fail-fast outside the restrictive sandbox with CARGO_BUILD_JOBS=2 and RUST_TEST_THREADS=4: 4932 passed, 0 failed, 10 ignored, 257 strict summaries, 246 Running targets plus 9 doc-test sections, exit 0. fmt, all-target clippy -D warnings, both probes and 153 Lean audits (--jobs 2) exit 0. Five named host-sensitive isolated tests also exit 0. Python is run after this matrix regeneration and recorded alongside. Actual Clang recording comes from this combined run, not the isolated card. Provider 122 is carried Unix evidence, not rerun; providers and schemas are unchanged. An earlier extra helper-target run inside the sandbox had 11 pass/1 LeakSanitizer ptrace failure, exit 101; the full native target here passes 12/12. Private logs: private/resource-boundaries/combined-gate-1/. All five pinned corpus artifacts are byte-identical, and CT/full-conformance claims are unchanged.",
+  "workspace_tests": 4932,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 317,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 153,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

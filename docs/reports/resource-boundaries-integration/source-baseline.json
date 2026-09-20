@@ -1,0 +1,15 @@
+{
+  "total": 555,
+  "check_passed": 307,
+  "emit_passed": 152,
+  "timeouts": 0,
+  "source_commit": "119115de866e5b50a4ca0dc478c6223790f75fc2",
+  "binary_sha256": "74b62cf1217946ea7b566bcdbcdd5058801d6e049fc660d21ba3d67321ecd269",
+  "command_template": [
+    "quirin",
+    "check|emit",
+    "FILE"
+  ],
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+  "private_record": "private/resource-boundaries/source-before/measurement.json"
+}

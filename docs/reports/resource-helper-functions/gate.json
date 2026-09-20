@@ -1,0 +1,13 @@
+{
+ "note": "RESOURCE-HELPER-FUNCTIONS isolated branch gate, 2026-09-20. The full Rust run began after semantic tip ccfcdca7 and after an independent clean-tip seven-probe header/type review. The only working-tree delta was report wording distinguishing the Q020 expansion budget from internal Q056 construction failures; no source changed during the run. git submodule update --init --recursive exited 0 first and checked out the pinned libevent revision. cargo test used CARGO_BUILD_JOBS=2, --workspace and --no-fail-fast outside the sandbox because LeakSanitizer ptrace is blocked inside it: 4,919 passed, 0 failed, 10 ignored over 255 strict result summaries; no FAILED summary, so no isolation retry. fmt, clippy, both reevaluation probes and 152 Lean audits exited 0. The first 317-test Python run exited 1 only because the committed derived Lean-audit count was 151 while this branch has 152; build_matrix.py regenerated the derived matrix with this gate, then the same 317-test suite passed. Clang was recorded in this worktree beside this gate. Provider 122 is carried, not rerun: providers/ and qcore-schemas are unchanged from 119115de. Private logs and exact exits are under private/resource-helper-functions/gate-595ea6b3/. This profile promotes no corpus verdict or full-language claim.",
+ "workspace_tests": 4919,
+ "provider_tests": 122,
+ "python_evidence_validator_tests": 317,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "pass",
+ "lean_audits": 152,
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

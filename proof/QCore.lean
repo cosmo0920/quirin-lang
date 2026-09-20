@@ -28,6 +28,7 @@ import QCore.ContextualCustody
 import QCore.NeutralFrameRecursion
 import QCore.NeutralPrefixPreservation
 import QCore.SourceValidation
+import QCore.SourceAnnotation
 import QCore.VerifierEvidenceV2
 import QCore.GuardedDelete
 import QCore.UnsupportedClose
@@ -194,5 +195,6 @@ import QCore.JoinedProvenanceCallFrames
 import QCore.JoinedProvenanceRoundBound
 
 import QCore.ScalarCalls
+import QCore.ResourceCalls
 
 /-! The executable formal core of QCore-C revision 0.1. -/

@@ -207,6 +207,9 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 qcore_compiler::SourceExecutionProfile::ScalarCallsV1 => {
                     "; source.scalar-calls.v1: i32/unit calls; checked arithmetic; explicit std.io; closed entry observation"
                 }
+                qcore_compiler::SourceExecutionProfile::ResourceCallsV1 => {
+                    "; source.resource-calls.v1: acyclic owned bytes moves and whole-buffer read/write loans"
+                }
                 qcore_compiler::SourceExecutionProfile::ScopedReadSharesV1 => {
                     "; scoped owned-buffer tasks with counted read shares (Linux/macOS/Windows threads)"
                 }

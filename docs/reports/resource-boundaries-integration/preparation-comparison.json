@@ -1,0 +1,235 @@
+{
+  "binaries": {
+    "before": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/before-quirin-audit",
+      "sha256": "2abec0a1d60c5ee171f0ed259af4fbdcee5ccc7bd365d4468cbeee58a13852ad",
+      "source_revision": "0255677f"
+    },
+    "after": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/after-quirin-audit",
+      "sha256": "c7753cdf5f98f075c1802ec85511066001aadb541544825a99f29ee569145d09",
+      "source_revision": "c6d05402"
+    }
+  },
+  "cases": {
+    "Safe": {
+      "before": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Safe/before-rss.txt",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/before-quirin-audit",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Safe/audit.json"
+        ],
+        "exit": 0,
+        "stages": {
+          "plain": {
+            "invocations": 1,
+            "seconds": 0.014987195027060807
+          },
+          "syntax": {
+            "invocations": 1,
+            "seconds": 0.01420231896918267
+          },
+          "marked": {
+            "invocations": 1,
+            "seconds": 0.015397115028463304
+          },
+          "metadata": {
+            "invocations": 7,
+            "seconds": 0.09339542489033192
+          }
+        },
+        "stdout": "  sample/src/unit.c: Safe (1/1)\n1 units: 1 Safe / 0 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures\npreparation: 1 unit(s), 3 Clang invocation(s); -E -P 72207 us / syntax 68564 us / line markers 84660 us\n",
+        "rss_observation": "\tCommand being timed: \"/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/before-quirin-audit /home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Safe/audit.json\"\n\tUser time (seconds): 0.26\n\tSystem time (seconds): 0.11\n\tPercent of CPU this job got: 99%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.38\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 77412\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 29\n\tMinor (reclaiming a frame) page faults: 48526\n\tVoluntary context switches: 270\n\tInvoluntary context switches: 39\n\tSwaps: 0\n\tFile system inputs: 312\n\tFile system outputs: 40\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "artifacts": {
+          "report.assumptions.json": "1cbda70bcd0e2b1b3c8bae3623f71c3324036cfe755f4810573c20d5c740cdd4",
+          "report.json": "af7411c3e241c172df3ec935351494c38bcc0e954a28f3a6f4f1cfc5b22d7300"
+        }
+      },
+      "after": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Safe/after-rss.txt",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/after-quirin-audit",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Safe/audit.json"
+        ],
+        "exit": 0,
+        "stages": {
+          "plain": {
+            "invocations": 1,
+            "seconds": 0.0161727030063048
+          },
+          "syntax": {
+            "invocations": 1,
+            "seconds": 0.018063718976918608
+          },
+          "marked": {
+            "invocations": 1,
+            "seconds": 0.01833178201923147
+          },
+          "metadata": {
+            "invocations": 7,
+            "seconds": 0.09037397598149255
+          }
+        },
+        "stdout": "  sample/src/unit.c: Safe (1/1)\n1 units: 1 Safe / 0 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures\npreparation: 1 unit(s), 3 Clang invocation(s); -E -P 76824 us / syntax 82171 us / line markers 92415 us\n",
+        "rss_observation": "\tCommand being timed: \"/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/after-quirin-audit /home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Safe/audit.json\"\n\tUser time (seconds): 0.28\n\tSystem time (seconds): 0.13\n\tPercent of CPU this job got: 99%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.42\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 77212\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 75\n\tMinor (reclaiming a frame) page faults: 49592\n\tVoluntary context switches: 754\n\tInvoluntary context switches: 30\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 40\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "artifacts": {
+          "report.assumptions.json": "1cbda70bcd0e2b1b3c8bae3623f71c3324036cfe755f4810573c20d5c740cdd4",
+          "report.json": "af7411c3e241c172df3ec935351494c38bcc0e954a28f3a6f4f1cfc5b22d7300"
+        }
+      },
+      "artifacts_byte_identical": true
+    },
+    "Unsafe": {
+      "before": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Unsafe/before-rss.txt",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/before-quirin-audit",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Unsafe/audit.json"
+        ],
+        "exit": 0,
+        "stages": {
+          "plain": {
+            "invocations": 1,
+            "seconds": 0.014461576996836811
+          },
+          "syntax": {
+            "invocations": 1,
+            "seconds": 0.01632038102252409
+          },
+          "marked": {
+            "invocations": 1,
+            "seconds": 0.01499097200576216
+          },
+          "metadata": {
+            "invocations": 7,
+            "seconds": 0.09154544799821451
+          }
+        },
+        "stdout": "  sample/src/unit.c: Unsafe (1/1)\n    resource diagnostics: leak=1\n    subject: preprocessed line 0: leak: live obligation acquired at src/unit.c:1\n1 units: 0 Safe / 1 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures\npreparation: 1 unit(s), 3 Clang invocation(s); -E -P 69790 us / syntax 70930 us / line markers 72606 us\n",
+        "rss_observation": "\tCommand being timed: \"/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/before-quirin-audit /home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Unsafe/audit.json\"\n\tUser time (seconds): 0.25\n\tSystem time (seconds): 0.12\n\tPercent of CPU this job got: 99%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.37\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 83948\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 18\n\tMinor (reclaiming a frame) page faults: 48438\n\tVoluntary context switches: 271\n\tInvoluntary context switches: 17\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 40\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "artifacts": {
+          "report.assumptions.json": "96eba1333d84e36bde03bb368ce33fec5886877b7d6fea7a8b9797d8bccffe9f",
+          "report.json": "f932c5600ddd416bc7656fe1ee0639c37888462f397f744e3cb2effa6e7ad55e"
+        }
+      },
+      "after": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Unsafe/after-rss.txt",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/after-quirin-audit",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Unsafe/audit.json"
+        ],
+        "exit": 0,
+        "stages": {
+          "plain": {
+            "invocations": 1,
+            "seconds": 0.014142456988338381
+          },
+          "syntax": {
+            "invocations": 1,
+            "seconds": 0.016545514052268118
+          },
+          "marked": {
+            "invocations": 1,
+            "seconds": 0.014224481012206525
+          },
+          "metadata": {
+            "invocations": 7,
+            "seconds": 0.08925748703768477
+          }
+        },
+        "stdout": "  sample/src/unit.c: Unsafe (1/1)\n    resource diagnostics: leak=1\n    subject: preprocessed line 0: leak: live obligation acquired at src/unit.c:1\n1 units: 0 Safe / 1 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures\npreparation: 1 unit(s), 3 Clang invocation(s); -E -P 72734 us / syntax 75523 us / line markers 80938 us\n",
+        "rss_observation": "\tCommand being timed: \"/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/after-quirin-audit /home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Unsafe/audit.json\"\n\tUser time (seconds): 0.25\n\tSystem time (seconds): 0.12\n\tPercent of CPU this job got: 99%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.37\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 83960\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 25\n\tMinor (reclaiming a frame) page faults: 48806\n\tVoluntary context switches: 350\n\tInvoluntary context switches: 19\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 40\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "artifacts": {
+          "report.assumptions.json": "96eba1333d84e36bde03bb368ce33fec5886877b7d6fea7a8b9797d8bccffe9f",
+          "report.json": "f932c5600ddd416bc7656fe1ee0639c37888462f397f744e3cb2effa6e7ad55e"
+        }
+      },
+      "artifacts_byte_identical": true
+    },
+    "Unknown": {
+      "before": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Unknown/before-rss.txt",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/before-quirin-audit",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Unknown/audit.json"
+        ],
+        "exit": 0,
+        "stages": {
+          "plain": {
+            "invocations": 1,
+            "seconds": 0.015104024962056428
+          },
+          "syntax": {
+            "invocations": 1,
+            "seconds": 0.01960446499288082
+          },
+          "marked": {
+            "invocations": 1,
+            "seconds": 0.013292529038153589
+          },
+          "metadata": {
+            "invocations": 7,
+            "seconds": 0.0897099080029875
+          }
+        },
+        "stdout": "  sample/src/unit.c: Unknown (1/1): resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)\n    resource diagnostics: unsupported=1\n    subject: src/unit.c:1: unsupported: unmodeled call, aggregate or indirect access in branch condition\n1 units: 0 Safe / 0 provisional Unsafe / 1 Unknown / 0 data-only / 0 gateway failures\npreparation: 1 unit(s), 3 Clang invocation(s); -E -P 75417 us / syntax 81745 us / line markers 76491 us\n",
+        "rss_observation": "\tCommand being timed: \"/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/before-quirin-audit /home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Unknown/audit.json\"\n\tUser time (seconds): 0.26\n\tSystem time (seconds): 0.11\n\tPercent of CPU this job got: 99%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.38\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 83340\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 31\n\tMinor (reclaiming a frame) page faults: 49012\n\tVoluntary context switches: 460\n\tInvoluntary context switches: 17\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 40\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "artifacts": {
+          "report.assumptions.json": "0d7afac2f4b02650c24a45ea4f82749e1cc7403f06cc9ba88cbb32426fcc019c",
+          "report.json": "1ba3be128f2234e795b722a325570a8de8d2607d1196c54d5389a06237f42a81"
+        }
+      },
+      "after": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Unknown/after-rss.txt",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/after-quirin-audit",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Unknown/audit.json"
+        ],
+        "exit": 0,
+        "stages": {
+          "plain": {
+            "invocations": 1,
+            "seconds": 0.015713389962911606
+          },
+          "syntax": {
+            "invocations": 1,
+            "seconds": 0.016446037974674255
+          },
+          "marked": {
+            "invocations": 1,
+            "seconds": 0.015325741027481854
+          },
+          "metadata": {
+            "invocations": 7,
+            "seconds": 0.08725850994233042
+          }
+        },
+        "stdout": "  sample/src/unit.c: Unknown (1/1): resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)\n    resource diagnostics: unsupported=1\n    subject: src/unit.c:1: unsupported: unmodeled call, aggregate or indirect access in branch condition\n1 units: 0 Safe / 0 provisional Unsafe / 1 Unknown / 0 data-only / 0 gateway failures\npreparation: 1 unit(s), 3 Clang invocation(s); -E -P 71366 us / syntax 71881 us / line markers 74647 us\n",
+        "rss_observation": "\tCommand being timed: \"/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/after-quirin-audit /home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/preparation-comparison/Unknown/audit.json\"\n\tUser time (seconds): 0.27\n\tSystem time (seconds): 0.10\n\tPercent of CPU this job got: 99%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.38\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 83520\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 23\n\tMinor (reclaiming a frame) page faults: 48390\n\tVoluntary context switches: 250\n\tInvoluntary context switches: 21\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 40\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "artifacts": {
+          "report.assumptions.json": "0d7afac2f4b02650c24a45ea4f82749e1cc7403f06cc9ba88cbb32426fcc019c",
+          "report.json": "1ba3be128f2234e795b722a325570a8de8d2607d1196c54d5389a06237f42a81"
+        }
+      },
+      "artifacts_byte_identical": true
+    }
+  }
+}

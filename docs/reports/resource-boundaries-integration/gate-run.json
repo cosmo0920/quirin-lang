@@ -1,0 +1,220 @@
+{
+  "source_commit": "c6d05402fe1a96e0c7e54cad61350cd5a0ac3407",
+  "start": "2026-09-20T08:37:22.032943+00:00",
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "RUST_TEST_THREADS": "4",
+    "QCORE_CLANG": null,
+    "RUSTFLAGS": null,
+    "CARGO_TARGET_DIR": null
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.023,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.015,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/clang-version.log"
+    },
+    {
+      "name": "cargo-test",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "seconds": 1103.431,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/cargo-test.log"
+    },
+    {
+      "name": "cargo-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 1.948,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/cargo-fmt.log"
+    },
+    {
+      "name": "cargo-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 20.605,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/cargo-clippy.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.088,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.476,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/reevaluation-followup.log"
+    },
+    {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "seconds": 19.981,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/lean-audits.log"
+    },
+    {
+      "name": "isolated-process-lifecycle",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "cycle20_verifier_plugins",
+        "vp04_vp07_vp08_process_lifecycle_and_payload_budgets",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.439,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/isolated-process-lifecycle.log"
+    },
+    {
+      "name": "isolated-process-limit",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "enforced_process_limits",
+        "a_declared_process_limit_stops_the_fixture_from_forking",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.556,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/isolated-process-limit.log"
+    },
+    {
+      "name": "isolated-memory-limit",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "enforced_process_limits",
+        "memory_growth_beyond_the_declared_limit_is_bounded",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 0.099,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/isolated-memory-limit.log"
+    },
+    {
+      "name": "isolated-confined-write",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "confined_process_execution",
+        "a_confined_fixture_cannot_write_outside_the_admitted_paths",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 0.061,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/isolated-confined-write.log"
+    },
+    {
+      "name": "isolated-closed-input",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "standalone_host",
+        "closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.642,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/resource-boundaries/combined-gate-1/isolated-closed-input.log"
+    }
+  ],
+  "rust": {
+    "passed": 4932,
+    "failed": 0,
+    "ignored": 10,
+    "result_summaries": 257,
+    "running_targets": 246,
+    "doc_targets": 9
+  },
+  "end": "2026-09-20T08:56:33.409711+00:00",
+  "post_gate": {
+    "matrix_regeneration_exit": 0,
+    "python_exit": 0,
+    "python_tests": 317
+  }
+}

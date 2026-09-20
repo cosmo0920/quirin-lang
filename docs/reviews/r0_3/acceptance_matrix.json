@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 273
+  "named_followups": 279
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6725,11 +6725,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Combined integration at Rust source 02b037df3ec44cf9cb96cd188d256dc9815e93e0: 4895 passed, 0 failed, 10 ignored; 254 result summaries over 252 targets. Mechanical lint cleanup af88325b was integrated after the Rust test binaries were built, without semantic change; final fmt/clippy/probes and focused gateway/audit checks validate it. All final commands exit 0; Lean 151, Python 317. Five host-sensitive rows also passed individually. Provider122 is carried Unix evidence, not remeasured. Actual Clang recording from this checkout is included. Full commands, identities, private paths and prior agent failures are disclosed in README.md and validation-run.json. No corpus, CT or full-conformance promotion.",
-  "workspace_tests": 4895,
+  "note": "RESOURCE-BOUNDARIES-INTEGRATION measured semantic tip c6d05402fe1a96e0c7e54cad61350cd5a0ac3407 after helper merge dd8515e9 and reviewed metadata/early-extent follow-ups. Submodules first, exit 0. Full cargo test --workspace --no-fail-fast outside the restrictive sandbox with CARGO_BUILD_JOBS=2 and RUST_TEST_THREADS=4: 4932 passed, 0 failed, 10 ignored, 257 strict summaries, 246 Running targets plus 9 doc-test sections, exit 0. fmt, all-target clippy -D warnings, both probes and 153 Lean audits (--jobs 2) exit 0. Five named host-sensitive isolated tests also exit 0. Python is run after this matrix regeneration and recorded alongside. Actual Clang recording comes from this combined run, not the isolated card. Provider 122 is carried Unix evidence, not rerun; providers and schemas are unchanged. An earlier extra helper-target run inside the sandbox had 11 pass/1 LeakSanitizer ptrace failure, exit 101; the full native target here passes 12/12. Private logs: private/resource-boundaries/combined-gate-1/. All five pinned corpus artifacts are byte-identical, and CT/full-conformance claims are unchanged.",
+  "workspace_tests": 4932,
   "provider_tests": 122,
   "python_evidence_validator_tests": 317,
-  "lean_audits": 151,
+  "lean_audits": 153,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6842,6 +6842,7 @@
    "AuditRegionJoinsDuties.lean",
    "AuditRegionJoinsLoan.lean",
    "AuditRegionTaskCredit.lean",
+   "AuditResourceCalls.lean",
    "AuditReturnCallCustody.lean",
    "AuditReturnExpressionEvaluation.lean",
    "AuditReturnPositionEscape.lean",
@@ -6854,6 +6855,7 @@
    "AuditSocketEventCompose.lean",
    "AuditSocketFootprint.lean",
    "AuditSocketInetAddresses.lean",
+   "AuditSourceAnnotation.lean",
    "AuditSourceCoordinate.lean",
    "AuditSourceEnumeration.lean",
    "AuditSourceLoop.lean",
@@ -6889,7 +6891,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/quirin-review-integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/docs/reports/resource-boundaries-integration/gate.json)"
  },
  "named_followups": [
   {
@@ -6955,8 +6957,8 @@
   {
    "id": "E01-F1-O",
    "title": "Enumeration residuals after the denominator completion",
-   "why": "E01-TAIL closed the trio in wave 15: STDIN was a live two-direction scope manipulation via #line directives (fail-open in one direction), repaired with depth-flag attribution no directive can move; DENOM found the partial analyzer silently dropping selected definitions — Safe now requires full coverage at the certificate gate (reach 0 today; 89 inert unprojected definitions censused); COST measured at 53 ms and the cache declined — the real redundancies are named as E01-TAIL-COST-SHARE (also a two-denominator correctness seam), -COST-DOUBLE-PP, -COST-DISCOVERY, plus -CERT-SCOPE, -EXCUSE, -REASON-ROWS. Wave-27 note, from the arbiter GATEWAY-C-LOCATION: the E01-F1-STDIN shape is removed from the PRESENTATION side, because include depth 0 is not named by a marker at all - the primary input presents OriginFile::Primary, which the caller resolves against the audit's own configured file, so the pinned transport's fixed and guessable `<stdin>` spelling reaches no report and is not a name anything can claim. The enumeration's own scope rule is UNTOUCHED (constraint 12): that card reads legacy_enumeration's depth flags through a now-shared marker parser and cannot write them. Its own follow-ons are in GATEWAY-LOCATION-O, including GATEWAY-LOCATION-SECOND-PREPROCESS, which is this row's E01-TAIL-COST-DOUBLE-PP reached from the presentation side: the enumeration already holds the marked output the map needs and does not hand it over, because changing enumerate_source_definitions' shape touches the pinned denominator route. Review integration (2026-09-20): E01-TAIL-CERT-SCOPE is discharged at the reconstructible target-scope and caller-held expected-context boundary by review-certificate-scope. Full compilation provenance and caller-intended trust binding remain separate CERT-SCOPE-COMPILETASK-PROVENANCE and CERT-SCOPE-EXPECTED-TRUST-CONTEXT entries. The parent enumeration residual remains open; no registered entry is retired.",
-   "source": "docs/reports/remaining-e01-f1/README.md, docs/reports/remaining-e01-f1-raw/README.md, docs/reports/remaining-e01-raw-cond/README.md, docs/reports/remaining-e01-tail/README.md, docs/reports/gateway-c-location/README.md, docs/reports/review-certificate-scope/README.md"
+   "why": "E01-TAIL closed the trio in wave 15: STDIN was a live two-direction scope manipulation via #line directives (fail-open in one direction), repaired with depth-flag attribution no directive can move; DENOM found the partial analyzer silently dropping selected definitions — Safe now requires full coverage at the certificate gate (reach 0 today; 89 inert unprojected definitions censused); COST measured at 53 ms and the cache declined — the real redundancies are named as E01-TAIL-COST-SHARE (also a two-denominator correctness seam), -COST-DOUBLE-PP, -COST-DISCOVERY, plus -CERT-SCOPE, -EXCUSE, -REASON-ROWS. Wave-27 note, from the arbiter GATEWAY-C-LOCATION: the E01-F1-STDIN shape is removed from the PRESENTATION side, because include depth 0 is not named by a marker at all - the primary input presents OriginFile::Primary, which the caller resolves against the audit's own configured file, so the pinned transport's fixed and guessable `<stdin>` spelling reaches no report and is not a name anything can claim. The enumeration's own scope rule is UNTOUCHED (constraint 12): that card reads legacy_enumeration's depth flags through a now-shared marker parser and cannot write them. Its own follow-ons are in GATEWAY-LOCATION-O, including GATEWAY-LOCATION-SECOND-PREPROCESS, which is this row's E01-TAIL-COST-DOUBLE-PP reached from the presentation side: the enumeration already holds the marked output the map needs and does not hand it over, because changing enumerate_source_definitions' shape touches the pinned denominator route. Review integration (2026-09-20): E01-TAIL-CERT-SCOPE is discharged at the reconstructible target-scope and caller-held expected-context boundary by review-certificate-scope. Full compilation provenance and caller-intended trust binding remain separate CERT-SCOPE-COMPILETASK-PROVENANCE and CERT-SCOPE-EXPECTED-TRUST-CONTEXT entries. The parent enumeration residual remains open; no registered entry is retired. Resource-boundary integration (2026-09-20) discharges CERT-SCOPE-COMPILETASK-PROVENANCE and CERT-SCOPE-EXPECTED-TRUST-CONTEXT through equality with the existing compile-task record and independently held contract/profile/declared-trust context. The retired bindings do not attest compiler execution or the machine environment; the parent enumeration residual remains open.",
+   "source": "docs/reports/remaining-e01-f1/README.md, docs/reports/remaining-e01-f1-raw/README.md, docs/reports/remaining-e01-raw-cond/README.md, docs/reports/remaining-e01-tail/README.md, docs/reports/gateway-c-location/README.md, docs/reports/review-certificate-scope/README.md, docs/reports/certificate-context-binding/README.md"
   },
   {
    "id": "P04-NEXT-O",
@@ -8722,18 +8724,60 @@
    "recorded_by": "W42-MONKEY-CALLBACK-COVERAGE"
   },
   {
-   "id": "CERT-SCOPE-COMPILETASK-PROVENANCE",
-   "title": "Bind expected certificate scope to full compilation provenance",
-   "why": "The expected certificate context authenticates retained input/request/scope, not the complete build context. Discharge: bind the expected certificate context to CompileTaskIdentity, including compiler/target/environment and dependency provenance, and exercise a mismatch. Do not describe the inner digest as full build provenance.",
-   "source": "docs/reports/review-certificate-scope/README.md",
-   "recorded_by": "QUIRIN-REVIEW-INTEGRATION"
+   "id": "ACQUIRE-NOMINAL-TYPE-UNPUBLISHED",
+   "title": "Publish a checked nominal type for legacy acquisitions",
+   "why": "Legacy qcore_acquire establishes custody without a nominal payload. Explicit own<T> annotations refuse. Discharge: publish the nominal result through a checked operation or callee declaration; the annotation cannot supply its own evidence.",
+   "source": "docs/reports/source-annotation-enforcement/README.md",
+   "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
   },
   {
-   "id": "CERT-SCOPE-EXPECTED-TRUST-CONTEXT",
-   "title": "Bind certificate acceptance to the caller intended contract and trust context",
-   "why": "Ordinary replay checks the certificate own contract source assumptions. Expected target context does not compare those with a caller-held contract/profile/trust environment. Discharge: a caller-held expected contract/profile/trust identity is compared and a mismatch is exercised.",
-   "source": "docs/reports/review-certificate-scope/README.md",
-   "recorded_by": "QUIRIN-REVIEW-INTEGRATION"
+   "id": "LOCAL-ANNOTATION-SURFACE-BOUNDED",
+   "title": "Connect additional executable annotation surfaces to checked value types",
+   "why": "This wave extends only legacy integer literal annotations; other routes retain exact grammars. Discharge for a widened route requires connecting its established value type to annotation compatibility and adding reference/emission evidence.",
+   "source": "docs/reports/source-annotation-enforcement/README.md",
+   "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+  },
+  {
+   "id": "RESOURCE-HELPERS-GENERAL-ABI",
+   "title": "Extend resource calls beyond the closed executable profile",
+   "why": "Direct acyclic resource helpers are not a general resource function type system or separately compiled ABI. Discharge requires checked call boundaries for separately compiled resource functions.",
+   "source": "docs/reports/resource-helper-functions/README.md",
+   "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+  },
+  {
+   "id": "RESOURCE-HELPERS-UNCALLED-PROOF",
+   "title": "Prove helper obligations for uncalled and public functions",
+   "why": "The bounded profile requires every helper to be reachable from the selected closed entry. Discharge requires universal argument obligations for uncalled/public helpers rather than closed-entry observations.",
+   "source": "docs/reports/resource-helper-functions/README.md",
+   "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+  },
+  {
+   "id": "RESOURCE-HELPERS-SUBLOANS",
+   "title": "Model resource helper subloans and returned borrows",
+   "why": "Loans cover a whole buffer for one call. Discharge requires checked lifetime/path rules for range subloans, returned/stored loans and relending.",
+   "source": "docs/reports/resource-helper-functions/README.md",
+   "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+  },
+  {
+   "id": "RESOURCE-HELPERS-TYPED-ERRORS",
+   "title": "Add resource helper typed errors and recovery",
+   "why": "Allocation failure has process-exit behavior and refuses surviving ownership. Discharge requires a checked per-error-edge cleanup model for typed errors, recovery and resource payloads.",
+   "source": "docs/reports/resource-helper-functions/README.md",
+   "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+  },
+  {
+   "id": "RESOURCE-HELPERS-C-REFINEMENT",
+   "title": "Bind resource call extraction and C emission to the formal model",
+   "why": "Lean covers bounded decision rules. Parser extraction, graph flattening and C refinement are review premises. Discharge requires a binding/refinement argument across those boundaries.",
+   "source": "docs/reports/resource-helper-functions/README.md",
+   "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
+  },
+  {
+   "id": "STD-BUFFER-EXTENT-REFUSAL-COST",
+   "title": "Refuse invalid standalone buffer extents before materializing byte storage",
+   "why": "The standalone std_buffer value step records ExtentOutOfRange but still allocates vec![0; extent] before returning refusal. The resource-helper integration adds an early guard for its new route. Discharge the remaining standalone boundary by checking invalid extents before materialization, including nested supported event paths, with bounded-cost refusal regressions. This is a reviewed cost/availability boundary, not an observed Safe misclassification.",
+   "source": "docs/reports/resource-boundaries-integration/README.md",
+   "recorded_by": "RESOURCE-BOUNDARIES-INTEGRATION"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

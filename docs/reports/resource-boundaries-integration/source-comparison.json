@@ -1,0 +1,118 @@
+{
+  "total": 555,
+  "check_passed": 305,
+  "emit_passed": 150,
+  "timeouts": 0,
+  "changed": [
+    {
+      "file": "docs/reports/remaining-v03/probes/S22_unknown_let_annotation.qcore",
+      "before": {
+        "source_sha256": "ae3c4d0a74ff6e48382bb60f75b411da8913fcee3126de4bfc14719421ef0660",
+        "check": {
+          "exit": 0,
+          "stdout_sha256": "3d462d73561e45fb754b8b9c436e106eed7d38e702d5df428724d151cd4968f1",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "checked 1 function(s); entry `main`\n",
+          "stderr": ""
+        },
+        "emit": {
+          "exit": 0,
+          "stdout_sha256": "8da29ce7efe8cb2a38a472c497e46c3d5c70b3eecdb161de230684a9b8e39f04",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": null,
+          "stderr": ""
+        }
+      },
+      "after": {
+        "source_sha256": "ae3c4d0a74ff6e48382bb60f75b411da8913fcee3126de4bfc14719421ef0660",
+        "check": {
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "02806d716e09221cb5d62ee750e7cadf5df047ac00cbaf894f0a34b9aa17ef1c",
+          "stdout": "",
+          "stderr": "docs/reports/remaining-v03/probes/S22_unknown_let_annotation.qcore:2:20: Q020: unsupported explicit local type annotation\nfn main() -> i32 { let x: Widget = qcore_acquire(1, true, E); drop x; return 0; }\n                   ^\n"
+        }
+      },
+      "disposition": "Intentional fail-closed annotation enforcement: no nominal type is published by qcore_acquire; refuse invalid explicit annotation before custody analysis."
+    },
+    {
+      "file": "docs/reports/remaining-v03/probes/S24_unknown_annotation_leak.qcore",
+      "before": {
+        "source_sha256": "72f82e14ac11e706dc9a9939c443da6f6261552605fd5825fb4c71c6ae13c909",
+        "check": {
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "be1c283afde05cca57d8e0a9ae5555ef04e88c1cbf4fe98a84eff135445deba2",
+          "stdout": "",
+          "stderr": "docs/reports/remaining-v03/probes/S24_unknown_annotation_leak.qcore:2:1: Q202: LiveResourcesAtNormalReturn([1])\nfn main() -> i32 { let x: Widget = qcore_acquire(1, true, E); return 0; }\n^\n"
+        }
+      },
+      "after": {
+        "source_sha256": "72f82e14ac11e706dc9a9939c443da6f6261552605fd5825fb4c71c6ae13c909",
+        "check": {
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "586ebaf10ce980cf110e92c5b8a46cf7f2748c5504e86d17d99df9adc31d6ada",
+          "stdout": "",
+          "stderr": "docs/reports/remaining-v03/probes/S24_unknown_annotation_leak.qcore:2:20: Q020: unsupported explicit local type annotation\nfn main() -> i32 { let x: Widget = qcore_acquire(1, true, E); return 0; }\n                   ^\n"
+        }
+      },
+      "disposition": "Intentional fail-closed annotation enforcement: no nominal type is published by qcore_acquire; refuse invalid explicit annotation before custody analysis."
+    },
+    {
+      "file": "docs/reports/remaining-v03/probes/S25_i32_annotation_on_resource.qcore",
+      "before": {
+        "source_sha256": "51fb74b6833fbf167fdbf4c0c3041287def15911f0d3dec1777dff723f977d34",
+        "check": {
+          "exit": 0,
+          "stdout_sha256": "3d462d73561e45fb754b8b9c436e106eed7d38e702d5df428724d151cd4968f1",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "checked 1 function(s); entry `main`\n",
+          "stderr": ""
+        },
+        "emit": {
+          "exit": 0,
+          "stdout_sha256": "c735da5fbb1fcaf49dd78282db5205d220a9e69439a0121d38d998da534fb643",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": null,
+          "stderr": ""
+        }
+      },
+      "after": {
+        "source_sha256": "51fb74b6833fbf167fdbf4c0c3041287def15911f0d3dec1777dff723f977d34",
+        "check": {
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "efcd09d85656f8f6d0bdf9d7c3a425657567af0539a1ec12a436a80fa210f792",
+          "stdout": "",
+          "stderr": "docs/reports/remaining-v03/probes/S25_i32_annotation_on_resource.qcore:2:20: Q020: local initializer does not match its explicit type annotation\nfn main() -> i32 { let x: i32 = qcore_acquire(1, true, E); drop x; return 0; }\n                   ^\n"
+        }
+      },
+      "disposition": "Intentional fail-closed annotation enforcement: no nominal type is published by qcore_acquire; refuse invalid explicit annotation before custody analysis."
+    }
+  ],
+  "measurements": {
+    "before": {
+      "source_commit": "119115de866e5b50a4ca0dc478c6223790f75fc2",
+      "binary_sha256": "74b62cf1217946ea7b566bcdbcdd5058801d6e049fc660d21ba3d67321ecd269",
+      "command_template": [
+        "quirin",
+        "check|emit",
+        "FILE"
+      ],
+      "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+      "private_log": "private/resource-boundaries/source-before/measurement.json"
+    },
+    "after": {
+      "source_commit": "c6d05402fe1a96e0c7e54cad61350cd5a0ac3407",
+      "binary_sha256": "050f2fb5ef4422d0b75cf2e4f83e5ce600cccfb229849973bab0ac78c82afcf6",
+      "command_template": [
+        "quirin",
+        "check|emit",
+        "FILE"
+      ],
+      "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+      "private_log": "private/resource-boundaries/source-after/measurement.json"
+    }
+  }
+}

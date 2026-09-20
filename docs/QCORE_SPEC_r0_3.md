@@ -61,6 +61,7 @@ For documentation, this revision names the current boundaries as follows. These 
 |---|---|---|
 | `source.structural` | `parse_source_program`, `elaborate_source` | Broad structural syntax; selected name, usage-grade, and quantitative-index checks. |
 | `source.exec12` | `compile_files`, `quirin check`, `quirin emit` | Flat artificial resource operations, literal returns, and restricted direct calls. |
+| `source.resource-calls.v1` | `compile_files`, `quirin check`, `quirin emit` | Closed acyclic helper calls carrying owned `bytes`, whole-call read/write loans and scalar values; per-call extent, custody and effect checks. No general error recovery, returned loans or separately compiled resource ABI. |
 | `source.tasks.copy.v1` | `compile_files`, `quirin check`, `quirin emit` | Linux C11 threads or the emitted macOS/Windows compatibility subset; finite scalar-copy leaf workers, explicit joins, checked creation/error paths; no resources, loans or shared source memory. |
 | `source.extern-call.v1` | `compile_files` with an explicit `CompileOptions` extern contract selection | A flat sequential entry calling declared extern functions under admitted resource-contract v1 shapes; results are valid only relative to those declarations. No extents, no excluded C04 mode, no concurrent or error-region context. |
 | `source.nonexec` | The same driver with library/contract modes | Entry-free checking of declarations and supported bodies; no standalone C artifact. |
@@ -1108,6 +1109,24 @@ cycles, syntax/execution bounds, and checked arithmetic failure on the closed
 entry, plus a missing `std.io` import or an effect row that excludes derived IO.
 Nonempty source contracts retain Q021 and an empty contract remains admissible.
 No diagnostic code is allocated; existing routes retain their codes.
+
+`SOURCE-ANNOTATION-ENFORCEMENT` extends Q020 to executable local annotation
+compatibility, unsupported explicit local types, malformed local heads before
+`=`, and an owned annotation whose operation publishes no nominal payload.
+The legacy sequential integer literal binding admits an optional matching
+`i32` annotation. `qcore_acquire` establishes custody without a nominal payload
+type, so every explicit result annotation refuses, including `own<T>`.
+Q100 still owns local usage annotations, including those inside error regions.
+
+`RESOURCE-HELPER-FUNCTIONS` extends existing conditions to
+`source.resource-calls.v1`, allocating no code: Q020 owns unsupported helper
+shapes, complete-header/type admission, finite expansion bounds and empty
+source contracts; Q021 retains nonempty unenforced source contracts. Q053 owns
+extent obligations, including acquisition bounds checked before value storage
+allocation; Q054 owns custody/alias refusal; Q056 owns certificate construction
+or recheck failure; Q057 owns undeclared derived effects. These categories are
+carried structurally, never inferred from diagnostic message text. Q100 owns
+unsupported explicit usage grades. Q058 remains owned by the Event pass.
 
 ### L21.1 Reason categories for uncovered obligations
 

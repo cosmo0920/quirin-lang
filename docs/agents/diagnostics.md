@@ -189,3 +189,24 @@ type/arity, required I/O effects, recursion, bounds and closed arithmetic failur
 nonempty contract refusal; no new code or pass is allocated. This is one further
 instance of the namespace rule on the existing Q020/Q021 band (twenty-three
 instances on the carried ten bands, not a fresh re-derivation of earlier entries).
+
+### SOURCE-ANNOTATION-ENFORCEMENT amendment
+
+Q020 also covers executable local annotation compatibility, unsupported
+explicit local types, malformed local heads before `=`, and an owned annotation
+whose operation publishes no nominal payload. Q100 still owns local usage
+annotations. The sequential `qcore_acquire` operation publishes custody but
+no nominal payload type; its explicit annotations refuse, including `own<T>`.
+This is one further namespace instance on the existing Q020/Q021 band
+(twenty-four on the carried ten bands), with no new diagnostic code.
+
+### Resource helper diagnostic amendment
+
+`RESOURCE-HELPER-FUNCTIONS` applies the existing conditions to the new bounded
+helper route: Q020 admission/expansion/empty-contract refusal, Q021 nonempty
+unenforced contracts, Q053 extents, Q054 custody/aliasing, Q056 certificate
+construction/recheck and Q057 declared effects; Q100 retains usage grades.
+Refusal categories are typed, not inferred from English message substrings.
+Q058 remains Event-owned. This adds one condition-extension instance on the
+existing ordinary/buffer bands, no band or code; the preceding historical
+tallies retain their checkpoint scope. Canonical meanings are in §L21.
