@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+    "observed-wait",
+    "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/cycle18-observed-integration/observed-config.json"
+  ],
+  "exit": 0,
+  "source_commit": "7b146cc7ac77678423dc7e98ae83ac7aefd31f54",
+  "binary_sha256": "3b672c79bcbd62476f62e91814f67bbe8d13b92127627464f7feb5249a8c3958",
+  "time": "2026-09-20T10:24:37.566724+00:00",
+  "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-observed-audit.log"
+}

@@ -1,7 +1,7 @@
 # Cycle 18 observed composition integration
 
 Base: `a524f4d95eaafd0dc5e879b070b9cf4c0e1a5e08`.
-Status: implementation in progress, no acceptance promotion.
+Status: bounded observed milestone implemented and validated; no acceptance promotion.
 
 Three GPT-5.6 Sol agents at medium reasoning implement independent composition
 context admission, sealed timed-wait source projection, and identity-bearing
@@ -173,3 +173,97 @@ rerun; that rerun does not change the full attempt's exit 101.
 - Treat `caller_prepared_context_sha256` as identity equality only.
 - Keep unobserved allocation and registration failures `Unknown` and make no
   callback-denominator or Cycle 18 aggregate promotion from this single run.
+
+
+## Final review boundary
+
+The public replay checker now requires the exact thread-configuration,
+observation-trust and linkage-trust assumptions plus a valid manifest digest.
+Its serialized claim is `caller_prepared_artifact_identity_conditional_replay`;
+`caller_prepared_context_sha256` identifies caller-prepared premises. It cannot
+independently authenticate the named build or observer artifacts. The configured
+CLI performs the file loading, hashing, manifest comparisons and post-replay
+snapshot checks. Tests use synthetic artifact digests only as explicit premises
+of the library-level conditional replay.
+
+Report destinations are checked against the configuration, selected artifacts,
+contracts, observations, source inventories and protected profile/source/build
+directories. Exact and symbolic aliases, including dangling symbolic targets,
+refuse; Unix file identities additionally refuse hard links. Three focused
+unit tests cover distinct output, direct/directory aliases and link aliases.
+This prevents configured output from overwriting retained inputs; it is not a
+claim against adversarial concurrent filesystem mutation. Hard-link identity
+checks are Unix-specific.
+
+The [final configured audit](final-observed-audit.json) at corrected semantic
+tip `7b146cc7` exited 0. The six shipped negative controls were rerun against
+that binary and all exited 1 without a report. These are current-code results;
+the earlier attempts remain in private logs.
+
+## Worktree preservation and reconciliation
+
+The [worktree sweep](worktree-sweep.json) removed the three completed, clean,
+merged agent checkouts, preserving 504 private measurement entries in a
+separate archive with before/after SHA-256 checks and old-path links. Build
+caches were disposable. The older `next-wave-candidates-c-sources-18bd37`
+checkout remains because its external Claude and shell sessions were live.
+
+The inclusive-base [reconciliation record](reconciliation.json) accounts for
+26 items, including the preceding close's fifteen items by reference. No
+frozen record is rewritten. The [residual scan](residual-sweep.json) returns
+57 candidates from historical increments and standing rules, with no untracked
+candidate introduced by these four Cycle 18 reports; this is not a claim that
+all historical candidates are discharged. The five new capability follow-ups
+are registered in the acceptance matrix, and none is retired here.
+
+
+## Corpus preservation
+
+The release audit was rebuilt and rerun at corrected semantic tip `7b146cc7`.
+The [run record](corpus-run.json) records exit 0, exact command, environment,
+binary digest and private log directory. [All five artifact hashes](corpus-identity.json)
+match the frozen W42 baseline byte-for-byte. The repository's
+[artifact itemizer](corpus-diff.json) also reports no additions, removals or
+changes, including the contract module inventory and selected declarations;
+raw equality confirms that normalized module names conceal no difference.
+The earlier `b1ad525a` comparison is retained separately as
+[initial run](initial-corpus-run.json) and [initial hashes](initial-corpus-identity.json).
+No hardcoded compatibility route is deleted, and no unit/function/CT or
+callback-coverage result is promoted.
+
+
+## Final standing gate
+
+The [final gate](gate.json) measures corrected semantic tip
+`7b146cc7ac77678423dc7e98ae83ac7aefd31f54`. Later changes are evidence,
+reconciliation, generated matrix and status documentation only.
+[Exact commands, exits, counts and private logs](gate-facts.json) record:
+
+| Check | Result |
+|---|---|
+| `git submodule update --init --recursive` | exit 0 |
+| `cargo test --workspace --no-fail-fast` | 4,957 passed, 0 failed, 11 ignored; 262 summaries; exit 0 |
+| `cargo fmt --all -- --check` | exit 0 |
+| `cargo clippy --all-targets -- -D warnings` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
+| `python3 scripts/check_lean_audits.py --jobs 2` | 156 audits; exit 0 |
+| Five named host-sensitive isolated tests | each exit 0 |
+| Matrix regeneration with this gate | exit 0 |
+| `python3 -m unittest discover -s scripts/tests` | 317 tests; exit 0 |
+
+There are 251 Running targets plus nine doc-test sections; summary counts and
+target counts are distinct. Python ran after derived matrix regeneration;
+[its record](python-tests.json) identifies that run. Final regeneration records
+the measured Python count and completed gate. The [Clang recording](clang-version.txt)
+was made in this measuring checkout, exit 0. The provider count of 122 is carried
+Unix evidence, not remeasured. All final logs remain under
+`private/cycle18-observed-integration/final-gate-20260920/`.
+
+The isolated observer's first sandbox workspace attempt hit LeakSanitizer's
+ptrace limitation (4,834 passed / 106 failed, exit 101); its complete rerun
+outside ptrace passed 4,940 / 0 / 10. The admission card's separately disclosed
+fork/Broken pipe failure and projection card's cancelled obsolete runs retain
+their original status. Neither an isolated retry nor this final green gate
+rewrites those attempts. No published merge figure substitutes an isolated
+card's gate for the combined result.

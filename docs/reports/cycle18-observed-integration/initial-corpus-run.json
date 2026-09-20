@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/target/release/examples/cycle19_fluent_bit_libraries_audit",
+    "--pinned-evidence",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/corpus-final/monkey-source.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/corpus-final/resource-diagnostics.json"
+  ],
+  "source_commit": "b1ad525ad95f08bfbbc4dab50b0483b9da9bcafa",
+  "binary_sha256": "8d9a62d1d2e5379165b7c6c4cb4b461524a96c9f41017a7da0de71c16d445c8f",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_SOURCE_CONTRACTS": "unset"
+  },
+  "start": "2026-09-20T09:57:43.967641+00:00",
+  "exit": 0,
+  "end": "2026-09-20T10:04:05.774897+00:00"
+}

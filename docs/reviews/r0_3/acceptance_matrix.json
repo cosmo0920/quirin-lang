@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 279
+  "named_followups": 284
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6725,11 +6725,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "RESOURCE-BOUNDARIES-INTEGRATION measured semantic tip c6d05402fe1a96e0c7e54cad61350cd5a0ac3407 after helper merge dd8515e9 and reviewed metadata/early-extent follow-ups. Submodules first, exit 0. Full cargo test --workspace --no-fail-fast outside the restrictive sandbox with CARGO_BUILD_JOBS=2 and RUST_TEST_THREADS=4: 4932 passed, 0 failed, 10 ignored, 257 strict summaries, 246 Running targets plus 9 doc-test sections, exit 0. fmt, all-target clippy -D warnings, both probes and 153 Lean audits (--jobs 2) exit 0. Five named host-sensitive isolated tests also exit 0. Python is run after this matrix regeneration and recorded alongside. Actual Clang recording comes from this combined run, not the isolated card. Provider 122 is carried Unix evidence, not rerun; providers and schemas are unchanged. An earlier extra helper-target run inside the sandbox had 11 pass/1 LeakSanitizer ptrace failure, exit 101; the full native target here passes 12/12. Private logs: private/resource-boundaries/combined-gate-1/. All five pinned corpus artifacts are byte-identical, and CT/full-conformance claims are unchanged.",
-  "workspace_tests": 4932,
+  "note": "CYCLE18-OBSERVED-INTEGRATION measured corrected semantic tip 7b146cc7ac77678423dc7e98ae83ac7aefd31f54. Full cargo test --workspace --no-fail-fast outside ptrace restrictions, CARGO_BUILD_JOBS=2 RUST_TEST_THREADS=4: 4957 passed / 0 failed / 11 ignored, 262 summaries, 251 Running targets plus 9 doc-test sections, exit 0. Submodule init, fmt, all-target clippy -D warnings, both probes, 156 Lean audits (--jobs 2) and five isolated host-sensitive tests exit 0. Clang recorded in this measuring checkout. Python after matrix regeneration: 317 tests, exit 0. Provider 122 is carried Unix evidence, not rerun; provider code and schema are unchanged. Prior root gate before source/public/output corrections is separate; isolated admission host-sensitive exit101 and observer sandbox LSan failures remain disclosed, not converted into passes. Logs: private/cycle18-observed-integration/final-gate-20260920/. One conditional observed timed-wait replay, no Safe or callback-coverage promotion; five followups added, none retired.",
+  "workspace_tests": 4957,
   "provider_tests": 122,
   "python_evidence_validator_tests": 317,
-  "lean_audits": 153,
+  "lean_audits": 156,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6792,6 +6792,7 @@
    "AuditEpochAccounting.lean",
    "AuditEpochSourceLowering.lean",
    "AuditErrorPayload.lean",
+   "AuditEventCompositionContext.lean",
    "AuditExternCall.lean",
    "AuditFixedScalarQuery.lean",
    "AuditFrameHelperTask.lean",
@@ -6808,6 +6809,7 @@
    "AuditMayAlias.lean",
    "AuditMemberAddress.lean",
    "AuditMemberAddressReader.lean",
+   "AuditMonkeyWaitProjection.lean",
    "AuditMutexInvariant.lean",
    "AuditMutexShareCross.lean",
    "AuditMutexShareCrossArms.lean",
@@ -6822,6 +6824,7 @@
    "AuditNeutralPrefixPreservation.lean",
    "AuditO05.lean",
    "AuditObsReordering.lean",
+   "AuditObservedWaitComposition.lean",
    "AuditOsEndpointPostState.lean",
    "AuditOwnedFieldCopyReach.lean",
    "AuditPackageIdentity.lean",
@@ -6891,7 +6894,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/docs/reports/resource-boundaries-integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cycle18-observed-integration/gate.json)"
  },
  "named_followups": [
   {

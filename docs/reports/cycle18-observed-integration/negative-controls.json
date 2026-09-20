@@ -4,77 +4,71 @@
     "command": [
       "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
       "observed-wait",
-      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/negative-controls/callback-generation/config.json"
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-negative-controls/callback-generation/config.json"
     ],
     "exit": 1,
-    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/negative-controls/callback-generation/audit.log",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-negative-controls/callback-generation/audit.log",
     "log_sha256": "8a0d00fd285d1e21a46e2b6fded7b36a4e81bb95536ad01a7256d2068fe35865",
-    "report_created": false,
-    "archived_log": "negative-controls/callback-generation.log"
+    "report_created": false
   },
   {
     "control": "missing-record",
     "command": [
       "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
       "observed-wait",
-      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/negative-controls/missing-record/config.json"
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-negative-controls/missing-record/config.json"
     ],
     "exit": 1,
-    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/negative-controls/missing-record/audit.log",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-negative-controls/missing-record/audit.log",
     "log_sha256": "fb42b162f285c840544996e5df1bf29ce9f6179c79d73a8d6e50b4139df336f0",
-    "report_created": false,
-    "archived_log": "negative-controls/missing-record.log"
+    "report_created": false
   },
   {
     "control": "invented-synchronization",
     "command": [
       "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
       "observed-wait",
-      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/negative-controls/invented-synchronization/config.json"
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-negative-controls/invented-synchronization/config.json"
     ],
     "exit": 1,
-    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/negative-controls/invented-synchronization/audit.log",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-negative-controls/invented-synchronization/audit.log",
     "log_sha256": "91ead3d373fb5216ae6e169b89b8a360da357d32c235e0b83c92c425b2a2fc8e",
-    "report_created": false,
-    "archived_log": "negative-controls/invented-synchronization.log"
+    "report_created": false
   },
   {
     "control": "unsupported-backend",
     "command": [
       "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
       "observed-wait",
-      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/negative-controls/unsupported-backend/config.json"
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-negative-controls/unsupported-backend/config.json"
     ],
     "exit": 1,
-    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/negative-controls/unsupported-backend/audit.log",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-negative-controls/unsupported-backend/audit.log",
     "log_sha256": "17fd6e7b0610fcf79d733375d9acdde2cca15cd3a45a0d6560609575f32e63fd",
-    "report_created": false,
-    "archived_log": "negative-controls/unsupported-backend.log"
+    "report_created": false
   },
   {
     "control": "owned-callback-contract",
     "command": [
       "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
       "observed-wait",
-      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/negative-controls/owned-callback-contract/config.json"
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-negative-controls/owned-callback-contract/config.json"
     ],
     "exit": 1,
-    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/negative-controls/owned-callback-contract/audit.log",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-negative-controls/owned-callback-contract/audit.log",
     "log_sha256": "109615f72e0dc16efd2ecf2110eb8e14a2b21523ea94a0bb10972fb074dedb74",
-    "report_created": false,
-    "archived_log": "negative-controls/owned-callback-contract.log"
+    "report_created": false
   },
   {
     "control": "artifact-substitution",
     "command": [
       "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
       "observed-wait",
-      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/negative-controls/artifact-substitution/config.json"
+      "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-negative-controls/artifact-substitution/config.json"
     ],
     "exit": 1,
-    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/negative-controls/artifact-substitution/audit.log",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-negative-controls/artifact-substitution/audit.log",
     "log_sha256": "3695394a07d91803eb8c0e8e651430d901186a7dda7f6280fe88b0d6b11e6f86",
-    "report_created": false,
-    "archived_log": "negative-controls/artifact-substitution.log"
+    "report_created": false
   }
 ]

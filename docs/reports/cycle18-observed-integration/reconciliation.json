@@ -1,0 +1,167 @@
+{
+  "card": "CYCLE18-OBSERVED-INTEGRATION",
+  "verify_applied": true,
+  "cards": [
+    "certificate-context-binding",
+    "cycle18-composition-admission",
+    "cycle18-identity-observer",
+    "cycle18-observed-integration",
+    "cycle18-wait-source-projection",
+    "resource-boundaries-integration",
+    "resource-helper-functions",
+    "source-annotation-enforcement"
+  ],
+  "note": "Inclusive base sweep deliberately includes the preceding resource-boundary close. Its fifteen dispositions are retained by reference; current status and matrix measurements supersede that close without editing its frozen record.",
+  "verdicts": {
+    "certificate-context-binding#integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "certificate-context-binding#integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "certificate-context-binding#integrator-reconciliation-list#3": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "certificate-context-binding#integrator-reconciliation-list#4": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "cycle18-composition-admission#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Implemented and verified at the named current source; scope and trust limits remain explicit.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/observed_wait.rs",
+          "contains": "load_wait_source("
+        }
+      ]
+    },
+    "cycle18-composition-admission#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Implemented and verified at the named current source; scope and trust limits remain explicit.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/observed_wait.rs",
+          "contains": "check_observed_wait_composition(&projection, &admitted, &observations, &bindings)?"
+        }
+      ]
+    },
+    "cycle18-composition-admission#integrator-reconciliation-list#3": {
+      "verdict": "noted",
+      "note": "Producer runtime/linkage trust remains a premise, explicitly retained in the public replay claim and integration report; no attestation claim is made."
+    },
+    "cycle18-composition-admission#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Implemented and verified at the named current source; scope and trust limits remain explicit.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown"
+        }
+      ]
+    },
+    "cycle18-composition-admission#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "Implemented and verified at the named current source; scope and trust limits remain explicit.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "AuditEventCompositionContext.lean"
+        }
+      ]
+    },
+    "cycle18-composition-admission#integrator-reconciliation-list#6": {
+      "verdict": "noted",
+      "note": "Describes the isolated card. Root updates current status and gate, while callback and corpus counts remain unchanged."
+    },
+    "cycle18-observed-integration#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Implemented and verified at the named current source; scope and trust limits remain explicit.",
+      "verify": [
+        {
+          "file": "crates/qcore-audit/src/observed_wait.rs",
+          "contains": "input changed during audit:"
+        }
+      ]
+    },
+    "cycle18-observed-integration#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Implemented and verified at the named current source; scope and trust limits remain explicit.",
+      "verify": [
+        {
+          "file": "crates/qcore-verification/src/observed_wait_composition.rs",
+          "contains": "caller_prepared_artifact_identity_conditional_replay"
+        }
+      ]
+    },
+    "cycle18-observed-integration#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Implemented and verified at the named current source; scope and trust limits remain explicit.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "CYCLE18-TIMED-WAIT-FAILURE-PATHS"
+        }
+      ]
+    },
+    "cycle18-wait-source-projection#integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "The isolated card reuses existing contract bytes and leaves pinned corpus counts intact. Root owns the new conditional replay and five tracked follow-ups; no coverage promotion."
+    },
+    "cycle18-wait-source-projection#integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "Cancelled isolated runs are disclosed in the card gate. The final corrected-code combined run is recorded in this integration gate; no partial run is reported as complete."
+    },
+    "resource-helper-functions#integrator-reconciliation#1": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "resource-helper-functions#integrator-reconciliation#2": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "resource-helper-functions#integrator-reconciliation#3": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "resource-helper-functions#integrator-reconciliation#4": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "resource-helper-functions#integrator-reconciliation#5": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "resource-helper-functions#integrator-reconciliation#6": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "resource-helper-functions#integrator-reconciliation#7": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "source-annotation-enforcement#integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "source-annotation-enforcement#integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "source-annotation-enforcement#integrator-reconciliation-list#3": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    },
+    "source-annotation-enforcement#integrator-reconciliation-list#4": {
+      "verdict": "noted",
+      "note": "Base-inclusive item already reconciled at resource-boundaries-integration/reconciliation.json under this same item id. That frozen close owns its figures; this integration preserves its code and exclusions and supersedes only current measurements."
+    }
+  },
+  "no_section": {
+    "cycle18-identity-observer": "The observer report contains no recognized addressed section. Its explicit source API join, trust limits, exact eleven-record boundary and host conditions are consumed and retained in the integration report; final independent card gate is preserved.",
+    "resource-boundaries-integration": "Base close itself; its constituent reconciliation list and fifteen dispositions are referenced above without modifying historical evidence."
+  }
+}

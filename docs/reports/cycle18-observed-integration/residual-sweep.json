@@ -1,0 +1,472 @@
+[
+  {
+    "name": "BASE-TYPE-READER-UNMEASURED",
+    "sources": [
+      "docs/development/increments/wave-36.md",
+      "docs/development/increments/wave-37.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CHECKPOINT-PAGE-SPLIT",
+    "sources": [
+      "docs/development/increments/wave-40.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "COMPOSED-VIEW-WINDOW-INERT",
+    "sources": [
+      "docs/agents/buffers-records.md (standing constraints)",
+      "docs/development/increments/wave-40.md",
+      "docs/development/increments/wave-41.md"
+    ],
+    "mentioned_in": [
+      "docs/agents/buffers-records.md"
+    ]
+  },
+  {
+    "name": "CONSTANT-DO-WHILE-JOINED-PROVENANCE-REACH",
+    "sources": [
+      "docs/agents/gateway.md (standing constraints)",
+      "docs/development/increments/wave-35.md",
+      "docs/development/increments/wave-37.md"
+    ],
+    "mentioned_in": [
+      "docs/agents/gateway.md"
+    ]
+  },
+  {
+    "name": "CT-COMPOSED-NATIVE-ROWS",
+    "sources": [
+      "docs/development/increments/wave-32.md",
+      "docs/development/increments/wave-40.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT-INTEGRATION-REBASE",
+    "sources": [
+      "docs/development/increments/wave-41.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT-NATIVE-CREDIT",
+    "sources": [
+      "docs/development/increments/wave-40.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT-PROOF-LEG-2",
+    "sources": [
+      "docs/development/increments/wave-30.md",
+      "docs/development/increments/wave-31.md",
+      "docs/development/increments/wave-32.md",
+      "docs/development/increments/wave-37.md",
+      "docs/development/increments/wave-40-compaction-checkpoints.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT-WIRE-LANE-2",
+    "sources": [
+      "docs/development/increments/wave-28.md",
+      "docs/development/increments/wave-37.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT-WIRE-LANE-3",
+    "sources": [
+      "docs/development/increments/wave-31.md",
+      "docs/development/increments/wave-32.md",
+      "docs/development/increments/wave-37.md",
+      "docs/development/increments/wave-40-compaction-checkpoints.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT01-PROOF-LEG",
+    "sources": [
+      "docs/development/increments/wave-29.md",
+      "docs/development/increments/wave-37.md",
+      "docs/development/increments/wave-40-compaction-checkpoints.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT07-TWO-THREAD-REMAP",
+    "sources": [
+      "docs/development/increments/wave-36.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT10-BYTE-ENCODING-UNSOUND",
+    "sources": [
+      "docs/development/increments/wave-37.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT10-SOURCE-LAYOUT",
+    "sources": [
+      "docs/agents/diagnostics.md (standing constraints)"
+    ],
+    "mentioned_in": [
+      "docs/agents/diagnostics.md"
+    ]
+  },
+  {
+    "name": "CT22-CT-MAPPING",
+    "sources": [
+      "docs/development/increments/wave-28.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT22-WIRE",
+    "sources": [
+      "docs/development/increments/wave-29.md",
+      "docs/development/increments/wave-32.md",
+      "docs/development/increments/wave-37.md",
+      "docs/development/increments/wave-40-compaction-checkpoints.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT24-CLEANUP-PREEMPTED",
+    "sources": [
+      "docs/agents/diagnostics.md (standing constraints)",
+      "docs/development/increments/wave-30.md",
+      "docs/development/increments/wave-40-compaction-checkpoints.md"
+    ],
+    "mentioned_in": [
+      "docs/agents/diagnostics.md"
+    ]
+  },
+  {
+    "name": "CT24-CLEANUP-TASK-COMPOSITION",
+    "sources": [
+      "docs/agents/diagnostics.md (standing constraints)"
+    ],
+    "mentioned_in": [
+      "docs/agents/diagnostics.md"
+    ]
+  },
+  {
+    "name": "CT41-PUBLICATION-MAPPING",
+    "sources": [
+      "docs/development/increments/wave-41.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT42-CELL-DERIVED-PREMISE",
+    "sources": [
+      "docs/agents/io.md (standing constraints)",
+      "docs/development/increments/wave-31.md",
+      "docs/development/increments/wave-39.md"
+    ],
+    "mentioned_in": [
+      "docs/agents/io.md"
+    ]
+  },
+  {
+    "name": "CT42-CELL-UDP-QUEUE",
+    "sources": [
+      "docs/agents/io.md (standing constraints)",
+      "docs/development/increments/wave-31.md",
+      "docs/development/increments/wave-39.md"
+    ],
+    "mentioned_in": [
+      "docs/agents/io.md"
+    ]
+  },
+  {
+    "name": "CT42-MAP",
+    "sources": [
+      "docs/development/increments/wave-39.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "CT46-SENDSYNC",
+    "sources": [
+      "docs/development/increments/wave-29.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "DOCS-COMPACT-5-EXAMPLES-HOST-GATE",
+    "sources": [
+      "docs/development/increments/wave-32.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "DOCS-COMPACT-5-MIGRATED-SECTION-CLAUSE",
+    "sources": [
+      "docs/development/increments/wave-32.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "DOCS-COMPACT-9",
+    "sources": [
+      "docs/development/increments/wave-40.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "DOCS-STRUCTURE-COMPRESSION",
+    "sources": [
+      "docs/development/increments/wave-40.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "EVENT-V1-WINDOWS-AFUNIX",
+    "sources": [
+      "docs/development/increments/wave-23.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "JOINED-PROVENANCE-DECLINE-INDISTINGUISHABLE",
+    "sources": [
+      "docs/development/increments/wave-37.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "JOINED-PROVENANCE-FACTS-NAME-NOTHING",
+    "sources": [
+      "docs/development/increments/wave-35.md",
+      "docs/development/increments/wave-36.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "JOINED-PROVENANCE-FIXED-POINT-BOUND-UNMEASURED",
+    "sources": [
+      "docs/development/increments/wave-37.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "LEAN-AUDIT-GATE-KEY-OPTIONAL",
+    "sources": [
+      "docs/development/increments/wave-38.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "LOOPWINDOWS-ADMITTED-SHAPES-TAUTOLOGY",
+    "sources": [
+      "docs/development/increments/wave-41.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "MAIN-GUARD-UNACTIVATED",
+    "sources": [
+      "docs/development/increments/wave-36.md",
+      "docs/development/increments/wave-37.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "OWNED-FIELD-BOUNDARIES-ARE-ABSENCE",
+    "sources": [
+      "docs/development/increments/wave-40.md",
+      "docs/development/increments/wave-41.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "OWNED-FIELD-WINDOWS-RUN",
+    "sources": [
+      "docs/development/increments/wave-40-compaction-checkpoints.md",
+      "docs/development/platform-evidence.md (standing constraints)"
+    ],
+    "mentioned_in": [
+      "docs/development/platform-evidence.md"
+    ]
+  },
+  {
+    "name": "OWNERSHIP-COPY-OP-UNPRODUCED",
+    "sources": [
+      "docs/development/increments/wave-40.md",
+      "docs/development/increments/wave-41.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "QUIRIN-REVIEW-INTEGRATION",
+    "sources": [
+      "docs/development/increments/wave-41-continuation.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED",
+    "sources": [
+      "docs/agents/operations.md (standing constraints)",
+      "docs/development/increments/wave-36.md",
+      "docs/development/increments/wave-37.md"
+    ],
+    "mentioned_in": [
+      "docs/agents/operations.md"
+    ]
+  },
+  {
+    "name": "RED-AS-REQUIRED",
+    "sources": [
+      "docs/development/increments/wave-39.md",
+      "docs/development/increments/wave-41.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "REGION-JOINS-DUTIES",
+    "sources": [
+      "docs/agents/diagnostics.md (standing constraints)",
+      "docs/agents/effects.md (standing constraints)",
+      "docs/development/increments/wave-28.md",
+      "docs/development/increments/wave-29.md",
+      "docs/development/increments/wave-30.md",
+      "docs/development/increments/wave-40-compaction-checkpoints.md"
+    ],
+    "mentioned_in": [
+      "docs/agents/diagnostics.md",
+      "docs/agents/effects.md"
+    ]
+  },
+  {
+    "name": "RESOURCE-HELPER-FUNCTIONS",
+    "sources": [
+      "docs/agents/diagnostics.md (standing constraints)"
+    ],
+    "mentioned_in": [
+      "docs/agents/diagnostics.md",
+      "docs/agents/source-routes.md"
+    ]
+  },
+  {
+    "name": "SOURCE-SCALAR-CALLS-V1",
+    "sources": [
+      "docs/development/increments/wave-41.md"
+    ],
+    "mentioned_in": [
+      "docs/agents/diagnostics.md",
+      "docs/agents/source-routes.md"
+    ]
+  },
+  {
+    "name": "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS",
+    "sources": [
+      "docs/development/increments/wave-37.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "SWEEP-RESIDUALS-SCANS-REPORTS-ONLY",
+    "sources": [
+      "docs/development/increments/wave-35.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "TASK-ROUTE-TSAN-SEGV-PRIORITY",
+    "sources": [
+      "docs/development/increments/wave-37.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "TSAN-SUBJECTS-ARE-TWINS-NOT-FIXTURES",
+    "sources": [
+      "docs/development/increments/wave-39.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "VERIFIER-HOST-ROW-DISPOSITION",
+    "sources": [
+      "docs/development/increments/wave-35.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "W29-CORPUS-CONTRACTS",
+    "sources": [
+      "docs/development/increments/wave-29.md",
+      "docs/development/increments/wave-40-compaction-checkpoints.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "W32-SWEEP-MATRIX-EDIT-LOST-AT-MERGE",
+    "sources": [
+      "docs/development/increments/wave-35.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "W36-W37-MUTATION-HARNESSES-UNSHIPPED",
+    "sources": [
+      "docs/agents/operations.md (standing constraints)",
+      "docs/development/increments/wave-40-compaction-checkpoints.md",
+      "docs/development/increments/wave-40.md"
+    ],
+    "mentioned_in": [
+      "docs/agents/operations.md"
+    ]
+  },
+  {
+    "name": "W4-RECSUM-ALREADY-LANDED",
+    "sources": [
+      "docs/development/increments/wave-30.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "W4-RECSUM-CONSTRAINT-4",
+    "sources": [
+      "docs/development/increments/wave-30.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "W4-RECURSIVE-SUMMARIES",
+    "sources": [
+      "docs/development/increments/wave-30.md",
+      "docs/development/increments/wave-40-compaction-checkpoints.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "WAVE-34-CLOSE-UNSWEPT",
+    "sources": [
+      "docs/development/increments/wave-35.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "WAVE-38-CLOSE",
+    "sources": [
+      "docs/development/increments/wave-38.md"
+    ],
+    "mentioned_in": []
+  },
+  {
+    "name": "WLT-EXERCISE-TSAN-TEST-SILENT-ARMS",
+    "sources": [
+      "docs/development/increments/wave-39.md"
+    ],
+    "mentioned_in": []
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "exit": 0,
+  "tests": 317,
+  "log": "/home/cosmo/Documents/GitHub/qcore-c/private/cycle18-observed-integration/final-gate-20260920/python-tests.log",
+  "source_commit": "7b146cc7ac77678423dc7e98ae83ac7aefd31f54",
+  "note": "Run after generated audit inventory/followup counts; subsequent matrix generation only records measured Python count and completed gate."
+}

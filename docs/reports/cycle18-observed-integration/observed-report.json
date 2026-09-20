@@ -1,8 +1,9 @@
 {
   "composition": {
+    "caller_prepared_context_sha256": "d323055a2a465ba31cb21b31a0585f6d8259ad6409279c5775b869f88e787f4d",
     "checked_operations": 11,
     "checked_records": 11,
-    "context_sha256": "7586762906335544d0d6a7d9f7c9f0774e5bae40a024c4111a47ca695c2e4d4a",
+    "claim": "caller_prepared_artifact_identity_conditional_replay",
     "identity_mapping": {
       "argument": [
         134961357128768,
@@ -77,7 +78,7 @@
     "monkey_build_sha256": "a68a573c2252cb39e022634c23001307376a77057ee2e10dbc96494a7e5a89c2",
     "monkey_profile_sha256": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
     "monkey_source_sha256": "ec4206f18c9e74b570ebf3f8958b6cfcb054315f97abcf9c9bdd83efb7a62855",
-    "observation_rules_sha256": "18a5a541dd0ba35bf84df0de115e443e59d354f504a888aeed8c8b005b9a44ca",
+    "observation_rules_sha256": "d0bbdad4a6c8f8b6c727bbbfdb97ca4592c0b155777bd00abb3fb5d3a222f6f7",
     "observation_trust": "producer_supplied_runtime_evidence",
     "observations_sha256": "c5d141e1a62a776581c7794f2ed468221938763159b802c17605323831515a05",
     "observer_binary_sha256": "1a23bf4c119b4315fd00a6031b4ce6db89b18642deccd1e8bb46a2ca86201dbd",

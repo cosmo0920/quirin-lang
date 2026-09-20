@@ -1,0 +1,13 @@
+{
+  "note": "CYCLE18-OBSERVED-INTEGRATION measured corrected semantic tip 7b146cc7ac77678423dc7e98ae83ac7aefd31f54. Full cargo test --workspace --no-fail-fast outside ptrace restrictions, CARGO_BUILD_JOBS=2 RUST_TEST_THREADS=4: 4957 passed / 0 failed / 11 ignored, 262 summaries, 251 Running targets plus 9 doc-test sections, exit 0. Submodule init, fmt, all-target clippy -D warnings, both probes, 156 Lean audits (--jobs 2) and five isolated host-sensitive tests exit 0. Clang recorded in this measuring checkout. Python after matrix regeneration: 317 tests, exit 0. Provider 122 is carried Unix evidence, not rerun; provider code and schema are unchanged. Prior root gate before source/public/output corrections is separate; isolated admission host-sensitive exit101 and observer sandbox LSan failures remain disclosed, not converted into passes. Logs: private/cycle18-observed-integration/final-gate-20260920/. One conditional observed timed-wait replay, no Safe or callback-coverage promotion; five followups added, none retired.",
+  "workspace_tests": 4957,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 317,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 156,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

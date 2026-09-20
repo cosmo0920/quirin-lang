@@ -19,8 +19,9 @@ numbers from those sources, not from an older summary. History belongs in the
 | Unit reasons | **136 unsupported-syntax / 1 incomplete-obligation-coverage / 48 without a reason code** | [Combined attribution](reports/w42-priority-integration/attribution.json) |
 | Raw source coverage | **4,921 definitions / 4,834 projected / 87 pinned-build exclusions**, across **24 full-path units** | [Verified census](reports/w42-unprojected-definitions/README.md); combined inventory unchanged |
 | Monkey callback accounting | **3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown**; 8 source paths | [Callback report](reports/w42-monkey-callback-coverage/README.md); ordinary audit checks 0/8 native paths, optional focused replay 8/8 |
+| Observed Monkey timed wait | **1 instrumented Linux epoll success run**, 11 identity records and 11 model operations; conditional replay, no coverage promotion | [Observed integration](reports/cycle18-observed-integration/README.md) |
 | Contract corpus | **88** modules; **59** resource-v1 declarations; **33** manifest-selected | `contract/qcore/`, [selection](../contract/cycle19-resource-contracts.json) and pinned tests |
-| Registered follow-ups | **279** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **284** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -63,21 +64,22 @@ separately.
 
 ## Latest validated gate
 
-The [resource-boundary integration gate](reports/resource-boundaries-integration/gate.json)
-records **4,932 Rust passed, 0 failed, 10 ignored; 257 result summaries over
-255 targets; 153 Lean audits; 317 Python tests**, clean fmt/clippy and both
+The [observed-composition integration gate](reports/cycle18-observed-integration/gate.json)
+records **4,957 Rust passed, 0 failed, 11 ignored; 262 result summaries over
+260 targets; 156 Lean audits; 317 Python tests**, clean fmt/clippy and both
 probes exit 0. Five named host-sensitive rows also passed separately in
 isolation. Clang 21.1.8 was recorded in the measuring checkout. **122 provider
 tests are carried Unix evidence, not remeasured.** [Run identities and private
-logs](reports/resource-boundaries-integration/README.md#final-standing-gate)
-disclose all commands and exits, including the earlier sandbox-only sanitizer
-failure and isolated-card attempts.
+logs](reports/cycle18-observed-integration/README.md#final-standing-gate)
+disclose commands, exits and the separate earlier/isolated attempts.
 
-Bounded direct resource helper calls, executable local annotation enforcement
-and independent certificate compilation/trust-context binding are integrated.
-All five pinned corpus artifacts remain byte-identical. The fixed 555-source
-comparison changes only three deliberately refused annotation fixtures;
-C projection, CT and full-conformance measurements are unchanged.
+The observed timed-wait route consumes existing QCore wrapper/callback
+contracts, exact pinned C summaries and an identity-bearing native trace.
+Its public result is conditional on independently prepared artifact identities
+and producer runtime/linkage evidence; it is not attestation or all-path Safe.
+All five pinned corpus artifacts remain byte-identical. Five narrower Cycle 18
+follow-ups are registered, none retired; callback, CT and full-conformance
+measurements remain unchanged.
 
 The ignored F02 Windows pin-agreement test is red by design on `--ignored`;
 Linux green does not repair it. Host/load-sensitive tests and their reporting
