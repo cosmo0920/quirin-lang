@@ -5,13 +5,13 @@
       "card": "resource-helper-functions",
       "finding": "Initial helper signatures used task-route Buffer for std.buffer byte storage, conflating distinct resource models.",
       "resolution": "Use own<bytes>/borrow<bytes>/lend<bytes>; refuse task Buffer on the helper route and test the distinction.",
-      "status": "plan corrected; implementation pending"
+      "status": "implemented at f140f171; final validation pending"
     },
     {
       "card": "resource-helper-functions",
       "finding": "A closed entry observation alone cannot justify helpers for arbitrary resource arguments.",
       "resolution": "Derive per-helper extent obligations and check every instantiated call; explicitly refuse uncalled helpers in this bounded closed profile and retain effect/custody checks.",
-      "status": "accepted plan; implementation pending"
+      "status": "implemented at f140f171; final validation pending"
     },
     {
       "card": "source-annotation-enforcement",
@@ -29,19 +29,37 @@
       "card": "resource-helper-functions",
       "finding": "Core checkpoint does not propagate scalar returns during expansion and DFS visitation can undercount a reverse-ordered call chain.",
       "resolution": "Propagate scalar call results and enforce actual call depth independently of DFS visitation order.",
-      "status": "requested"
+      "status": "implemented at f140f171; final validation pending"
     },
     {
       "card": "resource-helper-functions",
       "finding": "Allocation failure checks confined to local owned bindings can miss ownership retained in a caller across an allocating helper.",
       "resolution": "Reject transitive allocating calls with surviving caller custody unless generated cleanup covers the failure exit.",
-      "status": "requested"
+      "status": "implemented at f140f171; final validation pending"
     },
     {
       "card": "source-annotation-enforcement",
       "finding": "Initial matching-i32 test used the existing scalar route rather than the modified legacy annotation arm.",
       "resolution": "Drive legacy route with acquisition/drop and pin its profile and inferred-twin emitted/reference behavior.",
       "status": "implemented at b0774443; 7 focused tests passed"
+    },
+    {
+      "card": "resource-helper-functions",
+      "finding": "A native zero exit on output-free unit programs cannot detect wrong helper result data.",
+      "resolution": "Add a native observable-value check for generated helper bytes/scalar returns, alongside structural emission checks and model evidence.",
+      "status": "implemented at f140f171; final validation pending"
+    },
+    {
+      "card": "resource-helper-functions",
+      "finding": "Parameter lowering conflated omitted usage with unsupported explicit grades, and calls could resolve a global helper shadowed by a local/parameter.",
+      "resolution": "Retain usage presence and refuse unsupported explicit grades; refuse shadowed direct calls. Whitespace-normalized resource type selection and header-only effect parsing also preserve source meaning.",
+      "status": "implemented at f140f171; focused compiler 10/10 and core 11/11 passed"
+    },
+    {
+      "card": "certificate-context-binding",
+      "finding": "New binding failures initially aborted a whole audit; a first Unknown downgrade retained partial function-level Safe statuses despite rejected compilation/trust context.",
+      "resolution": "Preserve the selected denominator as Unknown without retaining Safe function claims; exercise serialized report and per-unit counts.",
+      "status": "requested"
     }
   ]
 }
