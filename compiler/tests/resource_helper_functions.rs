@@ -112,12 +112,14 @@ fn indirect_mutation_requires_the_callers_explicit_effect_row() {
         "fn main() -> unit effects { alloc }",
     );
     assert!(refusal(&source).contains("derived helper effects"));
+    assert!(refusal_codes(&source).iter().any(|code| code == "Q057"));
 }
 
 #[test]
 fn call_site_extent_obligation_is_checked() {
     let source = ROUND_TRIP.replace("value[0] = byte", "value[1] = byte");
     assert!(refusal(&source).contains("requires extent 2"));
+    assert!(refusal_codes(&source).iter().any(|code| code == "Q053"));
 }
 
 #[test]
@@ -127,6 +129,7 @@ fn moved_caller_name_is_stale() {
         "let output = process(move input);\n    drop input;",
     );
     assert!(refusal(&source).contains("drop after owned move"));
+    assert!(refusal_codes(&source).iter().any(|code| code == "Q054"));
 }
 
 #[test]

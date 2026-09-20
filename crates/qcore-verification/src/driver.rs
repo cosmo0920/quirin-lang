@@ -5470,6 +5470,39 @@ fn compile_std_io_source(
     })
 }
 
+/// Attribute the helper graph's refusal to the existing pass that owns the
+/// condition. The resource-call profile allocates no diagnostic namespace:
+/// ordinary signature/graph conditions stay at Q020, extent arithmetic at
+/// Q053, inherited custody at Q054, certificate construction at Q056, and
+/// transitive effect rows at Q057.
+fn resource_call_refusal_attribution(message: &str) -> (&'static str, SemanticPass) {
+    if message.contains("expanded") || message.contains("certificate") {
+        ("Q056", SemanticPass::StandardBuffer)
+    } else if message.contains("extent") {
+        ("Q053", SemanticPass::StandardBuffer)
+    } else if message.contains("effect") {
+        ("Q057", SemanticPass::StandardBuffer)
+    } else if [
+        "owned",
+        "owner",
+        "borrow",
+        "lend",
+        "drop",
+        "move",
+        "live resource",
+        "allocation failure",
+        "custody",
+        "binding already exists",
+    ]
+    .iter()
+    .any(|needle| message.contains(needle))
+    {
+        ("Q054", SemanticPass::StandardBuffer)
+    } else {
+        ("Q020", SemanticPass::OrdinaryTypes)
+    }
+}
+
 /// Compile one closed `source.resource-calls.v1` module.
 fn compile_resource_call_source(
     parsed: &SourceProgram,
@@ -5500,9 +5533,10 @@ fn compile_resource_call_source(
             .copied()
             .or_else(|| lowered.function_spans.get(error.function).copied())
             .unwrap_or(Span { start: 0, end: 0 });
+        let (code, pass) = resource_call_refusal_attribution(&error.message);
         vec![map_raw_diagnostic(
-            "Q054",
-            SemanticPass::StandardBuffer,
+            code,
+            pass,
             span,
             format!("source.resource-calls.v1: {}", error.message),
             ranges,
