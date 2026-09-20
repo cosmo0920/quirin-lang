@@ -21,6 +21,12 @@ structure SelectedSource where
   operations : List SourceOperation
   deriving DecidableEq, Repr
 
+inductive SourceArtifactIdentity where
+  | fixture
+  | production
+  | other (digest : String)
+  deriving DecidableEq, Repr
+
 inductive RequiredObservation where
   | baseCreateSuccess
   | eventCreateTimeoutNoDescriptorWithPriority
@@ -94,16 +100,21 @@ structure SourceProjection where
   obligations : List RequiredObservation
   deriving DecidableEq, Repr
 
-def project (source : List SelectedSource) (contracts : List ContractFact) : Option SourceProjection :=
-  if source = requiredSource ∧ contracts = requiredContracts then
+def approvedIdentity : SourceArtifactIdentity → Bool
+  | .fixture | .production => true
+  | .other _ => false
+
+def project (source : List SelectedSource) (contracts : List ContractFact)
+    (identity : SourceArtifactIdentity) : Option SourceProjection :=
+  if source = requiredSource ∧ contracts = requiredContracts ∧ approvedIdentity identity then
     some ⟨source, contracts, requiredObservations⟩
   else
     none
 
 theorem accepted_projection_has_exact_source
     {source : List SelectedSource} {projection : SourceProjection}
-    {contracts : List ContractFact}
-    (accepted : project source contracts = some projection) :
+    {contracts : List ContractFact} {identity : SourceArtifactIdentity}
+    (accepted : project source contracts identity = some projection) :
     source = requiredSource := by
   unfold project at accepted
   split at accepted <;> rename_i condition
@@ -112,8 +123,8 @@ theorem accepted_projection_has_exact_source
 
 theorem accepted_projection_has_exact_observation_obligations
     {source : List SelectedSource} {projection : SourceProjection}
-    {contracts : List ContractFact}
-    (accepted : project source contracts = some projection) :
+    {contracts : List ContractFact} {identity : SourceArtifactIdentity}
+    (accepted : project source contracts identity = some projection) :
     projection.obligations = requiredObservations := by
   unfold project at accepted
   split at accepted
@@ -125,37 +136,37 @@ theorem accepted_projection_has_exact_observation_obligations
 
 theorem accepted_callback_is_the_sole_return_path
     {source : List SelectedSource} {projection : SourceProjection}
-    {contracts : List ContractFact}
-    (accepted : project source contracts = some projection) :
+    {contracts : List ContractFact} {identity : SourceArtifactIdentity}
+    (accepted : project source contracts identity = some projection) :
     source.head? = some ⟨"cb_wait_2_timeout", 1, 0, [.returned]⟩ := by
   rw [accepted_projection_has_exact_source accepted]
   rfl
 
 theorem exact_source_is_accepted :
-    (project requiredSource requiredContracts).isSome = true := by
+    (project requiredSource requiredContracts .production).isSome = true := by
   rfl
 
 theorem accepted_projection_has_exact_contracts
     {source : List SelectedSource} {contracts : List ContractFact}
-    {projection : SourceProjection}
-    (accepted : project source contracts = some projection) :
+    {identity : SourceArtifactIdentity} {projection : SourceProjection}
+    (accepted : project source contracts identity = some projection) :
     contracts = requiredContracts := by
   unfold project at accepted
   split at accepted <;> rename_i condition
-  · exact condition.2
+  · exact condition.2.1
   · simp at accepted
 
 def missingDestroy : List SelectedSource := requiredSource.take 4
 
 theorem missing_lifecycle_source_is_rejected :
-    project missingDestroy requiredContracts = none := by
+    project missingDestroy requiredContracts .production = none := by
   decide
 
 def callbackWithEffect : List SelectedSource :=
   ⟨"cb_wait_2_timeout", 1, 0, [.call "perror", .returned]⟩ :: requiredSource.tail
 
 theorem callback_effect_substitution_is_rejected :
-    project callbackWithEffect requiredContracts = none := by
+    project callbackWithEffect requiredContracts .production = none := by
   decide
 
 def waitWithoutFree : List SelectedSource :=
@@ -167,14 +178,18 @@ def waitWithoutFree : List SelectedSource :=
   ]
 
 theorem missing_event_free_is_rejected :
-    project waitWithoutFree requiredContracts = none := by
+    project waitWithoutFree requiredContracts .production = none := by
   decide
 
 def missingNoEffectContract : List ContractFact :=
   requiredContracts.erase .callbackHasNoResourceEffect
 
 theorem missing_callback_contract_is_rejected :
-    project requiredSource missingNoEffectContract = none := by
+    project requiredSource missingNoEffectContract .production = none := by
+  decide
+
+theorem substituted_source_identity_is_rejected :
+    project requiredSource requiredContracts (.other "changed") = none := by
   decide
 
 end QCore.MonkeyWaitProjection
