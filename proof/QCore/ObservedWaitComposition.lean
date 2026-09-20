@@ -153,4 +153,110 @@ theorem invalid_manifest_identity_refuses
     project trace context invalidManifest = none := by
   simp [project, invalidManifest, requiredJoinAssumptions]
 
+/-! ### Declarative identity-policy extraction
+
+The executable `.qcore` policy consumes primitive text and integer facts.  The
+model below states that boundary separately from native trace replay: absent
+facts refuse, exact literals remain load-bearing, and actual/expected identity
+pairs are compared without accepting an aggregate authority Boolean. -/
+
+structure TextIdentity where
+  actual : Option String
+  expected : String
+  deriving DecidableEq, Repr
+
+def textIdentityAdmitted (identity : TextIdentity) : Bool :=
+  decide (identity.actual = some identity.expected)
+
+theorem a_missing_identity_fact_refuses (expected : String) :
+    textIdentityAdmitted ⟨none, expected⟩ = false := by
+  simp [textIdentityAdmitted]
+
+theorem an_unequal_identity_fact_refuses (actual expected : String)
+    (different : actual ≠ expected) :
+    textIdentityAdmitted ⟨some actual, expected⟩ = false := by
+  simp [textIdentityAdmitted, different]
+
+structure WaitIdentityPolicyFacts where
+  semanticProfile : Option String
+  threads : Option String
+  observationTrust : Option String
+  linkageTrust : Option String
+  manifestDigestLength : Nat
+  manifestInvalidLowerHexCount : Nat
+  contracts : TextIdentity
+  sourceRules : TextIdentity
+  observationRules : TextIdentity
+  observations : TextIdentity
+  bindings : TextIdentity
+  sourceRevision : TextIdentity
+  sourceProfile : TextIdentity
+  scope : TextIdentity
+  boundEntryCount : Nat
+  dispatcherBound : Nat
+  dispatcherBoundDeclared : Nat
+  eventBound : Nat
+  eventBoundDeclared : Nat
+  recordBound : Nat
+  recordBoundDeclared : Nat
+  runBound : Nat
+  runBoundDeclared : Nat
+  backend : TextIdentity
+  callback : TextIdentity
+  flagsActual : Nat
+  flagsExpected : Nat
+  sourceRequirementCount : Nat
+  observedRecordCount : Nat
+  deriving DecidableEq, Repr
+
+def waitIdentityPolicyAdmitted (facts : WaitIdentityPolicyFacts) : Bool :=
+  facts.semanticProfile == some "cycle18.timed_wait.single_dispatcher.v1" &&
+  facts.threads == some "pthreads" &&
+  facts.observationTrust == some "producer_supplied_runtime_evidence" &&
+  facts.linkageTrust == some "producer_supplied_selected_artifact_linkage" &&
+  facts.manifestDigestLength == 64 &&
+  facts.manifestInvalidLowerHexCount == 0 &&
+  textIdentityAdmitted facts.contracts &&
+  textIdentityAdmitted facts.sourceRules &&
+  textIdentityAdmitted facts.observationRules &&
+  textIdentityAdmitted facts.observations &&
+  textIdentityAdmitted facts.bindings &&
+  textIdentityAdmitted facts.sourceRevision &&
+  textIdentityAdmitted facts.sourceProfile &&
+  textIdentityAdmitted facts.scope &&
+  facts.boundEntryCount == 4 &&
+  facts.dispatcherBound == facts.dispatcherBoundDeclared &&
+  facts.eventBound == facts.eventBoundDeclared &&
+  facts.recordBound == facts.recordBoundDeclared &&
+  facts.runBound == facts.runBoundDeclared &&
+  facts.dispatcherBound == 1 && facts.eventBound == 1 &&
+  facts.recordBound == 11 && facts.runBound == 1 &&
+  textIdentityAdmitted facts.backend &&
+  textIdentityAdmitted facts.callback &&
+  facts.flagsActual == facts.flagsExpected &&
+  facts.sourceRequirementCount == 11 && facts.observedRecordCount == 11
+
+theorem accepted_identity_policy_has_exact_record_bound
+    (facts : WaitIdentityPolicyFacts)
+    (accepted : waitIdentityPolicyAdmitted facts = true) :
+    facts.recordBound = 11 := by
+  by_cases exact : facts.recordBound = 11
+  · assumption
+  · simp [waitIdentityPolicyAdmitted, exact] at accepted
+
+theorem a_substituted_policy_digest_refuses (facts : WaitIdentityPolicyFacts)
+    (different : facts.observationRules.actual ≠ some facts.observationRules.expected) :
+    waitIdentityPolicyAdmitted facts = false := by
+  simp [waitIdentityPolicyAdmitted, textIdentityAdmitted, different]
+
+theorem a_missing_callback_identity_refuses (facts : WaitIdentityPolicyFacts)
+    (missing : facts.callback.actual = none) :
+    waitIdentityPolicyAdmitted facts = false := by
+  simp [waitIdentityPolicyAdmitted, textIdentityAdmitted, missing]
+
+theorem a_mutated_record_clause_refuses_the_eleven_record_profile
+    (facts : WaitIdentityPolicyFacts) (records : facts.recordBound = 11) :
+    (facts.recordBound == 12) = false := by
+  simp [records]
+
 end QCore.ObservedWaitComposition
