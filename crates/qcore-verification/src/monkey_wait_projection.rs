@@ -22,6 +22,12 @@ use qcore_frontend::source_extern::normalize_type;
 use qcore_schemas::sha256_hex;
 use serde::Serialize;
 
+mod wait_failure_paths;
+pub use wait_failure_paths::{
+    CheckedWaitFailureCase, WaitFailureError, WaitFailureEvidenceClass, WaitFailureObservation,
+    WaitFailureOutcome, check_wait_failure_paths,
+};
+
 const WAIT_SOURCE_POLICY: &str =
     include_str!("../../../contract/qcore/monkey/wait_source_policy.qcore");
 const SOURCE_IDENTITY_POLICY: &str = "source_identity";
@@ -440,6 +446,7 @@ pub struct MonkeyWaitSourceProjection {
     profile_assumptions: BTreeMap<String, String>,
     source_summary_digests: BTreeMap<String, String>,
     selected_path_indices: BTreeMap<String, usize>,
+    source_path_counts: BTreeMap<String, usize>,
     required_observations: Vec<WaitObservationRequirement>,
     contract_digests: BTreeMap<String, String>,
     callback_semantics: WaitCallbackSemantics,
@@ -460,6 +467,12 @@ impl MonkeyWaitSourceProjection {
 
     pub fn selected_path_indices(&self) -> &BTreeMap<String, usize> {
         &self.selected_path_indices
+    }
+
+    /// Complete imported path counts, including the failure paths not selected
+    /// by the earlier success-observation projection.
+    pub fn source_path_counts(&self) -> &BTreeMap<String, usize> {
+        &self.source_path_counts
     }
 
     pub fn required_observations(&self) -> &[WaitObservationRequirement] {
@@ -587,8 +600,10 @@ pub fn project_monkey_timed_wait_source<'a>(
 
     let mut digests = BTreeMap::new();
     let mut selected = BTreeMap::new();
+    let mut path_counts = BTreeMap::new();
     for name in &contracts.source_functions {
         let summary = by_name[name.as_str()];
+        path_counts.insert(name.clone(), summary.paths().len());
         let mut assumptions = summary.profile_assumptions().clone();
         let role = assumptions
             .remove("typed_import_role")
@@ -682,6 +697,7 @@ pub fn project_monkey_timed_wait_source<'a>(
         profile_assumptions: common_assumptions,
         source_summary_digests: digests,
         selected_path_indices: selected,
+        source_path_counts: path_counts,
         required_observations: contracts.required_observations(),
         contract_digests: contracts.contract_digests.clone(),
         callback_semantics: WaitCallbackSemantics::BorrowedNoEffectNoTasks,
