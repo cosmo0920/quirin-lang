@@ -1,0 +1,233 @@
+{
+  "wave": 41,
+  "cards": [
+    "w42-indirect-access",
+    "w42-monkey-callback-coverage",
+    "w42-unprojected-definitions"
+  ],
+  "verify_applied": true,
+  "note": "Prioritized Cycle19 integration, not a full wave cadence close. All15 swept items receive decisions. No tracker entries retired;271 total. Residual sweep reports54 historical residual-shaped candidates, none introduced by these three card reports; it classifies none of them. Applied assertions are checked against this close only.",
+  "verdicts": {
+    "w42-indirect-access#integrator-reconciliation#1": {
+      "verdict": "noted",
+      "note": "The integrator owns and updates the shared records; the isolated matrix validation row is replaced by the measured combined gate, retaining the integrated follow-up ledger."
+    },
+    "w42-indirect-access#integrator-reconciliation#2": {
+      "verdict": "applied",
+      "note": "Canonical gateway amendment and router entry added.",
+      "verify": [
+        {
+          "file": "docs/agents/README.md",
+          "contains": "gateway.md#constraint-5g"
+        }
+      ]
+    },
+    "w42-indirect-access#integrator-reconciliation#3": {
+      "verdict": "applied",
+      "note": "Proposed amendment applied without weakening the exact shape, flow or refusal-frame premises.",
+      "verify": [
+        {
+          "file": "docs/agents/gateway.md",
+          "contains": "both admitted stores and flow-refused stores preserve pointer, custody, field-link, and scalar-fact maps"
+        },
+        {
+          "file": "docs/agents/gateway.md",
+          "contains": "Pointer fields remain refused by this route; shapes outside this conjunction retain their prior handling, including the separate unbound scalar-field no-op."
+        }
+      ]
+    },
+    "w42-indirect-access#integrator-reconciliation#4": {
+      "verdict": "applied",
+      "note": "Current counts are derived from the combined pinned audit, whose diagnostics exactly match the corrected isolated result.",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "**223 Safe / 84 provisional Unsafe / 4,527 Unknown**"
+        },
+        {
+          "file": "docs/reports/w42-priority-integration/attribution.json",
+          "contains": "\"identical_to_isolated_indirect\": true"
+        }
+      ]
+    },
+    "w42-indirect-access#integrator-reconciliation#5": {
+      "verdict": "applied",
+      "note": "Both movers, all exchanges and downstream additions are recorded with the exact leaf delta; the forecast stays frozen.",
+      "verify": [
+        {
+          "file": "docs/reports/w42-priority-integration/README.md",
+          "contains": "350 exact-coordinate exchanges"
+        },
+        {
+          "file": "docs/reports/w42-priority-integration/README.md",
+          "contains": "ctr_span_start_ts"
+        },
+        {
+          "file": "docs/reports/w42-priority-integration/README.md",
+          "contains": "seven downstream alias additions"
+        }
+      ]
+    },
+    "w42-indirect-access#integrator-reconciliation#6": {
+      "verdict": "applied",
+      "note": "One newest-first increment records this integration, and the matrix is regenerated from its own gate.",
+      "verify": [
+        {
+          "file": "docs/development/increments/wave-41.md",
+          "contains": "W42-PRIORITY-INTEGRATION"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "\"lean_audits\": 149"
+        }
+      ]
+    },
+    "w42-indirect-access#integrator-reconciliation#7": {
+      "verdict": "applied",
+      "note": "All 269 previous entries remain; two certificate follow-ups are added. No retirement or leak-history rewrite.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "INDIRECT-EXCHANGE-PROXY-UNVALIDATED"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "INDIRECT-CENSUS-FEATURE-UNBUILT"
+        },
+        {
+          "file": "docs/reports/w42-priority-integration/README.md",
+          "contains": "All 269 prior follow-ups are retained"
+        }
+      ]
+    },
+    "w42-monkey-callback-coverage#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Event composition is registered separately from completed callback accounting.",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "MONKEY-CALLBACK-CYCLE18-COMPOSITION"
+        }
+      ]
+    },
+    "w42-monkey-callback-coverage#integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "The Monkey change changes only schema and callback accounting. Exact isolated-diagnostic equality attributes all verdict movement to the scalar-store slice."
+    },
+    "w42-monkey-callback-coverage#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "The increment separates optional replay observations from ordinary no-binding accounting and event composition.",
+      "verify": [
+        {
+          "file": "docs/development/increments/wave-41.md",
+          "contains": "3/3 selected callbacks accounted"
+        },
+        {
+          "file": "docs/development/increments/wave-41.md",
+          "contains": "8/8 source paths"
+        },
+        {
+          "file": "docs/development/increments/wave-41.md",
+          "contains": "0/3 Cycle 18 composed"
+        }
+      ]
+    },
+    "w42-monkey-callback-coverage#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "The normal combined production audit confirms schema 3 and callback_coverage without any binding directory.",
+      "verify": [
+        {
+          "file": "docs/reports/w42-priority-integration/attribution.json",
+          "contains": "\"only_schema_and_callback_coverage_changed\": true"
+        },
+        {
+          "file": "docs/reports/w42-priority-integration/attribution.json",
+          "contains": "\"accounted_callbacks\": 3"
+        }
+      ]
+    },
+    "w42-unprojected-definitions#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Use full paths and explain the basename collision in the plan and integration report.",
+      "verify": [
+        {
+          "file": "docs/reports/w42-priority-integration/README.md",
+          "contains": "**24 full-path units**"
+        },
+        {
+          "file": "docs/plans/cycle19-custody-cards/README.md",
+          "contains": "`mk_core/mk_utils.c` (4 entries) and `mk_server/mk_utils.c` (3 entries)"
+        }
+      ]
+    },
+    "w42-unprojected-definitions#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "The raw inventory and projection remain separate, with unchanged exact inventories checked by the combined arbiter.",
+      "verify": [
+        {
+          "file": "docs/reports/w42-priority-integration/attribution.json",
+          "contains": "\"source_inventory_unchanged\": true"
+        },
+        {
+          "file": "docs/reports/w42-priority-integration/README.md",
+          "contains": "This measurement resolves the build-exclusion question without promoting any function or unit verdict."
+        }
+      ]
+    },
+    "w42-unprojected-definitions#integrator-reconciliation-list#3": {
+      "verdict": "noted",
+      "note": "The census is supplementary measurement, not a semantic close. All actual function movement is attributed to the Rust/Lean scalar-store slice."
+    },
+    "w42-unprojected-definitions#integrator-reconciliation-list#4": {
+      "verdict": "noted",
+      "note": "Excluded-platform definitions are not planned as cheap pinned-Linux additions. The fresh blocker census is archived for future sizing; certificate work has separate tracked acceptance conditions."
+    }
+  },
+  "no_section": {},
+  "deferred_decisions": {
+    "CT10-REASON-ROW": {
+      "verdict": "deferred",
+      "note": "The CT10 ledger-reason decision remains open. This integration changes no CT10 scenario or reason-row policy. Carried from docs/reports/b-series-integration/reconciliation.json and the wave40 decision record."
+    },
+    "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK": {
+      "verdict": "deferred",
+      "note": "The cadence-policy question remains open. This prioritized increment is not a compaction or whole-wave cadence close. Carried from docs/reports/b-series-integration/reconciliation.json and the wave40 decision record."
+    },
+    "EXAMPLES-STYLE-SLICE-FANOUT": {
+      "verdict": "deferred",
+      "note": "The user-facing example spelling decision remains open. The diagnostic probe printer repair does not decide slice fan-out style. Carried from docs/reports/b-series-integration/reconciliation.json and the wave40 decision record."
+    },
+    "F02-WINDOWS-PIN-RUN": {
+      "verdict": "deferred",
+      "note": "Still open: only Linux validation was performed. No user-validated Windows pin run is claimed. Carried from docs/reports/b-series-integration/reconciliation.json and the wave40 decision record."
+    },
+    "INDIRECT-CENSUS-FEATURE-UNBUILT": {
+      "verdict": "deferred",
+      "note": "Still open: the scalar-store admission adds neither a CI feature build nor a decision to discard the historical census instrumentation. Carried from docs/reports/b-series-integration/reconciliation.json and the wave40 decision record."
+    },
+    "MATRIX-RECORDED-BY-DECISION": {
+      "verdict": "deferred",
+      "note": "Still open: both new entries carry recorded_by, but the older entries were not back-filled and the optionality policy was not decided. Carried from docs/reports/b-series-integration/reconciliation.json and the wave40 decision record."
+    },
+    "MATRIX-UPDATED-STALE-AT-WAVE-27": {
+      "verdict": "deferred",
+      "note": "Still open: the corpus row was refreshed from primary evidence, but the separate updated field retains its wave27 checkpoint and its policy question is unchanged. Carried from docs/reports/b-series-integration/reconciliation.json and the wave40 decision record."
+    },
+    "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED": {
+      "verdict": "deferred",
+      "note": "Still open: the platform-family registration choice was not taken, and no new Windows or Apple evidence was produced. Carried from docs/reports/b-series-integration/reconciliation.json and the wave40 decision record."
+    },
+    "Q-NAMESPACE-DECISION": {
+      "verdict": "deferred",
+      "note": "Still open: no diagnostic code was allocated and this integration uses existing UnknownAlias and unsupported categories. Carried from docs/reports/b-series-integration/reconciliation.json and the wave40 decision record."
+    },
+    "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS": {
+      "verdict": "deferred",
+      "note": "Still open: the scanner was not changed and no new prose-shape rule was designed or mutation-tested. Carried from docs/reports/b-series-integration/reconciliation.json and the wave40 decision record."
+    },
+    "SYNC-RULE-TOOLING-COMMIT-SCOPE": {
+      "verdict": "deferred",
+      "note": "Still open: this integration again has integrator commits outside card merges; the tooling-scope policy is not decided by recording their work here. Carried from docs/reports/b-series-integration/reconciliation.json and the wave40 decision record."
+    }
+  }
+}

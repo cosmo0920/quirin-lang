@@ -236,6 +236,10 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             "OpaqueValue {destination} alias_read={}",
             alias_read.is_some()
         ),
+        LegacyInstruction::ScalarMemberStore { base, alias_read } => format!(
+            "ScalarMemberStore {base} alias_read={}",
+            alias_read.is_some()
+        ),
         LegacyInstruction::AggregateStore { place } => format!("AggregateStore {place}"),
         LegacyInstruction::ForgetScalar { destination } => format!("ForgetScalar {destination}"),
         LegacyInstruction::Unknown { description, .. } => format!("Unknown: {description}"),

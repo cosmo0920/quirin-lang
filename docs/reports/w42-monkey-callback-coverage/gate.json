@@ -1,0 +1,13 @@
+{
+  "note": "W42-MONKEY-CALLBACK-COVERAGE isolated standing gate at semantic source checkpoint af258e53096372e22ed999b33afa20a180f4bfcc. Exact commands, source identity, counts and private logs are recorded in gate-facts.json. Rust: 4851 passed, 0 failed, 10 ignored across 249 result summaries and 247 targets. All standing commands exited 0. Clang was invoked in the measuring worktree and is recorded beside this file. Provider 122 is carried Unix evidence, not remeasured. The ordinary no-binding production audit is pending the combined integration AFTER and this isolated gate does not promote any callback or translation unit.",
+  "workspace_tests": 4851,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 305,
+  "lean_audits": 148,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

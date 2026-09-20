@@ -1,0 +1,21 @@
+{
+  "note": "C-GATEWAY-WAVE final source, 2026-09-13. Fresh BEFORE reproduces wave-30 diagnostics and chunk-contracts byte for byte. AFTER has no unit status moves and no Safe promotions; four scalar counter helpers withdraw Safe to Unknown, and the existing constant-do-while CFG abstraction exposes one provisional repeated-release row. Functions: 146 Safe / 85 provisional Unsafe / 4603 Unknown. Leak 266 to 272: six added, no baseline leak leaves removed; four intermediate missing leaves restored by scalar-assignment hardening. unknown_alias 4208, unsupported 50155, double_release 1. All five stages and every changed leaf are archived; the other four artifacts remain byte-identical across stages. The production input_chunk_get residual remains Unknown. All previous corpus archives stay frozen; matrix-before.json.gz preserves the prior hand-carried checkpoint.",
+  "units": 185,
+  "safe": 2,
+  "provisional_unsafe": 42,
+  "unknown": 137,
+  "data_only": 4,
+  "projected_functions": 4834,
+  "leak_diagnostics": 272,
+  "process_sidecar": "3 checked function contracts / 93 Unknown",
+  "baseline": "docs/reports/c-gateway-wave/artifacts/",
+  "source": "docs/reports/c-gateway-wave/README.md; preceding baseline docs/reports/w4-recursive-summaries/artifacts/",
+  "unknown_alias_diagnostics": 4208,
+  "unsupported_diagnostics": 50155,
+  "double_release_diagnostics": 1,
+  "function_statuses": {
+    "safe": 146,
+    "provisional_unsafe": 85,
+    "unknown": 4603
+  }
+}

@@ -6,6 +6,36 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`W42-PRIORITY-INTEGRATION` (2026-09-20).** Three GPT-5.6 Sol medium agents
+implemented a bounded scalar-member-store rule, total Monkey callback
+accounting and a positive build-exclusion census. The syntax rule retains
+alias/liveness checks and preserves the projection frame on flow refusal;
+Rust negative controls and the audited Lean frame/refusal model accompany it.
+The combined pinned audit moves only `ctr_span_start_ts` and `ctr_span_start`
+Unknown→Safe: **223 Safe / 84 provisional Unsafe / 4,527 Unknown** projected
+functions, with units unchanged at **2 / 42 / 137 / 4 data-only**, unpromoted.
+It removes **362 lexical refusals + 2 downstream call refusals**, with
+**350 exact-coordinate alias exchanges**, seven downstream alias additions
+and one old alias removal: unsupported **49,371**, unknown_alias **4,665**,
+leak **272**, summary_conflict **1**, net **8** fewer diagnostic leaves.
+The forecast miss is preserved. All **87** unprojected definitions are
+positively excluded by the pinned historical build across **24 full-path
+units / 23 basenames**; no projection defect or unresolved census row is
+established. Unit reasons remain **136 unsupported-syntax / 1 incomplete
+coverage / 48 without a reason code**. Monkey has **3/3 selected callbacks accounted**,
+**8/8 source paths** checked by optional focused replay, **0/3 Cycle 18 composed**
+and **3/3 explicit Unknown**; the ordinary no-binding audit checks **0/8**
+native paths. Its sidecar changes only schema and callback accounting; three
+other artifacts are byte-identical and diagnostics exactly match the corrected
+isolated syntax run. The [integration report](../../reports/w42-priority-integration/README.md)
+records the gate: **4,863 Rust / 149 Lean / 313 Python**, zero failures,
+10 ignored Rust tests, 250 strict summaries over 248 targets, clean fmt/clippy,
+both probes exit 0 and five isolated host checks green; 122 provider tests are carried.
+All 15 reconciliation items are recorded. All 269 previous follow-ups remain;
+two explicit certificate entries bring the ledger to **271**. The input-chunk
+lifecycle/ChunkIO teardown and Monkey event-composition certificates remain
+open; neither this bounded slice nor the census completes Cycle 19.
+
 **`B01–B04-CALL-POSITIONS` (2026-09-20).** Four GPT-5.6 Sol medium agents
 implemented bounded return evaluation, branch conditions, loop/switch conditions
 and neutral sibling nested arguments. The merged rules retain call effects,

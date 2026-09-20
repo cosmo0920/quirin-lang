@@ -1145,7 +1145,7 @@ fn audit_monkey_callback_source(
             }
         }
     }
-    if let Some(directory) = binding_directory {
+    let binding = if let Some(directory) = binding_directory {
         let read =
             |name| fs::read_to_string(directory.join(name)).map_err(|error| error.to_string());
         let bound =
@@ -1170,10 +1170,24 @@ fn audit_monkey_callback_source(
             serde_json::to_string_pretty(&bound).map_err(|e| e.to_string())? + "\n",
         )
         .map_err(|e| e.to_string())?;
+        Some(bound)
+    } else {
+        None
+    };
+    let callback_coverage =
+        qcore_compiler::verifier_plugins::libevent::monkey_binding::account_monkey_callbacks(
+            &results,
+            binding.as_ref(),
+        )?;
+    for callback in &callback_coverage.callbacks {
+        println!(
+            "  monkey-libevent/{}: Cycle 18 callback composition {:?}",
+            callback.function, callback.cycle18_composition
+        );
     }
     if let Some(report) = report {
         let output = serde_json::json!({
-            "schema_version": 2,
+            "schema_version": 3,
             "scan_loop_semantics": "Each iteration evaluates header, then matches; a true match executes early_return and exits the function. Otherwise store increment in the induction local and repeat. A false header continues outside the loop. Iteration symbols are scoped to one iteration. Bounds, arithmetic, termination and memory safety remain obligations.",
             "source_revision": PINNED_FLUENT_BIT_COMMIT,
             "compile_entry": { "directory": entry.directory, "command": entry.command, "file": entry.file },
@@ -1182,6 +1196,7 @@ fn audit_monkey_callback_source(
             "wrapper_behavior_specification": include_str!("../../../contract/qcore/monkey/wrapper_paths.qcore"),
             "wrapper_behavior_specification_status": "syntax-preserved source findings; custody and behavioral predicate replay not certified",
             "callbacks": results,
+            "callback_coverage": callback_coverage,
             "wrappers": wrappers,
         });
         fs::write(

@@ -1,0 +1,12 @@
+{
+  "reviewer": "GPT-5.6 Sol medium callback worker, independent of scalar-store implementation",
+  "reviewed_commit": "e90e2958",
+  "scope": "Read-only review of ScalarMemberStore classifier ordering, exact shape and RHS walker; may_bind/type-reader premises; alias-read checks; singleton known non-null LIVE resolution without nullable or unresolved markers; refusal frame and transfer; generic poisoning boundary; all 11 source tests; Lean definitions, frame/refusal theorems and audit registration; probe exhaustive match",
+  "concrete_findings": [],
+  "limitations": "Review only, no additional tests or gate executed. It does not establish Rust extraction correctness or whole-C correctness.",
+  "earlier_integrator_repairs": [
+    "Reject increment/decrement in the scalar-only RHS and use a discriminating double-release control.",
+    "Keep the new may_bind route disjoint from the existing unbound scalar-field no-op.",
+    "Preserve the incoming projection frame for a classified but flow-refused scalar store; retain UnknownAlias and unrelated Leak(q). The earlier blanket-poison run with 268 leaks is superseded and excluded."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/agent-w42-census/scripts/w42_unprojected_census.py",
+    "--diagnostics",
+    "docs/reports/b-series-integration/artifacts/diagnostics.json.gz",
+    "--run-identity",
+    "docs/reports/b-series-integration/artifacts/run.json",
+    "--anchors",
+    "/tmp/agent-w42-census/docs/reports/w42-unprojected-definitions/artifacts/anchors.json",
+    "--compile-db",
+    "fluent-bit=/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+    "--compile-db",
+    "monkey=/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "--output",
+    "private/w42-priority/census-confirmation.json"
+  ],
+  "exit": 0,
+  "sha256": "299af9521e1ea67952186f7cb2fee55139926be391b1df906f9f8db28aab129e",
+  "byte_identical_to": "docs/reports/w42-unprojected-definitions/artifacts/census.json",
+  "script_commit": "22d3056ebadfc5cdfe0a2c67bb8b68694e320a71",
+  "log": "/home/cosmo/Documents/GitHub/qcore-c/private/w42-priority/census-confirmation.log"
+}

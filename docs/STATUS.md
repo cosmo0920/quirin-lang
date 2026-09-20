@@ -13,11 +13,14 @@ numbers from those sources, not from an older summary. History belongs in the
 | CT cases mapped | **50/50**; none unmapped | [Manifest](reevaluation/ct_manifest.json) |
 | CT case-bound proof | **5/50**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
 | CT gated sanitized-native | **10/50, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
-| Cycle 19 units | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only**, 185 total | [B-series corpus](reports/b-series-integration/README.md) |
-| Projected functions | **221 Safe / 84 provisional Unsafe / 4,529 Unknown**, 4,834 total | Same baseline |
-| Corpus diagnostics | leak **272**; unknown_alias **4,309**; double_release **0**; unsupported **49,735**; summary_conflict **1** | Same baseline, `artifacts/diagnostics.json.gz` |
+| Cycle 19 units | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only**, 185 total | [W42 priority corpus](reports/w42-priority-integration/README.md) |
+| Projected functions | **223 Safe / 84 provisional Unsafe / 4,527 Unknown**, 4,834 total | Same baseline |
+| Corpus diagnostics | leak **272**; unknown_alias **4,665**; double_release **0**; unsupported **49,371**; summary_conflict **1** | Same baseline, `artifacts/diagnostics.json.gz` |
+| Unit reasons | **136 unsupported-syntax / 1 incomplete-obligation-coverage / 48 without a reason code** | [Combined attribution](reports/w42-priority-integration/attribution.json) |
+| Raw source coverage | **4,921 definitions / 4,834 projected / 87 pinned-build exclusions**, across **24 full-path units** | [Verified census](reports/w42-unprojected-definitions/README.md); combined inventory unchanged |
+| Monkey callback accounting | **3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown**; 8 source paths | [Callback report](reports/w42-monkey-callback-coverage/README.md); ordinary audit checks 0/8 native paths, optional focused replay 8/8 |
 | Contract corpus | **88** modules; **59** resource-v1 declarations; **33** manifest-selected | `contract/qcore/`, [selection](../contract/cycle19-resource-contracts.json) and pinned tests |
-| Registered follow-ups | **269** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **271** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -37,7 +40,7 @@ can run on other hosts without implying sanitizer execution there.
 **Raw units remain unpromoted.** `flb_input_chunk_create` is function-level Safe;
 the production `input_chunk_get` residual remains Unknown. Provisional Unsafe
 findings are not validated upstream defects. Unknowns stay in the denominator.
-The baseline is `docs/reports/b-series-integration/artifacts/`; an arbiter must
+The baseline is `docs/reports/w42-priority-integration/artifacts/`; an arbiter must
 reproduce its predecessor's verdict-bearing artifacts byte-for-byte and
 attribute every delta. The chain and leaf identities are preserved in the
 individual reports, [wave history](development/increments/README.md), and
@@ -60,11 +63,12 @@ separately.
 
 ## Last integrated gate
 
-The [B01–B04 integration gate](reports/b-series-integration/gate.json) records
-**4,845 Rust passed, 0 failed, 10 ignored; 248 result summaries over 246 targets;
-148 Lean audits; 305 Python tests**, clean fmt/clippy and both probes exit 0.
+The [W42 priority integration gate](reports/w42-priority-integration/gate.json) records
+**4,863 Rust passed, 0 failed, 10 ignored; 250 result summaries over 248 targets;
+149 Lean audits; 313 Python tests**, clean fmt/clippy and both probes exit 0.
+Five core-workspace host-sensitive rows also passed separately in isolation.
 Clang 21.1.8 was recorded in the measuring worktree. **122 provider tests are
-carried Unix evidence, not re-measured.** [Run identity and private logs](reports/b-series-integration/README.md#final-standing-gate)
+carried Unix evidence, not re-measured.** [Run identity and private logs](reports/w42-priority-integration/README.md#final-standing-gate)
 bind these measurements to the checked source; they are not promises about
 another host or a later tree.
 

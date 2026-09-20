@@ -45,6 +45,7 @@ import QCore.CompositionAdmission
 import QCore.CleanupVocabulary
 import QCore.CleanupOutcome
 import QCore.CallbackBinding
+import QCore.CallbackCoverage
 import QCore.CallbackSource
 import QCore.Index
 import QCore.QuantIndexBinding
@@ -130,6 +131,7 @@ import QCore.SourceEnumeration
 import QCore.RawDirectiveLexing
 import QCore.ConditionalGroupDepth
 import QCore.AggregateStore
+import QCore.ScalarMemberStore
 import QCore.AtomicPublication
 import QCore.BoundFieldRead
 import QCore.MemberAddress

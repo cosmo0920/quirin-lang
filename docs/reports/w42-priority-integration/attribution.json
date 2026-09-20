@@ -1,0 +1,106 @@
+{
+  "artifacts": [
+    {
+      "file": "resource-diagnostics.json",
+      "before_sha256": "2545039c8252d5ac2c313e98104b59293e701dd1743d88ee5a659c37c345732b",
+      "after_sha256": "041b7f2193c8ef02c72346aed48dcfd657be1c1b36e74b0f243e55d80ac4b059",
+      "byte_identical": false,
+      "identical_to_isolated_indirect": true,
+      "source_inventory_unchanged": true,
+      "unit_reason_codes": {
+        "unsupported-syntax": 136,
+        "none": 48,
+        "incomplete-obligation-coverage": 1
+      }
+    },
+    {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "before_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "after_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "byte_identical": true
+    },
+    {
+      "file": "resource-diagnostics.contracts.json",
+      "before_sha256": "9de748ce56d2c614f251411f88e50a8b8a50c7dbff935216515e873a3c081f32",
+      "after_sha256": "9de748ce56d2c614f251411f88e50a8b8a50c7dbff935216515e873a3c081f32",
+      "byte_identical": true
+    },
+    {
+      "file": "resource-diagnostics.source-effects.json",
+      "before_sha256": "0bda08ad86da01b133bcf0397ee39d7b7cd145a1265c1cb66df2747e6aa4fc9b",
+      "after_sha256": "0bda08ad86da01b133bcf0397ee39d7b7cd145a1265c1cb66df2747e6aa4fc9b",
+      "byte_identical": true
+    },
+    {
+      "file": "monkey-source.json",
+      "before_sha256": "ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529",
+      "after_sha256": "bf9b1cacf3c822795f544d9b4b63da4625a926d7d746316929da12b761b6bb0d",
+      "byte_identical": false,
+      "callback_coverage": {
+        "accounted_callbacks": 3,
+        "callbacks": [
+          {
+            "checked_executions": 0,
+            "checked_paths": [],
+            "cycle18_composition": {
+              "reason": "native callback binding evidence was not supplied; no Cycle 18 event-program composition certificate is issued",
+              "status": "unknown"
+            },
+            "function": "cb_event",
+            "missing_paths": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "selected_paths": 4,
+            "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+          },
+          {
+            "checked_executions": 0,
+            "checked_paths": [],
+            "cycle18_composition": {
+              "reason": "native callback binding evidence was not supplied; no Cycle 18 event-program composition certificate is issued",
+              "status": "unknown"
+            },
+            "function": "cb_timeout",
+            "missing_paths": [
+              0,
+              1,
+              2
+            ],
+            "selected_paths": 3,
+            "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+          },
+          {
+            "checked_executions": 0,
+            "checked_paths": [],
+            "cycle18_composition": {
+              "reason": "native callback binding evidence was not supplied; no Cycle 18 event-program composition certificate is issued",
+              "status": "unknown"
+            },
+            "function": "cb_wait_2_timeout",
+            "missing_paths": [
+              0
+            ],
+            "selected_paths": 1,
+            "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+          }
+        ],
+        "checked_paths": 0,
+        "selected_callbacks": 3,
+        "selected_paths": 8,
+        "source_profile_assumptions": {
+          "library": "monkey",
+          "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+          "profile_digest": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+          "schema_version": "1",
+          "source_set": "fluent-bit",
+          "trust": "declared source-set assumptions, not verified upstream behavior"
+        }
+      },
+      "only_schema_and_callback_coverage_changed": true
+    }
+  ],
+  "attribution_complete": true
+}
