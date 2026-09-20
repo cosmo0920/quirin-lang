@@ -154,6 +154,10 @@ pub(crate) fn reject_report_aliases(
 /// premise that their producer accurately recorded execution and linkage.
 /// Hashes identify the selected artifacts; they do not attest that premise.
 pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
+    prepare_observed_wait(path)?.publish()
+}
+
+pub(crate) fn prepare_observed_wait(path: &Path) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::ObservedWait>, String> {
     let config: ObservedWaitConfig =
         serde_json::from_slice(&read(path)?).map_err(|error| error.to_string())?;
     if config.schema_version != 1 {
@@ -199,6 +203,7 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
         &resolve(&config.monkey_inputs),
         &resolve(&config.source_compile_database),
     )?;
+    let aggregate_identity = crate::cycle18_inputs::SourceIdentity::from_source(&source)?;
     let mut protected_files = source.protected_files.clone();
     protected_files.extend([
         path.to_path_buf(),
@@ -404,11 +409,13 @@ pub fn run_observed_wait_config(path: &Path) -> Result<(), String> {
             "One observed success path; unobserved failure paths remain Unknown",
             "No callback coverage or Cycle 18 acceptance promotion"]
     });
-    fs::write(
+    crate::cycle18_inputs::PreparedAudit::new(
+        aggregate_identity,
+        crate::cycle18_inputs::ObservedWait { projection, context: admitted, observations, bindings, summaries: source.summaries },
         resolve(&config.report),
         serde_json::to_vec_pretty(&report).map_err(|e| e.to_string())?,
+        protected_files, protected_directories,
     )
-    .map_err(|e| e.to_string())
 }
 
 #[cfg(test)]

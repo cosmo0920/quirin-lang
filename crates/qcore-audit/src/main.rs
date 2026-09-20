@@ -7,6 +7,26 @@ fn main() -> ExitCode {
         eprintln!("usage: quirin-audit CONFIG.json");
         return ExitCode::FAILURE;
     };
+    if path == "cycle18-composition" {
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: quirin-audit cycle18-composition CONFIG.json");
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: quirin-audit cycle18-composition CONFIG.json");
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::cycle18_composition::run_cycle18_composition_config(&PathBuf::from(config)) {
+            Ok(()) => {
+                println!("Bounded Cycle 18 evidence joined; aggregate remains Unknown. Report written.");
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("Cycle 18 composition rejected (Unknown): {error}");
+                ExitCode::FAILURE
+            }
+        };
+    }
     if path == "timeout-teardown" {
         let Some(config) = arguments.next() else {
             eprintln!("usage: quirin-audit timeout-teardown CONFIG.json");

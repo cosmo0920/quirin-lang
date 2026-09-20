@@ -189,6 +189,10 @@ fn snapshots_unchanged(snapshots: &[(PathBuf, Vec<u8>)]) -> bool {
 }
 
 pub fn run_wait_failures_config(path: &Path) -> Result<(), String> {
+    prepare_wait_failures(path)?.publish()
+}
+
+pub(crate) fn prepare_wait_failures(path: &Path) -> Result<crate::cycle18_inputs::PreparedAudit<crate::cycle18_inputs::Failures>, String> {
     let config_bytes = read(path)?;
     let config: WaitFailuresConfig =
         serde_json::from_slice(&config_bytes).map_err(|e| e.to_string())?;
@@ -227,6 +231,7 @@ pub fn run_wait_failures_config(path: &Path) -> Result<(), String> {
         &resolve(&config.monkey_inputs),
         &resolve(&config.source_compile_database),
     )?;
+    let aggregate_identity = crate::cycle18_inputs::SourceIdentity::from_source(&source)?;
     let compile_digest = source.compile_task.digest()?;
     let source_snapshot = (source.source_sha256.clone(), source.build_sha256.clone());
     let contracts = MonkeyWaitContracts::parse(
@@ -276,9 +281,12 @@ pub fn run_wait_failures_config(path: &Path) -> Result<(), String> {
         "limitations": ["Stubbed dependency fault outcomes, not a real Libevent execution",
             "Unknown rows remain in the denominator", "No callback or aggregate Cycle 18 promotion"]
     });
-    write_atomic(
-        &report,
-        &serde_json::to_vec_pretty(&report_value).map_err(|e| e.to_string())?,
+    crate::cycle18_inputs::PreparedAudit::new(
+        aggregate_identity,
+        crate::cycle18_inputs::Failures { observations: bytes(6).to_vec() },
+        report,
+        serde_json::to_vec_pretty(&report_value).map_err(|e| e.to_string())?,
+        protected_files, source.protected_directories,
     )
 }
 
