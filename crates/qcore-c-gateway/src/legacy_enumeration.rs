@@ -391,15 +391,14 @@ fn source_definition_inventory_without_expansion(source: &str) -> SourceDefiniti
 
 fn raw_half(source: &str) -> RawHalf {
     let scan = legacy_c_source_scan(source);
-    let raw = RawHalf {
+    RawHalf {
         names: scan.definitions().to_vec(),
         refusals: scan
             .refusals()
             .iter()
             .map(|refusal| EnumerationRefusal::from_conditional(*refusal))
             .collect(),
-    };
-    raw
+    }
 }
 
 /// Build the main-source inventory from a line-marked preprocessing already
