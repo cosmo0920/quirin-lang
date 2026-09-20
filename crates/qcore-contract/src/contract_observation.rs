@@ -10,6 +10,18 @@ use qcore_frontend::frontend::{
 use qcore_frontend::lexer::{Symbol, TokenKind, lex};
 use std::collections::BTreeMap;
 
+const MAX_POLICY_SOURCE_BYTES: usize = 64 * 1024;
+const MAX_POLICY_FACTS: usize = 256;
+const MAX_POLICY_NAME_BYTES: usize = 256;
+const MAX_POLICY_TEXT_BYTES: usize = 4096;
+
+/// One typed fact supplied to a bounded native policy contract.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ContractFact {
+    Integer(i128),
+    Text(String),
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObservationVerdict {
     Checked { postconditions: usize },
@@ -33,6 +45,216 @@ pub fn check_contract_facts(
             Err(format!("{function}: outside precondition: {predicate}"))
         }
     }
+}
+
+/// Check a strict, argument-free native policy declaration against typed facts.
+///
+/// The selected declaration must be a safe `extern fn NAME() -> unit` with no
+/// effects and a nonempty set of `ensures normal` clauses. Text values use the
+/// frontend's double-quoted string-literal tokens, decoded with
+/// `source.string.v1` escapes, and support same-type `==` and `!=` only; all
+/// arithmetic and ordering remain integer-only.
+pub fn check_typed_contract_facts(
+    source: &str,
+    function: &str,
+    facts: &[(&str, ContractFact)],
+) -> Result<(), String> {
+    if source.len() > MAX_POLICY_SOURCE_BYTES {
+        return Err("contract policy source too large".into());
+    }
+    if function.is_empty() || function.len() > MAX_POLICY_NAME_BYTES {
+        return Err("contract policy function name is out of bounds".into());
+    }
+    if facts.len() > MAX_POLICY_FACTS {
+        return Err("too many contract policy facts".into());
+    }
+    let mut values = BTreeMap::new();
+    for (name, value) in facts {
+        if name.is_empty() || name.len() > MAX_POLICY_NAME_BYTES {
+            return Err("contract policy fact name is out of bounds".into());
+        }
+        if matches!(value, ContractFact::Text(text) if text.len() > MAX_POLICY_TEXT_BYTES) {
+            return Err(format!("contract policy text fact `{name}` is too large"));
+        }
+        if values.insert((*name).to_owned(), value.clone()).is_some() {
+            return Err(format!("duplicate contract policy fact: {name}"));
+        }
+    }
+
+    let parsed = parse_source_program(source).map_err(|e| e.to_string())?;
+    let declarations: Vec<_> = parsed
+        .declarations
+        .iter()
+        .filter(|declaration| declaration.value.name == function)
+        .collect();
+    let [declaration] = declarations.as_slice() else {
+        return Err(format!("expected one declaration of {function}"));
+    };
+    validate_typed_policy_declaration(source, declaration)?;
+    let contract = declaration
+        .value
+        .function_contract
+        .as_ref()
+        .ok_or("missing contract")?;
+
+    // Evaluate every clause before interpreting any requirement. Unsupported
+    // syntax, type errors and missing facts cannot hide in a false Boolean arm
+    // or behind a false precondition.
+    let mut requirements = Vec::new();
+    let mut ensures = Vec::new();
+    for clause in &contract.clauses {
+        let expression = &clause.value.expression_source;
+        let result = evaluate_typed(expression, &values)?;
+        match clause.value.kind {
+            SourceContractClauseKind::Requires => requirements.push((expression, result)),
+            SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal) => {
+                ensures.push((expression, result))
+            }
+            _ => return Err("contract policy supports requires and ensures normal only".into()),
+        }
+    }
+    if ensures.is_empty() {
+        return Err("missing postconditions".into());
+    }
+    for (predicate, value) in requirements {
+        if integer_truth(&value)? == 0 {
+            return Err(format!("{function}: outside precondition: {predicate}"));
+        }
+    }
+    for (predicate, value) in ensures {
+        if integer_truth(&value)? == 0 {
+            return Err(format!(
+                "{function}: observed contract violation: {predicate}"
+            ));
+        }
+    }
+    Ok(())
+}
+
+/// Read one uniquely declared literal policy fact.
+///
+/// The fact must appear as the complete expression of exactly one
+/// `ensures normal FACT == LITERAL;` clause in a strict typed policy
+/// declaration. This accessor evaluates no caller-supplied state and refuses
+/// missing or ambiguous declarations.
+pub fn contract_fact_literal(
+    source: &str,
+    function: &str,
+    fact: &str,
+) -> Result<ContractFact, String> {
+    if source.len() > MAX_POLICY_SOURCE_BYTES {
+        return Err("contract policy source too large".into());
+    }
+    if function.is_empty()
+        || function.len() > MAX_POLICY_NAME_BYTES
+        || fact.is_empty()
+        || fact.len() > MAX_POLICY_NAME_BYTES
+    {
+        return Err("contract policy name is out of bounds".into());
+    }
+    let parsed = parse_source_program(source).map_err(|e| e.to_string())?;
+    let declarations: Vec<_> = parsed
+        .declarations
+        .iter()
+        .filter(|declaration| declaration.value.name == function)
+        .collect();
+    let [declaration] = declarations.as_slice() else {
+        return Err(format!("expected one declaration of {function}"));
+    };
+    validate_typed_policy_declaration(source, declaration)?;
+    let contract = declaration
+        .value
+        .function_contract
+        .as_ref()
+        .ok_or("missing contract")?;
+    let mut found = None;
+    for clause in &contract.clauses {
+        match clause.value.kind {
+            SourceContractClauseKind::Requires
+            | SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal) => {}
+            _ => return Err("contract policy supports requires and ensures normal only".into()),
+        }
+        if clause.value.kind
+            != SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal)
+        {
+            continue;
+        }
+        let tokens: Vec<_> = lex(&clause.value.expression_source)
+            .map_err(|error| error.to_string())?
+            .into_iter()
+            .map(|token| token.kind)
+            .filter(|token| *token != TokenKind::Eof)
+            .collect();
+        let literal = match tokens.as_slice() {
+            [
+                TokenKind::Word(name),
+                TokenKind::Symbol(Symbol::EqualEqual),
+                TokenKind::StringLiteral(value),
+            ] if name == fact => Some(ContractFact::Text(decode_text_literal(value)?)),
+            [
+                TokenKind::Word(name),
+                TokenKind::Symbol(Symbol::EqualEqual),
+                TokenKind::Integer(value),
+            ] if name == fact => Some(ContractFact::Integer(
+                value.parse().map_err(|_| "invalid predicate integer")?,
+            )),
+            [
+                TokenKind::Word(name),
+                TokenKind::Symbol(Symbol::EqualEqual),
+                TokenKind::Symbol(Symbol::Minus),
+                TokenKind::Integer(value),
+            ] if name == fact => Some(ContractFact::Integer(
+                format!("-{value}")
+                    .parse()
+                    .map_err(|_| "invalid predicate integer")?,
+            )),
+            _ => None,
+        };
+        if let Some(literal) = literal
+            && found.replace(literal).is_some()
+        {
+            return Err(format!("ambiguous contract policy literal: {fact}"));
+        }
+    }
+    found.ok_or_else(|| format!("missing contract policy literal: {fact}"))
+}
+
+fn validate_typed_policy_declaration(
+    source: &str,
+    declaration: &qcore_frontend::frontend::Located<qcore_frontend::frontend::SourceDeclaration>,
+) -> Result<(), String> {
+    if declaration.value.kind != DeclarationKind::ExternFunction {
+        return Err("contract policy requires an extern function".into());
+    }
+    if declaration.value.body.is_some() {
+        return Err("contract policy function must not have a body".into());
+    }
+    if !declaration.value.parameters.is_empty() {
+        return Err("contract policy function must not have parameters".into());
+    }
+    let result = declaration
+        .value
+        .result_type
+        .as_ref()
+        .ok_or("contract policy function requires a unit result")?;
+    if result.tokens.as_slice() != [TokenKind::Word("unit".into())] {
+        return Err("contract policy function requires a unit result".into());
+    }
+    if declaration.value.tokens.first() == Some(&TokenKind::Word("unsafe".into())) {
+        return Err("contract policy function must not be unsafe".into());
+    }
+    let contract = declaration
+        .value
+        .function_contract
+        .as_ref()
+        .ok_or("missing contract")?;
+    if !source[result.span.end..contract.span.start]
+        .trim()
+        .is_empty()
+    {
+        return Err("contract policy function must not declare effects".into());
+    }
+    Ok(())
 }
 
 pub fn check_contract_observation(
@@ -194,6 +416,198 @@ fn evaluate(source: &str, values: &BTreeMap<String, i128>) -> Result<i128, Strin
         return Err(format!("unsupported predicate syntax: {source}"));
     }
     Ok(value)
+}
+
+fn evaluate_typed(
+    source: &str,
+    values: &BTreeMap<String, ContractFact>,
+) -> Result<ContractFact, String> {
+    let tokens: Vec<_> = lex(source)
+        .map_err(|e| e.to_string())?
+        .into_iter()
+        .map(|token| token.kind)
+        .filter(|token| *token != TokenKind::Eof)
+        .collect();
+    if tokens.len() > 512 {
+        return Err("observation predicate too large".into());
+    }
+    let mut parser = TypedPredicate {
+        tokens: &tokens,
+        cursor: 0,
+        values,
+    };
+    let value = parser.expression(0, 0)?;
+    if parser.cursor != tokens.len() {
+        return Err(format!("unsupported predicate syntax: {source}"));
+    }
+    Ok(value)
+}
+
+fn integer(value: ContractFact, context: &str) -> Result<i128, String> {
+    match value {
+        ContractFact::Integer(value) => Ok(value),
+        ContractFact::Text(_) => Err(format!("{context} requires integer operands")),
+    }
+}
+
+fn integer_truth(value: &ContractFact) -> Result<i128, String> {
+    match value {
+        ContractFact::Integer(value) => Ok(*value),
+        ContractFact::Text(_) => Err("contract policy predicate must produce an integer".into()),
+    }
+}
+
+fn decode_text_literal(raw: &str) -> Result<String, String> {
+    let bytes = qcore_core::std_string::decode_string_literal(raw)
+        .map_err(|error| format!("invalid contract policy text literal: {error}"))?;
+    if bytes.len() > MAX_POLICY_TEXT_BYTES {
+        return Err("contract policy text literal is too large".into());
+    }
+    String::from_utf8(bytes).map_err(|_| "invalid contract policy text literal".into())
+}
+
+struct TypedPredicate<'a> {
+    tokens: &'a [TokenKind],
+    cursor: usize,
+    values: &'a BTreeMap<String, ContractFact>,
+}
+
+impl TypedPredicate<'_> {
+    fn expression(&mut self, minimum: u8, depth: usize) -> Result<ContractFact, String> {
+        if depth > 64 {
+            return Err("observation predicate nesting limit".into());
+        }
+        let token = self
+            .tokens
+            .get(self.cursor)
+            .ok_or("expected predicate term")?
+            .clone();
+        self.cursor += 1;
+        let mut left = match token {
+            TokenKind::Integer(number) => {
+                ContractFact::Integer(number.parse().map_err(|_| "invalid predicate integer")?)
+            }
+            TokenKind::StringLiteral(text) => ContractFact::Text(decode_text_literal(&text)?),
+            TokenKind::Word(name) if name == "true" => ContractFact::Integer(1),
+            TokenKind::Word(name) if name == "false" => ContractFact::Integer(0),
+            TokenKind::Word(name) if name == "not" => ContractFact::Integer(i128::from(
+                integer(self.expression(6, depth + 1)?, "predicate not")? == 0,
+            )),
+            TokenKind::Symbol(Symbol::Bang) => ContractFact::Integer(i128::from(
+                integer(self.expression(6, depth + 1)?, "predicate not")? == 0,
+            )),
+            TokenKind::Word(name) => self
+                .values
+                .get(&name)
+                .cloned()
+                .ok_or_else(|| format!("missing observation: {name}"))?,
+            TokenKind::Symbol(Symbol::Minus) => {
+                if let Some(TokenKind::Integer(number)) = self.tokens.get(self.cursor) {
+                    self.cursor += 1;
+                    ContractFact::Integer(
+                        format!("-{number}")
+                            .parse()
+                            .map_err(|_| "invalid predicate integer")?,
+                    )
+                } else {
+                    ContractFact::Integer(
+                        integer(self.expression(6, depth + 1)?, "predicate negation")?
+                            .checked_neg()
+                            .ok_or("predicate overflow")?,
+                    )
+                }
+            }
+            TokenKind::Symbol(Symbol::LeftParen) => {
+                let value = self.expression(0, depth + 1)?;
+                if self.tokens.get(self.cursor) != Some(&TokenKind::Symbol(Symbol::RightParen)) {
+                    return Err("missing predicate closing parenthesis".into());
+                }
+                self.cursor += 1;
+                value
+            }
+            _ => return Err("unsupported predicate term".into()),
+        };
+        while let Some(operator) = self.tokens.get(self.cursor).cloned() {
+            let priority = match &operator {
+                TokenKind::Word(word) if word == "or" => 1,
+                TokenKind::Word(word) if word == "and" => 2,
+                TokenKind::Symbol(
+                    Symbol::EqualEqual
+                    | Symbol::NotEqual
+                    | Symbol::Less
+                    | Symbol::LessEqual
+                    | Symbol::Greater
+                    | Symbol::GreaterEqual,
+                ) => 3,
+                TokenKind::Symbol(Symbol::Plus | Symbol::Minus) => 4,
+                TokenKind::Symbol(Symbol::Star) => 5,
+                _ => break,
+            };
+            if priority < minimum {
+                break;
+            }
+            self.cursor += 1;
+            let right = self.expression(priority + 1, depth + 1)?;
+            left = match operator {
+                TokenKind::Word(word) if word == "or" => {
+                    let lhs = integer(left, "predicate or")?;
+                    let rhs = integer(right, "predicate or")?;
+                    ContractFact::Integer(i128::from(lhs != 0 || rhs != 0))
+                }
+                TokenKind::Word(word) if word == "and" => {
+                    let lhs = integer(left, "predicate and")?;
+                    let rhs = integer(right, "predicate and")?;
+                    ContractFact::Integer(i128::from(lhs != 0 && rhs != 0))
+                }
+                TokenKind::Symbol(Symbol::EqualEqual | Symbol::NotEqual) => {
+                    let equal = match (&left, &right) {
+                        (ContractFact::Integer(lhs), ContractFact::Integer(rhs)) => lhs == rhs,
+                        (ContractFact::Text(lhs), ContractFact::Text(rhs)) => lhs == rhs,
+                        _ => {
+                            return Err(
+                                "predicate equality requires operands of the same type".into()
+                            );
+                        }
+                    };
+                    ContractFact::Integer(i128::from(
+                        if operator == TokenKind::Symbol(Symbol::EqualEqual) {
+                            equal
+                        } else {
+                            !equal
+                        },
+                    ))
+                }
+                TokenKind::Symbol(
+                    Symbol::Less | Symbol::LessEqual | Symbol::Greater | Symbol::GreaterEqual,
+                ) => {
+                    let lhs = integer(left, "predicate ordering")?;
+                    let rhs = integer(right, "predicate ordering")?;
+                    let result = match operator {
+                        TokenKind::Symbol(Symbol::Less) => lhs < rhs,
+                        TokenKind::Symbol(Symbol::LessEqual) => lhs <= rhs,
+                        TokenKind::Symbol(Symbol::Greater) => lhs > rhs,
+                        TokenKind::Symbol(Symbol::GreaterEqual) => lhs >= rhs,
+                        _ => unreachable!(),
+                    };
+                    ContractFact::Integer(i128::from(result))
+                }
+                TokenKind::Symbol(Symbol::Plus | Symbol::Minus | Symbol::Star) => {
+                    let lhs = integer(left, "predicate arithmetic")?;
+                    let rhs = integer(right, "predicate arithmetic")?;
+                    let result = match operator {
+                        TokenKind::Symbol(Symbol::Plus) => lhs.checked_add(rhs),
+                        TokenKind::Symbol(Symbol::Minus) => lhs.checked_sub(rhs),
+                        TokenKind::Symbol(Symbol::Star) => lhs.checked_mul(rhs),
+                        _ => unreachable!(),
+                    }
+                    .ok_or("predicate overflow")?;
+                    ContractFact::Integer(result)
+                }
+                _ => unreachable!(),
+            };
+        }
+        Ok(left)
+    }
 }
 
 struct Predicate<'a> {
