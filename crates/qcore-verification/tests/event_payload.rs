@@ -15,9 +15,9 @@ use qcore_verification::event_composition_context::{
     EventCompositionPayload, ValidatedEventCompositionContext, check_event_composition_context_for,
 };
 use qcore_verification::event_payload::{
-    EventPayloadBoundary, EventPayloadEvidence, EventPayloadProjection,
-    EventPayloadProjectionOutcome, EventPayloadWriteAuthority, check_event_payload_boundary,
-    event_payload_context_bindings, project_event_payload,
+    EventPayloadAllocationEvidence, EventPayloadBoundary, EventPayloadEvidence,
+    EventPayloadProjection, EventPayloadProjectionOutcome, EventPayloadWriteAuthority,
+    check_event_payload_boundary, event_payload_context_bindings, project_event_payload,
 };
 use serde_json::{Value, json};
 
@@ -113,6 +113,7 @@ fn digest(label: &str) -> String {
 }
 
 fn context(
+    observations: &[u8],
     bindings: &[u8],
     allocation: &[u8],
     projection: &EventPayloadProjection,
@@ -158,7 +159,7 @@ fn context(
         observation_trust: DeclaredObservationTrust::ProducerSuppliedRuntimeEvidence,
     };
     let payload = EventCompositionPayload {
-        observations: OBSERVATIONS,
+        observations,
         bindings,
     };
     let expected = EventCompositionContext::derive(input, payload).unwrap();
@@ -167,6 +168,7 @@ fn context(
 
 fn authority() -> EventPayloadWriteAuthority {
     EventPayloadWriteAuthority {
+        callback_argument: 9,
         context_object: CONTEXT,
         fired_base: FIRED,
         writable_fired_fields: BTreeSet::from(["data".into(), "fd".into(), "mask".into()]),
@@ -199,7 +201,14 @@ fn check_with(
     let allocation = allocation();
     check_event_payload_boundary(
         projection,
-        &context(bindings, &allocation, projection, authority, model),
+        &context(
+            OBSERVATIONS,
+            bindings,
+            &allocation,
+            projection,
+            authority,
+            model,
+        ),
         EventPayloadEvidence {
             observations: OBSERVATIONS,
             bindings,
@@ -348,6 +357,7 @@ fn context_hashes_bind_allocation_and_mutable_authority_inputs() {
     let original_authority = authority();
     let model = callback_model();
     let admitted = context(
+        OBSERVATIONS,
         &bindings,
         &allocation,
         &projection,
@@ -389,4 +399,54 @@ fn context_hashes_bind_allocation_and_mutable_authority_inputs() {
         ),
         EventPayloadBoundary::Unknown { .. }
     ));
+}
+
+#[test]
+fn configured_native_payload_artifacts_check_when_present() {
+    let Ok(directory) = std::env::var("QCORE_EVENT_PAYLOAD_NATIVE_DIR") else {
+        return;
+    };
+    let directory = PathBuf::from(directory);
+    let observations = std::fs::read(directory.join("observations.jsonl")).unwrap();
+    let bindings = std::fs::read(directory.join("bindings.jsonl")).unwrap();
+    let allocation = std::fs::read(directory.join("allocation.json")).unwrap();
+    let layout: EventPayloadAllocationEvidence = serde_json::from_slice(&allocation).unwrap();
+    let projection = projection(CALLBACKS);
+    let authority = EventPayloadWriteAuthority {
+        callback_argument: 9,
+        context_object: layout.context_object,
+        fired_base: layout.fired_base,
+        writable_fired_fields: BTreeSet::from(["data".into(), "fd".into(), "mask".into()]),
+        writable_context_fields: BTreeSet::from(["fired_count".into()]),
+        context_payload: 70,
+        fired_payload: 71,
+    };
+    let model = callback_model();
+    let admitted = context(
+        &observations,
+        &bindings,
+        &allocation,
+        &projection,
+        &authority,
+        &model,
+    );
+    let outcome = check_event_payload_boundary(
+        &projection,
+        &admitted,
+        EventPayloadEvidence {
+            observations: &observations,
+            bindings: &bindings,
+            allocation: &allocation,
+        },
+        &authority,
+        &model,
+    );
+    let EventPayloadBoundary::Checked(report) = outcome else {
+        panic!("native payload artifacts did not check: {outcome:?}");
+    };
+    assert_eq!(report.checked_executions, 4);
+    assert_eq!(report.checked_path_indices, BTreeSet::from([0, 1, 2, 3]));
+    assert_eq!(report.contextual_capacity, 8);
+    assert_eq!(report.contextual_element_size, 72);
+    assert_eq!(report.accounted_non_cb_event_bindings, 0);
 }

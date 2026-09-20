@@ -424,7 +424,6 @@ static void snapshot(struct observed_callback *entry)
         cell(map, "ctx", "struct mk_event_ctx *", (long) ctx, &count);
         cell(ctx, "fired", "struct mk_event *", (long) ctx->fired, &count);
         cell(ctx, "fired_count", "int", ctx->fired_count, &count);
-        cell(ctx, "queue_size", "unsigned long", (long) ctx->queue_size, &count);
         for (int i = 0; i < ctx->queue_size; i++) {
             cell(&ctx->fired[i], "fd", "int", ctx->fired[i].fd, &count);
             cell(&ctx->fired[i], "mask", "unsigned int", ctx->fired[i].mask, &count);

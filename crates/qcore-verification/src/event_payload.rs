@@ -19,12 +19,21 @@ use qcore_contract::contract_observation::{ContractFact, check_typed_contract_fa
 use serde::{Deserialize, Serialize};
 
 use crate::event_composition_context::ValidatedEventCompositionContext;
-use qcore_core::event_reactor::{
-    ActivationReason, ArgumentMode, CallbackSummary, PayloadAccessKind, PayloadId,
-};
+use qcore_core::event_reactor::{CallbackSummary, PayloadId};
 
 pub const EVENT_PAYLOAD_EVIDENCE_VERSION: &str = "qcore.cycle18.cb-event-payload.v1";
 pub const EVENT_PAYLOAD_PROPERTY: &str = "cb-event-payload-boundary";
+pub const EVENT_PAYLOAD_ALLOCATION_SCHEMA_VERSION: u16 = 1;
+pub const EVENT_PAYLOAD_ALLOCATION_EVIDENCE_ASSUMPTION: &str =
+    "event_payload_allocation_evidence_sha256";
+pub const EVENT_PAYLOAD_CONTEXT_ASSUMPTIONS: [&str; 6] = [
+    "event_payload_source_summary_sha256",
+    "event_payload_allocation_summary_sha256",
+    "event_payload_contract_sha256",
+    "event_payload_authority_sha256",
+    "event_payload_callback_summary_sha256",
+    EVENT_PAYLOAD_ALLOCATION_EVIDENCE_ASSUMPTION,
+];
 pub const EVENT_PAYLOAD_CONTRACT: &str =
     include_str!("../../../contract/qcore/monkey/event_payload.qcore");
 
@@ -111,6 +120,19 @@ struct DerivedPath {
     context: String,
     fired_base: String,
     fired_index: String,
+    mask_value: i64,
+}
+
+fn integer_value(value: &Identity) -> Result<i64, String> {
+    match value {
+        Identity::Integer(value) => value
+            .parse()
+            .map_err(|_| "source integer is outside i64".into()),
+        Identity::Binary(operator, left, right) if operator == "|" => {
+            Ok(integer_value(left)? | integer_value(right)?)
+        }
+        _ => Err("cb_event mask is not a bounded source integer expression".into()),
+    }
 }
 
 fn guard_mask(value: &SourceValue) -> Result<i64, String> {
@@ -145,7 +167,7 @@ fn guard_mask(value: &SourceValue) -> Result<i64, String> {
 
 fn derive_path(path: &SourcePath) -> Result<DerivedPath, String> {
     let mut state = PathState::default();
-    let mut writes = BTreeMap::new();
+    let mut write_identities = BTreeMap::new();
     let mut guards = Vec::new();
     for (operation_index, operation) in path.operations.iter().enumerate() {
         match operation {
@@ -162,8 +184,8 @@ fn derive_path(path: &SourcePath) -> Result<DerivedPath, String> {
             }
             SourceOperation::Write { place, value } => {
                 let target = identity(place, &state)?.canonical();
-                let value = identity(value, &state)?.canonical();
-                if writes.insert(target, value).is_some() {
+                let value = identity(value, &state)?;
+                if write_identities.insert(target, value).is_some() {
                     return Err("cb_event writes one payload target more than once".into());
                 }
             }
@@ -196,6 +218,10 @@ fn derive_path(path: &SourcePath) -> Result<DerivedPath, String> {
         "fired_count".into(),
     )));
     let fired = Identity::Index(Box::new(fired_base.clone()), Box::new(fired_index.clone()));
+    let writes = write_identities
+        .iter()
+        .map(|(target, value)| (target.clone(), value.canonical()))
+        .collect::<BTreeMap<_, _>>();
     let expected = ["fd", "mask", "data"]
         .into_iter()
         .map(|field| Identity::Field(Box::new(fired.clone()), field.into()).canonical())
@@ -208,6 +234,7 @@ fn derive_path(path: &SourcePath) -> Result<DerivedPath, String> {
     }
     let fired_data = Identity::Field(Box::new(fired.clone()), "data".into()).canonical();
     let fired_fd = Identity::Field(Box::new(fired.clone()), "fd".into()).canonical();
+    let fired_mask = Identity::Field(Box::new(fired.clone()), "mask".into()).canonical();
     let count = Identity::Field(Box::new(context.clone()), "fired_count".into()).canonical();
     let expected_fd = Identity::Load(Box::new(Identity::Field(
         Box::new(event.clone()),
@@ -226,6 +253,11 @@ fn derive_path(path: &SourcePath) -> Result<DerivedPath, String> {
     {
         return Err("cb_event source path writes substituted payload values".into());
     }
+    let mask_value = integer_value(
+        write_identities
+            .get(&fired_mask)
+            .ok_or("cb_event source path lacks the fired mask value")?,
+    )?;
     Ok(DerivedPath {
         guards,
         writes,
@@ -234,6 +266,7 @@ fn derive_path(path: &SourcePath) -> Result<DerivedPath, String> {
         context: context.canonical(),
         fired_base: fired_base.canonical(),
         fired_index: fired_index.canonical(),
+        mask_value,
     })
 }
 
@@ -243,6 +276,8 @@ fn derive_path(path: &SourcePath) -> Result<DerivedPath, String> {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct EventPayloadWriteAuthority {
+    /// Mapping from the observed callback argument to the event model namespace.
+    pub callback_argument: u32,
     pub context_object: u64,
     pub fired_base: u64,
     pub writable_fired_fields: BTreeSet<String>,
@@ -373,7 +408,7 @@ pub struct EventPayloadBoundaryReport {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 #[serde(tag = "status", rename_all = "snake_case")]
 pub enum EventPayloadBoundary {
-    Checked(EventPayloadBoundaryReport),
+    Checked(Box<EventPayloadBoundaryReport>),
     Unknown { reason: String },
 }
 
@@ -426,18 +461,18 @@ struct ObservationRow {
     action: serde_json::Value,
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct AllocationEvidence {
-    schema_version: u16,
-    context_object: u64,
-    fired_base: u64,
-    fired_capacity: usize,
-    fired_element_size: u64,
-    fired_allocation_bytes: u64,
-    loop_size_argument: usize,
-    context_allocation_bytes: u64,
-    sizeof_context: u64,
+pub struct EventPayloadAllocationEvidence {
+    pub schema_version: u16,
+    pub context_object: u64,
+    pub fired_base: u64,
+    pub fired_capacity: usize,
+    pub fired_element_size: u64,
+    pub fired_allocation_bytes: u64,
+    pub loop_size_argument: usize,
+    pub context_allocation_bytes: u64,
+    pub sizeof_context: u64,
 }
 
 fn json_lines<T: for<'de> Deserialize<'de>>(bytes: &[u8]) -> Result<Vec<T>, String> {
@@ -450,7 +485,11 @@ fn json_lines<T: for<'de> Deserialize<'de>>(bytes: &[u8]) -> Result<Vec<T>, Stri
         .collect()
 }
 
-fn cells(rows: &[Cell]) -> Result<BTreeMap<(u64, String), (&str, i64)>, String> {
+type CellKey = (u64, String);
+type CellValue<'a> = (&'a str, i64);
+type CellMap<'a> = BTreeMap<CellKey, CellValue<'a>>;
+
+fn cells(rows: &[Cell]) -> Result<CellMap<'_>, String> {
     let mut result = BTreeMap::new();
     for cell in rows {
         if cell.object == 0
@@ -519,11 +558,11 @@ fn check_observation_interval(
     Ok(())
 }
 
-fn registered_callback<'a>(
-    observations: &'a [ObservationRow],
+fn registered_callback(
+    observations: &[ObservationRow],
     event: u64,
     sequence: u64,
-) -> Result<(&'a str, (u64, u64, u64)), String> {
+) -> Result<(&str, (u64, u64, u64)), String> {
     let found = observations
         .iter()
         .filter(|row| {
@@ -563,28 +602,64 @@ fn checked(
     let allocation_sha256 = qcore_schemas::sha256_hex(evidence.allocation);
     if context_record
         .assumptions()
-        .get("event_payload_allocation_evidence_sha256")
+        .get(EVENT_PAYLOAD_ALLOCATION_EVIDENCE_ASSUMPTION)
         != Some(&allocation_sha256)
     {
         return Err("validated event context does not bind allocation evidence".into());
     }
-    let allocation: AllocationEvidence =
+    let allocation: EventPayloadAllocationEvidence =
         serde_json::from_slice(evidence.allocation).map_err(|e| e.to_string())?;
-    if allocation.schema_version != 1
-        || allocation.context_object == 0
-        || allocation.fired_base == 0
-        || allocation.fired_capacity < 2
-        || allocation.fired_element_size == 0
-        || allocation.loop_size_argument != allocation.fired_capacity
-        || allocation.context_allocation_bytes != allocation.sizeof_context
-        || allocation.fired_allocation_bytes
-            != u64::try_from(allocation.fired_capacity)
-                .map_err(|_| "allocation capacity is outside u64")?
-                .checked_mul(allocation.fired_element_size)
-                .ok_or("native allocation extent overflow")?
-    {
-        return Err("native allocation/layout record is inconsistent".into());
-    }
+    let capacity_u64 = u64::try_from(allocation.fired_capacity)
+        .map_err(|_| "allocation capacity is outside u64")?;
+    capacity_u64
+        .checked_mul(allocation.fired_element_size)
+        .ok_or("native allocation extent overflow")?;
+    check_typed_contract_facts(
+        EVENT_PAYLOAD_CONTRACT,
+        "native_allocation",
+        &[
+            (
+                "schema_version",
+                ContractFact::Integer(i128::from(allocation.schema_version)),
+            ),
+            (
+                "expected_schema_version",
+                ContractFact::Integer(i128::from(EVENT_PAYLOAD_ALLOCATION_SCHEMA_VERSION)),
+            ),
+            (
+                "context_object",
+                ContractFact::Integer(i128::from(allocation.context_object)),
+            ),
+            (
+                "fired_base",
+                ContractFact::Integer(i128::from(allocation.fired_base)),
+            ),
+            (
+                "capacity",
+                ContractFact::Integer(allocation.fired_capacity as i128),
+            ),
+            (
+                "element_size",
+                ContractFact::Integer(i128::from(allocation.fired_element_size)),
+            ),
+            (
+                "allocation_bytes",
+                ContractFact::Integer(i128::from(allocation.fired_allocation_bytes)),
+            ),
+            (
+                "loop_size",
+                ContractFact::Integer(allocation.loop_size_argument as i128),
+            ),
+            (
+                "context_allocation_bytes",
+                ContractFact::Integer(i128::from(allocation.context_allocation_bytes)),
+            ),
+            (
+                "sizeof_context",
+                ContractFact::Integer(i128::from(allocation.sizeof_context)),
+            ),
+        ],
+    )?;
     if projection.function != "cb_event"
         || projection.source_revision != context_record.fluent_bit_revision()
         || !context_record.scope().contains("cb_event")
@@ -650,28 +725,100 @@ fn checked(
     if observed_intervals != callbacks.len() * 2 {
         return Err("callback bindings do not account for every observed interval".into());
     }
-    if authority.context_object == 0
-        || authority.fired_base == 0
-        || authority.writable_fired_fields
-            != BTreeSet::from(["data".into(), "fd".into(), "mask".into()])
-        || authority.writable_context_fields != BTreeSet::from(["fired_count".into()])
-        || callback_summary.payload_authority.len() != 2
-        || callback_summary
+    let access = |payload| {
+        callback_summary
             .payload_authority
-            .get(&authority.context_payload)
-            != Some(&PayloadAccessKind::Write)
-        || callback_summary
-            .payload_authority
-            .get(&authority.fired_payload)
-            != Some(&PayloadAccessKind::Write)
-        || callback_summary.argument_mode != ArgumentMode::Borrowed
-        || callback_summary.trigger_reasons
-            != BTreeSet::from([ActivationReason::Read, ActivationReason::Write])
-        || callback_summary.may_defer
-        || callback_summary.may_spawn_tasks
-    {
-        return Err("contextual write authority is incomplete or overbroad".into());
-    }
+            .get(&payload)
+            .map(|kind| format!("{kind:?}"))
+            .unwrap_or_else(|| "Missing".into())
+    };
+    check_typed_contract_facts(
+        EVENT_PAYLOAD_CONTRACT,
+        "contextual_authority",
+        &[
+            (
+                "authority_context",
+                ContractFact::Integer(i128::from(authority.context_object)),
+            ),
+            (
+                "authority_fired_base",
+                ContractFact::Integer(i128::from(authority.fired_base)),
+            ),
+            (
+                "fired_fields",
+                ContractFact::Text(
+                    authority
+                        .writable_fired_fields
+                        .iter()
+                        .cloned()
+                        .collect::<Vec<_>>()
+                        .join(","),
+                ),
+            ),
+            (
+                "context_fields",
+                ContractFact::Text(
+                    authority
+                        .writable_context_fields
+                        .iter()
+                        .cloned()
+                        .collect::<Vec<_>>()
+                        .join(","),
+                ),
+            ),
+            (
+                "payload_count",
+                ContractFact::Integer(callback_summary.payload_authority.len() as i128),
+            ),
+            (
+                "context_payload",
+                ContractFact::Integer(i128::from(authority.context_payload)),
+            ),
+            (
+                "fired_payload",
+                ContractFact::Integer(i128::from(authority.fired_payload)),
+            ),
+            (
+                "context_access",
+                ContractFact::Text(access(authority.context_payload)),
+            ),
+            (
+                "fired_access",
+                ContractFact::Text(access(authority.fired_payload)),
+            ),
+            (
+                "model_argument",
+                ContractFact::Integer(i128::from(callback_summary.argument)),
+            ),
+            (
+                "authority_argument",
+                ContractFact::Integer(i128::from(authority.callback_argument)),
+            ),
+            (
+                "argument_mode",
+                ContractFact::Text(format!("{:?}", callback_summary.argument_mode)),
+            ),
+            (
+                "trigger_reasons",
+                ContractFact::Text(
+                    callback_summary
+                        .trigger_reasons
+                        .iter()
+                        .map(|reason| format!("{reason:?}"))
+                        .collect::<Vec<_>>()
+                        .join(","),
+                ),
+            ),
+            (
+                "may_defer",
+                ContractFact::Integer(i128::from(callback_summary.may_defer as u8)),
+            ),
+            (
+                "may_spawn_tasks",
+                ContractFact::Integer(i128::from(callback_summary.may_spawn_tasks as u8)),
+            ),
+        ],
+    )?;
 
     let mut checked_paths = BTreeSet::new();
     let mut checked_executions = 0usize;
@@ -706,6 +853,8 @@ fn checked(
             return Err("callback snapshots do not cover the same storage cells".into());
         }
         let event = callback.argument;
+        let path_index = path_for_flags(paths, callback.flags)?;
+        let source_path = &paths[path_index];
         let map = before
             .get(&(event, "data".into()))
             .filter(|(ty, _)| *ty == "void *")
@@ -832,6 +981,18 @@ fn checked(
         if expected.iter().any(|cell| !before.contains_key(cell)) {
             return Err("contextual extent does not contain every source-derived target".into());
         }
+        if before.get(&(event, "fd".into())) != Some(&("int", i64::from(callback.fd)))
+            || after.get(&(target, "fd".into())) != Some(&("int", i64::from(callback.fd)))
+            || after.get(&(target, "mask".into()))
+                != Some(&("unsigned int", source_path.mask_value))
+            || after.get(&(target, "data".into()))
+                != Some(&(
+                    "void *",
+                    i64::try_from(event).map_err(|_| "native event identity is outside i64")?,
+                ))
+        {
+            return Err("callback post-state does not match source-derived payload values".into());
+        }
         for (cell, prior) in &before {
             if !expected.contains(cell) && after.get(cell) != Some(prior) {
                 return Err("callback changed a cell outside its declared write authority".into());
@@ -844,7 +1005,7 @@ fn checked(
         if after_count != i64::from(fired_index_i32 + 1) {
             return Err("callback post-state does not increment fired_count once".into());
         }
-        checked_paths.insert(path_for_flags(paths, callback.flags)?);
+        checked_paths.insert(path_index);
         checked_executions += 1;
         let offset = index.checked_mul(stride).ok_or("fired offset overflow")?;
         let extent = u64::try_from(queue_size)
@@ -921,7 +1082,7 @@ fn checked(
     let mut assumptions = context_record.assumptions().clone();
     assumptions.insert(
         "payload_storage_extent".into(),
-        "producer-supplied complete callback snapshots checked against declared capacity".into(),
+        "source-sized native allocation record joined to complete callback snapshots".into(),
     );
     assumptions.insert(
         "payload_write_authority".into(),
@@ -975,7 +1136,7 @@ pub fn check_event_payload_boundary(
     callback_summary: &CallbackSummary,
 ) -> EventPayloadBoundary {
     match checked(projection, context, evidence, authority, callback_summary) {
-        Ok(report) => EventPayloadBoundary::Checked(report),
+        Ok(report) => EventPayloadBoundary::Checked(Box::new(report)),
         Err(reason) => EventPayloadBoundary::Unknown { reason },
     }
 }
@@ -1090,11 +1251,23 @@ fn projected(
     if summary
         .profile_assumptions()
         .get("library")
-        .is_some_and(|value| value != "monkey")
+        .map(String::as_str)
+        != Some("monkey")
         || summary
             .profile_assumptions()
             .get("typed_import_role")
-            .is_some_and(|value| value != "Callback")
+            .map(String::as_str)
+            != Some("Callback")
+        || allocation_summary
+            .profile_assumptions()
+            .get("library")
+            .map(String::as_str)
+            != Some("monkey")
+        || allocation_summary
+            .profile_assumptions()
+            .get("typed_import_role")
+            .map(String::as_str)
+            != Some("Wrapper")
     {
         return Err("sealed source summary has the wrong import profile".into());
     }

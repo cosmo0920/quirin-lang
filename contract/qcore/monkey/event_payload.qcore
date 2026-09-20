@@ -26,6 +26,35 @@ contract {
     ensures normal checked_paths == selected_paths;
 };
 
+extern fn contextual_authority() -> unit
+contract {
+    ensures normal authority_context > 0;
+    ensures normal authority_fired_base > 0;
+    ensures normal fired_fields == "data,fd,mask";
+    ensures normal context_fields == "fired_count";
+    ensures normal payload_count == 2;
+    ensures normal context_payload != fired_payload;
+    ensures normal context_access == "Write";
+    ensures normal fired_access == "Write";
+    ensures normal model_argument == authority_argument;
+    ensures normal argument_mode == "Borrowed";
+    ensures normal trigger_reasons == "Read,Write";
+    ensures normal may_defer == 0;
+    ensures normal may_spawn_tasks == 0;
+};
+
+extern fn native_allocation() -> unit
+contract {
+    ensures normal schema_version == expected_schema_version;
+    ensures normal context_object > 0;
+    ensures normal fired_base > 0;
+    ensures normal capacity >= 2;
+    ensures normal element_size > 0;
+    ensures normal loop_size == capacity;
+    ensures normal context_allocation_bytes == sizeof_context;
+    ensures normal allocation_bytes == capacity * element_size;
+};
+
 extern fn contextual_payload_access() -> unit
 contract {
     ensures normal index >= 0;
