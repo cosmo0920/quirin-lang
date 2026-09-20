@@ -128,4 +128,3 @@ retained evidence, not the semantic model.
    is claimed.”
 4. Preserve O2/O3 as open optimization scope: TU-wide typed declaration/AST
    indexing and correctly keyed CFG reuse are not implemented here.
-
