@@ -6700,11 +6700,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Final combined source 18b142b8d055a385985c68b392f449d60d3e2b99; 4845 Rust passed, 0 failed, 10 ignored; 248 strict summaries across 246 targets (237 running and 9 doc). All standing commands exit 0. 148 Lean audits. Python count is finalized by the post-regeneration run recorded in gate-facts.json. Provider 122 is carried Unix evidence, not remeasured. Actual Clang recording captured in this checkout during this run. Logs: /home/cosmo/Documents/GitHub/qcore-c/private/b-series/final-validated-gate/. Earlier failed/intermediate runs remain disclosed in README.md. No full-language conformance or raw-unit promotion claimed.",
-  "workspace_tests": 4845,
+  "note": "Isolated W42-INDIRECT-ACCESS source e90e2958ea7820d03ae7431b83b48eef22d3993a; 4857 Rust passed, 0 failed, 10 ignored; 249 strict summaries across 247 targets (238 running and 9 doc). All standing commands through 149 Lean audits exited 0. Python is measured after this gate regenerates the isolated acceptance matrix. Provider 122 is carried Unix evidence, not remeasured. Clang was invoked in this checkout during this run. Logs: /tmp/agent-w42-indirect/private/w42-priority/gate-final-2/. LeakSanitizer remained enabled; the run was outside the sandbox because LeakSanitizer refuses execution under ptrace.",
+  "workspace_tests": 4857,
   "provider_tests": 122,
   "python_evidence_validator_tests": 305,
-  "lean_audits": 148,
+  "lean_audits": 149,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6819,6 +6819,7 @@
    "AuditReturnCallCustody.lean",
    "AuditReturnExpressionEvaluation.lean",
    "AuditReturnPositionEscape.lean",
+   "AuditScalarMemberStore.lean",
    "AuditScalarRouteExitEdge.lean",
    "AuditSingleEmissionRoute.lean",
    "AuditSlicePermissions.lean",
@@ -6861,7 +6862,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/b-series-integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w42-indirect-access/gate.json)"
  },
  "named_followups": [
   {
