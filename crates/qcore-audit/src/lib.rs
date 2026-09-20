@@ -12,6 +12,7 @@ pub mod current;
 pub mod projection;
 pub mod report;
 mod source_audit;
+mod observed_wait_inputs;
 pub mod source_contract;
 pub use source_audit::{SourceContractAuditConfig, SourceContractLibrary};
 
