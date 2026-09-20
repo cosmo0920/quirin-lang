@@ -297,6 +297,51 @@ impl EventCompositionContext {
     }
 
     #[must_use]
+    pub fn bounds(&self) -> &BTreeMap<String, u64> {
+        &self.bounds
+    }
+
+    #[must_use]
+    pub fn assumptions(&self) -> &BTreeMap<String, String> {
+        &self.assumptions
+    }
+
+    #[must_use]
+    pub fn source_compile_task_sha256(&self) -> &str {
+        &self.source_compile_task_sha256
+    }
+
+    #[must_use]
+    pub fn fluent_bit_revision(&self) -> &str {
+        &self.fluent_bit_revision
+    }
+
+    #[must_use]
+    pub fn monkey_profile_sha256(&self) -> &str {
+        &self.monkey_profile_sha256
+    }
+
+    #[must_use]
+    pub fn libevent_profile_sha256(&self) -> &str {
+        &self.libevent_profile_sha256
+    }
+
+    #[must_use]
+    pub fn contracts_sha256(&self) -> &str {
+        &self.contracts_sha256
+    }
+
+    #[must_use]
+    pub fn source_rules_sha256(&self) -> &str {
+        &self.source_rules_sha256
+    }
+
+    #[must_use]
+    pub fn observation_rules_sha256(&self) -> &str {
+        &self.observation_rules_sha256
+    }
+
+    #[must_use]
     pub fn observations_sha256(&self) -> &str {
         &self.observations_sha256
     }

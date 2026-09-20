@@ -86,6 +86,27 @@ fn exact_caller_held_context_revalidates_payload_and_returns_a_sealed_identity()
     assert_eq!(validated.context_sha256(), expected.context_sha256());
     assert_eq!(validated.context_sha256().len(), 64);
     assert_eq!(expected.property(), EVENT_COMPOSITION_PROPERTY);
+    assert_eq!(expected.bounds()["source_paths"], 8);
+    assert_eq!(expected.assumptions()["task_effects"], "unsupported");
+    assert_eq!(
+        expected.source_compile_task_sha256(),
+        digest("compile-task")
+    );
+    assert_eq!(
+        expected.fluent_bit_revision(),
+        "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+    );
+    assert_eq!(expected.monkey_profile_sha256(), digest("monkey-profile"));
+    assert_eq!(
+        expected.libevent_profile_sha256(),
+        digest("libevent-profile")
+    );
+    assert_eq!(expected.contracts_sha256(), digest("contracts"));
+    assert_eq!(expected.source_rules_sha256(), digest("source-rules"));
+    assert_eq!(
+        expected.observation_rules_sha256(),
+        digest("observation-rules")
+    );
     assert_eq!(
         expected.evidence_version(),
         EVENT_COMPOSITION_EVIDENCE_VERSION
