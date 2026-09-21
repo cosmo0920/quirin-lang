@@ -48,7 +48,7 @@ fn cmetrics_process_checks_unit_paths_and_rejects_scalar_or_unbound_claims() {
         &profile,
         &["cmetrics"],
         &[],
-        include_str!("../../../contract/qcore/library/source_projection.qcore"),
+        include_str!("../../../providers/shared/contracts/library/source_projection.qcore"),
     )
     .unwrap();
     assert_eq!(imports.len(), 1);

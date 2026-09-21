@@ -32,8 +32,9 @@ use crate::timeout_teardown::{
     TimeoutTeardownEvidence, TimeoutTeardownSourceProjection, check_timeout_teardown_evidence,
 };
 
-pub const CYCLE18_COMPOSITION_POLICY: &str =
-    include_str!("../../../contract/qcore/monkey/cycle18_composition.qcore");
+pub const CYCLE18_COMPOSITION_POLICY: &str = include_str!(
+    "../../../providers/qcore-provider-libevent/contracts/monkey/cycle18_composition.qcore"
+);
 pub const CYCLE18_COMPOSITION_PROPERTY: &str = "monkey-cycle18-callback-composition";
 pub const CYCLE18_COMPOSITION_EVIDENCE_VERSION: &str = "qcore.cycle18.callback-composition.v1";
 
@@ -1239,11 +1240,15 @@ int _mk_event_wait_with_flags(struct mk_event_loop *loop, int flags)
         let wrappers = import(&wrappers, ImportRole::Wrapper);
         let wrapper_contract = format!(
             "{}\n{contract_suffix}",
-            include_str!("../../../contract/qcore/monkey/wrapper_paths.qcore")
+            include_str!(
+                "../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore"
+            )
         );
         let contracts = crate::monkey_wait_projection::MonkeyWaitContracts::parse(
             &wrapper_contract,
-            include_str!("../../../contract/qcore/monkey/composition.qcore"),
+            include_str!(
+                "../../../providers/qcore-provider-libevent/contracts/monkey/composition.qcore"
+            ),
         )
         .unwrap();
         Some(

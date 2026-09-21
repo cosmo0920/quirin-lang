@@ -10,8 +10,9 @@ use crate::chunk_lifecycle::{ChunkOperation, execute_chunk_prefix};
 use serde::Serialize;
 use std::collections::BTreeSet;
 
-pub const CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/nested_memory_teardown.qcore");
+pub const CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/nested_memory_teardown.qcore"
+);
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct NestedMemorySource {

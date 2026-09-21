@@ -35,7 +35,7 @@ pub const EVENT_PAYLOAD_CONTEXT_ASSUMPTIONS: [&str; 6] = [
     EVENT_PAYLOAD_ALLOCATION_EVIDENCE_ASSUMPTION,
 ];
 pub const EVENT_PAYLOAD_CONTRACT: &str =
-    include_str!("../../../contract/qcore/monkey/event_payload.qcore");
+    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/event_payload.qcore");
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 enum Identity {

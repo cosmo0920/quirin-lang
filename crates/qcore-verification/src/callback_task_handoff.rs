@@ -20,8 +20,9 @@ use qcore_core::callback_task_handoff::{
 use qcore_schemas::sha256_hex;
 use serde::{Deserialize, Serialize};
 
-pub const CALLBACK_TASK_HANDOFF_POLICY: &str =
-    include_str!("../../../contract/qcore/monkey/callback_task_handoff.qcore");
+pub const CALLBACK_TASK_HANDOFF_POLICY: &str = include_str!(
+    "../../../providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qcore"
+);
 pub const CALLBACK_TASK_HANDOFF_EVIDENCE_VERSION: &str = "qcore.cycle18.callback-task-handoff.v1";
 
 const EFFECT_DECLARATIONS: [&str; 7] = [

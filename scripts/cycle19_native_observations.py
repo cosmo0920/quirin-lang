@@ -100,7 +100,7 @@ def main():
               ("flb_malloc", "flb_calloc", "flb_realloc", "flb_realloc_z", "flb_free")}
     if list(counts.values()) != [10, 50, 40, 40, 5]:
         raise RuntimeError(f"missing native scenarios: {counts}")
-    contract = REPO / "contract/qcore/fluent_bit/memory.qcore"
+    contract = REPO / "providers/shared/contracts/fluent_bit/memory.qcore"
     metadata["contract_sha256"] = sha(contract)
     checked = run(["cargo", "run", "--quiet", "-p", "qcore-compiler", "--example",
                    "check_contract_observations", "--", str(contract), str(observations)],
@@ -152,11 +152,11 @@ def main():
             raise RuntimeError(f"callback binding regression: {binding_result}")
         metadata["monkey_binding"] = {
             "schema_version": 1,
-            "replay_contract_sha256": sha(REPO / "contract/qcore/monkey/callback_binding.qcore"),
-            "identity_contract_sha256": sha(REPO / "contract/qcore/monkey/descriptor_observation.qcore"),
+            "replay_contract_sha256": sha(REPO / "providers/qcore-provider-libevent/contracts/monkey/callback_binding.qcore"),
+            "identity_contract_sha256": sha(REPO / "providers/qcore-provider-libevent/contracts/monkey/descriptor_observation.qcore"),
             "controlled_scenarios": ["event_active flags: write, read|write, timeout", "one injected send failure with ECONNABORTED"],
             "database_sha256": sha(db),
-            "contract_sha256": sha(REPO / "contract/qcore/monkey/composition.qcore"),
+            "contract_sha256": sha(REPO / "providers/qcore-provider-libevent/contracts/monkey/composition.qcore"),
             "bindings_sha256": sha(output / "monkey_bindings.jsonl"),
             "source_report_sha256": sha(source_report),
             "result_sha256": sha(output / "monkey_binding_result.json")}

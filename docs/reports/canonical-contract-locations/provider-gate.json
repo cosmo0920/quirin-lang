@@ -1,0 +1,156 @@
+{
+  "source_commit": "9302d74aa1bc9dfe9ef12f3ff6f44006aeff678a",
+  "steps": [
+    {
+      "name": "test",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/provider-gate-final/test.log"
+    },
+    {
+      "name": "isolated",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "-p",
+        "qcore-provider-conformance",
+        "--test",
+        "packages",
+        "real_packages_preserve_unknown_and_reject_mutations",
+        "--locked",
+        "--offline",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/provider-gate-final/isolated.log"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/provider-gate-final/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/provider-gate-final/clippy.log"
+    },
+    {
+      "name": "package-python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/provider-gate-final/package-python.log"
+    },
+    {
+      "name": "build-packages",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/provider-gate-final/packages",
+        "--target-dir",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/agent-target/packaging"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/provider-gate-final/build-packages.log"
+    },
+    {
+      "name": "verify-qcore.chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/provider-gate-final/packages/qcore.chunkio"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "verify-qcore.cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/provider-gate-final/packages/qcore.cmetrics"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "verify-qcore.ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/provider-gate-final/packages/qcore.ctraces"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "verify-qcore.libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/provider-gate-final/packages/qcore.libevent"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "verify-qcore.librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/provider-gate-final/packages/qcore.librdkafka"
+      ],
+      "exit": 0
+    }
+  ],
+  "rust": {
+    "passed": 122,
+    "failed": 0,
+    "ignored": 0,
+    "summaries": 27
+  }
+}

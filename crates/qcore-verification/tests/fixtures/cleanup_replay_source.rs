@@ -36,14 +36,18 @@ use std::path::PathBuf;
 
 /// The two pinned cleanup-outcome contracts, and the attempt contracts their
 /// prerequisite is evaluated under.
-pub const OUTCOMES_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_outcomes.qcore");
-pub const DELETE_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_delete.qcore");
-pub const ATTEMPT_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_attempts.qcore");
-pub const DELETE_ATTEMPT_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_delete_attempt.qcore");
+pub const OUTCOMES_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore"
+);
+pub const DELETE_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qcore"
+);
+pub const ATTEMPT_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore"
+);
+pub const DELETE_ATTEMPT_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qcore"
+);
 
 /// The two native cleanup bodies the in-process `file_outcomes` route reads.
 pub const OUTCOMES_SOURCE: &str = r#"

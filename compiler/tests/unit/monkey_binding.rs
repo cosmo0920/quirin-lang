@@ -6,7 +6,8 @@ use serde_json::{Value as Json, json};
 const SOURCE: &str = include_str!("../fixtures/monkey/callbacks.c");
 const OBSERVATIONS: &str = include_str!("../fixtures/monkey/binding/observations.jsonl");
 const BINDINGS: &str = include_str!("../fixtures/monkey/binding/bindings.jsonl");
-const CONTRACT: &str = include_str!("../../../contract/qcore/monkey/composition.qcore");
+const CONTRACT: &str =
+    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/composition.qcore");
 
 fn import(source: &str) -> Vec<MonkeySourceResult> {
     import_monkey_callbacks(

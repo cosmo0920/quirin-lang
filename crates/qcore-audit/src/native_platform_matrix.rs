@@ -596,7 +596,9 @@ mod tests {
     #[test]
     fn configured_all_unknown_gap_report_is_valid() {
         let repository = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-        let policy = repository.join("contract/qcore/monkey/native_platform_matrix.qcore");
+        let policy = repository.join(
+            "providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qcore",
+        );
         let harness = repository.join("crates/qcore-audit/tests/fixtures/native_platform_probe.c");
         let history = repository.join("docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md");
         let source = repository.join("third_party/libevent");

@@ -273,7 +273,7 @@ Not landed. What was learned:
 * The gap is the **contract** side: binding `event_base_new`, `event_assign`,
   `event_add`, `event_base_loop`, `event_del`, `event_free` and
   `event_base_free` read-against-body faithfully is a new `.qcore` contract
-  module, and a new module under `contract/qcore` moves the pinned per-file
+  module, and a new module under the canonical contract corpus moves the pinned per-file
   count tables in `compiler/tests/qcore_contract_corpus.rs` (invariant 5). The
   brief asks for corpus-neutrality, so v1 stays outside that directory.
 * The identity would then have to flow through the L3 manifest machinery of

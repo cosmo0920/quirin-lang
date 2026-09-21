@@ -14,8 +14,10 @@ use std::path::PathBuf;
 
 const CALLBACKS: &str = include_str!("../../../compiler/tests/fixtures/monkey/callbacks.c");
 const WRAPPERS: &str = include_str!("../../../compiler/tests/fixtures/monkey/wrappers.c");
-const WRAPPER_CONTRACT: &str = include_str!("../../../contract/qcore/monkey/wrapper_paths.qcore");
-const COMPOSITION_CONTRACT: &str = include_str!("../../../contract/qcore/monkey/composition.qcore");
+const WRAPPER_CONTRACT: &str =
+    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore");
+const COMPOSITION_CONTRACT: &str =
+    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/composition.qcore");
 
 fn contracts() -> MonkeyWaitContracts {
     MonkeyWaitContracts::parse(WRAPPER_CONTRACT, COMPOSITION_CONTRACT).unwrap()

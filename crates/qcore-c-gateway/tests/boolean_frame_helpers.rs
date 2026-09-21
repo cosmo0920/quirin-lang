@@ -12,7 +12,8 @@ use qcore_contract::profile_loader::{LoadedProfile, load_profile_directory};
 use serde_json::json;
 
 const REVISION: &str = "1234567890abcdef1234567890abcdef12345678";
-const RULES: &str = include_str!("../../../contract/qcore/library/source_projection.qcore");
+const RULES: &str =
+    include_str!("../../../providers/shared/contracts/library/source_projection.qcore");
 const LAYOUT: &str = "struct sample_record { int ready; int other_model; int metadata; };";
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 struct Fixture(PathBuf);

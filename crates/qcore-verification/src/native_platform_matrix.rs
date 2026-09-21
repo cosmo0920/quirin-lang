@@ -7,7 +7,9 @@ use qcore_schemas::sha256_hex;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
-const POLICY: &str = include_str!("../../../contract/qcore/monkey/native_platform_matrix.qcore");
+const POLICY: &str = include_str!(
+    "../../../providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qcore"
+);
 const REQUIRED_PROFILES: [&str; 7] = [
     "linux_epoll_asan_profile",
     "linux_poll_asan_profile",

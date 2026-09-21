@@ -6,8 +6,9 @@ use crate::legacy_c::C11TranslationUnit;
 use crate::typed_source_match::{SourceFieldProfile, SourceMatch, check_source_match};
 use serde::Serialize;
 
-pub const CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/teardown_traversal.qcore");
+pub const CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/teardown_traversal.qcore"
+);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub enum TraversalKind {

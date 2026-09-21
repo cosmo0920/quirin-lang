@@ -3,7 +3,7 @@
 //!
 //! ```sh
 //! cargo run -p qcore-c-gateway --example declared_abi_census -- \
-//!     contract/qcore/manifest.json UNIT.i [UNIT.i ...]
+//!     cycle19-resource-contracts.json UNIT.i [UNIT.i ...]
 //! ```
 //!
 //! It runs the production decision (`legacy_c::declared_abi_census`) and prints

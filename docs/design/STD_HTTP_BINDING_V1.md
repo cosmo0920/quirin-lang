@@ -189,7 +189,7 @@ conformance to its own contracts is a premise, never a proof.
 | Owned extent-carrying byte buffer | `STD-BUFFER` (wave 22), `source.buffer.v1` | the source-level value an HTTP body would be, once it can cross a boundary |
 | Checked event vocabulary | `STD-EVENT` (wave 22), `source.event.v1` | reactor and descriptor custody — the transport half |
 | String views (**design only**) | `STRING_SLICE_V1.md` | the proposed shape of text; no implementation |
-| Declared-contract corpus conventions | `contract/qcore/`, 72 modules | how a library's custody modes are written down |
+| Declared-contract corpus conventions | the canonical contract corpus, 72 modules | how a library's custody modes are written down |
 
 ## 5. Named gaps
 

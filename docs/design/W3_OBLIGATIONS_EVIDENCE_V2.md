@@ -126,7 +126,7 @@ ObligationSubject =
     Function { symbol, translation_unit }
   | AllocationSite { function, site_index, resource_kind }
   | ChunkEntity { entity: Context(id) | Stream(id) | Chunk(id) }
-  | ObservedContract { function, contract_module }   // path into contract/qcore
+  | ObservedContract { function, contract_module }   // canonical contract source path
   | MutexIdentity { … } | TaskIdentity { … }          // reserved, 1.4.4
   | Unit                                              // whole-TU subjects
 

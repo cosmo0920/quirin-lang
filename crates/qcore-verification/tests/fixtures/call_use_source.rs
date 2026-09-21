@@ -17,10 +17,12 @@ use qcore_verification::call_use_source::{
 };
 use std::path::PathBuf;
 
-pub const ATTEMPT_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_attempts.qcore");
-pub const DELETE_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_delete_attempt.qcore");
+pub const ATTEMPT_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore"
+);
+pub const DELETE_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qcore"
+);
 
 /// The wrapper body the in-process `cio_file.c` route reads.
 pub const CLOSE_SOURCE: &str = "struct cio_file{char *path;};struct cio_chunk{void *backend;struct cio_ctx *ctx;};struct cio_ctx{};int munmap_file(struct cio_ctx*,struct cio_chunk*);int cio_file_native_close(struct cio_file*);void free(void*);void cio_file_close(struct cio_chunk *ch,int delete){struct cio_file *cf=ch->backend;if(!cf)return;munmap_file(ch->ctx,ch);cio_file_native_close(cf);free(cf->path);free(cf);}";

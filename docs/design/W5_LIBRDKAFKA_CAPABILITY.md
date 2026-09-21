@@ -32,8 +32,8 @@ library** plus a **built-in v1 provider stub**:
 | W2 source profile | `contract/profiles/fluent-bit/profile.json` → `libraries.librdkafka` | 1 source root, 3 audited files, 3 source witnesses, 7 permitted mechanisms |
 | Provider manifest | `contract/profiles/fluent-bit/providers/qcore.librdkafka.json` | `entrypoint.kind: built_in`, protocol v1, evidence v1, `certificate_checker: qcore.unsupported_assertions.v1` |
 | Provider package | `providers/qcore-provider-librdkafka/` | `main.rs` delegating to the shared `providers/common/runtime.rs`; no librdkafka-specific computation |
-| Declared contracts | `contract/qcore/librdkafka/*.qcore` | 4 modules, 12 declared operations, 4 declared resource-type destructors |
-| Loaded contracts | `contract/cycle19-resource-contracts.json` | **1** of those 4 modules |
+| Declared contracts | `providers/qcore-provider-librdkafka/contracts/librdkafka/*.qcore` | 4 modules, 12 declared operations, 4 declared resource-type destructors |
+| Loaded contracts | `cycle19-resource-contracts.json` | **1** of those 4 modules |
 
 The profile fields that can carry an importable operation are **all empty**:
 
@@ -58,7 +58,7 @@ v1 `Safe` proposal.
 
 `refcount.qcore`, `typed_queue.qcore` and `queue_destructor.qcore` are in the
 contract corpus and are pinned by `compiler/tests/qcore_contract_corpus.rs`, but
-they are **not** in `contract/cycle19-resource-contracts.json`, so they reach no
+they are **not** in `cycle19-resource-contracts.json`, so they reach no
 interpreter. That absence is load-bearing, because when they are measured
 against the audited configuration most of them do not describe an operation that
 exists.

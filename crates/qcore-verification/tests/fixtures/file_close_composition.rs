@@ -58,21 +58,27 @@ use std::path::PathBuf;
 
 /// The seven pinned contracts these two compositions are taken under.
 pub const CLOSE_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/file_close.qcore");
-pub const CLOSE_DELETE_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/file_close_delete.qcore");
-pub const UNMAP_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/unmap_wrapper.qcore");
-pub const OUTCOMES_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_outcomes.qcore");
-pub const DELETE_OUTCOMES_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_delete.qcore");
-pub const ATTEMPT_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_attempts.qcore");
-pub const DELETE_ATTEMPT_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_delete_attempt.qcore");
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close.qcore");
+pub const CLOSE_DELETE_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qcore"
+);
+pub const UNMAP_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qcore"
+);
+pub const OUTCOMES_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore"
+);
+pub const DELETE_OUTCOMES_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qcore"
+);
+pub const ATTEMPT_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore"
+);
+pub const DELETE_ATTEMPT_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qcore"
+);
 pub const COUNTER_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/counters.qcore");
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore");
 
 #[cfg(target_os = "windows")]
 fn outcomes_contract() -> &'static str {

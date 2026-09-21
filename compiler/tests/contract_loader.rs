@@ -1,5 +1,8 @@
+#[path = "support/contract_corpus.rs"]
+mod contract_corpus;
+
 use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use qcore_compiler::contract_loader::{
     FUNCTION_POINTER_ABI_TYPE, POINTER_ABI_TYPES, SCALAR_ABI_TYPES, check_source_assumptions,
@@ -13,7 +16,7 @@ use qcore_compiler::{
 };
 
 fn manifest() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../contract/cycle19-resource-contracts.json")
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../cycle19-resource-contracts.json")
 }
 
 fn load(source: &str) -> Result<ResourceContracts, String> {
@@ -462,7 +465,10 @@ fn duplicate_functions_and_inputs_are_rejected_even_when_identical() {
         ))
         .is_err()
     );
-    let file = manifest().parent().unwrap().join("qcore/libc/memory.qcore");
+    let file = manifest()
+        .parent()
+        .unwrap()
+        .join("providers/shared/contracts/libc/memory.qcore");
     assert!(
         load_resource_contract_files(&[file.clone(), file])
             .unwrap_err()
@@ -717,10 +723,7 @@ fn every_abi_scalar_is_a_borrowed_only_projection() {
 /// clauses it cannot check and return a weaker table.
 #[test]
 fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../contract/qcore");
-    let mut modules = Vec::new();
-    collect_qcore_sources(&root, &mut modules);
-    modules.sort();
+    let modules = contract_corpus::sources();
     // Includes the runtime-only reopen-failure and integrity observation
     // modules; neither carries the v1 marker, so both are rejected here.
     // 60 -> 61: card HASH-CONTRACTS adds
@@ -783,12 +786,7 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     let mut selected = 0;
     let mut v1_declarations = 0;
     let mut rejected_declarations = 0;
-    for path in &modules {
-        let relative = path
-            .strip_prefix(&root)
-            .unwrap()
-            .to_string_lossy()
-            .replace('\\', "/");
+    for (relative, path) in &modules {
         let source = std::fs::read_to_string(path).unwrap();
         let parsed = qcore_compiler::parse_source_program(&source).unwrap();
         let marked = |declaration: &qcore_compiler::SourceDeclaration| {
@@ -899,27 +897,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // The marker is a selector, not a bypass: attaching it to a lifecycle
     // declaration still rejects, because the rest of that declaration is
     // owned by the language front end.
-    let lifecycle = std::fs::read_to_string(root.join("chunkio/chunk_destructor.qcore")).unwrap();
+    let lifecycle = std::fs::read_to_string(&modules["chunkio/chunk_destructor.qcore"]).unwrap();
     let marked = lifecycle.replace(
         "requires chunk_is_live;",
         "requires resource_contract_v1; requires chunk_is_live;",
     );
     assert_ne!(marked, lifecycle);
     assert!(load(&marked).is_err());
-}
-
-fn collect_qcore_sources(directory: &Path, sources: &mut Vec<PathBuf>) {
-    for entry in std::fs::read_dir(directory).expect("contract directory is readable") {
-        let path = entry.expect("contract entry is readable").path();
-        if path.is_dir() {
-            collect_qcore_sources(&path, sources);
-        } else if path
-            .extension()
-            .is_some_and(|extension| extension == "qcore")
-        {
-            sources.push(path);
-        }
-    }
 }
 
 #[test]

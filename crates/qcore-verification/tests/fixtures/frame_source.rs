@@ -19,14 +19,17 @@ use qcore_verification::frame_source::{
 use std::path::PathBuf;
 
 /// The declared source-projection acceptance rules every import runs under.
-pub const RULES: &str = include_str!("../../../../contract/qcore/library/source_projection.qcore");
+pub const RULES: &str =
+    include_str!("../../../../providers/shared/contracts/library/source_projection.qcore");
 /// The `Chunk`-vocabulary contract `memory_close` already checks this helper
 /// against, unedited.
-pub const CHUNK_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/error_state.qcore");
+pub const CHUNK_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/error_state.qcore"
+);
 /// The generic declared-record contract the configured audit selects.
-pub const RECORD_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/error_frame.qcore");
+pub const RECORD_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qcore"
+);
 
 /// The declared ChunkIO Boolean model is `cio_chunk.lock`; `error_n` is the
 /// ordinary metadata field a frame helper may write.

@@ -28,8 +28,9 @@ pub use wait_failure_paths::{
     WaitFailureOutcome, check_wait_failure_paths, wait_failure_policy_digest,
 };
 
-const WAIT_SOURCE_POLICY: &str =
-    include_str!("../../../contract/qcore/monkey/wait_source_policy.qcore");
+const WAIT_SOURCE_POLICY: &str = include_str!(
+    "../../../providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qcore"
+);
 const SOURCE_IDENTITY_POLICY: &str = "source_identity";
 const PROJECTION_IDENTITY_POLICY: &str = "wait_projection_identity";
 const ARTIFACT_SET_POLICY: &str = "artifact_set";
@@ -716,10 +717,12 @@ mod tests {
 
     const CALLBACKS: &str = include_str!("../../../compiler/tests/fixtures/monkey/callbacks.c");
     const WRAPPERS: &str = include_str!("../../../compiler/tests/fixtures/monkey/wrappers.c");
-    const WRAPPER_CONTRACT: &str =
-        include_str!("../../../contract/qcore/monkey/wrapper_paths.qcore");
-    const COMPOSITION_CONTRACT: &str =
-        include_str!("../../../contract/qcore/monkey/composition.qcore");
+    const WRAPPER_CONTRACT: &str = include_str!(
+        "../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore"
+    );
+    const COMPOSITION_CONTRACT: &str = include_str!(
+        "../../../providers/qcore-provider-libevent/contracts/monkey/composition.qcore"
+    );
 
     fn wrapper_source() -> String {
         format!(

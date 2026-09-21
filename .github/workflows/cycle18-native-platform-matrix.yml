@@ -5,7 +5,7 @@ on:
   push:
     paths:
       - '.github/workflows/cycle18-native-platform-matrix.yml'
-      - 'contract/qcore/monkey/native_platform_matrix.qcore'
+      - 'providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qcore'
       - 'crates/qcore-audit/src/native_platform_matrix.rs'
       - 'crates/qcore-audit/tests/fixtures/native_platform_probe.c'
       - 'crates/qcore-verification/src/native_platform_matrix.rs'
@@ -14,7 +14,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/cycle18-native-platform-matrix.yml'
-      - 'contract/qcore/monkey/native_platform_matrix.qcore'
+      - 'providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qcore'
       - 'crates/qcore-audit/src/native_platform_matrix.rs'
       - 'crates/qcore-audit/tests/fixtures/native_platform_probe.c'
       - 'crates/qcore-verification/src/native_platform_matrix.rs'

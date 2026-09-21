@@ -368,9 +368,9 @@ pub fn run(
             "scope": "bounded field contracts; live/exclusive/Boolean domains and source/build/ABI identity assumed; no whole-unit lifecycle certificate",
             "results": native_results,
             "backend_teardown": teardown_results,
-            "source_policy_contract": include_str!("../../../contract/qcore/library/source_projection.qcore"),
+            "source_policy_contract": include_str!("../../../providers/shared/contracts/library/source_projection.qcore"),
             "configured_frame_helper_policies": source_contracts.frame_helper_policy_inventory(),
-            "frame_helper_contract": include_str!("../../../contract/qcore/chunkio/error_state.qcore"),
+            "frame_helper_contract": include_str!("../../../providers/qcore-provider-chunkio/contracts/chunkio/error_state.qcore"),
         });
         fs::write(
             &sidecar,
@@ -470,7 +470,7 @@ fn audit_library(
             PINNED_FLUENT_BIT_COMMIT,
             &profile,
             library,
-            include_str!("../../../contract/qcore/library/source_projection.qcore"),
+            include_str!("../../../providers/shared/contracts/library/source_projection.qcore"),
         )
         .map_err(|error| error.to_string())?
         {
@@ -1153,7 +1153,9 @@ fn audit_monkey_callback_source(
                 &results,
                 &read("monkey_observation.jsonl")?,
                 &read("monkey_bindings.jsonl")?,
-                include_str!("../../../contract/qcore/monkey/composition.qcore"),
+                include_str!(
+                    "../../../providers/qcore-provider-libevent/contracts/monkey/composition.qcore"
+                ),
             )?;
         for callback in &bound.callbacks {
             println!(
@@ -1192,8 +1194,8 @@ fn audit_monkey_callback_source(
             "source_revision": PINNED_FLUENT_BIT_COMMIT,
             "compile_entry": { "directory": entry.directory, "command": entry.command, "file": entry.file },
             "source_projection_only": true,
-            "source_policy_contract": include_str!("../../../contract/qcore/library/source_projection.qcore"),
-            "wrapper_behavior_specification": include_str!("../../../contract/qcore/monkey/wrapper_paths.qcore"),
+            "source_policy_contract": include_str!("../../../providers/shared/contracts/library/source_projection.qcore"),
+            "wrapper_behavior_specification": include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore"),
             "wrapper_behavior_specification_status": "syntax-preserved source findings; custody and behavioral predicate replay not certified",
             "callbacks": results,
             "callback_coverage": callback_coverage,

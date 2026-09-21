@@ -137,7 +137,7 @@
 (ert-deftest qcore-mode-intrusive-list-resource-members ()
   (with-temp-buffer
     (insert-file-contents
-     (expand-file-name "contract/qcore/cfl/intrusive_list.qcore" qcore-mode-test--root))
+     (expand-file-name "providers/shared/contracts/cfl/intrusive_list.qcore" qcore-mode-test--root))
     (qcore-mode)
     (font-lock-ensure)
     (dolist (word '("repr" "footprint" "destructor" "copy" "move" "noexcept"))

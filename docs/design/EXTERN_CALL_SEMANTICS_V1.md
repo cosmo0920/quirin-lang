@@ -174,7 +174,7 @@ duplicate extern names across selections (existing loader refusal, re-pinned
 at this boundary); consumed-then-used; leaked owned return; adapter bypass
 via assignment through an alias; a mutated contract file refusing replay of a
 previously issued certificate. Contract fixtures live under test fixtures,
-**not** `contract/qcore/`, so the 60-module corpus pin is untouched.
+**not** the canonical contract corpus, so the 60-module corpus pin is untouched.
 
 ## 7. Out of scope (named follow-ons, not omissions)
 

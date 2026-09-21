@@ -44,12 +44,12 @@ semantic checks in each mode.
 
 ```sh
 cargo run -p qcorec -- check \
-  contract/qcore/fluent_bit/memory.qcore
+  providers/shared/contracts/fluent_bit/memory.qcore
 cargo run -p qcorec -- check \
-  contract/qcore/language/quantified_indices.qcore
+  providers/shared/contracts/language/quantified_indices.qcore
 ```
 
-All files under `contract/qcore` now use `module contract;`; none needs a dummy
+All files indexed by `contract/corpus.json` now use `module contract;`; none needs a dummy
 `main`. The Rust `CompiledModule` records `mode`; `entry`, `c_source`, and
 `reference_observation` are `Option`s and are absent for non-executable modules.
 Source maps remain empty when no executable C artifact exists.
@@ -87,7 +87,7 @@ dependent function typing, symbolic inference from runtime values, or a proof
 of quantitative transfers through arbitrary bodies. Cost total/peak types and
 extensions to the separate legacy `quant<access, ...>` profile remain outside
 this addition. The native regression fixture is
-`contract/qcore/language/quantified_indices.qcore`.
+`providers/shared/contracts/language/quantified_indices.qcore`.
 
 ## Explicit bundled module imports
 

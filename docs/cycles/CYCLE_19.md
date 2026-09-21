@@ -237,7 +237,7 @@ source-derived wrapper trace are supplied.
 ## Native QCore contract corpus
 
 The implemented library and composition boundaries are retained as native
-QCore sources under `contract/qcore`, grouped by librdkafka, CFL, ChunkIO, and
+QCore sources indexed by `contract/corpus.json`, grouped by librdkafka, CFL, ChunkIO, and
 Monkey. They record resource types, owned and borrowed interfaces, normal and
 error postconditions, quantitative custody relations, delete-only partial
 states, import completeness, callback summaries, and observation refinement.
@@ -263,8 +263,8 @@ modeled, including statements on unexecuted paths. Calls, aliases, loops,
 unsupported expressions, and missing returns remain `Unknown`.
 
 The contract definitions are native QCore files:
-`contract/qcore/fluent_bit/busy_state.qcore` and
-`contract/qcore/chunkio/lock_state.qcore`. `chunk_contract` interprets their
+`providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qcore` and
+`providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qcore`. `chunk_contract` interprets their
 bounded predicate vocabulary and checks all postconditions against the C-derived
 paths, including the other field's frame condition. Changing a QCore
 postcondition changes the semantic verdict. Rust contains the importer and
@@ -297,7 +297,7 @@ are recorded in `../reports/cycle19-source-contracts/README.md`.
 
 The actual pinned `flb_mem.h` is compiled with its selected Fluent Bit build
 profile and instrumented allocator calls. Its five wrappers are evaluated
-against `contract/qcore/fluent_bit/memory.qcore` on 145 executions. The
+against `providers/shared/contracts/fluent_bit/memory.qcore` on 145 executions. The
 postconditions are defined in QCore; Rust provides a general bounded predicate
 interpreter, not a duplicate per-function behavior table. Nonzero-size realloc
 failure preservation is explicitly conditional. Zero-size realloc, alternate
@@ -465,7 +465,7 @@ Execution now follows the [generalization plan](../GENERALIZATION_PLAN.md) and
 is preserved unchanged; implementation progress is recorded here and in reports.
 The first W1 increment supports the remaining 19B custody work by loading the
 19-function resource environment from five native QCore modules selected by
-`contract/cycle19-resource-contracts.json`. The audit's Rust production table is
+`cycle19-resource-contracts.json`. The audit's Rust production table is
 removed after pinned verdict/diagnostic parity; library source/profile routing
 remains in place.
 

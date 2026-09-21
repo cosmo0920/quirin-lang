@@ -5,7 +5,9 @@ use crate::legacy_c::C11TranslationUnit;
 use crate::typed_source_match::{SourceFieldProfile, SourceMatch, check_source_match};
 use serde::Serialize;
 
-pub const CONTRACT: &str = include_str!("../../../../contract/qcore/chunkio/parent_teardown.qcore");
+pub const CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/parent_teardown.qcore"
+);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub enum ParentKind {

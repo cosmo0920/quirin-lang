@@ -110,8 +110,8 @@ this section requires:
   is immediately followed by `(`. A global reservation was measured unsafe: `len`
   occurs in the pinned contract corpus as a *reference* inside
   `ensures normal resource_borrowed(len);`
-  (`contract/qcore/fluent_bit/resource_memory.qcore`,
-  `contract/qcore/librdkafka/memory.qcore`). The `len(` shape occurs zero times
+  (`providers/shared/contracts/fluent_bit/resource_memory.qcore`,
+  `providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore`). The `len(` shape occurs zero times
   in QCore source anywhere in the repository, so the narrow rule collides with
   nothing.
 - `string` needs no rule at all: it appears only in a `let NAME : string = …;`

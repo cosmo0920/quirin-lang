@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/target/release/examples/cycle19_fluent_bit_libraries_audit",
+    "--pinned-evidence",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/corpus-final/monkey-source.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/corpus-final/resource-diagnostics.json"
+  ],
+  "source_commit": "9302d74aa1bc9dfe9ef12f3ff6f44006aeff678a",
+  "binary_sha256": "b9563d503869fd7a1705344013010b215fe4bf9214fc77037fed0fb928be256d",
+  "start": "2026-09-21T08:05:14.635763+00:00",
+  "exit": 0,
+  "end": "2026-09-21T08:09:41.718370+00:00"
+}

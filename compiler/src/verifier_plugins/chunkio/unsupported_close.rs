@@ -13,8 +13,9 @@ use qcore_verification::unsupported_close_composition::{
     UnsupportedCloseContracts, check_unsupported_close_source as check_source,
 };
 
-pub const CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/unsupported_close.qcore");
+pub const CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qcore"
+);
 
 /// The pinned selection this adapter classifies under.
 pub fn contracts(contract: &str) -> UnsupportedCloseContracts<'_> {

@@ -102,7 +102,7 @@
    },
    "corpus.contract_modules": {
     "owner": "derived",
-    "source": "contract/qcore/*/*.qcore on disk"
+    "source": "contract/corpus.json canonical roots on disk"
    },
    "corpus.contract_modules_pinned_by": {
     "owner": "derived",
@@ -203,7 +203,7 @@
    "ct_stage_evidence": "docs/reports/remaining-t00/coverage.json",
    "ct_inventory": "docs/reevaluation/ct_manifest.json",
    "checkpoint_and_corpus_reconciliation": "docs/reports/remaining-b00/ledger.json",
-   "contract_corpus": "contract/qcore/*/*.qcore on disk",
+   "contract_corpus": "contract/corpus.json canonical roots on disk",
    "workspace_membership": "Cargo.toml, providers/Cargo.toml",
    "schema_version": "crates/qcore-schemas/Cargo.toml",
    "provider_package_versions": "providers/*/provider-template.json",
@@ -6725,10 +6725,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "PROVIDER-CONTRACT-PACKAGING: core gate at 5ff36cfdfdf313ee69539b832e0742a8d913d54f records 5034 passed / 0 failed / 11 ignored, 268 result summaries; 164 Lean audits; 324 Python tests after matrix regeneration. Provider workspace 122 tests freshly measured separately; source/commands recorded in provider-gate-summary.json. Core compiled sources, shared contracts and Lean unchanged by subsequent provider-only integration. All standing commands and five isolated host-sensitive controls exit 0. Clang measured in this checkout. Logs: private/provider-contract-packaging/core-gate/. 72 provider-owned contracts match base and retained snapshots; logical corpus remains 96. No verification or conformance promotion.",
+  "note": "CANONICAL-CONTRACT-LOCATIONS: measured 9302d74aa1bc9dfe9ef12f3ff6f44006aeff678a; 5034 core Rust passed / 0 failed / 11 ignored; 164 Lean audits; 328 root Python tests; 122 provider Rust tests. All standing commands, five host controls, provider isolated control, fmt/clippy, package build and five verifications exit0. No semantic promotion;96 canonical modules byte-identical,33/59 resource selection. Logs: private/canonical-contract-locations/.",
   "workspace_tests": 5034,
   "provider_tests": 122,
-  "python_evidence_validator_tests": 324,
+  "python_evidence_validator_tests": 328,
   "lean_audits": 164,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
@@ -6902,7 +6902,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/provider-contract-packaging/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/canonical-contract-locations/gate.json)"
  },
  "named_followups": [
   {

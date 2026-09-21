@@ -53,18 +53,23 @@ pub const SOURCE: &str =
     include_str!("../../../../compiler/tests/fixtures/chunkio/memory_close_source.c");
 
 /// The five pinned contracts this composition is taken under.
-pub const COMPOSITION_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/memory_close.qcore");
-pub const FRAME_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/error_state.qcore");
-pub const BACKEND_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/memory_backend.qcore");
-pub const UNLINK_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/list_unlink.qcore");
+pub const COMPOSITION_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qcore"
+);
+pub const FRAME_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/error_state.qcore"
+);
+pub const BACKEND_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qcore"
+);
+pub const UNLINK_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qcore"
+);
 pub const COUNTER_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/counters.qcore");
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore");
 /// The declared source-projection acceptance rules the frame import runs under.
-pub const RULES: &str = include_str!("../../../../contract/qcore/library/source_projection.qcore");
+pub const RULES: &str =
+    include_str!("../../../../providers/shared/contracts/library/source_projection.qcore");
 
 /// The derivation recipe: the exact bytes the retained ChunkIO adapter appends.
 pub const PROBE: &str = "\nint qcore_cio_memory_store_value(void) { return CIO_STORE_MEM; }\n";

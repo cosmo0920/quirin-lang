@@ -24,9 +24,11 @@ use qcore_verification::file_close_composition::{
     check_file_close_deletion,
 };
 
-pub const CONTRACT: &str = include_str!("../../../../contract/qcore/chunkio/file_close.qcore");
-pub const DELETE_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/file_close_delete.qcore");
+pub const CONTRACT: &str =
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close.qcore");
+pub const DELETE_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qcore"
+);
 
 /// The native close prerequisite's record profile, the same table the retained
 /// `file_outcomes` route uses. The moved process route derives its own from the

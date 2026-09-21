@@ -19,7 +19,7 @@ validated run record that is read here, never hand-copied:
         dropped on every run, so nothing could refuse a stale row.
   * contract clause pin / per-directory counts
         <- docs/reports/remaining-b00/ledger.json (B00)
-  * contract corpus module count      <- contract/qcore/*/*.qcore on disk
+  * contract corpus module count      <- contract/corpus.json canonical roots on disk
   * workspace members / crates        <- Cargo.toml, providers/Cargo.toml
   * qcore-schemas Rust API version    <- crates/qcore-schemas/Cargo.toml
   * provider package versions         <- providers/*/provider-template.json
@@ -69,6 +69,7 @@ PREVIOUS = pathlib.Path(option("--previous")).resolve() if option("--previous") 
 
 sys.path.insert(0, str(ROOT / "scripts"))
 import ct_stage_summary  # noqa: E402
+import contract_corpus  # noqa: E402
 
 # ------------------------------------------------------------ section ownership
 # `derived`            recomputed here from a manifest, a validated record or
@@ -121,7 +122,7 @@ FIELD_OWNERS = {
     "versions.qcore_schemas_rust_api": (DERIVED, "crates/qcore-schemas/Cargo.toml"),
     "versions.provider_packages": (DERIVED, "providers/*/provider-template.json package_version"),
     "versions.*": (HAND_MAINTAINED, "protocol/evidence/schema prose and the version-cause note"),
-    "corpus.contract_modules": (DERIVED, "contract/qcore/*/*.qcore on disk"),
+    "corpus.contract_modules": (DERIVED, "contract/corpus.json canonical roots on disk"),
     "corpus.contract_modules_pinned_by": (DERIVED, "generator constant"),
     "corpus.contract_clause_pin": (DERIVED, "docs/reports/remaining-b00/ledger.json"),
     "corpus.contract_modules_per_directory": (DERIVED, "docs/reports/remaining-b00/ledger.json"),
@@ -274,7 +275,7 @@ manifest = read_json("docs/reevaluation/ct_manifest.json")
 b00 = read_json("docs/reports/remaining-b00/ledger.json")
 
 # ---------------------------------------------------------------- derived counts
-contract_modules = len(list((ROOT / "contract/qcore").glob("*/*.qcore")))
+contract_modules = len(contract_corpus.sources(ROOT))
 lean_audit_files = sorted(p.name for p in (ROOT / "proof").glob("Audit*.lean"))
 if "lean_audits" in GATE_CHECKED and GATE_CHECKED["lean_audits"] != len(lean_audit_files):
     sys.exit(
@@ -690,7 +691,7 @@ matrix = {
             "ct_stage_evidence": "docs/reports/remaining-t00/coverage.json",
             "ct_inventory": "docs/reevaluation/ct_manifest.json",
             "checkpoint_and_corpus_reconciliation": "docs/reports/remaining-b00/ledger.json",
-            "contract_corpus": "contract/qcore/*/*.qcore on disk",
+            "contract_corpus": "contract/corpus.json canonical roots on disk",
             "workspace_membership": "Cargo.toml, providers/Cargo.toml",
             "schema_version": "crates/qcore-schemas/Cargo.toml",
             "provider_package_versions": "providers/*/provider-template.json",

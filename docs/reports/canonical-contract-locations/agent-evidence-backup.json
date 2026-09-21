@@ -1,0 +1,12 @@
+[
+  {
+    "source": "/tmp/agent-contract-inventory/measure/contract-inventory-removal/real-provider-check.log",
+    "preserved": "private/canonical-contract-locations/agent-evidence/real-provider-check.log",
+    "sha256": "6e0271e73d2795f78f512d7ee6809cf0d4b4988263badb71abecf31344b30313"
+  },
+  {
+    "source": "/tmp/agent-contract-inventory/measure/contract-inventory-removal/unittest.log",
+    "preserved": "private/canonical-contract-locations/agent-evidence/unittest.log",
+    "sha256": "3cac1d9b56c8edff24a999bf4a47d33bd5f3e650b155eb960d7655988244dbaf"
+  }
+]

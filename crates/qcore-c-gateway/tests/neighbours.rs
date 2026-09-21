@@ -39,19 +39,26 @@ mod text;
 use text::normalize_newlines;
 
 /// **The three production contract modules this card lands.**
-const HELPERS: &str = include_str!("../../../contract/qcore/fluent_bit/input_chunk_helpers.qcore");
-const TIME: &str = include_str!("../../../contract/qcore/fluent_bit/time.qcore");
-const RESIDENCY: &str = include_str!("../../../contract/qcore/chunkio/chunk_residency.qcore");
+const HELPERS: &str =
+    include_str!("../../../providers/shared/contracts/fluent_bit/input_chunk_helpers.qcore");
+const TIME: &str = include_str!("../../../providers/shared/contracts/fluent_bit/time.qcore");
+const RESIDENCY: &str = include_str!(
+    "../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qcore"
+);
 
 /// The production modules card PROD-CONTRACTS landed, byte-unchanged.
-const LOGGING: &str = include_str!("../../../contract/qcore/fluent_bit/logging.qcore");
-const CHUNK_NAME: &str = include_str!("../../../contract/qcore/fluent_bit/input_chunk_name.qcore");
-const ROUTES_MASK: &str = include_str!("../../../contract/qcore/fluent_bit/routes_mask.qcore");
+const LOGGING: &str = include_str!("../../../providers/shared/contracts/fluent_bit/logging.qcore");
+const CHUNK_NAME: &str =
+    include_str!("../../../providers/shared/contracts/fluent_bit/input_chunk_name.qcore");
+const ROUTES_MASK: &str =
+    include_str!("../../../providers/shared/contracts/fluent_bit/routes_mask.qcore");
 /// Card HASH-CONTRACTS' module, byte-unchanged.
 const PUBLICATION: &str =
-    include_str!("../../../contract/qcore/fluent_bit/hash_table_publication.qcore");
+    include_str!("../../../providers/shared/contracts/fluent_bit/hash_table_publication.qcore");
 /// The production constructor/destructor pair, byte-unchanged.
-const OPEN_CLOSE: &str = include_str!("../../../contract/qcore/chunkio/resource_open_close.qcore");
+const OPEN_CLOSE: &str = include_str!(
+    "../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qcore"
+);
 
 /// The earlier cards' fixture premise sets, all byte-unchanged.
 const PRELUDE: &str = include_str!("fixtures/o04/prelude.c");
@@ -476,7 +483,7 @@ fn without_declaration(text: &str, signature: &str) -> String {
 
 /// **The six fixture premises this card replaces with production text.** Each
 /// name is cut from the fixture that carried it, and supplied instead by one of
-/// the three modules under `contract/qcore`. The fixture FILES stay
+/// the three modules under `the canonical contract corpus`. The fixture FILES stay
 /// byte-unchanged on disk, so cards O04, O04-ARMS, O04-B08, O04-READ-BOUND,
 /// O04-B09B10, O04-TRACE, HASH-CONTRACTS and PROD-CONTRACTS keep their exact
 /// premise sets and their exact measurements.
@@ -718,7 +725,7 @@ fn withdrawing_the_chained_tail_actual_decides_the_constructor() {
 /// PROD-CONTRACTS withdrew `input_chunk_write_header` alone and reproduced the
 /// production refusal. With the six neighbours now production text, the same
 /// one-withdrawal experiment still reproduces the same refusal — the
-/// declaration is load-bearing, and it is load-bearing from `contract/qcore`
+/// declaration is load-bearing, and it is load-bearing from `the canonical contract corpus`
 /// rather than from a fixture.
 #[test]
 fn withdrawing_one_neighbour_still_reproduces_the_refusal() {
@@ -791,7 +798,7 @@ fn the_real_program_is_not_promoted_by_this_card() {
     );
 }
 
-/// The modules under test are the files under `contract/qcore`, all six
+/// The modules under test are the files under `the canonical contract corpus`, all six
 /// declarations are in force through the real production manifest, and the
 /// clock declaration carries its own C result type rather than an integer
 /// projection of it.
@@ -822,7 +829,7 @@ fn the_modules_under_test_are_the_production_ones() {
     }
     // The three modules load together and with the rest of the manifest.
     let manifest = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../contract/cycle19-resource-contracts.json");
+        .join("../../cycle19-resource-contracts.json");
     let contracts =
         qcore_contract::contract_loader::load_resource_contract_manifest(&manifest).unwrap();
     for name in [
