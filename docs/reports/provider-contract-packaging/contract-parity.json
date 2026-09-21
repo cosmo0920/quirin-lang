@@ -1,0 +1,513 @@
+{
+  "base": "10aafcf8b1c17f11ee49d6cb909fca4a6b9ecee1",
+  "contracts": [
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qcore",
+      "compatibility_path": "contract/qcore/chunkio/chunk_destructor.qcore",
+      "sha256": "3e621aa75b7088b834dfcae5881ffa186cc1a105c7437674d2a0784274aa00b9",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qcore",
+      "compatibility_path": "contract/qcore/chunkio/chunk_residency.qcore",
+      "sha256": "901dee8413de0b35f29be6dd1ed82a9764a0995f565836d273d8e013eba1efd8",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qcore",
+      "compatibility_path": "contract/qcore/chunkio/chunk_sizes.qcore",
+      "sha256": "8c348e549de7e80d7aac28a7ba57beddd1a68d8d0f0975b517c2bfb01088dd24",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/constructor_failure_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/constructor_failure_observation.qcore",
+      "sha256": "95e9a31aff7f665a3b8c290e34e7be16c426c2b3b845b2dbf3d7d521dd802b3e",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/context_destructor.qcore",
+      "compatibility_path": "contract/qcore/chunkio/context_destructor.qcore",
+      "sha256": "fcd5d00e8f453a26515621b5d4e1ec68f5f9f7c5ad7031701cf4d166848d5f39",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore",
+      "compatibility_path": "contract/qcore/chunkio/counters.qcore",
+      "sha256": "5448288522151eab448a6ba011f47f9626f1974a69e70e53c74fd0c852ee89f0",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qcore",
+      "compatibility_path": "contract/qcore/chunkio/error_frame.qcore",
+      "sha256": "546c0b886b3e835045388266043202c6cbbeff7a5daa043feea91c47cd16a7ce",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/error_state.qcore",
+      "compatibility_path": "contract/qcore/chunkio/error_state.qcore",
+      "sha256": "4adda5278d32eb6885240e70b47ee5ad4c00526daba43ca84a6b6b8b58f3fff0",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/file_close.qcore",
+      "compatibility_path": "contract/qcore/chunkio/file_close.qcore",
+      "sha256": "0c130cdba00a7209fda9961b1510f08661881f9f3dc9d1b625ae9d6cac7c6bd1",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qcore",
+      "compatibility_path": "contract/qcore/chunkio/file_close_delete.qcore",
+      "sha256": "fc4b113c4744fbb52544da194b71fc6ecce24841f01da1216a37e5217d11f070",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_attempts.qcore",
+      "sha256": "f030ac455ffaadc3ad838e1339fe5bb0039875a40f04afe99cf0b4cae0c6ace0",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_chunk_close.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_chunk_close.qcore",
+      "sha256": "d5be2c58974b6a415d317bd7f4eba318a9c26f1d42621f4856eba1fc2279ddc1",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_constructor_failure_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_constructor_failure_observation.qcore",
+      "sha256": "72c8f0863f7189a2da46227d6629f8a9a65eb45d37306e9c0f98ff53c3130bbf",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_delete.qcore",
+      "sha256": "82efee60babbdf33aff94167672f6a8ace87f5dd8651e4c06a3a3f308e980525",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_delete_attempt.qcore",
+      "sha256": "ba766fb0022fcdc93e29cb88100298990f77ac6ee4c91894afd8d7f49823804f",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_delete_observation.qcore",
+      "sha256": "5ef365fcdfbb49aae30249afc4a462d801cba06d7abeafed3fcad5491d5358f9",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_descriptor_failure_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_descriptor_failure_observation.qcore",
+      "sha256": "61708a65b4f8e4f3315b78dc308d7bfccf0fca53bdee908ccc8865cb28be64df",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_existing_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_existing_observation.qcore",
+      "sha256": "7a542d6fa66a0f799e11fd2743d9ac1fa8754a3f386e6abef63358cb9a296487",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_integrity_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_integrity_observation.qcore",
+      "sha256": "f36c6e7d0f085f1d82a33d5aa2244b060e9053ab3e3a5dd5e50b4493ecdb3256",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_observation.qcore",
+      "sha256": "c609179c0670c424711d2648289cc385c492e65e03366bb9ec6236c5420d8361",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_constructor_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_os_constructor_observation.qcore",
+      "sha256": "00a249eeb643b4427953e57938689407dd2ac094c7fa2cb3a0d8cbedddd6d3dd",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_os_observation.qcore",
+      "sha256": "cdea8a50701e32e79bfca4b2239098ce0dac54c714ddbe82d30ff404a8210c81",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_outcomes.qcore",
+      "sha256": "96bef0b2552a34c9e3758b2e70823e4b8386b24e3f0823dd6b0d4f7dcc7011db",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_reopen_failure_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_reopen_failure_observation.qcore",
+      "sha256": "054c22b2b3f2739615a4ff9764647194d164072c5d7867a79a6b7cefd77cd5fd",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_sync_failure_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_sync_failure_observation.qcore",
+      "sha256": "914c01c412ea111917e8967959e1a6bbe58206d2c9e315a2dcd92a8c5657f1a5",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_teardown_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_teardown_observation.qcore",
+      "sha256": "d9e957b0fe8965b44d56f3546dc9d3d1b4aaf35b51ce11b045a0f9b33f014b88",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_transition_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_transition_observation.qcore",
+      "sha256": "e67d3bd5940454c4a9d4615990cc86349193fe7d3457331eada184f166b66b94",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_unmap_failure_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/filesystem_unmap_failure_observation.qcore",
+      "sha256": "c71a7b3b75ea7ad1761cb0b6137aa26a1f959c411ef816c813a6a4337eacc348",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qcore",
+      "compatibility_path": "contract/qcore/chunkio/import_composition.qcore",
+      "sha256": "c344b8cf5d2d76dcaf6211948ca1570191d2a152c2ddc6d6581927eb698c56ec",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qcore",
+      "compatibility_path": "contract/qcore/chunkio/list_unlink.qcore",
+      "sha256": "363f03b566ba8ec92a4f2ce33c6c1812ae2c6b6c74181152b4bde6749c7d3da2",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qcore",
+      "compatibility_path": "contract/qcore/chunkio/lock_state.qcore",
+      "sha256": "f0ea9b0797b0c490a7a1321111b2c94f2822b78b2afadcc14619d7f6f3ba557d",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qcore",
+      "compatibility_path": "contract/qcore/chunkio/memory_backend.qcore",
+      "sha256": "e74af40022bc05152618d435798265cd846158ba77c522414fd012426dd5c233",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qcore",
+      "compatibility_path": "contract/qcore/chunkio/memory_close.qcore",
+      "sha256": "61db735502775fae6cfd875f3bd6c4d3c137c16b3cf34114eaef246ecca348fc",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/nested_cleanup.qcore",
+      "compatibility_path": "contract/qcore/chunkio/nested_cleanup.qcore",
+      "sha256": "88f4f54f56b89a830f7b1b93bbf586ec8f012fa6588f8fc4e8f4a40c3ebbc7c7",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/nested_memory_teardown.qcore",
+      "compatibility_path": "contract/qcore/chunkio/nested_memory_teardown.qcore",
+      "sha256": "810a0d07e4e4135c7ac0fe0a803abcf3c12e61194b7a010adad974f646bcfc6e",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/parent_teardown.qcore",
+      "compatibility_path": "contract/qcore/chunkio/parent_teardown.qcore",
+      "sha256": "75782fc62cfdb795f52706492e6bddbb5626a6493fafc5ee4761c46742bc4068",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qcore",
+      "compatibility_path": "contract/qcore/chunkio/resource_open_close.qcore",
+      "sha256": "e3e9b6ba36bdc9ad3cf193364f399902bf1a23fd80198c50c13f101e69480a8c",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/stream_destructor.qcore",
+      "compatibility_path": "contract/qcore/chunkio/stream_destructor.qcore",
+      "sha256": "45436ac264a57862e2e7ac62f7f6c6094eb65185f5b90e32c6de6e9081444c9b",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/teardown_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/teardown_observation.qcore",
+      "sha256": "2a460060af078cf724545622993de05833c3bb548975cb34980d12fcf65872db",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/teardown_traversal.qcore",
+      "compatibility_path": "contract/qcore/chunkio/teardown_traversal.qcore",
+      "sha256": "92547aef7c2e3230b4910d1597abac328c2c1d8eb4fffe5835af502b1951b957",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qcore",
+      "compatibility_path": "contract/qcore/chunkio/unmap_wrapper.qcore",
+      "sha256": "9a20757b6f8c01f9bdf3ad022726b27e5d73871c1b84ba5a60c8bc0632502c07",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qcore",
+      "compatibility_path": "contract/qcore/chunkio/unsupported_close.qcore",
+      "sha256": "21633457d006a4da26c89efc045de6c6f22dadce157bf87d3ed67492041c3c57",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_constructor_observation.qcore",
+      "compatibility_path": "contract/qcore/chunkio/unsupported_constructor_observation.qcore",
+      "sha256": "8bf5aaf654db795fcdc7ecfb05b18a8df409f3d191868b9e0c598f6973059f63",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.chunkio",
+      "canonical_path": "providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qcore",
+      "compatibility_path": "contract/qcore/fluent_bit/busy_state.qcore",
+      "sha256": "82b04f12624023cb4fdae7e5827a725fca8fbc12c76889ef187880c383d0ac57",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.cmetrics",
+      "canonical_path": "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qcore",
+      "compatibility_path": "contract/qcore/cmetrics/context_lifetime.qcore",
+      "sha256": "8e500bed10c8fb9ca4be6345f07ed2f0ffd058c1c213890e4138be4ef0f999db",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.cmetrics",
+      "canonical_path": "providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore",
+      "compatibility_path": "contract/qcore/cmetrics/counter_reset.qcore",
+      "sha256": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.cmetrics",
+      "canonical_path": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qcore",
+      "compatibility_path": "contract/qcore/cmetrics/metric_values.qcore",
+      "sha256": "58bfabccfa419b14895562365c9b98444b309cccc1affcb610d2e7c093242317",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.cmetrics",
+      "canonical_path": "providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qcore",
+      "compatibility_path": "contract/qcore/cmetrics/mpack_utils.qcore",
+      "sha256": "9d06739a154e927adf7b9b80e31ceb376b49071100a280b55de4897244dd39dc",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.ctraces",
+      "canonical_path": "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qcore",
+      "compatibility_path": "contract/qcore/ctraces/context_lifetime.qcore",
+      "sha256": "8d7616c559595cc3e587f8a46321e43ccf8cc10ee0e4c89ed264da6719584a08",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/callback_binding.qcore",
+      "compatibility_path": "contract/qcore/monkey/callback_binding.qcore",
+      "sha256": "9c2dd85ccf4a993506fee37d4cab717788d9b06fb9ea9d6735e74159bf6d13d6",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qcore",
+      "compatibility_path": "contract/qcore/monkey/callback_task_handoff.qcore",
+      "sha256": "be5964f3d8f390516bd53209ec3132503a65d3bf7833d5183f0e5eb13c2d663e",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/composition.qcore",
+      "compatibility_path": "contract/qcore/monkey/composition.qcore",
+      "sha256": "ee16fa5d7b8bd36f355397045a7c12545db28392eaad113b454f862096215e73",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/cycle18_composition.qcore",
+      "compatibility_path": "contract/qcore/monkey/cycle18_composition.qcore",
+      "sha256": "76a4fc17604702c7b3fc012d75011f0d2e4abefb57f1a77406843b0c6f13e97b",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/descriptor_observation.qcore",
+      "compatibility_path": "contract/qcore/monkey/descriptor_observation.qcore",
+      "sha256": "89ffc2dfaae320c37341f4f6465b8b32c66a85134fff795bcd43364aec13c091",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/event_payload.qcore",
+      "compatibility_path": "contract/qcore/monkey/event_payload.qcore",
+      "sha256": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore",
+      "compatibility_path": "contract/qcore/monkey/intrusive_list.qcore",
+      "sha256": "b887797ad818ac1aca840d09a27ec905fd22b5985365fb65b6ed4bab76c3236e",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/logging.qcore",
+      "compatibility_path": "contract/qcore/monkey/logging.qcore",
+      "sha256": "82e2d05d6cc85a1980fff21df55dd8c3b10849936780c9fa1d4ddba5d048dade",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/memory.qcore",
+      "compatibility_path": "contract/qcore/monkey/memory.qcore",
+      "sha256": "9ae4da4aad598b9c9f20d793a1dd53fd23806d9446575a082c3b6b7f061fc7c1",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qcore",
+      "compatibility_path": "contract/qcore/monkey/native_platform_matrix.qcore",
+      "sha256": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/timeout_teardown.qcore",
+      "compatibility_path": "contract/qcore/monkey/timeout_teardown.qcore",
+      "sha256": "516fa1fee1732f3523a373f625333f87df7ca89239569ccbbf4ece7d37800e27",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/wait_failure_policy.qcore",
+      "compatibility_path": "contract/qcore/monkey/wait_failure_policy.qcore",
+      "sha256": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/wait_identity_policy.qcore",
+      "compatibility_path": "contract/qcore/monkey/wait_identity_policy.qcore",
+      "sha256": "131694dd932954d26cb085224bd6d25edfc02867e88863ca46de6f6c7572c1c3",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qcore",
+      "compatibility_path": "contract/qcore/monkey/wait_source_policy.qcore",
+      "sha256": "b78d56857a059c96d0d748e8dd6a4c3ee9bbf527c21e17f3ce9ebcad4fe0c393",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.libevent",
+      "canonical_path": "providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore",
+      "compatibility_path": "contract/qcore/monkey/wrapper_paths.qcore",
+      "sha256": "c5c51240aafc42b293f715113c76706e656ac51548b1be065536c83f6167bdb0",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.librdkafka",
+      "canonical_path": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qcore",
+      "compatibility_path": "contract/qcore/librdkafka/cjson.qcore",
+      "sha256": "a1bb9f911acd361afe55144cce2703a9f3d480601fcaf83ad62995c9b4d69f63",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.librdkafka",
+      "canonical_path": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qcore",
+      "compatibility_path": "contract/qcore/librdkafka/kafka_mem.qcore",
+      "sha256": "5e5915e3557c5f31039e28070ac2ce96b335ac30968c93d754174fba6c091f66",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.librdkafka",
+      "canonical_path": "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qcore",
+      "compatibility_path": "contract/qcore/librdkafka/lz4_stream.qcore",
+      "sha256": "6eb30b3db17f6cdbd37949122fa12fd0099ede2b098e2a02159083625a0047dc",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.librdkafka",
+      "canonical_path": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore",
+      "compatibility_path": "contract/qcore/librdkafka/memory.qcore",
+      "sha256": "c67d3b827a1e1636083ef5a063d69fe5eb53e8fbf6e2f08cd31054ddcb61baf4",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.librdkafka",
+      "canonical_path": "providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qcore",
+      "compatibility_path": "contract/qcore/librdkafka/queue_destructor.qcore",
+      "sha256": "a386d1e9b1ef68bc22d6ad5cd84fd4255e4bcf1665c6c4ef98e8efb4e893a005",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.librdkafka",
+      "canonical_path": "providers/qcore-provider-librdkafka/contracts/librdkafka/refcount.qcore",
+      "compatibility_path": "contract/qcore/librdkafka/refcount.qcore",
+      "sha256": "725fcf995116042cde3a92a547f2e889d1a5503aa2ef230f2c5e6576034fc0bb",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.librdkafka",
+      "canonical_path": "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qcore",
+      "compatibility_path": "contract/qcore/librdkafka/topic_partition.qcore",
+      "sha256": "b9fdbfe9e5d34b5a196e125a61f3b4f9e1baeb1702323eed9e2fd4cfebebd43d",
+      "baseline_byte_identical": true
+    },
+    {
+      "provider": "qcore.librdkafka",
+      "canonical_path": "providers/qcore-provider-librdkafka/contracts/librdkafka/typed_queue.qcore",
+      "compatibility_path": "contract/qcore/librdkafka/typed_queue.qcore",
+      "sha256": "cf9ff32d3b65d8ef38c6d7c95a91396899a99f89ca5ebd2a5cb89022c0af63b5",
+      "baseline_byte_identical": true
+    }
+  ],
+  "logical_corpus_count": 96,
+  "owned_contracts": 72,
+  "shared_contracts": 24,
+  "verdict_changes": false
+}

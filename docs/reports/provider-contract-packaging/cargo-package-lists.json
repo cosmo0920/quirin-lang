@@ -1,0 +1,37 @@
+[
+  {
+    "crate": "qcore-provider-chunkio",
+    "exit": 0,
+    "contracts": 44,
+    "missing_contracts": [],
+    "inventory_included": true
+  },
+  {
+    "crate": "qcore-provider-cmetrics",
+    "exit": 0,
+    "contracts": 4,
+    "missing_contracts": [],
+    "inventory_included": true
+  },
+  {
+    "crate": "qcore-provider-ctraces",
+    "exit": 0,
+    "contracts": 1,
+    "missing_contracts": [],
+    "inventory_included": true
+  },
+  {
+    "crate": "qcore-provider-libevent",
+    "exit": 0,
+    "contracts": 15,
+    "missing_contracts": [],
+    "inventory_included": true
+  },
+  {
+    "crate": "qcore-provider-librdkafka",
+    "exit": 0,
+    "contracts": 8,
+    "missing_contracts": [],
+    "inventory_included": true
+  }
+]

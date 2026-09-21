@@ -73,9 +73,16 @@ class Ownership(unittest.TestCase):
             contracts.maintain(self.root, sync=True)
         self.assertEqual(external.read_text(), "keep")
 
+    def test_sync_accepts_an_alias_above_the_repository_boundary(self):
+        alias = self.root.parent / "repo-alias"
+        alias.symlink_to(self.root.parent, target_is_directory=True)
+        contracts.maintain(alias / "providers", sync=True)
+        contracts.maintain(alias / "providers")
+        self.assertEqual(self.snapshot.read_bytes(), self.source.read_bytes())
+
     def test_unowned_contract_is_refused(self):
-        self.source.with_name("wrong.txt").write_text("not a contract")
-        with self.assertRaisesRegex(ValueError, "unexpected"):
+        self.source.parent.rename(self.source.parent.with_name("other"))
+        with self.assertRaisesRegex(ValueError, "unowned"):
             contracts.maintain(self.root)
 
 

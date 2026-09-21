@@ -92,7 +92,7 @@ def maintain(root=ROOT, sync=False):
             for name, source in canonical.items():
                 target = corpus / name
                 # Reject symlink parents, including a missing leaf's existing parents.
-                if any(p.is_symlink() for p in [target, *target.parents] if p != corpus.parent):
+                if any(p.is_symlink() for p in [target, *target.parents] if p.is_relative_to(corpus)):
                     raise ValueError(f"symbolic-link compatibility path: {target}")
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes(source.read_bytes())
