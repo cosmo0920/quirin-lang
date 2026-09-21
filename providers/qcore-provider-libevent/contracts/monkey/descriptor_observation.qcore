@@ -1,0 +1,49 @@
+module contract;
+
+// Executable runtime identity policy. Supplied native records are not
+// authenticated. Descriptor numbers acquire a fresh generation on reuse.
+// The Rust bridge supplies state facts and performs the checked transitions.
+
+extern fn observation_socketpair() -> unit
+contract {
+    ensures normal result == -1 or result == 0;
+    ensures normal result != -1 or descriptor_count == 0;
+    ensures normal result != 0 or descriptor_count == 2;
+    ensures normal result != 0 or endpoints_distinct;
+};
+
+extern fn observation_acquire() -> unit
+contract {
+    ensures normal fd >= 0;
+    ensures normal not already_live;
+    ensures normal previous_generation < 4294967295;
+    ensures normal generation == previous_generation + 1;
+};
+
+extern fn observation_use() -> unit
+contract {
+    ensures normal live_identity_matches;
+};
+
+// A native failed close is outside this platform-bounded profile. The general
+// conditional descriptor model is separately specified in composition.qcore,
+// whose error arm is target-qualified by the close(2) failure post-state
+// relation (docs/design/OS_FAILURE_POSTSTATE_PROFILE.md, card O03-U5): a failed
+// close leaves the endpoint unresolved, never live and retriable.
+extern fn observation_close() -> unit
+contract {
+    ensures normal not active_io_callback;
+    ensures normal result == 0;
+};
+
+extern fn observation_complete() -> unit
+contract {
+    ensures normal result == 0;
+    ensures normal seen_bases > 0;
+    ensures normal final_scope_matches;
+    ensures normal live_bases == 0;
+    ensures normal live_descriptors == 0;
+    ensures normal live_events == 0;
+    ensures normal not dispatch_active;
+    ensures normal not callback_active;
+};

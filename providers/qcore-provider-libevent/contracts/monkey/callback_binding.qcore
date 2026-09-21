@@ -1,0 +1,108 @@
+module contract;
+
+// Executable policy for the supplied-execution binder, interpreted by
+// monkey_binding.rs. Rust supplies typed source operations and observed facts;
+// these predicates decide whether the bounded execution may be accepted.
+// Storage liveness, snapshots, exclusive access and observer authenticity are
+// trusted inputs. Acceptance never establishes a universal C safety result.
+
+extern fn binding_scope() -> unit
+contract {
+    ensures normal created < enter;
+    ensures normal event == registered_event;
+    ensures normal argument == registered_argument;
+    ensures normal fd == registered_fd;
+    ensures normal exit_base == base;
+    ensures normal exit_dispatcher == dispatcher;
+    ensures normal exit_thread == thread;
+    ensures normal exit_matches_event;
+};
+
+extern fn binding_memory() -> unit
+contract {
+    ensures normal object > 0;
+    ensures normal cell_present;
+    ensures normal cell_type_matches;
+};
+
+extern fn binding_execution() -> unit
+contract {
+    ensures normal returned;
+    ensures normal consumed_calls == observed_calls;
+    ensures normal post_state_matches;
+};
+
+extern fn binding_select_path() -> unit
+contract {
+    ensures normal refining_paths == 1;
+};
+
+// LP64 callback send: only the observed 8-byte stack buffer is modeled.
+// A failed send changes no descriptor custody. errno is supplied separately.
+extern fn binding_send() -> unit
+contract {
+    ensures normal buffer_size == 8;
+    ensures normal length == buffer_size;
+    ensures normal flags == 0;
+    ensures normal result >= -1 and result <= length;
+};
+
+extern fn binding_errno_location() -> unit
+contract {
+    ensures normal result > 0;
+    ensures normal not aliases_observed_object;
+};
+
+extern fn binding_perror() -> unit
+contract {
+    ensures normal result == 0;
+};
+
+// Native close failure is unresolved in this execution profile; the general
+// event model's conditional custody contract lives in composition.qcore.
+extern fn binding_evutil_closesocket() -> unit
+contract {
+    ensures normal result == 0;
+};
+
+extern fn binding_event_del() -> unit
+contract {
+    ensures normal result == 0;
+};
+
+extern fn binding_event_free() -> unit
+contract {
+    ensures normal result == 0;
+};
+
+extern fn binding_mk_mem_free() -> unit
+contract {
+    ensures normal pointer == registered_argument;
+    ensures normal result == 0;
+    ensures normal prior_releases == 0;
+};
+
+extern fn binding_symbol() -> unit
+contract {
+    ensures normal producer_present;
+    ensures normal producer_type_matches;
+};
+
+extern fn binding_call_arguments() -> unit
+contract {
+    ensures normal function_matches;
+    ensures normal arguments_match;
+};
+
+extern fn binding_call_interval() -> unit
+contract {
+    ensures normal sequence >= prior_sequence;
+    ensures normal sequence < callback_exit;
+    ensures normal not injected or (is_send and result == -1);
+};
+
+extern fn binding_runtime_effect() -> unit
+contract {
+    ensures normal effect_matches;
+    ensures normal not previously_consumed;
+};

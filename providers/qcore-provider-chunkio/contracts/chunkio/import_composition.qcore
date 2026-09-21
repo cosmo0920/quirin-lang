@@ -1,0 +1,23 @@
+module contract;
+
+// Composition boundary for an imported ChunkIO/Fluent Bit lifecycle trace.
+// A checker may use the lifecycle postconditions only after all import claims hold.
+
+error ChunkImportError {
+    SourceRevisionMismatch;
+    IncompleteControlFlow;
+    MissingSummary;
+}
+
+extern fn check_imported_chunk_program(
+    imported_trace: borrow<'trace, const, ImportedChunkTrace> use one
+) -> result<ChunkLifecycleCertificate, ChunkImportError>
+contract {
+    requires source_revision_matches_pinned_revision;
+    requires imported_cfg_is_complete;
+    requires every_used_operation_has_exact_summary;
+    ensures normal lifecycle_trace_is_accepted;
+    ensures normal nested_teardown_order_is_context_stream_chunk_backend;
+    ensures normal no_live_owned_chunk_obligation;
+    ensures error(ChunkImportError) no_safe_verdict_is_issued;
+};

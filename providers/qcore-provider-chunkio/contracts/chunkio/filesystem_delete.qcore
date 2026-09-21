@@ -1,0 +1,49 @@
+module contract;
+
+// Nonnull native file record only. The fd/map fields control eligibility; they
+// are bookkeeping, not proof of current OS custody. Unlink/diagnostic effects
+// are framed premises. Deleting content never frees the record or path storage.
+//
+// Card P04-B1. The eligibility fields named in that first sentence are now
+// declared rather than merely described: prose is not a declaration, and
+// nothing could read a comment. `cleanup_vocabulary_v1` selects the
+// interpretation and `qcore_verification::cleanup_vocabulary` reads it back —
+// the pinned C function, the record pointer type, the `unlink` callee and its
+// signature, the eligibility (`fd`) and mapping (`map`) fields, the ordered
+// three-field inventory with each C type and reset value, the single ordered
+// path argument and the two diagnostic helpers. A profile that is not this
+// declaration is refused before any path is replayed.
+//
+// `cleanup_mapping_field__` exists only here: the guarded-delete eligibility
+// field is not a profile member, so the close/unmap policies must not declare
+// one and this policy must. The declared reset values (`fd = -1`, `map = NULL`,
+// `path = NULL`) state what a successful syscall would leave behind; on this
+// path nothing is reset, and `fields_preserved` below is what is checked.
+extern fn native_delete_outcomes() -> unit
+contract {
+    requires nonnull_live_exclusive_record;
+    requires path_is_live_readable_terminated_string;
+    requires syscall_returns_zero_or_minus_one_and_frames_record_and_path;
+    requires diagnostics_return_and_frame_record_and_path;
+    requires source_and_abi_bindings;
+    requires cleanup_vocabulary_v1;
+    requires cleanup_function__cio_file_native_delete;
+    requires cleanup_root_type__struct_cio_file_ptr;
+    requires cleanup_syscall__unlink;
+    requires cleanup_syscall_signature__int__const_char_ptr;
+    requires cleanup_presence_field__fd;
+    requires cleanup_mapping_field__map;
+    requires cleanup_field__0__fd__int__integer_m1;
+    requires cleanup_field__1__map__char_ptr__null;
+    requires cleanup_field__2__path__char_ptr__null;
+    requires cleanup_argument_field__0__path;
+    requires cleanup_errno_helper____errno_location;
+    requires cleanup_report_helper__cio_errno_print;
+    ensures normal syscall_calls == (not descriptor_field_active and not mapping_field_active);
+    ensures normal not (descriptor_field_active or mapping_field_active) or returned == -1;
+    ensures normal not syscall_failed or returned == -1;
+    ensures normal not syscall_succeeded or returned == 0;
+    ensures normal diagnostic_calls == syscall_failed;
+    ensures normal fields_preserved;
+    ensures normal record_and_path_allocations_preserved;
+};

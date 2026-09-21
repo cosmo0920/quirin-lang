@@ -5,6 +5,17 @@ external-library contracts used by the compiler's Fluent Bit integration.
 They are grouped by library and kept independent so each file can be checked
 directly with `quirin`.
 
+Provider-specific files here are compatibility snapshots. Their canonical
+sources live in `providers/qcore-provider-*/contracts/`; see the
+[ownership map and editing workflow](../../providers/README.md#contract-ownership).
+Edit the owning crate and run `python3 providers/contracts.py sync`, then
+`check`. Shared language, support-library and application contracts without a provider
+owner remain canonical here.
+The snapshots preserve existing source paths, corpus identities and builds
+without the optional provider workspace; they are not a second source to edit.
+[Current counts](../../docs/STATUS.md) supersede the historical corpus-growth
+checkpoints retained later in this guide.
+
 The regression test in `compiler/tests/qcore_contract_corpus.rs` recursively
 discovers every `.qcore` file, parses its function contracts into structured
 clauses, and runs the complete compiler driver. It also pins the expected

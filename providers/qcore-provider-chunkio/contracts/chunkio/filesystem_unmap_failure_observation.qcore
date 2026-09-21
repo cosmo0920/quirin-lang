@@ -1,0 +1,26 @@
+module contract;
+
+// Failed down retains the live OS epoch and up-ring membership. Sync success
+// before failed unmap is distinct from a completely unchanged operation.
+extern fn native_file_unmap_failure_observation() -> unit
+contract {
+    requires compiled_source_and_build_recorded;
+    requires exclusive_instrumented_fixture;
+    ensures normal exact_native_transitions;
+    ensures normal exact_parent_teardown;
+    ensures normal os_epochs_and_rings_bound;
+    ensures normal allocations == releases;
+    ensures normal releases == transient_releases + teardown_releases;
+    ensures normal transient_releases == 1;
+    ensures normal open_epochs == mapping_epochs;
+    ensures normal suppressed_unmap_calls == 1;
+    ensures normal failed_down_retains_mapping_and_descriptor;
+    ensures normal failed_down_retains_up_ring_and_counter;
+    ensures normal up_while_still_mapped_rejected;
+    ensures normal retry_down_releases_original_epoch + parent_teardown_recovers_original_epoch == 1;
+    ensures normal not successful_sync_before_failed_unmap or suppressed_sync_calls == 0;
+    ensures normal original_inode_retained;
+    ensures normal fixture_cleanup_complete;
+    ensures normal static_certificate == 0;
+    ensures normal durability_proved == 0;
+};

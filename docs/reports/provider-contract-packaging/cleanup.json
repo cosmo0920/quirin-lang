@@ -1,0 +1,15 @@
+{
+  "worktree": "/tmp/qcore-provider-contract-packages",
+  "branch": "codex/provider-contract-packages-agent",
+  "tip": "fc65259accea9bf88c5b0546b6841f4dc3223931",
+  "clean": true,
+  "agent_confirmed_no_jobs": true,
+  "observed_process_references": [],
+  "evidence_files": 16,
+  "evidence_bytes": 54948,
+  "backup_inventory": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/agent-evidence-backup.json",
+  "root_package_artifacts": "private/provider-contract-packaging/packages-run1, packages-run2, packages-integrated and extracted remain in the main checkout",
+  "external_worktree_preserved": true,
+  "worktree_remove_exit": 0,
+  "branch_delete_exit": 0
+}

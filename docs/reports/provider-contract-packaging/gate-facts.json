@@ -1,0 +1,228 @@
+{
+  "source_commit": "5ff36cfdfdf313ee69539b832e0742a8d913d54f",
+  "start": "2026-09-21T07:13:51.839531+00:00",
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "RUST_TEST_THREADS": "8",
+    "QCORE_CLANG": null,
+    "RUSTFLAGS": null,
+    "CARGO_TARGET_DIR": null
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.019,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.014,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/clang-version.log"
+    },
+    {
+      "name": "cargo-test",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "seconds": 915.791,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/cargo-test.log"
+    },
+    {
+      "name": "cargo-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 2.208,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/cargo-fmt.log"
+    },
+    {
+      "name": "cargo-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 11.804,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/cargo-clippy.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.087,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.436,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/reevaluation-followup.log"
+    },
+    {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "seconds": 20.575,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/lean-audits.log"
+    },
+    {
+      "name": "isolated-process-lifecycle",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "cycle20_verifier_plugins",
+        "vp04_vp07_vp08_process_lifecycle_and_payload_budgets",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.385,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/isolated-process-lifecycle.log"
+    },
+    {
+      "name": "isolated-process-limit",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "enforced_process_limits",
+        "a_declared_process_limit_stops_the_fixture_from_forking",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.549,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/isolated-process-limit.log"
+    },
+    {
+      "name": "isolated-memory-limit",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "enforced_process_limits",
+        "memory_growth_beyond_the_declared_limit_is_bounded",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 0.077,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/isolated-memory-limit.log"
+    },
+    {
+      "name": "isolated-confined-write",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "confined_process_execution",
+        "a_confined_fixture_cannot_write_outside_the_admitted_paths",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 0.048,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/isolated-confined-write.log"
+    },
+    {
+      "name": "isolated-closed-input",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "standalone_host",
+        "closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.577,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/core-gate/isolated-closed-input.log"
+    }
+  ],
+  "rust": {
+    "passed": 5034,
+    "failed": 0,
+    "ignored": 11,
+    "result_summaries": 268,
+    "running_targets": 257,
+    "doc_targets": 9
+  },
+  "end": "2026-09-21T07:29:47.421690+00:00",
+  "python": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "tests": 324,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/python-final.log"
+  }
+}

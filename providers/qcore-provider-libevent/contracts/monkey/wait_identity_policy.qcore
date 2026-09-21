@@ -1,0 +1,51 @@
+module contract;
+
+// Declarative admission policy for the bounded Cycle 18 timed-wait replay.
+// Rust derives every actual fact, computes hashes, and interprets the event
+// trace. This policy decides only whether those facts describe the one
+// supported identity/context profile. Equality does not authenticate producer
+// supplied evidence and successful evaluation is not a safety verdict.
+
+extern fn wait_identity_context() -> unit
+contract {
+    ensures normal semantic_profile == "cycle18.timed_wait.single_dispatcher.v1";
+    ensures normal threads == "pthreads";
+    ensures normal observation_trust == "producer_supplied_runtime_evidence";
+    ensures normal linkage_trust == "producer_supplied_selected_artifact_linkage";
+    ensures normal native_run_manifest_sha256_length == 64;
+    ensures normal native_run_manifest_invalid_lower_hex_count == 0;
+    ensures normal contracts_sha256_actual == contracts_sha256_expected;
+    ensures normal source_rules_sha256_actual == source_rules_sha256_expected;
+    ensures normal observation_rules_sha256_actual == observation_rules_sha256_expected;
+    ensures normal observations_sha256_actual == observations_sha256_expected;
+    ensures normal bindings_sha256_actual == bindings_sha256_expected;
+    ensures normal fluent_bit_revision_actual == fluent_bit_revision_expected;
+    ensures normal monkey_profile_sha256_actual == monkey_profile_sha256_expected;
+    ensures normal scope_actual == scope_expected;
+    ensures normal bound_entry_count == 4;
+    ensures normal dispatchers_bound_actual == dispatchers_bound_declared;
+    ensures normal events_bound_actual == events_bound_declared;
+    ensures normal records_bound_actual == records_bound_declared;
+    ensures normal runs_bound_actual == runs_bound_declared;
+    ensures normal dispatchers_bound_actual == 1;
+    ensures normal events_bound_actual == 1;
+    ensures normal records_bound_actual == 11;
+    ensures normal runs_bound_actual == 1;
+};
+
+// Reused independently for each source summary, contract and observer-source
+// identity. A missing entry is represented by an empty actual value and fails
+// the same equality clause; no aggregate "identities_match" fact is trusted.
+extern fn wait_identity_entry() -> unit
+contract {
+    ensures normal identity_actual == identity_expected;
+};
+
+extern fn wait_observed_profile() -> unit
+contract {
+    ensures normal backend_actual == backend_expected;
+    ensures normal callback_actual == callback_expected;
+    ensures normal flags_actual == flags_expected;
+    ensures normal source_requirement_count == 11;
+    ensures normal observed_record_count == 11;
+};

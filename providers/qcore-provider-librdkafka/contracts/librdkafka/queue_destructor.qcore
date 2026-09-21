@@ -1,0 +1,24 @@
+module contract;
+
+// Upstream source: src/rdkafka_queue.c (librdkafka 2.15.0)
+// Audited mechanism: cascading queue destruction.
+
+resource type KafkaQueueOwner {
+    repr: ptr<mut, u8>;
+    footprint: { queues = 1 };
+    destructor: rd_kafka_q_destroy_final noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn rd_kafka_q_destroy_final(
+    queue: own<KafkaQueueOwner> use one
+) -> unit
+contract {
+    requires queue_is_live;
+    ensures normal every_member_reference_is_released;
+    ensures normal queue_mutex_is_destroyed;
+    ensures normal queue_condition_is_destroyed;
+    ensures normal queue_is_discharged;
+    quant normal live_queues == old(live_queues) - 1;
+};

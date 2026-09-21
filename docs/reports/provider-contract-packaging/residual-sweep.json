@@ -1,0 +1,12 @@
+{
+  "base": "10aafcf8",
+  "cards": [
+    "provider-contract-packaging",
+    "provider-contract-bundle"
+  ],
+  "post_integration_residual_count": 61,
+  "named_followups": 281,
+  "named_followups_unchanged_from_base": true,
+  "note": "No tracker entry was retired. This post-integration scan is not a before/after discharge claim; historical residuals keep their existing decisions.",
+  "log": "private/provider-contract-packaging/residuals-final-cards-after.json"
+}

@@ -121,6 +121,12 @@ including cross-topic rules, before editing; the index is not a substitute.
     rebuilt and verified** after any change to the template or to a
     `qcore-schemas` major version; `providers/package.py --locked` is part of
     CI. `remaining-p01-f2`, `remaining-p01-f3`, `remaining-p03-f`.
+    Provider-owned contracts live in each artifact crate's `contracts/` tree.
+    Edit those sources, run `python3 providers/contracts.py sync`, and verify
+    `python3 providers/contracts.py check`; the top-level corpus copies are
+    compatibility snapshots. Preserve byte parity when reorganizing files, and
+    update corpus declaration/clause pins deliberately for semantic changes.
+    Package builds include these contracts and check their inventories.
 <!-- preserved:constraint-18:end -->
 
 <a id="constraint-19"></a>

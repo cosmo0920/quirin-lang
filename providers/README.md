@@ -31,6 +31,38 @@ validation stay in the trusted gateway. The CMetrics configured audit checks
 establish whole-unit custody, counter behavior, caller validity or synchronization.
 See the [unit-provider evidence](../docs/reports/w5-cmetrics-unit-provider/README.md).
 
+## Contract ownership
+
+Provider crates own their supplied Quirin contracts under `contracts/`, beside
+`src/` and `provider-template.json`. `contracts.json` records their package paths
+and SHA-256 values. The ownership map is `providers/contracts.py`.
+
+| Crate | Owned contract families |
+|---|---|
+| `qcore-provider-chunkio` | `chunkio/` and `fluent_bit/busy_state.qcore` |
+| `qcore-provider-cmetrics` | `cmetrics/` |
+| `qcore-provider-ctraces` | `ctraces/` |
+| `qcore-provider-libevent` | `monkey/` |
+| `qcore-provider-librdkafka` | `librdkafka/` |
+
+Edit the provider-owned source, then synchronize and check:
+
+```sh
+python3 providers/contracts.py sync
+python3 providers/contracts.py check
+cargo test -p qcore-compiler --test qcore_contract_corpus
+```
+
+The corresponding `contract/qcore/` files are byte-identical compatibility
+snapshots for retained in-process routes and the pinned regression corpus.
+They keep core builds independent of the optional providers workspace. Do not
+edit those snapshots directly. `check` refuses drift or stale inventories;
+`sync` copies from the provider to the snapshot and never silently deletes an
+orphaned contract. Intentional declaration/clause changes still require the
+corpus pin updates. Shared language, support-library and application policies without a provider owner remain owned
+by `contract/qcore/`; copying provider contracts does not increase the logical
+corpus count or confer new verification capabilities.
+
 ## Build, verify and reproduce
 
 On a Unix host with Rust, Python 3 and the locked Cargo dependencies cached:
@@ -53,7 +85,8 @@ hash. Reproducibility is relative to that recorded source, target, toolchain
 and lockfile; no cross-toolchain or cross-platform byte identity is claimed.
 No provider binary is checked into the source tree.
 
-Each package contains `provider` and `verifier-plugin.json`. Its
+Each package contains `provider`, `verifier-plugin.json`, `contracts.json` and
+the provider-owned `contracts/` tree. Its
 `package_digest` is the executable's SHA-256. The executable embeds its
 manifest template between the markers `<<<qcore.provider-template.v1:begin>>>`
 and `<<<qcore.provider-template.v1:end>>>`, exactly once, so a host can read it
@@ -69,6 +102,21 @@ envelope is refused distinctly. The all-zero digest in a source
 package digest. Verification establishes this binding, not a signature or
 source authenticity: whoever can rebuild or forge the executable controls its
 embedded template too. Retain the archive hash from a trusted build record.
+
+The new executable also embeds a separate `qcore.provider-contracts.v1`
+inventory envelope. `package.py verify` compares the installed `contracts.json`
+with that embedded inventory, checks the exact recursive contract file set and
+every SHA-256, and refuses missing, changed, extra or symbolic-link assets.
+`--contract-manifest` prints the executable's inventory. The inventory identifies
+supplied bytes; it is not a signature or a claim that every shipped policy is
+implemented by that process provider.
+
+The existing core `plugins verify`/registry gate continues to check executable
+and plugin-manifest identity. Contract-bundle checking is the additional
+`package.py verify` gate; consumers still select contract paths explicitly and
+retain their existing policy/trust checks. For example, the CMetrics policy is
+available at `<package>/contracts/cmetrics/counter_reset.qcore`. Legacy packages
+without a contract bundle remain supported.
 
 ## Invocation and installation
 

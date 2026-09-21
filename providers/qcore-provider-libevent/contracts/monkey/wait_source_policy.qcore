@@ -1,0 +1,161 @@
+module contract;
+
+// Executable acceptance policy for the bounded Monkey timed-wait source slice.
+// Rust derives every named fact from constructor-private typed source summaries;
+// this module is the sole authority for expected values. The artifact-set rule
+// admits either the focused fixture or the production translation unit as a
+// whole vector, so summaries from the two sources cannot be mixed.
+
+extern fn source_identity() -> unit
+contract {
+    ensures normal source_revision == "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
+    ensures normal library == "monkey";
+    ensures normal source_set == "fluent-bit";
+    ensures normal profile_digest != "";
+};
+
+extern fn wait_projection_identity() -> unit
+contract {
+    ensures normal wait_callback == "cb_wait_2_timeout";
+    ensures normal event_flags == 1;
+    ensures normal descriptor_absent == 1;
+    ensures normal priority_required == 1;
+};
+
+extern fn cb_wait_2_timeout() -> unit
+contract {
+    ensures normal (signature == "void (evutil_socket_t, short, void *)") or (signature == "void (int, short, void *)");
+    ensures normal path_count == 1;
+    ensures normal import_role == "Callback";
+    ensures normal path_operation_counts == "1";
+    ensures normal path_call_sequences == "";
+    ensures normal selected_path_index == 0;
+    ensures normal selected_operation_count == 1;
+    ensures normal selected_calls == "";
+    ensures normal selected_return_kind == "return";
+};
+
+extern fn contract_cb_wait_2_timeout() -> unit
+contract {
+    ensures normal declaration_is_extern == 1;
+    ensures normal declaration_has_body == 0;
+    ensures normal declaration_is_unsafe == 0;
+    ensures normal declaration_has_effects == 0;
+    ensures normal parameter_names == "callback_argument";
+    ensures normal parameter_types == "borrow<'callback,const,MonkeyCallbackArgument>";
+    ensures normal parameter_usages == "one";
+    ensures normal result_type == "unit";
+    ensures normal clause_sequence == "requires:callback_argument_is_borrowed|normal:callback_has_no_resource_effect";
+};
+
+extern fn _mk_event_loop_create() -> unit
+contract {
+    ensures normal signature == "void *(int)";
+    ensures normal path_count == 4;
+    ensures normal import_role == "Wrapper";
+    ensures normal path_operation_counts == "4,7,14,14";
+    ensures normal path_call_sequences == "_mk_event_init;_mk_event_init,mk_mem_alloc_z;_mk_event_init,mk_mem_alloc_z,event_base_new,mk_mem_alloc_z,mk_mem_free;_mk_event_init,mk_mem_alloc_z,event_base_new,mk_mem_alloc_z";
+    ensures normal selected_path_index == 3;
+    ensures normal selected_operation_count == 14;
+    ensures normal selected_calls == "_mk_event_init,mk_mem_alloc_z,event_base_new,mk_mem_alloc_z";
+    ensures normal selected_return_kind == "return_value";
+};
+
+extern fn contract__mk_event_loop_create() -> unit
+contract {
+    ensures normal declaration_is_extern == 1;
+    ensures normal declaration_has_body == 0;
+    ensures normal declaration_is_unsafe == 0;
+    ensures normal declaration_has_effects == 0;
+    ensures normal parameter_names == "size";
+    ensures normal parameter_types == "i32";
+    ensures normal parameter_usages == "none";
+    ensures normal result_type == "ptr<mut,EventContext>";
+    ensures normal clause_sequence == "requires:selected_unix_libevent_source_profile|normal:initialization_or_context_allocation_failure_returns_null|normal:event_base_new_result_is_stored_without_a_null_test|normal:fired_allocation_failure_frees_context_without_base_free|normal:successful_return_sets_queue_size_and_returns_context";
+};
+
+extern fn _mk_event_wait_with_flags() -> unit
+contract {
+    ensures normal signature == "int (struct mk_event_loop *, int)";
+    ensures normal path_count == 1;
+    ensures normal import_role == "Wrapper";
+    ensures normal path_operation_counts == "10";
+    ensures normal path_call_sequences == "event_base_loop";
+    ensures normal selected_path_index == 0;
+    ensures normal selected_operation_count == 10;
+    ensures normal selected_calls == "event_base_loop";
+    ensures normal selected_return_kind == "return_value";
+};
+
+extern fn contract__mk_event_wait_with_flags() -> unit
+contract {
+    ensures normal declaration_is_extern == 1;
+    ensures normal declaration_has_body == 0;
+    ensures normal declaration_is_unsafe == 0;
+    ensures normal declaration_has_effects == 0;
+    ensures normal parameter_names == "loop,flags";
+    ensures normal parameter_types == "borrow<'call,mut,EventLoop>,i32";
+    ensures normal parameter_usages == "one,none";
+    ensures normal result_type == "i32";
+    ensures normal clause_sequence == "requires:selected_unix_libevent_source_profile|normal:fired_count_is_cleared_before_dispatch|normal:dispatch_result_is_ignored|normal:final_fired_count_is_copied_to_loop_and_returned";
+};
+
+extern fn _mk_event_wait_2() -> unit
+contract {
+    ensures normal signature == "int (struct mk_event_loop *, int)";
+    ensures normal path_count == 3;
+    ensures normal import_role == "Wrapper";
+    ensures normal path_operation_counts == "13,14,20";
+    ensures normal path_call_sequences == "_mk_event_wait_with_flags;_mk_event_wait_with_flags;event_new,event_add,_mk_event_wait_with_flags,event_free";
+    ensures normal selected_path_index == 2;
+    ensures normal selected_operation_count == 20;
+    ensures normal selected_calls == "event_new,event_add,_mk_event_wait_with_flags,event_free";
+    ensures normal selected_return_kind == "return_value";
+};
+
+extern fn contract__mk_event_wait_2() -> unit
+contract {
+    ensures normal declaration_is_extern == 1;
+    ensures normal declaration_has_body == 0;
+    ensures normal declaration_is_unsafe == 0;
+    ensures normal declaration_has_effects == 0;
+    ensures normal parameter_names == "loop,timeout";
+    ensures normal parameter_types == "borrow<'call,mut,EventLoop>,i32";
+    ensures normal parameter_usages == "one,none";
+    ensures normal result_type == "i32";
+    ensures normal clause_sequence == "requires:selected_unix_libevent_source_profile|normal:infinite_and_zero_wait_paths_delegate_without_timer_creation|normal:timed_wait_uses_explicit_stack_timeval|normal:timeout_event_creation_and_registration_results_are_not_checked|normal:timed_wait_calls_event_free_after_dispatch_and_returns_dispatch_result";
+};
+
+extern fn _mk_event_loop_destroy() -> unit
+contract {
+    ensures normal signature == "void (struct mk_event_ctx *)";
+    ensures normal path_count == 1;
+    ensures normal import_role == "Wrapper";
+    ensures normal path_operation_counts == "6";
+    ensures normal path_call_sequences == "event_base_free,mk_mem_free,mk_mem_free";
+    ensures normal selected_path_index == 0;
+    ensures normal selected_operation_count == 6;
+    ensures normal selected_calls == "event_base_free,mk_mem_free,mk_mem_free";
+    ensures normal selected_return_kind == "return";
+};
+
+extern fn contract__mk_event_loop_destroy() -> unit
+contract {
+    ensures normal declaration_is_extern == 1;
+    ensures normal declaration_has_body == 0;
+    ensures normal declaration_is_unsafe == 0;
+    ensures normal declaration_has_effects == 0;
+    ensures normal parameter_names == "ctx";
+    ensures normal parameter_types == "own<EventContext>";
+    ensures normal parameter_usages == "one";
+    ensures normal result_type == "unit";
+    ensures normal clause_sequence == "requires:selected_unix_libevent_source_profile|requires:context_and_children_have_valid_destruction_provenance|normal:calls_base_free_then_fired_free_then_context_free|normal:nested_event_and_map_custody_still_requires_composition";
+};
+
+extern fn artifact_set() -> unit
+contract {
+    ensures normal digest_cb_wait_2_timeout == "8308bac83724f6f2417f6d22bbf3e65afbbf491b8ad91b4a9217b1aebd22efdc";
+    ensures normal digest__mk_event_wait_with_flags == "3637e3f8ddfb6ae389d571a05f13bb9e32e675e95bfb4d5134ee8ab73923ff1f";
+    ensures normal digest__mk_event_loop_destroy == "c0d3215c02ed7f421f725596fbcee27547d0cf2a5f8534aa532f794cbd9a5e0e";
+    ensures normal ((digest__mk_event_loop_create == "2e32d6c7bbc40031c0f9828031d1591478cc2d556c2504dcf4f2687b0943214d") and (digest__mk_event_wait_2 == "88d9d6f2d7dad652503bd218ac9fad80c8c16afc53beb8ec0e174e2232628dff")) or ((digest__mk_event_loop_create == "d1c48805630eacec138b0ed1eae834195815b9e4ce61a731c40ac3fd46bc7756") and (digest__mk_event_wait_2 == "69511d42a65bbed00f7c54e2890cc641578cf60029260893a8aa2db585bca4bd"));
+};

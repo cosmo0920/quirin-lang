@@ -24,7 +24,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Cycle 18 bounded aggregate | **3 joined families / 8 source paths / 7 unresolved obligations**, aggregate Unknown | [Broader integration](reports/cycle18-broader-integration/aggregate.json) |
 | Callback task handoff | **12 source-derived operations**, one Linux pthread fixture; production acceptance pending | [Integrated lifetime evidence](reports/cycle18-broader-integration/task-handoff.json) |
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
-| Contract corpus | **96** modules; **59** resource-v1 declarations; **33** manifest-selected | `contract/qcore/`, [selection](../contract/cycle19-resource-contracts.json) and pinned tests |
+| Contract corpus | **96** modules; **59** resource-v1 declarations; **33** manifest-selected | [Provider ownership](../providers/README.md#contract-ownership), compatibility corpus `contract/qcore/`, [selection](../contract/cycle19-resource-contracts.json) and pinned tests |
 | Registered follow-ups | **281** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
@@ -68,27 +68,24 @@ separately.
 
 ## Latest validated gate
 
-The [broader integration gate](reports/cycle18-broader-integration/gate.json)
-records **5,034 Rust passed, 0 failed, 11 ignored; 268 result summaries over 257 running targets and 9 doc sections; 164 Lean audits; 317 Python tests**, clean fmt/clippy and both probes exit 0.
-Five named host-sensitive rows also passed separately in isolation. Clang was
-recorded in the measuring checkout. **122 provider tests are carried Unix
-evidence, not remeasured.** [Commands, exits and private logs](reports/cycle18-broader-integration/README.md#final-standing-gate)
-retain the initial stale-profile-pin failure and complete corrected run separately.
+The [provider contract packaging gate](reports/provider-contract-packaging/gate.json)
+records **5,034 core Rust passed, 0 failed, 11 ignored; 164 Lean audits; 324 root Python tests; 122 provider Rust tests**. Core fmt/clippy, both probes and five isolated
+host-sensitive controls pass. Provider fmt/clippy and all five package
+build/verification checks are recorded separately. Clang was measured in the
+core checkout. [Commands, source identities, exits and logs](reports/provider-contract-packaging/README.md#integrated-validation)
+distinguish the two Cargo workspaces and preserve earlier failed attempts.
 
-Three executable Quirin policies add **28 declarations and 222 clauses** for
-bounded callback evidence composition, task/deferred-work custody and native
-platform/source identity admission. The corpus grows deliberately to 96 modules;
-resource selection remains 33 modules/59 declarations. Source and identity
-acceptance predicates live in contracts, with generic Rust extraction/state
-operations and matching audited Lean models.
+The five provider crates own **72** canonical contract modules; **24** shared or
+application-level modules remain in the top-level corpus. Byte-identical
+compatibility snapshots keep the logical corpus at **96** and preserve core
+build independence. Package inventories bind supplied contract bytes to their
+executables; policy selection and independent checking remain explicit. This
+changes ownership/distribution, with no predicate, model or verdict promotion.
 
-All three broader follow-ups remain open; **281** follow-ups are registered.
-The aggregate joins three families over eight source paths but retains seven
-unresolved obligations. The twelve-operation taskful instance is a bounded
-fixture. Four current Linux platform observations cover generic Libevent;
-three foreign-host rows remain Unknown. One accepted legacy CLI replay and six
-refusing controls agree with the baseline, and all five frozen corpus artifacts
-remain byte-identical. Callback, CT and aggregate conformance are unchanged.
+All three broader Cycle 18 follow-ups remain open; **281** follow-ups are
+registered. Production callback composition, task/cancellation/event-generation
+coverage and current foreign-host observations remain outstanding. Callback,
+CT and full-conformance coverage are unchanged.
 
 The ignored F02 Windows pin-agreement test is red by design on `--ignored`;
 Linux green does not repair it. Host/load-sensitive tests and their reporting
