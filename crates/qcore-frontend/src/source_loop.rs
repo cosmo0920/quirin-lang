@@ -35,7 +35,7 @@
 //! already shields (a word followed by `:`), but two are genuine **references**
 //! inside the pinned contract corpus —
 //! `ensures normal resource_borrowed(in);` in
-//! `contract/qcore/fluent_bit/input_chunk_helpers.qcore` and in a gateway test
+//! `contract/shared/fluent_bit/input_chunk_helpers.qcore` and in a gateway test
 //! fixture, both naming the `in` parameter of
 //! `extern fn generate_chunk_name(in: ptr<mut, u8>, …)`. That is exactly the
 //! shape card `STRING-SLICE` measured for `len`, and it takes exactly that

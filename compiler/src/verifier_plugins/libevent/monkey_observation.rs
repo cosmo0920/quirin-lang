@@ -8,8 +8,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use crate::contract_observation::check_contract_facts as rule;
 use serde::{Deserialize, Serialize};
 
-pub const DESCRIPTOR_OBSERVATION_CONTRACTS: &str =
-    include_str!("../../../../contract/qcore/monkey/descriptor_observation.qcore");
+pub const DESCRIPTOR_OBSERVATION_CONTRACTS: &str = include_str!(
+    "../../../../providers/qcore-provider-libevent/contracts/monkey/descriptor_observation.qcore"
+);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]

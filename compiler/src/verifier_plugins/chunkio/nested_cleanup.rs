@@ -7,7 +7,9 @@ use super::{
 use serde::Serialize;
 use std::collections::BTreeSet;
 
-pub const CONTRACT: &str = include_str!("../../../../contract/qcore/chunkio/nested_cleanup.qcore");
+pub const CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/nested_cleanup.qcore"
+);
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct NestedCleanupSource {

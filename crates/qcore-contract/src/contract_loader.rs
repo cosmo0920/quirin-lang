@@ -2,7 +2,7 @@
 //!
 //! # Interpreter selection
 //!
-//! `contract/qcore` is shared by three consumers with disjoint vocabularies.
+//! `the canonical contract corpus` is shared by three consumers with disjoint vocabularies.
 //! The **`requires resource_contract_v1` marker is the selector**: a declaration
 //! that carries it must map completely into [`ResourceFunctionContract`], and a
 //! declaration that does not carry it is rejected here rather than skipped, so

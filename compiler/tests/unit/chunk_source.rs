@@ -282,7 +282,9 @@ fn validated_frame_helper_connects_unlock_to_identity_and_native_contract() {
     for path in summary.paths() {
         assert_eq!(path.frame_writes, [("error_n".into(), 0)]);
     }
-    let contract = include_str!("../../../contract/qcore/chunkio/lock_state.qcore");
+    let contract = include_str!(
+        "../../../providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qcore"
+    );
     let certificate =
         crate::chunk_contract::check_chunk_source_contract(&summary, contract).unwrap();
     assert_eq!(certificate.dependency_sources()["reset"], helper.source);
@@ -411,8 +413,10 @@ fn native_helper_contract_checks_values_footprint_and_signature() {
     if !crate::test_support::clang_available() {
         return;
     }
-    let contract = include_str!("../../../contract/qcore/chunkio/error_state.qcore")
-        .replace("cio_error_reset", "reset");
+    let contract = include_str!(
+        "../../../providers/qcore-provider-chunkio/contracts/chunkio/error_state.qcore"
+    )
+    .replace("cio_error_reset", "reset");
     let helper = frame_helper("void reset(struct cio_chunk *ch) { ch->error_n = 0; }").unwrap();
     assert_eq!(
         crate::chunk_contract::check_chunk_frame_contract(&helper, &contract).unwrap(),

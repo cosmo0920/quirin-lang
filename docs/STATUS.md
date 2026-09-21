@@ -24,7 +24,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Cycle 18 bounded aggregate | **3 joined families / 8 source paths / 7 unresolved obligations**, aggregate Unknown | [Broader integration](reports/cycle18-broader-integration/aggregate.json) |
 | Callback task handoff | **12 source-derived operations**, one Linux pthread fixture; production acceptance pending | [Integrated lifetime evidence](reports/cycle18-broader-integration/task-handoff.json) |
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
-| Contract corpus | **96** modules; **59** resource-v1 declarations; **33** manifest-selected | [Provider ownership](../providers/README.md#contract-ownership), compatibility corpus `contract/qcore/`, [selection](../contract/cycle19-resource-contracts.json) and pinned tests |
+| Contract corpus | **96** modules; **59** resource-v1 declarations; **33** manifest-selected | [Provider ownership](../providers/README.md#contract-ownership), canonical index `contract/corpus.json`, [selection](../cycle19-resource-contracts.json) and pinned tests |
 | Registered follow-ups | **281** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
@@ -76,11 +76,12 @@ core checkout. [Commands, source identities, exits and logs](reports/provider-co
 distinguish the two Cargo workspaces and preserve earlier failed attempts.
 
 The five provider crates own **72** canonical contract modules; **24** shared or
-application-level modules remain in the top-level corpus. Byte-identical
-compatibility snapshots keep the logical corpus at **96** and preserve core
-build independence. Package inventories bind supplied contract bytes to their
+application-level modules live in `contract/shared`. `contract/corpus.json`
+indexes all **96** without duplicate snapshots. Retained integration adapters
+embed the provider-owned data directly; generic core crates retain no provider
+executable dependency. Package inventories bind supplied contract bytes to their
 executables; policy selection and independent checking remain explicit. This
-changes ownership/distribution, with no predicate, model or verdict promotion.
+changes source locations, with no predicate, model or verdict promotion.
 
 All three broader Cycle 18 follow-ups remain open; **281** follow-ups are
 registered. Production callback composition, task/cancellation/event-generation

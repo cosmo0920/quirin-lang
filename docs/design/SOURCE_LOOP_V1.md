@@ -44,9 +44,9 @@ separately from `//` comments:
 | Candidate | Code occurrences | Verdict |
 |---|---|---|
 | `for` | **0** | reserved; the reservation collides with nothing |
-| `in` | **6** | **not** reserved — four are parameter names the referenced-names filter already shields (a word followed by `:`), but **two are genuine references** inside the pinned contract corpus: `ensures normal resource_borrowed(in);` in `contract/qcore/fluent_bit/input_chunk_helpers.qcore` |
+| `in` | **6** | **not** reserved — four are parameter names the referenced-names filter already shields (a word followed by `:`), but **two are genuine references** inside the pinned contract corpus: `ensures normal resource_borrowed(in);` in `contract/shared/fluent_bit/input_chunk_helpers.qcore` |
 | `repeat`, `range`, `iter`, `upto`, `stride` | 0 | unused; not needed |
-| `loop` | 3 | a `borrow<'call, mut, EventLoop>` **parameter name** in `contract/qcore/monkey/wrapper_paths.qcore` |
+| `loop` | 3 | a `borrow<'call, mut, EventLoop>` **parameter name** in `providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore` |
 | `while`, `break`, `continue`, `range`, `bound`, `idx` | — | **already** reserved |
 | `count`, `body`, `index`, `next`, `span`, `step`, `to`, `over`, `through` | 1–32 | each occurs in code position; none was needed |
 

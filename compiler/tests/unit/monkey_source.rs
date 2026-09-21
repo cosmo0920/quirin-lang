@@ -751,7 +751,9 @@ fn scan_loops_reject_effects_and_induction_values_cannot_escape() {
 
 #[test]
 fn native_wrapper_specs_cover_the_exact_selected_source_functions() {
-    let source = include_str!("../../../contract/qcore/monkey/wrapper_paths.qcore");
+    let source = include_str!(
+        "../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore"
+    );
     let parsed = crate::frontend::parse_source_program(source).unwrap();
     let names: Vec<_> = parsed
         .declarations

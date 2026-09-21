@@ -28,7 +28,7 @@ def main():
     for row in observations: row["values"]["compiled_source_and_build_recorded"] = 1
     path = output/"observations.jsonl"
     path.write_text("".join(json.dumps(row)+"\n" for row in observations))
-    contract = REPO/"contract/qcore/chunkio/filesystem_teardown_observation.qcore"
+    contract = REPO/"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_teardown_observation.qcore"
     checked = run(["cargo","run","--quiet","-p","qcore-compiler","--example","check_contract_observations",
                    "--",str(contract),str(path)],cwd=REPO,capture_output=True)
     (output/"contract_result.json").write_text(checked.stdout)

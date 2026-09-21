@@ -26,8 +26,9 @@ use serde::Serialize;
 use std::collections::{BTreeMap, BTreeSet};
 
 pub const OBSERVED_WAIT_RULES: &str = "v2: exact eleven identity-bearing records; one dispatcher; timeout-only borrowed argument; no payload, descriptor, task or synchronization; source/context/payload equality; exact pthread/runtime-observation/linkage premises; valid native-run-manifest digest; caller-prepared artifact identity; conditional event kernel replay";
-pub const DEFAULT_WAIT_IDENTITY_POLICY: &str =
-    include_str!("../../../contract/qcore/monkey/wait_identity_policy.qcore");
+pub const DEFAULT_WAIT_IDENTITY_POLICY: &str = include_str!(
+    "../../../providers/qcore-provider-libevent/contracts/monkey/wait_identity_policy.qcore"
+);
 pub const CONDITIONAL_REPLAY_CLAIM: &str = "caller_prepared_artifact_identity_conditional_replay";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

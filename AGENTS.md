@@ -67,7 +67,7 @@ byte counts are not token billing. A smaller index alone proves no task-cost gai
    G4 parity.
 5. **Pinned expectations are intentional.** `qcore_contract_corpus.rs` pins
    per-file contract/clause counts (editing provider-owned contracts or
-   `contract/qcore` requires synchronizing compatibility snapshots and updating
+   `contract/shared` requires updating
    its tables); a test asserts the `third_party/libevent` submodule revision; pinned commit hashes are load-bearing identity checks.
 6. **Lean parity.** Semantic changes need matching Lean definitions/theorems;
    audits must stay placeholder-free with no project axioms.

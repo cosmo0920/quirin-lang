@@ -19,7 +19,7 @@ The migrated section below preserves the earlier development-guide checkpoint.
 | [`crates/qcore-verifier-host/`](../../crates/qcore-verifier-host) | Generic registry, source scope resolution, bounded process transport, evidence firewall and composition; no provider dependency |
 | [`crates/qcorec/`](../../crates/qcorec) | CLI binary `quirin` (crate `qcorec`) over the compiler library |
 | [`proof/`](../../proof) | Lean 4 executable core and safety proofs; per-cycle axiom audits |
-| [`contract/qcore/`](../../contract/qcore/README.md) | Declarative `.qcore` contract corpus for audited C APIs |
+| [`contract/`](../../contract/README.md) | Shared contracts and canonical provider corpus index |
 | [`docs/`](..) | Specifications, cycle records, validation and audit reports |
 | `third_party/libevent` | Submodule pinned to the audited Libevent revision |
 

@@ -286,7 +286,9 @@ fn declared_callback_effects_are_data_and_missing_entries_are_errors() {
         .iter()
         .filter_map(|(n, r)| (*r == ImportRole::Wrapper).then_some(n.as_str()))
         .collect::<BTreeSet<_>>();
-    let text = include_str!("../../contract/qcore/monkey/wrapper_paths.qcore");
+    let text = include_str!(
+        "../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore"
+    );
     let parsed = qcore_compiler::frontend::parse_source_program(text).unwrap();
     assert_eq!(
         declared,

@@ -60,13 +60,13 @@ mod text;
 use text::normalize_newlines;
 
 /// **The three production contract modules this card lands.**
-const LOGGING: &str = include_str!("../../../contract/qcore/fluent_bit/logging.qcore");
-const CHUNK_NAME: &str = include_str!("../../../contract/qcore/fluent_bit/input_chunk_name.qcore");
-const ROUTES_MASK: &str = include_str!("../../../contract/qcore/fluent_bit/routes_mask.qcore");
+const LOGGING: &str = include_str!("../../../contract/shared/fluent_bit/logging.qcore");
+const CHUNK_NAME: &str = include_str!("../../../contract/shared/fluent_bit/input_chunk_name.qcore");
+const ROUTES_MASK: &str = include_str!("../../../contract/shared/fluent_bit/routes_mask.qcore");
 /// The production hash publication, needed by the real caller's four
 /// publications; card HASH-CONTRACTS' module, byte-unchanged.
 const PUBLICATION: &str =
-    include_str!("../../../contract/qcore/fluent_bit/hash_table_publication.qcore");
+    include_str!("../../../contract/shared/fluent_bit/hash_table_publication.qcore");
 
 /// The earlier cards' fixture premise sets, all byte-unchanged.
 const PRELUDE: &str = include_str!("fixtures/o04/prelude.c");
@@ -790,7 +790,7 @@ fn the_real_caller_is_not_promoted_by_this_card() {
     );
 }
 
-/// The production modules are the files under `contract/qcore`, and the earlier
+/// The production modules are the files under `the canonical contract corpus`, and the earlier
 /// cards' fixtures are byte-unchanged where this card depends on them.
 #[test]
 fn the_modules_under_test_are_the_production_ones() {
@@ -808,7 +808,7 @@ fn the_modules_under_test_are_the_production_ones() {
     }
     // The three modules load together and with the rest of the manifest.
     let manifest = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../contract/cycle19-resource-contracts.json");
+        .join("../../cycle19-resource-contracts.json");
     let contracts =
         qcore_contract::contract_loader::load_resource_contract_manifest(&manifest).unwrap();
     for name in [

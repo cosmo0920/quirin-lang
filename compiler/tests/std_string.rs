@@ -900,8 +900,8 @@ fn the_contextual_len_rule_still_leaves_a_contract_parameter_resolvable() {
     // a test rather than left as a claim in a report. `len` is **not** reserved
     // globally, because the pinned contract corpus references a parameter of
     // that name inside an `ensures` clause
-    // (`contract/qcore/fluent_bit/resource_memory.qcore`,
-    // `contract/qcore/librdkafka/memory.qcore`). The contextual rule fires only
+    // (`contract/shared/fluent_bit/resource_memory.qcore`,
+    // `providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore`). The contextual rule fires only
     // before `(`, so the reference below — `len` followed by `)` — is still
     // collected and still resolves against the declared parameter.
     //

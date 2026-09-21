@@ -176,9 +176,14 @@ Rules:
   same schema types in-process; the out-of-process step is deferred, not
   abandoned. Schema types stay process-portable so the deferral costs no
   schema rework.*
-- **The core must build and test with zero providers present**, and the full
-  first-party set must be reproducible as separate artifacts (Cycle 20D's
-  packaging gate).
+- **Generic core crates build without provider executable crates or assets**.
+  The retained first-party integration adapters in `qcore-verification` and
+  `compiler` read canonical provider-owned contract assets at compile time;
+  their integration tests likewise require those data files. This deliberately
+  supersedes the full-workspace “zero providers present” layout requirement
+  following removal of duplicate contract snapshots. It adds no Rust dependency
+  on provider executable crates. The full first-party set remains separately
+  built and verified artifacts (Cycle 20D's packaging gate).
 
 ### 3.2 Migration strategy
 
@@ -292,7 +297,7 @@ W4, W5) wants contracts as data.
    diagnostic (fail-closed), not silently approximated.
 2. Migrate the production table in
    `cycle19_fluent_bit_libraries_audit.rs:141-207` into
-   `contract/qcore/` files (e.g. `contract/qcore/libc/memory.qcore`,
+   `contract/qcore/` files (e.g. `contract/shared/libc/memory.qcore`,
    `monkey/memory.qcore`, `librdkafka/memory.qcore`,
    `fluent_bit/memory.qcore` extensions, `chunkio/chunk_open_close.qcore`),
    and load them at runtime instead of `include_str!`/Rust literals.

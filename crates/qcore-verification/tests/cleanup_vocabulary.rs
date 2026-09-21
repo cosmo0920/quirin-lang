@@ -24,8 +24,12 @@ use qcore_verification::cleanup_vocabulary::{
     CleanupVocabularyShape, MARKER, declared_cleanup_vocabulary,
 };
 
-const OUTCOMES: &str = include_str!("../../../contract/qcore/chunkio/filesystem_outcomes.qcore");
-const DELETE: &str = include_str!("../../../contract/qcore/chunkio/filesystem_delete.qcore");
+const OUTCOMES: &str = include_str!(
+    "../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore"
+);
+const DELETE: &str = include_str!(
+    "../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qcore"
+);
 
 fn field(name: &str, c_type: &str, reset: ResetValue) -> CleanupField {
     CleanupField {

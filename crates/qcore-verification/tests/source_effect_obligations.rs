@@ -51,7 +51,7 @@ fn clang_available() -> bool {
     }
 }
 
-const RULES: &str = include_str!("../../../contract/qcore/library/source_projection.qcore");
+const RULES: &str = include_str!("../../../contract/shared/library/source_projection.qcore");
 /// Declared ChunkIO Boolean model in `contract/profiles/fluent-bit`: record
 /// `cio_chunk`, field `lock`. `error_n` is the ordinary metadata field a frame
 /// helper is allowed to write.

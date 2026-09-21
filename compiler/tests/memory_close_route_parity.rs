@@ -51,11 +51,15 @@ use qcore_verification::teardown_source::{
 /// the same file through `memory_close::tests::FIXTURE`.
 const SOURCE: &str = include_str!("fixtures/chunkio/memory_close_source.c");
 const UNIT: &str = "lib/chunkio/src/cio_chunk.c";
-const RULES: &str = include_str!("../../contract/qcore/library/source_projection.qcore");
-const FRAME_CONTRACT: &str = include_str!("../../contract/qcore/chunkio/error_state.qcore");
-const BACKEND_CONTRACT: &str = include_str!("../../contract/qcore/chunkio/memory_backend.qcore");
-const UNLINK_CONTRACT: &str = include_str!("../../contract/qcore/chunkio/list_unlink.qcore");
-const COUNTER_CONTRACT: &str = include_str!("../../contract/qcore/chunkio/counters.qcore");
+const RULES: &str = include_str!("../../contract/shared/library/source_projection.qcore");
+const FRAME_CONTRACT: &str =
+    include_str!("../../providers/qcore-provider-chunkio/contracts/chunkio/error_state.qcore");
+const BACKEND_CONTRACT: &str =
+    include_str!("../../providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qcore");
+const UNLINK_CONTRACT: &str =
+    include_str!("../../providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qcore");
+const COUNTER_CONTRACT: &str =
+    include_str!("../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore");
 const OWNED_FIELDS: [&str; 4] = [
     "backend",
     "backend__buf_data",

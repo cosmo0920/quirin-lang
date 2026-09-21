@@ -41,8 +41,9 @@ use qcore_verification::filesystem_chunk_close_composition::{
 use qcore_verifier_host::WitnessChecker;
 
 /// This family's own pinned contract.
-pub const COMPOSITION_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_chunk_close.qcore");
+pub const COMPOSITION_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_chunk_close.qcore"
+);
 
 /// This family's own derivation recipe: the exact bytes the retained ChunkIO
 /// adapter appends. It is a **second** recipe over the same base unit, and the

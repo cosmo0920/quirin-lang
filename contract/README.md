@@ -5,16 +5,16 @@ external-library contracts used by the compiler's Fluent Bit integration.
 They are grouped by library and kept independent so each file can be checked
 directly with `quirin`.
 
-Provider-specific files here are compatibility snapshots. Their canonical
-sources live in `providers/qcore-provider-*/contracts/`; see the
-[ownership map and editing workflow](../../providers/README.md#contract-ownership).
-Edit the owning crate and run `python3 providers/contracts.py sync`, then
-`check`. Shared language, support-library and application contracts without a provider
-owner remain canonical here.
-The snapshots preserve existing source paths, corpus identities and builds
-without the optional provider workspace; they are not a second source to edit.
-[Current counts](../../docs/STATUS.md) supersede the historical corpus-growth
-checkpoints retained later in this guide.
+Provider-specific contracts have one canonical source in each owning
+`providers/qcore-provider-*/contracts/` tree. Shared language, support-library
+and application contracts without a provider owner live under `contract/shared/`.
+The [corpus index](corpus.json) selects these roots for all 96 module and clause
+pins; it is validation metadata, not an implicit runtime contract selection.
+See the [provider editing workflow](../providers/README.md#contract-ownership).
+There are no compatibility copies or symlinks at `contract/qcore`.
+[Current counts](../docs/STATUS.md) supersede historical corpus-growth
+checkpoints retained later in this guide. Logical names such as
+`monkey/composition.qcore` below are resolved through the corpus index.
 
 The regression test in `compiler/tests/qcore_contract_corpus.rs` recursively
 discovers every `.qcore` file, parses its function contracts into structured
@@ -27,7 +27,7 @@ From the repository root:
 ```sh
 cargo test -p qcore-compiler --test qcore_contract_corpus
 cargo run -p qcorec -- check \
-  contract/qcore/chunkio/import_composition.qcore
+  providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qcore
 ```
 
 The clauses are retained in the source AST for future semantic passes. Today,
@@ -71,7 +71,7 @@ and contract-syntax checks; use the audit above to bind these contracts to C.
 
 Every contract source now begins with `module contract;` and compiles without
 an artificial `main`. `module library;` similarly checks helper definitions
-without a process entry. See [module modes and closed `where` bindings](../../docs/QCORE_MODULE_MODES.md)
+without a process entry. See [module modes and closed `where` bindings](../docs/QCORE_MODULE_MODES.md)
 for syntax, multi-file behavior, compiler API changes, and current boundaries.
 
 `fluent_bit/memory.qcore` is also evaluated on executions of the actual
@@ -79,7 +79,7 @@ for syntax, multi-file behavior, compiler API changes, and current boundaries.
 profile and allocator observation hooks. Its five functions passed 145
 recorded executions, including deterministic allocator failures. This is
 runtime contract evaluation, separate from the static Boolean-field
-source checks above. See the [native evaluation report](../../docs/reports/cycle19-native-contracts/README.md)
+source checks above. See the [native evaluation report](../docs/reports/cycle19-native-contracts/README.md)
 for reproducible commands, assumptions, and exclusions.
 
 The recent Monkey execution policies also have native semantic consumers:
@@ -97,7 +97,7 @@ ghost facts. Concrete C resource APIs and callback postconditions remain in
 `monkey/composition.qcore`. Rust retains the schema decoder, expression and
 state-transition implementation, representation bounds, and conservative source
 grammar. Compiling a QCore file alone checks syntax; the native runner connects
-these rules to recorded executions. The [native-rule report](../../docs/reports/cycle19-native-rules/README.md)
+these rules to recorded executions. The [native-rule report](../docs/reports/cycle19-native-rules/README.md)
 records eight exercised callback paths, the labeled injected failure, bounded
 wrapper source projections and remaining composition gates.
 
@@ -215,7 +215,7 @@ to ignore clauses it cannot check.
 
 ### Which interpreter owns which clause family
 
-`contract/qcore` is shared by three consumers with disjoint vocabularies, and
+The canonical corpus is shared by three consumers with disjoint vocabularies, and
 `requires resource_contract_v1` is the selector between them. Of the corpus's
 160 declarations, 19 carry the marker and load; the other 141 are **rejected**
 by the resource loader, not skipped, so asking it for a `ResourceContracts`
@@ -295,7 +295,7 @@ The latest source findings are retained in three additional modules:
   It separately requires a complete observed success lifecycle before replaying
   the event model. Other wrappers and unobserved failure paths remain outside
   that consumer; a close/free call alone never establishes discharged custody.
-  [Contract and observation boundary](../../docs/reports/cycle18-observed-integration/README.md).
+  [Contract and observation boundary](../docs/reports/cycle18-observed-integration/README.md).
 
 The audit sidecars retain the exact executable source-policy/helper inputs and
 continue to label the wrapper behavioral specifications as unverified; the
@@ -303,7 +303,7 @@ new explicitly configured observed-wait report is separate. These three modules
 are intentionally outside the declarative resource-projection manifest: their
 predicates are not approximated as acquire/release annotations. Corpus tests pin
 all declarations and clauses across the live corpus; mutation regressions exercise
-every extracted policy. See the [extraction report](../../docs/reports/cycle19-contract-extraction/README.md).
+every extracted policy. See the [extraction report](../docs/reports/cycle19-contract-extraction/README.md).
 
 The executable timed-wait policies `monkey/wait_source_policy.qcore` and
 `monkey/wait_identity_policy.qcore` now select source signatures, contract
@@ -312,7 +312,7 @@ trust labels and observed bounds. They use typed integer/text predicates;
 Rust supplies extracted facts and generic hashing, decoding and event replay.
 Both policies are hash-bound and remain outside the resource manifest. The
 corpus contains 93 modules; the resource manifest selection is unchanged.
-See [extraction parity](../../docs/reports/cycle18-contract-extraction/README.md).
+See [extraction parity](../docs/reports/cycle18-contract-extraction/README.md).
 
 Cycle 18 priority-one policies add `monkey/wait_failure_policy.qcore`,
 `monkey/event_payload.qcore` and `monkey/timeout_teardown.qcore`. Their typed
@@ -322,7 +322,7 @@ The configured `quirin-audit wait-failures`, `event-payload`, and
 `timeout-teardown` commands bind their selected source and observation inputs.
 These policies remain outside resource-v1: 33 selected modules and 59 declarations
 are unchanged; 179 declarations are rejected by that separate interpreter.
-[Bounds and integration evidence](../../docs/reports/cycle18-priority1-integration/README.md).
+[Bounds and integration evidence](../docs/reports/cycle18-priority1-integration/README.md).
 
 `chunkio/memory_backend.qcore` is checked against the complete typed
 `cio_memfs_close` body over nine nullable ownership states. The shared field
@@ -331,7 +331,7 @@ replay derives `old_live__PATH`, `live__PATH`, `released__PATH` and
 separate field components, so `backend__buf_data` denotes `chunk->backend->buf_data`.
 The borrowed chunk and its pointer fields remain unchanged; source-derived
 release does not make a dangling backend pointer reusable. The
-[memory backend report](../../docs/reports/cycle19-memory-backend/README.md)
+[memory backend report](../docs/reports/cycle19-memory-backend/README.md)
 records the provenance/libc assumptions and remaining enclosing teardown gates.
 
 `chunkio/counters.qcore` binds four unsigned counter helpers to their selected
@@ -339,13 +339,13 @@ field, source-derived unit `delta`, updated return and write footprint.
 `counter_positive`/`counter_below_maximum` and range/ABI clauses are caller
 premises; the C source does not guard against wraparound. The certificate checks
 concrete values against a supplied target maximum when instantiated. See the
-[counter report](../../docs/reports/cycle19-counters/README.md).
+[counter report](../docs/reports/cycle19-counters/README.md).
 
 `chunkio/list_unlink.qcore` checks `mk_list_del` and its complete
 `__mk_list_del` dependency under live reciprocal/exclusive link premises.
 Both distinct and equal neighbor identities are replayed; the entry is distinct
 from its neighbors. The contracts check link clearing/reconnection and preserve
-object custody. See the [list unlink report](../../docs/reports/cycle19-list-unlink/README.md).
+object custody. See the [list unlink report](../docs/reports/cycle19-list-unlink/README.md).
 
 `chunkio/memory_close.qcore` composes the checked dependencies for the null and
 memory-backed `cio_chunk_close` paths. It binds both embedded links and the saved
@@ -353,12 +353,12 @@ context counter after chunk release; filesystem/other paths stay uncovered.
 The caller must establish context/stream lifetime, distinct memberships, owned
 provenance and source/ABI equality. The backend contract now explicitly requires
 owned fields to be distinct from the borrowed root. See the
-[memory close report](../../docs/reports/cycle19-memory-close/README.md).
+[memory close report](../docs/reports/cycle19-memory-close/README.md).
 
 `chunkio/filesystem_attempts.qcore` contains four executable source result-use
 policies. They record ignored cleanup results in `cio_file_close` and guarded
 results in the unmap/Unix close helpers. These are producer-use facts, not OS
-success or custody certificates. The [filesystem attempts report](../../docs/reports/cycle19-filesystem-attempts/README.md)
+success or custody certificates. The [filesystem attempts report](../docs/reports/cycle19-filesystem-attempts/README.md)
 retains all 20 source paths and the unresolved failure obligations.
 
 `chunkio/filesystem_outcomes.qcore` checks the null, absent, syscall-error and
@@ -366,62 +366,62 @@ syscall-success bookkeeping transitions of the Unix close and unmap helpers.
 The typed symbolic interpreter binds actual syscall arguments and every field
 write. External outcome/framing premises remain explicit; an error preserves C
 fields but leaves OS custody unresolved. See the
-[filesystem outcomes report](../../docs/reports/cycle19-filesystem-outcomes/README.md).
+[filesystem outcomes report](../docs/reports/cycle19-filesystem-outcomes/README.md).
 
 `chunkio/filesystem_observation.qcore` checks endpoint observations from actual
 compiled Unix helpers with controlled syscall outcomes. Eighteen sanitized
 executions cover both helpers' null/absent/error/success behavior and record
 call identity, diagnostics and field frames. These hooks do not release OS
 resources. See the
-[cleanup observation report](../../docs/reports/cycle19-cleanup-observations/README.md).
+[cleanup observation report](../docs/reports/cycle19-cleanup-observations/README.md).
 
 `chunkio/unmap_wrapper.qcore` composes the source-derived native unmap and
 up-counter helpers across all eight `munmap_file` paths. Only successful native
 unmap clears wrapper sizes and decrements the saved parameter context. Sync/log
 frames and provenance remain explicit premises. See the
-[unmap wrapper report](../../docs/reports/cycle19-unmap-wrapper/README.md).
+[unmap wrapper report](../docs/reports/cycle19-unmap-wrapper/README.md).
 
 `chunkio/file_close.qcore` binds the non-deleting backend close chain to its
 checked unmap/counter and descriptor helpers. It retains unresolved OS custody
 through the subsequent backend allocation release: 26 of 43 conditional cases
 fail the nested-discharge gate. Deletion paths remain uncovered. See the
-[file close report](../../docs/reports/cycle19-file-close/README.md).
+[file close report](../docs/reports/cycle19-file-close/README.md).
 
 `chunkio/filesystem_delete_attempt.qcore` checks guarded unlink result use in the
 four source paths of `cio_file_native_delete`. The shared importer now preserves
 short-circuit fd/mapping guards and skipped reads/calls. Actual deletion outcome
 and custody still require proof. See the
-[short-circuit report](../../docs/reports/cycle19-short-circuit/README.md).
+[short-circuit report](../docs/reports/cycle19-short-circuit/README.md).
 
 The filesystem wrapper policies now also state storage separation explicitly:
 unmap's chunk/backend/context/stream storage is disjoint, and file close's owned
 backend/path are disjoint from the borrowed chunk root. Both policies have 17
 clauses. These remain caller provenance obligations; see the
-[cleanup frame report](../../docs/reports/cycle19-cleanup-frames/README.md).
+[cleanup frame report](../docs/reports/cycle19-cleanup-frames/README.md).
 
 `chunkio/filesystem_delete.qcore` checks native deletion eligibility and both
 unlink outcomes without consuming record/path allocations. Its nonnull record,
 readable path and external-call frames remain explicit premises. See the
-[native deletion report](../../docs/reports/cycle19-delete-outcomes/README.md).
+[native deletion report](../docs/reports/cycle19-delete-outcomes/README.md).
 
 `chunkio/file_close_delete.qcore` extends the checked close chain to delete one.
 Thirty conditional cases retain blocked, failed, successful and absent-backend
 outcomes through the following frees. Both delete modes together cover all four
 source paths; success still needs bound OS/caller premises. See the
-[deleting close report](../../docs/reports/cycle19-deleting-close/README.md).
+[deleting close report](../docs/reports/cycle19-deleting-close/README.md).
 
 `chunkio/filesystem_delete_observation.qcore` evaluates 16 controlled executions
 of the actual pinned native-delete body. It checks eligibility, path forwarding,
 status/diagnostic counts and record/path endpoint preservation. The returning
 unlink hook performs no deletion. See the
-[native delete observation report](../../docs/reports/cycle19-delete-observations/README.md).
+[native delete observation report](../docs/reports/cycle19-delete-observations/README.md).
 
 `chunkio/filesystem_chunk_close.qcore` carries filesystem backend outcomes through
 the enclosing chunk's two list removals, name/chunk frees and saved-context total
 decrement. Its 75 conditional cases retain 39 unresolved OS cleanup outcomes;
 only eight cases establish conditional backing deletion. Memory plus filesystem
 coverage leaves unsupported backend kinds open. See the
-[filesystem chunk close report](../../docs/reports/cycle19-filesystem-chunk/README.md).
+[filesystem chunk close report](../docs/reports/cycle19-filesystem-chunk/README.md).
 
 The nested chain now has four additional executable policy modules:
 `chunkio/teardown_traversal.qcore` records saved-next traversal and exact child
@@ -432,14 +432,14 @@ preserves each filesystem residual and up-counter obligation through parent free
 All component and native caller/provenance/OS premises remain explicit.
 These policies do not turn source matching, selected conditional outcomes or a
 checked lifecycle prefix into a whole-unit Safe verdict. See the
-[nested cleanup report](../../docs/reports/cycle19-nested-cleanup/README.md).
+[nested cleanup report](../docs/reports/cycle19-nested-cleanup/README.md).
 
 `chunkio/teardown_observation.qcore` checks five bounded native memory executions.
 Its adapter derives ownership, reciprocal rings, nested release order and exact
 counters from the pinned observer's allocation generations and event stream.
 The observer/build and exclusive execution are trusted. The contract is runtime
 evaluation only; it cannot establish a static certificate. See the
-[native teardown report](../../docs/reports/cycle19-native-teardown/README.md).
+[native teardown report](../docs/reports/cycle19-native-teardown/README.md).
 
 `chunkio/constructor_failure_observation.qcore` evaluates the nine injected
 allocation failures and one control on the same bounded memory path. Exact
@@ -447,7 +447,7 @@ attempt/rollback records and the surviving ownership tree account for every
 observed allocation. Null optional fields, a null chunk name on a successful
 return, and unchanged zero error output on backend failure remain explicit
 observations, not general API guarantees. See the
-[constructor failure report](../../docs/reports/cycle19-constructor-failures/README.md).
+[constructor failure report](../docs/reports/cycle19-constructor-failures/README.md).
 
 `chunkio/unsupported_close.qcore` specifies the conditional partial release for
 all non-memory/non-filesystem integer backend kinds. The source interpreter
@@ -455,14 +455,14 @@ uses an excluded-constant symbolic class and rejects any further split of that
 domain. Both links, name and chunk are released and the total counter decrements;
 backend custody remains unresolved. This 12-clause policy cannot establish a
 reachable caller, successful backing deletion or nested discharge. See the
-[unsupported close report](../../docs/reports/cycle19-unsupported-close/README.md).
+[unsupported close report](../docs/reports/cycle19-unsupported-close/README.md).
 
 The existing `nested_cleanup` policy also counts unclassified backend children
 in its residual inventory when matching symbolic close evidence is supplied.
 Opaque stream/chunk/backend-kind identities survive parent teardown separately
 from typed OS residuals; either inventory blocks discharge. The original
 memory/filesystem cases retain their exact results. See the
-[opaque parent report](../../docs/reports/cycle19-nested-unsupported/README.md).
+[opaque parent report](../docs/reports/cycle19-nested-unsupported/README.md).
 
 `chunkio/unsupported_constructor_observation.qcore` evaluates four recorded
 unsupported integer stream types. Native stream creation preserves each value;
@@ -470,35 +470,35 @@ chunk open returns null with unchanged error output and rolls back both local
 allocations. The surviving empty stream/context is fully released. The
 11-clause runtime policy and exact trace adapter establish only these executions,
 not all caller inputs or universal reachability of the conditional close arm.
-See the [constructor report](../../docs/reports/cycle19-unsupported-constructors/README.md).
+See the [constructor report](../docs/reports/cycle19-unsupported-constructors/README.md).
 
 `chunkio/filesystem_os_observation.qcore` checks twelve real Linux cleanup
 executions against exclusive temporary files, descriptors and mappings. An
 independent adapter checks raw arguments, errno, record frames, endpoint probes
 and inode hardlink witnesses. The 13 clauses preserve the separation between
 observed cleanup, static safety and durability. See the
-[OS observation report](../../docs/reports/cycle19-file-os/README.md).
+[OS observation report](../docs/reports/cycle19-file-os/README.md).
 
 `chunkio/filesystem_teardown_observation.qcore` checks six native one-file tree
 executions, including three suppressed-syscall EIO cases. Its 16 clauses require
 complete allocation release while retaining mapping, descriptor and up-counter
 residuals separately. Neither successful `msync` nor released parent allocations
 prove durability. See the
-[filesystem tree report](../../docs/reports/cycle19-file-tree/README.md).
+[filesystem tree report](../docs/reports/cycle19-file-tree/README.md).
 
 `chunkio/filesystem_constructor_failure_observation.qcore` checks eleven ENOMEM
 injections and a control on the bounded filesystem constructor path. Its 16
 clauses conserve acquired generations across temporary, rollback and teardown
 releases plus outstanding prefix generations. Sanitizer-interrupted processes
 cannot claim completed teardown or leak checking; fixture cleanup is separate.
-See the [filesystem failure report](../../docs/reports/cycle19-file-constructor-failures/README.md).
+See the [filesystem failure report](../docs/reports/cycle19-file-constructor-failures/README.md).
 
 `chunkio/filesystem_os_constructor_observation.qcore` checks eight native
 constructor OS-failure/control processes. Its 17 clauses separate allocation
 release from descriptor custody after null returns and parent teardown. POSIX
 allocation return/errno, file-size fallback and failed-mapping sentinels remain
 distinct; harness reclamation cannot be mistaken for constructor rollback.
-See the [OS constructor report](../../docs/reports/cycle19-file-os-constructors/README.md).
+See the [OS constructor report](../docs/reports/cycle19-file-os-constructors/README.md).
 
 `chunkio/filesystem_existing_observation.qcore` checks seven native existing-file
 profiles. The adapter binds generation/ring provenance, exact rollback/teardown,
@@ -520,14 +520,14 @@ down-ring membership, descriptor epochs and parent residuals; harness reclamatio
 cannot count as library cleanup. Suppressed close retains a descriptor even when
 down; suppressed reopen creates no new epoch. These runtime-only facts do not
 establish arbitrary kernel failures, production reachability or durability. See
-the [descriptor failure report](../../docs/reports/cycle19-file-descriptor-failures/README.md).
+the [descriptor failure report](../docs/reports/cycle19-file-descriptor-failures/README.md).
 
 The corpus now contains 58 modules. Five resource-loader modules supply 19
 resource declarations; the other 143 declarations reject through that consumer
 and belong to their explicit interpreters. `chunkio/error_frame.qcore` is the
 configured generic helper policy over `cio_chunk`; `chunkio/error_state.qcore`
 remains the policy of retained specialized lifecycle adapters. Their records
-must not be conflated. See the [helper report](../../docs/reports/w5-configured-frame-helpers/README.md).
+must not be conflated. See the [helper report](../docs/reports/w5-configured-frame-helpers/README.md).
 
 The CMetrics unit-result provider increment adds `cmetrics/counter_reset.qcore`
 for `cmt_counter_allow_reset`: 59 modules and 163 declarations, with the same 19

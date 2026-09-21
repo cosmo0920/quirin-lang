@@ -434,7 +434,7 @@ None of these is implemented here. Each is sized so it can be taken alone.
 | **U2** | **Loader vocabulary.** `requires os_endpoint_contract_v1`, total-or-reject, beside `resource_contract_v1` and never silently reinterpreting it. A declaration missing a target, a success test or any outcome row rejects whole. |
 | **U3** | **Gateway transfer function.** The blocking dependency is **relational branch analysis**: the relation is result-dependent, and both C02 §7 and O04 §7 record branch conditions as out of scope. Until an arm can be selected from `ret == 0` and an `errno` comparison, every real call site joins to **`Attempted`**. That is still sound, still fail-closed, and still strictly stronger than a v1 `resource_released` declaration, which would claim an unconditional discharge. |
 | **U4** | **`proof/QCore/DescriptorCustody.lean`.** `Close.Valid` hard-codes `succeeded = false → liveAfter = true` (theorem `accepted_failed_close_retains_custody`). See §13. `QCore.OsEndpointPostState` now states the corrected relation alongside it; the pinned theorem is deliberately untouched, and unifying the two record types is the remaining work. |
-| **U5** | **`contract/qcore/monkey/composition.qcore`.** `evutil_closesocket`'s `ensures error(SocketCloseError) descriptor_custody_is_preserved`. See §13. |
+| **U5** | **`providers/qcore-provider-libevent/contracts/monkey/composition.qcore`.** `evutil_closesocket`'s `ensures error(SocketCloseError) descriptor_custody_is_preserved`. See §13. |
 | **U6** | **`munmap` sibling profile**, per §11. |
 | **U7** | **Evidence for O4/O5.** A `SIGSTOP`/timer-driven EINTR fixture on an interruptible filesystem, and a small-loopback-device ENOSPC fixture, would bind the two arms this card takes from documentation alone. Both need privileges the current harness does not assume. |
 
@@ -468,7 +468,7 @@ The root cause is representational: one `liveAfter : Bool` cannot express
 "the descriptor is gone **and** nothing is discharged". That is exactly what the
 three-identity split of §3 and the poisoned states of §6.1 exist to say.
 
-### 13.2 `contract/qcore/monkey/composition.qcore`
+### 13.2 `providers/qcore-provider-libevent/contracts/monkey/composition.qcore`
 
 ```qcore
 extern fn evutil_closesocket(descriptor: own<Descriptor> use one)

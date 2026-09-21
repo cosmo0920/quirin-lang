@@ -40,8 +40,9 @@ use qcore_verifier_host::WitnessChecker;
 pub use filesystem::{PROBE, PROBE_FUNCTION, UNIT, WRAPPER, backend, clang_available, memory};
 
 /// This family's own pinned contract.
-pub const COMPOSITION_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/unsupported_close.qcore");
+pub const COMPOSITION_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qcore"
+);
 
 pub fn revision() -> String {
     filesystem::revision()

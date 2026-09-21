@@ -54,7 +54,7 @@ const OTHER_CALLEES: &str = include_str!("fixtures/contracts/hash_contracts_call
 const B09B10_CALLEES: &str = include_str!("fixtures/contracts/o04_b09b10_callees.qcore");
 /// **The production contract module this card lands.**
 const PUBLICATION: &str =
-    include_str!("../../../contract/qcore/fluent_bit/hash_table_publication.qcore");
+    include_str!("../../../contract/shared/fluent_bit/hash_table_publication.qcore");
 const GENERIC_CONTRACTS: &str = include_str!("fixtures/contracts/hash_contracts_generic.qcore");
 
 /// The refusal a call outside its declared premise carries.

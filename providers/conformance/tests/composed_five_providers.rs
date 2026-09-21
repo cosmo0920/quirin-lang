@@ -240,7 +240,7 @@ fn cmetrics_summary() -> qcore_c_gateway::boolean_source::ChunkSourceSummary {
         &profile,
         &["cmetrics"],
         &[],
-        include_str!("../../../contract/qcore/library/source_projection.qcore"),
+        include_str!("../../../contract/shared/library/source_projection.qcore"),
     )
     .expect("the CMetrics unit source imports");
     assert_eq!(imports.len(), 1);
@@ -322,8 +322,10 @@ fn the_five_package_registry_composes_only_what_its_packages_implement() {
     // ---------------------------------------------------------------- routes
     let chunkio_summary = boolean::checked(boolean::SOURCE, vec![]);
     let cmetrics_source = cmetrics_summary();
-    let cmetrics_contract =
-        include_str!("../../../contract/qcore/cmetrics/counter_reset.qcore").to_owned();
+    let cmetrics_contract = include_str!(
+        "../../../providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore"
+    )
+    .to_owned();
     let routes = vec![
         boolean_route(
             "chunkio.boolean_field",

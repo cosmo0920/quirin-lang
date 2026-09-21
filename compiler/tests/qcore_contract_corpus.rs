@@ -1,5 +1,4 @@
 use std::fs;
-use std::path::{Path, PathBuf};
 
 use qcore_compiler::{
     CompileOptions, SourceContractClauseKind, SourceContractExitSelector, SourceDeclarationKind,
@@ -869,38 +868,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("msgpack/packer.qcore", "msgpack_packer_init", 5),
 ];
 
-fn corpus_root() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .expect("compiler crate has a repository parent")
-        .join("contract/qcore")
-}
-
-fn contract_sources(directory: &Path) -> Vec<PathBuf> {
-    fn visit(directory: &Path, sources: &mut Vec<PathBuf>) {
-        for entry in fs::read_dir(directory).expect("contract directory is readable") {
-            let path = entry.expect("contract entry is readable").path();
-            if path.is_dir() {
-                visit(&path, sources);
-            } else if path
-                .extension()
-                .is_some_and(|extension| extension == "qcore")
-            {
-                sources.push(path);
-            }
-        }
-    }
-
-    let mut sources = Vec::new();
-    visit(directory, &mut sources);
-    sources.sort();
-    sources
-}
+#[path = "support/contract_corpus.rs"]
+mod contract_corpus;
 
 #[test]
 fn every_qcore_contract_source_parses_round_trips_and_compiles() {
-    let root = corpus_root();
-    let sources = contract_sources(&root);
+    let sources = contract_corpus::sources();
     // 60 -> 61 by card HASH-CONTRACTS' deliberate addition of
     // `fluent_bit/hash_table_publication.qcore`; 61 -> 64 by card
     // PROD-CONTRACTS' deliberate addition of
@@ -968,8 +941,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 93 -> 96: Cycle 18 aggregate, platform and task-handoff executable policies.
     assert_eq!(sources.len(), 96, "unexpected contract corpus size");
 
-    for path in sources {
-        let source = fs::read_to_string(&path).expect("contract source is readable");
+    for path in sources.values() {
+        let source = fs::read_to_string(path).expect("contract source is readable");
         // Card HASH-CLAUSE. The `qcore-premise` comment directive is retired in
         // favour of §C04.5's `resource_literal_argument` clause. The resource
         // loader rejects a module carrying it, but only the modules the
@@ -1013,21 +986,15 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
 
 #[test]
 fn contract_surface_is_pinned_as_structured_clauses() {
-    let root = corpus_root();
     let mut actual = Vec::new();
     let mut all_expressions = Vec::new();
     let mut has_normal = false;
     let mut has_error = false;
     let mut has_any = false;
 
-    for path in contract_sources(&root) {
+    for (relative, path) in contract_corpus::sources() {
         let source = fs::read_to_string(&path).expect("contract source is readable");
         let parsed = parse_source_program(&source).expect("contract source parses");
-        let relative = path
-            .strip_prefix(&root)
-            .expect("contract lies below corpus root")
-            .to_string_lossy()
-            .replace('\\', "/");
         for declaration in &parsed.declarations {
             if declaration.value.kind == SourceDeclarationKind::ExternFunction {
                 let contract = declaration
@@ -1103,7 +1070,9 @@ fn contract_surface_is_pinned_as_structured_clauses() {
 /// `descriptor_custody_is_preserved` clause, which is a borrow and is correct.
 #[test]
 fn the_closesocket_error_arm_states_an_unresolved_endpoint() {
-    let path = corpus_root().join("monkey/composition.qcore");
+    let path = contract_corpus::sources()
+        .remove("monkey/composition.qcore")
+        .unwrap();
     let source = fs::read_to_string(&path).expect("contract source is readable");
     let parsed = parse_source_program(&source).expect("contract source parses");
 

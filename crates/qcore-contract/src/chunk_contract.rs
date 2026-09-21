@@ -1,6 +1,6 @@
 //! Interpret the bounded lifecycle predicate vocabulary in native QCore
 //! contract files and check it against independently imported C field paths.
-//! Library function names and postconditions belong in contract/qcore, not here.
+//! Library function names and postconditions belong in the canonical contract corpus, not here.
 //!
 //! Inputs are declared schema records. Successful evaluation means the supplied
 //! finite paths satisfy the selected policy, not that they came from source.

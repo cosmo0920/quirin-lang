@@ -48,6 +48,6 @@
       "provider": null
     }
   },
-  "resource_contract_manifest": "../../cycle19-resource-contracts.json",
+  "resource_contract_manifest": "../../../cycle19-resource-contracts.json",
   "provider_manifests": []
 }

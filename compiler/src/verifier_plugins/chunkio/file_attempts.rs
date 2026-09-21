@@ -9,8 +9,9 @@ use crate::typed_source::{
 use qcore_verification::call_use_contract::{CallResultUsePolicy, check_call_result_use};
 use serde::Serialize;
 
-pub const CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_attempts.qcore");
+pub const CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore"
+);
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct FileAttemptEvidence {
     source: SourceSummary,
@@ -59,8 +60,9 @@ pub fn check_file_attempt_sources(
         })
         .collect()
 }
-pub const DELETE_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_delete_attempt.qcore");
+pub const DELETE_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qcore"
+);
 
 pub fn check_file_delete_source(
     unit: &C11TranslationUnit<'_>,

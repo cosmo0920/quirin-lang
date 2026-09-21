@@ -52,14 +52,17 @@ use qcore_verifier_host::WitnessChecker;
 use std::path::PathBuf;
 
 /// The four pinned contracts this composition is taken under.
-pub const COMPOSITION_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/unmap_wrapper.qcore");
-pub const OUTCOMES_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_outcomes.qcore");
-pub const ATTEMPT_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_attempts.qcore");
+pub const COMPOSITION_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qcore"
+);
+pub const OUTCOMES_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore"
+);
+pub const ATTEMPT_CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore"
+);
 pub const COUNTER_CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/counters.qcore");
+    include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore");
 
 /// The same C bodies the in-process `unmap_wrapper` unit tests import.
 pub const SOURCE: &str = include_str!("../../../../compiler/tests/fixtures/chunkio/unmap_source.c");

@@ -32,7 +32,7 @@ contract {
 
 // Premise R04/R07: the destructor releases a non-null chunk. The richer
 // `chunk_is_live` / `chunk_is_not_busy` / `chunk_has_no_task_or_route_custody`
-// premises of `contract/qcore/chunkio/chunk_destructor.qcore` carry no
+// premises of `providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qcore` carry no
 // `resource_contract_v1` marker and are therefore NOT in force here either.
 extern fn cio_chunk_close(ch: ptr<mut, u8>, delete: i32) -> unit
 contract {

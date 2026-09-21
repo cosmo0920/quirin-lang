@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "roots": [
+    "shared",
+    "../providers/qcore-provider-chunkio/contracts",
+    "../providers/qcore-provider-cmetrics/contracts",
+    "../providers/qcore-provider-ctraces/contracts",
+    "../providers/qcore-provider-libevent/contracts",
+    "../providers/qcore-provider-librdkafka/contracts"
+  ]
+}

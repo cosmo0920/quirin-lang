@@ -44,7 +44,7 @@ dependencies. Already published there and reused verbatim by this design:
   everywhere).
 
 Precedents this design deliberately follows: the W1 resource-contract
-manifest (`contract/cycle19-resource-contracts.json`: JSON, integer
+manifest (`cycle19-resource-contracts.json`: JSON, integer
 `schema_version`, total-or-reject loading) and protocol v1's day-one
 versioning discipline.
 

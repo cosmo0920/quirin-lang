@@ -7,7 +7,9 @@ use qcore_contract::contract_observation::{
 use qcore_schemas::sha256_hex;
 use serde::{Deserialize, Serialize};
 
-const POLICY: &str = include_str!("../../../../contract/qcore/monkey/wait_failure_policy.qcore");
+const POLICY: &str = include_str!(
+    "../../../../providers/qcore-provider-libevent/contracts/monkey/wait_failure_policy.qcore"
+);
 
 pub fn wait_failure_policy_digest() -> String {
     sha256_hex(POLICY.as_bytes())

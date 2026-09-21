@@ -6,8 +6,9 @@ use crate::cleanup_outcome::{
 };
 use crate::legacy_c::C11TranslationUnit;
 
-pub const CONTRACT: &str =
-    include_str!("../../../../contract/qcore/chunkio/filesystem_outcomes.qcore");
+pub const CONTRACT: &str = include_str!(
+    "../../../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore"
+);
 
 pub fn check_file_outcome_sources(
     unit: &C11TranslationUnit<'_>,

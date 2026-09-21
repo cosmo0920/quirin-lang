@@ -45,11 +45,14 @@ use qcore_verification::composition_source::{
 use qcore_verification::counter_source::{COUNTER_SEMANTIC_PROFILE, CounterSourceTask};
 
 const SOURCE: &str = include_str!("fixtures/chunkio/unmap_source.c");
-const COMPOSITION_CONTRACT: &str = include_str!("../../contract/qcore/chunkio/unmap_wrapper.qcore");
-const OUTCOMES_CONTRACT: &str =
-    include_str!("../../contract/qcore/chunkio/filesystem_outcomes.qcore");
-const ATTEMPT_CONTRACT: &str =
-    include_str!("../../contract/qcore/chunkio/filesystem_attempts.qcore");
+const COMPOSITION_CONTRACT: &str =
+    include_str!("../../providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qcore");
+const OUTCOMES_CONTRACT: &str = include_str!(
+    "../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore"
+);
+const ATTEMPT_CONTRACT: &str = include_str!(
+    "../../providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore"
+);
 const WRAPPER: &str = "munmap_file";
 const NATIVE: &str = "cio_file_native_unmap";
 const COUNTER: &str = "cio_chunk_counter_total_up_sub";

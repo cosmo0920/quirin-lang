@@ -44,7 +44,7 @@ def main():
         counts[row["mode"]] = counts.get(row["mode"], 0) + 1
     if actual != expected or len({row["case"] for row in rows}) != len(rows):
         raise RuntimeError(f"native scenario coverage mismatch: {actual}")
-    contract = REPO / "contract/qcore/chunkio/filesystem_observation.qcore"
+    contract = REPO / "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_observation.qcore"
     checked = run(["cargo", "run", "--quiet", "-p", "qcore-compiler", "--example",
                    "check_contract_observations", "--", str(contract), str(observations)],
                   cwd=REPO, capture_output=True)
@@ -65,7 +65,7 @@ def main():
             or any(row["function"] != "native_delete_observation"
                    or row["helper"] != "cio_file_native_delete" for row in delete_rows)):
         raise RuntimeError("native delete scenario coverage mismatch")
-    delete_contract = REPO / "contract/qcore/chunkio/filesystem_delete_observation.qcore"
+    delete_contract = REPO / "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_observation.qcore"
     delete_checked = run(["cargo", "run", "--quiet", "-p", "qcore-compiler", "--example",
                           "check_contract_observations", "--", str(delete_contract),
                           str(delete_observations)], cwd=REPO, capture_output=True)

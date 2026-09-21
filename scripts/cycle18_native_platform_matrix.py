@@ -213,7 +213,7 @@ def main():
                    "runtime_sha256":{"epoll":digest(output / "runtime-epoll-tsan.json")}}
     (output / "run-manifest-tsan.json").write_text(json.dumps(tsan_manifest, indent=2) + "\n")
     config = {"schema_version":1,"matrix":"matrix.json",
-              "policy":str(root / "contract/qcore/monkey/native_platform_matrix.qcore"),
+              "policy":str(root / "providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qcore"),
               "harness":str(harness),"historical_validation":str(history_doc),"libevent_source":str(source),
               "artifact_sets":[
               {"sanitizers":"address,undefined,leak","build_commands":"build-commands.json","cmake_cache":str(build / "CMakeCache.txt"),"compile_commands":str(build / "compile_commands.json"),"libevent_core":str(core),"libevent_pthreads":str(pthreads),
