@@ -40,12 +40,17 @@ fn main() {
         // The markers make the compiled-in template one contiguous, locatable
         // blob in the executable, so a host can bind an installed manifest's
         // declarations to it without executing this program.
-        runtime::run_with_v2(
+        runtime::run_with_v2_and_contracts(
             concat!(
                 "<<<qcore.provider-template.v1:begin>>>\n",
                 include_str!("../provider-template.json"),
                 "<<<qcore.provider-template.v1:end>>>"
             ),
+            Some(concat!(
+                "<<<qcore.provider-contracts.v1:begin>>>\n",
+                include_str!("../contracts.json"),
+                "<<<qcore.provider-contracts.v1:end>>>"
+            )),
             Some(propose),
         )
     {

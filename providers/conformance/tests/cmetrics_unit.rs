@@ -55,7 +55,10 @@ fn cmetrics_process_checks_unit_paths_and_rejects_scalar_or_unbound_claims() {
     let ChunkSourceResult::Summary(summary) = imports.remove(0) else {
         panic!("missing unit import")
     };
-    let contract = include_str!("../../../contract/qcore/cmetrics/counter_reset.qcore");
+    let contract = std::fs::read_to_string(
+        output.join("qcore.cmetrics/contracts/cmetrics/counter_reset.qcore"),
+    )
+    .unwrap();
     let target = TargetProfile {
         library: "cmetrics".into(),
         revision: summary.source_revision().into(),
@@ -65,7 +68,7 @@ fn cmetrics_process_checks_unit_paths_and_rejects_scalar_or_unbound_claims() {
         backend: "native".into(),
     };
     let replay =
-        BooleanFieldSourceTask::derive(&summary, "counter.c", contract, target.clone()).unwrap();
+        BooleanFieldSourceTask::derive(&summary, "counter.c", &contract, target.clone()).unwrap();
     let request = replay.request(PluginId::new("qcore.cmetrics").unwrap());
     let result = registry.verify_v2(&request, replay.task(), Some(&replay));
     assert_eq!(
