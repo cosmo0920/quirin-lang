@@ -1,0 +1,88 @@
+{
+  "implementation_commit": "5d71e8fb112da774892cf5407db5827edd7e93fd",
+  "report_commit": "fc65259a",
+  "passed": 122,
+  "failed": 0,
+  "ignored": 0,
+  "result_summaries": 27,
+  "workspace_exit": 0,
+  "workspace_log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/agent-evidence/provider-workspace-test-escalated.log",
+  "initial_attempt": {
+    "exit": 101,
+    "passed": 121,
+    "failed": 1,
+    "reason": "Sandbox denied unshare(CLONE_NEWUSER | CLONE_NEWNET) with EPERM; complete native-host rerun passed.",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/agent-evidence/provider-workspace-test.log"
+  },
+  "package_python_tests": 5,
+  "ownership_tests": 7,
+  "isolated_package_test": {
+    "exit": 0,
+    "passed": 1,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/provider-contract-packaging/agent-evidence/package-mutation-isolated.log"
+  },
+  "provider_fmt_exit": 0,
+  "provider_clippy_exit": 0,
+  "backup_files": 16,
+  "commands": {
+    "workspace": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--no-fail-fast"
+    ],
+    "isolated": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "-p",
+      "qcore-provider-conformance",
+      "--test",
+      "packages",
+      "real_packages_preserve_unknown_and_reject_mutations",
+      "--locked",
+      "--offline",
+      "--",
+      "--exact",
+      "--test-threads=1"
+    ],
+    "fmt": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "clippy": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ]
+  },
+  "environment": {
+    "cwd": "/tmp/qcore-provider-contract-packages",
+    "inherit_process_environment": true,
+    "command_specific_assignments": {},
+    "target_note": "providers/target was a symlink to private/provider-contract-packaging/agent-target in the integration checkout",
+    "native_host_access": [
+      "workspace",
+      "isolated"
+    ]
+  },
+  "source_note": "Tests ran after the last code/test edit, on bytes identical to 5d71e8fb; commit created afterward without source changes. Subsequent agent commit adds report only."
+}

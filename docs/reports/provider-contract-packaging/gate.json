@@ -1,0 +1,13 @@
+{
+  "note": "PROVIDER-CONTRACT-PACKAGING: core gate at 5ff36cfdfdf313ee69539b832e0742a8d913d54f records 5034 passed / 0 failed / 11 ignored, 268 result summaries; 164 Lean audits; 324 Python tests after matrix regeneration. Provider workspace 122 tests freshly measured separately; source/commands recorded in provider-gate-summary.json. Core compiled sources, shared contracts and Lean unchanged by subsequent provider-only integration. All standing commands and five isolated host-sensitive controls exit 0. Clang measured in this checkout. Logs: private/provider-contract-packaging/core-gate/. 72 provider-owned contracts match base and retained snapshots; logical corpus remains 96. No verification or conformance promotion.",
+  "workspace_tests": 5034,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 324,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 164,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
