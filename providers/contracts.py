@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Maintain provider-owned contracts and byte-identical legacy corpus snapshots.
+"""Maintain the inventories for canonical provider-owned contracts.
 
 Edit contracts in their provider crate, then run `sync`. `check` never writes.
-The compatibility corpus lets retained in-process routes build without providers.
+The retired ``contract/qcore`` compatibility tree is refused so it cannot
+silently become a second source of provider contracts again.
 """
 import argparse
 import hashlib
@@ -12,7 +13,7 @@ import re
 
 ROOT = Path(__file__).resolve().parent
 # Ownership is intentionally narrow: shared language/support policies stay in
-# contract/qcore. The ChunkIO provider also handles Fluent Bit's busy-state API.
+# contract/shared. The ChunkIO provider also handles Fluent Bit's busy-state API.
 OWNERS = {
     "qcore-provider-chunkio": ("chunkio", "fluent_bit/busy_state.qcore"),
     "qcore-provider-cmetrics": ("cmetrics",),
@@ -49,9 +50,9 @@ def files(directory):
 
 def maintain(root=ROOT, sync=False):
     root = Path(root)
-    corpus = root.parent / "contract/qcore"
-    if not corpus.is_dir() or corpus.is_symlink():
-        raise ValueError(f"missing or symbolic-link compatibility corpus: {corpus}")
+    legacy = root.parent / "contract/qcore"
+    if legacy.exists() or legacy.is_symlink():
+        raise ValueError(f"legacy contract corpus must be absent: {legacy}")
     rows = []
     claimed = set()
     for crate, selectors in OWNERS.items():
@@ -59,27 +60,14 @@ def maintain(root=ROOT, sync=False):
         if provider.is_symlink():
             raise ValueError(f"symbolic-link provider directory: {provider}")
         canonical = files(provider / "contracts")
-        template = json.loads((provider / "provider-template.json").read_text())
+        template_path = provider / "provider-template.json"
+        if template_path.is_symlink() or not template_path.is_file():
+            raise ValueError(f"missing or symbolic-link provider template: {template_path}")
+        template = json.loads(template_path.read_text())
         for name in canonical:
             if not owned(name, selectors) or name in claimed:
                 raise ValueError(f"unowned or multiply owned contract: {crate}/{name}")
             claimed.add(name)
-        snapshot = {}
-        for selector in selectors:
-            selected = corpus / selector
-            if selected.is_symlink():
-                raise ValueError(f"symbolic-link compatibility path: {selected}")
-            candidates = [selected] if selected.suffix == ".qcore" else selected.rglob("*")
-            for path in candidates:
-                if path.is_symlink():
-                    raise ValueError(f"symbolic-link compatibility path: {path}")
-                if path.is_file() and path.suffix == ".qcore":
-                    snapshot[path.relative_to(corpus).as_posix()] = path
-        extra = set(snapshot) - set(canonical)
-        if extra:
-            # Never silently delete a contract when synchronizing. An intentional
-            # retirement must remove both sides and update the pinned corpus.
-            raise ValueError(f"orphaned compatibility contracts for {crate}: {sorted(extra)}")
         expected = {
             "schema_version": 1,
             "plugin_id": template["plugin_id"],
@@ -89,20 +77,8 @@ def maintain(root=ROOT, sync=False):
         if inventory.is_symlink():
             raise ValueError(f"symbolic-link contract inventory: {inventory}")
         if sync:
-            for name, source in canonical.items():
-                target = corpus / name
-                # Reject symlink parents, including a missing leaf's existing parents.
-                if any(p.is_symlink() for p in [target, *target.parents] if p.is_relative_to(corpus)):
-                    raise ValueError(f"symbolic-link compatibility path: {target}")
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_bytes(source.read_bytes())
             inventory.write_text(json.dumps(expected, indent=2) + "\n")
         else:
-            if set(snapshot) != set(canonical):
-                raise ValueError(f"missing compatibility contracts for {crate}: {sorted(set(canonical) - set(snapshot))}")
-            for name, source in canonical.items():
-                if source.read_bytes() != snapshot[name].read_bytes():
-                    raise ValueError(f"compatibility contract differs from provider source: {crate}/{name}")
             if inventory.is_symlink() or not inventory.is_file():
                 raise ValueError(f"missing or symbolic-link contract inventory: {inventory}")
             if json.loads(inventory.read_text()) != expected:

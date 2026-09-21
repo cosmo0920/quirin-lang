@@ -53,15 +53,16 @@ python3 providers/contracts.py check
 cargo test -p qcore-compiler --test qcore_contract_corpus
 ```
 
-The corresponding `contract/qcore/` files are byte-identical compatibility
-snapshots for retained in-process routes and the pinned regression corpus.
-They keep core builds independent of the optional providers workspace. Do not
-edit those snapshots directly. `check` refuses drift or stale inventories;
-`sync` copies from the provider to the snapshot and never silently deletes an
-orphaned contract. Intentional declaration/clause changes still require the
-corpus pin updates. Shared language, support-library and application policies without a provider owner remain owned
-by `contract/qcore/`; copying provider contracts does not increase the logical
-corpus count or confer new verification capabilities.
+`sync` updates only each provider's `contracts.json`; `check` compares its exact
+path and SHA-256 inventory with the canonical `contracts/` tree. Both actions
+refuse symbolic links, invalid or unowned paths, and any reintroduced
+`contract/qcore/` legacy tree. Intentional declaration/clause changes still
+require the corpus pin updates.
+
+Shared language, support-library and application policies without a provider
+owner live under `contract/shared/`. The logical corpus is assembled from the
+roots listed in `contract/corpus.json`; provider contracts remain canonical in
+their artifact crates and are not copied into a compatibility tree.
 
 ## Build, verify and reproduce
 
