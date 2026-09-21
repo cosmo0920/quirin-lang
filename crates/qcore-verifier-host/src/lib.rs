@@ -1811,12 +1811,15 @@ impl ProcessProvider {
                 && error_done
                 && stdin.is_none()
             {
-                if let Some(error) = input_failure {
-                    return Err(error);
-                }
+                // A failed exit explains an early input close. Report it
+                // consistently whether the write or the exit was observed
+                // first; successful exits still cannot admit partial requests.
                 if !exit.success() {
                     return Err(ProviderFailure::Crashed(exit.code())
                         .with_detail(&String::from_utf8_lossy(error_output)));
+                }
+                if let Some(error) = input_failure {
+                    return Err(error);
                 }
                 return decode_protocol_frame(output, limit);
             }

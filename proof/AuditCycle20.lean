@@ -104,3 +104,7 @@ import QCore.VerifierPlugin
 
 #print axioms QCore.VerifierEvidenceV2.accepted_claim_preserves_scope_bounds_and_module
 #print axioms QCore.VerifierEvidenceV2.substituted_claim_rejects
+
+#print axioms QCore.VerifierPlugin.ProcessCompletion.failed_exit_precedes_input_failure
+#print axioms QCore.VerifierPlugin.ProcessCompletion.partial_request_never_decodes
+#print axioms QCore.VerifierPlugin.ProcessCompletion.decoding_requires_success_and_complete_input

@@ -186,6 +186,27 @@ fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
     std::thread::sleep(Duration::from_millis(350));
     assert!(!package.join("live.marker").exists());
 
+    // The oversized request forces a broken pipe even when the host writes
+    // first. Once all pipes close, a failed exit must take precedence over
+    // that transport symptom, including stderr detail and signal exits.
+    manifest.limits.timeout_ms = 1000;
+    for (body, code, signal) in [
+        ("exec 0<&-\nexit 6", Some(6), None),
+        ("exec 0<&-\necho denied >&2\nexit 6", Some(6), None),
+        ("exec 0<&-\nkill -TERM $$", None, Some(15)),
+    ] {
+        write_script(body);
+        let provider = UnverifiedProvider::new(manifest.clone(), &package).unwrap();
+        let failure = provider.verify(&request).unwrap_err();
+        let record = provider.last_execution().unwrap();
+        assert_eq!(record.outcome, ProcessOutcome::Terminated, "{failure}");
+        assert_eq!(record.exit_code, code);
+        assert_eq!(record.signal, signal);
+        if body.contains("denied") {
+            assert!(failure.to_string().contains("denied"), "{failure}");
+        }
+    }
+
     // Even a valid response cannot erase the host's incomplete-request state.
     let response = VerificationResponse {
         protocol_version: request.protocol_version,

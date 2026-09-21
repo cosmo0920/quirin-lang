@@ -944,4 +944,36 @@ theorem unknown_plugin_prevents_safe (before after : List Verdict) :
     | rejected => simp [compose]
     | unknown => simp [compose]
 
+/-! Final transport classification after direct-child exit and both output EOFs.
+Deadline and output-limit decisions precede this boundary in the Rust host.
+This models classification, not OS scheduling or pipe behavior. -/
+namespace ProcessCompletion
+
+inductive Outcome where
+  | terminated
+  | io
+  | decode
+  deriving DecidableEq, Repr
+
+def classify (exitSucceeded inputFailed : Bool) : Outcome :=
+  if !exitSucceeded then .terminated
+  else if inputFailed then .io
+  else .decode
+
+theorem failed_exit_precedes_input_failure (inputFailed : Bool) :
+    classify false inputFailed = .terminated := by
+  simp [classify]
+
+theorem partial_request_never_decodes (exitSucceeded : Bool) :
+    classify exitSucceeded true ≠ .decode := by
+  cases exitSucceeded <;> simp [classify]
+
+theorem decoding_requires_success_and_complete_input
+    (exitSucceeded inputFailed : Bool)
+    (h : classify exitSucceeded inputFailed = .decode) :
+    exitSucceeded = true ∧ inputFailed = false := by
+  cases exitSucceeded <;> cases inputFailed <;> simp_all [classify]
+
+end ProcessCompletion
+
 end QCore.VerifierPlugin
