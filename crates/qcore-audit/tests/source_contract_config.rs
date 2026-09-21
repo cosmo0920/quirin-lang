@@ -91,7 +91,7 @@ fn policy_only_loading_snapshots_relative_contracts_without_installed_packages()
 fn malformed_and_empty_configuration_rejects_instead_of_falling_back() {
     let fixture = Fixture::new();
     for change in [
-        json!({"schema_version":2}),
+        json!({"schema_version":3}),
         json!({"packages":[]}),
         json!({"packages":[""]}),
         json!({"packages":["x","x"]}),
@@ -265,4 +265,72 @@ fn helper_policies_share_the_primary_policy_snapshot_budget() {
     assert!(SourceContractPolicies::load(fixture.config(&config)).is_ok());
     config["bindings"][0]["frame_helpers"].as_array_mut().unwrap().push(json!({"source":"reset.c","function":"too_many_bytes","record":"widget","contract":"policy.qcore"}));
     assert!(SourceContractPolicies::load(fixture.config(&config)).is_err());
+}
+
+#[test]
+fn relocated_real_cmetrics_bundle_has_exact_policy_parity_without_a_provider() {
+    let fixture = Fixture::new();
+    let owner =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../providers/qcore-provider-cmetrics");
+    let inventory_bytes = fs::read(owner.join("contracts.json")).unwrap();
+    let inventory: Value = serde_json::from_slice(&inventory_bytes).unwrap();
+    let bundle = fixture.0.join("relocated-data");
+    fs::create_dir_all(&bundle).unwrap();
+    fs::write(bundle.join("contracts.json"), &inventory_bytes).unwrap();
+    for path in inventory["contracts"].as_object().unwrap().keys() {
+        let target = bundle.join(path);
+        fs::create_dir_all(target.parent().unwrap()).unwrap();
+        fs::copy(owner.join(path), target).unwrap();
+    }
+    let selected = "contracts/cmetrics/counter_reset.qcore";
+    let expected = fs::read_to_string(owner.join(selected)).unwrap();
+    let mut config = fixture.good();
+    config["schema_version"] = json!(2);
+    config["bindings"][0]["contract"] = json!({"manifest":"relocated-data/contracts.json","sha256":qcore_schemas::sha256_hex(&inventory_bytes),"owner":"qcore.cmetrics","path":selected});
+    let path = fixture.config(&config);
+    let policies = SourceContractPolicies::load(&path).unwrap();
+    assert_eq!(policies.contract_for_library("widgets").unwrap(), expected);
+    assert!(!bundle.join("provider").exists());
+    assert!(SourceContractRegistry::load(&path).is_err());
+    let mut v1 = config.clone();
+    v1["schema_version"] = json!(1);
+    assert!(SourceContractPolicies::load(fixture.config(&v1)).is_err());
+    for (key, value) in [
+        ("sha256", json!("0".repeat(64))),
+        ("owner", json!("other.owner")),
+        ("path", json!("contracts/missing.qcore")),
+        ("extra", json!(true)),
+    ] {
+        let mut invalid = config.clone();
+        invalid["bindings"][0]["contract"][key] = value;
+        assert!(SourceContractPolicies::load(fixture.config(&invalid)).is_err());
+    }
+    fs::write(bundle.join(selected), "changed after snapshot").unwrap();
+    assert_eq!(policies.contract_for_library("widgets").unwrap(), expected);
+    assert!(SourceContractPolicies::load(fixture.config(&config)).is_err());
+}
+
+#[test]
+fn shipped_cmetrics_selection_loads_canonical_policy() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let audit: Value = serde_json::from_slice(
+        &fs::read(root.join("contract/profiles/cmetrics-counter/audit.json")).unwrap(),
+    )
+    .unwrap();
+    let source_rules = root
+        .join("contract/profiles/cmetrics-counter")
+        .join(audit["source_contracts"]["source_rules"].as_str().unwrap());
+    assert!(
+        source_rules.is_file(),
+        "shipped audit source policy must resolve"
+    );
+    let policies = SourceContractPolicies::load(
+        root.join("contract/profiles/cmetrics-counter/source-contracts.json"),
+    )
+    .unwrap();
+    let expected = fs::read_to_string(
+        root.join("providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore"),
+    )
+    .unwrap();
+    assert_eq!(policies.contract_for_library("cmetrics").unwrap(), expected);
 }

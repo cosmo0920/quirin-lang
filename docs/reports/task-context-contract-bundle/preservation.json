@@ -1,0 +1,194 @@
+{
+  "base": "ad6016f21355ccfa2bc0a4746cb0c4d9fcd1bee6",
+  "checkpoint_sha256": "d6072c957b244bdf7af47bc0461845418a9fca61b3b7991078b1aee4439a9b0f",
+  "old_operation_bullets": 18,
+  "rows": [
+    {
+      "old_start_line": 15,
+      "old_heading": "- **Never weaken a fail-closed gate, delete a pinned expectation, or downgrade",
+      "old_block_sha256": "61a021eec1b13af46ec52be857536a94d6e6c304cfb172cd5b6aca1d0511a9d2",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Preserve fail-closed gates",
+        "Update"
+      ]
+    },
+    {
+      "old_start_line": 20,
+      "old_heading": "- **Status language matters.** Keep the Safe/Unsafe/Unknown verdict vocabulary",
+      "old_block_sha256": "e5ac03bb6afdcd238cf18388ffd177ab2812642b10dfdbac3b43f3cb43e6b073",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Preserve Safe/Unsafe/Unknown"
+      ]
+    },
+    {
+      "old_start_line": 24,
+      "old_heading": "- **Run the full standing per-change gate from `AGENTS.md`** before reporting a",
+      "old_block_sha256": "8c9ba939536d8d2959260d6aac670fac3743a429424dee90c4c09788cf88a6fd",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Run the full [standing gate]",
+        "incomplete attempts"
+      ]
+    },
+    {
+      "old_start_line": 27,
+      "old_heading": "- **Land code in the target crate.** Before starting checker/architecture work,",
+      "old_block_sha256": "b243b824ec93af389fec1aaaab02aa1dfd852a43d10dfce236e56e0917018b81",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Read [generalization]",
+        "target crate"
+      ]
+    },
+    {
+      "old_start_line": 31,
+      "old_heading": "- **Close a card with Rust plus audited Lean.** A card closes only with a Rust",
+      "old_block_sha256": "96c4b22accadf5b67c4ffeaf5feb04893117570484628f412127cb050009fd72",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "A card closes with Rust",
+        "Audit*.lean"
+      ]
+    },
+    {
+      "old_start_line": 34,
+      "old_heading": "- **New status text goes in one place** \u2014 one paragraph, newest first, in the",
+      "old_block_sha256": "1b46a201de4fda4cf929a96e264a1f22da4078834746df0fd321c18a27a753c2",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Add exactly one increment paragraph",
+        "primary evidence"
+      ]
+    },
+    {
+      "old_start_line": 39,
+      "old_heading": "- **Compact these three files every 2\u20133 waves.** `AGENTS.md`, `CLAUDE.md` and",
+      "old_block_sha256": "86ed2c45f4084b371729912896c0097c439070ecfa5061a75c3b171c726be704",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Compact AGENTS.md, CLAUDE.md and README.md every 2\u20133 waves",
+        "move unique history verbatim"
+      ]
+    },
+    {
+      "old_start_line": 63,
+      "old_heading": "- **Re-evaluate stability every 2 waves** (user direction, 2026-09-13, after",
+      "old_block_sha256": "0acda53e7735a1d4786ec4fb8f0471c8f437fc968ebbebd7ebcf91a2bd95e623",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Reevaluate stability every two waves",
+        "discharge condition",
+        "into its brief"
+      ]
+    },
+    {
+      "old_start_line": 120,
+      "old_heading": "- **Work every card's integrator reconciliation list at the wave close, and",
+      "old_block_sha256": "f16cc60133a65f0bad66dcac0aaf79c92bcbe975abc62b797b85b5979cbdd8fa",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Work every card's integrator list",
+        "reconciliation_sweep.py",
+        "unverifiable",
+        "never silently soften"
+      ]
+    },
+    {
+      "old_start_line": 185,
+      "old_heading": "- **A retirement is named, checked, and swept after.** Before counting a name",
+      "old_block_sha256": "e170541fb7cc080447d07b5f11c974dfdcc982bcb8491cada1c0ea79f01c4624",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Confirm a retired name was actually registered",
+        "before and after removal"
+      ]
+    },
+    {
+      "old_start_line": 199,
+      "old_heading": "- **Prefer temporary WIP commits over `git stash`.** The shared git stash stack",
+      "old_block_sha256": "08f9401f7dea0a37924863e473aff1fddda9fc0676050349735d2a6b022d50cf",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Prefer temporary WIP commits"
+      ]
+    },
+    {
+      "old_start_line": 202,
+      "old_heading": "- **Measurement outputs belong in worktree-private directories** \u2014 `measure/`",
+      "old_block_sha256": "daae7e18ff55fefa6e27ff757a90455b3cfcb2f41ecf9bf015d5c6c133a936f2",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "worktree-private",
+        "Every run gets",
+        "disk-exhausted"
+      ]
+    },
+    {
+      "old_start_line": 217,
+      "old_heading": "- **A committed artifact is not a finished card.** When reclaiming disk from a",
+      "old_block_sha256": "c9728c7bec0f4703776ec8241e9f9aaa31b7d98eae260ffa6e9e173949c4d753",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "only after its final report"
+      ]
+    },
+    {
+      "old_start_line": 227,
+      "old_heading": "- **A mutation harness restores by rewriting, never by an mtime-preserving",
+      "old_block_sha256": "0f9b8a2146f4ce48fe905bd051547b22e797b2fdc17889df0c63a60e1d64a265",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Restore mutation inputs by rewriting bytes",
+        "touch",
+        "green baseline after"
+      ]
+    },
+    {
+      "old_start_line": 251,
+      "old_heading": "- Delegated cards work in isolated worktrees, merge one at a time under the",
+      "old_block_sha256": "eb9e788e21ff4d20b9cff6ebedf4ab6fd6318a8f5be94f8487426a6465b1c1b9",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Delegated cards",
+        "Integrate cards one at a time",
+        "Publish a mutation count only",
+        "integration-gate.json"
+      ]
+    },
+    {
+      "old_start_line": 283,
+      "old_heading": "- **A delegated card never advances `main`, and since wave 36 a mechanism says",
+      "old_block_sha256": "a2fa36961476fbcf4e914a996fcc958cb89e06c01a46e51cced66af860f3cc6e",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "A delegated card never advances main",
+        "on that command only",
+        "Only the integrator installs",
+        "pack-refs"
+      ]
+    },
+    {
+      "old_start_line": 316,
+      "old_heading": "- **Never `pkill`/`pgrep` on a pattern that names a tool invocation** \u2014",
+      "old_block_sha256": "e0fa7a94d4d9ab281051647f5e75f0074b2e93cf3f8e69db874b10cebb1a6c60",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "Kill only captured PIDs",
+        "never `pkill`/`pgrep`"
+      ]
+    },
+    {
+      "old_start_line": 329,
+      "old_heading": "- **Never end a turn with a pristine tree while work is in flight.** The harness",
+      "old_block_sha256": "6162cc37bd07f096835d7cdfdf970dda378e50a1f586fe7f1fe7138f6e8348c6",
+      "current_file": "docs/agents/operations.md",
+      "required_phrases": [
+        "never end with an unchanged tree",
+        "at least one commit ahead"
+      ]
+    }
+  ],
+  "boundary": "Byte preservation and quoted operative destinations, not an automated proof of natural-language equivalence. Policy scoping deliberately changes; old narrative remains historical."
+}

@@ -64,6 +64,23 @@ owner live under `providers/shared/contracts/`. The logical corpus is assembled 
 roots listed in `contract/corpus.json`; provider contracts remain canonical in
 their artifact crates and are not copied into a compatibility tree.
 
+## Consuming contract data without a process
+
+The existing `contracts.json` plus `contracts/` tree is independently consumable
+with `qcore_contract::bundle::ContractBundle::load(manifest, expected_sha256,
+expected_owner)`. Supply the inventory hash from the consumer's reviewed
+configuration; do not derive the expected hash from the input being checked.
+Copy that inventory and tree together to relocate the data. No executable,
+plugin manifest or provider registration is required by this data loader.
+
+The [source-contract service version 2](../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#version-2-pinned-contract-bundle-selection)
+selects a bundle object instead of a policy filename. Its CMetrics configuration
+is the initial migrated consumer. After an intentional inventory change, update
+that consumer's manifest pin deliberately. Digest equality identifies declared
+bytes, not authenticity or satisfied predicates; the existing interpreter and
+source-evidence gates still decide those obligations. The package verifier's
+executable-to-inventory binding remains a separate check.
+
 ## Build, verify and reproduce
 
 On a Unix host with Rust, Python 3 and the locked Cargo dependencies cached:

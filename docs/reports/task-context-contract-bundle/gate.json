@@ -1,0 +1,13 @@
+{
+  "note": "TASK-CONTEXT-CONTRACT-BUNDLE: measured implementation on ad6016f21355ccfa2bc0a4746cb0c4d9fcd1bee6 with source digests and actual commands/exits in validation.json. 5043 core Rust passed / 0 failed / 11 ignored; 165 Lean audits; 336 root Python tests; 123 provider Rust tests. Standing commands, five isolated host controls, provider mutation control, fmt/clippy, probes and all five package verifications exit 0. Logs: private/task-context-contract-bundle/. Initial restricted-environment failures, corrected Lean import ordering, and stale matrix failure are retained. No coverage promotion.",
+  "workspace_tests": 5043,
+  "provider_tests": 123,
+  "python_evidence_validator_tests": 336,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 165,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

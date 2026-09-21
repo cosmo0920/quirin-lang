@@ -6,6 +6,7 @@
 //! `chunk_contract` evaluates declared schema paths; source import remains a
 //! separately checked boundary in the caller.
 
+pub mod bundle;
 pub mod contract_loader;
 pub mod contract_observation;
 pub mod extern_bridge;

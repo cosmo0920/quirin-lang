@@ -128,6 +128,7 @@ import QCore.SourceRootAdmission
 import QCore.ChunkIntegrityObservation
 import QCore.PackageTemplateBinding
 import QCore.PackageIdentity
+import QCore.ContractBundle
 import QCore.RegionTaskCredit
 import QCore.AggregateComposition
 import QCore.DenominatorCoverage

@@ -6725,11 +6725,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CANONICAL-CONTRACT-LOCATIONS: measured 9302d74aa1bc9dfe9ef12f3ff6f44006aeff678a; 5034 core Rust passed / 0 failed / 11 ignored; 164 Lean audits; 328 root Python tests; 122 provider Rust tests. All standing commands, five host controls, provider isolated control, fmt/clippy, package build and five verifications exit0. No semantic promotion;96 canonical modules byte-identical,33/59 resource selection. Logs: private/canonical-contract-locations/.",
-  "workspace_tests": 5034,
-  "provider_tests": 122,
-  "python_evidence_validator_tests": 328,
-  "lean_audits": 164,
+  "note": "TASK-CONTEXT-CONTRACT-BUNDLE: measured implementation on ad6016f21355ccfa2bc0a4746cb0c4d9fcd1bee6 with source digests and actual commands/exits in validation.json. 5043 core Rust passed / 0 failed / 11 ignored; 165 Lean audits; 336 root Python tests; 123 provider Rust tests. Standing commands, five isolated host controls, provider mutation control, fmt/clippy, probes and all five package verifications exit 0. Logs: private/task-context-contract-bundle/. Initial restricted-environment failures, corrected Lean import ordering, and stale matrix failure are retained. No coverage promotion.",
+  "workspace_tests": 5043,
+  "provider_tests": 123,
+  "python_evidence_validator_tests": 336,
+  "lean_audits": 165,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6762,6 +6762,7 @@
    "AuditConditionalGroupDepth.lean",
    "AuditConnectives.lean",
    "AuditConstantDoWhile.lean",
+   "AuditContractBundle.lean",
    "AuditCt01OwnedTransfer.lean",
    "AuditCt03ReadShares.lean",
    "AuditCt07LeaseLedger.lean",
@@ -6902,7 +6903,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/canonical-contract-locations/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/task-context-contract-bundle/gate.json)"
  },
  "named_followups": [
   {

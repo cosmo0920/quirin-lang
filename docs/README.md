@@ -69,3 +69,5 @@ existing link targets; historical copies must say they are checkpoints.
 [DEVELOPMENT.md](../DEVELOPMENT.md) retains legacy heading links. The
 [restructuring report](reports/docs-structure-compression/README.md) records
 the old-to-new map, exact preservation checks and size measurements.
+
+For a change-specific agent reading packet, see the [task reading protocol](agents/operations.md#task-reading-protocol) and [router](agents/README.md#generated-task-packet).

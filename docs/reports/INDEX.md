@@ -26,6 +26,16 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [b-series-integration](b-series-integration/README.md) | B01–B04 integration |
+
+| [b01-return-expression](b01-return-expression/README.md) | B01-RETURN-EXPRESSION |
+
+| [b02-branch-condition](b02-branch-condition/README.md) | B02-BRANCH-CONDITION — one modeled call before an `if` decision |
+
+| [b03-loop-and-switch](b03-loop-and-switch/README.md) | B03-LOOP-AND-SWITCH implementation handoff |
+
+| [b04-nested-call-argument](b04-nested-call-argument/README.md) | B04 — sibling nested-call arguments |
+
 | [base-type-reader-census](base-type-reader-census/README.md) | BASE-TYPE-READER-CENSUS — the reader beneath the member reader, measured |
 
 ## C
@@ -45,7 +55,11 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [c-gateway-wave](c-gateway-wave/README.md) | C gateway refinements after the worktree sweep |
 
+| [canonical-contract-locations](canonical-contract-locations/README.md) | Canonical contract locations |
+
 | [card-scope-guard](card-scope-guard/README.md) | `CARD-SCOPE-GUARD` — a mechanism that makes a delegated card unable to advance `main` |
+
+| [certificate-context-binding](certificate-context-binding/README.md) | Certificate context binding |
 
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
 
@@ -106,6 +120,38 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [ct42-protocol-cell](ct42-protocol-cell/README.md) | CT42-PROTOCOL-CELL — the shared protocol cell, surveyed, and its derivation landed for the socket route (wave 31) |
 
 | [ct47-copy-capture](ct47-copy-capture/README.md) | CT47-COPY-CAPTURE — the boundary refuses by the judgment, not the backend |
+
+| [cycle18-broader-composition](cycle18-broader-composition/README.md) | Cycle 18 broader callback composition |
+
+| [cycle18-broader-integration](cycle18-broader-integration/README.md) | Cycle 18 broader acceptance integration |
+
+| [cycle18-composition-admission](cycle18-composition-admission/README.md) | Cycle 18 observed-composition context admission |
+
+| [cycle18-contract-extraction](cycle18-contract-extraction/README.md) | Cycle 18 executable contract extraction |
+
+| [cycle18-contract-facts](cycle18-contract-facts/README.md) | Cycle 18 typed contract facts |
+
+| [cycle18-event-payload](cycle18-event-payload/README.md) | Cycle 18 `cb_event` payload boundary |
+
+| [cycle18-identity-contract-extraction](cycle18-identity-contract-extraction/README.md) | Cycle 18 timed-wait identity contract extraction |
+
+| [cycle18-identity-observer](cycle18-identity-observer/README.md) | Cycle 18 identity-bearing timed-wait observation |
+
+| [cycle18-native-platform-matrix](cycle18-native-platform-matrix/README.md) | Cycle 18 native platform matrix |
+
+| [cycle18-observed-integration](cycle18-observed-integration/README.md) | Cycle 18 observed composition integration |
+
+| [cycle18-priority1-integration](cycle18-priority1-integration/README.md) | Cycle 18 priority-one integration |
+
+| [cycle18-source-contract-extraction](cycle18-source-contract-extraction/README.md) | Cycle 18 timed-wait source contract extraction |
+
+| [cycle18-task-handoff](cycle18-task-handoff/README.md) | Cycle 18 callback task handoff |
+
+| [cycle18-timeout-teardown](cycle18-timeout-teardown/README.md) | Cycle 18 callback timeout self teardown |
+
+| [cycle18-wait-failures](cycle18-wait-failures/README.md) | Cycle 18 timed-wait failure paths |
+
+| [cycle18-wait-source-projection](cycle18-wait-source-projection/README.md) | Cycle 18 timed-wait source projection |
 
 | [cycle19-callback-binding](cycle19-callback-binding/README.md) | Cycle 19D: native callback binding and Lean models |
 
@@ -334,6 +380,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [proof-leg-batch](proof-leg-batch/README.md) | Two proof rows withdrawn by measurement: CT12 and CT14 are CT01's artifact (PROOF-LEG-BATCH) |
 
+| [provider-contract-bundle](provider-contract-bundle/README.md) | Provider contract bundle packaging handoff |
+
+| [provider-contract-packaging](provider-contract-packaging/README.md) | Provider-owned Quirin contracts |
+
 ## Q
 
 | Card directory | Original report title |
@@ -342,6 +392,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [quant-region-source](quant-region-source/README.md) | QUANT-REGION-SOURCE — the first source path to `RegionOp::QuantOpen` |
 
 | [quiet-emission-streams](quiet-emission-streams/README.md) | Quiet emission and composable streams |
+
+| [quirin-review-integration](quirin-review-integration/README.md) | Quirin review priority integration |
 
 | [quirin-socket-v1](quirin-socket-v1/README.md) | QUIRIN-SOCKET-V1 — a checked TCP and UDP socket surface in pure QCore source |
 
@@ -592,6 +644,16 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [remaining-wave3-ct-integration](remaining-wave3-ct-integration/README.md) | wave3-CT — integrating the T05 and T06 CT mappings |
 
+| [resource-boundaries-integration](resource-boundaries-integration/README.md) | Resource-boundary integration |
+
+| [resource-helper-functions](resource-helper-functions/README.md) | Bounded resource-aware helper functions |
+
+| [review-audit-runner](review-audit-runner/README.md) | Review audit-runner cancellation and failure observation |
+
+| [review-certificate-scope](review-certificate-scope/README.md) | E01-TAIL-CERT-SCOPE — independent Safe-certificate denominator |
+
+| [review-prepared-tu](review-prepared-tu/README.md) | Prepared translation unit sharing (review priority O1) |
+
 ## S
 
 | Card directory | Original report title |
@@ -608,6 +670,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [socket-inet-addresses](socket-inet-addresses/README.md) | SOCKET-INET-ADDRESSES — declared IPv4 and IPv6 addresses with ports |
 
 | [socket-v1-windows-run](socket-v1-windows-run/README.md) | SOCKET-V1-WINDOWS-RUN — native Winsock execution under Visual Studio |
+
+| [source-annotation-enforcement](source-annotation-enforcement/README.md) | SOURCE-ANNOTATION-ENFORCEMENT |
+
+| [source-scalar-calls-v1](source-scalar-calls-v1/README.md) | SOURCE-SCALAR-CALLS-V1 |
 
 | [stability-reeval-1](stability-reeval-1/README.md) | STABILITY-REEVAL #1 — under what conditions each current claim is unstable |
 
@@ -629,6 +695,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | Card directory | Original report title |
 |---|---|
+
+| [task-context-contract-bundle](task-context-contract-bundle/README.md) | TASK-CONTEXT-CONTRACT-BUNDLE — task reading and pinned policy data pilot |
 
 | [task-route-tsan](task-route-tsan/README.md) | TASK-ROUTE-TSAN — ThreadSanitizer on the checked task route (wave 37) |
 
@@ -715,6 +783,14 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w4-removed-custody](w4-removed-custody/README.md) | W4: validated direct Removed-custody wrappers |
 
 | [w4-unsigned-countdown](w4-unsigned-countdown/README.md) | Unsigned countdown custody inference |
+
+| [w42-indirect-access](w42-indirect-access/README.md) | W42-INDIRECT-ACCESS — bounded scalar destination stores |
+
+| [w42-monkey-callback-coverage](w42-monkey-callback-coverage/README.md) | W42 Monkey callback coverage accounting |
+
+| [w42-priority-integration](w42-priority-integration/README.md) | Cycle 19 priority implementation |
+
+| [w42-unprojected-definitions](w42-unprojected-definitions/README.md) | W42-UNPROJECTED-DEFINITIONS — exact leaf census |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 

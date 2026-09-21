@@ -1,0 +1,6 @@
+import QCore.ContractBundle
+#print axioms QCore.ContractBundle.admission_binds_manifest
+#print axioms QCore.ContractBundle.admission_binds_file_set
+#print axioms QCore.ContractBundle.manifest_mismatch_refuses
+#print axioms QCore.ContractBundle.invalid_structure_refuses
+#print axioms QCore.ContractBundle.selected_bytes_are_snapshot_bytes

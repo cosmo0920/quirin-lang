@@ -1,0 +1,22 @@
+{
+  "base": "ad6016f21355ccfa2bc0a4746cb0c4d9fcd1bee6",
+  "operations_sha256": "d6072c957b244bdf7af47bc0461845418a9fca61b3b7991078b1aee4439a9b0f",
+  "bytes": {
+    "AGENTS.md": 5513,
+    "CLAUDE.md": 690,
+    "docs/agents/README.md": 8606,
+    "docs/agents/buffers-records.md": 32201,
+    "docs/agents/concurrency.md": 13108,
+    "docs/agents/diagnostics.md": 32931,
+    "docs/agents/effects.md": 9842,
+    "docs/agents/evidence.md": 7246,
+    "docs/agents/gateway.md": 36571,
+    "docs/agents/io.md": 13100,
+    "docs/agents/operations.md": 23862,
+    "docs/agents/providers.md": 9810,
+    "docs/agents/source-identity.md": 5943,
+    "docs/agents/source-routes.md": 14007,
+    "docs/agents/validation.md": 5337,
+    "docs/STATUS.md": 8209
+  }
+}

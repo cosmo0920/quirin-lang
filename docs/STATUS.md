@@ -68,14 +68,16 @@ separately.
 
 ## Latest validated gate
 
-The [canonical contract migration gate](reports/canonical-contract-locations/gate.json)
-records **5,034 core Rust passed, 0 failed, 11 ignored; 164 Lean audits; 328 root Python tests; 122 provider Rust tests**. Core fmt/clippy, both probes and five isolated
-host-sensitive controls pass. Provider fmt/clippy, the isolated mutation control,
-and all five package builds/verifications exit 0. Clang was measured in the core
-checkout. [Commands, identities, exits and logs](reports/canonical-contract-locations/README.md#integrated-validation)
-separate the Cargo workspaces and preserve incomplete attempts. The pinned
-185-unit diagnostics remain byte-identical; four other artifacts change only
-paths and dependent identities, with verdicts and bounds unchanged.
+The [task context and contract bundle gate](reports/task-context-contract-bundle/gate.json)
+records **5,043 core Rust passed, 0 failed, 11 ignored; 165 Lean audits; 336 root
+Python tests; 123 provider Rust tests**. Core/provider fmt and clippy, both probes,
+five isolated host controls, the isolated package mutation control, five package
+builds/verifications and five package Python tests pass. Clang was measured in
+this checkout. [Commands, identities, exits and logs](reports/task-context-contract-bundle/README.md#validation)
+preserve failed attempts and their corrected reruns. All 96 contract sources and
+five package identities match the preceding checkpoint. The focused production
+CMetrics replay preserves report bytes with two attributed provenance changes;
+it does not rerun or promote the 185-unit baseline.
 
 The five provider crates own **72** canonical contract modules; **24** shared or
 application-level modules live in `providers/shared/contracts`. `contract/corpus.json`
@@ -83,7 +85,10 @@ indexes all **96** without duplicate snapshots. Retained integration adapters
 embed the provider-owned data directly; generic core crates retain no provider
 executable dependency. Package inventories bind supplied contract bytes to their
 executables; policy selection and independent checking remain explicit. This
-changes source locations, with no predicate, model or verdict promotion.
+changes source locations, with no predicate or verdict promotion. The bundle
+pilot adds independently pinned data-only selection for the CMetrics policy,
+retains version-1 paths and existing adapters, and models admission separately
+from policy truth. Four scoped follow-ons remain in its report.
 
 All three broader Cycle 18 follow-ups remain open; **281** follow-ups are
 registered. Production callback composition, task/cancellation/event-generation

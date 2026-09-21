@@ -1,0 +1,26 @@
+{
+  "test": "pinned_bundle_and_legacy_path_have_identical_process_evidence",
+  "rows": [
+    {
+      "checked_states_after": 4,
+      "checked_states_before": 4,
+      "function": "sample_ready",
+      "policy_sha256": "695fdee3ddd415135d9ba724db8519d518ece17c84d8d438759dc01a65bc1278",
+      "task_after": "3e6e08b08dbd50220f12f2420687c5d8ae7b40d035ebe64c0d1be8d86bb7cf83",
+      "task_before": "3e6e08b08dbd50220f12f2420687c5d8ae7b40d035ebe64c0d1be8d86bb7cf83",
+      "witness_after": "49b573dfe28d4807a8fdace48885ed8fc232f3f1586ac12c7372c04b05300d5a",
+      "witness_before": "49b573dfe28d4807a8fdace48885ed8fc232f3f1586ac12c7372c04b05300d5a"
+    },
+    {
+      "checked_states_after": 4,
+      "checked_states_before": 4,
+      "function": "sample_toggle",
+      "policy_sha256": "695fdee3ddd415135d9ba724db8519d518ece17c84d8d438759dc01a65bc1278",
+      "task_after": "21964463c5410227093b50b30a82e8f652b8237d8ae3e7e4c1566f98453ec165",
+      "task_before": "21964463c5410227093b50b30a82e8f652b8237d8ae3e7e4c1566f98453ec165",
+      "witness_after": "397744b2c9db4911844103feae38572c169d1488ac82790163b11d83b8e6a41d",
+      "witness_before": "397744b2c9db4911844103feae38572c169d1488ac82790163b11d83b8e6a41d"
+    }
+  ],
+  "boundary": "Two fixture functions through the real process and trusted replay, not the full 185-unit production corpus."
+}

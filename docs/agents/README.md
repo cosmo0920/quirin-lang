@@ -5,6 +5,22 @@ embedded in `AGENTS.md`; references to “AGENTS constraint N” retain their me
 Read all applicable rules, not just this table. The rule text is preserved
 verbatim apart from Markdown link rebasing. Root guides are navigation only.
 
+## Generated task packet
+
+`python3 scripts/task_context.py --base <revision> --topic <topic> --path
+<planned-path>` selects operative sections and complete applicable topic pages.
+Use `--render` for their canonical text. Path routes are additive; unknown paths
+select every topic. Add topics for claims or semantics that filenames cannot
+identify. Recompute on scope changes. The tool reports exact line ranges, hashes,
+rule IDs, reasons and reading-byte estimates; it does not certify rule compliance
+or measure token billing. Tests cover committed/working/untracked paths and both
+sides of renames. The manual union below remains the fallback if generation fails.
+
+Operations history is preserved in the [pilot checkpoint](../reports/task-context-contract-bundle/operations-before.txt).
+Read rationale when changing a rule; routine edits need the operative text.
+Status is selected for work planning and coverage claims. Broad implementation
+paths intentionally keep conservative packets until narrower routing is justified.
+
 ## Choose by task
 
 | Work | Read |
