@@ -1,0 +1,42 @@
+[
+  {
+    "name": "five-libraries",
+    "command": [
+      "cargo",
+      "check",
+      "--lib",
+      "--locked",
+      "--offline",
+      "-p",
+      "qcore-schemas",
+      "-p",
+      "qcore-core",
+      "-p",
+      "qcore-frontend",
+      "-p",
+      "qcore-contract",
+      "-p",
+      "qcore-verifier-host"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/generic-core/five-libraries.log",
+    "provider_crates_present": false,
+    "shared_assets_present": false
+  },
+  {
+    "name": "gateway-shared-only",
+    "command": [
+      "cargo",
+      "check",
+      "--lib",
+      "--locked",
+      "--offline",
+      "-p",
+      "qcore-c-gateway"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/generic-core/gateway-shared-only.log",
+    "provider_crates_present": false,
+    "shared_assets_present": true
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "agent_worktree": "/tmp/agent-contract-inventory",
+  "agent_branch": "codex/contract-inventory-removal",
+  "agent_commit": "d23d289190856b8a72657bcd893634ae3c5268fe",
+  "integrated_commit": "fab81fc9",
+  "agent_final_report_confirms_no_jobs": true,
+  "clean_before_removal": true,
+  "process_cwd_users_before_removal": [],
+  "preserved_private_files": 2,
+  "backup_inventory": "docs/reports/canonical-contract-locations/agent-evidence-backup.json",
+  "preserved_external_worktree": ".claude/worktrees/next-wave-candidates-c-sources-18bd37",
+  "status": "agent_worktree_and_branch_removed"
+}

@@ -1,0 +1,13 @@
+{
+  "note": "CANONICAL-CONTRACT-LOCATIONS: measured 9302d74aa1bc9dfe9ef12f3ff6f44006aeff678a; 5034 core Rust passed / 0 failed / 11 ignored; 164 Lean audits; 328 root Python tests; 122 provider Rust tests. All standing commands, five host controls, provider isolated control, fmt/clippy, package build and five verifications exit0. No semantic promotion;96 canonical modules byte-identical,33/59 resource selection. Logs: private/canonical-contract-locations/.",
+  "workspace_tests": 5034,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 328,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 164,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

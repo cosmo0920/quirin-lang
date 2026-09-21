@@ -1,7 +1,9 @@
 {
   "wave": 42,
   "cards": [
-    "canonical-contract-locations"
+    "canonical-contract-locations",
+    "corpus-repin",
+    "remaining-d02"
   ],
   "verify_applied": true,
   "note": "Canonical-location migration; no acceptance card or registered follow-up is retired. Historical deferred decisions remain deferred.",
@@ -61,9 +63,43 @@
           "contains": "281"
         }
       ]
+    },
+    "corpus-repin#twenty-three-functions-move-unknown-safe-flagged-for-the-integrator#1": {
+      "verdict": "noted",
+      "note": "Historical C02 corpus-repin checkpoint surfaced because its maintained artifact comparison tool changed. This task does not reapply its historical promotions, diagnostic arithmetic or attribution: the archived report/artifacts remain unchanged, and the new migration preserves the current pinned diagnostics byte-for-byte. The separator item is structural only."
+    },
+    "corpus-repin#twenty-three-functions-move-unknown-safe-flagged-for-the-integrator#2": {
+      "verdict": "noted",
+      "note": "Historical C02 corpus-repin checkpoint surfaced because its maintained artifact comparison tool changed. This task does not reapply its historical promotions, diagnostic arithmetic or attribution: the archived report/artifacts remain unchanged, and the new migration preserves the current pinned diagnostics byte-for-byte. The separator item is structural only."
+    },
+    "corpus-repin#twenty-three-functions-move-unknown-safe-flagged-for-the-integrator#3": {
+      "verdict": "noted",
+      "note": "Historical C02 corpus-repin checkpoint surfaced because its maintained artifact comparison tool changed. This task does not reapply its historical promotions, diagnostic arithmetic or attribution: the archived report/artifacts remain unchanged, and the new migration preserves the current pinned diagnostics byte-for-byte. The separator item is structural only."
+    },
+    "corpus-repin#twenty-three-functions-move-unknown-safe-flagged-for-the-integrator#4": {
+      "verdict": "noted",
+      "note": "Historical C02 corpus-repin checkpoint surfaced because its maintained artifact comparison tool changed. This task does not reapply its historical promotions, diagnostic arithmetic or attribution: the archived report/artifacts remain unchanged, and the new migration preserves the current pinned diagnostics byte-for-byte. The separator item is structural only."
+    },
+    "corpus-repin#twenty-three-functions-move-unknown-safe-flagged-for-the-integrator#5": {
+      "verdict": "noted",
+      "note": "Historical C02 corpus-repin checkpoint surfaced because its maintained artifact comparison tool changed. This task does not reapply its historical promotions, diagnostic arithmetic or attribution: the archived report/artifacts remain unchanged, and the new migration preserves the current pinned diagnostics byte-for-byte. The separator item is structural only."
+    },
+    "corpus-repin#twenty-three-functions-move-unknown-safe-flagged-for-the-integrator#6": {
+      "verdict": "noted",
+      "note": "Historical C02 corpus-repin checkpoint surfaced because its maintained artifact comparison tool changed. This task does not reapply its historical promotions, diagnostic arithmetic or attribution: the archived report/artifacts remain unchanged, and the new migration preserves the current pinned diagnostics byte-for-byte. The separator item is structural only."
+    },
+    "corpus-repin#twenty-three-functions-move-unknown-safe-flagged-for-the-integrator#7": {
+      "verdict": "noted",
+      "note": "Historical C02 corpus-repin checkpoint surfaced because its maintained artifact comparison tool changed. This task does not reapply its historical promotions, diagnostic arithmetic or attribution: the archived report/artifacts remain unchanged, and the new migration preserves the current pinned diagnostics byte-for-byte. The separator item is structural only."
+    },
+    "corpus-repin#twenty-three-functions-move-unknown-safe-flagged-for-the-integrator#8": {
+      "verdict": "noted",
+      "note": "Historical C02 corpus-repin checkpoint surfaced because its maintained artifact comparison tool changed. This task does not reapply its historical promotions, diagnostic arithmetic or attribution: the archived report/artifacts remain unchanged, and the new migration preserves the current pinned diagnostics byte-for-byte. The separator item is structural only."
     }
   },
-  "no_section": {},
+  "no_section": {
+    "remaining-d02": "Only its maintained live matrix generator changes discovery/provenance; historical report remains unchanged and has no swept integrator section."
+  },
   "deferred_decisions": {
     "note": "Eleven historical decisions are carried unchanged from the previous integration. Provider contract ownership and packaging do not resolve those policy or infrastructure decisions.",
     "items": [

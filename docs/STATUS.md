@@ -68,12 +68,14 @@ separately.
 
 ## Latest validated gate
 
-The [provider contract packaging gate](reports/provider-contract-packaging/gate.json)
-records **5,034 core Rust passed, 0 failed, 11 ignored; 164 Lean audits; 324 root Python tests; 122 provider Rust tests**. Core fmt/clippy, both probes and five isolated
-host-sensitive controls pass. Provider fmt/clippy and all five package
-build/verification checks are recorded separately. Clang was measured in the
-core checkout. [Commands, source identities, exits and logs](reports/provider-contract-packaging/README.md#integrated-validation)
-distinguish the two Cargo workspaces and preserve earlier failed attempts.
+The [canonical contract migration gate](reports/canonical-contract-locations/gate.json)
+records **5,034 core Rust passed, 0 failed, 11 ignored; 164 Lean audits; 328 root Python tests; 122 provider Rust tests**. Core fmt/clippy, both probes and five isolated
+host-sensitive controls pass. Provider fmt/clippy, the isolated mutation control,
+and all five package builds/verifications exit 0. Clang was measured in the core
+checkout. [Commands, identities, exits and logs](reports/canonical-contract-locations/README.md#integrated-validation)
+separate the Cargo workspaces and preserve incomplete attempts. The pinned
+185-unit diagnostics remain byte-identical; four other artifacts change only
+paths and dependent identities, with verdicts and bounds unchanged.
 
 The five provider crates own **72** canonical contract modules; **24** shared or
 application-level modules live in `providers/shared/contracts`. `contract/corpus.json`
