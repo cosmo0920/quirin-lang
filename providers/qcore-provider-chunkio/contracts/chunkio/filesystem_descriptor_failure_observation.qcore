@@ -1,0 +1,27 @@
+module contract;
+
+// Runtime-only suppressed-close/open profiles. Down membership does not imply
+// descriptor release. Harness reclamation is separate from library teardown.
+extern fn native_file_descriptor_failure_observation() -> unit
+contract {
+    requires compiled_source_and_build_recorded;
+    requires exclusive_instrumented_fixture;
+    ensures normal exact_native_transitions;
+    ensures normal exact_parent_teardown;
+    ensures normal os_epochs_and_rings_bound;
+    ensures normal allocations == releases;
+    ensures normal releases == transient_releases + teardown_releases;
+    ensures normal transient_releases == 1;
+    ensures normal open_epochs == mapping_epochs;
+    ensures normal open_epochs == library_descriptor_releases + parent_descriptor_residuals;
+    ensures normal parent_descriptor_residuals == harness_descriptor_releases;
+    ensures normal failed_close_retains_descriptor_in_down_ring + failed_open_preserves_down_state_without_new_epoch == 1;
+    ensures normal retry_down_and_up_reject_without_closing == failed_close_retains_descriptor_in_down_ring;
+    ensures normal not failed_close_retains_descriptor_in_down_ring or suppressed_close_calls > 0;
+    ensures normal failed_open_preserves_down_state_without_new_epoch == suppressed_open_calls;
+    ensures normal not reopen_retry_acquires_new_epoch or open_epochs == 2;
+    ensures normal original_inode_retained;
+    ensures normal fixture_cleanup_complete;
+    ensures normal static_certificate == 0;
+    ensures normal durability_proved == 0;
+};

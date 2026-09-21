@@ -1,0 +1,23 @@
+module contract;
+
+// Bounded native filesystem construction and teardown, including suppressed
+// syscalls returning EIO. OS residuals survive release of enclosing allocations.
+extern fn native_file_teardown_observation() -> unit
+contract {
+    requires compiled_source_and_build_recorded;
+    requires exclusive_instrumented_fixture;
+    ensures normal constructor_generations_and_rings_bound;
+    ensures normal exact_nested_release_sequence;
+    ensures normal allocations == releases;
+    ensures normal transient_releases == 2;
+    ensures normal parent_allocations_released;
+    ensures normal os_endpoints_bound;
+    ensures normal up_residual == mapping_residual;
+    ensures normal not mapping_residual or injected_failures;
+    ensures normal not descriptor_residual or injected_failures;
+    ensures normal not sync_failed or injected_failures;
+    ensures normal not delete_succeeded or (not mapping_residual and not descriptor_residual);
+    ensures normal fixture_cleanup_complete;
+    ensures normal static_certificate == 0;
+    ensures normal durability_proved == 0;
+};

@@ -1,0 +1,20 @@
+module contract;
+
+// Executed pinned native-delete body with a controlled unlink hook. These
+// observations bind endpoint fields and arguments for the listed executions;
+// the hook neither deletes a file nor establishes actual filesystem behavior.
+extern fn native_delete_observation() -> unit
+contract {
+    requires exclusive_nonnull_live_record_and_terminated_path;
+    requires controlled_returning_unlink_hook;
+    requires diagnostic_hook_frames_record_and_path;
+    requires compiled_source_and_build_recorded;
+    ensures normal eligible == (not fd_active and not mapping_active);
+    ensures normal unlink_calls == eligible;
+    ensures normal eligible or returned == -1;
+    ensures normal not eligible or returned == injected_result;
+    ensures normal diagnostic_calls == (eligible and injected_result == -1);
+    ensures normal arguments_match;
+    ensures normal record_preserved;
+    ensures normal path_preserved;
+};

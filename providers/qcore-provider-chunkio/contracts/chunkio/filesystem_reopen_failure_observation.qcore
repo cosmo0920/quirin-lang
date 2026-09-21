@@ -1,0 +1,37 @@
+module contract;
+
+// Runtime-only reopen size-lookup/mapping failure profiles. A failed reopen
+// still acquires and keeps a descriptor epoch. A failed mapping leaves the
+// library reporting up-ring membership without an up counter. Harness
+// reclamation is separate from library teardown.
+extern fn native_file_reopen_failure_observation() -> unit
+contract {
+    requires compiled_source_and_build_recorded;
+    requires exclusive_instrumented_fixture;
+    ensures normal exact_native_transitions;
+    ensures normal exact_parent_teardown;
+    ensures normal os_epochs_and_rings_bound;
+    ensures normal allocations == releases;
+    ensures normal releases == transient_releases + teardown_releases;
+    ensures normal transient_releases == 1;
+    ensures normal open_epochs == 2;
+    ensures normal mapping_epochs == library_mapping_releases;
+    ensures normal open_epochs == library_descriptor_releases + parent_descriptor_residuals;
+    ensures normal parent_descriptor_residuals == harness_descriptor_releases;
+    ensures normal stat_fallback_completes_reopen + reopen_failure_retains_new_descriptor == 1;
+    ensures normal failed_size_lookup_retains_descriptor + failed_map_retains_descriptor == reopen_failure_retains_new_descriptor;
+    ensures normal not failed_size_lookup_retains_descriptor or suppressed_size_lookups == 2;
+    ensures normal not stat_fallback_completes_reopen or suppressed_size_lookups == 1;
+    ensures normal failed_map_retains_descriptor == suppressed_map_calls;
+    ensures normal failed_map_reports_up_ring_without_counter == failed_map_retains_descriptor;
+    ensures normal invalid_map_unmap_failures == 2 * failed_map_retains_descriptor;
+    ensures normal down_retry_rejects_without_new_epoch == reopen_failure_retains_new_descriptor;
+    ensures normal not up_retry_rejects_without_new_epoch or reopen_failure_retains_new_descriptor;
+    ensures normal not sync_succeeds_without_mapping or failed_map_retains_descriptor;
+    ensures normal not stat_fallback_completes_reopen or mapping_epochs == 2;
+    ensures normal not reopen_failure_retains_new_descriptor or mapping_epochs == 1;
+    ensures normal original_inode_retained;
+    ensures normal fixture_cleanup_complete;
+    ensures normal static_certificate == 0;
+    ensures normal durability_proved == 0;
+};

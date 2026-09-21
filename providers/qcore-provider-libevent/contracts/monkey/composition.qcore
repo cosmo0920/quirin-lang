@@ -1,0 +1,137 @@
+module contract;
+
+// Composition boundary for Monkey's bundled Libevent adapter.
+// The certificate joins callback summaries, descriptor custody, build identity,
+// backend selection, dispatcher identity, and one observed execution trace.
+
+error MonkeyCompositionError {
+    SourceRevisionMismatch;
+    MissingCallbackSummary;
+    DescriptorCustodyMismatch;
+    BuildProfileMismatch;
+    BackendMismatch;
+    DispatcherMismatch;
+    ObservationMismatch;
+}
+
+resource type EventMap {
+    repr: ptr<mut, u8>;
+    footprint: { event_maps = 1 };
+    destructor: monkey_event_map_destroy noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn evutil_socketpair(
+    descriptors: borrow<'out, mut, DescriptorPairOut> use one
+) -> result<DescriptorPair, SocketPairError>
+effects { io, throws<SocketPairError> }
+contract {
+    ensures normal descriptor_pair_is_distinct;
+    ensures normal both_descriptors_have_local_close_custody;
+    ensures error(SocketPairError) no_descriptor_custody_created;
+};
+
+extern fn evutil_socket_geterror(
+    descriptor: borrow<'call, const, Descriptor> use one
+) -> i32
+contract {
+    requires descriptor_is_live;
+    ensures any descriptor_custody_is_preserved;
+};
+
+// Card O03-U5. At the pinned submodule revision d82464a2,
+// third_party/libevent/evutil.c:613-621, this function is a thin forwarder with
+// no error translation of its own:
+//
+//     int evutil_closesocket(evutil_socket_t sock)
+//     { #ifndef _WIN32  return close(sock);  #else  return closesocket(sock);  #endif }
+//
+// Two consequences the declared text must state, not assume.
+//
+// (1) The error channel is the platform's own and is never translated here.
+//     On every non-Windows build the failure is reported through errno; on
+//     Windows closesocket reports through WSAGetLastError(), which
+//     evutil_socket_geterror reads (include/event2/util.h:523-531 vs 561-566).
+//     Reading one channel on the other platform reads an unrelated value.
+//
+// (2) On the audited non-Windows build this call *is* close(2), whose failure
+//     post-state is target-qualified: see docs/design/OS_FAILURE_POSTSTATE_PROFILE.md
+//     and QCore.OsEndpointPostState. On Linux a failed close releases the
+//     descriptor anyway except on EBADF, and POSIX.1-2024 requires the retry
+//     Linux documents as a hazard, so with no pinned target the endpoint is
+//     indeterminate and no recovery is permitted. The error arm therefore
+//     asserts an UNRESOLVED endpoint carrying the conservative residual. The
+//     superseded clause here read "ensures error(SocketCloseError)
+//     descriptor_custody_is_preserved", which asserted a live, reusable
+//     descriptor and thereby prescribed exactly that forbidden retry.
+extern fn evutil_closesocket(
+    descriptor: own<Descriptor> use one
+) -> result<unit, SocketCloseError>
+effects { io, throws<SocketCloseError> }
+contract {
+    requires descriptor_has_close_custody;
+    requires descriptor_has_no_active_callback;
+    ensures normal descriptor_custody_is_discharged_once;
+    ensures error(SocketCloseError) descriptor_custody_is_unresolved;
+    ensures error(SocketCloseError) descriptor_number_must_not_be_reused;
+    ensures error(SocketCloseError) no_close_retry_is_permitted;
+    ensures error(SocketCloseError) close_error_is_read_on_the_platform_channel;
+    ensures any data_durability_is_not_discharged;
+};
+
+extern fn cb_event(
+    callback_argument: borrow<'callback, mut, MonkeyCallbackArgument> use one
+) -> unit
+contract {
+    requires callback_argument_is_borrowed;
+    ensures normal fired_event_array_is_written;
+    ensures normal callback_argument_custody_is_preserved;
+};
+
+extern fn cb_timeout(
+    callback_argument: borrow<'callback, mut, MonkeyCallbackArgument> use one
+) -> unit
+effects { io }
+contract {
+    requires callback_argument_is_borrowed;
+    ensures normal descriptor_may_be_closed;
+    ensures normal event_map_may_be_released;
+    ensures normal every_release_is_reflected_in_custody;
+};
+
+extern fn cb_wait_2_timeout(
+    callback_argument: borrow<'callback, const, MonkeyCallbackArgument> use one
+) -> unit
+contract {
+    requires callback_argument_is_borrowed;
+    ensures normal callback_has_no_resource_effect;
+};
+
+extern fn check_monkey_composition(
+    event_map: own<EventMap> use one,
+    observation: borrow<'observation, const, DispatcherObservation> use one
+) -> result<MonkeyCompositionCertificate, MonkeyCompositionError>
+contract {
+    requires source_revision_matches_pinned_revision;
+    requires nullable_base_failure_is_discharged;
+    requires nullable_event_failure_is_discharged;
+    requires failed_registration_is_discharged;
+    requires callback_summaries_are_exact;
+    requires build_profile_matches_created_base;
+    requires dispatcher_matches_observation;
+    requires backend_matches_observation;
+    requires observed_trace_refines_checked_trace;
+    ensures normal all_callback_obligations_are_composed;
+    ensures normal all_descriptor_obligations_are_discharged;
+    ensures normal event_map_is_discharged;
+    ensures error(MonkeyCompositionError) no_event_certificate_is_issued;
+};
+
+error SocketPairError {
+    CreationFailed;
+}
+
+error SocketCloseError {
+    CloseFailed;
+}

@@ -1,0 +1,18 @@
+module contract;
+
+// Typed reference-body equality records traversal order only. Native rings,
+// caller provenance and callee effects are explicit conditional premises.
+extern fn teardown_traversal() -> unit
+contract {
+    requires finite_exclusive_reciprocal_ring_with_live_sentinel;
+    requires distinct_live_container_identities_bound_to_primary_links;
+    requires child_destructor_unlinks_only_current_and_preserves_next_and_parent;
+    requires exact_cross_unit_source_abi_and_call_bindings;
+    ensures normal complete_typed_reference_body;
+    ensures normal next_saved_before_child_call;
+    ensures normal advance_uses_saved_next;
+    ensures normal only_current_child_passed;
+    ensures normal sentinel_excluded_from_calls;
+    ensures normal chunk_delete_argument_zero;
+    ensures normal not child_custody_discharged_by_source_match;
+};

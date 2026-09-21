@@ -1,0 +1,18 @@
+module contract;
+
+// Conditional source cases do not establish native caller or OS outcome facts.
+extern fn nested_cleanup() -> unit
+contract {
+    requires all_source_component_and_child_case_entry_outcome_premises;
+    requires complete_finite_live_reciprocal_rings_and_distinct_owned_provenance;
+    requires exclusive_access_and_exact_native_identity_order_abi_call_bindings;
+    requires parent_fields_and_saved_successors_disjoint_from_child_releases;
+    ensures normal released_chunks == entry_total;
+    ensures normal released_streams == entry_streams;
+    ensures normal context_released;
+    ensures normal total_after == 0;
+    ensures normal up_after + up_decrements == entry_up;
+    ensures normal post_parent_residual_child_count == residual_child_count;
+    ensures normal conditional_discharge_permitted == (residual_child_count == 0 and up_after == 0);
+    ensures normal not backing_deletion_established;
+};

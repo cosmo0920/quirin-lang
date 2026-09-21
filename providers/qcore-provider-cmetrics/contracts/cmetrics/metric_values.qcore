@@ -1,0 +1,141 @@
+module contract;
+
+// CMetrics metric value accessors — resource-projection vocabulary version 1.
+//
+// Card W37-CORPUS-CONTRACTS-4. TWO TRUSTED ASSUMPTIONS about two upstream
+// functions. This module verifies nothing: the C bodies are not analyzed by
+// this loader, and a declaration is a premise. Any verdict that rests on one is
+// a verdict RELATIVE TO this declaration, never a proof of the C.
+//
+// Read from the pinned checkout at Fluent Bit
+// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 on this card's own run.
+//
+// ## Why these callees
+//
+// Each is the SOLE blocker of exactly one projected function in the baseline:
+//
+//   * `cmt_metric_get_timestamp` -> `check_staled_timestamp`
+//     (`lib/cmetrics/src/cmt_encode_prometheus_remote_write.c:732-746`)
+//   * `cmt_metric_set_double`    -> `cmt_metric_set`
+//     (`lib/cmetrics/src/cmt_metric.c:66-69`)
+//
+// ## `cmt_metric_get_timestamp`, read from `lib/cmetrics/src/cmt_metric.c:244-251`
+//
+//     uint64_t cmt_metric_get_timestamp(struct cmt_metric *metric)
+//     {
+//         uint64_t val;
+//
+//         val = cmt_atomic_load(&metric->timestamp);
+//
+//         return val;
+//     }
+//
+//   * `metric` is READ THROUGH and nothing else: one atomic load of one field.
+//     It is not freed, not stored, not transferred, and no pointer to it
+//     outlives the call. `resource_borrowed` is the faithful mode.
+//   * The result is `uint64_t`, a SCALAR. A scalar result carries no custody,
+//     so `resource_return_none()` is the faithful — and the only writable —
+//     result mode; v1's owning result modes require a pointer return type.
+//   * The body dereferences `metric` in its first executable statement with no
+//     preceding guard, so `cmt_metric_get_timestamp(NULL)` is upstream
+//     undefined behaviour. That is NOT expressible here and is NOT claimed: v1
+//     carries a nullability marker only on a RELEASED parameter, and this
+//     parameter is borrowed. Recorded so the omission is visible.
+//
+// ## `cmt_metric_set_double`, read from `lib/cmetrics/src/cmt_metric.c:71-81`
+//
+//     void cmt_metric_set_double(struct cmt_metric *metric, uint64_t timestamp, double val)
+//     {
+//         uint64_t tmp;
+//
+//         tmp = cmt_math_d64_to_uint64(val);
+//
+//         cmt_atomic_store(&metric->val, tmp);
+//         cmt_atomic_store(&metric->val_int64, (uint64_t) ((int64_t) val));
+//         cmt_atomic_store(&metric->val_uint64, (uint64_t) val);
+//         cmt_atomic_store(&metric->timestamp, timestamp);
+//         cmt_atomic_store(&metric->value_type, CMT_METRIC_VALUE_DOUBLE);
+//     }
+//
+//   * `metric` is WRITTEN THROUGH — five atomic stores into five of its
+//     fields — and is not freed, not stored elsewhere, not transferred. Writing
+//     through a borrowed pointer does not change the caller's custody, which is
+//     the same reading `msgpack/packer.qcore` already makes for
+//     `msgpack_packer_init`'s output `pk`.
+//   * `timestamp` (`uint64_t`) and `val` (`double`) are scalars passed BY
+//     VALUE, carrying no custody.
+//   * The result is `void` -> `resource_return_none()`.
+//   * Every field written is a scalar counter/timestamp/type tag. NO field of
+//     `struct cmt_metric` is released, replaced or adopted by this body, so no
+//     custody leaves the call in either direction.
+//
+// ## The duty gate, and why no conflict is expected (constraint 8)
+//
+// BOTH are defined in `lib/cmetrics/src/cmt_metric.c`, which IS one of the 185
+// analysed units (29 projected functions in the baseline). So constraint 8's
+// duty gate applies: if W4 derives a summary for either body and that summary's
+// custody DUTY contradicts the declaration, the declaration is withdrawn for
+// this unit.
+//
+// No contradiction is expected, and the reason is structural rather than
+// hopeful: both declarations are the NEUTRAL ELEMENT — every formal `Borrowed`,
+// result `None` — which is the WEAKEST statement the vocabulary can make
+// (constraint 4's `N(m)`). A derived summary can only contradict it by claiming
+// a formal is released, transferred, delivered or restored, and neither body
+// performs any such operation on any parameter. Should a conflict nonetheless
+// be reported, it is a `SummaryConflict` diagnostic and the declaration
+// governs — never a silent override — exactly as card W36-CORPUS-CONTRACTS-3
+// measured for `rd_kafka_mem_free`.
+//
+// ## ABI (constraint 8)
+//
+//     lib/cmetrics/include/cmetrics/cmt_metric.h:111
+//         uint64_t cmt_metric_get_timestamp(struct cmt_metric *metric);
+//     lib/cmetrics/include/cmetrics/cmt_metric.h:96
+//         void cmt_metric_set_double(struct cmt_metric *metric, uint64_t timestamp, double val);
+//
+// One definition of each in the whole tree, external linkage, prototypes
+// agreeing with the definitions in types, arity and parameter spelling.
+// `struct cmt_metric *` is one object-pointer level, `ptr<mut, u8>`; under the
+// LP64 model (`LOADER-ABI-LP64`) `uint64_t` projects to `u64` and `double` to
+// `f64`; the `void` result is `unit`.
+//
+// ## NOT CLAIMED
+//
+//   * Nothing about atomicity, memory ordering, or whether two threads may call
+//     these concurrently. `cmt_atomic_load`/`cmt_atomic_store` have five
+//     per-backend definitions in this tree and this projection models none of
+//     them.
+//   * Nothing about the metric's own lifecycle: who allocated `metric`, who
+//     frees it, or whether it is still live. A borrowed declaration says the
+//     caller's obligations are UNCHANGED, not that they are discharged.
+//   * Nothing about `cmt_math_d64_to_uint64`'s bit-pattern round trip.
+//
+// ## Read at the same time and DELIBERATELY LEFT UNDECLARED
+//
+// `cmt_metric_set` (`:66`), `cmt_metric_set_int64`, `cmt_metric_set_timestamp`
+// and the rest of the `cmt_metric_*` family are undeclared: `cmt_metric_set` is
+// this card's TARGET rather than its premise, and none of the others is the
+// sole blocker of any projected function. `cmt_atomic_load`/`cmt_atomic_store`
+// are undeclared because each has five definitions across five backend files
+// (`cmt_atomic_clang.c`, `_gcc.c`, `_generic.c`, `_msvc.c` twice), three of them
+// `inline` with no `static`/`extern` against a plain extern prototype — the
+// `ADD-NAME-COLLISION` hazard, recorded here as `CMT-ATOMIC-BACKEND-COPIES`.
+
+// --- the metric's timestamp, read atomically ---
+extern fn cmt_metric_get_timestamp(metric: ptr<mut, u8>) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
+
+// --- a double value and its timestamp, stored atomically into the metric ---
+extern fn cmt_metric_set_double(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(metric);
+    ensures normal resource_borrowed(timestamp);
+    ensures normal resource_borrowed(val);
+    ensures normal resource_return_none();
+};

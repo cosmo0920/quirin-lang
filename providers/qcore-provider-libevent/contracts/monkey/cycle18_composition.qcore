@@ -1,0 +1,117 @@
+module contract;
+
+// Executable acceptance policy for the bounded Cycle 18 callback aggregate.
+// Rust derives every fact below from constructor-private source projections,
+// validated contexts, and a fresh replay of the underlying evidence.  The
+// aggregate deliberately has no Safe result while any named obligation is
+// Unknown or a source-preserving failure case remains provisionally Unsafe.
+
+extern fn callback_inventory() -> unit
+contract {
+    ensures normal callback_names == "cb_event,cb_timeout,cb_wait_2_timeout";
+    ensures normal callback_count == 3;
+    ensures normal selected_path_count == 8;
+    ensures normal cb_event_paths == 4;
+    ensures normal cb_timeout_paths == 3;
+    ensures normal cb_wait_2_timeout_paths == 1;
+    ensures normal cb_event_revision == expected_source_revision;
+    ensures normal cb_timeout_revision == expected_source_revision;
+    ensures normal cb_wait_revision == expected_source_revision;
+    ensures normal cb_event_profile == expected_profile;
+    ensures normal cb_timeout_profile == expected_profile;
+    ensures normal cb_wait_profile == expected_profile;
+    ensures normal cb_event_library == "monkey";
+    ensures normal cb_timeout_library == "monkey";
+    ensures normal cb_wait_library == "monkey";
+    ensures normal cb_event_role == "Callback";
+    ensures normal cb_timeout_role == "Callback";
+    ensures normal cb_wait_role == "Callback";
+};
+
+extern fn context_identity_join() -> unit
+contract {
+    ensures normal wait_source_revision == payload_source_revision;
+    ensures normal wait_source_revision == aggregate_source_revision;
+    ensures normal wait_monkey_profile == payload_monkey_profile;
+    ensures normal wait_monkey_profile == aggregate_profile;
+    ensures normal wait_libevent_revision == payload_libevent_revision;
+    ensures normal wait_libevent_profile == payload_libevent_profile;
+};
+
+extern fn wait_failure_source_join() -> unit
+contract {
+    ensures normal observed_summary_map == failure_summary_map;
+    ensures normal observed_contract_map == failure_contract_map;
+};
+
+extern fn evidence_join() -> unit
+contract {
+    ensures normal checked_callback_families == 3;
+    ensures normal payload_checked_paths == 4;
+    ensures normal wait_checked_paths == 1;
+    ensures normal timeout_source_paths == 3;
+    ensures normal timeout_checked_executions == 1;
+    ensures normal wait_source_revision == aggregate_source_revision;
+    ensures normal payload_source_revision == aggregate_source_revision;
+    ensures normal timeout_source_revision == aggregate_source_revision;
+    ensures normal wait_profile == aggregate_profile;
+    ensures normal payload_profile == aggregate_profile;
+    ensures normal timeout_profile == aggregate_profile;
+    ensures normal wait_callback_digest == expected_wait_callback_digest;
+    ensures normal payload_callback_digest == expected_payload_callback_digest;
+    ensures normal timeout_callback_digest == expected_timeout_callback_digest;
+    ensures normal wait_context_revision == aggregate_source_revision;
+    ensures normal payload_context_revision == aggregate_source_revision;
+    ensures normal wait_context_profile == aggregate_profile;
+    ensures normal payload_context_profile == aggregate_profile;
+    ensures normal wait_monkey_source != "";
+    ensures normal wait_monkey_build != "";
+    ensures normal wait_libevent_source != "";
+    ensures normal wait_libevent_build != "";
+    ensures normal payload_monkey_source != "";
+    ensures normal payload_monkey_build != "";
+    ensures normal payload_libevent_source != "";
+    ensures normal payload_libevent_build != "";
+    ensures normal failure_identity_revision == aggregate_source_revision;
+    ensures normal failure_identity_profile == aggregate_profile;
+    ensures normal failure_compile_task != "";
+    ensures normal failure_source != "";
+    ensures normal failure_build != "";
+    ensures normal failure_compile_task == wait_context_compile_task;
+    ensures normal failure_source == wait_context_monkey_source;
+    ensures normal failure_build == wait_context_monkey_build;
+    ensures normal timeout_identity_revision == aggregate_source_revision;
+    ensures normal timeout_identity_profile == aggregate_profile;
+    ensures normal timeout_compile_task != "";
+    ensures normal timeout_source != "";
+    ensures normal timeout_build != "";
+    ensures normal timeout_source == wait_context_monkey_source;
+    ensures normal timeout_build == wait_context_monkey_build;
+};
+
+extern fn caller_size_bound() -> unit
+contract {
+    ensures normal caller_name != "";
+    ensures normal source_revision == expected_source_revision;
+    ensures normal profile == expected_profile;
+    ensures normal call_count > 0;
+    ensures normal minimum_size > 0;
+    ensures normal maximum_size <= signed_size_max;
+    ensures normal element_size > 0;
+    ensures normal maximum_allocation_bytes == maximum_size * element_size;
+};
+
+extern fn aggregate_acceptance() -> unit
+contract {
+    ensures normal verdict == "unknown";
+    ensures normal universal_safety_certificate == 0;
+    ensures normal initialization_reachability == "unknown";
+    ensures normal caller_null_handling == "unknown";
+    ensures normal caller_size_bounds == "unknown";
+    ensures normal allocation_authority_provenance == "unknown";
+    ensures normal registration_liveness == "unknown";
+    ensures normal natural_activation_reachability == "unknown";
+    ensures normal all_path_execution_coverage == "unknown";
+    ensures normal unresolved_obligation_count == 7;
+    ensures normal provisional_unsafe_scenario_count == 3;
+};

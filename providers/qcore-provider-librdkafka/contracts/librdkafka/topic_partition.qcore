@@ -1,0 +1,143 @@
+module contract;
+
+// librdkafka topic-partition list ordering — resource-projection vocabulary
+// version 1.
+//
+// Card W37-CORPUS-CONTRACTS-4. ONE TRUSTED ASSUMPTION about one upstream
+// function. This module verifies nothing: the C body is not analyzed by this
+// loader, and a declaration is a premise.
+//
+// Read from the pinned checkout at Fluent Bit
+// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 on this card's own run.
+//
+// ## Why this callee
+//
+// `rd_kafka_topic_partition_list_sort` is the SOLE blocker of TWO projected
+// functions, the highest function-cover yield of any callee this card could
+// honestly declare:
+//
+//   * `rd_kafka_topic_partition_list_sort_by_topic`
+//     (`lib/librdkafka-2.15.0/src/rdkafka_partition.c:3675-3680`)
+//   * `rd_kafka_topic_partition_list_sort_by_topic_id` (`:3682-3687`)
+//
+// ## The body, read from `lib/librdkafka-2.15.0/src/rdkafka_partition.c:3664-3674`
+//
+//     void rd_kafka_topic_partition_list_sort(
+//         rd_kafka_topic_partition_list_t *rktparlist,
+//         int (*cmp)(const void *, const void *, void *),
+//         void *opaque) {
+//
+//             if (!cmp)
+//                     cmp = rd_kafka_topic_partition_cmp_opaque;
+//
+//             rd_qsort_r(rktparlist->elems, rktparlist->cnt,
+//                        sizeof(*rktparlist->elems), cmp, opaque);
+//     }
+//
+//   * `rktparlist` is READ (`->elems`, `->cnt`) and its element array is
+//     PERMUTED IN PLACE by `rd_qsort_r`. Nothing is allocated, nothing is
+//     freed, no element is removed, and the list is not stored anywhere that
+//     outlives the call. Reordering an array does not change who owns it: the
+//     caller's obligation to `rd_kafka_topic_partition_list_destroy` the list
+//     is exactly what it was before the call, which is what `resource_borrowed`
+//     says.
+//   * `cmp` is a FUNCTION POINTER, projected `fnptr` — the mode and spelling
+//     `msgpack/packer.qcore` already uses for `msgpack_packer_init`'s
+//     `callback`. It is called, never freed, and carries no custody. The
+//     `if (!cmp)` default substitution is a local rebinding of the parameter
+//     and is invisible to the caller.
+//   * `opaque` is a `void *` passed straight through to `cmp` as its third
+//     argument. This body neither dereferences nor frees it; whatever the
+//     comparator does with it is the comparator's business, and the caller's
+//     custody of it is unchanged across THIS call. Borrowed.
+//   * The result is `void`, so `resource_return_none()` is the faithful — and
+//     the only faithful — result mode.
+//   * `cmp` is explicitly NULL-guarded, so this body tolerates a null
+//     comparator. Nothing here asserts non-nullness of any parameter, and a
+//     borrowed declaration installs no entry resource, so no failure path is
+//     deleted — the hazard constraint 4 names.
+//
+// ## Sorting is not custody, and that is the point
+//
+// The two target functions each pass a NAMED comparator and `NULL`:
+//
+//     rd_kafka_topic_partition_list_sort(rktparlist,
+//                                        rd_kafka_topic_partition_cmp_opaque, NULL);
+//
+// so the interesting question is whether the permutation can disturb the
+// resource identities the projection tracks for the list's elements. It cannot,
+// because the elements are tracked through the LIST, not through an index: a
+// sort moves values within an array the caller still owns whole, and this
+// projection's unit of custody is the `rd_kafka_topic_partition_list_t *`.
+// Recorded because it is the premise a reader would want stated rather than
+// assumed.
+//
+// ## The duty gate (constraint 8)
+//
+// The body is defined in `lib/librdkafka-2.15.0/src/rdkafka_partition.c`, which
+// IS one of the 185 analysed units (161 projected functions in the baseline)
+// and which also contains BOTH target functions, so the duty gate applies with
+// full force. This declaration is the NEUTRAL ELEMENT — every formal
+// `Borrowed`, result `None` — the weakest statement the vocabulary can make
+// (constraint 4's `N(m)`), so a derived summary can contradict it only by
+// claiming a formal is released, transferred, delivered or restored. This body
+// performs no such operation on any parameter.
+//
+// The body's own call to `rd_qsort_r` is uncontracted, so W4 may derive no
+// summary for it at all — and "absence of evidence is not evidence": nothing is
+// withdrawn on a body W4 derives no summary for. Should a conflict arise it is
+// a `SummaryConflict` diagnostic with the declaration governing, never a silent
+// override, and a withdrawal would be scoped to `rdkafka_partition.c` alone.
+//
+// ## ABI (constraint 8)
+//
+//     lib/librdkafka-2.15.0/src/rdkafka.h:1163
+//         RD_EXPORT void rd_kafka_topic_partition_list_sort(
+//             rd_kafka_topic_partition_list_t *rktparlist,
+//             int (*cmp)(const void *a, const void *b, void *cmp_opaque),
+//             void *cmp_opaque);
+//
+// One definition in the whole tree, external linkage. `RD_EXPORT` is a
+// visibility decoration changing no type, arity or calling convention.
+// `rd_kafka_topic_partition_list_t *` and `void *` are each one object-pointer
+// level, `ptr<mut, u8>`; the function-pointer parameter is `fnptr`; the `void`
+// result is `unit`. Arity is three, as declared. The header spells the third
+// parameter `cmp_opaque` where the definition spells it `opaque`; a
+// declaration's parameter NAMES are its own, and this module follows the
+// DEFINITION's spelling with the disagreement recorded here rather than
+// silently resolved.
+//
+// ## NOT CLAIMED
+//
+//   * Nothing about the ordering the comparator imposes, its consistency, its
+//     stability, or whether `rd_qsort_r` sorts correctly.
+//   * Nothing about `opaque`'s validity, or about what the comparator does with
+//     it. A comparator that frees something through `opaque` would be a custody
+//     effect this declaration does not model and does not exclude — recorded as
+//     `RDKAFKA-SORT-COMPARATOR-EFFECTS`.
+//   * Nothing about thread safety; a concurrent mutation of the list during the
+//     sort is a data race this projection neither models nor excludes.
+//
+// ## Read at the same time and DELIBERATELY LEFT UNDECLARED
+//
+//   * `rd_kafka_topic_partition_destroy0` (`:2970`) has the next-highest
+//     function-cover yield in this unit (two functions) and is DELIBERATELY NOT
+//     declared, on two independent grounds published in this card's report: it
+//     is `static` with no header declaration and is defined in the very unit
+//     that calls it, so W4 is the correct lever; and it is a CONDITIONAL
+//     release (`if (do_free) rd_free(rktpar);`) whose five other call sites in
+//     this unit pass `do_free == 0`, so a `released` declaration would be false
+//     at those sites and would move in the admitting direction.
+//   * `rd_kafka_topic_partition_cmp_opaque`, `rd_kafka_topic_partition_by_id_cmp_opaque`
+//     and `rd_qsort_r` are named by these bodies and block no projected
+//     function in the baseline.
+
+// --- the in-place ordering of a topic-partition list ---
+extern fn rd_kafka_topic_partition_list_sort(rktparlist: ptr<mut, u8>, cmp: fnptr, opaque: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rktparlist);
+    ensures normal resource_borrowed(cmp);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_return_none();
+};
