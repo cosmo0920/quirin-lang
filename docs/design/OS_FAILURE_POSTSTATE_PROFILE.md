@@ -307,7 +307,7 @@ untouched.
   `requires resource_contract_v1` is untouched.
 * **A `close`-like syscall must not be declared with v1 `resource_released`.**
   That mode discharges unconditionally and cannot express O3, O4 or O7. Audited:
-  `contract/qcore` contains six `resource_released` declarations — five
+  the canonical contract corpus contains six `resource_released` declarations — five
   `free`-shaped (`libc/memory`, `monkey/memory`, `librdkafka/memory`,
   `fluent_bit/resource_memory` ×2) and one library wrapper
   (`chunkio/resource_open_close`'s `cio_chunk_close`). **No raw descriptor syscall is declared in v1

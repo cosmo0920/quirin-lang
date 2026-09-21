@@ -317,7 +317,7 @@ be able to turn an accepted program into a refusal — pinned, since that
 direction is the one a lazy implementation would lose); an artifact hash
 mismatch after relink; a second module binding an already-bound name.
 Manifest and contract fixtures live under test fixtures, **not**
-`contract/qcore/`, so the 69-module corpus pin **[adjusted, A3]** is untouched.
+the canonical contract corpus, so the 69-module corpus pin **[adjusted, A3]** is untouched.
 
 ## 10. Out of scope (named follow-ons, not omissions)
 

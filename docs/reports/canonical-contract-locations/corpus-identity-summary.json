@@ -1,0 +1,76 @@
+{
+  "monkey-source.json": {
+    "raw_changed_leaves": 19,
+    "changed_field_counts": {
+      "profile_digest": 19
+    },
+    "raw_diff_log": "private/canonical-contract-locations/corpus-final/monkey-source.json.raw-diff.json"
+  },
+  "resource-diagnostics.json": {
+    "raw_changed_leaves": 0,
+    "changed_field_counts": {},
+    "raw_diff_log": "private/canonical-contract-locations/corpus-final/resource-diagnostics.json.raw-diff.json"
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+    "raw_changed_leaves": 3,
+    "changed_field_counts": {
+      "profile_digest": 3
+    },
+    "raw_diff_log": "private/canonical-contract-locations/corpus-final/resource-diagnostics.chunk-contracts.json.raw-diff.json"
+  },
+  "resource-diagnostics.contracts.json": {
+    "raw_changed_leaves": 68,
+    "changed_field_counts": {
+      "manifest": 1,
+      "profile_digest": 1,
+      "chunk_residency.qcore": 2,
+      "chunk_sizes.qcore": 2,
+      "resource_open_close.qcore": 2,
+      "context_lifetime.qcore": 4,
+      "metric_values.qcore": 2,
+      "mpack_utils.qcore": 2,
+      "intrusive_list.qcore": 2,
+      "logging.qcore": 4,
+      "memory.qcore": 6,
+      "cjson.qcore": 2,
+      "kafka_mem.qcore": 2,
+      "lz4_stream.qcore": 2,
+      "topic_partition.qcore": 2,
+      "sds_lifetime.qcore": 2,
+      "time.qcore": 4,
+      "hash_table_publication.qcore": 2,
+      "input_chunk_destroy.qcore": 2,
+      "input_chunk_destroy_direct_routes.qcore": 2,
+      "input_chunk_helpers.qcore": 2,
+      "input_chunk_name.qcore": 2,
+      "input_chunk_sizes.qcore": 2,
+      "input_chunk_total_size.qcore": 2,
+      "resource_memory.qcore": 2,
+      "routes_mask.qcore": 2,
+      "errno.qcore": 2,
+      "pthread_mutex.qcore": 2,
+      "writer.qcore": 2,
+      "packer.qcore": 2
+    },
+    "raw_diff_log": "private/canonical-contract-locations/corpus-final/resource-diagnostics.contracts.json.raw-diff.json"
+  },
+  "resource-diagnostics.source-effects.json": {
+    "raw_changed_leaves": 33,
+    "changed_field_counts": {
+      "resource_contracts:90491186d9f37a47bfcd63bd": 1,
+      "resource_contracts:9ac7a1c2b131769a60cdd201": 1,
+      "0": 3,
+      "build_digest": 6,
+      "profile_digest": 6,
+      "qcore:boolean-field-import:v1": 3,
+      "qcore:boolean-field-source-input:v2": 3,
+      "obligation_id": 3,
+      "task_digest": 3,
+      "resource_contracts:631562afdf6ef72f5370e971": 1,
+      "resource_contracts:b41362b786443839f25daa24": 1,
+      "resource_contracts:77d39032d169a00bed7e805c": 1,
+      "resource_contracts:a2427b13a16ecb35496f0159": 1
+    },
+    "raw_diff_log": "private/canonical-contract-locations/corpus-final/resource-diagnostics.source-effects.json.raw-diff.json"
+  }
+}

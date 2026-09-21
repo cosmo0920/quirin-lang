@@ -1,0 +1,127 @@
+{
+  "wave": 42,
+  "cards": [
+    "canonical-contract-locations"
+  ],
+  "verify_applied": true,
+  "note": "Canonical-location migration; no acceptance card or registered follow-up is retired. Historical deferred decisions remain deferred.",
+  "verdicts": {
+    "canonical-contract-locations#integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "Applied at the explicit canonical source, loader, architectural and evidence boundaries; see verified text and final measured records.",
+      "verify": [
+        {
+          "file": "providers/contracts.py",
+          "contains": "legacy contract corpus must be absent"
+        },
+        {
+          "file": "compiler/tests/qcore_contract_corpus.rs",
+          "contains": "assert_eq!(sources.len(), 96"
+        }
+      ]
+    },
+    "canonical-contract-locations#integrator-reconciliation-list#2": {
+      "verdict": "applied",
+      "note": "Applied at the explicit canonical source, loader, architectural and evidence boundaries; see verified text and final measured records.",
+      "verify": [
+        {
+          "file": "crates/qcore-contract/src/contract_loader.rs",
+          "contains": "contract module paths must be relative without traversal"
+        },
+        {
+          "file": "contract/profiles/fluent-bit/profile.json",
+          "contains": "../../../cycle19-resource-contracts.json"
+        }
+      ]
+    },
+    "canonical-contract-locations#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "Applied at the explicit canonical source, loader, architectural and evidence boundaries; see verified text and final measured records.",
+      "verify": [
+        {
+          "file": "docs/GENERALIZATION_PLAN.md",
+          "contains": "The C gateway also requires"
+        },
+        {
+          "file": "docs/GENERALIZATION_PLAN.md",
+          "contains": "their integration tests likewise require those data files"
+        }
+      ]
+    },
+    "canonical-contract-locations#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "Applied at the explicit canonical source, loader, architectural and evidence boundaries; see verified text and final measured records.",
+      "verify": [
+        {
+          "file": "docs/reports/canonical-contract-locations/README.md",
+          "contains": "Raw identities are not rewritten"
+        },
+        {
+          "file": "docs/STATUS.md",
+          "contains": "281"
+        }
+      ]
+    }
+  },
+  "no_section": {},
+  "deferred_decisions": {
+    "note": "Eleven historical decisions are carried unchanged from the previous integration. Provider contract ownership and packaging do not resolve those policy or infrastructure decisions.",
+    "items": [
+      {
+        "name": "CT10-REASON-ROW",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; Cycle 18 contract priority-one changes no CT10 reason-row policy and supplies no basis to decide it."
+      },
+      {
+        "name": "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close as a user decision; this priority-one reconciliation is not a compaction-cadence measurement."
+      },
+      {
+        "name": "EXAMPLES-STYLE-SLICE-FANOUT",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; the Cycle 18 priority-one cards do not change the examples directory or measure its style-slice fanout."
+      },
+      {
+        "name": "F02-WINDOWS-PIN-RUN",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this Linux-hosted priority-one integration supplies no user-validated Windows F02 pin run."
+      },
+      {
+        "name": "INDIRECT-CENSUS-FEATURE-UNBUILT",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; these contract-policy changes neither add a feature-building CI job nor decide the instrumentation is disposable."
+      },
+      {
+        "name": "MATRIX-RECORDED-BY-DECISION",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close as a provenance-schema decision; this priority-one reconciliation neither backfills recorded_by nor makes it optional."
+      },
+      {
+        "name": "MATRIX-UPDATED-STALE-AT-WAVE-27",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; the Cycle 18 priority-one integration does not decide the acceptance-matrix updated-field convention."
+      },
+      {
+        "name": "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED",
+        "verdict": "deferred",
+        "ground": "New generic Cycle 18 Linux observations do not discharge the older platform-residual registration decision or supply current foreign-host observations. The existing decision remains open."
+      },
+      {
+        "name": "Q-NAMESPACE-DECISION",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; the contract-policy work allocates no diagnostic code and does not choose a future namespace."
+      },
+      {
+        "name": "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this record uses the existing sweep and does not define or implement a prose-only residual mutation gate."
+      },
+      {
+        "name": "SYNC-RULE-TOOLING-COMMIT-SCOPE",
+        "verdict": "deferred",
+        "ground": "Still open from the wave-40 close; this bounded reconciliation does not decide the synchronization rule for structural integrator commits."
+      }
+    ]
+  }
+}

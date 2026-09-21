@@ -519,7 +519,7 @@ tests, (b) dual-run parity harness, (c) archived report, (d) deletion — as
 separate reviewable changes, keeping `cargo test --workspace` green at each
 step. No row's deletion may precede its report. The `qcore_contract_corpus`
 pinned tables are untouched by W2 (profiles are not `.qcore` contracts); if
-any migration step does touch `contract/qcore`, its pin tables must be
+any migration step does touch the canonical contract corpus, its pin tables must be
 updated deliberately and the change must say so.
 
 Placement note (invariant §2.7): the loader and validation logic land in

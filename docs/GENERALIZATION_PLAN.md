@@ -176,7 +176,9 @@ Rules:
   same schema types in-process; the out-of-process step is deferred, not
   abandoned. Schema types stay process-portable so the deferral costs no
   schema rework.*
-- **Generic core crates build without provider executable crates or assets**.
+- **The schemas, core, frontend, contract and verifier-host libraries build
+  without provider executable crates or assets**. The C gateway also requires
+  the shared source-projection policy in `providers/shared/contracts`.
   The retained first-party integration adapters in `qcore-verification` and
   `compiler` read canonical provider-owned contract assets at compile time;
   their integration tests likewise require those data files. This deliberately

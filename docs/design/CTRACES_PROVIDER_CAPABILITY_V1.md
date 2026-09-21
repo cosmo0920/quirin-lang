@@ -151,7 +151,7 @@ Archived, parseable, and pinned clause-for-clause by
 `designed_ctraces_contract_parses_with_its_specified_vocabulary`:
 [`docs/reports/remaining-p06/ctraces_span_dropped_counts.qcore`](../reports/remaining-p06/ctraces_span_dropped_counts.qcore).
 
-It is deliberately **not** in `contract/qcore/`. Landing it there is step 3 of
+It is deliberately **not** in the canonical contract corpus. Landing it there is step 3 of
 P06-I1 and moves the pinned corpus count in
 `compiler/tests/qcore_contract_corpus.rs` from 59 to 60 modules — a deliberate
 pin update, which P06 is not authorized to make.
@@ -210,7 +210,7 @@ and none may land a stub that asserts `Safe`.
 - **P06-I1 — core checker `qcore.scalar_field_contract.v1`.** Implement §5 in
   `qcore-verification` beside the Boolean-field route; add the new
   `certificate_checker` name to the `qcore-audit` admission list; land the
-  contract module in `contract/qcore/ctraces/` and update the corpus pin from 59
+  contract module in `providers/qcore-provider-ctraces/contracts/ctraces/` and update the corpus pin from 59
   to 60 deliberately. Lean parity: the scalar-assignment path relation and the
   `only_selected_field_written` frame lemma, with no new axiom.
 - **P06-I2 — gateway import for the two-formal unsigned unit ABI.** Extend

@@ -1,0 +1,7 @@
+{
+  "source": "equal apart from profile_digest fields",
+  "chunk-contracts": "equal apart from profile_digest fields",
+  "diagnostics": "byte-identical",
+  "contracts": "33 identical source texts; only source keys, manifest paths and profile digest differ",
+  "source-effects": "93 exact results;3 differ only in checked identity fields and bound obligation identifiers; all bounds/verdicts equal"
+}
