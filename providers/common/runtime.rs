@@ -26,6 +26,12 @@ fn embedded(template: &str) -> Result<&str, String> {
     Ok(&template[start..=end])
 }
 
+fn contract_manifest(contracts: &str) -> Result<&str, String> {
+    let manifest = embedded(contracts)?;
+    let _: serde_json::Value = serde_json::from_str(manifest).map_err(|e| e.to_string())?;
+    Ok(manifest)
+}
+
 fn package(template: &str) -> Result<PluginManifest, String> {
     let mut expected: PluginManifest =
         serde_json::from_str(embedded(template)?).map_err(|e| e.to_string())?;
@@ -174,6 +180,19 @@ pub fn run(template: &str) -> Result<(), String> {
 }
 
 pub fn run_with_v2(template: &str, propose: Option<V2Proposal>) -> Result<(), String> {
+    run_with_v2_and_contracts(template, None, propose)
+}
+
+#[allow(dead_code)]
+pub fn run_with_contracts(template: &str, contracts: &str) -> Result<(), String> {
+    run_with_v2_and_contracts(template, Some(contracts), None)
+}
+
+pub fn run_with_v2_and_contracts(
+    template: &str,
+    contracts: Option<&str>,
+    propose: Option<V2Proposal>,
+) -> Result<(), String> {
     let manifest = package(template)?;
     let args: Vec<_> = std::env::args().skip(1).collect();
     if args == ["--verify-package"] {
@@ -183,8 +202,13 @@ pub fn run_with_v2(template: &str, propose: Option<V2Proposal>) -> Result<(), St
         );
         return Ok(());
     }
+    if args == ["--contract-manifest"] {
+        let contracts = contracts.ok_or("provider has no embedded contract inventory")?;
+        println!("{}", contract_manifest(contracts)?);
+        return Ok(());
+    }
     if !args.is_empty() {
-        return Err("expected no arguments, or --verify-package".into());
+        return Err("expected no arguments, --verify-package, or --contract-manifest".into());
     }
     let payload = read_frame(&mut std::io::stdin().lock(), manifest.limits.output_bytes)?;
     let response = response(&payload, &manifest, propose)?;
