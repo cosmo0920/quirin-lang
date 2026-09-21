@@ -601,7 +601,7 @@ mod tests {
         );
         let harness = repository.join("crates/qcore-audit/tests/fixtures/native_platform_probe.c");
         let history = repository.join("docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md");
-        let source = repository.join("third_party/libevent");
+        let source_repository = repository.join("third_party/libevent");
         let suffix = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -611,6 +611,25 @@ mod tests {
             std::process::id()
         ));
         fs::create_dir(&directory).unwrap();
+        // Native builds can leave ignored generated files in the shared submodule.
+        // Audit a private checkout of the pinned commit, retaining the production
+        // cleanliness gate (including ignored files).
+        let source = directory.join("libevent");
+        let clone = Command::new("git")
+            .args(["clone", "--shared", "--no-checkout"])
+            .arg(&source_repository)
+            .arg(&source)
+            .output()
+            .unwrap();
+        assert!(clone.status.success(), "{clone:?}");
+        let checkout = Command::new("git")
+            .arg("-C")
+            .arg(&source)
+            .args(["checkout", "--detach"])
+            .arg(native_platform_source_revision().unwrap())
+            .output()
+            .unwrap();
+        assert!(checkout.status.success(), "{checkout:?}");
         let history_digest = sha256_hex(&read(&history).unwrap());
         let profiles = [
             (
@@ -716,6 +735,28 @@ mod tests {
             serde_json::from_slice(&read(&directory.join("report.json")).unwrap()).unwrap();
         assert_eq!(report["observed_rows"], 0);
         assert_eq!(report["unknown_rows"], 7);
+        fs::remove_file(directory.join("report.json")).unwrap();
+        for relative in [
+            "test/regress.gen.c",
+            "qcore-untracked-fixture",
+            ".gitignore",
+        ] {
+            let path = source.join(relative);
+            let original = fs::read(&path).ok();
+            fs::write(&path, b"dirty source fixture\n").unwrap();
+            assert_eq!(
+                run_native_platform_matrix_config(&config_path).unwrap_err(),
+                "selected Libevent source worktree is not clean"
+            );
+            assert!(!directory.join("report.json").exists());
+            if let Some(bytes) = original {
+                fs::write(&path, &bytes).unwrap();
+                assert_eq!(fs::read(&path).unwrap(), bytes);
+            } else {
+                fs::remove_file(&path).unwrap();
+            }
+        }
+        run_native_platform_matrix_config(&config_path).unwrap();
         fs::remove_dir_all(directory).unwrap();
     }
 }

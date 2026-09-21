@@ -33,6 +33,8 @@ fn imported(source: &str) -> Vec<SourceResult> {
     import_source_functions_from_profile(
         &C11TranslationUnit {
             source,
+            // This policy and the recorded observations name the Linux accessor.
+            definitions: vec!["QCORE_TEST_LINUX_LP64=1".into()],
             ..Default::default()
         },
         monkey_source_revision(),
@@ -263,7 +265,26 @@ fn unsupported_transitive_callee_effect_fails_closed() {
         )
         .replace("perror(\"write\");", "task_spawn();");
     let imported = imported(&changed);
+    assert!(imported.iter().any(|result| matches!(
+        result,
+        SourceResult::Unknown { function, .. } if function == "cb_timeout"
+    )));
     assert!(project_callback_task_source(&summaries(&imported)).is_err());
+}
+
+#[test]
+fn an_undeclared_errno_accessor_still_refuses() {
+    if qcore_c_gateway::clang_command().is_err() {
+        return;
+    }
+    let changed = CALLBACKS.replace("__errno_location", "__error");
+    let imported = imported(&changed);
+    assert_eq!(
+        project_callback_task_source(&summaries(&imported)).unwrap_err(),
+        CallbackTaskHandoffError::Source(
+            "callee `__error` has no unique declared task/defer effect".into()
+        )
+    );
 }
 
 #[test]

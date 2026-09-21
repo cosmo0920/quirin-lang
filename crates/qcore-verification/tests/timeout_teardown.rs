@@ -19,6 +19,8 @@ fn imported(source: &str) -> Vec<SourceResult> {
     import_source_functions_from_profile(
         &C11TranslationUnit {
             source,
+            // Replay the Linux call sequences pinned by the teardown policy.
+            definitions: vec!["QCORE_TEST_LINUX_LP64=1".into()],
             ..Default::default()
         },
         monkey_source_revision(),

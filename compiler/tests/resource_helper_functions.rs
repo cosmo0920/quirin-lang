@@ -245,7 +245,15 @@ fn emitted_real_helpers_execute_under_address_and_undefined_sanitizers() {
         String::from_utf8_lossy(&output.stderr)
     );
     let output = Command::new(&binary)
-        .env("ASAN_OPTIONS", "detect_leaks=1:halt_on_error=1")
+        .env(
+            "ASAN_OPTIONS",
+            if cfg!(target_os = "macos") {
+                // Apple's sanitizer runtime does not support LeakSanitizer.
+                "detect_leaks=0:halt_on_error=1"
+            } else {
+                "detect_leaks=1:halt_on_error=1"
+            },
+        )
         .env("UBSAN_OPTIONS", "halt_on_error=1")
         .output()
         .unwrap();

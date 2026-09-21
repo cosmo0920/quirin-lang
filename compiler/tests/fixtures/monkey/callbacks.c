@@ -20,12 +20,18 @@
 
 /* Test-only minimal layouts/prototypes. The callback bodies below are copied
  * from the pinned adapter; the external audit checks the actual build/layouts. */
+/* Linux-recorded source summaries use the LP64 uint64_t spelling. */
+#ifdef QCORE_TEST_LINUX_LP64
+typedef unsigned int uint32_t;
+typedef unsigned long uint64_t;
+#else
 #include <stdint.h>
+#endif
 #include <stddef.h>
 #include <errno.h>
-/* Model the recorded POSIX errno accessor when importing on Windows. This
- * fixture does not claim to exercise the Windows socket implementation. */
-#ifdef _WIN32
+/* Model the recorded Linux errno accessor when replaying Linux evidence or
+ * importing on Windows. This does not exercise the host socket implementation. */
+#if defined(_WIN32) || defined(QCORE_TEST_LINUX_LP64)
 #undef errno
 int *__errno_location(void);
 #define errno (*__errno_location())

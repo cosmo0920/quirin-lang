@@ -34,6 +34,7 @@ use qcore_core::task_execution::{
 use std::collections::BTreeMap;
 use std::process::Command;
 
+#[cfg(target_os = "linux")]
 #[path = "../../tests/support/diagnostic_sink.rs"]
 mod diagnostic_sink;
 #[path = "../../tests/support/thread_sanitizer.rs"]
@@ -97,6 +98,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 /// A companion with no lease and no byte access at all — the shape of the
 /// published `examples/threads` programs — used to attribute a native failure
 /// to the route rather than to the exercise.
+#[cfg(target_os = "linux")]
 const LEASE_FREE_WORKERS: &str = "import std.concurrency; concurrency checked;
 fn worker(value: i32) -> i32 {
   return value;
