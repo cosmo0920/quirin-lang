@@ -510,3 +510,53 @@ fn configured_helper_policy_source_and_compile_inventory_fail_closed() {
         Err(SourceContractError::Derivation(_))
     ));
 }
+
+#[test]
+fn pinned_bundle_and_legacy_path_have_identical_process_evidence() {
+    let fixture = Fixture::new();
+    let legacy = fixture.registry(&fixture.config()).unwrap();
+    let bundle = fixture.0.join("policy-only");
+    std::fs::create_dir_all(bundle.join("contracts")).unwrap();
+    std::fs::write(bundle.join("contracts/sample.qcore"), POLICY).unwrap();
+    let inventory = serde_json::to_vec(&json!({"schema_version":1,"plugin_id":PROVIDER,
+        "contracts":{"contracts/sample.qcore":sha256_hex(POLICY.as_bytes())}}))
+    .unwrap();
+    std::fs::write(bundle.join("contracts.json"), &inventory).unwrap();
+    let mut config = fixture.config();
+    config["schema_version"] = json!(2);
+    config["bindings"][0]["contract"] = json!({"manifest":"policy-only/contracts.json",
+        "sha256":sha256_hex(&inventory),"owner":PROVIDER,"path":"contracts/sample.qcore"});
+    let selected = fixture.registry(&config).unwrap();
+    assert_eq!(selected.audit_inventory(), legacy.audit_inventory());
+    for summary in summaries(SOURCE, &fixture.profile(), LIBRARY) {
+        let before = legacy.verify(&summary, "sample.c").unwrap();
+        let after = selected.verify(&summary, "sample.c").unwrap();
+        assert_eq!(
+            serde_json::to_value(before.certificate.witness()).unwrap(),
+            serde_json::to_value(after.certificate.witness()).unwrap()
+        );
+        assert_eq!(
+            serde_json::to_value(before.certificate.task()).unwrap(),
+            serde_json::to_value(after.certificate.task()).unwrap()
+        );
+        assert_eq!(
+            before.evaluation.checked_states(),
+            after.evaluation.checked_states()
+        );
+        println!(
+            "bundle-parity {}",
+            json!({
+                "function": summary.function,
+                "task_before": sha256_hex(&serde_json::to_vec(&before.certificate.task()).unwrap()),
+                "task_after": sha256_hex(&serde_json::to_vec(&after.certificate.task()).unwrap()),
+                "witness_before": sha256_hex(&serde_json::to_vec(&before.certificate.witness()).unwrap()),
+                "witness_after": sha256_hex(&serde_json::to_vec(&after.certificate.witness()).unwrap()),
+                "checked_states_before": before.evaluation.checked_states(),
+                "checked_states_after": after.evaluation.checked_states(),
+                "policy_sha256": sha256_hex(POLICY.as_bytes()),
+            })
+        );
+    }
+    std::fs::write(bundle.join("contracts/sample.qcore"), "changed").unwrap();
+    assert!(fixture.registry(&config).is_err());
+}

@@ -1,0 +1,728 @@
+{
+  "base": "ad6016f21355ccfa2bc0a4746cb0c4d9fcd1bee6",
+  "measured_source_sha256": {
+    "contract/profiles/cmetrics-counter/audit.json": "98207a616034c57d9e1ec39b0680121e8ff6918c8ecbd99b90a066e550f38916",
+    "contract/profiles/cmetrics-counter/source-contracts.json": "72c294cb54cbb3eeb0f0fb7adb24177f8cd485b12154a86f053957f85351edf7",
+    "crates/qcore-audit/src/source_contract.rs": "d5a3d6e806177783b717a31cbb815ca19dc64f5e3663e535a5b1b22444c565b0",
+    "crates/qcore-audit/tests/source_contract_config.rs": "6f860d172e2db990679532456201c44d452e9d5edbb9da9caab7bc8b485b6784",
+    "crates/qcore-contract/src/bundle.rs": "4aacd87596fe03fefd3a3c9e229fef855e0cf31a621c3699e272007825c05b94",
+    "crates/qcore-contract/src/lib.rs": "c188aee022ee5fb25895d565e5a5940b168bbfded613cea5ab0ef0dcd74570e2",
+    "crates/qcore-contract/tests/contract_bundle.rs": "58625028884bcc52d7c77b6b905d7c642030682b77bfaca172a0844630f4336e",
+    "docs/reports/task-context-contract-bundle/measure.py": "22980ba9d907302091f8d242e6503d9638ebb9b463bbc1d5763b2df1bdcbcf72",
+    "docs/reports/task-context-contract-bundle/preserve.py": "7a241c9b1315a08796bc98cef2c50997609fc3298870bda76037965db60a3102",
+    "docs/reports/task-context-contract-bundle/replay_cmetrics.py": "cd71203c3d3ea33a9812f2dafb7a0ac1503a034af4d86c58568deacb92ab3043",
+    "proof/AuditContractBundle.lean": "d4c8e125698285154ea07d32eda6428f8d41f2a9b86f73ebeb3e9da5f555e1df",
+    "proof/QCore.lean": "e65553a95935e10248088383440febe22c9f6490251b7e9df997502aa90870cb",
+    "proof/QCore/ContractBundle.lean": "3f0fa9c72b65936233440b9216201820b03d66130ec97499d0ff96e21923a053",
+    "providers/conformance/tests/configured_source_contract.rs": "61803e07603371464e7d2f03199476d360825f8e2255377535f3457e8532a91c",
+    "scripts/task_context.py": "a28dc706524ee63738c394440fe6a85e95bbd72e0a25cf4e2f4d1d05756dec3f",
+    "scripts/tests/test_task_context.py": "a1b8d1bc77c6e6c17e84818110a1013df911e8cf93fbbf06f19d4ad985787abd"
+  },
+  "source_binding": "Uncommitted implementation on the named base, identified by source digests. Later documentation and evidence records do not change these implementation bytes.",
+  "submodule_update": {
+    "exit": 0,
+    "note": "git submodule update --init --recursive run separately with git metadata write permission"
+  },
+  "successful_commands": [
+    {
+      "name": "clang-version",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.02,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/clang-version.log"
+    },
+    {
+      "name": "cargo-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 1.8,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/cargo-fmt.log"
+    },
+    {
+      "name": "cargo-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 9.0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/cargo-clippy.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 4.86,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.87,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/reevaluation-followup.log"
+    },
+    {
+      "name": "provider-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 2.14,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/provider-fmt.log"
+    },
+    {
+      "name": "provider-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 13.39,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/provider-clippy.log"
+    },
+    {
+      "name": "contract-inventory",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 0,
+      "seconds": 0.08,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/contract-inventory.log"
+    },
+    {
+      "name": "package-build",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/packages"
+      ],
+      "exit": 0,
+      "seconds": 60.04,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/package-build.log"
+    },
+    {
+      "name": "verify-libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "seconds": 0.08,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/verify-libevent.log"
+    },
+    {
+      "name": "verify-chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/packages/qcore.chunkio"
+      ],
+      "exit": 0,
+      "seconds": 0.09,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/verify-chunkio.log"
+    },
+    {
+      "name": "verify-cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/packages/qcore.cmetrics"
+      ],
+      "exit": 0,
+      "seconds": 0.07,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/verify-cmetrics.log"
+    },
+    {
+      "name": "verify-ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/packages/qcore.ctraces"
+      ],
+      "exit": 0,
+      "seconds": 0.08,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/verify-ctraces.log"
+    },
+    {
+      "name": "verify-librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/packages/qcore.librdkafka"
+      ],
+      "exit": 0,
+      "seconds": 0.07,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/verify-librdkafka.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "seconds": 908.3183624478988,
+      "reason": "Sandboxed native LeakSanitizer/ptrace failures; assertions and sanitizer options unchanged.",
+      "log": "private/task-context-contract-bundle/core-unsandboxed/cargo-test.log",
+      "counts": {
+        "passed": 5043,
+        "failed": 0,
+        "ignored": 11,
+        "summaries": 269
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "seconds": 264.6573382039787,
+      "reason": "Sandboxed namespace creation refused for the unchanged linux-confined-v1 package test.",
+      "log": "private/task-context-contract-bundle/providers-unsandboxed/test.log",
+      "counts": {
+        "passed": 123,
+        "failed": 0,
+        "ignored": 0,
+        "summaries": 27
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "seconds": 23.51758671097923,
+      "log": "private/task-context-contract-bundle/lean-final-clean/audits.log"
+    },
+    {
+      "name": "process-lifecycle",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "cycle20_verifier_plugins",
+        "vp04_vp07_vp08_process_lifecycle_and_payload_budgets",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.455,
+      "log": "private/task-context-contract-bundle/isolated-final/process-lifecycle.log"
+    },
+    {
+      "name": "process-limit",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "enforced_process_limits",
+        "a_declared_process_limit_stops_the_fixture_from_forking",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.555,
+      "log": "private/task-context-contract-bundle/isolated-final/process-limit.log"
+    },
+    {
+      "name": "memory-limit",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "enforced_process_limits",
+        "memory_growth_beyond_the_declared_limit_is_bounded",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 0.088,
+      "log": "private/task-context-contract-bundle/isolated-final/memory-limit.log"
+    },
+    {
+      "name": "confined-write",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "confined_process_execution",
+        "a_confined_fixture_cannot_write_outside_the_admitted_paths",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 0.055,
+      "log": "private/task-context-contract-bundle/isolated-final/confined-write.log"
+    },
+    {
+      "name": "closed-input",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-verifier-host",
+        "--test",
+        "standalone_host",
+        "closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 1.57,
+      "log": "private/task-context-contract-bundle/isolated-final/closed-input.log"
+    },
+    {
+      "name": "package-mutation",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "-p",
+        "qcore-provider-conformance",
+        "--test",
+        "packages",
+        "real_packages_preserve_unknown_and_reject_mutations",
+        "--locked",
+        "--offline",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "seconds": 44.422,
+      "log": "private/task-context-contract-bundle/isolated-final/package-mutation.log"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "count": 336,
+      "log": "private/task-context-contract-bundle/python-after-derived-matrix/test.log"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "exit": 0,
+      "count": 5,
+      "log": "private/task-context-contract-bundle/package-python-final/test.log"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "count": 336,
+      "log": "private/task-context-contract-bundle/python-final/test.log",
+      "note": "After final gate-fed matrix regeneration."
+    }
+  ],
+  "preserved_initial_attempt": {
+    "base": "ad6016f21355ccfa2bc0a4746cb0c4d9fcd1bee6",
+    "start": "2026-09-21T14:23:01.482674+00:00",
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "steps": [
+      {
+        "name": "clang-version",
+        "command": [
+          "clang",
+          "--version"
+        ],
+        "exit": 0,
+        "seconds": 0.02,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/clang-version.log"
+      },
+      {
+        "name": "cargo-test",
+        "command": [
+          "cargo",
+          "test",
+          "--workspace",
+          "--no-fail-fast"
+        ],
+        "exit": 101,
+        "seconds": 886.48,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/cargo-test.log"
+      },
+      {
+        "name": "cargo-fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit": 0,
+        "seconds": 1.8,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/cargo-fmt.log"
+      },
+      {
+        "name": "cargo-clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit": 0,
+        "seconds": 9.0,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/cargo-clippy.log"
+      },
+      {
+        "name": "reevaluation-probe",
+        "command": [
+          "cargo",
+          "run",
+          "-p",
+          "qcore-compiler",
+          "--example",
+          "reevaluation_probe"
+        ],
+        "exit": 0,
+        "seconds": 4.86,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/reevaluation-probe.log"
+      },
+      {
+        "name": "reevaluation-followup",
+        "command": [
+          "cargo",
+          "run",
+          "-p",
+          "qcore-compiler",
+          "--example",
+          "reevaluation_followup"
+        ],
+        "exit": 0,
+        "seconds": 0.87,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/reevaluation-followup.log"
+      },
+      {
+        "name": "lean-audits",
+        "command": [
+          "python3",
+          "scripts/check_lean_audits.py",
+          "--jobs",
+          "2"
+        ],
+        "exit": 1,
+        "seconds": 2.67,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/lean-audits.log"
+      },
+      {
+        "name": "python-tests",
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/tests"
+        ],
+        "exit": 1,
+        "seconds": 37.16,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/python-tests.log"
+      },
+      {
+        "name": "provider-tests",
+        "command": [
+          "cargo",
+          "test",
+          "--manifest-path",
+          "providers/Cargo.toml",
+          "--workspace",
+          "--locked",
+          "--offline",
+          "--no-fail-fast"
+        ],
+        "exit": 101,
+        "seconds": 291.92,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/provider-tests.log"
+      },
+      {
+        "name": "provider-fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "providers/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit": 0,
+        "seconds": 2.14,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/provider-fmt.log"
+      },
+      {
+        "name": "provider-clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--manifest-path",
+          "providers/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--locked",
+          "--offline",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit": 0,
+        "seconds": 13.39,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/provider-clippy.log"
+      },
+      {
+        "name": "contract-inventory",
+        "command": [
+          "python3",
+          "providers/contracts.py",
+          "check"
+        ],
+        "exit": 0,
+        "seconds": 0.08,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/contract-inventory.log"
+      },
+      {
+        "name": "package-build",
+        "command": [
+          "python3",
+          "providers/package.py",
+          "build",
+          "--output",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/packages"
+        ],
+        "exit": 0,
+        "seconds": 60.04,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/package-build.log"
+      },
+      {
+        "name": "verify-libevent",
+        "command": [
+          "python3",
+          "providers/package.py",
+          "verify",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/packages/qcore.libevent"
+        ],
+        "exit": 0,
+        "seconds": 0.08,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/verify-libevent.log"
+      },
+      {
+        "name": "verify-chunkio",
+        "command": [
+          "python3",
+          "providers/package.py",
+          "verify",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/packages/qcore.chunkio"
+        ],
+        "exit": 0,
+        "seconds": 0.09,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/verify-chunkio.log"
+      },
+      {
+        "name": "verify-cmetrics",
+        "command": [
+          "python3",
+          "providers/package.py",
+          "verify",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/packages/qcore.cmetrics"
+        ],
+        "exit": 0,
+        "seconds": 0.07,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/verify-cmetrics.log"
+      },
+      {
+        "name": "verify-ctraces",
+        "command": [
+          "python3",
+          "providers/package.py",
+          "verify",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/packages/qcore.ctraces"
+        ],
+        "exit": 0,
+        "seconds": 0.08,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/verify-ctraces.log"
+      },
+      {
+        "name": "verify-librdkafka",
+        "command": [
+          "python3",
+          "providers/package.py",
+          "verify",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/packages/qcore.librdkafka"
+        ],
+        "exit": 0,
+        "seconds": 0.07,
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/gate-1/verify-librdkafka.log"
+      }
+    ],
+    "submodule_update": {
+      "exit": 0,
+      "note": "git submodule update --init --recursive run separately with git metadata write permission"
+    }
+  },
+  "initial_core_counts": {
+    "passed": 4936,
+    "failed": 106,
+    "ignored": 11,
+    "summaries": 269
+  },
+  "initial_provider_counts": {
+    "passed": 122,
+    "failed": 1,
+    "ignored": 0,
+    "summaries": 27
+  },
+  "limitations": "Summary counts retain the repository measurement limitations; native checks are host observations, not proof. No full production corpus replay.",
+  "final_document_checks": {
+    "local_links_checked": 751,
+    "missing": [],
+    "commands": [
+      {
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit": 0,
+        "log": "private/task-context-contract-bundle/final-document-checks/diff-check.log"
+      },
+      {
+        "command": [
+          "python3",
+          "scripts/build_docs_index.py",
+          "--check"
+        ],
+        "exit": 0,
+        "log": "private/task-context-contract-bundle/final-document-checks/index-check.log"
+      },
+      {
+        "command": [
+          "python3",
+          "docs/reports/task-context-contract-bundle/preserve.py"
+        ],
+        "exit": 0,
+        "log": "private/task-context-contract-bundle/final-document-checks/preservation.log"
+      },
+      {
+        "command": [
+          "python3",
+          "docs/reports/task-context-contract-bundle/measure.py"
+        ],
+        "exit": 0,
+        "log": "private/task-context-contract-bundle/final-document-checks/measurements.log"
+      },
+      {
+        "command": [
+          "python3",
+          "scripts/task_context.py",
+          "--base",
+          "ad6016f21355ccfa2bc0a4746cb0c4d9fcd1bee6",
+          "--topic",
+          "integration",
+          "--json"
+        ],
+        "exit": 0,
+        "log": "private/task-context-contract-bundle/final-document-checks/packet.log"
+      }
+    ]
+  }
+}

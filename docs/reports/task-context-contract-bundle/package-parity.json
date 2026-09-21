@@ -1,0 +1,42 @@
+{
+  "previous": "docs/reports/canonical-contract-locations/package-parity.json#/artifacts",
+  "measured": "private/task-context-contract-bundle/gate-1/packages/packages.json",
+  "all_five_artifact_identity_records_equal": true,
+  "artifacts": [
+    {
+      "plugin_id": "qcore.chunkio",
+      "executable_sha256": "b1cecd26237e2181de4e3e37aa7aa520c71356c4062a4bf0a1a68d3485e55b27",
+      "manifest_sha256": "897b35f14a3f66585e43ba94030e0cf62f6451e35bea784d33d9820dae820900",
+      "contracts_manifest_sha256": "321e74ee51e2a819b7f1fa2f75f2b065c8243852d3895bff75d5dbcce0458023",
+      "archive_sha256": "b8b3d1bfcad8a8e93caa8c5d25b40fc1f3e5cbf0a755f998de3d89f3b1488914"
+    },
+    {
+      "plugin_id": "qcore.cmetrics",
+      "executable_sha256": "e57beb035c5d9ca55464142097894e8d9c19e3eab7831911910ca0391109e0e5",
+      "manifest_sha256": "d0afac2e6e3f6fc701c4abe4e9bfda0557cbfd44e5f5d355b907877c139c1794",
+      "contracts_manifest_sha256": "49fd41b508a766577435e4ba81d30598ba53177b97a6216d2ca1cdd25ac14b93",
+      "archive_sha256": "fe44b70ab0dedfe411a6460a94189c95d42a5559efdc7e71f9a053f3d7c6ce3f"
+    },
+    {
+      "plugin_id": "qcore.ctraces",
+      "executable_sha256": "a4a5ee42ccbdbe0172059acbe096f45436330268cdd4388a0721969f783b1b88",
+      "manifest_sha256": "3edadce1c040033029df223fbb96362def3751e23f8d2a7e57590d63db5b68e0",
+      "contracts_manifest_sha256": "491a0d7a3ee123587bc84050fe4c5bf83cde5a539a52a9cc8c0cd1fdc99628ac",
+      "archive_sha256": "2085261a9f4adb57621b9c1a209f17952c18c93f2944f96c2298a32d136c3e94"
+    },
+    {
+      "plugin_id": "qcore.libevent",
+      "executable_sha256": "6345744d79bb03d07dc25c30da2c5de8d9c04ac3d24eb3e335418d5c634fd48f",
+      "manifest_sha256": "c400019bbd3ec86b2db82010f5c3c79477e9c8e1de64317b1a14adb46220dedb",
+      "contracts_manifest_sha256": "1dae88bce5751a6ca04fef318cd51b34f87372618ad68d04e9e6e63945cdbe01",
+      "archive_sha256": "fe1a521f8b5fbb506fb5568ef5fe94c275181c83564d6212b1df480718122211"
+    },
+    {
+      "plugin_id": "qcore.librdkafka",
+      "executable_sha256": "f32d1f23a46b8bc6f033dfc1067b764dc331525f793e62efea02946917bcf1fb",
+      "manifest_sha256": "933e10d5d96e7a925c8fd23e5c7b200f5cda206bdd4965de85c97bd26f64ebdb",
+      "contracts_manifest_sha256": "2a4afc081020127803cf7be87bc326bd8a9c224b45087d741272f44ed27eb119",
+      "archive_sha256": "99fcf1b2aa42e4e0e465a511114c718c5650cec8e32aaf23adc93af6c5741aad"
+    }
+  ]
+}

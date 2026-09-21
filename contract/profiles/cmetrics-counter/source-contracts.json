@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "packages": [
     "../../../build/cycle19/provider-packages-unit/qcore.cmetrics"
   ],
@@ -7,7 +7,12 @@
     {
       "library": "cmetrics",
       "provider": "qcore.cmetrics",
-      "contract": "../../qcore/cmetrics/counter_reset.qcore"
+      "contract": {
+        "manifest": "../../../providers/qcore-provider-cmetrics/contracts.json",
+        "sha256": "49fd41b508a766577435e4ba81d30598ba53177b97a6216d2ca1cdd25ac14b93",
+        "owner": "qcore.cmetrics",
+        "path": "contracts/cmetrics/counter_reset.qcore"
+      }
     }
   ]
 }

@@ -3038,6 +3038,45 @@ pinned audit's historical option projection; there is no automatic fallback.
 `configured_frame_helper_policies` in the audit sidecar records snapshotted
 selection metadata, not proof that every configured helper was executed.
 
+### Version 2: pinned contract bundle selection
+
+Version 1 retains string policy paths. Version 2 accepts those paths and, for
+binding or frame-helper `contract`, this strict object:
+
+```json
+{
+  "manifest": "policy-bundle/contracts.json",
+  "sha256": "<64 lowercase hexadecimal digits pinned by the consumer>",
+  "owner": "qcore.cmetrics",
+  "path": "contracts/cmetrics/counter_reset.qcore"
+}
+```
+
+`manifest` resolves relative to the configuration, while `path` is an exact key
+in the existing provider inventory format (`schema_version: 1`, `plugin_id`,
+`contracts` mapping paths to SHA-256). The consumer independently supplies the
+manifest hash and expected owner. Loading validates the inventory hash, owner,
+version, unique keys, exact recursive file set, and every file hash before
+exposing immutable UTF-8 policy snapshots. Asset keys must be forward-slash paths
+under `contracts/`, end in `.qcore`, and contain no empty, dot, parent, backslash
+or colon component. Symlink manifests, asset directories/files and special files
+reject. Manifest parents are resolved as the explicitly selected location;
+protect that directory from concurrent mutation during loading.
+
+Limits: 1 MiB manifest, 1–4096 files, 8192 tree entries, 32 directory levels,
+8 MiB per nonempty UTF-8 file and 32 MiB per complete bundle. Selected policy
+copies also consume the service's existing 32 MiB aggregate snapshot budget.
+Unknown fields, versions, paths, mismatches and failures reject without fallback.
+Version 1 refuses bundle objects; unsupported service versions still reject.
+
+`qcore_contract::bundle::ContractBundle::load` needs no executable or process
+registry. A bundle identifies supplied policy bytes, not predicate truth,
+authorship, provider capability or source authority. Existing source import,
+policy-derived task identities and independent witness replay remain unchanged.
+`SourceContractRegistry` still requires its selected executable packages; bundle
+ownership does not implicitly select or register a process. The CMetrics source
+configuration is the pilot; existing compatibility adapters are retained.
+
 ## Configured C audit composition
 
 `qcore-audit` schema-1 configuration now accepts an optional `source_contracts`

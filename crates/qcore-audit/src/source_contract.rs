@@ -88,7 +88,7 @@ struct Configuration {
 struct BindingConfiguration {
     library: String,
     provider: String,
-    contract: PathBuf,
+    contract: PolicySelection,
     #[serde(default)]
     frame_helpers: Vec<FrameHelperConfiguration>,
 }
@@ -99,7 +99,23 @@ struct FrameHelperConfiguration {
     source: PathBuf,
     function: String,
     record: String,
-    contract: PathBuf,
+    contract: PolicySelection,
+}
+
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum PolicySelection {
+    Path(PathBuf),
+    Bundle(BundleSelection),
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct BundleSelection {
+    manifest: PathBuf,
+    sha256: String,
+    owner: String,
+    path: String,
 }
 
 /// Declared helper selection and immutable policy bytes; not source evidence.
@@ -202,15 +218,11 @@ fn c_identifier(value: &str) -> bool {
 
 fn snapshot_policy(
     base: &Path,
-    path: &Path,
+    selection: &PolicySelection,
+    version: u32,
     retained: &mut u64,
 ) -> Result<String, SourceContractError> {
     const MAX_POLICY_BYTES: u64 = 32 * 1024 * 1024;
-    if path.as_os_str().is_empty() {
-        return Err(SourceContractError::Configuration(
-            "empty policy path".into(),
-        ));
-    }
     let remaining = MAX_POLICY_BYTES.checked_sub(*retained).ok_or_else(|| {
         SourceContractError::Configuration("policy snapshot byte budget exhausted".into())
     })?;
@@ -219,7 +231,38 @@ fn snapshot_policy(
             "policy snapshots exceed the 32 MiB aggregate byte budget".into(),
         ));
     }
-    let bytes = read_bounded(&crate::resolve(base, path), 8_388_608.min(remaining))?;
+    let bytes = match selection {
+        PolicySelection::Path(path) => {
+            if path.as_os_str().is_empty() {
+                return Err(SourceContractError::Configuration(
+                    "empty policy path".into(),
+                ));
+            }
+            read_bounded(&crate::resolve(base, path), 8_388_608.min(remaining))?
+        }
+        PolicySelection::Bundle(selected) => {
+            if version != 2 || selected.manifest.as_os_str().is_empty() {
+                return Err(SourceContractError::Configuration(
+                    "bundle selection requires version 2 and a manifest path".into(),
+                ));
+            }
+            let bundle = qcore_contract::bundle::ContractBundle::load(
+                &crate::resolve(base, &selected.manifest),
+                &selected.sha256,
+                &selected.owner,
+            )
+            .map_err(SourceContractError::Configuration)?;
+            let source = bundle
+                .contract(&selected.path)
+                .map_err(SourceContractError::Configuration)?;
+            if source.len() as u64 > 8_388_608.min(remaining) {
+                return Err(SourceContractError::Configuration(
+                    "policy snapshot byte budget exhausted".into(),
+                ));
+            }
+            source.as_bytes().to_vec()
+        }
+    };
     *retained += bytes.len() as u64;
     let policy = String::from_utf8(bytes)
         .map_err(|error| SourceContractError::Configuration(error.to_string()))?;
@@ -263,7 +306,9 @@ impl SourceContractPolicies {
         let config: Configuration = serde_json::from_slice(&read_bounded(&path, 1_048_576)?)
             .map_err(|e| SourceContractError::Configuration(e.to_string()))?;
         validate_package_paths(&config.packages)?;
-        if config.schema_version != 1 || config.bindings.is_empty() || config.bindings.len() > 4096
+        if !matches!(config.schema_version, 1 | 2)
+            || config.bindings.is_empty()
+            || config.bindings.len() > 4096
         {
             return Err(SourceContractError::Configuration(
                 "unsupported version, empty binding inventory, or excessive inventory".into(),
@@ -274,17 +319,19 @@ impl SourceContractPolicies {
         // Repeated references still retain distinct bytes and consume budget.
         let mut retained_bytes = 0u64;
         for binding in config.bindings {
-            if binding.library.trim().is_empty()
-                || binding.library.trim() != binding.library
-                || binding.contract.as_os_str().is_empty()
-            {
+            if binding.library.trim().is_empty() || binding.library.trim() != binding.library {
                 return Err(SourceContractError::Configuration(
                     "binding requires an exact nonempty library and contract path".into(),
                 ));
             }
             let provider = PluginId::new(binding.provider)
                 .map_err(|e| SourceContractError::Configuration(e.to_string()))?;
-            let contract = snapshot_policy(&base, &binding.contract, &mut retained_bytes)?;
+            let contract = snapshot_policy(
+                &base,
+                &binding.contract,
+                config.schema_version,
+                &mut retained_bytes,
+            )?;
             if binding.frame_helpers.len() > 256 {
                 return Err(SourceContractError::Configuration(
                     "more than 256 frame helpers in one binding".into(),
@@ -304,7 +351,12 @@ impl SourceContractPolicies {
                 {
                     return Err(SourceContractError::Configuration("frame helper requires a unique C function, C record, and contained relative source path".into()));
                 }
-                let contract = snapshot_policy(&base, &helper.contract, &mut retained_bytes)?;
+                let contract = snapshot_policy(
+                    &base,
+                    &helper.contract,
+                    config.schema_version,
+                    &mut retained_bytes,
+                )?;
                 frame_helpers.push(FrameHelperPolicy {
                     source: helper.source,
                     function: helper.function,

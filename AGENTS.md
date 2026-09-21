@@ -6,15 +6,19 @@ unchanged. This structure deliberately replaces the former monolithic briefing.
 
 ## Start here
 
-1. Read [operations](docs/agents/operations.md) for workflow, preservation,
-   reconciliation, worktree hygiene and the main-branch guard.
-2. Read [current status](docs/STATUS.md) for measured coverage and its sources.
-   Mapping, model proof and native observations are separate evidence classes.
-3. Use [the rule router](docs/agents/README.md) to read the union of path and
-   topic rules for committed changes since the base, staged/unstaged changes,
-   renamed/deleted/untracked paths and planned edits. Shared files need that
-   union. Unknown relevance requires more reading, never silent omission.
-4. Run the [standing gate](docs/agents/validation.md) and report commands,
+1. Read [operations](docs/agents/operations.md)'s Working rules, Worktree and
+   measurement hygiene, and Task reading protocol. Read its integration and
+   maintenance sections when that work is in scope.
+2. Generate the reading union with `python3 scripts/task_context.py --base
+   <revision> --topic <topic> --path <planned-path>`; `--render` emits exact
+   current text. It includes committed, staged, unstaged, renamed, deleted and
+   untracked paths. Rerun as scope changes; add topics for semantic implications.
+3. Read the returned sections. The [rule router](docs/agents/README.md) remains
+   the manual fallback and stable rule index. Unknown relevance requires broader
+   reading, never omission. A generated list is not evidence that it was read.
+4. Read [current status](docs/STATUS.md) when selecting work or making coverage
+   claims. Mapping, model proof and native observations are separate evidence.
+5. Run the [standing gate](docs/agents/validation.md) and report commands,
    exits, counts and private log paths. No optimistic fallback or hidden failure.
 
 Use `rg -n` on an exact symbol/card/heading before reading a long section.

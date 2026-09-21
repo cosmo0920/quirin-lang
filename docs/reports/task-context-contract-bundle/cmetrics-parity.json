@@ -1,0 +1,41 @@
+{
+  "runs": [
+    {
+      "mode": "legacy",
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/cmetrics-replay-final/audit.json"
+      ],
+      "exit": 0,
+      "artifacts": {
+        "report.assumptions.json": "25d62a2b40b8853c5e6379858d3cefcedde27329697a33fc6d466b0fe8549dd5",
+        "report.json": "a09b75819dbdd8d7a0e41e3020cf95cda4f110cdb7fe7058bef231f3fecbc96c"
+      }
+    },
+    {
+      "mode": "bundle",
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/target/debug/quirin-audit",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/task-context-contract-bundle/cmetrics-replay-final/audit.json"
+      ],
+      "exit": 0,
+      "artifacts": {
+        "report.assumptions.json": "b4fe7d8af43c268929e3929507e65c8b69a318ee52f222b7a12a5d90db9771f6",
+        "report.json": "a09b75819dbdd8d7a0e41e3020cf95cda4f110cdb7fe7058bef231f3fecbc96c"
+      }
+    }
+  ],
+  "attributed_sidecar_changes": [
+    {
+      "path": "/compile_tasks/0/identity/dependencies/source_contract_configuration",
+      "before": "28939c64b151690ddea404dc6ef626b6fe32f86e9be33e2f5fd88e584da60953",
+      "after": "f94e7bf329a6bfc55651a099f7bc428c4836c131a5fc305d738a7919bbed17d6"
+    },
+    {
+      "path": "/compile_tasks/0/identity_sha256",
+      "before": "965323b5d7fc4a89cc5c802b28106e2a73f0e97bb9bcc49d18f1d242e662fc2a",
+      "after": "47452de1e740c0616914a41e1b8eb8643a7973145529ade897d6dc13cd93c637"
+    }
+  ],
+  "boundary": "Report bytes equal. Exact configuration dependency hashes rederived; the enclosing identity digest is emitted by CompileTaskIdentity::digest. All other sidecar fields equal. No production Safe promotion."
+}

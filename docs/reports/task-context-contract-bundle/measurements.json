@@ -1,0 +1,1085 @@
+{
+  "base": "ad6016f21355ccfa2bc0a4746cb0c4d9fcd1bee6",
+  "assumed_injected_bytes": {
+    "before": 6203,
+    "after": 6516
+  },
+  "operations_bytes": {
+    "before": 23862,
+    "after": 8015
+  },
+  "samples": [
+    {
+      "task": "documentation",
+      "paths": [
+        "docs/README.md"
+      ],
+      "topics": [
+        "docs"
+      ],
+      "before_paths": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "docs/STATUS.md",
+        "docs/agents/README.md",
+        "docs/agents/evidence.md",
+        "docs/agents/operations.md",
+        "docs/agents/validation.md"
+      ],
+      "after_readings": [
+        {
+          "path": "AGENTS.md",
+          "start": 1,
+          "end": 118,
+          "bytes": 5826,
+          "sha256": "62c000f52cbe3c68feec8874d60c32d63830aa66a0beab25b9d2612c3fb4a6cf",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/operations.md",
+          "start": 9,
+          "end": 30,
+          "bytes": 1451,
+          "sha256": "b2b6a4c0a2f70d0096b23833a2497f79bf0fc4f483b0f742fa7eb54ee78904d9",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/operations.md",
+          "start": 31,
+          "end": 60,
+          "bytes": 2139,
+          "sha256": "eac4e7f5f9d8419c145339694dac3e63059805c821c3ec8f06c6bd683ba9fab0",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/operations.md",
+          "start": 115,
+          "end": 125,
+          "bytes": 715,
+          "sha256": "88a9f6042b6f75932aa11e9764936a732e029aecfa36c8ec733f94198a2483d6",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/validation.md",
+          "start": 1,
+          "end": 95,
+          "bytes": 5337,
+          "sha256": "146d60ee59779ea79dca896b135ccb0bc1cdd60f090c77e55e7d4d26ca961797",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/evidence.md",
+          "start": 1,
+          "end": 126,
+          "bytes": 7246,
+          "sha256": "c979f44c85ce99fb1887e0313dc034a674462773cf684fb4b9d2a3247d81518b",
+          "rule_ids": [
+            "constraint-21",
+            "constraint-22",
+            "constraint-23",
+            "constraint-24",
+            "constraint-25",
+            "constraint-28"
+          ],
+          "reasons": [
+            "docs: docs/README.md",
+            "docs: explicit task topic",
+            "every change"
+          ]
+        }
+      ],
+      "before_unique_bytes": 59463,
+      "after_unique_bytes": 23404,
+      "before_single_pass_retrieval_bytes": 59463,
+      "after_single_pass_retrieval_bytes": 23404,
+      "reduction_percent": 60.64
+    },
+    {
+      "task": "provider_contract",
+      "paths": [
+        "providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore"
+      ],
+      "topics": [
+        "contracts",
+        "providers"
+      ],
+      "before_paths": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "docs/STATUS.md",
+        "docs/agents/README.md",
+        "docs/agents/diagnostics.md",
+        "docs/agents/evidence.md",
+        "docs/agents/gateway.md",
+        "docs/agents/operations.md",
+        "docs/agents/providers.md",
+        "docs/agents/source-identity.md",
+        "docs/agents/validation.md"
+      ],
+      "after_readings": [
+        {
+          "path": "AGENTS.md",
+          "start": 1,
+          "end": 118,
+          "bytes": 5826,
+          "sha256": "62c000f52cbe3c68feec8874d60c32d63830aa66a0beab25b9d2612c3fb4a6cf",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/operations.md",
+          "start": 9,
+          "end": 30,
+          "bytes": 1451,
+          "sha256": "b2b6a4c0a2f70d0096b23833a2497f79bf0fc4f483b0f742fa7eb54ee78904d9",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/operations.md",
+          "start": 31,
+          "end": 60,
+          "bytes": 2139,
+          "sha256": "eac4e7f5f9d8419c145339694dac3e63059805c821c3ec8f06c6bd683ba9fab0",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/operations.md",
+          "start": 115,
+          "end": 125,
+          "bytes": 715,
+          "sha256": "88a9f6042b6f75932aa11e9764936a732e029aecfa36c8ec733f94198a2483d6",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/validation.md",
+          "start": 1,
+          "end": 95,
+          "bytes": 5337,
+          "sha256": "146d60ee59779ea79dca896b135ccb0bc1cdd60f090c77e55e7d4d26ca961797",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/evidence.md",
+          "start": 1,
+          "end": 126,
+          "bytes": 7246,
+          "sha256": "c979f44c85ce99fb1887e0313dc034a674462773cf684fb4b9d2a3247d81518b",
+          "rule_ids": [
+            "constraint-21",
+            "constraint-22",
+            "constraint-23",
+            "constraint-24",
+            "constraint-25",
+            "constraint-28"
+          ],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/gateway.md",
+          "start": 1,
+          "end": 542,
+          "bytes": 36571,
+          "sha256": "c6d4b2ebae0cd6aae41fb369f51b843b2e38298b8376a9fa6648f25c337734e1",
+          "rule_ids": [
+            "constraint-4",
+            "constraint-5",
+            "constraint-5a",
+            "constraint-5b",
+            "constraint-5c",
+            "constraint-5d",
+            "constraint-5e",
+            "constraint-5f",
+            "constraint-5g",
+            "constraint-6",
+            "constraint-7",
+            "constraint-8",
+            "constraint-9",
+            "constraint-10",
+            "constraint-10a",
+            "constraint-10b"
+          ],
+          "reasons": [
+            "contracts: explicit task topic",
+            "contracts: providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore"
+          ]
+        },
+        {
+          "path": "docs/agents/source-identity.md",
+          "start": 1,
+          "end": 98,
+          "bytes": 5943,
+          "sha256": "186119a20d25499703b536998d72920921c8a551618c2d2ed3c2d096ef65283b",
+          "rule_ids": [
+            "constraint-11",
+            "constraint-12",
+            "constraint-12a"
+          ],
+          "reasons": [
+            "contracts: explicit task topic",
+            "contracts: providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore",
+            "providers: explicit task topic",
+            "providers: providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore"
+          ]
+        },
+        {
+          "path": "docs/agents/diagnostics.md",
+          "start": 1,
+          "end": 212,
+          "bytes": 32931,
+          "sha256": "faa13ad474c1b361acbd10395c76e120d49e6f922544216e10684e300c37915a",
+          "rule_ids": [
+            "constraint-1",
+            "constraint-2",
+            "constraint-3"
+          ],
+          "reasons": [
+            "contracts: explicit task topic",
+            "contracts: providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore"
+          ]
+        },
+        {
+          "path": "docs/agents/providers.md",
+          "start": 1,
+          "end": 160,
+          "bytes": 9810,
+          "sha256": "4f2edfbadc19c9a458447b1f036878336c1da581ed8b63a034844dfffb907d65",
+          "rule_ids": [
+            "constraint-16",
+            "constraint-17",
+            "constraint-18",
+            "constraint-19",
+            "constraint-20",
+            "constraint-26"
+          ],
+          "reasons": [
+            "providers: explicit task topic",
+            "providers: providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore"
+          ]
+        }
+      ],
+      "before_unique_bytes": 144718,
+      "after_unique_bytes": 108659,
+      "before_single_pass_retrieval_bytes": 144718,
+      "after_single_pass_retrieval_bytes": 108659,
+      "reduction_percent": 24.92
+    },
+    {
+      "task": "gateway",
+      "paths": [
+        "crates/qcore-c-gateway/src/typed_source.rs"
+      ],
+      "topics": [
+        "gateway"
+      ],
+      "before_paths": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "docs/STATUS.md",
+        "docs/agents/README.md",
+        "docs/agents/diagnostics.md",
+        "docs/agents/evidence.md",
+        "docs/agents/gateway.md",
+        "docs/agents/operations.md",
+        "docs/agents/source-identity.md",
+        "docs/agents/validation.md"
+      ],
+      "after_readings": [
+        {
+          "path": "AGENTS.md",
+          "start": 1,
+          "end": 118,
+          "bytes": 5826,
+          "sha256": "62c000f52cbe3c68feec8874d60c32d63830aa66a0beab25b9d2612c3fb4a6cf",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/operations.md",
+          "start": 9,
+          "end": 30,
+          "bytes": 1451,
+          "sha256": "b2b6a4c0a2f70d0096b23833a2497f79bf0fc4f483b0f742fa7eb54ee78904d9",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/operations.md",
+          "start": 31,
+          "end": 60,
+          "bytes": 2139,
+          "sha256": "eac4e7f5f9d8419c145339694dac3e63059805c821c3ec8f06c6bd683ba9fab0",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/operations.md",
+          "start": 115,
+          "end": 125,
+          "bytes": 715,
+          "sha256": "88a9f6042b6f75932aa11e9764936a732e029aecfa36c8ec733f94198a2483d6",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/validation.md",
+          "start": 1,
+          "end": 95,
+          "bytes": 5337,
+          "sha256": "146d60ee59779ea79dca896b135ccb0bc1cdd60f090c77e55e7d4d26ca961797",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/evidence.md",
+          "start": 1,
+          "end": 126,
+          "bytes": 7246,
+          "sha256": "c979f44c85ce99fb1887e0313dc034a674462773cf684fb4b9d2a3247d81518b",
+          "rule_ids": [
+            "constraint-21",
+            "constraint-22",
+            "constraint-23",
+            "constraint-24",
+            "constraint-25",
+            "constraint-28"
+          ],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/gateway.md",
+          "start": 1,
+          "end": 542,
+          "bytes": 36571,
+          "sha256": "c6d4b2ebae0cd6aae41fb369f51b843b2e38298b8376a9fa6648f25c337734e1",
+          "rule_ids": [
+            "constraint-4",
+            "constraint-5",
+            "constraint-5a",
+            "constraint-5b",
+            "constraint-5c",
+            "constraint-5d",
+            "constraint-5e",
+            "constraint-5f",
+            "constraint-5g",
+            "constraint-6",
+            "constraint-7",
+            "constraint-8",
+            "constraint-9",
+            "constraint-10",
+            "constraint-10a",
+            "constraint-10b"
+          ],
+          "reasons": [
+            "gateway: crates/qcore-c-gateway/src/typed_source.rs",
+            "gateway: explicit task topic"
+          ]
+        },
+        {
+          "path": "docs/agents/source-identity.md",
+          "start": 1,
+          "end": 98,
+          "bytes": 5943,
+          "sha256": "186119a20d25499703b536998d72920921c8a551618c2d2ed3c2d096ef65283b",
+          "rule_ids": [
+            "constraint-11",
+            "constraint-12",
+            "constraint-12a"
+          ],
+          "reasons": [
+            "gateway: crates/qcore-c-gateway/src/typed_source.rs",
+            "gateway: explicit task topic"
+          ]
+        },
+        {
+          "path": "docs/agents/diagnostics.md",
+          "start": 1,
+          "end": 212,
+          "bytes": 32931,
+          "sha256": "faa13ad474c1b361acbd10395c76e120d49e6f922544216e10684e300c37915a",
+          "rule_ids": [
+            "constraint-1",
+            "constraint-2",
+            "constraint-3"
+          ],
+          "reasons": [
+            "gateway: crates/qcore-c-gateway/src/typed_source.rs",
+            "gateway: explicit task topic"
+          ]
+        }
+      ],
+      "before_unique_bytes": 134908,
+      "after_unique_bytes": 98849,
+      "before_single_pass_retrieval_bytes": 134908,
+      "after_single_pass_retrieval_bytes": 98849,
+      "reduction_percent": 26.73
+    },
+    {
+      "task": "cross_component",
+      "paths": [
+        "crates/qcore-c-gateway/src/typed_source.rs",
+        "crates/qcore-verifier-host/src/lib.rs"
+      ],
+      "topics": [
+        "gateway",
+        "providers",
+        "concurrency"
+      ],
+      "before_paths": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "docs/STATUS.md",
+        "docs/agents/README.md",
+        "docs/agents/buffers-records.md",
+        "docs/agents/concurrency.md",
+        "docs/agents/diagnostics.md",
+        "docs/agents/evidence.md",
+        "docs/agents/gateway.md",
+        "docs/agents/operations.md",
+        "docs/agents/providers.md",
+        "docs/agents/source-identity.md",
+        "docs/agents/source-routes.md",
+        "docs/agents/validation.md"
+      ],
+      "after_readings": [
+        {
+          "path": "AGENTS.md",
+          "start": 1,
+          "end": 118,
+          "bytes": 5826,
+          "sha256": "62c000f52cbe3c68feec8874d60c32d63830aa66a0beab25b9d2612c3fb4a6cf",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/operations.md",
+          "start": 9,
+          "end": 30,
+          "bytes": 1451,
+          "sha256": "b2b6a4c0a2f70d0096b23833a2497f79bf0fc4f483b0f742fa7eb54ee78904d9",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/operations.md",
+          "start": 31,
+          "end": 60,
+          "bytes": 2139,
+          "sha256": "eac4e7f5f9d8419c145339694dac3e63059805c821c3ec8f06c6bd683ba9fab0",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/operations.md",
+          "start": 115,
+          "end": 125,
+          "bytes": 715,
+          "sha256": "88a9f6042b6f75932aa11e9764936a732e029aecfa36c8ec733f94198a2483d6",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/validation.md",
+          "start": 1,
+          "end": 95,
+          "bytes": 5337,
+          "sha256": "146d60ee59779ea79dca896b135ccb0bc1cdd60f090c77e55e7d4d26ca961797",
+          "rule_ids": [],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/evidence.md",
+          "start": 1,
+          "end": 126,
+          "bytes": 7246,
+          "sha256": "c979f44c85ce99fb1887e0313dc034a674462773cf684fb4b9d2a3247d81518b",
+          "rule_ids": [
+            "constraint-21",
+            "constraint-22",
+            "constraint-23",
+            "constraint-24",
+            "constraint-25",
+            "constraint-28"
+          ],
+          "reasons": [
+            "every change"
+          ]
+        },
+        {
+          "path": "docs/agents/gateway.md",
+          "start": 1,
+          "end": 542,
+          "bytes": 36571,
+          "sha256": "c6d4b2ebae0cd6aae41fb369f51b843b2e38298b8376a9fa6648f25c337734e1",
+          "rule_ids": [
+            "constraint-4",
+            "constraint-5",
+            "constraint-5a",
+            "constraint-5b",
+            "constraint-5c",
+            "constraint-5d",
+            "constraint-5e",
+            "constraint-5f",
+            "constraint-5g",
+            "constraint-6",
+            "constraint-7",
+            "constraint-8",
+            "constraint-9",
+            "constraint-10",
+            "constraint-10a",
+            "constraint-10b"
+          ],
+          "reasons": [
+            "gateway: crates/qcore-c-gateway/src/typed_source.rs",
+            "gateway: explicit task topic"
+          ]
+        },
+        {
+          "path": "docs/agents/source-identity.md",
+          "start": 1,
+          "end": 98,
+          "bytes": 5943,
+          "sha256": "186119a20d25499703b536998d72920921c8a551618c2d2ed3c2d096ef65283b",
+          "rule_ids": [
+            "constraint-11",
+            "constraint-12",
+            "constraint-12a"
+          ],
+          "reasons": [
+            "gateway: crates/qcore-c-gateway/src/typed_source.rs",
+            "gateway: explicit task topic",
+            "providers: crates/qcore-verifier-host/src/lib.rs",
+            "providers: explicit task topic"
+          ]
+        },
+        {
+          "path": "docs/agents/diagnostics.md",
+          "start": 1,
+          "end": 212,
+          "bytes": 32931,
+          "sha256": "faa13ad474c1b361acbd10395c76e120d49e6f922544216e10684e300c37915a",
+          "rule_ids": [
+            "constraint-1",
+            "constraint-2",
+            "constraint-3"
+          ],
+          "reasons": [
+            "gateway: crates/qcore-c-gateway/src/typed_source.rs",
+            "gateway: explicit task topic"
+          ]
+        },
+        {
+          "path": "docs/agents/providers.md",
+          "start": 1,
+          "end": 160,
+          "bytes": 9810,
+          "sha256": "4f2edfbadc19c9a458447b1f036878336c1da581ed8b63a034844dfffb907d65",
+          "rule_ids": [
+            "constraint-16",
+            "constraint-17",
+            "constraint-18",
+            "constraint-19",
+            "constraint-20",
+            "constraint-26"
+          ],
+          "reasons": [
+            "providers: crates/qcore-verifier-host/src/lib.rs",
+            "providers: explicit task topic"
+          ]
+        },
+        {
+          "path": "docs/agents/concurrency.md",
+          "start": 1,
+          "end": 192,
+          "bytes": 13108,
+          "sha256": "06649a6565afc9a98cffd42dc0a5f1d65add64a8142c6a170e21523e34ceaa00",
+          "rule_ids": [
+            "constraint-15n",
+            "constraint-15o",
+            "constraint-27"
+          ],
+          "reasons": [
+            "concurrency: explicit task topic"
+          ]
+        },
+        {
+          "path": "docs/agents/buffers-records.md",
+          "start": 1,
+          "end": 468,
+          "bytes": 32201,
+          "sha256": "bdeabdbcaad3eda69d4ed7d35270047574fec5c6cd7bf15f1e7377f55708f696",
+          "rule_ids": [
+            "constraint-15h",
+            "constraint-15k",
+            "constraint-15k-amendments"
+          ],
+          "reasons": [
+            "concurrency: explicit task topic"
+          ]
+        },
+        {
+          "path": "docs/agents/source-routes.md",
+          "start": 1,
+          "end": 231,
+          "bytes": 14007,
+          "sha256": "8a7475604ffc8265e81504f3f4b059a223c4de07b9978a648974d62af538031d",
+          "rule_ids": [
+            "constraint-13",
+            "constraint-14",
+            "constraint-15",
+            "constraint-15a",
+            "constraint-15b",
+            "constraint-14-amendments"
+          ],
+          "reasons": [
+            "concurrency: explicit task topic"
+          ]
+        }
+      ],
+      "before_unique_bytes": 204034,
+      "after_unique_bytes": 167975,
+      "before_single_pass_retrieval_bytes": 204034,
+      "after_single_pass_retrieval_bytes": 167975,
+      "reduction_percent": 17.67
+    }
+  ],
+  "contract_byte_parity": [
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qcore",
+      "sha256": "3e621aa75b7088b834dfcae5881ffa186cc1a105c7437674d2a0784274aa00b9"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qcore",
+      "sha256": "901dee8413de0b35f29be6dd1ed82a9764a0995f565836d273d8e013eba1efd8"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qcore",
+      "sha256": "8c348e549de7e80d7aac28a7ba57beddd1a68d8d0f0975b517c2bfb01088dd24"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/constructor_failure_observation.qcore",
+      "sha256": "95e9a31aff7f665a3b8c290e34e7be16c426c2b3b845b2dbf3d7d521dd802b3e"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/context_destructor.qcore",
+      "sha256": "fcd5d00e8f453a26515621b5d4e1ec68f5f9f7c5ad7031701cf4d166848d5f39"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore",
+      "sha256": "5448288522151eab448a6ba011f47f9626f1974a69e70e53c74fd0c852ee89f0"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qcore",
+      "sha256": "546c0b886b3e835045388266043202c6cbbeff7a5daa043feea91c47cd16a7ce"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/error_state.qcore",
+      "sha256": "4adda5278d32eb6885240e70b47ee5ad4c00526daba43ca84a6b6b8b58f3fff0"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/file_close.qcore",
+      "sha256": "0c130cdba00a7209fda9961b1510f08661881f9f3dc9d1b625ae9d6cac7c6bd1"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qcore",
+      "sha256": "fc4b113c4744fbb52544da194b71fc6ecce24841f01da1216a37e5217d11f070"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qcore",
+      "sha256": "f030ac455ffaadc3ad838e1339fe5bb0039875a40f04afe99cf0b4cae0c6ace0"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_chunk_close.qcore",
+      "sha256": "d5be2c58974b6a415d317bd7f4eba318a9c26f1d42621f4856eba1fc2279ddc1"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_constructor_failure_observation.qcore",
+      "sha256": "72c8f0863f7189a2da46227d6629f8a9a65eb45d37306e9c0f98ff53c3130bbf"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qcore",
+      "sha256": "82efee60babbdf33aff94167672f6a8ace87f5dd8651e4c06a3a3f308e980525"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qcore",
+      "sha256": "ba766fb0022fcdc93e29cb88100298990f77ac6ee4c91894afd8d7f49823804f"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_observation.qcore",
+      "sha256": "5ef365fcdfbb49aae30249afc4a462d801cba06d7abeafed3fcad5491d5358f9"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_descriptor_failure_observation.qcore",
+      "sha256": "61708a65b4f8e4f3315b78dc308d7bfccf0fca53bdee908ccc8865cb28be64df"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_existing_observation.qcore",
+      "sha256": "7a542d6fa66a0f799e11fd2743d9ac1fa8754a3f386e6abef63358cb9a296487"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_integrity_observation.qcore",
+      "sha256": "f36c6e7d0f085f1d82a33d5aa2244b060e9053ab3e3a5dd5e50b4493ecdb3256"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_observation.qcore",
+      "sha256": "c609179c0670c424711d2648289cc385c492e65e03366bb9ec6236c5420d8361"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_constructor_observation.qcore",
+      "sha256": "00a249eeb643b4427953e57938689407dd2ac094c7fa2cb3a0d8cbedddd6d3dd"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_observation.qcore",
+      "sha256": "cdea8a50701e32e79bfca4b2239098ce0dac54c714ddbe82d30ff404a8210c81"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qcore",
+      "sha256": "96bef0b2552a34c9e3758b2e70823e4b8386b24e3f0823dd6b0d4f7dcc7011db"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_reopen_failure_observation.qcore",
+      "sha256": "054c22b2b3f2739615a4ff9764647194d164072c5d7867a79a6b7cefd77cd5fd"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_sync_failure_observation.qcore",
+      "sha256": "914c01c412ea111917e8967959e1a6bbe58206d2c9e315a2dcd92a8c5657f1a5"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_teardown_observation.qcore",
+      "sha256": "d9e957b0fe8965b44d56f3546dc9d3d1b4aaf35b51ce11b045a0f9b33f014b88"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_transition_observation.qcore",
+      "sha256": "e67d3bd5940454c4a9d4615990cc86349193fe7d3457331eada184f166b66b94"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_unmap_failure_observation.qcore",
+      "sha256": "c71a7b3b75ea7ad1761cb0b6137aa26a1f959c411ef816c813a6a4337eacc348"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qcore",
+      "sha256": "c344b8cf5d2d76dcaf6211948ca1570191d2a152c2ddc6d6581927eb698c56ec"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qcore",
+      "sha256": "363f03b566ba8ec92a4f2ce33c6c1812ae2c6b6c74181152b4bde6749c7d3da2"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qcore",
+      "sha256": "f0ea9b0797b0c490a7a1321111b2c94f2822b78b2afadcc14619d7f6f3ba557d"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qcore",
+      "sha256": "e74af40022bc05152618d435798265cd846158ba77c522414fd012426dd5c233"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qcore",
+      "sha256": "61db735502775fae6cfd875f3bd6c4d3c137c16b3cf34114eaef246ecca348fc"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/nested_cleanup.qcore",
+      "sha256": "88f4f54f56b89a830f7b1b93bbf586ec8f012fa6588f8fc4e8f4a40c3ebbc7c7"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/nested_memory_teardown.qcore",
+      "sha256": "810a0d07e4e4135c7ac0fe0a803abcf3c12e61194b7a010adad974f646bcfc6e"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/parent_teardown.qcore",
+      "sha256": "75782fc62cfdb795f52706492e6bddbb5626a6493fafc5ee4761c46742bc4068"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qcore",
+      "sha256": "e3e9b6ba36bdc9ad3cf193364f399902bf1a23fd80198c50c13f101e69480a8c"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/stream_destructor.qcore",
+      "sha256": "45436ac264a57862e2e7ac62f7f6c6094eb65185f5b90e32c6de6e9081444c9b"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/teardown_observation.qcore",
+      "sha256": "2a460060af078cf724545622993de05833c3bb548975cb34980d12fcf65872db"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/teardown_traversal.qcore",
+      "sha256": "92547aef7c2e3230b4910d1597abac328c2c1d8eb4fffe5835af502b1951b957"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qcore",
+      "sha256": "9a20757b6f8c01f9bdf3ad022726b27e5d73871c1b84ba5a60c8bc0632502c07"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qcore",
+      "sha256": "21633457d006a4da26c89efc045de6c6f22dadce157bf87d3ed67492041c3c57"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_constructor_observation.qcore",
+      "sha256": "8bf5aaf654db795fcdc7ecfb05b18a8df409f3d191868b9e0c598f6973059f63"
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qcore",
+      "sha256": "82b04f12624023cb4fdae7e5827a725fca8fbc12c76889ef187880c383d0ac57"
+    },
+    {
+      "path": "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qcore",
+      "sha256": "8e500bed10c8fb9ca4be6345f07ed2f0ffd058c1c213890e4138be4ef0f999db"
+    },
+    {
+      "path": "providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore",
+      "sha256": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c"
+    },
+    {
+      "path": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qcore",
+      "sha256": "58bfabccfa419b14895562365c9b98444b309cccc1affcb610d2e7c093242317"
+    },
+    {
+      "path": "providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qcore",
+      "sha256": "9d06739a154e927adf7b9b80e31ceb376b49071100a280b55de4897244dd39dc"
+    },
+    {
+      "path": "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qcore",
+      "sha256": "8d7616c559595cc3e587f8a46321e43ccf8cc10ee0e4c89ed264da6719584a08"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/callback_binding.qcore",
+      "sha256": "9c2dd85ccf4a993506fee37d4cab717788d9b06fb9ea9d6735e74159bf6d13d6"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qcore",
+      "sha256": "be5964f3d8f390516bd53209ec3132503a65d3bf7833d5183f0e5eb13c2d663e"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/composition.qcore",
+      "sha256": "ee16fa5d7b8bd36f355397045a7c12545db28392eaad113b454f862096215e73"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/cycle18_composition.qcore",
+      "sha256": "76a4fc17604702c7b3fc012d75011f0d2e4abefb57f1a77406843b0c6f13e97b"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/descriptor_observation.qcore",
+      "sha256": "89ffc2dfaae320c37341f4f6465b8b32c66a85134fff795bcd43364aec13c091"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/event_payload.qcore",
+      "sha256": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore",
+      "sha256": "b887797ad818ac1aca840d09a27ec905fd22b5985365fb65b6ed4bab76c3236e"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/logging.qcore",
+      "sha256": "82e2d05d6cc85a1980fff21df55dd8c3b10849936780c9fa1d4ddba5d048dade"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/memory.qcore",
+      "sha256": "9ae4da4aad598b9c9f20d793a1dd53fd23806d9446575a082c3b6b7f061fc7c1"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qcore",
+      "sha256": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/timeout_teardown.qcore",
+      "sha256": "516fa1fee1732f3523a373f625333f87df7ca89239569ccbbf4ece7d37800e27"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/wait_failure_policy.qcore",
+      "sha256": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/wait_identity_policy.qcore",
+      "sha256": "131694dd932954d26cb085224bd6d25edfc02867e88863ca46de6f6c7572c1c3"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qcore",
+      "sha256": "b78d56857a059c96d0d748e8dd6a4c3ee9bbf527c21e17f3ce9ebcad4fe0c393"
+    },
+    {
+      "path": "providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore",
+      "sha256": "c5c51240aafc42b293f715113c76706e656ac51548b1be065536c83f6167bdb0"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qcore",
+      "sha256": "a1bb9f911acd361afe55144cce2703a9f3d480601fcaf83ad62995c9b4d69f63"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qcore",
+      "sha256": "5e5915e3557c5f31039e28070ac2ce96b335ac30968c93d754174fba6c091f66"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qcore",
+      "sha256": "6eb30b3db17f6cdbd37949122fa12fd0099ede2b098e2a02159083625a0047dc"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore",
+      "sha256": "c67d3b827a1e1636083ef5a063d69fe5eb53e8fbf6e2f08cd31054ddcb61baf4"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qcore",
+      "sha256": "a386d1e9b1ef68bc22d6ad5cd84fd4255e4bcf1665c6c4ef98e8efb4e893a005"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/refcount.qcore",
+      "sha256": "725fcf995116042cde3a92a547f2e889d1a5503aa2ef230f2c5e6576034fc0bb"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qcore",
+      "sha256": "b9fdbfe9e5d34b5a196e125a61f3b4f9e1baeb1702323eed9e2fd4cfebebd43d"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/typed_queue.qcore",
+      "sha256": "cf9ff32d3b65d8ef38c6d7c95a91396899a99f89ca5ebd2a5cb89022c0af63b5"
+    },
+    {
+      "path": "providers/shared/contracts/cfl/arena_lifetime.qcore",
+      "sha256": "17e5f22bb2b2ed10d1ed3f2baed212054cc13ebdb9551f8db7ac15ceb2f4d6f7"
+    },
+    {
+      "path": "providers/shared/contracts/cfl/intrusive_list.qcore",
+      "sha256": "0e88afdb9a476a3da576bfed0dd0bb5de61bb59eb5eef1738d0bf65e5512cdec"
+    },
+    {
+      "path": "providers/shared/contracts/cfl/sds_lifetime.qcore",
+      "sha256": "1d11412507e94b29a3a5fb352faecc2bc2f9c780d651ef0b691da48d70c6b452"
+    },
+    {
+      "path": "providers/shared/contracts/cfl/time.qcore",
+      "sha256": "1696e45592e854e29d6e0117ab9c037f46158c33c4a340027739558e9b137bb6"
+    },
+    {
+      "path": "providers/shared/contracts/fluent_bit/hash_table_publication.qcore",
+      "sha256": "3784598c0245ba67790329a70b9c5e4064081eb71d827317151f7e52138576af"
+    },
+    {
+      "path": "providers/shared/contracts/fluent_bit/input_chunk_destroy.qcore",
+      "sha256": "073c9206df21e37d18775bcd50bd0c57b0d8c70f2f0ee5ec50a5579f5eaff897"
+    },
+    {
+      "path": "providers/shared/contracts/fluent_bit/input_chunk_destroy_direct_routes.qcore",
+      "sha256": "2ce152d343357466fe9ec5979362be28145f8fa707c20746ae49bc0599703974"
+    },
+    {
+      "path": "providers/shared/contracts/fluent_bit/input_chunk_helpers.qcore",
+      "sha256": "265315ca27a8cd15993ee4f269ce60b33376dcb7edbdaa685a3655f8d0731dc4"
+    },
+    {
+      "path": "providers/shared/contracts/fluent_bit/input_chunk_name.qcore",
+      "sha256": "b2204d2d77d1d44b5e77e3b80da0cfcaf559393e2e979271156de8ae5e84bda4"
+    },
+    {
+      "path": "providers/shared/contracts/fluent_bit/input_chunk_sizes.qcore",
+      "sha256": "ba8db67de28e9ee480165c21ca2c03f398433699d5af0dd57f4c225d0d74d0f8"
+    },
+    {
+      "path": "providers/shared/contracts/fluent_bit/input_chunk_total_size.qcore",
+      "sha256": "f8a1ab9dcf7637174ae83849b2ebf3c2d11374842c5ef5e517280b22691392d8"
+    },
+    {
+      "path": "providers/shared/contracts/fluent_bit/logging.qcore",
+      "sha256": "ca8d1746ebb634a0cb03c0365d29a8da9af552f0e4a710026e3a6236848a0f20"
+    },
+    {
+      "path": "providers/shared/contracts/fluent_bit/memory.qcore",
+      "sha256": "b1c44c632efe193f75737be13058b30498bd471dd47c65dc5e431fcb02645aad"
+    },
+    {
+      "path": "providers/shared/contracts/fluent_bit/resource_memory.qcore",
+      "sha256": "0590ec1151f77ee50dbd7cb42a2864b02fbb29777fd57e7091af545aee5455b2"
+    },
+    {
+      "path": "providers/shared/contracts/fluent_bit/routes_mask.qcore",
+      "sha256": "e98fb34a27238f977ee660708e03f95c123413964d93dd42a032f8aee5f3d99a"
+    },
+    {
+      "path": "providers/shared/contracts/fluent_bit/time.qcore",
+      "sha256": "e81170f7f36f50f1c93ed0d2a69b2a7f3e3e26714f6627ca3e9326fb87c10784"
+    },
+    {
+      "path": "providers/shared/contracts/language/quantified_indices.qcore",
+      "sha256": "f1a4a6d8a4113bfa94700f9aab35b6326394bca3f7bc40bdd1dcd13e224da8be"
+    },
+    {
+      "path": "providers/shared/contracts/libc/errno.qcore",
+      "sha256": "a62bdc4cfbfa84d76580ec0f95776aa677a702bef91f4d9002454571e2abe233"
+    },
+    {
+      "path": "providers/shared/contracts/libc/memory.qcore",
+      "sha256": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
+    },
+    {
+      "path": "providers/shared/contracts/libc/pthread_mutex.qcore",
+      "sha256": "1069c9b40f812230ce07fd4188f179b56cf4eef9a221dffde763d9e5f0da48f5"
+    },
+    {
+      "path": "providers/shared/contracts/library/custody_evidence.qcore",
+      "sha256": "630e28d65a6c11d3e7a32aeaa2d3ba6657fd0476fe6f8d86b120915bbc656b4f"
+    },
+    {
+      "path": "providers/shared/contracts/library/source_projection.qcore",
+      "sha256": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23"
+    },
+    {
+      "path": "providers/shared/contracts/mpack/writer.qcore",
+      "sha256": "242ad6fdb90e1210d3a7f2002ef97f322e213a39b7895d4607746b8757fea944"
+    },
+    {
+      "path": "providers/shared/contracts/msgpack/packer.qcore",
+      "sha256": "13eb452614f1f37c4cd9caf2519a57017c7475ab1cae13cc0cf0351418d36fc4"
+    }
+  ],
+  "boundary": "Synthetic once-per-section packets, not actual session retrieval, billed tokens, runtime latency, or safety coverage. Broad/unknown scope can select all topics. No 185-unit replay is claimed by this measurement."
+}

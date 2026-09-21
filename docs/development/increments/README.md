@@ -98,3 +98,5 @@ with relative links rebased where necessary. They are not current rules.
 - [mutex invariants and scalar fields](legacy/mutex-and-scalars.md)
 - [remaining work and delegated increments](legacy/remaining-work.md)
 - [pointers and operational notes](legacy/operational-notes.md)
+
+- [Task-context operations checkpoint](../../reports/task-context-contract-bundle/operations-before.txt): byte-preserved operations rationale before the task-reading pilot; current requirements remain in `docs/agents/operations.md`.
