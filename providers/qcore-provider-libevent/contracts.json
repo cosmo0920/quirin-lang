@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "plugin_id": "qcore.libevent",
+  "contracts": {
+    "contracts/monkey/callback_binding.qcore": "9c2dd85ccf4a993506fee37d4cab717788d9b06fb9ea9d6735e74159bf6d13d6",
+    "contracts/monkey/callback_task_handoff.qcore": "be5964f3d8f390516bd53209ec3132503a65d3bf7833d5183f0e5eb13c2d663e",
+    "contracts/monkey/composition.qcore": "ee16fa5d7b8bd36f355397045a7c12545db28392eaad113b454f862096215e73",
+    "contracts/monkey/cycle18_composition.qcore": "76a4fc17604702c7b3fc012d75011f0d2e4abefb57f1a77406843b0c6f13e97b",
+    "contracts/monkey/descriptor_observation.qcore": "89ffc2dfaae320c37341f4f6465b8b32c66a85134fff795bcd43364aec13c091",
+    "contracts/monkey/event_payload.qcore": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a",
+    "contracts/monkey/intrusive_list.qcore": "b887797ad818ac1aca840d09a27ec905fd22b5985365fb65b6ed4bab76c3236e",
+    "contracts/monkey/logging.qcore": "82e2d05d6cc85a1980fff21df55dd8c3b10849936780c9fa1d4ddba5d048dade",
+    "contracts/monkey/memory.qcore": "9ae4da4aad598b9c9f20d793a1dd53fd23806d9446575a082c3b6b7f061fc7c1",
+    "contracts/monkey/native_platform_matrix.qcore": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2",
+    "contracts/monkey/timeout_teardown.qcore": "516fa1fee1732f3523a373f625333f87df7ca89239569ccbbf4ece7d37800e27",
+    "contracts/monkey/wait_failure_policy.qcore": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
+    "contracts/monkey/wait_identity_policy.qcore": "131694dd932954d26cb085224bd6d25edfc02867e88863ca46de6f6c7572c1c3",
+    "contracts/monkey/wait_source_policy.qcore": "b78d56857a059c96d0d748e8dd6a4c3ee9bbf527c21e17f3ce9ebcad4fe0c393",
+    "contracts/monkey/wrapper_paths.qcore": "c5c51240aafc42b293f715113c76706e656ac51548b1be065536c83f6167bdb0"
+  }
+}

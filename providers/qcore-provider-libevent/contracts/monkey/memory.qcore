@@ -1,0 +1,27 @@
+module contract;
+
+// Trusted resource-projection assumptions, vocabulary version 1.
+// These preserve the Cycle 19 audit table; they do not verify the C bodies.
+// Borrowed scalar/opaque arguments carry no resource custody requirement.
+// Detailed observation/lifecycle contracts remain separate semantic profiles.
+
+extern fn mk_mem_alloc(size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn mk_mem_alloc_z(size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn mk_mem_free(ptr: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(ptr, nullable);
+    ensures normal resource_return_none();
+};

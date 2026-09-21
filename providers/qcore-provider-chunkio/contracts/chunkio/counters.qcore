@@ -1,0 +1,63 @@
+module contract;
+
+// Bounded unit updates from the selected unsigned C counter helpers.
+// Storage/provenance and C unsigned type = usize are caller/build premises.
+// The entry bounds rule out C's wrapping cases; the C functions themselves do
+// not check these preconditions. `delta` is source-derived and the ordinary
+// return equals the updated counter. This does not discharge a whole context.
+
+extern fn cio_chunk_counter_total_add(ctx: borrow<'call, mut, ChunkContext> use one) -> usize
+contract {
+    requires counter_is_live;
+    requires exclusive_counter_access;
+    requires c_unsigned_matches_usize;
+    requires counter_in_range;
+    requires counter_field__total_chunks;
+    requires counter_below_maximum;
+    ensures normal delta == 1;
+    ensures normal result_is_updated_counter;
+    ensures normal only_selected_field_written;
+    ensures normal no_unsigned_wrap;
+};
+
+extern fn cio_chunk_counter_total_sub(ctx: borrow<'call, mut, ChunkContext> use one) -> usize
+contract {
+    requires counter_is_live;
+    requires exclusive_counter_access;
+    requires c_unsigned_matches_usize;
+    requires counter_in_range;
+    requires counter_field__total_chunks;
+    requires counter_positive;
+    ensures normal delta == -1;
+    ensures normal result_is_updated_counter;
+    ensures normal only_selected_field_written;
+    ensures normal no_unsigned_wrap;
+};
+
+extern fn cio_chunk_counter_total_up_add(ctx: borrow<'call, mut, ChunkContext> use one) -> usize
+contract {
+    requires counter_is_live;
+    requires exclusive_counter_access;
+    requires c_unsigned_matches_usize;
+    requires counter_in_range;
+    requires counter_field__total_chunks_up;
+    requires counter_below_maximum;
+    ensures normal delta == 1;
+    ensures normal result_is_updated_counter;
+    ensures normal only_selected_field_written;
+    ensures normal no_unsigned_wrap;
+};
+
+extern fn cio_chunk_counter_total_up_sub(ctx: borrow<'call, mut, ChunkContext> use one) -> usize
+contract {
+    requires counter_is_live;
+    requires exclusive_counter_access;
+    requires c_unsigned_matches_usize;
+    requires counter_in_range;
+    requires counter_field__total_chunks_up;
+    requires counter_positive;
+    ensures normal delta == -1;
+    ensures normal result_is_updated_counter;
+    ensures normal only_selected_field_written;
+    ensures normal no_unsigned_wrap;
+};

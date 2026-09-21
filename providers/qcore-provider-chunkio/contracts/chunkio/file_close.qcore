@@ -1,0 +1,25 @@
+module contract;
+
+// Non-deleting cio_file_close only (delete == 0). Backend allocation release
+// cannot erase unresolved OS obligations. Success-discharge and cross-call
+// frames are explicit premises; this is not an OS observation or Safe verdict.
+extern fn file_close_no_delete() -> unit
+contract {
+    requires live_exclusive_chunk_with_nullable_owned_file_backend;
+    requires backend_and_nullable_path_disjoint_owned_provenance;
+    requires backend_and_path_are_disjoint_from_chunk_root;
+    requires delete_argument_is_zero;
+    requires chunk_context_stream_and_names_outlive_calls;
+    requires unmap_dependency_premises_and_counter_bounds;
+    requires native_close_frames_mapping_and_record_lifetimes;
+    requires unmap_frames_descriptor_and_owned_path;
+    requires successful_syscalls_discharge_the_bound_os_resource;
+    requires cross_unit_source_abi_and_libc_free_bindings;
+    ensures normal backend_released == was_nonnull;
+    ensures normal path_released == path_was_live;
+    ensures normal cleanup_results_ignored;
+    ensures normal mapping_unresolved == mapping_failure;
+    ensures normal descriptor_unresolved == descriptor_failure;
+    ensures normal nested_discharge_permitted == (not mapping_unresolved and not descriptor_unresolved);
+    ensures normal chunk_root_preserved;
+};

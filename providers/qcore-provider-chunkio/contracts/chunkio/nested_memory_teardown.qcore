@@ -1,0 +1,16 @@
+module contract;
+
+// Conditional C-source/model binding for a complete memory-backed context.
+extern fn nested_memory_teardown() -> unit
+contract {
+    requires all_component_source_contract_premises;
+    requires caller_binds_native_allocations_and_ring_order_to_model_identities;
+    requires complete_distinct_live_memory_children_and_exact_context_counter;
+    requires parent_owned_fields_disjoint_from_all_child_and_unrelated_storage;
+    requires exclusive_access_and_exact_cross_unit_abi_call_bindings;
+    ensures normal complete_context_stream_chunk_backend_source_chain;
+    ensures normal each_selected_chunk_closed_once_before_its_stream;
+    ensures normal all_selected_streams_destroyed_before_context;
+    ensures normal not filesystem_cleanup_inferred_from_memory_chain;
+    ensures normal terminal_safety_requires_complete_program_check;
+};

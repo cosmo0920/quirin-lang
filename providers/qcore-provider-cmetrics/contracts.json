@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "plugin_id": "qcore.cmetrics",
+  "contracts": {
+    "contracts/cmetrics/context_lifetime.qcore": "8e500bed10c8fb9ca4be6345f07ed2f0ffd058c1c213890e4138be4ef0f999db",
+    "contracts/cmetrics/counter_reset.qcore": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c",
+    "contracts/cmetrics/metric_values.qcore": "58bfabccfa419b14895562365c9b98444b309cccc1affcb610d2e7c093242317",
+    "contracts/cmetrics/mpack_utils.qcore": "9d06739a154e927adf7b9b80e31ceb376b49071100a280b55de4897244dd39dc"
+  }
+}

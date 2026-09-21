@@ -1,0 +1,35 @@
+module contract;
+
+// Executable source def/use policies, not OS-effect or custody contracts.
+// Facts come from every complete flat typed source path. A guard's presence
+// does not establish its correctness or prove actual OS cleanup success.
+extern fn file_close_result_use() -> unit
+contract {
+    requires source_has_cleanup_attempts;
+    ensures normal cleanup_calls == close_calls;
+    ensures normal ignored_results == cleanup_calls;
+    ensures normal ignored_close_results == close_calls;
+    ensures normal free_calls == 2 * close_calls;
+    ensures normal cleanup_order_retained;
+};
+
+extern fn file_unmap_result_use() -> unit
+contract {
+    requires source_has_cleanup_attempts;
+    ensures normal guarded_results == cleanup_calls;
+    ensures normal ignored_results == 0;
+};
+
+extern fn native_close_result_use() -> unit
+contract {
+    requires source_has_cleanup_attempts;
+    ensures normal guarded_results == cleanup_calls;
+    ensures normal ignored_results == 0;
+};
+
+extern fn native_unmap_result_use() -> unit
+contract {
+    requires source_has_cleanup_attempts;
+    ensures normal guarded_results == cleanup_calls;
+    ensures normal ignored_results == 0;
+};

@@ -1,0 +1,35 @@
+module contract;
+
+// Upstream: lib/chunkio/src/cio_chunk.c, cio_chunk_is_locked.
+// Bounded chunk-source profile: old_* names are entry ghost values and the
+// unprefixed fields are exit ghost values. Reading lock preserves both fields.
+
+extern fn cio_chunk_is_locked(
+    chunk: borrow<'call, const, Chunk> use one
+) -> i32
+contract {
+    requires chunk_is_live;
+    requires exclusive_chunk_access;
+    requires busy_is_boolean;
+    requires lock_is_boolean;
+    ensures normal result == old_lock;
+    ensures normal lock == old_lock;
+    ensures normal busy == old_busy;
+};
+
+// Source-validated cio_error_reset clears error_n before either unlock exit.
+// The helper source is retained with the certificate; lock acquisition/sync
+// and complete chunk teardown remain separate, unsupported dependencies.
+extern fn cio_chunk_unlock(
+    chunk: borrow<'call, mut, Chunk> use one
+) -> i32
+contract {
+    requires chunk_is_live;
+    requires exclusive_chunk_access;
+    requires busy_is_boolean;
+    requires lock_is_boolean;
+    ensures normal result == old_lock - 1;
+    ensures normal lock == 0;
+    ensures normal busy == old_busy;
+    ensures normal field_error_n == 0;
+};

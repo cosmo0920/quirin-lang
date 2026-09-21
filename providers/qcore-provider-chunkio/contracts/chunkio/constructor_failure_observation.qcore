@@ -1,0 +1,18 @@
+module contract;
+
+// Controlled failure at one of nine allocations on the pinned memory path.
+// Output conventions are observed, not promises of successful construction.
+extern fn native_constructor_failure_observation() -> unit
+contract {
+    requires controlled_allocation_failure;
+    requires compiled_source_and_build_recorded;
+    requires exclusive_instrumented_execution;
+    ensures normal attempts == expected_attempts;
+    ensures normal injected_failures == expected_failures;
+    ensures normal allocations == releases;
+    ensures normal exact_constructor_outcome;
+    ensures normal remaining_tree_and_teardown_checked;
+    ensures normal terminal_live == 0;
+    ensures normal not backend_allocation_failure or chunk_null and error_zero;
+    ensures normal not static_certificate;
+};
