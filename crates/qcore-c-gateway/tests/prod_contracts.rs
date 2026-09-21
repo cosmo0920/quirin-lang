@@ -60,13 +60,15 @@ mod text;
 use text::normalize_newlines;
 
 /// **The three production contract modules this card lands.**
-const LOGGING: &str = include_str!("../../../contract/shared/fluent_bit/logging.qcore");
-const CHUNK_NAME: &str = include_str!("../../../contract/shared/fluent_bit/input_chunk_name.qcore");
-const ROUTES_MASK: &str = include_str!("../../../contract/shared/fluent_bit/routes_mask.qcore");
+const LOGGING: &str = include_str!("../../../providers/shared/contracts/fluent_bit/logging.qcore");
+const CHUNK_NAME: &str =
+    include_str!("../../../providers/shared/contracts/fluent_bit/input_chunk_name.qcore");
+const ROUTES_MASK: &str =
+    include_str!("../../../providers/shared/contracts/fluent_bit/routes_mask.qcore");
 /// The production hash publication, needed by the real caller's four
 /// publications; card HASH-CONTRACTS' module, byte-unchanged.
 const PUBLICATION: &str =
-    include_str!("../../../contract/shared/fluent_bit/hash_table_publication.qcore");
+    include_str!("../../../providers/shared/contracts/fluent_bit/hash_table_publication.qcore");
 
 /// The earlier cards' fixture premise sets, all byte-unchanged.
 const PRELUDE: &str = include_str!("fixtures/o04/prelude.c");

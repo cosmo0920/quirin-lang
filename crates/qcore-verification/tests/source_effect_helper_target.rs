@@ -13,7 +13,8 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 const CHILD_ROOT: &str = "QCORE_SOURCE_EFFECT_HELPER_TARGET_CHILD";
-const RULES: &str = include_str!("../../../contract/shared/library/source_projection.qcore");
+const RULES: &str =
+    include_str!("../../../providers/shared/contracts/library/source_projection.qcore");
 const CONTRACT: &str =
     include_str!("../../../providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qcore");
 const HELPER: &str = "struct cio_chunk { int lock; int error_n; }; void cio_error_reset(struct cio_chunk *p) { p->error_n = 0; }";

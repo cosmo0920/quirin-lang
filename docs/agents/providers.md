@@ -125,7 +125,7 @@ including cross-topic rules, before editing; the index is not a substitute.
     Edit those sources, run `python3 providers/contracts.py sync` to update
     package inventories, and verify `python3 providers/contracts.py check`.
     Do not recreate top-level copies: `contract/corpus.json` indexes the
-    canonical provider sources and `contract/shared` modules. Preserve byte
+    canonical provider sources and `providers/shared/contracts` modules. Preserve byte
     parity when reorganizing files, and
     update corpus declaration/clause pins deliberately for semantic changes.
     Package builds include these contracts and check their inventories.

@@ -7,7 +7,7 @@ directly with `quirin`.
 
 Provider-specific contracts have one canonical source in each owning
 `providers/qcore-provider-*/contracts/` tree. Shared language, support-library
-and application contracts without a provider owner live under `contract/shared/`.
+and application contracts without a provider owner live under `providers/shared/contracts/`.
 The [corpus index](corpus.json) selects these roots for all 96 module and clause
 pins; it is validation metadata, not an implicit runtime contract selection.
 See the [provider editing workflow](../providers/README.md#contract-ownership).
@@ -217,7 +217,7 @@ to ignore clauses it cannot check.
 
 The canonical corpus is shared by three consumers with disjoint vocabularies, and
 `requires resource_contract_v1` is the selector between them. Of the corpus's
-160 declarations, 19 carry the marker and load; the other 141 are **rejected**
+266 declarations, 59 carry the marker and load; the other 207 are **rejected**
 by the resource loader, not skipped, so asking it for a `ResourceContracts`
 environment over an observation or lifecycle module fails closed instead of
 quietly returning a weaker table.

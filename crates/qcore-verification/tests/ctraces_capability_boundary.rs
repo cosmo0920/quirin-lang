@@ -26,7 +26,8 @@ use serde_json::json;
 /// not. The declared revision is the one the excerpt was taken from.
 const EXCERPT: &str = include_str!("../../../docs/reports/remaining-p06/ctraces_span_excerpt.c");
 const REVISION: &str = "9f0fa5730fba1761ebaf14bcd31220a3a9be9d6e";
-const RULES: &str = include_str!("../../../contract/shared/library/source_projection.qcore");
+const RULES: &str =
+    include_str!("../../../providers/shared/contracts/library/source_projection.qcore");
 const DESIGNED_CONTRACT: &str =
     include_str!("../../../docs/reports/remaining-p06/ctraces_span_dropped_counts.qcore");
 

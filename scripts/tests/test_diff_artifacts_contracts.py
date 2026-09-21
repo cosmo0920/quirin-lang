@@ -138,6 +138,20 @@ class ContractItemizationTest(unittest.TestCase):
     def section(self, full=False):
         return diff_artifacts.diff_contracts(self.BEFORE, self.AFTER, full)
 
+    def test_canonical_locations_compare_without_rewriting_raw_identity(self):
+        old = "/old/contract/qcore/monkey/memory.qcore"
+        provider = "/new/providers/qcore-provider-libevent/contracts/monkey/memory.qcore"
+        second = "/another/providers/qcore-provider-libevent/contracts/monkey/memory.qcore"
+        shared = "/new/providers/shared/contracts/monkey/memory.qcore"
+        for path in [provider, second, shared]:
+            self.assertEqual(diff_artifacts.contract_module(old), diff_artifacts.contract_module(path))
+        result = diff_artifacts.diff_contracts({"sources": {old: "policy"}}, {"sources": {provider: "changed"}}, False)
+        row = result["sources"]["changed"][0]
+        self.assertEqual(row["raw_key"], {"before": old, "after": provider})
+        collision = diff_artifacts.diff_contracts(
+            {"sources": {old: "policy"}}, {"sources": {provider: "policy", shared: "policy"}}, False)
+        self.assertTrue(collision["sources"]["key_collisions"])
+
     def test_a_module_add_a_removal_and_a_content_change_are_rows(self):
         sources = self.section()["sources"]
         self.assertEqual([row["key"] for row in sources["added"]], ["qcore/c.qcore"])

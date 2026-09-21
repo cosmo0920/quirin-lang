@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "roots": [
-    "shared",
+    "../providers/shared/contracts",
     "../providers/qcore-provider-chunkio/contracts",
     "../providers/qcore-provider-cmetrics/contracts",
     "../providers/qcore-provider-ctraces/contracts",

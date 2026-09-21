@@ -22,7 +22,7 @@ certificate recheck, taking contracts through one clean interface,
 
 **Generic substrate that exists but is not load-bearing.**
 
-- A real declarative contract language: `contract/qcore/**.qcore` (15 files,
+- A real declarative contract language: the historical `contract/qcore/**.qcore` checkpoint (15 files,
   689 lines) with `resource type`, `extern fn ... effects {...} contract
   {...}`, and two working interpreters
   (`compiler/src/contract_observation.rs`, `compiler/src/chunk_contract.rs`).
@@ -277,7 +277,7 @@ the resource loader with the observation/lifecycle interpreters is
 and non-null error sentinels need target-interface work in `qcore-schemas`
 plus the analyzer, not loader vocabulary.
 
-**Goal.** One loader from `contract/qcore` contract modules to the analyzer's
+**Goal.** One loader from canonical contract modules to the analyzer's
 `ResourceContracts`, eliminating every Rust-literal production contract table.
 
 **Why first.** It is the highest-leverage, lowest-risk step: the language, the
@@ -297,7 +297,7 @@ W4, W5) wants contracts as data.
    diagnostic (fail-closed), not silently approximated.
 2. Migrate the production table in
    `cycle19_fluent_bit_libraries_audit.rs:141-207` into
-   `contract/qcore/` files (e.g. `contract/shared/libc/memory.qcore`,
+   canonical `.qcore` files (e.g. `providers/shared/contracts/libc/memory.qcore`,
    `monkey/memory.qcore`, `librdkafka/memory.qcore`,
    `fluent_bit/memory.qcore` extensions, `chunkio/chunk_open_close.qcore`),
    and load them at runtime instead of `include_str!`/Rust literals.

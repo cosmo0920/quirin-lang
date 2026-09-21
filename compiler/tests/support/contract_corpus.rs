@@ -18,6 +18,13 @@ pub fn sources() -> BTreeMap<String, PathBuf> {
             "invalid corpus root: {}",
             root.display()
         );
+        assert!(
+            root.canonicalize()
+                .unwrap()
+                .starts_with(repository.canonicalize().unwrap()),
+            "corpus root escapes repository: {}",
+            root.display()
+        );
         let mut pending = vec![root.clone()];
         while let Some(directory) = pending.pop() {
             for entry in fs::read_dir(directory).unwrap() {

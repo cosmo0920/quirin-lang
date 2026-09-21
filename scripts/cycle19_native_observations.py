@@ -100,7 +100,7 @@ def main():
               ("flb_malloc", "flb_calloc", "flb_realloc", "flb_realloc_z", "flb_free")}
     if list(counts.values()) != [10, 50, 40, 40, 5]:
         raise RuntimeError(f"missing native scenarios: {counts}")
-    contract = REPO / "contract/shared/fluent_bit/memory.qcore"
+    contract = REPO / "providers/shared/contracts/fluent_bit/memory.qcore"
     metadata["contract_sha256"] = sha(contract)
     checked = run(["cargo", "run", "--quiet", "-p", "qcore-compiler", "--example",
                    "check_contract_observations", "--", str(contract), str(observations)],

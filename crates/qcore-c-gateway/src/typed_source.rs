@@ -18,7 +18,7 @@ use crate::typed_c_ast::{ast_declarations, children, function_ast, kind};
 /// Default declarative acceptance rules used by the legacy typed-path importer.
 /// This is shared policy data, not source evidence or a safety certificate.
 pub const DEFAULT_SOURCE_RULES: &str =
-    include_str!("../../../contract/shared/library/source_projection.qcore");
+    include_str!("../../../providers/shared/contracts/library/source_projection.qcore");
 
 fn check_source_rule(name: &str, facts: &[(&str, i128)]) -> Result<(), String> {
     qcore_contract::contract_observation::check_contract_facts(DEFAULT_SOURCE_RULES, name, facts)

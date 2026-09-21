@@ -14,7 +14,7 @@ class CanonicalCorpus(unittest.TestCase):
         self.assertFalse((root / "contract/qcore").exists())
         modules = contract_corpus.sources(root)
         self.assertEqual(len(modules), 96)
-        self.assertEqual(sum("providers" in path.parts for path in modules.values()), 72)
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 72)
         self.assertEqual(sum("shared" in path.parts for path in modules.values()), 24)
 
     def test_missing_root_duplicate_and_symlink_are_refused(self):

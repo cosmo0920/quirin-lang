@@ -60,7 +60,7 @@ refuse symbolic links, invalid or unowned paths, and any reintroduced
 require the corpus pin updates.
 
 Shared language, support-library and application policies without a provider
-owner live under `contract/shared/`. The logical corpus is assembled from the
+owner live under `providers/shared/contracts/`. The logical corpus is assembled from the
 roots listed in `contract/corpus.json`; provider contracts remain canonical in
 their artifact crates and are not copied into a compatibility tree.
 

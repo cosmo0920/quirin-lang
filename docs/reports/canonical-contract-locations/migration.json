@@ -4,25 +4,25 @@
     {
       "logical_module": "cfl/arena_lifetime.qcore",
       "previous": "contract/qcore/cfl/arena_lifetime.qcore",
-      "canonical": "contract/shared/cfl/arena_lifetime.qcore",
+      "canonical": "providers/shared/contracts/cfl/arena_lifetime.qcore",
       "sha256": "17e5f22bb2b2ed10d1ed3f2baed212054cc13ebdb9551f8db7ac15ceb2f4d6f7"
     },
     {
       "logical_module": "cfl/intrusive_list.qcore",
       "previous": "contract/qcore/cfl/intrusive_list.qcore",
-      "canonical": "contract/shared/cfl/intrusive_list.qcore",
+      "canonical": "providers/shared/contracts/cfl/intrusive_list.qcore",
       "sha256": "0e88afdb9a476a3da576bfed0dd0bb5de61bb59eb5eef1738d0bf65e5512cdec"
     },
     {
       "logical_module": "cfl/sds_lifetime.qcore",
       "previous": "contract/qcore/cfl/sds_lifetime.qcore",
-      "canonical": "contract/shared/cfl/sds_lifetime.qcore",
+      "canonical": "providers/shared/contracts/cfl/sds_lifetime.qcore",
       "sha256": "1d11412507e94b29a3a5fb352faecc2bc2f9c780d651ef0b691da48d70c6b452"
     },
     {
       "logical_module": "cfl/time.qcore",
       "previous": "contract/qcore/cfl/time.qcore",
-      "canonical": "contract/shared/cfl/time.qcore",
+      "canonical": "providers/shared/contracts/cfl/time.qcore",
       "sha256": "1696e45592e854e29d6e0117ab9c037f46158c33c4a340027739558e9b137bb6"
     },
     {
@@ -322,109 +322,109 @@
     {
       "logical_module": "fluent_bit/hash_table_publication.qcore",
       "previous": "contract/qcore/fluent_bit/hash_table_publication.qcore",
-      "canonical": "contract/shared/fluent_bit/hash_table_publication.qcore",
+      "canonical": "providers/shared/contracts/fluent_bit/hash_table_publication.qcore",
       "sha256": "3784598c0245ba67790329a70b9c5e4064081eb71d827317151f7e52138576af"
     },
     {
       "logical_module": "fluent_bit/input_chunk_destroy.qcore",
       "previous": "contract/qcore/fluent_bit/input_chunk_destroy.qcore",
-      "canonical": "contract/shared/fluent_bit/input_chunk_destroy.qcore",
+      "canonical": "providers/shared/contracts/fluent_bit/input_chunk_destroy.qcore",
       "sha256": "073c9206df21e37d18775bcd50bd0c57b0d8c70f2f0ee5ec50a5579f5eaff897"
     },
     {
       "logical_module": "fluent_bit/input_chunk_destroy_direct_routes.qcore",
       "previous": "contract/qcore/fluent_bit/input_chunk_destroy_direct_routes.qcore",
-      "canonical": "contract/shared/fluent_bit/input_chunk_destroy_direct_routes.qcore",
+      "canonical": "providers/shared/contracts/fluent_bit/input_chunk_destroy_direct_routes.qcore",
       "sha256": "2ce152d343357466fe9ec5979362be28145f8fa707c20746ae49bc0599703974"
     },
     {
       "logical_module": "fluent_bit/input_chunk_helpers.qcore",
       "previous": "contract/qcore/fluent_bit/input_chunk_helpers.qcore",
-      "canonical": "contract/shared/fluent_bit/input_chunk_helpers.qcore",
+      "canonical": "providers/shared/contracts/fluent_bit/input_chunk_helpers.qcore",
       "sha256": "265315ca27a8cd15993ee4f269ce60b33376dcb7edbdaa685a3655f8d0731dc4"
     },
     {
       "logical_module": "fluent_bit/input_chunk_name.qcore",
       "previous": "contract/qcore/fluent_bit/input_chunk_name.qcore",
-      "canonical": "contract/shared/fluent_bit/input_chunk_name.qcore",
+      "canonical": "providers/shared/contracts/fluent_bit/input_chunk_name.qcore",
       "sha256": "b2204d2d77d1d44b5e77e3b80da0cfcaf559393e2e979271156de8ae5e84bda4"
     },
     {
       "logical_module": "fluent_bit/input_chunk_sizes.qcore",
       "previous": "contract/qcore/fluent_bit/input_chunk_sizes.qcore",
-      "canonical": "contract/shared/fluent_bit/input_chunk_sizes.qcore",
+      "canonical": "providers/shared/contracts/fluent_bit/input_chunk_sizes.qcore",
       "sha256": "ba8db67de28e9ee480165c21ca2c03f398433699d5af0dd57f4c225d0d74d0f8"
     },
     {
       "logical_module": "fluent_bit/input_chunk_total_size.qcore",
       "previous": "contract/qcore/fluent_bit/input_chunk_total_size.qcore",
-      "canonical": "contract/shared/fluent_bit/input_chunk_total_size.qcore",
+      "canonical": "providers/shared/contracts/fluent_bit/input_chunk_total_size.qcore",
       "sha256": "f8a1ab9dcf7637174ae83849b2ebf3c2d11374842c5ef5e517280b22691392d8"
     },
     {
       "logical_module": "fluent_bit/logging.qcore",
       "previous": "contract/qcore/fluent_bit/logging.qcore",
-      "canonical": "contract/shared/fluent_bit/logging.qcore",
+      "canonical": "providers/shared/contracts/fluent_bit/logging.qcore",
       "sha256": "ca8d1746ebb634a0cb03c0365d29a8da9af552f0e4a710026e3a6236848a0f20"
     },
     {
       "logical_module": "fluent_bit/memory.qcore",
       "previous": "contract/qcore/fluent_bit/memory.qcore",
-      "canonical": "contract/shared/fluent_bit/memory.qcore",
+      "canonical": "providers/shared/contracts/fluent_bit/memory.qcore",
       "sha256": "b1c44c632efe193f75737be13058b30498bd471dd47c65dc5e431fcb02645aad"
     },
     {
       "logical_module": "fluent_bit/resource_memory.qcore",
       "previous": "contract/qcore/fluent_bit/resource_memory.qcore",
-      "canonical": "contract/shared/fluent_bit/resource_memory.qcore",
+      "canonical": "providers/shared/contracts/fluent_bit/resource_memory.qcore",
       "sha256": "0590ec1151f77ee50dbd7cb42a2864b02fbb29777fd57e7091af545aee5455b2"
     },
     {
       "logical_module": "fluent_bit/routes_mask.qcore",
       "previous": "contract/qcore/fluent_bit/routes_mask.qcore",
-      "canonical": "contract/shared/fluent_bit/routes_mask.qcore",
+      "canonical": "providers/shared/contracts/fluent_bit/routes_mask.qcore",
       "sha256": "e98fb34a27238f977ee660708e03f95c123413964d93dd42a032f8aee5f3d99a"
     },
     {
       "logical_module": "fluent_bit/time.qcore",
       "previous": "contract/qcore/fluent_bit/time.qcore",
-      "canonical": "contract/shared/fluent_bit/time.qcore",
+      "canonical": "providers/shared/contracts/fluent_bit/time.qcore",
       "sha256": "e81170f7f36f50f1c93ed0d2a69b2a7f3e3e26714f6627ca3e9326fb87c10784"
     },
     {
       "logical_module": "language/quantified_indices.qcore",
       "previous": "contract/qcore/language/quantified_indices.qcore",
-      "canonical": "contract/shared/language/quantified_indices.qcore",
+      "canonical": "providers/shared/contracts/language/quantified_indices.qcore",
       "sha256": "f1a4a6d8a4113bfa94700f9aab35b6326394bca3f7bc40bdd1dcd13e224da8be"
     },
     {
       "logical_module": "libc/errno.qcore",
       "previous": "contract/qcore/libc/errno.qcore",
-      "canonical": "contract/shared/libc/errno.qcore",
+      "canonical": "providers/shared/contracts/libc/errno.qcore",
       "sha256": "a62bdc4cfbfa84d76580ec0f95776aa677a702bef91f4d9002454571e2abe233"
     },
     {
       "logical_module": "libc/memory.qcore",
       "previous": "contract/qcore/libc/memory.qcore",
-      "canonical": "contract/shared/libc/memory.qcore",
+      "canonical": "providers/shared/contracts/libc/memory.qcore",
       "sha256": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
     },
     {
       "logical_module": "libc/pthread_mutex.qcore",
       "previous": "contract/qcore/libc/pthread_mutex.qcore",
-      "canonical": "contract/shared/libc/pthread_mutex.qcore",
+      "canonical": "providers/shared/contracts/libc/pthread_mutex.qcore",
       "sha256": "1069c9b40f812230ce07fd4188f179b56cf4eef9a221dffde763d9e5f0da48f5"
     },
     {
       "logical_module": "library/custody_evidence.qcore",
       "previous": "contract/qcore/library/custody_evidence.qcore",
-      "canonical": "contract/shared/library/custody_evidence.qcore",
+      "canonical": "providers/shared/contracts/library/custody_evidence.qcore",
       "sha256": "630e28d65a6c11d3e7a32aeaa2d3ba6657fd0476fe6f8d86b120915bbc656b4f"
     },
     {
       "logical_module": "library/source_projection.qcore",
       "previous": "contract/qcore/library/source_projection.qcore",
-      "canonical": "contract/shared/library/source_projection.qcore",
+      "canonical": "providers/shared/contracts/library/source_projection.qcore",
       "sha256": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23"
     },
     {
@@ -568,13 +568,13 @@
     {
       "logical_module": "mpack/writer.qcore",
       "previous": "contract/qcore/mpack/writer.qcore",
-      "canonical": "contract/shared/mpack/writer.qcore",
+      "canonical": "providers/shared/contracts/mpack/writer.qcore",
       "sha256": "242ad6fdb90e1210d3a7f2002ef97f322e213a39b7895d4607746b8757fea944"
     },
     {
       "logical_module": "msgpack/packer.qcore",
       "previous": "contract/qcore/msgpack/packer.qcore",
-      "canonical": "contract/shared/msgpack/packer.qcore",
+      "canonical": "providers/shared/contracts/msgpack/packer.qcore",
       "sha256": "13eb452614f1f37c4cd9caf2519a57017c7475ab1cae13cc0cf0351418d36fc4"
     }
   ]

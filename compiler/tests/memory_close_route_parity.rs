@@ -51,7 +51,8 @@ use qcore_verification::teardown_source::{
 /// the same file through `memory_close::tests::FIXTURE`.
 const SOURCE: &str = include_str!("fixtures/chunkio/memory_close_source.c");
 const UNIT: &str = "lib/chunkio/src/cio_chunk.c";
-const RULES: &str = include_str!("../../contract/shared/library/source_projection.qcore");
+const RULES: &str =
+    include_str!("../../providers/shared/contracts/library/source_projection.qcore");
 const FRAME_CONTRACT: &str =
     include_str!("../../providers/qcore-provider-chunkio/contracts/chunkio/error_state.qcore");
 const BACKEND_CONTRACT: &str =

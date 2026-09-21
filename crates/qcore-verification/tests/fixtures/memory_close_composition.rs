@@ -68,7 +68,8 @@ pub const UNLINK_CONTRACT: &str = include_str!(
 pub const COUNTER_CONTRACT: &str =
     include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qcore");
 /// The declared source-projection acceptance rules the frame import runs under.
-pub const RULES: &str = include_str!("../../../../contract/shared/library/source_projection.qcore");
+pub const RULES: &str =
+    include_str!("../../../../providers/shared/contracts/library/source_projection.qcore");
 
 /// The derivation recipe: the exact bytes the retained ChunkIO adapter appends.
 pub const PROBE: &str = "\nint qcore_cio_memory_store_value(void) { return CIO_STORE_MEM; }\n";

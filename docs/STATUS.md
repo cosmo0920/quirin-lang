@@ -76,7 +76,7 @@ core checkout. [Commands, source identities, exits and logs](reports/provider-co
 distinguish the two Cargo workspaces and preserve earlier failed attempts.
 
 The five provider crates own **72** canonical contract modules; **24** shared or
-application-level modules live in `contract/shared`. `contract/corpus.json`
+application-level modules live in `providers/shared/contracts`. `contract/corpus.json`
 indexes all **96** without duplicate snapshots. Retained integration adapters
 embed the provider-owned data directly; generic core crates retain no provider
 executable dependency. Package inventories bind supplied contract bytes to their

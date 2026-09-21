@@ -237,7 +237,7 @@ source-derived wrapper trace are supplied.
 ## Native QCore contract corpus
 
 The implemented library and composition boundaries are retained as native
-QCore sources under `contract/qcore`, grouped by librdkafka, CFL, ChunkIO, and
+QCore sources indexed by `contract/corpus.json`, grouped by librdkafka, CFL, ChunkIO, and
 Monkey. They record resource types, owned and borrowed interfaces, normal and
 error postconditions, quantitative custody relations, delete-only partial
 states, import completeness, callback summaries, and observation refinement.
@@ -297,7 +297,7 @@ are recorded in `../reports/cycle19-source-contracts/README.md`.
 
 The actual pinned `flb_mem.h` is compiled with its selected Fluent Bit build
 profile and instrumented allocator calls. Its five wrappers are evaluated
-against `contract/shared/fluent_bit/memory.qcore` on 145 executions. The
+against `providers/shared/contracts/fluent_bit/memory.qcore` on 145 executions. The
 postconditions are defined in QCore; Rust provides a general bounded predicate
 interpreter, not a duplicate per-function behavior table. Nonzero-size realloc
 failure preservation is explicitly conditional. Zero-size realloc, alternate

@@ -137,9 +137,19 @@ def contract_module(path):
     normalised path, so nothing is dropped for not matching the expectation.
     """
     normalised = posixpath.normpath(str(path).replace("\\", "/"))
+    # Comparison-only compatibility namespace. This does not rewrite runtime
+    # source identities or archived artifacts; raw keys remain in the diff.
+    parts = normalised.split("/")
+    for i in range(len(parts) - 3):
+        if (parts[i] == "providers" and (parts[i + 1].startswith("qcore-provider-") or parts[i + 1] == "shared")
+                and parts[i + 2] == "contracts"):
+            return "qcore/" + "/".join(parts[i + 3:])
     marker = "/contract/"
     index = normalised.rfind(marker)
-    return normalised[index + len(marker):] if index >= 0 else normalised
+    suffix = normalised[index + len(marker):] if index >= 0 else normalised
+    if index >= 0 and suffix.startswith("shared/"):
+        return "qcore/" + suffix.removeprefix("shared/")
+    return suffix
 
 
 def describe_text(value):
