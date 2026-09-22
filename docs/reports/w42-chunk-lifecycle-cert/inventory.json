@@ -1,0 +1,988 @@
+{
+  "card": "W42-CHUNK-LIFECYCLE-CERT",
+  "artifact": "docs/reports/w42-priority-integration/artifacts/chunk-contracts.json.gz",
+  "artifact_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_profile": "chunkio+fluent-bit-chunk",
+  "artifact_scope": "bounded field contracts; live/exclusive/Boolean domains and source/build/ABI identity assumed; no whole-unit lifecycle certificate",
+  "backend_teardown_records": 21,
+  "backend_teardown_kinds": [
+    "filesystem_call_results",
+    "filesystem_chunk_close",
+    "filesystem_close_no_delete",
+    "filesystem_close_with_delete",
+    "filesystem_delete_attempt",
+    "filesystem_delete_outcomes",
+    "filesystem_native_outcomes",
+    "filesystem_unmap_wrapper",
+    "list_unlink",
+    "memory_chunk_close",
+    "nested_cleanup_source",
+    "nested_memory_source",
+    "nested_unsupported_source",
+    "parent_teardown",
+    "teardown_traversal",
+    "unsigned_counters",
+    "unsupported_chunk_close"
+  ],
+  "selected_functions": 96,
+  "functions": [
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "chunk_state_sync",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_close",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_close_stream",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_counter_total_add",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_counter_total_sub",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_counter_total_up_add",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_counter_total_up_sub",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_delete",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_down",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_content",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_content_copy",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_content_end_pos",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_content_size",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_real_size",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_hash",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_is_file",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_is_locked",
+      "field_contract": {
+        "status": "checked",
+        "states": 4
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_is_up",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_lock",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled expression CallExpr",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_open",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_sync",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_tx_begin",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_tx_commit",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_tx_rollback",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_unlock",
+      "field_contract": {
+        "status": "checked",
+        "states": 4
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_up",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_up_force",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_write",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_write_at",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_version",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "append_to_ring_buffer",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "destroy_chunk_raw",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_chunk_route_plugin_matches",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_append_raw",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_append_raw_local",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_create",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_destroy",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_destroy_corrupted",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_destroy_direct_routes",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_down",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled expression CallExpr",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_drop_task_route",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_find_space_new_data",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_flush",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_direct_routes",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_event_type",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_name",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_projected_write_size",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_real_size",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_size",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_tag",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_has_direct_routes",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_has_other_routes",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_has_overlimit_routes",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_mem_overlimit",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_storage_overlimit",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_task_safe_delete",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_up",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled expression CallExpr",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_map",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_output_size_subtract",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_output_would_exceed_limit",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_place_new_chunk",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_prefers_physical_delete",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_protect",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_lock",
+      "field_contract": {
+        "status": "checked",
+        "states": 4
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_route",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_space",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_space_compound",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_ring_buffer_cleanup",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_ring_buffer_collector",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_ring_buffer_enqueue",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_safe_delete",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_set_limits",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_set_up",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled expression CallExpr",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_set_up_down",
+      "field_contract": {
+        "status": "refused",
+        "reason": "unmodeled statement DeclStmt",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_total_size",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_update_output_instances",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_write",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_write_at",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_write_header_v2",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "generate_chunk_name",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "get_input_chunk_record_count",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "get_input_chunk_source_name",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_append_raw",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_collect_output_references",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_get",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_has_magic_bytes",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_metadata_view",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_output_size_add",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_write_header",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "logs_tag_records_metrics_enabled",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "memrb_input_chunk_release_space",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "sb_get_releasable_output_queue_space",
+      "field_contract": {
+        "status": "refused",
+        "reason": "expected one selected definition after preprocessing, found 0",
+        "reason_code": "incomplete-obligation-coverage"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "sb_release_output_queue_space",
+      "field_contract": {
+        "status": "refused",
+        "reason": "expected one selected definition after preprocessing, found 0",
+        "reason_code": "incomplete-obligation-coverage"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "update_logs_tag_records_metrics",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "update_logs_tag_records_untracked",
+      "field_contract": {
+        "status": "refused",
+        "reason": "outside single borrowed chunk / int-or-void-result source profile",
+        "reason_code": "unsupported-syntax"
+      }
+    }
+  ]
+}

@@ -24,6 +24,7 @@ import QCore.CallbackSource
 import QCore.DescriptorObservation
 import QCore.QuantIndexBinding
 import QCore.ChunkLifecycle
+import QCore.ChunkLifecycleCoverage
 import QCore.DescriptorCustody
 import QCore.ControlFlow
 import QCore.ExternalIntegration
@@ -161,6 +162,25 @@ import QCore.ChunkSource
 #print axioms QCore.CallbackCoverage.omitted_selected_callback_is_not_accounted
 #print axioms QCore.CallbackCoverage.duplicate_callback_is_not_accounted
 #print axioms QCore.CallbackCoverage.unselected_callback_is_not_accounted
+
+-- Card W42-CHUNK-LIFECYCLE-CERT: the layer above an accepted teardown. A
+-- function is Safe only with a terminal composition and all nine legs; every
+-- other shape keeps an Unknown that names what is outstanding.
+#print axioms QCore.ChunkLifecycleCoverage.requiredLegs_length
+#print axioms QCore.ChunkLifecycleCoverage.safe_is_terminal_and_complete
+#print axioms QCore.ChunkLifecycleCoverage.safe_discharges_every_required_leg
+#print axioms QCore.ChunkLifecycleCoverage.a_missing_leg_stays_unknown
+#print axioms QCore.ChunkLifecycleCoverage.only_destruction_dependent_rows_can_be_safe
+#print axioms QCore.ChunkLifecycleCoverage.delete_only_is_never_safe
+#print axioms QCore.ChunkLifecycleCoverage.unclassified_is_never_safe
+#print axioms QCore.ChunkLifecycleCoverage.non_destructive_is_never_safe
+#print axioms QCore.ChunkLifecycleCoverage.a_prefix_composition_is_never_safe
+#print axioms QCore.ChunkLifecycleCoverage.no_composition_is_never_safe
+#print axioms QCore.ChunkLifecycleCoverage.delete_only_retains_its_partial_post_state
+#print axioms QCore.ChunkLifecycleCoverage.only_destruction_dependent_rows_carry_a_composition
+#print axioms QCore.ChunkLifecycleCoverage.omitted_selected_function_is_not_accounted
+#print axioms QCore.ChunkLifecycleCoverage.duplicate_function_is_not_accounted
+#print axioms QCore.ChunkLifecycleCoverage.unselected_function_is_not_accounted
 
 #print axioms QCore.MonkeyWaitProjection.accepted_projection_has_exact_source
 #print axioms QCore.MonkeyWaitProjection.accepted_projection_has_exact_observation_obligations
