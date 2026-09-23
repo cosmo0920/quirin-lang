@@ -6731,9 +6731,9 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for MONKEY-CALLBACK-CYCLE18-COMPOSITION on merge ea800844 (onto main df60bc78, after all three earlier W43 merges), measured by the integrator in its own worktree; every step's exit captured to a file, not piped. 5136 core Rust passed / 0 failed / 12 ignored over 272 summaries; 167 Lean audits; fmt, clippy -D warnings, both reevaluation examples and the docs index exit 0. The first Python run on the merge failed 1 of 317 (test_the_derived_facts_are_recomputed_rather_than_carried: committed validation.lean_audits 166 vs recomputed 167) because this derived section was deliberately deferred during conflict resolution; after regeneration from this file the suite is rerun and recorded in integration-confirmation.md. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-return-expression/artifacts/. Provider tests carried, not remeasured: no file under providers/ changed. No coverage promotion: 0/3 callbacks composed.",
+  "note": "Integration gate for QUIRIN-PROVIDER-SHARED on merge 7642d7de (onto main 8f40df36, after every earlier W43 merge), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5136 core Rust passed / 0 failed / 12 ignored over 272 summaries; 109 provider Rust passed / 0 / 0 over 39 summaries; 167 Lean audits; 317 root Python tests; 5 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-return-expression/artifacts/; the contracts artifact differs only in the 18 moved module paths (identical to the pre-move combined run once mapped back). No verdict or coverage change.",
   "workspace_tests": 5136,
-  "provider_tests": 123,
+  "provider_tests": 109,
   "python_evidence_validator_tests": 317,
   "lean_audits": 167,
   "lean_audit_files": [
@@ -6911,7 +6911,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-monkey-callback-composition/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/quirin-provider-shared/integration/gate.json)"
  },
  "named_followups": [
   {

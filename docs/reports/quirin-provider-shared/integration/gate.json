@@ -1,0 +1,13 @@
+{
+  "note": "Integration gate for QUIRIN-PROVIDER-SHARED on merge 7642d7de (onto main 8f40df36, after every earlier W43 merge), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5136 core Rust passed / 0 failed / 12 ignored over 272 summaries; 109 provider Rust passed / 0 / 0 over 39 summaries; 167 Lean audits; 317 root Python tests; 5 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-return-expression/artifacts/; the contracts artifact differs only in the 18 moved module paths (identical to the pre-move combined run once mapped back). No verdict or coverage change.",
+  "workspace_tests": 5136,
+  "provider_tests": 109,
+  "python_evidence_validator_tests": 317,
+  "lean_audits": 167,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
