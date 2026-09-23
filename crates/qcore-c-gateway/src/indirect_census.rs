@@ -862,3 +862,77 @@ pub struct DeclCensus {
     pub refusal: Option<DeclRefusal>,
     pub opaque: std::collections::BTreeMap<String, OpaqueCause>,
 }
+
+/// Card **W43-RETURN-EXPRESSION**: the environment variable naming the
+/// return-expression census stream. Read only with the `indirect-census`
+/// feature on; with it unset, [`record_return`] is a no-op. Like the other
+/// census streams it is written only after the parser has already decided to
+/// refuse, so it can neither admit nor refuse anything.
+pub const RETURN_CENSUS_PATH_VARIABLE: &str = "QCORE_RETURN_CENSUS";
+
+static RETURNS: Mutex<Option<Option<BufWriter<File>>>> = Mutex::new(None);
+
+/// One call occurrence inside a refused return expression, as the classifier's
+/// own contract environment and token stream answer for it.
+#[derive(Clone, Debug, serde::Serialize)]
+pub struct ReturnCall {
+    pub callee: String,
+    /// A declared `.qcore` contract or validated summary is in force.
+    pub contracted: bool,
+    /// The contract's result mode, spelled as its `Debug` text.
+    pub result_mode: Option<String>,
+    /// The callee has a body in this translation unit.
+    pub defined_in_unit: bool,
+}
+
+/// One refused return expression: one leaf of the `unmodeled call, aggregate
+/// or indirect access in return expression` family.
+#[derive(Clone, Debug, serde::Serialize)]
+pub struct ReturnLeaf {
+    pub unit_seq: u64,
+    pub function: String,
+    /// The internal preprocessed line of the `return` statement.
+    pub line: usize,
+    /// The complete return expression the parser delimited.
+    pub tokens: Vec<String>,
+    /// Every call occurrence in token order.
+    pub calls: Vec<ReturnCall>,
+    /// Every access chain in the expression.
+    pub chains: Vec<Chain>,
+}
+
+/// Record one already-decided return-expression refusal. A no-op unless
+/// [`RETURN_CENSUS_PATH_VARIABLE`] names a path.
+pub(crate) fn record_return(
+    context: &Context<'_>,
+    line: usize,
+    texts: &[&str],
+    calls: Vec<ReturnCall>,
+) {
+    if std::env::var_os(RETURN_CENSUS_PATH_VARIABLE).is_none() {
+        return;
+    }
+    let window = (0..texts.len()).collect::<Vec<_>>();
+    let leaf = ReturnLeaf {
+        unit_seq: UNIT_SEQ.load(Ordering::Relaxed),
+        function: context.function.to_owned(),
+        line,
+        tokens: texts.iter().map(|text| (*text).to_owned()).collect(),
+        calls,
+        chains: chains(context, texts, &window),
+    };
+    let Ok(mut guard) = RETURNS.lock() else {
+        return;
+    };
+    let opened = guard.get_or_insert_with(|| {
+        let path = std::env::var_os(RETURN_CENSUS_PATH_VARIABLE)?;
+        File::create(path).ok().map(BufWriter::new)
+    });
+    let Some(writer) = opened.as_mut() else {
+        return;
+    };
+    if let Ok(line) = serde_json::to_string(&leaf) {
+        let _ = writeln!(writer, "{line}");
+        let _ = writer.flush();
+    }
+}

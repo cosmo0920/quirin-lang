@@ -3453,6 +3453,43 @@ impl Parser<'_> {
         );
     }
 
+    /// Card **W43-RETURN-EXPRESSION**: hand one already-decided return
+    /// expression refusal to the instrumented census. Compiled out with the
+    /// feature off; called only after every return route has refused.
+    #[cfg(feature = "indirect-census")]
+    fn census_return(&self, line: usize, texts: &[&str]) {
+        let calls = texts
+            .iter()
+            .enumerate()
+            .filter(|(index, text)| {
+                is_identifier(text)
+                    && texts.get(index + 1) == Some(&"(")
+                    && !matches!(**text, "sizeof" | "_Alignof" | "__alignof__")
+            })
+            .map(|(_, callee)| {
+                let contract = self.contracts.contract(callee);
+                crate::indirect_census::ReturnCall {
+                    callee: (*callee).to_owned(),
+                    contracted: contract.is_some(),
+                    result_mode: contract.map(|contract| format!("{:?}", contract.result)),
+                    defined_in_unit: find_function_body(self.tokens, callee).is_some(),
+                }
+            })
+            .collect();
+        crate::indirect_census::record_return(
+            &crate::indirect_census::Context {
+                function: &self.census_function,
+                formal_parameters: &self.formal_parameters,
+                typed_model: &self.typed_model,
+                typed_types: &self.typed_types,
+                typed_bases: &self.typed_bases,
+            },
+            line,
+            texts,
+            calls,
+        );
+    }
+
     /// The complete expression was delimited by the parser; malformed
     /// control flow never reaches this constructor.
     fn expression_writes(&self, tokens: &[Token]) -> RefusedWrites {
@@ -4018,6 +4055,10 @@ impl Parser<'_> {
                 let returned_evaluation = (!strict && !untracked_pointer)
                     .then(|| self.return_expression_instruction(&expression, line))
                     .flatten();
+                #[cfg(feature = "indirect-census")]
+                if !strict && !untracked_pointer && returned_evaluation.is_none() {
+                    self.census_return(line, &texts);
+                }
                 Ok(Statement::Return {
                     line,
                     writes: self.expression_writes(&expression),
