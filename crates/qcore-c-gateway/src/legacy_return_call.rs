@@ -116,6 +116,19 @@
 //! A call that is not the **whole** return expression — a cast of one, a
 //! conditional over two, arithmetic on a result — is not admitted either: the
 //! desugaring's equivalence argument is about `return f(a);` and nothing else.
+//!
+//! **Amended by card W43-RETURN-EXPRESSION (deliberately).** The paragraph
+//! above still describes this card's *admitting* route, which still admits no
+//! uncontracted callee. W43's census found that exact exchange — a whole-call
+//! return whose synthetic assignment the classifier refuses — to be the
+//! dominant refused family of the corpus, and [`lowers_refused_whole_call`] now
+//! lowers it to the classifier's own refusal as a re-attribution that decides
+//! nothing (the function stays non-`Safe`; see that function). Separately, W43
+//! measured that `report_leaks` runs at **every** exit: an exit-node refusal
+//! does not suppress a leak accusation, so "an unmodeled exit is one
+//! `report_leaks` skips" in the `None` bullet above describes the exit
+//! *residual* observation (`observe_residual`'s `indeterminate`), not the leak
+//! report (`RETURN-REFUSAL-LEAK-REPORT-PREMISE`).
 
 use qcore_schemas::contract::ResourceReturnMode;
 
@@ -251,13 +264,10 @@ const NOT_A_CALLEE: &[&str] = &[
 /// * a call under a cast, a call inside a larger expression, a conditional, a
 ///   comma expression, and every call-shaped type operator in [`NOT_A_CALLEE`];
 /// * a body that spells the reserved synthetic place (checked by the caller).
-pub(crate) fn lowers_refused_whole_call(
-    tokens: &[Token],
-    texts: &[&str],
-    refused: bool,
-) -> bool {
+pub(crate) fn lowers_refused_whole_call(tokens: &[Token], texts: &[&str], refused: bool) -> bool {
     refused
-        && whole_expression_call(tokens, texts).is_some_and(|callee| !NOT_A_CALLEE.contains(&callee))
+        && whole_expression_call(tokens, texts)
+            .is_some_and(|callee| !NOT_A_CALLEE.contains(&callee))
 }
 
 /// The synthetic `PLACE = ` prefix, carrying the `return` statement's own line

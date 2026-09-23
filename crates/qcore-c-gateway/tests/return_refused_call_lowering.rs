@@ -236,7 +236,8 @@ fn a_contracted_call_refused_for_its_argument_reports_the_argument() {
     assert!(!lowered.refuses_return(), "{lowered:?}");
     assert_eq!(lowered.status, AnalysisStatus::Unknown);
     assert!(!lowered.certified);
-    let reference = run("int subject(void) { int t; t = r_borrow_code(z_unknown_ptr()); return t; }");
+    let reference =
+        run("int subject(void) { int t; t = r_borrow_code(z_unknown_ptr()); return t; }");
     assert_eq!(lowered.shape(), reference.shape());
     assert!(
         !lowered.unsupported().is_empty(),
@@ -309,7 +310,11 @@ fn a_leak_on_another_path_is_still_reported() {
         "int subject(int n) { void *p = q_alloc(); if (n) { q_free(p); int t; t = z_unknown(n); return t; } return 0; }",
         "call to uncontracted function `z_unknown`",
     );
-    assert_eq!(lowered.leaks(), 1, "the other path's leak must stand: {lowered:?}");
+    assert_eq!(
+        lowered.leaks(),
+        1,
+        "the other path's leak must stand: {lowered:?}"
+    );
 }
 
 // ------------------------------------------------------------------------
