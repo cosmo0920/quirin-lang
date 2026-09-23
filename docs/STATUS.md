@@ -19,7 +19,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Corpus diagnostics | leak **272**; unknown_alias **4,665**; double_release **0**; unsupported **49,371**; summary_conflict **1** | Same baseline, `artifacts/diagnostics.json.gz` |
 | Unit reasons | **136 unsupported-syntax / 1 incomplete-obligation-coverage / 48 without a reason code** | [Combined attribution](reports/w42-priority-integration/attribution.json) |
 | Raw source coverage | **4,921 definitions / 4,834 projected / 87 pinned-build exclusions**, across **24 full-path units** | [Verified census](reports/w42-unprojected-definitions/README.md); combined inventory unchanged |
-| Monkey callback accounting | **3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown**; 8 source paths | [Callback report](reports/w42-monkey-callback-coverage/README.md); ordinary audit checks 0/8 native paths, optional focused replay 8/8 |
+| Monkey callback accounting | **3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown**; 8 source paths; per-callback obligations **51 relevant cells, 17 discharged / 34 open** (was 5 / 46) | [Callback report](reports/w42-monkey-callback-coverage/README.md); ordinary audit checks 0/8 native paths, optional focused replay 8/8; [per-callback composition](reports/w43-monkey-callback-composition/README.md) discharges initialization reachability (3 callbacks) and natural activation (2) from the pinned compile task |
 | Observed Monkey timed wait | **1 instrumented Linux epoll success run**, 11 identity records and 11 model operations; conditional replay, no coverage promotion | [Observed integration](reports/cycle18-observed-integration/README.md) |
 | Cycle 18 priority-one checks | **8 failure cases** (3 fault-model Unsafe / 5 Unknown); **4/4 payload paths** under explicit authority; **15-operation timeout teardown** | [Bounded integration](reports/cycle18-priority1-integration/README.md) |
 | Cycle 18 bounded aggregate | **3 joined families / 8 source paths / 7 unresolved obligations**, aggregate Unknown | [Broader integration](reports/cycle18-broader-integration/aggregate.json) |
@@ -27,7 +27,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
 | Contract corpus | **96** modules; **59** resource-v1 declarations; **33** manifest-selected | [Provider ownership](../providers/README.md#contract-ownership), canonical index `contract/corpus.json`, [selection](../cycle19-resource-contracts.json) and pinned tests |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **276** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **278** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -95,9 +95,10 @@ pilot adds independently pinned data-only selection for the CMetrics policy,
 retains version-1 paths and existing adapters, and models admission separately
 from policy truth. Four scoped follow-ons remain in its report.
 
-All three broader Cycle 18 follow-ups remain open; **276** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **278** follow-ups are
 registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
-narrower lifecycle residuals took its place. Production callback composition, task/cancellation/event-generation
+narrower lifecycle residuals took its place; `MONKEY-CALLBACK-CYCLE18-COMPOSITION`
+was narrowed and two Cycle 18 residuals registered. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
 
