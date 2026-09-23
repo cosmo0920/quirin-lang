@@ -1,0 +1,13 @@
+{
+  "note": "Integration gate for MONKEY-CALLBACK-CYCLE18-COMPOSITION on merge ea800844 (onto main df60bc78, after all three earlier W43 merges), measured by the integrator in its own worktree; every step's exit captured to a file, not piped. 5136 core Rust passed / 0 failed / 12 ignored over 272 summaries; 167 Lean audits; fmt, clippy -D warnings, both reevaluation examples and the docs index exit 0. The first Python run on the merge failed 1 of 317 (test_the_derived_facts_are_recomputed_rather_than_carried: committed validation.lean_audits 166 vs recomputed 167) because this derived section was deliberately deferred during conflict resolution; after regeneration from this file the suite is rerun and recorded in integration-confirmation.md. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-return-expression/artifacts/. Provider tests carried, not remeasured: no file under providers/ changed. No coverage promotion: 0/3 callbacks composed.",
+  "workspace_tests": 5136,
+  "provider_tests": 123,
+  "python_evidence_validator_tests": 317,
+  "lean_audits": 167,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

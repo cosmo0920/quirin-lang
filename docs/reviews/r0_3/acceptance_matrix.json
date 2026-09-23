@@ -6725,11 +6725,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W43-RETURN-EXPRESSION: Rust, fmt, clippy, probes and Lean measured at 2fcc7109bac3b0fb35931611a92e48216bd96726; later commits change documents, the ledger and report scripts only (no Rust, Lean or test source), and the Python suite ran after the final matrix regeneration on the tip. 5099 core Rust passed / 0 failed / 11 ignored over 272 summaries; 166 Lean audits; 313 root Python tests after the final matrix regeneration. Step exits: {'clang': 0, 'clippy': 0, 'fmt': 0, 'followup': 0, 'lean': 0, 'probe': 0, 'python': 0, 'submodules': 0, 'test': 0}. Provider tests are carried, not remeasured (no provider change). Logs: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae2a69ef909727ba3/measure/gate. Clang recorded in this checkout. No coverage promotion; 0 function and 0 unit moves at the arbiter.",
-  "workspace_tests": 5099,
+  "note": "Integration gate for MONKEY-CALLBACK-CYCLE18-COMPOSITION on merge ea800844 (onto main df60bc78, after all three earlier W43 merges), measured by the integrator in its own worktree; every step's exit captured to a file, not piped. 5136 core Rust passed / 0 failed / 12 ignored over 272 summaries; 167 Lean audits; fmt, clippy -D warnings, both reevaluation examples and the docs index exit 0. The first Python run on the merge failed 1 of 317 (test_the_derived_facts_are_recomputed_rather_than_carried: committed validation.lean_audits 166 vs recomputed 167) because this derived section was deliberately deferred during conflict resolution; after regeneration from this file the suite is rerun and recorded in integration-confirmation.md. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-return-expression/artifacts/. Provider tests carried, not remeasured: no file under providers/ changed. No coverage promotion: 0/3 callbacks composed.",
+  "workspace_tests": 5136,
   "provider_tests": 123,
-  "python_evidence_validator_tests": 313,
-  "lean_audits": 166,
+  "python_evidence_validator_tests": 317,
+  "lean_audits": 167,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6778,6 +6778,7 @@
    "AuditCycle16.lean",
    "AuditCycle17.lean",
    "AuditCycle18.lean",
+   "AuditCycle18CallbackObligations.lean",
    "AuditCycle18Composition.lean",
    "AuditCycle19.lean",
    "AuditCycle20.lean",
@@ -6904,7 +6905,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-return-expression/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-monkey-callback-composition/integration/gate.json)"
  },
  "named_followups": [
   {
