@@ -1,10 +1,5 @@
-#[path = "../../common/runtime.rs"]
-mod runtime;
-
-#[path = "../../common/reactor_callbacks.rs"]
-mod reactor_callbacks;
-
 use qcore_schemas::plugin::{PluginManifest, VerificationRequestV2, VerificationResponseV2};
+use quirin_provider_shared::{reactor_callbacks, runtime};
 
 /// Each capability inspects the request itself and declines what it does not
 /// implement; a declined request falls through to the runtime's Unknown reply.

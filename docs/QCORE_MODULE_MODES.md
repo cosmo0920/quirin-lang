@@ -44,9 +44,9 @@ semantic checks in each mode.
 
 ```sh
 cargo run -p qcorec -- check \
-  providers/shared/contracts/fluent_bit/memory.qcore
+  providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qcore
 cargo run -p qcorec -- check \
-  providers/shared/contracts/language/quantified_indices.qcore
+  providers/quirin-provider-shared/contracts/language/quantified_indices.qcore
 ```
 
 All files indexed by `contract/corpus.json` now use `module contract;`; none needs a dummy
@@ -87,7 +87,7 @@ dependent function typing, symbolic inference from runtime values, or a proof
 of quantitative transfers through arbitrary bodies. Cost total/peak types and
 extensions to the separate legacy `quant<access, ...>` profile remain outside
 this addition. The native regression fixture is
-`providers/shared/contracts/language/quantified_indices.qcore`.
+`providers/quirin-provider-shared/contracts/language/quantified_indices.qcore`.
 
 ## Explicit bundled module imports
 

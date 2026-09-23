@@ -79,19 +79,25 @@ fn the_provider_fixtures_are_the_live_projections() {
             OUTCOMES_SOURCE,
             CLOSE,
             &OUTCOMES_RECORDS[..],
-            include_str!("../../common/fixtures/native_close_cleanup_replay_projection.json"),
+            include_str!(
+                "../../quirin-provider-shared/fixtures/native_close_cleanup_replay_projection.json"
+            ),
         ),
         (
             OUTCOMES_SOURCE,
             UNMAP,
             &OUTCOMES_RECORDS[..],
-            include_str!("../../common/fixtures/native_unmap_cleanup_replay_projection.json"),
+            include_str!(
+                "../../quirin-provider-shared/fixtures/native_unmap_cleanup_replay_projection.json"
+            ),
         ),
         (
             DELETE_SOURCE,
             DELETE,
             &DELETE_RECORDS[..],
-            include_str!("../../common/fixtures/native_delete_cleanup_replay_projection.json"),
+            include_str!(
+                "../../quirin-provider-shared/fixtures/native_delete_cleanup_replay_projection.json"
+            ),
         ),
     ] {
         let committed: CleanupReplaySourceInput = serde_json::from_str(name).unwrap();

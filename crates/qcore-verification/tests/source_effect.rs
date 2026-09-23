@@ -385,7 +385,7 @@ fn ordered_preprocessing_options_bind_source_tasks_even_when_output_is_identical
             &profile,
             &["chunkio"],
             &[],
-            include_str!("../../../providers/shared/contracts/library/source_projection.qcore"),
+            include_str!("../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"),
         )
         .unwrap();
         let ChunkSourceResult::Summary(summary) = results.into_iter().next().unwrap() else {

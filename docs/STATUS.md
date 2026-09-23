@@ -88,7 +88,8 @@ CMetrics replay preserves report bytes with two attributed provenance changes;
 it does not rerun or promote the 185-unit baseline.
 
 The five provider crates own **72** canonical contract modules; **24** shared or
-application-level modules live in `providers/shared/contracts`. `contract/corpus.json`
+application-level modules live in six `providers/quirin-provider-*` data crates
+(libc only in `quirin-provider-libc`; `quirin-provider-shared` bundles them). `contract/corpus.json`
 indexes all **96** without duplicate snapshots. Retained integration adapters
 embed the provider-owned data directly; generic core crates retain no provider
 executable dependency. Package inventories bind supplied contract bytes to their

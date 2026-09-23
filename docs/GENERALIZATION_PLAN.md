@@ -178,7 +178,7 @@ Rules:
   schema rework.*
 - **The schemas, core, frontend, contract and verifier-host libraries build
   without provider executable crates or assets**. The C gateway also requires
-  the shared source-projection policy in `providers/shared/contracts`.
+  the shared source-projection policy in `providers/quirin-provider-shared/contracts`.
   The retained first-party integration adapters in `qcore-verification` and
   `compiler` read canonical provider-owned contract assets at compile time;
   their integration tests likewise require those data files. This deliberately
@@ -299,7 +299,7 @@ W4, W5) wants contracts as data.
    diagnostic (fail-closed), not silently approximated.
 2. Migrate the production table in
    `cycle19_fluent_bit_libraries_audit.rs:141-207` into
-   canonical `.qcore` files (e.g. `providers/shared/contracts/libc/memory.qcore`,
+   canonical `.qcore` files (e.g. `providers/quirin-provider-libc/contracts/libc/memory.qcore`,
    `monkey/memory.qcore`, `librdkafka/memory.qcore`,
    `fluent_bit/memory.qcore` extensions, `chunkio/chunk_open_close.qcore`),
    and load them at runtime instead of `include_str!`/Rust literals.

@@ -13,7 +13,8 @@ import re
 
 ROOT = Path(__file__).resolve().parent
 # Ownership is intentionally narrow: shared language/support policies stay in
-# providers/shared/contracts. The ChunkIO provider also handles Fluent Bit's busy-state API.
+# the providers/quirin-provider-*/contracts data crates. The ChunkIO provider also handles
+# Fluent Bit's busy-state API.
 OWNERS = {
     "qcore-provider-chunkio": ("chunkio", "fluent_bit/busy_state.qcore"),
     "qcore-provider-cmetrics": ("cmetrics",),

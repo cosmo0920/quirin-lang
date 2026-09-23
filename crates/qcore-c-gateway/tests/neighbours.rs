@@ -39,22 +39,29 @@ mod text;
 use text::normalize_newlines;
 
 /// **The three production contract modules this card lands.**
-const HELPERS: &str =
-    include_str!("../../../providers/shared/contracts/fluent_bit/input_chunk_helpers.qcore");
-const TIME: &str = include_str!("../../../providers/shared/contracts/fluent_bit/time.qcore");
+const HELPERS: &str = include_str!(
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qcore"
+);
+const TIME: &str =
+    include_str!("../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qcore");
 const RESIDENCY: &str = include_str!(
     "../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qcore"
 );
 
 /// The production modules card PROD-CONTRACTS landed, byte-unchanged.
-const LOGGING: &str = include_str!("../../../providers/shared/contracts/fluent_bit/logging.qcore");
-const CHUNK_NAME: &str =
-    include_str!("../../../providers/shared/contracts/fluent_bit/input_chunk_name.qcore");
-const ROUTES_MASK: &str =
-    include_str!("../../../providers/shared/contracts/fluent_bit/routes_mask.qcore");
+const LOGGING: &str = include_str!(
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qcore"
+);
+const CHUNK_NAME: &str = include_str!(
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qcore"
+);
+const ROUTES_MASK: &str = include_str!(
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qcore"
+);
 /// Card HASH-CONTRACTS' module, byte-unchanged.
-const PUBLICATION: &str =
-    include_str!("../../../providers/shared/contracts/fluent_bit/hash_table_publication.qcore");
+const PUBLICATION: &str = include_str!(
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qcore"
+);
 /// The production constructor/destructor pair, byte-unchanged.
 const OPEN_CLOSE: &str = include_str!(
     "../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qcore"

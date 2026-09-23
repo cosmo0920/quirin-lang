@@ -5,7 +5,7 @@
 // That file stays byte-unchanged so card O04-B09B10 keeps its exact premise set
 // and its exact measurements. This card's real-source leg needs the same four
 // premises but must take `flb_hash_table_add` from the PRODUCTION module
-// `providers/shared/contracts/fluent_bit/hash_table_publication.qcore` instead, and the
+// `providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qcore` instead, and the
 // loader rejects a duplicate function contract, so the hash declaration is the
 // one thing this file omits. Every other declaration is character-for-character
 // the one O04-B09B10 measured under, and a test asserts that.

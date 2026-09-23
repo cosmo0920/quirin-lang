@@ -1936,5 +1936,4 @@ pub fn propose(
 }
 
 #[cfg(test)]
-#[path = "composition_effect_tests.rs"]
 mod tests;

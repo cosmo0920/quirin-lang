@@ -1,11 +1,17 @@
 [workspace]
-members = ["qcore-provider-libevent", "qcore-provider-chunkio", "qcore-provider-cmetrics", "qcore-provider-ctraces", "qcore-provider-librdkafka", "conformance"]
+members = ["quirin-provider-libc", "quirin-provider-cfl", "quirin-provider-mpack", "quirin-provider-msgpack", "quirin-provider-fluent-bit", "quirin-provider-shared", "qcore-provider-libevent", "qcore-provider-chunkio", "qcore-provider-cmetrics", "qcore-provider-ctraces", "qcore-provider-librdkafka", "conformance"]
 resolver = "2"
 
 [workspace.dependencies]
 qcore-schemas = { path = "../crates/qcore-schemas", version = "14.0.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
+quirin-provider-shared = { path = "quirin-provider-shared" }
+quirin-provider-libc = { path = "quirin-provider-libc" }
+quirin-provider-cfl = { path = "quirin-provider-cfl" }
+quirin-provider-mpack = { path = "quirin-provider-mpack" }
+quirin-provider-msgpack = { path = "quirin-provider-msgpack" }
+quirin-provider-fluent-bit = { path = "quirin-provider-fluent-bit" }
 
 [profile.release]
 debug = false

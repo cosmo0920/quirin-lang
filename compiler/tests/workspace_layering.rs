@@ -143,7 +143,7 @@ fn core_workspace_does_not_depend_on_provider_implementations() {
                 continue;
             }
             assert!(
-                !line.starts_with("qcore-provider"),
+                !line.starts_with("qcore-provider") && !line.starts_with("quirin-provider"),
                 "{member} must not depend on a provider crate: {line}"
             );
             assert!(

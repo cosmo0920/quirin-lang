@@ -1,0 +1,10 @@
+[package]
+name = "quirin-provider-fluent-bit"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+description = "Shared Quirin contract modules: fluent_bit"
+
+[lib]
+name = "quirin_provider_fluent_bit"

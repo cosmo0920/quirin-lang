@@ -1,5 +1,5 @@
-//! Bounded provider transport with optional capability-specific v2 proposals. Included as source by each artifact
-//! crate so no host/compiler dependency enters its dependency graph.
+//! Bounded provider transport with optional capability-specific v2 proposals. Linked by each artifact
+//! crate from `quirin-provider-shared`, so no host/compiler dependency enters its dependency graph.
 use qcore_schemas::plugin::*;
 use qcore_schemas::sha256_hex;
 use serde::Serialize;
@@ -174,7 +174,6 @@ fn response(
     }
 }
 
-#[allow(dead_code)]
 pub fn run(template: &str) -> Result<(), String> {
     run_with_v2(template, None)
 }
@@ -183,7 +182,6 @@ pub fn run_with_v2(template: &str, propose: Option<V2Proposal>) -> Result<(), St
     run_with_v2_and_contracts(template, None, propose)
 }
 
-#[allow(dead_code)]
 pub fn run_with_contracts(template: &str, contracts: &str) -> Result<(), String> {
     run_with_v2_and_contracts(template, Some(contracts), None)
 }

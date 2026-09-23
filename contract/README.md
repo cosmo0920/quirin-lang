@@ -7,7 +7,11 @@ directly with `quirin`.
 
 Provider-specific contracts have one canonical source in each owning
 `providers/qcore-provider-*/contracts/` tree. Shared language, support-library
-and application contracts without a provider owner live under `providers/shared/contracts/`.
+and application contracts without a provider owner live in the shared contract
+crates: `providers/quirin-provider-{libc,cfl,mpack,msgpack,fluent-bit}/contracts/`
+per library, and `providers/quirin-provider-shared/contracts/` for the
+`language/` and `library/` policies. libc contracts live only in
+`quirin-provider-libc`.
 The [corpus index](corpus.json) selects these roots for all 96 module and clause
 pins; it is validation metadata, not an implicit runtime contract selection.
 See the [provider editing workflow](../providers/README.md#contract-ownership).

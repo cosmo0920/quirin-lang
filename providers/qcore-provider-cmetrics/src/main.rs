@@ -1,8 +1,4 @@
-#[path = "../../common/runtime.rs"]
-mod runtime;
-
-#[path = "../../common/source_effect.rs"]
-mod source_effect;
+use quirin_provider_shared::{runtime, source_effect};
 
 fn main() {
     if let Err(error) = runtime::run_with_v2_and_contracts(

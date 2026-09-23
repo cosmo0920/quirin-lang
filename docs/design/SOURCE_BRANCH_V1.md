@@ -78,7 +78,7 @@ Occurrence census across all 369 `.qcore`/`.qc` files in the tree, 317 of them
 source-side (outside the canonical contract corpus), where wave 18 counted 294:
 
 * `if` as a word: **4 files**. Three are `//` comment text inside
-  `providers/shared/contracts/fluent_bit/` contracts (quoted C); one is
+  `providers/quirin-provider-fluent-bit/contracts/fluent_bit/` contracts (quoted C); one is
   `docs/reports/remaining-v03/probes/S21_structured_control_flow.qcore`, an
   archived probe. `acceptance_matrix.json` records for that directory that
   "nothing in the standing gate replays them", so no pinned expectation moves.

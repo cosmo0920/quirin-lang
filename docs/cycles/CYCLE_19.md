@@ -297,7 +297,7 @@ are recorded in `../reports/cycle19-source-contracts/README.md`.
 
 The actual pinned `flb_mem.h` is compiled with its selected Fluent Bit build
 profile and instrumented allocator calls. Its five wrappers are evaluated
-against `providers/shared/contracts/fluent_bit/memory.qcore` on 145 executions. The
+against `providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qcore` on 145 executions. The
 postconditions are defined in QCore; Rust provides a general bounded predicate
 interpreter, not a duplicate per-function behavior table. Nonzero-size realloc
 failure preservation is explicitly conditional. Zero-size realloc, alternate

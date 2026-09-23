@@ -6,8 +6,8 @@
 use super::*;
 use qcore_schemas::call_use_summary::{CallUsePathRecord, CallUseSourceInput};
 
-const CLOSE: &str = include_str!("fixtures/file_close_call_use_projection.json");
-const NATIVE: &str = include_str!("fixtures/native_close_call_use_projection.json");
+const CLOSE: &str = include_str!("../../fixtures/file_close_call_use_projection.json");
+const NATIVE: &str = include_str!("../../fixtures/native_close_call_use_projection.json");
 
 fn input(text: &str) -> CallUseSourceInput {
     serde_json::from_str(text).unwrap()
@@ -232,7 +232,7 @@ fn the_request_gate_declines_every_other_profile_capability_and_dialect() {
 
 fn manifest() -> PluginManifest {
     let mut manifest: PluginManifest = serde_json::from_str(include_str!(
-        "../qcore-provider-chunkio/provider-template.json"
+        "../../../qcore-provider-chunkio/provider-template.json"
     ))
     .unwrap();
     manifest.package_digest = "0".repeat(64);

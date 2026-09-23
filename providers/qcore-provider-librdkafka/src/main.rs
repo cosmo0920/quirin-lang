@@ -1,5 +1,4 @@
-#[path = "../../common/runtime.rs"]
-mod runtime;
+use quirin_provider_shared::runtime;
 
 fn main() {
     // The markers make the compiled-in template one contiguous, locatable blob

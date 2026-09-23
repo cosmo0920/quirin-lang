@@ -2140,7 +2140,7 @@ already reserved source words, and `==`, `!=`, `<=`, `>=`, `<` and `>` were
 already single tokens. The census across all 369 `.qcore`/`.qc` files (317 of
 them source-side, where wave 18 counted 294) found `if`
 as a word in four files — three of them `//` comment text quoting C inside
-`providers/shared/contracts/fluent_bit/`, and one an archived probe the standing gate does
+`providers/quirin-provider-fluent-bit/contracts/fluent_bit/`, and one an archived probe the standing gate does
 not replay — and `else` in sixteen, every one of them the extern adapter's
 `succeeds BOOL else … raise ERROR` tail, which is a `;`-terminated statement and
 never follows a `}`.

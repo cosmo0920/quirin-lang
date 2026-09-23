@@ -6,6 +6,7 @@ license = "MIT OR Apache-2.0"
 publish = false
 
 [dependencies]
+quirin-provider-shared.workspace = true
 qcore-schemas.workspace = true
 serde.workspace = true
 serde_json.workspace = true

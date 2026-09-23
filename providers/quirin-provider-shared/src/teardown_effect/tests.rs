@@ -7,8 +7,8 @@
 //! never read out of the projection.
 use super::*;
 
-const UNLINK: &str = include_str!("fixtures/list_unlink_projection.json");
-const DESTRUCTOR: &str = include_str!("fixtures/field_destructor_projection.json");
+const UNLINK: &str = include_str!("../../fixtures/list_unlink_projection.json");
+const DESTRUCTOR: &str = include_str!("../../fixtures/field_destructor_projection.json");
 
 fn unlink() -> TeardownSourceInput {
     serde_json::from_str(UNLINK).unwrap()

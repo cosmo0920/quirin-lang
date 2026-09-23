@@ -79,6 +79,7 @@ name = "qcore-provider-chunkio"
 version = "0.5.0"
 dependencies = [
  "qcore-schemas",
+ "quirin-provider-shared",
  "serde",
  "serde_json",
 ]
@@ -88,6 +89,7 @@ name = "qcore-provider-cmetrics"
 version = "0.2.0"
 dependencies = [
  "qcore-schemas",
+ "quirin-provider-shared",
  "serde",
  "serde_json",
 ]
@@ -103,6 +105,7 @@ dependencies = [
  "qcore-schemas",
  "qcore-verification",
  "qcore-verifier-host",
+ "quirin-provider-shared",
  "serde",
  "serde_json",
 ]
@@ -112,6 +115,7 @@ name = "qcore-provider-ctraces"
 version = "0.1.0"
 dependencies = [
  "qcore-schemas",
+ "quirin-provider-shared",
  "serde",
  "serde_json",
 ]
@@ -121,6 +125,7 @@ name = "qcore-provider-libevent"
 version = "0.1.0"
 dependencies = [
  "qcore-schemas",
+ "quirin-provider-shared",
  "serde",
  "serde_json",
 ]
@@ -130,6 +135,7 @@ name = "qcore-provider-librdkafka"
 version = "0.1.0"
 dependencies = [
  "qcore-schemas",
+ "quirin-provider-shared",
  "serde",
  "serde_json",
 ]
@@ -163,6 +169,40 @@ dependencies = [
  "libc",
  "qcore-frontend",
  "qcore-schemas",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "quirin-provider-cfl"
+version = "0.1.0"
+
+[[package]]
+name = "quirin-provider-fluent-bit"
+version = "0.1.0"
+
+[[package]]
+name = "quirin-provider-libc"
+version = "0.1.0"
+
+[[package]]
+name = "quirin-provider-mpack"
+version = "0.1.0"
+
+[[package]]
+name = "quirin-provider-msgpack"
+version = "0.1.0"
+
+[[package]]
+name = "quirin-provider-shared"
+version = "0.1.0"
+dependencies = [
+ "qcore-schemas",
+ "quirin-provider-cfl",
+ "quirin-provider-fluent-bit",
+ "quirin-provider-libc",
+ "quirin-provider-mpack",
+ "quirin-provider-msgpack",
  "serde",
  "serde_json",
 ]

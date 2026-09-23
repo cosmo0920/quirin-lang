@@ -12,7 +12,7 @@ fn emit() {
         return;
     }
     let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../providers/common/fixtures");
+        .join("../../providers/quirin-provider-shared/fixtures");
     for (source, function, records, name) in [
         (
             OUTCOMES_SOURCE,

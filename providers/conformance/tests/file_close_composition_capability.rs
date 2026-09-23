@@ -24,9 +24,10 @@ use std::process::Command;
 use std::sync::Arc;
 
 const COMMITTED: &str =
-    include_str!("../../common/fixtures/file_close_composition_projection.json");
-const COMMITTED_DELETE: &str =
-    include_str!("../../common/fixtures/file_close_delete_composition_projection.json");
+    include_str!("../../quirin-provider-shared/fixtures/file_close_composition_projection.json");
+const COMMITTED_DELETE: &str = include_str!(
+    "../../quirin-provider-shared/fixtures/file_close_delete_composition_projection.json"
+);
 
 fn plugin() -> PluginId {
     PluginId::new("qcore.chunkio").unwrap()

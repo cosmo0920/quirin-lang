@@ -8,7 +8,7 @@ use super::*;
 use qcore_schemas::cleanup_replay_summary::{CleanupReplayPathRecord, CleanupResetRecord};
 use qcore_schemas::composition_summary::{CompositionPrerequisiteSet, FileClosePrerequisites};
 
-const PROJECTION: &str = include_str!("fixtures/unmap_wrapper_composition_projection.json");
+const PROJECTION: &str = include_str!("../../fixtures/unmap_wrapper_composition_projection.json");
 
 fn projection() -> CompositionSourceInput {
     serde_json::from_str(PROJECTION).expect("the committed projection parses")
@@ -202,7 +202,7 @@ fn wrapper_bodies_outside_the_family_rules_decline() {
 #[test]
 fn the_request_gate_declines_every_other_exchange() {
     let manifest: PluginManifest = serde_json::from_str(include_str!(
-        "../qcore-provider-chunkio/provider-template.json"
+        "../../../qcore-provider-chunkio/provider-template.json"
     ))
     .unwrap();
     let base =
@@ -319,9 +319,10 @@ fn the_request_gate_declines_every_other_exchange() {
 // The two-level `cio_file_close` producer (card P04-COMPOSE-A).
 // ---------------------------------------------------------------------------
 
-const FILE_CLOSE_PROJECTION: &str = include_str!("fixtures/file_close_composition_projection.json");
+const FILE_CLOSE_PROJECTION: &str =
+    include_str!("../../fixtures/file_close_composition_projection.json");
 const FILE_CLOSE_DELETE_PROJECTION: &str =
-    include_str!("fixtures/file_close_delete_composition_projection.json");
+    include_str!("../../fixtures/file_close_delete_composition_projection.json");
 
 fn file_close_projection(deleting: bool) -> CompositionSourceInput {
     let text = if deleting {
@@ -701,7 +702,7 @@ fn degenerate_file_close_questions_decline_bounded() {
 #[test]
 fn the_file_close_request_gate_binds_family_to_profile() {
     let manifest: PluginManifest = serde_json::from_str(include_str!(
-        "../qcore-provider-chunkio/provider-template.json"
+        "../../../qcore-provider-chunkio/provider-template.json"
     ))
     .unwrap();
     let request = |profile: &str, input: CompositionSourceInput| VerificationRequestV2 {
@@ -791,7 +792,7 @@ fn the_file_close_request_gate_binds_family_to_profile() {
 /// test asserts the committed fixture is still the live one, so this matrix
 /// cannot drift onto a stale question.
 const MEMORY_CLOSE_PROJECTION: &str =
-    include_str!("fixtures/memory_close_composition_projection.json");
+    include_str!("../../fixtures/memory_close_composition_projection.json");
 
 fn memory_close_projection() -> CompositionSourceInput {
     serde_json::from_str(MEMORY_CLOSE_PROJECTION).unwrap()
@@ -1008,7 +1009,7 @@ fn degenerate_memory_close_questions_decline() {
 #[test]
 fn the_memory_close_request_gate_is_exact() {
     let manifest: PluginManifest = serde_json::from_str(include_str!(
-        "../qcore-provider-chunkio/provider-template.json"
+        "../../../qcore-provider-chunkio/provider-template.json"
     ))
     .unwrap();
     let base = |profile: &str,
@@ -1156,7 +1157,7 @@ fn the_memory_close_request_gate_is_exact() {
 /// test asserts the committed fixture is still the live one, so this matrix
 /// cannot drift onto a stale question.
 const FS_CLOSE_PROJECTION: &str =
-    include_str!("fixtures/filesystem_chunk_close_composition_projection.json");
+    include_str!("../../fixtures/filesystem_chunk_close_composition_projection.json");
 
 fn fs_close_projection() -> CompositionSourceInput {
     serde_json::from_str(FS_CLOSE_PROJECTION).unwrap()
@@ -1460,7 +1461,7 @@ fn degenerate_filesystem_questions_decline() {
 #[test]
 fn the_filesystem_request_gate_is_exact() {
     let manifest: PluginManifest = serde_json::from_str(include_str!(
-        "../qcore-provider-chunkio/provider-template.json"
+        "../../../qcore-provider-chunkio/provider-template.json"
     ))
     .unwrap();
     let base = |profile: &str,
@@ -1590,7 +1591,7 @@ fn the_filesystem_request_gate_is_exact() {
 #[test]
 fn the_honest_filesystem_question_is_answered_with_the_recomputed_reading() {
     let manifest: PluginManifest = serde_json::from_str(include_str!(
-        "../qcore-provider-chunkio/provider-template.json"
+        "../../../qcore-provider-chunkio/provider-template.json"
     ))
     .unwrap();
     let projection = fs_close_projection();
@@ -1645,7 +1646,7 @@ fn the_honest_filesystem_question_is_answered_with_the_recomputed_reading() {
 /// test asserts the committed fixture is still the live one, so this matrix
 /// cannot drift onto a stale question.
 const UNSUPPORTED_PROJECTION: &str =
-    include_str!("fixtures/unsupported_close_composition_projection.json");
+    include_str!("../../fixtures/unsupported_close_composition_projection.json");
 
 fn unsupported_projection() -> CompositionSourceInput {
     serde_json::from_str(UNSUPPORTED_PROJECTION).unwrap()
@@ -2014,7 +2015,7 @@ fn degenerate_symbolic_questions_decline() {
 #[test]
 fn the_symbolic_request_gate_is_exact() {
     let manifest: PluginManifest = serde_json::from_str(include_str!(
-        "../qcore-provider-chunkio/provider-template.json"
+        "../../../qcore-provider-chunkio/provider-template.json"
     ))
     .unwrap();
     let base = |profile: &str,
@@ -2159,7 +2160,7 @@ fn the_symbolic_request_gate_is_exact() {
 #[test]
 fn the_honest_symbolic_question_is_answered_with_the_recomputed_reading() {
     let manifest: PluginManifest = serde_json::from_str(include_str!(
-        "../qcore-provider-chunkio/provider-template.json"
+        "../../../qcore-provider-chunkio/provider-template.json"
     ))
     .unwrap();
     let projection = unsupported_projection();

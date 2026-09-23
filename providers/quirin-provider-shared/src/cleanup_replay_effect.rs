@@ -640,5 +640,4 @@ pub fn propose(
 }
 
 #[cfg(test)]
-#[path = "cleanup_replay_effect_tests.rs"]
 mod tests;
