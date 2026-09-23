@@ -1,0 +1,13 @@
+{
+  "note": "MONKEY-CALLBACK-CYCLE18-COMPOSITION isolated standing gate at 686f44dcb292a2b9d33666e287ae5c43c249c7fc (clean tree; later edits are report, status, index and matrix text only). Rust: 5122 passed, 0 failed, 12 ignored across 271 result summaries, 260 running targets and 9 doc-test sections; cargo test --workspace --no-fail-fast exit 0 with CARGO_PROFILE_DEV_DEBUG=0 and CARGO_PROFILE_TEST_DEBUG=0. fmt, clippy -D warnings, both reevaluation examples (8/8, 11/11) and 166 Lean audits exit 0; Python counted after matrix regeneration. The five rule-16 host-sensitive rows passed inside the full run. Provider 123 is carried, not remeasured: no file under providers/ changed. Clang was invoked in the measuring worktree and is recorded beside this file. Logs: measure/w43-gate-1/ (worktree-private). No callback, corpus, CT or conformance promotion: 0/3 callbacks composed.",
+  "workspace_tests": 5122,
+  "provider_tests": 123,
+  "python_evidence_validator_tests": 317,
+  "lean_audits": 166,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

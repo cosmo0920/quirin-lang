@@ -51,6 +51,30 @@ fn main() -> ExitCode {
             }
         };
     }
+    if path == "cycle18-obligations" {
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: quirin-audit cycle18-obligations CONFIG.json");
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: quirin-audit cycle18-obligations CONFIG.json");
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::cycle18_composition::run_cycle18_obligations_config(
+            &PathBuf::from(config),
+        ) {
+            Ok(()) => {
+                println!(
+                    "Per-callback Cycle 18 obligations measured; callbacks without every obligation discharged remain Unknown. Report written."
+                );
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("Cycle 18 callback obligations rejected (Unknown): {error}");
+                ExitCode::FAILURE
+            }
+        };
+    }
     if path == "cycle18-composition" {
         let Some(config) = arguments.next() else {
             eprintln!("usage: quirin-audit cycle18-composition CONFIG.json");
