@@ -389,7 +389,6 @@ fn a_call_that_is_not_the_whole_return_expression_is_refused() {
     }
     for body in [
         "void *subject(void) { return (void *) q_alloc(); }",
-        "int subject(void) { void *p = q_alloc(); return z_unknown(r_release_code(p)); }",
         "int subject(void) { void *p = q_alloc(); return r_release_code(p) ? 1 : 0; }",
         "int subject(void) { void *p = q_alloc(); return r_release_code(p) & 1; }",
         "int subject(void) { void *p = q_alloc(); return r_release_code(p), 0; }",
@@ -401,6 +400,23 @@ fn a_call_that_is_not_the_whole_return_expression_is_refused() {
             refused.unsupported()
         );
     }
+    // Deliberately re-pinned by card W43-RETURN-EXPRESSION: an uncontracted
+    // *whole* call whose argument is a contracted call is a whole-call return
+    // the classifier refuses, so it is lowered to that refusal. The nested
+    // release is not applied, nothing is admitted, and the function is not
+    // `Safe`.
+    let lowered =
+        run("int subject(void) { void *p = q_alloc(); return z_unknown(r_release_code(p)); }");
+    assert!(!lowered.refuses_return(), "{:?}", lowered.unsupported());
+    assert!(
+        lowered
+            .unsupported()
+            .contains(&"call to uncontracted function `z_unknown`".to_owned()),
+        "{:?}",
+        lowered.unsupported()
+    );
+    assert_ne!(lowered.status, AnalysisStatus::Safe);
+    assert!(!lowered.certified);
 }
 
 /// B01's positive family: exactly one modeled resource-free call may sit
@@ -602,28 +618,35 @@ fn the_collision_refusal_is_the_guard_and_not_the_body() {
 // The uncontracted callee: bucket (2) is empty by construction
 // ---------------------------------------------------------------------------
 
-/// A callee with no contract in force is **not** admitted, so clearing the
-/// return refusal never merely exchanges it for a `call to uncontracted
-/// function` leaf. That is wave 33's yield objection honoured in the rule
-/// rather than argued away, and it is what makes this card's bucket (2) empty
-/// by construction rather than by luck.
+/// A callee with no contract in force is **not** admitted by this card's
+/// route: nothing here models its call, so this card's bucket (2) stays empty.
+///
+/// **Deliberately re-pinned by card W43-RETURN-EXPRESSION.** This row used to
+/// assert that the return-position refusal was kept verbatim, so that clearing
+/// it could never be *published as progress* by exchanging it for a `call to
+/// uncontracted function` leaf. W43's corpus census found that exchange to be
+/// the dominant refused family (the call, not the return, is what blocks those
+/// functions) and lowers it to the classifier's own refusal
+/// (`return_call::lowers_refused_whole_call`), explicitly as a re-attribution
+/// that decides nothing: the function stays non-`Safe`, uncertified, and no
+/// obligation is discharged. What this row now pins is exactly that: the W4
+/// route still admits nothing, and the published reason names the callee.
 #[test]
-fn an_uncontracted_callee_keeps_the_return_refusal() {
+fn an_uncontracted_callee_is_refused_by_the_call_classifier() {
     if !clang_available() {
         return;
     }
     let refused = run("int u_unknown(int n); int subject(void) { return u_unknown(1); }");
     assert!(
-        refused.refuses_return(),
-        "an uncontracted callee must keep the return refusal: {:?}",
+        !refused.refuses_return(),
+        "W43 lowers a refused whole call to the classifier's refusal: {:?}",
         refused.unsupported()
     );
-    assert!(
-        !refused
-            .unsupported()
-            .iter()
-            .any(|text| text.contains("uncontracted")),
-        "and it must not have exchanged one refusal for another: {:?}",
-        refused.unsupported()
+    assert_eq!(
+        refused.unsupported(),
+        vec!["call to uncontracted function `u_unknown`".to_owned()],
+        "the published reason is the call classifier's"
     );
+    assert_ne!(refused.status, AnalysisStatus::Safe);
+    assert!(!refused.certified);
 }

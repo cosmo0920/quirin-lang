@@ -120,64 +120,111 @@ def merge(tokens):
     return out
 
 
+TYPE_OPERATORS = {"sizeof", "_Alignof", "__alignof__", "alignof"}
+
+
+def strip_casts(tokens):
+    """Remove any number of leading `( TYPE-NAME )` casts and grouping parens."""
+    tokens = strip_parens(tokens)
+    casts = 0
+    while True:
+        cast = leading_cast(tokens)
+        if cast is None:
+            return tokens, casts
+        tokens = strip_parens(tokens[cast + 1:])
+        casts += 1
+
+
+def is_type_operator_constant(tokens):
+    """Every operand is `sizeof`/`_Alignof` `( … )`, a numeric literal, a cast
+    or an arithmetic operator: an expression C evaluates at translation time
+    (no variable-length array can appear in the pinned corpus's spellings is
+    NOT assumed here; the family is only a sizing bucket)."""
+    index = 0
+    seen = False
+    while index < len(tokens):
+        token = tokens[index]
+        if token in TYPE_OPERATORS and index + 1 < len(tokens) and tokens[index + 1] == "(":
+            end = matching(tokens, index + 1)
+            if end is None:
+                return False
+            index = end + 1
+            seen = True
+            continue
+        if token == "(":
+            cast = leading_cast(tokens[index:])
+            if cast is not None:
+                index += cast + 1
+                continue
+        if token in ("(", ")", "+", "-", "*", "/") or token[:1].isdigit():
+            index += 1
+            continue
+        return False
+    return seen
+
+
+def access_obstacle(record, tokens):
+    """The first reason, in the analyzer's own chain facts, an access-only
+    expression is outside the admitted neutral families."""
+    if "=" in tokens or "++" in tokens or "--" in tokens:
+        return "writes inside the expression"
+    for chain in record["chains"]:
+        if chain["base_kind"] == "CallResult":
+            return "access through a call or cast result"
+        if chain["base_may_bind"]:
+            return "access through a base this body may bind"
+        cause = chain["base_cause"]
+        if cause != "Committed":
+            return "base type the declaration reader will not commit to"
+        if "Subscript" in chain["steps"]:
+            return "subscript"
+        if "Deref" in chain["steps"]:
+            return "dereference"
+        if chain["member_class"] not in ("Scalar", "RecordPointer", "SinglePointer"):
+            return f"member typed {chain['member_class']}"
+        if chain["member_class"] != "Scalar":
+            return "pointer-valued member leaf"
+    if "[" in tokens:
+        return "subscript of a non-chain operand"
+    if "*" in tokens or "&" in tokens:
+        return "address-of or dereference of a name"
+    return "unclassified operand"
+
+
 def family(record):
     tokens = strip_parens(merge(record["tokens"]))
     calls = record["calls"]
     if not tokens:
-        return "empty"
+        return "G. other", "empty"
     if "{" in tokens:
-        return "statement expression / braces"
-    if top_level(tokens, lambda i, t: t == "?"):
-        return "conditional ?:"
-    if top_level(tokens, lambda i, t: t in ("&&", "||")):
-        return "short-circuit && / ||"
-    if top_level(tokens, lambda i, t: t == ","):
-        return "comma operator"
-    cast = leading_cast(tokens)
-    if cast is not None:
-        inner = strip_parens(tokens[cast + 1:])
-        if whole_call(inner):
-            return "cast of a whole call"
-        return "cast of a non-call operand"
-    if whole_call(tokens):
-        callee = tokens[0]
+        return "G. other", "statement expression or compound literal"
+    inner, casts = strip_casts(tokens)
+    under = " under a cast" if casts else ""
+    if is_type_operator_constant(tokens):
+        return "D. type-operator constant", "sizeof/_Alignof over a type or object" + under
+    if whole_call(inner):
+        callee = inner[0]
         call = next((c for c in calls if c["callee"] == callee), None)
-        if callee in RESERVED_CALLS:
-            return "type operator"
         if call is None:
-            return "whole call (unclassified callee)"
+            return "A. whole call, uncontracted callee", "unclassified callee" + under
+        if callee.startswith(("__builtin_", "__atomic_", "__sync_")):
+            return "A. whole call, uncontracted callee", "compiler builtin" + under
         if not call["contracted"]:
-            where = "defined in unit" if call["defined_in_unit"] else "external"
-            return f"whole call, uncontracted callee ({where})"
-        return f"whole call, contracted callee (result {call['result_mode']})"
-    if tokens[0] == "&":
-        return "address-of"
-    if tokens[0] == "*" :
-        return "dereference"
-    if tokens[0] == "!" and not calls:
-        return "logical not over access"
+            where = "defined in this unit" if call["defined_in_unit"] else "declared elsewhere"
+            return "A. whole call, uncontracted callee", where + under
+        return "B. whole call, contracted callee", f"result {call['result_mode']}" + under
+    if top_level(tokens, lambda i, t: t == "?"):
+        return ("C. compound expression with a call" if calls else "E. conditional or short-circuit, no call"), "conditional ?:"
+    if top_level(tokens, lambda i, t: t in ("&&", "||")):
+        return ("C. compound expression with a call" if calls else "E. conditional or short-circuit, no call"), "short-circuit && / ||"
+    if top_level(tokens, lambda i, t: t == ","):
+        return "G. other", "comma operator"
     if calls:
         contracted = all(c["contracted"] for c in calls)
-        return (
-            "calls inside compound expression (all contracted)"
-            if contracted
-            else "calls inside compound expression (some uncontracted)"
+        return "C. compound expression with a call", (
+            "every call contracted" if contracted else "an uncontracted call"
         )
-    if "++" in tokens or "--" in tokens or top_level(tokens, lambda i, t: t == "="):
-        return "mutation inside expression (no call)"
-    if top_level(tokens, lambda i, t: t in ("==", "!=", "<", ">", "<=", ">=")):
-        return "comparison over accesses (no call)"
-    operators = {"+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", "~"}
-    if top_level(tokens, lambda i, t: t in operators and i > 0):
-        return "arithmetic over accesses (no call)"
-    if "[" in tokens:
-        return "subscript access (no call)"
-    chains = record["chains"]
-    if len(chains) == 1 and all(t not in operators for t in tokens):
-        chain = chains[0]
-        bound = "bound base" if chain["base_may_bind"] else "never-bound base"
-        return f"single access chain, {bound}, leaf {chain['member_class']}"
-    return "other"
+    return "F. access expression, no call", access_obstacle(record, tokens)
 
 
 def main() -> int:
@@ -235,7 +282,12 @@ def main() -> int:
         if key not in published:
             unmatched_records += 1
             continue
-        joined.setdefault(key, set()).add(tuple(record["tokens"]))
+        joined.setdefault(key, set()).add(
+            (tuple(record["tokens"]), tuple((c["callee"], c["contracted"]) for c in record["calls"]))
+        )
+        # The published analysis is the unit's last pass over the body, so the
+        # last record for a key is the one whose contract environment the
+        # published verdict used; disagreement between passes is counted.
         joined[key + ("record",)] = record
 
     leaves = []
@@ -251,6 +303,11 @@ def main() -> int:
         record = joined[key + ("record",)]
         function_key = key[:3]
         distinct = reasons[function_key]
+        name, detail = family(record)
+        callee_status = None
+        if name.startswith("A.") and detail.startswith("defined in this unit"):
+            callee = strip_casts(strip_parens(merge(record["tokens"])))[0][0]
+            callee_status = status.get((key[0], key[1], callee), "not projected")
         for _ in range(multiplicity):
             leaves.append(
                 {
@@ -260,20 +317,47 @@ def main() -> int:
                     "line": key[3],
                     "status": status[function_key],
                     "sole": distinct == {RETURN},
-                    "family": family(record),
+                    "family": name,
+                    "detail": detail,
+                    "callee_status": callee_status,
                     "expression": " ".join(record["tokens"]),
                 }
             )
 
     def table(rows):
-        leaf_count = collections.Counter(row["family"] for row in rows)
-        function_sets = collections.defaultdict(set)
-        for row in rows:
-            function_sets[row["family"]].add((row["library"], row["file"], row["function"]))
-        return [
-            {"family": name, "leaves": count, "functions": len(function_sets[name])}
-            for name, count in leaf_count.most_common()
-        ]
+        out = []
+        for name in sorted({row["family"] for row in rows}):
+            members = [row for row in rows if row["family"] == name]
+            details = collections.Counter(row["detail"] for row in members)
+            out.append(
+                {
+                    "family": name,
+                    "leaves": len(members),
+                    "functions": len({(r["library"], r["file"], r["function"]) for r in members}),
+                    "details": [
+                        {
+                            "detail": detail,
+                            "leaves": count,
+                            "functions": len(
+                                {
+                                    (r["library"], r["file"], r["function"])
+                                    for r in members
+                                    if r["detail"] == detail
+                                }
+                            ),
+                        }
+                        for detail, count in details.most_common()
+                    ],
+                }
+            )
+        return out
+
+    def callee_statuses(rows):
+        return dict(
+            collections.Counter(
+                row["callee_status"] for row in rows if row["callee_status"] is not None
+            )
+        )
 
     unknown = [row for row in leaves if row["status"] == "Unknown"]
     sole = [row for row in unknown if row["sole"]]
@@ -284,23 +368,37 @@ def main() -> int:
         "records_joined_to_no_published_leaf": unmatched_records,
         "published_leaves": sum(published.values()),
         "published_leaves_uncovered": len(uncovered),
-        "published_leaves_with_ambiguous_spelling": ambiguous,
+        "published_leaves_whose_passes_disagree": ambiguous,
         "unknown_population": {
             "leaves": len(unknown),
             "functions": len({(r["library"], r["file"], r["function"]) for r in unknown}),
             "families": table(unknown),
+            "defined_callee_status": callee_statuses(unknown),
         },
         "sole_population": {
             "leaves": len(sole),
             "functions": len({(r["library"], r["file"], r["function"]) for r in sole}),
             "families": table(sole),
+            "defined_callee_status": callee_statuses(sole),
         },
         "all_status_population": {
             "leaves": len(leaves),
             "families": table(leaves),
         },
     }
-    print(json.dumps({k: v for k, v in summary.items()}, indent=2))
+    for key in ("census_records", "census_unit_ordinals", "unjoined_unit_ordinals",
+                "records_joined_to_no_published_leaf", "published_leaves",
+                "published_leaves_uncovered", "published_leaves_whose_passes_disagree"):
+        print(f"{key}: {summary[key]}")
+    for population in ("unknown_population", "sole_population"):
+        block = summary[population]
+        print(f"\n{population}: {block['leaves']} leaves / {block['functions']} functions")
+        print(f"{'leaves':>7} {'funcs':>6}  family / detail")
+        for row in sorted(block["families"], key=lambda r: -r["leaves"]):
+            print(f"{row['leaves']:7} {row['functions']:6}  {row['family']}")
+            for detail in row["details"]:
+                print(f"{detail['leaves']:7} {detail['functions']:6}      {detail['detail']}")
+        print(f"  status of the defined-in-unit callee: {block['defined_callee_status']}")
     if out:
         out.write_text(json.dumps({"summary": summary, "uncovered": uncovered, "leaves": leaves}, indent=1) + "\n")
     return 0 if not uncovered else 1

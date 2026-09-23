@@ -4296,13 +4296,21 @@ impl Parser<'_> {
             LegacyInstruction::OpaqueValue { destination, .. }
                 if destination == return_call::RETURN_RESULT_PLACE
         ) && direct_member_read;
+        self.next_site = restore;
         if admitted {
-            self.next_site = restore;
-            Some((instruction, false))
-        } else {
-            self.next_site = restore;
-            None
+            return Some((instruction, false));
         }
+        // Card W43-RETURN-EXPRESSION. Asked last, after every admitting route
+        // above has declined: a whole-call return whose synthetic assignment
+        // the classifier *refuses* is lowered to that refusal and a `NoOp`
+        // exit, so the published reason names the call's own blocker. The
+        // node stays `Unknown`, so this re-attributes and never admits; see
+        // `return_call::lowers_refused_whole_call`.
+        let refused = matches!(instruction, LegacyInstruction::Unknown { .. });
+        if return_call::lowers_refused_whole_call(expression, &texts, refused) {
+            return Some((instruction, false));
+        }
+        None
     }
 
     fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {
