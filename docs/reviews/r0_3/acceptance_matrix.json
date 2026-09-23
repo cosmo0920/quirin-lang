@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 276
+  "named_followups": 282
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6725,11 +6725,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "TASK-CONTEXT-CONTRACT-BUNDLE: measured implementation on ad6016f21355ccfa2bc0a4746cb0c4d9fcd1bee6 with source digests and actual commands/exits in validation.json. 5043 core Rust passed / 0 failed / 11 ignored; 165 Lean audits; 336 root Python tests; 123 provider Rust tests. Standing commands, five isolated host controls, provider mutation control, fmt/clippy, probes and all five package verifications exit 0. Logs: private/task-context-contract-bundle/. Initial restricted-environment failures, corrected Lean import ordering, and stale matrix failure are retained. No coverage promotion.",
-  "workspace_tests": 5043,
+  "note": "W43-RETURN-EXPRESSION: Rust, fmt, clippy, probes and Lean measured at 2fcc7109bac3b0fb35931611a92e48216bd96726; later commits change documents, the ledger and report scripts only (no Rust, Lean or test source), and the Python suite ran after the final matrix regeneration on the tip. 5099 core Rust passed / 0 failed / 11 ignored over 272 summaries; 166 Lean audits; 313 root Python tests after the final matrix regeneration. Step exits: {'clang': 0, 'clippy': 0, 'fmt': 0, 'followup': 0, 'lean': 0, 'probe': 0, 'python': 0, 'submodules': 0, 'test': 0}. Provider tests are carried, not remeasured (no provider change). Logs: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae2a69ef909727ba3/measure/gate. Clang recorded in this checkout. No coverage promotion; 0 function and 0 unit moves at the arbiter.",
+  "workspace_tests": 5099,
   "provider_tests": 123,
-  "python_evidence_validator_tests": 336,
-  "lean_audits": 165,
+  "python_evidence_validator_tests": 313,
+  "lean_audits": 166,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6855,6 +6855,7 @@
    "AuditReturnCallCustody.lean",
    "AuditReturnExpressionEvaluation.lean",
    "AuditReturnPositionEscape.lean",
+   "AuditReturnRefusedCallLowering.lean",
    "AuditScalarCalls.lean",
    "AuditScalarMemberStore.lean",
    "AuditScalarRouteExitEdge.lean",
@@ -6903,7 +6904,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/task-context-contract-bundle/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-return-expression/gate.json)"
  },
  "named_followups": [
   {

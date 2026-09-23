@@ -58,8 +58,9 @@ semantics can be made sound, and refuses the rest by name.
 
 The last two rows matter to other cards: the indirect-access population the
 queued general indirect-access card inherits grows by **267 leaves** that
-were previously hidden behind the return wording (each is `return f(… p->x …)`
-where the classifier's lexical gate fires on the argument first).
+were previously hidden behind the return wording (each is a whole call such as
+`return f(… p->x …)` whose argument carries a member, subscript or dereference,
+so the classifier's lexical gate fires before its contract lookup).
 
 ## 1. Baseline reproduction
 
@@ -239,7 +240,11 @@ leaves on 3 provisional-Unsafe functions), matching the AFTER artifact exactly.
 Implementation commit `29f4a907`; [frozen forecast](PREDICTION.md) committed
 before the run (`0f0a0445`). AFTER run ([artifacts/run.json](artifacts/run.json)):
 binary `6fa3adb7…0a27`, exit **0**, 03:54:45Z–04:00:13Z. Later commits change
-formatting, comments, tests, scripts and documents only.
+formatting, comments, tests, scripts and documents only; a confirmation run at
+tip `1f29f123` ([confirmation-run.json](confirmation-run.json): binary
+`886b2ba5…41d8`, exit **0**, 04:09:07Z–04:13:45Z) reproduces **all five**
+archived AFTER artifacts byte for byte
+([confirmation-identity.json](confirmation-identity.json)).
 
 [`scripts/attribute.py`](scripts/attribute.py) keys attribution on the Rust
 rule's own shape predicate applied to the BEFORE token view, and accepts a
@@ -350,7 +355,44 @@ editing them. It is also why the arbiter moved no leak leaf.
 
 ## 9. Validation
 
-GATE-PLACEHOLDER
+The full standing gate ran through `scripts/run_gate.py` (each step's exit
+captured directly from the process, never through a pipe; `--no-fail-fast` on
+the workspace tests) with `CARGO_BUILD_JOBS=4`, `RUST_TEST_THREADS=2` and
+`CARGO_PROFILE_DEV_DEBUG=0` / `CARGO_PROFILE_TEST_DEBUG=0` (debug information
+off to bound disk on a host shared with two other cards; the tests are the
+same). Rust, fmt, clippy, probes and Lean were measured at `2fcc7109`; the
+later commits change documents, the ledger and report scripts only. Private
+logs and per-step facts: `measure/gate/` in this worktree; the collected record
+is [gate-facts.json](gate-facts.json) and the generator input [gate.json](gate.json).
+
+| Command | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | libevent at `d82464a2…` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8, recorded in this checkout ([clang-version.txt](clang-version.txt)) |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,099 passed / 0 failed / 11 ignored**, 272 `test result` summaries |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --all-targets -- -D warnings` | 0 | clean |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | 8/8 rows pass |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | 11/11 rows pass |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **166 Lean audits**, no project axioms or placeholders |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w43-return-expression/gate.json` | 0 | 282 follow-ups, 166 audit files |
+| `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **313 tests** |
+
+Rust 5,099 = the preceding checkpoint's 5,085 plus this card's 14 rows. No
+load-sensitive row failed, so no isolation rerun was needed. The 123 provider
+tests are carried (no provider change) and not remeasured. Additional focused
+checks: `cargo clippy -p qcore-c-gateway --features indirect-census
+--all-targets -- -D warnings` exit 0; `cargo test -p qcore-c-gateway
+--no-fail-fast` 1,117 passed / 0 failed / 7 ignored after the re-pins.
+
+Attempts that are not the gate, disclosed: the first focused run of the new
+test file failed 3 of 14 rows (exit 101) because the rows assumed a return
+refusal suppresses the leak report — the §8 finding; the rows were corrected to
+measure the old answer on the same body. The first `cargo test -p
+qcore-c-gateway` failed the 3 rows that pinned the old wording (exit 101)
+before their deliberate re-pin. A pre-gate `cargo fmt --check` exited 1 on two
+new files and was fixed with `cargo fmt`. A pre-final Python run against a
+provisional matrix also passed 313.
 
 ## 10. Ledger and status
 
