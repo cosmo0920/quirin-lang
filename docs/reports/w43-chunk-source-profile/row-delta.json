@@ -1,0 +1,117 @@
+{
+  "card": "W43-CHUNK-SOURCE-PROFILE",
+  "before": {
+    "result": "docs/reports/w42-chunk-lifecycle-cert/lifecycle-coverage.json",
+    "evidence_version": "chunk-lifecycle-coverage-1",
+    "selected_functions": 96,
+    "safe_functions": 0,
+    "unknown_functions": 96,
+    "distribution": [
+      {
+        "role": "unclassified",
+        "status": "unknown",
+        "outstanding_legs": 9,
+        "derived_from_own_pinned_unit": false,
+        "functions": 96
+      }
+    ]
+  },
+  "after": {
+    "result": "docs/reports/w43-chunk-source-profile/lifecycle-coverage.json",
+    "evidence_version": "chunk-lifecycle-coverage-2",
+    "selected_functions": 96,
+    "safe_functions": 0,
+    "unknown_functions": 96,
+    "distribution": [
+      {
+        "role": "destruction_dependent",
+        "status": "unknown",
+        "outstanding_legs": 9,
+        "derived_from_own_pinned_unit": true,
+        "functions": 2
+      },
+      {
+        "role": "unclassified",
+        "status": "unknown",
+        "outstanding_legs": 9,
+        "derived_from_own_pinned_unit": false,
+        "functions": 94
+      }
+    ]
+  },
+  "unchanged_rows": 94,
+  "changed_rows": [
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_close",
+      "before": {
+        "role": "unclassified",
+        "status": "unknown",
+        "outstanding_legs": 9,
+        "composition": null,
+        "reached_legs": [],
+        "retained_live": [],
+        "derived_from_own_pinned_unit": false,
+        "checked_paths": 0,
+        "uncovered_paths": 0
+      },
+      "after": {
+        "role": "destruction_dependent",
+        "status": "unknown",
+        "outstanding_legs": 9,
+        "composition": "prefix",
+        "reached_legs": [
+          "backend_teardown",
+          "chunk_teardown",
+          "context_counters",
+          "primary_list_unlink",
+          "residency_list_unlink"
+        ],
+        "retained_live": [
+          "context 0",
+          "stream 0"
+        ],
+        "derived_from_own_pinned_unit": true,
+        "checked_paths": 2,
+        "uncovered_paths": 2
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_close_stream",
+      "before": {
+        "role": "unclassified",
+        "status": "unknown",
+        "outstanding_legs": 9,
+        "composition": null,
+        "reached_legs": [],
+        "retained_live": [],
+        "derived_from_own_pinned_unit": false,
+        "checked_paths": 0,
+        "uncovered_paths": 0
+      },
+      "after": {
+        "role": "destruction_dependent",
+        "status": "unknown",
+        "outstanding_legs": 9,
+        "composition": "prefix",
+        "reached_legs": [
+          "backend_teardown",
+          "chunk_teardown",
+          "context_counters",
+          "primary_list_unlink",
+          "residency_list_unlink"
+        ],
+        "retained_live": [
+          "context 0",
+          "stream 0"
+        ],
+        "derived_from_own_pinned_unit": true,
+        "checked_paths": 1,
+        "uncovered_paths": 2
+      }
+    }
+  ]
+}

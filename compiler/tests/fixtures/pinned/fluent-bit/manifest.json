@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "card": "W43-CHUNK-SOURCE-PROFILE",
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "scope": "verbatim copies of the pinned ChunkIO units the lifecycle route imports, their in-tree include closure under the pinned compile database, and the two headers the pinned build generates; no byte is edited",
+  "files": {
+    "build/lib/chunkio/include/chunkio/cio_info.h": {
+      "origin": "pinned-build-generated",
+      "sha256": "93f946a6848219e2639c84354bf7287cd757b419d5049f38a2eafe4bba35a24e"
+    },
+    "build/lib/chunkio/include/chunkio/cio_version.h": {
+      "origin": "pinned-build-generated",
+      "sha256": "c98cee5452a457f3e5abddaaa377658829b959900f7b4dcd0d811e066b676831"
+    },
+    "source/LICENSE": {
+      "origin": "pinned-source",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    "source/lib/chunkio/LICENSE": {
+      "origin": "pinned-source",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    "source/lib/chunkio/deps/crc32/crc32.h": {
+      "origin": "pinned-source",
+      "sha256": "9142f86130d535f96167e90427e3a12fe89ee1883d40e7ea23c0d6b605091eb8"
+    },
+    "source/lib/chunkio/include/chunkio/chunkio.h": {
+      "origin": "pinned-source",
+      "sha256": "7521e7ff71a6806392ba40415374abad36d853e494c48c099fe569298678fce7"
+    },
+    "source/lib/chunkio/include/chunkio/chunkio_compat.h": {
+      "origin": "pinned-source",
+      "sha256": "0018bb818f125a1cc09e44da1c0f9eed1ad79ea9cc8971364c6ac1ce9bf64ef1"
+    },
+    "source/lib/chunkio/include/chunkio/cio_chunk.h": {
+      "origin": "pinned-source",
+      "sha256": "a210e185d9aee64556b5895145d9819cf2d58b32ec44af34fad49030785ce3ef"
+    },
+    "source/lib/chunkio/include/chunkio/cio_crc32.h": {
+      "origin": "pinned-source",
+      "sha256": "cb3a5f69b6529a77a42aca28bf38a788a9659af0cf2484584089eda4b53029bc"
+    },
+    "source/lib/chunkio/include/chunkio/cio_error.h": {
+      "origin": "pinned-source",
+      "sha256": "d5809df21bcff7e7665c00275fdb2d97ee77a6c76f976fbd3290498b2f57037c"
+    },
+    "source/lib/chunkio/include/chunkio/cio_file.h": {
+      "origin": "pinned-source",
+      "sha256": "13aad7f49c3f9f31813acdcb94f372b3d4f220adc91c52a3245cfe000cc2ce22"
+    },
+    "source/lib/chunkio/include/chunkio/cio_file_st.h": {
+      "origin": "pinned-source",
+      "sha256": "02eb39090bf82c246c1fc3b29f3b121259a066656956c8ac5fb2f4cbc13d9133"
+    },
+    "source/lib/chunkio/include/chunkio/cio_log.h": {
+      "origin": "pinned-source",
+      "sha256": "cd6516131d8213d0e2e826ace3d714cd8aacc1423223894bd04bbb2b11658825"
+    },
+    "source/lib/chunkio/include/chunkio/cio_memfs.h": {
+      "origin": "pinned-source",
+      "sha256": "8be8b597b2ed0af4ab2f46b41e936f723d00d16ebba9d2b8a7a7ab439ed8efd8"
+    },
+    "source/lib/chunkio/include/chunkio/cio_stream.h": {
+      "origin": "pinned-source",
+      "sha256": "33ff19b98b1d04a435325d2baea2d8a9de5d18f4d9ba7ffaa0c9ab9dcbee52ac"
+    },
+    "source/lib/chunkio/include/chunkio/cio_utils.h": {
+      "origin": "pinned-source",
+      "sha256": "3d5d2431d25fafded9bb8a5be289c62a1555ce989d26c2d983270c9c655f9f6b"
+    },
+    "source/lib/chunkio/src/cio_chunk.c": {
+      "origin": "pinned-source",
+      "sha256": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8"
+    },
+    "source/lib/chunkio/src/cio_error.c": {
+      "origin": "pinned-source",
+      "sha256": "96ea54b5bd2452cd6ab001cacf7405ff7ce869ae6983d3f471b6bda08a607914"
+    },
+    "source/lib/chunkio/src/cio_memfs.c": {
+      "origin": "pinned-source",
+      "sha256": "de82d7d9d78d310d40864c2b1d45e09d257f955404a9e7c1f5cf60b3863ac9b9"
+    },
+    "source/lib/monkey/LICENSE": {
+      "origin": "pinned-source",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    "source/lib/monkey/NOTICE": {
+      "origin": "pinned-source",
+      "sha256": "7387a0f57dc3ca22577c7459b6b2cd6c7f26d902cd88717427bce3af78e7302e"
+    },
+    "source/lib/monkey/include/monkey/mk_core/mk_limits.h": {
+      "origin": "pinned-source",
+      "sha256": "478943c1dfc9e014644b255295376e85a4bb94d0f7a1ec1f114022669c487a2b"
+    },
+    "source/lib/monkey/include/monkey/mk_core/mk_list.h": {
+      "origin": "pinned-source",
+      "sha256": "2deacdc5bb1abfc317be4b46687d569be36aad32aa1816c127e4fe6d5f9e1af1"
+    },
+    "source/lib/monkey/include/monkey/mk_core/mk_macros.h": {
+      "origin": "pinned-source",
+      "sha256": "ec875a3474cdd226651e5211e9f864b797dffd0c6570dfdbae083b34860383e7"
+    }
+  },
+  "units": {
+    "lib/chunkio/src/cio_chunk.c": {
+      "definitions": [
+        "CIO_HAVE_BACKEND_FILESYSTEM",
+        "CIO_HAVE_GETPAGESIZE",
+        "CIO_HAVE_POSIX_FALLOCATE",
+        "FLB_HAVE_CHUNK_TRACE",
+        "FLB_HAVE_DEV",
+        "FLB_HAVE_HTTP_CLIENT_DEBUG",
+        "FLB_HAVE_IN_STORAGE_BACKLOG",
+        "FLB_HAVE_PARSER",
+        "FLB_HAVE_RECORD_ACCESSOR",
+        "FLB_HAVE_SIMD",
+        "FLB_HAVE_STREAM_PROCESSOR",
+        "FLB_HAVE_SYS_WAIT_H",
+        "FLB_HAVE_UNICODE_ENCODER",
+        "FLB_HAVE_YYJSON",
+        "FLB_SYSTEM_LINUX",
+        "FLB_TRACE=1",
+        "MPACK_EXTENSIONS=1",
+        "MSGPACK_EMBED_STACK_SIZE=64",
+        "NGHTTP2_STATICLIB",
+        "__FLB_FILENAME__=__FILE__",
+        "__FILENAME__=__FILE__"
+      ],
+      "include_roots": [
+        "source/lib/chunkio/src",
+        "source/lib",
+        "source/lib/chunkio/include",
+        "build/lib/chunkio/include",
+        "source/lib/monkey/include",
+        "source/lib/monkey/include/monkey",
+        "source/lib/chunkio/deps"
+      ],
+      "dialect": "gnu17"
+    },
+    "lib/chunkio/src/cio_memfs.c": {
+      "definitions": [
+        "CIO_HAVE_BACKEND_FILESYSTEM",
+        "CIO_HAVE_GETPAGESIZE",
+        "CIO_HAVE_POSIX_FALLOCATE",
+        "FLB_HAVE_CHUNK_TRACE",
+        "FLB_HAVE_DEV",
+        "FLB_HAVE_HTTP_CLIENT_DEBUG",
+        "FLB_HAVE_IN_STORAGE_BACKLOG",
+        "FLB_HAVE_PARSER",
+        "FLB_HAVE_RECORD_ACCESSOR",
+        "FLB_HAVE_SIMD",
+        "FLB_HAVE_STREAM_PROCESSOR",
+        "FLB_HAVE_SYS_WAIT_H",
+        "FLB_HAVE_UNICODE_ENCODER",
+        "FLB_HAVE_YYJSON",
+        "FLB_SYSTEM_LINUX",
+        "FLB_TRACE=1",
+        "MPACK_EXTENSIONS=1",
+        "MSGPACK_EMBED_STACK_SIZE=64",
+        "NGHTTP2_STATICLIB",
+        "__FLB_FILENAME__=__FILE__",
+        "__FILENAME__=__FILE__"
+      ],
+      "include_roots": [
+        "source/lib/chunkio/src",
+        "source/lib",
+        "source/lib/chunkio/include",
+        "build/lib/chunkio/include",
+        "source/lib/monkey/include",
+        "source/lib/monkey/include/monkey",
+        "source/lib/chunkio/deps"
+      ],
+      "dialect": "gnu17"
+    },
+    "lib/chunkio/src/cio_error.c": {
+      "definitions": [
+        "CIO_HAVE_BACKEND_FILESYSTEM",
+        "CIO_HAVE_GETPAGESIZE",
+        "CIO_HAVE_POSIX_FALLOCATE",
+        "FLB_HAVE_CHUNK_TRACE",
+        "FLB_HAVE_DEV",
+        "FLB_HAVE_HTTP_CLIENT_DEBUG",
+        "FLB_HAVE_IN_STORAGE_BACKLOG",
+        "FLB_HAVE_PARSER",
+        "FLB_HAVE_RECORD_ACCESSOR",
+        "FLB_HAVE_SIMD",
+        "FLB_HAVE_STREAM_PROCESSOR",
+        "FLB_HAVE_SYS_WAIT_H",
+        "FLB_HAVE_UNICODE_ENCODER",
+        "FLB_HAVE_YYJSON",
+        "FLB_SYSTEM_LINUX",
+        "FLB_TRACE=1",
+        "MPACK_EXTENSIONS=1",
+        "MSGPACK_EMBED_STACK_SIZE=64",
+        "NGHTTP2_STATICLIB",
+        "__FLB_FILENAME__=__FILE__",
+        "__FILENAME__=__FILE__"
+      ],
+      "include_roots": [
+        "source/lib/chunkio/src",
+        "source/lib",
+        "source/lib/chunkio/include",
+        "build/lib/chunkio/include",
+        "source/lib/monkey/include",
+        "source/lib/monkey/include/monkey"
+      ],
+      "dialect": "gnu17"
+    }
+  }
+}

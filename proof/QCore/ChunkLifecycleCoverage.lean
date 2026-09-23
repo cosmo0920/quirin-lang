@@ -19,7 +19,11 @@ Three facts are the point of the module.
 * A delete-only operation is never `Safe` and keeps a nonempty retained
   post-state.
 * Accounting is exact: an omitted, duplicated or unselected row rejects the
-  operation instead of shrinking the denominator. -/
+  operation instead of shrinking the denominator.
+
+Card `W43-CHUNK-SOURCE-PROFILE` adds a fourth: a composition promotes a
+function only when it was derived from that function's own pinned unit and
+composes every one of its source paths. -/
 
 inductive Leg where
   | contextTeardown
@@ -55,11 +59,28 @@ inductive CompositionKind where
   deriving DecidableEq, BEq, Repr
 
 /-- A composition carries its kind together with the legs the re-run program
-actually reached. There is no way to carry legs without a composition. -/
+actually reached. There is no way to carry legs without a composition.
+
+Card `W43-CHUNK-SOURCE-PROFILE` adds the two facts a composition must carry
+before its legs may count for a *function*:
+
+* `ownSource` — it was derived from the selected function's own pinned
+  translation unit, not from a distilled fixture or another function's unit;
+* `pathsComplete` — every source path of the function is composed. A
+  composition over some paths only *reaches* its legs on those paths; for the
+  function it discharges nothing, and each uncovered path stays an explicit
+  `Unknown`. -/
 structure Composition where
   kind : CompositionKind
   legs : List Leg
+  ownSource : Bool
+  pathsComplete : Bool
   deriving DecidableEq, BEq, Repr
+
+/-- The only compositions whose legs may promote a function. -/
+def Composition.admits (composition : Composition) : Bool :=
+  decide (composition.kind = CompositionKind.terminal) && composition.ownSource &&
+    composition.pathsComplete
 
 structure Evidence where
   role : Role
@@ -70,10 +91,11 @@ structure Evidence where
   wrapperDischarged : Bool
   deriving DecidableEq, BEq, Repr
 
+/-- Model legs count for the function only when every source path is composed. -/
 def Evidence.modelLegs (evidence : Evidence) : List Leg :=
   match evidence.composition with
   | none => []
-  | some composition => composition.legs
+  | some composition => if composition.pathsComplete then composition.legs else []
 
 def Evidence.discharged (evidence : Evidence) : List Leg :=
   evidence.modelLegs ++
@@ -90,7 +112,8 @@ operation error rather than publishing it as a residual. -/
 def Evidence.WellFormed (evidence : Evidence) : Prop :=
   (evidence.role ≠ .destructionDependent → evidence.composition = none) ∧
   (evidence.role = .deleteOnly → evidence.retained ≠ []) ∧
-  (evidence.role ≠ .deleteOnly → evidence.retained = [])
+  (evidence.role ≠ .deleteOnly → evidence.retained = []) ∧
+  (∀ composition, evidence.composition = some composition → composition.ownSource = true)
 
 inductive Status where
   | safe
@@ -100,20 +123,20 @@ inductive Status where
 def isSafe (evidence : Evidence) : Bool :=
   decide (evidence.role = Role.destructionDependent) &&
     (match evidence.composition with
-     | some composition => decide (composition.kind = CompositionKind.terminal)
+     | some composition => composition.admits
      | none => false) &&
     evidence.outstanding.isEmpty
 
 def account (evidence : Evidence) : Status :=
   if isSafe evidence then .safe else .unknown evidence.outstanding
 
-/-- An accepted lifecycle result is destruction-dependent, carries a terminal
-composition, and has no outstanding leg. -/
-theorem safe_is_terminal_and_complete {evidence : Evidence}
+/-- The shared core: an accepted result is destruction-dependent, carries an
+admitted composition, and has no outstanding leg. -/
+theorem safe_is_admitted_and_complete {evidence : Evidence}
     (accepted : account evidence = .safe) :
     evidence.role = .destructionDependent ∧
       (∃ composition, evidence.composition = some composition ∧
-        composition.kind = .terminal) ∧
+        composition.admits = true) ∧
       evidence.outstanding = [] := by
   have safe : isSafe evidence = true := by
     cases decision : isSafe evidence with
@@ -122,7 +145,7 @@ theorem safe_is_terminal_and_complete {evidence : Evidence}
   have facts :
       (decide (evidence.role = Role.destructionDependent) = true ∧
         (match evidence.composition with
-         | some composition => decide (composition.kind = CompositionKind.terminal)
+         | some composition => composition.admits
          | none => false) = true) ∧
       evidence.outstanding.isEmpty = true := by
     simpa [isSafe, Bool.and_eq_true] using safe
@@ -134,7 +157,37 @@ theorem safe_is_terminal_and_complete {evidence : Evidence}
   | some value =>
     refine ⟨value, rfl, ?_⟩
     rw [composition] at facts
-    exact of_decide_eq_true facts.1.2
+    exact facts.1.2
+
+theorem admits_facts {composition : Composition} (admitted : composition.admits = true) :
+    composition.kind = .terminal ∧ composition.ownSource = true ∧
+      composition.pathsComplete = true := by
+  have facts :
+      (decide (composition.kind = CompositionKind.terminal) = true ∧
+        composition.ownSource = true) ∧ composition.pathsComplete = true := by
+    simpa [Composition.admits, Bool.and_eq_true] using admitted
+  exact ⟨of_decide_eq_true facts.1.1, facts.1.2, facts.2⟩
+
+/-- An accepted lifecycle result is destruction-dependent, carries a terminal
+composition, and has no outstanding leg. -/
+theorem safe_is_terminal_and_complete {evidence : Evidence}
+    (accepted : account evidence = .safe) :
+    evidence.role = .destructionDependent ∧
+      (∃ composition, evidence.composition = some composition ∧
+        composition.kind = .terminal) ∧
+      evidence.outstanding = [] := by
+  obtain ⟨role, ⟨composition, bound, admitted⟩, empty⟩ :=
+    safe_is_admitted_and_complete accepted
+  exact ⟨role, ⟨composition, bound, (admits_facts admitted).1⟩, empty⟩
+
+/-- W43: an accepted result's composition was derived from the function's own
+pinned unit and composes every one of its source paths. -/
+theorem safe_composition_is_own_source_and_path_complete {evidence : Evidence}
+    (accepted : account evidence = .safe) :
+    ∃ composition, evidence.composition = some composition ∧
+      composition.ownSource = true ∧ composition.pathsComplete = true := by
+  obtain ⟨_, ⟨composition, bound, admitted⟩, _⟩ := safe_is_admitted_and_complete accepted
+  exact ⟨composition, bound, (admits_facts admitted).2⟩
 
 /-- Every required leg an accepted result does not discharge is impossible:
 an accepted result discharges all nine. -/
@@ -229,6 +282,101 @@ theorem only_destruction_dependent_rows_carry_a_composition {evidence : Evidence
     evidence.modelLegs = [] := by
   unfold Evidence.modelLegs
   rw [wellFormed.1 other]
+
+/-! ### Own pinned source and complete paths (W43) -/
+
+/-- A composition over only some of the function's source paths contributes no
+model leg to the function. -/
+theorem a_path_incomplete_composition_discharges_no_model_leg {evidence : Evidence}
+    {composition : Composition} (bound : evidence.composition = some composition)
+    (incomplete : composition.pathsComplete = false) : evidence.modelLegs = [] := by
+  simp [Evidence.modelLegs, bound, incomplete]
+
+/-- Every leg other than the two source legs stays outstanding under a
+path-incomplete composition, whatever legs it reached on its checked paths. -/
+theorem a_path_incomplete_composition_leaves_model_legs_outstanding {evidence : Evidence}
+    {composition : Composition} (bound : evidence.composition = some composition)
+    (incomplete : composition.pathsComplete = false) {leg : Leg}
+    (required : leg ∈ requiredLegs) (notErrors : leg ≠ .errorExits)
+    (notWrapper : leg ≠ .wrapperObligations) : leg ∈ evidence.outstanding := by
+  have none : evidence.modelLegs = [] :=
+    a_path_incomplete_composition_discharges_no_model_leg bound incomplete
+  have errorsDiffer : (leg == Leg.errorExits) = false := by
+    cases leg <;> first | rfl | exact absurd rfl notErrors
+  have wrapperDiffers : (leg == Leg.wrapperObligations) = false := by
+    cases leg <;> first | rfl | exact absurd rfl notWrapper
+  have absent : evidence.discharged.contains leg = false := by
+    cases errors : evidence.errorExitsModeled <;> cases wrapper : evidence.wrapperDischarged <;>
+      simp [Evidence.discharged, none, errors, wrapper, errorsDiffer, wrapperDiffers]
+  exact List.mem_filter.mpr ⟨required, by simp [absent]⟩
+
+theorem a_path_incomplete_composition_is_never_safe {evidence : Evidence}
+    {composition : Composition} (bound : evidence.composition = some composition)
+    (incomplete : composition.pathsComplete = false) : account evidence ≠ .safe := by
+  intro accepted
+  obtain ⟨value, equality, _, complete⟩ :=
+    safe_composition_is_own_source_and_path_complete accepted
+  rw [bound] at equality
+  have same : composition = value := Option.some.inj equality
+  subst same
+  rw [incomplete] at complete
+  cases complete
+
+/-- A composition taken over a distilled fixture, or over another function's
+unit, cannot promote the function it is attached to. -/
+theorem a_composition_not_from_its_own_pinned_source_is_never_safe {evidence : Evidence}
+    {composition : Composition} (bound : evidence.composition = some composition)
+    (foreign : composition.ownSource = false) : account evidence ≠ .safe := by
+  intro accepted
+  obtain ⟨value, equality, own, _⟩ :=
+    safe_composition_is_own_source_and_path_complete accepted
+  rw [bound] at equality
+  have same : composition = value := Option.some.inj equality
+  subst same
+  rw [foreign] at own
+  cases own
+
+/-- A well-formed row never carries a composition from a foreign source. -/
+theorem a_well_formed_composition_is_from_its_own_pinned_source {evidence : Evidence}
+    {composition : Composition} (wellFormed : evidence.WellFormed)
+    (bound : evidence.composition = some composition) : composition.ownSource = true :=
+  wellFormed.2.2.2 composition bound
+
+/-- The identity a derivation claims, and the identity it must equal. The Rust
+adapter compares exactly these five fields; the unit digest is the pinned digest
+of the row's own file, so a fixture's bytes cannot stand in for it. -/
+structure SourceIdentity where
+  library : String
+  file : String
+  function : String
+  revision : String
+  unitDigest : String
+  deriving DecidableEq, BEq, Repr
+
+def derivedFromOwnSource (row derived : SourceIdentity) : Bool :=
+  decide (derived = row)
+
+theorem another_function_is_not_its_own_source {row derived : SourceIdentity}
+    (other : derived.function ≠ row.function) : derivedFromOwnSource row derived = false := by
+  apply Bool.eq_false_iff.mpr
+  intro accepted
+  have same : derived = row := of_decide_eq_true accepted
+  exact other (by rw [same])
+
+theorem another_unit_digest_is_not_its_own_source {row derived : SourceIdentity}
+    (other : derived.unitDigest ≠ row.unitDigest) :
+    derivedFromOwnSource row derived = false := by
+  apply Bool.eq_false_iff.mpr
+  intro accepted
+  have same : derived = row := of_decide_eq_true accepted
+  exact other (by rw [same])
+
+theorem another_revision_is_not_its_own_source {row derived : SourceIdentity}
+    (other : derived.revision ≠ row.revision) : derivedFromOwnSource row derived = false := by
+  apply Bool.eq_false_iff.mpr
+  intro accepted
+  have same : derived = row := of_decide_eq_true accepted
+  exact other (by rw [same])
 
 /-! ### Exact accounting -/
 
