@@ -1,0 +1,51 @@
+[
+  {
+    "id": "W43-RETURN-CALL-UNDER-CAST",
+    "title": "A whole call under a cast in a return keeps the return-position refusal (25 leaves)",
+    "why": "Card W43-RETURN-EXPRESSION lowers a whole-call return whose synthetic assignment the statement classifier refuses to that refusal, but only when the call spans the whole expression. The census (docs/reports/w43-return-expression/census/) measures 25 Unknown-function leaves over 22 functions where the call sits under one or more `( TYPE-NAME )` casts: 23 uncontracted or builtin callees and 2 contracted `Owned{nullable}` callees (`(T *) rd_kafka_mem_calloc(...)`); 13 leaves are sole blockers. The uncontracted half would be a pure re-attribution; the contracted `Owned` half would be an ADMISSION that escapes a fresh site through a cast, which needs its own argument that a pointer or integer conversion preserves (or does not) the escaped identity. Discharge: a card that recognises a leading cast positively (type-name tokens only, never a parenthesised expression or function designator), lowers the refused half as W43 does, and either admits the Owned half with a Lean statement about conversions or refuses it by name, with a measured arbiter.",
+    "source": "docs/reports/w43-return-expression/README.md",
+    "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+    "id": "W43-RETURN-COMPOUND-CALL",
+    "title": "Return expressions with a call inside a larger expression stay refused (82 leaves)",
+    "why": "Card W43-RETURN-EXPRESSION measured 82 refused return leaves over 76 Unknown functions whose expression contains a call but is not one whole call: 53 with an uncontracted call in arithmetic or comparison (`strcmp(a, b) == 0`), 18 conditionals and 9 short-circuits over a call, and 2 whose calls are all contracted; 41 leaves (39 functions) are sole blockers. B01 already admits exactly one externally declared contracted `None` call in a scalar residual; everything else needs an evaluation model for a call whose result feeds further computation, and a conditional or short-circuit call is not unconditionally evaluated (constraint 5d). Discharge: a measured card that either lowers the refused-call subset to the classifier's refusal of the call with a proved frequency-preserving decomposition, or states per sub-shape why it stays refused.",
+    "source": "docs/reports/w43-return-expression/README.md",
+    "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+    "id": "W43-RETURN-ACCESS-OPERANDS",
+    "title": "290 access-only return expressions are refused for their operands' binding and typing, not for the return",
+    "why": "Card W43-RETURN-EXPRESSION measured 290 refused return leaves over 264 Unknown functions whose expression carries no call: 186 read through a base the body may bind (constraint 5 / REACH-GATE-BOUND-BASE), 44 through a base whose declared type the reader will not commit to (e.g. `const cJSON * const item`, `UnreadableSpecifiers`), 31 end at an Unresolved member (typedef pointer members such as `cfl_sds_t`), 12 at an aggregate-valued (union) member, and 17 at other operand shapes; 75 are sole blockers (27 base-type, 22 unresolved member, 12 union member). None is a return-position question: each is an indirect-access, base-type-reader or member-typing premise shared with every other expression position, so this card deliberately does not widen it. Discharge: the general indirect-access and typed-member cards consume this per-obstacle split (it refines RETURN-POSITION-TYPED-MEMBER-REACH) and re-measure it at their arbiters.",
+    "source": "docs/reports/w43-return-expression/README.md",
+    "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+    "id": "W43-RETURN-COMMA-MACRO",
+    "title": "Comma-expression returns, dominated by one nanopb macro, stay refused (67 leaves)",
+    "why": "Card W43-RETURN-EXPRESSION measured 67 refused return leaves over 32 Unknown functions spelled `return (E1), E2;`, almost all nanopb's PB_RETURN_ERROR expansion `(stream->errmsg = stream->errmsg ? stream->errmsg : \"...\"), 0`; 2 are sole blockers, and 4 more leaves are statement expressions or compound literals. The comma operator itself is a sequence point, so `E1; return E2;` is an exact desugaring, but E1 is a pointer-member store through a base the body binds, which is indirect access outside this card and would only exchange the refusal. Discharge: a card that lands the sequential desugaring together with (or after) a sound pointer-member store rule, measured.",
+    "source": "docs/reports/w43-return-expression/README.md",
+    "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+    "id": "W43-RETURN-CONDITIONAL-OPERANDS",
+    "title": "Call-free conditional and short-circuit returns are refused for their operands (26 leaves)",
+    "why": "Card W43-RETURN-EXPRESSION measured 26 call-free refused return leaves over 26 Unknown functions whose top-level operator is `?:` (18) or `&&`/`||` (8); 17 are sole blockers. `?`, `:` and the logical operators are already admitted operand punctuation, so these refuse for an operand (a bound base, an untyped member, a dereference), not for the operator. This updates RETURN-POSITION-CONDITIONAL's 28-leaf wave-33 population with the analyzer's own token view but does not answer its counterfactual question. Discharge: RETURN-POSITION-CONDITIONAL's measurement, per operand obstacle, at the next typed-access arbiter.",
+    "source": "docs/reports/w43-return-expression/README.md",
+    "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+    "id": "W43-RETURN-TYPE-OPERATOR",
+    "title": "`sizeof` of a non-scalar type in a return stays refused (6 leaves)",
+    "why": "Card W43-RETURN-EXPRESSION measured 6 refused return leaves over 6 Unknown functions that are translation-time type-operator constants such as `return sizeof(LZ4_stream_t);`; 4 are sole blockers and would plausibly reach Safe. The fixed scalar type-query rule (type_query.rs) deliberately admits only a readable scalar type name or a declared scalar local, so a record or union typedef stays outside it; widening that rule is a type-query change affecting every expression position, not a return-position one, and W43's lowering explicitly refuses call-shaped type operators rather than misattributing them to an uncontracted `sizeof`. Discharge: a card widening the type-query rule to complete record/union types with its own VLA argument and arbiter.",
+    "source": "docs/reports/w43-return-expression/README.md",
+    "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+    "id": "RETURN-REFUSAL-LEAK-REPORT-PREMISE",
+    "title": "report_leaks runs at every exit; an exit-node refusal does not suppress a leak accusation",
+    "why": "Card W43-RETURN-EXPRESSION measured, in the real gateway, that a body `void *p = q_alloc(); return (int) z_take(p);` whose return keeps the return-position refusal still publishes Leak beside the Unsupported leaf (provisional Unsafe): `report_leaks` is called for every exit node with no unmodeled check, and a refusal never touches resource states. Several texts state the opposite: gateway constraint 7 ('report_leaks skips an unmodeled exit'), the C-GATEWAY-RETURN-CALL-W4 module note on the None result, and QCore.ReturnPositionEscape's `reported .refuse = false`, whose accusing-direction theorems are therefore about a model premise the Rust does not share (the residual observation's `indeterminate` flag is what an unmodeled path does change). W43's own Lean model states the measured behaviour and its test pins it. Discharge: an integrator correction of the constraint-7 sentence and the two module notes, and either a Lean amendment of ReturnPositionEscape's `reported` or an explicit statement that it models the residual observation rather than the leak report.",
+    "source": "docs/reports/w43-return-expression/README.md",
+    "recorded_by": "W43-RETURN-EXPRESSION"
+  }
+]

@@ -32,7 +32,36 @@ import sys
 RETURN = "unmodeled call, aggregate or indirect access in return expression"
 
 
+NOT_A_CALLEE = {
+    "sizeof", "_Alignof", "alignof", "__alignof", "__alignof__", "_Generic", "__typeof",
+    "__typeof__", "typeof", "__builtin_offsetof", "__builtin_types_compatible_p",
+    "__builtin_va_arg", "__extension__",
+}
+
+
+def rule_shape(tokens):
+    """`return_call::whole_expression_call` plus `NOT_A_CALLEE`, over the
+    analyzer's own token view: an identifier, `(`, and the matching `)` as the
+    last token. No parenthesis stripping and no cast skipping, exactly as the
+    Rust rule reads it."""
+    if len(tokens) < 3 or tokens[1] != "(":
+        return False
+    first = tokens[0]
+    if not (first[:1].isalpha() or first[:1] == "_") or first in NOT_A_CALLEE:
+        return False
+    depth = 0
+    for index in range(1, len(tokens)):
+        if tokens[index] == "(":
+            depth += 1
+        elif tokens[index] == ")":
+            depth -= 1
+            if depth == 0:
+                return index == len(tokens) - 1
+    return False
+
+
 def lowered_family(leaf):
+    """The census forecast family: A or B without a cast."""
     return leaf["family"][:2] in ("A.", "B.") and "under a cast" not in leaf["detail"]
 
 
@@ -61,10 +90,16 @@ def main() -> int:
     bu, bfields, bf, bl = index(before)
     au, afields, af, al = index(after)
 
+    # The attribution key is the rule's own shape predicate over the BEFORE
+    # token view; the census family forecast is compared separately.
     lowered_coordinates = collections.Counter()
+    forecast_coordinates = collections.Counter()
     for leaf in census["leaves"]:
+        coordinate = (leaf["library"], leaf["file"], leaf["function"], leaf["line"])
+        if rule_shape(leaf["expression"].split(" ")):
+            lowered_coordinates[coordinate] += 1
         if lowered_family(leaf):
-            lowered_coordinates[(leaf["library"], leaf["file"], leaf["function"], leaf["line"])] += 1
+            forecast_coordinates[coordinate] += 1
 
     removed = bl - al
     added = al - bl
@@ -99,10 +134,21 @@ def main() -> int:
 
     census_lowered = sum(lowered_coordinates.values())
     removed_lowered_total = sum(removed_lowered.values())
-    if removed_lowered_total != census_lowered:
-        unattributed.append(
-            {"kind": "census mismatch", "census_lowered": census_lowered, "removed": removed_lowered_total}
-        )
+    # A rule-shape leaf that survives is one whose synthetic assignment the
+    # classifier did not refuse; it must be listed, never silently accepted.
+    rule_shape_kept = sorted(
+        list(coordinate) for coordinate in lowered_coordinates if coordinate not in removed_coordinates
+    )
+    forecast = {
+        "forecast_lowered": sum(forecast_coordinates.values()),
+        "measured_lowered": removed_lowered_total,
+        "lowered_but_not_forecast": sorted(
+            list(c) for c in removed_coordinates if c not in forecast_coordinates
+        ),
+        "forecast_but_not_lowered": sorted(
+            list(c) for c in forecast_coordinates if c not in removed_coordinates
+        ),
+    }
 
     function_moves = [
         {"function": list(k), "before": bf.get(k), "after": af.get(k)}
@@ -156,7 +202,9 @@ def main() -> int:
         "leaves_removed": sum(removed.values()),
         "leaves_added": sum(added.values()),
         "removed_lowered": removed_lowered_total,
-        "census_lowered": census_lowered,
+        "rule_shape_leaves_before": census_lowered,
+        "rule_shape_kept": rule_shape_kept,
+        "forecast": forecast,
         "added_exchange": added_exchange,
         "absorbed_coordinates": len(absorbed),
         "absorbed": absorbed,
