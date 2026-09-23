@@ -1,3 +1,5 @@
+#![cfg_attr(windows, allow(dead_code, unused_imports))]
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 
@@ -49,11 +51,12 @@ fn allocation() -> Vec<u8> {
 }
 
 fn imported(source: &str, role: ImportRole) -> Vec<SourceResult> {
+    let source = source.replace("\r\n", "\n");
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let profile = load_source_set_profile(&root.join("contract/profiles"), "fluent-bit").unwrap();
     import_source_functions_from_profile(
         &C11TranslationUnit {
-            source,
+            source: &source,
             ..Default::default()
         },
         REVISION,
@@ -219,6 +222,7 @@ fn check_with(
     )
 }
 
+#[cfg(not(windows))]
 #[test]
 fn sealed_source_projection_and_all_four_context_paths_check() {
     let projection = projection(CALLBACKS);
@@ -235,6 +239,21 @@ fn sealed_source_projection_and_all_four_context_paths_check() {
     assert_eq!(report.contextual_capacity, CAPACITY);
     assert!(!report.universal_safety_certificate);
     assert!(report.assumptions.contains_key("payload_write_authority"));
+}
+
+#[cfg(windows)]
+#[test]
+fn windows_allocation_shape_stays_unknown_under_llp64() {
+    let callbacks = imported(CALLBACKS, ImportRole::Callback);
+    let wrappers = imported(WRAPPERS, ImportRole::Wrapper);
+    assert!(matches!(
+        project_event_payload(
+            summary(&callbacks, "cb_event"),
+            summary(&wrappers, "_mk_event_loop_create")
+        ),
+        EventPayloadProjectionOutcome::Unknown { reason }
+            if reason == "allocation summary lacks one exact successful fired extent path"
+    ));
 }
 
 #[test]
@@ -274,6 +293,7 @@ fn return_only_callback_and_substituted_write_do_not_project() {
     ));
 }
 
+#[cfg(not(windows))]
 #[test]
 fn extent_index_authority_and_path_omissions_remain_unknown() {
     let projection = projection(CALLBACKS);
@@ -349,6 +369,7 @@ fn extent_index_authority_and_path_omissions_remain_unknown() {
     }
 }
 
+#[cfg(not(windows))]
 #[test]
 fn context_hashes_bind_allocation_and_mutable_authority_inputs() {
     let projection = projection(CALLBACKS);

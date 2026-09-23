@@ -14,6 +14,9 @@ use qcore_core::disjoint_footprint::{
 
 const ADJACENT: &str = include_str!("fixtures/bitfield_concurrency/adjacent.qcore");
 const ADDRESSABLE: &str = include_str!("fixtures/bitfield_concurrency/addressable.qcore");
+fn addressable_fixture() -> String {
+    ADDRESSABLE.replace("\r\n", "\n")
+}
 const DISTINCT_UNITS: &str = include_str!("fixtures/bitfield_concurrency/distinct_units.qcore");
 
 fn compile(
@@ -142,14 +145,16 @@ fn byte_encoding_is_not_used_in_either_direction() {
 
 #[test]
 fn missing_concurrency_import_is_refused_before_route_admission() {
-    let source = ADJACENT.replace("import std.concurrency;\n", "");
+    let source = ADJACENT
+        .replace("\r\n", "\n")
+        .replace("import std.concurrency;\n", "");
     let diagnostics = compile(&source).expect_err("concurrency stays opt-in");
     assert_eq!(diagnostics[0].code, "Q015");
 }
 
 #[test]
 fn a_malformed_selected_layout_fails_closed() {
-    let source = ADDRESSABLE.replace("field<4, 4>", "field<4>");
+    let source = addressable_fixture().replace("field<4, 4>", "field<4>");
     let diagnostics = compile(&source).expect_err("selected syntax is total-or-reject");
     assert_eq!(diagnostics[0].code, "Q600");
     assert!(diagnostics[0].message.contains("layout fields must be"));
@@ -157,7 +162,7 @@ fn a_malformed_selected_layout_fails_closed() {
 
 #[test]
 fn a_worker_that_does_not_write_is_refused() {
-    let source = ADDRESSABLE.replace("    write value;\n", "");
+    let source = addressable_fixture().replace("    write value;\n", "");
     let diagnostics = compile(&source).expect_err("capture attribution cannot replace a write");
     assert_eq!(diagnostics[0].code, "Q600");
     assert!(
@@ -169,7 +174,7 @@ fn a_worker_that_does_not_write_is_refused() {
 
 #[test]
 fn an_unjoined_writer_is_refused() {
-    let source = ADDRESSABLE.replace("        let right_done = join move right?;\n", "");
+    let source = addressable_fixture().replace("        let right_done = join move right?;\n", "");
     let diagnostics = compile(&source).expect_err("the write authority must return at join");
     assert_eq!(diagnostics[0].code, "Q600");
     assert!(diagnostics[0].message.contains("join each handle once"));
@@ -177,7 +182,7 @@ fn an_unjoined_writer_is_refused() {
 
 #[test]
 fn sequentialized_writers_do_not_count_as_concurrent() {
-    let source = ADDRESSABLE.replace(
+    let source = addressable_fixture().replace(
         "        let right = spawn workers writer(write pair.right)?;\n        let left_done = join move left?;",
         "        let left_done = join move left?;\n        let right = spawn workers writer(write pair.right)?;",
     );
@@ -192,7 +197,7 @@ fn sequentialized_writers_do_not_count_as_concurrent() {
 
 #[test]
 fn an_extra_unsafe_statement_is_not_silently_ignored() {
-    let source = ADDRESSABLE.replace(
+    let source = addressable_fixture().replace(
         "    thread scope workers {",
         "    unsafe { return; }\n    thread scope workers {",
     );
@@ -203,17 +208,20 @@ fn an_extra_unsafe_statement_is_not_silently_ignored() {
 
 #[test]
 fn the_object_must_be_declared_before_the_writing_scope() {
-    let source = ADDRESSABLE.replace("    let pair = Pair;\n", "").replace(
-        "    }\n    return;\n}\n",
-        "    }\n    let pair = Pair;\n    return;\n}\n",
-    );
+    let source = addressable_fixture()
+        .replace("    let pair = Pair;\n", "")
+        .replace(
+            "    }\n    return;\n}\n",
+            "    }\n    let pair = Pair;\n    return;\n}\n",
+        );
     let diagnostics = compile(&source).expect_err("use before declaration stays refused");
     assert_eq!(diagnostics[0].code, "Q013");
 }
 
 #[test]
 fn an_unrelated_declaration_is_not_silently_ignored() {
-    let source = ADDRESSABLE.replace("fn main()", "fn idle() -> unit { return; }\n\nfn main()");
+    let source =
+        addressable_fixture().replace("fn main()", "fn idle() -> unit { return; }\n\nfn main()");
     let diagnostics = compile(&source).expect_err("bounded profile owns every declaration");
     assert_eq!(diagnostics[0].code, "Q600");
     assert!(diagnostics[0].message.contains("unrelated declaration"));
@@ -221,7 +229,7 @@ fn an_unrelated_declaration_is_not_silently_ignored() {
 
 #[test]
 fn the_entry_cannot_hide_unmodelled_parameters() {
-    let source = ADDRESSABLE.replace("fn main()", "fn main(hidden: i32)");
+    let source = addressable_fixture().replace("fn main()", "fn main(hidden: i32)");
     let diagnostics = compile(&source).expect_err("entry parameters are outside the grammar");
     assert_eq!(diagnostics[0].code, "Q600");
     assert!(diagnostics[0].message.contains("takes no parameters"));
@@ -229,7 +237,7 @@ fn the_entry_cannot_hide_unmodelled_parameters() {
 
 #[test]
 fn duplicate_write_captures_are_refused() {
-    let source = ADDRESSABLE.replace(
+    let source = addressable_fixture().replace(
         "writer(write pair.left)?;",
         "writer(write pair.left, write pair.left)?;",
     );
@@ -239,7 +247,7 @@ fn duplicate_write_captures_are_refused() {
 
 #[test]
 fn duplicate_joins_are_refused() {
-    let source = ADDRESSABLE.replace("join move right?;", "join move left?;");
+    let source = addressable_fixture().replace("join move right?;", "join move left?;");
     let diagnostics = compile(&source).expect_err("one handle cannot satisfy both joins");
     assert_eq!(diagnostics[0].code, "Q600");
     assert!(diagnostics[0].message.contains("join each handle once"));
@@ -247,7 +255,7 @@ fn duplicate_joins_are_refused() {
 
 #[test]
 fn a_spawn_binding_cannot_shadow_the_layout_object() {
-    let source = ADDRESSABLE.replace(
+    let source = addressable_fixture().replace(
         "let left = spawn workers writer(write pair.left)?;",
         "let pair = spawn workers writer(write pair.left)?;",
     );
@@ -292,7 +300,7 @@ fn propagated_spawn_failure_is_an_explicit_unproved_premise() {
 
 #[test]
 fn a_layout_word_without_a_layout_constructor_does_not_select_this_route() {
-    let source = ADDRESSABLE
+    let source = addressable_fixture()
         .replace("left: field<0, 4>", "left: field")
         .replace("right: field<4, 4>", "right: field");
     let diagnostics = compile(&source).expect_err("ordinary record typing owns this source");

@@ -395,7 +395,7 @@ def rule_documents(root: pathlib.Path) -> tuple[str, ...]:
     discovery to the canonical policy directory, not archived checkpoints.
     """
     routed = sorted(
-        str(path.relative_to(root))
+        path.relative_to(root).as_posix()
         for path in (root / "docs" / "agents").glob("*.md")
         if path.is_file()
     )

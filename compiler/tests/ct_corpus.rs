@@ -8093,6 +8093,23 @@ fn fixture_files(root: &Path, relative: &str, out: &mut Vec<(String, Vec<u8>)>) 
 /// Shown red by mutation in `docs/reports/ct-shared-fixture-disclosure/`.
 #[test]
 fn ct_fixture_byte_identity_is_exactly_the_reviewed_disclosure() {
+    fn repository_bytes(bytes: &[u8]) -> Vec<u8> {
+        // Git can check text fixtures out with CRLF on Windows. Compare the
+        // committed LF spelling in memory without rewriting the checkout.
+        if cfg!(windows) {
+            bytes
+                .split(|byte| *byte == b'\n')
+                .enumerate()
+                .flat_map(|(index, line)| {
+                    let mut part = if index == 0 { Vec::new() } else { vec![b'\n'] };
+                    part.extend_from_slice(line.strip_suffix(b"\r").unwrap_or(line));
+                    part
+                })
+                .collect()
+        } else {
+            bytes.to_vec()
+        }
+    }
     let manifest = load_manifest();
     let identity = &manifest.artifact_identity;
     assert_eq!(
@@ -8123,7 +8140,11 @@ fn ct_fixture_byte_identity_is_exactly_the_reviewed_disclosure() {
         .collect();
     let distinct_sources: BTreeSet<String> = source_fixtures
         .iter()
-        .map(|path| qcore_schemas::sha256_hex(&fs::read(repo_root().join(path)).unwrap()))
+        .map(|path| {
+            qcore_schemas::sha256_hex(&repository_bytes(
+                &fs::read(repo_root().join(path)).unwrap(),
+            ))
+        })
         .collect();
     assert_eq!(
         (
@@ -8145,7 +8166,7 @@ fn ct_fixture_byte_identity_is_exactly_the_reviewed_disclosure() {
     let mut by_digest: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
     for (path, bytes) in &files {
         by_digest
-            .entry(qcore_schemas::sha256_hex(bytes))
+            .entry(qcore_schemas::sha256_hex(&repository_bytes(bytes)))
             .or_default()
             .insert(path.clone());
     }

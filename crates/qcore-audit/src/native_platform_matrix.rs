@@ -504,7 +504,7 @@ pub fn run_native_platform_matrix_config(path: &Path) -> Result<(), String> {
     }
     let matrix: NativePlatformMatrix =
         serde_json::from_slice(bytes(&matrix_path)?).map_err(|error| error.to_string())?;
-    let history_digest = sha256_hex(bytes(&history_path)?);
+    let history_digest = historical_validation_digest(bytes(&history_path)?);
     if history_digest != native_platform_historical_digest()? {
         return Err("configured historical validation differs from policy identity".into());
     }
@@ -582,10 +582,32 @@ pub fn run_native_platform_matrix_config(path: &Path) -> Result<(), String> {
     )
 }
 
+fn historical_validation_digest(bytes: &[u8]) -> String {
+    // Git may check this Markdown record out with CRLF on Windows. Its policy
+    // identity pins the repository's LF bytes, so permit only that translation.
+    let normalized = bytes
+        .split(|byte| *byte == b'\n')
+        .map(|line| line.strip_suffix(b"\r").unwrap_or(line))
+        .collect::<Vec<_>>();
+    sha256_hex(&normalized.join(&b'\n'))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::time::{SystemTime, UNIX_EPOCH};
+
+    #[test]
+    fn historical_digest_accepts_only_checkout_line_ending_translation() {
+        assert_eq!(
+            historical_validation_digest(b"first\nsecond\n"),
+            historical_validation_digest(b"first\r\nsecond\r\n")
+        );
+        assert_ne!(
+            historical_validation_digest(b"first\nsecond\n"),
+            historical_validation_digest(b"first\rsecond\n")
+        );
+    }
 
     #[test]
     fn config_rejects_unknown_fields() {
@@ -630,7 +652,7 @@ mod tests {
             .output()
             .unwrap();
         assert!(checkout.status.success(), "{checkout:?}");
-        let history_digest = sha256_hex(&read(&history).unwrap());
+        let history_digest = historical_validation_digest(&read(&history).unwrap());
         let profiles = [
             (
                 "linux_epoll_asan_profile",

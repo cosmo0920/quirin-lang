@@ -470,6 +470,7 @@ fn analyze_real(source: &str) -> UnrestrictedLegacyResult {
 #[test]
 fn the_intermediate_link_declarations_are_the_upstream_bytes() {
     for (name, source) in [("cio_stream", CIO_STREAM), ("flb_config", FLB_CONFIG)] {
+        let source = source.replace("\r\n", "\n");
         let needle = format!(
             "\"sha256\": \"{}\"",
             digest_support::sha256(source.as_bytes())

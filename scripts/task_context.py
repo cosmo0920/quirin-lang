@@ -131,14 +131,14 @@ def packet(root, paths, topics):
             readings.append(span)
     # Extract canonical shell commands instead of maintaining another gate list.
     validation = read_source(root/'docs/agents/validation.md')
-    commands = re.findall(r'```sh\n(.*?)```', validation, re.S)
+    commands = re.findall(r'```sh\r?\n(.*?)```', validation, re.S)
     if not commands:
         raise ValueError('standing gate has no canonical shell command block')
     if 'providers' in reasons:
         provider_sections = read_source(root/'providers/README.md').split('## Build, verify and reproduce', 1)
         if len(provider_sections) != 2:
             raise ValueError('provider build/verification section is missing')
-        provider_commands = re.findall(r'```sh\n(.*?)```', provider_sections[1], re.S)[:1]
+        provider_commands = re.findall(r'```sh\r?\n(.*?)```', provider_sections[1], re.S)[:1]
         if not provider_commands:
             raise ValueError('provider verification has no canonical shell command block')
         commands += provider_commands

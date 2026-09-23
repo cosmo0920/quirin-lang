@@ -1,3 +1,5 @@
+#![cfg_attr(windows, allow(dead_code, unused_imports))]
+
 use std::path::PathBuf;
 
 use qcore_c_gateway::legacy_c::C11TranslationUnit;
@@ -14,11 +16,12 @@ const LIBEVENT_EVENT_C: &[u8] = include_bytes!("../../../third_party/libevent/ev
 const LIBEVENT_REVISION: &str = "d82464a277d0f42703702c4dfd9af6af38595a83";
 
 fn imported(source: &str) -> Vec<SourceResult> {
+    let source = source.replace("\r\n", "\n");
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let profile = load_source_set_profile(&root.join("contract/profiles"), "fluent-bit").unwrap();
     import_source_functions_from_profile(
         &C11TranslationUnit {
-            source,
+            source: &source,
             // Replay the Linux call sequences pinned by the teardown policy.
             definitions: vec!["QCORE_TEST_LINUX_LP64=1".into()],
             ..Default::default()
@@ -50,6 +53,21 @@ fn projection() -> TimeoutTeardownSourceProjection {
         LIBEVENT_EVENT_C,
     )
     .unwrap()
+}
+
+#[cfg(windows)]
+#[test]
+fn windows_callback_summary_does_not_satisfy_the_linux_teardown_pin() {
+    let imported = imported(CALLBACKS);
+    assert!(matches!(
+        project_cb_timeout_source(
+            summary(&imported),
+            &TimeoutTeardownContracts::parse().unwrap(),
+            LIBEVENT_REVISION,
+            LIBEVENT_EVENT_C,
+        ),
+        Err(TimeoutTeardownError::Source(reason)) if reason.contains("source_summary_digest")
+    ));
 }
 
 fn evidence(projection: &TimeoutTeardownSourceProjection) -> TimeoutTeardownEvidence {
@@ -92,6 +110,7 @@ fn evidence(projection: &TimeoutTeardownSourceProjection) -> TimeoutTeardownEvid
     }
 }
 
+#[cfg(not(windows))]
 #[test]
 fn sealed_source_and_pinned_libevent_derive_both_teardown_paths() {
     if qcore_c_gateway::clang_command().is_err() {
@@ -101,6 +120,7 @@ fn sealed_source_and_pinned_libevent_derive_both_teardown_paths() {
     assert_eq!(projection.teardown_path_indices(), &[0, 1]);
 }
 
+#[cfg(not(windows))]
 #[test]
 fn exact_native_evidence_discharges_distinct_custody() {
     if qcore_c_gateway::clang_command().is_err() {
@@ -113,6 +133,7 @@ fn exact_native_evidence_discharges_distinct_custody() {
     assert_eq!(certificate.closed_descriptors, vec![7, 8]);
 }
 
+#[cfg(not(windows))]
 #[test]
 fn linux_failed_close_is_platform_qualified_and_retires_the_number() {
     if qcore_c_gateway::clang_command().is_err() {
@@ -134,6 +155,7 @@ fn linux_failed_close_is_platform_qualified_and_retires_the_number() {
     assert!(check_timeout_teardown_evidence(&projection, &evidence).is_err());
 }
 
+#[cfg(not(windows))]
 #[test]
 fn source_order_and_evidence_binding_are_load_bearing() {
     if qcore_c_gateway::clang_command().is_err() {
@@ -163,6 +185,7 @@ fn source_order_and_evidence_binding_are_load_bearing() {
     assert!(check_timeout_teardown_evidence(&projection, &same_descriptor).is_err());
 }
 
+#[cfg(not(windows))]
 #[test]
 fn evidence_json_refuses_unknown_fields() {
     if qcore_c_gateway::clang_command().is_err() {
@@ -176,6 +199,7 @@ fn evidence_json_refuses_unknown_fields() {
     assert!(serde_json::from_value::<TimeoutTeardownEvidence>(value).is_err());
 }
 
+#[cfg(not(windows))]
 #[test]
 fn every_primitive_native_relationship_is_load_bearing() {
     if qcore_c_gateway::clang_command().is_err() {
@@ -246,6 +270,7 @@ fn every_primitive_native_relationship_is_load_bearing() {
     }
 }
 
+#[cfg(not(windows))]
 #[test]
 fn closed_descriptor_must_be_the_callback_maps_write_endpoint() {
     let projection = projection();

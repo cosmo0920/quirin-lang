@@ -355,9 +355,10 @@ fn non_atomic_refusal_requires_the_actual_closed_publication_shape() {
     if !clang_available() {
         return;
     }
-    let source = include_str!("../../../compiler/tests/fixtures/ct/CT41/case.c");
+    let source =
+        include_str!("../../../compiler/tests/fixtures/ct/CT41/case.c").replace("\r\n", "\n");
     assert_eq!(
-        check(source),
+        check(&source),
         Err(AtomicPublicationSourceRefusal::VolatileFlagHasNoSynchronization)
     );
     let bypass = source.replace("if (seen != 1) return 0;", "(void) seen;");

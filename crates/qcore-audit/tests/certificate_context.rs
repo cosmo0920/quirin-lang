@@ -68,7 +68,10 @@ impl Fixture {
     }
 
     fn entry(&self, extra: &[&str]) -> CompileEntry {
-        let mut args = vec![self.compiler.program().to_owned(), "-std=c11".to_owned()];
+        let mut args = vec![
+            format!("\"{}\"", self.compiler.program()),
+            "-std=c11".to_owned(),
+        ];
         args.extend(extra.iter().map(|arg| (*arg).to_owned()));
         args.extend(["-c".to_owned(), "src/unit.c".to_owned()]);
         CompileEntry {

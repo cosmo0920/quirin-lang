@@ -80,7 +80,8 @@ class W43ChunkSourceProfile(unittest.TestCase):
         present = {p.relative_to(VENDORED).as_posix() for p in VENDORED.rglob("*") if p.is_file()}
         self.assertEqual(present - {"manifest.json"}, listed)
         for path, record in manifest["files"].items():
-            digest = hashlib.sha256((VENDORED / path).read_bytes()).hexdigest()
+            checkout_bytes = (VENDORED / path).read_bytes()
+            digest = hashlib.sha256(checkout_bytes.replace(b"\r\n", b"\n")).hexdigest()
             self.assertEqual(digest, record["sha256"], path)
         profile = json.loads((ROOT / "contract/profiles/fluent-bit/profile.json").read_text())
         pinned = {f["path"]: f["sha256"]

@@ -1,6 +1,7 @@
 """Provider-owned source edits must reach package inventories deliberately."""
 import importlib.util
 import json
+import sys
 from pathlib import Path
 import tempfile
 import unittest
@@ -13,6 +14,14 @@ spec.loader.exec_module(contracts)
 
 
 class Ownership(unittest.TestCase):
+    def symlink_or_assert_denied(self, link, target, *, directory=False):
+        try:
+            link.symlink_to(target, target_is_directory=directory)
+        except OSError as error:
+            self.assertEqual((sys.platform, getattr(error, "winerror", None)), ("win32", 1314))
+            return False
+        return True
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -68,14 +77,17 @@ class Ownership(unittest.TestCase):
         inventory.unlink()
         external = self.root.parent / "outside.json"
         external.write_text("keep")
-        inventory.symlink_to(external)
+        if not self.symlink_or_assert_denied(inventory, external):
+            self.assertEqual(external.read_text(), "keep")
+            return
         with self.assertRaisesRegex(ValueError, "symbolic-link"):
             contracts.maintain(self.root, sync=True)
         self.assertEqual(external.read_text(), "keep")
 
     def test_sync_accepts_an_alias_above_the_repository_boundary(self):
         alias = self.root.parent / "repo-alias"
-        alias.symlink_to(self.root.parent, target_is_directory=True)
+        if not self.symlink_or_assert_denied(alias, self.root.parent, directory=True):
+            return
         contracts.maintain(alias / "providers", sync=True)
         contracts.maintain(alias / "providers")
 
@@ -88,7 +100,9 @@ class Ownership(unittest.TestCase):
         external = self.root.parent / "outside.qcore"
         external.write_text("outside policy\n")
         linked = self.source.with_name("linked.qcore")
-        linked.symlink_to(external)
+        if not self.symlink_or_assert_denied(linked, external):
+            self.assertEqual(external.read_text(), "outside policy\n")
+            return
         with self.assertRaisesRegex(ValueError, "symbolic link"):
             contracts.maintain(self.root, sync=True)
 

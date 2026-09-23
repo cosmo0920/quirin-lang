@@ -70,13 +70,13 @@ def render(before_path, after_path):
                          "before": was, "after": now})
     result = {
         "card": "W43-CHUNK-SOURCE-PROFILE",
-        "before": {"result": str(before_path.relative_to(ROOT)),
+        "before": {"result": before_path.relative_to(ROOT).as_posix(),
                    "evidence_version": before["evidence_version"],
                    "selected_functions": before["selected_functions"],
                    "safe_functions": before["safe_functions"],
                    "unknown_functions": before["unknown_functions"],
                    "distribution": distribution(before_rows)},
-        "after": {"result": str(after_path.relative_to(ROOT)),
+        "after": {"result": after_path.relative_to(ROOT).as_posix(),
                   "evidence_version": after["evidence_version"],
                   "selected_functions": after["selected_functions"],
                   "safe_functions": after["safe_functions"],

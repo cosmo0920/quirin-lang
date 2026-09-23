@@ -667,12 +667,13 @@ fn the_procedure_decides_the_lean_named_mutations_for_the_theorems_reason() {
 /// A mutant of CT07's fixture, built from the fixture itself so it cannot
 /// drift from it: `old` must occur exactly once.
 fn mutated(old: &str, new: &str) -> String {
+    let source = CT07_SOURCE.replace("\r\n", "\n");
     assert_eq!(
-        CT07_SOURCE.matches(old).count(),
+        source.matches(old).count(),
         1,
         "the mutation site must occur exactly once in CT07's fixture: {old:?}"
     );
-    CT07_SOURCE.replacen(old, new, 1)
+    source.replacen(old, new, 1)
 }
 
 /// Overlapping halves `[0, 3)`/`[2, 4)`: caught by the **checker** — the

@@ -118,7 +118,7 @@ mod digest_support;
 
 /// Hex SHA-256 of a fixture's bytes, so the pin needs no extra dependency.
 fn digest(bytes: &str) -> String {
-    digest_support::sha256(bytes.as_bytes())
+    digest_support::sha256(bytes.replace("\r\n", "\n").as_bytes())
 }
 
 /// The excerpts really are the upstream bytes. Needs no Clang.

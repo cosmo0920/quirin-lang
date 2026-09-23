@@ -35,6 +35,10 @@ class CanonicalCorpus(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "duplicate logical contract"):
                 contract_corpus.sources(root)
             (directory / "two/api.qcore").unlink()
-            (directory / "two/api.qcore").symlink_to(directory / "one/api.qcore")
+            try:
+                (directory / "two/api.qcore").symlink_to(directory / "one/api.qcore")
+            except OSError as error:
+                self.assertEqual((sys.platform, getattr(error, "winerror", None)), ("win32", 1314))
+                return
             with self.assertRaisesRegex(ValueError, "symbolic link"):
                 contract_corpus.sources(root)

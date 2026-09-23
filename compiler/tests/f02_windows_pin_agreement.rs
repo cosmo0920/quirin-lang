@@ -1,6 +1,4 @@
-//! The Linux-side half of `F02-DIGEST-PIN-DUPLICATED`'s discharge, landed by
-//! `WAVE-38-CLOSE` (wave 38); the Windows half stays open as
-//! `F02-WINDOWS-PIN-STALE-SINCE-WAVE-36`.
+//! Cross-host check for the two F02 emitted-C digest pins.
 //!
 //! The two F02 emitted-C digests are pinned twice: in `f02_trace_relation.rs`
 //! (Linux-reachable) and in `windows_threads.rs` (behind
@@ -10,22 +8,9 @@
 //! nothing checked that they did. This test reads both files as text (so it
 //! runs on every host, Windows `cfg` notwithstanding) and compares the pins.
 //!
-//! It is `#[ignore]`d on purpose. At `4f663934` the two files DISAGREE:
-//! `windows_threads.rs` still carries the fourth-move pair
-//! (`6df369991465940e` / `0da423be2f16b8bb`) while `f02_trace_relation.rs`
-//! pins the fifth (`bfa572914cb96413` / `9cbe67a70a420d52`), so the Windows
-//! F02 row has been red on every Windows host since `fa48211a` and no Linux
-//! gate could see it (card `STABILITY-REEVAL-3`, wave 38, §1.2). The Windows
-//! literals may move only in a card that records a Windows run of
-//! `windows_f02_renderings_satisfy_the_incoming_trace_relation_and_emission_pins`
-//! (the wave-38 close's deferred decision, in the `HTTP-V1-WINDOWS-RUN`
-//! pattern); re-pinning them from Linux is the shape `37bc9004` was named for.
-//! Run it on demand with
-//! `cargo test -p qcore-compiler --test f02_windows_pin_agreement -- --ignored`:
-//! it is red until that card lands and must go green with it, at which point
-//! the `#[ignore]` comes off and both residuals retire. The un-ignored
-//! companion below keeps the reader honest: if either literal site moves out
-//! from under the extraction, the standing gate says so.
+//! The Windows native row now passes with the fifth-move pair
+//! (`bfa572914cb96413` / `9cbe67a70a420d52`). This comparison runs in the
+//! ordinary gate on every host, so future drift fails without a Windows run.
 
 const LINUX_FILE: &str = include_str!("f02_trace_relation.rs");
 const WINDOWS_FILE: &str = include_str!("windows_threads.rs");
@@ -69,9 +54,7 @@ fn windows_pins() -> (String, String) {
     )
 }
 
-/// Runs in the standing gate: the extraction still reaches both pin sites, and
-/// both files still spell the same FNV-1a constants, so the ignored comparison
-/// below compares what it claims to compare.
+/// The extraction still reaches both pin sites and the same FNV-1a constants.
 #[test]
 fn both_f02_pin_sites_are_still_where_this_test_reads_them() {
     let (linux_round_trip, linux_concurrent) = linux_pins();
@@ -96,10 +79,7 @@ fn both_f02_pin_sites_are_still_where_this_test_reads_them() {
     }
 }
 
-/// Red at `4f663934` by design (see the module comment); green only once a
-/// Windows-run card re-pins `windows_threads.rs`.
 #[test]
-#[ignore = "F02-WINDOWS-PIN-STALE-SINCE-WAVE-36: the Windows twin pins the fourth-move digests; its re-pin needs a Windows run of windows_f02_renderings_satisfy_the_incoming_trace_relation_and_emission_pins (wave-38 close, deferred). Run with --ignored to reproduce the red."]
 fn the_windows_f02_pins_agree_with_the_linux_ones() {
     let (linux_round_trip, linux_concurrent) = linux_pins();
     let (windows_round_trip, windows_concurrent) = windows_pins();

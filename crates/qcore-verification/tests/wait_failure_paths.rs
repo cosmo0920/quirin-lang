@@ -14,6 +14,7 @@ const WRAPPER_CONTRACT: &str =
     include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qcore");
 const COMPOSITION_CONTRACT: &str =
     include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/composition.qcore");
+#[cfg(not(windows))]
 const EVIDENCE: &[u8] =
     include_bytes!("../../../docs/reports/cycle18-wait-failures/failure-observations.json");
 
@@ -35,11 +36,12 @@ int _mk_event_wait_with_flags(struct mk_event_loop *loop, int flags)
 }
 
 fn import(source: &str, role: ImportRole) -> Vec<SourceResult> {
+    let source = source.replace("\r\n", "\n");
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let profile = load_source_set_profile(&root.join("contract/profiles"), "fluent-bit").unwrap();
     import_source_functions_from_profile(
         &C11TranslationUnit {
-            source,
+            source: &source,
             ..Default::default()
         },
         monkey_source_revision(),
@@ -60,6 +62,7 @@ fn summary<'a>(results: &'a [SourceResult], name: &str) -> &'a SourceSummary {
         .unwrap()
 }
 
+#[cfg(not(windows))]
 fn projection() -> MonkeyWaitSourceProjection {
     let callbacks = import(CALLBACKS, ImportRole::Callback);
     let wrappers_source = wrapper_source();
@@ -78,6 +81,29 @@ fn projection() -> MonkeyWaitSourceProjection {
     .unwrap()
 }
 
+#[cfg(windows)]
+#[test]
+fn windows_wait_failure_source_remains_unknown() {
+    let callbacks = import(CALLBACKS, ImportRole::Callback);
+    let wrappers_source = wrapper_source();
+    let wrappers = import(&wrappers_source, ImportRole::Wrapper);
+    let contracts = MonkeyWaitContracts::parse(WRAPPER_CONTRACT, COMPOSITION_CONTRACT).unwrap();
+    assert!(matches!(
+        project_monkey_timed_wait_source(
+            [
+                summary(&callbacks, wait_callback()),
+                summary(&wrappers, "_mk_event_loop_create"),
+                summary(&wrappers, "_mk_event_wait_with_flags"),
+                summary(&wrappers, "_mk_event_wait_2"),
+                summary(&wrappers, "_mk_event_loop_destroy"),
+            ],
+            &contracts,
+        ),
+        Err(WaitSourceProjectionError::SourceArtifactMismatch(_))
+    ));
+}
+
+#[cfg(not(windows))]
 #[test]
 fn complete_failure_inventory_separates_native_violations_from_unknowns() {
     if qcore_c_gateway::clang_command().is_err() {
@@ -129,6 +155,7 @@ fn complete_failure_inventory_separates_native_violations_from_unknowns() {
     assert_eq!(success.outcome, WaitFailureOutcome::Unknown);
 }
 
+#[cfg(not(windows))]
 #[test]
 fn incomplete_or_mutated_native_evidence_fails_closed() {
     if qcore_c_gateway::clang_command().is_err() {

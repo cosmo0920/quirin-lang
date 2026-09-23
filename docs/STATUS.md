@@ -1,7 +1,7 @@
 # Current status and evidence boundaries
 
-Re-derived on 2026-09-21 from the sources below; corpus rows re-derived on
-2026-09-23 from the W43 arbiter. This is the concise status
+Re-derived on 2026-09-21 from the sources below; corpus rows and the live
+follow-up count re-derived on 2026-09-23. This is the concise status
 authority routed by `AGENTS.md`; reports own the underlying evidence. Update
 numbers from those sources, not from an older summary. History belongs in the
 [increment records](development/increments/README.md).
@@ -29,7 +29,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
 | Contract corpus | **96** modules; **59** resource-v1 declarations; **33** manifest-selected | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 24 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (11 roots), [selection](../cycle19-resource-contracts.json) and pinned tests |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **285** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **282** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -100,19 +100,20 @@ pilot adds independently pinned data-only selection for the CMetrics policy,
 retains version-1 paths and existing adapters, and models admission separately
 from policy truth. Four scoped follow-ons remain in its report.
 
-All three broader Cycle 18 follow-ups remain open; **285** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **282** follow-ups are
 registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
 retired `RETURN-CALL-INCOMPLETE-LINE-455` against its census;
 `MONKEY-CALLBACK-CYCLE18-COMPOSITION` was narrowed and two Cycle 18 residuals
 registered; QUIRIN-PROVIDER-SHARED registered
-`PROVIDER-CONFORMANCE-CORE-FIXTURE-PATHS`. Production callback composition, task/cancellation/event-generation
+`PROVIDER-CONFORMANCE-CORE-FIXTURE-PATHS`; the Windows F02 run and active
+cross-host pin check retired three F02 follow-ups. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
 
-The ignored F02 Windows pin-agreement test is red by design on `--ignored`;
-Linux green does not repair it. Host/load-sensitive tests and their reporting
+The F02 Windows native run and the host-unconditional pin-agreement test now
+pass with the same two emitted-C digests. Host/load-sensitive tests and their reporting
 requirements remain in [rule 16](agents/providers.md#constraint-16).
 The summary-count and Clang recording mechanisms still have their disclosed
 limitations; see [validation policy](agents/validation.md). This integration

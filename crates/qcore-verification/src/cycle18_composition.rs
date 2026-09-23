@@ -1144,6 +1144,7 @@ pub fn check_cycle18_composition(
 }
 
 #[cfg(test)]
+#[cfg_attr(windows, allow(dead_code))]
 mod tests {
     use super::*;
     use qcore_c_gateway::legacy_c::C11TranslationUnit;
@@ -1314,6 +1315,7 @@ int _mk_event_wait_with_flags(struct mk_event_loop *loop, int flags)
         );
     }
 
+    #[cfg(not(windows))]
     #[test]
     fn failure_projection_contract_map_cannot_cross_at_same_source_identity() {
         let Some(observed) = wait_projection("") else {

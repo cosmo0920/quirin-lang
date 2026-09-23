@@ -3,10 +3,52 @@ use qcore_compiler::{
 };
 use qcore_core::{
     c_program::{self, Entry},
+    io_emit, scalar_calls_c_emit,
+};
+#[cfg(windows)]
+#[path = "../../tests/support/windows_c.rs"]
+mod windows_c;
+
+fn native_run(source: &str, tag: &str) -> std::process::Output {
+    #[cfg(windows)]
+    {
+        let _ = tag;
+        windows_c::run_msvc(source, None, &[])
+    }
+    #[cfg(unix)]
+    {
+        use std::{fs, process::Command};
+        let dir = std::env::temp_dir().join(format!("qcore-scalar-{tag}-{}", std::process::id()));
+        fs::create_dir_all(&dir).unwrap();
+        fs::write(dir.join("main.c"), source).unwrap();
+        let compiler = std::env::var("QCORE_CLANG").unwrap_or("clang".into());
+        let built = Command::new(compiler)
+            .args([
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-fsanitize=address,undefined",
+                "-fno-sanitize-recover=all",
+            ])
+            .arg(dir.join("main.c"))
+            .arg("-o")
+            .arg(dir.join("main"))
+            .output()
+            .expect("Clang is required for this native check");
+        assert!(
+            built.status.success(),
+            "{}",
+            String::from_utf8_lossy(&built.stderr)
+        );
+        let output = Command::new(dir.join("main")).output().unwrap();
+        fs::remove_dir_all(dir).unwrap();
+        output
+    }
+}
+use qcore_core::{
     cfg::ExecutionOutcome,
-    io_emit,
     scalar_calls::{self, Op},
-    scalar_calls_c_emit,
 };
 fn compile(s: &str) -> Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>> {
     compile_files(
@@ -281,12 +323,8 @@ fn missing_names_and_boolean_operands_refuse() {
     assert!(compile("fn main()->i32{return missing+1;}").is_err());
     assert!(compile("fn main()->i32{return true+1;}").is_err());
 }
-#[cfg(unix)]
 #[test]
-fn native_calls_match_reference_under_sanitizers() {
-    use std::{fs, process::Command};
-    let dir = std::env::temp_dir().join(format!("qcore-scalar-calls-{}", std::process::id()));
-    fs::create_dir_all(&dir).unwrap();
+fn native_calls_match_reference() {
     let m = compile(include_str!("../../examples/scalar/calls.qcore")).unwrap();
     let source = m
         .c_source
@@ -294,34 +332,14 @@ fn native_calls_match_reference_under_sanitizers() {
         .replace("int main(void)", "int checked_entry(void)")
         + "\nint main(void) { return q_scalar_fn_2() == 42 ? 0 : 87; }\n";
     assert!(source.contains("q_scalar_fn_0(v") || source.contains("q_scalar_fn_0(t"));
-    fs::write(dir.join("main.c"), source).unwrap();
-    let compiler = std::env::var("QCORE_CLANG").unwrap_or("clang".into());
-    let o = Command::new(compiler)
-        .args([
-            "-std=c11",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-fsanitize=address,undefined",
-            "-fno-sanitize-recover=all",
-        ])
-        .arg(dir.join("main.c"))
-        .arg("-o")
-        .arg(dir.join("main"))
-        .output()
-        .expect("Clang is required for this native check");
-    assert!(o.status.success(), "{}", String::from_utf8_lossy(&o.stderr));
-    let o = Command::new(dir.join("main")).output().unwrap();
+    let o = native_run(&source, "calls");
     assert!(o.status.success(), "{}", String::from_utf8_lossy(&o.stderr));
     assert!(o.stdout.is_empty());
     assert!(o.stderr.is_empty());
-    fs::remove_dir_all(dir).unwrap();
 }
 
-#[cfg(unix)]
 #[test]
 fn composed_printing_emits_one_main_and_uses_the_shared_io_path() {
-    use std::{fs, process::Command};
     let m = compile(
         "import std.io; fn show(x:i32)->i32{print(x);return x;} fn add(a:i32,b:i32)->i32{return a+b;} fn main()->i32{let f=add(show(20),show(22));print(f);return f;}",
     )
@@ -361,30 +379,10 @@ fn composed_printing_emits_one_main_and_uses_the_shared_io_path() {
     assert_eq!(c_program::entry_definitions(&source).len(), 1);
     assert!(io_emit::direct_stdio_calls(&source).is_empty());
 
-    let dir = std::env::temp_dir().join(format!("qcore-scalar-compose-{}", std::process::id()));
-    fs::create_dir_all(&dir).unwrap();
-    fs::write(dir.join("main.c"), source).unwrap();
-    let compiler = std::env::var("QCORE_CLANG").unwrap_or("clang".into());
-    let o = Command::new(compiler)
-        .args([
-            "-std=c11",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-fsanitize=address,undefined",
-            "-fno-sanitize-recover=all",
-        ])
-        .arg(dir.join("main.c"))
-        .arg("-o")
-        .arg(dir.join("main"))
-        .output()
-        .expect("Clang is required for this native check");
-    assert!(o.status.success(), "{}", String::from_utf8_lossy(&o.stderr));
-    let o = Command::new(dir.join("main")).output().unwrap();
+    let o = native_run(&source, "compose");
     assert!(o.status.success(), "{}", String::from_utf8_lossy(&o.stderr));
     assert_eq!(o.stdout, b"20\n22\n42\n99\n");
     assert!(o.stderr.is_empty());
-    fs::remove_dir_all(dir).unwrap();
 }
 
 #[test]
@@ -489,19 +487,18 @@ fn pure_extension_does_not_claim_existing_branch_or_usage_syntax() {
     assert_eq!(e[0].code, "Q100");
 }
 
-#[cfg(unix)]
 #[test]
 fn native_arithmetic_guards_refuse_faults_in_uncalled_helpers() {
-    use std::{fs, process::Command};
-    let dir = std::env::temp_dir().join(format!("qcore-scalar-guards-{}", std::process::id()));
-    fs::create_dir_all(&dir).unwrap();
-    for (body, args) in [
+    for (index, (body, args)) in [
         ("x+1", "INT32_MAX"),
         ("x/-1", "INT32_MIN"),
         ("x%-1", "INT32_MIN"),
         ("1/x", "0"),
         ("-x", "INT32_MIN"),
-    ] {
+    ]
+    .into_iter()
+    .enumerate()
+    {
         let m = compile(&format!(
             "fn helper(x:i32)->i32{{return {body};}} fn main()->i32{{return helper(1);}}"
         ))
@@ -513,27 +510,9 @@ fn native_arithmetic_guards_refuse_faults_in_uncalled_helpers() {
             .unwrap()
             .replace("int main(void)", "int checked_entry(void)")
             + &format!("\nint main(void) {{ (void)q_scalar_fn_0({args}); return 0; }}\n");
-        fs::write(dir.join("main.c"), source).unwrap();
-        let compiler = std::env::var("QCORE_CLANG").unwrap_or("clang".into());
-        let o = Command::new(compiler)
-            .args([
-                "-std=c11",
-                "-Wall",
-                "-Wextra",
-                "-Werror",
-                "-fsanitize=address,undefined",
-                "-fno-sanitize-recover=all",
-            ])
-            .arg(dir.join("main.c"))
-            .arg("-o")
-            .arg(dir.join("main"))
-            .output()
-            .unwrap();
-        assert!(o.status.success(), "{}", String::from_utf8_lossy(&o.stderr));
-        let o = Command::new(dir.join("main")).output().unwrap();
+        let o = native_run(&source, &format!("guard-{index}"));
         assert_eq!(o.status.code(), Some(86));
         assert!(o.stderr.is_empty());
         assert!(o.stdout.is_empty());
     }
-    fs::remove_dir_all(dir).unwrap();
 }

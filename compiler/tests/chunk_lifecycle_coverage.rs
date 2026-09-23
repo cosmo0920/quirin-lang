@@ -1,3 +1,5 @@
+#![cfg_attr(windows, allow(dead_code, unused_imports))]
+
 //! The published lifecycle result for every selected input-chunk function.
 //!
 //! Card `W42-CHUNK-LIFECYCLE-CERT` established the accounting; its published
@@ -189,6 +191,14 @@ fn pinned_rows() -> Option<Vec<ClassifiedFunction>> {
     Some(derive_pinned_lifecycle(&units).expect("the pinned units derive their rows"))
 }
 
+#[cfg(windows)]
+#[test]
+fn windows_pinned_linux_unit_refuses_before_lifecycle_publication() {
+    let units = load_vendored_units(&vendored_root()).expect("the vendored pinned units load");
+    let error = derive_pinned_lifecycle(&units).unwrap_err();
+    assert!(error.contains("getpagesize"), "{error}");
+}
+
 #[test]
 fn the_pinned_inventory_selects_both_chunk_units_including_input_chunk_get() {
     let inventory = load_inventory();
@@ -224,6 +234,7 @@ fn the_pinned_inventory_selects_both_chunk_units_including_input_chunk_get() {
     }
 }
 
+#[cfg(not(windows))]
 #[test]
 fn every_selected_function_has_a_checked_lifecycle_result() {
     let Some(rows) = pinned_rows() else {
@@ -294,6 +305,7 @@ fn every_selected_function_has_a_checked_lifecycle_result() {
     );
 }
 
+#[cfg(not(windows))]
 #[test]
 fn a_fixture_derived_composition_cannot_be_attached_to_a_pinned_row() {
     let Some(mut rows) = pinned_rows() else {
@@ -330,6 +342,7 @@ fn a_fixture_derived_composition_cannot_be_attached_to_a_pinned_row() {
     );
 }
 
+#[cfg(not(windows))]
 #[test]
 fn the_published_lifecycle_result_matches_the_committed_artifact() {
     let Some(rows) = pinned_rows() else {

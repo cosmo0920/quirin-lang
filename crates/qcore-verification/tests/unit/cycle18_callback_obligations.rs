@@ -18,9 +18,10 @@ fn import(source: &str, role: ImportRole) -> Option<Vec<SourceSummary>> {
     }
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let profile = load_source_set_profile(&root.join("contract/profiles"), "fluent-bit").unwrap();
+    let source = source.replace("\r\n", "\n");
     let results = import_source_functions_from_profile(
         &C11TranslationUnit {
-            source,
+            source: &source,
             // Replay the Linux call sequences pinned by the teardown policy.
             definitions: vec!["QCORE_TEST_LINUX_LP64=1".into()],
             ..Default::default()
@@ -114,8 +115,25 @@ impl Fixture {
 }
 
 fn with_variant(source: &str, from: &str, to: &str) -> String {
+    let source = source.replace("\r\n", "\n");
     assert!(source.contains(from), "variant anchor `{from}` is missing");
     source.replacen(from, to, 1)
+}
+
+#[cfg(windows)]
+#[test]
+fn windows_timeout_summary_refuses_the_linux_composition_pin() {
+    let fixture = Fixture::load().unwrap();
+    assert!(matches!(
+        project_cb_timeout_source(
+            fixture.callback("cb_timeout"),
+            &TimeoutTeardownContracts::parse().unwrap(),
+            LIBEVENT_REVISION,
+            LIBEVENT_EVENT_C,
+        ),
+        Err(crate::timeout_teardown::TimeoutTeardownError::Source(reason))
+            if reason.contains("source_summary_digest")
+    ));
 }
 
 // --- initialization reachability ------------------------------------------
@@ -318,6 +336,7 @@ fn registration_sites_record_unchecked_results_from_source() {
 
 // --- cb_timeout path composition -------------------------------------------
 
+#[cfg(not(windows))]
 #[test]
 fn every_timeout_path_composes_on_the_close_success_branch_only() {
     let Some(fixture) = Fixture::load() else {
@@ -389,6 +408,7 @@ fn a_reordered_or_partial_teardown_is_refused_by_the_model() {
     // the registration path (see the non-persistent registration control).
 }
 
+#[cfg(not(windows))]
 #[test]
 fn a_non_persistent_or_escaping_registration_is_not_admitted() {
     let Some(fixture) = Fixture::load() else {
@@ -432,6 +452,7 @@ fn a_non_persistent_or_escaping_registration_is_not_admitted() {
     assert!(!composition.map_exclusive_to_registration);
 }
 
+#[cfg(not(windows))]
 #[test]
 fn the_teardown_projection_must_describe_the_composed_callback() {
     let Some(fixture) = Fixture::load() else {
@@ -557,6 +578,7 @@ fn sources(
     }
 }
 
+#[cfg(not(windows))]
 #[test]
 fn assembled_table_discharges_only_source_bound_obligations_and_composes_nothing() {
     let Some(fixture) = Fixture::load() else {
@@ -659,6 +681,7 @@ fn assembled_table_discharges_only_source_bound_obligations_and_composes_nothing
     );
 }
 
+#[cfg(not(windows))]
 #[test]
 fn a_substituted_callback_or_refused_family_is_not_admitted() {
     let Some(fixture) = Fixture::load() else {
@@ -704,6 +727,7 @@ fn a_substituted_callback_or_refused_family_is_not_admitted() {
     );
 }
 
+#[cfg(not(windows))]
 #[test]
 fn fixture_report_serializes_with_the_verdict_contract() {
     let Some(fixture) = Fixture::load() else {

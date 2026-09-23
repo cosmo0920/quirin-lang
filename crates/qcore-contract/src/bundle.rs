@@ -58,6 +58,22 @@ fn digest(value: &str) -> bool {
             .all(|c| c.is_ascii_digit() || (b'a'..=b'f').contains(&c))
 }
 
+fn matches_checkout_digest(bytes: &[u8], expected: &str) -> bool {
+    if sha256_hex(bytes) == expected {
+        return true;
+    }
+    if !cfg!(windows) {
+        return false;
+    }
+    // Git's Windows checkout may translate pinned LF text to CRLF. Accept
+    // only bytes that recover the exact pinned content after that translation.
+    let normalized = bytes
+        .split(|byte| *byte == b'\n')
+        .map(|line| line.strip_suffix(b"\r").unwrap_or(line))
+        .collect::<Vec<_>>();
+    sha256_hex(&normalized.join(&b'\n')) == expected
+}
+
 fn asset_path(value: &str) -> bool {
     value.starts_with("contracts/")
         && value.ends_with(".qcore")
@@ -150,7 +166,7 @@ impl ContractBundle {
             return Err("invalid expected inventory SHA-256".into());
         }
         let bytes = read(manifest, MAX_MANIFEST)?;
-        if sha256_hex(&bytes) != expected_sha256 {
+        if !matches_checkout_digest(&bytes, expected_sha256) {
             return Err("contract inventory digest mismatch".into());
         }
         let inventory: Inventory = serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
@@ -191,7 +207,7 @@ impl ContractBundle {
         for (path, hash) in inventory.contracts {
             let bytes = read(&root.join(&path), MAX_FILE.min(MAX_TOTAL - retained))?;
             retained += bytes.len() as u64;
-            if sha256_hex(&bytes) != hash {
+            if !matches_checkout_digest(&bytes, &hash) {
                 return Err(format!("contract digest mismatch: {path}"));
             }
             let source = String::from_utf8(bytes).map_err(|e| e.to_string())?;
@@ -208,5 +224,21 @@ impl ContractBundle {
             .get(path)
             .map(String::as_str)
             .ok_or_else(|| format!("unselected contract: {path}"))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn checkout_translation_requires_the_exact_pinned_content() {
+        let pinned = sha256_hex(b"first\nsecond\n");
+        assert!(matches_checkout_digest(b"first\nsecond\n", &pinned));
+        assert_eq!(
+            matches_checkout_digest(b"first\r\nsecond\r\n", &pinned),
+            cfg!(windows)
+        );
+        assert!(!matches_checkout_digest(b"first\rchanged\n", &pinned));
     }
 }

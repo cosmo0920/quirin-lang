@@ -610,7 +610,7 @@ fn a_certificate_resting_on_a_member_address_rests_on_the_declared_mode() {
 // --------------------------------------------------------------------------
 
 fn real_unit() -> String {
-    format!("{PRELUDE}\n{STORAGE_INPUT}\n{CONSTRUCTOR}\n{CALLER}\n")
+    format!("{PRELUDE}\n{STORAGE_INPUT}\n{CONSTRUCTOR}\n{CALLER}\n").replace("\r\n", "\n")
 }
 
 fn analyze_real(source: &str) -> UnrestrictedLegacyResult {

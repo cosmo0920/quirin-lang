@@ -2003,4 +2003,5 @@ fn assemble(
 
 #[cfg(test)]
 #[path = "../tests/unit/cycle18_callback_obligations.rs"]
+#[cfg_attr(windows, allow(dead_code))]
 mod tests;

@@ -32,13 +32,18 @@ use qcore_core::task_execution::{
     TaskExecutionObservation, TaskExecutionScript, execute_with_source_lines,
 };
 use std::collections::BTreeMap;
+#[cfg(unix)]
 use std::process::Command;
 
 #[cfg(target_os = "linux")]
 #[path = "../../tests/support/diagnostic_sink.rs"]
 mod diagnostic_sink;
+#[cfg(unix)]
 #[path = "../../tests/support/thread_sanitizer.rs"]
 mod thread_sanitizer;
+#[cfg(windows)]
+#[path = "../../tests/support/windows_c.rs"]
+mod windows_c;
 
 /// The flagship. One allocation whose payload starts at `0`, two children with
 /// disjoint write leases over the payload's two-byte halves, **each writing a
@@ -146,7 +151,9 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 /// Replace the flagship's worker body, keeping everything else identical, so a
 /// refusal is attributable to the body alone.
 fn with_worker(body: &str) -> String {
-    DISJOINT_EXERCISE.replace("  let done = qcore_buffer_write(half, 0, 9);\n", body)
+    DISJOINT_EXERCISE
+        .replace("\r\n", "\n")
+        .replace("  let done = qcore_buffer_write(half, 0, 9);\n", body)
 }
 
 fn compiled(source: &str) -> CompiledModule {
@@ -372,7 +379,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 /// not written a second time.
 #[test]
 fn the_owner_cannot_byte_read_while_a_lease_is_out() {
-    let source = DISJOINT_EXERCISE.replace(
+    let source = DISJOINT_EXERCISE.replace("\r\n", "\n").replace(
         "            let a = join move first?;\n            let b = join move second?;",
         "            let early = qcore_buffer_read(buffer, 0);\n\
          \x20           let a = join move first?;\n\
@@ -575,6 +582,7 @@ fn a_program_that_exercises_nothing_emits_no_byte_access() {
 // ---------------------------------------------------------------- leg 3: the
 // sanitized native comparison.
 
+#[cfg(unix)]
 #[derive(Debug)]
 struct Native {
     stdout: String,
@@ -582,6 +590,15 @@ struct Native {
     allocated: Vec<String>,
     freed: Vec<String>,
 }
+
+const TRACK_HEADER: &str = r#"
+#include <stdio.h>
+#include <stdlib.h>
+static void *lease_alloc(size_t size) { void *p = malloc(size); fprintf(stderr, "LEASE_ALLOC %p\n", p); return p; }
+static void lease_free(void *p) { fprintf(stderr, "LEASE_FREE %p\n", p); free(p); }
+#define QCORE_BUFFER_MALLOC lease_alloc
+#define QCORE_BUFFER_FREE lease_free
+"#;
 
 /// Compile the emitted C with the real toolchain under `sanitizers` and run
 /// it. `mutate` is applied to the emitted C first, which is how the past-range
@@ -602,6 +619,7 @@ fn run_native(
 /// (card `TSAN-ROWS-2`). `false` is the published `thrd_create` build every
 /// other row here runs; `true` is the build ThreadSanitizer can run, and it
 /// changes no emitted byte.
+#[cfg(unix)]
 fn run_native_threads(
     tag: &str,
     module: &CompiledModule,
@@ -618,18 +636,7 @@ fn run_native_threads(
     let binding = directory.join("bind.h");
     std::fs::write(&binding, thread_sanitizer::PTHREAD_BINDING).unwrap();
     let track = directory.join("track.h");
-    std::fs::write(
-        &track,
-        r#"
-#include <stdio.h>
-#include <stdlib.h>
-static void *lease_alloc(size_t size) { void *p = malloc(size); fprintf(stderr, "LEASE_ALLOC %p\n", p); return p; }
-static void lease_free(void *p) { fprintf(stderr, "LEASE_FREE %p\n", p); free(p); }
-#define QCORE_BUFFER_MALLOC lease_alloc
-#define QCORE_BUFFER_FREE lease_free
-"#,
-    )
-    .unwrap();
+    std::fs::write(&track, TRACK_HEADER).unwrap();
     let mut compiler =
         Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()));
     compiler.args([
@@ -680,10 +687,15 @@ static void lease_free(void *p) { fprintf(stderr, "LEASE_FREE %p\n", p); free(p)
     std::fs::remove_dir_all(&directory).unwrap();
     let stderr = String::from_utf8_lossy(&output.stderr).to_string();
     if !output.status.success() {
+        #[cfg(unix)]
         use std::os::unix::process::ExitStatusExt;
+        #[cfg(unix)]
+        let signal = output.status.signal();
+        #[cfg(not(unix))]
+        let signal: Option<i32> = None;
         return Err(format!(
             "signal={:?} code={:?}\n{stderr}",
-            output.status.signal(),
+            signal,
             output.status.code()
         ));
     }
@@ -727,6 +739,33 @@ fn two_threads_write_disjoint_bytes_of_one_object_sanitized() {
     );
     assert_eq!(native.allocated.len(), 1);
     assert_eq!(native.allocated, native.freed);
+}
+
+#[cfg(windows)]
+#[test]
+fn two_threads_write_disjoint_bytes_of_one_object_msvc() {
+    let module = compiled(DISJOINT_EXERCISE);
+    let (expected_stdout, expected_stderr) = reference(&module);
+    let output = windows_c::run_msvc(module.c_source.as_ref().unwrap(), Some(TRACK_HEADER), &[]);
+    assert!(output.status.success(), "{output:?}");
+    assert_eq!(String::from_utf8(output.stdout).unwrap(), expected_stdout);
+    let stderr = String::from_utf8(output.stderr).unwrap();
+    let allocated = stderr
+        .lines()
+        .filter_map(|line| line.strip_prefix("LEASE_ALLOC "))
+        .collect::<Vec<_>>();
+    let freed = stderr
+        .lines()
+        .filter_map(|line| line.strip_prefix("LEASE_FREE "))
+        .collect::<Vec<_>>();
+    assert_eq!(allocated.len(), 1);
+    assert_eq!(allocated, freed);
+    let native_stderr = stderr
+        .lines()
+        .filter(|line| !line.starts_with("LEASE_"))
+        .map(|line| format!("{line}\n"))
+        .collect::<String>();
+    assert_eq!(native_stderr, expected_stderr);
 }
 
 /// **The ThreadSanitizer row, measured rather than assumed — and the

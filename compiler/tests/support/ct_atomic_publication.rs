@@ -9,6 +9,11 @@ use qcore_verification::atomic_publication_source::{
 
 pub(super) fn run(case: &ManifestCase) {
     let directory = fixture_root().join("CT41");
+    let read_source = |file: &str| {
+        fs::read_to_string(directory.join(file))
+            .unwrap()
+            .replace("\r\n", "\n")
+    };
     let expected: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(directory.join("expected.json")).unwrap())
             .unwrap();
@@ -90,10 +95,10 @@ pub(super) fn run(case: &ManifestCase) {
     if !legacy_clang_available("CT41") {
         return;
     }
-    let source = fs::read_to_string(directory.join("case.c")).unwrap();
-    let plain = fs::read_to_string(directory.join("plain.c")).unwrap();
+    let source = read_source("case.c");
+    let plain = read_source("plain.c");
     assert_eq!(source.replace("volatile ", ""), plain);
-    let atomic = fs::read_to_string(directory.join("release_acquire.c")).unwrap();
+    let atomic = read_source("release_acquire.c");
     let replacement = "#include <stdatomic.h>\n".to_owned()
         + &plain
             .replace("static int done", "static _Atomic int done")
@@ -110,18 +115,18 @@ pub(super) fn run(case: &ManifestCase) {
         "the accepting control changes only the flag protocol"
     );
     assert_eq!(
-        fs::read_to_string(directory.join("relaxed_store.c")).unwrap(),
+        read_source("relaxed_store.c"),
         atomic.replace("memory_order_release", "memory_order_relaxed")
     );
     assert_eq!(
-        fs::read_to_string(directory.join("relaxed_load.c")).unwrap(),
+        read_source("relaxed_load.c"),
         atomic.replace("memory_order_acquire", "memory_order_relaxed")
     );
     // Card `CT41-MAP`: the two added controls are derived from the accepting
     // control by a single declaration substitution each, so what they change is
     // the flag's TYPE and nothing else.
     assert_eq!(
-        fs::read_to_string(directory.join("qualified_atomic.c")).unwrap(),
+        read_source("qualified_atomic.c"),
         atomic.replace(
             "static _Atomic int done",
             "static volatile _Atomic int done"
@@ -129,7 +134,7 @@ pub(super) fn run(case: &ManifestCase) {
         "the qualified-atomic control changes only the flag declaration"
     );
     assert_eq!(
-        fs::read_to_string(directory.join("volatile_atomic_ops.c")).unwrap(),
+        read_source("volatile_atomic_ops.c"),
         atomic.replace("static _Atomic int done", "static volatile int done"),
         "the language-boundary control changes only the flag declaration"
     );
@@ -145,7 +150,7 @@ pub(super) fn run(case: &ManifestCase) {
     // clause excludes.
     for (file, outcome) in boundary {
         assert_eq!(outcome.as_str().unwrap(), "not_valid_c11");
-        let source = fs::read_to_string(directory.join(file)).unwrap();
+        let source = read_source(file);
         let error = validate_unrestricted_c11(&C11TranslationUnit {
             source: &source,
             ..Default::default()
@@ -163,7 +168,7 @@ pub(super) fn run(case: &ManifestCase) {
             .iter()
             .map(|(file, outcome)| (file.as_str(), outcome.as_str().unwrap())),
     ) {
-        let source = fs::read_to_string(directory.join(file)).unwrap();
+        let source = read_source(file);
         let unit = C11TranslationUnit {
             source: &source,
             ..Default::default()

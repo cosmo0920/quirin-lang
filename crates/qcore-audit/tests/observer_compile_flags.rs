@@ -1,4 +1,5 @@
 use qcore_audit::compile_db::{compile_entries, compiler_options};
+use qcore_c_gateway::ClangIdentity;
 use qcore_c_gateway::legacy_c::{C11TranslationUnit, prepare_translation_unit};
 
 #[test]
@@ -11,9 +12,10 @@ fn observer_flags_preserve_sanitizer_preprocessor_features() {
     std::fs::write(&file, source).unwrap();
     let dependency = directory.join("flags.d");
     std::fs::write(&dependency, "retained build dependency output\n").unwrap();
+    let compiler = ClangIdentity::capture().expect("Clang is required for this native check");
     let entries = compile_entries(&serde_json::json!([{
         "directory": directory, "file": file,
-        "arguments": ["clang", "-std=gnu17", "-ffunction-sections", "-fdata-sections", "-fsanitize=address,undefined", "-MMD", "-MF", dependency, "-c", file]
+        "arguments": [compiler.program(), "-std=gnu17", "-ffunction-sections", "-fdata-sections", "-fsanitize=address,undefined", "-MMD", "-MF", dependency, "-c", file]
     }]).to_string()).unwrap();
     let options = compiler_options(&entries[0]).unwrap();
     let unit = C11TranslationUnit {

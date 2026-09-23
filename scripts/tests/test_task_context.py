@@ -1,6 +1,7 @@
 import importlib.util
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -49,8 +50,9 @@ class TaskContextTests(unittest.TestCase):
             git('add', '.'); git('commit', '-m', 'base'); base = git('rev-parse', 'HEAD').decode().strip()
             (root/'committed').write_text('new'); git('add', '.'); git('commit', '-m', 'new')
             git('mv', 'old name', 'new name')
-            (root/'dirty').write_text('changed'); (root/'deleted').unlink(); (root/'untracked\nname').write_text('new')
-            self.assertEqual(context.changed_paths(root, base), {'old name', 'new name', 'dirty', 'deleted', 'committed', 'untracked\nname'})
+            untracked = 'untracked name' if sys.platform == 'win32' else 'untracked\nname'
+            (root/'dirty').write_text('changed'); (root/'deleted').unlink(); (root/untracked).write_text('new')
+            self.assertEqual(context.changed_paths(root, base), {'old name', 'new name', 'dirty', 'deleted', 'committed', untracked})
 
     def test_invalid_base_does_not_silently_make_empty_diff(self):
         with self.assertRaises(subprocess.CalledProcessError):

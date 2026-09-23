@@ -453,7 +453,7 @@ fn one_effectful_or_uncontracted_sibling_refuses_the_whole_outer_call() {
     for (declarations, body) in [
         (
             DECLARATIONS.to_owned(),
-            "void d_run(int n) { d_report((*d_slot()), d_owned_slot()); (void) n; }",
+            "void d_run(int n) { d_report((*d_slot()), (const char *)d_owned_slot()); (void) n; }",
         ),
         (
             DECLARATIONS.replace(

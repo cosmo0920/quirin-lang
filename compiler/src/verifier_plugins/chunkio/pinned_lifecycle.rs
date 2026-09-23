@@ -217,7 +217,7 @@ pub fn load_vendored_units(root: &Path) -> Result<PinnedChunkUnits, String> {
         }
         let bytes = std::fs::read(root.join(path))
             .map_err(|error| format!("vendored `{path}` unavailable: {error}"))?;
-        if qcore_schemas::sha256_hex(&bytes) != file.sha256 {
+        if !matches_checkout_digest(&bytes, &file.sha256) {
             return Err(format!("vendored `{path}` differs from its pinned digest"));
         }
     }
@@ -237,7 +237,9 @@ pub fn load_vendored_units(root: &Path) -> Result<PinnedChunkUnits, String> {
         if !manifest.files.contains_key(&key) {
             return Err(format!("vendored unit `{path}` is not a listed file"));
         }
-        let source = std::fs::read_to_string(root.join(&key)).map_err(|e| e.to_string())?;
+        let source = std::fs::read_to_string(root.join(&key))
+            .map_err(|e| e.to_string())?
+            .replace("\r\n", "\n");
         let mut include_paths = Vec::new();
         for label in &recorded.include_roots {
             if !(label.starts_with("source/") || label.starts_with("build/"))
@@ -268,6 +270,20 @@ pub fn load_vendored_units(root: &Path) -> Result<PinnedChunkUnits, String> {
         })
     };
     PinnedChunkUnits::from_options(unit(CHUNK_UNIT)?, unit(MEMFS_UNIT)?, unit(ERROR_UNIT)?)
+}
+
+fn matches_checkout_digest(bytes: &[u8], expected: &str) -> bool {
+    if qcore_schemas::sha256_hex(bytes) == expected {
+        return true;
+    }
+    if !cfg!(windows) {
+        return false;
+    }
+    let normalized = bytes
+        .split(|byte| *byte == b'\n')
+        .map(|line| line.strip_suffix(b"\r").unwrap_or(line))
+        .collect::<Vec<_>>();
+    qcore_schemas::sha256_hex(&normalized.join(&b'\n')) == expected
 }
 
 fn collect_files(root: &Path, directory: &Path, out: &mut Vec<String>) -> Result<(), String> {

@@ -81,6 +81,26 @@ fn taskful_imported(source: &str, role: ImportRole) -> Vec<SourceSummary> {
     .collect()
 }
 
+#[cfg(windows)]
+fn assert_windows_pthread_source_unknown() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let contract = taskful_fixture_contract().unwrap();
+    let profile =
+        load_source_set_profile(&root.join("contract/profiles"), &contract.source_set).unwrap();
+    let refusal = import_source_functions_from_profile(
+        &C11TranslationUnit {
+            source: TASKFUL_SOURCE,
+            ..Default::default()
+        },
+        &contract.source_revision,
+        &profile,
+        &contract.library,
+        ImportRole::Callback,
+    )
+    .unwrap_err();
+    assert!(refusal.contains("pthread.h"), "{refusal}");
+}
+
 fn observations() -> Vec<CallbackTaskObservation> {
     ["cb_event", "cb_timeout", "cb_wait_2_timeout"]
         .into_iter()
@@ -299,6 +319,8 @@ fn observation_json_refuses_unknown_fields() {
 
 #[test]
 fn taskful_source_and_native_pthread_run_match_exactly() {
+    #[cfg(windows)]
+    assert_windows_pthread_source_unknown();
     if qcore_c_gateway::clang_command().is_err() || !cfg!(target_family = "unix") {
         return;
     }
@@ -352,6 +374,11 @@ fn taskful_source_and_native_pthread_run_match_exactly() {
 
 #[test]
 fn taskful_source_identity_arguments_are_load_bearing() {
+    if cfg!(windows) {
+        #[cfg(windows)]
+        assert_windows_pthread_source_unknown();
+        return;
+    }
     if qcore_c_gateway::clang_command().is_err() {
         return;
     }
@@ -371,6 +398,11 @@ fn taskful_source_identity_arguments_are_load_bearing() {
 
 #[test]
 fn taskful_artifact_identity_is_accepted_only_by_quirin() {
+    if cfg!(windows) {
+        #[cfg(windows)]
+        assert_windows_pthread_source_unknown();
+        return;
+    }
     if qcore_c_gateway::clang_command().is_err() {
         return;
     }
@@ -389,6 +421,11 @@ fn taskful_artifact_identity_is_accepted_only_by_quirin() {
 
 #[test]
 fn taskful_source_bytes_are_pinned_even_when_imported_summaries_are_unchanged() {
+    if cfg!(windows) {
+        #[cfg(windows)]
+        assert_windows_pthread_source_unknown();
+        return;
+    }
     if qcore_c_gateway::clang_command().is_err() {
         return;
     }

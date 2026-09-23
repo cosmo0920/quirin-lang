@@ -1,0 +1,9 @@
+warn: could not canonicalize path C:\Users\cosmo
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests\f02_windows_pin_agreement.rs (target\debug\deps\f02_windows_pin_agreement-1766290e8248d665.exe)
+
+running 2 tests
+test the_windows_f02_pins_agree_with_the_linux_ones ... ok
+test both_f02_pin_sites_are_still_where_this_test_reads_them ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

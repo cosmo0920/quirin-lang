@@ -1,3 +1,5 @@
+#![cfg_attr(windows, allow(dead_code, unused_imports))]
+
 use qcore_c_gateway::legacy_c::C11TranslationUnit;
 use qcore_c_gateway::typed_source::{
     SourceResult, SourceSummary, import_source_functions_from_profile,
@@ -24,8 +26,9 @@ fn contracts() -> MonkeyWaitContracts {
 }
 
 fn wrapper_source() -> String {
+    let wrappers = WRAPPERS.replace("\r\n", "\n");
     format!(
-        "{WRAPPERS}\n{}",
+        "{wrappers}\n{}",
         r#"
 int event_base_loop(struct event_base *, int);
 int _mk_event_wait_with_flags(struct mk_event_loop *loop, int flags)
@@ -46,9 +49,10 @@ fn profile() -> qcore_contract::profile_loader::LoadedProfile {
 }
 
 fn import(source: &str, role: ImportRole) -> Vec<SourceResult> {
+    let source = source.replace("\r\n", "\n");
     import_source_functions_from_profile(
         &C11TranslationUnit {
-            source,
+            source: &source,
             ..Default::default()
         },
         monkey_source_revision(),
@@ -83,6 +87,27 @@ fn project(callback_source: &str, wrapper_source: &str) -> MonkeyWaitSourceProje
         &contracts(),
     )
     .unwrap()
+}
+
+#[cfg(windows)]
+#[test]
+fn windows_wait_source_summary_refuses_the_linux_identity_join() {
+    let wrappers_source = wrapper_source();
+    let callbacks = import(CALLBACKS, ImportRole::Callback);
+    let wrappers = import(&wrappers_source, ImportRole::Wrapper);
+    assert!(matches!(
+        project_monkey_timed_wait_source(
+            [
+                summary(&callbacks, wait_callback()),
+                summary(&wrappers, "_mk_event_loop_create"),
+                summary(&wrappers, "_mk_event_wait_with_flags"),
+                summary(&wrappers, "_mk_event_wait_2"),
+                summary(&wrappers, "_mk_event_loop_destroy"),
+            ],
+            &contracts(),
+        ),
+        Err(WaitSourceProjectionError::SourceArtifactMismatch(_))
+    ));
 }
 
 fn fixture() -> (Vec<u8>, Vec<u8>) {
@@ -214,6 +239,7 @@ fn input(
     input_with_policy(source, DEFAULT_WAIT_IDENTITY_POLICY, observations, bindings)
 }
 
+#[cfg(not(windows))]
 #[test]
 fn conditional_replay_rejects_context_and_assumption_substitutions() {
     // Source summary creation requires the real Clang importer. CI requires Clang.
@@ -318,6 +344,7 @@ fn conditional_replay_rejects_context_and_assumption_substitutions() {
     );
 }
 
+#[cfg(not(windows))]
 #[test]
 fn declarative_identity_policy_is_load_bearing_and_exactly_bound() {
     let source = project(CALLBACKS, &wrapper_source());

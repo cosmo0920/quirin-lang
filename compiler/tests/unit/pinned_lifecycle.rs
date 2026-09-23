@@ -46,7 +46,15 @@ fn the_pinned_close_and_ring_close_derive_path_scoped_prefix_compositions() {
     if !crate::test_support::clang_available() {
         return;
     }
-    let rows = derive_pinned_lifecycle(&vendored()).unwrap();
+    let derived = derive_pinned_lifecycle(&vendored());
+    if cfg!(windows) {
+        assert!(
+            derived.unwrap_err().contains("getpagesize"),
+            "the Linux pinned unit must refuse under the Windows C target"
+        );
+        return;
+    }
+    let rows = derived.unwrap();
     let names: Vec<_> = rows.iter().map(|row| row.function.as_str()).collect();
     assert_eq!(names, ["cio_chunk_close", "cio_chunk_close_stream"]);
     for row in &rows {

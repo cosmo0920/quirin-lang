@@ -28,12 +28,12 @@ fn windows_f02_renderings_satisfy_the_incoming_trace_relation_and_emission_pins(
         (
             "round-trip",
             include_str!("fixtures/ct/CT01/case.qcore"),
-            "6df369991465940e",
+            "bfa572914cb96413",
         ),
         (
             "concurrent",
             include_str!("fixtures/f02/concurrent_round_trip.qcore"),
-            "0da423be2f16b8bb",
+            "9cbe67a70a420d52",
         ),
     ] {
         let module = compile_files(

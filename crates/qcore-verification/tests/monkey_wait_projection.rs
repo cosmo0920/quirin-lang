@@ -1,3 +1,5 @@
+#![cfg_attr(windows, allow(dead_code, unused_imports))]
+
 use std::path::PathBuf;
 
 use qcore_c_gateway::legacy_c::C11TranslationUnit;
@@ -20,8 +22,9 @@ fn contracts() -> MonkeyWaitContracts {
 }
 
 fn wrapper_source() -> String {
+    let wrappers = WRAPPERS.replace("\r\n", "\n");
     format!(
-        "{WRAPPERS}\n{}",
+        "{wrappers}\n{}",
         r#"
 int event_base_loop(struct event_base *, int);
 int _mk_event_wait_with_flags(struct mk_event_loop *loop, int flags)
@@ -42,9 +45,10 @@ fn profile() -> qcore_contract::profile_loader::LoadedProfile {
 }
 
 fn import(source: &str, role: ImportRole) -> Vec<SourceResult> {
+    let source = source.replace("\r\n", "\n");
     import_source_functions_from_profile(
         &C11TranslationUnit {
-            source,
+            source: &source,
             ..Default::default()
         },
         monkey_source_revision(),
@@ -81,6 +85,28 @@ fn project(callback_source: &str, wrapper_source: &str) -> MonkeyWaitSourceProje
     .unwrap()
 }
 
+#[cfg(windows)]
+#[test]
+fn windows_llp64_summary_set_stays_unpromoted() {
+    let wrappers_source = wrapper_source();
+    let callbacks = import(CALLBACKS, ImportRole::Callback);
+    let wrappers = import(&wrappers_source, ImportRole::Wrapper);
+    assert!(matches!(
+        project_monkey_timed_wait_source(
+            [
+                summary(&callbacks, wait_callback()),
+                summary(&wrappers, "_mk_event_loop_create"),
+                summary(&wrappers, "_mk_event_wait_with_flags"),
+                summary(&wrappers, "_mk_event_wait_2"),
+                summary(&wrappers, "_mk_event_loop_destroy"),
+            ],
+            &contracts(),
+        ),
+        Err(WaitSourceProjectionError::SourceArtifactMismatch(_))
+    ));
+}
+
+#[cfg(not(windows))]
 #[test]
 fn exact_imported_source_derives_the_bounded_native_obligations() {
     if qcore_c_gateway::clang_command().is_err() {
@@ -126,6 +152,7 @@ fn exact_imported_source_derives_the_bounded_native_obligations() {
     ));
 }
 
+#[cfg(not(windows))]
 #[test]
 fn body_and_lifecycle_substitutions_do_not_project() {
     if qcore_c_gateway::clang_command().is_err() {
@@ -253,52 +280,55 @@ fn configured_pinned_translation_unit_matches_the_fixture_projection() {
 
 #[test]
 fn missing_or_substituted_contract_semantics_fail_closed() {
-    let missing = WRAPPER_CONTRACT.replace(
+    let wrapper_contract = WRAPPER_CONTRACT.replace("\r\n", "\n");
+    let composition_contract = COMPOSITION_CONTRACT.replace("\r\n", "\n");
+    let missing = wrapper_contract.replace(
         "    ensures normal timed_wait_calls_event_free_after_dispatch_and_returns_dispatch_result;\n",
         "",
     );
     assert_eq!(
-        MonkeyWaitContracts::parse(&missing, COMPOSITION_CONTRACT),
+        MonkeyWaitContracts::parse(&missing, &composition_contract),
         Err(WaitSourceProjectionError::ContractClauseMismatch(
             "_mk_event_wait_2".into()
         ))
     );
 
-    let substituted = COMPOSITION_CONTRACT.replace(
+    let substituted = composition_contract.replace(
         "callback_has_no_resource_effect",
         "callback_may_release_resources",
     );
     assert_eq!(
-        MonkeyWaitContracts::parse(WRAPPER_CONTRACT, &substituted),
+        MonkeyWaitContracts::parse(&wrapper_contract, &substituted),
         Err(WaitSourceProjectionError::ContractClauseMismatch(
             wait_callback().into()
         ))
     );
 
-    let owned_callback = COMPOSITION_CONTRACT.replace(
+    let owned_callback = composition_contract.replace(
         "callback_argument: borrow<'callback, const, MonkeyCallbackArgument> use one",
         "callback_argument: own<MonkeyCallbackArgument> use one",
     );
     assert_eq!(
-        MonkeyWaitContracts::parse(WRAPPER_CONTRACT, &owned_callback),
+        MonkeyWaitContracts::parse(&wrapper_contract, &owned_callback),
         Err(WaitSourceProjectionError::ContractClauseMismatch(
             wait_callback().into()
         ))
     );
 
-    let effectful_callback = COMPOSITION_CONTRACT.replacen(
+    let effectful_callback = composition_contract.replacen(
         "extern fn cb_wait_2_timeout(\n    callback_argument: borrow<'callback, const, MonkeyCallbackArgument> use one\n) -> unit\ncontract {",
         "extern fn cb_wait_2_timeout(\n    callback_argument: borrow<'callback, const, MonkeyCallbackArgument> use one\n) -> unit\neffects { io }\ncontract {",
         1,
     );
     assert_eq!(
-        MonkeyWaitContracts::parse(WRAPPER_CONTRACT, &effectful_callback),
+        MonkeyWaitContracts::parse(&wrapper_contract, &effectful_callback),
         Err(WaitSourceProjectionError::ContractClauseMismatch(
             wait_callback().into()
         ))
     );
 }
 
+#[cfg(not(windows))]
 #[test]
 fn same_count_operand_field_and_guard_substitutions_fail_closed() {
     if qcore_c_gateway::clang_command().is_err() {

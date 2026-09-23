@@ -41,12 +41,13 @@ fn codes(source: &str) -> Vec<String> {
 /// `TCP_ECHO` with `marker` replaced by `line`, so a question can be placed at
 /// a known statement while every other byte of the published example stays.
 fn echo_with(marker: &str, line: &str) -> String {
+    let source = TCP_ECHO.replace("\r\n", "\n");
     assert_eq!(
-        TCP_ECHO.matches(marker).count(),
+        source.matches(marker).count(),
         1,
         "{marker} must occur once"
     );
-    TCP_ECHO.replace(marker, line)
+    source.replace(marker, line)
 }
 
 const AFTER_ACCEPT: &str = "    let server = accept listener;\n";
@@ -207,9 +208,10 @@ fn main() -> unit effects { io, alloc } {
 /// sockets really are independent custodians, and the question is admitted.
 #[test]
 fn a_datagram_pair_is_admitted_as_disjoint() {
+    let source = UDP_ECHO.replace("\r\n", "\n");
     let marker = "    let server = udp;\n";
-    assert_eq!(UDP_ECHO.matches(marker).count(), 1, "{UDP_ECHO}");
-    let source = UDP_ECHO.replace(
+    assert_eq!(source.matches(marker).count(), 1, "{source}");
+    let source = source.replace(
         marker,
         "    let server = udp;\n    disjoint client server;\n",
     );
@@ -297,7 +299,9 @@ fn a_question_in_a_helper_is_refused_as_a_construct_outside_the_entry() {
 fn the_question_needs_the_socket_module() {
     // The question is a socket use, so a module spelling it without
     // `import std.socket;` takes the import gate every other socket use takes.
-    let source = TCP_ECHO.replace("import std.socket;\n", "");
+    let source = TCP_ECHO
+        .replace("\r\n", "\n")
+        .replace("import std.socket;\n", "");
     let with_question = echo_with(
         AFTER_ACCEPT,
         "    let server = accept listener;\n    disjoint client listener;\n",
@@ -381,9 +385,10 @@ fn main() -> unit effects { io, alloc } {
 /// the exchange's own two ends are now refused as one cell there too.
 #[test]
 fn an_http_exchanges_two_ends_are_refused_as_one_cell_at_q664() {
+    let example = HTTP_EXCHANGE.replace("\r\n", "\n");
     let marker = "    let server = accept listener;\n";
-    assert_eq!(HTTP_EXCHANGE.matches(marker).count(), 1);
-    let source = HTTP_EXCHANGE.replace(
+    assert_eq!(example.matches(marker).count(), 1);
+    let source = example.replace(
         marker,
         "    let server = accept listener;\n    disjoint client server;\n",
     );
@@ -405,12 +410,13 @@ fn an_http_exchanges_two_ends_are_refused_as_one_cell_at_q664() {
 
 #[test]
 fn an_http_module_asking_about_its_listener_is_admitted_and_the_question_erases() {
+    let example = HTTP_EXCHANGE.replace("\r\n", "\n");
     let marker = "    let server = accept listener;\n";
-    let asked = HTTP_EXCHANGE.replace(
+    let asked = example.replace(
         marker,
         "    let server = accept listener;\n    disjoint client listener;\n",
     );
-    let twin = HTTP_EXCHANGE.replace(marker, "    let server = accept listener;\n\n");
+    let twin = example.replace(marker, "    let server = accept listener;\n\n");
     let asked_module = compile(&asked).unwrap_or_else(|diagnostics| {
         panic!("a listener shares no connection cell on the HTTP route either: {diagnostics:?}")
     });
