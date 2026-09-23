@@ -83,6 +83,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [ct-remaining-implementation](ct-remaining-implementation/README.md) | Remaining CT implementation integration |
 
+| [ct-shared-fixture-disclosure](ct-shared-fixture-disclosure/README.md) | CT shared fixture disclosure |
+
 | [ct-wire-lane](ct-wire-lane/README.md) | Wave-26 CT lane — what the current tree can actually wire |
 
 | [ct-wire-lane-2](ct-wire-lane-2/README.md) | Wave-28 CT lane — mapping the wave-27 capabilities (CT-WIRE-LANE-2) |

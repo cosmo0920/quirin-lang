@@ -1,0 +1,32 @@
+
+running 1 test
+test ct_fixture_byte_identity_is_exactly_the_reviewed_disclosure ... FAILED
+
+failures:
+
+---- ct_fixture_byte_identity_is_exactly_the_reviewed_disclosure stdout ----
+
+thread 'ct_fixture_byte_identity_is_exactly_the_reviewed_disclosure' (697620) panicked at compiler/tests/ct_corpus.rs:8228:5:
+byte-identical CT fixture groups differ from the reviewed disclosure in docs/reevaluation/ct_manifest.json `artifact_identity.shared_fixture_groups`.
+measured but not listed exactly: []
+listed but not measured exactly: [
+    (
+        "c775f7218f3394e7d5ed809fd366587cd330af8b4d68a248048b35a94e208a7b",
+        {
+            "compiler/tests/fixtures/ct/CT02/case.qcore",
+            "compiler/tests/fixtures/ct/CT14/read_before_join.qcore",
+        },
+    ),
+]
+A new copy needs review and a relation; an edit to one side of a listed group ends an identity a report relies on and needs a correction beside that report.
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    ct_fixture_byte_identity_is_exactly_the_reviewed_disclosure
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.04s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/ct_corpus.rs (target/debug/deps/ct_corpus-748d2eb45cd26500)
+error: test failed, to rerun pass `-p qcore-compiler --test ct_corpus`
