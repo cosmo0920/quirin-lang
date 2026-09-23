@@ -1,0 +1,2086 @@
+{
+  "aggregate_config_sha256": "a75bc46d96b3e9adf7057a934cb9101080688d20da45502f47f240e0ff1d2e22",
+  "limitations": [
+    "A callback is composed only when every relevant obligation of every path is discharged; none is",
+    "Source facts rest on faithful Clang import of the pinned translation unit under the selected profile",
+    "Model proofs check source-derived Cycle 18 event programs; they are not native observations",
+    "Joined native families identify presented bytes; they do not attest execution",
+    "No complete production caller inventory or universal null/size bound is claimed"
+  ],
+  "obligations": {
+    "activation": {
+      "cb_event": {
+        "dependence": "bit_guarded",
+        "exhaustive": true,
+        "path_classes": {
+          "0": {
+            "2": true,
+            "4": true
+          },
+          "1": {
+            "2": true,
+            "4": false
+          },
+          "2": {
+            "2": false,
+            "4": true
+          },
+          "3": {
+            "2": false,
+            "4": false
+          }
+        },
+        "tested_bits": [
+          2,
+          4
+        ]
+      },
+      "cb_timeout": {
+        "dependence": "independent"
+      },
+      "cb_wait_2_timeout": {
+        "dependence": "independent"
+      }
+    },
+    "after": {
+      "callbacks": [
+        {
+          "blocking_scenarios": {
+            "base_creation_failure": "_mk_event_loop_create precedes every callback registration",
+            "fired_allocation_failure": "_mk_event_loop_create precedes every callback registration"
+          },
+          "callback": "cb_event",
+          "obligations": {
+            "all_path_execution_coverage": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "every imported source path must be composed",
+              "status": {
+                "established": "four controlled-activation executions cover the four cb_event source paths",
+                "kind": "bounded_native_family",
+                "method": "joined bounded evidence family of the rechecked aggregate",
+                "status": "discharged"
+              }
+            },
+            "allocation_authority_provenance": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "paths that dereference, write through or release the callback argument",
+              "status": {
+                "needs": "derive storage extent and exclusive callback write authority without caller declaration; cb_event writes ctx->fired[ctx->fired_count] with no capacity guard, so exclusive authority needs a bound on activations per dispatch against queue_size",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "caller_null_handling": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "each registration wrapper dereferences the loop context the caller obtained",
+              "status": {
+                "needs": "compose every production caller with the null loop/context return paths",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "caller_size_bounds": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "paths that access the fired array sized by the caller (or call an unadmitted function)",
+              "status": {
+                "needs": "derive the loop size and allocation multiplication bound from every production caller",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "initialization_reachability": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "every selected callback is registered on a context returned by _mk_event_loop_create",
+              "status": {
+                "established": "_mk_event_init returns 0 on every imported path; loop-create paths {0} are infeasible and {1, 2, 3} remain",
+                "kind": "source_fact",
+                "method": "constant _mk_event_init result refutes the initialization-failure guard",
+                "status": "discharged"
+              }
+            },
+            "natural_activation_reachability": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "every path is entered by a Libevent activation",
+              "status": {
+                "needs": "path selection is settled from source, but the dispatcher state at entry (fired_count against the fired capacity) under natural multi-readiness is not bounded; it reduces to allocation_authority_provenance",
+                "partial": [
+                  {
+                    "established": "activation flags are read only by single-bit guards on bits {2, 4}; exhaustive path partition: true",
+                    "kind": "source_fact",
+                    "method": "single-bit activation guards"
+                  }
+                ],
+                "status": "open"
+              }
+            },
+            "registration_liveness": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "every activation depends on the callback's event registration",
+              "status": {
+                "needs": "establish behavior after event creation or registration failure against the selected backend; source facts: _mk_event_add paths [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]: event_new result unchecked, event_add result checked, unguarded results of event_new; _mk_event_update paths [0, 3, 6, 9, 12, 15, 18, 21]: event_new result checked, event_add result not reached, the failure return leaves the map's freed event field in place; _mk_event_update paths [2, 5, 8, 11, 14, 17, 20, 23]: event_new result checked, event_add result checked; _mk_event_update paths [1, 4, 7, 10, 13, 16, 19, 22]: event_new result checked, event_add result checked, the failure return leaves the map's freed event field in place",
+                "partial": [],
+                "status": "open"
+              }
+            }
+          },
+          "source_paths": 4,
+          "source_summary_sha256": "f1394cb5a3855f3889101e0342e5d373f216675c3b91416e356c22245f13b040",
+          "verdict": {
+            "blocking_scenarios": [
+              "base_creation_failure",
+              "fired_allocation_failure"
+            ],
+            "evidence_family_refused": null,
+            "open_obligations": [
+              "caller_null_handling",
+              "caller_size_bounds",
+              "allocation_authority_provenance",
+              "registration_liveness",
+              "natural_activation_reachability"
+            ],
+            "status": "unknown"
+          }
+        },
+        {
+          "blocking_scenarios": {
+            "base_creation_failure": "_mk_event_loop_create precedes every callback registration",
+            "fired_allocation_failure": "_mk_event_loop_create precedes every callback registration"
+          },
+          "callback": "cb_timeout",
+          "obligations": {
+            "all_path_execution_coverage": {
+              "paths": [
+                0,
+                1,
+                2
+              ],
+              "relevance": "every imported source path must be composed",
+              "status": {
+                "needs": "evutil_closesocket(ev_map->pipe[1])'s result is ignored and its failure post-state is indeterminate in the Cycle 18 close vocabulary, so the close-failure branch of the teardown paths is not composed",
+                "partial": [
+                  {
+                    "established": "teardown paths {0, 1} and non-teardown paths {2} compose on the close-success branch, including a non-teardown activation followed by a teardown activation",
+                    "kind": "model_proof",
+                    "method": "source-derived Cycle 18 event programs"
+                  }
+                ],
+                "status": "open"
+              }
+            },
+            "allocation_authority_provenance": {
+              "paths": [
+                0,
+                1,
+                2
+              ],
+              "relevance": "paths that dereference, write through or release the callback argument",
+              "status": {
+                "needs": "the owned-argument mode of the teardown model is declared; whole-program non-use of Libevent's callback-argument accessors is not established",
+                "partial": [
+                  {
+                    "established": "_mk_event_timeout_create allocates the map on the registering path and hands it only to event_new; the created event is stored only in that map and registered",
+                    "kind": "source_fact",
+                    "method": "registration-local escape check"
+                  }
+                ],
+                "status": "open"
+              }
+            },
+            "caller_null_handling": {
+              "paths": [
+                0,
+                1,
+                2
+              ],
+              "relevance": "each registration wrapper dereferences the loop context the caller obtained",
+              "status": {
+                "needs": "compose every production caller with the null loop/context return paths",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "initialization_reachability": {
+              "paths": [
+                0,
+                1,
+                2
+              ],
+              "relevance": "every selected callback is registered on a context returned by _mk_event_loop_create",
+              "status": {
+                "established": "_mk_event_init returns 0 on every imported path; loop-create paths {0} are infeasible and {1, 2, 3} remain",
+                "kind": "source_fact",
+                "method": "constant _mk_event_init result refutes the initialization-failure guard",
+                "status": "discharged"
+              }
+            },
+            "natural_activation_reachability": {
+              "paths": [
+                0,
+                1,
+                2
+              ],
+              "relevance": "every path is entered by a Libevent activation",
+              "status": {
+                "established": "every activation of cb_timeout, natural or controlled, selects its path from its argument state alone",
+                "kind": "source_fact",
+                "method": "no operation on any imported path reads the activation flags",
+                "status": "discharged"
+              }
+            },
+            "registration_liveness": {
+              "paths": [
+                0,
+                1,
+                2
+              ],
+              "relevance": "every activation depends on the callback's event registration",
+              "status": {
+                "needs": "establish behavior after timer registration failure against the selected backend; source facts: _mk_event_timeout_create paths [3]: event_new result unchecked, event_add result unchecked, unguarded results of _mk_event_add,event_add,event_new; the model refuses a trace in which the non-teardown path runs and the base is freed before a teardown activation",
+                "partial": [],
+                "status": "open"
+              }
+            }
+          },
+          "source_paths": 3,
+          "source_summary_sha256": "6266508acf9c66f335eebb9126208812eb52f41d93d59a2e941cb1d35e30b85c",
+          "verdict": {
+            "blocking_scenarios": [
+              "base_creation_failure",
+              "fired_allocation_failure"
+            ],
+            "evidence_family_refused": null,
+            "open_obligations": [
+              "caller_null_handling",
+              "allocation_authority_provenance",
+              "registration_liveness",
+              "all_path_execution_coverage"
+            ],
+            "status": "unknown"
+          }
+        },
+        {
+          "blocking_scenarios": {
+            "base_creation_failure": "_mk_event_loop_create precedes every callback registration",
+            "fired_allocation_failure": "_mk_event_loop_create precedes every callback registration",
+            "timer_creation_failure": "_mk_event_wait_2 registers cb_wait_2_timeout"
+          },
+          "callback": "cb_wait_2_timeout",
+          "obligations": {
+            "all_path_execution_coverage": {
+              "paths": [
+                0
+              ],
+              "relevance": "every imported source path must be composed",
+              "status": {
+                "established": "one identity-bearing observed execution covers the sole cb_wait_2_timeout path",
+                "kind": "bounded_native_family",
+                "method": "joined bounded evidence family of the rechecked aggregate",
+                "status": "discharged"
+              }
+            },
+            "caller_null_handling": {
+              "paths": [
+                0
+              ],
+              "relevance": "each registration wrapper dereferences the loop context the caller obtained",
+              "status": {
+                "needs": "compose every production caller with the null loop/context return paths",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "initialization_reachability": {
+              "paths": [
+                0
+              ],
+              "relevance": "every selected callback is registered on a context returned by _mk_event_loop_create",
+              "status": {
+                "established": "_mk_event_init returns 0 on every imported path; loop-create paths {0} are infeasible and {1, 2, 3} remain",
+                "kind": "source_fact",
+                "method": "constant _mk_event_init result refutes the initialization-failure guard",
+                "status": "discharged"
+              }
+            },
+            "natural_activation_reachability": {
+              "paths": [
+                0
+              ],
+              "relevance": "every path is entered by a Libevent activation",
+              "status": {
+                "established": "every activation of cb_wait_2_timeout, natural or controlled, selects its path from its argument state alone",
+                "kind": "source_fact",
+                "method": "no operation on any imported path reads the activation flags",
+                "status": "discharged"
+              }
+            },
+            "registration_liveness": {
+              "paths": [
+                0
+              ],
+              "relevance": "every activation depends on the callback's event registration",
+              "status": {
+                "needs": "establish behavior after timer registration failure against the selected backend; source facts: _mk_event_wait_2 paths [2]: event_new result unchecked, event_add result unchecked, unguarded results of event_add,event_new",
+                "partial": [],
+                "status": "open"
+              }
+            }
+          },
+          "source_paths": 1,
+          "source_summary_sha256": "88ec3a9905aa980b166a0eb4c6149be7f9b0f6009ae9432031cd573a4f0aeb6a",
+          "verdict": {
+            "blocking_scenarios": [
+              "base_creation_failure",
+              "fired_allocation_failure",
+              "timer_creation_failure"
+            ],
+            "evidence_family_refused": null,
+            "open_obligations": [
+              "caller_null_handling",
+              "registration_liveness"
+            ],
+            "status": "unknown"
+          }
+        }
+      ],
+      "cells": [
+        {
+          "callback": "cb_event",
+          "discharged": true,
+          "kind": "source_fact",
+          "obligation": "initialization_reachability",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": true,
+          "kind": "source_fact",
+          "obligation": "initialization_reachability",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": true,
+          "kind": "source_fact",
+          "obligation": "initialization_reachability",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": true,
+          "kind": "source_fact",
+          "obligation": "initialization_reachability",
+          "path": 3
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 3
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_size_bounds",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_size_bounds",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_size_bounds",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_size_bounds",
+          "path": 3
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 3
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 3
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "natural_activation_reachability",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "natural_activation_reachability",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "natural_activation_reachability",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "natural_activation_reachability",
+          "path": 3
+        },
+        {
+          "callback": "cb_event",
+          "discharged": true,
+          "kind": "bounded_native_family",
+          "obligation": "all_path_execution_coverage",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": true,
+          "kind": "bounded_native_family",
+          "obligation": "all_path_execution_coverage",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": true,
+          "kind": "bounded_native_family",
+          "obligation": "all_path_execution_coverage",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": true,
+          "kind": "bounded_native_family",
+          "obligation": "all_path_execution_coverage",
+          "path": 3
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": true,
+          "kind": "source_fact",
+          "obligation": "initialization_reachability",
+          "path": 0
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": true,
+          "kind": "source_fact",
+          "obligation": "initialization_reachability",
+          "path": 1
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": true,
+          "kind": "source_fact",
+          "obligation": "initialization_reachability",
+          "path": 2
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 0
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 1
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 2
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 0
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 1
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 2
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 0
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 1
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 2
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": true,
+          "kind": "source_fact",
+          "obligation": "natural_activation_reachability",
+          "path": 0
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": true,
+          "kind": "source_fact",
+          "obligation": "natural_activation_reachability",
+          "path": 1
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": true,
+          "kind": "source_fact",
+          "obligation": "natural_activation_reachability",
+          "path": 2
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "all_path_execution_coverage",
+          "path": 0
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "all_path_execution_coverage",
+          "path": 1
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "all_path_execution_coverage",
+          "path": 2
+        },
+        {
+          "callback": "cb_wait_2_timeout",
+          "discharged": true,
+          "kind": "source_fact",
+          "obligation": "initialization_reachability",
+          "path": 0
+        },
+        {
+          "callback": "cb_wait_2_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 0
+        },
+        {
+          "callback": "cb_wait_2_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 0
+        },
+        {
+          "callback": "cb_wait_2_timeout",
+          "discharged": true,
+          "kind": "source_fact",
+          "obligation": "natural_activation_reachability",
+          "path": 0
+        },
+        {
+          "callback": "cb_wait_2_timeout",
+          "discharged": true,
+          "kind": "bounded_native_family",
+          "obligation": "all_path_execution_coverage",
+          "path": 0
+        }
+      ],
+      "composed_callbacks": 0,
+      "discharged_cells": 17,
+      "open_cells": 34,
+      "relevant_cells": 51,
+      "unknown_callbacks": 3
+    },
+    "aggregate_policy_sha256": "76a4fc17604702c7b3fc012d75011f0d2e4abefb57f1a77406843b0c6f13e97b",
+    "aggregate_provisional_unsafe_scenarios": [
+      "base_creation_failure",
+      "fired_allocation_failure",
+      "timer_creation_failure"
+    ],
+    "aggregate_source_inventory_sha256": "3b7058570cfba1bdadab8b2f5d8b8ac52a186da2f1a996dea728b036cc6d2eec",
+    "aggregate_unresolved_obligations": {
+      "all_path_execution_coverage": "compose evidence for both cb_timeout teardown paths and its non-teardown success path",
+      "allocation_authority_provenance": "derive storage extent and exclusive callback write authority without caller declaration",
+      "caller_null_handling": "compose every production caller with the null loop/context return paths",
+      "caller_size_bounds": "derive the loop size and allocation multiplication bound from every production caller",
+      "initialization_reachability": "prove the opaque event_init branch unreachable or check it under the selected production profile",
+      "natural_activation_reachability": "observe or prove production readiness/timeout activation rather than controlled activation",
+      "registration_liveness": "establish behavior after timer registration failure against the selected backend"
+    },
+    "aggregate_verdict": "unknown",
+    "artifact": "fluent-bit/monkey/libevent selected callbacks",
+    "assumptions": {
+      "enclosing_peer_close": "the cb_timeout model closes the peer endpoint as the caller's _mk_event_timeout_destroy does; this is an enclosing premise",
+      "lean_rust_correspondence": "the decision rule and dischargers match QCore.Cycle18CallbackObligations by review, not extraction",
+      "runtime_provenance": "joined native families identify presented bytes; they do not attest execution",
+      "source_import": "faithful Clang/C extraction of the pinned translation unit under the selected profile"
+    },
+    "before": {
+      "callbacks": [
+        {
+          "blocking_scenarios": {
+            "base_creation_failure": "_mk_event_loop_create precedes every callback registration",
+            "fired_allocation_failure": "_mk_event_loop_create precedes every callback registration"
+          },
+          "callback": "cb_event",
+          "obligations": {
+            "all_path_execution_coverage": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "every imported source path must be composed",
+              "status": {
+                "established": "four controlled-activation executions cover the four cb_event source paths",
+                "kind": "bounded_native_family",
+                "method": "joined bounded evidence family of the rechecked aggregate",
+                "status": "discharged"
+              }
+            },
+            "allocation_authority_provenance": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "paths that dereference, write through or release the callback argument",
+              "status": {
+                "needs": "derive storage extent and exclusive callback write authority without caller declaration",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "caller_null_handling": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "each registration wrapper dereferences the loop context the caller obtained",
+              "status": {
+                "needs": "compose every production caller with the null loop/context return paths",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "caller_size_bounds": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "paths that access the fired array sized by the caller (or call an unadmitted function)",
+              "status": {
+                "needs": "derive the loop size and allocation multiplication bound from every production caller",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "initialization_reachability": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "every selected callback is registered on a context returned by _mk_event_loop_create",
+              "status": {
+                "needs": "prove the opaque event_init branch unreachable or check it under the selected production profile",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "natural_activation_reachability": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "every path is entered by a Libevent activation",
+              "status": {
+                "needs": "observe or prove production readiness/timeout activation rather than controlled activation",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "registration_liveness": {
+              "paths": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "relevance": "every activation depends on the callback's event registration",
+              "status": {
+                "needs": "establish behavior after timer registration failure against the selected backend",
+                "partial": [],
+                "status": "open"
+              }
+            }
+          },
+          "source_paths": 4,
+          "source_summary_sha256": "f1394cb5a3855f3889101e0342e5d373f216675c3b91416e356c22245f13b040",
+          "verdict": {
+            "blocking_scenarios": [
+              "base_creation_failure",
+              "fired_allocation_failure"
+            ],
+            "evidence_family_refused": null,
+            "open_obligations": [
+              "initialization_reachability",
+              "caller_null_handling",
+              "caller_size_bounds",
+              "allocation_authority_provenance",
+              "registration_liveness",
+              "natural_activation_reachability"
+            ],
+            "status": "unknown"
+          }
+        },
+        {
+          "blocking_scenarios": {
+            "base_creation_failure": "_mk_event_loop_create precedes every callback registration",
+            "fired_allocation_failure": "_mk_event_loop_create precedes every callback registration"
+          },
+          "callback": "cb_timeout",
+          "obligations": {
+            "all_path_execution_coverage": {
+              "paths": [
+                0,
+                1,
+                2
+              ],
+              "relevance": "every imported source path must be composed",
+              "status": {
+                "needs": "compose evidence for both cb_timeout teardown paths and its non-teardown success path",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "allocation_authority_provenance": {
+              "paths": [
+                0,
+                1,
+                2
+              ],
+              "relevance": "paths that dereference, write through or release the callback argument",
+              "status": {
+                "needs": "derive storage extent and exclusive callback write authority without caller declaration",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "caller_null_handling": {
+              "paths": [
+                0,
+                1,
+                2
+              ],
+              "relevance": "each registration wrapper dereferences the loop context the caller obtained",
+              "status": {
+                "needs": "compose every production caller with the null loop/context return paths",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "initialization_reachability": {
+              "paths": [
+                0,
+                1,
+                2
+              ],
+              "relevance": "every selected callback is registered on a context returned by _mk_event_loop_create",
+              "status": {
+                "needs": "prove the opaque event_init branch unreachable or check it under the selected production profile",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "natural_activation_reachability": {
+              "paths": [
+                0,
+                1,
+                2
+              ],
+              "relevance": "every path is entered by a Libevent activation",
+              "status": {
+                "needs": "observe or prove production readiness/timeout activation rather than controlled activation",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "registration_liveness": {
+              "paths": [
+                0,
+                1,
+                2
+              ],
+              "relevance": "every activation depends on the callback's event registration",
+              "status": {
+                "needs": "establish behavior after timer registration failure against the selected backend",
+                "partial": [],
+                "status": "open"
+              }
+            }
+          },
+          "source_paths": 3,
+          "source_summary_sha256": "6266508acf9c66f335eebb9126208812eb52f41d93d59a2e941cb1d35e30b85c",
+          "verdict": {
+            "blocking_scenarios": [
+              "base_creation_failure",
+              "fired_allocation_failure"
+            ],
+            "evidence_family_refused": null,
+            "open_obligations": [
+              "initialization_reachability",
+              "caller_null_handling",
+              "allocation_authority_provenance",
+              "registration_liveness",
+              "natural_activation_reachability",
+              "all_path_execution_coverage"
+            ],
+            "status": "unknown"
+          }
+        },
+        {
+          "blocking_scenarios": {
+            "base_creation_failure": "_mk_event_loop_create precedes every callback registration",
+            "fired_allocation_failure": "_mk_event_loop_create precedes every callback registration",
+            "timer_creation_failure": "_mk_event_wait_2 registers cb_wait_2_timeout"
+          },
+          "callback": "cb_wait_2_timeout",
+          "obligations": {
+            "all_path_execution_coverage": {
+              "paths": [
+                0
+              ],
+              "relevance": "every imported source path must be composed",
+              "status": {
+                "established": "one identity-bearing observed execution covers the sole cb_wait_2_timeout path",
+                "kind": "bounded_native_family",
+                "method": "joined bounded evidence family of the rechecked aggregate",
+                "status": "discharged"
+              }
+            },
+            "caller_null_handling": {
+              "paths": [
+                0
+              ],
+              "relevance": "each registration wrapper dereferences the loop context the caller obtained",
+              "status": {
+                "needs": "compose every production caller with the null loop/context return paths",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "initialization_reachability": {
+              "paths": [
+                0
+              ],
+              "relevance": "every selected callback is registered on a context returned by _mk_event_loop_create",
+              "status": {
+                "needs": "prove the opaque event_init branch unreachable or check it under the selected production profile",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "natural_activation_reachability": {
+              "paths": [
+                0
+              ],
+              "relevance": "every path is entered by a Libevent activation",
+              "status": {
+                "needs": "observe or prove production readiness/timeout activation rather than controlled activation",
+                "partial": [],
+                "status": "open"
+              }
+            },
+            "registration_liveness": {
+              "paths": [
+                0
+              ],
+              "relevance": "every activation depends on the callback's event registration",
+              "status": {
+                "needs": "establish behavior after timer registration failure against the selected backend",
+                "partial": [],
+                "status": "open"
+              }
+            }
+          },
+          "source_paths": 1,
+          "source_summary_sha256": "88ec3a9905aa980b166a0eb4c6149be7f9b0f6009ae9432031cd573a4f0aeb6a",
+          "verdict": {
+            "blocking_scenarios": [
+              "base_creation_failure",
+              "fired_allocation_failure",
+              "timer_creation_failure"
+            ],
+            "evidence_family_refused": null,
+            "open_obligations": [
+              "initialization_reachability",
+              "caller_null_handling",
+              "registration_liveness",
+              "natural_activation_reachability"
+            ],
+            "status": "unknown"
+          }
+        }
+      ],
+      "cells": [
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "initialization_reachability",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "initialization_reachability",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "initialization_reachability",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "initialization_reachability",
+          "path": 3
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 3
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_size_bounds",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_size_bounds",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_size_bounds",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_size_bounds",
+          "path": 3
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 3
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 3
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "natural_activation_reachability",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "natural_activation_reachability",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "natural_activation_reachability",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": false,
+          "kind": null,
+          "obligation": "natural_activation_reachability",
+          "path": 3
+        },
+        {
+          "callback": "cb_event",
+          "discharged": true,
+          "kind": "bounded_native_family",
+          "obligation": "all_path_execution_coverage",
+          "path": 0
+        },
+        {
+          "callback": "cb_event",
+          "discharged": true,
+          "kind": "bounded_native_family",
+          "obligation": "all_path_execution_coverage",
+          "path": 1
+        },
+        {
+          "callback": "cb_event",
+          "discharged": true,
+          "kind": "bounded_native_family",
+          "obligation": "all_path_execution_coverage",
+          "path": 2
+        },
+        {
+          "callback": "cb_event",
+          "discharged": true,
+          "kind": "bounded_native_family",
+          "obligation": "all_path_execution_coverage",
+          "path": 3
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "initialization_reachability",
+          "path": 0
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "initialization_reachability",
+          "path": 1
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "initialization_reachability",
+          "path": 2
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 0
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 1
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 2
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 0
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 1
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "allocation_authority_provenance",
+          "path": 2
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 0
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 1
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 2
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "natural_activation_reachability",
+          "path": 0
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "natural_activation_reachability",
+          "path": 1
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "natural_activation_reachability",
+          "path": 2
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "all_path_execution_coverage",
+          "path": 0
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "all_path_execution_coverage",
+          "path": 1
+        },
+        {
+          "callback": "cb_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "all_path_execution_coverage",
+          "path": 2
+        },
+        {
+          "callback": "cb_wait_2_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "initialization_reachability",
+          "path": 0
+        },
+        {
+          "callback": "cb_wait_2_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "caller_null_handling",
+          "path": 0
+        },
+        {
+          "callback": "cb_wait_2_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "registration_liveness",
+          "path": 0
+        },
+        {
+          "callback": "cb_wait_2_timeout",
+          "discharged": false,
+          "kind": null,
+          "obligation": "natural_activation_reachability",
+          "path": 0
+        },
+        {
+          "callback": "cb_wait_2_timeout",
+          "discharged": true,
+          "kind": "bounded_native_family",
+          "obligation": "all_path_execution_coverage",
+          "path": 0
+        }
+      ],
+      "composed_callbacks": 0,
+      "discharged_cells": 5,
+      "open_cells": 46,
+      "relevant_cells": 51,
+      "unknown_callbacks": 3
+    },
+    "bounds": {
+      "callbacks": 3,
+      "discharged_cells_after": 17,
+      "obligations": 7,
+      "relevant_cells_after": 51,
+      "source_paths": 8
+    },
+    "evidence_version": "qcore.cycle18.callback-obligations.v1",
+    "initialization": {
+      "constant_result": 0,
+      "event_init_summary_sha256": "ced6a22416d8070bc7171aea395c444c6b715ca3b2554fa48bf51bb38e6cb3a3",
+      "feasible_paths": [
+        1,
+        2,
+        3
+      ],
+      "infeasible_paths": [
+        0
+      ],
+      "initialization_failure_paths": [
+        0
+      ],
+      "loop_create_paths": 4,
+      "loop_create_summary_sha256": "3a76dc34233c6a52a0ae2c43fb0177569db73188ebf136870e054d190227fd77",
+      "profile_sha256": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+    },
+    "initialization_refusal": null,
+    "profile_sha256": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+    "property": "monkey-cycle18-callback-obligations",
+    "registration_sites": {
+      "cb_event": [
+        {
+          "creation_result_checked": false,
+          "event_flags": 22,
+          "ignored_results": [
+            "event_new@28"
+          ],
+          "path": 4,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 22,
+          "ignored_results": [
+            "event_new@28"
+          ],
+          "path": 5,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 22,
+          "ignored_results": [
+            "event_new@27"
+          ],
+          "path": 6,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 22,
+          "ignored_results": [
+            "event_new@27"
+          ],
+          "path": 7,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 18,
+          "ignored_results": [
+            "event_new@27"
+          ],
+          "path": 8,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 18,
+          "ignored_results": [
+            "event_new@27"
+          ],
+          "path": 9,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 18,
+          "ignored_results": [
+            "event_new@26"
+          ],
+          "path": 10,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 18,
+          "ignored_results": [
+            "event_new@26"
+          ],
+          "path": 11,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 20,
+          "ignored_results": [
+            "event_new@27"
+          ],
+          "path": 12,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 20,
+          "ignored_results": [
+            "event_new@27"
+          ],
+          "path": 13,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 20,
+          "ignored_results": [
+            "event_new@26"
+          ],
+          "path": 14,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 20,
+          "ignored_results": [
+            "event_new@26"
+          ],
+          "path": 15,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 16,
+          "ignored_results": [
+            "event_new@26"
+          ],
+          "path": 16,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 16,
+          "ignored_results": [
+            "event_new@26"
+          ],
+          "path": 17,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 16,
+          "ignored_results": [
+            "event_new@25"
+          ],
+          "path": 18,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": false,
+          "event_flags": 16,
+          "ignored_results": [
+            "event_new@25"
+          ],
+          "path": 19,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_add"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 22,
+          "ignored_results": [],
+          "path": 0,
+          "registration_result_checked": null,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 22,
+          "ignored_results": [],
+          "path": 1,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 22,
+          "ignored_results": [],
+          "path": 2,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 18,
+          "ignored_results": [],
+          "path": 3,
+          "registration_result_checked": null,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 18,
+          "ignored_results": [],
+          "path": 4,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 18,
+          "ignored_results": [],
+          "path": 5,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 20,
+          "ignored_results": [],
+          "path": 6,
+          "registration_result_checked": null,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 20,
+          "ignored_results": [],
+          "path": 7,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 20,
+          "ignored_results": [],
+          "path": 8,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 16,
+          "ignored_results": [],
+          "path": 9,
+          "registration_result_checked": null,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 16,
+          "ignored_results": [],
+          "path": 10,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 16,
+          "ignored_results": [],
+          "path": 11,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 22,
+          "ignored_results": [],
+          "path": 12,
+          "registration_result_checked": null,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 22,
+          "ignored_results": [],
+          "path": 13,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 22,
+          "ignored_results": [],
+          "path": 14,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 18,
+          "ignored_results": [],
+          "path": 15,
+          "registration_result_checked": null,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 18,
+          "ignored_results": [],
+          "path": 16,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 18,
+          "ignored_results": [],
+          "path": 17,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 20,
+          "ignored_results": [],
+          "path": 18,
+          "registration_result_checked": null,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 20,
+          "ignored_results": [],
+          "path": 19,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 20,
+          "ignored_results": [],
+          "path": 20,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 16,
+          "ignored_results": [],
+          "path": 21,
+          "registration_result_checked": null,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 16,
+          "ignored_results": [],
+          "path": 22,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": true,
+          "wrapper": "_mk_event_update"
+        },
+        {
+          "creation_result_checked": true,
+          "event_flags": 16,
+          "ignored_results": [],
+          "path": 23,
+          "registration_result_checked": true,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_update"
+        }
+      ],
+      "cb_timeout": [
+        {
+          "creation_result_checked": false,
+          "event_flags": 17,
+          "ignored_results": [
+            "event_new@18",
+            "event_add@21",
+            "_mk_event_add@27"
+          ],
+          "path": 3,
+          "registration_result_checked": false,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_timeout_create"
+        }
+      ],
+      "cb_wait_2_timeout": [
+        {
+          "creation_result_checked": false,
+          "event_flags": 1,
+          "ignored_results": [
+            "event_new@8",
+            "event_add@10"
+          ],
+          "path": 2,
+          "registration_result_checked": false,
+          "stale_event_field_on_failure": false,
+          "wrapper": "_mk_event_wait_2"
+        }
+      ]
+    },
+    "scope": [
+      "cb_event",
+      "cb_timeout",
+      "cb_wait_2_timeout"
+    ],
+    "semantic_profile": "fluent-bit/monkey/libevent",
+    "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "source_summary_sha256": {
+      "_mk_event_add": "0454b6f49001b0d64fb7accf354c1f494ccda728b718e6542e365fd2d92a8cdd",
+      "_mk_event_init": "ced6a22416d8070bc7171aea395c444c6b715ca3b2554fa48bf51bb38e6cb3a3",
+      "_mk_event_loop_create": "3a76dc34233c6a52a0ae2c43fb0177569db73188ebf136870e054d190227fd77",
+      "_mk_event_timeout_create": "887912dd54c9ac3be32aa375ca6febdeaa6e601ff1220fdff2983d8d1a289dcf",
+      "_mk_event_update": "56eb0099b62249d6643d178ba90e37ab6e2c0dadbb9fc970f8a534da2dd08c50",
+      "_mk_event_wait_2": "13c86eb0878ef58f3a6b4a5d391c046a4464920c160c394b90aad105f21ff8da",
+      "cb_event": "f1394cb5a3855f3889101e0342e5d373f216675c3b91416e356c22245f13b040",
+      "cb_timeout": "6266508acf9c66f335eebb9126208812eb52f41d93d59a2e941cb1d35e30b85c",
+      "cb_wait_2_timeout": "88ec3a9905aa980b166a0eb4c6149be7f9b0f6009ae9432031cd573a4f0aeb6a"
+    },
+    "timeout_paths": {
+      "callback_summary_sha256": "6266508acf9c66f335eebb9126208812eb52f41d93d59a2e941cb1d35e30b85c",
+      "event_flags": 17,
+      "map_exclusive_to_registration": true,
+      "non_teardown_paths": [
+        2
+      ],
+      "path_steps": {
+        "0": [
+          "endpoint_send",
+          "effect_free",
+          "effect_free",
+          "close_write_endpoint",
+          "delete_current_event",
+          "free_current_event",
+          "drop_map_argument"
+        ],
+        "1": [
+          "endpoint_send",
+          "effect_free",
+          "close_write_endpoint",
+          "delete_current_event",
+          "free_current_event",
+          "drop_map_argument"
+        ],
+        "2": [
+          "endpoint_send"
+        ]
+      },
+      "programs": [
+        {
+          "accepted": true,
+          "checked_operations": 15,
+          "close_succeeds": true,
+          "diagnostics": [],
+          "name": "teardown_path_0",
+          "purpose": "composition",
+          "source_paths": [
+            0
+          ]
+        },
+        {
+          "accepted": true,
+          "checked_operations": 18,
+          "close_succeeds": true,
+          "diagnostics": [],
+          "name": "path_2_then_teardown_path_0",
+          "purpose": "composition",
+          "source_paths": [
+            2,
+            0
+          ]
+        },
+        {
+          "accepted": true,
+          "checked_operations": 15,
+          "close_succeeds": true,
+          "diagnostics": [],
+          "name": "teardown_path_1",
+          "purpose": "composition",
+          "source_paths": [
+            1
+          ]
+        },
+        {
+          "accepted": true,
+          "checked_operations": 18,
+          "close_succeeds": true,
+          "diagnostics": [],
+          "name": "path_2_then_teardown_path_1",
+          "purpose": "composition",
+          "source_paths": [
+            2,
+            1
+          ]
+        },
+        {
+          "accepted": false,
+          "checked_operations": 15,
+          "close_succeeds": false,
+          "diagnostics": [
+            "L03DescriptorCustody { operation: 15, descriptor: 11 }"
+          ],
+          "name": "teardown_path_0",
+          "purpose": "composition",
+          "source_paths": [
+            0
+          ]
+        },
+        {
+          "accepted": false,
+          "checked_operations": 18,
+          "close_succeeds": false,
+          "diagnostics": [
+            "L03DescriptorCustody { operation: 18, descriptor: 11 }"
+          ],
+          "name": "path_2_then_teardown_path_0",
+          "purpose": "composition",
+          "source_paths": [
+            2,
+            0
+          ]
+        },
+        {
+          "accepted": false,
+          "checked_operations": 15,
+          "close_succeeds": false,
+          "diagnostics": [
+            "L03DescriptorCustody { operation: 15, descriptor: 11 }"
+          ],
+          "name": "teardown_path_1",
+          "purpose": "composition",
+          "source_paths": [
+            1
+          ]
+        },
+        {
+          "accepted": false,
+          "checked_operations": 18,
+          "close_succeeds": false,
+          "diagnostics": [
+            "L03DescriptorCustody { operation: 18, descriptor: 11 }"
+          ],
+          "name": "path_2_then_teardown_path_1",
+          "purpose": "composition",
+          "source_paths": [
+            2,
+            1
+          ]
+        },
+        {
+          "accepted": false,
+          "checked_operations": 11,
+          "close_succeeds": true,
+          "diagnostics": [
+            "L03DescriptorCustody { operation: 11, descriptor: 11 }",
+            "L07OwnedObligation { operation: 11 }",
+            "L11LoopExitCustody { operation: 10 }",
+            "L11LoopExitCustody { operation: 11 }"
+          ],
+          "name": "liveness_gap_path_2_then_base_free",
+          "purpose": "liveness_witness",
+          "source_paths": [
+            2
+          ]
+        }
+      ],
+      "registration_paths": [
+        3
+      ],
+      "registration_summary_sha256": "887912dd54c9ac3be32aa375ca6febdeaa6e601ff1220fdff2983d8d1a289dcf",
+      "teardown_paths": [
+        0,
+        1
+      ]
+    },
+    "timeout_paths_refusal": null,
+    "universal_safety_certificate": false
+  },
+  "obligations_config_sha256": "bf4012c909475a3595937644de97e66b25b5a3f7daab9dbe5ee96b7b0c907758",
+  "schema_version": 1,
+  "status": "cycle18_callback_obligations_checked"
+}

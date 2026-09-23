@@ -1,0 +1,85 @@
+{
+  "binary": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/target/debug/quirin-audit",
+  "binary_sha256": "a56817aab04e00caae67130294c06f07220f66576774c644ed21bfe9660b3722",
+  "base_config": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/measure/w43-monkey-after-2/obligations-config.json",
+  "controls": [
+    {
+      "control": "m0-baseline",
+      "expect": "accept",
+      "exit": 0,
+      "report_created": true,
+      "passed": true,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/measure/w43-monkey-controls-3/m0-baseline.log",
+      "output": "Per-callback Cycle 18 obligations measured; callbacks without every obligation discharged remain Unknown. Report written."
+    },
+    {
+      "control": "m1-unknown-field",
+      "expect": "refuse",
+      "exit": 1,
+      "report_created": false,
+      "passed": true,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/measure/w43-monkey-controls-3/m1-unknown-field.log",
+      "output": "Cycle 18 callback obligations rejected (Unknown): unknown field `discharged`, expected one of `schema_version`, `composition`, `monkey_profile`, `fluent_checkout`, `monkey_inputs`, `source_compile_database`, `report` at line 9 column 14"
+    },
+    {
+      "control": "m2-schema-version",
+      "expect": "refuse",
+      "exit": 1,
+      "report_created": false,
+      "passed": true,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/measure/w43-monkey-controls-3/m2-schema-version.log",
+      "output": "Cycle 18 callback obligations rejected (Unknown): unsupported Cycle 18 obligations configuration"
+    },
+    {
+      "control": "m3-foreign-compile-database",
+      "expect": "refuse",
+      "exit": 1,
+      "report_created": false,
+      "passed": true,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/measure/w43-monkey-controls-3/m3-foreign-compile-database.log",
+      "output": "Cycle 18 callback obligations rejected (Unknown): obligation sources were not imported from the aggregate's pinned compile task"
+    },
+    {
+      "control": "m4-report-aliases-aggregate-report",
+      "expect": "refuse",
+      "exit": 1,
+      "report_created": false,
+      "passed": true,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/measure/w43-monkey-controls-3/m4-report-aliases-aggregate-report.log",
+      "output": "Cycle 18 callback obligations rejected (Unknown): aggregate report aliases prepared leaf report: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/measure/w43-monkey-after-2/aggregate-report.json"
+    },
+    {
+      "control": "m5-report-aliases-own-config",
+      "expect": "refuse",
+      "exit": 1,
+      "report_created": false,
+      "passed": true,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/measure/w43-monkey-controls-3/m5-report-aliases-own-config.log",
+      "output": "Cycle 18 callback obligations rejected (Unknown): report destination aliases verified input: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/measure/w43-monkey-controls-3/m5-report-aliases-own-config-config.json"
+    },
+    {
+      "control": "m6-report-aliases-leaf-report",
+      "expect": "refuse",
+      "exit": 1,
+      "report_created": false,
+      "passed": true,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/measure/w43-monkey-controls-3/m6-report-aliases-leaf-report.log",
+      "output": "Cycle 18 callback obligations rejected (Unknown): aggregate report aliases prepared leaf report: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/measure/w43-monkey-after-2/timeout_teardown-report.json"
+    },
+    {
+      "control": "m7-baseline-after",
+      "expect": "accept",
+      "exit": 0,
+      "report_created": true,
+      "passed": true,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aba6be6a577335b33/measure/w43-monkey-controls-3/m7-baseline-after.log",
+      "output": "Per-callback Cycle 18 obligations measured; callbacks without every obligation discharged remain Unknown. Report written."
+    }
+  ],
+  "passed": 8,
+  "total": 8,
+  "baseline_reports_sha256": [
+    "0013463c338bd0d5d7ec63df9908bc83d40078722b23fcf759da3dddd765d52c",
+    "f2da503a4a4172d40b8441481058c4ee80a7dc20a020c7508f5397a0cf1ff607"
+  ]
+}
