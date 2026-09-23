@@ -1,0 +1,13 @@
+[
+  {
+    "entry": {
+      "id": "RETURN-CALL-INCOMPLETE-LINE-455",
+      "title": "455 of 1,470 return leaves sit on a line where the return is not complete, and are classed shape-unknown",
+      "why": "Card C-GATEWAY-RETURN-CALL-W4 (wave 34) \u00a73.2: 455 of 1,470 return leaves (31%) have an `origin` line on which the `return` statement is not complete - the classifier reads one preprocessed line, and a return spanning more than one cannot be shaped from it. Those leaves are classified SHAPE-UNKNOWN rather than guessed, which is why the card's own census makes no shape claim about them (the `ctr_span_set_trace_id_with_cid` exemplar falls in this bucket and is recorded as such rather than smoothed over). Fail-closed and correct, but it bounds every shape census this route publishes. DISCHARGE: a multi-line-aware classifier, or a measurement showing the class is uninteresting.",
+      "source": "docs/reports/c-gateway-return-call-w4/README.md",
+      "recorded_by": "C-GATEWAY-RETURN-CALL-W4"
+    },
+    "discharged_by": "W43-RETURN-EXPRESSION",
+    "ground": "The W43 census classifies every refused return leaf from the analyzer's own parser-delimited token view (the complete return expression, however many preprocessed lines it spans), not from one origin line: 1,444 of 1,444 published leaves are covered and 0 are shape-unknown. This is the multi-line-aware classifier the discharge condition names; census/census.txt and census/census.json.gz."
+  }
+]

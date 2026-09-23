@@ -1,0 +1,86 @@
+{
+  "run": "measure/before/run",
+  "baseline": "docs/reports/w42-priority-integration/artifacts",
+  "artifacts": {
+    "diagnostics": {
+      "file": "resource-diagnostics.json",
+      "run_sha256": "041b7f2193c8ef02c72346aed48dcfd657be1c1b36e74b0f243e55d80ac4b059",
+      "baseline_raw_sha256": "041b7f2193c8ef02c72346aed48dcfd657be1c1b36e74b0f243e55d80ac4b059",
+      "archive_matches_manifest": true,
+      "byte_identical": true,
+      "references": [
+        {
+          "reference": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/corpus-final/resource-diagnostics.json",
+          "reference_sha256": "041b7f2193c8ef02c72346aed48dcfd657be1c1b36e74b0f243e55d80ac4b059",
+          "byte_identical": true,
+          "identical_after_root_alias": true
+        }
+      ]
+    },
+    "chunk-contracts": {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "run_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "baseline_raw_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false,
+      "references": [
+        {
+          "reference": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/corpus-final/resource-diagnostics.chunk-contracts.json",
+          "reference_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+          "byte_identical": true,
+          "identical_after_root_alias": true
+        }
+      ]
+    },
+    "contracts": {
+      "file": "resource-diagnostics.contracts.json",
+      "run_sha256": "a24e0268b74a325606af8a47432a5e662bbf5082faee9b8e9ddc7c1d174a9bf9",
+      "baseline_raw_sha256": "9de748ce56d2c614f251411f88e50a8b8a50c7dbff935216515e873a3c081f32",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false,
+      "references": [
+        {
+          "reference": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/corpus-final/resource-diagnostics.contracts.json",
+          "reference_sha256": "20fe70ee3e01d51f84baae5c69ce200a778058e06ac218aa4ab87d668c9066cd",
+          "byte_identical": false,
+          "identical_after_root_alias": true
+        }
+      ]
+    },
+    "source-effects": {
+      "file": "resource-diagnostics.source-effects.json",
+      "run_sha256": "55fa756fe4e0cb349ac1f9239dc83af3638c9047aef5caf657e9df9dc092f668",
+      "baseline_raw_sha256": "0bda08ad86da01b133bcf0397ee39d7b7cd145a1265c1cb66df2747e6aa4fc9b",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false,
+      "references": [
+        {
+          "reference": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/corpus-final/resource-diagnostics.source-effects.json",
+          "reference_sha256": "39ff15812af2eab7b28beea8188ed091c01fef9bf165fe707f35231283a132ba",
+          "byte_identical": false,
+          "identical_after_root_alias": false
+        }
+      ]
+    },
+    "source": {
+      "file": "monkey-source.json",
+      "run_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "baseline_raw_sha256": "bf9b1cacf3c822795f544d9b4b63da4625a926d7d746316929da12b761b6bb0d",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false,
+      "references": [
+        {
+          "reference": "/home/cosmo/Documents/GitHub/qcore-c/private/canonical-contract-locations/corpus-final/monkey-source.json",
+          "reference_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+          "byte_identical": true,
+          "identical_after_root_alias": true
+        }
+      ]
+    }
+  },
+  "verdict_bearing_identical": true
+}

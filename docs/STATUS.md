@@ -1,6 +1,7 @@
 # Current status and evidence boundaries
 
-Re-derived on 2026-09-21 from the sources below. This is the concise status
+Re-derived on 2026-09-21 from the sources below; corpus rows re-derived on
+2026-09-23 from the W43 arbiter. This is the concise status
 authority routed by `AGENTS.md`; reports own the underlying evidence. Update
 numbers from those sources, not from an older summary. History belongs in the
 [increment records](development/increments/README.md).
@@ -13,10 +14,11 @@ numbers from those sources, not from an older summary. History belongs in the
 | CT cases mapped | **50/50**; none unmapped | [Manifest](reevaluation/ct_manifest.json) |
 | CT case-bound proof | **5/50**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
 | CT gated sanitized-native | **10/50, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
-| Cycle 19 units | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only**, 185 total | [W42 priority corpus](reports/w42-priority-integration/README.md) |
+| Cycle 19 units | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only**, 185 total | [W43 return-expression corpus](reports/w43-return-expression/README.md) |
 | Projected functions | **223 Safe / 84 provisional Unsafe / 4,527 Unknown**, 4,834 total | Same baseline |
 | Corpus diagnostics | leak **272**; unknown_alias **4,665**; double_release **0**; unsupported **49,371**; summary_conflict **1** | Same baseline, `artifacts/diagnostics.json.gz` |
-| Unit reasons | **136 unsupported-syntax / 1 incomplete-obligation-coverage / 48 without a reason code** | [Combined attribution](reports/w42-priority-integration/attribution.json) |
+| Return-expression refusals | **499** leaves on **422** Unknown functions, sole blocker of **145** (was 1,440 / 1,109 / 465); 941 whole-call leaves now carry the call classifier's own refusal | [W43 attribution](reports/w43-return-expression/attribution-summary.json), [blocker census](reports/w43-return-expression/blocker-census.txt) |
+| Unit reasons | **136 unsupported-syntax / 1 incomplete-obligation-coverage / 48 without a reason code** | [Combined attribution](reports/w42-priority-integration/attribution.json); unit fields unchanged at W43 |
 | Raw source coverage | **4,921 definitions / 4,834 projected / 87 pinned-build exclusions**, across **24 full-path units** | [Verified census](reports/w42-unprojected-definitions/README.md); combined inventory unchanged |
 | Monkey callback accounting | **3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown**; 8 source paths | [Callback report](reports/w42-monkey-callback-coverage/README.md); ordinary audit checks 0/8 native paths, optional focused replay 8/8 |
 | Observed Monkey timed wait | **1 instrumented Linux epoll success run**, 11 identity records and 11 model operations; conditional replay, no coverage promotion | [Observed integration](reports/cycle18-observed-integration/README.md) |
@@ -26,7 +28,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
 | Contract corpus | **96** modules; **59** resource-v1 declarations; **33** manifest-selected | [Provider ownership](../providers/README.md#contract-ownership), canonical index `contract/corpus.json`, [selection](../cycle19-resource-contracts.json) and pinned tests |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each | [Lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md), `lifecycle-coverage.json` |
-| Registered follow-ups | **276** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **282** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -49,7 +51,8 @@ and the chunk **lifecycle** result are separate dimensions: no selected chunk
 function's lifecycle post-state is established, `flb_input_chunk_create`
 included, and a checked field contract is not a lifecycle result. Provisional Unsafe
 findings are not validated upstream defects. Unknowns stay in the denominator.
-The baseline is `docs/reports/w42-priority-integration/artifacts/`; an arbiter must
+The baseline is `docs/reports/w43-return-expression/artifacts/` (its predecessor
+`docs/reports/w42-priority-integration/artifacts/` is frozen); an arbiter must
 reproduce its predecessor's verdict-bearing artifacts byte-for-byte and
 attribute every delta. The chain and leaf identities are preserved in the
 individual reports, [wave history](development/increments/README.md), and
@@ -95,8 +98,9 @@ retains version-1 paths and existing adapters, and models admission separately
 from policy truth. Four scoped follow-ons remain in its report.
 
 All three broader Cycle 18 follow-ups remain open; **282** follow-ups are
-registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
-narrower lifecycle residuals took its place. Production callback composition, task/cancellation/event-generation
+registered — W43-RETURN-EXPRESSION registered six refused return-expression
+families and the `report_leaks` premise finding, and retired
+`RETURN-CALL-INCOMPLETE-LINE-455` against its census. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
 

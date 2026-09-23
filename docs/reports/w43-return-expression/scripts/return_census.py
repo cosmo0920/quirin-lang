@@ -22,9 +22,16 @@ view (first match wins), so each leaf has exactly one family.
 """
 
 import collections
+import gzip
 import json
 import pathlib
 import sys
+
+
+def read_text(path):
+    """Plain or gzip-compressed text, so the archived inputs replay directly."""
+    data = path.read_bytes()
+    return (gzip.decompress(data) if path.name.endswith(".gz") else data).decode()
 
 RETURN = "unmodeled call, aggregate or indirect access in return expression"
 
@@ -229,7 +236,7 @@ def family(record):
 
 def main() -> int:
     census_path = pathlib.Path(sys.argv[1])
-    diagnostics = json.loads(pathlib.Path(sys.argv[2]).read_text())
+    diagnostics = json.loads(read_text(pathlib.Path(sys.argv[2])))
     out = None
     if "--json" in sys.argv:
         out = pathlib.Path(sys.argv[sys.argv.index("--json") + 1])
@@ -250,7 +257,7 @@ def main() -> int:
                     by_function_line[(entry["function"], diagnostic["line"])].add(key[:2])
 
     # Join each census unit ordinal to exactly one published unit.
-    records = [json.loads(line) for line in census_path.read_text().splitlines() if line]
+    records = [json.loads(line) for line in read_text(census_path).splitlines() if line]
     per_seq = collections.defaultdict(list)
     for record in records:
         per_seq[record["unit_seq"]].append(record)

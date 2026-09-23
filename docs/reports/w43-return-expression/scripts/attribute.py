@@ -25,6 +25,7 @@ reported as UNATTRIBUTED and makes the script exit 1.
 """
 
 import collections
+import gzip
 import json
 import pathlib
 import sys
@@ -82,9 +83,13 @@ def index(data):
 
 
 def main() -> int:
-    before = json.loads(pathlib.Path(sys.argv[1]).read_text())
-    after = json.loads(pathlib.Path(sys.argv[2]).read_text())
-    census = json.loads(pathlib.Path(sys.argv[3]).read_text())
+    def load(path):
+        data = pathlib.Path(path).read_bytes()
+        return json.loads(gzip.decompress(data) if path.endswith(".gz") else data)
+
+    before = load(sys.argv[1])
+    after = load(sys.argv[2])
+    census = load(sys.argv[3])
     out = pathlib.Path(sys.argv[sys.argv.index("--json") + 1]) if "--json" in sys.argv else None
 
     bu, bfields, bf, bl = index(before)
@@ -124,6 +129,14 @@ def main() -> int:
         else:
             unattributed.append({"kind": "added", "leaf": list(key), "count": count})
     coordinates_with_addition = {key[:4] for key in added if key[:4] in removed_coordinates}
+    exchanges = [
+        {
+            "coordinate": list(coordinate),
+            "origin": next(key[6] for key in removed_lowered if key[:4] == coordinate),
+            "added": sorted(key[5] for key in added if key[:4] == coordinate),
+        }
+        for coordinate in sorted(removed_coordinates)
+    ]
     absorbed = []
     for coordinate in sorted(removed_coordinates - coordinates_with_addition):
         existing = [key for key in al if key[:4] == coordinate and key[4] == "unsupported"]
@@ -217,11 +230,16 @@ def main() -> int:
         "sole_blocked_still_carrying_the_return_refusal": still_return,
         "unattributed": unattributed,
         "attribution_complete": not unattributed and not unit_field_changes,
+        "exchanges": exchanges,
     }
     text = json.dumps(result, indent=1)
     if out:
         out.write_text(text + "\n")
-    summary = {k: v for k, v in result.items() if k not in ("absorbed", "unattributed", "unit_field_changes")}
+    summary = {
+        k: v
+        for k, v in result.items()
+        if k not in ("absorbed", "unattributed", "unit_field_changes", "exchanges")
+    }
     summary["unattributed_count"] = len(unattributed)
     summary["unit_field_change_count"] = len(unit_field_changes)
     print(json.dumps(summary, indent=1))
