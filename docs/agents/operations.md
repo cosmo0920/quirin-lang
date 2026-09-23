@@ -50,13 +50,10 @@ when investigating or changing a requirement, rather than on every startup.
   later corrections belong beside the frozen report, not inside it.
 - Kill only captured PIDs or a known task handle; never `pkill`/`pgrep` patterns
   such as cargo, lake or python. The process table is shared across worktrees.
-- A delegated card never advances main, even with a guard token. Main ref updates and pushes
-  require the repository-local guard token on that command only, never exported.
-  Only the integrator installs the versioned hooks with
-  `python3 scripts/install_main_guard.py`. Do not bypass them. They guard mistakes,
-  not intentional attacks. The known `pack-refs` false positive can print a guard
-  refusal after a successful commit; inspect the actual result rather than
-  claiming the commit failed. Evidence and command form remain in the checkpoint.
+- A delegated card never advances main; only the integrator merges or pushes
+  main. This is policy, not mechanism: the versioned main-ref guard hooks were
+  removed, so no hook enforces it. Historical guard evidence remains in the
+  checkpoint.
 
 ## Integration and reconciliation
 

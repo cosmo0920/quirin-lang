@@ -349,6 +349,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [macos-cycle19-compiler-options](macos-cycle19-compiler-options/README.md) | macOS Cycle19 compiler-option transport — 2026-09-08 |
 
+| [main-guard-removal](main-guard-removal/README.md) | MAIN-GUARD-REMOVAL |
+
 | [mutex-share-cross](mutex-share-cross/README.md) | MUTEX-SHARE-CROSS — a payload crosses because a verified mutex protects it (wave 32) |
 
 | [mutex-share-cross-arms](mutex-share-cross-arms/README.md) | `MUTEX-SHARE-CROSS-ARMS` — four arms, four outcomes |
