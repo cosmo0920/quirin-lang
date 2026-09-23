@@ -1,0 +1,48 @@
+module contract;
+
+// <sys/prctl.h> -- resource-projection vocabulary version 1.
+//
+// Card W43-LIBC-CONTRACTS. A TRUSTED ASSUMPTION about Linux's `prctl` (trust
+// boundary 28); no libc or kernel body is analysed. Read from the prototype
+// the analysed units declare (`/usr/include/x86_64-linux-gnu/sys/prctl.h` on
+// the audited host):
+//
+//   extern int prctl (int __option, ...) __THROW;
+//
+// ## The custody statement, and why it carries a literal premise
+//
+// `prctl` is a multiplexer: what it does with its tail depends on the option.
+// The declaration therefore carries `resource_literal_argument(option, 15)` and
+// applies ONLY at call sites whose option is exactly `15` -- `PR_SET_NAME` in
+// `linux/prctl.h`, the spelling the pinned call site reaches after
+// preprocessing -- and at every other option the callee stays undeclared. For
+// `PR_SET_NAME` the kernel copies at most 16 bytes of the name the second
+// argument points to and retains nothing; the remaining actuals are unused
+// scalars. So the option is `resource_borrowed`, the tail is exactly
+// `resource_variadic_data_tail()` (no custody taken, no pointer retained), and
+// the `int` result is `resource_return_none()`.
+//
+// ## Deliberately NOT declared (recorded in the card report)
+//
+//   `regexec`, `regerror`: faithful in v1, but their prototypes spell a
+//   qualifier AFTER the `*` (`const regex_t *__restrict __preg`), which the
+//   declared-ABI reader (gateway constraint 8) does not read; measured
+//   withdrawn at every call site (`LOADER-ABI-RESTRICT-QUALIFIER`).
+//   `getrlimit`, `setrlimit`: their first parameter is the enumeration typedef
+//   `__rlimit_resource_t`, which the reader does not project; measured
+//   withdrawn at every call site.
+//   `regcomp` allocates storage inside the caller's `regex_t`, released by
+//   `regfree`: an in-place object lifecycle v1 cannot state.
+//
+// ## What no declaration here says
+//
+// Nothing about the thread name, truncation, errors, or any other option.
+
+extern fn prctl(option: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_literal_argument(option, 15);
+    ensures normal resource_borrowed(option);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};

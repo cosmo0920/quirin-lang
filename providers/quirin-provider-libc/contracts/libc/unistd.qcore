@@ -1,0 +1,120 @@
+module contract;
+
+// <unistd.h> -- resource-projection vocabulary version 1.
+//
+// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library and POSIX
+// (trust boundary 28); no libc body is analysed. Read from the prototypes the
+// analysed units declare (`/usr/include/unistd.h` on the audited host):
+//
+//   extern unsigned int sleep (unsigned int __seconds);
+//   extern int usleep (__useconds_t __useconds);            // unsigned int
+//   extern long int sysconf (int __name) __THROW;
+//   extern int getpagesize (void) __THROW __attribute__ ((__const__));
+//   extern __uid_t geteuid (void) __THROW;                   // unsigned int
+//   extern __gid_t getegid (void) __THROW;                   // unsigned int
+//   extern __pid_t setsid (void) __THROW;                    // int
+//   extern int access (const char *__name, int __type) __THROW __nonnull ((1));
+//   extern int unlink (const char *__name) __THROW __nonnull ((1));
+//   extern ssize_t read (int __fd, void *__buf, size_t __nbytes) __wur;
+//   extern ssize_t write (int __fd, const void *__buf, size_t __n) __wur;
+//
+// ## The custody statements
+//
+// Every parameter is a scalar or a pointer the call only reads or writes
+// through (`read` fills the caller's buffer, `write` reads it); every result
+// is a scalar. None allocates, frees or retains a caller object, so every
+// parameter is `resource_borrowed` and every result `resource_return_none()`,
+// exactly. A file descriptor is an `int`: `read`/`write` USE a descriptor and
+// neither create nor close one, so the (unmodelled) descriptor obligation is
+// the same before and after the call.
+//
+// ## Deliberately NOT declared here (recorded in the card report)
+//
+//   `close` RELEASES a descriptor and `open`/`socket`/`accept4`/`fcntl`
+//   (`F_DUPFD`) CREATE one. v1 custody is pointer-only, so a declaration could
+//   only call them neutral, which would erase a real acquire/release; the
+//   descriptor lifecycle is a separate semantic profile.
+//
+// ## What no declaration here says
+//
+// Nothing about short reads or writes, errors, `errno`, signals, permissions,
+// or the file system. Per-call custody statements about the CALLER's
+// obligations, and nothing more.
+
+extern fn sleep(seconds: u32) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(seconds);
+    ensures normal resource_return_none();
+};
+
+extern fn usleep(useconds: u32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(useconds);
+    ensures normal resource_return_none();
+};
+
+extern fn sysconf(name: i32) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(name);
+    ensures normal resource_return_none();
+};
+
+extern fn getpagesize() -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+extern fn geteuid() -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+extern fn getegid() -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+extern fn setsid() -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+extern fn access(name: ptr<const, u8>, kind: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(name);
+    ensures normal resource_borrowed(kind);
+    ensures normal resource_return_none();
+};
+
+extern fn unlink(name: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(name);
+    ensures normal resource_return_none();
+};
+
+extern fn read(fd: i32, buf: ptr<mut, u8>, nbytes: usize) -> isize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(nbytes);
+    ensures normal resource_return_none();
+};
+
+extern fn write(fd: i32, buf: ptr<const, u8>, n: usize) -> isize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};

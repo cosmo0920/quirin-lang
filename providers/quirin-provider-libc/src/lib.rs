@@ -1,4 +1,7 @@
-//! Shared Quirin contract modules for the C standard library and POSIX (`errno`, heap memory, `pthread_mutex`).
+//! Shared Quirin contract modules for the C standard library and POSIX: `errno`, heap
+//! memory, `pthread_mutex`, and (card W43-LIBC-CONTRACTS) `<dlfcn.h>`, `<math.h>`,
+//! process/regex/rlimit helpers, sockets, `<stdio.h>`, `<stdlib.h>`, `<string.h>`,
+//! `<sys/stat.h>`, threads and signals, `<time.h>` and `<unistd.h>`.
 //!
 //! The `.qcore` sources under this crate's `contracts/` are canonical: the
 //! corpus index `contract/corpus.json` names that directory as one of its
@@ -15,16 +18,60 @@
 /// is the name `contract/corpus.json` resolves (for example `libc/errno.qcore`).
 pub const CONTRACTS: &[(&str, &str)] = &[
     (
+        "libc/dlfcn.qcore",
+        include_str!("../contracts/libc/dlfcn.qcore"),
+    ),
+    (
         "libc/errno.qcore",
         include_str!("../contracts/libc/errno.qcore"),
+    ),
+    (
+        "libc/math.qcore",
+        include_str!("../contracts/libc/math.qcore"),
     ),
     (
         "libc/memory.qcore",
         include_str!("../contracts/libc/memory.qcore"),
     ),
     (
+        "libc/process.qcore",
+        include_str!("../contracts/libc/process.qcore"),
+    ),
+    (
         "libc/pthread_mutex.qcore",
         include_str!("../contracts/libc/pthread_mutex.qcore"),
+    ),
+    (
+        "libc/socket.qcore",
+        include_str!("../contracts/libc/socket.qcore"),
+    ),
+    (
+        "libc/stdio.qcore",
+        include_str!("../contracts/libc/stdio.qcore"),
+    ),
+    (
+        "libc/stdlib.qcore",
+        include_str!("../contracts/libc/stdlib.qcore"),
+    ),
+    (
+        "libc/string.qcore",
+        include_str!("../contracts/libc/string.qcore"),
+    ),
+    (
+        "libc/sys_stat.qcore",
+        include_str!("../contracts/libc/sys_stat.qcore"),
+    ),
+    (
+        "libc/threads.qcore",
+        include_str!("../contracts/libc/threads.qcore"),
+    ),
+    (
+        "libc/time.qcore",
+        include_str!("../contracts/libc/time.qcore"),
+    ),
+    (
+        "libc/unistd.qcore",
+        include_str!("../contracts/libc/unistd.qcore"),
     ),
 ];
 

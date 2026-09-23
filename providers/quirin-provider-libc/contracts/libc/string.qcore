@@ -1,0 +1,85 @@
+module contract;
+
+// <string.h> -- resource-projection vocabulary version 1.
+//
+// Card W43-LIBC-CONTRACTS. Every declaration below is a TRUSTED ASSUMPTION
+// about the C library. It verifies nothing: no libc body is analysed, and a
+// declaration is a premise (trust boundary 28). Each was read from the
+// prototype the analysed units themselves declare (glibc 2.x headers on the
+// audited host, `/usr/include/string.h`), after preprocessing.
+//
+// ## The custody statements
+//
+//   extern int strcmp (const char *__s1, const char *__s2)
+//     __THROW __attribute_pure__ __nonnull ((1, 2));
+//   extern size_t strlen (const char *__s) __THROW __attribute_pure__ __nonnull ((1));
+//
+//   Both only READ their arguments and return a scalar. They allocate, free
+//   and retain nothing, so every pointer is `resource_borrowed` and the result
+//   is `resource_return_none()` -- a scalar result, so the mode is exact, not
+//   an approximation.
+//
+//   extern char *strdup (const char *__s) __THROW __attribute_malloc__ __nonnull ((1));
+//
+//   Reads `__s` (borrowed) and returns a FRESH `malloc` allocation or NULL on
+//   failure (C23 7.26.2.6, POSIX). That is exactly
+//   `resource_return_owned(nullable)`: the caller acquires an obligation that
+//   `free` (declared in `libc/memory.qcore`) discharges, from the same
+//   allocator, and must test the result for null before relying on it.
+//
+//   extern int strerror_r (int __errnum, char *__buf, size_t __buflen)
+//     __asm__ ("__xpg_strerror_r") __THROW __nonnull ((2));
+//
+//   The XSI form: writes a message into the caller's buffer and returns an
+//   `int` status. Borrowed buffer, scalar result. glibc ALSO has a GNU form,
+//   `char *strerror_r (int, char *, size_t)`, selected by `_GNU_SOURCE`, whose
+//   result is either `__buf` or a pointer to static storage -- a conditional
+//   alias this vocabulary cannot state. This declaration speaks only for the
+//   XSI prototype: in a unit that declares the GNU form, the declared-ABI gate
+//   (gateway constraint 8) sees `-> i32` against `char *` and WITHDRAWS the
+//   declaration at every call site, which is the refusing direction.
+//
+// ## Deliberately NOT declared here (recorded in the card report)
+//
+//   `memcpy`, `memmove`, `memset`, `strcpy`, `strncpy` return their FIRST
+//   ARGUMENT, and `strchr`, `strrchr`, `strstr`, `strcasestr`, `memchr`,
+//   `memrchr` return a pointer INTO their first argument. v1 has no result
+//   mode meaning "aliases parameter n"; `resource_return_none()` would drop the
+//   alias and is therefore not exact (`LIBC-MEM-RESULT-ALIAS`).
+//
+// ## What no declaration here says
+//
+// Nothing about string contents, termination, bounds, overlap, or the value of
+// any result. These are per-call custody statements about the CALLER's
+// obligations, and nothing more.
+
+extern fn strcmp(s1: ptr<const, u8>, s2: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s1);
+    ensures normal resource_borrowed(s2);
+    ensures normal resource_return_none();
+};
+
+extern fn strlen(s: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_none();
+};
+
+extern fn strdup(s: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn strerror_r(errnum: i32, buf: ptr<mut, u8>, buflen: usize) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(errnum);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(buflen);
+    ensures normal resource_return_none();
+};

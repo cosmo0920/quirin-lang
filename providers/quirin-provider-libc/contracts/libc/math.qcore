@@ -1,0 +1,53 @@
+module contract;
+
+// <math.h> -- resource-projection vocabulary version 1.
+//
+// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library (trust
+// boundary 28); no libm body is analysed. Read from the prototypes the
+// analysed units declare (`bits/mathcalls.h` via `/usr/include/math.h` on the
+// audited host):
+//
+//   extern double ceil (double __x) __THROW __attribute__ ((__const__));
+//   extern double floor (double __x) __THROW __attribute__ ((__const__));
+//   extern double fabs (double __x) __THROW __attribute__ ((__const__));
+//   extern double pow (double __x, double __y) __THROW;
+//
+// ## The custody statement
+//
+// Scalars in, a scalar out, no pointer anywhere: there is no custody to state,
+// so `resource_borrowed` on every parameter and `resource_return_none()` are
+// the only faithful modes.
+//
+// ## What no declaration here says
+//
+// Nothing about rounding, domain or range errors, floating-point exceptions or
+// `errno`.
+
+extern fn ceil(x: f64) -> f64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(x);
+    ensures normal resource_return_none();
+};
+
+extern fn floor(x: f64) -> f64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(x);
+    ensures normal resource_return_none();
+};
+
+extern fn fabs(x: f64) -> f64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(x);
+    ensures normal resource_return_none();
+};
+
+extern fn pow(x: f64, y: f64) -> f64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(x);
+    ensures normal resource_borrowed(y);
+    ensures normal resource_return_none();
+};

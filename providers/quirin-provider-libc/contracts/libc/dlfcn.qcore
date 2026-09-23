@@ -1,0 +1,40 @@
+module contract;
+
+// <dlfcn.h> -- resource-projection vocabulary version 1.
+//
+// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library (trust
+// boundary 28); no libc body is analysed. Read from the prototypes the
+// analysed units declare (`/usr/include/dlfcn.h` on the audited host):
+//
+//   extern char *dlerror (void) __THROW;
+//
+// ## The custody statements
+//
+// `dlerror` returns a pointer to a message in storage the library owns and
+// reuses; the caller must not free it, and it aliases no argument (there is
+// none). The caller acquires NO obligation, which is
+// exactly `resource_return_none()` -- the `__errno_location` /
+// `flb_input_chunk_get_name` precedent for a pointer result that carries no
+// custody. The gateway binds no identity to such a result.
+//
+// ## Deliberately NOT declared here (recorded in the card report)
+//
+//   `dlopen`/`dlclose` open and close a handle: a v1 owned/released pair would
+//   put the handle in the one kind-less pointer class `malloc`/`free` use.
+//   `dlsym` (whose result, a symbol address, would otherwise be `resource_return_none()`): faithful in v1, but the prototype spells a qualifier AFTER the
+//   `*` (`T *__restrict p`), which the declared-ABI reader (gateway
+//   constraint 8) does not read; this card measured the declaration withdrawn
+//   with `abi-unreadable-declaration` at every call site in the pinned corpus
+//   (`LOADER-ABI-RESTRICT-QUALIFIER`), so it is not shipped.
+//
+// ## What no declaration here says
+//
+// Nothing about the lifetime of the `dlerror` message (the next call may
+// overwrite it). Per-call custody statements about the CALLER's
+// obligations, and nothing more.
+
+extern fn dlerror() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};

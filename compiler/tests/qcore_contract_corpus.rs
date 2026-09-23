@@ -421,13 +421,27 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "preserve_five_chunk_credits",
         2,
     ),
+    // Card W43-LIBC-CONTRACTS: eleven libc/POSIX modules, all owned by
+    // `providers/quirin-provider-libc`, 55 declarations, each a trusted
+    // assumption read from the prototype the pinned units declare. Every
+    // declaration is the neutral element (borrowed parameters, a `none`
+    // result: two clauses plus one per parameter) except `strdup`
+    // (`return_owned(nullable)`, 3) and `prctl` (literal premise on its
+    // option plus a variadic tail, 5). Deliberate; see
+    // `docs/reports/w43-libc-contracts/README.md`.
+    ("libc/dlfcn.qcore", "dlerror", 2),
     // Card CONSTRUCTOR-RESIDUALS, continued. Two clauses: the marker and the
     // result mode. It takes no parameter, so it has no parameter clause — the
     // same shape as `fluent_bit/time.qcore`'s `flb_time_now`.
     ("libc/errno.qcore", "__errno_location", 2),
+    ("libc/math.qcore", "ceil", 3),
+    ("libc/math.qcore", "floor", 3),
+    ("libc/math.qcore", "fabs", 3),
+    ("libc/math.qcore", "pow", 4),
     ("libc/memory.qcore", "malloc", 3),
     ("libc/memory.qcore", "calloc", 4),
     ("libc/memory.qcore", "free", 3),
+    ("libc/process.qcore", "prctl", 5),
     // Card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF. Three clauses each: the marker,
     // the borrowed mutex pointer and the `int` result. `pthread_mutex_t` is a
     // union the typedef DEFINES, which card LOADER-ABI's reader would not read;
@@ -435,6 +449,55 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // object, so `resource_borrowed` is the whole custody statement.
     ("libc/pthread_mutex.qcore", "pthread_mutex_lock", 3),
     ("libc/pthread_mutex.qcore", "pthread_mutex_unlock", 3),
+    ("libc/socket.qcore", "setsockopt", 7),
+    ("libc/socket.qcore", "send", 6),
+    ("libc/socket.qcore", "recv", 6),
+    ("libc/socket.qcore", "listen", 4),
+    ("libc/socket.qcore", "sendfile", 6),
+    ("libc/socket.qcore", "htonl", 3),
+    ("libc/socket.qcore", "ntohl", 3),
+    ("libc/socket.qcore", "gai_strerror", 3),
+    ("libc/stdio.qcore", "perror", 3),
+    ("libc/stdio.qcore", "fflush", 3),
+    ("libc/stdio.qcore", "remove", 3),
+    ("libc/stdlib.qcore", "atoi", 3),
+    ("libc/stdlib.qcore", "srand", 3),
+    ("libc/stdlib.qcore", "rand_r", 3),
+    ("libc/stdlib.qcore", "system", 3),
+    ("libc/string.qcore", "strcmp", 4),
+    ("libc/string.qcore", "strlen", 3),
+    ("libc/string.qcore", "strdup", 3),
+    ("libc/string.qcore", "strerror_r", 5),
+    ("libc/sys_stat.qcore", "fstat", 4),
+    ("libc/sys_stat.qcore", "mkdir", 4),
+    ("libc/sys_stat.qcore", "umask", 3),
+    ("libc/threads.qcore", "mtx_lock", 3),
+    ("libc/threads.qcore", "mtx_unlock", 3),
+    ("libc/threads.qcore", "cnd_wait", 4),
+    ("libc/threads.qcore", "pthread_rwlock_rdlock", 3),
+    ("libc/threads.qcore", "pthread_rwlock_wrlock", 3),
+    ("libc/threads.qcore", "pthread_rwlock_unlock", 3),
+    ("libc/threads.qcore", "pthread_self", 2),
+    ("libc/threads.qcore", "pthread_kill", 4),
+    ("libc/threads.qcore", "pthread_setcancelstate", 4),
+    ("libc/threads.qcore", "pthread_setcanceltype", 4),
+    ("libc/threads.qcore", "pthread_attr_setdetachstate", 4),
+    ("libc/threads.qcore", "sigemptyset", 3),
+    ("libc/threads.qcore", "sigfillset", 3),
+    ("libc/threads.qcore", "sigaddset", 4),
+    ("libc/time.qcore", "time", 3),
+    ("libc/time.qcore", "timegm", 3),
+    ("libc/unistd.qcore", "sleep", 3),
+    ("libc/unistd.qcore", "usleep", 3),
+    ("libc/unistd.qcore", "sysconf", 3),
+    ("libc/unistd.qcore", "getpagesize", 2),
+    ("libc/unistd.qcore", "geteuid", 2),
+    ("libc/unistd.qcore", "getegid", 2),
+    ("libc/unistd.qcore", "setsid", 2),
+    ("libc/unistd.qcore", "access", 4),
+    ("libc/unistd.qcore", "unlink", 3),
+    ("libc/unistd.qcore", "read", 5),
+    ("libc/unistd.qcore", "write", 5),
     (
         "library/custody_evidence.qcore",
         "publish_library_resource",
@@ -939,7 +1002,15 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `destroy_context_list` families, with every reading published in
     // `docs/reports/w37-corpus-contracts-4/README.md`.
     // 93 -> 96: Cycle 18 aggregate, platform and task-handoff executable policies.
-    assert_eq!(sources.len(), 96, "unexpected contract corpus size");
+    // 96 -> 107 by card W43-LIBC-CONTRACTS' deliberate addition of eleven
+    // libc/POSIX modules in `providers/quirin-provider-libc` (`libc/dlfcn`,
+    // `math`, `process`, `socket`, `stdio`, `stdlib`, `string`, `sys_stat`,
+    // `threads`, `time`, `unistd`): 55 trusted declarations read from the
+    // prototypes the pinned units declare. The card also read and deliberately
+    // did NOT land the alias-returning (`memcpy`, `strchr`, ...), no-return,
+    // lifecycle and `__restrict`-withdrawn prototypes; every reading is in
+    // `docs/reports/w43-libc-contracts/README.md`.
+    assert_eq!(sources.len(), 107, "unexpected contract corpus size");
 
     for path in sources.values() {
         let source = fs::read_to_string(path).expect("contract source is readable");

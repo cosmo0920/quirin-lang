@@ -1,0 +1,54 @@
+module contract;
+
+// <sys/stat.h> -- resource-projection vocabulary version 1.
+//
+// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about POSIX (trust boundary
+// 28); no libc body is analysed. Read from the prototypes the analysed units
+// declare (`/usr/include/x86_64-linux-gnu/sys/stat.h` on the audited host):
+//
+//   extern int fstat (int __fd, struct stat *__buf) __THROW __nonnull ((2));
+//   extern int mkdir (const char *__path, __mode_t __mode) __THROW __nonnull ((1));
+//   extern __mode_t umask (__mode_t __mask) __THROW;        // unsigned int
+//
+// ## The custody statements
+//
+// `fstat` fills the caller's `struct stat` (a value write through a borrowed
+// pointer); `mkdir` reads a path; `umask` exchanges a scalar. No call
+// allocates, frees or retains a caller object and every result is a scalar:
+// `resource_borrowed` on every parameter and `resource_return_none()`, exactly.
+//
+// ## Deliberately NOT declared here (recorded in the card report)
+//
+//   `stat`: faithful in v1, but the prototype spells a qualifier AFTER the
+//   `*` (`T *__restrict p`), which the declared-ABI reader (gateway
+//   constraint 8) does not read; this card measured the declaration withdrawn
+//   with `abi-unreadable-declaration` at every call site in the pinned corpus
+//   (`LOADER-ABI-RESTRICT-QUALIFIER`), so it is not shipped.
+//
+// ## What no declaration here says
+//
+// Nothing about the file system, permissions, errors or `errno`. Per-call
+// custody statements about the CALLER's obligations, and nothing more.
+
+extern fn fstat(fd: i32, buf: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_return_none();
+};
+
+extern fn mkdir(path: ptr<const, u8>, mode: u32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(path);
+    ensures normal resource_borrowed(mode);
+    ensures normal resource_return_none();
+};
+
+extern fn umask(mask: u32) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(mask);
+    ensures normal resource_return_none();
+};
