@@ -56,7 +56,3 @@ specifications, implementation status, future work and historical evidence.
 | Work as an agent | [Agent rules](AGENTS.md) |
 | Choose the next card | [Planning](docs/README.md#planning) |
 | Find a past card or wave | [Evidence](docs/README.md#evidence-and-history) |
-
-Versioned main-branch hooks are activated by `scripts/install_main_guard.py` in
-the main checkout. They prevent accidental updates, not intentional bypass;
-the [operations policy](docs/agents/operations.md) explains authorized updates.
