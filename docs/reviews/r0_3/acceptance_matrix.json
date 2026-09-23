@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 282
+  "named_followups": 283
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6713,22 +6713,28 @@
    "crates/qcore-verifier-host",
    "crates/qcorec"
   ],
-  "provider_workspace_members": 6,
+  "provider_workspace_members": 12,
   "provider_workspace_member_paths": [
    "conformance",
    "qcore-provider-chunkio",
    "qcore-provider-cmetrics",
    "qcore-provider-ctraces",
    "qcore-provider-libevent",
-   "qcore-provider-librdkafka"
+   "qcore-provider-librdkafka",
+   "quirin-provider-cfl",
+   "quirin-provider-fluent-bit",
+   "quirin-provider-libc",
+   "quirin-provider-mpack",
+   "quirin-provider-msgpack",
+   "quirin-provider-shared"
   ],
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W43-RETURN-EXPRESSION: Rust, fmt, clippy, probes and Lean measured at 2fcc7109bac3b0fb35931611a92e48216bd96726; later commits change documents, the ledger and report scripts only (no Rust, Lean or test source), and the Python suite ran after the final matrix regeneration on the tip. 5099 core Rust passed / 0 failed / 11 ignored over 272 summaries; 166 Lean audits; 313 root Python tests after the final matrix regeneration. Step exits: {'clang': 0, 'clippy': 0, 'fmt': 0, 'followup': 0, 'lean': 0, 'probe': 0, 'python': 0, 'submodules': 0, 'test': 0}. Provider tests are carried, not remeasured (no provider change). Logs: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae2a69ef909727ba3/measure/gate. Clang recorded in this checkout. No coverage promotion; 0 function and 0 unit moves at the arbiter.",
-  "workspace_tests": 5099,
-  "provider_tests": 123,
-  "python_evidence_validator_tests": 313,
+  "note": "QUIRIN-PROVIDER-SHARED: core Rust, fmt, clippy, probes and Lean measured on aebd76a5 (the wiring commit; later commits change documents, the ledger and report scripts only). 5117 core Rust passed / 0 failed / 12 ignored over 272 summaries; 166 Lean audits; 317 root Python tests after the final matrix regeneration. Step exits: {'clang': 0, 'clippy': 0, 'fmt': 0, 'followup': 0, 'lean': 0, 'probe': 0, 'python': 0, 'submodules': 0, 'test': 0}. Provider workspace remeasured on the same tree: 109 passed / 0 failed / 0 ignored over 39 summaries (was 123: the same 59 capability-evaluator unit tests previously ran once in every binary that #[path]-included their module, 80 executions; they now run once in quirin-provider-shared, plus 7 new contract-index tests), provider fmt and clippy clean, isolated package mutation control passed, five package builds and verifications exit 0, 5 package Python tests. Logs: worktree-private measure/gate and measure/provider-gate of agent-a982e29dfe882f8ec. Clang recorded in this checkout. No coverage promotion; the corpus diagnostics are byte-identical to the W43 baseline.",
+  "workspace_tests": 5117,
+  "provider_tests": 109,
+  "python_evidence_validator_tests": 317,
   "lean_audits": 166,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
@@ -6904,7 +6910,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-return-expression/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/quirin-provider-shared/gate.json)"
  },
  "named_followups": [
   {
@@ -8817,6 +8823,13 @@
    "why": "Card W43-RETURN-EXPRESSION measured, in the real gateway, that a body `void *p = q_alloc(); return (int) z_take(p);` whose return keeps the return-position refusal still publishes Leak beside the Unsupported leaf (provisional Unsafe): `report_leaks` is called for every exit node with no unmodeled check, and a refusal never touches resource states. Several texts state the opposite: gateway constraint 7 ('report_leaks skips an unmodeled exit'), the C-GATEWAY-RETURN-CALL-W4 module note on the None result, and QCore.ReturnPositionEscape's `reported .refuse = false`, whose accusing-direction theorems are therefore about a model premise the Rust does not share (the residual observation's `indeterminate` flag is what an unmodeled path does change). W43's own Lean model states the measured behaviour and its test pins it. Discharge: an integrator correction of the constraint-7 sentence and the two module notes, and either a Lean amendment of ReturnPositionEscape's `reported` or an explicit statement that it models the residual observation rather than the leak report.",
    "source": "docs/reports/w43-return-expression/README.md",
    "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+   "id": "PROVIDER-CONFORMANCE-CORE-FIXTURE-PATHS",
+   "title": "Provider conformance tests compile 11 core test-fixture modules through 15 #[path] includes",
+   "why": "Card QUIRIN-PROVIDER-SHARED removed every #[path] from provider and conformance binaries into the former providers/common (17) and the four side-file test includes, but deliberately left the 15 #[path] attributes in providers/conformance/tests/*.rs (13 files) that compile modules from crates/qcore-verification/tests/fixtures/ (boolean_source, counter_source, reactor_program, composition_source, call_use_source, cleanup_replay_source, teardown_source, file_close_composition, filesystem_chunk_close_composition, memory_close_composition, unsupported_close_composition; reactor_program is included three times and counter_source and boolean_source twice each). Moving those fixtures into a provider crate would invert the layering (they import qcore-c-gateway, qcore-contract, qcore-verification and qcore-core), so the coupling is a cross-workspace source include with no Cargo edge: a fixture edit in the core workspace silently changes a provider-workspace test, and each including test target compiles its own copy. A sound home is a publish=false test-support library in the core workspace (for example crates/qcore-verification-fixtures) that depends on the core crates, is a dev-dependency of qcore-verification's integration tests and of providers/conformance, and is admitted by compiler/tests/workspace_layering.rs as a core member that no production crate depends on. Discharge: move the fixture modules there, remove all 15 attributes, and show the qcore-verification and provider-conformance test counts and names unchanged.",
+   "source": "docs/reports/quirin-provider-shared/README.md",
+   "recorded_by": "QUIRIN-PROVIDER-SHARED"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

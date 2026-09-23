@@ -1,0 +1,339 @@
+{
+ "before": "measure/before/packages",
+ "after": "measure/after/packages",
+ "shared_contract_modules_checked": 24,
+ "packages": {
+  "qcore.chunkio": {
+   "executable_sha256": {
+    "before": "faf3541a70421dc23e7a0a6ae31807b79c416487f60c22100148cefe1cd813bc",
+    "after": "6d7fcecbc3409a746e5b8fccfea8c137e6b40b109eff235f21ed1e251bac48fc"
+   },
+   "executable_bytes": {
+    "before": 3106520,
+    "after": 3126640
+   },
+   "manifest_fields_changed": [
+    "package_digest"
+   ],
+   "embedded_envelopes_identical": true,
+   "contracts_json_identical": true,
+   "contract_tree_identical": true,
+   "shared_modules_with_symbols": {
+    "before": [
+     "call_use_effect",
+     "cleanup_replay_effect",
+     "composition_effect",
+     "counter_effect",
+     "runtime",
+     "source_effect",
+     "teardown_effect"
+    ],
+    "after": [
+     "call_use_effect",
+     "cleanup_replay_effect",
+     "composition_effect",
+     "counter_effect",
+     "runtime",
+     "source_effect",
+     "teardown_effect"
+    ]
+   },
+   "moved_module_source_paths": {
+    "before": [
+     "runtime",
+     "teardown_effect"
+    ],
+    "after": [
+     "runtime",
+     "teardown_effect"
+    ],
+    "old_spelling_left_after": []
+   },
+   "shared_contract_text_embedded": [],
+   "crate_local_symbols": {
+    "before": 47,
+    "after": 47,
+    "only_before": [],
+    "only_after": []
+   },
+   "other_symbols": {
+    "before": 3778,
+    "after": 3798,
+    "only_before": 832,
+    "only_after": 852,
+    "examples": [
+     "<alloc::collections::btree::node::Handle<alloc::collections::btree::node::NodeRef<alloc::collections::btree::node::marker::Dying, alloc::string::String, alloc::collections::btree::set_val::SetValZST, alloc::collections::btree::node::marker::Leaf>, alloc::collections::btree::node::marker::Edge>>::deallocating_next::<alloc::alloc::Global>",
+     "<alloc::collections::btree::node::Handle<alloc::collections::btree::node::NodeRef<alloc::collections::btree::node::marker::Dying, alloc::string::String, bool, alloc::collections::btree::node::marker::Leaf>, alloc::collections::btree::node::marker::Edge>>::deallocating_next::<alloc::alloc::Global>",
+     "<alloc::raw_vec::RawVec<qcore_schemas::call_use_summary::CallUseOperationRecord> as core::ops::drop::Drop>::drop",
+     "<alloc::raw_vec::RawVec<qcore_schemas::call_use_summary::CallUseOperationRecord>>::grow_one",
+     "<alloc::raw_vec::RawVec<qcore_schemas::cleanup_replay_summary::CleanupFieldRecord>>::grow_one",
+     "<alloc::raw_vec::RawVec<qcore_schemas::cleanup_replay_summary::CleanupReplayOperationRecord> as core::ops::drop::Drop>::drop",
+     "<alloc::raw_vec::RawVec<qcore_schemas::cleanup_replay_summary::CleanupReplayOperationRecord>>::grow_one",
+     "<alloc::raw_vec::RawVec<qcore_schemas::cleanup_replay_summary::CleanupReplayPathRecord>>::grow_one",
+     "<alloc::raw_vec::RawVec<qcore_schemas::counter_summary::CounterOperationRecord> as core::ops::drop::Drop>::drop",
+     "<alloc::raw_vec::RawVec<qcore_schemas::reactor::EventKeyRecord>>::grow_one",
+     "<alloc::raw_vec::RawVec<qcore_schemas::reactor::ReactorCallbackRecord>>::grow_one",
+     "<alloc::raw_vec::RawVec<qcore_schemas::teardown_summary::TeardownOperationRecord> as core::ops::drop::Drop>::drop"
+    ]
+   },
+   "asserted_checks_hold": true
+  },
+  "qcore.cmetrics": {
+   "executable_sha256": {
+    "before": "b9ff0c7ac68992d27d9e709b6a8f03acff02bc4c351984090d6f30d3e8ed61fa",
+    "after": "706fdd99222e51a1b4524baa675b582dfd8d6b8b082c3ad95c6a35c53ddaea14"
+   },
+   "executable_bytes": {
+    "before": 2835968,
+    "after": 2827840
+   },
+   "manifest_fields_changed": [
+    "package_digest"
+   ],
+   "embedded_envelopes_identical": true,
+   "contracts_json_identical": true,
+   "contract_tree_identical": true,
+   "shared_modules_with_symbols": {
+    "before": [
+     "runtime",
+     "source_effect"
+    ],
+    "after": [
+     "runtime",
+     "source_effect"
+    ]
+   },
+   "moved_module_source_paths": {
+    "before": [
+     "runtime"
+    ],
+    "after": [
+     "runtime"
+    ],
+    "old_spelling_left_after": []
+   },
+   "shared_contract_text_embedded": [],
+   "crate_local_symbols": {
+    "before": 16,
+    "after": 15,
+    "only_before": [
+     "<crate>::source_effect::derive_summary::{closure#0}"
+    ],
+    "only_after": []
+   },
+   "other_symbols": {
+    "before": 3572,
+    "after": 3596,
+    "only_before": 827,
+    "only_after": 851,
+    "examples": [
+     "<alloc::boxed::Box<qcore_schemas::chunk_summary::BooleanFieldStatement> as serde_core::de::Deserialize>::deserialize::<&mut serde_json::de::Deserializer<serde_json::read::SliceRead>>",
+     "<alloc::collections::btree::map::BTreeMap<alloc::string::String, alloc::string::String> as core::clone::Clone>::clone",
+     "<alloc::collections::btree::map::BTreeMap<alloc::string::String, serde_json::value::Value> as core::ops::drop::Drop>::drop",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, alloc::collections::btree::set_val::SetValZST>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, alloc::string::String>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, bool>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, serde_json::value::Value>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, u64>>::insert_entry",
+     "<alloc::collections::btree::node::Handle<alloc::collections::btree::node::NodeRef<alloc::collections::btree::node::marker::Dying, alloc::string::String, alloc::collections::btree::set_val::SetValZST, alloc::collections::btree::node::marker::Leaf>, alloc::collections::btree::node::marker::Edge>>::deallocating_next::<alloc::alloc::Global>",
+     "<alloc::collections::btree::node::Handle<alloc::collections::btree::node::NodeRef<alloc::collections::btree::node::marker::Dying, alloc::string::String, bool, alloc::collections::btree::node::marker::Leaf>, alloc::collections::btree::node::marker::Edge>>::deallocating_next::<alloc::alloc::Global>",
+     "<alloc::raw_vec::RawVec<(u32, alloc::vec::Vec<alloc::string::String>)>>::grow_one",
+     "<alloc::raw_vec::RawVec<qcore_schemas::call_use_summary::CallUseOperationRecord> as core::ops::drop::Drop>::drop"
+    ]
+   },
+   "asserted_checks_hold": true
+  },
+  "qcore.ctraces": {
+   "executable_sha256": {
+    "before": "21c34f9861e0e4afa0478fea9b1f8e77fd753adc9983dd1834b0a531300faf30",
+    "after": "93dbc6a2f78e81348a584aa8ec866607c9474014c0e48708df7068f5e259f1d3"
+   },
+   "executable_bytes": {
+    "before": 2774160,
+    "after": 2799384
+   },
+   "manifest_fields_changed": [
+    "package_digest"
+   ],
+   "embedded_envelopes_identical": true,
+   "contracts_json_identical": true,
+   "contract_tree_identical": true,
+   "shared_modules_with_symbols": {
+    "before": [
+     "runtime"
+    ],
+    "after": [
+     "runtime"
+    ]
+   },
+   "moved_module_source_paths": {
+    "before": [
+     "runtime"
+    ],
+    "after": [
+     "runtime"
+    ],
+    "old_spelling_left_after": []
+   },
+   "shared_contract_text_embedded": [],
+   "crate_local_symbols": {
+    "before": 9,
+    "after": 10,
+    "only_before": [],
+    "only_after": [
+     "<crate>::runtime::run_with_contracts"
+    ]
+   },
+   "other_symbols": {
+    "before": 3529,
+    "after": 3570,
+    "only_before": 810,
+    "only_after": 851,
+    "examples": [
+     "<alloc::boxed::Box<qcore_schemas::chunk_summary::BooleanFieldStatement> as serde_core::de::Deserialize>::deserialize::<&mut serde_json::de::Deserializer<serde_json::read::SliceRead>>",
+     "<alloc::collections::btree::map::BTreeMap<alloc::string::String, serde_json::value::Value> as core::ops::drop::Drop>::drop",
+     "<alloc::collections::btree::map::Iter<qcore_schemas::plugin::VerifierCapability, alloc::collections::btree::set_val::SetValZST> as core::iter::traits::iterator::Iterator>::next",
+     "<alloc::collections::btree::map::Iter<u16, alloc::collections::btree::set_val::SetValZST> as core::iter::traits::iterator::Iterator>::next",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, alloc::collections::btree::set_val::SetValZST>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, alloc::string::String>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, bool>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, serde_json::value::Value>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, u64>>::insert_entry",
+     "<alloc::collections::btree::node::Handle<alloc::collections::btree::node::NodeRef<alloc::collections::btree::node::marker::Dying, alloc::string::String, i128, alloc::collections::btree::node::marker::Leaf>, alloc::collections::btree::node::marker::Edge>>::deallocating_next::<alloc::alloc::Global>",
+     "<alloc::raw_vec::RawVec<(u32, alloc::vec::Vec<alloc::string::String>)>>::grow_one",
+     "<alloc::raw_vec::RawVec<bool>>::grow_one"
+    ]
+   },
+   "asserted_checks_hold": true
+  },
+  "qcore.libevent": {
+   "executable_sha256": {
+    "before": "d19249fd0f8a77e9e83590a3f7475760cdfebe56f8fab1a9975614b4821ab2a9",
+    "after": "906764032c3c32f6329e7f3fb9e736d0cb6b8e4254d14c6f29003fe901898319"
+   },
+   "executable_bytes": {
+    "before": 2804472,
+    "after": 2826008
+   },
+   "manifest_fields_changed": [
+    "package_digest"
+   ],
+   "embedded_envelopes_identical": true,
+   "contracts_json_identical": true,
+   "contract_tree_identical": true,
+   "shared_modules_with_symbols": {
+    "before": [
+     "reactor_callbacks",
+     "runtime"
+    ],
+    "after": [
+     "reactor_callbacks",
+     "runtime"
+    ]
+   },
+   "moved_module_source_paths": {
+    "before": [
+     "runtime"
+    ],
+    "after": [
+     "runtime"
+    ],
+    "old_spelling_left_after": []
+   },
+   "shared_contract_text_embedded": [],
+   "crate_local_symbols": {
+    "before": 10,
+    "after": 11,
+    "only_before": [],
+    "only_after": [
+     "<crate>::propose"
+    ]
+   },
+   "other_symbols": {
+    "before": 3569,
+    "after": 3598,
+    "only_before": 825,
+    "only_after": 854,
+    "examples": [
+     "<alloc::boxed::Box<qcore_schemas::chunk_summary::BooleanFieldStatement> as serde_core::de::Deserialize>::deserialize::<&mut serde_json::de::Deserializer<serde_json::read::SliceRead>>",
+     "<alloc::collections::btree::map::BTreeMap<alloc::string::String, serde_json::value::Value> as core::ops::drop::Drop>::drop",
+     "<alloc::collections::btree::map::Iter<qcore_schemas::plugin::VerifierCapability, alloc::collections::btree::set_val::SetValZST> as core::iter::traits::iterator::Iterator>::next",
+     "<alloc::collections::btree::map::Iter<u16, alloc::collections::btree::set_val::SetValZST> as core::iter::traits::iterator::Iterator>::next",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, alloc::collections::btree::set_val::SetValZST>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, alloc::string::String>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, bool>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, serde_json::value::Value>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, u64>>::insert_entry",
+     "<alloc::collections::btree::node::Handle<alloc::collections::btree::node::NodeRef<alloc::collections::btree::node::marker::Dying, alloc::string::String, i128, alloc::collections::btree::node::marker::Leaf>, alloc::collections::btree::node::marker::Edge>>::deallocating_next::<alloc::alloc::Global>",
+     "<alloc::raw_vec::RawVec<(u32, alloc::vec::Vec<alloc::string::String>)>>::grow_one",
+     "<alloc::raw_vec::RawVec<bool>>::grow_one"
+    ]
+   },
+   "asserted_checks_hold": true
+  },
+  "qcore.librdkafka": {
+   "executable_sha256": {
+    "before": "ad0d2e7e6da7de5026148d74ddb83bfb0d89531e7f9be2378c4342ab9a5a14f1",
+    "after": "56e87a78990187579ac04bd81b83272f1d74ea100a23f2154551ac3a4e4f99b0"
+   },
+   "executable_bytes": {
+    "before": 2780320,
+    "after": 2800232
+   },
+   "manifest_fields_changed": [
+    "package_digest"
+   ],
+   "embedded_envelopes_identical": true,
+   "contracts_json_identical": true,
+   "contract_tree_identical": true,
+   "shared_modules_with_symbols": {
+    "before": [
+     "runtime"
+    ],
+    "after": [
+     "runtime"
+    ]
+   },
+   "moved_module_source_paths": {
+    "before": [
+     "runtime"
+    ],
+    "after": [
+     "runtime"
+    ],
+    "old_spelling_left_after": []
+   },
+   "shared_contract_text_embedded": [],
+   "crate_local_symbols": {
+    "before": 9,
+    "after": 10,
+    "only_before": [],
+    "only_after": [
+     "<crate>::runtime::run_with_contracts"
+    ]
+   },
+   "other_symbols": {
+    "before": 3529,
+    "after": 3570,
+    "only_before": 810,
+    "only_after": 851,
+    "examples": [
+     "<alloc::boxed::Box<qcore_schemas::chunk_summary::BooleanFieldStatement> as serde_core::de::Deserialize>::deserialize::<&mut serde_json::de::Deserializer<serde_json::read::SliceRead>>",
+     "<alloc::collections::btree::map::BTreeMap<alloc::string::String, serde_json::value::Value> as core::ops::drop::Drop>::drop",
+     "<alloc::collections::btree::map::Iter<qcore_schemas::plugin::VerifierCapability, alloc::collections::btree::set_val::SetValZST> as core::iter::traits::iterator::Iterator>::next",
+     "<alloc::collections::btree::map::Iter<u16, alloc::collections::btree::set_val::SetValZST> as core::iter::traits::iterator::Iterator>::next",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, alloc::collections::btree::set_val::SetValZST>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, alloc::string::String>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, bool>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, serde_json::value::Value>>::insert_entry",
+     "<alloc::collections::btree::map::entry::VacantEntry<alloc::string::String, u64>>::insert_entry",
+     "<alloc::collections::btree::node::Handle<alloc::collections::btree::node::NodeRef<alloc::collections::btree::node::marker::Dying, alloc::string::String, i128, alloc::collections::btree::node::marker::Leaf>, alloc::collections::btree::node::marker::Edge>>::deallocating_next::<alloc::alloc::Global>",
+     "<alloc::raw_vec::RawVec<(u32, alloc::vec::Vec<alloc::string::String>)>>::grow_one",
+     "<alloc::raw_vec::RawVec<bool>>::grow_one"
+    ]
+   },
+   "asserted_checks_hold": true
+  }
+ },
+ "all_asserted_checks_hold": true
+}

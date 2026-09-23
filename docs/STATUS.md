@@ -27,9 +27,9 @@ numbers from those sources, not from an older summary. History belongs in the
 | Cycle 18 bounded aggregate | **3 joined families / 8 source paths / 7 unresolved obligations**, aggregate Unknown | [Broader integration](reports/cycle18-broader-integration/aggregate.json) |
 | Callback task handoff | **12 source-derived operations**, one Linux pthread fixture; production acceptance pending | [Integrated lifetime evidence](reports/cycle18-broader-integration/task-handoff.json) |
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
-| Contract corpus | **96** modules; **59** resource-v1 declarations; **33** manifest-selected | [Provider ownership](../providers/README.md#contract-ownership), canonical index `contract/corpus.json`, [selection](../cycle19-resource-contracts.json) and pinned tests |
+| Contract corpus | **96** modules; **59** resource-v1 declarations; **33** manifest-selected | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 24 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (11 roots), [selection](../cycle19-resource-contracts.json) and pinned tests |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **282** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **283** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -88,8 +88,9 @@ CMetrics replay preserves report bytes with two attributed provenance changes;
 it does not rerun or promote the 185-unit baseline.
 
 The five provider crates own **72** canonical contract modules; **24** shared or
-application-level modules live in six `providers/quirin-provider-*` data crates
-(libc only in `quirin-provider-libc`; `quirin-provider-shared` bundles them). `contract/corpus.json`
+application-level modules live in six `providers/quirin-provider-*` crates: five per-library
+data crates (libc only in `quirin-provider-libc`) and `quirin-provider-shared`, which also
+holds the providers' shared runtime and bundles the five. `contract/corpus.json`
 indexes all **96** without duplicate snapshots. Retained integration adapters
 embed the provider-owned data directly; generic core crates retain no provider
 executable dependency. Package inventories bind supplied contract bytes to their
@@ -99,11 +100,12 @@ pilot adds independently pinned data-only selection for the CMetrics policy,
 retains version-1 paths and existing adapters, and models admission separately
 from policy truth. Four scoped follow-ons remain in its report.
 
-All three broader Cycle 18 follow-ups remain open; **282** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **283** follow-ups are
 registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
-retired `RETURN-CALL-INCOMPLETE-LINE-455` against its census. Production callback composition, task/cancellation/event-generation
+retired `RETURN-CALL-INCOMPLETE-LINE-455` against its census; QUIRIN-PROVIDER-SHARED
+registered `PROVIDER-CONFORMANCE-CORE-FIXTURE-PATHS`. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
 

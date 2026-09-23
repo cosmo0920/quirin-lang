@@ -64,7 +64,8 @@ refuse symbolic links, invalid or unowned paths, and any reintroduced
 require the corpus pin updates.
 
 Shared language, support-library and application policies without a provider
-owner live in six data crates of this workspace:
+owner live in six library crates of this workspace (five data-only, plus the
+shared runtime crate):
 
 | Crate | Shared contract modules |
 |---|---|
