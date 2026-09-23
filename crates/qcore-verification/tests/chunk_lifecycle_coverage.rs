@@ -1,4 +1,5 @@
-//! Accounting and composition controls for `W42-CHUNK-LIFECYCLE-CERT`.
+//! Accounting and composition controls for `W42-CHUNK-LIFECYCLE-CERT` and
+//! `W43-CHUNK-SOURCE-PROFILE`.
 //!
 //! Every refusal below is a negative control: the seven model legs cannot be
 //! asserted, a delete-only operation cannot masquerade as a terminal teardown,
@@ -19,6 +20,45 @@ fn binding() -> SourceBinding {
         artifact_sha256: "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980".into(),
         source_revision: "66910c10a4d7eafa810b84229cf2dcf7b0f26f97".into(),
         source_profile: "fluent-bit forced-libevent".into(),
+        pinned_units: BTreeMap::from([
+            ("cio_chunk.c".to_owned(), CHUNK_UNIT_SHA256.to_owned()),
+            (
+                "flb_input_chunk.c".to_owned(),
+                WRAPPER_UNIT_SHA256.to_owned(),
+            ),
+        ]),
+    }
+}
+
+const CHUNK_UNIT_SHA256: &str = "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8";
+const WRAPPER_UNIT_SHA256: &str =
+    "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e";
+
+/// A derivation from `identity`'s own pinned unit. `complete` decides whether
+/// every source path is composed.
+fn derivation_for(identity: &FunctionIdentity, complete: bool) -> SourceDerivation {
+    let unit_sha256 = match identity.file.as_str() {
+        "cio_chunk.c" => CHUNK_UNIT_SHA256,
+        _ => WRAPPER_UNIT_SHA256,
+    };
+    SourceDerivation {
+        source: CompositionSource {
+            library: identity.library.clone(),
+            file: identity.file.clone(),
+            function: identity.function.clone(),
+            source_revision: "66910c10a4d7eafa810b84229cf2dcf7b0f26f97".into(),
+            unit_sha256: unit_sha256.into(),
+        },
+        dependency_units: BTreeMap::new(),
+        checked_paths: vec!["source path 0".into(), "source path 1".into()],
+        uncovered_paths: if complete {
+            Vec::new()
+        } else {
+            vec![UncoveredPath {
+                path: "source path 2".into(),
+                reason: "the filesystem-backed close is not composed".into(),
+            }]
+        },
     }
 }
 
@@ -83,6 +123,7 @@ fn unclassified(function: &str) -> LifecycleEvidence {
         delete_only: None,
         error_exits_modeled: false,
         wrapper_obligations_discharged: false,
+        derivation: None,
     }
 }
 
@@ -98,6 +139,7 @@ fn complete_row(function: &str) -> LifecycleEvidence {
         delete_only: None,
         error_exits_modeled: true,
         wrapper_obligations_discharged: true,
+        derivation: Some(derivation_for(&identity(function), true)),
     }
 }
 
@@ -352,6 +394,7 @@ fn a_delete_only_row_must_carry_its_post_state() {
         delete_only: None,
         error_exits_modeled: true,
         wrapper_obligations_discharged: true,
+        derivation: None,
     };
     let error = account(&[identity("flb_input_chunk_destroy")], vec![row])
         .expect_err("a delete-only claim without a post-state says nothing");
@@ -372,6 +415,7 @@ fn a_delete_only_row_is_never_safe_and_keeps_its_retained_identities() {
         // established, so the row stays Unknown.
         error_exits_modeled: true,
         wrapper_obligations_discharged: true,
+        derivation: Some(derivation_for(&identity("flb_input_chunk_destroy"), true)),
     };
     let report =
         account(&[identity("flb_input_chunk_destroy")], vec![row]).expect("total accounting");
@@ -401,6 +445,7 @@ fn a_non_destructive_row_cannot_carry_a_teardown_certificate() {
         delete_only: None,
         error_exits_modeled: false,
         wrapper_obligations_discharged: false,
+        derivation: None,
     };
     let error = account(&[identity("flb_input_chunk_get_size")], vec![row])
         .expect_err("a non-destructive function has no teardown to certify");
@@ -447,6 +492,7 @@ fn a_missing_error_exit_leg_keeps_the_function_unknown() {
 fn a_missing_model_binding_keeps_every_model_leg_outstanding() {
     let mut row = complete_row("cio_chunk_close");
     row.model = None;
+    row.derivation = None;
     let report = account(&[identity("cio_chunk_close")], vec![row]).expect("total accounting");
     assert_eq!(report.safe_functions, 0);
     let ChunkLifecycleStatus::Unknown {
@@ -535,6 +581,10 @@ fn a_prefix_composition_keeps_its_function_unknown_and_names_the_premise() {
         delete_only: None,
         error_exits_modeled: false,
         wrapper_obligations_discharged: true,
+        derivation: Some(derivation_for(
+            &FunctionIdentity::new("chunkio", "cio_chunk.c", "cio_chunk_close"),
+            true,
+        )),
     };
     let selected = vec![FunctionIdentity::new(
         "chunkio",
@@ -586,10 +636,176 @@ fn the_report_carries_its_verdict_contract() {
             .scope
             .contains("pinned forced-Libevent Fluent Bit build")
     );
-    assert_eq!(report.bounds.len(), 4);
+    assert_eq!(report.bounds.len(), 5);
     assert!(report.assumptions.contains_key("extraction"));
     assert_eq!(
         report.source_binding.source_revision,
         "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// W43-CHUNK-SOURCE-PROFILE: a composition counts only when it was derived from
+// the row's own pinned unit and composes every one of the function's paths.
+// ---------------------------------------------------------------------------
+
+fn close_identity() -> FunctionIdentity {
+    FunctionIdentity::new("chunkio", "cio_chunk.c", "cio_chunk_close")
+}
+
+fn close_row(derivation: Option<SourceDerivation>) -> LifecycleEvidence {
+    LifecycleEvidence {
+        identity: close_identity(),
+        role: LifecycleRole::DestructionDependent,
+        projection_reason: None,
+        model: Some(
+            ModelComposition::terminal("complete-teardown", &complete_teardown())
+                .expect("accepted"),
+        ),
+        delete_only: None,
+        error_exits_modeled: true,
+        wrapper_obligations_discharged: true,
+        derivation,
+    }
+}
+
+fn account_close(row: LifecycleEvidence) -> Result<ChunkLifecycleCoverageReport, String> {
+    account(&[close_identity()], vec![row])
+}
+
+#[test]
+fn a_path_incomplete_composition_discharges_no_model_leg_even_with_every_source_leg() {
+    // A terminal composition and both source legs: everything but path
+    // completeness. The row must stay Unknown with all seven model legs open.
+    let report = account_close(close_row(Some(derivation_for(&close_identity(), false))))
+        .expect("total accounting");
+    assert_eq!(report.safe_functions, 0);
+    let row = &report.functions[0];
+    let ChunkLifecycleStatus::Unknown {
+        reason,
+        outstanding_legs,
+    } = &row.lifecycle
+    else {
+        panic!("a path-incomplete composition cannot be Safe");
+    };
+    assert_eq!(outstanding_legs, &MODEL_LEGS.to_vec());
+    assert!(reason.contains("source path 2"), "{reason}");
+    assert!(
+        reason.contains("discharge nothing for the function"),
+        "{reason}"
+    );
+    // The reached legs stay visible on the row; they are not erased.
+    assert_eq!(
+        row.model.as_ref().unwrap().discharged().len(),
+        MODEL_LEGS.len()
+    );
+}
+
+#[test]
+fn the_same_row_with_complete_paths_reaches_safe() {
+    let report = account_close(close_row(Some(derivation_for(&close_identity(), true))))
+        .expect("total accounting");
+    assert_eq!(report.safe_functions, 1);
+}
+
+#[test]
+fn a_composition_without_its_derivation_is_refused() {
+    let error = account_close(close_row(None)).unwrap_err();
+    assert!(
+        error.contains("without the source it was derived from"),
+        "{error}"
+    );
+}
+
+#[test]
+fn a_derivation_without_a_composition_is_refused() {
+    let mut row = close_row(Some(derivation_for(&close_identity(), true)));
+    row.model = None;
+    let error = account_close(row).unwrap_err();
+    assert!(error.contains("carries no composition"), "{error}");
+}
+
+#[test]
+fn another_functions_composition_is_refused() {
+    let other = FunctionIdentity::new("chunkio", "cio_chunk.c", "cio_chunk_close_stream");
+    let error = account_close(close_row(Some(derivation_for(&other, true)))).unwrap_err();
+    assert!(error.contains("not from its own source"), "{error}");
+}
+
+#[test]
+fn a_composition_at_another_revision_is_refused() {
+    let mut derivation = derivation_for(&close_identity(), true);
+    derivation.source.source_revision = "0000000000000000000000000000000000000000".into();
+    let error = account_close(close_row(Some(derivation))).unwrap_err();
+    assert!(error.contains("not the pinned"), "{error}");
+}
+
+#[test]
+fn a_fixture_digest_is_not_the_pinned_unit() {
+    let mut derivation = derivation_for(&close_identity(), true);
+    derivation.source.unit_sha256 =
+        "0000000000000000000000000000000000000000000000000000000000000000".into();
+    let error = account_close(close_row(Some(derivation))).unwrap_err();
+    assert!(error.contains("rather than its pinned unit"), "{error}");
+}
+
+#[test]
+fn a_unit_without_a_pinned_digest_binds_no_composition() {
+    let mut source = binding();
+    source.pinned_units.remove("cio_chunk.c");
+    let error = account_chunk_lifecycle_coverage(
+        source,
+        &[close_identity()],
+        BTreeMap::from([("extraction".into(), "premise".into())]),
+        vec![close_row(Some(derivation_for(&close_identity(), true)))],
+    )
+    .unwrap_err();
+    assert!(error.contains("no pinned digest"), "{error}");
+}
+
+#[test]
+fn a_derivation_must_name_its_paths() {
+    let mut empty = derivation_for(&close_identity(), true);
+    empty.checked_paths.clear();
+    let error = account_close(close_row(Some(empty))).unwrap_err();
+    assert!(error.contains("checks no source path"), "{error}");
+
+    let mut silent = derivation_for(&close_identity(), false);
+    silent.uncovered_paths[0].reason = " ".into();
+    let error = account_close(close_row(Some(silent))).unwrap_err();
+    assert!(error.contains("without a reason"), "{error}");
+
+    let mut duplicated = derivation_for(&close_identity(), false);
+    duplicated.uncovered_paths[0].path = "source path 0".into();
+    let error = account_close(close_row(Some(duplicated))).unwrap_err();
+    assert!(error.contains("duplicate source path"), "{error}");
+}
+
+#[test]
+fn an_unclassified_row_cannot_carry_a_derivation() {
+    let mut row = unclassified("input_chunk_get");
+    row.derivation = Some(derivation_for(&identity("input_chunk_get"), true));
+    let error = account(&[identity("input_chunk_get")], vec![row]).unwrap_err();
+    assert!(error.contains("has no role for"), "{error}");
+}
+
+#[test]
+fn a_delete_only_post_state_also_needs_its_own_source() {
+    let row = LifecycleEvidence {
+        identity: identity("flb_input_chunk_destroy"),
+        role: LifecycleRole::DeleteOnly,
+        projection_reason: None,
+        model: None,
+        delete_only: Some(
+            DeleteOnlyPostState::from_program("delete-only", &delete_only()).expect("executable"),
+        ),
+        error_exits_modeled: false,
+        wrapper_obligations_discharged: false,
+        derivation: None,
+    };
+    let error = account(&[identity("flb_input_chunk_destroy")], vec![row]).unwrap_err();
+    assert!(
+        error.contains("without the source it was derived from"),
+        "{error}"
     );
 }

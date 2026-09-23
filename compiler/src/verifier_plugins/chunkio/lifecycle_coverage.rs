@@ -19,10 +19,13 @@ use std::collections::BTreeMap;
 
 use qcore_verification::chunk_lifecycle_coverage::{
     DeleteOnlyPostState, FunctionIdentity, LifecycleEvidence, LifecycleRole, ModelComposition,
+    SourceDerivation,
 };
 use qcore_verification::memory_close_composition::MemoryCloseCertificate;
 
+use super::PINNED_FLUENT_BIT_REVISION;
 use super::nested_memory::{NestedMemorySource, StreamRing};
+use super::traversal::{TraversalKind, TraversalSource};
 use crate::chunk_lifecycle::{ChunkBackend, ChunkOperation, ChunkProgram, ChunkResidency};
 
 /// The single context/stream/chunk identity triple every composition below is
@@ -67,10 +70,31 @@ pub fn compose_memory_close(
     certificate: &MemoryCloseCertificate,
     delete: bool,
 ) -> Result<ModelComposition, String> {
+    ModelComposition::prefix(program_digest, &memory_close_program(certificate, delete)?)
+}
+
+/// The model program [`compose_memory_close`] composes, so a caller can bind
+/// its digest to the exact operations.
+pub fn memory_close_program(
+    certificate: &MemoryCloseCertificate,
+    delete: bool,
+) -> Result<ChunkProgram, String> {
     let mut operations = opened(ChunkBackend::Memory, ChunkResidency::Down);
     let state = state_of(&operations)?;
     operations.extend(certificate.instantiate(&state, Some(CHUNK), delete)?);
-    ModelComposition::prefix(program_digest, &ChunkProgram { operations })
+    Ok(ChunkProgram { operations })
+}
+
+/// A content digest of a model program bound to the unit it was derived from.
+/// The operations are rendered with their derived `Debug` form, which names
+/// every operation and identity.
+pub fn bound_program_digest(unit_sha256: &str, function: &str, program: &ChunkProgram) -> String {
+    format!(
+        "sha256:{}",
+        qcore_schemas::sha256_hex(
+            format!("{unit_sha256}\n{function}\n{:?}", program.operations).as_bytes()
+        )
+    )
 }
 
 /// Compose the rechecked nested context → stream → chunk → backend teardown
@@ -95,6 +119,76 @@ pub fn compose_nested_teardown(
     let mut operations = prefix;
     operations.extend(teardown);
     ModelComposition::terminal(program_digest, &ChunkProgram { operations })
+}
+
+/// Compose the rechecked chunk-ring traversal (`cio_chunk_close_stream`) with
+/// the rechecked null/memory `cio_chunk_close` certificate over one stream whose
+/// ring holds `members` memory-backed chunks.
+///
+/// Card `W43-CHUNK-SOURCE-PROFILE`. The traversal certificate establishes that
+/// the body visits every ring member once with a saved next pointer and passes
+/// only the current child, with `delete` zero; the close certificate supplies
+/// each member's operations. The ring is the stream's exact model membership, so
+/// a member cannot be skipped. The stream and its context stay live: the
+/// traversal destroys neither, and that is recorded as retained, not discharged.
+pub fn compose_stream_ring_close(
+    program_digest: impl Into<String>,
+    traversal: &TraversalSource,
+    certificate: &MemoryCloseCertificate,
+    members: u32,
+) -> Result<ModelComposition, String> {
+    ModelComposition::prefix(
+        program_digest,
+        &stream_ring_close_program(traversal, certificate, members)?,
+    )
+}
+
+/// The model program [`compose_stream_ring_close`] composes.
+pub fn stream_ring_close_program(
+    traversal: &TraversalSource,
+    certificate: &MemoryCloseCertificate,
+    members: u32,
+) -> Result<ChunkProgram, String> {
+    if traversal.kind() != TraversalKind::Chunks {
+        return Err("a stream ring close needs the chunk-ring traversal".into());
+    }
+    if traversal.source().source_revision() != PINNED_FLUENT_BIT_REVISION {
+        return Err("chunk-ring traversal revision mismatch".into());
+    }
+    if members == 0 {
+        return Err("a stream ring close over an empty ring discharges nothing".into());
+    }
+    // Includes the backend, reset, list unlink and total counter source checks.
+    let certificate = certificate.recheck()?;
+    let mut operations = vec![
+        ChunkOperation::CreateContext { context: CONTEXT },
+        ChunkOperation::CreateStream {
+            context: CONTEXT,
+            stream: STREAM,
+        },
+    ];
+    for chunk in 0..members {
+        operations.push(ChunkOperation::OpenChunk {
+            context: CONTEXT,
+            stream: STREAM,
+            chunk,
+            backend: ChunkBackend::Memory,
+            residency: ChunkResidency::Down,
+        });
+    }
+    let state = state_of(&operations)?;
+    let ring = state
+        .streams
+        .get(&STREAM)
+        .filter(|stream| stream.live)
+        .map(|stream| stream.chunks.clone())
+        .ok_or("the ring's stream is not live")?;
+    for chunk in ring {
+        let current = state_of(&operations)?;
+        // `chunk_delete_argument_zero` is a checked traversal fact.
+        operations.extend(certificate.instantiate(&current, Some(chunk), false)?);
+    }
+    Ok(ChunkProgram { operations })
 }
 
 /// Compose a `cio_stream_delete`-shaped partial operation: the stream's content
@@ -135,6 +229,9 @@ pub struct ClassifiedFunction {
     pub delete_only: Option<DeleteOnlyPostState>,
     pub error_exits_modeled: bool,
     pub wrapper_obligations_discharged: bool,
+    /// The pinned unit the composition was derived from and the source paths
+    /// it composes (card `W43-CHUNK-SOURCE-PROFILE`).
+    pub derivation: Option<SourceDerivation>,
 }
 
 /// Turn the pinned selection and the rechecked classifications into the
@@ -179,6 +276,7 @@ pub fn derive_lifecycle_evidence(
                 delete_only: row.delete_only,
                 error_exits_modeled: row.error_exits_modeled,
                 wrapper_obligations_discharged: row.wrapper_obligations_discharged,
+                derivation: row.derivation,
             }),
             None => evidence.push(LifecycleEvidence {
                 identity: entry.identity.clone(),
@@ -188,6 +286,7 @@ pub fn derive_lifecycle_evidence(
                 delete_only: None,
                 error_exits_modeled: false,
                 wrapper_obligations_discharged: false,
+                derivation: None,
             }),
         }
     }

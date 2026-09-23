@@ -181,6 +181,20 @@ import QCore.ChunkSource
 #print axioms QCore.ChunkLifecycleCoverage.omitted_selected_function_is_not_accounted
 #print axioms QCore.ChunkLifecycleCoverage.duplicate_function_is_not_accounted
 #print axioms QCore.ChunkLifecycleCoverage.unselected_function_is_not_accounted
+-- Card W43-CHUNK-SOURCE-PROFILE: a composition counts for a function only when
+-- it was derived from that function's own pinned unit and composes every one
+-- of its source paths; otherwise it reaches legs on its checked paths only.
+#print axioms QCore.ChunkLifecycleCoverage.safe_is_admitted_and_complete
+#print axioms QCore.ChunkLifecycleCoverage.admits_facts
+#print axioms QCore.ChunkLifecycleCoverage.safe_composition_is_own_source_and_path_complete
+#print axioms QCore.ChunkLifecycleCoverage.a_path_incomplete_composition_discharges_no_model_leg
+#print axioms QCore.ChunkLifecycleCoverage.a_path_incomplete_composition_leaves_model_legs_outstanding
+#print axioms QCore.ChunkLifecycleCoverage.a_path_incomplete_composition_is_never_safe
+#print axioms QCore.ChunkLifecycleCoverage.a_composition_not_from_its_own_pinned_source_is_never_safe
+#print axioms QCore.ChunkLifecycleCoverage.a_well_formed_composition_is_from_its_own_pinned_source
+#print axioms QCore.ChunkLifecycleCoverage.another_function_is_not_its_own_source
+#print axioms QCore.ChunkLifecycleCoverage.another_unit_digest_is_not_its_own_source
+#print axioms QCore.ChunkLifecycleCoverage.another_revision_is_not_its_own_source
 
 #print axioms QCore.MonkeyWaitProjection.accepted_projection_has_exact_source
 #print axioms QCore.MonkeyWaitProjection.accepted_projection_has_exact_observation_obligations

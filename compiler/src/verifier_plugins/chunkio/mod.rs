@@ -14,6 +14,7 @@ pub mod memory_close;
 pub mod nested_cleanup;
 pub mod nested_memory;
 pub mod parent_teardown;
+pub mod pinned_lifecycle;
 pub mod teardown_source;
 pub mod traversal;
 pub mod unmap_wrapper;

@@ -1,0 +1,2271 @@
+{
+  "property": "bounded chunk lifecycle post-state",
+  "semantic_profile": "qcore.chunk_lifecycle.v1",
+  "scope": "the selected input-chunk wrapper and cio_chunk functions of the pinned forced-Libevent Fluent Bit build; no other translation unit, build configuration or caller is covered",
+  "bounds": [
+    "nine composition legs; seven are derived from a re-checked model program and two from source evidence",
+    "a delete-only operation keeps its executed partial post-state and is never Safe",
+    "model identities are bounded by the kernel's own identity profile",
+    "field contracts are not lifecycle results and are not read as such",
+    "a composition counts for a function only when it was derived from that function's own pinned unit and composes every one of its source paths; otherwise its legs are reached on the checked paths only and each uncovered path stays Unknown"
+  ],
+  "assumptions": {
+    "composition_binding": "every attached composition is re-derived on each run from verbatim copies of the pinned units under compiler/tests/fixtures/pinned/fluent-bit; cio_chunk.c is bound to the digest contract/profiles/fluent-bit/profile.json pins, the other copied files to the vendored manifest; distilled fixtures are negative and positive controls only and are refused as row evidence",
+    "composition_premises": "the close and ring-close compositions keep every premise of their component contracts: native pointer provenance, ring order and model identity binding, exclusive access and a live context and stream",
+    "extraction": "faithful C extraction and Rust-model correspondence remain premises maintained by review (evidence rule 28)",
+    "field_contracts": "the pinned sidecar's field contracts assume live/exclusive/Boolean domains and source/build/ABI identity; they establish no lifecycle post-state",
+    "unsealed_report_values": "the pinned sidecar's recorded certificates are unsealed report data and are never revalidated here as certificate evidence",
+    "vendored_build_configuration": "the vendored units are preprocessed with the pinned compile database's recorded definitions and the subset of its include roots the measured include closure uses, in the database's order; host system headers are the host's, as in the pinned audit"
+  },
+  "evidence_version": "chunk-lifecycle-coverage-2",
+  "artifact": "docs/reports/w42-priority-integration/artifacts/chunk-contracts.json.gz",
+  "artifact_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_profile": "chunkio+fluent-bit-chunk",
+  "pinned_units": {
+    "cio_chunk.c": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8"
+  },
+  "selected_functions": 96,
+  "accounted_functions": 96,
+  "safe_functions": 0,
+  "unknown_functions": 96,
+  "role_totals": {
+    "destruction_dependent": 2,
+    "unclassified": 94
+  },
+  "outstanding_leg_totals": [
+    {
+      "leg": "context_teardown",
+      "functions": 96
+    },
+    {
+      "leg": "stream_teardown",
+      "functions": 96
+    },
+    {
+      "leg": "chunk_teardown",
+      "functions": 96
+    },
+    {
+      "leg": "backend_teardown",
+      "functions": 96
+    },
+    {
+      "leg": "primary_list_unlink",
+      "functions": 96
+    },
+    {
+      "leg": "residency_list_unlink",
+      "functions": 96
+    },
+    {
+      "leg": "context_counters",
+      "functions": 96
+    },
+    {
+      "leg": "error_exits",
+      "functions": 96
+    },
+    {
+      "leg": "wrapper_obligations",
+      "functions": 96
+    }
+  ],
+  "functions": [
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "chunk_state_sync",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_close",
+      "role": "destruction_dependent",
+      "model": {
+        "program_digest": "sha256:34c271337bbd804592da961440349dab37b89e6d28ce4b09e6964efe6f282456",
+        "kind": "prefix",
+        "operations": 4,
+        "reached_legs": [
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters"
+        ],
+        "retained_live": [
+          "context 0",
+          "stream 0"
+        ]
+      },
+      "derivation": {
+        "source": {
+          "library": "chunkio",
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_close",
+          "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+          "unit_sha256": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8"
+        },
+        "dependency_units": {
+          "lib/chunkio/src/cio_error.c": "96ea54b5bd2452cd6ab001cacf7405ff7ce869ae6983d3f471b6bda08a607914",
+          "lib/chunkio/src/cio_memfs.c": "de82d7d9d78d310d40864c2b1d45e09d257f955404a9e7c1f5cf60b3863ac9b9"
+        },
+        "checked_paths": [
+          "source path 0: null chunk",
+          "source path 1: memory-backed chunk"
+        ],
+        "uncovered_paths": [
+          {
+            "path": "source path 2",
+            "reason": "not the null or memory-backed close path; the filesystem-backed close (conditional nested cleanup with unresolved OS custody) and the unsupported-backend close (opaque backend custody) are not composed by this route"
+          },
+          {
+            "path": "source path 3",
+            "reason": "not the null or memory-backed close path; the filesystem-backed close (conditional nested cleanup with unresolved OS custody) and the unsupported-backend close (opaque backend custody) are not composed by this route"
+          }
+        ]
+      },
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "9 of 9 composition legs are outstanding: context_teardown, stream_teardown, chunk_teardown, backend_teardown, primary_list_unlink, residency_list_unlink, context_counters, error_exits, wrapper_obligations; the composition leaves context 0, stream 0 live by premise; 2 source path(s) are not composed (source path 2: not the null or memory-backed close path; the filesystem-backed close (conditional nested cleanup with unresolved OS custody) and the unsupported-backend close (opaque backend custody) are not composed by this route; source path 3: not the null or memory-backed close path; the filesystem-backed close (conditional nested cleanup with unresolved OS custody) and the unsupported-backend close (opaque backend custody) are not composed by this route), so the legs the composition reaches on its 2 checked path(s) discharge nothing for the function",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_close_stream",
+      "role": "destruction_dependent",
+      "model": {
+        "program_digest": "sha256:ba8c3ac6a8de9caa39d590eab2c6633d9a7a4b2e86c797f1023ad226a19f862f",
+        "kind": "prefix",
+        "operations": 6,
+        "reached_legs": [
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters"
+        ],
+        "retained_live": [
+          "context 0",
+          "stream 0"
+        ]
+      },
+      "derivation": {
+        "source": {
+          "library": "chunkio",
+          "file": "cio_chunk.c",
+          "function": "cio_chunk_close_stream",
+          "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+          "unit_sha256": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8"
+        },
+        "dependency_units": {
+          "lib/chunkio/src/cio_error.c": "96ea54b5bd2452cd6ab001cacf7405ff7ce869ae6983d3f471b6bda08a607914",
+          "lib/chunkio/src/cio_memfs.c": "de82d7d9d78d310d40864c2b1d45e09d257f955404a9e7c1f5cf60b3863ac9b9"
+        },
+        "checked_paths": [
+          "every member of the stream's chunk ring, visited once through a saved next pointer and closed through cio_chunk_close's checked paths (source path 0: null chunk; source path 1: memory-backed chunk)"
+        ],
+        "uncovered_paths": [
+          {
+            "path": "a ring member closed through cio_chunk_close source path 2",
+            "reason": "not the null or memory-backed close path; the filesystem-backed close (conditional nested cleanup with unresolved OS custody) and the unsupported-backend close (opaque backend custody) are not composed by this route"
+          },
+          {
+            "path": "a ring member closed through cio_chunk_close source path 3",
+            "reason": "not the null or memory-backed close path; the filesystem-backed close (conditional nested cleanup with unresolved OS custody) and the unsupported-backend close (opaque backend custody) are not composed by this route"
+          }
+        ]
+      },
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "9 of 9 composition legs are outstanding: context_teardown, stream_teardown, chunk_teardown, backend_teardown, primary_list_unlink, residency_list_unlink, context_counters, error_exits, wrapper_obligations; the composition leaves context 0, stream 0 live by premise; 2 source path(s) are not composed (a ring member closed through cio_chunk_close source path 2: not the null or memory-backed close path; the filesystem-backed close (conditional nested cleanup with unresolved OS custody) and the unsupported-backend close (opaque backend custody) are not composed by this route; a ring member closed through cio_chunk_close source path 3: not the null or memory-backed close path; the filesystem-backed close (conditional nested cleanup with unresolved OS custody) and the unsupported-backend close (opaque backend custody) are not composed by this route), so the legs the composition reaches on its 1 checked path(s) discharge nothing for the function",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_counter_total_add",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_counter_total_sub",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_counter_total_up_add",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_counter_total_up_sub",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_delete",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_down",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_content",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_content_copy",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_content_end_pos",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_content_size",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_real_size",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_hash",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_is_file",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_is_locked",
+      "role": "unclassified",
+      "projection_reason": "checked field contract over 4 Boolean field state(s) only; a field contract establishes no lifecycle post-state",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; checked field contract over 4 Boolean field state(s) only; a field contract establishes no lifecycle post-state",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_is_up",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_lock",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled expression CallExpr",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled expression CallExpr",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_open",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_sync",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_tx_begin",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_tx_commit",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_tx_rollback",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_unlock",
+      "role": "unclassified",
+      "projection_reason": "checked field contract over 4 Boolean field state(s) only; a field contract establishes no lifecycle post-state",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; checked field contract over 4 Boolean field state(s) only; a field contract establishes no lifecycle post-state",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_up",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_up_force",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_write",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_write_at",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_version",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "append_to_ring_buffer",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "destroy_chunk_raw",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_chunk_route_plugin_matches",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_append_raw",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_append_raw_local",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_create",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_destroy",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_destroy_corrupted",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_destroy_direct_routes",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_down",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled expression CallExpr",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled expression CallExpr",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_drop_task_route",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_find_space_new_data",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_flush",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_direct_routes",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_event_type",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_name",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_projected_write_size",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_real_size",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_size",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_tag",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_has_direct_routes",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_has_other_routes",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_has_overlimit_routes",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_mem_overlimit",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_storage_overlimit",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_task_safe_delete",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_up",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled expression CallExpr",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled expression CallExpr",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_map",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_output_size_subtract",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_output_would_exceed_limit",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_place_new_chunk",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_prefers_physical_delete",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_protect",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_lock",
+      "role": "unclassified",
+      "projection_reason": "checked field contract over 4 Boolean field state(s) only; a field contract establishes no lifecycle post-state",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; checked field contract over 4 Boolean field state(s) only; a field contract establishes no lifecycle post-state",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_route",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_space",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_space_compound",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_ring_buffer_cleanup",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_ring_buffer_collector",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_ring_buffer_enqueue",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_safe_delete",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_set_limits",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_set_up",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled expression CallExpr",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled expression CallExpr",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_set_up_down",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): unmodeled statement DeclStmt",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_total_size",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_update_output_instances",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_write",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_write_at",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_write_header_v2",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "generate_chunk_name",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "get_input_chunk_record_count",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "get_input_chunk_source_name",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_append_raw",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_collect_output_references",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_get",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_has_magic_bytes",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_metadata_view",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_output_size_add",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_write_header",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "logs_tag_records_metrics_enabled",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "memrb_input_chunk_release_space",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "sb_get_releasable_output_queue_space",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (incomplete-obligation-coverage): expected one selected definition after preprocessing, found 0",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (incomplete-obligation-coverage): expected one selected definition after preprocessing, found 0",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "sb_release_output_queue_space",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (incomplete-obligation-coverage): expected one selected definition after preprocessing, found 0",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (incomplete-obligation-coverage): expected one selected definition after preprocessing, found 0",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "update_logs_tag_records_metrics",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "update_logs_tag_records_untracked",
+      "role": "unclassified",
+      "projection_reason": "pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+      "lifecycle": {
+        "status": "unknown",
+        "reason": "no source-derived lifecycle role; pinned projection refusal (unsupported-syntax): outside single borrowed chunk / int-or-void-result source profile",
+        "outstanding_legs": [
+          "context_teardown",
+          "stream_teardown",
+          "chunk_teardown",
+          "backend_teardown",
+          "primary_list_unlink",
+          "residency_list_unlink",
+          "context_counters",
+          "error_exits",
+          "wrapper_obligations"
+        ]
+      }
+    }
+  ]
+}

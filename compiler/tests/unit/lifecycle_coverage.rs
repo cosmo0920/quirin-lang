@@ -46,6 +46,16 @@ fn binding() -> SourceBinding {
         artifact_sha256: "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980".into(),
         source_revision: PINNED_FLUENT_BIT_REVISION.into(),
         source_profile: "fluent-bit forced-libevent".into(),
+        pinned_units: std::collections::BTreeMap::from([
+            (
+                "cio_chunk.c".to_owned(),
+                "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8".to_owned(),
+            ),
+            (
+                "flb_input_chunk.c".to_owned(),
+                "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e".to_owned(),
+            ),
+        ]),
     }
 }
 
@@ -193,6 +203,7 @@ fn a_classification_outside_the_selection_is_refused() {
             delete_only: None,
             error_exits_modeled: false,
             wrapper_obligations_discharged: false,
+            derivation: None,
         }],
     )
     .unwrap_err();
@@ -209,6 +220,7 @@ fn a_duplicated_classification_is_refused() {
         delete_only: None,
         error_exits_modeled: false,
         wrapper_obligations_discharged: false,
+        derivation: None,
     };
     let error = derive_lifecycle_evidence(&selected, vec![row.clone(), row]).unwrap_err();
     assert!(error.contains("twice"), "{error}");
@@ -226,6 +238,7 @@ fn the_unclassified_default_cannot_be_supplied_by_a_caller() {
             delete_only: None,
             error_exits_modeled: false,
             wrapper_obligations_discharged: false,
+            derivation: None,
         }],
     )
     .unwrap_err();

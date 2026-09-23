@@ -10,7 +10,7 @@
 //! wrapper-obligation evidence — or the function keeps a precise `Unknown`
 //! reason naming exactly which legs are outstanding.
 //!
-//! Four properties are structural rather than conventional.
+//! Five properties are structural rather than conventional.
 //!
 //! * The seven model legs cannot be asserted. They are derived here from a
 //!   [`ChunkProgram`] this module re-runs itself — [`check_chunk_program`] for
@@ -25,6 +25,13 @@
 //!   reaches. It retains its live container identities and can never be `Safe`.
 //! * Accounting is exact. Omitted, duplicated and unselected rows reject the
 //!   whole operation instead of shrinking the denominator.
+//! * A composition belongs to the function whose own pinned unit it was
+//!   derived from (card `W43-CHUNK-SOURCE-PROFILE`). Its [`SourceDerivation`]
+//!   must name that function, the pinned revision and the pinned unit digest,
+//!   or the operation is refused; and its model legs count for the function
+//!   only when it composes every source path. A composition over some paths
+//!   reaches its legs there, discharges nothing for the function, and leaves
+//!   each uncovered path as an explicit `Unknown` with its own reason.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -158,6 +165,10 @@ pub struct SourceBinding {
     pub source_revision: String,
     /// The compilation profile the selection came from.
     pub source_profile: String,
+    /// The SHA-256 of every selected translation unit at the pinned revision,
+    /// keyed by the file name a [`FunctionIdentity`] carries. A composition is
+    /// attachable to a row only when it was derived from exactly these bytes.
+    pub pinned_units: BTreeMap<String, String>,
 }
 
 fn require_nonempty(label: &str, value: &str) -> Result<(), String> {
@@ -172,7 +183,125 @@ impl SourceBinding {
         require_nonempty("artifact", &self.artifact)?;
         require_nonempty("artifact digest", &self.artifact_sha256)?;
         require_nonempty("source revision", &self.source_revision)?;
-        require_nonempty("source profile", &self.source_profile)
+        require_nonempty("source profile", &self.source_profile)?;
+        for (file, digest) in &self.pinned_units {
+            require_nonempty("pinned unit name", file)?;
+            require_nonempty("pinned unit digest", digest)?;
+        }
+        Ok(())
+    }
+}
+
+/// The translation unit a composition or partial post-state was derived from.
+///
+/// Card `W43-CHUNK-SOURCE-PROFILE`. The accounting compares every field with
+/// the row it is attached to and with the binding's pinned unit digest, so a
+/// composition taken over a distilled fixture, over another function, or at
+/// another revision is an operation error rather than evidence.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct CompositionSource {
+    pub library: String,
+    pub file: String,
+    pub function: String,
+    pub source_revision: String,
+    pub unit_sha256: String,
+}
+
+/// A source path of the function that the composition does not reach, and why.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct UncoveredPath {
+    pub path: String,
+    pub reason: String,
+}
+
+/// Where a composition came from and which of the function's source paths it
+/// composes.
+///
+/// A composition over only some paths *reaches* its legs on those paths. For
+/// the function it discharges no model leg: each uncovered path stays an
+/// explicit `Unknown` with its own reason, and the row names them.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct SourceDerivation {
+    pub source: CompositionSource,
+    /// The other pinned units whose rechecked certificates the composition
+    /// consumed (path to SHA-256). Recorded for audit; the row's own unit is
+    /// the one [`SourceBinding::pinned_units`] binds.
+    pub dependency_units: BTreeMap<String, String>,
+    pub checked_paths: Vec<String>,
+    pub uncovered_paths: Vec<UncoveredPath>,
+}
+
+impl SourceDerivation {
+    /// Whether every source path of the function is composed.
+    pub fn paths_complete(&self) -> bool {
+        self.uncovered_paths.is_empty()
+    }
+
+    fn validate(&self, row: &FunctionIdentity, binding: &SourceBinding) -> Result<(), String> {
+        let function = &row.function;
+        let source = &self.source;
+        if source.library != row.library || source.file != row.file || source.function != *function
+        {
+            return Err(format!(
+                "`{function}` carries a composition derived from `{}/{}/{}`, not from its own source",
+                source.library, source.file, source.function
+            ));
+        }
+        if source.source_revision != binding.source_revision {
+            return Err(format!(
+                "`{function}` carries a composition derived at revision `{}`, not the pinned `{}`",
+                source.source_revision, binding.source_revision
+            ));
+        }
+        let pinned = binding.pinned_units.get(&row.file).ok_or_else(|| {
+            format!(
+                "`{function}`'s unit `{}` has no pinned digest to bind a composition to",
+                row.file
+            )
+        })?;
+        if &source.unit_sha256 != pinned {
+            return Err(format!(
+                "`{function}` carries a composition derived from unit bytes {} rather than its \
+                 pinned unit {pinned}",
+                source.unit_sha256
+            ));
+        }
+        if self
+            .dependency_units
+            .iter()
+            .any(|(path, digest)| path.trim().is_empty() || digest.trim().is_empty())
+        {
+            return Err(format!(
+                "`{function}` names a dependency unit without a digest"
+            ));
+        }
+        if self.checked_paths.is_empty() {
+            return Err(format!(
+                "`{function}` carries a composition that checks no source path"
+            ));
+        }
+        let mut seen = BTreeSet::new();
+        for path in &self.checked_paths {
+            if path.trim().is_empty() || !seen.insert(path.as_str()) {
+                return Err(format!(
+                    "`{function}` names an empty or duplicate source path"
+                ));
+            }
+        }
+        for uncovered in &self.uncovered_paths {
+            if uncovered.path.trim().is_empty() || !seen.insert(uncovered.path.as_str()) {
+                return Err(format!(
+                    "`{function}` names an empty or duplicate source path"
+                ));
+            }
+            if uncovered.reason.trim().is_empty() {
+                return Err(format!(
+                    "`{function}` leaves source path `{}` uncovered without a reason",
+                    uncovered.path
+                ));
+            }
+        }
+        Ok(())
     }
 }
 
@@ -199,6 +328,9 @@ pub struct ModelComposition {
     program_digest: String,
     kind: CompositionKind,
     operations: usize,
+    /// The legs the re-run program reaches. They count as discharged for a
+    /// function only when its [`SourceDerivation`] composes every source path.
+    #[serde(rename = "reached_legs")]
     discharged: BTreeSet<LifecycleLeg>,
     retained_live: Vec<String>,
 }
@@ -467,6 +599,9 @@ pub struct LifecycleEvidence {
     pub error_exits_modeled: bool,
     /// Source-derived evidence that the wrapper's custody is discharged.
     pub wrapper_obligations_discharged: bool,
+    /// Where `model` or `delete_only` was derived from, and which source paths
+    /// it composes. Required whenever either is supplied, rejected otherwise.
+    pub derivation: Option<SourceDerivation>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -499,6 +634,8 @@ pub struct ChunkLifecycleCoverage {
     pub model: Option<ModelComposition>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub delete_only_post_state: Option<DeleteOnlyPostState>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub derivation: Option<SourceDerivation>,
     pub lifecycle: ChunkLifecycleStatus,
 }
 
@@ -530,7 +667,10 @@ pub struct ChunkLifecycleCoverageReport {
 /// The published semantic profile of every row this module decides.
 pub const SEMANTIC_PROFILE: &str = "qcore.chunk_lifecycle.v1";
 /// The evidence version of this accounting route.
-pub const EVIDENCE_VERSION: &str = "chunk-lifecycle-coverage-1";
+///
+/// Version 2 (card `W43-CHUNK-SOURCE-PROFILE`) binds every composition to the
+/// row's own pinned unit and counts model legs only over complete source paths.
+pub const EVIDENCE_VERSION: &str = "chunk-lifecycle-coverage-2";
 
 /// Account for every selected chunk function without letting any leg be
 /// asserted rather than checked.
@@ -591,7 +731,7 @@ pub fn account_chunk_lifecycle_coverage(
     let mut outstanding_totals: BTreeMap<LifecycleLeg, usize> = BTreeMap::new();
     for identity in selected {
         let row = rows.remove(&identity.key()).expect("checked membership");
-        let lifecycle = decide(&row)?;
+        let lifecycle = decide(&row, &source_binding)?;
         if let ChunkLifecycleStatus::Unknown {
             outstanding_legs, ..
         } = &lifecycle
@@ -609,6 +749,7 @@ pub fn account_chunk_lifecycle_coverage(
             projection_reason: row.projection_reason,
             model: row.model,
             delete_only_post_state: row.delete_only,
+            derivation: row.derivation,
             lifecycle,
         });
     }
@@ -629,6 +770,10 @@ pub fn account_chunk_lifecycle_coverage(
                 .into(),
             "model identities are bounded by the kernel's own identity profile".into(),
             "field contracts are not lifecycle results and are not read as such".into(),
+            "a composition counts for a function only when it was derived from that function's \
+             own pinned unit and composes every one of its source paths; otherwise its legs are \
+             reached on the checked paths only and each uncovered path stays Unknown"
+                .into(),
         ],
         assumptions,
         evidence_version: EVIDENCE_VERSION.into(),
@@ -655,7 +800,10 @@ fn role_name(role: LifecycleRole) -> &'static str {
     }
 }
 
-fn decide(row: &LifecycleEvidence) -> Result<ChunkLifecycleStatus, String> {
+fn decide(
+    row: &LifecycleEvidence,
+    binding: &SourceBinding,
+) -> Result<ChunkLifecycleStatus, String> {
     let function = &row.identity.function;
     // Structural rejections first: a malformed row is an operation error, not
     // an Unknown that could be mistaken for a measured residual.
@@ -670,7 +818,7 @@ fn decide(row: &LifecycleEvidence) -> Result<ChunkLifecycleStatus, String> {
                     "unclassified function `{function}` lacks a projection reason"
                 ));
             }
-            if row.model.is_some() || row.delete_only.is_some() {
+            if row.model.is_some() || row.delete_only.is_some() || row.derivation.is_some() {
                 return Err(format!(
                     "unclassified function `{function}` carries lifecycle evidence it has no role for"
                 ));
@@ -716,10 +864,36 @@ fn decide(row: &LifecycleEvidence) -> Result<ChunkLifecycleStatus, String> {
             }
         }
     }
+    // W43: whatever a row composes must come from its own pinned unit.
+    match (
+        &row.derivation,
+        row.model.is_some() || row.delete_only.is_some(),
+    ) {
+        (Some(derivation), true) => derivation.validate(&row.identity, binding)?,
+        (None, true) => {
+            return Err(format!(
+                "`{function}` carries a composition without the source it was derived from"
+            ));
+        }
+        (Some(_), false) => {
+            return Err(format!(
+                "`{function}` names a source derivation but carries no composition"
+            ));
+        }
+        (None, false) => {}
+    }
+    let paths_complete = row
+        .derivation
+        .as_ref()
+        .is_none_or(SourceDerivation::paths_complete);
 
+    // Model legs count only when every source path is composed. A composition
+    // over some paths reaches its legs there and discharges nothing for the
+    // function; the row keeps them in `model` and lists them as outstanding.
     let mut discharged: BTreeSet<LifecycleLeg> = row
         .model
         .as_ref()
+        .filter(|_| paths_complete)
         .map(|model| model.discharged().clone())
         .unwrap_or_default();
     if row.error_exits_modeled {
@@ -733,6 +907,26 @@ fn decide(row: &LifecycleEvidence) -> Result<ChunkLifecycleStatus, String> {
         .copied()
         .filter(|leg| !discharged.contains(leg))
         .collect();
+
+    let uncovered = row
+        .derivation
+        .as_ref()
+        .filter(|derivation| !derivation.paths_complete())
+        .map(|derivation| {
+            format!(
+                "; {} source path(s) are not composed ({}), so the legs the composition reaches \
+                 on its {} checked path(s) discharge nothing for the function",
+                derivation.uncovered_paths.len(),
+                derivation
+                    .uncovered_paths
+                    .iter()
+                    .map(|path| format!("{}: {}", path.path, path.reason))
+                    .collect::<Vec<_>>()
+                    .join("; "),
+                derivation.checked_paths.len()
+            )
+        })
+        .unwrap_or_default();
 
     let reason = match row.role {
         LifecycleRole::Unclassified => format!(
@@ -748,7 +942,7 @@ fn decide(row: &LifecycleEvidence) -> Result<ChunkLifecycleStatus, String> {
             let post = row.delete_only.as_ref().expect("checked post-state");
             format!(
                 "delete-only operation: content deletion is recorded and {} identity/identities \
-                 remain live ({}); container teardown is not established",
+                 remain live ({}); container teardown is not established{uncovered}",
                 post.retained_live().len(),
                 post.retained_live().join(", ")
             )
@@ -768,6 +962,11 @@ fn decide(row: &LifecycleEvidence) -> Result<ChunkLifecycleStatus, String> {
                         "function `{function}` claims every leg from a non-terminal composition"
                     ));
                 }
+                if !paths_complete {
+                    return Err(format!(
+                        "function `{function}` claims every leg from a path-incomplete composition"
+                    ));
+                }
                 String::new()
             } else {
                 let retained = row
@@ -782,7 +981,7 @@ fn decide(row: &LifecycleEvidence) -> Result<ChunkLifecycleStatus, String> {
                     })
                     .unwrap_or_default();
                 format!(
-                    "{} of {} composition legs are outstanding: {}{retained}",
+                    "{} of {} composition legs are outstanding: {}{retained}{uncovered}",
                     outstanding_legs.len(),
                     REQUIRED_LEGS.len(),
                     outstanding_legs

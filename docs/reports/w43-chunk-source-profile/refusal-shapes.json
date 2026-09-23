@@ -1,0 +1,2024 @@
+{
+  "card": "W43-CHUNK-SOURCE-PROFILE",
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "inventory": "docs/reports/w42-chunk-lifecycle-cert/inventory.json",
+  "inventory_artifact_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+  "unit_sha256": {
+    "cio_chunk.c": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+    "flb_input_chunk.c": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e"
+  },
+  "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "summary": {
+    "profile_refusals": 74,
+    "by_result_class": {
+      "int": 40,
+      "other-scalar": 14,
+      "void": 12,
+      "pointer": 8
+    },
+    "by_parameter_shape": {
+      "non-chunk first, 1 parameter(s)": 13,
+      "chunk first, 2 parameter(s)": 11,
+      "chunk first, 1 parameter(s)": 9,
+      "chunk first, 3 parameter(s)": 7,
+      "non-chunk first, 2 parameter(s)": 7,
+      "non-chunk first, 4 parameter(s)": 6,
+      "non-chunk first, 3 parameter(s)": 5,
+      "non-chunk first, 7 parameter(s)": 5,
+      "chunk first, 4 parameter(s)": 3,
+      "chunk first, 5 parameter(s)": 2,
+      "non-chunk first, 6 parameter(s)": 2,
+      "chunk first, 6 parameter(s)": 1,
+      "no parameter": 1,
+      "non-chunk first, 5 parameter(s)": 1,
+      "non-chunk first, 8 parameter(s)": 1
+    },
+    "by_result_class_and_parameter_shape": {
+      "int / chunk first, 2 parameter(s)": 7,
+      "int / chunk first, 3 parameter(s)": 7,
+      "other-scalar / chunk first, 1 parameter(s)": 7,
+      "other-scalar / non-chunk first, 1 parameter(s)": 6,
+      "int / non-chunk first, 7 parameter(s)": 5,
+      "int / non-chunk first, 1 parameter(s)": 4,
+      "int / non-chunk first, 4 parameter(s)": 4,
+      "void / non-chunk first, 2 parameter(s)": 4,
+      "int / chunk first, 4 parameter(s)": 3,
+      "int / non-chunk first, 2 parameter(s)": 3,
+      "int / non-chunk first, 3 parameter(s)": 3,
+      "void / non-chunk first, 1 parameter(s)": 3,
+      "int / chunk first, 5 parameter(s)": 2,
+      "pointer / chunk first, 1 parameter(s)": 2,
+      "pointer / non-chunk first, 6 parameter(s)": 2,
+      "void / chunk first, 2 parameter(s)": 2,
+      "int / chunk first, 6 parameter(s)": 1,
+      "int / non-chunk first, 8 parameter(s)": 1,
+      "other-scalar / chunk first, 2 parameter(s)": 1,
+      "pointer / chunk first, 2 parameter(s)": 1,
+      "pointer / no parameter": 1,
+      "pointer / non-chunk first, 3 parameter(s)": 1,
+      "pointer / non-chunk first, 4 parameter(s)": 1,
+      "void / non-chunk first, 3 parameter(s)": 1,
+      "void / non-chunk first, 4 parameter(s)": 1,
+      "void / non-chunk first, 5 parameter(s)": 1
+    },
+    "one_chunk_parameter_only": 9,
+    "admitted_boolean_abi": 0
+  },
+  "functions": [
+    {
+      "file": "cio_chunk.c",
+      "function": "chunk_state_sync",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct cio_chunk *)",
+      "result": "void",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "void",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "mk_list_del",
+        "cio_chunk_is_up",
+        "mk_list_add"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_close",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct cio_chunk *, int)",
+      "result": "void",
+      "parameters": [
+        "struct cio_chunk *",
+        "int"
+      ],
+      "result_class": "void",
+      "parameter_shape": "chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_memfs_close",
+        "cio_file_close",
+        "mk_list_del",
+        "free",
+        "cio_chunk_counter_total_sub"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_close_stream",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct cio_stream *)",
+      "result": "void",
+      "parameters": [
+        "struct cio_stream *"
+      ],
+      "result_class": "void",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_chunk_close"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_counter_total_add",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "size_t (struct cio_ctx *)",
+      "result": "size_t",
+      "parameters": [
+        "struct cio_ctx *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_counter_total_sub",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "size_t (struct cio_ctx *)",
+      "result": "size_t",
+      "parameters": [
+        "struct cio_ctx *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_counter_total_up_add",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "size_t (struct cio_ctx *)",
+      "result": "size_t",
+      "parameters": [
+        "struct cio_ctx *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_counter_total_up_sub",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "size_t (struct cio_ctx *)",
+      "result": "size_t",
+      "parameters": [
+        "struct cio_ctx *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_delete",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_ctx *, struct cio_stream *, const char *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_ctx *",
+        "struct cio_stream *",
+        "const char *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 3 parameter(s)",
+      "direct_callees": [
+        "cio_log_print",
+        "strlen",
+        "cio_file_delete"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_down",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_file_down",
+        "chunk_state_sync"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_content",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *, char **, size_t *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *",
+        "char **",
+        "size_t *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 3 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_file_read_prepare",
+        "cio_file_st_get_content"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_content_copy",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *, void **, size_t *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *",
+        "void **",
+        "size_t *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 3 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_memfs_content_copy",
+        "cio_file_content_copy"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_content_end_pos",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "size_t (struct cio_chunk *)",
+      "result": "size_t",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_file_st_get_content"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_content_size",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "ssize_t (struct cio_chunk *)",
+      "result": "ssize_t",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_get_real_size",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "ssize_t (struct cio_chunk *)",
+      "result": "ssize_t",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_file_real_size"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_hash",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "char *(struct cio_chunk *)",
+      "result": "char *",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "pointer",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_file_hash"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_is_file",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_is_locked",
+      "pinned_projection": "checked field contract over 4 states",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_is_up",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_file_is_up"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_lock",
+      "pinned_projection": "unmodeled expression CallExpr",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_chunk_is_up",
+        "cio_chunk_sync"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_open",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "struct cio_chunk *(struct cio_ctx *, struct cio_stream *, const char *, int, size_t, int *)",
+      "result": "struct cio_chunk *",
+      "parameters": [
+        "struct cio_ctx *",
+        "struct cio_stream *",
+        "const char *",
+        "int",
+        "size_t",
+        "int *"
+      ],
+      "result_class": "pointer",
+      "parameter_shape": "non-chunk first, 6 parameter(s)",
+      "direct_callees": [
+        "cio_log_print",
+        "strlen",
+        "malloc",
+        "cio_errno_print",
+        "__errno_location",
+        "strdup",
+        "mk_list_add",
+        "cio_error_reset",
+        "cio_file_open",
+        "cio_memfs_open",
+        "mk_list_del",
+        "free",
+        "cio_chunk_counter_total_add",
+        "cio_chunk_is_up"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_sync",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_file_sync"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_tx_begin",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_chunk_is_locked"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_tx_commit",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_chunk_sync"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_tx_rollback",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_unlock",
+      "pinned_projection": "checked field contract over 4 states",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_up",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_file_up",
+        "chunk_state_sync"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_up_force",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_file_up_force",
+        "chunk_state_sync"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_write",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *, const void *, size_t)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *",
+        "const void *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 3 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_memfs_write",
+        "cio_file_write"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_write_at",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *, off_t, const void *, size_t)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *",
+        "off_t",
+        "const void *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 4 parameter(s)",
+      "direct_callees": [
+        "cio_error_reset",
+        "cio_chunk_write"
+      ]
+    },
+    {
+      "file": "cio_chunk.c",
+      "function": "cio_version",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "char *()",
+      "result": "char *",
+      "parameters": [],
+      "result_class": "pointer",
+      "parameter_shape": "no parameter",
+      "direct_callees": []
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "append_to_ring_buffer",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_instance *, int, int, size_t, const char *, size_t, const void *, size_t)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_instance *",
+        "int",
+        "int",
+        "size_t",
+        "const char *",
+        "size_t",
+        "const void *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 8 parameter(s)",
+      "direct_callees": [
+        "flb_log_check_level",
+        "flb_log_suppress_check",
+        "flb_log_print",
+        "flb_input_name",
+        "flb_calloc",
+        "flb_errno_print",
+        "__errno_location",
+        "flb_sds_create_len",
+        "flb_free",
+        "flb_malloc",
+        "destroy_chunk_raw",
+        "memcpy",
+        "cmt_counter_add",
+        "cfl_time_now",
+        "flb_ring_buffer_write",
+        "usleep"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "destroy_chunk_raw",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct input_chunk_raw *)",
+      "result": "void",
+      "parameters": [
+        "struct input_chunk_raw *"
+      ],
+      "result_class": "void",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "flb_free",
+        "flb_sds_destroy"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_chunk_route_plugin_matches",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_output_instance *, const struct flb_chunk_direct_route *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_output_instance *",
+        "const struct flb_chunk_direct_route *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "strlen",
+        "strncmp"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_append_raw",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_instance *, int, size_t, const char *, size_t, const void *, size_t)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_instance *",
+        "int",
+        "size_t",
+        "const char *",
+        "size_t",
+        "const void *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 7 parameter(s)",
+      "direct_callees": [
+        "flb_input_is_threaded",
+        "append_to_ring_buffer",
+        "input_chunk_append_raw"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_append_raw_local",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_instance *, int, size_t, const char *, size_t, const void *, size_t)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_instance *",
+        "int",
+        "size_t",
+        "const char *",
+        "size_t",
+        "const void *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 7 parameter(s)",
+      "direct_callees": [
+        "input_chunk_append_raw"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_create",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "struct flb_input_chunk *(struct flb_input_instance *, int, const char *, int)",
+      "result": "struct flb_input_chunk *",
+      "parameters": [
+        "struct flb_input_instance *",
+        "int",
+        "const char *",
+        "int"
+      ],
+      "result_class": "pointer",
+      "parameter_shape": "non-chunk first, 4 parameter(s)",
+      "direct_callees": [
+        "generate_chunk_name",
+        "cio_chunk_open",
+        "flb_log_check",
+        "flb_log_print",
+        "cio_chunk_is_up",
+        "cio_chunk_up_force",
+        "cio_chunk_close",
+        "input_chunk_write_header",
+        "flb_calloc",
+        "flb_errno_print",
+        "__errno_location",
+        "flb_time_now",
+        "flb_routes_mask_get_size",
+        "flb_free",
+        "flb_routes_mask_set_by_tag",
+        "flb_input_chunk_get_name",
+        "msgpack_packer_init",
+        "mk_list_add",
+        "cio_chunk_down",
+        "flb_hash_table_add",
+        "pthread_mutex_lock",
+        "pthread_mutex_unlock"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_destroy",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, int)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "int"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_input_chunk_is_up",
+        "flb_input_chunk_set_up",
+        "flb_input_chunk_get_real_size",
+        "flb_routes_mask_get_bit",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_input_chunk_get_name",
+        "flb_input_chunk_output_size_subtract",
+        "cio_chunk_up_force",
+        "flb_input_chunk_get_tag",
+        "flb_hash_table_del_ptr",
+        "pthread_mutex_lock",
+        "pthread_mutex_unlock",
+        "flb_chunk_trace_destroy",
+        "cio_chunk_close",
+        "mk_list_del",
+        "flb_free"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_destroy_corrupted",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, const char *, int, int)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "const char *",
+        "int",
+        "int"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 4 parameter(s)",
+      "direct_callees": [
+        "flb_input_chunk_get_real_size",
+        "flb_routes_mask_get_bit",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_input_chunk_get_name",
+        "flb_input_chunk_output_size_subtract",
+        "flb_hash_table_del_ptr",
+        "pthread_mutex_lock",
+        "pthread_mutex_unlock",
+        "flb_chunk_trace_destroy",
+        "cio_chunk_close",
+        "mk_list_del",
+        "flb_free"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_destroy_direct_routes",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct flb_chunk_direct_route *, int)",
+      "result": "void",
+      "parameters": [
+        "struct flb_chunk_direct_route *",
+        "int"
+      ],
+      "result_class": "void",
+      "parameter_shape": "non-chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_free"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_down",
+      "pinned_projection": "unmodeled expression CallExpr",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_chunk_is_up",
+        "cio_chunk_down"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_drop_task_route",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_task *, struct flb_output_instance *, ssize_t *, ssize_t *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_task *",
+        "struct flb_output_instance *",
+        "ssize_t *",
+        "ssize_t *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 4 parameter(s)",
+      "direct_callees": [
+        "flb_task_acquire_lock",
+        "flb_task_get_route_status",
+        "flb_task_set_route_status",
+        "flb_task_get_route_data",
+        "flb_task_release_lock"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_find_space_new_data",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, size_t)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_routes_mask_get_bit",
+        "flb_input_chunk_output_would_exceed_limit",
+        "flb_input_chunk_release_space_compound",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_input_name"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_flush",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "const void *(struct flb_input_chunk *, size_t *)",
+      "result": "const void *",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "size_t *"
+      ],
+      "result_class": "pointer",
+      "parameter_shape": "chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_input_chunk_get_real_size",
+        "cio_chunk_is_up",
+        "cio_chunk_up",
+        "cio_chunk_lock",
+        "cio_chunk_get_content",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_input_chunk_update_output_instances"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_direct_routes",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, struct flb_chunk_direct_route **, int *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "struct flb_chunk_direct_route **",
+        "int *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 3 parameter(s)",
+      "direct_callees": [
+        "input_chunk_metadata_view",
+        "flb_calloc",
+        "flb_errno_print",
+        "__errno_location",
+        "flb_input_chunk_destroy_direct_routes",
+        "flb_free",
+        "flb_malloc",
+        "memcpy"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_event_type",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_meta_read",
+        "input_chunk_has_magic_bytes"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_name",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "flb_sds_t (struct flb_input_chunk *)",
+      "result": "flb_sds_t",
+      "parameters": [
+        "struct flb_input_chunk *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_projected_write_size",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "size_t (struct flb_input_chunk *, size_t)",
+      "result": "size_t",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "size_t"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "cio_meta_size",
+        "flb_input_chunk_get_size",
+        "flb_input_chunk_get_real_size"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_real_size",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "ssize_t (struct flb_input_chunk *)",
+      "result": "ssize_t",
+      "parameters": [
+        "struct flb_input_chunk *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_chunk_get_real_size",
+        "flb_input_chunk_get_size",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_input_chunk_get_name",
+        "cio_meta_size"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_size",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "ssize_t (struct flb_input_chunk *)",
+      "result": "ssize_t",
+      "parameters": [
+        "struct flb_input_chunk *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_chunk_get_content_size"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_tag",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, const char **, int *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "const char **",
+        "int *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 3 parameter(s)",
+      "direct_callees": [
+        "input_chunk_metadata_view"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_has_direct_routes",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "input_chunk_metadata_view"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_has_other_routes",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, struct flb_output_instance *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "struct flb_output_instance *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_routes_mask_get_bit"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_has_overlimit_routes",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, size_t)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_routes_mask_get_bit",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_input_chunk_output_would_exceed_limit",
+        "flb_input_chunk_get_name"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_mem_overlimit",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_instance *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_instance *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_storage_overlimit",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_instance *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_instance *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_task_safe_delete",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_task *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_task *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_is_up",
+      "pinned_projection": "unmodeled expression CallExpr",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_chunk_is_up"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_map",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "struct flb_input_chunk *(struct flb_input_instance *, int, void *)",
+      "result": "struct flb_input_chunk *",
+      "parameters": [
+        "struct flb_input_instance *",
+        "int",
+        "void *"
+      ],
+      "result_class": "pointer",
+      "parameter_shape": "non-chunk first, 3 parameter(s)",
+      "direct_callees": [
+        "flb_calloc",
+        "flb_errno_print",
+        "__errno_location",
+        "msgpack_packer_init",
+        "cio_chunk_get_content",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_free",
+        "flb_routes_mask_get_size",
+        "cio_chunk_close",
+        "flb_mp_validate_log_chunk",
+        "flb_log_check_level",
+        "flb_log_suppress_check",
+        "flb_input_name",
+        "cio_chunk_write_at",
+        "flb_mp_validate_metric_chunk",
+        "cio_chunk_get_content_size",
+        "flb_mp_count_log_records",
+        "cfl_time_now",
+        "cmt_counter_add",
+        "flb_input_rate_update",
+        "flb_metrics_sum",
+        "flb_input_chunk_get_tag",
+        "flb_input_chunk_get_direct_routes",
+        "input_chunk_collect_output_references",
+        "flb_input_chunk_get_name",
+        "strlen",
+        "memset",
+        "flb_routes_mask_set_bit",
+        "flb_input_chunk_destroy_direct_routes",
+        "flb_input_chunk_get_real_size",
+        "flb_routes_mask_set_by_tag",
+        "mk_list_add",
+        "flb_input_chunk_update_output_instances"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_output_size_subtract",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct flb_output_instance *, size_t)",
+      "result": "void",
+      "parameters": [
+        "struct flb_output_instance *",
+        "size_t"
+      ],
+      "result_class": "void",
+      "parameter_shape": "non-chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_log_check",
+        "flb_log_print",
+        "flb_output_name"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_output_would_exceed_limit",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_output_instance *, size_t, size_t *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_output_instance *",
+        "size_t",
+        "size_t *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 3 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_place_new_chunk",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, size_t)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_input_chunk_has_overlimit_routes",
+        "flb_input_chunk_find_space_new_data",
+        "flb_routes_mask_is_empty"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_prefers_physical_delete",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, struct flb_output_instance *, int)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "struct flb_output_instance *",
+        "int"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 3 parameter(s)",
+      "direct_callees": [
+        "flb_input_chunk_is_task_safe_delete",
+        "flb_input_chunk_has_other_routes"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_protect",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_instance *, size_t)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_instance *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_input_chunk_is_storage_overlimit",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_input_name",
+        "flb_input_pause",
+        "flb_input_rate_gate_protect",
+        "flb_input_chunk_is_mem_overlimit"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_lock",
+      "pinned_projection": "checked field contract over 4 states",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_route",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, struct flb_output_instance *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "struct flb_output_instance *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_routes_mask_get_bit",
+        "flb_input_chunk_get_real_size",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_input_chunk_get_name",
+        "flb_input_chunk_output_size_subtract",
+        "flb_routes_mask_clear_bit"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_space",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, struct flb_input_instance *, struct flb_output_instance *, ssize_t *, int)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "struct flb_input_instance *",
+        "struct flb_output_instance *",
+        "ssize_t *",
+        "int"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 5 parameter(s)",
+      "direct_callees": [
+        "flb_routes_mask_get_bit",
+        "flb_input_chunk_safe_delete",
+        "flb_input_chunk_prefers_physical_delete",
+        "flb_input_chunk_get_real_size",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_input_chunk_drop_task_route",
+        "flb_routes_mask_clear_bit",
+        "flb_input_chunk_get_name",
+        "flb_input_chunk_output_size_subtract",
+        "flb_routes_mask_is_empty",
+        "get_input_chunk_source_name",
+        "flb_output_name",
+        "get_input_chunk_record_count",
+        "cmt_counter_add",
+        "cfl_time_now",
+        "flb_input_name",
+        "flb_metrics_sum",
+        "flb_task_destroy",
+        "flb_input_chunk_destroy"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_space_compound",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, struct flb_output_instance *, size_t, size_t *, int)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "struct flb_output_instance *",
+        "size_t",
+        "size_t *",
+        "int"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 5 parameter(s)",
+      "direct_callees": [
+        "flb_input_chunk_release_space",
+        "sb_release_output_queue_space"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_ring_buffer_cleanup",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct flb_input_instance *)",
+      "result": "void",
+      "parameters": [
+        "struct flb_input_instance *"
+      ],
+      "result_class": "void",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "flb_ring_buffer_read",
+        "destroy_chunk_raw"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_ring_buffer_collector",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct flb_config *, void *)",
+      "result": "void",
+      "parameters": [
+        "struct flb_config *",
+        "void *"
+      ],
+      "result_class": "void",
+      "parameter_shape": "non-chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_input_paused",
+        "flb_ring_buffer_read",
+        "flb_sds_len",
+        "flb_input_log_append_processed",
+        "input_chunk_append_raw",
+        "destroy_chunk_raw",
+        "flb_ring_buffer_mark_flushed"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_ring_buffer_enqueue",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_instance *, int, size_t, const char *, size_t, const void *, size_t)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_instance *",
+        "int",
+        "size_t",
+        "const char *",
+        "size_t",
+        "const void *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 7 parameter(s)",
+      "direct_callees": [
+        "append_to_ring_buffer"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_instance *, int, size_t, const char *, size_t, const void *, size_t)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_instance *",
+        "int",
+        "size_t",
+        "const char *",
+        "size_t",
+        "const void *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 7 parameter(s)",
+      "direct_callees": [
+        "append_to_ring_buffer"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_safe_delete",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, struct flb_input_chunk *, uint64_t)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "struct flb_input_chunk *",
+        "uint64_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 3 parameter(s)",
+      "direct_callees": [
+        "flb_routes_mask_get_bit"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_set_limits",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "size_t (struct flb_input_instance *)",
+      "result": "size_t",
+      "parameters": [
+        "struct flb_input_instance *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "flb_input_chunk_total_size",
+        "flb_input_chunk_is_mem_overlimit",
+        "flb_input_chunk_is_storage_overlimit",
+        "flb_input_rate_gate_maybe_resume",
+        "flb_input_resume",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_input_name"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_set_up",
+      "pinned_projection": "unmodeled expression CallExpr",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_chunk_is_up",
+        "cio_chunk_up"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_set_up_down",
+      "pinned_projection": "unmodeled statement DeclStmt",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "flb_input_chunk_total_size",
+        "flb_input_chunk_is_mem_overlimit",
+        "cio_chunk_is_up",
+        "cio_chunk_down"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_total_size",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "size_t (struct flb_input_instance *)",
+      "result": "size_t",
+      "parameters": [
+        "struct flb_input_instance *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_stream_size_chunks_up"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_update_output_instances",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct flb_input_chunk *, ssize_t)",
+      "result": "void",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "ssize_t"
+      ],
+      "result_class": "void",
+      "parameter_shape": "chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_routes_mask_get_bit",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_input_chunk_output_size_subtract",
+        "input_chunk_output_size_add"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_write",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (void *, const char *, size_t)",
+      "result": "int",
+      "parameters": [
+        "void *",
+        "const char *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 3 parameter(s)",
+      "direct_callees": [
+        "cio_chunk_write"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_write_at",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (void *, off_t, const char *, size_t)",
+      "result": "int",
+      "parameters": [
+        "void *",
+        "off_t",
+        "const char *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 4 parameter(s)",
+      "direct_callees": [
+        "cio_chunk_write_at"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_write_header_v2",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *, int, char *, int, const struct flb_chunk_direct_route *, int)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *",
+        "int",
+        "char *",
+        "int",
+        "const struct flb_chunk_direct_route *",
+        "int"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 6 parameter(s)",
+      "direct_callees": [
+        "flb_calloc",
+        "flb_errno_print",
+        "__errno_location",
+        "flb_free",
+        "strlen",
+        "memcpy",
+        "cio_meta_write",
+        "flb_log_check",
+        "flb_log_print"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "generate_chunk_name",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct flb_input_instance *, char *, int)",
+      "result": "void",
+      "parameters": [
+        "struct flb_input_instance *",
+        "char *",
+        "int"
+      ],
+      "result_class": "void",
+      "parameter_shape": "non-chunk first, 3 parameter(s)",
+      "direct_callees": [
+        "flb_time_get",
+        "snprintf",
+        "getpid"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "get_input_chunk_record_count",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "ssize_t (struct flb_input_chunk *)",
+      "result": "ssize_t",
+      "parameters": [
+        "struct flb_input_chunk *"
+      ],
+      "result_class": "other-scalar",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "cio_chunk_is_up",
+        "cio_chunk_up_force",
+        "cio_chunk_get_content",
+        "flb_mp_count_log_records",
+        "flb_mp_count",
+        "cio_chunk_down"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "get_input_chunk_source_name",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "const char *(struct flb_input_chunk *)",
+      "result": "const char *",
+      "parameters": [
+        "struct flb_input_chunk *"
+      ],
+      "result_class": "pointer",
+      "parameter_shape": "chunk first, 1 parameter(s)",
+      "direct_callees": [
+        "flb_input_name"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_append_raw",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_instance *, int, size_t, const char *, size_t, const void *, size_t)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_instance *",
+        "int",
+        "size_t",
+        "const char *",
+        "size_t",
+        "const void *",
+        "size_t"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 7 parameter(s)",
+      "direct_callees": [
+        "flb_input_chunk_is_mem_overlimit",
+        "memrb_input_chunk_release_space",
+        "cfl_time_now",
+        "flb_input_name",
+        "cmt_counter_add",
+        "flb_input_paused",
+        "flb_log_check",
+        "flb_log_print",
+        "strlen",
+        "input_chunk_get",
+        "flb_input_chunk_get_size",
+        "flb_input_chunk_is_up",
+        "cio_chunk_up_force",
+        "flb_input_chunk_get_real_size",
+        "flb_mp_count_log_records",
+        "flb_chunk_trace_do_input",
+        "update_logs_tag_records_metrics",
+        "flb_input_rate_update",
+        "flb_metrics_sum",
+        "flb_filter_do",
+        "flb_input_chunk_write",
+        "flb_free",
+        "cio_chunk_tx_rollback",
+        "cio_chunk_get_content_size",
+        "cio_chunk_lock",
+        "flb_input_chunk_destroy",
+        "flb_input_chunk_set_limits",
+        "cio_chunk_get_content",
+        "flb_sp_do",
+        "cio_chunk_down",
+        "cio_chunk_is_up",
+        "flb_input_chunk_update_output_instances",
+        "flb_chunk_trace_pre_output",
+        "flb_input_chunk_protect"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_collect_output_references",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_config *, const struct flb_chunk_direct_route *, struct flb_output_instance ***, size_t *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_config *",
+        "const struct flb_chunk_direct_route *",
+        "struct flb_output_instance ***",
+        "size_t *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 4 parameter(s)",
+      "direct_callees": [
+        "strlen",
+        "strncmp",
+        "flb_chunk_route_plugin_matches",
+        "flb_calloc",
+        "flb_errno_print",
+        "__errno_location"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_get",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "struct flb_input_chunk *(struct flb_input_instance *, int, const char *, int, size_t, int *)",
+      "result": "struct flb_input_chunk *",
+      "parameters": [
+        "struct flb_input_instance *",
+        "int",
+        "const char *",
+        "int",
+        "size_t",
+        "int *"
+      ],
+      "result_class": "pointer",
+      "parameter_shape": "non-chunk first, 6 parameter(s)",
+      "direct_callees": [
+        "flb_log_check_level",
+        "flb_log_suppress_check",
+        "flb_log_print",
+        "flb_input_name",
+        "flb_hash_table_get",
+        "pthread_mutex_lock",
+        "pthread_mutex_unlock",
+        "cio_chunk_is_locked",
+        "cio_chunk_is_up",
+        "cio_chunk_up_force",
+        "flb_log_check",
+        "flb_input_chunk_destroy_corrupted",
+        "flb_input_chunk_create",
+        "flb_input_chunk_get_projected_write_size",
+        "flb_routes_mask_is_empty",
+        "flb_input_chunk_place_new_chunk",
+        "flb_input_chunk_destroy"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_has_magic_bytes",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (char *, int)",
+      "result": "int",
+      "parameters": [
+        "char *",
+        "int"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 2 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_metadata_view",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_chunk *, struct flb_input_chunk_meta_view *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_chunk *",
+        "struct flb_input_chunk_meta_view *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "cio_meta_read",
+        "input_chunk_has_magic_bytes",
+        "memchr"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_output_size_add",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct flb_output_instance *, size_t)",
+      "result": "void",
+      "parameters": [
+        "struct flb_output_instance *",
+        "size_t"
+      ],
+      "result_class": "void",
+      "parameter_shape": "non-chunk first, 2 parameter(s)",
+      "direct_callees": [
+        "flb_log_check",
+        "flb_log_print",
+        "flb_output_name"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "input_chunk_write_header",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct cio_chunk *, int, char *, int)",
+      "result": "int",
+      "parameters": [
+        "struct cio_chunk *",
+        "int",
+        "char *",
+        "int"
+      ],
+      "result_class": "int",
+      "parameter_shape": "chunk first, 4 parameter(s)",
+      "direct_callees": [
+        "flb_calloc",
+        "flb_errno_print",
+        "__errno_location",
+        "memcpy",
+        "cio_meta_write",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_free"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "logs_tag_records_metrics_enabled",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_instance *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_instance *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 1 parameter(s)",
+      "direct_callees": []
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "memrb_input_chunk_release_space",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "int (struct flb_input_instance *, size_t, size_t *, size_t *)",
+      "result": "int",
+      "parameters": [
+        "struct flb_input_instance *",
+        "size_t",
+        "size_t *",
+        "size_t *"
+      ],
+      "result_class": "int",
+      "parameter_shape": "non-chunk first, 4 parameter(s)",
+      "direct_callees": [
+        "flb_input_chunk_is_task_safe_delete",
+        "flb_input_chunk_get_real_size",
+        "flb_task_destroy",
+        "flb_input_chunk_destroy"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "sb_get_releasable_output_queue_space",
+      "pinned_projection": "expected one selected definition after preprocessing, found 0",
+      "definitions_after_preprocessing": 0
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "sb_release_output_queue_space",
+      "pinned_projection": "expected one selected definition after preprocessing, found 0",
+      "definitions_after_preprocessing": 0
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "update_logs_tag_records_metrics",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct flb_input_instance *, uint64_t, size_t, const char *, size_t)",
+      "result": "void",
+      "parameters": [
+        "struct flb_input_instance *",
+        "uint64_t",
+        "size_t",
+        "const char *",
+        "size_t"
+      ],
+      "result_class": "void",
+      "parameter_shape": "non-chunk first, 5 parameter(s)",
+      "direct_callees": [
+        "logs_tag_records_metrics_enabled",
+        "update_logs_tag_records_untracked",
+        "flb_input_name",
+        "strlen",
+        "snprintf",
+        "flb_malloc",
+        "flb_errno_print",
+        "__errno_location",
+        "memcpy",
+        "pthread_mutex_lock",
+        "flb_hash_table_get",
+        "pthread_mutex_unlock",
+        "flb_free",
+        "flb_hash_table_add",
+        "flb_sds_create_len",
+        "cmt_counter_add",
+        "flb_sds_destroy"
+      ]
+    },
+    {
+      "file": "flb_input_chunk.c",
+      "function": "update_logs_tag_records_untracked",
+      "pinned_projection": "outside single borrowed chunk / int-or-void-result source profile",
+      "definitions_after_preprocessing": 1,
+      "abi": "void (struct flb_input_instance *, uint64_t, size_t, const char *)",
+      "result": "void",
+      "parameters": [
+        "struct flb_input_instance *",
+        "uint64_t",
+        "size_t",
+        "const char *"
+      ],
+      "result_class": "void",
+      "parameter_shape": "non-chunk first, 4 parameter(s)",
+      "direct_callees": [
+        "cmt_counter_add",
+        "flb_input_name"
+      ]
+    }
+  ]
+}
