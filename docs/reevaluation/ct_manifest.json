@@ -101,6 +101,163 @@
       ]
     }
   },
+  "artifact_identity": {
+    "note": "Card CT-SHARED-FIXTURE-DISCLOSURE. Mapping counts cases, not independent programs. mapped_cases and distinct_source_fixture_digests are recomputed by compiler/tests/ct_corpus.rs::ct_fixture_byte_identity_is_exactly_the_reviewed_disclosure from the files themselves (sha256 over raw bytes). shared_fixture_groups is the reviewed allow-list: every set of two or more byte-identical files under scan_root that contains a file under compiler/tests/fixtures/ct/ must appear here with exactly these members, digest, roles and relation, and every listed group must still exist. An edit to one side of a group, a new copy, or a stale entry fails that test. Roles: case = a mapped case source_fixture; header = a .h file in a case directory; control = any other file in a case directory; non_ct_fixture = a file outside compiler/tests/fixtures/ct/. Relations: shared_artifact (same-role CT files of several cases), case_as_control (one case artifact is another case control), shared_with_non_ct_fixture (a CT file copied from, or to, another test fixture). This section discloses; it changes no mapping status, stage, proof or verdict.",
+    "report": "docs/reports/ct-shared-fixture-disclosure/README.md",
+    "scan_root": "compiler/tests/fixtures",
+    "mapped_cases": 50,
+    "distinct_source_fixture_digests": 48,
+    "shared_fixture_groups": [
+      {
+        "sha256": "131f635d9579a7da9833a7e51f305a5aa3306b2542808c17558ced982f5e909c",
+        "relation": "shared_artifact",
+        "decision": "disclose",
+        "members": [
+          {
+            "path": "compiler/tests/fixtures/ct/CT01/case.qcore",
+            "role": "case"
+          },
+          {
+            "path": "compiler/tests/fixtures/ct/CT12/case.qcore",
+            "role": "case"
+          },
+          {
+            "path": "compiler/tests/fixtures/ct/CT14/case.qcore",
+            "role": "case"
+          }
+        ],
+        "note": "One program under three case scenarios; the scenarios that distinguish CT12 (creation failure) and CT14 (completed but unjoined child) live in their native harness data, not in the program. W6-OWNED-SOURCE-TASKS rewrote CT12's program and created CT01's with the same bytes in one commit; W6-COMPLETED-CHILD-CUSTODY added CT14's. CT01 is proof-bound through the F02 trace/digest relation, so no side is edited. Known since PROOF-LEG-BATCH, which withdrew CT12 and CT14 proof rows on this identity; compiler/tests/ct12_ct14_proof_reach.rs asserts it independently."
+      },
+      {
+        "sha256": "b5e74449cef4fc3616194be01812c83d2cb59105938eda9ec86b11d0c26cfc63",
+        "relation": "shared_artifact",
+        "decision": "disclose",
+        "members": [
+          {
+            "path": "compiler/tests/fixtures/ct/CT01/owned_transfer.h",
+            "role": "header"
+          },
+          {
+            "path": "compiler/tests/fixtures/ct/CT12/owned_transfer.h",
+            "role": "header"
+          }
+        ],
+        "note": "The native_owned_transfer header both cases compile against; CT12 differs from CT01 only by fail_create=true in its expected.json. It follows from the shared program above. Two archived copies, docs/reports/w6-owned-source-tasks/sanitizer-create-failure.h and sanitizer-round-trip.h, carry the same bytes and are frozen evidence outside this check."
+      },
+      {
+        "sha256": "bf65bbc702778effa5c82d363e08eac35b948d2abb05bcae0ec2c64c3b3d3926",
+        "relation": "shared_artifact",
+        "decision": "disclose",
+        "members": [
+          {
+            "path": "compiler/tests/fixtures/ct/CT14/completion_before_join.h",
+            "role": "header"
+          },
+          {
+            "path": "compiler/tests/fixtures/ct/CT37/completion_before_join.h",
+            "role": "header"
+          }
+        ],
+        "note": "A one-line #include shim; both resolve to the single shared compiler/tests/fixtures/task_worker_allocations/completion_before_join.h, as W6-COMPLETED-CHILD-CUSTODY records. CT14 and CT37 have distinct programs; they share the native completion-before-join adapter. CT37 is proof-bound, so its side is not edited."
+      },
+      {
+        "sha256": "c775f7218f3394e7d5ed809fd366587cd330af8b4d68a248048b35a94e208a7b",
+        "relation": "case_as_control",
+        "decision": "disclose",
+        "members": [
+          {
+            "path": "compiler/tests/fixtures/ct/CT02/case.qcore",
+            "role": "case"
+          },
+          {
+            "path": "compiler/tests/fixtures/ct/CT14/read_before_join.qcore",
+            "role": "control"
+          }
+        ],
+        "note": "CT02's own artifact (parent uses a buffer after a successful move capture, refused Q600) is CT14's read_before_join rejection control. The control is a separate file in CT14's own directory, so editing CT02 does not change what CT14's control tests: it silently ends the identity. That identity is now pinned here."
+      },
+      {
+        "sha256": "7c75577b59733994bac462404ee51173d4376336b5351d1d9e9b6a380d634be6",
+        "relation": "case_as_control",
+        "decision": "disclose",
+        "members": [
+          {
+            "path": "compiler/tests/fixtures/ct/CT03/case.qcore",
+            "role": "case"
+          },
+          {
+            "path": "compiler/tests/fixtures/ct/CT04/write_after_joins.qcore",
+            "role": "control"
+          }
+        ],
+        "note": "CT03's own artifact (complementary read shares, admitted) is CT04's accepted write_after_joins control. REMAINING-WAVE3-CT-INTEGRATION describes it as 'the same write after both joins' and does not say it is CT03's program. CT03 is proof-bound through the F02 trace/digest relation, so neither side is edited."
+      },
+      {
+        "sha256": "29f2f013edbbde7f68eb8881b2c3776abf5da3dd9c05743e7c11133c13538fa9",
+        "relation": "shared_with_non_ct_fixture",
+        "decision": "disclose",
+        "members": [
+          {
+            "path": "compiler/tests/fixtures/ct/CT08/case.qcore",
+            "role": "case"
+          },
+          {
+            "path": "compiler/tests/fixtures/slice_permissions/overlapping_write.qcore",
+            "role": "non_ct_fixture"
+          }
+        ],
+        "note": "CT08's artifact is CT07-SLICE-PERMISSIONS' overlapping_write.qcore, which compiler/tests/slice_permissions.rs include_str!s. CT-WIRE-LANE-2 section 2.2 names the source program but not its byte identity. The two files are independent copies; either may diverge silently without this pin."
+      },
+      {
+        "sha256": "9a793c465809c3dd3fff452aa31f22f185cfc6825f86e9af4cb9f9ff51810f86",
+        "relation": "shared_with_non_ct_fixture",
+        "decision": "disclose",
+        "members": [
+          {
+            "path": "compiler/tests/fixtures/ct/CT09/case.qcore",
+            "role": "case"
+          },
+          {
+            "path": "compiler/tests/fixtures/source_record/point.qcore",
+            "role": "non_ct_fixture"
+          }
+        ],
+        "note": "CT09's artifact is AGGREGATES-V1's point.qcore, which compiler/tests/source_record.rs include_str!s. CT-WIRE-LANE-2 section 2.3 names the source program but not its byte identity."
+      },
+      {
+        "sha256": "57c3072d319d2d3b8948b5435501c0419ee632c5145312f68524cda30503dc17",
+        "relation": "shared_with_non_ct_fixture",
+        "decision": "disclose",
+        "members": [
+          {
+            "path": "compiler/tests/fixtures/bitfield_concurrency/distinct_units.qcore",
+            "role": "non_ct_fixture"
+          },
+          {
+            "path": "compiler/tests/fixtures/ct/CT10/distinct_units.qcore",
+            "role": "control"
+          }
+        ],
+        "note": "CT10's distinct_units admitted control is CT10-SOURCE-LAYOUT's route fixture, which compiler/tests/bitfield_concurrency.rs include_str!s."
+      },
+      {
+        "sha256": "d91828fc546b4b10fb57736dba483373216057bc119e622782baefb4bdeaac1c",
+        "relation": "shared_with_non_ct_fixture",
+        "decision": "disclose",
+        "members": [
+          {
+            "path": "compiler/tests/fixtures/bitfield_concurrency/addressable.qcore",
+            "role": "non_ct_fixture"
+          },
+          {
+            "path": "compiler/tests/fixtures/ct/CT10/addressable.qcore",
+            "role": "control"
+          }
+        ],
+        "note": "CT10's addressable admitted control is CT10-SOURCE-LAYOUT's route fixture, which compiler/tests/bitfield_concurrency.rs and crates/qcorec/tests/examples_cli.rs read."
+      }
+    ]
+  },
   "cases": [
     {
       "id": "CT01",

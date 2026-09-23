@@ -598,7 +598,41 @@ struct Manifest {
     #[allow(dead_code)]
     note: String,
     stage_vocabulary: StageVocabulary,
+    artifact_identity: ArtifactIdentity,
     cases: Vec<ManifestCase>,
+}
+
+/// Card `CT-SHARED-FIXTURE-DISCLOSURE`: how many independent programs back the
+/// mapped cases, and the reviewed allow-list of byte-identical fixture groups.
+/// Required rather than defaulted, so deleting the disclosure fails parsing.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ArtifactIdentity {
+    #[allow(dead_code)]
+    note: String,
+    report: String,
+    scan_root: String,
+    mapped_cases: usize,
+    distinct_source_fixture_digests: usize,
+    shared_fixture_groups: Vec<SharedFixtureGroup>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SharedFixtureGroup {
+    sha256: String,
+    relation: String,
+    decision: String,
+    members: Vec<SharedFixtureMember>,
+    #[allow(dead_code)]
+    note: String,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SharedFixtureMember {
+    path: String,
+    role: String,
 }
 
 /// The vocabulary is carried in the manifest so a reader knows what the words
@@ -8021,4 +8055,186 @@ fn proof_gated_cases_name_a_live_test_that_reads_the_cases_own_fixture() {
              this case's own fixture"
         );
     }
+}
+
+/// Every file under `root`, recursively, as `(repository-relative path with
+/// `/` separators, bytes)`. Nothing is skipped: a copy placed anywhere under
+/// the scanned tree is a copy.
+fn fixture_files(root: &Path, relative: &str, out: &mut Vec<(String, Vec<u8>)>) {
+    for entry in fs::read_dir(root).unwrap() {
+        let entry = entry.unwrap();
+        let name = entry.file_name().into_string().unwrap();
+        let path = entry.path();
+        let relative = format!("{relative}/{name}");
+        if entry.file_type().unwrap().is_dir() {
+            fixture_files(&path, &relative, out);
+        } else {
+            out.push((relative, fs::read(&path).unwrap()));
+        }
+    }
+}
+
+/// Card `CT-SHARED-FIXTURE-DISCLOSURE` (wave 43). The CT denominator counts
+/// cases, and three relations make a case's artifact something other than
+/// its own: several cases sharing one program (`shared_artifact`), one case's
+/// program doubling as another case's control (`case_as_control`), and a CT
+/// file being a copy of another test's fixture (`shared_with_non_ct_fixture`).
+/// Copies are separate files, so nothing couples an edit on one side to the
+/// other: the hazard is a *silent divergence* of an identity a report relies
+/// on, or a new identity nobody reviewed.
+///
+/// This test hashes every file under the manifest's `scan_root` and requires
+/// the byte-identical groups that contain a CT fixture to be **exactly** the
+/// manifest's reviewed `shared_fixture_groups` — same digest, same members,
+/// roles derived from the files rather than trusted, relation consistent with
+/// those roles — in both directions, so an edit to one side of a disclosed
+/// group, a new undisclosed copy, and a stale allow-list entry each fail here.
+/// It also recomputes the independent-artifact figure the manifest discloses.
+/// Shown red by mutation in `docs/reports/ct-shared-fixture-disclosure/`.
+#[test]
+fn ct_fixture_byte_identity_is_exactly_the_reviewed_disclosure() {
+    let manifest = load_manifest();
+    let identity = &manifest.artifact_identity;
+    assert_eq!(
+        identity.report, "docs/reports/ct-shared-fixture-disclosure/README.md",
+        "the disclosure names the report that reviewed it"
+    );
+    assert!(
+        repo_root().join(&identity.report).is_file(),
+        "the reviewing report `{}` exists",
+        identity.report
+    );
+    assert_eq!(identity.scan_root, "compiler/tests/fixtures");
+    let ct_prefix = format!("{}/ct/", identity.scan_root);
+
+    // 1. The independent-artifact figure, recomputed from the files.
+    let mapped: Vec<&ManifestCase> = manifest
+        .cases
+        .iter()
+        .filter(|case| case.mapping_status == "mapped")
+        .collect();
+    let source_fixtures: BTreeSet<String> = mapped
+        .iter()
+        .map(|case| {
+            case.source_fixture
+                .clone()
+                .unwrap_or_else(|| panic!("{}: a mapped case names its source fixture", case.id))
+        })
+        .collect();
+    let distinct_sources: BTreeSet<String> = source_fixtures
+        .iter()
+        .map(|path| qcore_schemas::sha256_hex(&fs::read(repo_root().join(path)).unwrap()))
+        .collect();
+    assert_eq!(
+        (
+            identity.mapped_cases,
+            identity.distinct_source_fixture_digests
+        ),
+        (mapped.len(), distinct_sources.len()),
+        "artifact_identity must disclose (mapped cases, distinct source-fixture digests) \
+         as measured"
+    );
+
+    // 2. The measured byte-identity groups that contain a CT fixture.
+    let mut files = Vec::new();
+    fixture_files(
+        &repo_root().join(&identity.scan_root),
+        &identity.scan_root,
+        &mut files,
+    );
+    let mut by_digest: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for (path, bytes) in &files {
+        by_digest
+            .entry(qcore_schemas::sha256_hex(bytes))
+            .or_default()
+            .insert(path.clone());
+    }
+    let measured: BTreeMap<String, BTreeSet<String>> = by_digest
+        .into_iter()
+        .filter(|(_, members)| {
+            members.len() > 1 && members.iter().any(|path| path.starts_with(&ct_prefix))
+        })
+        .collect();
+
+    // 3. The reviewed allow-list, with every role derived rather than trusted.
+    let mut declared: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for group in &identity.shared_fixture_groups {
+        assert_eq!(
+            group.decision, "disclose",
+            "{}: a listed group is disclosed; a decoupled pair is no longer a group",
+            group.sha256
+        );
+        let mut roles: BTreeMap<&str, usize> = BTreeMap::new();
+        for member in &group.members {
+            let derived = if !member.path.starts_with(&ct_prefix) {
+                "non_ct_fixture"
+            } else if source_fixtures.contains(&member.path) {
+                "case"
+            } else if member.path.ends_with(".h") {
+                "header"
+            } else {
+                "control"
+            };
+            assert_eq!(
+                member.role, derived,
+                "{}: `{}` is recorded as `{}` but is a `{derived}`",
+                group.sha256, member.path, member.role
+            );
+            *roles.entry(derived).or_insert(0) += 1;
+        }
+        let ct_roles = roles
+            .keys()
+            .filter(|role| **role != "non_ct_fixture")
+            .count();
+        let consistent = match group.relation.as_str() {
+            "shared_artifact" => {
+                !roles.contains_key("non_ct_fixture")
+                    && ct_roles == 1
+                    && (roles.contains_key("case") || roles.contains_key("header"))
+            }
+            "case_as_control" => {
+                !roles.contains_key("non_ct_fixture")
+                    && roles.contains_key("case")
+                    && roles.contains_key("control")
+            }
+            "shared_with_non_ct_fixture" => roles.contains_key("non_ct_fixture"),
+            other => panic!("{}: unknown relation `{other}`", group.sha256),
+        };
+        assert!(
+            consistent,
+            "{}: relation `{}` does not match its members' roles {roles:?}",
+            group.sha256, group.relation
+        );
+        let members: BTreeSet<String> = group.members.iter().map(|m| m.path.clone()).collect();
+        assert_eq!(
+            members.len(),
+            group.members.len(),
+            "{}: a member is listed twice",
+            group.sha256
+        );
+        assert!(
+            declared.insert(group.sha256.clone(), members).is_none(),
+            "{}: a digest is listed twice",
+            group.sha256
+        );
+    }
+
+    // 4. Total-or-reject in both directions.
+    let undisclosed: Vec<_> = measured
+        .iter()
+        .filter(|(digest, members)| declared.get(*digest) != Some(*members))
+        .collect();
+    let stale: Vec<_> = declared
+        .iter()
+        .filter(|(digest, members)| measured.get(*digest) != Some(*members))
+        .collect();
+    assert!(
+        undisclosed.is_empty() && stale.is_empty(),
+        "byte-identical CT fixture groups differ from the reviewed disclosure in \
+         docs/reevaluation/ct_manifest.json `artifact_identity.shared_fixture_groups`.\n\
+         measured but not listed exactly: {undisclosed:#?}\n\
+         listed but not measured exactly: {stale:#?}\n\
+         A new copy needs review and a relation; an edit to one side of a listed group \
+         ends an identity a report relies on and needs a correction beside that report."
+    );
 }
