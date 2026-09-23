@@ -65,6 +65,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |
 
+| [confined-exit-precedence](confined-exit-precedence/README.md) | Confined process failure precedence |
+
 | [core-concurrency-prelude](core-concurrency-prelude/README.md) | Core concurrency prelude — 2026-09-08 |
 
 | [corpus-repin](corpus-repin/README.md) | CORPUS-REPIN — re-measurement and deliberate re-pin of the four 185-unit artifacts |
@@ -363,6 +365,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [native-library-source-binding](native-library-source-binding/README.md) | Card `NATIVE-LIBRARY-SOURCE-BINDING` — the source file's own library binding |
 
 | [native-observation-repair](native-observation-repair/README.md) | Native observation repair |
+
+| [native-platform-test-isolation](native-platform-test-isolation/README.md) | Native platform test isolation and sanitizer portability |
 
 ## O
 
@@ -783,6 +787,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w4-removed-custody](w4-removed-custody/README.md) | W4: validated direct Removed-custody wrappers |
 
 | [w4-unsigned-countdown](w4-unsigned-countdown/README.md) | Unsigned countdown custody inference |
+
+| [w42-chunk-lifecycle-cert](w42-chunk-lifecycle-cert/README.md) | W42 chunk lifecycle certificate |
 
 | [w42-indirect-access](w42-indirect-access/README.md) | W42-INDIRECT-ACCESS — bounded scalar destination stores |
 

@@ -9,6 +9,7 @@ pub mod file_close;
 pub mod file_delete;
 pub mod file_outcomes;
 pub mod filesystem_chunk_close;
+pub mod lifecycle_coverage;
 pub mod memory_close;
 pub mod nested_cleanup;
 pub mod nested_memory;

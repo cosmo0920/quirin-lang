@@ -65,6 +65,7 @@ import QCore.TypedContractFacts
 import QCore.ExternalIntegration
 import QCore.MonkeyEvent
 import QCore.ChunkLifecycle
+import QCore.ChunkLifecycleCoverage
 import QCore.CallResultUse
 import QCore.MemoryClose
 import QCore.ListUnlink
