@@ -116,6 +116,19 @@
 //! A call that is not the **whole** return expression — a cast of one, a
 //! conditional over two, arithmetic on a result — is not admitted either: the
 //! desugaring's equivalence argument is about `return f(a);` and nothing else.
+//!
+//! **Amended by card W43-RETURN-EXPRESSION (deliberately).** The paragraph
+//! above still describes this card's *admitting* route, which still admits no
+//! uncontracted callee. W43's census found that exact exchange — a whole-call
+//! return whose synthetic assignment the classifier refuses — to be the
+//! dominant refused family of the corpus, and [`lowers_refused_whole_call`] now
+//! lowers it to the classifier's own refusal as a re-attribution that decides
+//! nothing (the function stays non-`Safe`; see that function). Separately, W43
+//! measured that `report_leaks` runs at **every** exit: an exit-node refusal
+//! does not suppress a leak accusation, so "an unmodeled exit is one
+//! `report_leaks` skips" in the `None` bullet above describes the exit
+//! *residual* observation (`observe_residual`'s `indeterminate`), not the leak
+//! report (`RETURN-REFUSAL-LEAK-REPORT-PREMISE`).
 
 use qcore_schemas::contract::ResourceReturnMode;
 
@@ -181,6 +194,80 @@ pub(crate) fn escapes_only_fresh_custody(result: ResourceReturnMode) -> bool {
 /// collision would overwrite a real binding. Absence is required, not assumed.
 pub(crate) fn place_is_unspelled(tokens: &[Token], place: &str) -> bool {
     !tokens.iter().any(|token| token.text == place)
+}
+
+/// Callee spellings that take a *type* operand or denote a translation-time
+/// constant. They are call-shaped to [`is_identifier`] but are not calls, so
+/// "call to uncontracted function `sizeof`" would misattribute the refusal.
+/// The C keywords among them are also refused by `typed_field_access::is_name`;
+/// they are listed here so this rule is self-contained.
+const NOT_A_CALLEE: &[&str] = &[
+    "sizeof",
+    "_Alignof",
+    "alignof",
+    "__alignof",
+    "__alignof__",
+    "_Generic",
+    "__typeof",
+    "__typeof__",
+    "typeof",
+    "__builtin_offsetof",
+    "__builtin_types_compatible_p",
+    "__builtin_va_arg",
+    "__extension__",
+];
+
+/// Card **W43-RETURN-EXPRESSION**: may the ordinary statement classifier's
+/// *refusal* of `PLACE = f(args);` stand in for the return-position refusal of
+/// `return f(args);`?
+///
+/// # The family
+///
+/// The W43 shape census measured the refused return expressions of the pinned
+/// corpus in the analyzer's own token view: the dominant family is exactly one
+/// call `NAME ( … )` spanning the whole expression whose synthetic assignment
+/// the statement classifier **refuses** — an uncontracted callee, a declared
+/// literal premise the site does not meet, a withdrawn declaration, or an
+/// argument the classifier will not model. The return-position refusal
+/// ("unmodeled call, aggregate or indirect access in return expression")
+/// reports none of those causes; the classifier's own refusal names them.
+///
+/// # Why this is sound, and why it decides nothing
+///
+/// `return f(a);` and `{ T = f(a); return T; }` are the same C for a fresh `T`,
+/// which is the desugaring card C-GATEWAY-RETURN-CALL-W4 already performs for
+/// an *admitted* call. This rule performs the same desugaring for a *refused*
+/// one and keeps the classifier's answer verbatim:
+///
+/// * the evaluation node is the classifier's [`super::LegacyInstruction::Unknown`]
+///   — an `Unsupported` diagnostic at the `return`'s own line — so the path is
+///   poisoned exactly as before and the function cannot become `Safe` or
+///   acquire a validated summary through it. A refusal never touches resource
+///   states and applies the same bounded binding poison, so the exit state
+///   `report_leaks` reads is the one the old exit-node refusal left: no leak is
+///   hidden and none is manufactured;
+/// * the exit is a `NoOp`: it escapes nothing, so no obligation can be
+///   discharged on this route (invariant 1's forbidden direction is not
+///   reachable here at all);
+/// * a declined probe restores the site counter, so site numbering and
+///   certificate identity are unchanged.
+///
+/// It is a **re-attribution**, not a verdict change: every function that loses
+/// its return-position refusal through this rule keeps an `Unsupported`
+/// refusal at the same line naming what actually blocks it.
+///
+/// # What stays refused, with the return-position wording
+///
+/// * any classifier answer other than a refusal — an admitted call is the
+///   W4/B01 routes' business, and a `Reallocated` result they decline keeps
+///   the return refusal rather than being lowered here;
+/// * a call under a cast, a call inside a larger expression, a conditional, a
+///   comma expression, and every call-shaped type operator in [`NOT_A_CALLEE`];
+/// * a body that spells the reserved synthetic place (checked by the caller).
+pub(crate) fn lowers_refused_whole_call(tokens: &[Token], texts: &[&str], refused: bool) -> bool {
+    refused
+        && whole_expression_call(tokens, texts)
+            .is_some_and(|callee| !NOT_A_CALLEE.contains(&callee))
 }
 
 /// The synthetic `PLACE = ` prefix, carrying the `return` statement's own line

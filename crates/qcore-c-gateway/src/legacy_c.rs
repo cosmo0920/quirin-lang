@@ -3453,6 +3453,43 @@ impl Parser<'_> {
         );
     }
 
+    /// Card **W43-RETURN-EXPRESSION**: hand one already-decided return
+    /// expression refusal to the instrumented census. Compiled out with the
+    /// feature off; called only after every return route has refused.
+    #[cfg(feature = "indirect-census")]
+    fn census_return(&self, line: usize, texts: &[&str]) {
+        let calls = texts
+            .iter()
+            .enumerate()
+            .filter(|(index, text)| {
+                is_identifier(text)
+                    && texts.get(index + 1) == Some(&"(")
+                    && !matches!(**text, "sizeof" | "_Alignof" | "__alignof__")
+            })
+            .map(|(_, callee)| {
+                let contract = self.contracts.contract(callee);
+                crate::indirect_census::ReturnCall {
+                    callee: (*callee).to_owned(),
+                    contracted: contract.is_some(),
+                    result_mode: contract.map(|contract| format!("{:?}", contract.result)),
+                    defined_in_unit: find_function_body(self.tokens, callee).is_some(),
+                }
+            })
+            .collect();
+        crate::indirect_census::record_return(
+            &crate::indirect_census::Context {
+                function: &self.census_function,
+                formal_parameters: &self.formal_parameters,
+                typed_model: &self.typed_model,
+                typed_types: &self.typed_types,
+                typed_bases: &self.typed_bases,
+            },
+            line,
+            texts,
+            calls,
+        );
+    }
+
     /// The complete expression was delimited by the parser; malformed
     /// control flow never reaches this constructor.
     fn expression_writes(&self, tokens: &[Token]) -> RefusedWrites {
@@ -4018,6 +4055,10 @@ impl Parser<'_> {
                 let returned_evaluation = (!strict && !untracked_pointer)
                     .then(|| self.return_expression_instruction(&expression, line))
                     .flatten();
+                #[cfg(feature = "indirect-census")]
+                if !strict && !untracked_pointer && returned_evaluation.is_none() {
+                    self.census_return(line, &texts);
+                }
                 Ok(Statement::Return {
                     line,
                     writes: self.expression_writes(&expression),
@@ -4255,13 +4296,21 @@ impl Parser<'_> {
             LegacyInstruction::OpaqueValue { destination, .. }
                 if destination == return_call::RETURN_RESULT_PLACE
         ) && direct_member_read;
+        self.next_site = restore;
         if admitted {
-            self.next_site = restore;
-            Some((instruction, false))
-        } else {
-            self.next_site = restore;
-            None
+            return Some((instruction, false));
         }
+        // Card W43-RETURN-EXPRESSION. Asked last, after every admitting route
+        // above has declined: a whole-call return whose synthetic assignment
+        // the classifier *refuses* is lowered to that refusal and a `NoOp`
+        // exit, so the published reason names the call's own blocker. The
+        // node stays `Unknown`, so this re-attributes and never admits; see
+        // `return_call::lowers_refused_whole_call`.
+        let refused = matches!(instruction, LegacyInstruction::Unknown { .. });
+        if return_call::lowers_refused_whole_call(expression, &texts, refused) {
+            return Some((instruction, false));
+        }
+        None
     }
 
     fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {

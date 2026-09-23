@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 276
+  "named_followups": 282
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W42 priority integration, 2026-09-20. Same-checkout BEFORE reproduces all five B-series artifacts byte for byte. Combined AFTER matches the isolated scalar-store diagnostics exactly: two functions Unknown to Safe, zero unit moves, 362 lexical plus2 downstream call refusals removed,350 direct alias exchanges and7 downstream alias additions. Leak272 preserved. Three other artifacts are byte-identical; Monkey changes only schema and callback accounting. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous hand-carried checkpoint preserved in docs/reports/w42-priority-integration/previous-corpus-row.json.",
+   "note": "W43-RETURN-EXPRESSION, 2026-09-23. Same-checkout BEFORE reproduces the W42 diagnostics byte for byte (the four other artifacts match the canonical-contract-locations checkpoint after the worktree-path alias; their W42 differences are that migration's attributed path and digest identities). AFTER lowers 941 whole-call return refusals to the call classifier's own refusal at the same line (671 uncontracted call, 267 lexical indirect access, 2 braced initializer, 1 nested call): 941 removed, 941 added, 0 function or unit moves, every count unchanged. Leak 272 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-return-expression/previous-corpus-row.json.",
    "units": 185,
    "safe": 2,
    "provisional_unsafe": 42,
@@ -6642,8 +6642,8 @@
    "projected_functions": 4834,
    "leak_diagnostics": 272,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w42-priority-integration/artifacts/",
-   "source": "docs/reports/w42-priority-integration/README.md; preceding baseline docs/reports/b-series-integration/artifacts/",
+   "baseline": "docs/reports/w43-return-expression/artifacts/",
+   "source": "docs/reports/w43-return-expression/README.md; preceding baseline docs/reports/w42-priority-integration/artifacts/",
    "unknown_alias_diagnostics": 4665,
    "unsupported_diagnostics": 49371,
    "double_release_diagnostics": 0,
@@ -6725,11 +6725,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "TASK-CONTEXT-CONTRACT-BUNDLE: measured implementation on ad6016f21355ccfa2bc0a4746cb0c4d9fcd1bee6 with source digests and actual commands/exits in validation.json. 5043 core Rust passed / 0 failed / 11 ignored; 165 Lean audits; 336 root Python tests; 123 provider Rust tests. Standing commands, five isolated host controls, provider mutation control, fmt/clippy, probes and all five package verifications exit 0. Logs: private/task-context-contract-bundle/. Initial restricted-environment failures, corrected Lean import ordering, and stale matrix failure are retained. No coverage promotion.",
-  "workspace_tests": 5043,
+  "note": "W43-RETURN-EXPRESSION: Rust, fmt, clippy, probes and Lean measured at 2fcc7109bac3b0fb35931611a92e48216bd96726; later commits change documents, the ledger and report scripts only (no Rust, Lean or test source), and the Python suite ran after the final matrix regeneration on the tip. 5099 core Rust passed / 0 failed / 11 ignored over 272 summaries; 166 Lean audits; 313 root Python tests after the final matrix regeneration. Step exits: {'clang': 0, 'clippy': 0, 'fmt': 0, 'followup': 0, 'lean': 0, 'probe': 0, 'python': 0, 'submodules': 0, 'test': 0}. Provider tests are carried, not remeasured (no provider change). Logs: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae2a69ef909727ba3/measure/gate. Clang recorded in this checkout. No coverage promotion; 0 function and 0 unit moves at the arbiter.",
+  "workspace_tests": 5099,
   "provider_tests": 123,
-  "python_evidence_validator_tests": 336,
-  "lean_audits": 165,
+  "python_evidence_validator_tests": 313,
+  "lean_audits": 166,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6855,6 +6855,7 @@
    "AuditReturnCallCustody.lean",
    "AuditReturnExpressionEvaluation.lean",
    "AuditReturnPositionEscape.lean",
+   "AuditReturnRefusedCallLowering.lean",
    "AuditScalarCalls.lean",
    "AuditScalarMemberStore.lean",
    "AuditScalarRouteExitEdge.lean",
@@ -6903,7 +6904,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/task-context-contract-bundle/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-return-expression/gate.json)"
  },
  "named_followups": [
   {
@@ -7381,13 +7382,6 @@
    "id": "RETURN-CALL-NULLABLE-WRAPPER",
    "title": "Five allocator wrappers are accused by a non-null contract for legitimately returning NULL",
    "why": "Card C-GATEWAY-RETURN-CALL-W4 (wave 34) §5.3.1: five functions outside the 478 gain a new leaf reading `nullable resource ... used by a non-null contract`. They are allocator wrappers that legitimately return NULL on failure; the complaint arises from analysing them WITHOUT their own derived contract in force, so the caller-side non-null contract meets a nullable result. `Unknown`-class and in the accusing direction, so invariant 1 is not engaged and nothing is promoted. DISCHARGE: measure whether the derivation can infer `Owned { nullable: true }` for such a wrapper, AND whether doing so is a promotion this project wants - the second half is a disposition, not a measurement, because inferring nullability for a wrapper moves verdicts in the discharging direction.",
-   "source": "docs/reports/c-gateway-return-call-w4/README.md",
-   "recorded_by": "C-GATEWAY-RETURN-CALL-W4"
-  },
-  {
-   "id": "RETURN-CALL-INCOMPLETE-LINE-455",
-   "title": "455 of 1,470 return leaves sit on a line where the return is not complete, and are classed shape-unknown",
-   "why": "Card C-GATEWAY-RETURN-CALL-W4 (wave 34) §3.2: 455 of 1,470 return leaves (31%) have an `origin` line on which the `return` statement is not complete - the classifier reads one preprocessed line, and a return spanning more than one cannot be shaped from it. Those leaves are classified SHAPE-UNKNOWN rather than guessed, which is why the card's own census makes no shape claim about them (the `ctr_span_set_trace_id_with_cid` exemplar falls in this bucket and is recorded as such rather than smoothed over). Fail-closed and correct, but it bounds every shape census this route publishes. DISCHARGE: a multi-line-aware classifier, or a measurement showing the class is uninteresting.",
    "source": "docs/reports/c-gateway-return-call-w4/README.md",
    "recorded_by": "C-GATEWAY-RETURN-CALL-W4"
   },
@@ -8774,6 +8768,55 @@
    "why": "W43-CHUNK-SOURCE-PROFILE attaches pinned-source compositions to cio_chunk_close and cio_chunk_close_stream. Each reaches chunk teardown, backend teardown, both list unlinks and the context counter on cio_chunk_close's null and memory-backed source paths (paths 0 and 1 of 4) and leaves context 0 and stream 0 live by premise. Source paths 2 and 3 - the filesystem-backed close, whose nested cleanup keeps unresolved OS custody, and the unsupported-backend close, whose backend custody is opaque - are not composed, so under the path-completeness rule the reached legs discharge nothing for either function and both rows keep all nine legs outstanding. Discharge: compose the filesystem path from the pinned cio_file.c/cio_file_unix.c certificates with its OS custody resolved, and either prove the unsupported-backend path unreachable from the pinned constructors or keep it an explicit Unknown; container and source legs remain separate obligations.",
    "source": "docs/reports/w43-chunk-source-profile/README.md",
    "recorded_by": "W43-CHUNK-SOURCE-PROFILE"
+  },
+  {
+   "id": "W43-RETURN-CALL-UNDER-CAST",
+   "title": "A whole call under a cast or in parentheses keeps the return-position refusal (26 leaves)",
+   "why": "Card W43-RETURN-EXPRESSION lowers a whole-call return whose synthetic assignment the statement classifier refuses to that refusal, but only when the call's name is the expression's first token and its `)` the last. The census (docs/reports/w43-return-expression/census/) measures 25 Unknown-function leaves over 20 functions where the call sits under one or more `( TYPE-NAME )` casts: 23 uncontracted or builtin callees and 2 contracted `Owned{nullable}` callees (`(T *) rd_kafka_mem_calloc(...)`); 11 leaves are sole blockers. One more leaf is a whole call wrapped in redundant parentheses (`return (LZ4F_decodeHeader(...));`), which the Rust rule reads literally and does not strip. The uncontracted half would be a pure re-attribution; the contracted `Owned` half would be an ADMISSION that escapes a fresh site through a cast, which needs its own argument that a pointer or integer conversion preserves (or does not) the escaped identity. Discharge: a card that recognises a leading cast positively (type-name tokens only, never a parenthesised expression or function designator), lowers the refused half as W43 does, and either admits the Owned half with a Lean statement about conversions or refuses it by name, with a measured arbiter.",
+   "source": "docs/reports/w43-return-expression/README.md",
+   "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+   "id": "W43-RETURN-COMPOUND-CALL",
+   "title": "Return expressions with a call inside a larger expression stay refused (82 leaves)",
+   "why": "Card W43-RETURN-EXPRESSION measured 82 refused return leaves over 76 Unknown functions whose expression contains a call but is not one whole call: 53 with an uncontracted call in arithmetic or comparison (`strcmp(a, b) == 0`), 18 conditionals and 9 short-circuits over a call, and 2 whose calls are all contracted; 41 leaves (39 functions) are sole blockers. B01 already admits exactly one externally declared contracted `None` call in a scalar residual; everything else needs an evaluation model for a call whose result feeds further computation, and a conditional or short-circuit call is not unconditionally evaluated (constraint 5d). Discharge: a measured card that either lowers the refused-call subset to the classifier's refusal of the call with a proved frequency-preserving decomposition, or states per sub-shape why it stays refused.",
+   "source": "docs/reports/w43-return-expression/README.md",
+   "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+   "id": "W43-RETURN-ACCESS-OPERANDS",
+   "title": "290 access-only return expressions are refused for their operands' binding and typing, not for the return",
+   "why": "Card W43-RETURN-EXPRESSION measured 290 refused return leaves over 264 Unknown functions whose expression carries no call: 186 read through a base the body may bind (constraint 5 / REACH-GATE-BOUND-BASE), 44 through a base whose declared type the reader will not commit to (e.g. `const cJSON * const item`, `UnreadableSpecifiers`), 31 end at an Unresolved member (typedef pointer members such as `cfl_sds_t`), 12 at an aggregate-valued (union) member, and 17 at other operand shapes; 75 are sole blockers (27 base-type, 22 unresolved member, 12 union member). None is a return-position question: each is an indirect-access, base-type-reader or member-typing premise shared with every other expression position, so this card deliberately does not widen it. Discharge: the general indirect-access and typed-member cards consume this per-obstacle split (it refines RETURN-POSITION-TYPED-MEMBER-REACH) and re-measure it at their arbiters.",
+   "source": "docs/reports/w43-return-expression/README.md",
+   "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+   "id": "W43-RETURN-COMMA-MACRO",
+   "title": "Comma-expression returns, dominated by one nanopb macro, stay refused (67 leaves)",
+   "why": "Card W43-RETURN-EXPRESSION measured 67 refused return leaves over 32 Unknown functions spelled `return (E1), E2;`, almost all nanopb's PB_RETURN_ERROR expansion `(stream->errmsg = stream->errmsg ? stream->errmsg : \"...\"), 0`; 2 are sole blockers. Two further call-free leaves carry a brace (statement expression or compound literal); the two whole calls whose argument is a compound literal were lowered to the classifier's `braced initializer` refusal. The comma operator itself is a sequence point, so `E1; return E2;` is an exact desugaring, but E1 is a pointer-member store through a base the body binds, which is indirect access outside this card and would only exchange the refusal. Discharge: a card that lands the sequential desugaring together with (or after) a sound pointer-member store rule, measured.",
+   "source": "docs/reports/w43-return-expression/README.md",
+   "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+   "id": "W43-RETURN-CONDITIONAL-OPERANDS",
+   "title": "Call-free conditional and short-circuit returns are refused for their operands (26 leaves)",
+   "why": "Card W43-RETURN-EXPRESSION measured 26 call-free refused return leaves over 26 Unknown functions whose top-level operator is `?:` (18) or `&&`/`||` (8); 17 are sole blockers. `?`, `:` and the logical operators are already admitted operand punctuation, so these refuse for an operand (a bound base, an untyped member, a dereference), not for the operator. This updates RETURN-POSITION-CONDITIONAL's 28-leaf wave-33 population with the analyzer's own token view but does not answer its counterfactual question. Discharge: RETURN-POSITION-CONDITIONAL's measurement, per operand obstacle, at the next typed-access arbiter.",
+   "source": "docs/reports/w43-return-expression/README.md",
+   "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+   "id": "W43-RETURN-TYPE-OPERATOR",
+   "title": "`sizeof` of a non-scalar type in a return stays refused (6 leaves)",
+   "why": "Card W43-RETURN-EXPRESSION measured 6 refused return leaves over 6 Unknown functions that are translation-time type-operator constants such as `return sizeof(LZ4_stream_t);`; 4 are sole blockers and would plausibly reach Safe. The fixed scalar type-query rule (type_query.rs) deliberately admits only a readable scalar type name or a declared scalar local, so a record or union typedef stays outside it; widening that rule is a type-query change affecting every expression position, not a return-position one, and W43's lowering explicitly refuses call-shaped type operators rather than misattributing them to an uncontracted `sizeof`. Discharge: a card widening the type-query rule to complete record/union types with its own VLA argument and arbiter.",
+   "source": "docs/reports/w43-return-expression/README.md",
+   "recorded_by": "W43-RETURN-EXPRESSION"
+  },
+  {
+   "id": "RETURN-REFUSAL-LEAK-REPORT-PREMISE",
+   "title": "report_leaks runs at every exit; an exit-node refusal does not suppress a leak accusation",
+   "why": "Card W43-RETURN-EXPRESSION measured, in the real gateway, that a body `void *p = q_alloc(); return (int) z_take(p);` whose return keeps the return-position refusal still publishes Leak beside the Unsupported leaf (provisional Unsafe): `report_leaks` is called for every exit node with no unmodeled check, and a refusal never touches resource states. Several texts state the opposite: gateway constraint 7 ('report_leaks skips an unmodeled exit'), the C-GATEWAY-RETURN-CALL-W4 module note on the None result, and QCore.ReturnPositionEscape's `reported .refuse = false`, whose accusing-direction theorems are therefore about a model premise the Rust does not share (the residual observation's `indeterminate` flag is what an unmodeled path does change). W43's own Lean model states the measured behaviour and its test pins it. Discharge: an integrator correction of the constraint-7 sentence and the two module notes, and either a Lean amendment of ReturnPositionEscape's `reported` or an explicit statement that it models the residual observation rather than the leak report.",
+   "source": "docs/reports/w43-return-expression/README.md",
+   "recorded_by": "W43-RETURN-EXPRESSION"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

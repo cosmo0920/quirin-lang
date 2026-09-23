@@ -804,6 +804,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-chunk-source-profile](w43-chunk-source-profile/README.md) | W43 chunk source profile |
 
+| [w43-return-expression](w43-return-expression/README.md) | W43-RETURN-EXPRESSION — the refused return expressions, measured and re-attributed |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |

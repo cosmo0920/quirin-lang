@@ -1,0 +1,28 @@
+Unknown functions whose only blocker is one uncontracted callee: 315
+distinct callees: 235
+functions  callee
+        9  LZ4_decompress_generic (defined in: lz4.c)
+        8  memcpy
+        6  strcmp
+        5  cmt_mpack_unpack_array
+        5  ctr_mpack_unpack_array
+        5  setsockopt
+        4  LZ4_compress_HC (defined in: lz4hc.c)
+        4  LZ4_compress_HC_extStateHC (defined in: lz4hc.c)
+        4  rd_kafka_admin_result_ret_groups (defined in: rdkafka_admin.c)
+        3  add (defined in: cmt_metric.c)
+        3  add_item_to_object (defined in: cJSON.c)
+        3  LZ4_compress_fast_continue (defined in: lz4.c)
+        3  LZ4_decompress_unsafe_generic (defined in: lz4.c)
+        3  LZ4_compress_HC_continue (defined in: lz4hc.c)
+        3  rd_kafka_admin_result_ret_resources (defined in: rdkafka_admin.c)
+        3  rd_kafka_admin_result_ret_topics (defined in: rdkafka_admin.c)
+        3  rd_kafka_assignor_add
+        2  memset
+        2  add_item_to_array (defined in: cJSON.c)
+        2  get_object_item (defined in: cJSON.c)
+        2  replace_item_in_object (defined in: cJSON.c)
+        2  LZ4_compress_default (defined in: lz4.c)
+        2  LZ4_compress_fast_extState (defined in: lz4.c)
+        2  pb_write (defined in: nanopb/pb_encode.c)
+        2  rd_slice_reader0 (defined in: rdbuf.c)

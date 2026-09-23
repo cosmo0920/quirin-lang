@@ -1,0 +1,81 @@
+census_records: 4396
+census_unit_ordinals: 122
+unjoined_unit_ordinals: 0
+records_joined_to_no_published_leaf: 8
+published_leaves: 1444
+published_leaves_uncovered: 0
+published_leaves_whose_passes_disagree: 7
+
+unknown_population: 1440 leaves / 1109 functions
+ leaves  funcs  family / detail
+    952    732  A. whole call, uncontracted callee
+    635    465      defined in this unit
+    290    253      declared elsewhere
+     12      9      declared elsewhere under a cast
+     10     10      defined in this unit under a cast
+      4      4      compiler builtin
+      1      1      compiler builtin under a cast
+    290    264  F. access expression, no call
+    186    165      access through a base this body may bind
+     44     43      base type the declaration reader will not commit to
+     31     28      member typed Unresolved
+     12     12      member typed AggregateValued
+      5      5      access through a call or cast result
+      3      3      writes inside the expression
+      3      3      member typed OtherPointer
+      3      3      address-of or dereference of a name
+      2      2      subscript
+      1      1      unclassified operand
+     82     76  C. compound expression with a call
+     53     49      an uncontracted call
+     18     16      conditional ?:
+      9      9      short-circuit && / ||
+      2      2      every call contracted
+     71     36  G. other
+     67     32      comma operator
+      4      4      statement expression or compound literal
+     26     26  E. conditional or short-circuit, no call
+     18     18      conditional ?:
+      8      8      short-circuit && / ||
+     13     12  B. whole call, contracted callee
+     11     10      result None
+      2      2      result Owned { nullable: true } under a cast
+      6      6  D. type-operator constant
+      5      5      sizeof/_Alignof over a type or object
+      1      1      sizeof/_Alignof over a type or object under a cast
+  status of the defined-in-unit callee: {'Unknown': 581, 'not projected': 49, 'Unsafe': 15}
+
+sole_population: 491 leaves / 465 functions
+ leaves  funcs  family / detail
+    348    327  A. whole call, uncontracted callee
+    242    225      defined in this unit
+     93     92      declared elsewhere
+      5      5      declared elsewhere under a cast
+      4      4      compiler builtin
+      4      4      defined in this unit under a cast
+     75     75  F. access expression, no call
+     27     27      base type the declaration reader will not commit to
+     22     22      member typed Unresolved
+     12     12      member typed AggregateValued
+      6      6      access through a base this body may bind
+      4      4      access through a call or cast result
+      2      2      subscript
+      1      1      unclassified operand
+      1      1      address-of or dereference of a name
+     41     39  C. compound expression with a call
+     21     21      an uncontracted call
+     11      9      conditional ?:
+      8      8      short-circuit && / ||
+      1      1      every call contracted
+     17     17  E. conditional or short-circuit, no call
+     13     13      conditional ?:
+      4      4      short-circuit && / ||
+      4      4  D. type-operator constant
+      3      3      sizeof/_Alignof over a type or object
+      1      1      sizeof/_Alignof over a type or object under a cast
+      4      4  G. other
+      2      2      statement expression or compound literal
+      2      2      comma operator
+      2      2  B. whole call, contracted callee
+      2      2      result Owned { nullable: true } under a cast
+  status of the defined-in-unit callee: {'Unknown': 227, 'Unsafe': 4, 'not projected': 15}

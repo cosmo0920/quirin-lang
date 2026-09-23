@@ -1,0 +1,29 @@
+{
+  "note": "W42 priority integration, 2026-09-20. Same-checkout BEFORE reproduces all five B-series artifacts byte for byte. Combined AFTER matches the isolated scalar-store diagnostics exactly: two functions Unknown to Safe, zero unit moves, 362 lexical plus2 downstream call refusals removed,350 direct alias exchanges and7 downstream alias additions. Leak272 preserved. Three other artifacts are byte-identical; Monkey changes only schema and callback accounting. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous hand-carried checkpoint preserved in docs/reports/w42-priority-integration/previous-corpus-row.json.",
+  "units": 185,
+  "safe": 2,
+  "provisional_unsafe": 42,
+  "unknown": 137,
+  "data_only": 4,
+  "projected_functions": 4834,
+  "leak_diagnostics": 272,
+  "process_sidecar": "3 checked function contracts / 93 Unknown",
+  "baseline": "docs/reports/w42-priority-integration/artifacts/",
+  "source": "docs/reports/w42-priority-integration/README.md; preceding baseline docs/reports/b-series-integration/artifacts/",
+  "unknown_alias_diagnostics": 4665,
+  "unsupported_diagnostics": 49371,
+  "double_release_diagnostics": 0,
+  "function_statuses": {
+    "safe": 223,
+    "provisional_unsafe": 84,
+    "unknown": 4527
+  },
+  "source_definitions": 4921,
+  "unprojected_definitions": 87,
+  "unit_reason_codes": {
+    "unsupported-syntax": 136,
+    "none": 48,
+    "incomplete-obligation-coverage": 1
+  },
+  "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

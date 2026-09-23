@@ -1,0 +1,89 @@
+{
+ "diagnostic_counts": {
+  "before": {
+   "leak": 272,
+   "summary_conflict": 1,
+   "unknown_alias": 4665,
+   "unsupported": 49371
+  },
+  "after": {
+   "leak": 272,
+   "summary_conflict": 1,
+   "unknown_alias": 4665,
+   "unsupported": 49371
+  }
+ },
+ "function_counts": {
+  "before": {
+   "Unknown": 4527,
+   "Safe": 223,
+   "Unsafe": 84
+  },
+  "after": {
+   "Unknown": 4527,
+   "Safe": 223,
+   "Unsafe": 84
+  }
+ },
+ "unit_counts": {
+  "before": {
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4,
+   "Safe": 2
+  },
+  "after": {
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4,
+   "Safe": 2
+  }
+ },
+ "leaves_removed": 941,
+ "leaves_added": 941,
+ "removed_lowered": 941,
+ "rule_shape_leaves_before": 941,
+ "rule_shape_kept": [],
+ "forecast": {
+  "forecast_lowered": 940,
+  "measured_lowered": 941,
+  "lowered_but_not_forecast": [
+   [
+    "cmetrics",
+    "cmt_histogram.c",
+    "cmt_histogram_buckets_default_create",
+    5508
+   ],
+   [
+    "librdkafka",
+    "rdkafka_request.c",
+    "rd_kafka_MetadataRequest",
+    22226
+   ]
+  ],
+  "forecast_but_not_lowered": [
+   [
+    "librdkafka",
+    "lz4frame.c",
+    "LZ4F_decompress",
+    2028
+   ]
+  ]
+ },
+ "added_exchange": 941,
+ "absorbed_coordinates": 0,
+ "exchange_descriptions": {
+  "call to uncontracted function `\u2026`": 671,
+  "indirect memory access is outside the resource projection": 267,
+  "braced initializer, expression, or declaration is not modeled": 2,
+  "nested call `\u2026` inside a modeled call is outside the resource projection": 1
+ },
+ "functions_losing_a_return_leaf": 726,
+ "function_moves": [],
+ "unit_moves": [],
+ "sole_blocked_before": 465,
+ "sole_blocked_still_carrying_the_return_refusal": 148,
+ "attribution_complete": true,
+ "unattributed_count": 0,
+ "unit_field_change_count": 0
+}

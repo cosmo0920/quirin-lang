@@ -403,7 +403,9 @@ fn a_conditional_opaque_pointer_result_stays_refused() {
 /// The widening is the `Decides` rule reached from a new position and nothing
 /// more: it adds no vocabulary, so a dereference, a subscript, an address-of,
 /// an uncontracted call, a member this reader will not type and a chain past
-/// `ACCESS_CHAIN_LIMIT` all refuse exactly as before.
+/// `ACCESS_CHAIN_LIMIT` all refuse exactly as before. (Since card
+/// W43-RETURN-EXPRESSION the uncontracted whole call refuses with the statement
+/// classifier's wording rather than the return position's; it still refuses.)
 #[test]
 fn the_adversarial_family_keeps_its_return_refusal() {
     if !clang_available() {
@@ -420,14 +422,26 @@ fn the_adversarial_family_keeps_its_return_refusal() {
         "struct z_node **subject(struct z_view *view) { return &view->head; }",
         // a `void *` member the reader will not resolve
         "void *subject(struct z_view *view) { return view->head->leaf->opaque; }",
-        // an uncontracted call
-        "int subject(struct z_view *view) { return z_unknown(view->kind); }",
         // a chain past the bound
         "struct z_node *subject(struct z_view *view) { \
          return view->head->next->next->next->next; }",
     ] {
         refused_in_return_but_admitted_in_a_condition(refused, decided);
     }
+    // An uncontracted call. Deliberately re-pinned by card
+    // W43-RETURN-EXPRESSION: a whole-call return the statement classifier
+    // refuses is lowered to that refusal, which here is the classifier's own
+    // lexical indirect-access gate on the argument — exactly what
+    // `x = z_unknown(view->kind);` reports in a statement. It is still refused,
+    // not `Safe` and not certified; only the wording names the real blocker.
+    let lowered = run("int subject(struct z_view *view) { return z_unknown(view->kind); }");
+    assert!(!lowered.refuses_return(), "{:?}", lowered.unsupported());
+    assert_eq!(
+        lowered.unsupported(),
+        vec!["indirect memory access is outside the resource projection".to_owned()]
+    );
+    assert_ne!(lowered.status, AnalysisStatus::Safe);
+    assert!(!lowered.certified);
 }
 
 /// The behaviour this card must **not** disturb: a `return` of a plain

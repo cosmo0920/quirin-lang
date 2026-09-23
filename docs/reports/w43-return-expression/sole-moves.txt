@@ -1,0 +1,9 @@
+BEFORE sole-return-blocked Unknown functions: 465
+AFTER statuses: {'Unknown': 465}
+functions  AFTER distinct reasons (normalised)
+      237  call to uncontracted function `_`
+      145  unmodeled call, aggregate or indirect access in return expression
+       77  indirect memory access is outside the resource projection
+        3  call to uncontracted function `_` + unmodeled call, aggregate or indirect access in return expression
+        2  braced initializer, expression, or declaration is not modeled
+        1  call to uncontracted function `_` + indirect memory access is outside the resource projection
