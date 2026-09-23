@@ -29,8 +29,9 @@ use qcore_verifier_host::{ProcessProvider, VerifierRegistry};
 use std::process::Command;
 use std::sync::Arc;
 
-const COMMITTED: &str =
-    include_str!("../../common/fixtures/unsupported_close_composition_projection.json");
+const COMMITTED: &str = include_str!(
+    "../../quirin-provider-shared/fixtures/unsupported_close_composition_projection.json"
+);
 
 fn plugin() -> PluginId {
     PluginId::new("qcore.chunkio").unwrap()

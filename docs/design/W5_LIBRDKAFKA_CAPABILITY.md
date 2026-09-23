@@ -31,7 +31,7 @@ library** plus a **built-in v1 provider stub**:
 | --- | --- | --- |
 | W2 source profile | `contract/profiles/fluent-bit/profile.json` → `libraries.librdkafka` | 1 source root, 3 audited files, 3 source witnesses, 7 permitted mechanisms |
 | Provider manifest | `contract/profiles/fluent-bit/providers/qcore.librdkafka.json` | `entrypoint.kind: built_in`, protocol v1, evidence v1, `certificate_checker: qcore.unsupported_assertions.v1` |
-| Provider package | `providers/qcore-provider-librdkafka/` | `main.rs` delegating to the shared `providers/common/runtime.rs`; no librdkafka-specific computation |
+| Provider package | `providers/qcore-provider-librdkafka/` | `main.rs` delegating to the shared `quirin_provider_shared::runtime` (`providers/quirin-provider-shared/src/runtime.rs`); no librdkafka-specific computation |
 | Declared contracts | `providers/qcore-provider-librdkafka/contracts/librdkafka/*.qcore` | 4 modules, 12 declared operations, 4 declared resource-type destructors |
 | Loaded contracts | `cycle19-resource-contracts.json` | **1** of those 4 modules |
 

@@ -1,9 +1,6 @@
 //! Schemas-only process fixture for a separate declared source codebase.
 //! The reused evaluator consumes imported statements, never expected paths.
-#[path = "../../../common/runtime.rs"]
-mod runtime;
-#[path = "../../../common/source_effect.rs"]
-mod source_effect;
+use quirin_provider_shared::{runtime, source_effect};
 
 fn main() {
     if let Err(error) = runtime::run_with_v2(

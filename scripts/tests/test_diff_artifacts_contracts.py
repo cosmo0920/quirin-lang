@@ -142,8 +142,12 @@ class ContractItemizationTest(unittest.TestCase):
         old = "/old/contract/qcore/monkey/memory.qcore"
         provider = "/new/providers/qcore-provider-libevent/contracts/monkey/memory.qcore"
         second = "/another/providers/qcore-provider-libevent/contracts/monkey/memory.qcore"
-        shared = "/new/providers/shared/contracts/monkey/memory.qcore"
-        for path in [provider, second, shared]:
+        shared = "/new/providers/quirin-provider-shared/contracts/monkey/memory.qcore"
+        # The pre-QUIRIN-PROVIDER-SHARED spelling of the shared root must still
+        # compare, so a diff across that move names the same logical module.
+        former_shared = "/old/providers/shared/contracts/monkey/memory.qcore"
+        library = "/new/providers/quirin-provider-libc/contracts/monkey/memory.qcore"
+        for path in [provider, second, shared, former_shared, library]:
             self.assertEqual(diff_artifacts.contract_module(old), diff_artifacts.contract_module(path))
         result = diff_artifacts.diff_contracts({"sources": {old: "policy"}}, {"sources": {provider: "changed"}}, False)
         row = result["sources"]["changed"][0]

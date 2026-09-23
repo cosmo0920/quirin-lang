@@ -10,9 +10,9 @@
 use super::*;
 use qcore_schemas::cleanup_replay_summary::CleanupReplayPathRecord;
 
-const CLOSE: &str = include_str!("fixtures/native_close_cleanup_replay_projection.json");
-const UNMAP: &str = include_str!("fixtures/native_unmap_cleanup_replay_projection.json");
-const DELETE: &str = include_str!("fixtures/native_delete_cleanup_replay_projection.json");
+const CLOSE: &str = include_str!("../../fixtures/native_close_cleanup_replay_projection.json");
+const UNMAP: &str = include_str!("../../fixtures/native_unmap_cleanup_replay_projection.json");
+const DELETE: &str = include_str!("../../fixtures/native_delete_cleanup_replay_projection.json");
 
 fn input(text: &str) -> CleanupReplaySourceInput {
     serde_json::from_str(text).unwrap()
@@ -435,7 +435,7 @@ fn path_shapes_outside_the_replay_rules_are_declined() {
 #[test]
 fn the_route_declines_every_request_that_is_not_its_own() {
     let manifest: PluginManifest = serde_json::from_str(include_str!(
-        "../qcore-provider-chunkio/provider-template.json"
+        "../../../qcore-provider-chunkio/provider-template.json"
     ))
     .unwrap();
     let base = VerificationRequestV2 {

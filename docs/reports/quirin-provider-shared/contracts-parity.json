@@ -1,0 +1,21 @@
+{
+ "before_sources": 33,
+ "after_sources": 33,
+ "moved_source_keys": 18,
+ "unchanged_source_keys": 15,
+ "moved_texts_identical": true,
+ "top_level_keys_differing_raw": [
+  "manifest",
+  "sources"
+ ],
+ "identical_after_path_rewrite": true,
+ "diff_artifacts_source_counts": {
+  "added": 0,
+  "removed": 0,
+  "changed": 0,
+  "before": 33,
+  "after": 33
+ },
+ "diff_artifacts_key_collisions": [],
+ "path_only": true
+}

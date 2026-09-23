@@ -1,25 +1,8 @@
-#[path = "../../common/runtime.rs"]
-mod runtime;
-
-#[path = "../../common/source_effect.rs"]
-mod source_effect;
-
-#[path = "../../common/counter_effect.rs"]
-mod counter_effect;
-
-#[path = "../../common/teardown_effect.rs"]
-mod teardown_effect;
-
-#[path = "../../common/call_use_effect.rs"]
-mod call_use_effect;
-
-#[path = "../../common/cleanup_replay_effect.rs"]
-mod cleanup_replay_effect;
-
-#[path = "../../common/composition_effect.rs"]
-mod composition_effect;
-
 use qcore_schemas::plugin::{PluginManifest, VerificationRequestV2, VerificationResponseV2};
+use quirin_provider_shared::{
+    call_use_effect, cleanup_replay_effect, composition_effect, counter_effect, runtime,
+    source_effect, teardown_effect,
+};
 
 /// Each capability inspects the request itself and declines what it does not
 /// implement; a declined request falls through to the runtime's Unknown reply.

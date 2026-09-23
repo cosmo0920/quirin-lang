@@ -199,5 +199,4 @@ pub fn propose(
 }
 
 #[cfg(test)]
-#[path = "call_use_effect_tests.rs"]
 mod tests;

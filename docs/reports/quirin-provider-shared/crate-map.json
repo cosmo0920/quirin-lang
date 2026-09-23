@@ -1,0 +1,230 @@
+{
+ "quirin-provider-cfl": {
+  "contracts": {
+   "cfl/arena_lifetime.qcore": [
+    "contract/corpus.json (root)"
+   ],
+   "cfl/intrusive_list.qcore": [
+    "contract/corpus.json (root)",
+    "editors/emacs/qcore-mode-tests.el"
+   ],
+   "cfl/sds_lifetime.qcore": [
+    "contract/corpus.json (root)",
+    "cycle19-resource-contracts.json"
+   ],
+   "cfl/time.qcore": [
+    "contract/corpus.json (root)",
+    "cycle19-resource-contracts.json"
+   ]
+  },
+  "cargo_dependants": [
+   "providers/quirin-provider-shared/Cargo.toml"
+  ]
+ },
+ "quirin-provider-fluent-bit": {
+  "contracts": {
+   "fluent_bit/hash_table_publication.qcore": [
+    "contract/corpus.json (root)",
+    "crates/qcore-c-gateway/tests/fixtures/contracts/hash_contracts_callees.qcore",
+    "crates/qcore-c-gateway/tests/hash_contracts.rs",
+    "crates/qcore-c-gateway/tests/neighbours.rs",
+    "crates/qcore-c-gateway/tests/prod_contracts.rs",
+    "cycle19-resource-contracts.json"
+   ],
+   "fluent_bit/input_chunk_destroy.qcore": [
+    "contract/corpus.json (root)",
+    "cycle19-resource-contracts.json"
+   ],
+   "fluent_bit/input_chunk_destroy_direct_routes.qcore": [
+    "contract/corpus.json (root)",
+    "cycle19-resource-contracts.json"
+   ],
+   "fluent_bit/input_chunk_helpers.qcore": [
+    "contract/corpus.json (root)",
+    "crates/qcore-c-gateway/tests/neighbours.rs",
+    "crates/qcore-frontend/src/frontend.rs",
+    "crates/qcore-frontend/src/source_loop.rs",
+    "cycle19-resource-contracts.json",
+    "docs/QCORE_SPEC_r0_3.md",
+    "docs/design/SOURCE_LOOP_V1.md"
+   ],
+   "fluent_bit/input_chunk_name.qcore": [
+    "contract/corpus.json (root)",
+    "crates/qcore-c-gateway/tests/neighbours.rs",
+    "crates/qcore-c-gateway/tests/prod_contracts.rs",
+    "cycle19-resource-contracts.json"
+   ],
+   "fluent_bit/input_chunk_sizes.qcore": [
+    "contract/corpus.json (root)",
+    "cycle19-resource-contracts.json"
+   ],
+   "fluent_bit/input_chunk_total_size.qcore": [
+    "contract/corpus.json (root)",
+    "cycle19-resource-contracts.json"
+   ],
+   "fluent_bit/logging.qcore": [
+    "contract/corpus.json (root)",
+    "crates/qcore-c-gateway/tests/neighbours.rs",
+    "crates/qcore-c-gateway/tests/prod_contracts.rs",
+    "cycle19-resource-contracts.json"
+   ],
+   "fluent_bit/memory.qcore": [
+    "contract/corpus.json (root)",
+    "docs/QCORE_MODULE_MODES.md",
+    "docs/cycles/CYCLE_19.md",
+    "scripts/cycle19_native_observations.py"
+   ],
+   "fluent_bit/resource_memory.qcore": [
+    "contract/corpus.json (root)",
+    "compiler/tests/std_string.rs",
+    "crates/qcore-frontend/src/frontend.rs",
+    "crates/qcore-frontend/src/source_std_string.rs",
+    "cycle19-resource-contracts.json",
+    "docs/design/STRING_SLICE_V1.md"
+   ],
+   "fluent_bit/routes_mask.qcore": [
+    "contract/corpus.json (root)",
+    "crates/qcore-c-gateway/tests/neighbours.rs",
+    "crates/qcore-c-gateway/tests/prod_contracts.rs",
+    "cycle19-resource-contracts.json"
+   ],
+   "fluent_bit/time.qcore": [
+    "contract/corpus.json (root)",
+    "crates/qcore-c-gateway/tests/neighbours.rs",
+    "cycle19-resource-contracts.json"
+   ]
+  },
+  "cargo_dependants": [
+   "providers/quirin-provider-shared/Cargo.toml"
+  ]
+ },
+ "quirin-provider-libc": {
+  "contracts": {
+   "libc/errno.qcore": [
+    "contract/corpus.json (root)",
+    "cycle19-resource-contracts.json"
+   ],
+   "libc/memory.qcore": [
+    "contract/corpus.json (root)",
+    "compiler/tests/contract_loader.rs",
+    "cycle19-resource-contracts.json",
+    "docs/GENERALIZATION_PLAN.md"
+   ],
+   "libc/pthread_mutex.qcore": [
+    "contract/corpus.json (root)",
+    "cycle19-resource-contracts.json"
+   ]
+  },
+  "cargo_dependants": [
+   "providers/quirin-provider-shared/Cargo.toml"
+  ]
+ },
+ "quirin-provider-mpack": {
+  "contracts": {
+   "mpack/writer.qcore": [
+    "contract/corpus.json (root)",
+    "cycle19-resource-contracts.json"
+   ]
+  },
+  "cargo_dependants": [
+   "providers/quirin-provider-shared/Cargo.toml"
+  ]
+ },
+ "quirin-provider-msgpack": {
+  "contracts": {
+   "msgpack/packer.qcore": [
+    "contract/corpus.json (root)",
+    "cycle19-resource-contracts.json"
+   ]
+  },
+  "cargo_dependants": [
+   "providers/quirin-provider-shared/Cargo.toml"
+  ]
+ },
+ "quirin-provider-shared": {
+  "contracts": {
+   "language/quantified_indices.qcore": [
+    "contract/corpus.json (root)",
+    "compiler/tests/quant_index_contracts.rs",
+    "docs/QCORE_MODULE_MODES.md"
+   ],
+   "library/custody_evidence.qcore": [
+    "contract/corpus.json (root)"
+   ],
+   "library/source_projection.qcore": [
+    "contract/corpus.json (root)",
+    "compiler/examples/support/cycle19_compatibility.rs",
+    "compiler/tests/memory_close_route_parity.rs",
+    "contract/profiles/cmetrics-counter/audit.json",
+    "crates/qcore-c-gateway/src/typed_source.rs",
+    "crates/qcore-c-gateway/tests/boolean_frame_helpers.rs",
+    "crates/qcore-verification/tests/ctraces_capability_boundary.rs",
+    "crates/qcore-verification/tests/fixtures/boolean_source.rs",
+    "crates/qcore-verification/tests/fixtures/frame_source.rs",
+    "crates/qcore-verification/tests/fixtures/memory_close_composition.rs",
+    "crates/qcore-verification/tests/source_effect.rs",
+    "crates/qcore-verification/tests/source_effect_helper_target.rs",
+    "crates/qcore-verification/tests/source_effect_mutations.rs",
+    "crates/qcore-verification/tests/source_effect_obligations.rs",
+    "providers/conformance/tests/cmetrics_unit.rs",
+    "providers/conformance/tests/composed_five_providers.rs",
+    "scripts/prepare_cmetrics_clang_audit.py"
+   ]
+  },
+  "rust_modules": {
+   "call_use_effect": [
+    "providers/qcore-provider-chunkio/src/main.rs"
+   ],
+   "cleanup_replay_effect": [
+    "providers/qcore-provider-chunkio/src/main.rs"
+   ],
+   "composition_effect": [
+    "providers/qcore-provider-chunkio/src/main.rs"
+   ],
+   "counter_effect": [
+    "providers/qcore-provider-chunkio/src/main.rs"
+   ],
+   "reactor_callbacks": [
+    "providers/qcore-provider-libevent/src/main.rs"
+   ],
+   "runtime": [
+    "providers/conformance/src/bin/configured_audit_provider.rs",
+    "providers/conformance/src/bin/sample_boolean_provider.rs",
+    "providers/qcore-provider-chunkio/src/main.rs",
+    "providers/qcore-provider-cmetrics/src/main.rs",
+    "providers/qcore-provider-ctraces/src/main.rs",
+    "providers/qcore-provider-libevent/src/main.rs",
+    "providers/qcore-provider-librdkafka/src/main.rs"
+   ],
+   "source_effect": [
+    "providers/conformance/src/bin/configured_audit_provider.rs",
+    "providers/conformance/src/bin/sample_boolean_provider.rs",
+    "providers/qcore-provider-chunkio/src/main.rs",
+    "providers/qcore-provider-cmetrics/src/main.rs"
+   ],
+   "teardown_effect": [
+    "providers/qcore-provider-chunkio/src/main.rs"
+   ]
+  },
+  "fixtures": [
+   "crates/qcore-verification/tests/emit_cleanup_replay_fixtures.rs",
+   "providers/conformance/tests/call_use_capability.rs",
+   "providers/conformance/tests/cleanup_replay_capability.rs",
+   "providers/conformance/tests/composition_capability.rs",
+   "providers/conformance/tests/file_close_composition_capability.rs",
+   "providers/conformance/tests/filesystem_chunk_close_composition_capability.rs",
+   "providers/conformance/tests/memory_close_composition_capability.rs",
+   "providers/conformance/tests/teardown_capability.rs",
+   "providers/conformance/tests/unsupported_close_composition_capability.rs",
+   "providers/quirin-provider-shared/src/*/tests.rs (unit tests)"
+  ],
+  "cargo_dependants": [
+   "providers/conformance/Cargo.toml",
+   "providers/qcore-provider-chunkio/Cargo.toml",
+   "providers/qcore-provider-cmetrics/Cargo.toml",
+   "providers/qcore-provider-ctraces/Cargo.toml",
+   "providers/qcore-provider-libevent/Cargo.toml",
+   "providers/qcore-provider-librdkafka/Cargo.toml"
+  ]
+ }
+}

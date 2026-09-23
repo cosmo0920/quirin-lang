@@ -34,8 +34,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 use std::sync::Arc;
 
-const RULES: &str =
-    include_str!("../../../providers/shared/contracts/library/source_projection.qcore");
+const RULES: &str = include_str!(
+    "../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"
+);
 
 /// Two functions of the declared ChunkIO Boolean model in one translation unit.
 /// `read_lock` returns the field; `peek_lock` normalizes it through a branch.

@@ -401,6 +401,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [quiet-emission-streams](quiet-emission-streams/README.md) | Quiet emission and composable streams |
 
+| [quirin-provider-shared](quirin-provider-shared/README.md) | QUIRIN-PROVIDER-SHARED: the providers' shared assets become real crates |
+
 | [quirin-review-integration](quirin-review-integration/README.md) | Quirin review priority integration |
 
 | [quirin-socket-v1](quirin-socket-v1/README.md) | QUIRIN-SOCKET-V1 — a checked TCP and UDP socket surface in pure QCore source |

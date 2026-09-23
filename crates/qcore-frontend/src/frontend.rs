@@ -2862,7 +2862,7 @@ fn lexical_references(
             // `in` is deliberately **not** in `is_reserved_source_word`, and the
             // constraint-14 census is why: it occurs as a *reference* inside the
             // pinned contract corpus — `ensures normal resource_borrowed(in);`
-            // in `providers/shared/contracts/fluent_bit/input_chunk_helpers.qcore`, whose
+            // in `providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qcore`, whose
             // `extern fn generate_chunk_name(in: ptr<mut, u8>, …)` names a
             // parameter `in`. That is exactly the shape card `STRING-SLICE`
             // measured for `len`, and it gets exactly that card's answer: narrow
@@ -2884,7 +2884,7 @@ fn lexical_references(
         // in `is_reserved_source_word`: the constraint-14 census found `len` as
         // a *reference* inside the pinned contract corpus
         // (`ensures normal resource_borrowed(len);` in
-        // `providers/shared/contracts/fluent_bit/resource_memory.qcore` and
+        // `providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore` and
         // `providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore`), so a global reservation
         // would change how a corpus this card may not touch resolves a name.
         // The `len(` shape occurs zero times in QCore source anywhere in the

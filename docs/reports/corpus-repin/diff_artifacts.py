@@ -141,7 +141,10 @@ def contract_module(path):
     # source identities or archived artifacts; raw keys remain in the diff.
     parts = normalised.split("/")
     for i in range(len(parts) - 3):
-        if (parts[i] == "providers" and (parts[i + 1].startswith("qcore-provider-") or parts[i + 1] == "shared")
+        if (parts[i] == "providers"
+                and (parts[i + 1].startswith("qcore-provider-")
+                     or parts[i + 1].startswith("quirin-provider-")
+                     or parts[i + 1] == "shared")
                 and parts[i + 2] == "contracts"):
             return "qcore/" + "/".join(parts[i + 3:])
     marker = "/contract/"

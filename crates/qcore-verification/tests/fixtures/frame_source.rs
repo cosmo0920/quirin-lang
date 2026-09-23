@@ -19,8 +19,9 @@ use qcore_verification::frame_source::{
 use std::path::PathBuf;
 
 /// The declared source-projection acceptance rules every import runs under.
-pub const RULES: &str =
-    include_str!("../../../../providers/shared/contracts/library/source_projection.qcore");
+pub const RULES: &str = include_str!(
+    "../../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"
+);
 /// The `Chunk`-vocabulary contract `memory_close` already checks this helper
 /// against, unedited.
 pub const CHUNK_CONTRACT: &str = include_str!(

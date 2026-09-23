@@ -468,7 +468,7 @@ fn duplicate_functions_and_inputs_are_rejected_even_when_identical() {
     let file = manifest()
         .parent()
         .unwrap()
-        .join("providers/shared/contracts/libc/memory.qcore");
+        .join("providers/quirin-provider-libc/contracts/libc/memory.qcore");
     assert!(
         load_resource_contract_files(&[file.clone(), file])
             .unwrap_err()

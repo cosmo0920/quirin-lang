@@ -1,0 +1,9 @@
+[
+ {
+  "id": "PROVIDER-CONFORMANCE-CORE-FIXTURE-PATHS",
+  "title": "Provider conformance tests compile 11 core test-fixture modules through 15 #[path] includes",
+  "why": "Card QUIRIN-PROVIDER-SHARED removed every #[path] from provider and conformance binaries into the former providers/common (17) and the four side-file test includes, but deliberately left the 15 #[path] attributes in providers/conformance/tests/*.rs (13 files) that compile modules from crates/qcore-verification/tests/fixtures/ (boolean_source, counter_source, reactor_program, composition_source, call_use_source, cleanup_replay_source, teardown_source, file_close_composition, filesystem_chunk_close_composition, memory_close_composition, unsupported_close_composition; reactor_program is included three times and counter_source and boolean_source twice each). Moving those fixtures into a provider crate would invert the layering (they import qcore-c-gateway, qcore-contract, qcore-verification and qcore-core), so the coupling is a cross-workspace source include with no Cargo edge: a fixture edit in the core workspace silently changes a provider-workspace test, and each including test target compiles its own copy. A sound home is a publish=false test-support library in the core workspace (for example crates/qcore-verification-fixtures) that depends on the core crates, is a dev-dependency of qcore-verification's integration tests and of providers/conformance, and is admitted by compiler/tests/workspace_layering.rs as a core member that no production crate depends on. Discharge: move the fixture modules there, remove all 15 attributes, and show the qcore-verification and provider-conformance test counts and names unchanged.",
+  "source": "docs/reports/quirin-provider-shared/README.md",
+  "recorded_by": "QUIRIN-PROVIDER-SHARED"
+ }
+]

@@ -53,8 +53,9 @@ const OTHER_CALLEES: &str = include_str!("fixtures/contracts/hash_contracts_call
 /// The declaration O04-B09B10 measured under, kept for the byte comparison.
 const B09B10_CALLEES: &str = include_str!("fixtures/contracts/o04_b09b10_callees.qcore");
 /// **The production contract module this card lands.**
-const PUBLICATION: &str =
-    include_str!("../../../providers/shared/contracts/fluent_bit/hash_table_publication.qcore");
+const PUBLICATION: &str = include_str!(
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qcore"
+);
 const GENERIC_CONTRACTS: &str = include_str!("fixtures/contracts/hash_contracts_generic.qcore");
 
 /// The refusal a call outside its declared premise carries.

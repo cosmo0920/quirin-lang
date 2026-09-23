@@ -102,7 +102,7 @@ def main():
                   compile_database=str(database), report=str(build / 'cmetrics-audit.json'))
     if historical:
         config['source_contracts']['configuration'] = str(profile_dir / 'source-contracts.json')
-        config['source_contracts']['source_rules'] = str(ROOT / 'providers/shared/contracts/library/source_projection.qcore')
+        config['source_contracts']['source_rules'] = str(ROOT / 'providers/quirin-provider-shared/contracts/library/source_projection.qcore')
     else:
         config['source_revision_policy'] = 'checkout_head'
         del config['source_contracts']

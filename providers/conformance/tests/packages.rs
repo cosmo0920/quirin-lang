@@ -533,16 +533,36 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
     let metadata: serde_json::Value = serde_json::from_slice(&metadata.stdout).unwrap();
     let packages = metadata["packages"].as_array().unwrap();
     let mut artifacts = 0;
+    let mut shared = 0;
     for package in packages {
         let name = package["name"].as_str().unwrap();
-        if name.starts_with("qcore-provider-") && name != "qcore-provider-conformance" {
-            artifacts += 1;
-            for dependency in package["dependencies"].as_array().unwrap() {
+        // An artifact's only admitted first-party dependency is the shared
+        // provider library, and every `quirin-provider-*` library is itself held
+        // to the same schemas-and-serialization surface (plus its sibling shared
+        // libraries), so the artifact's whole dependency closure stays on it.
+        let is_artifact =
+            name.starts_with("qcore-provider-") && name != "qcore-provider-conformance";
+        let is_shared = name.starts_with("quirin-provider-");
+        if is_shared {
+            shared += 1;
+            // The per-library contract crates are data only, each usable on its
+            // own (the libc crate in particular) without the shared bundle.
+            if name != "quirin-provider-shared" {
                 assert!(
-                    matches!(
-                        dependency["name"].as_str().unwrap(),
-                        "qcore-schemas" | "serde" | "serde_json"
-                    ),
+                    package["dependencies"].as_array().unwrap().is_empty(),
+                    "{name} is a data-only contract crate"
+                );
+            }
+        }
+        if is_artifact || is_shared {
+            artifacts += usize::from(is_artifact);
+            for dependency in package["dependencies"].as_array().unwrap() {
+                let dependency_name = dependency["name"].as_str().unwrap();
+                assert!(
+                    matches!(dependency_name, "qcore-schemas" | "serde" | "serde_json")
+                        || (is_artifact && dependency_name == "quirin-provider-shared")
+                        || (name == "quirin-provider-shared"
+                            && dependency_name.starts_with("quirin-provider-")),
                     "{name}: {dependency}"
                 );
                 assert!(
@@ -573,7 +593,10 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
                     continue;
                 }
                 assert!(
-                    matches!(name, "qcore-schemas" | "serde" | "serde_json"),
+                    matches!(
+                        name,
+                        "qcore-schemas" | "serde" | "serde_json" | "quirin-provider-shared"
+                    ),
                     "conformance fixtures may not link `{name}` outside dev-dependencies"
                 );
             }
@@ -584,6 +607,7 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
         }
     }
     assert_eq!(artifacts, 5);
+    assert_eq!(shared, 6);
 }
 
 /// The packaged artifacts are exactly the crates carrying a package template;

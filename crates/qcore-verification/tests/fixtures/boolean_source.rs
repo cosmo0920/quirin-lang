@@ -10,8 +10,9 @@ use std::path::PathBuf;
 pub const SOURCE: &str = "struct cio_chunk { int lock; }; int cio_chunk_is_locked(struct cio_chunk *ch) { return ch->lock; }";
 pub const CONTRACT: &str =
     include_str!("../../../../providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qcore");
-const RULES: &str =
-    include_str!("../../../../providers/shared/contracts/library/source_projection.qcore");
+const RULES: &str = include_str!(
+    "../../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"
+);
 
 pub fn imports(source: &str, definitions: Vec<String>) -> Vec<ChunkSourceResult> {
     // This fixture is also included by the excluded provider conformance tests.

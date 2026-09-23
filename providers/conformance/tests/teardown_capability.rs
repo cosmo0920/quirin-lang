@@ -49,12 +49,12 @@ fn the_provider_fixtures_are_the_live_projections() {
         return;
     }
     let unlink: TeardownSourceInput = serde_json::from_str(include_str!(
-        "../../common/fixtures/list_unlink_projection.json"
+        "../../quirin-provider-shared/fixtures/list_unlink_projection.json"
     ))
     .unwrap();
     assert_eq!(unlink, unlink_import(UNLINK_SOURCE, vec![]).source_input());
     let destructor: TeardownSourceInput = serde_json::from_str(include_str!(
-        "../../common/fixtures/field_destructor_projection.json"
+        "../../quirin-provider-shared/fixtures/field_destructor_projection.json"
     ))
     .unwrap();
     assert_eq!(

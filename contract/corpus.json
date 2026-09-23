@@ -1,7 +1,12 @@
 {
   "schema_version": 1,
   "roots": [
-    "../providers/shared/contracts",
+    "../providers/quirin-provider-shared/contracts",
+    "../providers/quirin-provider-libc/contracts",
+    "../providers/quirin-provider-cfl/contracts",
+    "../providers/quirin-provider-mpack/contracts",
+    "../providers/quirin-provider-msgpack/contracts",
+    "../providers/quirin-provider-fluent-bit/contracts",
     "../providers/qcore-provider-chunkio/contracts",
     "../providers/qcore-provider-cmetrics/contracts",
     "../providers/qcore-provider-ctraces/contracts",

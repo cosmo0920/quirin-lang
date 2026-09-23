@@ -9,7 +9,7 @@
   "report": "../../../build/cycle19/fluent-bit-clang-production/cmetrics-audit.json",
   "source_contracts": {
     "configuration": "source-contracts.json",
-    "source_rules": "../../../providers/shared/contracts/library/source_projection.qcore",
+    "source_rules": "../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore",
     "libraries": [
       {
         "library": "cmetrics",

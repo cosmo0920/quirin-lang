@@ -49,7 +49,7 @@
 //! every tracked `.rs`/`.md` file, and its result decided the surface:
 //!
 //! * **`len` is not reserved.** It occurs in the *pinned contract corpus* as a
-//!   parameter name and, in `providers/shared/contracts/fluent_bit/resource_memory.qcore`
+//!   parameter name and, in `providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore`
 //!   and `providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore`, as a **reference** inside an
 //!   `ensures normal resource_borrowed(len);` clause. Reserving it globally
 //!   would have changed how those clauses resolve a name in a corpus this card

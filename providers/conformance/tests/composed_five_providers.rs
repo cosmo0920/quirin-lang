@@ -240,7 +240,9 @@ fn cmetrics_summary() -> qcore_c_gateway::boolean_source::ChunkSourceSummary {
         &profile,
         &["cmetrics"],
         &[],
-        include_str!("../../../providers/shared/contracts/library/source_projection.qcore"),
+        include_str!(
+            "../../../providers/quirin-provider-shared/contracts/library/source_projection.qcore"
+        ),
     )
     .expect("the CMetrics unit source imports");
     assert_eq!(imports.len(), 1);

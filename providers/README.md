@@ -3,9 +3,13 @@
 This separate Cargo workspace builds five executable packages:
 `qcore.libevent`, `qcore.chunkio`, `qcore.cmetrics`, `qcore.ctraces`, and
 `qcore.librdkafka`. Each artifact crate depends only on the published
-`qcore-schemas` package and serialization libraries. The shared transport
-source introduces no Rust crate dependency. The conformance harness depends
-on the real verifier host and is never linked into an artifact.
+`qcore-schemas` package, serialization libraries and the workspace library
+[`quirin-provider-shared`](quirin-provider-shared/README.md), which itself
+depends only on `qcore-schemas`, serialization and the five data-only shared
+contract crates listed under [contract ownership](#contract-ownership). That library holds the
+shared protocol runtime and the schemas-only capability evaluators, and each
+provider's `main` names exactly the evaluators it offers. The conformance
+harness depends on the real verifier host and is never linked into an artifact.
 
 All protocol-v1 responses remain Unknown. ChunkIO 0.5.0 and CMetrics 0.2.0
 compute Boolean-field contract witnesses using a shared schemas-only statement
@@ -60,7 +64,20 @@ refuse symbolic links, invalid or unowned paths, and any reintroduced
 require the corpus pin updates.
 
 Shared language, support-library and application policies without a provider
-owner live under `providers/shared/contracts/`. The logical corpus is assembled from the
+owner live in six library crates of this workspace (five data-only, plus the
+shared runtime crate):
+
+| Crate | Shared contract modules |
+|---|---|
+| [`quirin-provider-libc`](quirin-provider-libc/README.md) | `libc/` (3): the only home for libc contracts |
+| [`quirin-provider-cfl`](quirin-provider-cfl/README.md) | `cfl/` (4) |
+| [`quirin-provider-mpack`](quirin-provider-mpack/README.md) | `mpack/` (1) |
+| [`quirin-provider-msgpack`](quirin-provider-msgpack/README.md) | `msgpack/` (1) |
+| [`quirin-provider-fluent-bit`](quirin-provider-fluent-bit/README.md) | `fluent_bit/` (12) |
+| [`quirin-provider-shared`](quirin-provider-shared/README.md) | `language/` (1), `library/` (2); re-exports the five above as one bundle |
+
+Each exposes its modules as `CONTRACTS` (logical path, source text), pinned to
+its `contracts/` tree by a unit test. The logical corpus is assembled from the
 roots listed in `contract/corpus.json`; provider contracts remain canonical in
 their artifact crates and are not copied into a compatibility tree.
 

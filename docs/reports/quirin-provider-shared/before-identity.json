@@ -1,0 +1,44 @@
+{
+  "run": "measure/before/run",
+  "baseline": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a982e29dfe882f8ec/docs/reports/w43-return-expression/artifacts",
+  "artifacts": {
+    "diagnostics": {
+      "file": "resource-diagnostics.json",
+      "run_sha256": "f07ba9777cf4ced4e5da5b7c359b81ca8ae96357cc9104820ba74bcd200e1ab3",
+      "baseline_raw_sha256": "f07ba9777cf4ced4e5da5b7c359b81ca8ae96357cc9104820ba74bcd200e1ab3",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "chunk-contracts": {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "run_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "baseline_raw_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "contracts": {
+      "file": "resource-diagnostics.contracts.json",
+      "run_sha256": "0b497c97237b4cbd1ead23b01df0d77943f278ab3a64f6ed0212b0cec99e0daa",
+      "baseline_raw_sha256": "a24e0268b74a325606af8a47432a5e662bbf5082faee9b8e9ddc7c1d174a9bf9",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": true
+    },
+    "source-effects": {
+      "file": "resource-diagnostics.source-effects.json",
+      "run_sha256": "b080df712c3874b909479287f2bf12ef08b205645c857a07f34811cd63fcd434",
+      "baseline_raw_sha256": "55fa756fe4e0cb349ac1f9239dc83af3638c9047aef5caf657e9df9dc092f668",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false
+    },
+    "source": {
+      "file": "monkey-source.json",
+      "run_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "baseline_raw_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    }
+  },
+  "verdict_bearing_identical": true
+}

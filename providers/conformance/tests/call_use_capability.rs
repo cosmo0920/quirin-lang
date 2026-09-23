@@ -50,7 +50,7 @@ fn the_provider_fixtures_are_the_live_projections() {
         return;
     }
     let close: CallUseSourceInput = serde_json::from_str(include_str!(
-        "../../common/fixtures/file_close_call_use_projection.json"
+        "../../quirin-provider-shared/fixtures/file_close_call_use_projection.json"
     ))
     .unwrap();
     assert_eq!(
@@ -58,7 +58,7 @@ fn the_provider_fixtures_are_the_live_projections() {
         import(CLOSE_SOURCE, "cio_file_close", &ATTEMPT_RECORDS).source_input()
     );
     let native: CallUseSourceInput = serde_json::from_str(include_str!(
-        "../../common/fixtures/native_close_call_use_projection.json"
+        "../../quirin-provider-shared/fixtures/native_close_call_use_projection.json"
     ))
     .unwrap();
     assert_eq!(

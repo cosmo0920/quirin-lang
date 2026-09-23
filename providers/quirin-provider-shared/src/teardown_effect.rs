@@ -499,5 +499,4 @@ pub fn propose(
 }
 
 #[cfg(test)]
-#[path = "teardown_effect_tests.rs"]
 mod tests;
