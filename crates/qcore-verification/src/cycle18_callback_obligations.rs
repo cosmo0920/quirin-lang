@@ -727,7 +727,8 @@ pub struct RegistrationSite {
     pub path: usize,
     pub event_flags: Option<i128>,
     pub creation_result_checked: bool,
-    pub registration_result_checked: bool,
+    /// `None` when the path returns before registering the created event.
+    pub registration_result_checked: Option<bool>,
     pub stale_event_field_on_failure: bool,
     pub ignored_results: Vec<String>,
 }
@@ -799,7 +800,7 @@ pub fn registration_sites(callback: &str, wrapper: &SourceSummary) -> Vec<Regist
                     && arguments.first().is_some_and(|argument| value_mentions(argument, &is_symbol(creation))))
         });
         let registration_result_checked =
-            registration.is_some_and(|registration| guarded_after(path, registration));
+            registration.map(|registration| guarded_after(path, registration));
         let ignored_results = path
             .operations
             .iter()
@@ -1545,7 +1546,8 @@ fn open(needs: impl Into<String>, partial: Vec<PartialDischarge>) -> ObligationS
 }
 
 fn registration_needs(sites: &[RegistrationSite]) -> String {
-    let mut groups = BTreeMap::<(String, bool, bool, bool, BTreeSet<String>), Vec<usize>>::new();
+    let mut groups =
+        BTreeMap::<(String, bool, Option<bool>, bool, BTreeSet<String>), Vec<usize>>::new();
     for site in sites {
         let ignored = site
             .ignored_results
@@ -1570,7 +1572,11 @@ fn registration_needs(sites: &[RegistrationSite]) -> String {
                 format!(
                     "{wrapper} paths {paths:?}: event_new result {}, event_add result {}{}{}",
                     if creation { "checked" } else { "unchecked" },
-                    if registration { "checked" } else { "unchecked" },
+                    match registration {
+                        Some(true) => "checked",
+                        Some(false) => "unchecked",
+                        None => "not reached",
+                    },
                     if stale {
                         ", the failure return leaves the map's freed event field in place"
                     } else {
@@ -1730,7 +1736,12 @@ fn discharged_status(
                 .get(callback)
                 .map(Vec::as_slice)
                 .unwrap_or_default();
-            let mut text = format!("{needs}; source facts: {}", registration_needs(sites));
+            let subject = if callback == "cb_event" {
+                "establish behavior after event creation or registration failure against the selected backend".to_owned()
+            } else {
+                needs
+            };
+            let mut text = format!("{subject}; source facts: {}", registration_needs(sites));
             if callback == "cb_timeout"
                 && let Ok(composition) = &dischargers.timeout
                 && composition.liveness_gap_witnessed()

@@ -290,7 +290,7 @@ fn registration_sites_record_unchecked_results_from_source() {
         .unwrap();
     assert_eq!(timeout.event_flags, Some(17));
     assert!(!timeout.creation_result_checked);
-    assert!(!timeout.registration_result_checked);
+    assert_eq!(timeout.registration_result_checked, Some(false));
     assert!(
         timeout
             .ignored_results
@@ -302,14 +302,14 @@ fn registration_sites_record_unchecked_results_from_source() {
         .try_into()
         .unwrap();
     assert_eq!(wait.event_flags, Some(1));
-    assert!(!wait.creation_result_checked && !wait.registration_result_checked);
+    assert!(!wait.creation_result_checked);
+    assert_eq!(wait.registration_result_checked, Some(false));
 
     let add = registration_sites("cb_event", fixture.wrapper("_mk_event_add"));
     assert!(!add.is_empty());
-    assert!(
-        add.iter()
-            .all(|site| !site.creation_result_checked && site.registration_result_checked)
-    );
+    assert!(add.iter().all(
+        |site| !site.creation_result_checked && site.registration_result_checked == Some(true)
+    ));
     let update = registration_sites("cb_event", fixture.wrapper("_mk_event_update"));
     assert!(update.iter().all(|site| site.creation_result_checked));
     assert!(update.iter().any(|site| site.stale_event_field_on_failure));
