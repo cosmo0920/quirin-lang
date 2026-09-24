@@ -36,7 +36,8 @@
 //! included module declares is refused with the qualified spelling suggested);
 //! a qualified parent among the modules this module includes **directly** from
 //! the crate whose namespace that is ([`derive_contract_namespace`]: the crate
-//! name without `quirin-provider-`, `-` read as `_`). The include string keeps
+//! name without its `quirin-provider-` or `qcore-provider-` prefix, `-` read as
+//! `_`). The include string keeps
 //! the full Cargo package name — it is what the dependency rule checks — and
 //! the qualifier is the namespace derived from it. Nothing is re-exported, so
 //! a qualifier always names the crate that owns the contract. Exactly one
@@ -124,9 +125,9 @@ pub enum InclusionCode {
     Qi015,
     /// Retained inclusion evidence that does not reproduce its environment.
     Qi016,
-    /// A load-path crate whose name is not `quirin-provider-*`, whose recorded
-    /// namespace is not the derived one, or whose namespace another crate
-    /// also maps to.
+    /// A load-path crate whose name carries neither admitted prefix
+    /// (`quirin-provider-*`, `qcore-provider-*`), whose recorded namespace is
+    /// not the derived one, or whose namespace another crate also maps to.
     Qi017,
     /// An unqualified parent that only an included module declares.
     Qi018,
@@ -225,20 +226,39 @@ pub(crate) fn reject_unresolved_inclusion(path: &str, source: &str) -> Result<()
     Ok(())
 }
 
-/// The package-name prefix every contract crate on a load path carries.
+/// The package-name prefix of the data-only contract crates.
 pub const CONTRACT_CRATE_PREFIX: &str = "quirin-provider-";
 
+/// The package-name prefix of the executable provider crates, which own
+/// provider contracts too (card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING, the
+/// user's option B).
+pub const EXECUTABLE_CONTRACT_CRATE_PREFIX: &str = "qcore-provider-";
+
+/// Exactly the package-name prefixes a crate on a load path may carry. There
+/// is no other prefix and no freely recorded namespace: a namespace is always
+/// derived from the package name.
+pub const CONTRACT_CRATE_PREFIXES: [&str; 2] =
+    [CONTRACT_CRATE_PREFIX, EXECUTABLE_CONTRACT_CRATE_PREFIX];
+
 /// The inheritance namespace of a contract crate: its package name without
-/// [`CONTRACT_CRATE_PREFIX`], with `-` changed to `_`, so that it is an
-/// identifier (`quirin-provider-fluent-bit` → `fluent_bit`).
+/// its admitted prefix ([`CONTRACT_CRATE_PREFIXES`]), with `-` changed to
+/// `_`, so that it is an identifier (`quirin-provider-fluent-bit` →
+/// `fluent_bit`, `qcore-provider-librdkafka` → `librdkafka`).
 ///
-/// `None` for a name without the prefix, or whose remainder is not an
+/// `None` for a name with neither prefix, or whose remainder is not an
 /// identifier (`[a-z_][a-z0-9_]*`). The namespace names the crate that
-/// **owns** a contract, never a bundle that re-exports it: nothing is
-/// re-exported, so `quirin-provider-shared` contributes only its own modules.
+/// **owns** a contract, never a bundle that re-exports it and never the
+/// declarations' own naming prefix: nothing is re-exported, so
+/// `quirin-provider-shared` contributes only its own modules, and Monkey's
+/// `mk_*` contracts, which `qcore-provider-libevent` owns, are `libevent::…`.
+/// Two prefixes can derive one namespace (`quirin-provider-libc` and
+/// `qcore-provider-libc` both derive `libc`); the load path refuses that
+/// pair like any other shared namespace (`QI017`).
 #[must_use]
 pub fn derive_contract_namespace(crate_name: &str) -> Option<String> {
-    let rest = crate_name.strip_prefix(CONTRACT_CRATE_PREFIX)?;
+    let rest = CONTRACT_CRATE_PREFIXES
+        .iter()
+        .find_map(|prefix| crate_name.strip_prefix(prefix))?;
     let namespace = rest.replace('-', "_");
     let mut chars = namespace.chars();
     let first = chars.next()?;
@@ -283,9 +303,10 @@ impl ContractLoadPath {
     /// Validate and build a load path. Refuses (`QI014`) a duplicate crate, a
     /// malformed crate name, version or module path, a published module the
     /// crate does not own, a dependency that is absent or the crate itself,
-    /// and a dependency cycle; and (`QI017`) a crate whose name is not
-    /// `quirin-provider-*`, whose recorded namespace is not the derived one,
-    /// or whose namespace another crate on the load path shares.
+    /// and a dependency cycle; and (`QI017`) a crate whose name is neither
+    /// `quirin-provider-*` nor `qcore-provider-*`, whose recorded namespace is
+    /// not the derived one, or whose namespace another crate on the load path
+    /// shares.
     pub fn new(
         crates: impl IntoIterator<Item = PublishedContractCrate>,
     ) -> Result<Self, ContractInclusionError> {
@@ -303,8 +324,8 @@ impl ContractLoadPath {
                         InclusionCode::Qi017,
                         &krate.name,
                         format!(
-                            "a contract crate's name must be `{CONTRACT_CRATE_PREFIX}NAME` with \
-                             an identifier-shaped NAME"
+                            "a contract crate's name must be `{CONTRACT_CRATE_PREFIX}NAME` or \
+                             `{EXECUTABLE_CONTRACT_CRATE_PREFIX}NAME` with an identifier-shaped NAME"
                         ),
                     ));
                 }

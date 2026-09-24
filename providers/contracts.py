@@ -4,9 +4,10 @@ published contract load path (card CONTRACT-INHERIT-ADOPTION).
 
 Edit contracts in their provider crate, then run `sync`. `check` never writes.
 Both also maintain `contract-load-path.json`: one record per
-`quirin-provider-*` crate from `cargo metadata` and the crate's `NAMESPACE`
-and `PUBLISHED` constants, with every published module's SHA-256 pinned; and
-a provider inventory's `includes` pins, resolved on that load path.
+`quirin-provider-*` and `qcore-provider-*` contract crate from `cargo
+metadata` and the crate's `NAMESPACE` and `PUBLISHED` constants, with every
+published module's SHA-256 pinned; and a provider inventory's `includes`
+pins, resolved on that load path.
 The retired ``contract/qcore`` compatibility tree is refused so it cannot
 silently become a second source of provider contracts again.
 """
@@ -60,7 +61,15 @@ def files(directory):
 # from Cargo metadata and each contract crate's recorded constants, and read by
 # core consumers as data (`qcore_contract::load_path_manifest`).
 LOAD_PATH = "contract-load-path.json"
-CONTRACT_CRATE_PREFIX = "quirin-provider-"
+# Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING (the user's option B): exactly
+# two package-name prefixes, `qcore_contract::contract_inclusion::
+# CONTRACT_CRATE_PREFIXES`. The namespace is always derived from the package
+# name; there is no freely recorded namespace.
+CONTRACT_CRATE_PREFIXES = ("quirin-provider-", "qcore-provider-")
+# Workspace packages that carry an admitted prefix but own no contracts: the
+# conformance harness (`providers/conformance`) is a test crate, not a
+# contract crate. Listed by name, and checked to own no contracts.
+NON_CONTRACT_PACKAGES = ("qcore-provider-conformance",)
 NAMESPACE_CONST = re.compile(r'^pub const NAMESPACE: &str = "([a-z_][a-z0-9_]*)";$', re.M)
 PUBLISHED_CONST = re.compile(r'^pub const PUBLISHED: &\[&str\] = &\[([^\]]*)\];$', re.M)
 STRING_LITERAL = re.compile(r'\s*"([a-z0-9_/-]+\.qcore)"\s*')
@@ -73,6 +82,29 @@ def cargo_metadata(root):
                "--format-version", "1", "--no-deps", "--offline", "--locked"]
     completed = subprocess.run(command, check=True, capture_output=True, text=True)
     return json.loads(completed.stdout)
+
+
+def derive_namespace(name):
+    """The namespace a contract crate's package name derives: the name without
+    its admitted prefix, `-` read as `_`, identifier-shaped. None otherwise
+    (the Rust `derive_contract_namespace`)."""
+    for prefix in CONTRACT_CRATE_PREFIXES:
+        if name.startswith(prefix):
+            namespace = name[len(prefix):].replace("-", "_")
+            return namespace if re.fullmatch(r"[a-z_][a-z0-9_]*", namespace) else None
+    return None
+
+
+def constants_source(package):
+    """The Rust source that records a crate's constants: its library root, or
+    for an executable crate (no library target) its one binary root."""
+    targets = package.get("targets", [])
+    libs = [t for t in targets if "lib" in t.get("kind", [])]
+    bins = [t for t in targets if "bin" in t.get("kind", [])]
+    chosen = libs if libs else bins
+    if len(chosen) != 1:
+        raise ValueError(f"{package['name']}: expected one library or one binary target")
+    return Path(chosen[0]["src_path"])
 
 
 def recorded_constants(lib):
@@ -97,27 +129,44 @@ def recorded_constants(lib):
 
 
 def load_path_manifest(root=ROOT, metadata=None):
-    """The load-path manifest: one record per `quirin-provider-*` workspace
-    crate. Name, version and dependencies come from Cargo metadata; a
-    dependency counts only when it is a normal (not dev or build) dependency
-    on another load-path crate. Namespace and published list come from the
-    crate's constants; the namespace must be the derived one. Every published
-    module's SHA-256 is pinned. `qcore-provider-*` crates are not load-path
-    crates: the prefix rule refuses them (`QI017`)."""
+    """The load-path manifest: one record per `quirin-provider-*` and
+    `qcore-provider-*` workspace contract crate (card
+    CONTRACT-INHERIT-QCORE-PROVIDER-NAMING). Name, version and dependencies
+    come from Cargo metadata; a dependency counts only when it is a normal (not
+    dev or build) dependency on another load-path crate. Namespace and
+    published list come from the crate's constants (its `src/lib.rs`, or an
+    executable crate's `src/main.rs`); the namespace must be the derived one,
+    and no two crates may derive one namespace. Every published module's
+    SHA-256 is pinned."""
     root = Path(root)
     metadata = cargo_metadata(root) if metadata is None else metadata
     packages = {package["name"]: package for package in metadata["packages"]}
-    names = sorted(name for name in packages if name.startswith(CONTRACT_CRATE_PREFIX))
+    for name in NON_CONTRACT_PACKAGES:
+        package = packages.get(name)
+        if package is not None and (Path(package["manifest_path"]).resolve().parent
+                                    / "contracts").exists():
+            raise ValueError(f"{name} is listed as owning no contracts but has a contracts/ tree")
+    names = sorted(name for name in packages
+                   if name.startswith(CONTRACT_CRATE_PREFIXES) and name not in NON_CONTRACT_PACKAGES)
     if not names:
         raise ValueError("no contract crate on the load path")
     crates = []
+    owners = {}
     for name in names:
         package = packages[name]
         directory = Path(package["manifest_path"]).resolve().parent
         if directory != (root / name).resolve():
             raise ValueError(f"contract crate {name} is not at providers/{name}")
-        namespace, published = recorded_constants(directory / "src/lib.rs")
-        derived = name[len(CONTRACT_CRATE_PREFIX):].replace("-", "_")
+        source = constants_source(package).resolve()
+        if source.parent != directory / "src":
+            raise ValueError(f"{name}: constants source {source} is not under src/")
+        namespace, published = recorded_constants(source)
+        derived = derive_namespace(name)
+        if derived is None:
+            raise ValueError(f"{name}: the package name derives no identifier-shaped namespace")
+        if derived in owners:
+            raise ValueError(f"{name}: namespace {derived!r} is also derived by {owners[derived]}")
+        owners[derived] = name
         if namespace != derived:
             raise ValueError(f"{name}: recorded namespace {namespace!r} is not the derived {derived!r}")
         modules = files(directory / "contracts")

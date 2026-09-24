@@ -390,9 +390,22 @@ fn recorded_namespaces_equal_the_derived_ones() {
         ("quirin-provider-msgpack", "msgpack"),
         ("quirin-provider-fluent-bit", "fluent_bit"),
         ("quirin-provider-shared", "shared"),
+        // Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING (the user's option B):
+        // the second admitted prefix derives the same way.
+        ("qcore-provider-chunkio", "chunkio"),
+        ("qcore-provider-cmetrics", "cmetrics"),
+        ("qcore-provider-ctraces", "ctraces"),
+        ("qcore-provider-libevent", "libevent"),
+        ("qcore-provider-librdkafka", "librdkafka"),
     ] {
         assert_eq!(derive_contract_namespace(name).as_deref(), Some(namespace));
     }
+    // Two prefixes, one remainder: one namespace (the load path refuses the
+    // pair, `qi017_…`).
+    assert_eq!(
+        derive_contract_namespace("quirin-provider-libc"),
+        derive_contract_namespace("qcore-provider-libc")
+    );
     for crate_ in fixture_crates() {
         assert_eq!(
             derive_contract_namespace(&crate_.name).as_deref(),
@@ -400,10 +413,15 @@ fn recorded_namespaces_equal_the_derived_ones() {
         );
     }
     for refused in [
-        "qcore-provider-chunkio",
+        "other-provider-chunkio",
+        "qcore-chunkio",
+        "quirin-plugin-chunkio",
         "libc",
         "quirin-provider-",
         "quirin-provider-1x",
+        "qcore-provider-",
+        "qcore-provider-1x",
+        "qcore-provider-Libc",
     ] {
         assert_eq!(derive_contract_namespace(refused), None, "{refused}");
     }
@@ -932,13 +950,40 @@ fn qi017_crate_names_and_namespaces_are_checked_when_the_load_path_is_built() {
             .map(|_| ())
             .map_err(|e| e.to_string())
     };
-    // A crate outside the `quirin-provider-` family.
+    // A crate with neither admitted prefix. (Before card
+    // CONTRACT-INHERIT-QCORE-PROVIDER-NAMING this control used
+    // `qcore-provider-chunkio`, which the second prefix now admits.)
     assert_code(
         refuse(&|c| {
-            c[3].name = "qcore-provider-chunkio".into();
+            c[3].name = "other-provider-chunkio".into();
             c[3].namespace = "chunkio".into();
         }),
         "QI017",
+    );
+    // The second prefix is admitted, and its namespace must still be derived.
+    let mut crates = fixture_crates();
+    crates[3].name = "qcore-provider-chunkio".into();
+    crates[3].namespace = "chunkio".into();
+    ContractLoadPath::new(crates).expect("a qcore-provider-* crate derives its namespace");
+    assert_code(
+        refuse(&|c| {
+            c[3].name = "qcore-provider-chunkio".into();
+            c[3].namespace = "qcore_chunkio".into();
+        }),
+        "QI017",
+    );
+    // One remainder under both prefixes: one namespace, two crates.
+    let error = assert_code(
+        refuse(&|c| {
+            let mut twin = c[0].clone();
+            twin.name = "qcore-provider-libc".into();
+            c.push(twin);
+        }),
+        "QI017",
+    );
+    assert!(
+        error.contains("namespace `libc` is also the namespace of crate"),
+        "{error}"
     );
     // A recorded namespace that is not the derived one.
     assert_code(refuse(&|c| c[0].namespace = "c".into()), "QI017");

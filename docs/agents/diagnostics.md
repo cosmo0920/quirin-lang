@@ -227,7 +227,8 @@ consumer reading differs; `QI013` inclusion without a load path; `QI014`
 invalid load path, or a load-path manifest that is malformed, lists other modules than its
 crate's contract directory, or pins a changed published module (card
 `CONTRACT-INHERIT-ADOPTION`); `QI015` parent not inheritable; `QI016` evidence replay
-differs; `QI017` crate not `quirin-provider-*`, namespace not derived, or
-shared; `QI018` unqualified parent only an included module declares;
+differs; `QI017` crate neither `quirin-provider-*` nor (card
+`CONTRACT-INHERIT-QCORE-PROVIDER-NAMING`) `qcore-provider-*`, namespace not
+derived, or shared (one remainder under both prefixes included); `QI018` unqualified parent only an included module declares;
 `QI019` namespace names no directly included crate; `QI020` child named like
 its qualified parent.

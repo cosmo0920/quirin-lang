@@ -1,0 +1,620 @@
+{
+  "method": "Usage: census.py REPOSITORY OUT.json [--before]",
+  "libc_declarations": 75,
+  "provider_declarations_outside_libc": 231,
+  "matches": 38,
+  "custody_bearing_matches": 3,
+  "neutral_matches": 35,
+  "admitted": 2,
+  "refused": 36,
+  "already_inheriting": [
+    {
+      "crate": "qcore-provider-libevent",
+      "module": "monkey/memory.qcore",
+      "name": "mk_mem_alloc",
+      "inherits": "libc::malloc"
+    },
+    {
+      "crate": "qcore-provider-libevent",
+      "module": "monkey/memory.qcore",
+      "name": "mk_mem_alloc_z",
+      "inherits": "libc::malloc"
+    },
+    {
+      "crate": "qcore-provider-libevent",
+      "module": "monkey/memory.qcore",
+      "name": "mk_mem_free",
+      "inherits": "libc::free"
+    },
+    {
+      "crate": "qcore-provider-librdkafka",
+      "module": "librdkafka/memory.qcore",
+      "name": "rd_malloc",
+      "inherits": "libc::malloc"
+    },
+    {
+      "crate": "qcore-provider-librdkafka",
+      "module": "librdkafka/memory.qcore",
+      "name": "rd_calloc",
+      "inherits": "libc::calloc"
+    },
+    {
+      "crate": "qcore-provider-librdkafka",
+      "module": "librdkafka/memory.qcore",
+      "name": "rd_strdup",
+      "inherits": "libc::strdup"
+    },
+    {
+      "crate": "qcore-provider-librdkafka",
+      "module": "librdkafka/memory.qcore",
+      "name": "rd_strndup",
+      "inherits": "libc::strndup"
+    },
+    {
+      "crate": "qcore-provider-librdkafka",
+      "module": "librdkafka/memory.qcore",
+      "name": "rd_free",
+      "inherits": "libc::free"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "module": "fluent_bit/resource_memory.qcore",
+      "name": "flb_malloc",
+      "inherits": "libc::malloc"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "module": "fluent_bit/resource_memory.qcore",
+      "name": "flb_calloc",
+      "inherits": "libc::calloc"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "module": "fluent_bit/resource_memory.qcore",
+      "name": "flb_free",
+      "inherits": "libc::free"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "module": "fluent_bit/resource_string.qcore",
+      "name": "flb_strdup",
+      "inherits": "libc::strdup"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "module": "fluent_bit/resource_string.qcore",
+      "name": "flb_strndup",
+      "inherits": "libc::strndup"
+    }
+  ],
+  "rows": [
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_is_up",
+      "parent": "libc::pthread_mutex_lock",
+      "parent_module": "libc/pthread_mutex.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_is_up",
+      "parent": "libc::pthread_mutex_unlock",
+      "parent_module": "libc/pthread_mutex.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_is_up",
+      "parent": "libc::fflush",
+      "parent_module": "libc/stdio.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_is_up",
+      "parent": "libc::rand_r",
+      "parent_module": "libc/stdlib.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_is_up",
+      "parent": "libc::mtx_lock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_is_up",
+      "parent": "libc::mtx_unlock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_is_up",
+      "parent": "libc::pthread_rwlock_rdlock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_is_up",
+      "parent": "libc::pthread_rwlock_wrlock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_is_up",
+      "parent": "libc::pthread_rwlock_unlock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_is_up",
+      "parent": "libc::sigemptyset",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_is_up",
+      "parent": "libc::sigfillset",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_up_force",
+      "parent": "libc::pthread_mutex_lock",
+      "parent_module": "libc/pthread_mutex.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_up_force",
+      "parent": "libc::pthread_mutex_unlock",
+      "parent_module": "libc/pthread_mutex.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_up_force",
+      "parent": "libc::fflush",
+      "parent_module": "libc/stdio.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_up_force",
+      "parent": "libc::rand_r",
+      "parent_module": "libc/stdlib.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_up_force",
+      "parent": "libc::mtx_lock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_up_force",
+      "parent": "libc::mtx_unlock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_up_force",
+      "parent": "libc::pthread_rwlock_rdlock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_up_force",
+      "parent": "libc::pthread_rwlock_wrlock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_up_force",
+      "parent": "libc::pthread_rwlock_unlock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_up_force",
+      "parent": "libc::sigemptyset",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_up_force",
+      "parent": "libc::sigfillset",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_down",
+      "parent": "libc::pthread_mutex_lock",
+      "parent_module": "libc/pthread_mutex.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_down",
+      "parent": "libc::pthread_mutex_unlock",
+      "parent_module": "libc/pthread_mutex.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_down",
+      "parent": "libc::fflush",
+      "parent_module": "libc/stdio.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_down",
+      "parent": "libc::rand_r",
+      "parent_module": "libc/stdlib.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_down",
+      "parent": "libc::mtx_lock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_down",
+      "parent": "libc::mtx_unlock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_down",
+      "parent": "libc::pthread_rwlock_rdlock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_down",
+      "parent": "libc::pthread_rwlock_wrlock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_down",
+      "parent": "libc::pthread_rwlock_unlock",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_down",
+      "parent": "libc::sigemptyset",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-chunkio",
+      "module": "chunkio/chunk_residency.qcore",
+      "name": "cio_chunk_down",
+      "parent": "libc::sigfillset",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-cmetrics",
+      "module": "cmetrics/mpack_utils.qcore",
+      "name": "cmt_mpack_consume_uint_tag",
+      "parent": "libc::cnd_wait",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "qcore-provider-librdkafka",
+      "module": "librdkafka/cjson.qcore",
+      "name": "cJSON_Delete",
+      "parent": "libc::free",
+      "parent_module": "libc/memory.qcore",
+      "resource_v1": true,
+      "shape": "custody-bearing",
+      "cycle19_selected": true,
+      "admitted": true,
+      "refusals": []
+    },
+    {
+      "crate": "quirin-provider-cfl",
+      "module": "cfl/sds_lifetime.qcore",
+      "name": "cfl_sds_destroy",
+      "parent": "libc::free",
+      "parent_module": "libc/memory.qcore",
+      "resource_v1": true,
+      "shape": "custody-bearing",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "quirin-provider-cfl",
+      "module": "cfl/time.qcore",
+      "name": "cfl_time_now",
+      "parent": "libc::pthread_self",
+      "parent_module": "libc/threads.qcore",
+      "resource_v1": true,
+      "shape": "neutral",
+      "cycle19_selected": true,
+      "admitted": false,
+      "refusals": [
+        "QI004: crate does not declare quirin-provider-libc"
+      ]
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "module": "fluent_bit/resource_memory.qcore",
+      "name": "flb_sds_destroy",
+      "parent": "libc::free",
+      "parent_module": "libc/memory.qcore",
+      "resource_v1": true,
+      "shape": "custody-bearing",
+      "cycle19_selected": true,
+      "admitted": true,
+      "refusals": []
+    }
+  ]
+}

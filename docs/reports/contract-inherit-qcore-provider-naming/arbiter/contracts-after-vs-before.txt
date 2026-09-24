@@ -1,0 +1,10 @@
+{
+ "other_top_level_keys_equal": true,
+ "manifest_moves_only_two_entries_in_place": true,
+ "other_sources_byte_equal": true,
+ "removed_sources_are_the_hand_written_modules": true,
+ "added_sources_are_the_two_references": true,
+ "inclusion_keeps_before_records": true,
+ "inclusion_adds_the_two_modules": true,
+ "contract_inclusion_trust_equal": true
+}

@@ -256,6 +256,64 @@ fn rejected(package: &Path, wire: &[u8]) {
     assert!(!output.stderr.is_empty());
 }
 
+/// Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: a real package whose contracts
+/// `#include` libc modules pins every reached parent in its inventory and
+/// installs the pinned text under `includes/`, `package.py verify` accepts it,
+/// and verify refuses a **changed** and a **missing** included parent. Each
+/// mutation is undone by rewriting the original bytes, the round trip is
+/// asserted, and the package verifies again. Returns the number of refused
+/// mutations (0 for a package that includes nothing).
+fn included_parent_mutations(root: &Path, package: &Path) -> usize {
+    let inventory: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(package.join("contracts.json")).unwrap()).unwrap();
+    let Some(pins) = inventory.get("includes").and_then(|pins| pins.as_object()) else {
+        assert!(!package.join("includes").exists());
+        return 0;
+    };
+    let verify = || {
+        Command::new("python3")
+            .arg(root.join("package.py"))
+            .arg("verify")
+            .arg(package)
+            .output()
+            .unwrap()
+    };
+    let refused = |expected: &str, what: &str| {
+        let output = verify();
+        assert!(!output.status.success(), "{what} must not verify");
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert!(stderr.contains(expected), "{what}: {stderr}");
+    };
+    assert!(verify().status.success());
+    let mut controls = 0;
+    for (key, pin) in pins {
+        let path = package
+            .join("includes")
+            .join(pin["crate"].as_str().unwrap())
+            .join(pin["module"].as_str().unwrap());
+        let original = std::fs::read(&path).unwrap();
+        assert_eq!(
+            sha256_hex(&original),
+            pin["sha256"].as_str().unwrap(),
+            "{key}"
+        );
+        let mut changed = original.clone();
+        changed.extend_from_slice(b"// changed\n");
+        std::fs::write(&path, &changed).unwrap();
+        refused("included parent changed", key);
+        std::fs::remove_file(&path).unwrap();
+        refused("included parent set mismatch", key);
+        std::fs::write(&path, &original).unwrap();
+        assert_eq!(std::fs::read(&path).unwrap(), original, "{key}: round trip");
+        assert!(
+            verify().status.success(),
+            "{key}: restored package verifies"
+        );
+        controls += 2;
+    }
+    controls
+}
+
 #[test]
 fn real_packages_preserve_unknown_and_reject_mutations() {
     let root = root();
@@ -279,6 +337,8 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
     assert_eq!(index["artifacts"].as_array().unwrap().len(), 5);
     let mut cases = 0;
     let mut bound = 0;
+    let mut including: Vec<String> = Vec::new();
+    let mut include_controls = 0;
     let mut parity = Vec::new();
     for artifact in index["artifacts"].as_array().unwrap() {
         let id = artifact["plugin_id"].as_str().unwrap();
@@ -508,9 +568,18 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
             manifest.package_digest
         );
         bound += embedded_template_binding(&package, &manifest);
+        let controls = included_parent_mutations(&root, &package);
+        if controls > 0 {
+            including.push(id.to_owned());
+            include_controls += controls;
+        }
     }
+    // Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: exactly the two packages
+    // whose contracts inherit libc contracts carry include pins.
+    assert_eq!(including, ["qcore.libevent", "qcore.librdkafka"]);
     println!(
-        "five process packages: {cases} exact v1 response/Unknown parity cases; all declared capabilities return v2 Unknown; identity/version/framing/package mutations rejected; {bound} digest-intact declaration edits and stripped envelopes refused by the embedded-template binding"
+        "five process packages: {cases} exact v1 response/Unknown parity cases; all declared capabilities return v2 Unknown; identity/version/framing/package mutations rejected; {bound} digest-intact declaration edits and stripped envelopes refused by the embedded-template binding; {include_controls} changed or missing included parents refused in {} packages",
+        including.len()
     );
     println!("PARITY_JSON {}", serde_json::to_string(&parity).unwrap());
     std::fs::remove_dir_all(output).unwrap();
@@ -535,6 +604,7 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
     let mut artifacts = 0;
     let mut shared = 0;
     let mut data_edges: Vec<(String, String)> = Vec::new();
+    let mut artifact_contract_edges: Vec<(String, String)> = Vec::new();
     for package in packages {
         let name = package["name"].as_str().unwrap();
         // An artifact's only admitted first-party dependency is the shared
@@ -571,9 +641,21 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
             artifacts += usize::from(is_artifact);
             for dependency in package["dependencies"].as_array().unwrap() {
                 let dependency_name = dependency["name"].as_str().unwrap();
+                // Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING (deliberate pin
+                // update): an artifact may also depend on a data contract crate,
+                // because that Cargo edge is the contract-use edge the load
+                // path reads; the executable links nothing from it. The exact
+                // edge set is pinned below.
+                let artifact_contract_edge = is_artifact
+                    && dependency_name.starts_with("quirin-provider-")
+                    && dependency_name != "quirin-provider-shared";
+                if artifact_contract_edge {
+                    artifact_contract_edges.push((name.to_owned(), dependency_name.to_owned()));
+                }
                 assert!(
                     matches!(dependency_name, "qcore-schemas" | "serde" | "serde_json")
                         || (is_artifact && dependency_name == "quirin-provider-shared")
+                        || artifact_contract_edge
                         || (is_shared
                             && name != "quirin-provider-shared"
                             && dependency_name.starts_with("quirin-provider-")
@@ -634,6 +716,22 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
             "quirin-provider-fluent-bit".to_owned(),
             "quirin-provider-libc".to_owned()
         )]
+    );
+    // Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: the two artifact crates
+    // whose contracts inherit libc contracts, and nothing else.
+    artifact_contract_edges.sort();
+    assert_eq!(
+        artifact_contract_edges,
+        [
+            (
+                "qcore-provider-libevent".to_owned(),
+                "quirin-provider-libc".to_owned()
+            ),
+            (
+                "qcore-provider-librdkafka".to_owned(),
+                "quirin-provider-libc".to_owned()
+            ),
+        ]
     );
 }
 
