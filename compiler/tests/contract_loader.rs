@@ -69,7 +69,10 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // and `librdkafka/topic_partition.qcore`. Every one of the ten
     // declarations is the NEUTRAL ELEMENT — every formal borrowed, result
     // none — so none can contradict a faithful derived summary.
-    assert_eq!(contracts.source_assumptions().len(), 33);
+    // 33 -> 44 by card W43-LIBC-CONTRACTS: eleven `libc/` modules owned by
+    // `providers/quirin-provider-libc` (55 trusted libc/POSIX declarations,
+    // each read from the prototype the pinned units declare).
+    assert_eq!(contracts.source_assumptions().len(), 44);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -245,6 +248,70 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("mpack_write_double", 2),
         ("LZ4_resetStream", 1),
         ("rd_kafka_topic_partition_list_sort", 3),
+        // Card W43-LIBC-CONTRACTS adds 54 libc/POSIX declarations to this
+        // all-borrowed loop, every one owned by `providers/quirin-provider-libc`
+        // and each a trusted assumption read from the prototype the pinned
+        // units declare: every parameter is read, written through or a scalar,
+        // nothing is allocated, freed or retained, and every result is a
+        // scalar or (`dlerror`, `gai_strerror`) a pointer to library-owned
+        // storage the caller must not free. `prctl` additionally carries the
+        // literal premise `option == 15` (`PR_SET_NAME`), which is not a mode
+        // and so is not compared here. The card's one acquisition, `strdup`,
+        // is listed below the loop.
+        ("dlerror", 0),
+        ("ceil", 1),
+        ("floor", 1),
+        ("fabs", 1),
+        ("pow", 2),
+        ("prctl", 1),
+        ("setsockopt", 5),
+        ("send", 4),
+        ("recv", 4),
+        ("listen", 2),
+        ("sendfile", 4),
+        ("htonl", 1),
+        ("ntohl", 1),
+        ("gai_strerror", 1),
+        ("perror", 1),
+        ("fflush", 1),
+        ("remove", 1),
+        ("atoi", 1),
+        ("srand", 1),
+        ("rand_r", 1),
+        ("system", 1),
+        ("strcmp", 2),
+        ("strlen", 1),
+        ("strerror_r", 3),
+        ("fstat", 2),
+        ("mkdir", 2),
+        ("umask", 1),
+        ("mtx_lock", 1),
+        ("mtx_unlock", 1),
+        ("cnd_wait", 2),
+        ("pthread_rwlock_rdlock", 1),
+        ("pthread_rwlock_wrlock", 1),
+        ("pthread_rwlock_unlock", 1),
+        ("pthread_self", 0),
+        ("pthread_kill", 2),
+        ("pthread_setcancelstate", 2),
+        ("pthread_setcanceltype", 2),
+        ("pthread_attr_setdetachstate", 2),
+        ("sigemptyset", 1),
+        ("sigfillset", 1),
+        ("sigaddset", 2),
+        ("time", 1),
+        ("timegm", 1),
+        ("sleep", 1),
+        ("usleep", 1),
+        ("sysconf", 1),
+        ("getpagesize", 0),
+        ("geteuid", 0),
+        ("getegid", 0),
+        ("setsid", 0),
+        ("access", 2),
+        ("unlink", 1),
+        ("read", 3),
+        ("write", 3),
     ] {
         old.insert_contract(
             name,
@@ -329,6 +396,13 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     old.insert_contract(
         "rd_kafka_mem_free",
         ResourceFunctionContract::new([P::Borrowed, P::Released { nullable: true }], R::None),
+    );
+    // Card W43-LIBC-CONTRACTS: `strdup` reads its argument and returns a
+    // fresh `malloc` allocation or NULL -- `malloc`'s own result mode, from the
+    // allocator `free` releases.
+    old.insert_contract(
+        "strdup",
+        ResourceFunctionContract::new([P::Borrowed], R::Owned { nullable: true }),
     );
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
@@ -610,7 +684,10 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // and `librdkafka/topic_partition.qcore`. Every one of the ten
     // declarations is the NEUTRAL ELEMENT — every formal borrowed, result
     // none — so none can contradict a faithful derived summary.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 33);
+    // 33 -> 44 by card W43-LIBC-CONTRACTS: eleven `libc/` modules owned by
+    // `providers/quirin-provider-libc` (55 trusted libc/POSIX declarations,
+    // each read from the prototype the pinned units declare).
+    assert_eq!(certificate.contracts.source_assumptions().len(), 44);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -781,7 +858,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // declarations is the NEUTRAL ELEMENT — every formal borrowed, result
     // none — so none can contradict a faithful derived summary.
     // 93 -> 96: Cycle 18 aggregate/platform/task policies belong to the typed interpreter.
-    assert_eq!(modules.len(), 96, "corpus module count");
+    // 96 -> 107: card W43-LIBC-CONTRACTS adds eleven `libc/` modules in
+    // `providers/quirin-provider-libc`, all entirely v1 and all
+    // manifest-selected.
+    assert_eq!(modules.len(), 107, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -882,9 +962,16 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // The rejected count is unchanged in all twelve cases, because every added
     // module is entirely v1.
     // All 34 Cycle 18 typed-policy declarations are deliberately rejected by resource-v1.
+    // 33 -> 44 and 59 -> 114 by card W43-LIBC-CONTRACTS: eleven `libc/`
+    // modules and 55 declarations, every one a trusted assumption about the C
+    // library read from the prototype the pinned units declare; 53 are the
+    // neutral element, `strdup` returns fresh `malloc` custody
+    // (`return_owned(nullable)`), and `prctl` applies only under its literal
+    // `PR_SET_NAME` premise. The rejected count is unchanged: every added
+    // module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (33, 59, 207)
+        (44, 114, 207)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

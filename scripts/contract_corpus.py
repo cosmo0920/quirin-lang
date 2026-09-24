@@ -1,5 +1,6 @@
 """Discover canonical contract assets for repository validation (not runtime loading)."""
 import json
+import re
 from pathlib import Path
 
 
@@ -27,3 +28,52 @@ def sources(repository):
     if not result:
         raise ValueError("empty corpus")
     return dict(sorted(result.items()))
+
+
+LIBC_CRATE = "providers/quirin-provider-libc"
+LIBC_NAMES = LIBC_CRATE + "/libc-names.txt"
+_EXTERN_FN = re.compile(r"^\s*(?:unsafe\s+)?extern\s+fn\s+([A-Za-z_][A-Za-z0-9_]*)", re.MULTILINE)
+
+
+def declared_functions(path):
+    """`extern fn` names a `.qcore` module declares, `//` comments removed."""
+    text = "\n".join(line.split("//", 1)[0] for line in Path(path).read_text().split("\n"))
+    return _EXTERN_FN.findall(text)
+
+
+def libc_names(repository):
+    """The libc/POSIX name list owned by the libc crate; fail closed if absent or empty."""
+    path = Path(repository).resolve() / LIBC_NAMES
+    names = {line.strip() for line in path.read_text().split("\n") if line.strip() and not line.startswith("#")}
+    if not names:
+        raise ValueError(f"empty libc name list: {path}")
+    return names
+
+
+def libc_placement_violations(repository):
+    """Every (module, name) declaring a libc/POSIX function outside the libc crate.
+
+    Scanned: every canonical corpus module and every `.qcore` under `providers/`.
+    A name is libc/POSIX when it is in the libc crate's generated name list or is
+    declared by a module of the libc crate itself. Card W43-LIBC-CONTRACTS.
+    """
+    repository = Path(repository).resolve()
+    crate = (repository / LIBC_CRATE).resolve()
+    names = libc_names(repository)
+    modules = {path.resolve() for path in sources(repository).values()}
+    providers = repository / "providers"
+    if providers.is_dir():
+        modules |= {path.resolve() for path in providers.rglob("*.qcore") if path.is_file()}
+    owned = [path for path in modules if path.is_relative_to(crate)]
+    if not owned:
+        raise ValueError(f"no contract module under {crate}")
+    for path in owned:
+        names |= set(declared_functions(path))
+    violations = []
+    for path in sorted(modules):
+        if path.is_relative_to(crate):
+            continue
+        for name in declared_functions(path):
+            if name in names:
+                violations.append((path.relative_to(repository).as_posix(), name))
+    return violations

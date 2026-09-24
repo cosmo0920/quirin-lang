@@ -1,0 +1,162 @@
+module contract;
+
+// C11 <threads.h> and POSIX thread/signal helpers -- resource-projection
+// vocabulary version 1.
+//
+// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library (trust
+// boundary 28); no libc body is analysed. Read from the prototypes the
+// analysed units declare (glibc `threads.h`, `pthread.h`, `bits/sigthread.h`,
+// `signal.h` on the audited host):
+//
+//   extern int mtx_lock (mtx_t *__mutex);
+//   extern int mtx_unlock (mtx_t *__mutex);
+//   extern int cnd_wait (cnd_t *__cond, mtx_t *__mutex);
+//   extern int pthread_rwlock_rdlock (pthread_rwlock_t *__rwlock) __THROWNL __nonnull ((1));
+//   extern int pthread_rwlock_wrlock (pthread_rwlock_t *__rwlock) __THROWNL __nonnull ((1));
+//   extern int pthread_rwlock_unlock (pthread_rwlock_t *__rwlock) __THROWNL __nonnull ((1));
+//   extern pthread_t pthread_self (void) __THROW __attribute__ ((__const__));  // unsigned long
+//   extern int pthread_kill (pthread_t __threadid, int __signo) __THROW;
+//   extern int pthread_setcancelstate (int __state, int *__oldstate);
+//   extern int pthread_setcanceltype (int __type, int *__oldtype);
+//   extern int pthread_attr_setdetachstate (pthread_attr_t *__attr, int __detachstate)
+//     __THROW __nonnull ((1));
+//   extern int sigemptyset (sigset_t *__set) __THROW __nonnull ((1));
+//   extern int sigfillset (sigset_t *__set) __THROW __nonnull ((1));
+//   extern int sigaddset (sigset_t *__set, int __signo) __THROW __nonnull ((1));
+//
+// ## The custody statements
+//
+// The lock, wait and unlock calls are the `libc/pthread_mutex.qcore` shape:
+// they neither allocate, free, reallocate nor take custody of the lock object,
+// which the caller owns on both sides of the call, so the caller's obligations
+// are unchanged -- `resource_borrowed` -- and each `int` result is
+// `resource_return_none()`. The remaining calls read or write scalar state
+// through a caller pointer (`oldstate`, the attribute object, a signal set) or
+// take scalars; every result is a scalar. Nothing is allocated, freed or
+// retained.
+//
+// ## Deliberately NOT declared here (recorded in the card report)
+//
+//   The OBJECT LIFECYCLE pairs -- `mtx_init`/`mtx_destroy`,
+//   `pthread_rwlock_init`/`pthread_rwlock_destroy`, `pthread_attr_init`,
+//   `pthread_key_create` -- open an obligation to destroy an object the caller
+//   owns in place; v1 cannot state it, and a neutral declaration would erase
+//   it. `call_once`/`pthread_once` invoke a caller-supplied function whose
+//   effects the declaration cannot state. `pthread_setspecific` RETAINS its
+//   pointer argument past the call, and `pthread_getspecific` returns that
+//   retained pointer -- an alias this vocabulary cannot state.
+//   `cnd_timedwait`, `pthread_sigmask`: faithful in v1, but the prototype spells a qualifier AFTER the
+//   `*` (`T *__restrict p`), which the declared-ABI reader (gateway
+//   constraint 8) does not read; this card measured the declaration withdrawn
+//   with `abi-unreadable-declaration` at every call site in the pinned corpus
+//   (`LOADER-ABI-RESTRICT-QUALIFIER`), so it is not shipped.
+//
+// ## What no declaration here says
+//
+// Nothing about mutual exclusion, lock ordering, deadlock, spurious wake-ups,
+// timeouts, cancellation, signal delivery, or which data a lock protects.
+// QCore's checked-concurrency model (constraint 27) is untouched. Per-call
+// custody statements about the CALLER's obligations, and nothing more.
+
+extern fn mtx_lock(mutex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(mutex);
+    ensures normal resource_return_none();
+};
+
+extern fn mtx_unlock(mutex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(mutex);
+    ensures normal resource_return_none();
+};
+
+extern fn cnd_wait(cond: ptr<mut, u8>, mutex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(cond);
+    ensures normal resource_borrowed(mutex);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_rwlock_rdlock(rwlock: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rwlock);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_rwlock_wrlock(rwlock: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rwlock);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_rwlock_unlock(rwlock: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rwlock);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_self() -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_kill(threadid: u64, signo: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(threadid);
+    ensures normal resource_borrowed(signo);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_setcancelstate(state: i32, oldstate: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(state);
+    ensures normal resource_borrowed(oldstate);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_setcanceltype(kind: i32, oldtype: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(kind);
+    ensures normal resource_borrowed(oldtype);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_attr_setdetachstate(attr: ptr<mut, u8>, detachstate: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(attr);
+    ensures normal resource_borrowed(detachstate);
+    ensures normal resource_return_none();
+};
+
+extern fn sigemptyset(set: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(set);
+    ensures normal resource_return_none();
+};
+
+extern fn sigfillset(set: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(set);
+    ensures normal resource_return_none();
+};
+
+extern fn sigaddset(set: ptr<mut, u8>, signo: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(set);
+    ensures normal resource_borrowed(signo);
+    ensures normal resource_return_none();
+};

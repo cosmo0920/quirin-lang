@@ -1,0 +1,67 @@
+module contract;
+
+// <stdlib.h> -- resource-projection vocabulary version 1.
+//
+// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library (trust
+// boundary 28); no libc body is analysed. Read from the prototypes the
+// analysed units declare (`/usr/include/stdlib.h` on the audited host):
+//
+//   extern int atoi (const char *__nptr) __THROW __attribute_pure__ __nonnull ((1)) __wur;
+//   extern void srand (unsigned int __seed) __THROW;
+//   extern int rand_r (unsigned int *__seed) __THROW;
+//   extern int system (const char *__command) __wur;
+//
+// ## The custody statements
+//
+// `atoi` reads a string; `srand` takes a scalar; `rand_r` reads and updates
+// the caller's `unsigned int` seed through its pointer (a value write, the
+// `cmt_mpack_consume_uint_tag` precedent: borrowed, not a custody `Out`);
+// `system` reads a command string and waits for the child it runs. None
+// allocates, frees or retains a caller object, and every result is a scalar,
+// so `resource_borrowed` on every parameter and `resource_return_none()` are
+// exact.
+//
+// ## Deliberately NOT declared here (recorded in the card report)
+//
+//   `exit`/`abort` do not return; v1 has no no-return mode, and a `normal`
+//   return clause would add a continuation the C does not have.
+//   `strtol`/`strtoll`/`strtoull`/`strtod` store an alias INTO `__nptr`
+//   through `char **__endptr`; `ptr<mut, ptr<mut, u8>>` admits only
+//   `resource_out`, and the stored value is an alias, not fresh custody.
+//   `qsort` invokes a caller-supplied comparator whose effects the
+//   declaration cannot state. `realpath` returns either its second argument
+//   or a fresh `malloc` allocation, a conditional alias.
+//
+// ## What no declaration here says
+//
+// Nothing about parse errors, overflow, the random sequence, the child's exit
+// status or its side effects. Per-call custody statements about the CALLER's
+// obligations, and nothing more.
+
+extern fn atoi(nptr: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(nptr);
+    ensures normal resource_return_none();
+};
+
+extern fn srand(seed: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(seed);
+    ensures normal resource_return_none();
+};
+
+extern fn rand_r(seed: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(seed);
+    ensures normal resource_return_none();
+};
+
+extern fn system(command: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(command);
+    ensures normal resource_return_none();
+};

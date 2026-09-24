@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 282
+  "named_followups": 291
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 96,
+  "contract_modules": 107,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W43-RETURN-EXPRESSION, 2026-09-23. Same-checkout BEFORE reproduces the W42 diagnostics byte for byte (the four other artifacts match the canonical-contract-locations checkpoint after the worktree-path alias; their W42 differences are that migration's attributed path and digest identities). AFTER lowers 941 whole-call return refusals to the call classifier's own refusal at the same line (671 uncontracted call, 267 lexical indirect access, 2 braced initializer, 1 nested call): 941 removed, 941 added, 0 function or unit moves, every count unchanged. Leak 272 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-return-expression/previous-corpus-row.json.",
+   "note": "W43-LIBC-CONTRACTS, 2026-09-23. Declarative arbiter, one audit binary for both stages. BEFORE reproduces the W43-RETURN-EXPRESSION diagnostics byte for byte. AFTER selects eleven new libc/ modules (55 trusted libc/POSIX declarations in providers/quirin-provider-libc): 314 leaves removed, 27 added, all attributed (229 declared-callee, 4 newly-Safe callee summaries, 86 same line, 22 same function); 22 functions Unknown -> Safe, each relative to the declared premises; 0 unit status moves. Leak 272 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-libc-contracts/previous-corpus-row.json.",
    "units": 185,
    "safe": 2,
    "provisional_unsafe": 42,
@@ -6642,15 +6642,15 @@
    "projected_functions": 4834,
    "leak_diagnostics": 272,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w43-return-expression/artifacts/",
-   "source": "docs/reports/w43-return-expression/README.md; preceding baseline docs/reports/w42-priority-integration/artifacts/",
-   "unknown_alias_diagnostics": 4665,
-   "unsupported_diagnostics": 49371,
+   "baseline": "docs/reports/w43-libc-contracts/artifacts/",
+   "source": "docs/reports/w43-libc-contracts/README.md; preceding baseline docs/reports/w43-return-expression/artifacts/",
+   "unknown_alias_diagnostics": 4655,
+   "unsupported_diagnostics": 49094,
    "double_release_diagnostics": 0,
    "function_statuses": {
-    "safe": 223,
+    "safe": 245,
     "provisional_unsafe": 84,
-    "unknown": 4527
+    "unknown": 4505
    },
    "source_definitions": 4921,
    "unprojected_definitions": 87,
@@ -6731,10 +6731,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for QUIRIN-PROVIDER-SHARED on merge 7642d7de (onto main 8f40df36, after every earlier W43 merge), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5136 core Rust passed / 0 failed / 12 ignored over 272 summaries; 109 provider Rust passed / 0 / 0 over 39 summaries; 167 Lean audits; 317 root Python tests; 5 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-return-expression/artifacts/; the contracts artifact differs only in the 18 moved module paths (identical to the pre-move combined run once mapped back). No verdict or coverage change.",
+  "note": "W43-LIBC-CONTRACTS: core Rust, fmt, clippy, probes and Lean measured on d5b90c6d (the implementation commit; later commits change documents, the ledger, report scripts and the report's evidence files only, no Rust, Lean, contract or test source). 5136 core Rust passed / 0 failed / 12 ignored over 272 summaries (equal to the base: this card adds no Rust test and re-pins existing ones); 167 Lean audits; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace remeasured on the same tree: 109 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0 (72 provider-owned); five package builds and verifications exit 0; 5 package Python tests. Logs: worktree-private measure/gate and measure/provider-gate of agent-a2aa6b1173f195eb0. Clang recorded in this checkout. Corpus: 22 functions Unknown -> Safe relative to 55 declared libc/POSIX premises, 0 unit moves, leak 272.",
   "workspace_tests": 5136,
   "provider_tests": 109,
-  "python_evidence_validator_tests": 317,
+  "python_evidence_validator_tests": 319,
   "lean_audits": 167,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
@@ -6911,7 +6911,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/quirin-provider-shared/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-libc-contracts/gate.json)"
  },
  "named_followups": [
   {
@@ -8151,12 +8151,6 @@
    "source": "docs/reports/w37-corpus-contracts-4/README.md"
   },
   {
-   "id": "LOADER-ABI-RESTRICT-QUALIFIER",
-   "title": "Narrows LIBC-MEM-RESULT-ALIAS's ABI half: glibc DECORATION is already exercised in production; what is untested is specifically `__restrict` on a pointer parameter",
-   "why": "Card W36-CORPUS-CONTRACTS-3 declined memcpy/memset on two grounds, one of them that surviving glibc's decorated prototypes is an untested ABI path. Card W37-CORPUS-CONTRACTS-4 re-read that ground and found it narrower than recorded: libc/memory.qcore already declares malloc, whose glibc prototype is `extern void *malloc (size_t __size) __THROW __attribute_malloc__ __attribute_alloc_size__ ((1)) __wur;` (/usr/include/stdlib.h:676), manifest-selected and NOT withdrawn, so the decoration class as such is exercised. What memcpy/memset add over malloc/free is specifically `__restrict` on the pointer parameters (/usr/include/string.h:46-48 and :65), which no corpus declaration has yet met. The RESULT-MODE half of LIBC-MEM-RESULT-ALIAS is untouched and still stands. Discharge condition: One measurement: declare any `__restrict`-qualified libc callee and observe whether the declared-ABI reader withdraws it.",
-   "source": "docs/reports/w37-corpus-contracts-4/README.md"
-  },
-  {
    "id": "CONDITIONAL-RELEASE-BY-LITERAL",
    "title": "A callee that releases its parameter only when a second, literal argument is nonzero cannot be declared in v1 without conditioning on that literal",
    "why": "rd_kafka_topic_partition_destroy0 (lib/librdkafka-2.15.0/src/rdkafka_partition.c:2969-2982) ends `if (do_free) rd_free(rktpar);`. Its two target call sites (:3105, :3109) pass 1/rd_true, but five further sites in the same unit (:3098, :3122, :3600) pass 0. A contract is per-NAME and not per-site, so declaring `released` would be FALSE at those five sites and would move in the admitting direction, which invariant 1 forbids. Card W37-CORPUS-CONTRACTS-4 therefore declined it - also, independently, because it is `static` with no header declaration inside its own calling unit (W37-COVER-FRONTIER-IS-STATIC). The corpus does carry a `resource_literal_argument(PARAMETER, LITERAL)` clause that could in principle condition a contract on `do_free == 1`, which is why this is recorded as an avenue rather than as an impossibility. Discharge condition: A literal-conditioned release contract exercised on a real callee, or acceptance that W4 is the lever for unit-internal statics and this shape needs no declaration vocabulary.",
@@ -8824,6 +8818,76 @@
    "why": "Card QUIRIN-PROVIDER-SHARED removed every #[path] from provider and conformance binaries into the former providers/common (17) and the four side-file test includes, but deliberately left the 15 #[path] attributes in providers/conformance/tests/*.rs (13 files) that compile modules from crates/qcore-verification/tests/fixtures/ (boolean_source, counter_source, reactor_program, composition_source, call_use_source, cleanup_replay_source, teardown_source, file_close_composition, filesystem_chunk_close_composition, memory_close_composition, unsupported_close_composition; reactor_program is included three times and counter_source and boolean_source twice each). Moving those fixtures into a provider crate would invert the layering (they import qcore-c-gateway, qcore-contract, qcore-verification and qcore-core), so the coupling is a cross-workspace source include with no Cargo edge: a fixture edit in the core workspace silently changes a provider-workspace test, and each including test target compiles its own copy. A sound home is a publish=false test-support library in the core workspace (for example crates/qcore-verification-fixtures) that depends on the core crates, is a dev-dependency of qcore-verification's integration tests and of providers/conformance, and is admitted by compiler/tests/workspace_layering.rs as a core member that no production crate depends on. Discharge: move the fixture modules there, remove all 15 attributes, and show the qcore-verification and provider-conformance test counts and names unchanged.",
    "source": "docs/reports/quirin-provider-shared/README.md",
    "recorded_by": "QUIRIN-PROVIDER-SHARED"
+  },
+  {
+   "id": "W43-LIBC-POINTER-QUALIFIER-READER",
+   "title": "The declared-ABI reader withdraws every prototype that spells a qualifier after the `*` (`T *__restrict p`), which blocks the printf family and 10 other faithful libc declarations",
+   "why": "Card W43-LIBC-CONTRACTS measured what LOADER-ABI-RESTRICT-QUALIFIER asked for: `project_declarator` (crates/qcore-c-gateway/src/legacy_declared_abi.rs) counts only TRAILING `*` words, so a parameter spelled `const char *__restrict __format` ends in a qualifier, has zero trailing stars and a `*` in its head, and projects to `None` (`abi-unreadable-declaration`). A five-unit probe isolates the token: the same printf prototype without `__restrict` agrees. In the trial arbiter the drafted declarations of printf, fprintf, snprintf, sprintf, stat, strftime, gettimeofday, getsockopt, getpeername, dlsym, cnd_timedwait, pthread_sigmask, regexec and regerror were withdrawn at every call site (2,577 withdrawn call-site leaves, 1,192 fprintf and 1,290 snprintf), so none was shipped. A qualifier after the last `*` qualifies the parameter object itself and is dropped for type compatibility (C11 6.7.6.3p15), so reading it is a faithful widening, but it is analyzer semantics: it needs Rust, a Lean model of the projection step and a re-arbiter. memcpy/memset/strcpy also spell `__restrict`, so LIBC-MEM-RESULT-ALIAS's result mode alone would not make them declarable. LIBC-PRINTF-FAMILY stays open behind this. Discharge condition: the reader drops top-level qualifiers after the last `*` (and still refuses a qualifier between two `*`), with matching audited Lean and tests, then a declarative card lands the 14 prototypes above with its own leaf-by-leaf attribution.",
+   "source": "docs/reports/w43-libc-contracts/README.md",
+   "recorded_by": "W43-LIBC-CONTRACTS"
+  },
+  {
+   "id": "W43-LIBC-ABI-READER-SHAPES",
+   "title": "Three more prototype shapes the declared-ABI reader cannot project keep six faithful libc callees undeclared: `__CONST_SOCKADDR_ARG`, an enum typedef, and `va_list`",
+   "why": "Card W43-LIBC-CONTRACTS drafted and measured them: `bind`/`connect` take `__CONST_SOCKADDR_ARG`, a transparent union under `_GNU_SOURCE` (withdrawn at every call site); `getrlimit`/`setrlimit` take the enumeration typedef `__rlimit_resource_t` (withdrawn at every call site); `vprintf`/`vsnprintf` take `__gnuc_va_list` (`__builtin_va_list`), for which the v1 vocabulary has no spelling at all. Each custody statement is otherwise the neutral element. Discharge condition: a measured reader widening per shape (transparent union of object pointers -> pointer projection; enum typedef -> its integer projection; a va_list spelling) with Lean parity, or a recorded decision that the shape stays refused.",
+   "source": "docs/reports/w43-libc-contracts/README.md",
+   "recorded_by": "W43-LIBC-CONTRACTS"
+  },
+  {
+   "id": "W43-LIBC-RESULT-ALIAS-NAMES",
+   "title": "Thirteen more libc callees than LIBC-MEM-RESULT-ALIAS names return an alias of an argument or of retained storage",
+   "why": "Card W43-LIBC-CONTRACTS inventoried every libc/POSIX callee of the uncontracted-call family. Besides memcpy and memset (LIBC-MEM-RESULT-ALIAS), memmove, strcpy and strncpy return their first argument; strchr, strrchr, strstr, strcasestr, memchr and memrchr return a pointer into it; gmtime_r and localtime_r return their second argument; realpath returns its second argument or a fresh malloc allocation; pthread_getspecific returns a pointer an earlier pthread_setspecific retained. resource_return_none() would drop the alias, so none was declared. Measured yield at the W43-LIBC-CONTRACTS baseline: memcpy 8 sole-blocked functions, memset 2, memmove 1, the rest 0. Discharge condition: the result mode LIBC-MEM-RESULT-ALIAS asks for (plus an interior-pointer and a conditional-alias reading, or a recorded refusal for those), and W43-LIBC-POINTER-QUALIFIER-READER for the `__restrict` prototypes among them.",
+   "source": "docs/reports/w43-libc-contracts/README.md",
+   "recorded_by": "W43-LIBC-CONTRACTS"
+  },
+  {
+   "id": "W43-LIBC-OUT-POINTER-ALIAS",
+   "title": "strtol/strtoll/strtoull/strtod, getpwnam_r/getgrnam_r and backtrace write a pointer through a pointer-to-pointer parameter that v1 admits only as a custody `resource_out`",
+   "why": "Card W43-LIBC-CONTRACTS read them: the strto* family stores an alias INTO its first argument through `char **endptr`; getpwnam_r/getgrnam_r store a pointer to their caller-supplied record through `struct passwd **result`; backtrace writes return addresses through `void **`. `ptr<mut, ptr<mut, u8>>` is admitted only for `resource_out`, which would assert fresh custody the caller does not acquire. Discharge condition: a v1 mode for a borrowed pointer-to-pointer that receives an alias or a non-custody value, with Lean parity, or a recorded refusal.",
+   "source": "docs/reports/w43-libc-contracts/README.md",
+   "recorded_by": "W43-LIBC-CONTRACTS"
+  },
+  {
+   "id": "W43-LIBC-DESCRIPTOR-LIFECYCLE",
+   "title": "Seventeen libc callees create or release a descriptor or handle that v1's pointer-only, kind-less custody cannot state",
+   "why": "Card W43-LIBC-CONTRACTS declined open, close, socket, accept4, fcntl (F_DUPFD), fopen, fclose, opendir, closedir, dlopen, dlclose, getaddrinfo, freeaddrinfo, fts_open, fts_close, glob and globfree. A file descriptor is an `int`, which v1 never treats as custody, so a neutral declaration would erase a real acquire/release; a pointer handle (FILE *, DIR *, dlopen handle, addrinfo list) could be declared owned/released, but v1 custody has one kind, so `free(fopen(...))` and `fclose(malloc(...))` would both discharge. getaddrinfo's out list is established on a `0` return, not by a null test. close is the sole blocker of 1 function at the baseline, fclose blocks 6. Discharge condition: a kind-indexed custody vocabulary or a descriptor profile carried into the C gateway, with Lean parity, then per-callee declarations.",
+   "source": "docs/reports/w43-libc-contracts/README.md",
+   "recorded_by": "W43-LIBC-CONTRACTS"
+  },
+  {
+   "id": "W43-LIBC-IN-PLACE-LIFECYCLE",
+   "title": "Init/destroy pairs on caller-owned objects (mtx_init/mtx_destroy, pthread_rwlock_init/destroy, pthread_attr_init, pthread_key_create, regcomp/regfree) stay undeclared",
+   "why": "Card W43-LIBC-CONTRACTS read them: each initialises an object the caller owns in place and opens an obligation to destroy it (regcomp allocates inside the caller's regex_t; POSIX requires pthread_attr_destroy), which v1 cannot state, so a neutral declaration would erase the obligation. mtx_destroy, pthread_rwlock_init, pthread_rwlock_destroy and pthread_key_create are each the sole blocker of one function at the baseline. Discharge condition: an in-place lifecycle mode (or a typed profile) the gateway checks, with Lean parity.",
+   "source": "docs/reports/w43-libc-contracts/README.md",
+   "recorded_by": "W43-LIBC-CONTRACTS"
+  },
+  {
+   "id": "W43-LIBC-NORETURN",
+   "title": "exit and abort stay undeclared: v1 has no no-return mode",
+   "why": "Card W43-LIBC-CONTRACTS declined both: their custody effect is neutral, but `ensures normal` would give the call a continuation the C does not have, which is not exact. exit blocks 13 functions and abort 10 at the baseline, neither as a sole blocker. Discharge condition: a v1 `noreturn` clause the C gateway models as a path end (and matching Lean), then a declaration.",
+   "source": "docs/reports/w43-libc-contracts/README.md",
+   "recorded_by": "W43-LIBC-CONTRACTS"
+  },
+  {
+   "id": "W43-LIBC-CALLBACK-RETAIN",
+   "title": "Callback-invoking (qsort, call_once, pthread_once) and pointer-retaining (pthread_setspecific) libc callees stay undeclared",
+   "why": "Card W43-LIBC-CONTRACTS declined them: a declaration cannot state the effects of the caller-supplied function the call invokes, and pthread_setspecific retains its pointer argument past the call with no owner v1 can name (`resource_stored` needs an owned owner parameter). call_once and pthread_once are each the sole blocker of one function. W37 did declare a sort with a comparator (rd_kafka_topic_partition_list_sort); this card took the stricter reading for libc, recorded rather than resolved. Discharge condition: a decision, with its reasons, on whether a borrowed fnptr parameter may be declared when the callee invokes it, and a retained-pointer mode for pthread_setspecific.",
+   "source": "docs/reports/w43-libc-contracts/README.md",
+   "recorded_by": "W43-LIBC-CONTRACTS"
+  },
+  {
+   "id": "W43-LIBC-HEADER-INLINE-BODIES",
+   "title": "glibc's header-defined `__bswap_16/32/64` and `__uint64_identity` carry 599 uncontracted-call leaves and were deliberately not declared",
+   "why": "Card W43-LIBC-CONTRACTS classified them `libc-inline`: each is `static __inline` with its body in a glibc header inside every unit that uses it (`bits/byteswap.h`, `bits/uintn-identity.h`), so a name-keyed contract would replace a checkable body with a trusted assumption, and there is no extern prototype for the declared-ABI gate. They block 87, 84, 33 and 1 functions, 0 of them solely. Discharge condition: model `__builtin_bswap16/32/64` (scalar builtins) so W4 can derive the header bodies, or a recorded decision to contract header-inline libc bodies.",
+   "source": "docs/reports/w43-libc-contracts/README.md",
+   "recorded_by": "W43-LIBC-CONTRACTS"
+  },
+  {
+   "id": "W43-LIBC-NAME-LIST-HOST-BOUND",
+   "title": "The libc placement test's name list is generated from the audited host's glibc and the 185 pinned units, not from a libc specification",
+   "why": "Card W43-LIBC-CONTRACTS added `providers/quirin-provider-libc/libc-names.txt` (2,762 names: every identifier followed by `(` at file scope in a libc6-dev or linux-libc-dev header across the pinned units, `scripts/libc_names.py`) and a test in scripts/tests/test_contract_corpus.py that fails when any corpus module or any `.qcore` under providers/ outside the libc crate declares a listed name or a name the libc crate declares. A libc function no pinned unit's headers declare (another libc, a header no unit includes) is not in the list, and QCore test fixtures outside providers/ and the corpus are out of the test's scope by design. Discharge condition: regenerate the list whenever the pinned corpus or audited host changes, or derive it from a specification-level name set (C23 Annex B plus POSIX), and record which.",
+   "source": "docs/reports/w43-libc-contracts/README.md",
+   "recorded_by": "W43-LIBC-CONTRACTS"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

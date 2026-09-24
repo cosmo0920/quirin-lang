@@ -806,6 +806,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-chunk-source-profile](w43-chunk-source-profile/README.md) | W43 chunk source profile |
 
+| [w43-libc-contracts](w43-libc-contracts/README.md) | W43-LIBC-CONTRACTS: trusted libc/POSIX contracts, measured first and placed only in the libc crate |
+
 | [w43-monkey-callback-composition](w43-monkey-callback-composition/README.md) | W43 Monkey callback Cycle 18 composition |
 
 | [w43-return-expression](w43-return-expression/README.md) | W43-RETURN-EXPRESSION — the refused return expressions, measured and re-attributed |
@@ -999,6 +1001,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [windows-native-sockets-harness](windows-native-sockets-harness/README.md) | WINDOWS-NATIVE-SOCKETS-HARNESS — the wave-24 native runs, made runnable on Windows |
 
 | [windows-std-event-af-unix](windows-std-event-af-unix/README.md) | EVENT-V1-WINDOWS-AFUNIX — capability-selected Windows endpoint pairs |
+
+| [windows-test-portability](windows-test-portability/README.md) | Windows test portability and F02 pin repair |
 
 | [windows-vs2026](windows-vs2026/README.md) | Windows Visual Studio 2026 toolchain repair |
 

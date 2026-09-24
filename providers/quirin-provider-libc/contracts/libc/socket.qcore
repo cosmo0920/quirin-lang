@@ -1,0 +1,122 @@
+module contract;
+
+// <sys/socket.h>, <sys/sendfile.h>, <arpa/inet.h>, <netdb.h> -- resource-
+// projection vocabulary version 1.
+//
+// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about POSIX sockets (trust
+// boundary 28); no libc body is analysed. Read from the prototypes the
+// analysed units declare (glibc headers on the audited host):
+//
+//   extern int setsockopt (int __fd, int __level, int __optname,
+//                          const void *__optval, socklen_t __optlen) __THROW;
+//   extern ssize_t send (int __fd, const void *__buf, size_t __n, int __flags);
+//   extern ssize_t recv (int __fd, void *__buf, size_t __n, int __flags);
+//   extern int listen (int __fd, int __n) __THROW;
+//   extern ssize_t sendfile (int __out_fd, int __in_fd, off_t *__offset, size_t __count) __THROW;
+//   extern uint32_t htonl (uint32_t __hostlong) __THROW __attribute__ ((__const__));
+//   extern uint32_t ntohl (uint32_t __netlong) __THROW __attribute__ ((__const__));
+//   extern const char *gai_strerror (int __ecode) __THROW;
+//
+// `socklen_t` is `unsigned int` (`u32`), `ssize_t` is `long` (`isize`).
+//
+// ## The custody statements
+//
+// Each call USES an existing descriptor (an `int`, which v1 does not model as
+// custody) and reads or writes through caller buffers: the kernel copies
+// `optval` and `buf` and retains neither. No call allocates,
+// frees or retains a caller object, so every parameter is `resource_borrowed`.
+// Every result but one is a scalar, so `resource_return_none()` is exact.
+// `gai_strerror` returns a pointer to a STATIC message: the caller acquires no
+// obligation and must not free it, which is `resource_return_none()` -- the
+// `__errno_location` / `flb_input_chunk_get_name` precedent, and it aliases no
+// argument (its only parameter is a scalar).
+//
+// ## Deliberately NOT declared here (recorded in the card report)
+//
+//   `socket`/`accept4` CREATE a descriptor and `close` releases one;
+//   `getaddrinfo` allocates a list released by `freeaddrinfo`, through a
+//   `struct addrinfo **` out slot whose success arm is the `0` return, not a
+//   null test. Neither lifecycle is expressible as v1 pointer custody.
+//   `getsockopt`, `getpeername`: faithful in v1, but the prototype spells a qualifier AFTER the
+//   `*` (`T *__restrict p`), which the declared-ABI reader (gateway
+//   constraint 8) does not read; this card measured the declaration withdrawn
+//   with `abi-unreadable-declaration` at every call site in the pinned corpus
+//   (`LOADER-ABI-RESTRICT-QUALIFIER`), so it is not shipped.
+//   `bind`/`connect` take `__CONST_SOCKADDR_ARG`, a transparent union under
+//   `_GNU_SOURCE`, which the reader does not read in the units that call them
+//   (measured withdrawn at every call site), so they are not shipped either.
+//
+// ## What no declaration here says
+//
+// Nothing about connection state, partial sends, errors, `errno`, or signals.
+// Per-call custody statements about the CALLER's obligations, and nothing more.
+
+extern fn setsockopt(fd: i32, level: i32, optname: i32, optval: ptr<const, u8>, optlen: u32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(level);
+    ensures normal resource_borrowed(optname);
+    ensures normal resource_borrowed(optval);
+    ensures normal resource_borrowed(optlen);
+    ensures normal resource_return_none();
+};
+
+extern fn send(fd: i32, buf: ptr<const, u8>, n: usize, flags: i32) -> isize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_none();
+};
+
+extern fn recv(fd: i32, buf: ptr<mut, u8>, n: usize, flags: i32) -> isize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_none();
+};
+
+extern fn listen(fd: i32, n: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};
+
+extern fn sendfile(out_fd: i32, in_fd: i32, offset: ptr<mut, u8>, count: usize) -> isize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(out_fd);
+    ensures normal resource_borrowed(in_fd);
+    ensures normal resource_borrowed(offset);
+    ensures normal resource_borrowed(count);
+    ensures normal resource_return_none();
+};
+
+extern fn htonl(hostlong: u32) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(hostlong);
+    ensures normal resource_return_none();
+};
+
+extern fn ntohl(netlong: u32) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(netlong);
+    ensures normal resource_return_none();
+};
+
+extern fn gai_strerror(ecode: i32) -> ptr<const, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ecode);
+    ensures normal resource_return_none();
+};

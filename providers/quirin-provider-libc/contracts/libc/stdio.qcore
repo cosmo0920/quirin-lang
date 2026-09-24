@@ -1,0 +1,61 @@
+module contract;
+
+// <stdio.h> -- resource-projection vocabulary version 1.
+//
+// Card W43-LIBC-CONTRACTS. Every declaration below is a TRUSTED ASSUMPTION
+// about the C library (trust boundary 28); no libc body is analysed. Each was
+// read from the prototype the analysed units declare (`/usr/include/stdio.h`
+// on the audited host), after preprocessing:
+//
+//   extern void perror (const char *__s);
+//   extern int fflush (FILE *__stream);
+//   extern int remove (const char *__filename) __THROW;
+//
+// ## The custody statements
+//
+// `perror` reads one string and writes to `stderr`; `fflush` writes out the
+// buffer of a stream the caller keeps (`FILE *` is an object pointer the call
+// borrows); `remove` reads one path. None allocates, frees or retains a caller
+// object and every result is `void` or an `int`: `resource_borrowed` on every
+// parameter and `resource_return_none()`, exactly.
+//
+// ## Deliberately NOT declared here (recorded in the card report)
+//
+//   `printf`, `fprintf`, `snprintf`, `sprintf`: faithful in v1
+//   (`LIBC-PRINTF-FAMILY`), but every one spells a qualifier AFTER the `*`
+//   (`const char *__restrict __format`), which the declared-ABI reader
+//   (gateway constraint 8) does not read: this card measured each of them
+//   withdrawn with `abi-unreadable-declaration` at every call site in the
+//   pinned corpus (`LOADER-ABI-RESTRICT-QUALIFIER`). A declaration withdrawn
+//   everywhere decides nothing, so none is shipped.
+//   `vprintf`/`vsnprintf` take a `va_list` (`__builtin_va_list`), for which
+//   this vocabulary has no ABI spelling.
+//   `fopen`/`fclose` open and close a STREAM: a v1 owned/released pair would
+//   put `FILE *` custody in the one kind-less pointer class `malloc`/`free`
+//   use, so `free(fopen(...))` and `fclose(malloc(...))` would both discharge.
+//
+// ## What no declaration here says
+//
+// Nothing about stream state, buffering, errors or `errno`. These are per-call
+// custody statements about the CALLER's obligations, and nothing more.
+
+extern fn perror(s: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_none();
+};
+
+extern fn fflush(stream: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(stream);
+    ensures normal resource_return_none();
+};
+
+extern fn remove(filename: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(filename);
+    ensures normal resource_return_none();
+};

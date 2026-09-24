@@ -889,5 +889,8 @@ fn the_modules_under_test_are_the_production_ones() {
     // `cmetrics/metric_values.qcore`, `cmetrics/mpack_utils.qcore`,
     // `mpack/writer.qcore`, `librdkafka/lz4_stream.qcore` and
     // `librdkafka/topic_partition.qcore`.
-    assert_eq!(contracts.source_assumptions().len(), 33);
+    // 33 -> 44 by card W43-LIBC-CONTRACTS: eleven `libc/` modules owned by
+    // `providers/quirin-provider-libc` (55 trusted libc/POSIX declarations,
+    // each read from the prototype the pinned units declare).
+    assert_eq!(contracts.source_assumptions().len(), 44);
 }

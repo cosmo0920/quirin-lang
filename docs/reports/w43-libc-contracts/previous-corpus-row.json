@@ -1,0 +1,29 @@
+{
+  "note": "W43-RETURN-EXPRESSION, 2026-09-23. Same-checkout BEFORE reproduces the W42 diagnostics byte for byte (the four other artifacts match the canonical-contract-locations checkpoint after the worktree-path alias; their W42 differences are that migration's attributed path and digest identities). AFTER lowers 941 whole-call return refusals to the call classifier's own refusal at the same line (671 uncontracted call, 267 lexical indirect access, 2 braced initializer, 1 nested call): 941 removed, 941 added, 0 function or unit moves, every count unchanged. Leak 272 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-return-expression/previous-corpus-row.json.",
+  "units": 185,
+  "safe": 2,
+  "provisional_unsafe": 42,
+  "unknown": 137,
+  "data_only": 4,
+  "projected_functions": 4834,
+  "leak_diagnostics": 272,
+  "process_sidecar": "3 checked function contracts / 93 Unknown",
+  "baseline": "docs/reports/w43-return-expression/artifacts/",
+  "source": "docs/reports/w43-return-expression/README.md; preceding baseline docs/reports/w42-priority-integration/artifacts/",
+  "unknown_alias_diagnostics": 4665,
+  "unsupported_diagnostics": 49371,
+  "double_release_diagnostics": 0,
+  "function_statuses": {
+    "safe": 223,
+    "provisional_unsafe": 84,
+    "unknown": 4527
+  },
+  "source_definitions": 4921,
+  "unprojected_definitions": 87,
+  "unit_reason_codes": {
+    "unsupported-syntax": 136,
+    "none": 48,
+    "incomplete-obligation-coverage": 1
+  },
+  "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

@@ -1,0 +1,4641 @@
+{
+ "inventory_callees": 2721,
+ "class_counts": {
+  "builtin": 13,
+  "corpus": 2462,
+  "libc": 85,
+  "libc-inline": 4,
+  "libc-with-tree-body": 43,
+  "other-system": 69,
+  "unresolved": 45
+ },
+ "libc_callees": 132,
+ "declared": 55,
+ "refused": 77,
+ "refusal_grounds": {
+  "result-alias": {
+   "reason": "the result (or a stored out-pointer) aliases an argument or retained storage; v1 has no result mode meaning 'aliases parameter n' (`LIBC-MEM-RESULT-ALIAS`)",
+   "callees": [
+    "getgrnam_r",
+    "getpwnam_r",
+    "gmtime_r",
+    "localtime_r",
+    "memchr",
+    "memcpy",
+    "memmove",
+    "memrchr",
+    "memset",
+    "pthread_getspecific",
+    "realpath",
+    "strcasestr",
+    "strchr",
+    "strcpy",
+    "strncpy",
+    "strrchr",
+    "strstr",
+    "strtod",
+    "strtol",
+    "strtoll",
+    "strtoull"
+   ]
+  },
+  "abi-restrict": {
+   "reason": "faithful in v1, but the prototype spells a qualifier after the `*` (`T *__restrict p`); the declared-ABI reader withdrew the declaration at every call site (`LOADER-ABI-RESTRICT-QUALIFIER`, measured by this card's trial run)",
+   "callees": [
+    "cnd_timedwait",
+    "dlsym",
+    "fprintf",
+    "getpeername",
+    "getsockopt",
+    "gettimeofday",
+    "printf",
+    "pthread_sigmask",
+    "regerror",
+    "regexec",
+    "snprintf",
+    "sprintf",
+    "stat",
+    "strftime"
+   ]
+  },
+  "abi-sockaddr-union": {
+   "reason": "`__CONST_SOCKADDR_ARG` is a transparent union under `_GNU_SOURCE`; the reader withdrew the declaration at every call site",
+   "callees": [
+    "bind",
+    "connect"
+   ]
+  },
+  "abi-enum-typedef": {
+   "reason": "first parameter is the enumeration typedef `__rlimit_resource_t`, which the reader does not project; withdrawn at every call site",
+   "callees": [
+    "getrlimit",
+    "setrlimit"
+   ]
+  },
+  "abi-va-list": {
+   "reason": "takes a `va_list` (`__builtin_va_list`), for which v1 has no ABI spelling",
+   "callees": [
+    "vprintf",
+    "vsnprintf"
+   ]
+  },
+  "no-return": {
+   "reason": "does not return; v1 has no no-return mode and a `normal` clause would add a continuation the C does not have",
+   "callees": [
+    "abort",
+    "exit"
+   ]
+  },
+  "descriptor-or-handle-lifecycle": {
+   "reason": "creates or releases a descriptor, stream, directory, library or result-list handle; v1 custody is pointer-only and kind-less, so a neutral declaration would erase the obligation and an owned/released pair would conflate it with `malloc`/`free`",
+   "callees": [
+    "accept4",
+    "close",
+    "closedir",
+    "dlclose",
+    "dlopen",
+    "fclose",
+    "fcntl",
+    "fopen",
+    "freeaddrinfo",
+    "fts_close",
+    "fts_open",
+    "getaddrinfo",
+    "glob",
+    "globfree",
+    "open",
+    "opendir",
+    "socket"
+   ]
+  },
+  "in-place-object-lifecycle": {
+   "reason": "initialises or destroys an object the caller owns in place (a destroy obligation v1 cannot state)",
+   "callees": [
+    "mtx_destroy",
+    "mtx_init",
+    "pthread_attr_init",
+    "pthread_key_create",
+    "pthread_rwlock_destroy",
+    "pthread_rwlock_init",
+    "regcomp",
+    "regfree"
+   ]
+  },
+  "retains-pointer": {
+   "reason": "retains its pointer argument past the call without an owner v1 can name",
+   "callees": [
+    "pthread_setspecific"
+   ]
+  },
+  "callback": {
+   "reason": "invokes a caller-supplied function whose effects the declaration cannot state",
+   "callees": [
+    "call_once",
+    "pthread_once",
+    "qsort"
+   ]
+  },
+  "pointer-to-pointer-borrow": {
+   "reason": "writes through `void **`; `ptr<mut, ptr<mut, u8>>` admits only `resource_out`",
+   "callees": [
+    "backtrace"
+   ]
+  },
+  "header-inline-body": {
+   "reason": "defined `static __inline` by a glibc header inside the unit: a checkable body, not an external prototype, so a name-keyed contract would replace it with an assumption",
+   "callees": [
+    "__bswap_16",
+    "__bswap_32",
+    "__bswap_64",
+    "__uint64_identity"
+   ]
+  }
+ },
+ "libc_rows": [
+  {
+   "callee": "memcpy",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 70,
+   "functions": 54,
+   "sole_blocked": 8,
+   "blocked_only_by_uncontracted_calls": 11,
+   "statuses": {
+    "Unknown": 47,
+    "Unsafe": 7
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_file.c/cio_file_content_copy",
+    "chunkio/cio_file.c/cio_file_scan_dump",
+    "chunkio/cio_file.c/cio_file_write_metadata",
+    "cmetrics/cmt_encode_opentelemetry_batch.c/append_original_payload",
+    "cmetrics/cmt_encode_splunk_hec.c/format_metric",
+    "fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_write_header_v2",
+    "fluent-bit-chunk/flb_input_chunk.c/input_chunk_write_header",
+    "fluent-bit-chunk/flb_input_chunk.c/update_logs_tag_records_metrics",
+    "librdkafka/cJSON.c/cJSON_strdup",
+    "librdkafka/cJSON.c/create_reference",
+    "librdkafka/cJSON.c/print_string_ptr",
+    "librdkafka/crc32c.c/crc32c_sw",
+    "librdkafka/lz4frame.c/LZ4F_decompress",
+    "librdkafka/lz4frame.c/LZ4F_makeBlock",
+    "librdkafka/nanopb/pb_decode.c/buf_read",
+    "librdkafka/nanopb/pb_encode.c/buf_write",
+    "librdkafka/rdaddr.c/rd_addrinfo_prepare",
+    "librdkafka/rdbuf.c/rd_buf_write",
+    "librdkafka/rdbuf.c/rd_slice_read",
+    "librdkafka/rddl.c/rd_dl_open",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AuthorizedOperations_copy",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_consumer_group_metadata_read",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_consumer_group_metadata_write",
+    "librdkafka/rdkafka_conf.c/rd_kafka_anyconf_get0",
+    "librdkafka/rdkafka_conf.c/rd_kafka_conf_kv_split",
+    "librdkafka/rdkafka_conf.c/rd_kafka_desensitize_str",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_partition_write_control_batch",
+    "librdkafka/rdrand.c/rd_array_shuffle",
+    "librdkafka/rdstring.c/rd_string_render",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_all_error_types_with_valid",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_mixed_crc_success_decomp",
+    "librdkafka/rdunittest_msgset_errors.c/ut_build_record_v2",
+    "librdkafka/rdunittest_msgset_errors.c/ut_build_valid_msgset_v2",
+    "librdkafka/rdunittest_msgset_errors.c/ut_put_be16",
+    "librdkafka/rdunittest_msgset_errors.c/ut_put_be32",
+    "librdkafka/rdunittest_msgset_errors.c/ut_put_be64",
+    "librdkafka/rdxxhash.c/XXH_memcpy",
+    "librdkafka/rdxxhash.c/XXH_read32",
+    "librdkafka/rdxxhash.c/XXH_read64",
+    "librdkafka/snappy.c/append",
+    "librdkafka/snappy.c/emit_literal",
+    "librdkafka/snappy.c/get_unaligned32",
+    "librdkafka/snappy.c/get_unaligned64",
+    "librdkafka/snappy.c/put_unaligned16",
+    "librdkafka/snappy.c/put_unaligned32",
+    "librdkafka/snappy.c/put_unaligned64",
+    "librdkafka/snappy.c/rd_kafka_snappy_java_uncompress",
+    "librdkafka/snappy.c/writer_append",
+    "monkey-libevent/mk_core/mk_string.c/mk_string_copy_substr",
+    "monkey-libevent/mk_core/mk_string.c/mk_string_dup",
+    "monkey-libevent/mk_server/mk_http_parser.c/cb_debug_chunk_complete",
+    "monkey-libevent/mk_server/mk_lib.c/mk_http_header",
+    "monkey-libevent/mk_server/mk_utils.c/mk_utils_utime2gmt",
+    "monkey-libevent/mk_server/mk_vhost.c/str_to_regex"
+   ]
+  },
+  {
+   "callee": "strcmp",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/string.qcore",
+   "leaves": 8,
+   "functions": 8,
+   "sole_blocked": 6,
+   "blocked_only_by_uncontracted_calls": 6,
+   "statuses": {
+    "Unknown": 8
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeConsumerGroupsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeConsumerGroups_cmp",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeTopics_cmp",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ListConsumerGroupsResponse_parse",
+    "librdkafka/rdlist.c/rd_list_cmp_str",
+    "librdkafka/rdmap.c/rd_map_str_cmp",
+    "librdkafka/rdstring.c/rd_strcmp",
+    "monkey-libevent/mk_server/mk_mimetype.c/rbtree_compare"
+   ]
+  },
+  {
+   "callee": "setsockopt",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/socket.qcore",
+   "leaves": 5,
+   "functions": 5,
+   "sole_blocked": 5,
+   "blocked_only_by_uncontracted_calls": 5,
+   "statuses": {
+    "Unknown": 5
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/socket.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_set_cork_flag",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_set_tcp_defer_accept",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_set_tcp_fastopen",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_set_tcp_nodelay",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_set_tcp_reuseport"
+   ]
+  },
+  {
+   "callee": "memset",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 61,
+   "functions": 44,
+   "sole_blocked": 2,
+   "blocked_only_by_uncontracted_calls": 2,
+   "statuses": {
+    "Unknown": 39,
+    "Unsafe": 5
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/chunkio.c/cio_options_init",
+    "chunkio/cio_stats.c/cio_stats_get",
+    "cmetrics/cmt_decode_msgpack.c/unpack_basic_type",
+    "cmetrics/cmt_decode_msgpack.c/unpack_opts",
+    "cmetrics/cmt_encode_influx.c/append_metric_value",
+    "cmetrics/cmt_encode_opentelemetry_batch.c/metrics_batch_view_init",
+    "cmetrics/cmt_encode_prometheus.c/format_metrics",
+    "cmetrics/cmt_encode_prometheus.c/initialize_temporary_metric",
+    "cmetrics/cmt_encode_prometheus_remote_write.c/cmt_encode_prometheus_remote_write_create",
+    "cmetrics/cmt_encode_prometheus_remote_write.c/pack_complex_metric_sample",
+    "cmetrics/cmt_encode_splunk_hec.c/initialize_splunk_hec_context",
+    "cmetrics/cmt_encode_splunk_hec.c/initialize_temporary_metric",
+    "cmetrics/cmt_metric.c/cmt_metric_exp_hist_get_snapshot",
+    "ctraces/ctr_decode_msgpack.c/ctr_decode_msgpack_create",
+    "ctraces/ctraces.c/ctr_opts_init",
+    "librdkafka/cJSON.c/cJSON_New_Item",
+    "librdkafka/cJSON.c/print",
+    "librdkafka/lz4.c/LZ4_initStream",
+    "librdkafka/lz4.c/LZ4_resetStream",
+    "librdkafka/lz4frame.c/LZ4F_calloc",
+    "librdkafka/lz4frame.c/LZ4F_compressFrame",
+    "librdkafka/lz4frame.c/LZ4F_compressFrameBound",
+    "librdkafka/lz4frame.c/LZ4F_compressFrame_usingCDict",
+    "librdkafka/lz4frame.c/LZ4F_decompress",
+    "librdkafka/rdaddr.c/rd_getaddrinfo",
+    "librdkafka/rdbuf.c/do_unittest_write_read",
+    "librdkafka/rdbuf.c/do_unittest_write_split_seek",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_SyncGroup_memberstate",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_partition_write_control_batch",
+    "librdkafka/rdkafka_msgset_writer.c/rd_kafka_gzip_compress",
+    "librdkafka/rdkafka_partition.c/rd_kafka_topic_partition_list_get_leaders",
+    "librdkafka/rdkafka_telemetry_decode.c/clear_unit_test_data",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_all_error_types_with_valid",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_decompression_error_share_consumer",
+    "librdkafka/rdxxhash.c/XXH32_reset",
+    "librdkafka/rdxxhash.c/XXH64_reset",
+    "monkey-libevent/mk_server/mk_http.c/mk_request_premature_close",
+    "monkey-libevent/mk_server/mk_net.c/mk_net_fd_connect",
+    "monkey-libevent/mk_server/mk_plugin.c/mk_plugin_load_all",
+    "monkey-libevent/mk_server/mk_server.c/mk_server_loop_balancer",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_connect",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_open",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_server",
+    "monkey-libevent/mk_server/mk_utils.c/mk_utils_gmt2utime"
+   ]
+  },
+  {
+   "callee": "sysconf",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/unistd.qcore",
+   "leaves": 4,
+   "functions": 4,
+   "sole_blocked": 2,
+   "blocked_only_by_uncontracted_calls": 2,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/unistd.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_file_unix.c/cio_file_native_lookup_group",
+    "chunkio/cio_file_unix.c/cio_file_native_lookup_user",
+    "monkey-libevent/mk_server/mk_utils.c/mk_utils_get_system_core_count",
+    "monkey-libevent/mk_server/mk_utils.c/mk_utils_get_system_page_size"
+   ]
+  },
+  {
+   "callee": "snprintf",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 1044,
+   "functions": 234,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 7,
+   "statuses": {
+    "Unknown": 231,
+    "Unsafe": 3
+   },
+   "headers": [
+    "/usr/include/stdio.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_file_unix.c/cio_file_native_compose_path",
+    "cmetrics/cmt_encode_influx.c/append_histogram_metric_value",
+    "cmetrics/cmt_encode_influx.c/append_metric_value",
+    "cmetrics/cmt_encode_influx.c/append_summary_metric_value",
+    "cmetrics/cmt_encode_prometheus.c/append_metric_value",
+    "cmetrics/cmt_encode_prometheus.c/bucket_value_to_string",
+    "cmetrics/cmt_encode_splunk_hec.c/append_bucket_metric",
+    "cmetrics/cmt_encode_splunk_hec.c/append_metric_value",
+    "cmetrics/cmt_encode_splunk_hec.c/append_quantiles_metric",
+    "cmetrics/cmt_encode_splunk_hec.c/double_to_string",
+    "cmetrics/cmt_encode_splunk_hec.c/format_histogram_bucket",
+    "cmetrics/cmt_encode_splunk_hec.c/format_metric_type",
+    "cmetrics/cmt_encode_splunk_hec.c/format_summary_metric",
+    "cmetrics/cmt_encode_text.c/append_exp_histogram_metric_value",
+    "cmetrics/cmt_encode_text.c/append_histogram_metric_value",
+    "cmetrics/cmt_encode_text.c/append_metric_value",
+    "cmetrics/cmt_encode_text.c/append_summary_metric_value",
+    "ctraces/ctr_encode_text.c/format_array",
+    "ctraces/ctr_encode_text.c/format_double",
+    "ctraces/ctr_encode_text.c/format_event",
+    "ctraces/ctr_encode_text.c/format_int64",
+    "ctraces/ctr_encode_text.c/format_span",
+    "ctraces/ctr_encode_text.c/format_string",
+    "fluent-bit-chunk/flb_input_chunk.c/update_logs_tag_records_metrics",
+    "librdkafka/rddl.c/rd_dl_open0",
+    "librdkafka/rddl.c/rd_dl_sym",
+    "librdkafka/rdhttp.c/unittest_http_get",
+    "librdkafka/rdkafka.c/rd_kafka_DescribeGroups_resp_cb",
+    "librdkafka/rdkafka.c/rd_kafka_ListGroups_resp_cb",
+    "librdkafka/rdkafka.c/rd_kafka_err2name",
+    "librdkafka/rdkafka.c/rd_kafka_err2str",
+    "librdkafka/rdkafka.c/rd_kafka_log0",
+    "librdkafka/rdkafka.c/rd_kafka_new",
+    "librdkafka/rdkafka.c/rd_kafka_share_consumer_new",
+    "librdkafka/rdkafka.c/rd_kafka_version_str",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AclBindingFilter_new",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AclBinding_new",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AlterConfigsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AlterConsumerGroupOffsetsRequest",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AlterUserScramCredentialsRequest",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AlterUserScramCredentialsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ConfigResource_get_single_broker_id",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ConsumerGroupDescribeResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_CreateAclsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_CreatePartitionsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_CreateTopicsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteAclsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteGroupsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteRecordsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteTopicsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeAclsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeConfigsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeConsumerGroupsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeUserScramCredentialsRequest",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeUserScramCredentialsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ElectLeadersResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_IncrementalAlterConfigsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ListConsumerGroupsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_NewPartitions_new",
+    "librdkafka/rdkafka_admin.c/rd_kafka_NewPartitions_set_replica_assignment",
+    "librdkafka/rdkafka_admin.c/rd_kafka_NewTopic_new",
+    "librdkafka/rdkafka_admin.c/rd_kafka_NewTopic_set_replica_assignment",
+    "librdkafka/rdkafka_admin.c/rd_kafka_OffsetDeleteResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_admin_ConsumerGroupDescribeRequest",
+    "librdkafka/rdkafka_admin.c/rd_kafka_admin_DescribeClusterRequest",
+    "librdkafka/rdkafka_admin.c/rd_kafka_admin_DescribeConsumerGroupsRequest",
+    "librdkafka/rdkafka_admin.c/rd_kafka_admin_DescribeTopicsRequest",
+    "librdkafka/rdkafka_admin.c/rd_kafka_admin_ListConsumerGroupsRequest",
+    "librdkafka/rdkafka_assignor.c/rd_kafka_assignors_init",
+    "librdkafka/rdkafka_background.c/rd_kafka_background_thread_create",
+    "librdkafka/rdkafka_broker.c/rd_kafka_broker_handle_SaslHandshake",
+    "librdkafka/rdkafka_broker.c/rd_kafka_broker_set_error",
+    "librdkafka/rdkafka_broker.c/rd_kafka_mk_brokername",
+    "librdkafka/rdkafka_broker.c/rd_kafka_mk_nodename",
+    "librdkafka/rdkafka_broker.c/rd_kafka_recv",
+    "librdkafka/rdkafka_broker.c/rd_kafka_req_response",
+    "librdkafka/rdkafka_cert.c/rd_kafka_cert_new",
+    "librdkafka/rdkafka_cert.c/rd_kafka_conf_set_ssl_cert",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_assignor_run",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_consumer_rejoin",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_ConsumerGroupHeartbeat",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_FindCoordinator",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_Heartbeat",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_JoinGroup",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_LeaveGroup",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_ShareGroupHeartbeat",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_SyncGroup",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_SyncGroup_memberstate",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_rejoin",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_group_MemberMetadata_consumer_read",
+    "librdkafka/rdkafka_conf.c/rd_kafka_anyconf_get0",
+    "librdkafka/rdkafka_conf.c/rd_kafka_anyconf_set",
+    "librdkafka/rdkafka_conf.c/rd_kafka_conf_set_events",
+    "librdkafka/rdkafka_coord.c/rd_kafka_coord_req_handle_FindCoordinator",
+    "librdkafka/rdkafka_error.c/rd_kafka_error_to_legacy",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_broker_fetch_reply",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_broker_share_fetch_reply",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_fetch_reply_handle",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_fetch_reply_handle_partition",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_share_acknowledge_reply_handle",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_share_fetch_reply_handle",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_share_fetch_reply_handle_partition",
+    "librdkafka/rdkafka_idempotence.c/rd_kafka_idemp_broker_any",
+    "librdkafka/rdkafka_idempotence.c/rd_kafka_idemp_pid_fsm",
+    "librdkafka/rdkafka_idempotence.c/rd_kafka_idemp_request_pid_failed",
+    "librdkafka/rdkafka_metadata.c/rd_kafka_parse_Metadata0",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_connection_read_request",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_partition_log_append",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_validate_records",
+    "librdkafka/rdkafka_mock_cgrp.c/rd_kafka_mock_cgrp_classic_member_add",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_AddOffsetsToTxn",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_AddPartitionsToTxn",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ConsumerGroupHeartbeat",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_EndTxn",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Fetch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_FindCoordinator",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_GetTelemetrySubscriptions",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Heartbeat",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_InitProducerId",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_JoinGroup",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_LeaveGroup",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ListOffsets",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Metadata",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_OffsetCommit",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_OffsetFetch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_OffsetForLeaderEpoch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Produce",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_PushTelemetry",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ShareAcknowledge",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ShareFetch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ShareGroupHeartbeat",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_SyncGroup",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_TxnOffsetCommit",
+    "librdkafka/rdkafka_msg.c/rd_kafka_msg_headers_parse",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_msg_v0_1",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_msg_v2",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_msgs_v2",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_peek_msg_version",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_v2",
+    "librdkafka/rdkafka_offset.c/rd_kafka_offset_file_commit",
+    "librdkafka/rdkafka_offset.c/rd_kafka_offset_file_init",
+    "librdkafka/rdkafka_pattern.c/rd_kafka_pattern_list_parse",
+    "librdkafka/rdkafka_plugin.c/rd_kafka_plugin_new",
+    "librdkafka/rdkafka_plugin.c/rd_kafka_plugins_conf_set0",
+    "librdkafka/rdkafka_range_assignor.c/setupRackAwareAssignment0",
+    "librdkafka/rdkafka_request.c/rd_kafka_AddOffsetsToTxnRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_AddPartitionsToTxnRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_AlterConfigsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_CreateAclsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_CreatePartitionsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_CreateTopicsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_DeleteAclsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_DeleteGroupsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_DeleteRecordsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_DeleteTopicsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_DescribeAclsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_DescribeConfigsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_ElectLeadersRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_EndTxnRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_GetTelemetrySubscriptionsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_IncrementalAlterConfigsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_InitProducerIdRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_OffsetDeleteRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_PushTelemetryRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_buf_read_CurrentLeader",
+    "librdkafka/rdkafka_request.c/rd_kafka_buf_read_NodeEndpoints",
+    "librdkafka/rdkafka_request.c/rd_kafka_buf_read_topic_partitions_nullable",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_ApiVersion",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_GetTelemetrySubscriptions",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_InitProducerId",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_LeaveGroup",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_ListOffsets",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_OffsetCommit",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_OffsetFetch",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_OffsetForLeaderEpoch",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_Produce_parse",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_PushTelemetry",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_SaslAuthenticate",
+    "librdkafka/rdkafka_request.c/rd_kafka_make_ListOffsetsRequest",
+    "librdkafka/rdkafka_request.c/rd_kafka_parse_ListOffsets",
+    "librdkafka/rdkafka_sasl.c/rd_kafka_sasl_client_new",
+    "librdkafka/rdkafka_sasl.c/rd_kafka_share_oauthbearer_set_token",
+    "librdkafka/rdkafka_sasl_cyrus.c/rd_kafka_sasl_cyrus_cb_canon",
+    "librdkafka/rdkafka_sasl_cyrus.c/rd_kafka_sasl_cyrus_client_new",
+    "librdkafka/rdkafka_sasl_cyrus.c/rd_kafka_sasl_cyrus_conf_validate",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/check_oauthbearer_extension_key",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/create_jws_compact_serialization",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/parse_ujws_config",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/parse_ujws_config_value_for_prefix",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/rd_kafka_oauthbearer_set_token0",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/rd_kafka_oauthbearer_unsecured_token0",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/rd_kafka_oidc_assertion_create",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/rd_kafka_oidc_jwt_bearer_build_request_body",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/rd_kafka_oidc_token_try_validate",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_should_succeed",
+    "librdkafka/rdkafka_sasl_plain.c/rd_kafka_sasl_plain_conf_validate",
+    "librdkafka/rdkafka_sasl_scram.c/rd_kafka_sasl_scram_conf_validate",
+    "librdkafka/rdkafka_sasl_scram.c/rd_kafka_sasl_scram_get_attr",
+    "librdkafka/rdkafka_sasl_scram.c/rd_kafka_sasl_scram_handle_server_final_message",
+    "librdkafka/rdkafka_sasl_scram.c/rd_kafka_sasl_scram_handle_server_first_message",
+    "librdkafka/rdkafka_ssl.c/rd_kafka_ssl_ctx_init",
+    "librdkafka/rdkafka_ssl.c/rd_kafka_ssl_ctx_init_engine",
+    "librdkafka/rdkafka_ssl.c/rd_kafka_ssl_ctx_load_providers",
+    "librdkafka/rdkafka_ssl.c/rd_kafka_ssl_error0",
+    "librdkafka/rdkafka_ssl.c/rd_kafka_ssl_normalize_hostname",
+    "librdkafka/rdkafka_ssl.c/rd_kafka_ssl_set_certs",
+    "librdkafka/rdkafka_ssl.c/rd_kafka_transport_ssl_io_update",
+    "librdkafka/rdkafka_sticky_assignor.c/setupRackAwareAssignment0",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testLargeAssignmentWithMultipleConsumersLeaving",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testNewSubscription",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testReassignmentAfterOneConsumerAdded",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testReassignmentAfterOneConsumerLeaves",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testSameSubscriptions",
+    "librdkafka/rdkafka_topic.c/rd_kafka_topic_new0",
+    "librdkafka/rdkafka_transport.c/rd_kafka_transport_connect",
+    "librdkafka/rdkafka_transport.c/rd_kafka_transport_framed_recv",
+    "librdkafka/rdkafka_transport.c/rd_kafka_transport_new",
+    "librdkafka/rdkafka_transport.c/rd_kafka_transport_socket_recv0",
+    "librdkafka/rdkafka_transport.c/rd_kafka_transport_socket_recvmsg",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_coord_query",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_AddOffsetsToTxn",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_AddPartitionsToTxn",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_EndTxn",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_FindCoordinator",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_TxnOffsetCommit",
+    "librdkafka/rdmap.c/unittest_untyped_map",
+    "librdkafka/rdstring.c/rd_flags2str",
+    "librdkafka/rdstring.c/rd_string_render",
+    "librdkafka/snappy.c/rd_kafka_snappy_java_uncompress",
+    "monkey-libevent/mk_server/mk_kernel.c/mk_kernel_features_print",
+    "monkey-libevent/mk_server/mk_net.c/mk_net_fd_connect",
+    "monkey-libevent/mk_server/mk_plugin.c/mk_plugin_load"
+   ]
+  },
+  {
+   "callee": "pthread_getspecific",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 16,
+   "functions": 15,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 14,
+    "Unsafe": 1
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:1087"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_cache.c/mk_cache_worker_exit",
+    "monkey-libevent/mk_server/mk_header.c/mk_header_prepare",
+    "monkey-libevent/mk_server/mk_http_thread.c/mk_http_thread_destroy",
+    "monkey-libevent/mk_server/mk_http_thread.c/thread_get_libco_params",
+    "monkey-libevent/mk_server/mk_lib.c/mk_lib_yield",
+    "monkey-libevent/mk_server/mk_net.c/mk_net_conn_write",
+    "monkey-libevent/mk_server/mk_plugin.c/mk_plugin_sched_get_thread_conf",
+    "monkey-libevent/mk_server/mk_server.c/mk_server_fifo_worker_setup",
+    "monkey-libevent/mk_server/mk_server.c/mk_server_listen_free",
+    "monkey-libevent/mk_server/mk_server.c/mk_server_worker_loop",
+    "monkey-libevent/mk_server/mk_utils.c/mk_utils_gmt_cache_add",
+    "monkey-libevent/mk_server/mk_utils.c/mk_utils_gmt_cache_get",
+    "monkey-libevent/mk_server/mk_utils.c/mk_utils_utime2gmt",
+    "monkey-libevent/mk_server/mk_vhost.c/mk_vhost_fdt_table_lookup",
+    "monkey-libevent/mk_server/mk_vhost.c/mk_vhost_fdt_worker_exit"
+   ]
+  },
+  {
+   "callee": "close",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 20,
+   "functions": 11,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 10,
+    "Unsafe": 1
+   },
+   "headers": [
+    "/usr/include/unistd.h"
+   ],
+   "tree_definitions": [
+    "lib/librdkafka-2.15.0/tests/sockem.c:786"
+   ],
+   "blocked_functions": [
+    "ctraces/ctr_random.c/ctr_random_get",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_broker_new_listener",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_connection_new",
+    "librdkafka/rdkafka_transport.c/rd_kafka_transport_close0",
+    "monkey-libevent/mk_core/mk_utils.c/mk_utils_register_pid",
+    "monkey-libevent/mk_server/mk_config.c/mk_config_listen_check_busy",
+    "monkey-libevent/mk_server/mk_config.c/mk_config_sanity_check",
+    "monkey-libevent/mk_server/mk_net.c/mk_net_conn_create",
+    "monkey-libevent/mk_server/mk_net.c/net_plain_close",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_connect",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_open"
+   ]
+  },
+  {
+   "callee": "pthread_setspecific",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "retains-pointer",
+   "leaves": 13,
+   "functions": 9,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 4,
+    "Unsafe": 5
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:1097"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_cache.c/mk_cache_worker_init",
+    "monkey-libevent/mk_server/mk_http_thread.c/mk_http_thread_destroy",
+    "monkey-libevent/mk_server/mk_http_thread.c/thread_get_libco_params",
+    "monkey-libevent/mk_server/mk_scheduler.c/mk_sched_launch_worker_loop",
+    "monkey-libevent/mk_server/mk_scheduler.c/mk_sched_set_request_list",
+    "monkey-libevent/mk_server/mk_scheduler.c/mk_sched_thread_lists_init",
+    "monkey-libevent/mk_server/mk_server.c/mk_server_listen_init",
+    "monkey-libevent/mk_server/mk_server.c/mk_server_worker_loop",
+    "monkey-libevent/mk_server/mk_vhost.c/mk_vhost_fdt_worker_init"
+   ]
+  },
+  {
+   "callee": "sleep",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/unistd.qcore",
+   "leaves": 4,
+   "functions": 4,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/unistd.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_clock.c/mk_clock_worker_init",
+    "monkey-libevent/mk_server/mk_lib.c/mk_lib_worker",
+    "monkey-libevent/mk_server/mk_lib.c/mk_main",
+    "monkey-libevent/mk_server/mk_lib.c/mk_stop"
+   ]
+  },
+  {
+   "callee": "sprintf",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 8,
+   "functions": 4,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/stdio.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/cJSON.c/cJSON_Version",
+    "librdkafka/cJSON.c/print_number",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/create_jws_compact_serialization",
+    "monkey-libevent/mk_core/mk_utils.c/mk_utils_register_pid"
+   ]
+  },
+  {
+   "callee": "memmove",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 3,
+   "functions": 3,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 3
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka_pattern.c/rd_kafka_pattern_list_parse",
+    "librdkafka/rdunittest_msgset_errors.c/ut_build_record_v2",
+    "monkey-libevent/mk_server/mk_fifo.c/consume_bytes"
+   ]
+  },
+  {
+   "callee": "open",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 3,
+   "functions": 3,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 2,
+   "statuses": {
+    "Unknown": 3
+   },
+   "headers": [
+    "/usr/include/fcntl.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "ctraces/ctr_random.c/ctr_random_get",
+    "librdkafka/rdkafka_offset.c/rd_kafka_open_cb_generic",
+    "librdkafka/rdkafka_offset.c/rd_kafka_open_cb_linux"
+   ]
+  },
+  {
+   "callee": "socket",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 3,
+   "functions": 3,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 2,
+   "statuses": {
+    "Unknown": 3
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/socket.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka_broker.c/rd_kafka_socket_cb_generic",
+    "librdkafka/rdkafka_broker.c/rd_kafka_socket_cb_linux",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_create"
+   ]
+  },
+  {
+   "callee": "call_once",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "callback",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/stdlib.h",
+    "/usr/include/threads.h"
+   ],
+   "tree_definitions": [
+    "lib/librdkafka-2.15.0/src/tinycthread.c:893"
+   ],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_global_init",
+    "librdkafka/rdkafka.c/rd_kafka_thread_srand"
+   ]
+  },
+  {
+   "callee": "dlclose",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 3,
+   "functions": 2,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/dlfcn.h"
+   ],
+   "tree_definitions": [
+    "src/flb_dlfcn_win32.c:88"
+   ],
+   "blocked_functions": [
+    "librdkafka/rddl.c/rd_dl_close",
+    "monkey-libevent/mk_server/mk_plugin.c/mk_plugin_load"
+   ]
+  },
+  {
+   "callee": "pthread_key_create",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "in-place-object-lifecycle",
+   "leaves": 4,
+   "functions": 2,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 2,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:967"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_http_thread.c/mk_http_thread_initialize_tls_once",
+    "monkey-libevent/mk_server/monkey.c/mk_set_up_tls_keys"
+   ]
+  },
+  {
+   "callee": "pthread_once",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "callback",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:100"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_http_thread.c/mk_http_thread_initialize_tls",
+    "monkey-libevent/mk_server/monkey.c/mk_server_create"
+   ]
+  },
+  {
+   "callee": "strcasestr",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/mk_string.c:113"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_string.c/_mk_string_search",
+    "monkey-libevent/mk_core/mk_string.c/mk_string_casestr"
+   ]
+  },
+  {
+   "callee": "getpagesize",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/unistd.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/unistd.h"
+   ],
+   "tree_definitions": [
+    "include/fluent-bit/flb_compat.h:71"
+   ],
+   "blocked_functions": [
+    "chunkio/cio_utils.c/cio_getpagesize"
+   ]
+  },
+  {
+   "callee": "mtx_destroy",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "in-place-object-lifecycle",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/threads.h"
+   ],
+   "tree_definitions": [
+    "lib/librdkafka-2.15.0/src/tinycthread.c:94"
+   ],
+   "blocked_functions": [
+    "librdkafka/rdkafka_sasl_cyrus.c/rd_kafka_sasl_cyrus_global_term"
+   ]
+  },
+  {
+   "callee": "prctl",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/process.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/prctl.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_utils.c/mk_utils_worker_rename"
+   ]
+  },
+  {
+   "callee": "pthread_rwlock_destroy",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "in-place-object-lifecycle",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:212"
+   ],
+   "blocked_functions": [
+    "librdkafka/tinycthread_extra.c/rwlock_destroy"
+   ]
+  },
+  {
+   "callee": "pthread_rwlock_init",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "in-place-object-lifecycle",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:204"
+   ],
+   "blocked_functions": [
+    "librdkafka/tinycthread_extra.c/rwlock_init"
+   ]
+  },
+  {
+   "callee": "recv",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/socket.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/socket.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_net.c/net_plain_read"
+   ]
+  },
+  {
+   "callee": "send",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/socket.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/socket.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_net.c/net_plain_write"
+   ]
+  },
+  {
+   "callee": "srand",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/stdlib.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 1,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/stdlib.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_srand"
+   ]
+  },
+  {
+   "callee": "fprintf",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 1138,
+   "functions": 239,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 5,
+   "statuses": {
+    "Unknown": 226,
+    "Unsafe": 13
+   },
+   "headers": [
+    "/usr/include/stdio.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/chunkio.c/cio_create",
+    "chunkio/cio_log.c/cio_errno_print",
+    "cmetrics/cmt_encode_cloudwatch_emf.c/cmt_encode_cloudwatch_emf_create",
+    "cmetrics/cmt_encode_msgpack.c/cmt_encode_msgpack_create",
+    "cmetrics/cmt_log.c/cmt_errno_print",
+    "ctraces/ctr_decode_opentelemetry.c/convert_array_value",
+    "ctraces/ctr_encode_msgpack.c/ctr_encode_msgpack_create",
+    "ctraces/ctr_log.c/ctr_errno_print",
+    "librdkafka/crc32c.c/unittest_rd_crc32c",
+    "librdkafka/rdbuf.c/do_unittest_erase",
+    "librdkafka/rdbuf.c/do_unittest_iov_verify0",
+    "librdkafka/rdbuf.c/do_unittest_read_verify0",
+    "librdkafka/rdbuf.c/do_unittest_write_iov",
+    "librdkafka/rdbuf.c/do_unittest_write_read",
+    "librdkafka/rdbuf.c/do_unittest_write_read_payload_correctness",
+    "librdkafka/rdbuf.c/do_unittest_write_split_seek",
+    "librdkafka/rdbuf.c/rd_buf_dump",
+    "librdkafka/rdbuf.c/rd_buf_erase",
+    "librdkafka/rdfnv1a.c/unittest_fnv1a",
+    "librdkafka/rdhdrhistogram.c/ut_high_sigfig",
+    "librdkafka/rdhdrhistogram.c/ut_max",
+    "librdkafka/rdhdrhistogram.c/ut_mean",
+    "librdkafka/rdhdrhistogram.c/ut_min",
+    "librdkafka/rdhdrhistogram.c/ut_minmax_trackable",
+    "librdkafka/rdhdrhistogram.c/ut_nan",
+    "librdkafka/rdhdrhistogram.c/ut_quantile",
+    "librdkafka/rdhdrhistogram.c/ut_reset",
+    "librdkafka/rdhdrhistogram.c/ut_sigfigs",
+    "librdkafka/rdhdrhistogram.c/ut_stddev",
+    "librdkafka/rdhdrhistogram.c/ut_subbucketmask_overflow",
+    "librdkafka/rdhdrhistogram.c/ut_totalcount",
+    "librdkafka/rdhdrhistogram.c/ut_unitmagnitude_overflow",
+    "librdkafka/rdhttp.c/unittest_http_get",
+    "librdkafka/rdhttp.c/unittest_http_get_params_append",
+    "librdkafka/rdkafka.c/rd_kafka_crash",
+    "librdkafka/rdkafka.c/rd_kafka_dump0",
+    "librdkafka/rdkafka.c/rd_kafka_poll_cb",
+    "librdkafka/rdkafka_admin.c/ut_ListConsumerGroups_response_merge",
+    "librdkafka/rdkafka_admin.c/ut_verify_ListConsumerGroups_result",
+    "librdkafka/rdkafka_assignment.c/rd_kafka_assignment_subtract",
+    "librdkafka/rdkafka_assignment.c/rd_kafka_share_assignment_subtract",
+    "librdkafka/rdkafka_assignor.c/isFullyBalanced0",
+    "librdkafka/rdkafka_assignor.c/ut_assignors",
+    "librdkafka/rdkafka_assignor.c/ut_print_toppar_list",
+    "librdkafka/rdkafka_assignor.c/verifyAssignment0",
+    "librdkafka/rdkafka_assignor.c/verifyMultipleAssignment0",
+    "librdkafka/rdkafka_assignor.c/verifyNumPartitionsWithRackMismatch0",
+    "librdkafka/rdkafka_assignor.c/verifyValidityAndBalance0",
+    "librdkafka/rdkafka_broker.c/rd_ut_ApiVersion_at_least",
+    "librdkafka/rdkafka_broker.c/rd_ut_reconnect_backoff",
+    "librdkafka/rdkafka_cgrp.c/unittest_consumer_group_metadata",
+    "librdkafka/rdkafka_cgrp.c/unittest_consumer_group_metadata_iteration",
+    "librdkafka/rdkafka_cgrp.c/unittest_list_to_map",
+    "librdkafka/rdkafka_cgrp.c/unittest_map_to_list",
+    "librdkafka/rdkafka_cgrp.c/unittest_member_metadata_serdes",
+    "librdkafka/rdkafka_cgrp.c/unittest_set_intersect",
+    "librdkafka/rdkafka_cgrp.c/unittest_set_subtract",
+    "librdkafka/rdkafka_conf.c/rd_kafka_conf_is_modified",
+    "librdkafka/rdkafka_conf.c/rd_kafka_conf_properties_show",
+    "librdkafka/rdkafka_conf.c/rd_kafka_topic_conf_is_modified",
+    "librdkafka/rdkafka_conf.c/unittest_conf",
+    "librdkafka/rdkafka_feature.c/rd_ut_features_check",
+    "librdkafka/rdkafka_feature.c/rd_ut_features_check_assert_features",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_broker_cmd",
+    "librdkafka/rdkafka_mock.c/ut_assert_topic_partitions",
+    "librdkafka/rdkafka_mock.c/ut_cgrp_consumer_member_next_assignment",
+    "librdkafka/rdkafka_mock.c/ut_cgrp_consumer_member_next_assignment0",
+    "librdkafka/rdkafka_mock.c/ut_cgrp_consumer_member_next_assignment1",
+    "librdkafka/rdkafka_mock.c/ut_cgrp_consumer_member_next_assignment2",
+    "librdkafka/rdkafka_mock.c/ut_cgrp_consumer_member_next_assignment3",
+    "librdkafka/rdkafka_mock.c/ut_cgrp_consumer_member_next_assignment4",
+    "librdkafka/rdkafka_mock.c/ut_cgrp_consumer_member_next_assignment5",
+    "librdkafka/rdkafka_mock.c/ut_mock_txn_aborted_range_recorded",
+    "librdkafka/rdkafka_mock.c/ut_mock_txn_control_batch_written",
+    "librdkafka/rdkafka_mock.c/ut_mock_txn_get_creates_and_reuses",
+    "librdkafka/rdkafka_mock.c/ut_mock_txn_lso_calculation",
+    "librdkafka/rdkafka_mock.c/ut_mock_txn_offset_is_aborted",
+    "librdkafka/rdkafka_mock.c/ut_mock_txn_partition_add_and_clear",
+    "librdkafka/rdkafka_msg.c/rd_kafka_msgq_dump",
+    "librdkafka/rdkafka_msg.c/unittest_msg",
+    "librdkafka/rdkafka_msg.c/unittest_msg_seq_wrap",
+    "librdkafka/rdkafka_msg.c/unittest_msgq_insert_all_sort",
+    "librdkafka/rdkafka_msg.c/unittest_msgq_insert_each_sort",
+    "librdkafka/rdkafka_msg.c/unittest_msgq_order",
+    "librdkafka/rdkafka_msg.c/ut_verify_msgq_order",
+    "librdkafka/rdkafka_msgset_reader.c/unittest_aborted_txns",
+    "librdkafka/rdkafka_queue.c/rd_kafka_q_dump",
+    "librdkafka/rdkafka_range_assignor.c/rd_kafka_range_assignor_unittest",
+    "librdkafka/rdkafka_range_assignor.c/setupRackAwareAssignment0",
+    "librdkafka/rdkafka_range_assignor.c/ut_testCoPartitionedAssignmentWithSameSubscription",
+    "librdkafka/rdkafka_range_assignor.c/ut_testMultipleConsumersMixedTopicSubscriptions",
+    "librdkafka/rdkafka_range_assignor.c/ut_testOneConsumerMultipleTopics",
+    "librdkafka/rdkafka_range_assignor.c/ut_testOneConsumerNoTopic",
+    "librdkafka/rdkafka_range_assignor.c/ut_testOneConsumerNonexistentTopic",
+    "librdkafka/rdkafka_range_assignor.c/ut_testOneConsumerOneTopic",
+    "librdkafka/rdkafka_range_assignor.c/ut_testOnlyAssignsPartitionsFromSubscribedTopics",
+    "librdkafka/rdkafka_range_assignor.c/ut_testRackAwareAssignmentWithCoPartitioning0",
+    "librdkafka/rdkafka_range_assignor.c/ut_testRackAwareAssignmentWithCoPartitioning1",
+    "librdkafka/rdkafka_range_assignor.c/ut_testRackAwareAssignmentWithNonEqualSubscription",
+    "librdkafka/rdkafka_range_assignor.c/ut_testRackAwareAssignmentWithUniformPartitions",
+    "librdkafka/rdkafka_range_assignor.c/ut_testRackAwareAssignmentWithUniformPartitionsNonEqualSubscription",
+    "librdkafka/rdkafka_range_assignor.c/ut_testRackAwareAssignmentWithUniformSubscription",
+    "librdkafka/rdkafka_range_assignor.c/ut_testTwoConsumersOneTopicOnePartition",
+    "librdkafka/rdkafka_range_assignor.c/ut_testTwoConsumersOneTopicTwoPartitions",
+    "librdkafka/rdkafka_range_assignor.c/ut_testTwoConsumersTwoTopicsSixPartitions",
+    "librdkafka/rdkafka_request.c/unittest_handle_GetTelemetrySubscriptions",
+    "librdkafka/rdkafka_request.c/unittest_idempotent_producer",
+    "librdkafka/rdkafka_sasl_cyrus.c/rd_kafka_sasl_cyrus_global_init",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_config_all_explicit_values",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_config_defaults",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_config_empty_should_fail",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_config_empty_value_should_fail",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_config_explicit_scope_and_life",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_config_extensions",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_config_no_principal_should_fail",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_config_unrecognized_should_fail",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_config_value_with_quote_should_fail",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_illegal_extension_keys_should_fail",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_odd_extension_size_should_fail",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_create_mock_jwt_template_file",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_assertion_create",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_assertion_parse_from_file",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_jwt_bearer_base64url_encode",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_jwt_bearer_build_request_body",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_post_fields",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_post_fields_with_empty_scope",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_should_succeed",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_sub_claim_name",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_with_empty_key",
+    "librdkafka/rdkafka_sasl_scram.c/unittest_scram_nonce",
+    "librdkafka/rdkafka_sasl_scram.c/unittest_scram_safe",
+    "librdkafka/rdkafka_ssl.c/unittest_ssl",
+    "librdkafka/rdkafka_sticky_assignor.c/rd_kafka_sticky_assignor_unittest",
+    "librdkafka/rdkafka_sticky_assignor.c/setupRackAwareAssignment0",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testAddRemoveConsumerOneTopic",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testAddRemoveTopicTwoConsumers",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testAllConsumersReachExpectedQuotaAndAreConsideredFilled",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testAssignmentUpdatedForDeletedTopic",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testConflictingPreviousAssignments",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testEnsurePartitionsAssignedToHighestGeneration",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testLargeAssignmentWithMultipleConsumersLeaving",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testMoveExistingAssignments",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testMoveExistingAssignments_j",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testMultipleConsumersMixedTopicSubscriptions",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testNewSubscription",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testNoExceptionThrownWhenOnlySubscribedTopicDeleted",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testNoReassignmentOnCurrentMembers",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testOneConsumerMultipleTopics",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testOneConsumerNoTopic",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testOneConsumerNonexistentTopic",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testOneConsumerOneTopic",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testOnlyAssignsPartitionsFromSubscribedTopics",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testOwnedPartitionsAreInvalidatedForConsumerWithMultipleGeneration",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testOwnedPartitionsAreInvalidatedForConsumerWithNoGeneration",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testOwnedPartitionsAreInvalidatedForConsumerWithStaleGeneration",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration2",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testPoorRoundRobinAssignmentScenario",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testRackAwareAssignmentWithNonEqualSubscription",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testRackAwareAssignmentWithUniformSubscription",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testReassignmentAfterOneConsumerAdded",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testReassignmentAfterOneConsumerLeaves",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testSameSubscriptions",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testStickiness",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testStickiness2",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testStickiness_j",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testTwoConsumersOneTopicOnePartition",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testTwoConsumersOneTopicTwoPartitions",
+    "librdkafka/rdkafka_sticky_assignor.c/ut_testTwoConsumersTwoTopicsSixPartitions",
+    "librdkafka/rdkafka_telemetry.c/unit_test_telemetry_match_requested_metrics_no_duplicates",
+    "librdkafka/rdkafka_telemetry_decode.c/unit_test_telemetry",
+    "librdkafka/rdkafka_telemetry_decode.c/unit_test_telemetry_decode_error",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_op_req0",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_state_transition_is_valid",
+    "librdkafka/rdlog.c/rd_hexdump",
+    "librdkafka/rdmap.c/unittest_typed_map",
+    "librdkafka/rdmap.c/unittest_typed_map2",
+    "librdkafka/rdmap.c/unittest_untyped_map",
+    "librdkafka/rdmurmur2.c/unittest_murmur2",
+    "librdkafka/rdstring.c/ut_strcasestr",
+    "librdkafka/rdstring.c/ut_string_split",
+    "librdkafka/rdunittest.c/rd_unittest",
+    "librdkafka/rdunittest.c/unittest_sysqueue",
+    "librdkafka/rdunittest.c/ut_tq_test",
+    "librdkafka/rdunittest_acknowledge.c/unittest_share_acknowledge",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_acknowledge_accept",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_acknowledge_multiple_partitions",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_acknowledge_type_reject",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_acknowledge_type_release",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_bsearch_boundary_offsets",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_bsearch_empty_entries",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_bsearch_first_entry",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_bsearch_last_entry",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_bsearch_middle_entries",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_bsearch_not_found_after",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_bsearch_not_found_before",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_bsearch_not_found_gap",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_error_gap_record",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_error_invalid_type",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_error_null_parameters",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_reacknowledge_delivered",
+    "librdkafka/rdunittest_acknowledge.c/ut_case_unacked_count",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_details_all_accept",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_details_all_acquired",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_details_alternating",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_details_empty_map",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_details_gap_acquired",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_details_interleaved",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_details_metadata",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_details_mixed_collation",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_details_multi_entry",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_details_multi_partition",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_mapping_cumulative",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_mapping_empty",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_mapping_gaps",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_mapping_multi_entry",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_mapping_multi_partition",
+    "librdkafka/rdunittest_fetcher.c/unittest_ack_mapping_single_partition",
+    "librdkafka/rdunittest_fetcher.c/unittest_fetcher_share_filter_forward",
+    "librdkafka/rdunittest_fetcher.c/unittest_filter_all_acquired",
+    "librdkafka/rdunittest_fetcher.c/unittest_filter_disjoint_ranges",
+    "librdkafka/rdunittest_fetcher.c/unittest_filter_empty_queue",
+    "librdkafka/rdunittest_fetcher.c/unittest_filter_no_ranges",
+    "librdkafka/rdunittest_fetcher.c/unittest_filter_partial_range",
+    "librdkafka/rdunittest_fetcher.c/unittest_filter_range_beyond_messages",
+    "librdkafka/rdunittest_fetcher.c/unittest_filter_sparse_offsets",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_all_error_types_with_valid",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_all_errors",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_all_success",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_crc_error_share_consumer",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_decompression_error_share_consumer",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_mixed_crc_success_decomp",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_mixed_magic_success_crc_success",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_mixed_success_crc_success",
+    "librdkafka/rdunittest_msgset_errors.c/unittest_msgset_unsupported_magic_share_consumer",
+    "librdkafka/rdvarint.c/do_test_rd_uvarint_enc_i64",
+    "monkey-libevent/mk_server/mk_fifo.c/mk_fifo_send",
+    "monkey-libevent/mk_server/mk_net.c/mk_net_conn_write"
+   ]
+  },
+  {
+   "callee": "__bswap_32",
+   "class": "libc-inline",
+   "decision": "refused",
+   "detail": "header-inline-body",
+   "leaves": 286,
+   "functions": 87,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 85,
+    "Unsafe": 2
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/byteswap.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_DescribeGroups_resp_cb",
+    "librdkafka/rdkafka.c/rd_kafka_ListGroups_resp_cb",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AlterConfigsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AlterUserScramCredentialsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ConsumerGroupDescribeResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_CreateAclsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_CreatePartitionsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_CreateTopicsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteAclsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteGroupsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteRecordsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteTopicsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeAclsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeConfigsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeConsumerGroupsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeUserScramCredentialsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ElectLeadersResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_IncrementalAlterConfigsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ListConsumerGroupsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_OffsetDeleteResponse_parse",
+    "librdkafka/rdkafka_broker.c/rd_kafka_broker_handle_SaslHandshake",
+    "librdkafka/rdkafka_broker.c/rd_kafka_recv",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_ConsumerGroupHeartbeat",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_FindCoordinator",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_Heartbeat",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_JoinGroup",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_LeaveGroup",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_ShareGroupHeartbeat",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_SyncGroup",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_SyncGroup_memberstate",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_group_MemberMetadata_consumer_read",
+    "librdkafka/rdkafka_coord.c/rd_kafka_coord_req_handle_FindCoordinator",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_fetch_reply_handle",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_fetch_reply_handle_partition",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_share_acknowledge_reply_handle",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_share_fetch_reply_handle",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_share_fetch_reply_handle_partition",
+    "librdkafka/rdkafka_metadata.c/rd_kafka_parse_Metadata0",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_connection_read_request",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_partition_log_append",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_partition_write_control_batch",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_validate_records",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_AddPartitionsToTxn",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ConsumerGroupHeartbeat",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Fetch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Heartbeat",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_InitProducerId",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_JoinGroup",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ListOffsets",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Metadata",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_OffsetCommit",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_OffsetFetch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_OffsetForLeaderEpoch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Produce",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_PushTelemetry",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ShareAcknowledge",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ShareFetch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ShareGroupHeartbeat",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_SyncGroup",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_TxnOffsetCommit",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_msg_v0_1",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_peek_msg_version",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_v2",
+    "librdkafka/rdkafka_request.c/rd_kafka_buf_read_CurrentLeader",
+    "librdkafka/rdkafka_request.c/rd_kafka_buf_read_NodeEndpoints",
+    "librdkafka/rdkafka_request.c/rd_kafka_buf_read_topic_partitions_nullable",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_ApiVersion",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_GetTelemetrySubscriptions",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_InitProducerId",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_OffsetCommit",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_OffsetFetch",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_OffsetForLeaderEpoch",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_Produce_parse",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_PushTelemetry",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_SaslAuthenticate",
+    "librdkafka/rdkafka_request.c/rd_kafka_parse_ListOffsets",
+    "librdkafka/rdkafka_sasl.c/rd_kafka_sasl_send_legacy",
+    "librdkafka/rdkafka_transport.c/rd_kafka_transport_framed_recv",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_AddOffsetsToTxn",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_AddPartitionsToTxn",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_EndTxn",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_FindCoordinator",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_TxnOffsetCommit",
+    "librdkafka/rdunittest_msgset_errors.c/ut_put_be32",
+    "librdkafka/snappy.c/rd_kafka_snappy_java_uncompress"
+   ]
+  },
+  {
+   "callee": "__bswap_16",
+   "class": "libc-inline",
+   "decision": "refused",
+   "detail": "header-inline-body",
+   "leaves": 252,
+   "functions": 84,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 83,
+    "Unsafe": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/byteswap.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_DescribeGroups_resp_cb",
+    "librdkafka/rdkafka.c/rd_kafka_ListGroups_resp_cb",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AlterConfigsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AlterUserScramCredentialsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ConsumerGroupDescribeResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_CreateAclsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_CreatePartitionsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_CreateTopicsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteAclsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteGroupsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteTopicsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeAclsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeConfigsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeConsumerGroupsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DescribeUserScramCredentialsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ElectLeadersResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_IncrementalAlterConfigsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ListConsumerGroupsResponse_parse",
+    "librdkafka/rdkafka_admin.c/rd_kafka_OffsetDeleteResponse_parse",
+    "librdkafka/rdkafka_broker.c/rd_kafka_broker_handle_SaslHandshake",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_ConsumerGroupHeartbeat",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_FindCoordinator",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_Heartbeat",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_JoinGroup",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_LeaveGroup",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_ShareGroupHeartbeat",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_SyncGroup",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_handle_SyncGroup_memberstate",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_group_MemberMetadata_consumer_read",
+    "librdkafka/rdkafka_coord.c/rd_kafka_coord_req_handle_FindCoordinator",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_fetch_reply_handle",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_fetch_reply_handle_partition",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_share_acknowledge_reply_handle",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_share_fetch_reply_handle",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_share_fetch_reply_handle_partition",
+    "librdkafka/rdkafka_metadata.c/rd_kafka_parse_Metadata0",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_connection_read_request",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_partition_log_append",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_partition_write_control_batch",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_validate_records",
+    "librdkafka/rdkafka_mock.c/ut_mock_txn_control_batch_written",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_AddOffsetsToTxn",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_AddPartitionsToTxn",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ConsumerGroupHeartbeat",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_EndTxn",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Fetch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_FindCoordinator",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Heartbeat",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_InitProducerId",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_JoinGroup",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_LeaveGroup",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ListOffsets",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Metadata",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_OffsetCommit",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_OffsetFetch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_OffsetForLeaderEpoch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Produce",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ShareAcknowledge",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ShareFetch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ShareGroupHeartbeat",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_SyncGroup",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_TxnOffsetCommit",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_sgrp_acquire_available_offsets",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_msg_v2",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_peek_msg_version",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_v2",
+    "librdkafka/rdkafka_request.c/rd_kafka_buf_read_NodeEndpoints",
+    "librdkafka/rdkafka_request.c/rd_kafka_buf_read_topic_partitions_nullable",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_ApiVersion",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_GetTelemetrySubscriptions",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_InitProducerId",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_LeaveGroup",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_OffsetFetch",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_Produce_parse",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_PushTelemetry",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_SaslAuthenticate",
+    "librdkafka/rdkafka_request.c/rd_kafka_parse_ListOffsets",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_AddOffsetsToTxn",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_AddPartitionsToTxn",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_EndTxn",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_handle_FindCoordinator",
+    "librdkafka/rdunittest_msgset_errors.c/ut_put_be16"
+   ]
+  },
+  {
+   "callee": "strlen",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/string.qcore",
+   "leaves": 92,
+   "functions": 80,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 5,
+   "statuses": {
+    "Unknown": 75,
+    "Unsafe": 5
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/chunkio.c/check_root_path",
+    "chunkio/cio_chunk.c/cio_chunk_open",
+    "chunkio/cio_file_unix.c/cio_file_native_compose_path",
+    "chunkio/cio_file_unix.c/cio_file_native_filename_check",
+    "chunkio/cio_scan.c/cio_scan_stream_files",
+    "chunkio/cio_stream.c/cio_stream_create",
+    "cmetrics/cmt_decode_opentelemetry.c/create_label",
+    "cmetrics/cmt_decode_prometheus_remote_write.c/create_map_label",
+    "cmetrics/cmt_decode_statsd.c/create_map_label",
+    "cmetrics/cmt_encode_splunk_hec.c/format_metric_name",
+    "cmetrics/cmt_filter.c/compare_fqname",
+    "cmetrics/cmt_filter.c/compare_label_keys",
+    "cmetrics/cmt_map.c/map_metric_get_unlocked",
+    "ctraces/ctr_encode_text.c/sds_cat_safe",
+    "fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_map",
+    "fluent-bit-chunk/flb_input_chunk.c/input_chunk_collect_output_references",
+    "fluent-bit-chunk/flb_input_chunk.c/update_logs_tag_records_metrics",
+    "librdkafka/cJSON.c/cJSON_ParseWithOpts",
+    "librdkafka/cJSON.c/cJSON_SetValuestring",
+    "librdkafka/cJSON.c/cJSON_strdup",
+    "librdkafka/cJSON.c/update_offset",
+    "librdkafka/rdaddr.c/rd_addrinfo_prepare",
+    "librdkafka/rddl.c/rd_dl_open",
+    "librdkafka/rdhttp.c/unittest_http_get",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AlterConsumerGroupOffsets_new",
+    "librdkafka/rdkafka_admin.c/rd_kafka_AlterUserScramCredentialsRequest",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ConfigResource_new",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteConsumerGroupOffsets_new",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteGroup_new",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteTopic_new",
+    "librdkafka/rdkafka_admin.c/rd_kafka_ListConsumerGroupOffsets_new",
+    "librdkafka/rdkafka_admin.c/rd_kafka_NewPartitions_new",
+    "librdkafka/rdkafka_assignor.c/rd_kafka_assignors_init",
+    "librdkafka/rdkafka_assignor.c/rtrim",
+    "librdkafka/rdkafka_aux.c/rd_kafka_group_result_new",
+    "librdkafka/rdkafka_aux.c/rd_kafka_topic_result_new",
+    "librdkafka/rdkafka_broker.c/rd_kafka_broker_name_parse",
+    "librdkafka/rdkafka_conf.c/rd_kafka_anyconf_get0",
+    "librdkafka/rdkafka_conf.c/rd_kafka_anyconf_set_prop",
+    "librdkafka/rdkafka_conf.c/rd_kafka_conf_kv_split",
+    "librdkafka/rdkafka_conf.c/rd_kafka_confval_set_type",
+    "librdkafka/rdkafka_conf.c/rd_kafka_topic_conf_set",
+    "librdkafka/rdkafka_header.c/rd_kafka_header_add",
+    "librdkafka/rdkafka_header.c/rd_kafka_header_get",
+    "librdkafka/rdkafka_header.c/rd_kafka_header_get_last",
+    "librdkafka/rdkafka_offset.c/mk_esc_filename",
+    "librdkafka/rdkafka_plugin.c/rd_kafka_plugins_conf_set0",
+    "librdkafka/rdkafka_request.c/rd_kafka_SaslHandshakeRequest",
+    "librdkafka/rdkafka_sasl.c/rd_kafka_sasl_io_event",
+    "librdkafka/rdkafka_sasl_cyrus.c/rd_kafka_sasl_cyrus_cb_getsecret",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/create_jws_compact_serialization",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/parse_ujws_config_value_for_prefix",
+    "librdkafka/rdkafka_sasl_oauthbearer.c/rd_kafka_sasl_oauthbearer_build_client_first_message",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/rd_kafka_jwt_b64_decode_payload",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/rd_kafka_oidc_assertion_create",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/rd_kafka_oidc_client_credentials_build_post_fields",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/rd_kafka_oidc_jwt_bearer_build_request_body",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_post_fields",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_post_fields_with_empty_scope",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_should_succeed",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_with_empty_key",
+    "librdkafka/rdkafka_ssl.c/rd_kafka_ssl_ctx_init",
+    "librdkafka/rdkafka_ssl.c/rd_kafka_ssl_normalize_hostname",
+    "librdkafka/rdkafka_topic.c/rd_kafka_lwtopic_new",
+    "librdkafka/rdkafka_topic.c/rd_kafka_topic_info_new",
+    "librdkafka/rdstring.c/_rd_strcasestr",
+    "librdkafka/rdstring.c/rd_string_render",
+    "librdkafka/rdstring.c/rd_strtup_new0",
+    "monkey-libevent/mk_core/mk_rconf.c/mk_rconf_read",
+    "monkey-libevent/mk_core/mk_string.c/mk_string_char_search",
+    "monkey-libevent/mk_core/mk_string.c/mk_string_char_search_r",
+    "monkey-libevent/mk_core/mk_string.c/mk_string_dup",
+    "monkey-libevent/mk_core/mk_string.c/mk_string_html_escape",
+    "monkey-libevent/mk_core/mk_string.c/mk_string_split_line",
+    "monkey-libevent/mk_core/mk_string.c/mk_string_trim",
+    "monkey-libevent/mk_core/mk_utils.c/mk_utils_register_pid",
+    "monkey-libevent/mk_server/mk_fifo.c/mk_fifo_queue_create",
+    "monkey-libevent/mk_server/mk_http_parser.c/header_cmp",
+    "monkey-libevent/mk_server/mk_lib.c/mk_vhost_set_property",
+    "monkey-libevent/mk_server/mk_mimetype.c/mk_mimetype_add"
+   ]
+  },
+  {
+   "callee": "__bswap_64",
+   "class": "libc-inline",
+   "decision": "refused",
+   "detail": "header-inline-body",
+   "leaves": 60,
+   "functions": 33,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 32,
+    "Unsafe": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/byteswap.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_fetch_reply_handle",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_fetch_reply_handle_partition",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_share_acknowledge_reply_handle",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_share_fetch_reply_handle",
+    "librdkafka/rdkafka_fetcher.c/rd_kafka_share_fetch_reply_handle_partition",
+    "librdkafka/rdkafka_metadata.c/rd_kafka_parse_Metadata0",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_partition_write_control_batch",
+    "librdkafka/rdkafka_mock.c/rd_kafka_mock_validate_records",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_AddOffsetsToTxn",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_AddPartitionsToTxn",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_EndTxn",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Fetch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_GetTelemetrySubscriptions",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_InitProducerId",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ListOffsets",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_Metadata",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_OffsetCommit",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_PushTelemetry",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ShareAcknowledge",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_ShareFetch",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_TxnOffsetCommit",
+    "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_sgrp_acquire_available_offsets",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_msg_v0_1",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_peek_msg_version",
+    "librdkafka/rdkafka_msgset_reader.c/rd_kafka_msgset_reader_v2",
+    "librdkafka/rdkafka_request.c/rd_kafka_buf_read_topic_partitions_nullable",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_GetTelemetrySubscriptions",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_InitProducerId",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_OffsetFetch",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_Produce_parse",
+    "librdkafka/rdkafka_request.c/rd_kafka_handle_SaslAuthenticate",
+    "librdkafka/rdkafka_request.c/rd_kafka_parse_ListOffsets",
+    "librdkafka/rdunittest_msgset_errors.c/ut_put_be64"
+   ]
+  },
+  {
+   "callee": "vsnprintf",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-va-list",
+   "leaves": 25,
+   "functions": 25,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 2,
+   "statuses": {
+    "Unknown": 25
+   },
+   "headers": [
+    "/usr/include/stdio.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_log.c/cio_log_print",
+    "cmetrics/cmt_log.c/cmt_log_print",
+    "ctraces/ctr_log.c/ctr_log_print",
+    "librdkafka/rdhttp.c/rd_http_error_new",
+    "librdkafka/rdkafka.c/rd_kafka_log0",
+    "librdkafka/rdkafka.c/rd_kafka_set_fatal_error0",
+    "librdkafka/rdkafka.c/rd_kafka_set_thread_name",
+    "librdkafka/rdkafka.c/rd_kafka_set_thread_sysname",
+    "librdkafka/rdkafka_admin.c/rd_kafka_admin_result_set_err0",
+    "librdkafka/rdkafka_broker.c/rd_kafka_broker_set_error",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_assignment_clear_lost",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_assignment_set_lost",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_consumer_rejoin",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_rejoin",
+    "librdkafka/rdkafka_error.c/rd_kafka_error_new_v",
+    "librdkafka/rdkafka_idempotence.c/rd_kafka_idemp_drain_epoch_bump0",
+    "librdkafka/rdkafka_offset.c/rd_kafka_offset_reset",
+    "librdkafka/rdkafka_offset.c/rd_kafka_offset_validate",
+    "librdkafka/rdkafka_op.c/rd_kafka_consumer_err",
+    "librdkafka/rdkafka_op.c/rd_kafka_q_op_err",
+    "librdkafka/rdkafka_op.c/rd_kafka_share_msgset_err_ops",
+    "librdkafka/rdkafka_telemetry_decode.c/unit_test_telemetry_decode_error",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_coord_set",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_set_abortable_error0",
+    "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_set_fatal_error"
+   ]
+  },
+  {
+   "callee": "printf",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 22,
+   "functions": 16,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 16
+   },
+   "headers": [
+    "/usr/include/stdio.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_file.c/cio_file_scan_dump",
+    "chunkio/cio_memfs.c/cio_memfs_scan_dump",
+    "chunkio/cio_stats.c/cio_stats_print_summary",
+    "ctraces/ctr_decode_opentelemetry.c/convert_bool_value",
+    "ctraces/ctr_decode_opentelemetry.c/convert_bytes_value",
+    "ctraces/ctr_decode_opentelemetry.c/convert_double_value",
+    "ctraces/ctr_decode_opentelemetry.c/convert_int_value",
+    "ctraces/ctr_decode_opentelemetry.c/convert_kvlist_value",
+    "ctraces/ctr_decode_opentelemetry.c/convert_string_value",
+    "librdkafka/rdlog.c/rd_msghdr_print",
+    "monkey-libevent/mk_core/mk_iov.c/mk_iov_print",
+    "monkey-libevent/mk_core/mk_memory.c/mk_ptr_print",
+    "monkey-libevent/mk_core/mk_utils.c/mk_print",
+    "monkey-libevent/mk_server/mk_http_parser.c/cb_debug_chunk_complete",
+    "monkey-libevent/mk_server/mk_utils.c/mk_utils_stacktrace",
+    "monkey-libevent/mk_server/monkey.c/mk_server_info"
+   ]
+  },
+  {
+   "callee": "perror",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/stdio.qcore",
+   "leaves": 21,
+   "functions": 14,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 11,
+    "Unsafe": 3
+   },
+   "headers": [
+    "/usr/include/stdio.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/chunkio.c/cio_create",
+    "chunkio/chunkio.c/qsort_stream",
+    "chunkio/cio_utils.c/cio_utils_read_file",
+    "monkey-libevent/mk_core/mk_rconf.c/mk_rconf_create",
+    "monkey-libevent/mk_core/mk_rconf.c/mk_rconf_open",
+    "monkey-libevent/mk_core/mk_rconf.c/mk_rconf_read",
+    "monkey-libevent/mk_server/mk_fifo.c/mk_fifo_create",
+    "monkey-libevent/mk_server/mk_fifo.c/mk_fifo_queue_create",
+    "monkey-libevent/mk_server/mk_fifo.c/mk_fifo_send",
+    "monkey-libevent/mk_server/mk_fifo.c/mk_fifo_worker_create",
+    "monkey-libevent/mk_server/mk_fifo.c/mk_fifo_worker_read",
+    "monkey-libevent/mk_server/mk_fifo.c/msg_write",
+    "monkey-libevent/mk_server/mk_lib.c/mk_stop",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_connect"
+   ]
+  },
+  {
+   "callee": "exit",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "no-return",
+   "leaves": 22,
+   "functions": 13,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 10,
+    "Unsafe": 3
+   },
+   "headers": [
+    "/usr/include/stdlib.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_utils.c/mk_utils_register_pid",
+    "monkey-libevent/mk_core/mk_utils.c/mk_utils_set_daemon",
+    "monkey-libevent/mk_server/mk_config.c/mk_config_listener_add",
+    "monkey-libevent/mk_server/mk_config.c/mk_config_print_error_msg",
+    "monkey-libevent/mk_server/mk_plugin.c/mk_plugin_load_all",
+    "monkey-libevent/mk_server/mk_scheduler.c/mk_sched_launch_worker_loop",
+    "monkey-libevent/mk_server/mk_server.c/mk_server_listen_init",
+    "monkey-libevent/mk_server/mk_server.c/mk_server_loop_balancer",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_connect",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_reset",
+    "monkey-libevent/mk_server/mk_vhost.c/mk_vhost_init",
+    "monkey-libevent/mk_server/mk_vhost.c/mk_vhost_read",
+    "monkey-libevent/mk_server/mk_vhost.c/mk_vhost_set_single"
+   ]
+  },
+  {
+   "callee": "abort",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "no-return",
+   "leaves": 11,
+   "functions": 10,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 10
+   },
+   "headers": [
+    "/usr/include/stdlib.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_crash",
+    "monkey-libevent/mk_core/mk_event.c/mk_event_channel_create",
+    "monkey-libevent/mk_core/mk_event.c/mk_event_channel_destroy",
+    "monkey-libevent/mk_core/mk_string.c/mk_string_build",
+    "monkey-libevent/mk_server/mk_header.c/mk_header_prepare",
+    "monkey-libevent/mk_server/mk_header.c/mk_header_set_http_status",
+    "monkey-libevent/mk_server/mk_plugin.c/mk_plugin_header_add",
+    "monkey-libevent/mk_server/mk_plugin.c/mk_plugin_load",
+    "monkey-libevent/mk_server/mk_scheduler.c/mk_sched_worker_free",
+    "monkey-libevent/mk_server/mk_utils.c/mk_utils_utime2gmt"
+   ]
+  },
+  {
+   "callee": "fclose",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 22,
+   "functions": 6,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 5,
+    "Unsafe": 1
+   },
+   "headers": [
+    "/usr/include/stdio.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_utils.c/cio_utils_read_file",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_create_mock_jwt_template_file",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_assertion_parse_from_file",
+    "monkey-libevent/mk_core/mk_file.c/mk_file_to_buffer",
+    "monkey-libevent/mk_core/mk_rconf.c/mk_rconf_read",
+    "monkey-libevent/mk_core/mk_utils.c/mk_utils_set_daemon"
+   ]
+  },
+  {
+   "callee": "closedir",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 5,
+   "functions": 4,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/dirent.h"
+   ],
+   "tree_definitions": [
+    "lib/avro/tests/msdirent.h:321",
+    "lib/monkey/include/monkey/mk_core/external/dirent.h:759",
+    "lib/nghttp2-1.65.0/third-party/mruby/mrbgems/mruby-dir/src/Win/dirent.c:73"
+   ],
+   "blocked_functions": [
+    "chunkio/cio_scan.c/cio_scan_stream_files",
+    "chunkio/cio_scan.c/cio_scan_streams",
+    "librdkafka/rdkafka.c/rd_kafka_dir_is_empty",
+    "monkey-libevent/mk_server/mk_vhost.c/mk_vhost_init"
+   ]
+  },
+  {
+   "callee": "fflush",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/stdio.qcore",
+   "leaves": 6,
+   "functions": 4,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/stdio.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_iov.c/mk_iov_print",
+    "monkey-libevent/mk_core/mk_memory.c/mk_ptr_print",
+    "monkey-libevent/mk_core/mk_utils.c/mk_print",
+    "monkey-libevent/mk_server/monkey.c/mk_server_info"
+   ]
+  },
+  {
+   "callee": "freeaddrinfo",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 6,
+   "functions": 4,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/netdb.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdaddr.c/rd_getaddrinfo",
+    "monkey-libevent/mk_server/mk_net.c/mk_net_fd_connect",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_connect",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_server"
+   ]
+  },
+  {
+   "callee": "getaddrinfo",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 4,
+   "functions": 4,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/netdb.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdaddr.c/rd_getaddrinfo",
+    "monkey-libevent/mk_server/mk_net.c/mk_net_fd_connect",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_connect",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_server"
+   ]
+  },
+  {
+   "callee": "mtx_lock",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 4,
+   "functions": 4,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/threads.h"
+   ],
+   "tree_definitions": [
+    "lib/librdkafka-2.15.0/src/tinycthread.c:110"
+   ],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_global_cnt_decr",
+    "librdkafka/rdkafka.c/rd_kafka_global_cnt_get",
+    "librdkafka/rdkafka.c/rd_kafka_global_cnt_incr",
+    "librdkafka/rdkafka_sasl_cyrus.c/rd_kafka_sasl_cyrus_kinit_refresh"
+   ]
+  },
+  {
+   "callee": "mtx_unlock",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 4,
+   "functions": 4,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/threads.h"
+   ],
+   "tree_definitions": [
+    "lib/librdkafka-2.15.0/src/tinycthread.c:267"
+   ],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_global_cnt_decr",
+    "librdkafka/rdkafka.c/rd_kafka_global_cnt_get",
+    "librdkafka/rdkafka.c/rd_kafka_global_cnt_incr",
+    "librdkafka/rdkafka_sasl_cyrus.c/rd_kafka_sasl_cyrus_kinit_refresh"
+   ]
+  },
+  {
+   "callee": "pthread_sigmask",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 10,
+   "functions": 4,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/sigthread.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_new",
+    "librdkafka/rdkafka_background.c/rd_kafka_background_thread_create",
+    "librdkafka/rdkafka_broker.c/rd_kafka_broker_add",
+    "monkey-libevent/mk_server/mk_scheduler.c/mk_signal_thread_sigpipe_safe"
+   ]
+  },
+  {
+   "callee": "sigemptyset",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 4,
+   "functions": 4,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/signal.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_new",
+    "librdkafka/rdkafka_background.c/rd_kafka_background_thread_create",
+    "librdkafka/rdkafka_broker.c/rd_kafka_broker_add",
+    "monkey-libevent/mk_server/mk_scheduler.c/mk_signal_thread_sigpipe_safe"
+   ]
+  },
+  {
+   "callee": "strcpy",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 6,
+   "functions": 4,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/cJSON.c/print_string_ptr",
+    "librdkafka/cJSON.c/print_value",
+    "librdkafka/rdaddr.c/rd_addrinfo_prepare",
+    "monkey-libevent/mk_core/mk_string.c/mk_string_html_escape"
+   ]
+  },
+  {
+   "callee": "time",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/time.qcore",
+   "leaves": 4,
+   "functions": 4,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 4
+   },
+   "headers": [
+    "/usr/include/time.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "ctraces/ctr_random.c/ctr_random_get",
+    "monkey-libevent/mk_core/mk_utils.c/mk_print",
+    "monkey-libevent/mk_server/mk_clock.c/mk_clock_sequential_init",
+    "monkey-libevent/mk_server/mk_clock.c/mk_clock_worker_init"
+   ]
+  },
+  {
+   "callee": "atoi",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/stdlib.qcore",
+   "leaves": 8,
+   "functions": 3,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 3
+   },
+   "headers": [
+    "/usr/include/stdlib.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka_broker.c/rd_kafka_broker_name_parse",
+    "monkey-libevent/mk_server/mk_kernel.c/mk_kernel_version",
+    "monkey-libevent/mk_server/mk_lib.c/mk_config_set_property"
+   ]
+  },
+  {
+   "callee": "gettimeofday",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 3,
+   "functions": 3,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 3
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/time.h"
+   ],
+   "tree_definitions": [
+    "lib/librdkafka-2.15.0/win32/wintime.h:14"
+   ],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_log_print",
+    "librdkafka/rdrand.c/rd_seed",
+    "librdkafka/tinycthread_extra.c/cnd_timedwait_ms"
+   ]
+  },
+  {
+   "callee": "read",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/unistd.qcore",
+   "leaves": 3,
+   "functions": 3,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 3
+   },
+   "headers": [
+    "/usr/include/unistd.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "ctraces/ctr_random.c/ctr_random_get",
+    "monkey-libevent/mk_server/mk_lib.c/mk_lib_worker",
+    "monkey-libevent/mk_server/mk_lib.c/mk_start"
+   ]
+  },
+  {
+   "callee": "sigfillset",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 3,
+   "functions": 3,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 3
+   },
+   "headers": [
+    "/usr/include/signal.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_new",
+    "librdkafka/rdkafka_background.c/rd_kafka_background_thread_create",
+    "librdkafka/rdkafka_broker.c/rd_kafka_broker_add"
+   ]
+  },
+  {
+   "callee": "stat",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 3,
+   "functions": 3,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2,
+    "Unsafe": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/stat.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_os.c/cio_os_isdir",
+    "chunkio/cio_utils.c/cio_utils_recursive_delete",
+    "monkey-libevent/mk_core/mk_rconf.c/mk_rconf_read"
+   ]
+  },
+  {
+   "callee": "strchr",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 4,
+   "functions": 3,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2,
+    "Unsafe": 1
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "cmetrics/cmt_decode_statsd.c/decode_labels",
+    "cmetrics/cmt_decode_statsd.c/statsd_process_line",
+    "monkey-libevent/mk_core/mk_rconf.c/mk_rconf_meta_add"
+   ]
+  },
+  {
+   "callee": "strerror_r",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/string.qcore",
+   "leaves": 3,
+   "functions": 3,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 3,
+   "statuses": {
+    "Unknown": 3
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_log.c/cio_errno_print",
+    "cmetrics/cmt_log.c/cmt_errno_print",
+    "ctraces/ctr_log.c/ctr_errno_print"
+   ]
+  },
+  {
+   "callee": "strftime",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 3,
+   "functions": 3,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 3
+   },
+   "headers": [
+    "/usr/include/time.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "cmetrics/cmt_encode_text.c/format_metric",
+    "monkey-libevent/mk_server/mk_clock.c/mk_clock_headers_preset",
+    "monkey-libevent/mk_server/mk_clock.c/mk_clock_log_set_time"
+   ]
+  },
+  {
+   "callee": "strtol",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 3,
+   "functions": 3,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 3
+   },
+   "headers": [
+    "/usr/include/stdlib.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_config.c/mk_config_listen_parse",
+    "monkey-libevent/mk_server/mk_http_parser.c/header_lookup",
+    "monkey-libevent/mk_server/mk_http_parser.c/http_parser_transfer_encoding_chunked"
+   ]
+  },
+  {
+   "callee": "unlink",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/unistd.qcore",
+   "leaves": 3,
+   "functions": 3,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 3
+   },
+   "headers": [
+    "/usr/include/unistd.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_file_unix.c/cio_file_native_delete_by_path",
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+    "monkey-libevent/mk_core/mk_utils.c/mk_utils_register_pid"
+   ]
+  },
+  {
+   "callee": "access",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/unistd.qcore",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/unistd.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/chunkio.c/check_root_path",
+    "chunkio/cio_stream.c/check_stream_path"
+   ]
+  },
+  {
+   "callee": "ceil",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/math.qcore",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdhdrhistogram.c/rd_hdr_histogram_new",
+    "librdkafka/rdkafka_mock_sharegrp.c/rd_kafka_mock_sharegroup_assign_topic_partitions"
+   ]
+  },
+  {
+   "callee": "cnd_wait",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/threads.h"
+   ],
+   "tree_definitions": [
+    "lib/librdkafka-2.15.0/src/tinycthread.c:437"
+   ],
+   "blocked_functions": [
+    "librdkafka/tinycthread_extra.c/cnd_timedwait_abs",
+    "librdkafka/tinycthread_extra.c/cnd_timedwait_ms"
+   ]
+  },
+  {
+   "callee": "dlerror",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/dlfcn.qcore",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/dlfcn.h"
+   ],
+   "tree_definitions": [
+    "src/flb_dlfcn_win32.c:57"
+   ],
+   "blocked_functions": [
+    "librdkafka/rddl.c/rd_dl_error",
+    "monkey-libevent/mk_server/mk_plugin.c/mk_plugin_load_symbol"
+   ]
+  },
+  {
+   "callee": "dlopen",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/dlfcn.h"
+   ],
+   "tree_definitions": [
+    "src/flb_dlfcn_win32.c:45"
+   ],
+   "blocked_functions": [
+    "librdkafka/rddl.c/rd_dl_open0",
+    "monkey-libevent/mk_server/mk_plugin.c/mk_plugin_load_dynamic"
+   ]
+  },
+  {
+   "callee": "dlsym",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/dlfcn.h"
+   ],
+   "tree_definitions": [
+    "src/flb_dlfcn_win32.c:74"
+   ],
+   "blocked_functions": [
+    "librdkafka/rddl.c/rd_dl_sym",
+    "monkey-libevent/mk_server/mk_plugin.c/mk_plugin_load_symbol"
+   ]
+  },
+  {
+   "callee": "fcntl",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/fcntl.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka_offset.c/rd_kafka_open_cb_generic",
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_set_nonblocking"
+   ]
+  },
+  {
+   "callee": "gmtime_r",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/time.h"
+   ],
+   "tree_definitions": [
+    "include/fluent-bit/flb_compat.h:78",
+    "lib/monkey/mk_server/mk_clock.c:41",
+    "lib/monkey/mk_server/mk_utils.c:63"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_clock.c/mk_clock_headers_preset",
+    "monkey-libevent/mk_server/mk_utils.c/mk_utils_utime2gmt"
+   ]
+  },
+  {
+   "callee": "htonl",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/socket.qcore",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/netinet/in.h"
+   ],
+   "tree_definitions": [
+    "lib/nghttp2-1.65.0/lib/nghttp2_net.h:53"
+   ],
+   "blocked_functions": [
+    "chunkio/cio_file.c/cio_file_format_check",
+    "chunkio/cio_file.c/finalize_checksum"
+   ]
+  },
+  {
+   "callee": "mtx_init",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "in-place-object-lifecycle",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/threads.h"
+   ],
+   "tree_definitions": [
+    "lib/librdkafka-2.15.0/src/tinycthread.c:61"
+   ],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_global_init0",
+    "librdkafka/rdkafka_sasl_cyrus.c/rd_kafka_sasl_cyrus_global_init"
+   ]
+  },
+  {
+   "callee": "opendir",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/dirent.h"
+   ],
+   "tree_definitions": [
+    "lib/avro/tests/msdirent.h:199",
+    "lib/monkey/include/monkey/mk_core/external/dirent.h:634",
+    "lib/nghttp2-1.65.0/third-party/mruby/mrbgems/mruby-dir/src/Win/dirent.c:38"
+   ],
+   "blocked_functions": [
+    "chunkio/cio_scan.c/cio_scan_stream_files",
+    "librdkafka/rdkafka.c/rd_kafka_dir_is_empty"
+   ]
+  },
+  {
+   "callee": "pow",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/math.qcore",
+   "leaves": 4,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1,
+    "Unsafe": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "cmetrics/cmt_exp_histogram.c/cmt_exp_histogram_to_explicit",
+    "librdkafka/rdhdrhistogram.c/rd_hdr_histogram_new"
+   ]
+  },
+  {
+   "callee": "pthread_attr_init",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "in-place-object-lifecycle",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1,
+    "Unsafe": 1
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:542"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_utils.c/mk_utils_worker_spawn",
+    "monkey-libevent/mk_server/mk_scheduler.c/mk_sched_launch_thread"
+   ]
+  },
+  {
+   "callee": "pthread_attr_setdetachstate",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1,
+    "Unsafe": 1
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:557"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_utils.c/mk_utils_worker_spawn",
+    "monkey-libevent/mk_server/mk_scheduler.c/mk_sched_launch_thread"
+   ]
+  },
+  {
+   "callee": "pthread_kill",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/sigthread.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka.c/rd_kafka_destroy_app",
+    "monkey-libevent/mk_server/mk_lib.c/mk_lib_worker"
+   ]
+  },
+  {
+   "callee": "pthread_rwlock_unlock",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:234"
+   ],
+   "blocked_functions": [
+    "librdkafka/tinycthread_extra.c/rwlock_rdunlock",
+    "librdkafka/tinycthread_extra.c/rwlock_wrunlock"
+   ]
+  },
+  {
+   "callee": "qsort",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "callback",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/stdlib.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/chunkio.c/qsort_stream",
+    "librdkafka/rdports.c/rd_qsort_r"
+   ]
+  },
+  {
+   "callee": "rand_r",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/stdlib.qcore",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/stdlib.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "ctraces/ctr_random.c/ctr_random_get",
+    "librdkafka/rdrand.c/rd_rand"
+   ]
+  },
+  {
+   "callee": "strdup",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/string.qcore",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_chunk.c/cio_chunk_open",
+    "chunkio/cio_os.c/cio_os_mkpath"
+   ]
+  },
+  {
+   "callee": "strncpy",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/rd_kafka_jwt_b64_decode_payload",
+    "monkey-libevent/mk_server/mk_plugin.c/mk_plugin_load_all"
+   ]
+  },
+  {
+   "callee": "strtod",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 2
+   },
+   "headers": [
+    "/usr/include/stdlib.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "cmetrics/cmt_encode_prometheus.c/bucket_value_to_string",
+    "librdkafka/rdkafka_conf.c/rd_kafka_anyconf_set_prop0"
+   ]
+  },
+  {
+   "callee": "usleep",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/unistd.qcore",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1,
+    "Unsafe": 1
+   },
+   "headers": [
+    "/usr/include/unistd.h"
+   ],
+   "tree_definitions": [
+    "include/fluent-bit/flb_compat.h:131"
+   ],
+   "blocked_functions": [
+    "fluent-bit-chunk/flb_input_chunk.c/append_to_ring_buffer",
+    "monkey-libevent/mk_server/mk_fifo.c/msg_write"
+   ]
+  },
+  {
+   "callee": "__uint64_identity",
+   "class": "libc-inline",
+   "decision": "refused",
+   "detail": "header-inline-body",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/uintn-identity.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/crc32c.c/crc32c_sw"
+   ]
+  },
+  {
+   "callee": "accept4",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/socket.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_accept"
+   ]
+  },
+  {
+   "callee": "backtrace",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "pointer-to-pointer-borrow",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/execinfo.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_utils.c/mk_utils_stacktrace"
+   ]
+  },
+  {
+   "callee": "bind",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-sockaddr-union",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/socket.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_bind"
+   ]
+  },
+  {
+   "callee": "cnd_timedwait",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/threads.h"
+   ],
+   "tree_definitions": [
+    "lib/librdkafka-2.15.0/src/tinycthread.c:446"
+   ],
+   "blocked_functions": [
+    "librdkafka/tinycthread_extra.c/cnd_timedwait_ms"
+   ]
+  },
+  {
+   "callee": "connect",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "abi-sockaddr-union",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/socket.h"
+   ],
+   "tree_definitions": [
+    "lib/librdkafka-2.15.0/tests/sockem.c:771"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_open"
+   ]
+  },
+  {
+   "callee": "fabs",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/math.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/cJSON.c/compare_double"
+   ]
+  },
+  {
+   "callee": "floor",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/math.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdhdrhistogram.c/rd_hdr_histogram_new"
+   ]
+  },
+  {
+   "callee": "fopen",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/stdio.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_utils.c/cio_utils_read_file"
+   ]
+  },
+  {
+   "callee": "fstat",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/sys_stat.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/stat.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_utils.c/cio_utils_read_file"
+   ]
+  },
+  {
+   "callee": "fts_close",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/fts.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_utils.c/cio_utils_recursive_delete"
+   ]
+  },
+  {
+   "callee": "fts_open",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/fts.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_utils.c/cio_utils_recursive_delete"
+   ]
+  },
+  {
+   "callee": "gai_strerror",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/socket.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/netdb.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdaddr.c/rd_getaddrinfo"
+   ]
+  },
+  {
+   "callee": "getegid",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/unistd.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/unistd.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_file.c/mk_file_get_info"
+   ]
+  },
+  {
+   "callee": "geteuid",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/unistd.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/unistd.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_file.c/mk_file_get_info"
+   ]
+  },
+  {
+   "callee": "getgrnam_r",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/grp.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_file_unix.c/cio_file_native_lookup_group"
+   ]
+  },
+  {
+   "callee": "getpeername",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/socket.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_ip_str"
+   ]
+  },
+  {
+   "callee": "getpwnam_r",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/pwd.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_file_unix.c/cio_file_native_lookup_user"
+   ]
+  },
+  {
+   "callee": "getrlimit",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-enum-typedef",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/resource.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_server.c/mk_server_capacity"
+   ]
+  },
+  {
+   "callee": "getsockopt",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unsafe": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/socket.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_net.c/mk_net_conn_create"
+   ]
+  },
+  {
+   "callee": "glob",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/glob.h"
+   ],
+   "tree_definitions": [
+    "plugins/in_blob/win32_glob.c:119"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_rconf.c/mk_rconf_read_glob"
+   ]
+  },
+  {
+   "callee": "globfree",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "descriptor-or-handle-lifecycle",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/glob.h"
+   ],
+   "tree_definitions": [
+    "plugins/in_blob/win32_glob.c:107"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_rconf.c/mk_rconf_read_glob"
+   ]
+  },
+  {
+   "callee": "listen",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/socket.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/socket.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_socket.c/mk_socket_bind"
+   ]
+  },
+  {
+   "callee": "localtime_r",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/time.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_server/mk_clock.c:34",
+    "lib/monkey/mk_server/mk_utils.c:56"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_utils.c/mk_print"
+   ]
+  },
+  {
+   "callee": "memchr",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "fluent-bit-chunk/flb_input_chunk.c/input_chunk_metadata_view"
+   ]
+  },
+  {
+   "callee": "memrchr",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/mk_string.c:37"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_string.c/mk_string_char_search_r"
+   ]
+  },
+  {
+   "callee": "mkdir",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/sys_stat.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/stat.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "chunkio/cio_os.c/cio_os_mkpath"
+   ]
+  },
+  {
+   "callee": "ntohl",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/socket.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/netinet/in.h"
+   ],
+   "tree_definitions": [
+    "lib/nghttp2-1.65.0/lib/nghttp2_net.h:71"
+   ],
+   "blocked_functions": [
+    "chunkio/cio_file.c/cio_file_scan_dump"
+   ]
+  },
+  {
+   "callee": "pthread_rwlock_rdlock",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:218"
+   ],
+   "blocked_functions": [
+    "librdkafka/tinycthread_extra.c/rwlock_rdlock"
+   ]
+  },
+  {
+   "callee": "pthread_rwlock_wrlock",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:226"
+   ],
+   "blocked_functions": [
+    "librdkafka/tinycthread_extra.c/rwlock_wrlock"
+   ]
+  },
+  {
+   "callee": "pthread_self",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:322"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_scheduler.c/mk_sched_worker_free"
+   ]
+  },
+  {
+   "callee": "pthread_setcancelstate",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:622"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_clock.c/mk_clock_worker_init"
+   ]
+  },
+  {
+   "callee": "pthread_setcanceltype",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/pthread.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_core/external/winpthreads.c:634"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_clock.c/mk_clock_worker_init"
+   ]
+  },
+  {
+   "callee": "realpath",
+   "class": "libc-with-tree-body",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/stdlib.h"
+   ],
+   "tree_definitions": [
+    "include/fluent-bit/flb_compat.h:123"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_rconf.c/mk_rconf_path_set"
+   ]
+  },
+  {
+   "callee": "regcomp",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "in-place-object-lifecycle",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/regex.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdregex.c/rd_regex_match"
+   ]
+  },
+  {
+   "callee": "regerror",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/regex.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdregex.c/rd_regex_match"
+   ]
+  },
+  {
+   "callee": "regexec",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-restrict",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/regex.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdregex.c/rd_regex_match"
+   ]
+  },
+  {
+   "callee": "regfree",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "in-place-object-lifecycle",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/regex.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdregex.c/rd_regex_match"
+   ]
+  },
+  {
+   "callee": "remove",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/stdio.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/stdio.h"
+   ],
+   "tree_definitions": [
+    "lib/jemalloc-5.3.0/include/jemalloc/internal/rb.h:820"
+   ],
+   "blocked_functions": [
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c/ut_sasl_oauthbearer_oidc_assertion_parse_from_file"
+   ]
+  },
+  {
+   "callee": "sendfile",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/socket.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/sendfile.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_net.c/net_plain_send_file"
+   ]
+  },
+  {
+   "callee": "setrlimit",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-enum-typedef",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/resource.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_server.c/mk_server_capacity"
+   ]
+  },
+  {
+   "callee": "setsid",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/unistd.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/unistd.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_utils.c/mk_utils_set_daemon"
+   ]
+  },
+  {
+   "callee": "sigaddset",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/threads.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 1,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/signal.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_scheduler.c/mk_signal_thread_sigpipe_safe"
+   ]
+  },
+  {
+   "callee": "strrchr",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_rconf.c/mk_rconf_path_set"
+   ]
+  },
+  {
+   "callee": "strstr",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 2,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/string.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "cmetrics/cmt_decode_statsd.c/statsd_process_line"
+   ]
+  },
+  {
+   "callee": "strtoll",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/stdlib.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka_sasl_oauthbearer.c/parse_ujws_config"
+   ]
+  },
+  {
+   "callee": "strtoull",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "result-alias",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/stdlib.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka_offset.c/rd_kafka_offset_file_read"
+   ]
+  },
+  {
+   "callee": "system",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/stdlib.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/stdlib.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "librdkafka/rdkafka_sasl_cyrus.c/rd_kafka_sasl_cyrus_kinit_refresh"
+   ]
+  },
+  {
+   "callee": "timegm",
+   "class": "libc-with-tree-body",
+   "decision": "declared",
+   "detail": "libc/time.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/time.h"
+   ],
+   "tree_definitions": [
+    "lib/monkey/mk_server/mk_utils.c:70"
+   ],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_utils.c/mk_utils_gmt2utime"
+   ]
+  },
+  {
+   "callee": "umask",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/sys_stat.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/x86_64-linux-gnu/sys/stat.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_utils.c/mk_utils_set_daemon"
+   ]
+  },
+  {
+   "callee": "vprintf",
+   "class": "libc",
+   "decision": "refused",
+   "detail": "abi-va-list",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/stdio.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_core/mk_utils.c/mk_print"
+   ]
+  },
+  {
+   "callee": "write",
+   "class": "libc",
+   "decision": "declared",
+   "detail": "libc/unistd.qcore",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "blocked_only_by_uncontracted_calls": 0,
+   "statuses": {
+    "Unknown": 1
+   },
+   "headers": [
+    "/usr/include/unistd.h"
+   ],
+   "tree_definitions": [],
+   "blocked_functions": [
+    "monkey-libevent/mk_server/mk_fifo.c/msg_write"
+   ]
+  }
+ ],
+ "excluded": {
+  "builtin": {
+   "callees": 13,
+   "leaves": 193,
+   "sole_blocked": 2,
+   "top_by_sole_blocked": [
+    {
+     "callee": "__builtin_ctz",
+     "functions": 1,
+     "sole_blocked": 1,
+     "evidence": []
+    },
+    {
+     "callee": "__builtin_ctzll",
+     "functions": 1,
+     "sole_blocked": 1,
+     "evidence": []
+    },
+    {
+     "callee": "__builtin_va_end",
+     "functions": 50,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "__builtin_va_start",
+     "functions": 49,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "__builtin_va_arg",
+     "functions": 14,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "_Generic",
+     "functions": 10,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "__builtin_memcpy",
+     "functions": 8,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "__builtin_alloca",
+     "functions": 7,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "__builtin_memmove",
+     "functions": 3,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "__asm__",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "__builtin_va_copy",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "__builtin_offsetof",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": [
+      "<stdin> [declaration]"
+     ]
+    },
+    {
+     "callee": "__builtin_prefetch",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": []
+    }
+   ]
+  },
+  "corpus": {
+   "callees": 2462,
+   "leaves": 8849,
+   "sole_blocked": 262,
+   "top_by_sole_blocked": [
+    {
+     "callee": "LZ4_decompress_generic",
+     "functions": 9,
+     "sole_blocked": 9,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "cmt_mpack_unpack_array",
+     "functions": 12,
+     "sole_blocked": 5,
+     "evidence": [
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/include/cmetrics/cmt_mpack_utils.h [declaration]",
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "ctr_mpack_unpack_array",
+     "functions": 5,
+     "sole_blocked": 5,
+     "evidence": [
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/ctraces/include/ctraces/ctr_mpack_utils.h [declaration]",
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "LZ4_compress_HC_extStateHC",
+     "functions": 5,
+     "sole_blocked": 4,
+     "evidence": [
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4hc.h [declaration]",
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "LZ4_compress_HC",
+     "functions": 4,
+     "sole_blocked": 4,
+     "evidence": [
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4hc.h [declaration]",
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "rd_kafka_admin_result_ret_groups",
+     "functions": 4,
+     "sole_blocked": 4,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "LZ4_compress_HC_continue",
+     "functions": 4,
+     "sole_blocked": 3,
+     "evidence": [
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4hc.h [declaration]",
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "LZ4_compress_fast_continue",
+     "functions": 4,
+     "sole_blocked": 3,
+     "evidence": [
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4.h [declaration]",
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "LZ4_decompress_unsafe_generic",
+     "functions": 4,
+     "sole_blocked": 3,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "add",
+     "functions": 4,
+     "sole_blocked": 3,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "add_item_to_object",
+     "functions": 3,
+     "sole_blocked": 3,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "rd_kafka_admin_result_ret_resources",
+     "functions": 3,
+     "sole_blocked": 3,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "rd_kafka_admin_result_ret_topics",
+     "functions": 3,
+     "sole_blocked": 3,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "rd_kafka_assignor_add",
+     "functions": 3,
+     "sole_blocked": 3,
+     "evidence": [
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_assignor.h [declaration]",
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "pb_write",
+     "functions": 8,
+     "sole_blocked": 2,
+     "evidence": [
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/nanopb/pb_encode.h [declaration]",
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "add_item_to_array",
+     "functions": 4,
+     "sole_blocked": 2,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "LZ4_compress_fast_extState",
+     "functions": 3,
+     "sole_blocked": 2,
+     "evidence": [
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4.h [declaration]",
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "append_to_ring_buffer",
+     "functions": 3,
+     "sole_blocked": 2,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "rd_kafka_anyconf_dump",
+     "functions": 3,
+     "sole_blocked": 2,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "rd_kafka_topic_partition_list_difference0",
+     "functions": 3,
+     "sole_blocked": 2,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "LZ4_compress_default",
+     "functions": 2,
+     "sole_blocked": 2,
+     "evidence": [
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4.h [declaration]",
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "_cio_file_up",
+     "functions": 2,
+     "sole_blocked": 2,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "_mk_event_wait_2",
+     "functions": 2,
+     "sole_blocked": 2,
+     "evidence": [
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-source/mk_core/mk_event_libevent.c [definition]"
+     ]
+    },
+    {
+     "callee": "_mk_string_search",
+     "functions": 2,
+     "sole_blocked": 2,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    },
+    {
+     "callee": "get_object_item",
+     "functions": 2,
+     "sole_blocked": 2,
+     "evidence": [
+      "<stdin> [definition]"
+     ]
+    }
+   ]
+  },
+  "other-system": {
+   "callees": 69,
+   "leaves": 151,
+   "sole_blocked": 2,
+   "top_by_sole_blocked": [
+    {
+     "callee": "ERR_clear_error",
+     "functions": 3,
+     "sole_blocked": 1,
+     "evidence": [
+      "/usr/include/openssl/err.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "curl_global_init",
+     "functions": 1,
+     "sole_blocked": 1,
+     "evidence": [
+      "/usr/include/x86_64-linux-gnu/curl/curl.h (libcurl4-openssl-dev)"
+     ]
+    },
+    {
+     "callee": "BIO_free",
+     "functions": 5,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/bio.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "X509_free",
+     "functions": 5,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/x509.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "BIO_new_mem_buf",
+     "functions": 4,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/bio.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "EVP_PKEY_free",
+     "functions": 3,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/evp.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "curl_slist_free_all",
+     "functions": 3,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/x86_64-linux-gnu/curl/curl.h (libcurl4-openssl-dev)"
+     ]
+    },
+    {
+     "callee": "EVP_sha256",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/evp.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "OPENSSL_sk_pop_free",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/stack.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "OPENSSL_sk_push",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/stack.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "OPENSSL_sk_value",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/stack.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "PEM_read_bio_PrivateKey",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/pem.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "PKCS12_free",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/pkcs12.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "SSL_CTX_ctrl",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/ssl.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "SSL_CTX_set_default_verify_paths",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/ssl.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "curl_slist_append",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/x86_64-linux-gnu/curl/curl.h (libcurl4-openssl-dev)"
+     ]
+    },
+    {
+     "callee": "d2i_PKCS12_bio",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/pkcs12.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "BIO_new_file",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/bio.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "CRYPTO_free",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/crypto.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "ENGINE_by_id",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/engine.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "ENGINE_free",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/engine.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "ERR_error_string_n",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/err.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "ERR_peek_error",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/err.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "ERR_peek_last_error",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/err.h (libssl-dev)"
+     ]
+    },
+    {
+     "callee": "ERR_peek_last_error_all",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": [
+      "/usr/include/openssl/err.h (libssl-dev)"
+     ]
+    }
+   ]
+  },
+  "unresolved": {
+   "callees": 45,
+   "leaves": 70,
+   "sole_blocked": 4,
+   "top_by_sole_blocked": [
+    {
+     "callee": "__atomic_compare_exchange",
+     "functions": 1,
+     "sole_blocked": 1,
+     "evidence": []
+    },
+    {
+     "callee": "__atomic_load_n",
+     "functions": 1,
+     "sole_blocked": 1,
+     "evidence": []
+    },
+    {
+     "callee": "__atomic_store_n",
+     "functions": 1,
+     "sole_blocked": 1,
+     "evidence": []
+    },
+    {
+     "callee": "rd_qsort_r_cmp",
+     "functions": 1,
+     "sole_blocked": 1,
+     "evidence": []
+    },
+    {
+     "callee": "callback",
+     "functions": 4,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__common__v1__key_value__init",
+     "functions": 3,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "entry_processor_callback",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__free_unpacked",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__collector__trace__v1__export_trace_service_request__get_packed_size",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__common__v1__any_value__init",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__common__v1__array_value__init",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__common__v1__instrumentation_scope__init",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__common__v1__key_value_list__init",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__resource__v1__resource__init",
+     "functions": 2,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "cb",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "cb_chunk_complete",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "copy_cb",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__unpack",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__collector__trace__v1__export_trace_service_request__free_unpacked",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__collector__trace__v1__export_trace_service_request__init",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__collector__trace__v1__export_trace_service_request__pack",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__metrics__v1__exemplar__init",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__metrics__v1__exponential_histogram_data_point__buckets__init",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__metrics__v1__exponential_histogram_data_point__init",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": []
+    },
+    {
+     "callee": "opentelemetry__proto__metrics__v1__histogram_data_point__init",
+     "functions": 1,
+     "sole_blocked": 0,
+     "evidence": []
+    }
+   ]
+  }
+ },
+ "errors": []
+}
