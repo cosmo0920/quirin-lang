@@ -2,7 +2,8 @@
 
 Re-derived on 2026-09-21 from the sources below; corpus rows re-derived on
 2026-09-24 from the W43-LIBC-RESULT-ALIAS arbiter; contract-corpus and follow-up
-rows re-derived on 2026-09-24 at the CONTRACT-INHERIT-ADOPTION integration. This is the concise status
+rows re-derived on 2026-09-24 at the CONTRACT-INHERIT-ADOPTION integration; multi-module
+declaration and follow-up rows re-derived on 2026-09-25 by CONTRACT-VIEW-PROJECTION-CHECK. This is the concise status
 authority routed by `AGENTS.md`; reports own the underlying evidence. Update
 numbers from those sources, not from an older summary. History belongs in the
 [increment records](development/increments/README.md).
@@ -29,8 +30,9 @@ numbers from those sources, not from an older summary. History belongs in the
 | Callback task handoff | **12 source-derived operations**, one Linux pthread fixture; production acceptance pending | [Integrated lifetime evidence](reports/cycle18-broader-integration/task-handoff.json) |
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
 | Contract corpus | **108** modules; **130** resource-v1 declarations; **45** manifest-selected, 2 of them by `crate:module` reference; **5** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 36 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md) |
+| Multi-module declarations | **10** functions in **12** module pairs, every pair a registered checked relation: 5 projections, 1 renamed equivalence, 5 source-shape agreements, 1 lifecycle agreement; **0** textual duplicates; 1 view not implied outside a coverage premise (`CONTRACT-VIEW-CHUNK-CLOSE-BACKEND-COVERAGE`) | [View projection check](reports/contract-view-projection-check/README.md), `qcore_contract::contract_views::REGISTERED_RELATIONS`, guard `compiler/tests/contract_view_census.rs` |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **299** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **305** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -107,9 +109,12 @@ into the six `quirin-provider-*` crates through a generated, digest-pinned load
 path read as data. Five Fluent Bit wrappers (`flb_malloc`, `flb_calloc`,
 `flb_free`, `flb_strdup`, `flb_strndup`) inherit libc contracts, with no
 verdict-bearing byte moved. The `qcore-provider-*` crates stay off the load path
-pending a naming decision.
+pending a naming decision. Every function declared in more than one module is a
+[checked view relation](reports/contract-view-projection-check/README.md); the
+one textual duplicate (`source_identity`) was removed, with no verdict-bearing
+byte moved.
 
-All three broader Cycle 18 follow-ups remain open; **299** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **305** follow-ups are
 registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
@@ -123,7 +128,11 @@ real-crate adoption, extension clauses and non-v1 consumers; W43-LIBC-RESULT-ALI
 retired `LIBC-MEM-RESULT-ALIAS`, `W43-LIBC-RESULT-ALIAS-NAMES` and
 `W43-LIBC-POINTER-QUALIFIER-READER` and registered six derived-result and reader residuals;
 CONTRACT-INHERIT-ADOPTION retired the adoption and registered the `qcore-provider-*`
-naming decision, alias-result parents and the Fluent Bit string-wrapper assumptions. Production callback composition, task/cancellation/event-generation
+naming decision, alias-result parents and the Fluent Bit string-wrapper assumptions;
+CONTRACT-VIEW-PROJECTION-CHECK registered six view-relation residuals (backend
+coverage, unenforced premises, the kept renamed equivalent, the unproved
+small-model lemma, declared bridges and the timeout-policy native rerun) and
+retired none. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
 
