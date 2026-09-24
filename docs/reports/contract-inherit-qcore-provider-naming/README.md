@@ -35,7 +35,7 @@ inheritance from the derived-result parents that
   `libc/memory.qcore` and `libc/string.qcore`, `qcore.libevent` pins
   `libc/memory.qcore`. `package.py build` installs them, `verify` accepts them,
   and the real-package mutation test refuses a changed and a missing included
-  parent in both packages (4 refused mutations); the Rust `ContractBundle`
+  parent in both packages (6 refused mutations over 3 pins); the Rust `ContractBundle`
   does the same on the real layout.
 * **Alias-result parents.** A child inherits `memcpy`, `strchr`, `strstr` and
   `gmtime_r` (base at index 1) under renamed parameters and loads to the
@@ -209,8 +209,10 @@ inventories gain an `includes` object; nothing else in them changed:
 
 Each pin equals the load path's pin for that module, so a parent has one
 identity everywhere. In the gate's package build (§6) `package.py build`
-installed `includes/quirin-provider-libc/libc/{memory,string}.qcore` and
-`verify` reported `includes: 2` and `includes: 1` for the two packages.
+installed `includes/quirin-provider-libc/libc/{memory,string}.qcore` for
+`qcore.librdkafka` and `includes/quirin-provider-libc/libc/memory.qcore` for
+`qcore.libevent`, at their pinned digests, and `verify` exited 0 for all five
+packages ([package-includes.json](package-includes.json)).
 
 **Mutation controls.** `real_packages_preserve_unknown_and_reject_mutations`
 now calls `included_parent_mutations` for each built package. For every pin of
@@ -218,8 +220,9 @@ a package that has pins, it appends a line to the installed parent (`verify`
 must fail with "included parent changed"), deletes it (must fail with
 "included parent set mismatch"), restores the original bytes, asserts the round
 trip, and requires `verify` to pass again; it also pins that exactly
-`qcore.libevent` and `qcore.librdkafka` carry pins. That is 4 refused
-mutations over 3 pins. `real_package_inventories_pin_their_included_parents`
+`qcore.libevent` and `qcore.librdkafka` carry pins. The isolated run printed
+"6 changed or missing included parents refused in 2 packages"
+(`measure/pisolated-nocapture/pisolated.log`, exit 0). `real_package_inventories_pin_their_included_parents`
 drives the same two refusals through the Rust `ContractBundle` on a copy of
 each real package layout.
 
@@ -294,7 +297,60 @@ file, never through a pipe (`CARGO_BUILD_JOBS=6`, `RUST_TEST_THREADS=2`, debug
 info off). Logs are worktree-private under `measure/`. Clang was recorded in
 this checkout ([clang-version.txt](clang-version.txt)).
 
-GATE_TABLE
+The core and provider gates ran on `3044f204` ([gate.json](gate.json) is the
+generator input). Later commits change the report, ledger, status, increment
+record, index and matrix only.
+
+| Command | Exit | Result | Log |
+|---|---:|---|---|
+| `git submodule update --init --recursive` | 0 | libevent at `d82464a2…` | `measure/gate/submodules.log` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 | `measure/gate/clang.log` |
+| `cargo test --workspace --no-fail-fast` (first run) | **101** | 5,215 passed / **1 failed** / 11 ignored, 281 summaries | `measure/gate/test.log` |
+| `cargo test --workspace --no-fail-fast` (rerun in full) | 0 | **5,216 passed / 0 failed / 11 ignored**, 281 summaries | `measure/gate-test2/test.log` |
+| `cargo fmt --all -- --check` | 0 | clean | `measure/gate/fmt.log` |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean | `measure/gate/clippy.log` |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | | `measure/gate/probe.log` |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | | `measure/gate/followup.log` |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **170** audits (`AuditContractInherit` 46 → 57 theorems) | `measure/gate/lean.log` |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **124 passed / 0 failed / 0 ignored**, 39 summaries | `measure/gate/ptest.log` |
+| `… -p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations --exact --test-threads=1` | 0 | 1 passed (isolated, constraint 16) | `measure/gate/pisolated.log` |
+| the same, `--nocapture` | 0 | 1 passed; "6 changed or missing included parents refused in 2 packages" | `measure/pisolated-nocapture/pisolated.log` |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean | `measure/gate/pfmt.log` |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean | `measure/gate/pclippy.log` |
+| `python3 providers/contracts.py check` | 0 | 72 provider-owned contracts; includes 0/0/0/1/2; load path current (11 crates) | `measure/gate/pcontracts.log` |
+| `python3 providers/package.py build --output measure/gate/packages` | 0 | 5 packages | `measure/gate/pbuild.log` |
+| `python3 providers/package.py verify …/<id>` (×5) | 0 ×5 | | `measure/gate/pverify-<id>.log` |
+| `python3 -m unittest discover -s providers/tests` | 0 | **13** tests (+1) | `measure/gate/ppython.log` |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/contract-inherit-qcore-provider-naming/gate.json` | 0 | 298 follow-ups, 170 Lean audits, 108 contract modules | `measure/build-matrix-1.log` |
+| `python3 -m unittest discover -s scripts/tests` (after the regeneration) | 0 | **330** tests | `measure/gate-final/python.log` |
+| `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | index regenerated and matching | `measure/gate-final/docs-index.log` |
+
+**The failed first run, disclosed.** The one failure was
+`compiler/tests/std_socket_inet.rs`
+`this_card_reserves_no_word_and_its_address_rule_collides_with_nothing`, a
+repository-wide `.qcore` census that pins the files its rule matches. It saw
+`private/base-src/examples/sockets/inet_v{4,6}_echo.qcore`: the `git archive`
+export of the base this card used to build the arbiter's BEFORE binary (§7),
+kept under the ignored `private/` tree. The export was a measurement input,
+not a code change; it was deleted after the BEFORE run, and the test step was
+rerun **in full** in a fresh directory with exit 0. No assertion was changed.
+Worktree-private scratch that contains repository files is visible to such
+censuses; a later card should export elsewhere or delete it before its gate.
+
+**Where the deltas come from** (against the base's integration gate,
+`docs/reports/contract-inherit-adoption/integration/gate.json`: 5,208 over
+280 summaries, 117 provider, 12 package Python):
+
+* **Core Rust** +8, 280 → 281 summaries: the new
+  `compiler/tests/contract_inherit_qcore_provider.rs` (8 tests). The edited
+  tests in `contract_inherit.rs` and `contract_inherit_adoption.rs` keep their
+  counts.
+* **Provider Rust** +7: five `namespace_is_derived_and_published_modules_are_owned`
+  and two `every_include_names_a_published_libc_module` in the executable
+  crates.
+* **Package Python** +1: `test_both_prefixes_derive_and_a_shared_namespace_is_refused`.
+* **Load-sensitive rows.** No `P02-FLAKE` row failed. The isolated package run
+  is the constraint-16 record, not a retry.
 
 ## 7. Corpus arbiter (constraint 7)
 
