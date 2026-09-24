@@ -1,0 +1,91 @@
+module contract;
+
+// Executable descriptor lifecycle policy for native observations
+// (card W43-DESCRIPTOR-NATIVE-CHECK). Supplied records are trusted observer
+// output, not authenticated certificates, and never a static Safe result.
+// The Rust interpreter (qcore_contract::descriptor_observation) derives the
+// facts below from each record and its own replayed state; a false clause is
+// a recorded violation of the named property, not a rejected run. Identities
+// are descriptor numbers or pointers; a reused identity is a fresh
+// generation, extending the Monkey rules in monkey/descriptor_observation.qcore
+// from socketpair descriptors to every observed kind.
+
+// Generation discipline: an acquisition names an identity with no live
+// generation, and its generation is the previous one plus one.
+extern fn descriptor_generation_fresh() -> unit
+contract {
+    ensures normal not already_live;
+    ensures normal previous_generation < 4294967295;
+    ensures normal generation == previous_generation + 1;
+};
+
+// A counted kind (dl handle) acquired while live adds one reference to the
+// same generation.
+extern fn descriptor_counted_reference() -> unit
+contract {
+    ensures normal counted_kind;
+    ensures normal already_live;
+    ensures normal generation == previous_generation;
+};
+
+// Sentinel validity for every constructor: a failure returns the call's
+// sentinel, acquires nothing and reports errno where the API requires it; a
+// success returns a valid identity and acquires exactly what the call makes.
+extern fn descriptor_sentinel_validity() -> unit
+contract {
+    ensures normal succeeded or result_is_sentinel;
+    ensures normal not succeeded or result_valid;
+    ensures normal succeeded or acquired_count == 0;
+    ensures normal not succeeded or acquired_count == expected_acquired;
+    ensures normal succeeded or not errno_required or errno_value > 0;
+};
+
+// Each generation is released at most once.
+extern fn descriptor_release_at_most_once() -> unit
+contract {
+    ensures normal not released_before;
+};
+
+// A release names the kind of the generation it releases, and a descriptor
+// owned by a live stream or directory is released only through that owner.
+extern fn descriptor_release_matches_kind() -> unit
+contract {
+    ensures normal kind_matches;
+    ensures normal custody_matches;
+};
+
+// No use after release of the named generation.
+extern fn descriptor_no_use_after_release() -> unit
+contract {
+    ensures normal not use_after_release;
+};
+
+// Releases and uses never receive the invalid sentinel identity.
+extern fn descriptor_operand_identity_valid() -> unit
+contract {
+    ensures normal identity_valid;
+};
+
+// fdopen/fdopendir adopt a live caller-owned descriptor; fileno/dirfd return
+// the owner's descriptor; dup returns a distinct descriptor; dup2/dup3 return
+// the requested target.
+extern fn descriptor_relation_holds() -> unit
+contract {
+    ensures normal relation_matches;
+};
+
+// A mapping release or remap names the recorded base and extent.
+extern fn descriptor_mapping_extent() -> unit
+contract {
+    ensures normal extent_matches;
+};
+
+// The leak set at exit is well defined: the observer's live set equals the
+// replayed one, each identity has at most one live generation, and every live
+// generation has a recorded origin.
+extern fn descriptor_leak_set_well_defined() -> unit
+contract {
+    ensures normal observer_live_set_matches;
+    ensures normal unique_live_generation_per_identity;
+    ensures normal every_live_generation_has_origin;
+};

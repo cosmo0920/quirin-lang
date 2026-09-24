@@ -814,6 +814,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-chunk-source-profile](w43-chunk-source-profile/README.md) | W43 chunk source profile |
 
+| [w43-descriptor-native-check](w43-descriptor-native-check/README.md) | W43-DESCRIPTOR-NATIVE-CHECK: descriptor lifecycles checked on native executions |
+
 | [w43-descriptor-resource-tracking](w43-descriptor-resource-tracking/README.md) | W43-DESCRIPTOR-RESOURCE-TRACKING: kind-indexed custody, integer-carried descriptors and eight libc declarations |
 
 | [w43-index-traversal](w43-index-traversal/README.md) | W43-INDEX-TRAVERSAL: index and pointer traversal |

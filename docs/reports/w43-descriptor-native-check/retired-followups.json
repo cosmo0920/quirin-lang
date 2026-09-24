@@ -1,0 +1,11 @@
+{
+ "card": "W43-DESCRIPTOR-NATIVE-CHECK",
+ "retired": [
+  {
+   "id": "W43-DESC-NATIVE-PHASE-B",
+   "recorded_by": "W43-DESCRIPTOR-NATIVE-CHECK",
+   "discharged_by": "docs/reports/w43-descriptor-native-check/README.md#8-phase-b-the-landed-contracts-against-the-executions",
+   "evidence": "Every recorded execution of the 18 declared libc callees the runs reach (3,149 executions over 80 accepted runs) bound to its loaded contract from providers/quirin-provider-libc (unistd, socket, stdio, dirent) by qcore_contract::descriptor_contract_binding; 0 contradictions; binding.json re-derived byte for byte by verify_records.py."
+  }
+ ]
+}

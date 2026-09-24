@@ -1,0 +1,461 @@
+{
+  "source_commit": "c18a0675",
+  "private_logs": {
+    "clang": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b3",
+    "submodules": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b3",
+    "test": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b3",
+    "clippy": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "contracts_check": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "fmt": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "followup": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "lean": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "package_build": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "probe": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "provider_clippy": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "provider_fmt": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "provider_mutation": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "provider_python": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "provider_test": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "verify_qcore.chunkio": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "verify_qcore.cmetrics": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "verify_qcore.ctraces": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "verify_qcore.libevent": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "verify_qcore.librdkafka": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4",
+    "docs_index": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b7",
+    "python": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b7"
+  },
+  "steps": {
+    "clang": {
+      "step": "clang",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T22:40:10.641644+00:00",
+      "end": "2026-09-24T22:40:10.656826+00:00",
+      "exit": 0
+    },
+    "submodules": {
+      "step": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T22:40:10.607307+00:00",
+      "end": "2026-09-24T22:40:10.641333+00:00",
+      "exit": 0
+    },
+    "test": {
+      "step": "test",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-fail-fast"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T22:40:10.657101+00:00",
+      "end": "2026-09-24T23:01:19.999419+00:00",
+      "exit": 0,
+      "totals": {
+        "passed": 5353,
+        "failed": 0,
+        "ignored": 11,
+        "summaries": 286
+      },
+      "failed_tests": []
+    },
+    "clippy": {
+      "step": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:01:40.301872+00:00",
+      "end": "2026-09-24T23:01:55.106348+00:00",
+      "exit": 0
+    },
+    "contracts_check": {
+      "step": "contracts_check",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:08:15.498937+00:00",
+      "end": "2026-09-24T23:08:15.573899+00:00",
+      "exit": 0
+    },
+    "fmt": {
+      "step": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:01:38.289522+00:00",
+      "end": "2026-09-24T23:01:40.301529+00:00",
+      "exit": 0
+    },
+    "followup": {
+      "step": "followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:02:12.890528+00:00",
+      "end": "2026-09-24T23:02:13.744878+00:00",
+      "exit": 0
+    },
+    "lean": {
+      "step": "lean",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "4"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:02:13.745238+00:00",
+      "end": "2026-09-24T23:02:27.086304+00:00",
+      "exit": 0,
+      "audits_passed": 176
+    },
+    "package_build": {
+      "step": "package_build",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4/packages"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:08:15.574115+00:00",
+      "end": "2026-09-24T23:08:16.872459+00:00",
+      "exit": 0
+    },
+    "probe": {
+      "step": "probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:01:55.106643+00:00",
+      "end": "2026-09-24T23:02:12.890311+00:00",
+      "exit": 0
+    },
+    "provider_clippy": {
+      "step": "provider_clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:07:24.393017+00:00",
+      "end": "2026-09-24T23:07:29.530583+00:00",
+      "exit": 0
+    },
+    "provider_fmt": {
+      "step": "provider_fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:07:22.219134+00:00",
+      "end": "2026-09-24T23:07:24.392769+00:00",
+      "exit": 0
+    },
+    "provider_mutation": {
+      "step": "provider_mutation",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "qcore-provider-conformance",
+        "--test",
+        "packages",
+        "real_packages_preserve_unknown_and_reject_mutations",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:07:29.530809+00:00",
+      "end": "2026-09-24T23:08:15.498665+00:00",
+      "exit": 0,
+      "totals": {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "summaries": 1
+      },
+      "failed_tests": []
+    },
+    "provider_python": {
+      "step": "provider_python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:08:17.181304+00:00",
+      "end": "2026-09-24T23:08:17.265753+00:00",
+      "exit": 0,
+      "tests_run": 13
+    },
+    "provider_test": {
+      "step": "provider_test",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--no-fail-fast"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:02:27.087664+00:00",
+      "end": "2026-09-24T23:07:22.218474+00:00",
+      "exit": 0,
+      "totals": {
+        "passed": 124,
+        "failed": 0,
+        "ignored": 0,
+        "summaries": 39
+      },
+      "failed_tests": []
+    },
+    "verify_qcore.chunkio": {
+      "step": "verify_qcore.chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4/packages/qcore.chunkio"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:08:16.872885+00:00",
+      "end": "2026-09-24T23:08:16.935180+00:00",
+      "exit": 0
+    },
+    "verify_qcore.cmetrics": {
+      "step": "verify_qcore.cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4/packages/qcore.cmetrics"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:08:16.935421+00:00",
+      "end": "2026-09-24T23:08:17.001809+00:00",
+      "exit": 0
+    },
+    "verify_qcore.ctraces": {
+      "step": "verify_qcore.ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4/packages/qcore.ctraces"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:08:17.002042+00:00",
+      "end": "2026-09-24T23:08:17.062767+00:00",
+      "exit": 0
+    },
+    "verify_qcore.libevent": {
+      "step": "verify_qcore.libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4/packages/qcore.libevent"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:08:17.062971+00:00",
+      "end": "2026-09-24T23:08:17.124038+00:00",
+      "exit": 0
+    },
+    "verify_qcore.librdkafka": {
+      "step": "verify_qcore.librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-b4/packages/qcore.librdkafka"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:08:17.124446+00:00",
+      "end": "2026-09-24T23:08:17.180972+00:00",
+      "exit": 0
+    },
+    "docs_index": {
+      "step": "docs_index",
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py",
+        "--check"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:22:36.113796+00:00",
+      "end": "2026-09-24T23:22:36.154395+00:00",
+      "exit": 0
+    },
+    "python": {
+      "step": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "environment": {
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_BUILD_JOBS": "8",
+        "RUST_TEST_THREADS": "4"
+      },
+      "start": "2026-09-24T23:22:23.181959+00:00",
+      "end": "2026-09-24T23:22:36.113263+00:00",
+      "exit": 0,
+      "tests_run": 330
+    }
+  }
+}

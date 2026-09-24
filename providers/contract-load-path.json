@@ -240,6 +240,7 @@
       "modules": [
         "language/quantified_indices.qcore",
         "library/custody_evidence.qcore",
+        "library/descriptor_native_observation.qcore",
         "library/source_projection.qcore"
       ],
       "published": {}

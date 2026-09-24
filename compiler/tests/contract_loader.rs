@@ -982,7 +982,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // entirely v1 and manifest-selected.
     // 109 -> 110: card W43-DESCRIPTOR-RESOURCE-TRACKING adds `libc/dirent.qcore`,
     // entirely v1 (a kinded pair) and manifest-selected.
-    assert_eq!(modules.len(), 110, "corpus module count");
+    // 110 -> 111: card W43-DESCRIPTOR-NATIVE-CHECK adds
+    // `library/descriptor_native_observation.qcore`, a native observation
+    // policy (ten parameterless rules), not resource-v1 and not selected.
+    assert_eq!(modules.len(), 111, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1117,9 +1120,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // declarations, six appended to already-selected modules (`open`, `close`,
     // `socket`, `fopen`, `fclose`, `fileno`) and two in the new
     // `libc/dirent.qcore`. Rejected unchanged.
+    // 206 -> 216 rejected by card W43-DESCRIPTOR-NATIVE-CHECK: the ten rules
+    // of `library/descriptor_native_observation.qcore` belong to the native
+    // descriptor replay and are deliberately rejected by resource-v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (47, 152, 206)
+        (47, 152, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())
