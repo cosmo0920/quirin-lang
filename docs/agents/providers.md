@@ -159,3 +159,15 @@ including cross-topic rules, before editing; the index is not a substitute.
     seccomp, no other namespace). The recorded default remains
     `unenforced-legacy`. `remaining-p02`, `remaining-p03`, `remaining-p03-f`.
 <!-- preserved:constraint-26:end -->
+
+## Amendment: included contract parents in packages (CONTRACT-INHERIT)
+
+Constraint 18's package verification gains one rule. A packaged contract that
+uses `#include "crate:module";` must pin every module it reaches — crate,
+crate version, module path, SHA-256 — in its inventory's `includes` object and
+install the exact texts under `includes/<crate>/<module>`;
+`providers/package.py verify` refuses an unpinned directive, a changed or
+missing parent, an unused pin and an unpinned `includes/` tree. No package
+includes anything yet, so every existing inventory and package identity is
+unchanged. Building the pins from the real crates' published sets is
+`CONTRACT-INHERIT-ADOPTION`. [Report](../reports/contract-inherit/README.md).

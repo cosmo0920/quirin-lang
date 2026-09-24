@@ -63,6 +63,10 @@ concurrency. Importing vocabulary does not discharge operation checks or make an
 unsupported profile executable. The task profile still requires its
 `concurrency checked;` marker. User-file/package resolution, import aliases,
 wildcards, reexports and implicit/transitive imports are not implemented.
+`import` names bundled semantic modules only; a contract module takes another
+contract module's declarations through the separate `#include` directive of
+G05a, resolved by the contract loader against a published load path and never
+by this front end.
 
 ## G02. Source execution profile
 
@@ -2486,6 +2490,52 @@ Additional static conditions are mandatory: exactly one marker, exactly one mode
 `literal_argument_premise` (card HASH-CLAUSE) states where the declaration is applied, not what it means: a consumer treats the callee as undeclared at every call site whose actual at the named parameter is not exactly that integer constant. It never widens a declaration and never changes a mode. Which call-site *spellings* are that constant is fixed by contract specification C04.5.1 (card HASH-REFINE): matched enclosing parentheses and an integer suffix are erased structurally, and every spelling needing arithmetic, a base, a cast or symbol resolution is refused.
 
 The grammar describes tokens, not required whitespace. It provides no general predicate-call nesting. It also does not turn an admitted trusted declaration into proof that a C function obeys it.
+
+## G05a. Contract inclusion and inheritance
+
+Card CONTRACT-INHERIT. A directive layer read by
+`crates/qcore-frontend/src/contract_inclusion.rs` and resolved by
+`crates/qcore-contract/src/contract_inclusion.rs` **before** any consumer
+parses the module. The structural parser of G01 does not admit either form:
+it refuses them with a `Q000` parse error naming the contract loader, so an
+unresolved inclusion never reaches a consumer.
+
+```ebnf
+contract_module   = "module", "contract", ";", {include_directive},
+                    declaration, {declaration} ;
+include_directive = "#", "include", STRING, ";" ;
+(* STRING content: CRATE ":" MODULE, with
+   CRATE  = [a-z0-9][a-z0-9_-]*                       (the Cargo package name)
+   MODULE = SEGMENT {"/" SEGMENT} ".qcore", SEGMENT = [a-z0-9_-]+ *)
+inheriting_fn     = "extern", "fn", IDENT, "(", [parameter, {",", parameter}], ")",
+                    "->", TYPE, "contract", "inherit", parent, ";" ;
+parent            = [IDENT, "::"], IDENT ;            (* one qualifier level *)
+```
+
+`#` is the existing attribute-marker token and `::` the existing `ColonColon`
+token; `include` and `inherit` are **contextual** (read only after `#` at a
+contract module's top level and only directly after `contract`), so no
+reserved word is added and both remain ordinary identifiers elsewhere. The
+constraint-14 census found no `#` in code position, no `#include`, no
+`inherit` and no non-block `contract` tail in any of the 571 tracked Quirin
+sources, archived probes included.
+
+Static conditions (each a `QI` refusal, contract specification C15): the
+directives precede every declaration of a `module contract;` module; the
+included crate is the includer's crate or a declared dependency and the module
+is in its published set; no include cycle or repeated include; the parent is
+the one own declaration named `NAME`, or the one declaration named `NAME` in
+the directly included modules of the crate whose namespace is `NS`; the parent
+is a plain `extern fn … contract { … };`; arity, parameter types and result
+type agree; the positional renaming captures no word; no inheritance cycle; no
+clause after `inherit PARENT`. The elaborated text replaces each directive by
+blanks and each `inherit PARENT` by the parent's clause block under the
+renaming; resource-v1 then loads it through G05 unchanged and additionally
+requires the child's loaded record to equal the parent's.
+
+The include string carries the **package name** (`quirin-provider-libc`), which
+the dependency rule checks; the qualifier carries the **namespace** derived from
+it (`libc`: the package name without `quirin-provider-`, `-` read as `_`).
 
 ## G06. Observation predicate grammar
 
