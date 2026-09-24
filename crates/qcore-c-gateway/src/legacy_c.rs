@@ -106,6 +106,13 @@ pub struct NestedContractCall {
     pub arguments: Vec<Option<String>>,
 }
 
+// Card W43-DESCRIPTOR-RESOURCE-TRACKING: the kinds on
+// `ResourceFunctionContract` grew the `ContractCall` variant past clippy's
+// size-difference threshold. Instructions are built once per statement and
+// cloned only with their CFG, so boxing every contract would add an
+// allocation per call statement to buy nothing; the crate's precedent at
+// `UnrestrictedLegacyResult` makes the same decision.
+#[allow(clippy::large_enum_variant)]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LegacyInstruction {
     Acquire {

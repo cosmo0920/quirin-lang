@@ -406,11 +406,10 @@ fn a_tracked_descriptor_on_every_scalar_store_route_is_refused() {
         ),
         (
             "bound member (ScalarMemberStore)",
-            format!(
-                "void w(void) {{ struct k_conn *c = k_conn_new(); if (!c) return; \
-                 int fd = k_open(\"p\"); if (fd < 0) {{ k_free(c); return; }} \
-                 c->fd = fd; k_close(fd); k_free(c); }}"
-            ),
+            "void w(void) { struct k_conn *c = k_conn_new(); if (!c) return; \
+             int fd = k_open(\"p\"); if (fd < 0) { k_free(c); return; } \
+             c->fd = fd; k_close(fd); k_free(c); }"
+                .to_owned(),
         ),
         (
             "local struct member (`s.f = fd`)",

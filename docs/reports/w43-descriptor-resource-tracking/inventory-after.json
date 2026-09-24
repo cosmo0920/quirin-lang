@@ -1,0 +1,214 @@
+{
+ "absent": [
+  "open",
+  "openat",
+  "open64",
+  "creat",
+  "close",
+  "close_range",
+  "socket",
+  "socketpair",
+  "accept",
+  "dup",
+  "dup2",
+  "dup3",
+  "pipe",
+  "pipe2",
+  "fopen",
+  "fdopen",
+  "freopen",
+  "fclose",
+  "fileno",
+  "popen",
+  "pclose",
+  "tmpfile",
+  "opendir",
+  "fdopendir",
+  "closedir",
+  "epoll_create",
+  "epoll_create1",
+  "eventfd",
+  "timerfd_create",
+  "signalfd",
+  "inotify_init",
+  "inotify_init1",
+  "mkstemp",
+  "mkostemp",
+  "mkstemps",
+  "mmap",
+  "munmap",
+  "shm_open",
+  "memfd_create",
+  "kqueue",
+  "if_nameindex",
+  "if_freenameindex",
+  "getifaddrs",
+  "freeifaddrs",
+  "scandir",
+  "setmntent",
+  "endmntent",
+  "iconv_open",
+  "iconv_close"
+ ],
+ "callees_present": 12,
+ "functions": 14,
+ "leaves": 24,
+ "other_descriptions": {},
+ "rows": [
+  {
+   "callee": "accept4",
+   "function_list": [
+    "mk_server/mk_socket.c:mk_socket_accept"
+   ],
+   "function_status": {
+    "Unknown": 1
+   },
+   "functions": 1,
+   "leaves": 1,
+   "sole_blocked": 0
+  },
+  {
+   "callee": "fcntl",
+   "function_list": [
+    "mk_server/mk_socket.c:mk_socket_set_nonblocking",
+    "rdkafka_offset.c:rd_kafka_open_cb_generic"
+   ],
+   "function_status": {
+    "Unknown": 2
+   },
+   "functions": 2,
+   "leaves": 2,
+   "sole_blocked": 1
+  },
+  {
+   "callee": "dlopen",
+   "function_list": [
+    "mk_server/mk_plugin.c:mk_plugin_load_dynamic",
+    "rddl.c:rd_dl_open0"
+   ],
+   "function_status": {
+    "Unknown": 2
+   },
+   "functions": 2,
+   "leaves": 2,
+   "sole_blocked": 1
+  },
+  {
+   "callee": "dlclose",
+   "function_list": [
+    "mk_server/mk_plugin.c:mk_plugin_load",
+    "rddl.c:rd_dl_close"
+   ],
+   "function_status": {
+    "Unknown": 2
+   },
+   "functions": 2,
+   "leaves": 3,
+   "sole_blocked": 1
+  },
+  {
+   "callee": "getaddrinfo",
+   "function_list": [
+    "mk_server/mk_net.c:mk_net_fd_connect",
+    "mk_server/mk_socket.c:mk_socket_connect",
+    "mk_server/mk_socket.c:mk_socket_server",
+    "rdaddr.c:rd_getaddrinfo"
+   ],
+   "function_status": {
+    "Unknown": 4
+   },
+   "functions": 4,
+   "leaves": 4,
+   "sole_blocked": 0
+  },
+  {
+   "callee": "freeaddrinfo",
+   "function_list": [
+    "mk_server/mk_net.c:mk_net_fd_connect",
+    "mk_server/mk_socket.c:mk_socket_connect",
+    "mk_server/mk_socket.c:mk_socket_server",
+    "rdaddr.c:rd_getaddrinfo"
+   ],
+   "function_status": {
+    "Unknown": 4
+   },
+   "functions": 4,
+   "leaves": 6,
+   "sole_blocked": 0
+  },
+  {
+   "callee": "fts_open",
+   "function_list": [
+    "cio_utils.c:cio_utils_recursive_delete"
+   ],
+   "function_status": {
+    "Unknown": 1
+   },
+   "functions": 1,
+   "leaves": 1,
+   "sole_blocked": 0
+  },
+  {
+   "callee": "fts_close",
+   "function_list": [
+    "cio_utils.c:cio_utils_recursive_delete"
+   ],
+   "function_status": {
+    "Unknown": 1
+   },
+   "functions": 1,
+   "leaves": 1,
+   "sole_blocked": 0
+  },
+  {
+   "callee": "glob",
+   "function_list": [
+    "mk_core/mk_rconf.c:mk_rconf_read_glob"
+   ],
+   "function_status": {
+    "Unknown": 1
+   },
+   "functions": 1,
+   "leaves": 1,
+   "sole_blocked": 0
+  },
+  {
+   "callee": "globfree",
+   "function_list": [
+    "mk_core/mk_rconf.c:mk_rconf_read_glob"
+   ],
+   "function_status": {
+    "Unknown": 1
+   },
+   "functions": 1,
+   "leaves": 1,
+   "sole_blocked": 0
+  },
+  {
+   "callee": "regcomp",
+   "function_list": [
+    "rdregex.c:rd_regex_match"
+   ],
+   "function_status": {
+    "Unknown": 1
+   },
+   "functions": 1,
+   "leaves": 1,
+   "sole_blocked": 0
+  },
+  {
+   "callee": "regfree",
+   "function_list": [
+    "rdregex.c:rd_regex_match"
+   ],
+   "function_status": {
+    "Unknown": 1
+   },
+   "functions": 1,
+   "leaves": 1,
+   "sole_blocked": 0
+  }
+ ],
+ "sole_blocked": 3,
+ "source": "docs/reports/w43-descriptor-resource-tracking/artifacts/diagnostics.json.gz"
+}

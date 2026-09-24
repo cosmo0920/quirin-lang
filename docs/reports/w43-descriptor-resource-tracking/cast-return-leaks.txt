@@ -1,0 +1,3 @@
+leak leaves 272; at a cast return 3
+  1  mk_core/mk_string.c:mk_string_copy_substr
+  2  rdkafka_conf.c:rd_kafka_anyconf_dump
