@@ -217,6 +217,29 @@ pub struct IndirectLeaf {
     pub tokens: usize,
     /// Every access chain the gate's own token view carries.
     pub chains: Vec<Chain>,
+    /// Card **W43-INDIRECT-ACCESS-GENERAL**: the complete token text of the
+    /// refused statement, exactly as the classifier read it, so the shape
+    /// census classifies the analyzer's own view rather than source text.
+    pub texts: Vec<String>,
+    /// The names of this statement the body assigns a declared *derived*
+    /// result (`strchr`, `memcpy`, …). A label, not a flow fact: the name may
+    /// be rebound elsewhere.
+    pub derived_names: Vec<String>,
+    /// The names of this statement the body assigns a declared *owned* or
+    /// reallocated result. The same kind of label.
+    pub owned_names: Vec<String>,
+    /// Per identifier of the statement, the declared-type label the
+    /// function's declaration reader gives it: `scalar`, `record`,
+    /// `record_pointer:TAG`, `opaque:CAUSE`, or absent when undeclared.
+    pub declared: std::collections::BTreeMap<String, String>,
+}
+
+/// Card **W43-INDIRECT-ACCESS-GENERAL**: census-only labels of one function
+/// body's `NAME = CALLEE (` assignments, keyed by the callee's declared result.
+#[derive(Clone, Debug, Default)]
+pub struct BodyBindings {
+    pub derived: BTreeSet<String>,
+    pub owned: BTreeSet<String>,
 }
 
 /// The census stream, opened once on first use.
@@ -344,6 +367,7 @@ pub(crate) fn record(
     texts: &[&str],
     exempt: &[(usize, usize)],
     refusal: &Refusal,
+    bindings: &BodyBindings,
 ) {
     let &Refusal {
         from,
@@ -381,7 +405,40 @@ pub(crate) fn record(
         call_contracted,
         tokens: texts.len(),
         chains: chains(context, texts, &window),
+        texts: texts.iter().map(|text| (*text).to_owned()).collect(),
+        derived_names: names_in(texts, &bindings.derived),
+        owned_names: names_in(texts, &bindings.owned),
+        declared: texts
+            .iter()
+            .filter(|text| is_name(text))
+            .filter_map(|name| {
+                declared_label(context, name).map(|label| ((*name).to_owned(), label))
+            })
+            .collect(),
     });
+}
+
+fn names_in(texts: &[&str], names: &BTreeSet<String>) -> Vec<String> {
+    texts
+        .iter()
+        .filter(|text| names.contains(**text))
+        .map(|text| (*text).to_owned())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
+/// The declaration reader's own answer for one name, as a census label.
+fn declared_label(context: &Context<'_>, name: &str) -> Option<String> {
+    Some(match context.typed_types.declared_type(name)? {
+        DeclaredType::Scalar => "scalar".to_owned(),
+        DeclaredType::Record(tag) => format!("record:{tag}"),
+        DeclaredType::RecordPointer(tag) => format!("record_pointer:{tag}"),
+        DeclaredType::Opaque => match context.typed_types.census.opaque.get(name) {
+            Some(cause) => format!("opaque:{cause:?}"),
+            None => "opaque:Unrecorded".to_owned(),
+        },
+    })
 }
 
 /// Every maximal access chain in the gate's own view of the statement.

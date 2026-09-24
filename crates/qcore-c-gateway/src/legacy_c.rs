@@ -2312,6 +2312,8 @@ pub(crate) fn build_function_cfg(
         frame_protected,
         #[cfg(feature = "indirect-census")]
         census_function: function.to_owned(),
+        #[cfg(feature = "indirect-census")]
+        census_bindings: census_body_bindings(tokens, body_start, contracts),
     };
     let statements =
         parser
@@ -2856,6 +2858,48 @@ pub(crate) fn tokenize_with_conditionals(source: &str) -> (Vec<Token>, Vec<Condi
         }
     }
     (tokens, conditionals)
+}
+
+/// Card **W43-INDIRECT-ACCESS-GENERAL**, census only: every `NAME = CALLEE (`
+/// in the body starting at `body_start` whose callee's in-force contract
+/// declares a derived or an owned result. A label for the census's base axis,
+/// never consulted by any rule.
+#[cfg(feature = "indirect-census")]
+fn census_body_bindings(
+    tokens: &[Token],
+    body_start: usize,
+    contracts: &ResourceContracts,
+) -> crate::indirect_census::BodyBindings {
+    let mut bindings = crate::indirect_census::BodyBindings::default();
+    let Some(body_end) = matching(tokens, body_start, "{", "}") else {
+        return bindings;
+    };
+    let texts = tokens[body_start..body_end]
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
+    for (index, window) in texts.windows(4).enumerate() {
+        let [name, "=", callee, "("] = window else {
+            continue;
+        };
+        // A chained assignment `a = NAME = f (` is left unlabelled.
+        if index > 0 && texts[index - 1] == "=" {
+            continue;
+        }
+        if !is_identifier(name) || !is_identifier(callee) {
+            continue;
+        }
+        match contracts.contract(callee).map(|contract| contract.result) {
+            Some(ResourceReturnMode::Derived { .. }) => {
+                bindings.derived.insert((*name).to_owned());
+            }
+            Some(ResourceReturnMode::Owned { .. } | ResourceReturnMode::Reallocated { .. }) => {
+                bindings.owned.insert((*name).to_owned());
+            }
+            _ => {}
+        }
+    }
+    bindings
 }
 
 pub(crate) fn find_function_body(tokens: &[Token], function: &str) -> Option<(usize, usize)> {
@@ -3424,6 +3468,13 @@ struct Parser<'a> {
     /// feature off, and read by nothing else.
     #[cfg(feature = "indirect-census")]
     census_function: String,
+    /// Card **W43-INDIRECT-ACCESS-GENERAL**: the names this body assigns the
+    /// result of a contracted call whose declared result is derived
+    /// (`resource_return_alias`/`resource_return_interior`) or owned, read
+    /// once from the body's own tokens and the classifier's own contracts.
+    /// Census labels only; compiled out with the feature off.
+    #[cfg(feature = "indirect-census")]
+    census_bindings: crate::indirect_census::BodyBindings,
 }
 
 impl Parser<'_> {
@@ -3469,6 +3520,7 @@ impl Parser<'_> {
             texts,
             exempt,
             refusal,
+            &self.census_bindings,
         );
     }
 
