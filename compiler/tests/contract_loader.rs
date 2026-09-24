@@ -916,7 +916,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 107 -> 108: card CONTRACT-INHERIT-ADOPTION adds
     // `fluent_bit/resource_string.qcore`, entirely v1 (two inherited
     // declarations) and manifest-selected.
-    assert_eq!(modules.len(), 108, "corpus module count");
+    // 108 -> 109: card W43-DESCRIPTOR-NATIVE-CHECK adds
+    // `library/descriptor_native_observation.qcore`, a native observation
+    // policy (ten parameterless rules), not resource-v1 and not selected.
+    assert_eq!(modules.len(), 109, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1037,9 +1040,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `flb_free` to `contract inherit` moves nothing here: these counts are
     // of elaborated declarations. 44 -> 45 and 128 -> 130 by the same card's
     // `fluent_bit/resource_string.qcore` (`flb_strdup`, `flb_strndup`).
+    // 207 -> 217 rejected by card W43-DESCRIPTOR-NATIVE-CHECK: the ten rules
+    // of `library/descriptor_native_observation.qcore` belong to the native
+    // descriptor replay and are deliberately rejected by resource-v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (45, 130, 207)
+        (45, 130, 217)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())
