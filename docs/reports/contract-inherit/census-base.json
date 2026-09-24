@@ -1,0 +1,113 @@
+{
+  "archived_probe_sources": 174,
+  "embedder_files_scanned": 2481,
+  "embedder_hash_include_in_quirin_context": [
+    {
+      "file": "compiler/tests/native_library_header.rs",
+      "line": 506,
+      "text": "// `#include` this reader does not follow. That is the census's headline and"
+    },
+    {
+      "file": "crates/qcorec/src/main.rs",
+      "line": 166,
+      "text": "// own `#include`s are read from resolve the same way, against the"
+    },
+    {
+      "file": "crates/qcorec/tests/cli.rs",
+      "line": 438,
+      "text": "#include <stdint.h>\\n\\"
+    },
+    {
+      "file": "crates/qcorec/tests/cli.rs",
+      "line": 540,
+      "text": "#include <stdint.h>\\n\\"
+    },
+    {
+      "file": "crates/qcorec/tests/cli.rs",
+      "line": 541,
+      "text": "#include \\\"demo_visibility.h\\\"\\n\\"
+    }
+  ],
+  "embedder_inherit_words": [
+    {
+      "file": "compiler/tests/bitwise_conditions.rs",
+      "line": 264,
+      "text": "// revision deliberately does not inherit \u2014 and a condition is not an"
+    },
+    {
+      "file": "compiler/tests/logical_connectives.rs",
+      "line": 239,
+      "text": "// inherit it, since associativity would stop being free the moment a leaf"
+    },
+    {
+      "file": "compiler/tests/pipe_operator.rs",
+      "line": 583,
+      "text": "// to decide this case deliberately rather than inherit it."
+    },
+    {
+      "file": "crates/qcore-c-gateway/tests/neutral_frame_recursion.rs",
+      "line": 10,
+      "text": "//! route does *not* inherit that permissiveness."
+    },
+    {
+      "file": "crates/qcore-core/src/std_buffer.rs",
+      "line": 41,
+      "text": "//! \"inherit, don't reimplement\" precedent)."
+    },
+    {
+      "file": "crates/qcore-frontend/src/source_mutex.rs",
+      "line": 1284,
+      "text": "// untested reading of what it would inherit."
+    },
+    {
+      "file": "crates/qcore-frontend/src/source_region.rs",
+      "line": 237,
+      "text": "/// The model's wording is kept verbatim otherwise \u2014 \"inherit, don't"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/mutex_share_cross.rs",
+      "line": 342,
+      "text": "/// admitted on an untested reading of what it would inherit."
+    },
+    {
+      "file": "crates/qcore-schemas/src/composition_summary.rs",
+      "line": 813,
+      "text": "/// itself. A family whose nested question is derived does not inherit its"
+    },
+    {
+      "file": "crates/qcore-verification/src/driver.rs",
+      "line": 3184,
+      "text": "// C idiom this revision deliberately does not inherit, because"
+    },
+    {
+      "file": "crates/qcore-verification/src/driver.rs",
+      "line": 6080,
+      "text": "/// way. What differs is that there is no custody step to inherit: a view is not"
+    },
+    {
+      "file": "docs/reports/wave36-close/reconciliation.json",
+      "line": 963,
+      "text": "\"ground\": \"Still deferred - explicitly a question raised for the user, which no card and no close may answer. NEW EVIDENCE from this close, offered as a data po"
+    },
+    {
+      "file": "docs/reports/wave36-close/scripts/write_reconciliation.py",
+      "line": 837,
+      "text": "\"around wave 37 and will inherit the question.\","
+    },
+    {
+      "file": "docs/reviews/r0_3/acceptance_matrix.json",
+      "line": 8614,
+      "text": "\"why\": \"Two independent mappings of CT41 were built from the same base and reached the same row. Both measured the SAME obstruction -- that the wave-9 attributi"
+    },
+    {
+      "file": "scripts/ct_stage_summary.py",
+      "line": 699,
+      "text": "# another host cannot inherit `executed`."
+    }
+  ],
+  "quirin_sources": 571,
+  "source_code_hashes": [],
+  "source_contract_non_block_tails": [],
+  "source_hash_include": [],
+  "source_inherit_words": []
+}
