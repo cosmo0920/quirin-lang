@@ -1,0 +1,13 @@
+{
+  "note": "W43-INDEX-TRAVERSAL: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured from a clean target directory on 2ddb6ef7 (main 0a07cb57 merged into the card; the implementation is 44d7eb5f, later commits change documents, the ledger, report scripts and evidence only), with CARGO_INCREMENTAL=0. 5278 core Rust passed / 0 failed / 11 ignored over 283 summaries (the card adds the 19-test index_traversal.rs binary, 4 index_traversal unit tests and subscript_condition_certifies, and moves nine existing pins deliberately, each explained where it stands); 173 Lean audits (1 added: AuditIndexTraversal); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 432 feature-on library tests passed; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. A first gate run on 44d7eb5f was stopped during cargo test when main advanced and is not evidence. Logs: worktree-private private/gate and private/provider-gate of agent-a3257f6ea7e13d982. Clang recorded in this checkout. Corpus: 11 functions Unknown -> Safe, 0 unit moves, leak 271 unchanged, 0 violation candidates; the AFTER artifacts are reproduced byte for byte on the merged tree.",
+  "workspace_tests": 5278,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 173,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -295,6 +295,7 @@ baseline.
 | CENSUS | `e9f840b1…` | `42ee628f` + feature | 0 | [census-run.json](census-run.json) |
 | AFTER | `2ae54a0e…` | `44d7eb5f` | 0 | [after-run.json](after-run.json), [artifacts/](artifacts/) |
 | CENSUS (after) | `ec36dff0…` | `44d7eb5f` + feature | 0 | [census-after-run.json](census-after-run.json) |
+| AFTER (merged) | `62d6b3d7…` | `2ddb6ef7` (main `0a07cb57` merged) | 0 | [after-merged-run.json](after-merged-run.json): all five artifacts byte-identical to AFTER |
 
 * BEFORE against the W43-INDIRECT-ACCESS-GENERAL baseline: diagnostics,
   chunk-contracts and source byte-identical; `contracts` differs by main's
@@ -368,13 +369,43 @@ The frozen file is not edited; these corrections live here.
 
 Measured in this worktree (`agent-a3257f6ea7e13d982`) by
 [`scripts/run_gate.py`](scripts/run_gate.py) — the indirect card's runner with
-`CARGO_INCREMENTAL=0` — on the implementation commit `44d7eb5f`; later commits
-change documents, the ledger, report scripts and evidence only. Logs are
+`CARGO_INCREMENTAL=0` — from a clean target directory on `2ddb6ef7`, the merge
+of main `0a07cb57` into the card (the card's implementation is `44d7eb5f`;
+later commits change documents, the ledger, report scripts and evidence
+only). A first gate run on `44d7eb5f` was stopped by its task handle during
+`cargo test` when main advanced, and is kept privately as
+`aborted-gate-premerge`; it is not evidence. Logs are
 worktree-private under `private/gate/` and `private/provider-gate/`. The
 generator input is [gate.json](gate.json), with the
 [Clang recording](clang-version.txt) taken in this checkout beside it.
 
-GATE-TABLE
+| Command | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | libevent `d82464a2…` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,278 passed / 0 failed / 11 ignored**, 283 summaries |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **173** audits |
+| `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings` and `cargo test -p qcore-c-gateway --features indirect-census --lib` | 0 | clean; 432 passed |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w43-index-traversal/gate.json` | 0 | 324 follow-ups, 108 contract modules, 173 Lean audits |
+| `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **330** tests |
+| `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | regenerated and matching |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **124 passed / 0 failed / 0 ignored**, 39 summaries |
+| `… -p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations … -- --exact --test-threads=1` | 0 | 1 passed (isolated, constraint 16) |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean |
+| `python3 providers/contracts.py check` | 0 | |
+| `python3 providers/package.py build --output private/provider-gate/packages` | 0 | 5 packages |
+| `python3 providers/package.py verify …/<id>` (×5) | 0 ×5 | chunkio, cmetrics, ctraces, libevent, librdkafka |
+| `python3 -m unittest discover -s providers/tests` | 0 | 13 tests |
+
+**Counts.** The card adds the 19-test `index_traversal.rs` binary, 4 unit
+tests of `index_traversal.rs`, `subscript_condition_certifies`, and one Lean
+audit; it moves nine pins (§2.7). Main's own gate figures at `0a07cb57` were
+not remeasured here, so the delta is stated by test, not by subtraction.
 
 ## 6. Ledger
 

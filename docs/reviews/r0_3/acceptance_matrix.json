@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W43-INDIRECT-ACCESS-GENERAL on merge 10b8c607 (onto main 65b5df37, after the three verdict-neutral contract cards), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0 from a cold build; every exit captured to a file, not piped. 5254 core Rust passed / 0 failed / 11 ignored over 284 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 172 Lean audits; 330 root Python tests after regenerating this section (the first run failed only the derived-facts check, 171 vs 172 Lean audits, because the merged validation section predated AuditIndirectScalarAccess); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the card's own verdict-bearing diagnostics byte for byte against docs/reports/w43-indirect-access-general/artifacts/ on the combined tree; source-effects is identical to that baseline modulo checkout-path identity digests, and contracts is byte-identical to the CONTRACT-VIEW-PROJECTION-CHECK integration run in the same checkout.",
-  "workspace_tests": 5254,
+  "note": "W43-INDEX-TRAVERSAL: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured from a clean target directory on 2ddb6ef7 (main 0a07cb57 merged into the card; the implementation is 44d7eb5f, later commits change documents, the ledger, report scripts and evidence only), with CARGO_INCREMENTAL=0. 5278 core Rust passed / 0 failed / 11 ignored over 283 summaries (the card adds the 19-test index_traversal.rs binary, 4 index_traversal unit tests and subscript_condition_certifies, and moves nine existing pins deliberately, each explained where it stands); 173 Lean audits (1 added: AuditIndexTraversal); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 432 feature-on library tests passed; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. A first gate run on 44d7eb5f was stopped during cargo test when main advanced and is not evidence. Logs: worktree-private private/gate and private/provider-gate of agent-a3257f6ea7e13d982. Clang recorded in this checkout. Corpus: 11 functions Unknown -> Safe, 0 unit moves, leak 271 unchanged, 0 violation candidates; the AFTER artifacts are reproduced byte for byte on the merged tree.",
+  "workspace_tests": 5278,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 172,
+  "lean_audits": 173,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6812,6 +6812,7 @@
    "AuditFrameHelperTask.lean",
    "AuditGenericNames.lean",
    "AuditHttpComputedLength.lean",
+   "AuditIndexTraversal.lean",
    "AuditIndirectScalarAccess.lean",
    "AuditJoinedProvenanceCallFrames.lean",
    "AuditJoinedProvenanceCycles.lean",
@@ -6916,7 +6917,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-indirect-access-general/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-index-traversal/gate.json)"
  },
  "named_followups": [
   {
