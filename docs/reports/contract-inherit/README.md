@@ -1,7 +1,7 @@
 # CONTRACT-INHERIT: contract inclusion and contract inheritance
 
 Card CONTRACT-INHERIT, 2026-09-24, on base `fa7ab464`. The card adds two
-forms to the Quirin contract language so that a declaration can take its
+forms to the Quirin contract language, so that a declaration can take its
 contract from another declared contract instead of restating it:
 
 ```qcore
@@ -9,47 +9,80 @@ module contract;
 #include "quirin-provider-libc:libc/string.qcore";
 
 extern fn flb_memcpy(dst: ptr<mut, u8>, src: ptr<const, u8>, n: usize) -> ptr<mut, u8>
-contract inherit memcpy;
+contract inherit libc::memcpy;
 ```
 
-No existing contract module uses either form, and this card does not adopt
-them in any real contract (a later card does; see [remaining work](#remaining-work)).
-The feature ships with its own fixtures, tests, Lean model and parity
+No existing contract module uses either form, and this card adopts them in no
+real contract. A later card does that; see [remaining work](#10-remaining-work).
+The feature ships with its own fixture crates, tests, Lean model and parity
 evidence.
 
-The design was fixed in this section before implementation. It was then
-amended once by the integrator's brief (cross-crate publication and load
-path, §1.3), before any code was written.
+**Design history.** The design was written and committed before any
+implementation (`94438552`). The integrator's first amendment (cross-crate
+publication and the load path) arrived before code was written and is
+§1.3. The user's second amendment arrived during implementation: it requires
+included parents to be written with a crate namespace (`libc::memcpy`) and
+restricts unqualified parents to the module's own declarations. It is folded
+into §1.2–§1.4 and adds `QI017`–`QI020`. The committed pre-implementation
+text remains in `94438552`.
+
+## Headline
+
+* **Syntax.** `#include "CRATE:MODULE";` header directives, and
+  `contract inherit [NS::]NAME;` as an `extern fn` contract. **No reserved
+  word is added**: `include` and `inherit` are contextual, and both existing
+  tokens are reused (`#`, `::`).
+* **Semantics.** The contract loader elaborates the module before any
+  consumer parses it. It resolves includes through a published load path,
+  looks the parent up in a namespace-scoped way, checks signatures, and copies
+  the parent's clauses under a positional renaming that refuses capture. The
+  resource-v1 loader then requires the child's loaded record to **equal** the
+  parent's. An inherited contract is exactly as strong as its parent, a trusted
+  assumption like a hand-written one, and never a proof.
+* **Provenance.** Every environment that used inclusion carries, for each
+  selected module, its chains (child → parent → … → the declaration whose
+  contract is written out). Each link records crate, crate version, module
+  path and SHA-256. It also retains every text the elaboration read.
+  `check_source_assumptions` replays the elaboration from those texts alone.
+  A change to a parent's text changes the environment's identity.
+* **Diagnostics.** A loader-owned `QI001`–`QI020` namespace. **No `Q` route
+  code is allocated.** Every code is exercised by a negative control.
+* **Lean.** `proof/QCore/ContractInherit.lean`: 38 theorems, audited by
+  `AuditContractInherit.lean`, placeholder-free, no project axioms.
+* **Parity.** No contract source, manifest, corpus index or pin changed. An
+  environment without inclusion serializes byte for byte as before. Every
+  corpus module elaborates to itself. The fresh arbiter run's verdict-bearing
+  diagnostics are **@@ARBITER@@**.
+* **Follow-ups 282 → 285.**
 
 ## 1. Design
 
 ### 1.1 Where the feature lives: a directive layer resolved before parsing
 
 Inclusion and inheritance are **resolved by the contract loader against an
-explicit load path and elaborated into ordinary contract text before any
+explicit load path, and elaborated into ordinary contract text before any
 consumer parses the module**. The structural parser does not resolve them.
 
-The alternative, parsing `#include` and `contract inherit` into the shared
-source AST, was measured and rejected. Twenty-five consumer sites across
-`qcore-frontend`, `qcore-contract`, `qcore-verification` and the compiler read
+The alternative was to parse both forms into the shared source AST. It was
+measured and rejected. Twenty-five consumer sites across `qcore-frontend`,
+`qcore-contract`, `qcore-verification` and the compiler read
 `SourceDeclaration::function_contract`. Several of them treat an extern
-declaration without a contract block as "no clauses", and one (the
-observation interpreter) would evaluate an empty postcondition list as
-vacuously true. An inheriting declaration reaching one of them unresolved
-would be the fail-open direction. Keeping the forms out of the AST gives the
-opposite guarantee by construction: an unresolved inclusion **does not parse**
-for any consumer, so it is refused everywhere the elaborator has not run.
+declaration without a contract block as "no clauses". An inheriting
+declaration that reached one of them unresolved would fail open. Keeping the
+forms out of the AST gives the opposite guarantee by construction: an
+unresolved inclusion **does not parse** for any consumer, so every consumer
+that has not been wired refuses it. The structural parser now refuses both
+forms with a message that names the contract loader. It is still `Q000`.
 
-The elaborated module is exactly the text a person would have written by hand
-(the parent's clauses under the positional renaming, §1.4). It is loaded by the
-unchanged resource-v1 loader, and it is what the environment retains as its
-trusted source assumption. That is the literal sense in which an inherited
-contract is a trusted assumption *of the same strength* as a hand-written one:
-downstream there is no difference to observe. Provenance travels beside it
-(§3).
+The elaborated module is exactly the text a person would have written by
+hand: the parent's clauses under the positional renaming (§1.4). The unchanged
+resource-v1 loader loads it, and the environment retains it as its trusted
+source assumption. That is the literal sense in which an inherited contract is
+a trusted assumption *of the same strength* as a hand-written one: downstream,
+there is no difference to observe. Provenance travels beside it (§3).
 
-This is also why the directive spelling uses `#`: like a C preprocessor
-directive, it is consumed before parsing and never reaches the grammar.
+The `#` spelling fits this design. Like a C preprocessor directive, it is
+consumed before parsing and never reaches the grammar.
 
 ### 1.2 Concrete syntax
 
@@ -57,218 +90,275 @@ directive, it is consumed before parsing and never reaches the grammar.
 contract_module   = "module", "contract", ";", {include_directive},
                     declaration, {declaration} ;
 include_directive = "#", "include", STRING, ";" ;
-STRING            = '"', crate, ":", module, '"' ;
-crate             = LOWER_ALNUM, {LOWER_ALNUM | "_" | "-"} ;
-module            = segment, {"/", segment}, ".qcore" ;
-segment           = (LOWER_ALNUM | "_" | "-"), {LOWER_ALNUM | "_" | "-"} ;
+(* STRING content: CRATE ":" MODULE
+   CRATE  = [a-z0-9][a-z0-9_-]*              the Cargo package name
+   MODULE = SEGMENT {"/" SEGMENT} ".qcore",  SEGMENT = [a-z0-9_-]+ *)
 inheriting_fn     = "extern", "fn", IDENT, "(", [parameter, {",", parameter}], ")",
-                    "->", TYPE, "contract", "inherit", IDENT, ";" ;
+                    "->", TYPE, "contract", "inherit", parent, ";" ;
+parent            = [NAMESPACE, "::"], IDENT ;   (* one qualifier level *)
 ```
 
 * **Includes are header directives.** They are admitted only in a
-  `module contract;` module, only after the header and before the first
-  declaration. A directive anywhere else is refused.
-* **Includes are crate-qualified.** The string names a crate and a module
-  path inside that crate's `contracts/` tree, in the same logical spelling the
-  `CONTRACTS` indexes and `contract/corpus.json` already use
-  (`libc/memory.qcore`). `:` separates them: Cargo package names cannot
-  contain it and the contract-bundle asset rule already rejects it inside a
-  path, so the split is unambiguous. The module charset is exactly
-  `providers/contracts.py`'s `[a-z0-9_/-]+\.qcore`, so absolute paths, `.`,
-  `..`, empty segments, backslashes, escapes and a second `:` are all
-  unrepresentable, not merely checked.
-* **`inherit` takes one parent name** and the declaration ends at `;`. The
-  child's own signature is written out in full: inheritance transfers the
-  contract block, never the signature.
-* **No extension clauses** in this version. `contract inherit memcpy { … };`
-  is refused with its own code. §1.5 gives the reason and the follow-up.
-* `inherit` is admitted on `extern fn` only. `unsafe extern fn` has no
-  contract to inherit or to carry, and a defined `fn` has a body the contract
-  would have to be checked against, which is a different consumer.
+  `module contract;` module, after the header and before the first
+  declaration. A directive anywhere else is refused (`QI001`).
+* **Includes carry the full Cargo package name.** An example is
+  `"quirin-provider-libc:libc/string.qcore"`. The module half is the logical
+  path the `CONTRACTS` indexes and `contract/corpus.json` already use. `:`
+  splits the two halves unambiguously: Cargo package names cannot contain it,
+  and the contract-bundle asset rule already rejects it inside a path. The
+  module charset is exactly `providers/contracts.py`'s `[a-z0-9_/-]+\.qcore`,
+  with nonempty segments. Absolute paths, `.`, `..`, backslashes, escapes and a
+  second `:` are therefore unrepresentable, not merely checked (`QI003`).
+* **Parents carry a namespace, not a package name.** `libc::memcpy`
+  qualifies the parent by the **namespace derived from** the crate name
+  (§1.3). The two spellings name the same crate in two roles. The include
+  string is what the dependency rule checks. The qualifier is what the parent
+  lookup scopes by.
+* **One qualifier level.** `a::b::c` is refused (`QI001`).
+* **No extension clauses** in this version. `contract inherit libc::memcpy { … };`
+  is refused with its own code (`QI002`); §1.5 gives the reason.
+* `inherit` is admitted on a plain `extern fn` only (`QI001` otherwise). An
+  `unsafe extern fn` has no contract to carry. A defined `fn` has a body that
+  the contract would have to be checked against, which needs a different
+  consumer. The child's signature is written in full, with no effects row or
+  usage annotation, because inheritance transfers the contract block, never
+  the signature.
 
-### 1.3 Cross-crate publication and the load path
+### 1.3 Cross-crate publication, the load path and namespaces
 
 The integrator's amendment asked for the rules by which a provider crate
-publishes contracts to crates that build on it, weighing a `LOADPATH`
-and an in-source `#path` directive against a recommended default. The card
-adopts the recommended default, with one refinement (own-crate includes also
-require publication), for the following reasons.
+publishes contracts to crates that build on it. It asked for the design to
+weigh a `LOADPATH` and an in-source `#path` directive against a recommended
+default. The card adopts the default, with one refinement: own-crate includes
+also require publication.
 
 | Candidate | Resolution | Verdict |
 |---|---|---|
-| `LOADPATH` (an ordered directory list, from the environment or command line) | first directory that contains the name | **Rejected.** First-match is shadowing: which text a module includes would depend on the invoking environment rather than on anything a reviewer can read in the module or the crate graph, and two checkouts with different search orders would load different contracts under one spelling. Constraint 11's source-identity rule (two spellings are two selections, never normalised together) points the other way. |
-| In-source `#path "dir";` | a module redirects its own resolution | **Rejected.** It lets a contract point its resolution at arbitrary files, which rule (4) of the brief forbids, and it recreates the `#[path]` coupling that QUIRIN-PROVIDER-SHARED has just removed (36 attributes → 15): a cross-crate source include with no Cargo edge, invisible to the dependency graph. |
-| **Derived load path** (integrator default) | the include names a crate; the crate must be the includer's own crate or one of its declared dependencies; the module must be in that crate's published set | **Adopted.** |
+| `LOADPATH` (an ordered directory list from the environment or command line) | the first directory that contains the name | **Rejected.** First-match is shadowing. Which text a module includes would depend on the invoking environment, not on anything a reviewer can read in the module or the crate graph. Two checkouts with different search orders would load different contracts under one spelling. Constraint 11's source-identity rule (two spellings are two selections, never normalised together) points the other way. |
+| In-source `#path "dir";` | a module redirects its own resolution | **Rejected.** It lets a contract point its resolution at arbitrary files, which rule (4) of the amendment forbids. It would also recreate the `#[path]` coupling that QUIRIN-PROVIDER-SHARED just removed (36 attributes → 15): a cross-crate source include with no Cargo edge, invisible to the dependency graph. |
+| **Derived load path** (integrator default) | the include names a crate, which must be the includer's own crate or one of its declared dependencies; the module must be in that crate's published set | **Adopted.** |
 
 The model is `qcore_contract::contract_inclusion::ContractLoadPath`, a set of
-`PublishedContractCrate { name, version, dependencies, modules, published }`:
+`PublishedContractCrate { name, namespace, version, dependencies, modules, published }`.
+`ContractLoadPath::new` validates it.
 
 1. **Publication is explicit.** `published` is a declared subset of the crate's
    `modules`. Only a published module can be included, **from any crate,
-   including its own**. Requiring publication for own-crate includes too makes
-   `published` the single list a reviewer reads to learn what can be
+   including its own**. Because own-crate includes also need publication,
+   `published` is the one list a reviewer reads to learn what can be
    inherited from. An unpublished or absent module is refused (`QI005`).
 2. **The load path is derived from declared dependencies.** A module in crate
    `A` may include from `A` and from each crate in `A.dependencies`, and from
-   nothing else (`QI004`). There is no transitive visibility: if
-   `fluent-bit → libc` and `app → fluent-bit`, then `app` cannot include
-   `libc` modules unless it declares `libc` too. This mirrors Cargo, where a
-   crate can name only its direct dependencies. A crate with no dependencies
-   — `quirin-provider-libc` today — can include only its own published
-   modules.
-3. **Crate-qualified names, no search order, no shadowing.** Because every
-   include names its crate, include resolution never searches, so no
-   first-match rule exists to be wrong. Ambiguity can still arise one level
-   up, in the parent name (`inherit memcpy` when two included modules both
-   declare `memcpy`), and that is refused (`QI009`), never resolved by order.
-4. **No in-source path redirection.** The grammar cannot spell a path outside
-   the named crate's `contracts/` tree (§1.2), and the load path is data the
-   caller constructs, not something a module can extend.
-5. **Cycles are refused at two levels.** Crate dependency cycles are refused
-   when the load path is constructed (`QI014`; Cargo already forbids them, and
-   the check keeps fixture load paths honest). Module include cycles, which
-   can exist inside one crate, are refused during elaboration (`QI006`).
+   nothing else (`QI004`). Visibility is not transitive. If `fluent-bit`
+   depends on `libc` and `app` depends on `fluent-bit`, `app` cannot include
+   `libc` modules unless it declares `libc` too. This mirrors Cargo. A crate
+   with no dependencies, which `quirin-provider-libc` is today, can include only
+   its own published modules (Lean `no_dependency_includes_nothing_foreign`).
+3. **Namespaces are derived and recorded** (user amendment). Every crate on a
+   load path must be named `quirin-provider-NAME`. Its namespace is `NAME`
+   with `-` read as `_`: `quirin-provider-libc` → `libc` and
+   `quirin-provider-fluent-bit` → `fluent_bit`, and likewise `cfl`, `mpack`,
+   `msgpack` and `shared`. The crate records its namespace, and the load path
+   refuses a recorded namespace that differs from the derived one. It also
+   refuses a crate whose name lacks the prefix or is not identifier-shaped
+   after it, and two crates that derive the same namespace, such as
+   `quirin-provider-fluent-bit` and `quirin-provider-fluent_bit` (`QI017`).
+   A namespace names the crate that **owns** a contract, never a bundle.
+   Nothing is re-exported, so a contract that `quirin-provider-shared` bundles
+   is still `libc::malloc`, never `shared::malloc`.
+4. **No search order, no shadowing.** Every include names its crate, so include
+   resolution never searches, and there is no first-match rule to get wrong.
+5. **No in-source path redirection.** The grammar cannot spell a path outside
+   the named crate's `contracts/` tree (§1.2). The load path is data the caller
+   builds; a module cannot extend it.
+6. **Cycles are refused at two levels.** Crate dependency cycles are refused
+   when the load path is built (`QI014`). Cargo already forbids them; the
+   check keeps fixture load paths honest. Module include cycles, which can
+   exist inside one crate, are refused during elaboration (`QI006`).
 
-**Real-crate wiring is not in this card.** The five contract crates'
-`CONTRACTS` lists, their Cargo manifests, the resource manifest,
-`contract/corpus.json` and the corpus pins are unchanged (a concurrent card
-edits them). Building a `ContractLoadPath` from the real crates — a
-`PUBLISHED` list beside each `CONTRACTS`, crate versions and dependency edges
-read from Cargo metadata, and a manifest schema that selects `crate:module`
-references — is registered as `CONTRACT-INHERIT-ADOPTION`. The rules above are
-implemented and tested against fixture crates.
+**Real-crate wiring is not in this card.** The following are unchanged
+because a concurrent card edits them: the real crates' `CONTRACTS` lists and
+Cargo manifests, the resource manifest, `contract/corpus.json` and the corpus
+pins. Four pieces of wiring are registered as `CONTRACT-INHERIT-ADOPTION`:
+
+* a recorded `NAMESPACE` and a `PUBLISHED` list beside each `CONTRACTS`;
+* versions and dependency edges read from Cargo metadata into a load-path
+  manifest that core consumers read as data (core crates may not link provider
+  crates);
+* a manifest schema that selects `crate:module` references;
+* package builds that write include pins.
+
+The five `qcore-provider-*` artifact crates would be refused by the prefix
+rule (`QI017`). This is recorded in the same follow-up as a decision for the
+adoption card.
 
 ### 1.4 Semantics of `contract inherit`
 
-Let the child be `extern fn f(c₁: T₁, …, cₙ: Tₙ) -> R contract inherit p;` in
+Let the child be `extern fn f(c₁: T₁, …, cₙ: Tₙ) -> R contract inherit P;` in
 module `M`.
 
-1. **Visible declarations** are `M`'s own declarations and the declarations of
-   the modules `M` includes **directly**. Included modules' own includes are
-   not visible (no implicit re-export, matching G01's "implicit/transitive
-   imports are not implemented").
-2. **Parent lookup** finds every visible declaration named `p`. Exactly one
-   must exist: none is `QI008`, two or more is `QI009`. A child named like its
-   parent in an included module therefore refuses as ambiguous rather than
-   shadowing — which also keeps the two out of one environment, where they
-   would be a duplicate function contract.
-3. **The parent must be inheritable** (`QI015`): an `extern fn` (not `unsafe`)
-   whose declaration is exactly `extern fn p(params) -> R' contract { clauses };`
-   with no effects row, usage annotation or other signature syntax. A parent
-   that is itself `contract inherit q;` is inheritable: it is elaborated first
-   (§1.6).
-4. **Signature agreement** (`QI010`): the child and parent have the same
-   number of parameters, the same type at each position, compared as token
-   sequences, and the same result type. The child's parameter *names* may
-   differ; binding is **by position**.
-5. **Positional renaming.** With parent parameters `P = [p₁ … pₙ]` and child
-   parameters `C = [c₁ … cₙ]`, σ maps the word `pᵢ` to `cᵢ` and every other
-   word to itself. The child's contract block is the parent's clause list with
-   σ applied to every word token of every clause expression. Clause order,
-   clause kinds, exit selectors and all non-parameter tokens are preserved.
-6. **Capture is refused** (`QI012`). If a child parameter name occurs in the
-   parent's clauses as a word that is *not* a parent parameter (for example a
-   child parameter named `nullable`, or `result`), σ would capture it. Selector
-   words (`error(E)`) take part in the same check.
+1. **Scope** (user amendment). An **unqualified** `NAME` is looked up among
+   `M`'s own declarations only. A **qualified** `NS::NAME` is looked up among
+   the modules `M` includes **directly** from the crate whose namespace is
+   `NS`. Included modules' own includes are never visible. There is no
+   implicit re-export, which matches G01's "implicit/transitive imports are not
+   implemented".
+2. **Lookup refusals.**
+   * An unqualified name that no own declaration has, but that an included
+     module declares, is refused. The refusal suggests the qualified spelling,
+     for example "write `contract inherit libc::memcpy`" (`QI018`).
+   * A namespace that names no directly included crate is refused (`QI019`).
+     This covers an unknown namespace, a crate on the load path that this
+     module does not include, and a crate reachable only through another
+     module's includes.
+   * No match in the scope is refused (`QI008`).
+   * Two or more matches in the scope are refused, never resolved by order
+     (`QI009`). After the amendment, this means two own declarations with one
+     name, or two published modules of one crate that both declare the name.
+   * A child named like its qualified parent, such as
+     `extern fn memcpy(...) contract inherit libc::memcpy;`, is refused
+     (`QI020`). Both would be one function with two contracts in one
+     environment. The card does not register a follow-up for it: a wrapper
+     should carry its own name, and the parent's owner already declares the
+     original.
+3. **The parent must be inheritable** (`QI015`). It must be a plain `extern fn`
+   (not `unsafe`) whose declaration is exactly
+   `extern fn p(params) -> R' contract { clauses };`, with no effects row,
+   usage annotation or other signature syntax. The module that declares it
+   must parse as a `module contract;` module. A parent that is itself
+   `contract inherit …;` is inheritable, because it is elaborated first (§1.6).
+4. **Signature agreement** (`QI010`). The child and parent have the same
+   number of parameters, the same type at each position (compared as token
+   sequences), and the same result type. Parameter *names* may differ, because
+   binding is **by position**.
+5. **Positional renaming.** Let the parent parameters be `P = [p₁ … pₙ]` and
+   the child parameters `C = [c₁ … cₙ]`. The renaming σ maps the word `pᵢ` to
+   `cᵢ` and every other word to itself. The child's contract block is the
+   parent's clause list with σ applied to every word token of every clause
+   expression. Clause order, clause kinds, exit selectors and all
+   non-parameter tokens are preserved (Lean `elaboration_exact`).
+6. **Capture is refused** (`QI012`). A child parameter name might occur in the
+   parent's clauses as a word that is *not* a parent parameter, for example a
+   child parameter named `nullable`. σ would capture it, so the declaration is
+   refused. A parameter name that occurs as a selector word is refused for the
+   same reason.
 7. **The consumer's own reading is checked** (`QI012`). The renaming is sound
    for any consumer that resolves a clause word by looking it up in the
-   declaration's parameter list (Lean `rename_preserves_meaning`). The
-   resource-v1 loader instead reads some positions structurally — the
-   nullability argument is compared against the words `nullable`/`nonnull`
-   *without* a parameter lookup — so a parent parameter that happens to be
-   *named* `nullable` would be renamed where v1 reads a keyword. The v1 loader
-   therefore loads both the parent declaration and the elaborated child and
-   requires the loaded records to be **equal**: the custody modes, the result
-   mode, the literal-argument premises (by parameter index), the variadic tail
-   and the ABI projection. Any difference refuses. Lean
-   `positional_reading_can_diverge` exhibits the case that makes this check
-   necessary.
+   parameter list (Lean `rename_preserves_meaning`). The resource-v1 loader
+   instead reads some positions structurally: the nullability argument is
+   compared against the words `nullable` and `nonnull` without a lookup. So a
+   parent parameter that happens to be *named* `nullable` is renamed where v1
+   reads a keyword. The v1 loader therefore loads both the parent declaration
+   and the elaborated child, and requires the loaded records to be **equal**:
+   custody modes, the result mode, the literal-argument premises (by parameter
+   index), the variadic tail and the ABI projection. Any difference refuses.
+   Lean `positional_reading_can_diverge` exhibits the case that makes this
+   check necessary, and the negative control `qi012_…` drives it in Rust.
 
 **Never weaker, by equality.** Admission requires the child's loaded contract
-to equal the parent's, so the child has exactly the parent's obligations and
-guarantees under the consumer that loaded it. It is therefore neither weaker
-nor stronger. Lean `inherited_is_not_weaker` states the non-weakening
-direction explicitly.
+to equal the parent's. The child therefore has exactly the parent's
+obligations and guarantees under the consumer that loaded it: it is neither
+weaker nor stronger. Lean `inherited_is_not_weaker` states the non-weakening
+direction for the name-resolving reading, and `consumerGate_sound` states it
+for the gate.
 
 ### 1.5 Extension clauses: refused in this version
 
-`contract inherit memcpy { requires resource_literal_argument(n, 0); }` is
-refused (`QI002`). Whether an added clause is sound depends on the consumer,
-not on the syntax. In resource v1, a literal-argument premise only withdraws
-call sites and would be sound to add, but an added `ensures normal` mode is a
-*duplicate mode* for a parameter the parent already covers, which is neither
-a strengthening nor a weakening but a contradiction, and v1 has no ordering
-on modes under which "stronger" is even defined. A sound admission rule must
-therefore be per consumer and per clause family, with its own proof.
-The card records it as `CONTRACT-INHERIT-EXTENSION-CLAUSES` rather than
-admitting a partial rule.
+`contract inherit libc::memcpy { requires resource_literal_argument(n, 0); };`
+is refused (`QI002`). Whether an added clause is sound depends on the
+consumer, not on the syntax. Two v1 cases show the problem:
+
+* A literal-argument premise only withdraws call sites, so adding one would be
+  sound.
+* An added `ensures normal` mode is a *duplicate mode* for a parameter the
+  parent already covers. That is not a strengthening or a weakening but a
+  contradiction, and v1 has no order on modes under which "stronger" is even
+  defined.
+
+A sound admission rule therefore has to be stated per consumer and per clause
+family, with its own proof. It is registered as
+`CONTRACT-INHERIT-EXTENSION-CLAUSES` rather than admitted as a partial rule.
 
 ### 1.6 Transitivity and termination
 
-Chains are admitted. `f inherit g` where `g` is itself inherited resolves `g`
-first. Two cases arise:
+Chains are admitted. For `f inherit g`, where `g` is itself inherited, `g` is
+resolved first.
 
 * **Across modules.** An included module is elaborated completely before the
   includer sees it, so its inheriting declarations are already concrete. A
-  chain can only descend the include graph, and the include graph is checked
-  for cycles with a visiting stack (`QI006`).
-* **Inside one module.** Own-module parents are resolved on demand with a
-  visiting set over declaration names. Revisiting a name is an inheritance
-  cycle (`QI011`), including self-inheritance.
+  chain can only descend the include graph, and a visiting stack refuses
+  cycles in that graph (`QI006`).
+* **Inside one module.** Own-module parents are resolved on demand, with an
+  in-progress set over declarations. Revisiting a declaration is an
+  inheritance cycle (`QI011`), including self-inheritance.
 
 Both walks carry a visiting set over a finite node set, so each terminates.
-The Lean model uses an explicit fuel bound with exhaustion as a refusal, and
-proves that any cycle reachable from the start is refused.
+The Lean model uses an explicit fuel bound and treats exhaustion as a refusal,
+so it is total-or-refuse by construction. It proves that any cycle through the
+start is refused, whatever the fuel (`walk_refuses_cycle`,
+`self_inheritance_refused`).
 
 ### 1.7 Diagnostics: the `QI` namespace
 
-The contract loader's refusals were never route codes. They are loader error
-strings, and the route-code space `Q000`–`Q099` is exhausted and iceboxed
-(`Q-NAMESPACE-DECISION`). The brief requires a new diagnostic code per refusal,
-so this card opens a **loader-owned namespace**, `QI001`–`QI016`, on the
-`QP001`–`QP016` precedent (a separate namespace owned by a non-route
-component). It allocates **no `Q` route code** and does not resolve the iceboxed
-route-code decision. Every `QI` code appears at the start of the loader's
-error string, so existing `Result<_, String>` callers carry it unchanged.
+The contract loader's refusals were never route codes. They were loader error
+strings. The route-code space `Q000`–`Q099` is exhausted and iceboxed
+(`Q-NAMESPACE-DECISION`), and the brief required a new code per refusal. This
+card therefore opens a **loader-owned namespace**, `QI001`–`QI020`, on the
+`QP001`–`QP016` precedent: a separate namespace owned by a component that is
+not a route. It allocates **no `Q` route code** and does not settle the
+iceboxed decision; the integrator may overrule the spelling. Every code starts
+the loader's error string, so existing `Result<_, String>` callers carry it
+unchanged. The codes are one Rust enum (`InclusionCode`), so a rename is
+mechanical.
 
-| Code | Condition |
-|---|---|
-| `QI001` | malformed inclusion syntax: a directive outside a contract module's header, a directive whose operand is not one string, `contract inherit` without exactly one name and `;`, `inherit` on anything but a plain `extern fn`, an inheriting declaration with extra signature syntax |
-| `QI002` | extension clauses after `contract inherit NAME` |
-| `QI003` | an include target that is not `crate:module` in the admitted charset |
-| `QI004` | the named crate is not on the load path, or is neither the includer's crate nor one of its declared dependencies |
-| `QI005` | the named module is not published by that crate |
-| `QI006` | an include cycle |
-| `QI007` | the same target included twice by one module |
-| `QI008` | no visible declaration has the parent's name |
-| `QI009` | more than one visible declaration has the parent's name |
-| `QI010` | parameter count, a parameter type or the result type differs from the parent's |
-| `QI011` | an inheritance cycle |
-| `QI012` | the renaming would capture a word, or the consumer reads the renamed contract differently from the parent's |
-| `QI013` | inclusion syntax reached an entry point that has no load path (the file, manifest and source-map loaders) |
-| `QI014` | an invalid load path: duplicate crate, malformed name or version, a published module the crate does not own, a dependency absent from the load path, a dependency cycle |
-| `QI015` | the parent is not inheritable (§1.4 item 3) |
-| `QI016` | retained inclusion evidence does not reproduce the environment it accompanies |
+| Code | Condition | Negative control |
+|---|---|---|
+| `QI001` | malformed form: a directive outside a contract module's header, a non-string operand, `contract inherit` without one parent and `;`, `a::b::c`, `inherit` on anything but a plain `extern fn` | `qi001_…` (4 cases) + scanner unit tests |
+| `QI002` | clauses after `contract inherit PARENT` | `qi002_…` |
+| `QI003` | a target that is not `crate:module` in the admitted charset | `qi003_…` (3) + 14 scanner cases |
+| `QI004` | the crate is not on the load path, or is neither the includer's crate nor a declared dependency | `qi004_…` (3, incl. libc including nothing foreign) |
+| `QI005` | the module is not published by that crate (own crate included) | `qi005_…` (3) |
+| `QI006` | include cycle | `qi006_…` (two-module and self) |
+| `QI007` | one target included twice | `qi007_…` |
+| `QI008` | no declaration in the parent's scope | `qi008_…` (qualified, unqualified) |
+| `QI009` | two or more declarations in the parent's scope | `qi009_…` |
+| `QI010` | arity, a parameter type or the result type differs | `qi010_…` (3) |
+| `QI011` | inheritance cycle | `qi011_…` (two-step, self) |
+| `QI012` | capturing renaming, or the consumer reads child and parent differently | `qi012_…` (capture, v1 divergence, non-v1 parent) |
+| `QI013` | inclusion syntax at an entry point without a load path | `qi013_…` (4) |
+| `QI014` | invalid load path: duplicate crate, malformed module path or version, published-not-owned, absent or self dependency, dependency cycle | `qi014_…` (7) |
+| `QI015` | the parent is not inheritable | `qi015_…` (unsafe, effects row, library module) |
+| `QI016` | retained evidence does not replay | `tampered_or_orphaned_evidence_is_refused_on_recheck` (5) |
+| `QI017` | a crate not named `quirin-provider-*`, a recorded namespace that is not the derived one, or a namespace shared by two crates | `qi017_…` (3) |
+| `QI018` | an unqualified parent that only an included module declares (the qualified spelling is suggested) | `qi018_…` |
+| `QI019` | a namespace that names no directly included crate | `qi019_…` (unknown, not included, not re-exported) |
+| `QI020` | a child named like its qualified parent | `qi020_…` |
 
 The structural parser also gets two more specific parse-error **messages**
-(`#include` at top level, `contract inherit`), both still `Q000`. A message is
-not a code (constraint 1).
+(`#include` at top level, and `contract inherit`), both still `Q000`. A
+message is not a code (constraint 1). The namespace is documented in
+`docs/agents/diagnostics.md` and in §L21 of the language specification.
 
 ## 2. Keyword evidence (constraint 14)
 
-**Zero reserved words are added.** `include` is contextual: it is read only
-immediately after a `#` at a contract module's top level. `inherit` is
-contextual too: it is read only immediately after the word `contract` in a
-declaration's contract position, where the structural parser admitted only
-`{` before this card. Neither word enters
-`qcore_frontend::frontend::is_reserved_source_word`, so `let inherit = 5;` and
-a parameter named `include` are still programs. This is the constraint's
-"contextual words stay contextual" precedent (`#unroll`, `lend`, `error`
-after `log`).
+**Zero reserved words are added.**
 
-The census was run, not assumed:
-[`scripts/keyword_census.py`](scripts/keyword_census.py) over every tracked
-Quirin source and every tracked file that could embed one, on base
+* `include` is contextual: it is read only immediately after a `#` at a
+  contract module's top level.
+* `inherit` is contextual: it is read only immediately after the word
+  `contract` in a declaration's contract position, where the structural
+  parser admitted only `{` before this card.
+* The namespace qualifier reuses the existing `ColonColon` token.
+
+Neither word enters `qcore_frontend::frontend::is_reserved_source_word`. So
+`let inherit = 5;` is still a program, and so is a parameter named `include`
+(unit test `a_module_without_either_form_is_empty_and_unaffected`). This
+follows the constraint's precedent that contextual words stay contextual
+(`#unroll`, `lend`, `error` after `log`).
+
+The census was run, not assumed.
+[`scripts/keyword_census.py`](scripts/keyword_census.py) scans every tracked
+Quirin source, and every tracked file that could embed one, on base
 `fa7ab464` ([census-base.json](census-base.json)):
 
 | Measurement | Count |
@@ -283,18 +373,201 @@ Quirin source and every tracked file that could embed one, on base
 | `inherit` in an embedding file | 15, all English prose in comments or reports |
 | `#include` in an embedding file that also contains `module contract;` | 5, all C preprocessor lines or prose about C headers |
 
-**No frozen report's pinned diagnostic can change.** The only inputs whose
-outcome this card changes are inputs containing `#include` at top level or
-`contract inherit`, and the census finds none in any Quirin source, archived
-probe or embedded program. Such an input was a `Q000` parse error before this
-card and is still a `Q000` parse error for every consumer except the contract
-loader; only the message wording is new. The spelling `record`'s precedent
-(an archived probe pinned to `Q000`) does not recur.
+**No frozen report's pinned diagnostic can change.** This card changes the
+outcome only for inputs that contain `#include` at top level or
+`contract inherit`. The census finds none in any Quirin source, archived probe
+or embedded program. Before this card, such an input was a `Q000` parse error
+("expected a QCore declaration" or "function contract requires a block"). It
+is still a `Q000` parse error for every consumer except the contract loader;
+only the wording is new. The `record` precedent (an archived probe pinned to
+`Q000`) does not recur. The census after the card ([census-after.json](census-after.json))
+differs from the base only by this card's own fixtures and documentation:
+578 Quirin sources (the seven fixtures added, 174 archived probes unchanged); every new `inherit`, `#`, `#include` and non-block `contract` tail is in the two inheriting fixtures, `fluent_bit/wrappers.qcore` and `app/chain.qcore`; and every new embedding-file occurrence is in a file this card added or edited.
 
 ## 3. Trust and provenance
 
-(Completed after implementation; see §5.)
+An inherited contract is a **trusted assumption of the same strength as a
+hand-written one**, not a proof. The elaborated text is what the environment
+retains as its source assumption, so every consumer that rederives facts from
+the retained texts sees an ordinary module. These consumers are ABI
+projections, literal-argument premises, variadic tails and the extern bridge's
+declared signatures. Loading the parent elsewhere is not evidence for the
+child. The parent itself is only a declaration.
+
+**Provenance format.** `ResourceContracts` gains one field,
+`inclusion_evidence: BTreeMap<module key, ContractInclusionEvidence>`,
+serialized as `inclusion_evidence` only when nonempty:
+
+```text
+ContractInclusionEvidence {
+  module:    ContractModuleIdentity { crate_name, crate_version, module, sha256 },
+  source:    the selected module's text as written (directives included),
+  included:  { "crate:module" → { identity: ContractModuleIdentity, source } },  // transitive
+  inherited: { child function → [ ContractInheritanceLink { declaration, module: ContractModuleIdentity } ] }
+}
+```
+
+Each chain starts at the immediate parent and ends at the declaration whose
+contract is written out. For example, the fixture `app_release` records
+`fluent_bit/wrappers.qcore#flb_sds_destroy` →
+`fluent_bit/wrappers.qcore#flb_free` → `libc/heap.qcore#free`, and each link
+carries its crate, crate version and module digest.
+
+* **Identity.** The field is part of the serialized environment, so it enters
+  `resource_contracts_sha256` in the audit trust-context identity. A
+  comment-only change to a parent leaves the modes and the elaborated text
+  unchanged, but it changes the parent's digest, so it changes the identity
+  (`a_change_to_the_parent_text_changes_the_childs_contract_identity`, and
+  `crates/qcore-audit/tests/contract_inherit_identity.rs`).
+* **Replay.** `check_source_assumptions` replays every elaboration from the
+  retained texts alone, with no load path or file. It resolves each include by
+  exact lookup in `included`. It then requires three things: that the replay
+  reproduces the retained elaborated text byte for byte and the recorded
+  chains, that every retained module is reached, and that every inherited
+  declaration still passes the v1 agreement check. Otherwise it refuses with
+  `QI016`. The replay does not re-check the publication rule, because the load
+  path is not retained; the retained identities record the result of that
+  check.
+* **Published results.** A certificate carries the whole `ResourceContracts`.
+  An audit report's assumptions block carries the same provenance under
+  `contract_inclusion`, but only when it is nonempty, so every existing report
+  is unchanged. No audit route can load an inherited contract yet, because the
+  resource manifest selects file paths (`CONTRACT-INHERIT-ADOPTION`).
+* **Packages.** A package whose contracts include another module must pin every
+  module it reaches in its inventory's `includes` object: crate, version,
+  module and SHA-256. It must also install the texts under
+  `includes/<crate>/<module>`. `providers/package.py verify` refuses an
+  unpinned directive, a changed or missing parent, a transitively reached
+  parent that is not pinned, an unused pin, a stray `includes/` tree and a
+  malformed directive (`scripts/tests/test_package_contract_includes.py`, 8
+  tests). The pins sit in the inventory the executable embeds, so they are
+  bound to the executable.
 
 ## 4. Lean correspondence
 
-(Completed after implementation.)
+`proof/QCore/ContractInherit.lean` (registered in `QCore.lean`, audited by
+`proof/AuditContractInherit.lean`, 38 theorems). Words and names are modelled
+as natural numbers (interned identifiers). As constraint 28 states, the
+correspondence with the Rust is maintained by review and is not an extraction
+theorem.
+
+| Rule | Rust | Lean |
+|---|---|---|
+| unique crate lookup; duplicates never resolve by order | `ContractLoadPath::new` (`QI014`) | `findCrate_sound`, `findCrate_duplicate_refused` |
+| include only from own crate or a declared dependency, only published modules | `LoadPathResolver::resolve` (`QI004`, `QI005`) | `resolveInclude_sound`, `unpublished_is_refused`, `no_dependency_includes_nothing_foreign` |
+| namespace derived from the crate name, prefix required, no `-` | `derive_contract_namespace` | `deriveNamespace_requires_prefix`, `deriveNamespace_has_no_dash`, `dashToUnderscore_ne_dash` |
+| recorded = derived, namespaces distinct ⇒ a namespace names one crate | `ContractLoadPath::new` (`QI017`) | `namespacesValid_records_derived`, `namespace_names_one_crate`, `nodup_map_injective` |
+| include and inheritance walks are total-or-refuse; every cycle is refused | `Elaborator::elaborate` visiting stack (`QI006`), `Resolution::resolve` in-progress set (`QI011`) | `walk`, `allOk_each`, `walk_visited`, `walk_refuses_reach_into_visiting`, `walk_refuses_cycle`, `walk_ok_is_acyclic`, `self_inheritance_refused` |
+| unqualified parent: own declarations only; included-only is refused with the qualified spelling | `Resolution::resolve` (`QI018`, `QI008`, `QI009`) | `lookup_own_sound`, `unqualified_included_only_refused` |
+| qualified parent: directly included modules of that namespace's crate; ambiguity and unknown namespaces refused | `Resolution::resolve` (`QI019`, `QI008`, `QI009`) | `lookup_qualified_sound`, `lookup_qualified_ambiguous`, `lookup_unknown_namespace`, `unique_sound`, `unique_ambiguous` |
+| extension clauses and same-name children refused | scanner (`QI002`), `Resolution::resolve` (`QI020`) | `extension_refused`, `same_name_refused` |
+| positional substitution yields exactly the parent's clauses under the renaming, with agreeing signatures | `rename_clauses`, `signatures_agree` (`QI010`) | `elaboration_exact` |
+| the renaming preserves a name-resolving reading under the capture condition; chains compose | `rename_clauses` capture check (`QI012`) | `indexOf?_some`, `indexOf?_none`, `indexOf?_nodup`, `rename_word_meaning`, `rename_preserves_meaning`, `captures_each`, `rename_clauses_preserve_meaning`, `transitive_inheritance_preserves_meaning` |
+| an inherited contract is never weaker than its parent | admission ⇒ equality | `inherited_is_not_weaker` |
+| a structural reading can diverge, so the consumer gate is necessary, and it admits only equal readings | `inherited_declarations_agree` (`QI012`) | `positional_reading_can_diverge`, `consumerGate_sound` |
+
+The model does not cover the following. The byte-level elaboration (blanking
+directives, splicing clause blocks) and evidence replay are tested in Rust
+only. The Rust namespace derivation additionally requires an identifier shape,
+a refinement that only refuses more. The Lean `deriveNamespace` is stated over
+`List Char` and proved generally; it is not evaluated on the five real names,
+and the Rust test `recorded_namespaces_equal_the_derived_ones` does that. The
+Lean walk is fuel-bounded, while the Rust walks terminate by their visiting
+sets over finite node sets. The Lean refusal on fuel exhaustion is the
+fail-closed image of that, and it is not a completeness theorem for acyclic
+graphs.
+
+## 5. Parity
+
+No existing contract uses the feature, so every existing contract must load to
+an identical result.
+
+* **Sources untouched.** `git diff --stat fa7ab464 -- '*.qcore'` lists only
+  this card's seven new fixture files under
+  `crates/qcore-contract/tests/fixtures/contract_inherit/`. Not one byte
+  changed in any of the 96 corpus modules, `contract/corpus.json`,
+  `cycle19-resource-contracts.json`, any `CONTRACTS` list or the corpus pins
+  (`compiler/tests/qcore_contract_corpus.rs` is unedited and passes).
+* **Every corpus module elaborates to itself.** The test
+  `compiler/tests/contract_inherit_parity.rs` puts every corpus module that
+  uses no inclusion (all 96 today) into one load-path crate. It then requires
+  each module to parse, to elaborate to itself byte for byte, and to carry no
+  evidence. The count is not pinned, because a later card may adopt the
+  feature.
+* **Serialization unchanged.** An environment without inclusion serializes
+  with exactly the two pre-card fields (`functions`, `source_assumptions`), so
+  every certificate and trust-context digest over it is unchanged (tests in
+  `qcore-contract` and `qcore-audit`).
+* **Guard inert on the corpus.** `QI013` fires only on inclusion syntax, and the
+  census and the parity test show that no corpus module has any.
+* **Arbiter.** @@ARBITER_SECTION@@
+
+## 6. Positive fixtures
+
+The fixture crates are in `crates/qcore-contract/tests/fixtures/contract_inherit/`.
+The load path has four crates: `quirin-provider-libc` and `quirin-provider-cfl`
+have no dependencies, `quirin-provider-fluent-bit` depends on both, and
+`quirin-provider-app` depends on fluent-bit only.
+
+* `fluent_bit/wrappers.qcore` inherits six contracts:
+  * a `memcpy`-shaped contract (`libc::memcpy`);
+  * a `free`-shaped contract (`libc::free`);
+  * a reallocation (`libc::realloc`, which carries an index-bearing
+    reallocated result);
+  * a variadic tail (`libc::printf`);
+  * a literal-argument premise with an owner-indexed stored mode
+    (`cfl::cfl_table_put`);
+  * an own-module chain (`flb_sds_destroy` → `flb_free` → `libc::free`).
+
+  The parameter names deliberately differ from the parents'. The environment
+  equals the one loaded from `hand_written.qcore`, the same contracts written
+  out by hand, in every rederived fact: functions, ABI signatures, premises and
+  tails. No parent function leaks into the environment.
+* `app/chain.qcore` inherits across three crates through direct dependencies
+  only (`app_copy` → `fluent_bit::flb_memcpy` → `libc::memcpy`).
+* Selecting a parent module beside its child loads both, with equal contracts.
+
+## 7. Negative controls
+
+Every `QI` code has at least one control that drives it, listed in §1.7:
+`crates/qcore-contract/tests/contract_inherit.rs` (29 tests), the scanner unit
+tests in `crates/qcore-frontend/tests/unit/contract_inclusion.rs` (5 tests) and
+the package tests. Each control was checked against its message, not only its
+code prefix: a review run printed every refusal. One case is a
+partial-environment control. A good module selected beside a refused one
+returns nothing (`a_refused_module_leaves_no_partial_environment`).
+
+## 8. Validation
+
+@@VALIDATION@@
+
+## 9. Documentation changes
+
+* Contract specification: new **C15**.
+* Implemented grammars: new **G05a**, plus a sentence in G01 that separates
+  `import` from `#include`.
+* Language specification §L21: the `QI***` row.
+* `docs/agents/diagnostics.md`: the `QI` namespace section. The page was
+  already 32,931 bytes, over its stated 32 KiB cap, before this card; the
+  section adds about 1.2 KB. The cap overrun is pre-existing and is disclosed
+  here, not repaired.
+* `docs/agents/providers.md`: the package include-pin amendment.
+* Increment record, STATUS follow-up count, report index.
+
+## 10. Remaining work
+
+Registered (follow-ups 282 → 285, `dimensions.named_followups` = entry count):
+
+* **`CONTRACT-INHERIT-ADOPTION`**: the real-crate wiring, which covers
+  namespace and published lists beside `CONTRACTS`, a load-path manifest from
+  Cargo metadata, a `crate:module` manifest schema, package pin building, the
+  Rust `ContractBundle` accepting `includes`, and the prefix decision for the
+  five `qcore-provider-*` crates. It also covers adopting the feature in at
+  least one real contract, with an arbiter run.
+* **`CONTRACT-INHERIT-EXTENSION-CLAUSES`**: the refused extension clauses (§1.5).
+* **`CONTRACT-INHERIT-NON-V1-CONSUMERS`**: only the resource-v1 loader has a
+  reading-equality gate. Observation, lifecycle and source-bound interpreters
+  refuse inherited contracts, which is fail-closed, until each gets its own.
+
+Not registered: the same-name child (`QI020`, §1.4). It stays refused, and
+nothing needs it.

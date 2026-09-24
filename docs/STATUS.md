@@ -98,16 +98,20 @@ executables; policy selection and independent checking remain explicit. This
 changes source locations, with no predicate or verdict promotion. The bundle
 pilot adds independently pinned data-only selection for the CMetrics policy,
 retains version-1 paths and existing adapters, and models admission separately
-from policy truth. Four scoped follow-ons remain in its report.
+from policy truth. Four scoped follow-ons remain in its report. Contract
+modules can take a declaration's contract from another published module
+(`#include` / `contract inherit NS::NAME`, [CONTRACT-INHERIT](reports/contract-inherit/README.md));
+it is exercised on fixture crates only, and no real contract or manifest uses it yet.
 
-All three broader Cycle 18 follow-ups remain open; **282** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **285** follow-ups are
 registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
 retired `RETURN-CALL-INCOMPLETE-LINE-455` against its census;
 `MONKEY-CALLBACK-CYCLE18-COMPOSITION` was narrowed and two Cycle 18 residuals
 registered; QUIRIN-PROVIDER-SHARED registered
-`PROVIDER-CONFORMANCE-CORE-FIXTURE-PATHS`; the Windows F02 run and active
+`PROVIDER-CONFORMANCE-CORE-FIXTURE-PATHS`; CONTRACT-INHERIT registered its
+real-crate adoption, extension clauses and non-v1 consumers; the Windows F02 run and active
 cross-host pin check retired three F02 follow-ups. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
