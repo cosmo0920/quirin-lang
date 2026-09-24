@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for CONTRACT-INHERIT on merge 6ae583ca (onto main a7a936d9, after W43-LIBC-CONTRACTS), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5176 core Rust passed / 0 failed / 11 ignored over 277 summaries; 109 provider Rust passed / 0 / 0 over 39 summaries; 168 Lean audits; 327 root Python tests after regenerating this section (the first run failed only the derived-facts check, 167 vs 168 Lean audits, because the merged validation section predated AuditContractInherit); 5 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-contracts/artifacts/; contracts is identical after the checkout-root alias, and source-effects is byte-identical to the W43-LIBC-CONTRACTS integration run in the same checkout. No verdict or coverage change.",
-  "workspace_tests": 5176,
+  "note": "Integration gate for W43-LIBC-RESULT-ALIAS on merge ac241322 (onto main dfe10c92, after CONTRACT-INHERIT), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5197 core Rust passed / 0 failed / 11 ignored over 278 summaries; 109 provider Rust passed / 0 / 0 over 39 summaries; 170 Lean audits; 327 root Python tests after regenerating this section (the first run failed only the derived-facts check, 168 vs 170 Lean audits, because the merged validation section predated the card's two audits); 5 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-result-alias/artifacts/; contracts is identical after the checkout-root alias and source-effects modulo checkout-path identity digests.",
+  "workspace_tests": 5197,
   "provider_tests": 109,
   "python_evidence_validator_tests": 327,
-  "lean_audits": 168,
+  "lean_audits": 170,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6797,6 +6797,7 @@
    "AuditDeclaredModeAgreement.lean",
    "AuditDenominatorCoverage.lean",
    "AuditDereferencedResult.lean",
+   "AuditDerivedResult.lean",
    "AuditDerivedTextAdmission.lean",
    "AuditDisjointFootprint.lean",
    "AuditEnumerationAttribution.lean",
@@ -6844,6 +6845,7 @@
    "AuditPackageIdentity.lean",
    "AuditPackageTemplateBinding.lean",
    "AuditPipeDesugaring.lean",
+   "AuditPointerQualifierReader.lean",
    "AuditProcessQuotaPlan.lean",
    "AuditProtectionGrowthEmission.lean",
    "AuditPublicationCustody.lean",
@@ -6912,7 +6914,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/contract-inherit/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-libc-result-alias/integration/gate.json)"
  },
  "named_followups": [
   {
