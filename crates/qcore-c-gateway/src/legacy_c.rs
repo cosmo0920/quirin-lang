@@ -2215,22 +2215,38 @@ fn analyze_defined_function(
     };
     let mut summary = match derivation.entry_contract(function) {
         Some(contract) => match function_parameters(tokens, function) {
-            Some(parameters) => match EntryCustody::build(&cfg, &parameters, contract) {
-                Some(entry) => {
-                    let (candidate, observations) = analyze_cfg_with_entry(cfg.clone(), &entry);
-                    if crate::legacy_summary::observations_match_contract(
-                        contract,
-                        &entry,
-                        &candidate,
-                        &observations,
-                    ) {
-                        candidate
-                    } else {
-                        analyze_cfg(cfg)
+            Some(parameters) => {
+                // Card W43-RESULT-ALIAS-RETURNED: a derived result is checked on
+                // the CFG that desugars a derived `return f(…)`; a body that does
+                // not validate falls back to the ordinary CFG's contract-free
+                // analysis, exactly as any other failed entry does.
+                let entry_cfg = if matches!(contract.result, ResourceReturnMode::Derived { .. })
+                    && derivation.contextual_cfg(function).is_none()
+                {
+                    build_derived_return_cfg(tokens, function, derivation.environment()).ok()
+                } else {
+                    Some(cfg.clone())
+                };
+                match entry_cfg.and_then(|entry_cfg| {
+                    EntryCustody::build(&entry_cfg, &parameters, contract)
+                        .map(|entry| (entry_cfg, entry))
+                }) {
+                    Some((entry_cfg, entry)) => {
+                        let (candidate, observations) = analyze_cfg_with_entry(entry_cfg, &entry);
+                        if crate::legacy_summary::observations_match_contract(
+                            contract,
+                            &entry,
+                            &candidate,
+                            &observations,
+                        ) {
+                            candidate
+                        } else {
+                            analyze_cfg(cfg)
+                        }
                     }
+                    None => analyze_cfg(cfg),
                 }
-                None => analyze_cfg(cfg),
-            },
+            }
             None => analyze_cfg(cfg),
         },
         None => analyze_cfg(cfg),
@@ -2263,6 +2279,52 @@ pub(crate) fn build_function_cfg(
     tokens: &[Token],
     function: &str,
     contracts: &ResourceContracts,
+) -> Result<LegacyCfg, LegacyCError> {
+    build_function_cfg_with(tokens, function, contracts, false)
+}
+
+/// Card **W43-RESULT-ALIAS-RETURNED**: does the body name a callee whose contract in force has a derived result,
+/// and does it `return` anything? A cheap token pre-filter, so the derived CFG
+/// is built only for bodies that could possibly qualify.
+pub(crate) fn body_calls_derived_result(
+    tokens: &[Token],
+    function: &str,
+    environment: &ResourceContracts,
+) -> bool {
+    let Some((start, _)) = find_function_body(tokens, function) else {
+        return false;
+    };
+    let Some(end) = matching(tokens, start, "{", "}") else {
+        return false;
+    };
+    let body = &tokens[start + 1..end];
+    let derived_call = body.windows(2).any(|pair| {
+        pair[1].text == "("
+            && environment.contract(&pair[0].text).is_some_and(|contract| {
+                matches!(contract.result, ResourceReturnMode::Derived { .. })
+            })
+    });
+    derived_call && body.iter().any(|token| token.text == "return")
+}
+
+/// Card **W43-RESULT-ALIAS-RETURNED**: the CFG a derived-result summary is
+/// inferred and validated on. It differs from [`build_function_cfg`]'s only at
+/// `return` statements: a whole-call return of a derived result is desugared
+/// like any admitted return call, and a null-constant return names its exit.
+/// Nothing else reads it, so every other function's CFG is unchanged.
+pub(crate) fn build_derived_return_cfg(
+    tokens: &[Token],
+    function: &str,
+    contracts: &ResourceContracts,
+) -> Result<LegacyCfg, LegacyCError> {
+    build_function_cfg_with(tokens, function, contracts, true)
+}
+
+fn build_function_cfg_with(
+    tokens: &[Token],
+    function: &str,
+    contracts: &ResourceContracts,
+    admit_derived_returns: bool,
 ) -> Result<LegacyCfg, LegacyCError> {
     // Card HASH-CONTRACTS. A declared literal-argument premise restricts a
     // contract to the call sites whose named argument is the named literal;
@@ -2312,6 +2374,7 @@ pub(crate) fn build_function_cfg(
         frame_protected,
         #[cfg(feature = "indirect-census")]
         census_function: function.to_owned(),
+        admit_derived_returns,
     };
     let statements =
         parser
@@ -3363,6 +3426,11 @@ enum Statement {
         /// the synthetic `EscapeIfOwned` exit. B01's scalar/opaque family is
         /// resource-free and uses `NoOp` instead.
         returned_evaluation_escapes: bool,
+        /// Card W43-RESULT-ALIAS-RETURNED: the expression is a null pointer
+        /// constant. Set only by a parser built for derived-result validation
+        /// ([`Parser::admit_derived_returns`]); always `false` otherwise, so
+        /// every other CFG is unchanged.
+        returns_null_constant: bool,
     },
 }
 
@@ -3424,6 +3492,13 @@ struct Parser<'a> {
     /// feature off, and read by nothing else.
     #[cfg(feature = "indirect-census")]
     census_function: String,
+    /// Card **W43-RESULT-ALIAS-RETURNED**: build the CFG a derived-result
+    /// summary is validated on. A whole-call `return f(…)` whose contract in
+    /// force has a [`ResourceReturnMode::Derived`] result is desugared like any
+    /// other admitted return call, and a null-constant `return` names its exit
+    /// (see [`return_call::NULL_RETURN_PLACE`]). `false` for every other CFG,
+    /// which therefore keeps the W43-LIBC-RESULT-ALIAS refusal byte for byte.
+    admit_derived_returns: bool,
 }
 
 impl Parser<'_> {
@@ -3458,6 +3533,11 @@ impl Parser<'_> {
         exempt: &[(usize, usize)],
         refusal: &crate::indirect_census::Refusal,
     ) {
+        // A derived-result validation parse re-reads a body the ordinary parse
+        // already recorded; recording it again would double-count.
+        if self.admit_derived_returns {
+            return;
+        }
         crate::indirect_census::record(
             &crate::indirect_census::Context {
                 function: &self.census_function,
@@ -3477,6 +3557,9 @@ impl Parser<'_> {
     /// feature off; called only after every return route has refused.
     #[cfg(feature = "indirect-census")]
     fn census_return(&self, line: usize, texts: &[&str]) {
+        if self.admit_derived_returns {
+            return;
+        }
         let calls = texts
             .iter()
             .enumerate()
@@ -4092,6 +4175,8 @@ impl Parser<'_> {
                         .map(|(instruction, _)| Box::new(instruction.clone())),
                     returned_evaluation_escapes: returned_evaluation
                         .is_some_and(|(_, escapes)| escapes),
+                    returns_null_constant: self.admit_derived_returns
+                        && return_call::is_null_pointer_constant(&texts),
                 })
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
@@ -4220,7 +4305,9 @@ impl Parser<'_> {
                 contract,
                 ..
             } if destination == return_call::RETURN_RESULT_PLACE
-                && return_call::escapes_only_fresh_custody(contract.result)
+                && (return_call::escapes_only_fresh_custody(contract.result)
+                    || (self.admit_derived_returns
+                        && matches!(contract.result, ResourceReturnMode::Derived { .. })))
         );
         if admitted {
             Some(instruction)
@@ -5014,13 +5101,17 @@ impl Parser<'_> {
                 // that object would not invalidate the result: a *bound* result
                 // over one is refused rather than bound to nothing. A discarded
                 // result binds nothing and keeps its ordinary argument places.
+                let mut offset_base = false;
                 if let ResourceReturnMode::Derived { parameter, .. } = contract.result {
                     match raw_arguments
                         .as_ref()
                         .and_then(|arguments| arguments.get(parameter))
                         .map(|argument| derived_base(argument))
                     {
-                        Some(DerivedBase::Place(place)) => arguments[parameter] = Some(place),
+                        Some(DerivedBase::Place { place, offset }) => {
+                            arguments[parameter] = Some(place);
+                            offset_base = offset;
+                        }
                         Some(DerivedBase::Untracked) => arguments[parameter] = None,
                         Some(DerivedBase::Unmodeled) | None if destination.is_some() => {
                             return LegacyInstruction::Unknown {
@@ -5033,6 +5124,15 @@ impl Parser<'_> {
                         Some(DerivedBase::Unmodeled) | None => {}
                     }
                 }
+                // Card W43-RESULT-ALIAS-RETURNED: `memcpy(p + n, …)` returns
+                // `p + n`, not `p`. A pointer offset from its base still points
+                // into the base's object (C11 6.5.6p8), so it is derived with
+                // the *interior* extent, never as an exact alias of the base.
+                let contract = if offset_base {
+                    interior_extent(contract)
+                } else {
+                    contract
+                };
                 let produced_count = usize::from(!matches!(
                     contract.result,
                     ResourceReturnMode::None | ResourceReturnMode::Derived { .. }
@@ -5692,8 +5792,10 @@ fn contract_argument_place(argument: &[&str], mode: ResourceParameterMode) -> Op
 enum DerivedBase {
     /// A place, or a place plus or minus one offset token. C pointer arithmetic
     /// that is defined stays inside the object the place points to (C11
-    /// 6.5.6p8), so the result is derived from the place's targets.
-    Place(String),
+    /// 6.5.6p8), so the result is derived from the place's targets. `offset`
+    /// records the second shape, whose value is not the place's own (card
+    /// W43-RESULT-ALIAS-RETURNED reads it as interior).
+    Place { place: String, offset: bool },
     /// A string literal or the address of a plain name: an object with static
     /// or automatic storage that no tracked identity can stand for.
     Untracked,
@@ -5707,7 +5809,10 @@ enum DerivedBase {
 fn derived_base(argument: &[&str]) -> DerivedBase {
     let argument = strip_parentheses(argument);
     if let Some(place) = canonical_place(argument) {
-        return DerivedBase::Place(place);
+        return DerivedBase::Place {
+            place,
+            offset: false,
+        };
     }
     match argument {
         [literal] if literal.starts_with('"') => return DerivedBase::Untracked,
@@ -5721,9 +5826,22 @@ fn derived_base(argument: &[&str]) -> DerivedBase {
         && !matches!(place.last(), Some(&("+" | "-")))
         && let Some(place) = canonical_place(place)
     {
-        return DerivedBase::Place(place);
+        return DerivedBase::Place {
+            place,
+            offset: true,
+        };
     }
     DerivedBase::Unmodeled
+}
+
+/// Card **W43-RESULT-ALIAS-RETURNED**: `contract` with a derived result read at
+/// the interior extent. Used for a base spelled `place ± offset`, whose value
+/// is inside the place's object but is not the place's own value.
+fn interior_extent(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
+    if let ResourceReturnMode::Derived { extent, .. } = &mut contract.result {
+        *extent = DerivedExtent::Interior;
+    }
+    contract
 }
 
 fn direct_assignment_destination(tokens: &[&str]) -> Option<String> {
@@ -5882,6 +6000,7 @@ impl CfgBuilder {
                 returned_place,
                 returned_evaluation,
                 returned_evaluation_escapes,
+                returns_null_constant,
             } => {
                 // Card C-GATEWAY-RETURN-CALL-W4. `return f(args);` becomes the
                 // two nodes `PLACE = f(args);` and `return PLACE;` — the same C,
@@ -5910,6 +6029,13 @@ impl CfgBuilder {
                 } else if let Some(source) = returned_place {
                     LegacyInstruction::EscapeIfOwned {
                         source: source.clone(),
+                    }
+                } else if *returns_null_constant {
+                    // Card W43-RESULT-ALIAS-RETURNED. The place can never be
+                    // bound, so the transfer is the `NoOp` it replaces; only
+                    // `observe_exit` reads the name.
+                    LegacyInstruction::EscapeIfOwned {
+                        source: return_call::NULL_RETURN_PLACE.to_owned(),
                     }
                 } else {
                     LegacyInstruction::NoOp
@@ -6280,6 +6406,14 @@ enum Derivation {
     Derived {
         extent: DerivedExtent,
         const_dropped: bool,
+        /// Card W43-RESULT-ALIAS-RETURNED: whether some derivation step on
+        /// the way here may return NULL for a non-null base (`strchr`). It is
+        /// the *relative* nullness a derived-result summary states, kept apart
+        /// from [`AbstractPointer::may_be_null`], which also carries the base's
+        /// own nullness. It is joined by disjunction and never narrowed, so it
+        /// can only over-state the summary's `nullable`. No custody rule reads
+        /// it.
+        nullable: bool,
     },
     /// Different paths disagree. Treated as derived wherever that refuses, and
     /// never as derived where that would accuse.
@@ -6293,8 +6427,8 @@ impl Derivation {
 
     /// Join two paths' derivations. A definitely-null binding carries no
     /// relation, so it takes the other path's; otherwise equal derivations are
-    /// kept, `const_dropped` is joined by disjunction within one extent, and any
-    /// other disagreement is `Mixed`.
+    /// kept, `const_dropped` and the relative `nullable` are joined by
+    /// disjunction within one extent, and any other disagreement is `Mixed`.
     fn join(one: &AbstractPointer, other: &AbstractPointer) -> Self {
         let definitely_null = |pointer: &AbstractPointer| {
             pointer.targets.is_empty() && !pointer.unknown && pointer.may_be_null
@@ -6311,14 +6445,17 @@ impl Derivation {
                 Self::Derived {
                     extent,
                     const_dropped,
+                    nullable,
                 },
                 Self::Derived {
                     extent: other_extent,
                     const_dropped: other_dropped,
+                    nullable: other_nullable,
                 },
             ) if extent == other_extent => Self::Derived {
                 extent,
                 const_dropped: const_dropped || other_dropped,
+                nullable: nullable || other_nullable,
             },
             _ => Self::Mixed,
         }
@@ -6769,6 +6906,19 @@ pub(crate) struct EntryCustody {
     /// possibly-null place only when its own contract says the caller has to
     /// null-check the result; otherwise the escape reports an unresolved alias.
     pub(crate) result_nullable: bool,
+    /// Card **W43-RESULT-ALIAS-RETURNED**: the *name-only* sites of the
+    /// borrowed formals a derived result may be derived from, keyed by site to
+    /// the formal's position.
+    ///
+    /// Each such formal is bound to one site so that a pointer derived from it
+    /// carries that site as its target, but the site is **not a resource**: it
+    /// has no status, so every custody-bearing use of the formal (a release, a
+    /// consumption, an escape, an `Owned` position, an aggregate owner, a
+    /// bound read) fails the live-identity check it already has and refuses.
+    /// The formal therefore stays exactly as borrowed as the summary claims,
+    /// and nothing is exempted from leak reporting because nothing is owned.
+    /// Empty for every contract whose result is not `Derived`.
+    pub(crate) derived_bases: BTreeMap<usize, usize>,
 }
 
 impl EntryCustody {
@@ -6791,13 +6941,22 @@ impl EntryCustody {
                 ResourceReturnMode::None => false,
                 ResourceReturnMode::Owned { nullable }
                 | ResourceReturnMode::Reallocated { nullable, .. } => nullable,
-                // Card W43-LIBC-RESULT-ALIAS: no exit can exhibit "the result
-                // is derived from parameter k", so a body is never checked
-                // against a declared derived result; it is analysed
-                // contract-free instead.
-                ResourceReturnMode::Derived { .. } => return None,
+                // Card W43-RESULT-ALIAS-RETURNED (amending W43-LIBC-RESULT-ALIAS,
+                // which answered `None` here): a derived result escapes
+                // nothing, so no escape consults this flag.
+                ResourceReturnMode::Derived { .. } => false,
             },
+            derived_bases: BTreeMap::new(),
         };
+        if let ResourceReturnMode::Derived { parameter, .. } = contract.result {
+            // The base must be a borrowed, named formal: the summary claims the
+            // body performs no custody effect on it.
+            if contract.parameters.get(parameter) != Some(&ResourceParameterMode::Borrowed) {
+                return None;
+            }
+            let name = parameters.get(parameter)?.as_ref()?;
+            custody.seed_derived_base(parameter, name, base.checked_add(parameter)?);
+        }
         for (index, mode) in contract.parameters.iter().copied().enumerate() {
             let nullable = match mode {
                 // Nothing is bound: the body may not treat the formal as a
@@ -6868,6 +7027,25 @@ impl EntryCustody {
         Some(custody)
     }
 
+    /// Card **W43-RESULT-ALIAS-RETURNED**: bind the borrowed formal at
+    /// `index` to the name-only `site` (see [`Self::derived_bases`]).
+    ///
+    /// The binding may be null — a borrowed formal can be — so a null test on
+    /// it keeps both edges, and no path is deleted by the seeding. The site is
+    /// deliberately left out of `state.resources`.
+    pub(crate) fn seed_derived_base(&mut self, index: usize, name: &str, site: usize) {
+        self.state.pointers.insert(
+            name.to_owned(),
+            AbstractPointer {
+                targets: BTreeSet::from([site]),
+                unknown: false,
+                may_be_null: true,
+                derivation: Derivation::Identity,
+            },
+        );
+        self.derived_bases.insert(site, index);
+    }
+
     /// Sites the caller — not this body — is responsible for discharging at a
     /// given exit: every formal the contract bound, plus whatever each out
     /// slot holds there, because an `Out` contract hands that resource back.
@@ -6901,7 +7079,7 @@ impl EntryCustody {
 }
 
 /// The first abstract site that no acquisition in `cfg` already uses.
-fn first_free_site(cfg: &LegacyCfg) -> usize {
+pub(crate) fn first_free_site(cfg: &LegacyCfg) -> usize {
     cfg.nodes
         .iter()
         .flat_map(|node| match &node.instruction {
@@ -6928,6 +7106,13 @@ pub(crate) struct ExitObservation {
     pub(crate) caller_containment: BTreeMap<usize, BTreeSet<usize>>,
     /// Reallocation replacements that this exit left unresolved.
     pub(crate) pending_replacements: BTreeMap<usize, BTreeSet<usize>>,
+    /// Card **W43-RESULT-ALIAS-RETURNED**: whether some custody effect reached
+    /// a name-only derived base ([`EntryCustody::derived_bases`]) on the way to
+    /// this exit — the site acquired a status (a nullable release, an escape, a
+    /// cascade through an aggregate that held it) or an unresolved effect. A
+    /// derived-result summary claims its base is borrowed, so it requires this
+    /// to be `false` at every exit. Always `false` when there is no such base.
+    pub(crate) derived_base_touched: bool,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -6953,6 +7138,21 @@ pub(crate) enum ReturnedValue {
     },
     /// The returned place denotes more than one site, or an unknown one.
     Ambiguous,
+    /// Card **W43-RESULT-ALIAS-RETURNED**: a null pointer constant, observed
+    /// only on a CFG built for derived-result validation (elsewhere such an
+    /// exit is a `NoOp` and reads [`Self::None`]). Every consumer but the
+    /// derived-result check treats it exactly as `None`.
+    Null,
+    /// Card **W43-RESULT-ALIAS-RETURNED**: a derived binding over exactly one
+    /// site. Before this card it read [`Self::Ambiguous`], and every consumer
+    /// but the derived-result check still treats it so.
+    Derived {
+        site: usize,
+        extent: DerivedExtent,
+        /// The binding's relative nullness (see [`Derivation::Derived`]).
+        nullable: bool,
+        const_dropped: bool,
+    },
 }
 
 /// What an out slot holds at one exit. `Unwritten` is deliberately distinct
@@ -7034,9 +7234,31 @@ fn observe_exit(
     entry: &EntryCustody,
 ) -> ExitObservation {
     let returned = match &node.instruction {
+        LegacyInstruction::EscapeIfOwned { source } if source == return_call::NULL_RETURN_PLACE => {
+            ReturnedValue::Null
+        }
         LegacyInstruction::EscapeIfOwned { source } | LegacyInstruction::Escape { source } => {
             match state.pointers.get(source) {
                 None => ReturnedValue::None,
+                // Card W43-RESULT-ALIAS-RETURNED: a derived binding over one
+                // resolved site is reported as such; only the derived-result
+                // check reads it, and everything else treats it as ambiguous.
+                Some(AbstractPointer {
+                    targets,
+                    unknown: false,
+                    derivation:
+                        Derivation::Derived {
+                            extent,
+                            const_dropped,
+                            nullable,
+                        },
+                    ..
+                }) if targets.len() == 1 => ReturnedValue::Derived {
+                    site: *targets.first().expect("one target"),
+                    extent: *extent,
+                    nullable: *nullable,
+                    const_dropped: *const_dropped,
+                },
                 // Card W43-LIBC-RESULT-ALIAS: nor does a returned derived
                 // pointer (whose escape the transfer already refused).
                 Some(pointer)
@@ -7078,6 +7300,9 @@ fn observe_exit(
             .map(|(owner, children)| (*owner, children.clone()))
             .collect(),
         pending_replacements: state.conditional_replacements.clone(),
+        derived_base_touched: entry.derived_bases.keys().any(|site| {
+            state.resources.contains_key(site) || state.unresolved_effect_sites.contains(site)
+        }),
     }
 }
 
@@ -7433,6 +7658,10 @@ struct TransferContext<'a> {
     /// the projection does not model, and is refused; see
     /// [`reject_publication`].
     publications: PublicationFacts,
+    /// Card **W43-RESULT-ALIAS-RETURNED**: the name-only sites of the formals
+    /// a derived result may be derived from ([`EntryCustody::derived_bases`]).
+    /// Returning a derived binding over one of them escapes nothing.
+    derived_bases: BTreeSet<usize>,
 }
 
 fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
@@ -7446,13 +7675,17 @@ pub(crate) fn analyze_cfg_with_entry(
     let context = TransferContext {
         sanctioned: entry_custody.sanctioned_places(),
         result_nullable: entry_custody.result_nullable,
+        // A derived base's name-only site is caller-held too: no aggregate
+        // store may target it (it also fails every live-identity check).
         caller_sites: entry_custody
             .parameter_sites
             .iter()
             .flatten()
             .copied()
+            .chain(entry_custody.derived_bases.keys().copied())
             .collect(),
         publications: cfg.publications.clone(),
+        derived_bases: entry_custody.derived_bases.keys().copied().collect(),
     };
     // C02-P-ALIAS: computed once, before the custody work list starts, and only
     // read below. See [`alias_facts`].
@@ -8240,6 +8473,23 @@ fn transfer(
                 false,
             );
         }
+        // Card W43-RESULT-ALIAS-RETURNED. Under an entry whose result is
+        // derived from a borrowed formal, returning a derived binding over that
+        // formal's name-only site hands the caller the non-owning relation the
+        // summary states and escapes nothing: no status changes and no
+        // obligation of this body is discharged. `observe_exit` reports it and
+        // the summary check decides it. Every other binding keeps the rule
+        // below, which refuses a derived escape.
+        LegacyInstruction::EscapeIfOwned { source }
+            if state.pointers.get(source).is_some_and(|pointer| {
+                !pointer.unknown
+                    && matches!(pointer.derivation, Derivation::Derived { .. })
+                    && pointer.targets.len() == 1
+                    && pointer
+                        .targets
+                        .iter()
+                        .all(|site| context.derived_bases.contains(site))
+            }) => {}
         LegacyInstruction::EscapeIfOwned { source } => {
             if state.pointers.contains_key(source) {
                 apply_resource_action(
@@ -9183,8 +9433,9 @@ fn apply_contract_call(
 /// binding: nothing it could denote is resolved, so it supports no claim, and
 /// it is still a derived binding, so it can never be escaped or released as if
 /// it owned something. A derived pointer derived again stays derived: interior
-/// unless both steps are exact, `const_dropped` if either step dropped it, and
-/// `Mixed` over a mixed base.
+/// unless both steps are exact, `const_dropped` if either step dropped it,
+/// relatively `nullable` if either step may return NULL (card
+/// W43-RESULT-ALIAS-RETURNED), and `Mixed` over a mixed base.
 fn derive_pointer(
     base: Option<&AbstractPointer>,
     extent: DerivedExtent,
@@ -9199,6 +9450,7 @@ fn derive_pointer(
             derivation: Derivation::Derived {
                 extent,
                 const_dropped,
+                nullable,
             },
         };
     };
@@ -9206,10 +9458,12 @@ fn derive_pointer(
         Derivation::Identity => Derivation::Derived {
             extent,
             const_dropped,
+            nullable,
         },
         Derivation::Derived {
             extent: base_extent,
             const_dropped: base_dropped,
+            nullable: base_nullable,
         } => Derivation::Derived {
             extent: if base_extent == DerivedExtent::Exact && extent == DerivedExtent::Exact {
                 DerivedExtent::Exact
@@ -9217,6 +9471,7 @@ fn derive_pointer(
                 DerivedExtent::Interior
             },
             const_dropped: const_dropped || base_dropped,
+            nullable: nullable || base_nullable,
         },
         Derivation::Mixed => Derivation::Mixed,
     };

@@ -121,8 +121,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_schemas::contract::{
-    ContractTrust, ResourceContracts, ResourceFunctionContract, ResourceParameterMode,
-    ResourceReturnMode, ResourceSummaryRecord,
+    ContractTrust, DerivedExtent, ResourceContracts, ResourceFunctionContract,
+    ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
 };
 
 use crate::legacy_c::{
@@ -421,6 +421,28 @@ fn infer_validated_summary(
 ) -> Option<ResourceFunctionContract> {
     infer_live_entry_summary(tokens, function, environment)
         .or_else(|| infer_removed_wrapper(tokens, function, environment))
+        .or_else(|| infer_derived_result(tokens, function, environment))
+}
+
+/// Card **W43-RESULT-ALIAS-RETURNED**: the derived-result route, consulted
+/// only after both routes above published nothing. See [`derived`].
+fn infer_derived_result(
+    tokens: &[Token],
+    function: &str,
+    environment: &ResourceContracts,
+) -> Option<ResourceFunctionContract> {
+    let decision = derived::infer_derived_result_summary(tokens, function, environment);
+    #[cfg(feature = "indirect-census")]
+    match &decision {
+        Ok(contract) => crate::indirect_census::record_derived(
+            function,
+            "admitted",
+            Some(format!("{:?}", contract.result)),
+        ),
+        Err(derived::DerivedRefusal::NotCandidate) => {}
+        Err(refusal) => crate::indirect_census::record_derived(function, refusal.label(), None),
+    }
+    decision.ok()
 }
 
 /// Preserve the existing least-binding search before considering a contained
@@ -801,8 +823,8 @@ fn reallocation_exit(
 ) -> Option<ReallocationExit> {
     let disposition = observation.parameters.get(index).copied().flatten();
     match observation.returned {
-        ReturnedValue::Ambiguous => None,
-        ReturnedValue::None => (observation.pending_replacements.is_empty()
+        ReturnedValue::Ambiguous | ReturnedValue::Derived { .. } => None,
+        ReturnedValue::None | ReturnedValue::Null => (observation.pending_replacements.is_empty()
             && disposition == Some(SiteDisposition::Live))
         .then_some(ReallocationExit::Kept),
         ReturnedValue::Site {
@@ -901,8 +923,8 @@ fn propose_result(
 
     for observation in observations {
         match observation.returned {
-            ReturnedValue::Ambiguous => return None,
-            ReturnedValue::None => {
+            ReturnedValue::Ambiguous | ReturnedValue::Derived { .. } => return None,
+            ReturnedValue::None | ReturnedValue::Null => {
                 if !observation.pending_replacements.is_empty() {
                     return None;
                 }
@@ -1136,13 +1158,17 @@ fn result_matches(
 ) -> bool {
     match contract.result {
         ResourceReturnMode::None => {
-            observation.returned == ReturnedValue::None
-                && observation.pending_replacements.is_empty()
+            matches!(
+                observation.returned,
+                ReturnedValue::None | ReturnedValue::Null
+            ) && observation.pending_replacements.is_empty()
         }
         ResourceReturnMode::Owned { nullable } => match observation.returned {
             // Returning nothing is only consistent with a nullable result.
-            ReturnedValue::None => nullable && observation.pending_replacements.is_empty(),
-            ReturnedValue::Ambiguous => false,
+            ReturnedValue::None | ReturnedValue::Null => {
+                nullable && observation.pending_replacements.is_empty()
+            }
+            ReturnedValue::Ambiguous | ReturnedValue::Derived { .. } => false,
             ReturnedValue::Site {
                 site,
                 nullable: site_nullable,
@@ -1171,10 +1197,43 @@ fn result_matches(
             }
             None => false,
         },
-        // Card W43-LIBC-RESULT-ALIAS: no exit observation exhibits "the result
-        // is derived from parameter k", so a body is never validated against a
-        // declared derived result. It falls back to the contract-free analysis.
-        ResourceReturnMode::Derived { .. } => false,
+        // Card W43-RESULT-ALIAS-RETURNED (W43-LIBC-RESULT-ALIAS answered
+        // `false` here). Every exit hands back either a null pointer constant,
+        // which only a nullable result permits, or a derived binding over the
+        // named formal's name-only site whose relation the contract covers: an
+        // exact step is covered by either extent and an interior one only by
+        // `Interior`; a step that may be null, or drops `const`, only by a
+        // contract that says so. Every other returned value — none, a fresh or
+        // formal site, an ambiguous or mixed binding, or a pointer derived from
+        // anything else — refutes it. An exit may not leave a reallocation
+        // pending either.
+        ResourceReturnMode::Derived {
+            parameter,
+            extent,
+            nullable,
+            const_dropped,
+        } => {
+            observation.pending_replacements.is_empty()
+                && !observation.derived_base_touched
+                && match observation.returned {
+                    ReturnedValue::Null => nullable,
+                    ReturnedValue::Derived {
+                        site,
+                        extent: observed_extent,
+                        nullable: observed_nullable,
+                        const_dropped: observed_dropped,
+                    } => {
+                        entry.derived_bases.get(&site) == Some(&parameter)
+                            && (observed_extent == DerivedExtent::Exact
+                                || extent == DerivedExtent::Interior)
+                            && (!observed_nullable || nullable)
+                            && (!observed_dropped || const_dropped)
+                    }
+                    ReturnedValue::None | ReturnedValue::Site { .. } | ReturnedValue::Ambiguous => {
+                        false
+                    }
+                }
+        }
     }
 }
 
@@ -1279,6 +1338,9 @@ fn strongly_connected_components(graph: &BTreeMap<String, BTreeSet<String>>) -> 
 
 #[path = "legacy_neutral.rs"]
 mod neutral;
+
+#[path = "legacy_derived_summary.rs"]
+mod derived;
 
 #[cfg(test)]
 #[path = "../tests/unit/legacy_summary.rs"]
