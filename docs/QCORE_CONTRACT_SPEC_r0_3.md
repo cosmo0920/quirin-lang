@@ -124,7 +124,7 @@ The result vocabulary adds `unit` to the parameter vocabulary. `unit` is not a p
 
 **Qualifiers after a parameter's last `*` (card W43-LIBC-RESULT-ALIAS).** A qualifier that follows a parameter declarator's last `*` — `const char *__restrict __format`, `void *const p` — qualifies the parameter object, and C drops it for type compatibility (C11 6.7.6.3p15). A consumer reading the C side MUST read such a parameter as its unqualified type and MUST keep refusing a qualifier *between* two `*`, which qualifies an inner pointer this vocabulary cannot spell. A result declarator is not a parameter and is not widened. The Lean model is `QCore.PointerQualifierReader`.
 
-These are opaque interface projections. They do not check actual C layouts, ABI compatibility, pointee validity, allocation size, alignment, aliasing, or thread-safety. A scalar may carry a descriptor number as data, but it cannot carry descriptor custody in v1. Only `resource_borrowed` may apply to a scalar or to `fnptr`. Every other parameter mode requires an admitted pointer type; `resource_out` specifically requires `ptr<mut, ptr<mut, u8>>`. An owned or reallocated result requires an admitted pointer result.
+These are opaque interface projections. They do not check actual C layouts, ABI compatibility, pointee validity, allocation size, alignment, aliasing, or thread-safety. A scalar carries a descriptor number as data unless its position declares the `descriptor` kind (§C04.6), which is the one way a scalar carries custody. Otherwise only `resource_borrowed` may apply to a scalar or to `fnptr`. Every other parameter mode requires an admitted pointer type or an `i32` of the `descriptor` kind; `resource_out` specifically requires `ptr<mut, ptr<mut, u8>>`. An owned result requires an admitted pointer result or an `i32` of the `descriptor` kind, and a reallocated result an admitted pointer result.
 
 ### C04.2. Parameter modes
 
@@ -204,7 +204,7 @@ Card W43-LIBC-RESULT-ALIAS added the two derived-result predicates. Both load to
 
 Only normal C returns are represented by v1 postconditions. A C routine returning null or a negative integer has still returned normally; it has not taken a QCore typed-error exit. Error-specific ownership behavior can be modeled only where a supported mode explicitly represents it, such as nullable acquisition or the specified reallocation relation.
 
-General success-dependent parameter modes, exceptional exits, `ensures any`, `ensures error(E)`, quantitative clauses, effects, access permissions and synchronization are not in v1. Non-null error sentinels such as `MAP_FAILED` and scalar failure sentinels such as `-1` are not representable as tracked endpoint acquisition outcomes by the existing nullability-only return mode.
+General success-dependent parameter modes, exceptional exits, `ensures any`, `ensures error(E)`, quantitative clauses, effects, access permissions and synchronization are not in v1. Non-null pointer error sentinels such as `MAP_FAILED` are not representable. The scalar failure sentinel `-1` of a descriptor is, through the `descriptor` kind and its `sentinel`/`valid` validity words (§C04.6); no other scalar sentinel is, and nullability is never reinterpreted as one.
 
 **Value-dependent parameter modes are not in v1.** A parameter mode is fixed per declaration; no clause conditions a *mode* on an argument's value, and C04.5's premise does not add one — it restricts where the whole declaration applies, leaving every mode exactly as written.
 
@@ -249,6 +249,67 @@ Every other spelling MUST be refused, because deciding it would require a capabi
 An object-like **macro** is not among the refusals: a consumer that reads preprocessed text sees the expansion, so a macro naming the constant has already become the constant.
 
 Because the admitted spellings are exactly the declared constant, honoring them is not a widening of the declaration: it is applying the declaration where the clause already says it applies. A consumer MUST NOT admit a spelling whose value it has not decided structurally, and MUST NOT compare numeric values.
+
+### C04.6. Resource kinds and integer-carried identities
+
+Card W43-DESCRIPTOR-RESOURCE-TRACKING added **kinds** to the custody positions of vocabulary version 1. Before it, every tracked resource had one kind, so a declaration of `fopen`/`fclose` as owned/released would have let `free(fopen(…))` and `fclose(malloc(…))` discharge, and a file descriptor — an `int` whose failure value is `-1`, not NULL — could not be declared at all (`W43-LIBC-DESCRIPTOR-LIFECYCLE`, `CT-CTWIN-DESCRIPTOR`).
+
+**Vocabulary.** Two clauses name a kind:
+
+```qcore
+ensures normal resource_kind(p, KIND);
+ensures normal resource_return_kind(KIND);
+```
+
+`KIND` is exactly one of `descriptor`, `stream`, `directory`, `dynamic_library` and `file_tree`. The **heap** kind is what a position with no kind clause means, and it is spelled only by that absence: writing `heap` rejects the module, so every meaning has one spelling. Every declaration written before this card therefore loads to exactly the contract it loaded to before, with every position heap. Kinds load onto `ResourceFunctionContract` as `parameter_kinds` (non-heap entries only) and `result_kind`, both omitted from the serialized form and from the diagnostic text when heap, so a contract without a kind is byte-identical in every artifact.
+
+**Placement.** A kind clause names a custody-bearing position:
+
+| Position | Admitted kinds |
+|---|---|
+| `resource_owned`, `resource_consumed`, `resource_released` parameter | every kind |
+| `resource_out` parameter | every pointer-carried kind (a descriptor has no out slot in this vocabulary) |
+| `resource_return_owned` result | every kind |
+| `resource_borrowed` parameter | none — a borrowed position touches no obligation |
+| `resource_stored`, `resource_removed` parameter; `resource_return_reallocated`, a derived or a `none` result | none — the owner cascade and the replacement relation were specified for heap allocations |
+
+**Integer-carried identities and sentinel validity.** `descriptor` is carried by an integer: its position MUST be typed `i32`, and its failure value is the sentinel `-1`. Its validity is spelled `sentinel` (the position may carry `-1`) or `valid` (it never does), the counterpart of `nullable`/`nonnull`, which a descriptor position MUST NOT use; conversely `sentinel`/`valid` on a heap or pointer-kind position rejects the module. Every other kind is carried by an admitted pointer and keeps `nullable`/`nonnull`. This is the one relaxation of C04.1's pointer-only custody rule: a scalar carries custody exactly when its position declares the `descriptor` kind.
+
+```qcore
+extern fn open(file: ptr<const, u8>, oflag: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(oflag);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_owned(sentinel);
+    ensures normal resource_return_kind(descriptor);
+};
+
+extern fn close(fd: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(fd, valid);
+    ensures normal resource_kind(fd, descriptor);
+    ensures normal resource_return_none();
+};
+```
+
+**Semantics.** A consumer MUST apply all of the following, and MUST NOT approximate any of them:
+
+1. **A custody position touches only an obligation of its own kind.** Each identity has the kind of the position that created it (an acquisition result, an out slot, or a formal under the contract a body is checked against). A release of another kind discharges nothing; when its actual resolves to exactly one identity it is an `invalid_release` violation *candidate* (`free(fopen(…))`, `fclose(malloc(…))`, `close(fp)`), and the identity's own obligation stays open. Every other kind-mismatched custody position — owned, consumed, stored, removed, a reallocation's replaced parameter, or an ambiguous release — is a refusal.
+2. **Validity narrows like nullness, from the declared value set.** A descriptor-returning call produces `-1` or a number `≥ 0`. A comparison of a tracked descriptor with `0` or `-1` narrows it exactly as far as that set allows: `fd < 0`, `fd <= -1` and `fd == -1` establish *invalid* on their true edge and *valid* on their false edge, `fd >= 0`, `fd > -1` and `fd != -1` the reverse (and the mirrored spellings the same). `fd > 0` establishes *valid* on its true edge only, and `fd <= 0` on its false edge only, because descriptor `0` is valid. An invalid edge carries no resource at that identity, as a null edge does; a valid edge makes the identity usable at a `valid` position.
+3. **A null test of an integer-carried identity refines nothing.** `if (fd)`, `if (!fd)`, `fd == 0` and `fd != 0` decide nothing about validity, so neither edge removes or validates the identity. A body that abandons a descriptor on the `!fd` edge is reported as the leak candidate it is.
+4. **A tracked integer is custody, not data.** Every route that treats a declared scalar as custody-neutral MUST ask, before admitting a value, whether it reads a name that may hold a tracked integer-carried identity, and MUST refuse when it does: a store into a member (typed or untyped base), an aggregate field, an array element, a location reached through a pointer, or an object that outlives the call (the scalar-source exemption of C10's publication rule does not cover it). The C gateway's single predicate is `descriptor_custody::value_carries_descriptor`. A copy into a plain name aliases the same identity; a `return` escapes it; arithmetic into another name (`n = fd + 1`) creates and aliases no identity; a comparison decides a branch and transfers nothing.
+5. **A descriptor handed where no declaration states the effect is refused.** A tracked integer at a `Borrowed` position is a *use* only where a declared contract covers the callee. A validated inferred summary was derived with its integer formals untracked, so a helper storing its formal still earned `Borrowed`; the call is refused instead, for the reason C10 withdrew the borrowed publication launder for pointers.
+6. **Use after release.** A non-heap identity used at a `Borrowed` position after it was released on some path reaching the use is a `use_after_release` violation *candidate* (`read(fd, …)` after `close(fd)`, `fflush(fp)` after `fclose(fp)`) — the `double_release` reading of the same status. The heap kind keeps the pre-existing borrowed-liveness refusal and is not accused.
+7. **Inferred summaries stay heap.** A consumer inferring summaries MUST NOT infer a non-heap result or out slot, and MUST check a body's releases against the kinds of the contract it is validated against, so a body that releases a probed (heap) formal with a descriptor release validates no summary. A declared kinded contract checked against a body defined in the unit seeds its formals with the declared kinds.
+
+**Verdict contract, unchanged.** A candidate becomes `Unsafe` only under the existing provisional-`Unsafe` policy and is never presented as an upstream defect. Everything unproven stays `Unknown`, and no rule here turns an `Unknown` into `Safe` by approximation: with no kinded declaration in force every site is heap, no name holds an integer identity, and every rule above is the identity (measured byte for byte on the Cycle 19 corpus). The checked extern-call route (`qcore-contract::extern_bridge`) has one custody kind and refuses a kinded declaration rather than projecting it onto the heap.
+
+**Versioning.** This is an addition to resource vocabulary version 1, exactly as the variadic data tail, the literal premise and the derived results were: the marker is unchanged, every module that loaded before loads to the same functions, and a loader that predates the clauses rejects a module using them as an unsupported predicate (`resource_kind`, `resource_return_kind`) or nullability (`sentinel`, `valid`) rather than misreading it. No new evidence version is minted: every verdict carries the exact module texts in `source_assumptions`, which name the declarations — and so the vocabulary — it rests on. The Lean model is `QCore.KindedCustody`.
+
+**Not in the vocabulary, deliberately.** A kinded stored/removed relation; a descriptor out slot (`pipe`, `socketpair` write an `int[2]`); a status-conditioned out slot (`getaddrinfo`'s list is valid on a zero return, which needs a status witness bound to the list); a command-dependent creator (`fcntl` creates a descriptor only for `F_DUPFD`/`F_DUPFD_CLOEXEC`, and one declaration carries one literal premise per parameter); a transfer that happens on success only (`fdopen` moves the descriptor into the stream only when it returns non-NULL); a pointer sentinel (`mmap`'s `MAP_FAILED`); a process stream released by `pclose`, not `fclose` (no audited unit calls `popen`).
 
 ## C05. Manifests and immutable assumptions
 

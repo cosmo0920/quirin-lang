@@ -235,6 +235,17 @@ pub(crate) fn statement_reads_descriptor<'a>(
                 ))
     });
     let Some(equal) = assignment else {
+        // A declaration with no initializer (`int g;`, `ssize_t n, m;`) names
+        // its declarators; it reads nothing unless an array bound or a
+        // parenthesised declarator could evaluate one.
+        let declaration = texts.first().is_some_and(|first| {
+            super::DECLARATION_SPECIFIERS.contains(first)
+                || (is_identifier(first)
+                    && texts.get(1).is_some_and(|second| is_identifier(second)))
+        });
+        if declaration && !texts.iter().any(|text| matches!(*text, "[" | "(")) {
+            return None;
+        }
         return value_carries_descriptor(texts, names);
     };
     if let Some(read) = value_carries_descriptor(&texts[equal + 1..], names) {
@@ -555,7 +566,7 @@ mod tests {
         use ValidityFact::{Unrefined, Valid};
         assert_eq!(test("fd > 0"), Some(("fd".to_owned(), Valid, Unrefined)));
         assert_eq!(test("fd < = 0"), Some(("fd".to_owned(), Unrefined, Valid)));
-        for source in ["fd", "! fd", "fd = = 0", "fd ! = 0", "fd > max", "fd < - 2"] {
+        for source in ["fd", "! fd", "fd = = 0", "fd ! = 0", "fd > max", "fd < 2"] {
             assert_eq!(
                 test(source),
                 Some(("fd".to_owned(), Unrefined, Unrefined)),
@@ -569,6 +580,8 @@ mod tests {
         assert_eq!(test("other < 0"), None);
         assert_eq!(test("fd + 1 < 0"), None);
         assert_eq!(test("fd < 0 & & x"), None);
+        // A negative operand other than the sentinel is not one literal.
+        assert_eq!(test("fd < - 2"), None);
         let empty = DescriptorNames::default();
         assert_eq!(validity_test(&["fd", "<", "0"], &empty), None);
     }
@@ -612,5 +625,9 @@ mod tests {
         assert_eq!(reads("fd + = 1"), Some("fd".to_owned()));
         assert_eq!(reads("n = fd + 1"), Some("fd".to_owned()));
         assert_eq!(reads("( void ) fd"), Some("fd".to_owned()));
+        assert_eq!(reads("int fd"), None);
+        assert_eq!(reads("int g , fd"), None);
+        assert_eq!(reads("ssize_t fd"), None);
+        assert_eq!(reads("int a [ fd ]"), Some("fd".to_owned()));
     }
 }

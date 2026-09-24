@@ -41,6 +41,9 @@
 //!   the object `p` points to, and owns nothing. See below.
 //! - `resource_variadic_data_tail()` -> the declaration additionally covers
 //!   calls that pass *more* actuals than it names. See below.
+//! - `resource_kind(p, KIND)` and `resource_return_kind(KIND)` -> the non-heap
+//!   kind of a custody position (card W43-DESCRIPTOR-RESOURCE-TRACKING). See
+//!   below.
 //!
 //! and one further **precondition** beside the marker:
 //!
@@ -109,6 +112,32 @@
 //! rather than misreading it. The exact module texts travel with every
 //! verdict in `source_assumptions`, so the evidence identity already names
 //! which declarations — and therefore which vocabulary — a verdict rests on.
+//!
+//! # Resource kinds (card W43-DESCRIPTOR-RESOURCE-TRACKING)
+//!
+//! A custody position carries a [`ResourceKind`]: `heap` (spelled by the
+//! **absence** of a kind clause, so every earlier module loads to exactly the
+//! contract it loaded to before), `descriptor`, `stream`, `directory`,
+//! `dynamic_library` or `file_tree`. A consumer discharges an obligation only
+//! with a release of its own kind (contract spec §C04.6). The clauses are
+//! `ensures normal resource_kind(p, KIND);` on an owned, consumed, released or
+//! out parameter and `ensures normal resource_return_kind(KIND);` on an owned
+//! result; a borrowed, stored, removed or reallocated position, a derived or
+//! `none` result, an unknown kind, the spelled-out `heap` and a duplicate each
+//! reject the whole module.
+//!
+//! `descriptor` is the one kind carried by an **integer**. Its position must be
+//! typed `i32`, and its validity is spelled `sentinel` (may be the failure value
+//! `-1`) or `valid`, never `nullable`/`nonnull`; conversely `sentinel`/`valid`
+//! on any other position rejects the module. That is the only way a scalar ever
+//! carries custody here: an `i32` position without the `descriptor` kind keeps
+//! the borrowed-only rule and its verbatim refusals. A descriptor has no out
+//! slot in this vocabulary.
+//!
+//! **Version.** An addition to vocabulary version 1, as the derived results
+//! were: the marker is unchanged, kinds serialize only when non-heap, and a
+//! loader that predates the clauses rejects them (unsupported predicate or
+//! nullability) rather than misreading them.
 //!
 //! # The literal-argument premise (card HASH-CLAUSE)
 //!
@@ -189,8 +218,9 @@
 //! vocabulary is likewise an explicit table, not a wildcard:
 //!
 //! - [`SCALAR_ABI_TYPES`] — sizes, counts, flags, descriptors, offsets and
-//!   real-valued readings. Borrowed only: a scalar cannot carry custody, so
-//!   every custody mode on one is rejected. Card NEIGHBOURS admitted `f32` and
+//!   real-valued readings. Borrowed only, unless the position declares the
+//!   integer-carried `descriptor` kind on an `i32` (see *Resource kinds*):
+//!   every other custody mode on a scalar is rejected. Card NEIGHBOURS admitted `f32` and
 //!   `f64` under exactly the condition this note stated for them — a resource
 //!   API in scope that passes one: Fluent Bit's `double flb_time_now()`
 //!   (`src/flb_lib.c:936`), whose reading `flb_input_chunk_create` stores in
@@ -205,10 +235,11 @@
 //!
 //! Acquire/Release/Escape/Neutral compatibility kinds map respectively to Owned
 //! results, Released/Consumed parameters, and borrowed-only/None contracts.
-//! Non-null error sentinels (a resource returned as `MAP_FAILED` or `-1` rather
-//! than null) remain unrepresentable: [`ResourceReturnMode`] records only
-//! nullability, so expressing them needs target-interface work, not loader
-//! vocabulary, and they are rejected meanwhile. Conditional effects, effects
+//! A pointer error sentinel (a resource returned as `MAP_FAILED` rather than
+//! null) remains unrepresentable and is rejected. The integer sentinel `-1` of
+//! a file descriptor is representable only through the `descriptor` kind and
+//! its `sentinel`/`valid` words (card W43-DESCRIPTOR-RESOURCE-TRACKING); no
+//! other scalar sentinel is, and nullability is never reinterpreted as one. Conditional effects, effects
 //! rows, quantitative clauses, arbitrary predicates and other exits are
 //! likewise rejected.
 //!

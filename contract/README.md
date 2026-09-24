@@ -240,10 +240,12 @@ quietly returning a weaker table.
 A resource projection of a lifecycle module is written as its own v1 module —
 `fluent_bit/resource_memory.qcore` projects `fluent_bit/memory.qcore`, and
 `chunkio/resource_open_close.qcore` projects the ChunkIO destructors — and is
-never inferred by dropping predicates the loader cannot check. Non-null error
-sentinels (a resource returned as `MAP_FAILED` or `-1` rather than null) stay
-unrepresentable: the target interface records only nullability, so they need
-interface work rather than loader vocabulary.
+never inferred by dropping predicates the loader cannot check. A pointer error
+sentinel (a resource returned as `MAP_FAILED` rather than null) stays
+unrepresentable. The integer sentinel `-1` of a file descriptor is
+representable through the `descriptor` kind and its `sentinel`/`valid`
+validity words (`resource_kind`, `resource_return_kind`; contract spec §C04.6,
+card W43-DESCRIPTOR-RESOURCE-TRACKING), and only there.
 
 `contract_loader::load_resource_contract_manifest` loads these files at runtime;
 `load_resource_contract_files` and `load_resource_contract_sources` expose the
