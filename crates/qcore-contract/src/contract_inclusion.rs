@@ -1258,6 +1258,43 @@ impl Resolution<'_> {
     }
 }
 
+/// One module of a published load path, elaborated.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ElaboratedContractModule {
+    /// `crate:module`.
+    pub key: String,
+    /// The elaborated text. For a module that uses no inclusion, the text as
+    /// written, byte for byte.
+    pub text: String,
+    /// The module's provenance, if it uses inclusion.
+    pub evidence: Option<ContractInclusionEvidence>,
+}
+
+/// Elaborate one module owned by a crate on `load_path`, for any consumer.
+///
+/// This is the interpreter-independent half of the feature: resolution, the
+/// publication rule, the positional renaming and capture refusal. It does
+/// **not** check that the renamed text means the same thing to a particular
+/// consumer; a consumer that reads some clause positions structurally rather
+/// than by parameter lookup must compare its reading of every inherited
+/// declaration with its reading of the parent, as the resource-v1 loader does
+/// (`contract_loader::load_published_resource_contracts`). No other consumer
+/// is wired in this card.
+pub fn elaborate_contract_module(
+    load_path: &ContractLoadPath,
+    crate_name: &str,
+    module: &str,
+) -> Result<ElaboratedContractModule, ContractInclusionError> {
+    let (identity, text) = load_path.owned_module(crate_name, module)?;
+    let resolver = LoadPathResolver(load_path);
+    let elaborated = Elaborator::new(&resolver).elaborate(identity, &text)?;
+    Ok(ElaboratedContractModule {
+        key: module_key(&elaborated.identity),
+        text: elaborated.text.clone(),
+        evidence: elaborated.uses_inclusion.then(|| elaborated.evidence()),
+    })
+}
+
 /// Replay one module's retained evidence and compare it with the elaborated
 /// source assumption it accompanies (`QI016` on any difference).
 pub(crate) fn replay_evidence(

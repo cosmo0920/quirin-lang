@@ -471,6 +471,11 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             "existing-C resource projection of selected compiled units; no observation or provider composition; Unsafe is provisional"
         },
     });
+    // Card CONTRACT-INHERIT: an environment that inherited any contract
+    // publishes each inheritance chain beside the elaborated sources.
+    if let Some(provenance) = qcore_contract::contract_loader::inclusion_provenance(&contracts) {
+        assumptions["contract_inclusion"] = provenance;
+    }
     if let Some(selection) = &config.compile_target {
         assumptions["compile_target_selection"] = serde_json::json!({
             "object_prefix": selection.object_prefix,

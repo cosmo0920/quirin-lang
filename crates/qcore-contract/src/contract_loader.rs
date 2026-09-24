@@ -587,6 +587,22 @@ pub fn check_source_assumptions(contracts: &ResourceContracts) -> Result<(), Str
     Ok(())
 }
 
+/// The published provenance of an environment's inherited contracts (card
+/// **CONTRACT-INHERIT**), for a report's assumptions block: each selected
+/// module's identity, its text as written, every included module's identity
+/// and text, and each inheritance chain. `None` for an environment that used
+/// no inclusion, so a report without it is unchanged.
+#[must_use]
+pub fn inclusion_provenance(contracts: &ResourceContracts) -> Option<serde_json::Value> {
+    if contracts.inclusion_evidence().is_empty() {
+        return None;
+    }
+    Some(serde_json::json!({
+        "trust": "inherited contracts are declared assumptions of the same strength as hand-written ones; each chain records where the assumption was written, not evidence that it holds",
+        "modules": contracts.inclusion_evidence(),
+    }))
+}
+
 /// A module selected from a published load path, by crate and logical path.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct PublishedModuleRef {
