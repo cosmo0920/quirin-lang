@@ -6976,7 +6976,16 @@ pub(crate) enum OutSlotValue {
 fn observe_out_slot(state: &AbstractState, place: &str) -> OutSlotValue {
     match state.pointers.get(place) {
         None => OutSlotValue::Unwritten,
-        Some(pointer) if pointer.unknown || pointer.targets.len() > 1 => OutSlotValue::Ambiguous,
+        // Card W43-LIBC-RESULT-ALIAS: a derived pointer is not the identity it
+        // targets, so a slot holding one delivers no custody a summary could
+        // name.
+        Some(pointer)
+            if pointer.unknown
+                || pointer.targets.len() > 1
+                || !pointer.derivation.is_identity() =>
+        {
+            OutSlotValue::Ambiguous
+        }
         Some(pointer) => match pointer.targets.first().copied() {
             None => OutSlotValue::Null,
             Some(site) => OutSlotValue::Site {
@@ -7028,7 +7037,13 @@ fn observe_exit(
         LegacyInstruction::EscapeIfOwned { source } | LegacyInstruction::Escape { source } => {
             match state.pointers.get(source) {
                 None => ReturnedValue::None,
-                Some(pointer) if pointer.unknown || pointer.targets.len() > 1 => {
+                // Card W43-LIBC-RESULT-ALIAS: nor does a returned derived
+                // pointer (whose escape the transfer already refused).
+                Some(pointer)
+                    if pointer.unknown
+                        || pointer.targets.len() > 1
+                        || !pointer.derivation.is_identity() =>
+                {
                     ReturnedValue::Ambiguous
                 }
                 Some(pointer) => match pointer.targets.first().copied() {
@@ -7961,6 +7976,31 @@ fn transfer(
         && !context.sanctioned.contains(destination.as_str())
     {
         reject_unsanctioned_store(function, node.line, destination, &mut state, diagnostics);
+        return state;
+    }
+    // Card W43-LIBC-RESULT-ALIAS: a derived pointer stored through a sanctioned
+    // out slot would be observed at the exit as delivering its base's
+    // identity, which a W4 summary could then publish as fresh `Out` custody.
+    // The store is refused and the slot left as it was.
+    if let LegacyInstruction::Alias {
+        destination,
+        source,
+    } = &node.instruction
+        && is_indirect_place(destination)
+        && let Some(pointer) = state
+            .pointers
+            .get(source)
+            .filter(|pointer| !pointer.derivation.is_identity())
+            .cloned()
+    {
+        diagnostics.insert(LegacyDiagnostic {
+            function: function.to_owned(),
+            line: node.line,
+            kind: LegacyDiagnosticKind::UnknownAlias {
+                variable: destination.clone(),
+            },
+        });
+        mark_unresolved_effect(&mut state, &pointer);
         return state;
     }
     // Forwarded Out arguments denote indirect writes just like *out = value.
@@ -9089,8 +9129,27 @@ fn apply_contract_call(
             const_dropped,
         } => {
             // A discarded derived result binds nothing and owns nothing, which
-            // is exactly a discarded `None`.
-            if let Some(destination) = destination {
+            // is exactly a discarded `None`. One written through an out slot
+            // is refused, as a derived `*out = p;` is in `transfer`.
+            if let Some(destination) = destination.filter(|place| is_indirect_place(place)) {
+                let base = arguments
+                    .get(parameter)
+                    .and_then(Option::as_deref)
+                    .and_then(|base| state.pointers.get(base))
+                    .cloned()
+                    .unwrap_or(AbstractPointer {
+                        unknown: true,
+                        ..AbstractPointer::default()
+                    });
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line,
+                    kind: LegacyDiagnosticKind::UnknownAlias {
+                        variable: destination.to_owned(),
+                    },
+                });
+                mark_unresolved_effect(state, &base);
+            } else if let Some(destination) = destination {
                 let base = arguments
                     .get(parameter)
                     .and_then(Option::as_deref)

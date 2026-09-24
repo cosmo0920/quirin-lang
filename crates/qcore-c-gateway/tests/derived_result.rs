@@ -64,7 +64,7 @@ fn clang_available() -> bool {
     }
 }
 
-fn analyze(body: &str) -> UnrestrictedLegacyResult {
+fn analyze_with(body: &str, contracts: &ResourceContracts) -> UnrestrictedLegacyResult {
     let source = format!("{DECLARATIONS} {body}");
     analyze_unrestricted_c11(
         &C11TranslationUnit {
@@ -72,7 +72,7 @@ fn analyze(body: &str) -> UnrestrictedLegacyResult {
             ..Default::default()
         },
         "w",
-        &contracts(),
+        contracts,
     )
     .unwrap_or_else(|error| panic!("fixture rejected by Clang: {error:?}\n{source}"))
 }
@@ -91,7 +91,11 @@ fn program(result: &UnrestrictedLegacyResult) -> &LegacyProgramSummary {
 
 /// The status and the complete, sorted, de-duplicated diagnostic vector of `w`.
 fn outcome(body: &str) -> (&'static str, Vec<String>) {
-    let result = analyze(body);
+    outcome_with(body, &contracts())
+}
+
+fn outcome_with(body: &str, contracts: &ResourceContracts) -> (&'static str, Vec<String>) {
+    let result = analyze_with(body, contracts);
     let status = match &result {
         UnrestrictedLegacyResult::Safe(certificate) => {
             check_legacy_safety_certificate(certificate)
@@ -553,4 +557,42 @@ fn a_derived_pointer_stored_into_a_member_is_refused() {
         "Unknown",
         &["unknown_alias:x->item"],
     );
+}
+
+// -- A derived pointer delivers no custody through an out slot --------------
+
+/// `w` itself declares `resource_out(out, nonnull)`, so `*out` is a sanctioned
+/// slot. A derived pointer stored there would be observed at the exit as
+/// delivering its base's identity, and a summary could publish that as fresh
+/// custody the caller must free: refused, in both the call-result and the
+/// alias shape.
+#[test]
+fn a_derived_pointer_is_never_delivered_through_an_out_slot() {
+    if !clang_available() {
+        return;
+    }
+    let mut sources = BTreeMap::from([(
+        "derived_result_generic.qcore".to_owned(),
+        CONTRACTS.to_owned(),
+    )]);
+    sources.insert(
+        "w_out.qcore".to_owned(),
+        "module contract;\nextern fn w(out: ptr<mut, ptr<mut, u8>>) -> unit\ncontract {\n    \
+         requires resource_contract_v1;\n    ensures normal resource_out(out, nonnull);\n    \
+         ensures normal resource_return_none();\n};\n"
+            .to_owned(),
+    );
+    let contracts = load_resource_contract_sources(&sources).expect("the out-slot module loads");
+    // The identity delivery the slot exists for certifies. Each derived shape
+    // fails the declared-interface check and falls back to the contract-free
+    // analysis, which refuses or accuses it; neither certifies.
+    let (identity, keys) = outcome_with("void w(char **out) { *out = d_alloc(8); }", &contracts);
+    assert_eq!((identity, keys.len()), ("Safe", 0), "{keys:?}");
+    for body in [
+        "void w(char **out) { char *b; b = d_alloc(8); *out = d_chr(b, 58); d_free(b); }",
+        "void w(char **out) { char *b; char *p; b = d_alloc(8); p = d_chr(b, 58); *out = p; }",
+    ] {
+        let (status, keys) = outcome_with(body, &contracts);
+        assert_ne!(status, "Safe", "{body}: {keys:?}");
+    }
 }
