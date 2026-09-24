@@ -3,14 +3,12 @@ module contract;
 // Executable policy for cb_timeout's running-callback self teardown.  Rust
 // derives these facts from a sealed SourceSummary, pinned Libevent bytes, and
 // an independently supplied native evidence record.
-
-extern fn source_identity() -> unit
-contract {
-    ensures normal source_revision == "66910c10a4d7eafa810b84229cf2dcf7b0f26f97";
-    ensures normal library == "monkey";
-    ensures normal source_set == "fluent-bit";
-    ensures normal profile_digest != "";
-};
+//
+// Card CONTRACT-VIEW-PROJECTION-CHECK: the Monkey source identity is declared
+// once, as `source_identity` in `monkey/wait_source_policy.qcore`. This
+// module's former copy was textually identical; its consumer
+// (`qcore_verification::timeout_teardown`) now evaluates the owner's
+// declaration and binds the owner's digest into its projection and evidence.
 
 extern fn cb_timeout_source() -> unit
 contract {
