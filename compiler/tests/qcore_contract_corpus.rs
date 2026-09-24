@@ -441,11 +441,6 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/dirent.qcore", "opendir", 4),
     ("libc/dirent.qcore", "closedir", 4),
     ("libc/dlfcn.qcore", "dlerror", 2),
-    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the library-handle pair, appended.
-    // `dlopen`: marker, two borrowed, owned result, `dynamic_library` kind (5);
-    // `dlclose`: marker, released handle, kind, `none` (4).
-    ("libc/dlfcn.qcore", "dlopen", 5),
-    ("libc/dlfcn.qcore", "dlclose", 4),
     // Card CONSTRUCTOR-RESIDUALS, continued. Two clauses: the marker and the
     // result mode. It takes no parameter, so it has no parameter clause — the
     // same shape as `fluent_bit/time.qcore`'s `flb_time_now`.

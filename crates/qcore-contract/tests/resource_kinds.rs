@@ -87,14 +87,6 @@ fn every_kind_loads_where_it_may_stand() {
             )),
             ResourceKind::Heap,
         ),
-        (
-            "(p: ptr<const, u8>) -> ptr<mut, u8>",
-            "    ensures normal resource_borrowed(p);\n    \
-             ensures normal resource_return_owned(nullable);\n    \
-             ensures normal resource_return_kind(dynamic_library);\n",
-            None,
-            ResourceKind::DynamicLibrary,
-        ),
     ];
     for (signature, clauses, parameter, result_kind) in admitted {
         let source = module(signature, clauses);

@@ -117,8 +117,8 @@
 //!
 //! A custody position carries a [`ResourceKind`]: `heap` (spelled by the
 //! **absence** of a kind clause, so every earlier module loads to exactly the
-//! contract it loaded to before), `descriptor`, `stream`, `directory`,
-//! or `dynamic_library`. A consumer discharges an obligation only
+//! contract it loaded to before), `descriptor`, `stream`
+//! or `directory`. A consumer discharges an obligation only
 //! with a release of its own kind (contract spec §C04.6). The clauses are
 //! `ensures normal resource_kind(p, KIND);` on an owned, consumed, released or
 //! out parameter and `ensures normal resource_return_kind(KIND);` on an owned

@@ -454,7 +454,7 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             ResourceFunctionContract::new([P::Borrowed], R::Owned { nullable: true }),
         );
     }
-    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: ten kinded libc declarations. The
+    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: eight kinded libc declarations. The
     // old table had no kind, so each is listed with the kind the card reads off
     // the prototype; the two `descriptor` results are `sentinel` (may be `-1`),
     // the `descriptor` release is `valid`, and `fileno` is the neutral element.
@@ -463,7 +463,6 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("socket", 3, ResourceKind::Descriptor),
         ("fopen", 2, ResourceKind::Stream),
         ("opendir", 1, ResourceKind::Directory),
-        ("dlopen", 2, ResourceKind::DynamicLibrary),
     ] {
         old.insert_contract(
             name,
@@ -478,7 +477,6 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("close", ResourceKind::Descriptor),
         ("fclose", ResourceKind::Stream),
         ("closedir", ResourceKind::Directory),
-        ("dlclose", ResourceKind::DynamicLibrary),
     ] {
         old.insert_contract(
             name,
@@ -1077,13 +1075,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `flb_free` to `contract inherit` moves nothing here: these counts are
     // of elaborated declarations. 44 -> 45 and 128 -> 130 by the same card's
     // `fluent_bit/resource_string.qcore` (`flb_strdup`, `flb_strndup`).
-    // 45 -> 46 and 130 -> 140 by card W43-DESCRIPTOR-RESOURCE-TRACKING: ten
-    // kinded declarations, eight appended to already-selected modules
-    // (`open`, `close`, `socket`, `fopen`, `fclose`, `fileno`, `dlopen`,
-    // `dlclose`) and two in the new `libc/dirent.qcore`. Rejected unchanged.
+    // 45 -> 46 and 130 -> 138 by card W43-DESCRIPTOR-RESOURCE-TRACKING: eight
+    // declarations, six appended to already-selected modules (`open`, `close`,
+    // `socket`, `fopen`, `fclose`, `fileno`) and two in the new
+    // `libc/dirent.qcore`. Rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (46, 140, 207)
+        (46, 138, 207)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

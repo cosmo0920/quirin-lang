@@ -564,6 +564,32 @@ fn no_heap_summary_is_inferred_for_a_descriptor_wrapper() {
     expect_function("my_open", body, "my_open", "Safe", &[]);
 }
 
+/// A measured boundary, not a rule of this card: the return route reads
+/// `return (T *)p;` as returning no place, so an acquisition returned through
+/// a cast is reported as a leak — for the heap exactly as for a stream. This is
+/// why the card withholds `dlopen`/`dlclose`: their one corpus function,
+/// `rd_dl_open0`, returns its handle that way, and the resulting candidate is
+/// refuted by reading (`RETURN-CAST-PLACE-NOT-ESCAPED`).
+#[test]
+fn a_cast_return_is_not_an_escape_for_any_kind() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "void *w(void) { void *p = k_alloc(1); if (!p) return 0; return (char *)p; }",
+        "void *w(void) { void *p = k_fopen(\"p\"); if (!p) return 0; return (char *)p; }",
+    ] {
+        expect("cast return", body, "Unsafe", &["leak"]);
+    }
+    // Without the cast the same bodies escape their identity and certify.
+    for body in [
+        "void *w(void) { void *p = k_alloc(1); if (!p) return 0; return p; }",
+        "void *w(void) { void *p = k_fopen(\"p\"); if (!p) return 0; return p; }",
+    ] {
+        expect("plain return", body, "Safe", &[]);
+    }
+}
+
 /// A heap-only body is analysed exactly as before this card.
 #[test]
 fn a_heap_only_body_is_unchanged() {

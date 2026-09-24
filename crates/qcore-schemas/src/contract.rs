@@ -124,19 +124,11 @@ pub enum ResourceKind {
     Stream,
     /// A `DIR *` directory stream (`opendir`; `closedir`).
     Directory,
-    /// A dynamic-library handle (`dlopen`; `dlclose`).
-    DynamicLibrary,
 }
 
 impl ResourceKind {
     /// Every kind, in declaration order.
-    pub const ALL: [Self; 5] = [
-        Self::Heap,
-        Self::Descriptor,
-        Self::Stream,
-        Self::Directory,
-        Self::DynamicLibrary,
-    ];
+    pub const ALL: [Self; 4] = [Self::Heap, Self::Descriptor, Self::Stream, Self::Directory];
 
     #[must_use]
     pub const fn is_heap(&self) -> bool {
@@ -161,7 +153,6 @@ impl ResourceKind {
             Self::Descriptor => "descriptor",
             Self::Stream => "stream",
             Self::Directory => "directory",
-            Self::DynamicLibrary => "dynamic_library",
         }
     }
 

@@ -58,7 +58,6 @@ inductive Kind where
   | descriptor
   | stream
   | directory
-  | dynamicLibrary
   deriving DecidableEq, Repr
 
 /-- The kinds carried by an integer rather than a pointer. -/
