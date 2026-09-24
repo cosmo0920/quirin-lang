@@ -75,6 +75,13 @@
 //! still takes precedence, so store-then-remove does not gain a false entry
 //! containment requirement.
 //!
+//! Card W43-RESULT-ALIAS-RETURNED adds a third ordinary route, consulted only
+//! after the two above publish nothing: a body whose every exit returns NULL or
+//! a pointer derived from one borrowed formal gets a validated
+//! `ResourceReturnMode::Derived` summary ([`derived`]). The formal is tracked by
+//! a name-only site that carries no custody, so the summary's `Borrowed` claim
+//! for it is checked, not assumed.
+//!
 //! Likewise, a formal handed straight back to the caller, a formal whose
 //! disposition differs between exits with no reallocation explaining it, an
 //! out slot left unwritten on some path, and an out slot holding a value the
