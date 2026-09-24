@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 313
+  "named_followups": 321
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 108,
+  "contract_modules": 109,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W43-INDIRECT-ACCESS-GENERAL on merge 10b8c607 (onto main 65b5df37, after the three verdict-neutral contract cards), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0 from a cold build; every exit captured to a file, not piped. 5254 core Rust passed / 0 failed / 11 ignored over 284 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 172 Lean audits; 330 root Python tests after regenerating this section (the first run failed only the derived-facts check, 171 vs 172 Lean audits, because the merged validation section predated AuditIndirectScalarAccess); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the card's own verdict-bearing diagnostics byte for byte against docs/reports/w43-indirect-access-general/artifacts/ on the combined tree; source-effects is identical to that baseline modulo checkout-path identity digests, and contracts is byte-identical to the CONTRACT-VIEW-PROJECTION-CHECK integration run in the same checkout.",
-  "workspace_tests": 5254,
+  "note": "W43-DESCRIPTOR-NATIVE-CHECK: gate measured at 662af52f. 5270 core Rust passed / 0 failed / 11 ignored over 282 summaries; 173 Lean audits; 330 root Python tests after the final matrix regeneration; docs index check exit 0. Provider workspace 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control exit 0; providers/contracts.py check exit 0; five package builds/verifications; 13 package Python tests. Step exits: {'clang': 0, 'clippy': 0, 'contracts_check': 0, 'fmt': 0, 'followup': 0, 'lean': 0, 'package_build': 0, 'probe': 0, 'provider_clippy': 0, 'provider_fmt': 0, 'provider_mutation': 0, 'provider_python': 0, 'provider_test': 0, 'submodules': 0, 'test': 0, 'verify_qcore.chunkio': 0, 'verify_qcore.cmetrics': 0, 'verify_qcore.ctraces': 0, 'verify_qcore.libevent': 0, 'verify_qcore.librdkafka': 0, 'docs_index': 0, 'python': 0}. Logs: ['/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-4', '/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/gate-7']. Clang recorded in this checkout. CARGO_INCREMENTAL=0. Native observation evidence only; no verdict, unit or function moved at the arbiter.",
+  "workspace_tests": 5270,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 172,
+  "lean_audits": 173,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6800,6 +6800,7 @@
    "AuditDereferencedResult.lean",
    "AuditDerivedResult.lean",
    "AuditDerivedTextAdmission.lean",
+   "AuditDescriptorNativeObservation.lean",
    "AuditDisjointFootprint.lean",
    "AuditEnumerationAttribution.lean",
    "AuditEpochAccounting.lean",
@@ -6916,7 +6917,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-indirect-access-general/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-descriptor-native-check/gate.json)"
  },
  "named_followups": [
   {
