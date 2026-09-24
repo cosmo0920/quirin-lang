@@ -500,5 +500,98 @@ theorem live_identity_reacquisition_rejected :
     run {} [.acquire .fd 1, .acquire .fd 2] = none := by
   decide
 
+/-! ### Phase B: binding recorded executions to a declared contract
+
+`qcore_contract::descriptor_contract_binding` checks each recorded execution
+of a declared callee against the callee's loaded contract. The owned-result
+rule is `OwnedResult.consistent`: a failing execution returns the kind's
+failure value (`-1` for the integer descriptor kind, NULL for a pointer
+kind), is admitted only if the contract may fail (`sentinel`/`nullable`), and
+acquires nothing; any other execution acquires exactly the result, of the
+declared kind. A release's caller precondition (a live identity of the
+declared kind) is not a contract fact: breaking it is exactly a rejected
+lifecycle step. Correspondence to the Rust binding is by review (rule 28). -/
+
+structure OwnedResult where
+  kind : Kind
+  mayFail : Bool
+  failure : Int
+  deriving DecidableEq, Repr
+
+structure Execution where
+  result : Int
+  acquired : List (Kind × Int)
+  deriving DecidableEq, Repr
+
+def OwnedResult.consistent (c : OwnedResult) (e : Execution) : Bool :=
+  if e.result = c.failure then c.mayFail && e.acquired.isEmpty
+  else decide (e.acquired = [(c.kind, e.result)])
+
+theorem consistent_failure_acquires_nothing {c : OwnedResult} {e : Execution}
+    (bound : c.consistent e = true) (failed : e.result = c.failure) :
+    c.mayFail = true ∧ e.acquired = [] := by
+  simp only [OwnedResult.consistent, failed, ↓reduceIte, Bool.and_eq_true,
+    List.isEmpty_iff] at bound
+  exact bound
+
+theorem consistent_success_acquires_the_declared_result {c : OwnedResult} {e : Execution}
+    (bound : c.consistent e = true) (succeeded : e.result ≠ c.failure) :
+    e.acquired = [(c.kind, e.result)] := by
+  simp only [OwnedResult.consistent, succeeded, ↓reduceIte, decide_eq_true_eq] at bound
+  exact bound
+
+/-- A contract that may not fail is contradicted by any failing execution. -/
+theorem never_failing_contract_is_contradicted_by_a_failure {c : OwnedResult} {e : Execution}
+    (never : c.mayFail = false) (failed : e.result = c.failure) :
+    c.consistent e = false := by
+  simp [OwnedResult.consistent, failed, never]
+
+/-- The acquisition a bound success records enters the lifecycle model with
+the declared kind. -/
+theorem bound_acquisition_has_the_declared_kind {c : OwnedResult} {slot next : Slot} {g : Nat}
+    (fresh : slot.live = false) (accepted : step slot (.acquire c.kind g) = some next) :
+    next.kind = c.kind ∧ next.live = true := by
+  rcases step_acquire_some.mp accepted with ⟨hl, _⟩ | ⟨_, _, rfl⟩
+  · rw [fresh] at hl
+    cases hl
+  · exact ⟨rfl, rfl⟩
+
+/-- A caller that releases an identity that is not live breaks the release
+precondition; the lifecycle model rejects that step. It is a caller fact
+(for example a second `close`), not a contradiction of the contract. -/
+theorem release_of_a_dead_identity_is_rejected {slot : Slot} {k : Kind} {g : Nat}
+    (dead : slot.live = false) : step slot (.release k g) = none := by
+  simp [step, dead]
+
+/-- A release of another kind than the live generation's is rejected. -/
+theorem release_of_another_kind_is_rejected {slot : Slot} {k : Kind} {g : Nat}
+    (other : slot.kind ≠ k) : step slot (.release k g) = none := by
+  simp [step, other]
+
+/-- The `ctr_random_get` shape: under a descriptor contract (failure `-1`), a
+bound success that returns `0` acquires descriptor `0`, which a positive
+guard (`fd > 0`) does not select. -/
+theorem zero_descriptor_is_acquired_and_missed_by_a_positive_guard {c : OwnedResult}
+    {acquired : List (Kind × Int)} (descriptor : c.failure = -1)
+    (bound : c.consistent ⟨0, acquired⟩ = true) :
+    acquired = [(c.kind, 0)] ∧ ¬ ((0 : Int) > 0) := by
+  refine ⟨?_, by decide⟩
+  have : (0 : Int) ≠ c.failure := by rw [descriptor]; decide
+  exact consistent_success_acquires_the_declared_result bound this
+
+theorem open_failure_binding_anchor :
+    ({ kind := .fd, mayFail := true, failure := -1 } : OwnedResult).consistent ⟨-1, []⟩ = true := by
+  decide
+
+theorem open_success_binding_anchor :
+    ({ kind := .fd, mayFail := true, failure := -1 } : OwnedResult).consistent
+      ⟨3, [(.fd, 3)]⟩ = true := by
+  decide
+
+theorem wrong_kind_success_binding_anchor :
+    ({ kind := .file, mayFail := true, failure := 0 } : OwnedResult).consistent
+      ⟨4096, [(.dir, 4096)]⟩ = false := by
+  decide
+
 end QCore.DescriptorNativeObservation
 

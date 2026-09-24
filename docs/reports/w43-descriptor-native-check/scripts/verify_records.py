@@ -10,7 +10,10 @@ current repository policy, and requires:
   * each accepted run's replay to reproduce its pinned report.json byte for
     byte, and each rejected run to be rejected again;
   * aggregate.py over the replayed reports to reproduce the pinned
-    aggregate.json byte for byte.
+    aggregate.json byte for byte;
+  * bind_contracts.py (Phase B) over the pinned records, under the current
+    landed libc contracts, to reproduce every pinned binding.json and the
+    pinned binding.json aggregate byte for byte.
 Exit 0 only if all of that holds. A policy or checker change that moves any
 result makes this fail; that is its purpose.
 """
@@ -62,6 +65,23 @@ def main() -> int:
                    check=True, capture_output=True)
     if (replayed / "aggregate.json").read_text() != (report / "aggregate.json").read_text():
         failures.append("aggregate differs from the pinned aggregate.json")
+    rebind = scratch / "rebind"
+    for run in summary["runs"]:
+        target = rebind / "runs" / run["name"]
+        target.mkdir(parents=True)
+        (target / "records.jsonl").write_bytes((scratch / "runs" / run["name"] / "records.jsonl").read_bytes())
+    (rebind / "summary.json").write_text((scratch / "summary.json").read_text())
+    bound = subprocess.run([sys.executable, str(HERE / "bind_contracts.py"), str(rebind), str(rebind / "binding.json")],
+                           capture_output=True, text=True)
+    if bound.returncode != 0:
+        failures.append(f"binding rejected: {bound.stdout}{bound.stderr}")
+    for run in summary["runs"]:
+        pinned = scratch / "runs" / run["name"] / "binding.json"
+        fresh = rebind / "runs" / run["name"] / "binding.json"
+        if pinned.is_file() != fresh.is_file() or (pinned.is_file() and pinned.read_text() != fresh.read_text()):
+            failures.append(f"{run['name']}: binding differs from the pinned binding.json")
+    if (rebind / "binding.json").read_text() != (report / "binding.json").read_text():
+        failures.append("binding aggregate differs from the pinned binding.json")
     print(json.dumps({"runs": len(summary["runs"]), "failures": failures}, indent=1))
     return 1 if failures else 0
 

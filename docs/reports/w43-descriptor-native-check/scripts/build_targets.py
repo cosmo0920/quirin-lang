@@ -130,7 +130,18 @@ def main() -> int:
     run(command, cwd=entry["directory"])
     build["monkey_socket_driver"] = {"command": command, "source_sha256": sha(HARNESS / "monkey_socket_driver.c"),
                                      "object_sha256": sha(driver), "profile_entry": entry["file"]}
-    targets = dict(TARGETS, **{"monkey-socket-driver": str(driver)})
+    # ctraces random driver compiled with ctr_random.c's pinned profile (Phase B).
+    entry = next(e for e in database if e["file"].endswith("/lib/ctraces/src/ctr_random.c"))
+    flags = [a for a in shlex.split(entry["command"])[1:] if a.startswith(("-I", "-D", "-std="))]
+    random_driver = out / "ctraces_random_driver.o"
+    command = ["clang", *flags, "-g", "-Wall", "-Werror", "-c", str(HARNESS / "ctraces_random_driver.c"),
+               "-o", str(random_driver)]
+    run(command, cwd=entry["directory"])
+    build["ctraces_random_driver"] = {"command": command,
+                                      "source_sha256": sha(HARNESS / "ctraces_random_driver.c"),
+                                      "object_sha256": sha(random_driver), "profile_entry": entry["file"]}
+    targets = dict(TARGETS, **{"monkey-socket-driver": str(driver),
+                               "ctraces-random-driver": str(random_driver)})
     link = (private_build / "src/CMakeFiles/fluent-bit-bin.dir/link.txt").read_text().split()
     wraps = ["-Wl,--wrap=" + name for name in WRAPPED]
     for name, test_object in targets.items():

@@ -4,12 +4,12 @@
 Usage: pin_records.py MEASUREMENT_DIR REPORT_DIR
 
 MEASUREMENT_DIR holds `targets/` (build_targets.py) and `run/`
-(run_scenarios.py) plus `aggregate.json`. Writes REPORT_DIR/records/
+(run_scenarios.py) plus `aggregate.json` and `binding.json` (bind_contracts.py). Writes REPORT_DIR/records/
 observations.tar.gz (deterministic: sorted members, zero mtimes and owners)
-with every run's records.jsonl, run.json, report.json (when accepted),
+with every run's records.jsonl, run.json, report.json and binding.json (when accepted),
 stdout, stderr and fluent-bit.conf, plus sites.json, summary.json and
 build.json; REPORT_DIR/records/manifest.json with each member's SHA-256; and
-copies aggregate.json and build.json beside it. Binaries, storage chunk
+copies aggregate.json, binding.json and build.json beside it. Binaries, storage chunk
 files and copied plugin DSOs are not pinned; their hashes are in build.json.
 """
 import gzip
@@ -21,7 +21,7 @@ import shutil
 import sys
 import tarfile
 
-KEEP = {"records.jsonl", "run.json", "report.json", "stdout", "stderr", "fluent-bit.conf"}
+KEEP = {"records.jsonl", "run.json", "report.json", "binding.json", "stdout", "stderr", "fluent-bit.conf"}
 
 
 def main() -> int:
@@ -58,6 +58,7 @@ def main() -> int:
         "members": manifest,
     }, indent=1, sort_keys=True) + "\n")
     shutil.copyfile(measurement / "aggregate.json", report / "aggregate.json")
+    shutil.copyfile(measurement / "binding.json", report / "binding.json")
     shutil.copyfile(measurement / "targets" / "build.json", report / "build.json")
     print(json.dumps({"members": len(manifest), "archive_bytes": len(compressed.getvalue())}))
     return 0

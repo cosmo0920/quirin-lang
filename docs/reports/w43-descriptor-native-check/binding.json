@@ -1,0 +1,1035 @@
+{
+ "bound": {
+  "close": {
+   "caller_observations": {
+    "invalid_argument": 37,
+    "not_live": 49
+   },
+   "contract": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None, parameter_kinds: {0: Descriptor} }",
+   "contradictions": 0,
+   "executions": 905,
+   "facts": {},
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 73,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "closedir": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None, parameter_kinds: {0: Directory} }",
+   "contradictions": 0,
+   "executions": 47,
+   "facts": {
+    "release_ends_owned_descriptor": 47
+   },
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 29,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "fclose": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None, parameter_kinds: {0: Stream} }",
+   "contradictions": 0,
+   "executions": 71,
+   "facts": {
+    "release_ends_owned_descriptor": 71
+   },
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 35,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "fflush": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "contradictions": 0,
+   "executions": 77,
+   "facts": {},
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 39,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "fileno": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: None }",
+   "contradictions": 0,
+   "executions": 38,
+   "facts": {},
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 20,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "fopen": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: Owned { nullable: true }, result_kind: Stream }",
+   "contradictions": 0,
+   "executions": 56,
+   "facts": {
+    "owned_result_derives_its_descriptor": 33
+   },
+   "failures": 22,
+   "injected": 1,
+   "released_despite_error": 0,
+   "runs": 35,
+   "successes": 33,
+   "zero_results": 0
+  },
+  "fprintf": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }",
+   "contradictions": 0,
+   "executions": 89,
+   "facts": {},
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 24,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "getpeername": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed, Borrowed], result: None }",
+   "contradictions": 0,
+   "executions": 1,
+   "facts": {},
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 1,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "getsockopt": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed, Borrowed, Borrowed, Borrowed], result: None }",
+   "contradictions": 0,
+   "executions": 2,
+   "facts": {},
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 2,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "listen": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }",
+   "contradictions": 0,
+   "executions": 34,
+   "facts": {},
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 34,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "open": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: Owned { nullable: true }, result_kind: Descriptor }",
+   "contradictions": 0,
+   "executions": 171,
+   "facts": {},
+   "failures": 23,
+   "injected": 3,
+   "released_despite_error": 0,
+   "runs": 30,
+   "successes": 145,
+   "zero_results": 1
+  },
+  "opendir": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed], result: Owned { nullable: true }, result_kind: Directory }",
+   "contradictions": 0,
+   "executions": 49,
+   "facts": {
+    "owned_result_derives_its_descriptor": 28
+   },
+   "failures": 20,
+   "injected": 1,
+   "released_despite_error": 0,
+   "runs": 29,
+   "successes": 28,
+   "zero_results": 0
+  },
+  "read": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed, Borrowed], result: None }",
+   "contradictions": 0,
+   "executions": 596,
+   "facts": {},
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 13,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "recv": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed, Borrowed, Borrowed], result: None }",
+   "contradictions": 0,
+   "executions": 48,
+   "facts": {},
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 6,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "send": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed, Borrowed, Borrowed], result: None }",
+   "contradictions": 0,
+   "executions": 6,
+   "facts": {},
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 2,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "setsockopt": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed, Borrowed, Borrowed, Borrowed], result: None }",
+   "contradictions": 0,
+   "executions": 28,
+   "facts": {},
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 13,
+   "successes": 0,
+   "zero_results": 0
+  },
+  "socket": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed, Borrowed], result: Owned { nullable: true }, result_kind: Descriptor }",
+   "contradictions": 0,
+   "executions": 85,
+   "facts": {},
+   "failures": 20,
+   "injected": 5,
+   "released_despite_error": 0,
+   "runs": 38,
+   "successes": 60,
+   "zero_results": 0
+  },
+  "write": {
+   "caller_observations": {},
+   "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed, Borrowed], result: None }",
+   "contradictions": 0,
+   "executions": 536,
+   "facts": {},
+   "failures": 0,
+   "injected": 0,
+   "released_despite_error": 0,
+   "runs": 31,
+   "successes": 0,
+   "zero_results": 0
+  }
+ },
+ "caller_observation_runs": {
+  "close:invalid_argument": [
+   "test.pipe.pipe_usage",
+   "test.file.file_read_text_file",
+   "test.file.file_read_empty_file",
+   "test.file.file_read_missing",
+   "test.network.ipv4_client_server",
+   "test.network.ipv6_client_server",
+   "test.network.ipv6_bracketed_listen",
+   "test.network.accept_empty_nonblocking_listener",
+   "test.network.downstream_event_callback_runs_on_parent_stack",
+   "test.fstore.all",
+   "test.fstore.delete_after_external_close",
+   "test.utils.url_split",
+   "test.utils.url_split_sds",
+   "test.utils.write_str",
+   "test.utils.write_str_simd_boundary",
+   "test.utils.write_str_special_bytes",
+   "test.utils.write_raw_str_special_bytes",
+   "test.utils.write_raw_str_invalid_bytes",
+   "test.utils.test_write_str_invalid_trailing_bytes",
+   "test.utils.test_write_str_invalid_leading_byte",
+   "test.utils.test_write_str_edge_cases",
+   "test.utils.test_write_str_invalid_leading_byte_case_2",
+   "test.utils.test_write_str_buffer_overrun",
+   "test.utils.proxy_url_split",
+   "test.utils.test_flb_utils_split",
+   "test.utils.test_flb_utils_split_quoted",
+   "test.utils.test_flb_utils_split_quoted_errors",
+   "test.utils.test_flb_utils_get_machine_id",
+   "test.utils.test_size_to_bytes",
+   "test.utils.test_size_to_bianry_bytes",
+   "test.network.accept_empty_nonblocking_listener.inject-socket",
+   "test.network.accept_empty_nonblocking_listener.inject-getaddrinfo",
+   "test.network.ipv6_bracketed_listen.inject-socket",
+   "test.fstore.all.inject-open",
+   "test.fstore.all.inject-mmap",
+   "engine.dummy_null.inject-epoll_create1",
+   "engine.dummy_null.inject-pipe"
+  ],
+  "close:not_live": [
+   "engine.dummy_null",
+   "engine.tcp_filesystem_storage",
+   "engine.http_server_monkey",
+   "engine.dynamic_plugin",
+   "engine.dynamic_plugin_twice",
+   "engine.plugin_invalid_name",
+   "engine.tcp_filesystem_storage.inject-socket",
+   "engine.tcp_filesystem_storage.inject-accept4",
+   "engine.tcp_filesystem_storage.inject-open",
+   "engine.tcp_filesystem_storage.inject-mmap",
+   "engine.http_server_monkey.inject-accept4"
+  ]
+ },
+ "contradiction_runs": {},
+ "contradictions": 0,
+ "modules": [
+  "providers/quirin-provider-libc/contracts/libc/dirent.qcore",
+  "providers/quirin-provider-libc/contracts/libc/socket.qcore",
+  "providers/quirin-provider-libc/contracts/libc/stdio.qcore",
+  "providers/quirin-provider-libc/contracts/libc/unistd.qcore"
+ ],
+ "rejected": [],
+ "runs_bound": 78,
+ "schema_version": 1,
+ "static_certificate": false,
+ "unbound": {
+  "accept4": {
+   "acquired_equals_result": 28,
+   "acquiring_by_result": {
+    "positive": 28
+   },
+   "acquisitions": {
+    "Fd": 28
+   },
+   "argument_1_values": {
+    "524288": 19,
+    "526336": 36
+   },
+   "executions": 59,
+   "injected": 4,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 27,
+   "result_other_negative": 0,
+   "result_positive": 28,
+   "result_zero": 0,
+   "runs": 31
+  },
+  "accept_enter": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 59,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 59,
+   "runs": 31
+  },
+  "bind": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 15,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 15,
+   "runs": 14
+  },
+  "connect": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 6,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 6,
+   "runs": 5
+  },
+  "dirfd": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 19,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 19,
+   "result_zero": 0,
+   "runs": 19
+  },
+  "dlclose": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 42,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {
+    "DlHandle": 42
+   },
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 42,
+   "runs": 22
+  },
+  "dlopen": {
+   "acquired_equals_result": 43,
+   "acquiring_by_result": {
+    "positive": 43
+   },
+   "acquisitions": {
+    "DlHandle": 43
+   },
+   "argument_1_values": {},
+   "executions": 66,
+   "injected": 2,
+   "reacquired_while_live": 20,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 43,
+   "result_zero": 21,
+   "runs": 25
+  },
+  "dlsym": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 24,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 24,
+   "runs": 22
+  },
+  "dup": {
+   "acquired_equals_result": 18,
+   "acquiring_by_result": {
+    "positive": 18
+   },
+   "acquisitions": {
+    "Fd": 18
+   },
+   "argument_1_values": {},
+   "executions": 19,
+   "injected": 1,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 18,
+   "result_zero": 0,
+   "runs": 19
+  },
+  "dup2": {
+   "acquired_equals_result": 19,
+   "acquiring_by_result": {
+    "positive": 19
+   },
+   "acquisitions": {
+    "Fd": 19
+   },
+   "argument_1_values": {
+    "3": 19,
+    "4": 19
+   },
+   "executions": 38,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 38,
+   "result_zero": 0,
+   "runs": 19
+  },
+  "epoll_create1": {
+   "acquired_equals_result": 66,
+   "acquiring_by_result": {
+    "positive": 66
+   },
+   "acquisitions": {
+    "Fd": 66
+   },
+   "argument_1_values": {},
+   "executions": 88,
+   "injected": 2,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 20,
+   "result_other_negative": 0,
+   "result_positive": 66,
+   "result_zero": 0,
+   "runs": 36
+  },
+  "epoll_ctl": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {
+    "1": 282,
+    "2": 229,
+    "3": 6
+   },
+   "executions": 517,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 517,
+   "runs": 33
+  },
+  "epoll_wait": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 894,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 894,
+   "runs": 13
+  },
+  "eventfd": {
+   "acquired_equals_result": 19,
+   "acquiring_by_result": {
+    "positive": 19
+   },
+   "acquisitions": {
+    "Fd": 19
+   },
+   "argument_1_values": {
+    "-1": 20,
+    "524288": 19
+   },
+   "executions": 40,
+   "injected": 1,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 20,
+   "result_other_negative": 0,
+   "result_positive": 19,
+   "result_zero": 0,
+   "runs": 20
+  },
+  "fcntl": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {
+    "2": 2,
+    "3": 14,
+    "4": 14
+   },
+   "executions": 30,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 30,
+   "runs": 12
+  },
+  "fcntl_dupfd": {
+   "acquired_equals_result": 18,
+   "acquiring_by_result": {
+    "positive": 18
+   },
+   "acquisitions": {
+    "Fd": 18
+   },
+   "argument_1_values": {
+    "1030": 18
+   },
+   "executions": 19,
+   "injected": 1,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 18,
+   "result_zero": 0,
+   "runs": 19
+  },
+  "fdopen": {
+   "acquired_equals_result": 18,
+   "acquiring_by_result": {
+    "positive": 18
+   },
+   "acquisitions": {
+    "File": 18
+   },
+   "argument_1_values": {},
+   "executions": 38,
+   "injected": 1,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 18,
+   "result_zero": 19,
+   "runs": 19
+  },
+  "fdopendir": {
+   "acquired_equals_result": 19,
+   "acquiring_by_result": {
+    "positive": 19
+   },
+   "acquisitions": {
+    "Dir": 19
+   },
+   "argument_1_values": {},
+   "executions": 20,
+   "injected": 1,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 19,
+   "result_zero": 0,
+   "runs": 20
+  },
+  "fgets": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 165,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 165,
+   "runs": 29
+  },
+  "fread": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 3,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 3,
+   "runs": 2
+  },
+  "freeaddrinfo": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 41,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {
+    "Addrinfo": 41
+   },
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 41,
+   "runs": 36
+  },
+  "fseek": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 4,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 4,
+   "runs": 2
+  },
+  "fstat": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 50,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 50,
+   "runs": 8
+  },
+  "ftell": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 2,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 2,
+   "runs": 2
+  },
+  "getaddrinfo": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {
+    "zero": 41
+   },
+   "acquisitions": {
+    "Addrinfo": 41
+   },
+   "argument_1_values": {
+    "0": 39,
+    "1": 22
+   },
+   "executions": 64,
+   "injected": 3,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 20,
+   "result_positive": 0,
+   "result_zero": 41,
+   "runs": 39
+  },
+  "getsockname": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 5,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 5,
+   "runs": 5
+  },
+  "isatty": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 553,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 553,
+   "runs": 52
+  },
+  "mmap": {
+   "acquired_equals_result": 59,
+   "acquiring_by_result": {
+    "positive": 59
+   },
+   "acquisitions": {
+    "Mapping": 59
+   },
+   "argument_1_values": {
+    "1": 39,
+    "3": 40
+   },
+   "executions": 82,
+   "injected": 3,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 20,
+   "result_other_negative": 0,
+   "result_positive": 59,
+   "result_zero": 0,
+   "runs": 38
+  },
+  "mremap": {
+   "acquired_equals_result": 19,
+   "acquiring_by_result": {
+    "positive": 19
+   },
+   "acquisitions": {
+    "Mapping": 19
+   },
+   "argument_1_values": {
+    "16384": 19
+   },
+   "executions": 19,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {
+    "Mapping": 19
+   },
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 19,
+   "result_zero": 0,
+   "runs": 19
+  },
+  "msync": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 25,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 25,
+   "runs": 25
+  },
+  "munmap": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 44,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {
+    "Mapping": 44
+   },
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 44,
+   "runs": 26
+  },
+  "openat": {
+   "acquired_equals_result": 19,
+   "acquiring_by_result": {
+    "positive": 19
+   },
+   "acquisitions": {
+    "Fd": 19
+   },
+   "argument_1_values": {
+    "0": 39
+   },
+   "executions": 40,
+   "injected": 1,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 20,
+   "result_other_negative": 0,
+   "result_positive": 19,
+   "result_zero": 0,
+   "runs": 20
+  },
+  "pipe": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {
+    "zero": 161
+   },
+   "acquisitions": {
+    "Fd": 322
+   },
+   "argument_1_values": {},
+   "executions": 163,
+   "injected": 2,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 161,
+   "runs": 36
+  },
+  "pipe2": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {
+    "zero": 19
+   },
+   "acquisitions": {
+    "Fd": 38
+   },
+   "argument_1_values": {},
+   "executions": 20,
+   "injected": 1,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 19,
+   "runs": 20
+  },
+  "posix_fallocate": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 8,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 8,
+   "runs": 7
+  },
+  "readdir": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 159,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 159,
+   "runs": 28
+  },
+  "socketpair": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {
+    "zero": 19
+   },
+   "acquisitions": {
+    "Fd": 38
+   },
+   "argument_1_values": {
+    "1": 39
+   },
+   "executions": 40,
+   "injected": 1,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 20,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 19,
+   "runs": 20
+  },
+  "timerfd_create": {
+   "acquired_equals_result": 97,
+   "acquiring_by_result": {
+    "positive": 97
+   },
+   "acquisitions": {
+    "Fd": 97
+   },
+   "argument_1_values": {
+    "0": 97
+   },
+   "executions": 97,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 97,
+   "result_zero": 0,
+   "runs": 11
+  },
+  "timerfd_settime": {
+   "acquired_equals_result": 0,
+   "acquiring_by_result": {},
+   "acquisitions": {},
+   "argument_1_values": {},
+   "executions": 97,
+   "injected": 0,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 0,
+   "result_zero": 97,
+   "runs": 11
+  },
+  "tmpfile": {
+   "acquired_equals_result": 19,
+   "acquiring_by_result": {
+    "positive": 19
+   },
+   "acquisitions": {
+    "File": 19
+   },
+   "argument_1_values": {},
+   "executions": 20,
+   "injected": 1,
+   "reacquired_while_live": 0,
+   "releases": {},
+   "result_minus_one": 0,
+   "result_other_negative": 0,
+   "result_positive": 19,
+   "result_zero": 0,
+   "runs": 20
+  }
+ },
+ "zero_descriptor_result_runs": {
+  "open": [
+   "ctraces.random.stdin_closed"
+  ]
+ }
+}

@@ -140,6 +140,12 @@ def scenarios(targets):
     monkey("tcp", ("getaddrinfo", 1, EAI_NONAME, "mk_socket_server"), "listener address resolution fails")
     monkey("tcp", ("accept4", 1, ECONNABORTED, "mk_socket_accept"), "first accept fails")
 
+    # Phase B: the actual ctr_random_get (lib/ctraces/src/ctr_random.c), called directly.
+    for scenario, note in (("stdin_open", "open(/dev/urandom) with descriptor 0 inherited and live"),
+                           ("stdin_closed", "descriptor 0 closed first: open returns 0, the if (fd > 0) guard")):
+        runs.append({"name": f"ctraces.random.{scenario}", "target": "ctraces-random-driver",
+                     "argv": [scenario], "inject": None, "note": note, "kind": "probe", "timeout": 30})
+
     def engine(name, argv=None, service="", inputs="", outputs="", action=None, inject=None,
                note="", expect_exit_alone=False, duration=2.5):
         runs.append({"name": f"engine.{name}" + (f".inject-{inject[0]}" if inject else ""),
@@ -339,7 +345,7 @@ def main() -> int:
         raise SystemExit(f"build the checker first: {CHECKER}")
     ranges = {name: function_ranges(targets / name) for name in
               ("fluent-bit", "flb-it-pipe", "flb-it-network", "flb-it-fstore", "flb-it-utils", "flb-it-file",
-               "libc-descriptor-probe", "monkey-socket-driver")}
+               "libc-descriptor-probe", "monkey-socket-driver", "ctraces-random-driver")}
     env_base = {key: value for key, value in os.environ.items() if not key.startswith("QCORE_")}
     env_base["LC_ALL"] = "C"
     tmp = tempfile.mkdtemp(prefix="w43-desc-", dir=str(out))
