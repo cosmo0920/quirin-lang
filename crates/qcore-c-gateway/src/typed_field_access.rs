@@ -1329,7 +1329,13 @@ impl FunctionTypes {
         let mut variables = BTreeMap::new();
         let mut elements = BTreeMap::new();
         let mut census = DeclCensus::default();
-        if !read_parameters(model, parameters, &mut variables, &mut elements, &mut census) {
+        if !read_parameters(
+            model,
+            parameters,
+            &mut variables,
+            &mut elements,
+            &mut census,
+        ) {
             return Self::build(None, bound, BTreeMap::new(), census);
         }
         if !read_locals(model, body, &mut variables, &mut elements, &mut census) {
@@ -1904,6 +1910,378 @@ pub(crate) fn scalar_member_store_base<'a>(
         return None;
     }
     Some(base)
+}
+
+/// Card **W43-INDIRECT-ACCESS-GENERAL**: what one admitted typed scalar
+/// access statement asks of the flow analysis.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub(crate) struct TypedScalarPlan {
+    /// Every name the statement dereferences — `*B`, `B[I]` or `B->F` — in
+    /// first-occurrence order, without repeats. Each must pass the dereference
+    /// obligation at the statement.
+    pub(crate) bases: Vec<String>,
+    /// The subset of `bases` read through `->`, whose C02-P-ALIAS may-alias
+    /// obligation travels with the instruction exactly as a modeled read's does.
+    pub(crate) record_bases: Vec<String>,
+    /// The declared scalar variable the statement writes, when its destination
+    /// is a plain name rather than an access.
+    pub(crate) destination: Option<String>,
+    /// Whether the statement writes through `*B` or `B[I]`. Such a write may
+    /// reach any byte of the object `B` points into — a character-typed one
+    /// can rewrite a pointer object's representation without undefined
+    /// behaviour — so the flow analysis bounds its effect on bindings exactly
+    /// as the refusal it replaces did. A member store `B->F` or `S.F` writes
+    /// one scalar member and nothing else.
+    pub(crate) writes_through_pointer: bool,
+}
+
+impl TypedScalarPlan {
+    fn add_base(&mut self, base: &str, record: bool) {
+        if !self.bases.iter().any(|known| known == base) {
+            self.bases.push(base.to_owned());
+        }
+        if record && !self.record_bases.iter().any(|known| known == base) {
+            self.record_bases.push(base.to_owned());
+        }
+    }
+}
+
+/// One access in operand position: the index just past it, the name it
+/// dereferences (none for `S . F`) and whether that name is a record pointer.
+struct TypedAccess<'a> {
+    end: usize,
+    base: Option<&'a str>,
+    record: bool,
+}
+
+impl TypedAccess<'_> {
+    /// `*B` or `B[I]`: an access through a scalar pointer or array, as opposed
+    /// to a member selection.
+    fn through_pointer(&self) -> bool {
+        self.base.is_some() && !self.record
+    }
+}
+
+/// Whether the token at `at` continues an access into something this rule
+/// does not admit: another member, a subscript or a call.
+fn continues_access(texts: &[&str], at: usize) -> bool {
+    match texts.get(at).copied() {
+        Some(".") | Some("[") | Some("(") => true,
+        Some("-") => texts.get(at + 1) == Some(&">"),
+        _ => false,
+    }
+}
+
+/// Parse one typed scalar access at `index` (card
+/// **W43-INDIRECT-ACCESS-GENERAL**). Every premise is a declaration fact this
+/// function's reader committed to; nothing is inferred from spelling alone.
+fn typed_access<'a>(
+    texts: &[&'a str],
+    index: usize,
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> Option<TypedAccess<'a>> {
+    let text = *texts.get(index)?;
+    if text == "*" {
+        let name = *texts.get(index + 1)?;
+        if !is_name(name) || types.scalar_element(name) != Some(ScalarElement::Pointer) {
+            return None;
+        }
+        let end = index + 2;
+        // `* p ++` increments the pointer, not the object: never an access here.
+        if continues_access(texts, end)
+            || matches!(
+                (texts.get(end).copied(), texts.get(end + 1).copied()),
+                (Some("+"), Some("+")) | (Some("-"), Some("-"))
+            )
+        {
+            return None;
+        }
+        return Some(TypedAccess {
+            end,
+            base: Some(name),
+            record: false,
+        });
+    }
+    if !is_name(text) {
+        return None;
+    }
+    match (texts.get(index + 1).copied(), texts.get(index + 2).copied()) {
+        (Some("-"), Some(">")) => {
+            let field = *texts.get(index + 3)?;
+            let Some(DeclaredType::RecordPointer(tag)) = types.declared(text) else {
+                return None;
+            };
+            if !is_name(field) || !model.scalar_field(tag, field) {
+                return None;
+            }
+            let end = index + 4;
+            (!continues_access(texts, end)).then_some(TypedAccess {
+                end,
+                base: Some(text),
+                record: true,
+            })
+        }
+        (Some("."), _) => {
+            let field = *texts.get(index + 2)?;
+            let Some(DeclaredType::Record(tag)) = types.declared(text) else {
+                return None;
+            };
+            if !is_name(field) || !model.scalar_field(tag, field) {
+                return None;
+            }
+            let end = index + 3;
+            (!continues_access(texts, end)).then_some(TypedAccess {
+                end,
+                base: None,
+                record: false,
+            })
+        }
+        (Some("["), _) => {
+            types.scalar_element(text)?;
+            let close = matching_close(texts, index + 1, "[", "]")?;
+            let subscript = &texts[index + 2..close];
+            if subscript.is_empty() || scalar_statement_accesses(subscript, model, types) != Some(0)
+            {
+                return None;
+            }
+            let end = close + 1;
+            (!continues_access(texts, end)).then_some(TypedAccess {
+                end,
+                base: Some(text),
+                record: false,
+            })
+        }
+        _ => None,
+    }
+}
+
+/// Walk one scalar expression that may carry typed scalar accesses, adding
+/// their bases to `plan`. Returns the number of accesses, or `None` on any
+/// token outside the rule: a call, `&` in operand position, `,`, a lone `=`,
+/// an increment, a pointer-valued name, or an unbalanced parenthesis.
+fn typed_scalar_expression(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    plan: &mut TypedScalarPlan,
+) -> Option<usize> {
+    let mut accesses = 0usize;
+    let mut expect_operand = true;
+    let mut depth = 0usize;
+    let mut index = 0usize;
+    while index < texts.len() {
+        let text = texts[index];
+        if expect_operand {
+            if text == "(" {
+                let close = matching_close(texts, index, "(", ")")?;
+                let inner = &texts[index + 1..close];
+                // A cast to a scalar type name: its operand follows.
+                if !inner.is_empty() && model.scalar_type_name(inner) {
+                    index = close + 1;
+                    continue;
+                }
+                depth += 1;
+                index += 1;
+                continue;
+            }
+            if matches!(text, "-" | "+" | "!" | "~") {
+                if matches!(text, "-" | "+") && texts.get(index + 1) == Some(&text) {
+                    return None;
+                }
+                index += 1;
+                continue;
+            }
+            if is_numeric_literal(text) || text == "__qcore_literal__" {
+                expect_operand = false;
+                index += 1;
+                continue;
+            }
+            if let Some(access) = typed_access(texts, index, model, types) {
+                accesses += 1;
+                if let Some(base) = access.base {
+                    plan.add_base(base, access.record);
+                }
+                index = access.end;
+                expect_operand = false;
+                continue;
+            }
+            if is_name(text)
+                && texts.get(index + 1) != Some(&"(")
+                && (model.enum_constants.contains(text)
+                    || types.declared(text) == Some(&DeclaredType::Scalar))
+            {
+                expect_operand = false;
+                index += 1;
+                continue;
+            }
+            return None;
+        }
+        if text == ")" {
+            depth = depth.checked_sub(1)?;
+            index += 1;
+            continue;
+        }
+        match (text, texts.get(index + 1).copied().unwrap_or("")) {
+            ("+", "+") | ("-", "-") => return None,
+            ("=", "=")
+            | ("!", "=")
+            | ("<", "=")
+            | (">", "=")
+            | ("<", "<")
+            | (">", ">")
+            | ("&", "&")
+            | ("|", "|") => {
+                index += 2;
+                expect_operand = true;
+                continue;
+            }
+            _ => {}
+        }
+        if matches!(
+            text,
+            "+" | "-" | "*" | "/" | "%" | "<" | ">" | "^" | "|" | "&" | "?" | ":"
+        ) {
+            index += 1;
+            expect_operand = true;
+            continue;
+        }
+        return None;
+    }
+    (!expect_operand && depth == 0).then_some(accesses)
+}
+
+/// Strip parentheses that enclose the whole run.
+fn strip_enclosing<'a, 'b>(mut texts: &'b [&'a str]) -> &'b [&'a str] {
+    while texts.len() >= 2
+        && texts[0] == "("
+        && matching_close(texts, 0, "(", ")") == Some(texts.len() - 1)
+    {
+        texts = &texts[1..texts.len() - 1];
+    }
+    texts
+}
+
+/// Exactly one typed access spanning `texts`, after enclosing parentheses.
+/// `dereferencing` additionally requires a base: an increment is admitted only
+/// through a pointer, while an assignment may also store into `S . F`.
+fn single_typed_access(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    plan: &mut TypedScalarPlan,
+    dereferencing: bool,
+) -> Option<()> {
+    let texts = strip_enclosing(texts);
+    let access = typed_access(texts, 0, model, types)?;
+    if access.end != texts.len() || (dereferencing && access.base.is_none()) {
+        return None;
+    }
+    if let Some(base) = access.base {
+        plan.add_base(base, access.record);
+    }
+    plan.writes_through_pointer = access.through_pointer();
+    Some(())
+}
+
+/// Card **W43-INDIRECT-ACCESS-GENERAL**: a complete statement whose every
+/// memory access is a typed scalar access and whose destination and value are
+/// scalar. The statement can neither acquire, release, transfer nor rebind a
+/// tracked resource identity; what remains is the dereference obligation of
+/// each base, which the flow analysis checks.
+///
+/// Admitted forms, over the statement's complete token text:
+///
+/// * `ACCESS = E` and `ACCESS op= E` (every compound operator, `<<=` and `>>=`
+///   included), where `ACCESS` is `*B`, `B[I]`, `B->F` or `S.F`;
+/// * `++ACCESS`, `--ACCESS`, `ACCESS++` and `ACCESS--` through a pointer,
+///   never `*B++`;
+/// * `X = E`, `X op= E` and `SCALAR_TYPE X = E` with `X` a declared scalar and
+///   `E` carrying at least one access (`S.F` included).
+///
+/// `E` is built from numeric and character literals, declared scalars,
+/// enumeration constants, casts to scalar type names and typed accesses, with
+/// no call, no unary `&`, no comma, no nested assignment and no increment. An
+/// access is `*B` (`B` declared `SCALAR *`), `B[I]` (`B` declared `SCALAR *` or
+/// `SCALAR [N]`, `I` a scalar-only index), `B->F` (`B` declared `struct T *`,
+/// `F` a scalar member of a completely read `struct T`) or `S.F` (`S` declared
+/// `struct T`).
+pub(crate) fn typed_scalar_statement(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> Option<TypedScalarPlan> {
+    types.variables.as_ref()?;
+    if texts.is_empty()
+        || texts
+            .iter()
+            .any(|text| matches!(*text, "{" | "}" | ";" | ","))
+    {
+        return None;
+    }
+    let mut plan = TypedScalarPlan::default();
+    let Some((equal, operator)) = statement_assignment(texts) else {
+        let body = match texts {
+            ["+", "+", rest @ ..] | ["-", "-", rest @ ..] => rest,
+            [rest @ .., "+", "+"] | [rest @ .., "-", "-"] => {
+                // `* p ++` is `* (p ++)`: it increments the pointer.
+                if rest.first() == Some(&"*") {
+                    return None;
+                }
+                rest
+            }
+            _ => return None,
+        };
+        single_typed_access(body, model, types, &mut plan, true)?;
+        return Some(plan);
+    };
+    let left = &texts[..equal - operator];
+    let right = &texts[equal + 1..];
+    let lhs_access = single_typed_access(left, model, types, &mut plan, false).is_some();
+    if !lhs_access {
+        plan = TypedScalarPlan::default();
+        let (&name, specifiers) = left.split_last()?;
+        if !is_name(name) || types.declared(name) != Some(&DeclaredType::Scalar) {
+            return None;
+        }
+        if !specifiers.is_empty() && (operator != 0 || !model.scalar_type_name(specifiers)) {
+            return None;
+        }
+        plan.destination = Some(name.to_owned());
+    }
+    let accesses = typed_scalar_expression(right, model, types, &mut plan)?;
+    (lhs_access || accesses > 0).then_some(plan)
+}
+
+/// The statement's own assignment: the index of its top-level `=` and the
+/// length of the compound operator before it (0 for `=`, 1 for `+=`, 2 for
+/// `<<=`). `None` when there is no assignment at depth 0 or the first `=` at
+/// depth 0 belongs to a comparison.
+fn statement_assignment(texts: &[&str]) -> Option<(usize, usize)> {
+    let mut depth = 0usize;
+    for (index, text) in texts.iter().enumerate() {
+        match *text {
+            "(" | "[" => depth += 1,
+            ")" | "]" => depth = depth.checked_sub(1)?,
+            "=" if depth == 0 => {
+                let next = texts.get(index + 1).copied();
+                let previous = index.checked_sub(1).map(|at| texts[at]);
+                if next == Some("=") || matches!(previous, Some("=") | Some("!")) {
+                    return None;
+                }
+                return match previous {
+                    Some("<") | Some(">") => {
+                        let before = index.checked_sub(2).map(|at| texts[at]);
+                        (before == previous).then_some((index, 2))
+                    }
+                    Some("+" | "-" | "*" | "/" | "%" | "&" | "|" | "^") => Some((index, 1)),
+                    _ => Some((index, 0)),
+                };
+            }
+            _ => {}
+        }
+    }
+    None
 }
 
 /// Whether a statement operates only on declared scalar variables, enumeration

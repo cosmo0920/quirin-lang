@@ -206,7 +206,11 @@ fn rhs_mutation_and_indirect_rhs_shapes_keep_the_lexical_refusal() {
     if !clang_available() {
         return;
     }
-    for rhs in ["n++", "p->state", "p->next->state", "*(&n)"] {
+    // Card W43-INDIRECT-ACCESS-GENERAL deliberately admits `p->state` — a
+    // scalar member read of the same live identity — through its typed scalar
+    // access route; `a_live_member_read_on_the_rhs_is_admitted_by_the_general_route`
+    // pins that. The other three keep the lexical refusal.
+    for rhs in ["n++", "p->next->state", "*(&n)"] {
         let program = format!(
             "void subject(int n) {{ struct record *p = w_fresh(); p->state = {rhs}; w_release(p); }}"
         );
@@ -224,6 +228,20 @@ fn rhs_mutation_and_indirect_rhs_shapes_keep_the_lexical_refusal() {
             "{rhs}: {diagnostic:?}"
         );
     }
+}
+
+#[test]
+fn a_live_member_read_on_the_rhs_is_admitted_by_the_general_route() {
+    if !clang_available() {
+        return;
+    }
+    assert_safe(
+        "void subject(int n) { struct record *p = w_fresh(); p->state = p->state; w_release(p); }",
+    );
+    assert_unknown_alias(
+        "void subject(int n) { struct record *p = w_fresh(); w_release(p); p->state = p->state; }",
+        "p",
+    );
 }
 
 #[test]
