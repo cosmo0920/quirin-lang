@@ -1,0 +1,9 @@
+[
+ {
+  "id": "W43-DERIVED-SUMMARY-CONST-DROPPED-FROM-CHAIN",
+  "title": "An inferred derived-result summary reads `const_dropped` off the derivation chain, not off the wrapper's own declared types",
+  "why": "Card W43-RESULT-ALIAS-RETURNED publishes `ResourceReturnMode::Derived { .., const_dropped }` for a body whose exits return a pointer derived from one borrowed formal. A declared derived result sets `const_dropped` from its declared ABI types (base `ptr<const, u8>`, result `ptr<mut, u8>`). The inferred summary instead takes the disjunction of the flag over the returned bindings' derivation chains, because the gateway's transfer function does not see declared types. For `mk_core/mk_string.c` `mk_string_casestr(char *heystack, char *needle)` the summary therefore says `const_dropped: true` (it comes from `strcasestr`'s `const char *` haystack), although the wrapper's own formal is not `const`. The flag is read by no check today, so no verdict depends on it; it over-states, which is the conservative direction for the unimplemented W43-RESULT-ALIAS-CONST-WRITE. Discharge condition: when W43-RESULT-ALIAS-CONST-WRITE lands a check that reads `const_dropped`, either recompute an inferred summary's flag from the wrapper's declared parameter and result types (with Lean parity), or record that the chain's over-approximation is the intended reading.",
+  "source": "docs/reports/w43-result-alias-returned/README.md",
+  "recorded_by": "W43-RESULT-ALIAS-RETURNED"
+ }
+]
