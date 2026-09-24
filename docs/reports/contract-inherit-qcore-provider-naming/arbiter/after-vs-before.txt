@@ -1,0 +1,70 @@
+{
+ "diagnostics": {
+  "byte_identical": true
+ },
+ "chunk-contracts": {
+  "byte_identical": true
+ },
+ "contracts": {
+  "byte_identical": false,
+  "identical_after_root_alias": false,
+  "manifest_changed": true,
+  "sources_removed": [
+   "ROOT/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/memory.qcore",
+   "ROOT/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore"
+  ],
+  "sources_added": [
+   "qcore-provider-libevent:monkey/memory.qcore",
+   "qcore-provider-librdkafka:librdkafka/memory.qcore"
+  ],
+  "sources_changed": [],
+  "contract_inclusion_right": true,
+  "other_keys_changed": []
+ },
+ "source-effects": {
+  "byte_identical": false,
+  "identical_after_root_alias": false,
+  "changed_leaf_count": 41,
+  "changed_leaf_keys": [
+   [
+    "build_digest",
+    6
+   ],
+   [
+    "configuration_digest",
+    5
+   ],
+   [
+    "coverage",
+    3
+   ],
+   [
+    "kind",
+    6
+   ],
+   [
+    "obligation_id",
+    3
+   ],
+   [
+    "observed_runs_only",
+    6
+   ],
+   [
+    "paths",
+    6
+   ],
+   [
+    "qcore:boolean-field-import:v1",
+    3
+   ],
+   [
+    "task_digest",
+    3
+   ]
+  ]
+ },
+ "source": {
+  "byte_identical": true
+ }
+}

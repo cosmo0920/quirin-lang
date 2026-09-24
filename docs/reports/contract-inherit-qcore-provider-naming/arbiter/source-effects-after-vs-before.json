@@ -1,0 +1,400 @@
+{
+ "leaves": 29,
+ "classes": {
+  "resource_contracts:<digest> key": 6,
+  "checkout-path digest": 20,
+  "contract_sources digest": 3
+ },
+ "renamed_bound_keys_keep_values": true,
+ "rows": [
+  {
+   "path": [
+    "results",
+    16,
+    "bounds",
+    "resource_contracts:3a963dae4cd40165419c53ac"
+   ],
+   "left": null,
+   "right": {
+    "max_operations": null,
+    "observed_runs_only": false,
+    "path_exploration": {
+     "kind": "bounded_paths",
+     "paths": 4
+    },
+    "schedules_explored": null
+   },
+   "class": "resource_contracts:<digest> key"
+  },
+  {
+   "path": [
+    "results",
+    16,
+    "bounds",
+    "resource_contracts:6a4b5156e53c9971576f00dc"
+   ],
+   "left": {
+    "max_operations": null,
+    "observed_runs_only": false,
+    "path_exploration": {
+     "kind": "bounded_paths",
+     "paths": 4
+    },
+    "schedules_explored": null
+   },
+   "right": null,
+   "class": "resource_contracts:<digest> key"
+  },
+  {
+   "path": [
+    "results",
+    16,
+    "evidence",
+    "coverage",
+    0
+   ],
+   "left": "resource_contracts:6a4b5156e53c9971576f00dc",
+   "right": "resource_contracts:3a963dae4cd40165419c53ac",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    16,
+    "evidence",
+    "unit",
+    "build_digest"
+   ],
+   "left": "ca4151c75e165acafe6a537bbf96ffe0fbd8221d77bc0bce891f0a9b8b883ca9",
+   "right": "dee3e55db336f1a772f99b3457ad5f3b9c66e5bfe89354e72357834482c08f9d",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    16,
+    "import_identity",
+    "configuration_digest"
+   ],
+   "left": "e2bc9254900e0120dd11412bb01aec03e5839191a2d2d4ec53d50166ae0d3ea1",
+   "right": "a907571011f23f028e3c247fd60dba9d2f62b966d490c7e24ed5765ba27b8cf8",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    16,
+    "import_identity",
+    "helpers",
+    "cio_error_reset",
+    "configuration_digest"
+   ],
+   "left": "e2bc9254900e0120dd11412bb01aec03e5839191a2d2d4ec53d50166ae0d3ea1",
+   "right": "a907571011f23f028e3c247fd60dba9d2f62b966d490c7e24ed5765ba27b8cf8",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    16,
+    "task",
+    "contract_sources",
+    "qcore:boolean-field-import:v1"
+   ],
+   "left": "ca4151c75e165acafe6a537bbf96ffe0fbd8221d77bc0bce891f0a9b8b883ca9",
+   "right": "dee3e55db336f1a772f99b3457ad5f3b9c66e5bfe89354e72357834482c08f9d",
+   "class": "contract_sources digest"
+  },
+  {
+   "path": [
+    "results",
+    16,
+    "task",
+    "obligations",
+    0,
+    "obligation_id"
+   ],
+   "left": "resource_contracts:6a4b5156e53c9971576f00dc",
+   "right": "resource_contracts:3a963dae4cd40165419c53ac",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    16,
+    "task",
+    "unit",
+    "build_digest"
+   ],
+   "left": "ca4151c75e165acafe6a537bbf96ffe0fbd8221d77bc0bce891f0a9b8b883ca9",
+   "right": "dee3e55db336f1a772f99b3457ad5f3b9c66e5bfe89354e72357834482c08f9d",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    16,
+    "witness",
+    "task_digest"
+   ],
+   "left": "f31abbba70227ccd90e58cc18496111ff8a66c892b9414cd7000e9fa7b3c1a61",
+   "right": "a835a641e2be1b7cdb4ee92216411e7fde4868359bfc393dbb4473300878fbf7",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    24,
+    "bounds",
+    "resource_contracts:377ce21f50da9b3f45589f1b"
+   ],
+   "left": {
+    "max_operations": null,
+    "observed_runs_only": false,
+    "path_exploration": {
+     "kind": "bounded_paths",
+     "paths": 4
+    },
+    "schedules_explored": null
+   },
+   "right": null,
+   "class": "resource_contracts:<digest> key"
+  },
+  {
+   "path": [
+    "results",
+    24,
+    "bounds",
+    "resource_contracts:434582aac7f17696ca0b3130"
+   ],
+   "left": null,
+   "right": {
+    "max_operations": null,
+    "observed_runs_only": false,
+    "path_exploration": {
+     "kind": "bounded_paths",
+     "paths": 4
+    },
+    "schedules_explored": null
+   },
+   "class": "resource_contracts:<digest> key"
+  },
+  {
+   "path": [
+    "results",
+    24,
+    "evidence",
+    "coverage",
+    0
+   ],
+   "left": "resource_contracts:377ce21f50da9b3f45589f1b",
+   "right": "resource_contracts:434582aac7f17696ca0b3130",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    24,
+    "evidence",
+    "unit",
+    "build_digest"
+   ],
+   "left": "ca4151c75e165acafe6a537bbf96ffe0fbd8221d77bc0bce891f0a9b8b883ca9",
+   "right": "dee3e55db336f1a772f99b3457ad5f3b9c66e5bfe89354e72357834482c08f9d",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    24,
+    "import_identity",
+    "configuration_digest"
+   ],
+   "left": "e2bc9254900e0120dd11412bb01aec03e5839191a2d2d4ec53d50166ae0d3ea1",
+   "right": "a907571011f23f028e3c247fd60dba9d2f62b966d490c7e24ed5765ba27b8cf8",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    24,
+    "import_identity",
+    "helpers",
+    "cio_error_reset",
+    "configuration_digest"
+   ],
+   "left": "e2bc9254900e0120dd11412bb01aec03e5839191a2d2d4ec53d50166ae0d3ea1",
+   "right": "a907571011f23f028e3c247fd60dba9d2f62b966d490c7e24ed5765ba27b8cf8",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    24,
+    "task",
+    "contract_sources",
+    "qcore:boolean-field-import:v1"
+   ],
+   "left": "ca4151c75e165acafe6a537bbf96ffe0fbd8221d77bc0bce891f0a9b8b883ca9",
+   "right": "dee3e55db336f1a772f99b3457ad5f3b9c66e5bfe89354e72357834482c08f9d",
+   "class": "contract_sources digest"
+  },
+  {
+   "path": [
+    "results",
+    24,
+    "task",
+    "obligations",
+    0,
+    "obligation_id"
+   ],
+   "left": "resource_contracts:377ce21f50da9b3f45589f1b",
+   "right": "resource_contracts:434582aac7f17696ca0b3130",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    24,
+    "task",
+    "unit",
+    "build_digest"
+   ],
+   "left": "ca4151c75e165acafe6a537bbf96ffe0fbd8221d77bc0bce891f0a9b8b883ca9",
+   "right": "dee3e55db336f1a772f99b3457ad5f3b9c66e5bfe89354e72357834482c08f9d",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    24,
+    "witness",
+    "task_digest"
+   ],
+   "left": "c24ac7b0d696cba2f65181d0dcb52ce1725d109c2707217163591299065615be",
+   "right": "f06a5794d190f12e59b45d6ae5b9b89b8bdc64af6f8a3d0e7871b1d196b7db6f",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    63,
+    "bounds",
+    "resource_contracts:853a13b274a3bd6fd8f56133"
+   ],
+   "left": null,
+   "right": {
+    "max_operations": null,
+    "observed_runs_only": false,
+    "path_exploration": {
+     "kind": "bounded_paths",
+     "paths": 4
+    },
+    "schedules_explored": null
+   },
+   "class": "resource_contracts:<digest> key"
+  },
+  {
+   "path": [
+    "results",
+    63,
+    "bounds",
+    "resource_contracts:c1f428682cc165f69e2ff10a"
+   ],
+   "left": {
+    "max_operations": null,
+    "observed_runs_only": false,
+    "path_exploration": {
+     "kind": "bounded_paths",
+     "paths": 4
+    },
+    "schedules_explored": null
+   },
+   "right": null,
+   "class": "resource_contracts:<digest> key"
+  },
+  {
+   "path": [
+    "results",
+    63,
+    "evidence",
+    "coverage",
+    0
+   ],
+   "left": "resource_contracts:c1f428682cc165f69e2ff10a",
+   "right": "resource_contracts:853a13b274a3bd6fd8f56133",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    63,
+    "evidence",
+    "unit",
+    "build_digest"
+   ],
+   "left": "7c99ffa33eba9d9455e393f9c2776886a8fd66d194804434d9ccda97183b7456",
+   "right": "701f09fcb1cfebf0d528fa4d1d17f51856cd29179a6c7836d7476976bed80a08",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    63,
+    "import_identity",
+    "configuration_digest"
+   ],
+   "left": "8cc6c0636cadc8dcefcd039c129cb1696ddfd76ecd7238c263394444f9ec7707",
+   "right": "9e3842ed33d977f5a8b60626e0a3b769a61880c9f462e7a4671c00106cd41911",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    63,
+    "task",
+    "contract_sources",
+    "qcore:boolean-field-import:v1"
+   ],
+   "left": "7c99ffa33eba9d9455e393f9c2776886a8fd66d194804434d9ccda97183b7456",
+   "right": "701f09fcb1cfebf0d528fa4d1d17f51856cd29179a6c7836d7476976bed80a08",
+   "class": "contract_sources digest"
+  },
+  {
+   "path": [
+    "results",
+    63,
+    "task",
+    "obligations",
+    0,
+    "obligation_id"
+   ],
+   "left": "resource_contracts:c1f428682cc165f69e2ff10a",
+   "right": "resource_contracts:853a13b274a3bd6fd8f56133",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    63,
+    "task",
+    "unit",
+    "build_digest"
+   ],
+   "left": "7c99ffa33eba9d9455e393f9c2776886a8fd66d194804434d9ccda97183b7456",
+   "right": "701f09fcb1cfebf0d528fa4d1d17f51856cd29179a6c7836d7476976bed80a08",
+   "class": "checkout-path digest"
+  },
+  {
+   "path": [
+    "results",
+    63,
+    "witness",
+    "task_digest"
+   ],
+   "left": "3ed0c0a8c2e9d85ec127c3a4cde3fc79a272cf67e55ce4b48e4843cc96deb254",
+   "right": "e322a45234788a487247765d43ae4f2968add393e629c59339a7defd030f3d09",
+   "class": "checkout-path digest"
+  }
+ ]
+}
