@@ -127,6 +127,19 @@ def scenarios(targets):
                      "inject": (call, 1, error, None), "note": "injected failure of the first call",
                      "kind": "probe", "timeout": 30})
 
+    # Monkey server sockets: the actual mk_socket.c functions, called directly.
+    def monkey(scenario, inject=None, note=""):
+        runs.append({"name": f"monkey.{scenario}" + (f".inject-{inject[0]}" if inject else ""),
+                     "target": "monkey-socket-driver", "argv": [scenario, "."], "inject": inject,
+                     "note": note, "kind": "probe", "timeout": 30})
+
+    monkey("tcp", note="server, connect, accept, peer address, close; then an empty nonblocking accept")
+    monkey("unix", note="mk_socket_open to a listening and to a missing Unix socket")
+    monkey("bind_in_use", note="second mk_socket_server on a listening port: bind fails with EADDRINUSE")
+    monkey("tcp", ("socket", 1, EMFILE, "mk_socket_create"), "listener socket creation fails")
+    monkey("tcp", ("getaddrinfo", 1, EAI_NONAME, "mk_socket_server"), "listener address resolution fails")
+    monkey("tcp", ("accept4", 1, ECONNABORTED, "mk_socket_accept"), "first accept fails")
+
     def engine(name, argv=None, service="", inputs="", outputs="", action=None, inject=None,
                note="", expect_exit_alone=False, duration=2.5):
         runs.append({"name": f"engine.{name}" + (f".inject-{inject[0]}" if inject else ""),
@@ -150,7 +163,8 @@ def scenarios(targets):
            inputs=dummy_in, outputs=qdesc_out, note="the same DSO loaded twice: counted dl references")
     engine("plugin_invalid_name", argv=["-e", "{run}/qdesc-invalid.so", "-c", "{config}"],
            inputs=dummy_in, outputs=null_out,
-           note="dlopen succeeds, the name check fails, dlclose", expect_exit_alone=True)
+           note="a name without the flb- prefix routes to the Go proxy loader: dlopen succeeds, "
+                "registration fails without an error and the engine runs on")
     engine("plugin_missing", argv=["-e", "{run}/flb-out_missing.so", "-c", "{config}"],
            inputs=dummy_in, outputs=null_out, note="dlopen fails", expect_exit_alone=True)
     # Injected failures in the engine.
@@ -305,7 +319,7 @@ def symbolize(out, targets, source_root):
         blocks = [block.splitlines() for block in text.strip().split("\n\n")]
         for offset, block in zip(ordered, blocks):
             # Inlined frames print innermost first; keep the full chain.
-            frames = [{"function": block[i], "location": block[i + 1].replace(str(source_root) + "/", "")}
+            frames = [{"function": block[i], "location": block[i + 1].replace(str(source_root) + "/", "").replace(str(REPO) + "/", "")}
                       for i in range(0, len(block) - 1, 2)]
             sites[f"{module}:{offset}"] = frames[0] | {"inlined_into": frames[1:]}
     (out / "sites.json").write_text(json.dumps(sites, indent=1, sort_keys=True) + "\n")
@@ -325,7 +339,7 @@ def main() -> int:
         raise SystemExit(f"build the checker first: {CHECKER}")
     ranges = {name: function_ranges(targets / name) for name in
               ("fluent-bit", "flb-it-pipe", "flb-it-network", "flb-it-fstore", "flb-it-utils", "flb-it-file",
-               "libc-descriptor-probe")}
+               "libc-descriptor-probe", "monkey-socket-driver")}
     env_base = {key: value for key, value in os.environ.items() if not key.startswith("QCORE_")}
     env_base["LC_ALL"] = "C"
     tmp = tempfile.mkdtemp(prefix="w43-desc-", dir=str(out))

@@ -121,9 +121,19 @@ def main() -> int:
     run(command, cwd=entry["directory"])
     build["fixture_plugin"] = {"command": command, "source_sha256": sha(HARNESS / "flb_out_qdesc_plugin.c"),
                                "object_sha256": sha(plugin), "profile_entry": entry["file"]}
+    # Monkey socket driver compiled with mk_socket.c's pinned profile.
+    entry = next(e for e in database if e["file"].endswith("/lib/monkey/mk_server/mk_socket.c"))
+    flags = [a for a in shlex.split(entry["command"])[1:] if a.startswith(("-I", "-D", "-std="))]
+    driver = out / "monkey_socket_driver.o"
+    command = ["clang", *flags, "-g", "-Wall", "-Werror", "-c", str(HARNESS / "monkey_socket_driver.c"),
+               "-o", str(driver)]
+    run(command, cwd=entry["directory"])
+    build["monkey_socket_driver"] = {"command": command, "source_sha256": sha(HARNESS / "monkey_socket_driver.c"),
+                                     "object_sha256": sha(driver), "profile_entry": entry["file"]}
+    targets = dict(TARGETS, **{"monkey-socket-driver": str(driver)})
     link = (private_build / "src/CMakeFiles/fluent-bit-bin.dir/link.txt").read_text().split()
     wraps = ["-Wl,--wrap=" + name for name in WRAPPED]
-    for name, test_object in TARGETS.items():
+    for name, test_object in targets.items():
         args = []
         for arg in link:
             if arg.startswith("--dependency-file"):

@@ -435,3 +435,49 @@ fn policy_text_drives_the_result() {
     let missing = POLICY.replace("descriptor_release_at_most_once", "descriptor_renamed");
     assert!(check_descriptor_observations(&text, &missing).is_err());
 }
+
+/// Pinned real executions from the W43-DESCRIPTOR-NATIVE-CHECK measurement
+/// (`docs/reports/w43-descriptor-native-check/records/`): the replay must keep
+/// reproducing their recorded results under the current policy.
+#[test]
+fn pinned_fluent_bit_engine_run_reproduces_its_double_closes() {
+    let records = include_str!("../fixtures/descriptor/engine_dummy_null.jsonl");
+    let report = check_descriptor_observations(records, POLICY).unwrap();
+    assert_eq!(report.records, 398);
+    // flb_config_exit closes ch_event.fd and ch_manager[0] (one generation),
+    // and flb_sched_destroy closes each timer fd before flb_sched_timer_destroy
+    // closes it again: five second closes, each answered EBADF.
+    assert_eq!(violations(&report, "release_at_most_once"), 5);
+    for example in &report.properties["release_at_most_once"].examples {
+        assert_eq!(example.call, "close");
+        assert!(example.detail.contains("errno 9"), "{}", example.detail);
+    }
+    assert_eq!(total_violations(&report), 5);
+    let leaked: Vec<_> = report.live_at_exit.iter().filter(|live| !live.inherited).collect();
+    assert_eq!(leaked.len(), 1);
+    assert_eq!(leaked[0].kind, Kind::Mapping);
+}
+
+#[test]
+fn pinned_libc_probe_run_holds_every_property() {
+    let records = include_str!("../fixtures/descriptor/probe_libc.jsonl");
+    let report = check_descriptor_observations(records, POLICY).unwrap();
+    assert_eq!(total_violations(&report), 0, "{:#?}", report.properties);
+    assert!(report.properties["relation_holds"].checks >= 7);
+    assert_eq!(report.properties["counted_reference"].checks, 1);
+    assert!(report.properties["mapping_extent"].checks >= 3);
+    assert!(report.live_at_exit.iter().all(|live| live.inherited));
+}
+
+#[test]
+fn pinned_monkey_bind_failure_run_leaves_its_socket_live_at_exit() {
+    let records = include_str!("../fixtures/descriptor/monkey_bind_in_use.jsonl");
+    let report = check_descriptor_observations(records, POLICY).unwrap();
+    assert_eq!(total_violations(&report), 0);
+    let leaked: Vec<_> = report.live_at_exit.iter().filter(|live| !live.inherited).collect();
+    assert_eq!(leaked.len(), 1);
+    assert_eq!(
+        (leaked[0].kind, leaked[0].origin_call.as_str()),
+        (Kind::Fd, "socket")
+    );
+}
