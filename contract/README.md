@@ -240,8 +240,43 @@ quietly returning a weaker table.
 A resource projection of a lifecycle module is written as its own v1 module —
 `fluent_bit/resource_memory.qcore` projects `fluent_bit/memory.qcore`, and
 `chunkio/resource_open_close.qcore` projects the ChunkIO destructors — and is
-never inferred by dropping predicates the loader cannot check. Non-null error
-sentinels (a resource returned as `MAP_FAILED` or `-1` rather than null) stay
+never inferred by dropping predicates the loader cannot check.
+
+**The projection is a checked relation (card CONTRACT-VIEW-PROJECTION-CHECK).**
+A function may be declared in more than one module only as one hand-written
+view per consuming checker, and every such pair is registered in
+`qcore_contract::contract_views::REGISTERED_RELATIONS` with a relation the
+corpus guard (`compiler/tests/contract_view_census.rs`) checks:
+
+* **projection** — the detailed contract, read through a declared bridge from
+  its vocabulary to the v1 predicates, must *entail* every view clause. The
+  entailment is decided exactly over the equality fragment the shared
+  interpreter evaluates; the detailed premises the view does not discharge are
+  computed and must equal the pinned list, and a coverage-restricting one needs
+  a registered finding. `flb_malloc`, `flb_calloc` and `flb_free` in
+  `memory.qcore` entail their v1 views under `ordinary_allocator_profile`
+  alone; `cio_chunk_close`'s view follows from `chunkio/chunk_destructor.qcore`
+  on every backend but from `chunkio/memory_close.qcore` only on memory-backed
+  chunks (`CONTRACT-VIEW-CHUNK-CLOSE-BACKEND-COVERAGE`);
+* **renamed equivalence** — `chunkio/error_frame.qcore` and
+  `chunkio/error_state.qcore` are token-equal under a four-word renaming and
+  both frame evaluators give identical results whenever the protected set
+  contains `lock` and excludes the written field. Both stay: each is the
+  contract of a different evaluator flavour bound into its own task identity;
+* **agreement of different kinds** — source-shape metadata in
+  `monkey/wait_source_policy.qcore` must agree with the typed declarations in
+  `monkey/wrapper_paths.qcore` and `monkey/composition.qcore` on every recorded
+  C signature, arity, ABI category, struct nominal and declaration fact; two
+  lifecycle profiles must agree on every position's ABI type.
+
+A new multi-module declaration, a stale registration or a failing relation
+fails the guard; mutating either side of any pair is refused by the negative
+controls in `crates/qcore-contract/tests/contract_views.rs`. Textual duplicates
+are removed instead: `monkey/wait_source_policy.qcore` is the single owner of
+`source_identity`, which the timeout-teardown consumer now reads from it. See
+the [report](../docs/reports/contract-view-projection-check/README.md).
+
+Non-null error sentinels (a resource returned as `MAP_FAILED` or `-1` rather than null) stay
 unrepresentable: the target interface records only nullability, so they need
 interface work rather than loader vocabulary.
 

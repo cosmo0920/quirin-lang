@@ -1,0 +1,20 @@
+{
+ "base": "f8b41209",
+ "results": [
+  {
+   "package": "qcore.libevent",
+   "module": "monkey/timeout_teardown.qcore",
+   "clean_exit": 0,
+   "base_text_exit": 1,
+   "restored_exit": 0
+  },
+  {
+   "package": "qcore.chunkio",
+   "module": "chunkio/chunk_destructor.qcore",
+   "clean_exit": 0,
+   "base_text_exit": 1,
+   "restored_exit": 0
+  }
+ ],
+ "all_as_required": true
+}

@@ -75,6 +75,7 @@ fn evidence(projection: &TimeoutTeardownSourceProjection) -> TimeoutTeardownEvid
         source_summary_digest: projection.source_summary_digest().into(),
         libevent_event_c_digest: projection.libevent_event_c_digest().into(),
         contract_digest: projection.contract_digest().into(),
+        source_identity_digest: projection.source_identity_digest().into(),
         path_index: 1,
         callback: "cb_timeout".into(),
         base: 2,
@@ -177,6 +178,12 @@ fn source_order_and_evidence_binding_are_load_bearing() {
     );
 
     let projection = projection();
+    assert!(check_timeout_teardown_evidence(&projection, &evidence(&projection)).is_ok());
+    // Card CONTRACT-VIEW-PROJECTION-CHECK: the owner of the evaluated source
+    // identity is bound; evidence naming another owner is refused.
+    let mut other_owner = evidence(&projection);
+    other_owner.source_identity_digest = projection.contract_digest().into();
+    assert!(check_timeout_teardown_evidence(&projection, &other_owner).is_err());
     let mut wrong = evidence(&projection);
     std::mem::swap(&mut wrong.delete_sequence, &mut wrong.free_sequence);
     assert!(check_timeout_teardown_evidence(&projection, &wrong).is_err());
