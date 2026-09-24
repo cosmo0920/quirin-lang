@@ -1,7 +1,9 @@
 # W43-DESCRIPTOR-RESOURCE-TRACKING: kind-indexed custody, integer-carried descriptors and eight libc declarations
 
 Card W43-DESCRIPTOR-RESOURCE-TRACKING, 2026-09-25, on base `f8b41209` (main
-after CONTRACT-INHERIT-ADOPTION's matrix repair). File descriptors and other OS
+after CONTRACT-INHERIT-ADOPTION's matrix repair), merged with main `0a07cb57`
+(W43-INDIRECT-ACCESS-GENERAL, CONTRACT-INHERIT-QCORE-PROVIDER-NAMING and
+CONTRACT-VIEW-PROJECTION-CHECK) and re-arbitrated on the combined tree. File descriptors and other OS
 handles could not be tracked: a descriptor is an `int`, which vocabulary
 version 1 never treated as custody, and v1 custody had one kind, so a declared
 `fopen`/`fclose` pair would have let `free(fopen(…))` and `fclose(malloc(…))`
@@ -55,28 +57,29 @@ the resource loader, and registers five residuals.
   `fileno`. **Refused by name: the other ten**, and six more spelled without a
   leaf, each with a measured ground (§4), including `dlopen`/`dlclose`, withheld
   because their one corpus effect was a leak candidate refuted by reading.
-* **Arbiter.** BEFORE reproduces the W43-LIBC-RESULT-ALIAS diagnostics byte for
-  byte. **(a) Vocabulary and gateway alone: all five artifacts byte-identical to
+* **Arbiter** (combined tree). BEFORE, main `0a07cb57`'s own binary, reproduces
+  the W43-INDIRECT-ACCESS-GENERAL diagnostics byte for byte. **(a) Vocabulary and gateway alone: all five artifacts byte-identical to
   BEFORE.** **(b) Declarations:** 60 leaves removed, 43 added, all attributed;
   56 are the declared callees' own leaves. **(c) Wrappers:** none declared.
   **(d) Candidates:** one leak added (`ctr_random_get`, `if (fd > 0)`), one leak
   withdrawn by refusal (`mk_rconf_read`, still Unsafe); no kind-mismatch or
   use-after-close leaf.
-* **Totals.** Functions 257 / 84 / 4,493 → **257 / 85 / 4,492** (Safe /
-  provisional Unsafe / Unknown); units 2 / 42 / 137 / 4 → **2 / 43 / 136 / 4**.
-  Leak **272** (+1 −1), `unknown_alias` 4,657 → 4,695, `unsupported` 48,930 →
-  48,875. The frozen prediction ([PREDICTION.md](PREDICTION.md)) held on the
+* **Totals.** Functions 269 / 84 / 4,481 → **269 / 85 / 4,480** (Safe /
+  provisional Unsafe / Unknown); units 3 / 42 / 136 / 4 → **3 / 43 / 135 / 4**.
+  Leak **271** (+1 −1), `unknown_alias` 4,727 → 4,765, `unsupported` 47,832 →
+  47,777. The pre-merge arbiter on `f8b41209` measured the identical movement
+  leaf for leaf ([pre-merge-totals.txt](pre-merge-totals.txt)). The frozen prediction ([PREDICTION.md](PREDICTION.md)) held on the
   function, unit and candidate rows; its three misses are listed in §1.
 
-| Measure | BEFORE (W43-LIBC-RESULT-ALIAS) | AFTER | Delta |
+| Measure | BEFORE (main `0a07cb57`, W43-INDIRECT-ACCESS-GENERAL baseline) | AFTER | Delta |
 |---|---:|---:|---:|
-| Functions Safe / provisional Unsafe / Unknown | 257 / 84 / 4,493 | **257 / 85 / 4,492** | 0 / +1 / −1 |
-| Units Safe / provisional Unsafe / Unknown / data-only | 2 / 42 / 137 / 4 | **2 / 43 / 136 / 4** | 0 / +1 / −1 / 0 |
-| `leak` / `summary_conflict` / `double_release` | 272 / 1 / 0 | 272 / 1 / 0 | +1 −1 / 0 / 0 |
+| Functions Safe / provisional Unsafe / Unknown | 269 / 84 / 4,481 | **269 / 85 / 4,480** | 0 / +1 / −1 |
+| Units Safe / provisional Unsafe / Unknown / data-only | 3 / 42 / 136 / 4 | **3 / 43 / 135 / 4** | 0 / +1 / −1 / 0 |
+| `leak` / `summary_conflict` / `double_release` | 271 / 1 / 0 | 271 / 1 / 0 | +1 −1 / 0 / 0 |
 | `invalid_release` / `use_after_release` | 0 / 0 | 0 / 0 | 0 |
-| `unknown_alias` | 4,657 | **4,695** | +38 |
-| `unsupported` | 48,930 | **48,875** | −55 |
-| `call to uncontracted function` on Unknown functions: leaves / functions / sole | 11,652 / 2,688 / 295 | 11,611 / 2,677 / 294 | −41 / −11 / −1 |
+| `unknown_alias` | 4,727 | **4,765** | +38 |
+| `unsupported` | 47,832 | **47,777** | −55 |
+| `call to uncontracted function` on Unknown functions: leaves / functions / sole | 11,642 / 2,684 / 298 | 11,601 / 2,673 / 297 | −41 / −11 / −1 |
 | Descriptor/handle callee leaves / functions / sole-blocked ([inventory](inventory-before.txt) → [after](inventory-after.txt)) | 80 / 38 / 5 | 24 / 14 / 3 | −56 / −24 / −2 |
 | Contract corpus modules / manifest-selected / resource-v1 declarations | 108 / 45 / 130 | **109 / 46 / 138** | +1 / +1 / +8 |
 
@@ -128,7 +131,7 @@ implementation. Outcome against it:
 | no kind-mismatch or use-after-close candidate | **0 / 0** |
 | `unsupported` −50…−65, `unknown_alias` +20…+35 | −55, **+38** (three above the band; `mk_rconf_read` alone adds ten, one per `fclose(f)`) |
 | declare `dlopen`/`dlclose` | **withdrawn** after the first AFTER run (§3); the prediction did not foresee the cast-return shape |
-| leak 273 | **272**: the predicted +1, and an unpredicted withdrawal (−1) in `mk_rconf_read` |
+| leak 272 → 273 | **272** (pre-merge; 271 on the combined tree): the predicted +1, and an unpredicted withdrawal (−1) in `mk_rconf_read` |
 
 ## 2. The design
 
@@ -299,7 +302,7 @@ selected in the first AFTER run (`measure/after1`), they moved one more function
 `return (rd_dl_hnd_t *)handle;`. The handle *is* returned; the return route reads
 `return (T *)p;` as returning no place. That shape reports the same false leak for
 a heap pointer (`a_cast_return_is_not_an_escape_for_any_kind`), and three of the
-272 baseline leaks already sit at one ([cast-return-leaks.txt](cast-return-leaks.txt)).
+271 combined-tree baseline leaks already sit at one ([cast-return-leaks.txt](cast-return-leaks.txt)).
 A declaration whose one corpus effect is a refuted candidate adds no evidence, so
 the pair and its kind were withdrawn before the published arbiter, and the
 return route is registered (`RETURN-CAST-PLACE-NOT-ESCAPED`).
@@ -335,22 +338,39 @@ All registered as `W43-DESCRIPTOR-REFUSED-SHAPES` and `RETURN-CAST-PLACE-NOT-ESC
 One command shape, [`../w43-return-expression/scripts/run_audit.py`](../w43-return-expression/scripts/run_audit.py),
 with `QCORE_CLANG=/usr/bin/clang` and the wave-20 ChunkIO package.
 
+The published arbiter runs on the **combined tree** after merging main
+`0a07cb57`:
+
 | Run | Tree | Declarations | Exit | Record |
 |---|---|---|---:|---|
-| BEFORE | base `f8b41209` (binary `a7341f11…`) | base | 0 | [before-run.json](before-run.json) |
-| CLASS-A | `1a5ebc5a`: kinds, integer identities, guards; no declaration | base | 0 | [class-a-run.json](class-a-run.json) |
-| AFTER-1 (private) | `a888657f`: ten declarations incl. `dlopen`/`dlclose` | 10 | 0 | `measure/after1` |
-| AFTER | `b2c4213e`: eight declarations | 8 | 0 | [after-run.json](after-run.json), [artifacts/run.json](artifacts/run.json) |
+| BEFORE | main `0a07cb57`'s own tree and binary (`9824e963…`), extracted by `git archive` to `measure/main-src` | main's | 0 | [before-run.json](before-run.json) |
+| CLASS-A | merge `06ee9fe4` binary (`73d6d00a…`) with main's `unistd`/`socket`/`stdio` modules and manifest | main's | 0 | [class-a-run.json](class-a-run.json) |
+| AFTER | merge `06ee9fe4` | + 8 | 0 | [after-run.json](after-run.json), [artifacts/run.json](artifacts/run.json) |
 
-**BEFORE vs the W43-LIBC-RESULT-ALIAS baseline** ([before-identity.json](before-identity.json)):
-diagnostics, chunk-contracts and source byte-identical; `contracts` and
-`source-effects` differ only by the checkout-path and inclusion-record
-identities the brief lists (`--root-alias` given; the contracts artifact also
-carries CONTRACT-INHERIT-ADOPTION's confirmed verdict-neutral changes).
+**BEFORE vs the W43-INDIRECT-ACCESS-GENERAL baseline** ([before-identity.json](before-identity.json),
+`--root-alias <this worktree>=…/agent-a8d24f7f717a987c1`): diagnostics,
+chunk-contracts and source byte-identical — 269 / 84 / 4,481 functions, 3 Safe
+units, leak 271, as the integrator recorded. `contracts` and `source-effects`
+carry the checkout-path identities the brief lists.
 
-**Class (a): CLASS-A vs BEFORE — all five artifacts byte-identical**, including
-`contracts` and `source-effects`. The capture run (`scripts/capture_run.sh`, the
-tee wrapper) on the CLASS-A binary reproduced its diagnostics byte for byte.
+**Class (a): CLASS-A vs BEFORE.** diagnostics, chunk-contracts and source
+byte-identical; `contracts` identical after rewriting BEFORE's checkout root to
+this worktree's; `source-effects` differs only in the path-derived fields the
+brief lists — `resource_contracts:<digest>`, `build_digest`,
+`configuration_digest`, `task_digest`, `obligation_id`, `coverage[0]` and the
+`contract_sources` digests ([class-a-path-alias-diff.txt](class-a-path-alias-diff.txt),
+[`scripts/path_alias_diff.py`](scripts/path_alias_diff.py)). With the indirect
+rule in force, the vocabulary and gateway alone move no verdict-bearing byte.
+
+**Pre-merge record.** The same three stages on base `f8b41209` against the
+W43-LIBC-RESULT-ALIAS baseline gave BEFORE byte-identical, CLASS-A byte-identical
+on **all five** artifacts (one checkout), and an AFTER whose attribution matches
+the combined tree's class by class and leaf by leaf; a private AFTER-1 with
+`dlopen`/`dlclose` still declared is §3's measurement. Totals are in
+[pre-merge-totals.txt](pre-merge-totals.txt). The capture run
+(`scripts/capture_run.sh`, the tee wrapper) on the pre-merge CLASS-A binary
+reproduced its diagnostics byte for byte and supplied the ABI census units and
+the `-E -P` texts.
 
 **AFTER vs CLASS-A.** chunk-contracts, source-effects and source byte-identical;
 `contracts` differs in the four edited module texts and the one added module.
@@ -389,11 +409,11 @@ delta, except `ctr_random.c`, whose status, `reason` and `reason_code`
 (`unsupported-syntax` → none) move with its one function's status; this is
 the attribution script's only failure line, and it is that unit move.
 
-**Leak pin (constraint 7).** 272 → **272**: one accusing addition
-(`ctr_random_get`, the first leak on an integer-carried identity) and one
-withdrawal-by-refusal (`mk_rconf_read` L383). The new baseline is
-[artifacts/](artifacts/) ([manifest.json](artifacts/manifest.json));
-`docs/reports/w43-libc-result-alias/artifacts/` is its frozen predecessor.
+**Leak pin (constraint 7).** 271 → **271** (272 → 272 pre-merge): one
+accusing addition (`ctr_random_get`, the first leak on an integer-carried
+identity) and one withdrawal-by-refusal (`mk_rconf_read` L383). The new
+baseline is [artifacts/](artifacts/) ([manifest.json](artifacts/manifest.json));
+`docs/reports/w43-indirect-access-general/artifacts/` is its frozen predecessor.
 
 ## 6. Pin changes, each deliberate
 
@@ -441,14 +461,15 @@ GATE_SECTION
   `RETURN-CAST-PLACE-NOT-ESCAPED`,
   `W43-DESCRIPTOR-ACCUSING-ARMS-UNEXERCISED-IN-CORPUS`,
   `W43-DESCRIPTOR-INDIRECT-ACCESS-WIRING`.
-* Follow-ups **299 → 303**. `corpus.cycle19_raw_units` points at this report's
+* Follow-ups **299 → 303** on the card branch before the merge; **313 → 317** on the
+  combined tree. `corpus.cycle19_raw_units` points at this report's
   artifacts; its previous contents are in [previous-corpus-row.json](previous-corpus-row.json).
   `docs/STATUS.md`'s corpus, contract-corpus, unit-reason and follow-up rows are
   updated from this arbiter.
 
 ## 9. For the integrator
 
-* **Constraint 7:** the leak pin holds at 272 through one accusing addition on
+* **Constraint 7:** the leak pin holds at 271 (combined tree) through one accusing addition on
   the first integer-carried identity and one withdrawal-by-refusal; both leaf
   coordinates are above.
 * **Constraint 5g / W43-INDIRECT-ACCESS-GENERAL:** §2.3. Wire the indirect rule's
@@ -490,21 +511,25 @@ GATE_SECTION
 ## Reproduction
 
 ```sh
-python3 docs/reports/w43-descriptor-resource-tracking/scripts/descriptor_inventory.py docs/reports/w43-libc-result-alias/artifacts/diagnostics.json.gz inventory.json
+python3 docs/reports/w43-descriptor-resource-tracking/scripts/descriptor_inventory.py docs/reports/w43-indirect-access-general/artifacts/diagnostics.json.gz inventory.json
 python3 docs/reports/w43-descriptor-resource-tracking/scripts/source_call_sites.py docs/reports/w43-libc-result-alias/artifacts/diagnostics.json.gz <fluent-bit-clang-source>
-python3 docs/reports/w43-return-expression/scripts/run_audit.py measure/before f8b41209      # base binary
-python3 docs/reports/w43-descriptor-resource-tracking/scripts/identity.py measure/before docs/reports/w43-libc-result-alias/artifacts before-identity.json
-python3 docs/reports/w43-return-expression/scripts/run_audit.py measure/class-a 1a5ebc5a    # card binary, base declarations
-docs/reports/w43-descriptor-resource-tracking/scripts/capture_run.sh measure/capture-run  # tee wrapper, CLASS-A binary
+git archive 0a07cb57 | tar -x -C measure/main-src    # plus a symlink to third_party/libevent
+(cd measure/main-src && cargo build --release -p qcore-compiler --example cycle19_fluent_bit_libraries_audit \
+  && python3 docs/reports/w43-return-expression/scripts/run_audit.py ../before-main 0a07cb57)
+python3 docs/reports/w43-descriptor-resource-tracking/scripts/identity.py measure/before-main docs/reports/w43-indirect-access-general/artifacts before-identity.json agent-a8d24f7f717a987c1
+# CLASS-A: this tree's binary with main's unistd/socket/stdio modules and manifest copied in, then restored
+python3 docs/reports/w43-return-expression/scripts/run_audit.py measure/class-a3 06ee9fe4+main-contract-data
+python3 docs/reports/w43-descriptor-resource-tracking/scripts/path_alias_diff.py measure/before-main measure/class-a3 $PWD/measure/main-src $PWD
+python3 docs/reports/w43-return-expression/scripts/run_audit.py measure/after3 06ee9fe4
+docs/reports/w43-descriptor-resource-tracking/scripts/capture_run.sh measure/capture-run  # tee wrapper, pre-merge CLASS-A binary
 python3 docs/reports/w43-descriptor-resource-tracking/scripts/strip.py
 python3 docs/reports/w43-descriptor-resource-tracking/scripts/census.py docs/reports/w43-descriptor-resource-tracking/measurement/drafts.qcore abi-census.txt
-python3 docs/reports/w43-return-expression/scripts/run_audit.py measure/after2 b2c4213e     # eight declarations
 python3 docs/reports/w43-libc-contracts/scripts/unit_texts.py measure/class-a/resource-diagnostics.json measure/capture/ppP measure/unit-texts
-python3 docs/reports/w43-libc-contracts/scripts/attribute.py measure/class-a measure/after2 measure/unit-texts attr.json docs/reports/w43-descriptor-resource-tracking/measurement/shipped-names.txt
-python3 docs/reports/w43-descriptor-resource-tracking/scripts/classes.py measure/before measure/class-a measure/after2 attr.json classes.json
-python3 docs/reports/w43-descriptor-resource-tracking/scripts/totals.py measure/before measure/class-a measure/after2
-python3 docs/reports/w43-descriptor-resource-tracking/scripts/cast_return_leaks.py measure/after2/resource-diagnostics.json measure/unit-texts
-python3 docs/reports/w43-libc-contracts/scripts/archive.py measure/after2 docs/reports/w43-descriptor-resource-tracking/artifacts
+python3 docs/reports/w43-libc-contracts/scripts/attribute.py measure/class-a3 measure/after3 measure/unit-texts attr.json docs/reports/w43-descriptor-resource-tracking/measurement/shipped-names.txt
+python3 docs/reports/w43-descriptor-resource-tracking/scripts/classes.py measure/before-main measure/class-a3 measure/after3 attr.json classes.json
+python3 docs/reports/w43-descriptor-resource-tracking/scripts/totals.py measure/before-main measure/class-a3 measure/after3
+python3 docs/reports/w43-descriptor-resource-tracking/scripts/cast_return_leaks.py measure/after3/resource-diagnostics.json measure/unit-texts
+python3 docs/reports/w43-libc-contracts/scripts/archive.py measure/after3 docs/reports/w43-descriptor-resource-tracking/artifacts
 python3 docs/reports/w43-descriptor-resource-tracking/scripts/update_ledger.py
 ```
 
@@ -512,5 +537,8 @@ python3 docs/reports/w43-descriptor-resource-tracking/scripts/update_ledger.py
 `dlopen`, `dlclose`, `fts_open` and `fts_close` entries; it loads only with the
 census binary that measured it, because the `file_tree` kind its `fts` drafts
 use was withdrawn afterwards. Private raw outputs are in this worktree's
-`measure/` (`before/`, `class-a/`, `capture-run/`, `capture/`, `after1/`,
-`after2/`, `unit-texts/`, `gate/`, `provider-gate/`).
+`measure/` (pre-merge `before/`, `class-a/`, `capture-run/`, `capture/`, `after1/`,
+`after2/`; combined `before-main/`, `class-a3/`, `after3/`; `unit-texts/`,
+`gate/`, `provider-gate/`, and the aborted pre-merge `gate-aborted-premerge/`).
+`measure/main-src` was deleted after its run so no stray `.qcore` copy reaches
+the repository-wide census tests.

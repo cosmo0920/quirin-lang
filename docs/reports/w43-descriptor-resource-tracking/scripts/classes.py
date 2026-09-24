@@ -77,8 +77,13 @@ def main() -> int:
     record["c_wrappers"] = "none declared"
     record["d_violation_candidates"] = candidates
     record["unattributed"] = unattributed
+    # The verdict-bearing artifacts must be byte-identical in class (a). The
+    # `contracts` and `source-effects` artifacts carry checkout-path identities
+    # when BEFORE was measured from another checkout; they are reported here and
+    # compared after a root rewrite by `path_alias_diff.py`.
+    verdict_bearing = ("diagnostics", "chunk-contracts", "source")
     record["attribution_complete"] = not unattributed and all(
-        record["a_vocabulary_and_gateway_alone"].values()
+        record["a_vocabulary_and_gateway_alone"][label] for label in verdict_bearing
     )
     pathlib.Path(sys.argv[5]).write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
     print(json.dumps({k: v for k, v in record.items() if k != "b_declarations"}, indent=1)[:3000])

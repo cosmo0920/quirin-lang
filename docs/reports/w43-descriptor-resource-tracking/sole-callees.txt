@@ -1,5 +1,5 @@
-Unknown functions whose only blocker is one uncontracted callee: 294
-distinct callees: 228
+Unknown functions whose only blocker is one uncontracted callee: 297
+distinct callees: 229
 functions  callee
         9  LZ4_decompress_generic (defined in: lz4.c)
         5  cmt_mpack_unpack_array
@@ -16,6 +16,8 @@ functions  callee
         3  rd_kafka_admin_result_ret_resources (defined in: rdkafka_admin.c)
         3  rd_kafka_admin_result_ret_topics (defined in: rdkafka_admin.c)
         3  rd_kafka_assignor_add
+        2  ctr_mpack_consume_int_tag (defined in: ctr_mpack_utils.c)
+        2  ctr_mpack_consume_uint_tag (defined in: ctr_mpack_utils.c)
         2  add_item_to_array (defined in: cJSON.c)
         2  get_object_item (defined in: cJSON.c)
         2  cJSON_ParseWithLengthOpts (defined in: cJSON.c)
@@ -29,5 +31,3 @@ functions  callee
         2  rd_kafka_metadata_copy_internal (defined in: rdkafka_metadata.c)
         2  rd_kafka_aborted_txns_next_offset (defined in: rdkafka_msgset_reader.c)
         2  rd_kafka_topic_partition_destroy0 (defined in: rdkafka_partition.c)
-        2  rd_kafka_topic_partition_list_difference0 (defined in: rdkafka_partition.c)
-        2  rd_kafka_topic_partition_list_intersection0 (defined in: rdkafka_partition.c)

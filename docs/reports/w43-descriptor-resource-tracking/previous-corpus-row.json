@@ -1,28 +1,28 @@
 {
-  "note": "W43-LIBC-RESULT-ALIAS, 2026-09-24. Staged arbiter: BEFORE (base binary) reproduces the W43-LIBC-CONTRACTS diagnostics byte for byte; the card's binary with no new declaration (reader change alone) reproduces all five BEFORE artifacts byte for byte; seven exact-alias declarations then remove 169 leaves and add 20, and six interior-pointer declarations remove 14 and add 1, all attributed. 12 functions Unknown -> Safe, each relative to the declared premises; 0 unit status moves; 0 invalid_release and 0 use_after_release candidates. Leak 272 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-libc-result-alias/previous-corpus-row.json.",
+  "note": "W43-INDIRECT-ACCESS-GENERAL, 2026-09-24. BEFORE (base binary) reproduces the W43-LIBC-RESULT-ALIAS diagnostics byte for byte, and so do the census-instrumented base runs. A typed scalar-access route (statements the classifier refused for their access, destination or increment, or named as an unsanctioned *p store) removes 1,112 leaves and adds 83, all attributed: 985 forecast rule leaves, 98 unforecast rule leaves, 1 unreached, 16 summary, 12 binding-precision; 78 exchanges, 5 summary-side additions, 0 violation candidates. 12 functions Unknown -> Safe (11 forecast), 1 unit Unknown -> Safe (cmt_time.c). Leak 272 -> 271: snappy.c L1694 withdrawn because the release before it is now credited (a framed store replaced a blanket poison). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-indirect-access-general/previous-corpus-row.json.",
   "units": 185,
-  "safe": 2,
+  "safe": 3,
   "provisional_unsafe": 42,
-  "unknown": 137,
+  "unknown": 136,
   "data_only": 4,
   "projected_functions": 4834,
-  "leak_diagnostics": 272,
+  "leak_diagnostics": 271,
   "process_sidecar": "3 checked function contracts / 93 Unknown",
-  "baseline": "docs/reports/w43-libc-result-alias/artifacts/",
-  "source": "docs/reports/w43-libc-result-alias/README.md; preceding baseline docs/reports/w43-libc-contracts/artifacts/",
-  "unknown_alias_diagnostics": 4657,
-  "unsupported_diagnostics": 48930,
+  "baseline": "docs/reports/w43-indirect-access-general/artifacts/",
+  "source": "docs/reports/w43-indirect-access-general/README.md; preceding baseline docs/reports/w43-libc-result-alias/artifacts/",
+  "unknown_alias_diagnostics": 4727,
+  "unsupported_diagnostics": 47832,
   "double_release_diagnostics": 0,
   "function_statuses": {
-    "safe": 257,
+    "safe": 269,
     "provisional_unsafe": 84,
-    "unknown": 4493
+    "unknown": 4481
   },
   "source_definitions": 4921,
   "unprojected_definitions": 87,
   "unit_reason_codes": {
-    "unsupported-syntax": 136,
-    "none": 48,
+    "unsupported-syntax": 135,
+    "none": 49,
     "incomplete-obligation-coverage": 1
   },
   "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"

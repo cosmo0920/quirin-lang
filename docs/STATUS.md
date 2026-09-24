@@ -4,7 +4,9 @@ Re-derived on 2026-09-21 from the sources below; corpus rows re-derived on
 2026-09-24 from the W43-INDIRECT-ACCESS-GENERAL arbiter (confirmed on the combined tree
 on 2026-09-25); contract-corpus rows re-derived on 2026-09-25 at the
 CONTRACT-INHERIT-QCORE-PROVIDER-NAMING and CONTRACT-VIEW-PROJECTION-CHECK integrations; the
-follow-up count at the W43-INDIRECT-ACCESS-GENERAL integration. This is the concise status
+follow-up count at the W43-INDIRECT-ACCESS-GENERAL integration; corpus, unit-reason,
+contract-corpus and follow-up rows then re-derived on 2026-09-25 from the
+W43-DESCRIPTOR-RESOURCE-TRACKING combined-tree arbiter (card branch). This is the concise status
 authority routed by `AGENTS.md`; reports own the underlying evidence. Update
 numbers from those sources, not from an older summary. History belongs in the
 [increment records](development/increments/README.md).
@@ -18,12 +20,12 @@ numbers from those sources, not from an older summary. History belongs in the
 | CT independent artifacts | **48** distinct source-fixture programs behind the 50 mapped cases (CT01/CT12/CT14 share one); **9** reviewed byte-identical fixture groups | Same manifest, `artifact_identity`, recomputed by `ct_corpus.rs`; [disclosure](reports/ct-shared-fixture-disclosure/README.md) |
 | CT case-bound proof | **5/50**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
 | CT gated sanitized-native | **10/50, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
-| Cycle 19 units | **3 Safe / 42 provisional Unsafe / 136 Unknown / 4 data-only**, 185 total; `cmt_time.c` moved Unknown → Safe at W43-INDIRECT-ACCESS-GENERAL | [W43 indirect-access corpus](reports/w43-indirect-access-general/README.md) |
-| Projected functions | **269 Safe / 84 provisional Unsafe / 4,481 Unknown**, 4,834 total; the 34 Safe added by the two W43 libc cards are relative to 68 declared libc/POSIX premises, and the 12 added by W43-INDIRECT-ACCESS-GENERAL to the typed scalar-access rule and existing premises | Same baseline |
-| Corpus diagnostics | leak **271**; unknown_alias **4,727**; double_release **0**; unsupported **47,832**; summary_conflict **1**; invalid_release / use_after_release **0 / 0** | Same baseline, `artifacts/diagnostics.json.gz`; the leak move 272 → 271 is one attributed false-leak withdrawal |
+| Cycle 19 units | **3 Safe / 43 provisional Unsafe / 135 Unknown / 4 data-only**, 185 total; `cmt_time.c` moved Unknown → Safe at W43-INDIRECT-ACCESS-GENERAL, `ctr_random.c` Unknown → provisional Unsafe at W43-DESCRIPTOR-RESOURCE-TRACKING | [W43 descriptor corpus](reports/w43-descriptor-resource-tracking/README.md) |
+| Projected functions | **269 Safe / 85 provisional Unsafe / 4,480 Unknown**, 4,834 total; the 34 Safe added by the two W43 libc cards are relative to 68 declared libc/POSIX premises, and the 12 added by W43-INDIRECT-ACCESS-GENERAL to the typed scalar-access rule and existing premises; the one provisional Unsafe added by W43-DESCRIPTOR-RESOURCE-TRACKING (`ctr_random_get`'s `if (fd > 0)` guard) is a candidate reachable only if `open` returns descriptor 0 | Same baseline |
+| Corpus diagnostics | leak **271**; unknown_alias **4,765**; double_release **0**; unsupported **47,777**; summary_conflict **1**; invalid_release / use_after_release **0 / 0** (the kind-mismatch and use-after-close candidates included) | Same baseline, `artifacts/diagnostics.json.gz`; the leak move 272 → 271 is one attributed false-leak withdrawal, and W43-DESCRIPTOR-RESOURCE-TRACKING's +1 −1 (one descriptor leak candidate, one withdrawal by refusal) is net zero |
 | Indirect-access refusals | **17,300** leaves on **3,291** Unknown functions, sole blocker of **380** (17,665 / 3,315 / 378 before W43-INDIRECT-ACCESS-GENERAL); the typed scalar-access rule removed 1,083 leaves across five access families, and the refused shapes are sized in its [residuals](reports/w43-indirect-access-general/residuals.txt) | [Current blocker census](reports/w43-indirect-access-general/blocker-census.txt) |
 | Return-expression refusals | **499** leaves on **422** Unknown functions, sole blocker of **149** (1,440 / 1,109 / 465 before W43-RETURN-EXPRESSION; two returned derived results joined at W43-LIBC-RESULT-ALIAS; 146 sole at that card, 149 after W43-INDIRECT-ACCESS-GENERAL cleared other families); 941 whole-call leaves carry the call classifier's own refusal | [W43 attribution](reports/w43-return-expression/attribution-summary.json), [current blocker census](reports/w43-indirect-access-general/blocker-census.txt) |
-| Unit reasons | **135 unsupported-syntax / 1 incomplete-obligation-coverage / 49 without a reason code** | [W43 indirect-access corpus row](reviews/r0_3/acceptance_matrix.json) (`corpus.cycle19_raw_units`); `cmt_time.c` lost its reason at W43-INDIRECT-ACCESS-GENERAL, and the earlier fields are in the [combined attribution](reports/w42-priority-integration/attribution.json) |
+| Unit reasons | **134 unsupported-syntax / 1 incomplete-obligation-coverage / 50 without a reason code** | [Corpus row](reviews/r0_3/acceptance_matrix.json) (`corpus.cycle19_raw_units`); `cmt_time.c` lost its reason at W43-INDIRECT-ACCESS-GENERAL and `ctr_random.c` at W43-DESCRIPTOR-RESOURCE-TRACKING, and the earlier fields are in the [combined attribution](reports/w42-priority-integration/attribution.json) |
 | Raw source coverage | **4,921 definitions / 4,834 projected / 87 pinned-build exclusions**, across **24 full-path units** | [Verified census](reports/w42-unprojected-definitions/README.md); combined inventory unchanged |
 | Monkey callback accounting | **3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown**; 8 source paths; per-callback obligations **51 relevant cells, 17 discharged / 34 open** (was 5 / 46) | [Callback report](reports/w42-monkey-callback-coverage/README.md); ordinary audit checks 0/8 native paths, optional focused replay 8/8; [per-callback composition](reports/w43-monkey-callback-composition/README.md) discharges initialization reachability (3 callbacks) and natural activation (2) from the pinned compile task |
 | Observed Monkey timed wait | **1 instrumented Linux epoll success run**, 11 identity records and 11 model operations; conditional replay, no coverage promotion | [Observed integration](reports/cycle18-observed-integration/README.md) |
@@ -31,10 +33,10 @@ numbers from those sources, not from an older summary. History belongs in the
 | Cycle 18 bounded aggregate | **3 joined families / 8 source paths / 7 unresolved obligations**, aggregate Unknown | [Broader integration](reports/cycle18-broader-integration/aggregate.json) |
 | Callback task handoff | **12 source-derived operations**, one Linux pthread fixture; production acceptance pending | [Integrated lifetime evidence](reports/cycle18-broader-integration/task-handoff.json) |
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
-| Contract corpus | **108** modules; **130** resource-v1 declarations; **45** manifest-selected, 4 of them by `crate:module` reference; **13** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 36 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) (all 11 contract crates) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md), [executable crates](reports/contract-inherit-qcore-provider-naming/README.md) |
+| Contract corpus | **109** modules; **138** resource-v1 declarations, **8** of them kinded (`descriptor`, `stream`, `directory`; contract spec §C04.6); **46** manifest-selected, 4 of them by `crate:module` reference; **13** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 37 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) (all 11 contract crates) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md), [executable crates](reports/contract-inherit-qcore-provider-naming/README.md) |
 | Multi-module declarations | **10** functions in **12** module pairs, every pair a registered checked relation: 5 projections, 1 renamed equivalence, 5 source-shape agreements, 1 lifecycle agreement; **0** textual duplicates; 1 view not implied outside a coverage premise (`CONTRACT-VIEW-CHUNK-CLOSE-BACKEND-COVERAGE`) | [View projection check](reports/contract-view-projection-check/README.md), `qcore_contract::contract_views::REGISTERED_RELATIONS`, guard `compiler/tests/contract_view_census.rs` |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **313** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **317** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -59,8 +61,9 @@ and the chunk **lifecycle** result are separate dimensions: no selected chunk
 function's lifecycle post-state is established, `flb_input_chunk_create`
 included, and a checked field contract is not a lifecycle result. Provisional Unsafe
 findings are not validated upstream defects. Unknowns stay in the denominator.
-The baseline is `docs/reports/w43-indirect-access-general/artifacts/` (its predecessor
-`docs/reports/w43-libc-result-alias/artifacts/` is frozen); an arbiter must
+The baseline is `docs/reports/w43-descriptor-resource-tracking/artifacts/` (its predecessors
+`docs/reports/w43-indirect-access-general/artifacts/` and
+`docs/reports/w43-libc-result-alias/artifacts/` are frozen); an arbiter must
 reproduce its predecessor's verdict-bearing artifacts byte-for-byte and
 attribute every delta. The chain and leaf identities are preserved in the
 individual reports, [wave history](development/increments/README.md), and
@@ -120,10 +123,17 @@ allocator wrappers the same way, again with no verdict-bearing byte moved;
 `qcore.librdkafka` and `qcore.libevent` are the first packages with include pins. Every function declared in more than one module is a
 [checked view relation](reports/contract-view-projection-check/README.md); the
 one textual duplicate (`source_identity`) was removed, with no verdict-bearing
-byte moved.
+byte moved. Resource custody is now kind-indexed: a release discharges only an
+obligation of its own kind, and a file descriptor is tracked as an `int` with
+sentinel validity, with a single custody-carrying-value predicate guarding
+every scalar route including the typed indirect one
+([W43-DESCRIPTOR-RESOURCE-TRACKING](reports/w43-descriptor-resource-tracking/README.md),
+Lean `QCore.KindedCustody`).
 
-All three broader Cycle 18 follow-ups remain open; **313** follow-ups are
-registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
+All three broader Cycle 18 follow-ups remain open; **317** follow-ups are
+registered — W43-DESCRIPTOR-RESOURCE-TRACKING retired `W43-LIBC-DESCRIPTOR-LIFECYCLE`,
+discharged the `CT-CTWIN-DESCRIPTOR` arm of `CT-CTWIN-O` and registered five
+descriptor residuals; `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
 retired `RETURN-CALL-INCOMPLETE-LINE-455` against its census;

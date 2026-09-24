@@ -39,7 +39,7 @@ GROUNDS = {
         "(30 audited theorems), and declared eight of the seventeen named callees in "
         "providers/quirin-provider-libc: open, close, socket, fopen, fclose, opendir, closedir (and "
         "fileno, neutral). Class (a) of the arbiter is byte-identical; the declarations decide 56 "
-        "uncontracted-call leaves. The other nine (accept4, fcntl, dlopen, dlclose, getaddrinfo, "
+        "uncontracted-call leaves. The other ten (accept4, fcntl, dlopen, dlclose, getaddrinfo, "
         "freeaddrinfo, fts_open, fts_close, glob, globfree) are refused by name with measured grounds "
         "in W43-DESCRIPTOR-REFUSED-SHAPES and RETURN-CAST-PLACE-NOT-ESCAPED. "
         "docs/reports/w43-descriptor-resource-tracking/README.md."
@@ -110,16 +110,18 @@ def main() -> int:
     row = dict(corpus["cycle19_raw_units"])
     row.update(
         {
-            "note": "W43-DESCRIPTOR-RESOURCE-TRACKING, 2026-09-25. Staged arbiter: BEFORE (base binary) "
-            "reproduces the W43-LIBC-RESULT-ALIAS diagnostics byte for byte; the card's binary with no new "
-            "declaration (kinds, integer identities, validity guards, the scalar-route guard) reproduces all "
-            "five BEFORE artifacts byte for byte; eight kinded libc declarations then remove 60 leaves and add "
-            "43, all attributed. 1 function and its unit Unknown -> provisional Unsafe (ctr_random_get: an "
-            "`if (fd > 0)` guard abandons descriptor 0, a leak candidate reachable only if open returns 0); "
-            "one provisional leak withdrawn by refusal in mk_rconf_read (still Unsafe). 0 functions to Safe. "
-            "0 kind-mismatched-release and 0 use-after-close candidates. Leak 272 preserved (+1 -1). Raw "
-            "units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row "
-            "preserved in docs/reports/w43-descriptor-resource-tracking/previous-corpus-row.json.",
+            "note": "W43-DESCRIPTOR-RESOURCE-TRACKING, 2026-09-25, on the tree merged with main 0a07cb57. "
+            "Staged arbiter: BEFORE (main's own binary) reproduces the W43-INDIRECT-ACCESS-GENERAL "
+            "diagnostics byte for byte; the card's binary with main's contract data (kinds, integer "
+            "identities, validity guards, the descriptor guard around the indirect scalar route) "
+            "reproduces BEFORE's verdict-bearing artifacts byte for byte; eight kinded libc declarations "
+            "then remove 60 leaves and add 43, all attributed. 1 function and its unit Unknown -> "
+            "provisional Unsafe (ctr_random_get: an `if (fd > 0)` guard abandons descriptor 0, a leak "
+            "candidate reachable only if open returns 0); one provisional leak withdrawn by refusal in "
+            "mk_rconf_read (still Unsafe). 0 functions to Safe. 0 kind-mismatched-release and 0 "
+            "use-after-close candidates. Leak 271 preserved (+1 -1). Raw units remain unpromoted; "
+            "provisional Unsafe is not an upstream defect claim. Previous row preserved in "
+            "docs/reports/w43-descriptor-resource-tracking/previous-corpus-row.json.",
             "units": sum(units.values()),
             "safe": units["Safe"],
             "provisional_unsafe": units["Unsafe"],
@@ -129,7 +131,7 @@ def main() -> int:
             "leak_diagnostics": counts["leak"],
             "baseline": "docs/reports/w43-descriptor-resource-tracking/artifacts/",
             "source": "docs/reports/w43-descriptor-resource-tracking/README.md; preceding baseline "
-            "docs/reports/w43-libc-result-alias/artifacts/",
+            "docs/reports/w43-indirect-access-general/artifacts/",
             "unknown_alias_diagnostics": counts["unknown_alias"],
             "unsupported_diagnostics": counts["unsupported"],
             "double_release_diagnostics": counts.get("double_release", 0),

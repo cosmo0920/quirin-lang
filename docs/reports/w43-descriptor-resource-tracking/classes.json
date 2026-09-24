@@ -1,10 +1,10 @@
 {
  "a_vocabulary_and_gateway_alone": {
   "chunk-contracts": true,
-  "contracts": true,
+  "contracts": false,
   "diagnostics": true,
   "source": true,
-  "source-effects": true
+  "source-effects": false
  },
  "attribution_complete": true,
  "b_declarations": {

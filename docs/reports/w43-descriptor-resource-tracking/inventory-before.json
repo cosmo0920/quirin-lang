@@ -314,5 +314,5 @@
   }
  ],
  "sole_blocked": 5,
- "source": "docs/reports/w43-libc-result-alias/artifacts/diagnostics.json.gz"
+ "source": "docs/reports/w43-indirect-access-general/artifacts/diagnostics.json.gz"
 }
