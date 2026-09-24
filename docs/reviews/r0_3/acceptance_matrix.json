@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W43-INDEXED-RESOURCE-COLLECTIONS on main d2dd61c1 (merge eea0b30b), 2026-09-25. Measured against the W43-DESCRIPTOR-RESOURCE-TRACKING integration baseline: 0 leaves removed or added, 0 function or unit status moves, leak 271, 0 violation candidates; the diagnostics are equal to that baseline except for the report's `scope` string, contracts are identical after the root alias, and source-effects differ only in checkout-path-derived digests. 27 element operations are lowered in 19 functions and every one keeps its fallback refusal. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-indexed-resource-collections/previous-corpus-row.json.",
+   "note": "W43-INDEXED-RESOURCE-COLLECTIONS integration, 2026-09-25. The card (measured against docs/reports/w43-descriptor-resource-tracking/integration/artifacts) composed onto the combined tree docs/reports/w43-descriptor-resource-tracking/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 0 added 0 functions 0 units 0); functions moved (combined): []. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] Verdict-neutral on the corpus: the diagnostics artifact differs from the previous baseline only in the scope string (no bounds claim for collection ranges); every one of the 27 recognised element operations keeps its original refusal. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-indexed-resource-collections/integration/previous-corpus-row.json.",
    "units": 185,
    "safe": 3,
    "provisional_unsafe": 43,
@@ -6642,8 +6642,8 @@
    "projected_functions": 4834,
    "leak_diagnostics": 271,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w43-indexed-resource-collections/artifacts/",
-   "source": "docs/reports/w43-indexed-resource-collections/README.md; preceding baseline docs/reports/w43-descriptor-resource-tracking/integration/artifacts/",
+   "baseline": "docs/reports/w43-indexed-resource-collections/integration/artifacts/",
+   "source": "docs/reports/w43-indexed-resource-collections/integration/integration-confirmation.md; preceding baseline docs/reports/w43-descriptor-resource-tracking/integration/artifacts",
    "unknown_alias_diagnostics": 4358,
    "unsupported_diagnostics": 45848,
    "double_release_diagnostics": 0,
@@ -6731,7 +6731,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W43-INDEXED-RESOURCE-COLLECTIONS: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured on eea0b30b (this card merged with main d2dd61c1; later commits change documents, the ledger, report scripts and evidence only, no Rust, Lean, contract or test source), with CARGO_INCREMENTAL=0; the dev profile was reclaimed (cargo clean --profile dev) after the test step, before fmt. 5362 core Rust passed / 0 failed / 11 ignored over 287 summaries (the card adds the 32-test indexed_collection.rs binary and 5 unit tests of indexed_collection.rs; no existing pin moved); 176 Lean audits (main's 175 plus AuditIndexedCollection, 47 theorems); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 450 feature-on library tests passed; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed (1 test); provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. Logs: worktree-private private/gate and private/provider-gate of agent-a21f70f046fa88069 (the pre-merge gates on 6bcfae3d are kept as private/gate-premerge2-6bcfae3d and private/provider-gate-premerge2-6bcfae3d). Clang recorded in this checkout. Corpus against the W43-DESCRIPTOR-RESOURCE-TRACKING integration baseline: 0 leaves, 0 functions, 0 units moved, leak 271, 0 violation candidates; the diagnostics differ only in the scope string.",
+  "note": "Integration gate for W43-INDEXED-RESOURCE-COLLECTIONS on merge d2cdfd71 (onto main d2dd61c1, after W43-DESCRIPTOR-RESOURCE-TRACKING), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5362 core Rust passed / 0 failed / 11 ignored over 289 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 176 Lean audits; 330 root Python tests after regenerating this section (08-python exit 0 before regeneration); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w43-descriptor-resource-tracking/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
   "workspace_tests": 5362,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
@@ -6920,7 +6920,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-indexed-resource-collections/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-indexed-resource-collections/integration/gate.json)"
  },
  "named_followups": [
   {
