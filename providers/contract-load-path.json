@@ -181,6 +181,7 @@
       "contracts": "quirin-provider-libc/contracts",
       "dependencies": [],
       "modules": [
+        "libc/dirent.qcore",
         "libc/dlfcn.qcore",
         "libc/errno.qcore",
         "libc/math.qcore",

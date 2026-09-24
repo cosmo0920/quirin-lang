@@ -228,6 +228,11 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             source,
             true_is_null,
         } => format!("BranchOnNull {source} true_is_null={true_is_null}"),
+        LegacyInstruction::BranchOnValidity {
+            source,
+            when_true,
+            when_false,
+        } => format!("BranchOnValidity {source} true={when_true:?} false={when_false:?}"),
         LegacyInstruction::BranchOnDistinct { .. } => "BranchOnDistinct".to_owned(),
         LegacyInstruction::OpaqueValue {
             destination,
@@ -282,6 +287,22 @@ fn describe(diagnostic: &LegacyDiagnostic) -> String {
         LegacyDiagnosticKind::UseAfterRelease { acquisition_line } => {
             format!("use after release of a pointer derived from L{acquisition_line}")
         }
+        LegacyDiagnosticKind::KindMismatchedRelease {
+            acquisition_line,
+            acquired,
+            released,
+        } => format!(
+            "{} release of the {} acquired at L{acquisition_line}",
+            released.spelling(),
+            acquired.spelling()
+        ),
+        LegacyDiagnosticKind::UseAfterClose {
+            acquisition_line,
+            kind,
+        } => format!(
+            "use after release of the {} acquired at L{acquisition_line}",
+            kind.spelling()
+        ),
         LegacyDiagnosticKind::UnknownAlias { variable } => {
             format!("unresolved resource identity `{variable}`")
         }

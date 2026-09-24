@@ -890,5 +890,6 @@ fn the_modules_under_test_are_the_production_ones() {
     // selected by `crate:module` reference (schema 2); `resource_memory.qcore`
     // moved from a path entry to a reference without changing the count.
     // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
-    assert_eq!(contracts.source_assumptions().len(), 46);
+    // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
+    assert_eq!(contracts.source_assumptions().len(), 47);
 }

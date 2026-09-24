@@ -35,6 +35,8 @@ module contract;
 //   `fopen`/`fclose` open and close a STREAM: a v1 owned/released pair would
 //   put `FILE *` custody in the one kind-less pointer class `malloc`/`free`
 //   use, so `free(fopen(...))` and `fclose(malloc(...))` would both discharge.
+//   Superseded by the stream section at the end of this module (card
+//   W43-DESCRIPTOR-RESOURCE-TRACKING), which gives them the `stream` kind.
 //
 // ## What no declaration here says
 //
@@ -160,5 +162,55 @@ contract {
     ensures normal resource_borrowed(s);
     ensures normal resource_borrowed(format);
     ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};
+
+// ## Streams (Card W43-DESCRIPTOR-RESOURCE-TRACKING)
+//
+// TRUSTED ASSUMPTIONS, read from the prototypes the analysed units declare:
+//
+//   extern FILE *fopen (const char *__restrict __filename,
+//                       const char *__restrict __modes)
+//     __attribute__ ((__malloc__));
+//   extern int fclose (FILE *__stream) __nonnull ((1));
+//   extern int fileno (FILE *__stream) __THROW __nonnull ((1));
+//
+// `fopen` returns a fresh stream or NULL (`resource_return_owned(nullable)` of
+// the `stream` kind, contract spec §C04.6). `fclose` releases a non-NULL stream
+// (`resource_released(stream, nonnull)` of the `stream` kind), whether or not
+// it reports an error. `fileno` borrows the stream and returns the number of
+// the descriptor the stream owns: `resource_return_none()`, because that
+// number is borrowed, and closing it independently would be a second release
+// of the stream's descriptor, which this declaration never licenses.
+//
+// ## What these declarations do not say
+//
+// Nothing about buffering, flushing on close, `errno` or the file system. A
+// `stream` is released only by a stream release: `free(fp)` and `close(fp)`
+// discharge nothing. `fdopen` (the descriptor moves into the stream only when
+// it returns non-NULL) and `popen`/`pclose` (a process stream `fclose` must not
+// release) are not declared.
+
+extern fn fopen(filename: ptr<const, u8>, modes: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(filename);
+    ensures normal resource_borrowed(modes);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(stream);
+};
+
+extern fn fclose(stream: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(stream, nonnull);
+    ensures normal resource_kind(stream, stream);
+    ensures normal resource_return_none();
+};
+
+extern fn fileno(stream: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(stream);
     ensures normal resource_return_none();
 };

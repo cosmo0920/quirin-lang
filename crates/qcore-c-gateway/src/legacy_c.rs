@@ -54,6 +54,11 @@ pub use declared_abi::{AbiAgreementRow, AbiOutcome, AbiRefusal, declared_abi_cen
 #[path = "legacy_declared_modes.rs"]
 pub mod declared_modes;
 
+#[path = "legacy_descriptor_custody.rs"]
+pub(crate) mod descriptor_custody;
+
+pub use descriptor_custody::ValidityFact;
+
 pub use declared_modes::{
     ModeAgreementRow, ModeOutcome, ModeRefusal, declared_mode_census, mode_contradiction,
 };
@@ -68,7 +73,7 @@ pub type LegacyNodeId = usize;
 
 pub use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
-    ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
+    ResourceKind, ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
 };
 
 use crate::aggregate_store::AggregateStoreBases;
@@ -101,6 +106,13 @@ pub struct NestedContractCall {
     pub arguments: Vec<Option<String>>,
 }
 
+// Card W43-DESCRIPTOR-RESOURCE-TRACKING: the kinds on
+// `ResourceFunctionContract` grew the `ContractCall` variant past clippy's
+// size-difference threshold. Instructions are built once per statement and
+// cloned only with their CFG, so boxing every contract would add an
+// allocation per call statement to buy nothing; the crate's precedent at
+// `UnrestrictedLegacyResult` makes the same decision.
+#[allow(clippy::large_enum_variant)]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LegacyInstruction {
     Acquire {
@@ -177,6 +189,20 @@ pub enum LegacyInstruction {
     BranchOnNull {
         source: String,
         true_is_null: bool,
+    },
+    /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: a branch on the validity of
+    /// a name that may hold an integer-carried identity (`fd < 0`,
+    /// `fd == -1`, `fd >= 0`, …). It is the integer counterpart of
+    /// [`Self::BranchOnNull`]: an `Invalid` edge carries no resource at the
+    /// tested identity, a `Valid` edge carries a valid one, and an `Unrefined`
+    /// edge carries the state unchanged. A null-shaped test of such a name
+    /// (`if (fd)`, `fd == 0`) is one of these with both edges `Unrefined`,
+    /// because descriptor `0` is valid. Emitted only for a name
+    /// [`descriptor_custody::DescriptorNames`] lists.
+    BranchOnValidity {
+        source: String,
+        when_true: ValidityFact,
+        when_false: ValidityFact,
     },
     /// A branch on `LEFT == RIGHT` or `LEFT != RIGHT` between two plain names
     /// this function declares with the same record-pointer type (C02-P-ALIAS).
@@ -639,6 +665,26 @@ pub enum LegacyDiagnosticKind {
     /// identity.
     UseAfterRelease {
         acquisition_line: usize,
+    },
+    /// Card W43-DESCRIPTOR-RESOURCE-TRACKING: the identity acquired at
+    /// `acquisition_line`, of kind `acquired`, was handed to a release of
+    /// another kind (`free(fopen(…))`, `fclose(malloc(…))`, `close(fp)`). The
+    /// release discharges nothing. A violation *candidate*, published in the
+    /// `invalid_release` category.
+    KindMismatchedRelease {
+        acquisition_line: usize,
+        acquired: ResourceKind,
+        released: ResourceKind,
+    },
+    /// Card W43-DESCRIPTOR-RESOURCE-TRACKING: a non-heap identity (a
+    /// descriptor, a stream, …) acquired at `acquisition_line` was used at a
+    /// declared position after it was released on some path reaching the use
+    /// (`read(fd, …)` after `close(fd)`). A violation *candidate*, published in
+    /// the `use_after_release` category; the heap kind keeps its pre-existing
+    /// refusal.
+    UseAfterClose {
+        acquisition_line: usize,
+        kind: ResourceKind,
     },
     UnknownAlias {
         variable: String,
@@ -2446,6 +2492,26 @@ fn build_function_cfg_with(
             &variadic_tails,
         );
     let alias_classes = crate::may_alias::MayAliasClasses::read(&typed_types);
+    let descriptor_names = matching(tokens, body_start, "{", "}").map_or_else(
+        descriptor_custody::DescriptorNames::default,
+        |body_end| {
+            let body = tokens[body_start + 1..body_end]
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            descriptor_custody::DescriptorNames::read(
+                &body,
+                contracts,
+                contracts.contract(function),
+                &parameters,
+            )
+        },
+    );
+    let declared_callees = if descriptor_names.is_empty() {
+        BTreeSet::new()
+    } else {
+        descriptor_custody::declared_callees(contracts)
+    };
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -2460,6 +2526,8 @@ fn build_function_cfg_with(
         alias_classes,
         variadic_tails,
         frame_protected,
+        descriptor_names,
+        declared_callees,
         #[cfg(feature = "indirect-census")]
         census_function: function.to_owned(),
         #[cfg(feature = "indirect-census")]
@@ -3605,6 +3673,27 @@ enum Statement {
 struct PointerNullCondition {
     source: String,
     true_is_null: bool,
+    /// Card W43-DESCRIPTOR-RESOURCE-TRACKING: `Some((when_true, when_false))`
+    /// when the condition is a validity test of a descriptor name, which
+    /// compiles to [`LegacyInstruction::BranchOnValidity`] instead.
+    validity: Option<(ValidityFact, ValidityFact)>,
+}
+
+impl PointerNullCondition {
+    /// The branch instruction this condition compiles to.
+    fn branch(&self) -> LegacyInstruction {
+        match self.validity {
+            Some((when_true, when_false)) => LegacyInstruction::BranchOnValidity {
+                source: self.source.clone(),
+                when_true,
+                when_false,
+            },
+            None => LegacyInstruction::BranchOnNull {
+                source: self.source.clone(),
+                true_is_null: self.true_is_null,
+            },
+        }
+    }
 }
 
 /// C02-P-ALIAS: a comparison of two plain declared names the may-alias rule
@@ -3654,6 +3743,14 @@ struct Parser<'a> {
     /// binding environment. Empty whenever the body could not be delimited,
     /// which restores the pre-repair blanket poison for the whole function.
     frame_protected: BTreeSet<String>,
+    /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: the names of this body that
+    /// may hold a tracked integer-carried identity. Empty in every environment
+    /// that declares no integer-kinded result, which makes every rule reading
+    /// it the identity there.
+    descriptor_names: descriptor_custody::DescriptorNames,
+    /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: the callees a retained
+    /// trusted text declares, as opposed to ones only a W4 summary covers.
+    declared_callees: BTreeSet<String>,
     /// Card **C-GATEWAY-INDIRECT-CENSUS-2**: this function's name, carried only
     /// so the instrumented census can label its records. Compiled out with the
     /// feature off, and read by nothing else.
@@ -4109,6 +4206,25 @@ impl Parser<'_> {
     /// field of an admitted aggregate base is read here, and only when the
     /// condition carries no call, no braces and no other unmodeled access.
     fn null_condition(&self, condition: &[Token]) -> Option<PointerNullCondition> {
+        // Card W43-DESCRIPTOR-RESOURCE-TRACKING: a test of a descriptor name is
+        // a validity test, never a null test — descriptor `0` is valid, so a
+        // null-shaped test of one (`if (fd)`) must not remove its site.
+        if !self.descriptor_names.is_empty() {
+            let texts = condition
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            if supported_neutral_expression(condition)
+                && let Some(test) =
+                    descriptor_custody::validity_test(&texts, &self.descriptor_names)
+            {
+                return Some(PointerNullCondition {
+                    source: test.source,
+                    true_is_null: false,
+                    validity: Some((test.when_true, test.when_false)),
+                });
+            }
+        }
         if let Some(existing) = pointer_null_condition(condition) {
             return Some(existing);
         }
@@ -4133,6 +4249,7 @@ impl Parser<'_> {
             return Some(PointerNullCondition {
                 source: place,
                 true_is_null: false,
+                validity: None,
             });
         }
         for index in 0..texts.len().saturating_sub(1) {
@@ -4151,6 +4268,7 @@ impl Parser<'_> {
             return Some(PointerNullCondition {
                 source,
                 true_is_null: texts[index] == "=",
+                validity: None,
             });
         }
         None
@@ -4880,6 +4998,60 @@ impl Parser<'_> {
         None
     }
 
+    /// Classify one complete statement, then apply card
+    /// **W43-DESCRIPTOR-RESOURCE-TRACKING**'s guard: a statement that reads a
+    /// tracked descriptor is admitted only by an instruction that states that
+    /// read's custody effect exactly
+    /// ([`descriptor_custody::admits_descriptor_read`]), and a descriptor
+    /// handed to a callee no declaration covers is refused. With no descriptor
+    /// name in the body the guard is skipped, so every heap-only body keeps
+    /// exactly the classification it had.
+    fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {
+        let instruction = self.classify_simple_unguarded(tokens);
+        if self.descriptor_names.is_empty() {
+            return instruction;
+        }
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let Some(read) =
+            descriptor_custody::statement_reads_descriptor(&texts, &self.descriptor_names)
+        else {
+            return instruction;
+        };
+        if !descriptor_custody::admits_descriptor_read(&instruction, &self.descriptor_names) {
+            return LegacyInstruction::Unknown {
+                description: format!(
+                    "tracked descriptor `{read}` read by a custody-neutral scalar route is \
+                     outside the resource projection"
+                ),
+                writes: self.refused_writes(&texts),
+            };
+        }
+        if let LegacyInstruction::ContractCall {
+            function, nested, ..
+        } = &instruction
+            && let Some(callee) = std::iter::once(function.as_str())
+                .chain(nested.iter().map(|nested| nested.function.as_str()))
+                .find(|callee| !self.declared_callees.contains(*callee))
+        {
+            return LegacyInstruction::Unknown {
+                description: format!(
+                    "tracked descriptor `{read}` passed to `{callee}`, whose effect on it no \
+                     declaration states"
+                ),
+                writes: self.refused_writes(&texts),
+            };
+        }
+        instruction
+    }
+
+    /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: the classifier the descriptor
+    /// guard above wraps. Card W43-INDIRECT-ACCESS-GENERAL's typed-scalar route
+    /// is inside the guard, so every instruction it admits is checked by
+    /// [`descriptor_custody::admits_descriptor_read`] like any other.
+    ///
     /// Card **W43-INDIRECT-ACCESS-GENERAL**: the statement classifier, with
     /// one route consulted only after the existing classifier has refused.
     ///
@@ -4891,7 +5063,7 @@ impl Parser<'_> {
     /// lowering, so the route can only replace a refusal (or an unsanctioned
     /// `*B` store, itself refused in transfer) by a statement whose own
     /// obligations the flow analysis then checks.
-    fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {
+    fn classify_simple_unguarded(&mut self, tokens: &[Token]) -> LegacyInstruction {
         let instruction = self.classify_simple_base(tokens);
         // Card W43-INDEX-TRAVERSAL: the formal-mutation gate refuses `q++` for
         // every protected name, and protection reaches a *local* through a
@@ -6291,6 +6463,7 @@ fn null_condition_text(texts: &[&str]) -> Option<PointerNullCondition> {
         return Some(PointerNullCondition {
             source,
             true_is_null: false,
+            validity: None,
         });
     }
     let mut depth = 0usize;
@@ -6311,6 +6484,7 @@ fn null_condition_text(texts: &[&str]) -> Option<PointerNullCondition> {
                 return Some(PointerNullCondition {
                     source,
                     true_is_null: texts[index] == "=",
+                    validity: None,
                 });
             }
             _ => {}
@@ -6711,10 +6885,7 @@ impl CfgBuilder {
                 let then_entry = self.compile_sequence(then_body, continuation);
                 let else_entry = self.compile_sequence(else_body, continuation);
                 let instruction = if let Some(condition) = null_condition {
-                    LegacyInstruction::BranchOnNull {
-                        source: condition.source.clone(),
-                        true_is_null: condition.true_is_null,
-                    }
+                    condition.branch()
                 } else if let Some(condition) = distinct_condition {
                     // C02-P-ALIAS. A supported neutral condition would have
                     // become `NoOp`; this carries the same absence of custody
@@ -6754,10 +6925,7 @@ impl CfgBuilder {
                 body,
             } => {
                 let instruction = if let Some(condition) = null_condition {
-                    LegacyInstruction::BranchOnNull {
-                        source: condition.source.clone(),
-                        true_is_null: condition.true_is_null,
-                    }
+                    condition.branch()
                 } else if let Some(call) = condition_call {
                     (**call).clone()
                 } else if *condition_supported {
@@ -7026,10 +7194,7 @@ fn branch_instruction(
     unsupported_description: &str,
 ) -> LegacyInstruction {
     if let Some(condition) = null_condition {
-        LegacyInstruction::BranchOnNull {
-            source: condition.source.clone(),
-            true_is_null: condition.true_is_null,
-        }
+        condition.branch()
     } else if condition_supported {
         LegacyInstruction::NoOp
     } else if let Some(access) = condition_access {
@@ -7726,6 +7891,11 @@ pub(crate) struct EntryCustody {
     /// and nothing is exempted from leak reporting because nothing is owned.
     /// Empty for every contract whose result is not `Derived`.
     pub(crate) derived_bases: BTreeMap<usize, usize>,
+    /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: the non-heap kind of each
+    /// formal site, from the contract the body is checked against. A probe
+    /// contract names none, so every probed formal is heap, and a body that
+    /// releases one with another kind's release refuses its own summary.
+    pub(crate) site_kinds: BTreeMap<usize, ResourceKind>,
 }
 
 impl EntryCustody {
@@ -7754,6 +7924,7 @@ impl EntryCustody {
                 ResourceReturnMode::Derived { .. } => false,
             },
             derived_bases: BTreeMap::new(),
+            site_kinds: BTreeMap::new(),
         };
         if let ResourceReturnMode::Derived { parameter, .. } = contract.result {
             // The base must be a borrowed, named formal: the summary claims the
@@ -7785,6 +7956,10 @@ impl EntryCustody {
             };
             let name = parameters[index].as_ref()?;
             let site = base.checked_add(index)?;
+            let kind = contract.parameter_kind(index);
+            if !kind.is_heap() {
+                custody.site_kinds.insert(site, kind);
+            }
             custody.state.resources.insert(site, LIVE);
             custody.state.pointers.insert(
                 name.clone(),
@@ -7942,6 +8117,8 @@ pub(crate) enum ReturnedValue {
         site: usize,
         nullable: bool,
         disposition: SiteDisposition,
+        /// Card W43-DESCRIPTOR-RESOURCE-TRACKING: the returned identity's kind.
+        kind: ResourceKind,
     },
     /// The returned place denotes more than one site, or an unknown one.
     Ambiguous,
@@ -7975,12 +8152,18 @@ pub(crate) enum OutSlotValue {
         site: usize,
         nullable: bool,
         disposition: SiteDisposition,
+        /// Card W43-DESCRIPTOR-RESOURCE-TRACKING: the delivered identity's kind.
+        kind: ResourceKind,
     },
     /// The slot denotes more than one site, or an unknown one.
     Ambiguous,
 }
 
-fn observe_out_slot(state: &AbstractState, place: &str) -> OutSlotValue {
+fn observe_out_slot(
+    state: &AbstractState,
+    place: &str,
+    kinds: &BTreeMap<usize, ResourceKind>,
+) -> OutSlotValue {
     match state.pointers.get(place) {
         None => OutSlotValue::Unwritten,
         // Card W43-LIBC-RESULT-ALIAS: a derived pointer is not the identity it
@@ -7999,6 +8182,7 @@ fn observe_out_slot(state: &AbstractState, place: &str) -> OutSlotValue {
                 site,
                 nullable: pointer.may_be_null || state.nullable_sites.contains(&site),
                 disposition: site_disposition(state, site),
+                kind: kind_of(kinds, site),
             },
         },
     }
@@ -8042,6 +8226,7 @@ fn observe_exit(
     // Card W43-INDEX-TRAVERSAL: the declared scalars, whose target-free
     // binding returns no custody (see the `EscapeIfOwned` transfer arm).
     scalars: &BTreeSet<String>,
+    kinds: &BTreeMap<usize, ResourceKind>,
 ) -> ExitObservation {
     let returned = match &node.instruction {
         LegacyInstruction::EscapeIfOwned { source } if source == return_call::NULL_RETURN_PLACE => {
@@ -8092,6 +8277,7 @@ fn observe_exit(
                         site,
                         nullable: pointer.may_be_null || state.nullable_sites.contains(&site),
                         disposition: site_disposition(state, site),
+                        kind: kind_of(kinds, site),
                     },
                 },
             }
@@ -8109,7 +8295,11 @@ fn observe_exit(
         out_slots: entry
             .out_slots
             .iter()
-            .map(|place| place.as_deref().map(|place| observe_out_slot(state, place)))
+            .map(|place| {
+                place
+                    .as_deref()
+                    .map(|place| observe_out_slot(state, place, kinds))
+            })
             .collect(),
         caller_containment: caller_visible_containment(state)
             .iter()
@@ -8173,6 +8363,7 @@ fn observe_exit(
 fn report_retained_loop_exit_edges(
     cfg: &LegacyCfg,
     incoming: &[Option<AbstractState>],
+    kinds: &BTreeMap<usize, ResourceKind>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     for (node_id, node) in cfg.nodes.iter().enumerate() {
@@ -8180,22 +8371,10 @@ fn report_retained_loop_exit_edges(
         let (Some(edge), Some(state)) = (node.loop_exit_edge, incoming[node_id].as_ref()) else {
             continue;
         };
-        let LegacyInstruction::BranchOnNull {
-            source,
-            true_is_null,
-        } = &node.instruction
-        else {
-            continue;
-        };
-        let assume_null = if edge == 0 {
-            *true_is_null
-        } else {
-            !*true_is_null
-        };
         let mut probe = state.clone();
         if matches!(
-            refine_pointer_null(&mut probe, source, assume_null),
-            PointerRefinement::Infeasible
+            refine_edge(&node.instruction, edge, &mut probe, kinds),
+            Some((_, PointerRefinement::Infeasible))
         ) {
             diagnostics.insert(LegacyDiagnostic {
                 function: cfg.function.clone(),
@@ -8483,6 +8662,8 @@ fn classify_diagnostics(diagnostics: &[LegacyDiagnostic]) -> AnalysisStatus {
                 | LegacyDiagnosticKind::CustodyConflict { .. }
                 | LegacyDiagnosticKind::InvalidRelease { .. }
                 | LegacyDiagnosticKind::UseAfterRelease { .. }
+                | LegacyDiagnosticKind::KindMismatchedRelease { .. }
+                | LegacyDiagnosticKind::UseAfterClose { .. }
         )
     });
     let unknown_found = diagnostics.iter().any(|diagnostic| {
@@ -8531,6 +8712,31 @@ struct TransferContext<'a> {
     /// Card **W43-INDEX-TRAVERSAL**: the declared scalar and pointer names a
     /// copy from an unbound source is read against.
     traversal: TraversalNames,
+    /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: the kind of every non-heap
+    /// site this analysis can hold, the CFG's produced sites and the entry
+    /// custody's formal sites together. A site absent here is heap.
+    site_kinds: BTreeMap<usize, ResourceKind>,
+}
+
+/// The kind of `site` under `kinds`: heap unless recorded otherwise.
+fn kind_of(kinds: &BTreeMap<usize, ResourceKind>, site: usize) -> ResourceKind {
+    kinds.get(&site).copied().unwrap_or_default()
+}
+
+/// Card W43-DESCRIPTOR-RESOURCE-TRACKING: whether `place` is bound here to at
+/// least one identity carried by an integer. Such a value is custody, not
+/// data, whatever its declared C type.
+fn carries_integer_identity(
+    state: &AbstractState,
+    place: &str,
+    kinds: &BTreeMap<usize, ResourceKind>,
+) -> bool {
+    state.pointers.get(place).is_some_and(|pointer| {
+        pointer
+            .targets
+            .iter()
+            .any(|site| kind_of(kinds, *site).is_integer())
+    })
 }
 
 fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
@@ -8556,6 +8762,10 @@ pub(crate) fn analyze_cfg_with_entry(
         publications: cfg.publications.clone(),
         derived_bases: entry_custody.derived_bases.keys().copied().collect(),
         traversal: cfg.traversal.clone(),
+        site_kinds: descriptor_custody::site_kinds(cfg.nodes.iter().map(|node| &node.instruction))
+            .into_iter()
+            .chain(entry_custody.site_kinds.clone())
+            .collect(),
     };
     // C02-P-ALIAS: computed once, before the custody work list starts, and only
     // read below. See [`alias_facts`].
@@ -8615,17 +8825,13 @@ pub(crate) fn analyze_cfg_with_entry(
         }
         for (edge, &successor) in node.successors.iter().enumerate() {
             let mut edge_output = output.clone();
-            if let LegacyInstruction::BranchOnNull {
-                source,
-                true_is_null,
-            } = &node.instruction
-            {
-                let assume_null = if edge == 0 {
-                    *true_is_null
-                } else {
-                    !*true_is_null
-                };
-                match refine_pointer_null(&mut edge_output, source, assume_null) {
+            if let Some((source, refinement)) = refine_edge(
+                &node.instruction,
+                edge,
+                &mut edge_output,
+                &context.site_kinds,
+            ) {
+                match refinement {
                     // Card **SCALAR-ROUTE-EXIT-EDGE**. A loop header's exit
                     // edge is never removed, whatever the value route decides.
                     //
@@ -8687,7 +8893,7 @@ pub(crate) fn analyze_cfg_with_entry(
                             function: cfg.function.clone(),
                             line: node.line,
                             kind: LegacyDiagnosticKind::UnknownAlias {
-                                variable: source.clone(),
+                                variable: source.to_owned(),
                             },
                         });
                     }
@@ -8725,7 +8931,16 @@ pub(crate) fn analyze_cfg_with_entry(
     // would depend on the work-list schedule. Read-only — see
     // [`crate::borrow_liveness`].
     require_live_borrowed_actuals(&cfg, &incoming, &mut diagnostics);
-    report_retained_loop_exit_edges(&cfg, &incoming, &mut diagnostics);
+    report_retained_loop_exit_edges(&cfg, &incoming, &context.site_kinds, &mut diagnostics);
+    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the kind-mismatched release and the
+    // use-after-close candidates, from the same settled states.
+    report_kind_violations(
+        &cfg,
+        &incoming,
+        &acquisition_lines,
+        &context.site_kinds,
+        &mut diagnostics,
+    );
     // Card W43-LIBC-RESULT-ALIAS: the two derived-pointer violation candidates,
     // read from the same settled states for the same reason — a binding's
     // derivation can still widen to `Mixed` on a later iterate.
@@ -8765,6 +8980,7 @@ pub(crate) fn analyze_cfg_with_entry(
             &output,
             entry_custody,
             &context.traversal.scalars,
+            &context.site_kinds,
         ));
         exits.push(observe_residual(
             node_id,
@@ -8805,6 +9021,8 @@ fn is_path_poisoning(diagnostic: &LegacyDiagnostic) -> bool {
             | LegacyDiagnosticKind::CustodyConflict { .. }
             | LegacyDiagnosticKind::InvalidRelease { .. }
             | LegacyDiagnosticKind::UseAfterRelease { .. }
+            | LegacyDiagnosticKind::KindMismatchedRelease { .. }
+            | LegacyDiagnosticKind::UseAfterClose { .. }
     )
 }
 
@@ -9047,9 +9265,13 @@ fn transfer(
             // Card W43-INDEX-TRAVERSAL: a stepped pointer into a tracked
             // object stored into such a destination publishes that object's
             // interior exactly as a copy publishes it.
+            // Card W43-DESCRIPTOR-RESOURCE-TRACKING: a declared scalar that
+            // holds a tracked descriptor is custody, so the scalar-source
+            // exemption does not cover it.
             LegacyInstruction::Alias { source, .. }
             | LegacyInstruction::PointerStep { source, .. }
-                if !context.publications.scalar_sources.contains(source) =>
+                if !context.publications.scalar_sources.contains(source)
+                    || carries_integer_identity(&state, source, &context.site_kinds) =>
             {
                 state
                     .pointers
@@ -9480,6 +9702,30 @@ fn transfer(
                 },
             );
         }
+        LegacyInstruction::Release { source }
+            if kind_mismatch(&state, source, ResourceKind::Heap, &context.site_kinds) =>
+        {
+            refuse_kind_mismatch(
+                function,
+                node.line,
+                source,
+                ResourceParameterMode::Released { nullable: false },
+                &mut state,
+                diagnostics,
+            );
+        }
+        LegacyInstruction::Escape { source }
+            if kind_mismatch(&state, source, ResourceKind::Heap, &context.site_kinds) =>
+        {
+            refuse_kind_mismatch(
+                function,
+                node.line,
+                source,
+                ResourceParameterMode::Consumed { nullable: false },
+                &mut state,
+                diagnostics,
+            );
+        }
         LegacyInstruction::Release { source } => {
             apply_resource_action(
                 function,
@@ -9573,6 +9819,7 @@ fn transfer(
                     &[],
                     &mut state,
                     acquisition_lines,
+                    &context.site_kinds,
                     diagnostics,
                 );
             }
@@ -9594,6 +9841,7 @@ fn transfer(
                         produced_sites,
                         &mut state,
                         acquisition_lines,
+                        &context.site_kinds,
                         diagnostics,
                     );
                 }
@@ -9624,6 +9872,7 @@ fn transfer(
                     produced_sites,
                     &mut state,
                     acquisition_lines,
+                    &context.site_kinds,
                     diagnostics,
                 ),
             }
@@ -9655,7 +9904,9 @@ fn transfer(
             // is what makes an overwritten resource visible as a residual.
             state.pointers.remove(place);
         }
-        LegacyInstruction::BranchOnNull { .. } | LegacyInstruction::BranchOnDistinct { .. } => {}
+        LegacyInstruction::BranchOnNull { .. }
+        | LegacyInstruction::BranchOnValidity { .. }
+        | LegacyInstruction::BranchOnDistinct { .. } => {}
         LegacyInstruction::Unknown {
             description,
             writes,
@@ -9688,7 +9939,10 @@ fn transfer(
                 let published = publication
                     .sources
                     .iter()
-                    .filter(|source| !context.publications.scalar_sources.contains(*source))
+                    .filter(|source| {
+                        !context.publications.scalar_sources.contains(*source)
+                            || carries_integer_identity(&state, source, &context.site_kinds)
+                    })
                     .filter_map(|source| state.pointers.get(source))
                     .filter(|pointer| !pointer.targets.is_empty())
                     .cloned()
@@ -10200,6 +10454,7 @@ fn apply_contract_call(
     produced_sites: &[usize],
     state: &mut AbstractState,
     acquisition_lines: &BTreeMap<usize, usize>,
+    kinds: &BTreeMap<usize, ResourceKind>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     // Card W43-LIBC-RESULT-ALIAS: a derived pointer owns nothing, so no
@@ -10247,6 +10502,12 @@ fn apply_contract_call(
         let valid = old.as_ref().is_some_and(|old| {
             !old.unknown
                 && old.targets.len() <= 1
+                // Card W43-DESCRIPTOR-RESOURCE-TRACKING: a replacement relation
+                // is specified for the declared kind only.
+                && old
+                    .targets
+                    .iter()
+                    .all(|site| kind_of(kinds, *site) == contract.parameter_kind(parameter))
                 && (input_nullable || (old.targets.len() == 1 && !old.may_be_null))
                 && old.targets.iter().all(|site| {
                     state.resources.get(site) == Some(&LIVE)
@@ -10278,6 +10539,19 @@ fn apply_contract_call(
     for (index, mode) in contract.parameters.iter().copied().enumerate() {
         let source = arguments.get(index).and_then(Option::as_deref);
         if derived_positions.contains(&index) {
+            continue;
+        }
+        // Card W43-DESCRIPTOR-RESOURCE-TRACKING: a custody-bearing position
+        // touches only an obligation of its own kind. A release of another
+        // kind discharges nothing and is accused from the settled states; any
+        // other mismatched custody position refuses.
+        if !matches!(
+            mode,
+            ResourceParameterMode::Borrowed | ResourceParameterMode::Out { .. }
+        ) && let Some(source) = source
+            && kind_mismatch(state, source, contract.parameter_kind(index), kinds)
+        {
+            refuse_kind_mismatch(function, line, source, mode, state, diagnostics);
             continue;
         }
         // An aggregate owner that is itself a derived pointer relates the child
@@ -10625,6 +10899,225 @@ fn derived_custody_refusal(
         },
     });
     mark_unresolved_effect(state, pointer);
+}
+
+/// Card W43-DESCRIPTOR-RESOURCE-TRACKING: whether `source` is bound to some
+/// identity whose kind is not `expected`.
+fn kind_mismatch(
+    state: &AbstractState,
+    source: &str,
+    expected: ResourceKind,
+    kinds: &BTreeMap<usize, ResourceKind>,
+) -> bool {
+    state.pointers.get(source).is_some_and(|pointer| {
+        pointer
+            .targets
+            .iter()
+            .any(|site| kind_of(kinds, *site) != expected)
+    })
+}
+
+/// Card W43-DESCRIPTOR-RESOURCE-TRACKING: a custody position met an identity
+/// of another kind. The effect is never applied. A release that resolves to
+/// one identity is left for the settled pass to accuse
+/// ([`report_kind_violations`]), and the path carries a violation candidate;
+/// every other shape refuses with `UnknownAlias`, and the identities carry an
+/// unresolved effect so no residual depending on this call is claimed.
+fn refuse_kind_mismatch(
+    function: &str,
+    line: usize,
+    source: &str,
+    mode: ResourceParameterMode,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    let pointer = state.pointers.get(source).cloned().unwrap_or_default();
+    if matches!(mode, ResourceParameterMode::Released { .. })
+        && pointer.derivation.is_identity()
+        && !pointer.unknown
+        && pointer.targets.len() == 1
+    {
+        state.unmodeled = true;
+        return;
+    }
+    diagnostics.insert(LegacyDiagnostic {
+        function: function.to_owned(),
+        line,
+        kind: LegacyDiagnosticKind::UnknownAlias {
+            variable: source.to_owned(),
+        },
+    });
+    mark_unresolved_effect(state, &pointer);
+}
+
+/// Card W43-DESCRIPTOR-RESOURCE-TRACKING: refine one branch edge.
+///
+/// `None` for an instruction that is not a branch on a single name, and for a
+/// null test of a name bound to an integer-carried identity, which refines
+/// nothing (descriptor `0` is valid, so `if (fd)` says nothing about custody).
+/// A validity test narrows exactly as a null test does, and only a binding that
+/// resolves to one integer-carried identity: anything else is a refusal.
+fn refine_edge<'a>(
+    instruction: &'a LegacyInstruction,
+    edge: usize,
+    state: &mut AbstractState,
+    kinds: &BTreeMap<usize, ResourceKind>,
+) -> Option<(&'a str, PointerRefinement)> {
+    match instruction {
+        LegacyInstruction::BranchOnNull {
+            source,
+            true_is_null,
+        } => {
+            if carries_integer_identity(state, source, kinds) {
+                return None;
+            }
+            let assume_null = if edge == 0 {
+                *true_is_null
+            } else {
+                !*true_is_null
+            };
+            Some((source, refine_pointer_null(state, source, assume_null)))
+        }
+        LegacyInstruction::BranchOnValidity {
+            source,
+            when_true,
+            when_false,
+        } => {
+            let fact = descriptor_custody::edge_fact(*when_true, *when_false, edge);
+            Some((source, refine_validity(state, source, fact, kinds)))
+        }
+        _ => None,
+    }
+}
+
+/// Card W43-DESCRIPTOR-RESOURCE-TRACKING: narrow a descriptor's validity.
+fn refine_validity(
+    state: &mut AbstractState,
+    source: &str,
+    fact: ValidityFact,
+    kinds: &BTreeMap<usize, ResourceKind>,
+) -> PointerRefinement {
+    let assume_invalid = match fact {
+        ValidityFact::Unrefined => return PointerRefinement::Refined,
+        ValidityFact::Invalid => true,
+        ValidityFact::Valid => false,
+    };
+    let Some(pointer) = state.pointers.get(source).cloned() else {
+        // Nothing bound: an ordinary integer here, exactly as an untracked
+        // name is in a null test.
+        return PointerRefinement::Refined;
+    };
+    if pointer.targets.is_empty() && !pointer.unknown {
+        // A number with no identity (after `fd = 0;`): nothing to narrow.
+        return PointerRefinement::Refined;
+    }
+    if !pointer.derivation.is_identity()
+        || pointer.unknown
+        || pointer.targets.len() > 1
+        || pointer
+            .targets
+            .iter()
+            .any(|site| !kind_of(kinds, *site).is_integer())
+    {
+        return PointerRefinement::Unknown;
+    }
+    refine_pointer_null(state, source, assume_invalid)
+}
+
+/// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: the two kind violation
+/// candidates, read from the settled incoming states for constraint 6's
+/// reason — a binding's targets can still grow on a later iterate.
+///
+/// * A release whose actual resolves to exactly one identity of another kind:
+///   `KindMismatchedRelease`. `refuse_kind_mismatch` already withheld the
+///   effect, so the identity's own obligation stays open.
+/// * A non-heap identity that resolves to exactly one site carrying the
+///   `RELEASED` bit, used at a `Borrowed` position: `UseAfterClose` — the
+///   `DoubleRelease` reading of the same bit. The heap kind keeps the
+///   pre-existing `ALIAS-LOCALS-BORROW-LIVENESS` refusal and is not accused.
+///
+/// Nothing here changes a state; it only reports.
+fn report_kind_violations(
+    cfg: &LegacyCfg,
+    incoming: &[Option<AbstractState>],
+    acquisition_lines: &BTreeMap<usize, usize>,
+    kinds: &BTreeMap<usize, ResourceKind>,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    for (node_id, node) in cfg.nodes.iter().enumerate() {
+        let Some(state) = incoming[node_id].as_ref() else {
+            continue;
+        };
+        let mut uses: Vec<(ResourceParameterMode, ResourceKind, &str)> = Vec::new();
+        match &node.instruction {
+            LegacyInstruction::ContractCall {
+                arguments,
+                contract,
+                nested,
+                ..
+            } => {
+                let calls = std::iter::once((arguments, contract)).chain(
+                    nested
+                        .iter()
+                        .map(|nested| (&nested.arguments, &nested.contract)),
+                );
+                for (arguments, contract) in calls {
+                    for (index, (mode, argument)) in
+                        contract.parameters.iter().zip(arguments).enumerate()
+                    {
+                        if let Some(place) = argument.as_deref() {
+                            uses.push((*mode, contract.parameter_kind(index), place));
+                        }
+                    }
+                }
+            }
+            LegacyInstruction::Release { source } => uses.push((
+                ResourceParameterMode::Released { nullable: false },
+                ResourceKind::Heap,
+                source,
+            )),
+            _ => continue,
+        }
+        for (mode, expected, place) in uses {
+            let Some(pointer) = state.pointers.get(place) else {
+                continue;
+            };
+            if !pointer.derivation.is_identity() || pointer.unknown || pointer.targets.len() != 1 {
+                continue;
+            }
+            let Some(site) = pointer.targets.first().copied() else {
+                continue;
+            };
+            let acquired = kind_of(kinds, site);
+            let kind = match mode {
+                ResourceParameterMode::Released { .. } if acquired != expected => {
+                    LegacyDiagnosticKind::KindMismatchedRelease {
+                        acquisition_line: acquisition_line(acquisition_lines, site),
+                        acquired,
+                        released: expected,
+                    }
+                }
+                ResourceParameterMode::Borrowed
+                    if !acquired.is_heap()
+                        && state
+                            .resources
+                            .get(&site)
+                            .is_some_and(|status| status & RELEASED != 0) =>
+                {
+                    LegacyDiagnosticKind::UseAfterClose {
+                        acquisition_line: acquisition_line(acquisition_lines, site),
+                        kind: acquired,
+                    }
+                }
+                _ => continue,
+            };
+            diagnostics.insert(LegacyDiagnostic {
+                function: cfg.function.clone(),
+                line: node.line,
+                kind,
+            });
+        }
+    }
 }
 
 fn create_resource(state: &mut AbstractState, destination: &str, site: usize, nullable: bool) {

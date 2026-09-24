@@ -31,9 +31,11 @@ module contract;
 // ## Deliberately NOT declared here (recorded in the card report)
 //
 //   `close` RELEASES a descriptor and `open`/`socket`/`accept4`/`fcntl`
-//   (`F_DUPFD`) CREATE one. v1 custody is pointer-only, so a declaration could
-//   only call them neutral, which would erase a real acquire/release; the
-//   descriptor lifecycle is a separate semantic profile.
+//   (`F_DUPFD`) CREATE one. v1 custody was pointer-only, so a declaration
+//   could only call them neutral, which would erase a real acquire/release.
+//   Superseded for `open` and `close` by the descriptor section at the end of
+//   this module (card W43-DESCRIPTOR-RESOURCE-TRACKING); `fcntl` stays
+//   undeclared, see there.
 //
 // ## What no declaration here says
 //
@@ -116,5 +118,58 @@ contract {
     ensures normal resource_borrowed(fd);
     ensures normal resource_borrowed(buf);
     ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};
+
+// ## Descriptors (Card W43-DESCRIPTOR-RESOURCE-TRACKING)
+//
+// TRUSTED ASSUMPTIONS, read from the prototypes the analysed units declare
+// (`/usr/include/fcntl.h` for `open`, `/usr/include/unistd.h` for `close`):
+//
+//   extern int open (const char *__file, int __oflag, ...) __nonnull ((1));
+//   extern int close (int __fd);
+//
+// `open` returns a fresh file descriptor or the sentinel `-1`
+// (`resource_return_owned(sentinel)` of the `descriptor` kind, contract spec
+// §C04.6); its path is read, its flags are a scalar, and its optional `mode`
+// is data (`resource_variadic_data_tail()`). `close` releases a valid
+// descriptor (`resource_released(fd, valid)` of the `descriptor` kind); a
+// descriptor that may be `-1` must be validity-tested first. `open` lives in
+// `<fcntl.h>`; it is declared in this module beside its release so that the
+// pair is one reading.
+//
+// ## What these two declarations do not say
+//
+// Nothing about `errno`, `EINTR`, a failed `close` (whose descriptor POSIX
+// leaves unspecified; the declaration reads every `close` as a release, the
+// reading Linux implements), `O_CLOEXEC`, or which file was opened. A
+// `descriptor` is released only by a descriptor release: `free(fd)` and
+// `fclose(fd)` discharge nothing.
+//
+// ## Deliberately NOT declared (recorded in the card report)
+//
+//   `fcntl` creates a descriptor only for `F_DUPFD`/`F_DUPFD_CLOEXEC` and is a
+//   neutral use for every other command; the audited units spell five
+//   commands (`F_SETFL`, `F_GETFL`, `F_SETFD`, `F_SETLK`, a nested `F_GETFL`),
+//   and one declaration carries one literal premise per parameter, so no
+//   single declaration is exact. `pipe` writes two descriptors into an
+//   `int[2]`, and a descriptor has no out slot in this vocabulary. `dup`,
+//   `dup2`, `creat`, `openat` and `mkstemp` are called by no audited unit.
+
+extern fn open(file: ptr<const, u8>, oflag: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(oflag);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_owned(sentinel);
+    ensures normal resource_return_kind(descriptor);
+};
+
+extern fn close(fd: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(fd, valid);
+    ensures normal resource_kind(fd, descriptor);
     ensures normal resource_return_none();
 };

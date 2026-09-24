@@ -1,0 +1,19 @@
+resource-diagnostics.json: identical
+resource-diagnostics.chunk-contracts.json: identical
+resource-diagnostics.source-effects.json: 29 differing paths after the root rewrite
+   /results[]/bounds/resource_contracts:0fc935e9eb644e6ac8dba88a (present on one side)
+   /results[]/bounds/resource_contracts:15b9fdc27d3c5c0f79f4d224 (present on one side)
+   /results[]/bounds/resource_contracts:4de87b33478a8d4f578f9504 (present on one side)
+   /results[]/bounds/resource_contracts:a4fe43465a389377f262dcef (present on one side)
+   /results[]/bounds/resource_contracts:ebe9a3c2710e41295330e72f (present on one side)
+   /results[]/bounds/resource_contracts:fbad13e41b3e95c23d648200 (present on one side)
+   /results[]/evidence/coverage[]
+   /results[]/evidence/unit/build_digest
+   /results[]/import_identity/configuration_digest
+   /results[]/import_identity/helpers/cio_error_reset/configuration_digest
+   /results[]/task/contract_sources/qcore:boolean-field-import:v1
+   /results[]/task/obligations[]/obligation_id
+   /results[]/task/unit/build_digest
+   /results[]/witness/task_digest
+monkey-source.json: identical
+resource-diagnostics.contracts.json: identical after the root rewrite

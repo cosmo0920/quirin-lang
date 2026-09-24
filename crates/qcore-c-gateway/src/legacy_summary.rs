@@ -794,9 +794,12 @@ fn out_mode(index: usize, observations: &[ExitObservation]) -> Option<ResourcePa
             OutSlotValue::Site {
                 nullable: site_nullable,
                 disposition,
+                kind,
                 ..
             } => {
-                if site_nullable || disposition != SiteDisposition::Live {
+                // Card W43-DESCRIPTOR-RESOURCE-TRACKING: no non-heap out slot
+                // is inferred; the probe's slot is heap-kinded.
+                if site_nullable || disposition != SiteDisposition::Live || !kind.is_heap() {
                     return None;
                 }
                 delivered = true;
@@ -838,9 +841,13 @@ fn reallocation_exit(
             site: returned,
             nullable,
             disposition: returned_disposition,
+            kind,
         } => {
+            // Card W43-DESCRIPTOR-RESOURCE-TRACKING: a replacement relation is
+            // specified for heap allocations only.
             if parameter_sites.contains(&returned)
                 || returned_disposition != SiteDisposition::Escaped
+                || !kind.is_heap()
             {
                 return None;
             }
@@ -941,10 +948,20 @@ fn propose_result(
                 site,
                 nullable,
                 disposition,
+                kind,
             } => {
                 // A formal handed straight back is an alias the summary
                 // vocabulary cannot express without double-counting custody.
                 if parameter_sites.contains(&site) || disposition != SiteDisposition::Escaped {
+                    return None;
+                }
+                // Card W43-DESCRIPTOR-RESOURCE-TRACKING: no summary is inferred
+                // for a non-heap result. A body returning `-1` on one path and
+                // a descriptor on another reads as a nullable result only if
+                // every non-site return is the literal sentinel, which the
+                // exit observation does not record, so the kinded result is
+                // declined rather than guessed (`W43-DESCRIPTOR-W4-SUMMARIES`).
+                if !kind.is_heap() {
                     return None;
                 }
                 // An unresolved reallocation would make the result's custody
@@ -1116,8 +1133,12 @@ fn out_slots_match(
                     site,
                     nullable: site_nullable,
                     disposition,
+                    kind,
                 }) => {
-                    disposition == SiteDisposition::Live
+                    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the slot delivers
+                    // exactly the declared kind.
+                    kind == contract.parameter_kind(index)
+                        && disposition == SiteDisposition::Live
                         && !site_nullable
                         && !parameter_sites.contains(&site)
                         && claimed.insert(site)
@@ -1180,8 +1201,12 @@ fn result_matches(
                 site,
                 nullable: site_nullable,
                 disposition,
+                kind,
             } => {
-                !parameter_sites.contains(&site)
+                // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the exit returns
+                // exactly the declared kind.
+                kind == contract.result_kind
+                    && !parameter_sites.contains(&site)
                     && disposition == SiteDisposition::Escaped
                     && (nullable || !site_nullable)
                     && observation.pending_replacements.is_empty()
