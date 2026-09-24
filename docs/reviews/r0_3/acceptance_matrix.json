@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 313
+  "named_followups": 316
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 108,
+  "contract_modules": 109,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W43-INDIRECT-ACCESS-GENERAL on merge 10b8c607 (onto main 65b5df37, after the three verdict-neutral contract cards), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0 from a cold build; every exit captured to a file, not piped. 5254 core Rust passed / 0 failed / 11 ignored over 284 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 172 Lean audits; 330 root Python tests after regenerating this section (the first run failed only the derived-facts check, 171 vs 172 Lean audits, because the merged validation section predated AuditIndirectScalarAccess); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the card's own verdict-bearing diagnostics byte for byte against docs/reports/w43-indirect-access-general/artifacts/ on the combined tree; source-effects is identical to that baseline modulo checkout-path identity digests, and contracts is byte-identical to the CONTRACT-VIEW-PROJECTION-CHECK integration run in the same checkout.",
-  "workspace_tests": 5254,
+  "note": "W43-DESCRIPTOR-RESOURCE-TRACKING: core Rust, fmt, clippy (--workspace), probes, Lean and the provider gate measured on 53ecbb73 (the tree merged with main 0a07cb57; its Rust, Lean, contract and test sources are those of the merge commit 06ee9fe4; later commits change documents, the ledger and report evidence only). cargo test --workspace --no-fail-fast: 5277 passed / 1 failed / 11 ignored over 286 summaries, exit 101; the one failure is the constraint-16 load-sensitive row vp04_vp07_vp08_process_lifecycle_and_payload_budgets (`elapsed < 500 ms`, host shared with concurrent cards), which passed 1/1 rerun in isolation (--exact --test-threads=1, exit 0). Tests added by this card: descriptor_custody.rs 15, resource_kinds.rs 3, the extern_bridge refusal 1, legacy_descriptor_custody unit 5. 173 Lean audits (1 added: AuditKindedCustody). indirect-census feature step: clippy clean, 433 feature-on library tests passed. Step exits: {'submodules': 0, 'clang': 0, 'test': 101 (P02-FLAKE row, isolated rerun 0), 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. Logs: worktree-private measure/gate of agent-a91fc20c32abdf4f7. Clang recorded in this checkout. Corpus (combined tree): 1 function and 1 unit Unknown -> provisional Unsafe (ctr_random_get), leak 271 -> 271 (+1 -1), 0 kind-mismatch and 0 use-after-close candidates.",
+  "workspace_tests": 5277,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 172,
+  "lean_audits": 173,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6816,6 +6816,7 @@
    "AuditJoinedProvenanceCallFrames.lean",
    "AuditJoinedProvenanceCycles.lean",
    "AuditJoinedProvenanceRoundBound.lean",
+   "AuditKindedCustody.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditLiteralArgumentPremise.lean",
    "AuditLoopBudget.lean",
@@ -6916,7 +6917,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-indirect-access-general/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-descriptor-resource-tracking/gate.json)"
  },
  "named_followups": [
   {
@@ -9059,7 +9060,7 @@
   {
    "id": "RETURN-CAST-PLACE-NOT-ESCAPED",
    "title": "`return (T *)p;` is read as returning no place, so an acquisition returned through a cast is reported as a leak; dlopen/dlclose withheld on it",
-   "why": "Measured by card W43-DESCRIPTOR-RESOURCE-TRACKING: the return route escapes `return p;` but answers a parenthesised cast of one place with no returned place, so the site stays live and `report_leaks` reports it at that exit, for the heap exactly as for a stream (`descriptor_custody.rs::a_cast_return_is_not_an_escape_for_any_kind`). Three of the 272 leak leaves already sit at such an exit (`mk_string_copy_substr` 1, `rd_kafka_anyconf_dump` 2; scripts/cast_return_leaks.py). The card's first AFTER run declared dlopen/dlclose and moved `rd_dl_open0` Unknown -> provisional Unsafe with one leak at `return (rd_dl_hnd_t *)handle;` — a candidate refuted by reading, since the handle is returned. The pair and the `dynamic_library` kind were withdrawn before the published arbiter; they hold 5 leaves in 4 functions (`mk_plugin_load_dynamic`, `rd_dl_open0`, `mk_plugin_load`, `rd_dl_close`), dlopen and dlclose sole-blocking one function each. Discharge condition: the return route escapes the place under a pointer-to-pointer cast (the value is unchanged, C11 6.3.2.3p7) with Lean parity and an arbiter attributing every withdrawn leak, then the dlopen/dlclose declarations re-measured.",
+   "why": "Measured by card W43-DESCRIPTOR-RESOURCE-TRACKING: the return route escapes `return p;` but answers a parenthesised cast of one place with no returned place, so the site stays live and `report_leaks` reports it at that exit, for the heap exactly as for a stream (`descriptor_custody.rs::a_cast_return_is_not_an_escape_for_any_kind`). Three of the 271 combined-tree leak leaves already sit at such an exit (`mk_string_copy_substr` 1, `rd_kafka_anyconf_dump` 2; scripts/cast_return_leaks.py). The card's first AFTER run declared dlopen/dlclose and moved `rd_dl_open0` Unknown -> provisional Unsafe with one leak at `return (rd_dl_hnd_t *)handle;` — a candidate refuted by reading, since the handle is returned. The pair and the `dynamic_library` kind were withdrawn before the published arbiter; they hold 5 leaves in 4 functions (`mk_plugin_load_dynamic`, `rd_dl_open0`, `mk_plugin_load`, `rd_dl_close`), dlopen and dlclose sole-blocking one function each. Discharge condition: the return route escapes the place under a pointer-to-pointer cast (the value is unchanged, C11 6.3.2.3p7) with Lean parity and an arbiter attributing every withdrawn leak, then the dlopen/dlclose declarations re-measured.",
    "source": "docs/reports/w43-descriptor-resource-tracking/README.md",
    "recorded_by": "W43-DESCRIPTOR-RESOURCE-TRACKING"
   },
@@ -9067,13 +9068,6 @@
    "id": "W43-DESCRIPTOR-ACCUSING-ARMS-UNEXERCISED-IN-CORPUS",
    "title": "The kind-mismatched release and use-after-close candidates reach no function of the pinned corpus",
    "why": "Card W43-DESCRIPTOR-RESOURCE-TRACKING added `LegacyDiagnosticKind::KindMismatchedRelease` (published as invalid_release) and `UseAfterClose` (published as use_after_release), both read from settled states by `report_kind_violations`. They are unit-tested (crates/qcore-c-gateway/tests/descriptor_custody.rs: free(fopen), fclose(malloc), read after close, fflush after fclose) and modelled in QCore.KindedCustody, but the arbiter added zero leaves of either category: no audited function hands a handle of one kind to another kind's release or uses a released descriptor or stream at a declared position. The one candidate the declarations exposed is a leak (`ctr_random_get`'s `if (fd > 0)`). Discharge condition: a pinned or held-out real-code fixture reaching either arm, with the leaf attributed and never presented as an upstream defect.",
-   "source": "docs/reports/w43-descriptor-resource-tracking/README.md",
-   "recorded_by": "W43-DESCRIPTOR-RESOURCE-TRACKING"
-  },
-  {
-   "id": "W43-DESCRIPTOR-INDIRECT-ACCESS-WIRING",
-   "title": "Re-check the descriptor guard against W43-INDIRECT-ACCESS-GENERAL's indirect scalar stores on the combined tree",
-   "why": "Card W43-DESCRIPTOR-RESOURCE-TRACKING's guard (`descriptor_custody::value_carries_descriptor`, applied to every statement classification through `Parser::classify_simple`) refuses a tracked descriptor read by any custody-neutral instruction — `ScalarMemberStore`, `AggregateStore`, `OpaqueValue`, the typed scalar-field `NoOp`, and any instruction variant it does not list — and its test `a_tracked_descriptor_on_every_scalar_store_route_is_refused` pins `*p = fd`, `p[i] = fd`, `p->f = fd` and `s.f = fd` refused. On this card's base those four shapes are refused by the lexical gate already. The concurrent card W43-INDIRECT-ACCESS-GENERAL (branch tip 6bb838c8, not on this base) admits them as custody-neutral when the value is a declared scalar, in `legacy_c.rs`, `typed_field_access.rs` and `legacy_joined_provenance.rs`; its predicate must consult `value_carries_descriptor`, or its admitted instruction must pass through this guard, and the test must stay green on the combined tree. Discharge condition: the combined tree runs the test with the indirect rule in force, and the combined arbiter attributes any descriptor refusal it adds.",
    "source": "docs/reports/w43-descriptor-resource-tracking/README.md",
    "recorded_by": "W43-DESCRIPTOR-RESOURCE-TRACKING"
   }

@@ -15,7 +15,7 @@ them in Lean, and declares eight libc functions with them, only in
 
 It discharges `W43-LIBC-DESCRIPTOR-LIFECYCLE` and the `CT-CTWIN-DESCRIPTOR` arm of
 `CT-CTWIN-O`, addresses the sentinel half of `EXTERN-CALL-F` where it applies to
-the resource loader, and registers five residuals.
+the resource loader, and registers four residuals.
 
 ## Headline
 
@@ -210,21 +210,25 @@ Measured on the corpus: one leaf, `mk_vhost_fdt_open`'s `hc->fd = fd;`
 (`mk_vhost.c:229`), whose previous refusal was an `unknown_alias` on `hc`; the
 function was and stays Unknown. The prediction had said zero.
 
-**Composition with W43-INDIRECT-ACCESS-GENERAL** (branch tip `6bb838c8`, not on
-this base; read, not merged). That card admits `*p = e`, `p[i] = e`, `p->f = e`
-and `s.f = e` as a new `LegacyInstruction::IndirectScalarAccess` when `e` is a
-declared scalar, by wrapping `Parser::classify_simple` exactly as this card does
-(both rename the old body; the textual merge conflicts there). The composition
-is: this card's descriptor guard outermost, their typed-scalar route inside it,
-the old classifier innermost — so their admitted instruction is checked by the
-guard. `admits_descriptor_read` names every variant with no wildcard arm, so the
-merge does not compile until `IndirectScalarAccess` is placed; it belongs with
-the refused variants (it treats the value as custody-neutral data). The test
-`a_tracked_descriptor_on_every_scalar_store_route_is_refused` pins all four
-shapes, plus W42's bound `ScalarMemberStore`, refused and never accused; on this
-base the indirect shapes are refused by the lexical gate. Registered for the
-combined tree (`W43-DESCRIPTOR-INDIRECT-ACCESS-WIRING`); this card wires and
-re-tests it when main contains that card.
+**Composition with W43-INDIRECT-ACCESS-GENERAL** (merged from main `0a07cb57`,
+merge commit `06ee9fe4`). That card admits `*p = e`, `p[i] = e`, `p->f = e` and
+`s.f = e` as a new `LegacyInstruction::IndirectScalarAccess` when `e` is a
+declared scalar, by wrapping `Parser::classify_simple` exactly as this card did;
+the textual merge conflicted there and was resolved as three layers:
+`classify_simple` (this card's descriptor guard) → `classify_simple_unguarded`
+(the typed scalar-access route) → `classify_simple_base` (the old classifier).
+Every instruction the indirect route admits is therefore checked by the guard,
+and the predicate the guard applies is `value_carries_descriptor`, the same one
+every other scalar route consults. `admits_descriptor_read` names every variant
+with no wildcard arm, so the merge did not compile until `IndirectScalarAccess`
+was placed; it sits with the refused variants, because it treats its value as
+custody-neutral data. On the combined tree the test
+`a_tracked_descriptor_on_every_scalar_store_route_is_refused` requires the
+guard's own refusal, by name, for `*p = fd`, `p[i] = fd`, `p->f = fd`, `s.f = fd`
+and W42's bound `ScalarMemberStore`, and never an accusation; its controls show
+the same four stores of an ordinary `int` admitted `Safe`, which is the indirect
+rule in force. The combined-tree arbiter adds no guard leaf beyond the one
+`mk_vhost_fdt_open` leaf the pre-merge arbiter already had.
 
 ### 2.4 `dup`, `fdopen`, `fileno`, `fcntl`
 
@@ -443,7 +447,66 @@ No assertion is weakened.
 
 ## 7. Validation
 
-GATE_SECTION
+Measured in this worktree (`agent-a91fc20c32abdf4f7`) on the tree merged with
+main `0a07cb57` (`53ecbb73`; its Rust, Lean, contract and test sources are the
+merge commit `06ee9fe4`'s), by [`scripts/run_gate.py`](scripts/run_gate.py): the
+W43-LIBC-RESULT-ALIAS runner plus `CARGO_INCREMENTAL=0` (the coordinator's disk
+request), `CARGO_BUILD_JOBS=6`, `RUST_TEST_THREADS=2`, debug info off. Every exit
+is captured to a file, never piped. Logs are worktree-private under
+`measure/gate/`; the generator input is [gate.json](gate.json), with the
+[Clang recording](clang-version.txt) taken in this checkout beside it.
+
+| Command | Exit | Result | Log |
+|---|---:|---|---|
+| `git submodule update --init --recursive` | 0 | libevent at `d82464a2…` | `submodules.log` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 | `clang.log` |
+| `cargo test --workspace --no-fail-fast` | **101** | **5,277 passed / 1 failed / 11 ignored**, 286 summaries; the failure is the constraint-16 row below | `test.log` |
+| `cargo test -p qcore-compiler --test cycle20_verifier_plugins vp04_vp07_vp08_process_lifecycle_and_payload_budgets -- --exact --test-threads=1` | 0 | 1 passed (isolated, constraint 16) | `vp04-isolated.log` |
+| `cargo fmt --all -- --check` | 0 | clean | `fmt.log` |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean | `clippy.log` |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | | `probe.log` |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | | `followup.log` |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **173** audits | `lean.log` |
+| `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings`; `cargo test -p qcore-c-gateway --features indirect-census --lib` | 0 / 0 | clean; 433 passed (the merged classifier's feature-gated census paths) | `census-clippy.log`, `census-test.log` |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w43-descriptor-resource-tracking/gate.json` | 0 | 316 follow-ups, 109 contract modules, 173 Lean audits | `measure/build-matrix-2.log` |
+| `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | regenerated and matching | `measure/docs-index*.log` |
+| `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **330** tests | `measure/python-final.log` |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **124 passed / 0 failed / 0 ignored**, 39 summaries | `ptest.log` |
+| `… -p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations … -- --exact --test-threads=1` | 0 | 1 passed (isolated) | `pisolated.log` |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean | `pfmt.log` |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean | `pclippy.log` |
+| `python3 providers/contracts.py check` | 0 | inventories and load path current | `pcontracts.log` |
+| `python3 providers/package.py build --output measure/gate/packages` | 0 | 5 packages | `pbuild.log` |
+| `python3 providers/package.py verify …/<id>` (×5: chunkio, cmetrics, ctraces, libevent, librdkafka) | 0 ×5 | | `pverify.log` |
+| `python3 -m unittest discover -s providers/tests` | 0 | 13 tests | `ppython.log` |
+
+**Counts.** This card adds 24 Rust tests (`descriptor_custody.rs` 15,
+`resource_kinds.rs` 3, the `extern_bridge` refusal 1, five
+`legacy_descriptor_custody` unit tests) and one Lean audit
+(`AuditKindedCustody`, 30 theorems). The base's own figures at `0a07cb57` were
+not remeasured here, so the delta is stated by test, not by subtraction.
+
+**The one failing row.** `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
+is constraint 16's wall-clock row (`elapsed < 500 ms`); the host was shared with
+concurrent card builds during the full run (1-minute load 9 at the isolated
+rerun, higher earlier). It passed in isolation on the same tree. It is reported,
+not weakened; the full-run exit stays 101 in the record.
+
+**Attempts that are not the gate, disclosed.**
+
+* A first gate run on the pre-merge implementation commit (`ee2589b2`) was
+  stopped by hand during `cargo test` when the coordinator reported that main
+  contained W43-INDIRECT-ACCESS-GENERAL; its partial logs are
+  `measure/gate-aborted-premerge/` and nothing from it is gate evidence.
+* An earlier class-(a) build failed with ENOSPC (disk full, shared host); its log
+  was kept, 63 GiB of this worktree's own debug target was reclaimed, and the
+  build and run were repeated from scratch.
+* The first BEFORE run on main's extracted tree exited 1 (`Pin(GitUnavailable {
+  pin: "libevent" })`: the copied submodule had no git metadata). It was
+  repeated with the pinned submodule linked in, exit 0.
+* The report, ledger and STATUS were edited while the gate ran; the Rust, Lean,
+  contract and test sources under test were committed before it started, and the
+  Python suite ran after every edit.
 
 ## 8. Ledger and status
 
@@ -459,10 +522,11 @@ GATE_SECTION
 * **Registered** ([followups.json](followups.json)):
   `W43-DESCRIPTOR-W4-SUMMARIES`, `W43-DESCRIPTOR-REFUSED-SHAPES`,
   `RETURN-CAST-PLACE-NOT-ESCAPED`,
-  `W43-DESCRIPTOR-ACCUSING-ARMS-UNEXERCISED-IN-CORPUS`,
-  `W43-DESCRIPTOR-INDIRECT-ACCESS-WIRING`.
-* Follow-ups **299 → 303** on the card branch before the merge; **313 → 317** on the
-  combined tree. `corpus.cycle19_raw_units` points at this report's
+  `W43-DESCRIPTOR-ACCUSING-ARMS-UNEXERCISED-IN-CORPUS`. The indirect-access
+  combination was drafted as a fifth and dropped before landing: the merge wired
+  it and the combined-tree test and arbiter discharge it (§2.3).
+* Follow-ups **313 → 316** on the combined tree (299 → 303 on the pre-merge branch,
+  before the wiring residual was discharged). `corpus.cycle19_raw_units` points at this report's
   artifacts; its previous contents are in [previous-corpus-row.json](previous-corpus-row.json).
   `docs/STATUS.md`'s corpus, contract-corpus, unit-reason and follow-up rows are
   updated from this arbiter.
@@ -472,11 +536,11 @@ GATE_SECTION
 * **Constraint 7:** the leak pin holds at 271 (combined tree) through one accusing addition on
   the first integer-carried identity and one withdrawal-by-refusal; both leaf
   coordinates are above.
-* **Constraint 5g / W43-INDIRECT-ACCESS-GENERAL:** §2.3. Wire the indirect rule's
-  value test to `descriptor_custody::value_carries_descriptor` (or confirm its
-  instruction passes the classification guard) and keep
-  `a_tracked_descriptor_on_every_scalar_store_route_is_refused` green on the
-  combined tree.
+* **Constraint 5g / W43-INDIRECT-ACCESS-GENERAL:** §2.3. Already merged and
+  wired on this branch: the descriptor guard wraps the typed scalar-access route,
+  and `a_tracked_descriptor_on_every_scalar_store_route_is_refused` passes on the
+  combined tree. Constraint 5g's paragraph can record that a tracked descriptor
+  on the right-hand side of any admitted shape is refused.
 * **Constraint 10:** the declared-scalar source exemption now excludes a scalar
   bound to an integer-carried identity.
 * **Files likely to conflict:**
@@ -488,7 +552,7 @@ GATE_SECTION
     (regenerate with `sync`), `compiler/tests/qcore_contract_corpus.rs`,
     `compiler/tests/contract_loader.rs` (counts add up across cards),
     `scripts/tests/test_contract_corpus.py`;
-  * with W43-INDIRECT-ACCESS-GENERAL and W43-RESULT-ALIAS-RETURNED:
+  * with W43-RESULT-ALIAS-RETURNED (W43-INDIRECT-ACCESS-GENERAL is merged):
     `crates/qcore-c-gateway/src/legacy_c.rs` (`LegacyInstruction`, `classify_simple`,
     `transfer`, the edge loop, `apply_contract_call`), `legacy_summary.rs`,
     `legacy_joined_provenance.rs`, `qcore-audit/src/report.rs`;

@@ -814,6 +814,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-chunk-source-profile](w43-chunk-source-profile/README.md) | W43 chunk source profile |
 
+| [w43-descriptor-resource-tracking](w43-descriptor-resource-tracking/README.md) | W43-DESCRIPTOR-RESOURCE-TRACKING: kind-indexed custody, integer-carried descriptors and eight libc declarations |
+
 | [w43-indirect-access-general](w43-indirect-access-general/README.md) | W43-INDIRECT-ACCESS-GENERAL: typed scalar accesses through pointers |
 
 | [w43-libc-contracts](w43-libc-contracts/README.md) | W43-LIBC-CONTRACTS: trusted libc/POSIX contracts, measured first and placed only in the libc crate |

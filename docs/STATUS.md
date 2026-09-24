@@ -36,7 +36,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Contract corpus | **109** modules; **138** resource-v1 declarations, **8** of them kinded (`descriptor`, `stream`, `directory`; contract spec §C04.6); **46** manifest-selected, 4 of them by `crate:module` reference; **13** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 37 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) (all 11 contract crates) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md), [executable crates](reports/contract-inherit-qcore-provider-naming/README.md) |
 | Multi-module declarations | **10** functions in **12** module pairs, every pair a registered checked relation: 5 projections, 1 renamed equivalence, 5 source-shape agreements, 1 lifecycle agreement; **0** textual duplicates; 1 view not implied outside a coverage premise (`CONTRACT-VIEW-CHUNK-CLOSE-BACKEND-COVERAGE`) | [View projection check](reports/contract-view-projection-check/README.md), `qcore_contract::contract_views::REGISTERED_RELATIONS`, guard `compiler/tests/contract_view_census.rs` |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **317** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **316** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -130,9 +130,9 @@ every scalar route including the typed indirect one
 ([W43-DESCRIPTOR-RESOURCE-TRACKING](reports/w43-descriptor-resource-tracking/README.md),
 Lean `QCore.KindedCustody`).
 
-All three broader Cycle 18 follow-ups remain open; **317** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **316** follow-ups are
 registered — W43-DESCRIPTOR-RESOURCE-TRACKING retired `W43-LIBC-DESCRIPTOR-LIFECYCLE`,
-discharged the `CT-CTWIN-DESCRIPTOR` arm of `CT-CTWIN-O` and registered five
+discharged the `CT-CTWIN-DESCRIPTOR` arm of `CT-CTWIN-O` and registered four
 descriptor residuals; `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and

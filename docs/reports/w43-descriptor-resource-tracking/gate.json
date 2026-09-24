@@ -1,0 +1,13 @@
+{
+  "note": "W43-DESCRIPTOR-RESOURCE-TRACKING: core Rust, fmt, clippy (--workspace), probes, Lean and the provider gate measured on 53ecbb73 (the tree merged with main 0a07cb57; its Rust, Lean, contract and test sources are those of the merge commit 06ee9fe4; later commits change documents, the ledger and report evidence only). cargo test --workspace --no-fail-fast: 5277 passed / 1 failed / 11 ignored over 286 summaries, exit 101; the one failure is the constraint-16 load-sensitive row vp04_vp07_vp08_process_lifecycle_and_payload_budgets (`elapsed < 500 ms`, host shared with concurrent cards), which passed 1/1 rerun in isolation (--exact --test-threads=1, exit 0). Tests added by this card: descriptor_custody.rs 15, resource_kinds.rs 3, the extern_bridge refusal 1, legacy_descriptor_custody unit 5. 173 Lean audits (1 added: AuditKindedCustody). indirect-census feature step: clippy clean, 433 feature-on library tests passed. Step exits: {'submodules': 0, 'clang': 0, 'test': 101 (P02-FLAKE row, isolated rerun 0), 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. Logs: worktree-private measure/gate of agent-a91fc20c32abdf4f7. Clang recorded in this checkout. Corpus (combined tree): 1 function and 1 unit Unknown -> provisional Unsafe (ctr_random_get), leak 271 -> 271 (+1 -1), 0 kind-mismatch and 0 use-after-close candidates.",
+  "workspace_tests": 5277,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 173,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
