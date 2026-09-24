@@ -292,7 +292,11 @@ fn included_parent_mutations(root: &Path, package: &Path) -> usize {
             .join(pin["crate"].as_str().unwrap())
             .join(pin["module"].as_str().unwrap());
         let original = std::fs::read(&path).unwrap();
-        assert_eq!(sha256_hex(&original), pin["sha256"].as_str().unwrap(), "{key}");
+        assert_eq!(
+            sha256_hex(&original),
+            pin["sha256"].as_str().unwrap(),
+            "{key}"
+        );
         let mut changed = original.clone();
         changed.extend_from_slice(b"// changed\n");
         std::fs::write(&path, &changed).unwrap();
@@ -301,7 +305,10 @@ fn included_parent_mutations(root: &Path, package: &Path) -> usize {
         refused("included parent set mismatch", key);
         std::fs::write(&path, &original).unwrap();
         assert_eq!(std::fs::read(&path).unwrap(), original, "{key}: round trip");
-        assert!(verify().status.success(), "{key}: restored package verifies");
+        assert!(
+            verify().status.success(),
+            "{key}: restored package verifies"
+        );
         controls += 2;
     }
     controls

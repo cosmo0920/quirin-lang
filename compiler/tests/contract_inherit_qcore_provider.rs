@@ -32,8 +32,8 @@ use qcore_contract::contract_inclusion::{
 };
 use qcore_contract::contract_loader::{
     PublishedModuleRef, check_source_assumptions, declared_abi_signatures, inclusion_provenance,
-    literal_argument_premises, load_published_resource_contracts,
-    load_resource_contract_manifest, load_resource_contract_sources, variadic_data_tails,
+    literal_argument_premises, load_published_resource_contracts, load_resource_contract_manifest,
+    load_resource_contract_sources, variadic_data_tails,
 };
 use qcore_contract::load_path_manifest::load_contract_load_path_manifest;
 use qcore_frontend::frontend::parse_source_program;
@@ -390,7 +390,9 @@ fn real_package_inventories_pin_their_included_parents() {
             assert_eq!(pin["sha256"], sha256_hex(text.as_bytes()));
             assert!(libc.published.contains(module));
         }
-        let bundle = scratch.load(owner).unwrap_or_else(|e| panic!("{krate}: {e}"));
+        let bundle = scratch
+            .load(owner)
+            .unwrap_or_else(|e| panic!("{krate}: {e}"));
         for (key, pin) in &pins {
             assert_eq!(
                 bundle.included(key).unwrap(),
@@ -475,8 +477,22 @@ fn alias_and_interior_parents_are_inherited_with_their_base_index() {
     for (child, parent, parameter, extent, nullable, const_dropped) in [
         ("app_copy", "memcpy", 0, DerivedExtent::Exact, false, false),
         ("app_find", "strchr", 0, DerivedExtent::Interior, true, true),
-        ("app_search", "strstr", 0, DerivedExtent::Interior, true, true),
-        ("app_gmtime", "gmtime_r", 1, DerivedExtent::Exact, true, false),
+        (
+            "app_search",
+            "strstr",
+            0,
+            DerivedExtent::Interior,
+            true,
+            true,
+        ),
+        (
+            "app_gmtime",
+            "gmtime_r",
+            1,
+            DerivedExtent::Exact,
+            true,
+            false,
+        ),
     ] {
         let child_contract = loaded.contract(child).unwrap();
         assert_eq!(Some(child_contract), loaded.contract(parent), "{child}");
@@ -493,12 +509,18 @@ fn alias_and_interior_parents_are_inherited_with_their_base_index() {
     }
     let key = format!("{APP}:{ALIAS_MODULE}");
     let text = &loaded.source_assumptions()[&key];
-    assert!(text.contains("resource_return_alias(to, nonnull)"), "{text}");
+    assert!(
+        text.contains("resource_return_alias(to, nonnull)"),
+        "{text}"
+    );
     assert!(
         text.contains("resource_return_interior(text, nullable)"),
         "{text}"
     );
-    assert!(text.contains("resource_return_alias(out, nullable)"), "{text}");
+    assert!(
+        text.contains("resource_return_alias(out, nullable)"),
+        "{text}"
+    );
     let chains = &loaded.inclusion_evidence()[&key].inherited;
     assert_eq!(chains["app_copy"][0].declaration, "memcpy");
     assert_eq!(chains["app_gmtime"][0].module.module, "libc/time.qcore");
