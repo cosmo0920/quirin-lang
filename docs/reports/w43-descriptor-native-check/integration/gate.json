@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W43-DESCRIPTOR-NATIVE-CHECK on merge e94f1607 (onto main 08e9a76c, after W43-INDEXED-RESOURCE-COLLECTIONS), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5390 core Rust passed / 0 failed / 11 ignored over 289 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 177 Lean audits; 330 root Python tests after regenerating this section (the first run failed only the derived-facts check because the merged validation section predated this card's audit); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run is byte-identical in all five artifacts to docs/reports/w43-indexed-resource-collections/integration/artifacts/ (baseline_identity exit 0); the card is verdict-neutral and that baseline stays current.",
+ "workspace_tests": 5390,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 330,
+ "lean_audits": 177,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
