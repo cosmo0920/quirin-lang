@@ -812,6 +812,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-libc-contracts](w43-libc-contracts/README.md) | W43-LIBC-CONTRACTS: trusted libc/POSIX contracts, measured first and placed only in the libc crate |
 
+| [w43-libc-printf-family](w43-libc-printf-family/README.md) | W43-LIBC-PRINTF-FAMILY: the printf family, declared and attributed leaf by leaf |
+
 | [w43-libc-result-alias](w43-libc-result-alias/README.md) | W43-LIBC-RESULT-ALIAS: derived results, the `__restrict` reader, and thirteen libc declarations |
 
 | [w43-monkey-callback-composition](w43-monkey-callback-composition/README.md) | W43 Monkey callback Cycle 18 composition |

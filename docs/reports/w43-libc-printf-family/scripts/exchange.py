@@ -20,7 +20,9 @@ on that line. The leaf is labelled:
   above decides which premise refused it.
 
 Then the bound: over the AFTER run, every non-Safe function whose remaining
-leaves are ALL family tail or nested-call refusals. Those are the only functions
+leaves are ALL family tail refusals or nested-call refusals this card added
+(a nested-call leaf already present at the baseline belongs to another outer
+call and is not counted). Those are the only functions
 any widening of the tail rule, or of nested-call admission, could move by
 itself.
 """
@@ -81,6 +83,8 @@ def main() -> int:
         match = NESTED.fullmatch(r["description"])
         if match:
             nested[match.group(1)] += r["count"]
+    added_nested = {(r["library"], r["unit"], r["function"], r["line"], r["description"])
+                    for r in added if NESTED.fullmatch(r["description"])}
     bound = []
     for unit in after["units"]:
         for function in unit["functions"]:
@@ -94,7 +98,8 @@ def main() -> int:
                 tail = TAIL.fullmatch(leaf["description"])
                 if tail and tail.group(1) in FAMILY:
                     continue
-                if NESTED.fullmatch(leaf["description"]):
+                if (unit["library"], unit["file"], function["function"], leaf["line"],
+                        leaf["description"]) in added_nested:
                     continue
                 only = False
                 break
@@ -109,7 +114,7 @@ def main() -> int:
         "functions_proved_unreadable": len(unreadable),
         "nested_call_refusals_added_by_inner_callee": dict(nested.most_common()),
         "nested_call_refusals_added": sum(nested.values()),
-        "functions_blocked_only_by_family_tail_or_nested_refusals": bound,
+        "functions_blocked_only_by_family_tail_or_added_nested_refusals": bound,
     }
     out.write_text(json.dumps(record, indent=1) + "\n")
     brief = dict(record)

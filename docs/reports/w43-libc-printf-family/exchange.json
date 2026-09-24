@@ -38,46 +38,5 @@
   "rd_kafka_txn_state2str": 1
  },
  "nested_call_refusals_added": 100,
- "functions_blocked_only_by_family_tail_or_nested_refusals": [
-  {
-   "unit": "ctraces/ctr_encode_msgpack.c",
-   "function": "pack_string",
-   "status": "Unknown",
-   "leaves": {
-    "nested call `cfl_sds_len` inside a modeled call is outside the resource projection": 1
-   }
-  },
-  {
-   "unit": "librdkafka/cJSON.c",
-   "function": "cJSON_DeleteItemFromArray",
-   "status": "Unknown",
-   "leaves": {
-    "nested call `cJSON_DetachItemFromArray` inside a modeled call is outside the resource projection": 1
-   }
-  },
-  {
-   "unit": "librdkafka/cJSON.c",
-   "function": "cJSON_DeleteItemFromObject",
-   "status": "Unknown",
-   "leaves": {
-    "nested call `cJSON_DetachItemFromObject` inside a modeled call is outside the resource projection": 1
-   }
-  },
-  {
-   "unit": "librdkafka/cJSON.c",
-   "function": "cJSON_DeleteItemFromObjectCaseSensitive",
-   "status": "Unknown",
-   "leaves": {
-    "nested call `cJSON_DetachItemFromObjectCaseSensitive` inside a modeled call is outside the resource projection": 1
-   }
-  },
-  {
-   "unit": "librdkafka/rdkafka.c",
-   "function": "rd_kafka_srand",
-   "status": "Unknown",
-   "leaves": {
-    "nested call `rd_seed` inside a modeled call is outside the resource projection": 1
-   }
-  }
- ]
+ "functions_blocked_only_by_family_tail_or_added_nested_refusals": []
 }
