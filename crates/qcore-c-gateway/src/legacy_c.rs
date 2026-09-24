@@ -3654,6 +3654,31 @@ impl Parser<'_> {
     /// named an indirect destination that only an out-parameter contract can
     /// sanction. Compiled out with the feature off; it reads the instruction
     /// after it was produced and cannot change it.
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: record one element null test
+    /// the condition parser lowered. Compiled out with the feature off.
+    #[cfg(feature = "indirect-census")]
+    fn census_element_condition(&self, line: usize, condition: &[Token], base: &str) {
+        let texts = condition
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        crate::indirect_census::record_statement(
+            &crate::indirect_census::Context {
+                function: &self.census_function,
+                formal_parameters: &self.formal_parameters,
+                typed_model: &self.typed_model,
+                typed_types: &self.typed_types,
+                typed_bases: &self.typed_bases,
+            },
+            line,
+            &texts,
+            format!(
+                "element null test over `{base}`; fallback: unmodeled call, aggregate or indirect access in branch condition"
+            ),
+            &self.census_bindings,
+        );
+    }
+
     #[cfg(feature = "indirect-census")]
     fn census_statement(&self, line: usize, tokens: &[Token], instruction: &LegacyInstruction) {
         let outcome = match instruction {
@@ -3669,6 +3694,15 @@ impl Parser<'_> {
                 ..
             } if is_indirect_place(destination) => {
                 format!("indirect call destination `{destination}`")
+            }
+            // Card W43-INDEXED-RESOURCE-COLLECTIONS: an element operation the
+            // classifier lowered, with the refusal it keeps as its fallback.
+            LegacyInstruction::ElementStore { base, fallback, .. }
+            | LegacyInstruction::ElementRelease { base, fallback, .. } => {
+                let LegacyInstruction::Unknown { description, .. } = fallback.as_ref() else {
+                    return;
+                };
+                format!("element operation over `{base}`; fallback: {description}")
             }
             _ => return,
         };
@@ -4085,8 +4119,10 @@ impl Parser<'_> {
                     && self.null_condition(&condition).is_none())
                 .then(|| self.element_condition(&condition))
                 .flatten();
-                if element_condition.is_some() {
+                if let Some((_base, _, _)) = &element_condition {
                     self.element_lowerings += 1;
+                    #[cfg(feature = "indirect-census")]
+                    self.census_element_condition(line, &condition, _base);
                 }
                 let then_body = self.parse_statement_body()?;
                 let else_body = if self.text() == Some("else") {
