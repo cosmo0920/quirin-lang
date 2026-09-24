@@ -1,0 +1,42 @@
+{
+  "run": "private/runs/census-base6",
+  "baseline": "docs/reports/w43-libc-result-alias/artifacts",
+  "artifacts": {
+    "diagnostics": {
+      "file": "resource-diagnostics.json",
+      "run_sha256": "98c441042405674f3c870c3254d5c8ed6345ed98391bb7cc4d2dcd1ca0a445f4",
+      "baseline_raw_sha256": "98c441042405674f3c870c3254d5c8ed6345ed98391bb7cc4d2dcd1ca0a445f4",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "chunk-contracts": {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "run_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "baseline_raw_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "contracts": {
+      "file": "resource-diagnostics.contracts.json",
+      "run_sha256": "c66aabee5d938352cc121012c4014bc05ef981efc59d9cd200a4a8133c2d3543",
+      "baseline_raw_sha256": "1af4e434ebd07e04368956d296709cdb981137b78a8705a453a650d43e2596bf",
+      "archive_matches_manifest": true,
+      "byte_identical": false
+    },
+    "source-effects": {
+      "file": "resource-diagnostics.source-effects.json",
+      "run_sha256": "0b7ce72d00131c7c410541bd8f3396189cfc9b3c21a90289cf3e303dd1b79964",
+      "baseline_raw_sha256": "a19251e0442274781560aade445ee53c3b5d58bce6e599e18988815e9380aadd",
+      "archive_matches_manifest": true,
+      "byte_identical": false
+    },
+    "source": {
+      "file": "monkey-source.json",
+      "run_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "baseline_raw_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    }
+  },
+  "verdict_bearing_identical": true
+}

@@ -326,12 +326,6 @@ fn ambiguous_accesses_keep_their_existing_unknown_and_diagnostic() {
             "chained access",
             "void subject(struct pane *n) { void *p = q_alloc(); n->doc->cursor = 1; q_free(p); }",
         ),
-        // A subscript is not admitted at all.
-        (
-            "subscripted access",
-            "void subject(struct doc *d, int *v) { void *p = q_alloc(); \
-             d->cursor = v[0]; q_free(p); }",
-        ),
         // A cast names a type, which is never a declared scalar variable.
         (
             "cast operand",
@@ -356,6 +350,21 @@ fn ambiguous_accesses_keep_their_existing_unknown_and_diagnostic() {
             "{case}: expected the existing indirect-access diagnostic, got {reasons:?}"
         );
     }
+}
+
+/// Card W43-INDIRECT-ACCESS-GENERAL moved one case out of the table above,
+/// deliberately: `d->cursor = v[0]` over two unbound formals is a typed scalar
+/// access statement (`v` is declared `int *`, `cursor` a scalar member), so it
+/// is now admitted and certifies. The certificate rechecks from source.
+#[test]
+fn a_subscripted_scalar_read_into_a_scalar_member_is_admitted_by_the_general_route() {
+    if !clang_available() {
+        return;
+    }
+    certified(
+        "void subject(struct doc *d, int *v) { void *p = q_alloc(); \
+         d->cursor = v[0]; q_free(p); }",
+    );
 }
 
 #[test]

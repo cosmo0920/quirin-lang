@@ -1,0 +1,13 @@
+{
+  "note": "W43-INDIRECT-ACCESS-GENERAL: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured on d975ffc6 (the implementation commit; later commits change documents, the ledger, report scripts and evidence only, no Rust, Lean, contract or test source). 5222 core Rust passed / 0 failed / 11 ignored over 277 summaries (23 tests in the new indirect_scalar_access.rs binary and one test in each of scalar_member_store.rs and typed_field_access.rs added by this card, which also narrows two existing pins deliberately); 171 Lean audits (1 added: AuditIndirectScalarAccess); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 428 feature-on library tests passed; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0}. Provider workspace remeasured on the same tree: 109 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0 (72 provider-owned); five package builds and verifications exit 0; 5 package Python tests. Logs: worktree-private private/gate and private/provider-gate of agent-a8d24f7f717a987c1. Clang recorded in this checkout. Corpus: 12 functions and 1 unit Unknown -> Safe, leak 272 -> 271 (a withdrawn false leak, attributed), 0 violation candidates.",
+  "workspace_tests": 5222,
+  "provider_tests": 109,
+  "python_evidence_validator_tests": 327,
+  "lean_audits": 171,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

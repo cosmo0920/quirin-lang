@@ -1,0 +1,34 @@
+[
+  {
+    "entry": {
+      "id": "INDIRECT-CENSUS-FEATURE-UNBUILT",
+      "title": "The indirect-census instrumentation is built by no CI job and will rot silently",
+      "why": "The `indirect-census` feature is built by no CI job and by no gate step other than the one the card adds to its own gate script. A later refactor of `legacy_c.rs` or `typed_field_access.rs` will break it silently, and the next card wanting the census pays to repair it. The card states this is a DECISION rather than a task and declines to take it, since the answer depends on whether wave 37 takes a gateway card at all - and the card's own recommendation is that it should not take this one. DISCHARGE: either a CI job building `-p qcore-c-gateway --features indirect-census`, or a recorded decision that the instrumentation is disposable and a future census re-derives it.",
+      "source": "docs/reports/c-gateway-indirect-census-2/README.md",
+      "recorded_by": "WAVE-36-CLOSE"
+    },
+    "discharged_by": "W43-INDIRECT-ACCESS-GENERAL",
+    "ground": "Its discharge condition is \"a CI job building `-p qcore-c-gateway --features indirect-census`\". Card W43-INDIRECT-ACCESS-GENERAL added the step `Lint and test the gateway with the indirect-access census compiled in` to .github/workflows/ci.yml, running `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings` and `cargo test -p qcore-c-gateway --features indirect-census --lib`, and ran both as the `census` step of its own gate (exit 0; 428 library tests). The card also used and extended the census (statement stream, declared labels) for its shape census. docs/reports/w43-indirect-access-general/README.md."
+  },
+  {
+    "entry": {
+      "id": "BASE-TYPE-READER-CENSUS-FEATURE-UNBUILT",
+      "title": "The indirect-census feature now carries two cards' instrumentation and is still built by no CI job",
+      "why": "Raised by C-GATEWAY-INDIRECT-CENSUS-2 (wave 36) as INDIRECT-CENSUS-FEATURE-UNBUILT, left to the integrator, and not registered. BASE-TYPE-READER-CENSUS (wave 37) has now paid into it a second time: the feature gates hooks in legacy_c.rs, typed_field_access.rs and indirect_census.rs, including note sinks threaded through classify_specifiers, declared_type, read_parameters, read_locals, read_declaration and record_variable. No workspace member enables it, so the standing gate never compiles it; each card adds its own extra clippy pass and nothing else checks it. A refactor of the declaration reader will break the census silently and the next card will pay to repair it. DISCHARGE: a CI job building `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings`, or a recorded decision that the instrumentation is disposable and a future census re-derives it.",
+      "source": "docs/reports/base-type-reader-census/README.md"
+    },
+    "discharged_by": "W43-INDIRECT-ACCESS-GENERAL",
+    "ground": "Its discharge condition is \"a CI job building `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings`\", exactly the command card W43-INDIRECT-ACCESS-GENERAL added to .github/workflows/ci.yml (with the feature's library tests) and ran green in its gate. docs/reports/w43-indirect-access-general/README.md."
+  },
+  {
+    "entry": {
+      "id": "INDIRECT-EXCHANGE-PROXY-UNVALIDATED",
+      "title": "The census's three-way split rests on a proxy never validated against an admission",
+      "why": "A statement carrying an uncontracted call, or a second chain of a different shape, is PREDICTED to stay refused. The proxy has never been validated against an actual admission, because the census makes none. It errs toward exchange, so the CLEAR column is an upper bound - but the SIZE of the error is unmeasured. DISCHARGE: the first wave-37 arbiter to admit any shape publishes its measured three-way split beside this card's prediction for the same shape, and the difference is recorded.",
+      "source": "docs/reports/c-gateway-indirect-census-2/README.md",
+      "recorded_by": "WAVE-36-CLOSE"
+    },
+    "discharged_by": "W43-INDIRECT-ACCESS-GENERAL",
+    "ground": "Its discharge condition: \"the first arbiter to admit any shape publishes its measured three-way split beside this card's prediction for the same shape, and the difference is recorded\". Card W43-INDIRECT-ACCESS-GENERAL is that arbiter: proxy-validation.txt publishes, for the 17 census-2 shapes its typed rule touches, the proxy's prediction beside the measured AFTER outcome. Of 11 functions the proxy calls CLEAR, 4 measured cleared and 7 kept a leaf only because another statement of the same shape lies outside the typed rule; no CLEAR prediction was wrong where the rule covered the shape. The 4 EXCH predictions kept a leaf for the same reason, so the exchange arm is re-registered, narrower, as INDIRECT-EXCHANGE-PROXY-EXCH-ARM-UNTESTED. The card's own forecast (PREDICTION.md) is compared leaf by leaf in the report."
+  }
+]

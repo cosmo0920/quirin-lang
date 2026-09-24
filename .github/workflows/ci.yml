@@ -27,6 +27,15 @@ jobs:
       - name: Lint
         run: cargo clippy --workspace --all-targets -- -D warnings
 
+      # Cards C-GATEWAY-INDIRECT-CENSUS-2, BASE-TYPE-READER-CENSUS and
+      # W43-INDIRECT-ACCESS-GENERAL. No workspace member enables the census
+      # feature, so without this step its hooks in the gateway compile nowhere
+      # and rot silently (INDIRECT-CENSUS-FEATURE-UNBUILT).
+      - name: Lint and test the gateway with the indirect-access census compiled in
+        run: |
+          cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings
+          cargo test -p qcore-c-gateway --features indirect-census --lib
+
       - name: Test, including the pinned Libevent audit
         run: cargo test --workspace
 
