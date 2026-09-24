@@ -52,7 +52,7 @@ text remains in `94438552`.
 * **Parity.** No contract source, manifest, corpus index or pin changed. An
   environment without inclusion serializes byte for byte as before. Every
   corpus module elaborates to itself. The fresh arbiter run's verdict-bearing
-  diagnostics are **@@ARBITER@@**.
+  diagnostics are **byte-identical to the W43 baseline**.
 * **Follow-ups 282 → 285.**
 
 ## 1. Design
@@ -500,7 +500,48 @@ an identical result.
   `qcore-contract` and `qcore-audit`).
 * **Guard inert on the corpus.** `QI013` fires only on inclusion syntax, and the
   census and the parity test show that no corpus module has any.
-* **Arbiter.** @@ARBITER_SECTION@@
+* **Arbiter.** `docs/reports/w43-return-expression/scripts/run_audit.py` ran twice in this
+worktree, each time with a fresh release build of
+`cycle19_fluent_bit_libraries_audit`:
+
+* **BEFORE** on base `fa7ab464` ([before-run.json](arbiter/before-run.json),
+  exit 0).
+* **AFTER** on `1442847b`, the tree the gate measured
+  ([after-run.json](arbiter/after-run.json), exit 0).
+
+| Artifact | AFTER vs BEFORE (same checkout) | AFTER vs W43 baseline |
+|---|---|---|
+| diagnostics (verdict-bearing) | **byte-identical** | **byte-identical** (`f07ba977…`) |
+| chunk-contracts | byte-identical | byte-identical |
+| source (`monkey-source.json`) | byte-identical | byte-identical |
+| contracts | byte-identical | differs by path only: equal after the root alias and the crate-path rewrite |
+| source-effects | byte-identical | differs, pre-existing at base: 53 leaves |
+
+Records: [before-vs-after.json](arbiter/before-vs-after.json),
+[after-vs-w43.json](arbiter/after-vs-w43.json) (`baseline_identity.py
+--root-alias`, exit 0, `verdict_bearing_identical: true`) and
+[nonverdict-parity.json](arbiter/nonverdict-parity.json).
+
+* **contracts.** [`scripts/nonverdict_parity.py`](scripts/nonverdict_parity.py)
+  applies the root alias and the QUIRIN-PROVIDER-SHARED crate-path rewrite
+  (`providers/quirin-provider-*/contracts/` → `providers/shared/contracts/`).
+  The result equals the W43 archive exactly. All 33 selected source texts are
+  identical by key. That difference is the provider-shared move, not this
+  card.
+* **source-effects.** Against W43, 53 leaves differ. The differing key names
+  are `build_digest`, `configuration_digest`, `task_digest`, `paths`,
+  `coverage`, `kind`, `max_operations`, `obligation_id`,
+  `observed_runs_only`, `schedules_explored` and
+  `qcore:boolean-field-import:v1`. QUIRIN-PROVIDER-SHARED measured 41 leaves,
+  all checkout-path digests. The extra leaves and key names were not
+  attributed here, because they are present **identically in BEFORE**, and
+  AFTER equals BEFORE byte for byte. Whatever moved them landed between the
+  W43 baseline and `fa7ab464` (the Monkey callback, provider-shared and
+  Windows portability merges), not in this card. This card moves **no**
+  artifact byte.
+
+AFTER vs BEFORE is the direct measure of this card, and it is byte-identical
+in all five artifacts.
 
 ## 6. Positive fixtures
 
@@ -539,7 +580,69 @@ returns nothing (`a_refused_module_leaves_no_partial_environment`).
 
 ## 8. Validation
 
-@@VALIDATION@@
+Measured in this worktree (`agent-afca7a363739adbfc`). The core gate ran on
+`1442847b`. Later commits change the report, ledger, status, increment record
+and report scripts only. [`run_gate.py`](../w43-return-expression/scripts/run_gate.py)
+captured every step's exit to a file, never through a pipe
+(`CARGO_BUILD_JOBS=4`, `RUST_TEST_THREADS=2`). Logs are worktree-private under
+`measure/`. Clang was recorded in this checkout ([clang-version.txt](clang-version.txt)).
+
+| Command | Exit | Result | Log |
+|---|---|---|---|
+| `git submodule update --init --recursive` | 0 | | `measure/gate/submodules.log` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 | `measure/gate/clang.log` |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,176 passed / 0 failed / 11 ignored**, 275 summaries | `measure/gate/test.log` |
+| `cargo fmt --all -- --check` | 0 | clean | `measure/gate/fmt.log` |
+| `cargo clippy --all-targets -- -D warnings` | 0 | clean | `measure/gate/clippy.log` |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | | `measure/gate/probe.log` |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | | `measure/gate/followup.log` |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **168** audits (+1, `AuditContractInherit`) | `measure/gate/lean.log` |
+| `python3 -m unittest discover -s scripts/tests` (before the matrix regeneration) | 1 | 325 tests, 2 failures: the two committed-matrix consistency tests, which are expected red until the regeneration below | `measure/python-pre.log` |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/contract-inherit/gate.json` | 0 | 285 follow-ups, 168 Lean audits | `measure/build-matrix.log` |
+| `python3 -m unittest discover -s scripts/tests` (after the regeneration) | 0 | **325** tests (+8, `test_package_contract_includes`) | `measure/python-final.log` |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **109 passed / 0 failed / 0 ignored**, 39 summaries | `measure/provider-gate/test.log` |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean | `measure/provider-gate/fmt.log` |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean | `measure/provider-gate/clippy.log` |
+| `python3 providers/contracts.py check` | 0 | inventories unchanged | `measure/provider-gate/contracts-check.log` |
+| `python3 providers/package.py build --output measure/provider-gate/packages` | 0 | 5 packages | `measure/provider-gate/package-build.log` |
+| `python3 providers/package.py verify …/<id>` (×5) | 0 ×5 | | `measure/provider-gate/verify-<id>.log` |
+| `python3 -m unittest discover -s providers/tests` | 0 | 5 tests | `measure/provider-gate/package-python.log` |
+| arbiter BEFORE / AFTER (`run_audit.py`) | 0 / 0 | §5 | `measure/arbiter-before`, `measure/arbiter-after` |
+| `python3 scripts/build_docs_index.py` | 0 | index regenerated | `measure/docs-index.log` |
+
+**Where the counts come from.**
+
+* **Core Rust.** QUIRIN-PROVIDER-SHARED recorded 5,117 / 0 / 12 at
+  `aebd76a5`, and the Monkey and Windows-portability merges moved the suite
+  again before `fa7ab464`. This card did not re-measure its base, so the delta
+  to 5,176 is not attributed test by test. The card's own new tests are:
+  * 29 in `qcore-contract/tests/contract_inherit.rs`;
+  * 5 frontend scanner unit tests;
+  * 2 in `qcore-audit/tests/contract_inherit_identity.rs`;
+  * 1 in `compiler/tests/contract_inherit_parity.rs`.
+
+  That is 37 in total.
+* **Python.** The suite gained this card's 8 package-include tests.
+* **Provider tests.** 109 equals the QUIRIN-PROVIDER-SHARED count; no provider
+  crate changed.
+* **Load-sensitive rows.** No `P02-FLAKE` row failed in either full run, so no
+  isolated rerun was needed.
+
+**Package identities.** Five things hold for every package:
+
+* All five contract inventories (`contracts_manifest_sha256`) are identical to
+  QUIRIN-PROVIDER-SHARED's recorded after-build.
+* `Cargo.lock` is unchanged.
+* No inventory gained an `includes` field.
+* No package installs an `includes/` tree.
+* `package.py verify`, with the new include rule, exits 0 for all five.
+
+Executable, manifest and archive digests differ from that record. That record
+came from a different checkout, and this card does not claim cross-checkout
+reproducibility, as that report itself did not. The providers also link
+`qcore-schemas`, which gained the `inclusion_evidence` field. A same-checkout
+base package build was not run, so the executable delta is **not attributed**
+here. No identity is pinned by any test.
 
 ## 9. Documentation changes
 

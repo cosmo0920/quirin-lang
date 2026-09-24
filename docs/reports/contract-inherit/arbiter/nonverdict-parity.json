@@ -1,0 +1,19 @@
+{
+  "contracts_equal_after_root_alias_and_crate_path_rewrite": true,
+  "contracts_source_keys": 33,
+  "contracts_texts_identical_by_key": true,
+  "source_effects_differing_leaves": 53,
+  "source_effects_differing_key_names": [
+    "build_digest",
+    "configuration_digest",
+    "coverage",
+    "kind",
+    "max_operations",
+    "obligation_id",
+    "observed_runs_only",
+    "paths",
+    "qcore:boolean-field-import:v1",
+    "schedules_explored",
+    "task_digest"
+  ]
+}

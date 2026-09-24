@@ -67,6 +67,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [confined-exit-precedence](confined-exit-precedence/README.md) | Confined process failure precedence |
 
+| [contract-inherit](contract-inherit/README.md) | CONTRACT-INHERIT: contract inclusion and contract inheritance |
+
 | [core-concurrency-prelude](core-concurrency-prelude/README.md) | Core concurrency prelude — 2026-09-08 |
 
 | [corpus-repin](corpus-repin/README.md) | CORPUS-REPIN — re-measurement and deliberate re-pin of the four 185-unit artifacts |
@@ -999,6 +1001,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [windows-native-sockets-harness](windows-native-sockets-harness/README.md) | WINDOWS-NATIVE-SOCKETS-HARNESS — the wave-24 native runs, made runnable on Windows |
 
 | [windows-std-event-af-unix](windows-std-event-af-unix/README.md) | EVENT-V1-WINDOWS-AFUNIX — capability-selected Windows endpoint pairs |
+
+| [windows-test-portability](windows-test-portability/README.md) | Windows test portability and F02 pin repair |
 
 | [windows-vs2026](windows-vs2026/README.md) | Windows Visual Studio 2026 toolchain repair |
 
