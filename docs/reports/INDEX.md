@@ -812,6 +812,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-libc-contracts](w43-libc-contracts/README.md) | W43-LIBC-CONTRACTS: trusted libc/POSIX contracts, measured first and placed only in the libc crate |
 
+| [w43-libc-restrict-prototypes](w43-libc-restrict-prototypes/README.md) | W43-LIBC-RESTRICT-PROTOTYPES: ten `__restrict` libc prototypes, and the array-bound qualifier |
+
 | [w43-libc-result-alias](w43-libc-result-alias/README.md) | W43-LIBC-RESULT-ALIAS: derived results, the `__restrict` reader, and thirteen libc declarations |
 
 | [w43-monkey-callback-composition](w43-monkey-callback-composition/README.md) | W43 Monkey callback Cycle 18 composition |

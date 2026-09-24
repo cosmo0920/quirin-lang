@@ -381,7 +381,68 @@ attributed above.
 
 ## 6. Validation
 
-(Filled from the gate run, below.)
+Measured in this worktree (`agent-a8d59e97c933911a0`) by
+[`scripts/run_gate.py`](scripts/run_gate.py), which is W43-LIBC-RESULT-ALIAS'
+runner unchanged. It sets `CARGO_BUILD_JOBS=6` and `RUST_TEST_THREADS=2`, turns
+debug info off, and captures every exit to a file, never through a pipe.
+
+The core and provider gates ran on the tree of the implementation commit
+`fb0bec93`. Later commits change documents, the ledger, report scripts and
+evidence only. Logs are worktree-private under `measure/`. The generator input
+is [gate.json](gate.json), with the [Clang recording](clang-version.txt) taken
+in this checkout beside it.
+
+| Command | Exit | Result | Log |
+|---|---:|---|---|
+| `git submodule update --init --recursive` | 0 | libevent at `d82464a2…` | `measure/gate/submodules.log` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 | `measure/gate/clang.log` |
+| `cargo test --workspace --no-fail-fast` | **101** | **5,207 passed / 1 failed / 11 ignored**, 278 summaries; see below | `measure/gate/test.log` |
+| `cargo test -p qcore-compiler --test task_route_tsan -- --exact removing_the_join_edge_is_reported_under_every_schedule` (×5, isolated, [`scripts/isolated_rerun.py`](scripts/isolated_rerun.py)) | 0 ×5 | 5 of 5 pass, at a 1-minute load of 22–24 | `measure/gate-tsan-isolated/` |
+| `cargo fmt --all -- --check` | 0 | clean | `measure/gate/fmt.log` |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean | `measure/gate/clippy.log` |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | | `measure/gate/probe.log` |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | | `measure/gate/followup.log` |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **170** audits | `measure/gate/lean.log` |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w43-libc-restrict-prototypes/gate.json` | 0 | 300 follow-ups, 109 contract modules, 170 Lean audits | `measure/build-matrix-2.log` |
+| `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | index regenerated and matching | `measure/docs-index-check-2.log` |
+| `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **330** tests | `measure/python-final.log` |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **117 passed / 0 failed / 0 ignored**, 39 summaries | `measure/provider-gate/ptest.log` |
+| `… -p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations … -- --exact --test-threads=1` | 0 | 1 passed (isolated, constraint 16) | `measure/provider-gate/pisolated.log` |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean | `measure/provider-gate/pfmt.log` |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean | `measure/provider-gate/pclippy.log` |
+| `python3 providers/contracts.py check` | 0 | 72 provider-owned, inventories unchanged | `measure/provider-gate/pcontracts.log` |
+| `python3 providers/package.py build --output measure/provider-gate/packages` | 0 | 5 packages | `measure/provider-gate/pbuild.log` |
+| `python3 providers/package.py verify …/<id>` (×5: chunkio, cmetrics, ctraces, libevent, librdkafka) | 0 ×5 | | `measure/provider-gate/pverify.log` |
+| `python3 -m unittest discover -s providers/tests` | 0 | 12 tests | `measure/provider-gate/ppython.log` |
+
+**The one core failure, stated as seen.**
+`removing_the_join_edge_is_reported_under_every_schedule`
+(`compiler/tests/task_route_tsan.rs`) failed in the full workspace run. It
+missed its `ct07-case` cell under `forced-together`: ThreadSanitizer reported
+a thread leak rather than the data race the row asserts. The ledger already
+names this cell as load-sensitive, `TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE`
+("misses its ct07-case forced-together cell under concurrent whole-workspace
+load, and passes it 20 of 20 in isolation").
+
+This card touches no emission, task route or TSan harness. The same binary
+passed the test 5 of 5 times in isolation.
+
+The full-suite exit therefore stays **101**, and it is reported as 101. The
+isolated reruns are recorded beside it; they do not replace it. Nothing was
+weakened.
+
+**Counts.** This card adds no Rust test function. It adds 13 table rows inside
+`loader_abi.rs`' existing admission test, and 13 theorems inside an existing
+audit file, so the audit-file count is unchanged at 170. The base's own gate
+figures at `f8b41209` were not remeasured here, so no delta is stated by
+subtraction.
+
+**Focused runs before the gate**, which are measurements and not gate steps:
+
+* `cargo test -p qcore-c-gateway` passed 1,137 / 0 on the reader change.
+* The four re-pinned test binaries passed 10 + 4 + 12 + 14.
+* `test_contract_corpus` passed 7 / 7.
+* The Lean module and its audit built with exit 0.
 
 ## 7. Ledger and status
 

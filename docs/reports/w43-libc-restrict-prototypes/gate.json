@@ -1,0 +1,13 @@
+{
+  "note": "W43-LIBC-RESTRICT-PROTOTYPES: core Rust, fmt, clippy (--workspace), probes and Lean measured on the tree of fb0bec93 (the implementation commit; later commits change documents, the ledger, report scripts and evidence files only, no Rust, Lean, contract or test source). Full-suite core Rust: 5207 passed / 1 failed / 11 ignored over 278 summaries, exit 101; the one failure is removing_the_join_edge_is_reported_under_every_schedule's ct07-case forced-together cell, the row the ledger already records as load-sensitive (TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE), untouched by this card; 5 isolated reruns of that test all exit 0 (measure/gate-tsan-isolated). 13 loader_abi rows added inside one existing test, no test added. 170 Lean audits (13 theorems added to an existing audit file). Root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 101, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace on the same tree: 117 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0 (72 provider-owned); five package builds and verifications exit 0; 12 package Python tests. Logs: worktree-private measure/gate and measure/provider-gate of agent-a8d59e97c933911a0. Clang recorded in this checkout. Corpus: 3 functions Unknown -> Safe relative to 10 declared libc premises, 0 unit moves, leak 272, 0 violation candidates.",
+  "workspace_tests": 5207,
+  "provider_tests": 117,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 170,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete with one recorded load-sensitive failure (TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE), 5/5 isolated passes",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 299
+  "named_followups": 300
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 108,
+  "contract_modules": 109,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6731,8 +6731,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for CONTRACT-INHERIT-ADOPTION on merge 2d0b77e1 plus the ledger repair (onto main d3cd8d81, after W43-LIBC-RESULT-ALIAS), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5208 core Rust passed / 0 failed / 11 ignored over 280 summaries; 117 provider Rust passed / 0 / 0 over 39 summaries; 170 Lean audits; 330 root Python tests after the ledger repair and this regeneration (the gate's own Python step failed because the merge commit carried unresolved conflict markers in the acceptance matrix; see integration-confirmation.md); 12 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-result-alias/artifacts/; source-effects is identical modulo checkout-path identity digests; contracts differs only by the inclusion record, the schema-2 manifest, the crate:module source keys, the token-identical elaborated resource_memory.qcore, the new resource_string.qcore and the appended strndup.",
-  "workspace_tests": 5208,
+  "note": "W43-LIBC-RESTRICT-PROTOTYPES: core Rust, fmt, clippy (--workspace), probes and Lean measured on the tree of fb0bec93 (the implementation commit; later commits change documents, the ledger, report scripts and evidence files only, no Rust, Lean, contract or test source). Full-suite core Rust: 5207 passed / 1 failed / 11 ignored over 278 summaries, exit 101; the one failure is removing_the_join_edge_is_reported_under_every_schedule's ct07-case forced-together cell, the row the ledger already records as load-sensitive (TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE), untouched by this card; 5 isolated reruns of that test all exit 0 (measure/gate-tsan-isolated). 13 loader_abi rows added inside one existing test, no test added. 170 Lean audits (13 theorems added to an existing audit file). Root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 101, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace on the same tree: 117 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0 (72 provider-owned); five package builds and verifications exit 0; 12 package Python tests. Logs: worktree-private measure/gate and measure/provider-gate of agent-a8d59e97c933911a0. Clang recorded in this checkout. Corpus: 3 functions Unknown -> Safe relative to 10 declared libc premises, 0 unit moves, leak 272, 0 violation candidates.",
+  "workspace_tests": 5207,
   "provider_tests": 117,
   "python_evidence_validator_tests": 330,
   "lean_audits": 170,
@@ -6912,9 +6912,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "complete",
+  "standing_gate": "complete with one recorded load-sensitive failure (TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE), 5/5 isolated passes",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/contract-inherit-adoption/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-libc-restrict-prototypes/gate.json)"
  },
  "named_followups": [
   {

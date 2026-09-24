@@ -1,0 +1,45 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "-p",
+    "qcore-compiler",
+    "--test",
+    "task_route_tsan",
+    "--",
+    "--exact",
+    "removing_the_join_edge_is_reported_under_every_schedule"
+  ],
+  "runs": [
+    {
+      "run": 1,
+      "exit": 0,
+      "load_1min_at_start": 21.88,
+      "end": "2026-09-24T17:18:26.946288+00:00"
+    },
+    {
+      "run": 2,
+      "exit": 0,
+      "load_1min_at_start": 22.85,
+      "end": "2026-09-24T17:18:30.855950+00:00"
+    },
+    {
+      "run": 3,
+      "exit": 0,
+      "load_1min_at_start": 23.67,
+      "end": "2026-09-24T17:18:35.220261+00:00"
+    },
+    {
+      "run": 4,
+      "exit": 0,
+      "load_1min_at_start": 23.13,
+      "end": "2026-09-24T17:18:37.917918+00:00"
+    },
+    {
+      "run": 5,
+      "exit": 0,
+      "load_1min_at_start": 23.13,
+      "end": "2026-09-24T17:18:40.491953+00:00"
+    }
+  ]
+}
