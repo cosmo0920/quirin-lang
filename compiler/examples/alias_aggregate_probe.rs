@@ -253,6 +253,25 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             frame.is_some()
         ),
         LegacyInstruction::AggregateStore { place } => format!("AggregateStore {place}"),
+        LegacyInstruction::ElementStore {
+            base, index, call, ..
+        } => format!("ElementStore {base}[{index:?}] call={}", call.is_some()),
+        LegacyInstruction::ElementRelease {
+            base,
+            index,
+            callee,
+            ..
+        } => format!("ElementRelease {callee}({base}[{index:?}])"),
+        LegacyInstruction::BranchOnElementNull {
+            base,
+            index,
+            true_is_null,
+            ..
+        } => format!("BranchOnElementNull {base}[{index:?}] true_is_null={true_is_null}"),
+        LegacyInstruction::CountedLoopHeader { index, bound } => {
+            format!("CountedLoopHeader {index} < {bound:?}")
+        }
+        LegacyInstruction::CountedLoopStep { index } => format!("CountedLoopStep {index}"),
         LegacyInstruction::ForgetScalar { destination } => format!("ForgetScalar {destination}"),
         LegacyInstruction::Unknown { description, .. } => format!("Unknown: {description}"),
         LegacyInstruction::NoOp => "NoOp".to_owned(),
