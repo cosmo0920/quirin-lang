@@ -1,0 +1,8 @@
+card delta:     removed 60 added 43 functions 1 units 1
+overlap (already removed by earlier integrations): 0 []
+combined delta: removed 64 added 43
+transitive (callers of combined-only Safe functions): 0 []
+explained by the integrator: 4 [('mk_utils_register_pid', 4, 'The tail actual is the borrowed formal `path`. untracked_bases() admits it as data only when every call it reaches is declared: `stat(path, ...)` is declared by W43-LIBC-RESTRICT-PROTOTYPES (in PREV, not on the card branch) and `open(path, ...)` by this card (not in PREV); both take it borrowed. Only the combined tree declares both, so the four mk_err(..., path) tail refusals are admitted. The function stays Unknown.')]
+complementary Unknown->Safe (card cleared the last blocker): []
+functions moved (combined): [('ctr_random_get', ('Unknown', 'Unsafe'))]
+COMPOSES
