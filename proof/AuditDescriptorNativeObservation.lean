@@ -1,0 +1,41 @@
+import QCore.DescriptorNativeObservation
+
+-- W43-DESCRIPTOR-NATIVE-CHECK: observation-level descriptor lifecycle model.
+-- These are model theorems about accepted (violation-free) traces; the Rust
+-- replay's correspondence to the model is maintained by review (rule 28), and
+-- native records remain observations, not proofs.
+
+-- Step characterizations and generation monotonicity.
+#print axioms QCore.DescriptorNativeObservation.run_append
+#print axioms QCore.DescriptorNativeObservation.step_acquire_some
+#print axioms QCore.DescriptorNativeObservation.step_use_some
+#print axioms QCore.DescriptorNativeObservation.step_release_some
+#print axioms QCore.DescriptorNativeObservation.step_generation_monotone
+#print axioms QCore.DescriptorNativeObservation.run_events_not_older
+
+-- A release matches its generation's kind.
+#print axioms QCore.DescriptorNativeObservation.release_matches_live_kind
+#print axioms QCore.DescriptorNativeObservation.release_keeps_generation
+#print axioms QCore.DescriptorNativeObservation.kind_stable_at_generation
+#print axioms QCore.DescriptorNativeObservation.release_kind_is_acquisition_kind
+
+-- Each generation is released at most once; no use after release.
+#print axioms QCore.DescriptorNativeObservation.single_owner_release_is_terminal
+#print axioms QCore.DescriptorNativeObservation.nothing_names_a_released_generation
+#print axioms QCore.DescriptorNativeObservation.single_owner_generation_released_at_most_once
+#print axioms QCore.DescriptorNativeObservation.single_owner_generation_not_used_after_release
+#print axioms QCore.DescriptorNativeObservation.counted_release_keeps_generation_until_last
+
+-- The leak set at exit is well defined.
+#print axioms QCore.DescriptorNativeObservation.runAll_projects
+#print axioms QCore.DescriptorNativeObservation.leak_generation_unique
+#print axioms QCore.DescriptorNativeObservation.live_generation_was_acquired
+#print axioms QCore.DescriptorNativeObservation.leaked_generation_has_origin
+
+-- Executable anchors matching the Rust unit-test shapes.
+#print axioms QCore.DescriptorNativeObservation.clean_fd_lifecycle_accepted
+#print axioms QCore.DescriptorNativeObservation.double_close_rejected
+#print axioms QCore.DescriptorNativeObservation.use_after_close_rejected
+#print axioms QCore.DescriptorNativeObservation.stream_released_as_directory_rejected
+#print axioms QCore.DescriptorNativeObservation.counted_dl_references_accepted
+#print axioms QCore.DescriptorNativeObservation.live_identity_reacquisition_rejected

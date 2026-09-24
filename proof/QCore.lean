@@ -111,6 +111,7 @@ import QCore.VerifierPlugin
 import QCore.NativeOsObservation
 import QCore.NativeTeardownObservation
 import QCore.DescriptorObservation
+import QCore.DescriptorNativeObservation
 import QCore.NullableRemoval
 import QCore.OsEndpointPostState
 import QCore.CapacityBoundary

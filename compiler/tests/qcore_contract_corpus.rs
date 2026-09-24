@@ -551,6 +551,59 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "release_library_resource",
         3,
     ),
+    // Card W43-DESCRIPTOR-NATIVE-CHECK: the executable lifecycle policy the
+    // native descriptor replay (`qcore_contract::descriptor_observation`)
+    // evaluates on recorded executions, one parameterless rule per property.
+    (
+        "library/descriptor_native_observation.qcore",
+        "descriptor_generation_fresh",
+        3,
+    ),
+    (
+        "library/descriptor_native_observation.qcore",
+        "descriptor_counted_reference",
+        3,
+    ),
+    (
+        "library/descriptor_native_observation.qcore",
+        "descriptor_sentinel_validity",
+        5,
+    ),
+    (
+        "library/descriptor_native_observation.qcore",
+        "descriptor_release_at_most_once",
+        1,
+    ),
+    (
+        "library/descriptor_native_observation.qcore",
+        "descriptor_release_matches_kind",
+        2,
+    ),
+    (
+        "library/descriptor_native_observation.qcore",
+        "descriptor_no_use_after_release",
+        1,
+    ),
+    (
+        "library/descriptor_native_observation.qcore",
+        "descriptor_operand_identity_valid",
+        1,
+    ),
+    (
+        "library/descriptor_native_observation.qcore",
+        "descriptor_relation_holds",
+        1,
+    ),
+    (
+        "library/descriptor_native_observation.qcore",
+        "descriptor_mapping_extent",
+        1,
+    ),
+    (
+        "library/descriptor_native_observation.qcore",
+        "descriptor_leak_set_well_defined",
+        3,
+    ),
     ("library/source_projection.qcore", "source_enum_value", 2),
     ("library/source_projection.qcore", "source_scan_effects", 3),
     ("library/source_projection.qcore", "source_scan_initial", 2),
@@ -1042,7 +1095,11 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `fluent_bit/resource_string.qcore` (`flb_strdup`, `flb_strndup`
     // inheriting libc). Its conversion of `fluent_bit/resource_memory.qcore`
     // to `contract inherit` changes no module count.
-    assert_eq!(sources.len(), 108, "unexpected contract corpus size");
+    // 108 -> 109 by card W43-DESCRIPTOR-NATIVE-CHECK's
+    // `library/descriptor_native_observation.qcore` in
+    // `providers/quirin-provider-shared`: an observation policy (ten
+    // parameterless rules), not a libc API contract.
+    assert_eq!(sources.len(), 109, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

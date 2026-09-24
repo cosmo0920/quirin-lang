@@ -52,6 +52,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/library/custody_evidence.qcore"),
     ),
     (
+        "library/descriptor_native_observation.qcore",
+        include_str!("../contracts/library/descriptor_native_observation.qcore"),
+    ),
+    (
         "library/source_projection.qcore",
         include_str!("../contracts/library/source_projection.qcore"),
     ),
