@@ -139,6 +139,21 @@
 //! An *inline* function-pointer parameter — `int (*cb)(void *)` written out at
 //! the parameter position rather than behind a typedef — also still refuses, as
 //! every nested declarator does.
+//!
+//! # What card W43-LIBC-RESULT-ALIAS widened
+//!
+//! A qualifier after a **parameter** declarator's last `*` — glibc's
+//! `const char *__restrict __format`, `void *const p` — qualifies the parameter
+//! object, and C11 6.7.6.3p15 drops it for type compatibility. The reader used
+//! to count only trailing `*` words, so every such parameter projected to
+//! nothing and its declaration was withdrawn with `abi-unreadable-declaration`
+//! (card W43-LIBC-CONTRACTS measured 2,577 call-site leaves across fourteen
+//! drafted libc declarations). `drop_parameter_object_qualifiers` now reads
+//! it as the unqualified type. A qualifier *between* two `*` still refuses, a
+//! result declarator is not widened, and the measured effect on the 114
+//! declarations selected at the card's base was nil: every one of the 8,292
+//! (unit, name) census rows kept its outcome. `QCore.PointerQualifierReader`
+//! is the Lean model of this step.
 
 use std::collections::{BTreeMap, BTreeSet};
 

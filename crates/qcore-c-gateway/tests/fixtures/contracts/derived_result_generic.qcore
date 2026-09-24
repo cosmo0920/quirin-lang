@@ -50,3 +50,29 @@ contract {
     ensures normal resource_borrowed(n);
     ensures normal resource_return_alias(dst, nonnull);
 };
+
+extern fn d_box_new() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn d_box_free(b: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn d_item_new() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn d_item_free(i: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(i, nullable);
+    ensures normal resource_return_none();
+};

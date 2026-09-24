@@ -34,7 +34,13 @@ void d_free(void *p); \
 void d_consume(void *p); \
 unsigned long d_len(const char *s); \
 char *d_chr(const char *s, int c); \
-void *d_copy(void *restrict dst, const void *restrict src, unsigned long n);";
+void *d_copy(void *restrict dst, const void *restrict src, unsigned long n); \
+struct d_item { int weight; }; \
+struct d_box { int flag; struct d_item *item; }; \
+struct d_box *d_box_new(void); \
+void d_box_free(struct d_box *b); \
+struct d_item *d_item_new(void); \
+void d_item_free(struct d_item *i);";
 
 fn contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(
@@ -517,5 +523,34 @@ fn a_bound_result_over_an_unmodeled_base_expression_is_refused() {
         "void w(const char *s, int n) { if (d_chr(s + n + 1, 59)) { return; } }",
         "Safe",
         &[],
+    );
+}
+
+// -- A derived pointer is never linked under an aggregate ----------------------
+
+#[test]
+fn a_derived_pointer_stored_into_a_member_is_refused() {
+    if !clang_available() {
+        return;
+    }
+    // The identity store is the admitted B08 shape this rule stands beside: the
+    // member links `it`, and releasing both certifies.
+    expect(
+        "an identity stored into a member",
+        "void w(void) { struct d_box *x; struct d_item *it; x = d_box_new(); \
+         it = d_item_new(); x->item = it; d_item_free(it); d_box_free(x); }",
+        "Safe",
+        &[],
+    );
+    // A pointer derived from `it` in the same member would link the base under
+    // `x`, and an escape of `x` would then reach an object the member does not
+    // own: the link is refused.
+    expect(
+        "a derived pointer stored into a member",
+        "void w(void) { struct d_box *x; struct d_item *it; struct d_item *q; \
+         x = d_box_new(); it = d_item_new(); q = d_copy(it, it, 0); x->item = q; \
+         d_item_free(it); d_box_free(x); }",
+        "Unknown",
+        &["unknown_alias:x->item"],
     );
 }

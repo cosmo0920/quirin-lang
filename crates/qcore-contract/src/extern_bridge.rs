@@ -187,3 +187,50 @@ const fn return_mode(mode: ResourceReturnMode) -> Option<ContractReturnMode> {
         ResourceReturnMode::Derived { .. } => None,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::BTreeMap;
+
+    use super::{declared_contract, declared_signatures};
+    use crate::contract_loader::load_resource_contract_sources;
+
+    /// Card W43-LIBC-RESULT-ALIAS: the checked extern-call model has no
+    /// derived-result constructor, so a derived declaration is refused by
+    /// name rather than projected onto `None`, which would drop the alias.
+    #[test]
+    fn a_derived_result_is_refused_not_projected_onto_none() {
+        let contracts = load_resource_contract_sources(&BTreeMap::from([(
+            "k.qcore".to_owned(),
+            "module contract;\n\
+             extern fn k_chr(s: ptr<const, u8>, c: i32) -> ptr<mut, u8>\n\
+             contract {\n    requires resource_contract_v1;\n    \
+             ensures normal resource_borrowed(s);\n    \
+             ensures normal resource_borrowed(c);\n    \
+             ensures normal resource_return_interior(s, nullable);\n};\n\
+             extern fn k_len(s: ptr<const, u8>) -> usize\n\
+             contract {\n    requires resource_contract_v1;\n    \
+             ensures normal resource_borrowed(s);\n    \
+             ensures normal resource_return_none();\n};\n"
+                .to_owned(),
+        )]))
+        .expect("the module loads");
+        let signatures = declared_signatures(&contracts).expect("signatures read");
+        let refusal = declared_contract(
+            "k_chr",
+            &signatures["k_chr"],
+            contracts.contract("k_chr").expect("declared"),
+        )
+        .expect_err("a derived result has no extern-call model");
+        assert!(refusal.contains("derived result"), "{refusal}");
+        // The neutral neighbour in the same module is unaffected.
+        assert!(
+            declared_contract(
+                "k_len",
+                &signatures["k_len"],
+                contracts.contract("k_len").expect("declared"),
+            )
+            .is_ok()
+        );
+    }
+}
