@@ -240,6 +240,18 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             "ScalarMemberStore {base} alias_read={}",
             alias_read.is_some()
         ),
+        LegacyInstruction::IndirectScalarAccess {
+            bases,
+            alias_reads,
+            destination,
+            frame,
+        } => format!(
+            "IndirectScalarAccess bases={} alias_reads={} destination={} frame={}",
+            bases.join(","),
+            alias_reads.len(),
+            destination.as_deref().unwrap_or("-"),
+            frame.is_some()
+        ),
         LegacyInstruction::AggregateStore { place } => format!("AggregateStore {place}"),
         LegacyInstruction::ForgetScalar { destination } => format!("ForgetScalar {destination}"),
         LegacyInstruction::Unknown { description, .. } => format!("Unknown: {description}"),

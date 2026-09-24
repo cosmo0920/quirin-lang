@@ -1,0 +1,195 @@
+before {'leak': 272, 'summary_conflict': 1, 'unknown_alias': 4657, 'unsupported': 48930}
+after  {'leak': 271, 'summary_conflict': 1, 'unknown_alias': 4727, 'unsupported': 47832}
+removed by category {'unsupported': 1101, 'unknown_alias': 10, 'leak': 1}
+added by category {'unknown_alias': 80, 'unsupported': 3}
+
+classes:
+       5  added:downstream
+      78  added:exchange
+      12  removed:downstream
+     985  removed:rule
+      98  removed:rule-unforecast
+      16  removed:summary
+       1  removed:unreached
+
+removed rule leaves by shape:
+     446  store:*p | store through `X` without an out-parameter contract
+     105  read-into-scalar | indirect memory access is outside the resource projection
+      68  store:p[i] | indirect memory access is outside the resource projection
+      60  store:p[i] | unrecognized assignment destination
+      60  compound-store:p->f | unrecognized assignment destination
+      51  store:s.f | indirect memory access is outside the resource projection
+      39  increment:p->f | unmodeled increment or decrement expression
+      38  store:*p | unsupported assignment expression
+      25  compound-into-scalar | indirect memory access is outside the resource projection
+      25  store:p->f | indirect memory access is outside the resource projection
+      21  store:p[i] | unmodeled increment or decrement expression
+      18  store:*p | indirect memory access is outside the resource projection
+      16  compound-store:*p | unrecognized assignment destination
+       6  compound-store:p[i] | unrecognized assignment destination
+       2  increment:*p | unmodeled increment or decrement expression
+       2  read-into-scalar | unmodeled increment or decrement expression
+       2  compound-store:s.f | unrecognized assignment destination
+       1  compound-store:p->f | indirect memory access is outside the resource projection
+
+function moves {'Unknown -> Safe': 12}
+  Unknown -> Safe  chunkio/cio_chunk.c/cio_chunk_counter_total_add
+  Unknown -> Safe  chunkio/cio_chunk.c/cio_chunk_counter_total_sub
+  Unknown -> Safe  chunkio/cio_chunk.c/cio_chunk_counter_total_up_add
+  Unknown -> Safe  chunkio/cio_chunk.c/cio_chunk_counter_total_up_sub
+  Unknown -> Safe  cmetrics/cmt_encode_opentelemetry_batch.c/empty_batches_create
+  Unknown -> Safe  cmetrics/cmt_encode_opentelemetry_batch.c/set_result
+  Unknown -> Safe  cmetrics/cmt_time.c/cmt_time_from_ns
+  Unknown -> Safe  fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_output_would_exceed_limit
+  Unknown -> Safe  librdkafka/rdkafka_admin.c/rd_kafka_ConsumerGroupDescription_authorized_operations
+  Unknown -> Safe  librdkafka/rdkafka_admin.c/rd_kafka_TopicDescription_authorized_operations
+  Unknown -> Safe  librdkafka/rdmap.c/rd_bytes_hash
+  Unknown -> Safe  monkey-libevent/mk_core/mk_string.c/mk_string_dup
+
+unit moves: [['cmetrics/cmt_time.c', 'Unknown', 'Safe']]
+
+removed:rule-unforecast (98):
+  chunkio/cio_chunk.c/cio_chunk_tx_begin L2309 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_chunk.c/cio_chunk_tx_begin L2310 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_chunk.c/cio_chunk_tx_begin L2314 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_chunk.c/cio_chunk_tx_begin L2315 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_chunk.c/cio_chunk_tx_rollback L2342 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_chunk.c/cio_chunk_tx_rollback L2343 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_chunk.c/cio_chunk_tx_rollback L2347 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_chunk.c/cio_chunk_tx_rollback L2348 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_file.c/cio_file_open L3274 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_memfs.c/cio_memfs_open L2160 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_exp_histogram_values L5787 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_exp_histogram_values L5788 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_exp_histogram_values L5789 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_exp_histogram_values L5790 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_exp_histogram_values L5791 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_exp_histogram_values L5792 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_exp_histogram_values L5793 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_exp_histogram_values L5817 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_exp_histogram_values L5818 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_exp_histogram_values L5857 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_exp_histogram_values L5858 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_exp_histogram_values L5887 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cat_summary_values L5703 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_cat.c/cmt_cat_exp_histogram L6385 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_decode_msgpack.c/unpack_basic_type_meta L8324 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_decode_msgpack.c/unpack_basic_type_meta L8328 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_decode_msgpack.c/unpack_basic_type_meta L8333 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_decode_msgpack.c/unpack_basic_type_meta L8339 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_decode_msgpack.c/unpack_metric L7990 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_decode_opentelemetry.c/decode_counter_entry L7946 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_decode_opentelemetry.c/decode_exponential_histogram_data_point L8114 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_decode_opentelemetry.c/decode_exponential_histogram_data_point L8115 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_decode_opentelemetry.c/decode_exponential_histogram_data_point L8116 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_decode_opentelemetry.c/decode_summary_data_point L7715 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_decode_opentelemetry.c/decode_summary_data_point L7764 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_map.c/metric_prepare_storage L5659 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_metric.c/cmt_metric_exp_hist_get_snapshot L5606 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_metric.c/cmt_metric_exp_hist_get_snapshot L5607 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_metric.c/cmt_metric_exp_hist_get_snapshot L5608 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_metric.c/cmt_metric_exp_hist_get_snapshot L5609 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_metric.c/cmt_metric_exp_hist_get_snapshot L5610 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_metric.c/cmt_metric_exp_hist_get_snapshot L5611 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_metric.c/cmt_metric_exp_hist_get_snapshot L5612 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_summary.c/cmt_summary_set_default L5661 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_time.c/cmt_time_from_ns L219 unsupported: indirect memory access is outside the resource projection x1
+  ctraces/ctr_encode_opentelemetry.c/ctr_set_resource L8919 unsupported: indirect memory access is outside the resource projection x1
+  ctraces/ctr_encode_opentelemetry.c/set_event L9011 unsupported: indirect memory access is outside the resource projection x1
+  ctraces/ctr_encode_opentelemetry.c/set_event L9015 unsupported: indirect memory access is outside the resource projection x1
+  ctraces/ctr_encode_opentelemetry.c/set_instrumentation_scope L9204 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/lz4frame.c/LZ4F_updateDict L1957 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_admin.c/rd_kafka_ListOffsets_response_merge L22576 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_admin.c/rd_kafka_TopicPartitionInfo_new L25972 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_admin.c/rd_kafka_TopicPartitionInfo_new L25973 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_admin.c/rd_kafka_TopicPartitionInfo_new L25974 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_cgrp.c/rd_kafka_consumer_group_metadata_dup L24622 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_error.c/rd_kafka_error_copy L19599 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_error.c/rd_kafka_error_copy L19600 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_error.c/rd_kafka_error_copy L19601 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_mock.c/rd_kafka_mock_request_copy L23493 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_mock.c/rd_kafka_mock_request_copy L23494 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_mock.c/rd_kafka_mock_request_copy L23495 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdxxhash.c/XXH32_update_endian L931 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/snappy.c/rd_kafka_snappy_compress_iov L20413 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/tinycthread_extra.c/cnd_timedwait_ms L2998 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/tinycthread_extra.c/cnd_timedwait_ms L2999 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/tinycthread_extra.c/cnd_timedwait_ms L3001 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_core/mk_file.c/mk_file_get_info L4203 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_core/mk_iov.c/mk_iov_realloc L2124 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_core/mk_iov.c/mk_iov_realloc L2125 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_core/mk_iov.c/mk_iov_realloc L2127 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/method_lookup L5508 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6008 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6014 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6024 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6030 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6033 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6036 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6050 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6053 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6095 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6127 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6172 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6177 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6178 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6183 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6188 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6189 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6202 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6206 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6219 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6235 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6239 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6249 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6261 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6273 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_http_parser.c/mk_http_parser L6277 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_server.c/mk_server_capacity L6185 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_server.c/mk_server_capacity L6186 unsupported: indirect memory access is outside the resource projection x1
+
+removed:unreached (1):
+  librdkafka/rdkafka_request.c/rd_kafka_handle_OffsetFetch L21154 unsupported: indirect memory access is outside the resource projection x1
+
+removed:summary (16):
+  chunkio/cio_chunk.c/cio_chunk_close L2087 unsupported: call to uncontracted function `cio_chunk_counter_total_sub` x1
+  chunkio/cio_chunk.c/cio_chunk_open L2058 unsupported: call to uncontracted function `cio_chunk_counter_total_add` x1
+  cmetrics/cmt_encode_opentelemetry_batch.c/cmt_encode_opentelemetry_create_batches L7105 unsupported: call to uncontracted function `set_result` x1
+  cmetrics/cmt_encode_opentelemetry_batch.c/cmt_encode_opentelemetry_create_batches L7111 unsupported: call to uncontracted function `set_result` x1
+  cmetrics/cmt_encode_opentelemetry_batch.c/cmt_encode_opentelemetry_create_batches L7116 unsupported: call to uncontracted function `empty_batches_create` x1
+  cmetrics/cmt_encode_opentelemetry_batch.c/cmt_encode_opentelemetry_split_payload L6954 unsupported: call to uncontracted function `set_result` x1
+  cmetrics/cmt_encode_opentelemetry_batch.c/cmt_encode_opentelemetry_split_payload L6960 unsupported: call to uncontracted function `set_result` x1
+  cmetrics/cmt_encode_opentelemetry_batch.c/cmt_encode_opentelemetry_split_payload L6970 unsupported: call to uncontracted function `set_result` x1
+  cmetrics/cmt_encode_opentelemetry_batch.c/cmt_encode_opentelemetry_split_payload L6989 unsupported: call to uncontracted function `set_result` x1
+  cmetrics/cmt_encode_opentelemetry_batch.c/cmt_encode_opentelemetry_split_payload L7068 unsupported: call to uncontracted function `set_result` x1
+  cmetrics/cmt_encode_opentelemetry_batch.c/cmt_encode_opentelemetry_split_payload L7081 unsupported: call to uncontracted function `set_result` x1
+  cmetrics/cmt_encode_opentelemetry_batch.c/empty_batches_create L7090 unsupported: call to uncontracted function `set_result` x1
+  cmetrics/cmt_encode_opentelemetry_batch.c/empty_batches_create L7093 unsupported: call to uncontracted function `set_result` x1
+  fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_has_overlimit_routes L18567 unsupported: call to uncontracted function `flb_input_chunk_output_would_exceed_limit` x1
+  monkey-libevent/mk_core/mk_string.c/mk_string_html_escape L2286 unsupported: call to uncontracted function `mk_string_dup` x1
+  monkey-libevent/mk_core/mk_string.c/mk_string_tolower L2457 unsupported: call to uncontracted function `mk_string_dup` x1
+
+removed:downstream (12):
+  chunkio/cio_file.c/cio_file_open L3320 unknown_alias: unresolved resource identity `cf` x1
+  chunkio/cio_file.c/cio_file_open L3332 unknown_alias: unresolved resource identity `cf` x1
+  librdkafka/rdkafka_request.c/rd_kafka_handle_OffsetFetch L21153 unknown_alias: unresolved resource identity `topic_id` x1
+  librdkafka/rdkafka_request.c/rd_kafka_handle_OffsetFetch L21204 unknown_alias: unresolved resource identity `topic_id` x1
+  librdkafka/rdkafka_request.c/rd_kafka_handle_OffsetFetch L21204 unsupported: call to uncontracted function `rd_kafka_Uuid_destroy` x1
+  librdkafka/rdkafka_sasl_oauthbearer.c/create_jws_compact_serialization L20587 unknown_alias: unresolved resource identity `scope_json` x1
+  librdkafka/snappy.c/rd_kafka_snappy_java_uncompress L20489 unknown_alias: unresolved resource identity `outbuf` x1
+  librdkafka/snappy.c/rd_kafka_snappy_java_uncompress L20497 unknown_alias: unresolved resource identity `outbuf` x1
+  librdkafka/snappy.c/rd_kafka_snappy_java_uncompress L20498 unknown_alias: unresolved resource identity `outbuf` x1
+  librdkafka/snappy.c/rd_kafka_snappy_java_uncompress L20499 leak: live obligation acquired at snappy.c:1705 x1
+  monkey-libevent/mk_core/mk_string.c/mk_string_html_escape L2338 unknown_alias: unresolved resource identity `buf` x1
+  monkey-libevent/mk_core/mk_string.c/mk_string_tolower L2459 unknown_alias: unresolved resource identity `out` x1
+
+added:downstream (5):
+  cmetrics/cmt_encode_opentelemetry_batch.c/cmt_encode_opentelemetry_create_batches L7116 unknown_alias: unresolved resource identity `__qcore_returned_value` x1
+  cmetrics/cmt_encode_opentelemetry_batch.c/cmt_encode_opentelemetry_create_batches L7116 unsupported: nullable resource `__qcore_returned_value` used by a non-null contract x1
+  monkey-libevent/mk_core/mk_string.c/mk_string_html_escape L2286 unknown_alias: unresolved resource identity `__qcore_returned_value` x1
+  monkey-libevent/mk_core/mk_string.c/mk_string_html_escape L2286 unsupported: nullable resource `__qcore_returned_value` used by a non-null contract x1
+  monkey-libevent/mk_core/mk_string.c/mk_string_tolower L2468 unsupported: nullable resource `out` used by a non-null contract x1
+
+added:violation (0):
+
+attribution_complete: True

@@ -1,0 +1,86 @@
+[
+ {
+  "id": "W43-INDIRECT-CALL-ARGUMENT-ACCESS",
+  "title": "An access inside a call's arguments or result assignment stays refused: 9,539 leaves on 2,408 Unknown functions, 242 sole-blocked",
+  "why": "Card W43-INDIRECT-ACCESS-GENERAL admits only statements with no call (the typed scalar-access route is never consulted for a statement that carries one). Measured at its AFTER census (docs/reports/w43-indirect-access-general/residuals.txt, class call-argument): 9,539 leaves of the five access-refusal families in 2,408 Unknown functions, 242 of them blocked by that family alone. These are `f(p->x)`, `x = f(p->x)` and `p->f = g()`; the borrowed-actual, bound-read and member-address routes already admit narrow cases. Admitting one needs the call's own contract (and, for an uncontracted callee, the call leaf remains: the census-2 exchange proxy). DISCHARGE: a card that admits a typed scalar access in a Borrowed data argument or as a call result's scalar destination, with the call's existing obligations retained, and a measured re-pin; or a recorded decision that the class belongs to the call routes.",
+  "source": "docs/reports/w43-indirect-access-general/README.md",
+  "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+ },
+ {
+  "id": "W43-INDIRECT-CHAIN-ACCESS",
+  "title": "Member chains of depth two or more stay refused: 5,616 leaves on 2,057 Unknown functions, 188 sole-blocked",
+  "why": "The typed scalar-access route admits one selection per access (`*B`, `B[I]`, `B->F`, `S.F`). `a->b->c`, `a->b.c` and `a[i].f` stay refused. Measured at the AFTER census (residuals.txt, class chain): 5,616 leaves (3,998 indirect-access, 1,306 unsupported-assignment, 199 increment, 113 unrecognized-destination) in 2,057 Unknown functions, 188 sole-blocked. The intermediate member is a pointer loaded from memory, which the projection binds only through a field link; admitting it needs the intermediate dereference's own obligation (the owner's field link live, or the owner untracked) and a member reader that classifies the intermediate (census-2 section 7 measured most chains end Unresolved). DISCHARGE: a card that extends the route to record-pointer member chains with each intermediate dereference checked against field links, Lean parity and a measured re-pin; or a measured decision that the reader classes do not justify it.",
+  "source": "docs/reports/w43-indirect-access-general/README.md",
+  "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+ },
+ {
+  "id": "W43-INDIRECT-UNTYPED-SINGLE-ACCESS",
+  "title": "Single accesses whose base or member the declaration reader does not classify stay refused: 3,136 leaves on 1,212 Unknown functions, 94 sole-blocked",
+  "why": "A single `*B`, `B[I]`, `B->F` or `S.F` is admitted only when the reader commits to `SCALAR *B`/`SCALAR B[N]`, `struct T *B` with a scalar member `F` of a completely read `struct T`, or `struct T S`. Measured at the AFTER census (residuals.txt, class untyped-single-access): 3,136 leaves (2,668 indirect-access, 247 unrecognized-destination, 187 store-through, 19 unsupported-assignment, 15 increment) in 1,212 Unknown functions, 94 sole-blocked. The causes are the readers already registered (RECORD-BODY-TOTAL-OR-REJECT, TYPEDEF-ANONYMOUS-AGGREGATE-UNREACHED, BASE-CAUSE-SECOND-DISCOUNT-PARTIAL) plus pointees the rule deliberately excludes (`void *`, `T **`, records). A reader repair now has a consumer: every base it commits to reaches this route. DISCHARGE: re-measure this class after any of those reader repairs lands, and attribute the moves to the reader, not the route; or a recorded decision that the class is closed.",
+  "source": "docs/reports/w43-indirect-access-general/README.md",
+  "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+ },
+ {
+  "id": "W43-INDIRECT-POINTER-VALUE-STORE",
+  "title": "Pointer-valued stores through a single access stay refused: 306 leaves on 207 Unknown functions, 18 sole-blocked",
+  "why": "`p->f = q`, `*pp = q` and `a[i] = q` store an identity, which is an escape or custody question. The existing member-link (aggregate store) and out-slot machinery state that effect only for their own premises; card W43-INDIRECT-ACCESS-GENERAL admits no pointer-valued store. Measured at the AFTER census (residuals.txt, class pointer-value-store): 306 leaves (249 indirect-access, 43 store-through, 10 unrecognized-destination, 4 unsupported-assignment) in 207 Unknown functions, 18 sole-blocked. DISCHARGE: a card that states the custody effect of storing a tracked or untracked pointer into an untracked object (publication? escape? loss of the residual claim?) and admits exactly that, with Lean parity and a measured re-pin.",
+  "source": "docs/reports/w43-indirect-access-general/README.md",
+  "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+ },
+ {
+  "id": "W43-INDIRECT-POINTER-INCREMENT",
+  "title": "Stores through a moving or computed pointer stay refused: 335 leaves on 172 Unknown functions",
+  "why": "`*p++ = c` increments the pointer it dereferences (C11 6.5.2.4), and `*(p + i) = c` dereferences a computed pointer; neither is a typed scalar access, so card W43-INDIRECT-ACCESS-GENERAL refuses both. A tracked pointer that moves becomes an interior pointer to its allocation, which the projection would have to rebind as derived (the W43-LIBC-RESULT-ALIAS vocabulary) before its release could be judged. Measured at the AFTER census (residuals.txt, class pointer-increment): 335 leaves (136 unrecognized-destination, 101 indirect-access, 98 increment) in 172 Unknown functions, 0 sole-blocked. DISCHARGE: a card that models pointer arithmetic on a bound name as an interior derivation of the same site, with the release rules of QCore.DerivedResult, and a measured re-pin.",
+  "source": "docs/reports/w43-indirect-access-general/README.md",
+  "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+ },
+ {
+  "id": "W43-INDIRECT-OTHER-STATEMENTS",
+  "title": "Access refusals outside every named shape: 1,693 leaves on 764 Unknown functions, 25 sole-blocked, including uncensused for-clauses",
+  "why": "The residual class `other` of card W43-INDIRECT-ACCESS-GENERAL's AFTER census (residuals.txt): 1,693 leaves (751 indirect-access, 360 increment, 316 unsupported-assignment, 266 unrecognized-destination) in 764 Unknown functions, 25 sole-blocked. It holds expression statements, declarations with bracketed or dotted initializers, compound assignments into names from non-access values, and the increment-family leaves of `for` clauses, which the card's statement census does not stream (it records only `parse_statement`'s statements; 189 such leaves at the BEFORE census). DISCHARGE: stream the for-clause and synthetic-condition statements into the statement census and split this class by shape before any card is cut on it; not a discharge: citing the leaf count.",
+  "source": "docs/reports/w43-indirect-access-general/README.md",
+  "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+ },
+ {
+  "id": "W43-INDIRECT-ACCUSING-UNEXERCISED-IN-CORPUS",
+  "title": "The typed scalar access's use_after_release arm reaches no function of the pinned corpus",
+  "why": "Card W43-INDIRECT-ACCESS-GENERAL reports a `use_after_release` candidate when a typed scalar access dereferences a base settled on one identity whose status carries the released bit (`report_indirect_scalar_violations`, from the settled states). It is unit-tested (crates/qcore-c-gateway/tests/indirect_scalar_access.rs: store, read, member and derived cases) and modelled (QCore.IndirectScalarAccess.an_accusation_names_a_released_settled_identity), but the arbiter over the 185 pinned units added zero use_after_release and zero invalid_release leaves: no admitted access in the corpus follows a release of its base. The unchanged provisional-Unsafe count records that absence, not the arm's verification (the RETURN-POSITION-ACCUSING-UNEXERCISED-IN-CORPUS shape). DISCHARGE: a pinned or held-out real-code fixture reaches the arm, with the leaf attributed and never presented as an upstream defect.",
+  "source": "docs/reports/w43-indirect-access-general/README.md",
+  "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+ },
+ {
+  "id": "W43-INDIRECT-BYTE-STORE-REPRESENTATION-PREMISE",
+  "title": "A character-typed store through a pointer may rewrite a tracked pointer object's representation; the frame and the no-undefined-behaviour reading carry the claim",
+  "why": "C lets a character lvalue modify any object's representation (C11 6.5p7), so `*c = 0` or `c[i] = 0` through an untracked `char *c` could rewrite the bytes of a pointer the projection tracks. Card W43-INDIRECT-ACCESS-GENERAL bounds that exactly as the refusal it replaces did: a write through `*B`/`B[I]` poisons every binding outside the constraint-10a frame (a name whose slot no other lvalue designates is spared), and QCore.IndirectScalarAccess states the frame as a premise, not a proof. Two things remain premises: (1) a field link (an aggregate member's tracked child) is not invalidated by such a store, exactly as it is not invalidated by a `memset`/`memcpy` through a Borrowed position today (W43-LIBC-RESULT-ALIAS); (2) a subsequent use of a rewritten pointer is excluded by the no-undefined-behaviour reading. DISCHARGE: invalidate the field links of the targeted site (and of every site, for an untracked base) on a character-typed write, with a measured re-pin; or record that the premise is the same one the Borrowed `memset`/`memcpy` declarations already rest on, in constraint 10a's words.",
+  "source": "docs/reports/w43-indirect-access-general/README.md",
+  "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+ },
+ {
+  "id": "W43-INDIRECT-CONST-DROPPED-WRITE",
+  "title": "A direct write through a const-dropped derived pointer is now admitted, so W43-LIBC-RESULT-ALIAS's 'already refused' sentence no longer holds",
+  "why": "W43-LIBC-RESULT-ALIAS section 1.3 wrote that a direct write through a `const_dropped` derived pointer (a `strchr` result over a `const char *` parameter) is already refused by the indirect-store gate, and registered only the borrowed-position case as W43-RESULT-ALIAS-CONST-WRITE. Card W43-INDIRECT-ACCESS-GENERAL admits `*p = '\\0'` through such a pointer when its base resolves, because the flag is set from the contract's parameter type and says nothing about whether the object is const, and constness is outside the custody property (as bounds are; spec L18 and the report's scope field). The forecast mirror counts 1 store and 5 reads through a name the body assigns a derived result in the pinned corpus. DISCHARGE: carry the argument's declared constness (not the parameter's) into the derived binding and refuse a write through a genuinely const object, with a measured re-pin; or fold this into W43-RESULT-ALIAS-CONST-WRITE with a recorded decision that constness stays outside the property.",
+  "source": "docs/reports/w43-indirect-access-general/README.md",
+  "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+ },
+ {
+  "id": "W43-INDIRECT-PROTECTED-FORMAL-INCREMENT",
+  "title": "The older formal-mutation refusal blocks 15 leaves of typed scalar statements before the new route is consulted",
+  "why": "`classify_simple` refuses `unmodeled expression may mutate a formal resource identity` for any statement with an increment or nested write that mentions a protected name, and `*n` anywhere in a body protects the formal `n`, so `(*n)++` and `p->count++` on a protected `p` never reach card W43-INDIRECT-ACCESS-GENERAL's route (pinned by an_increment_of_a_protected_name_keeps_its_refusal). Measured at the AFTER census (scripts/formal_mutation.py): 118 leaves of that family in Unknown functions, 15 of them (9 functions) statements the typed rule would otherwise admit. The refusal protects a formal's identity from `p++`; an increment of the pointee does not change it. DISCHARGE: narrow the formal-mutation gate to writes of the protected name itself (not of an object it designates), with a test that `p++` on a protected formal still refuses, and a measured re-pin.",
+  "source": "docs/reports/w43-indirect-access-general/README.md",
+  "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+ },
+ {
+  "id": "INDIRECT-EXCHANGE-PROXY-EXCH-ARM-UNTESTED",
+  "title": "The census-2 proxy's EXCH arm has still met no admission that covers every statement of its shape",
+  "why": "Narrowed from INDIRECT-EXCHANGE-PROXY-UNVALIDATED by card W43-INDIRECT-ACCESS-GENERAL, which published the proxy's per-shape prediction beside its measured outcome for the 17 census-2 shapes its typed rule touches (proxy-validation.txt): of 11 functions the proxy calls CLEAR, 4 measured cleared and 7 kept a leaf only because another statement of the same shape is outside the typed rule; no CLEAR prediction was wrong where the rule covered the shape. The 4 EXCH predictions all kept a leaf for the same reason, so the exchange arm is still unmeasured. DISCHARGE: an admission whose rule covers every statement of a census-2 shape measures that shape's EXCH functions, and the difference is recorded.",
+  "source": "docs/reports/w43-indirect-access-general/README.md",
+  "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+ },
+ {
+  "id": "W43-INDIRECT-FORECAST-CENSUS-WINDOW",
+  "title": "The indirect census omits a destination-refused statement's value-side chains, so a forecast from it misses two-base member copies",
+  "why": "`indirect_census::record` reads only the destination window for an AssignmentDestination refusal, so `a->f = b->g` carries no chain (and no member class) for `b`. Card W43-INDIRECT-ACCESS-GENERAL's forecast mirror therefore refused 98 leaves the implementation admitted (unforecast.txt: all indirect-access, all two-base scalar member copies such as `metric_dst->x = metric_src->x`), which is the whole of its leaf-level forecast miss and its one function-level miss (`cmt_time_from_ns`, whose unit `cmt_time.c` then moved to Safe). The card's statement stream carries whole-statement chains; the indirect stream does not. DISCHARGE: record the whole statement's chains in the indirect census as well, keeping the gate's own window as a separate field, and re-run the forecast.",
+  "source": "docs/reports/w43-indirect-access-general/README.md",
+  "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+ }
+]
