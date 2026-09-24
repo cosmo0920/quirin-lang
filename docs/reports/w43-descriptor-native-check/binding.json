@@ -3,16 +3,16 @@
   "close": {
    "caller_observations": {
     "invalid_argument": 37,
-    "not_live": 49
+    "not_live": 61
    },
    "contract": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None, parameter_kinds: {0: Descriptor} }",
    "contradictions": 0,
-   "executions": 905,
+   "executions": 1031,
    "facts": {},
    "failures": 0,
    "injected": 0,
    "released_despite_error": 0,
-   "runs": 73,
+   "runs": 75,
    "successes": 0,
    "zero_results": 0
   },
@@ -35,14 +35,14 @@
    "caller_observations": {},
    "contract": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None, parameter_kinds: {0: Stream} }",
    "contradictions": 0,
-   "executions": 71,
+   "executions": 73,
    "facts": {
-    "release_ends_owned_descriptor": 71
+    "release_ends_owned_descriptor": 73
    },
    "failures": 0,
    "injected": 0,
    "released_despite_error": 0,
-   "runs": 35,
+   "runs": 37,
    "successes": 0,
    "zero_results": 0
   },
@@ -76,27 +76,27 @@
    "caller_observations": {},
    "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: Owned { nullable: true }, result_kind: Stream }",
    "contradictions": 0,
-   "executions": 56,
+   "executions": 58,
    "facts": {
-    "owned_result_derives_its_descriptor": 33
+    "owned_result_derives_its_descriptor": 35
    },
    "failures": 22,
    "injected": 1,
    "released_despite_error": 0,
-   "runs": 35,
-   "successes": 33,
+   "runs": 37,
+   "successes": 35,
    "zero_results": 0
   },
   "fprintf": {
    "caller_observations": {},
    "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }",
    "contradictions": 0,
-   "executions": 89,
+   "executions": 99,
    "facts": {},
    "failures": 0,
    "injected": 0,
    "released_despite_error": 0,
-   "runs": 24,
+   "runs": 26,
    "successes": 0,
    "zero_results": 0
   },
@@ -143,13 +143,13 @@
    "caller_observations": {},
    "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: Owned { nullable: true }, result_kind: Descriptor }",
    "contradictions": 0,
-   "executions": 171,
+   "executions": 181,
    "facts": {},
    "failures": 23,
    "injected": 3,
    "released_despite_error": 0,
-   "runs": 30,
-   "successes": 145,
+   "runs": 32,
+   "successes": 155,
    "zero_results": 1
   },
   "opendir": {
@@ -171,12 +171,12 @@
    "caller_observations": {},
    "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed, Borrowed], result: None }",
    "contradictions": 0,
-   "executions": 596,
+   "executions": 687,
    "facts": {},
    "failures": 0,
    "injected": 0,
    "released_despite_error": 0,
-   "runs": 13,
+   "runs": 15,
    "successes": 0,
    "zero_results": 0
   },
@@ -184,7 +184,7 @@
    "caller_observations": {},
    "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed, Borrowed, Borrowed], result: None }",
    "contradictions": 0,
-   "executions": 48,
+   "executions": 47,
    "facts": {},
    "failures": 0,
    "injected": 0,
@@ -236,12 +236,12 @@
    "caller_observations": {},
    "contract": "ResourceFunctionContract { parameters: [Borrowed, Borrowed, Borrowed], result: None }",
    "contradictions": 0,
-   "executions": 536,
+   "executions": 606,
    "facts": {},
    "failures": 0,
    "injected": 0,
    "released_despite_error": 0,
-   "runs": 31,
+   "runs": 33,
    "successes": 0,
    "zero_results": 0
   }
@@ -288,6 +288,8 @@
   ],
   "close:not_live": [
    "engine.dummy_null",
+   "engine.event_type_traces",
+   "engine.event_type_traces_stdin_closed",
    "engine.tcp_filesystem_storage",
    "engine.http_server_monkey",
    "engine.dynamic_plugin",
@@ -309,7 +311,7 @@
   "providers/quirin-provider-libc/contracts/libc/unistd.qcore"
  ],
  "rejected": [],
- "runs_bound": 78,
+ "runs_bound": 80,
  "schema_version": 1,
  "static_certificate": false,
  "unbound": {
@@ -323,13 +325,13 @@
    },
    "argument_1_values": {
     "524288": 19,
-    "526336": 36
+    "526336": 34
    },
-   "executions": 59,
+   "executions": 57,
    "injected": 4,
    "reacquired_while_live": 0,
    "releases": {},
-   "result_minus_one": 27,
+   "result_minus_one": 25,
    "result_other_negative": 0,
    "result_positive": 28,
    "result_zero": 0,
@@ -340,14 +342,14 @@
    "acquiring_by_result": {},
    "acquisitions": {},
    "argument_1_values": {},
-   "executions": 59,
+   "executions": 57,
    "injected": 0,
    "reacquired_while_live": 0,
    "releases": {},
    "result_minus_one": 0,
    "result_other_negative": 0,
    "result_positive": 0,
-   "result_zero": 59,
+   "result_zero": 57,
    "runs": 31
   },
   "bind": {
@@ -488,57 +490,57 @@
    "runs": 19
   },
   "epoll_create1": {
-   "acquired_equals_result": 66,
+   "acquired_equals_result": 76,
    "acquiring_by_result": {
-    "positive": 66
+    "positive": 76
    },
    "acquisitions": {
-    "Fd": 66
+    "Fd": 76
    },
    "argument_1_values": {},
-   "executions": 88,
+   "executions": 98,
    "injected": 2,
    "reacquired_while_live": 0,
    "releases": {},
    "result_minus_one": 20,
    "result_other_negative": 0,
-   "result_positive": 66,
+   "result_positive": 76,
    "result_zero": 0,
-   "runs": 36
+   "runs": 38
   },
   "epoll_ctl": {
    "acquired_equals_result": 0,
    "acquiring_by_result": {},
    "acquisitions": {},
    "argument_1_values": {
-    "1": 282,
-    "2": 229,
-    "3": 6
+    "1": 339,
+    "2": 274,
+    "3": 5
    },
-   "executions": 517,
+   "executions": 618,
    "injected": 0,
    "reacquired_while_live": 0,
    "releases": {},
    "result_minus_one": 0,
    "result_other_negative": 0,
    "result_positive": 0,
-   "result_zero": 517,
-   "runs": 33
+   "result_zero": 618,
+   "runs": 35
   },
   "epoll_wait": {
    "acquired_equals_result": 0,
    "acquiring_by_result": {},
    "acquisitions": {},
    "argument_1_values": {},
-   "executions": 894,
+   "executions": 1014,
    "injected": 0,
    "reacquired_while_live": 0,
    "releases": {},
    "result_minus_one": 0,
    "result_other_negative": 0,
    "result_positive": 0,
-   "result_zero": 894,
-   "runs": 13
+   "result_zero": 1014,
+   "runs": 15
   },
   "eventfd": {
    "acquired_equals_result": 19,
@@ -568,18 +570,18 @@
    "acquisitions": {},
    "argument_1_values": {
     "2": 2,
-    "3": 14,
-    "4": 14
+    "3": 18,
+    "4": 18
    },
-   "executions": 30,
+   "executions": 38,
    "injected": 0,
    "reacquired_while_live": 0,
    "releases": {},
    "result_minus_one": 0,
    "result_other_negative": 0,
    "result_positive": 0,
-   "result_zero": 30,
-   "runs": 12
+   "result_zero": 38,
+   "runs": 14
   },
   "fcntl_dupfd": {
    "acquired_equals_result": 18,
@@ -645,15 +647,15 @@
    "acquiring_by_result": {},
    "acquisitions": {},
    "argument_1_values": {},
-   "executions": 165,
+   "executions": 187,
    "injected": 0,
    "reacquired_while_live": 0,
    "releases": {},
    "result_minus_one": 0,
    "result_other_negative": 0,
    "result_positive": 0,
-   "result_zero": 165,
-   "runs": 29
+   "result_zero": 187,
+   "runs": 31
   },
   "fread": {
    "acquired_equals_result": 0,
@@ -774,37 +776,37 @@
    "acquiring_by_result": {},
    "acquisitions": {},
    "argument_1_values": {},
-   "executions": 553,
+   "executions": 623,
    "injected": 0,
    "reacquired_while_live": 0,
    "releases": {},
    "result_minus_one": 0,
    "result_other_negative": 0,
    "result_positive": 0,
-   "result_zero": 553,
-   "runs": 52
+   "result_zero": 623,
+   "runs": 54
   },
   "mmap": {
-   "acquired_equals_result": 59,
+   "acquired_equals_result": 61,
    "acquiring_by_result": {
-    "positive": 59
+    "positive": 61
    },
    "acquisitions": {
-    "Mapping": 59
+    "Mapping": 61
    },
    "argument_1_values": {
     "1": 39,
-    "3": 40
+    "3": 42
    },
-   "executions": 82,
+   "executions": 84,
    "injected": 3,
    "reacquired_while_live": 0,
    "releases": {},
    "result_minus_one": 20,
    "result_other_negative": 0,
-   "result_positive": 59,
+   "result_positive": 61,
    "result_zero": 0,
-   "runs": 38
+   "runs": 40
   },
   "mremap": {
    "acquired_equals_result": 19,
@@ -883,23 +885,23 @@
    "runs": 20
   },
   "pipe": {
-   "acquired_equals_result": 0,
+   "acquired_equals_result": 1,
    "acquiring_by_result": {
-    "zero": 161
+    "zero": 197
    },
    "acquisitions": {
-    "Fd": 322
+    "Fd": 394
    },
    "argument_1_values": {},
-   "executions": 163,
+   "executions": 199,
    "injected": 2,
    "reacquired_while_live": 0,
    "releases": {},
    "result_minus_one": 0,
    "result_other_negative": 0,
    "result_positive": 0,
-   "result_zero": 161,
-   "runs": 36
+   "result_zero": 197,
+   "runs": 38
   },
   "pipe2": {
    "acquired_equals_result": 0,
@@ -972,40 +974,40 @@
    "runs": 20
   },
   "timerfd_create": {
-   "acquired_equals_result": 97,
+   "acquired_equals_result": 121,
    "acquiring_by_result": {
-    "positive": 97
+    "positive": 121
    },
    "acquisitions": {
-    "Fd": 97
+    "Fd": 121
    },
    "argument_1_values": {
-    "0": 97
+    "0": 121
    },
-   "executions": 97,
+   "executions": 121,
    "injected": 0,
    "reacquired_while_live": 0,
    "releases": {},
    "result_minus_one": 0,
    "result_other_negative": 0,
-   "result_positive": 97,
+   "result_positive": 121,
    "result_zero": 0,
-   "runs": 11
+   "runs": 13
   },
   "timerfd_settime": {
    "acquired_equals_result": 0,
    "acquiring_by_result": {},
    "acquisitions": {},
    "argument_1_values": {},
-   "executions": 97,
+   "executions": 121,
    "injected": 0,
    "reacquired_while_live": 0,
    "releases": {},
    "result_minus_one": 0,
    "result_other_negative": 0,
    "result_positive": 0,
-   "result_zero": 97,
-   "runs": 11
+   "result_zero": 121,
+   "runs": 13
   },
   "tmpfile": {
    "acquired_equals_result": 19,

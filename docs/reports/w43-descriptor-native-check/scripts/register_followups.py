@@ -3,7 +3,8 @@
 
 Usage: register_followups.py MATRIX_JSON
 
-Idempotent: an id already present is left unchanged. `named_followups` is
+Idempotent: an id already present is left unchanged, and every id in RETIRED
+is removed. `named_followups` is
 hand-maintained (build_matrix.py carries it verbatim); regenerate the matrix
 afterwards so the derived dimension agrees.
 """
@@ -15,15 +16,6 @@ SOURCE = "docs/reports/w43-descriptor-native-check/README.md"
 CARD = "W43-DESCRIPTOR-NATIVE-CHECK"
 
 FOLLOWUPS = [
-    ("W43-DESC-NATIVE-PHASE-B",
-     "Native descriptor observations are not yet bound to the libc descriptor contracts",
-     "Card W43-DESCRIPTOR-NATIVE-CHECK pinned 77 native runs (76 accepted, 6,730 records) of the pinned Fluent Bit "
-     "build, Monkey sockets and a libc probe, replayed under library/descriptor_native_observation.qcore. Its Phase B "
-     "(check each declared libc descriptor contract of W43-DESCRIPTOR-RESOURCE-TRACKING against every recorded "
-     "execution of its callee: sentinel validity, kind, dup/fdopen/fileno relations) could not run because main at "
-     "f8b41209 lacks that card. Discharge: on a main containing W43-DESCRIPTOR-RESOURCE-TRACKING, derive each landed "
-     "contract's clauses as facts over its callee's pinned records and report every contradiction as a finding, "
-     "without weakening the observation."),
     ("W43-DESC-NATIVE-COVERAGE-GAPS",
      "Several descriptor callees and kinds are observed only through the libc probe or not at all",
      "In the W43-DESCRIPTOR-NATIVE-CHECK measurement the observed Fluent Bit paths never call dup, dup2, "
@@ -77,6 +69,28 @@ FOLLOWUPS = [
      "flb_destroy and continues, the handle and proxy allocations would outlive the context (inferred). "
      "Discharge: a teardown of config->proxies or a refusal on registration failure, observed releasing the "
      "handle; or a decision that the process-lifetime handle is intended."),
+    ("W43-DESC-CTR-RANDOM-ZERO-DESCRIPTOR",
+     "ctr_random_get leaks descriptor 0 natively; the Fluent Bit binary does not reach that arm because startup takes descriptor 0 first",
+     "W43-DESCRIPTOR-RESOURCE-TRACKING reports ctr_random_get provisional Unsafe (`if (fd > 0)` after open(\"/dev/urandom\")) "
+     "with the witness status 'reachable only if open returns 0; not observed natively'. The pinned build compiles that "
+     "arm (its configure test leaves CTR_HAVE_GETRANDOM empty). W43-DESCRIPTOR-NATIVE-CHECK Phase B observed it: the "
+     "actual lib/ctraces/src/ctr_random.c function, called by a driver whose stdin stream was closed first, got 0 from "
+     "open, skipped read/close and exited with descriptor 0 live (pinned run ctraces.random.stdin_closed; the landed "
+     "open contract admits 0 as a valid descriptor, 0 contradictions). Through the real binary (in_event_type traces, "
+     "10 calls) open returned 54, including with descriptor 0 closed at spawn, because flb_create's data pipe takes "
+     "descriptor 0 first (W43-DESC-FLB-CONFIG-DATA-PIPE-ZERO-GUARD). Native observation under a stated precondition, "
+     "not an upstream defect claim. Discharge: an upstream `fd >= 0` guard with the driver scenario showing no live "
+     "descriptor at exit, or a recorded decision on routing it upstream."),
+    ("W43-DESC-FLB-CONFIG-DATA-PIPE-ZERO-GUARD",
+     "Started with descriptor 0 closed, Fluent Bit never closes its data pipe because flb_config_exit tests ch_data[0] for nonzero",
+     "Observed by W43-DESCRIPTOR-NATIVE-CHECK Phase B (pinned run engine.event_type_traces_stdin_closed): with "
+     "descriptor 0 closed at spawn, flb_create's flb_pipe_create(config->ch_data) (src/flb_lib.c:181) returns the pair "
+     "[0, 3], and flb_config_exit guards its destroy with `if (config->ch_data[0])` (src/flb_config.c:611), so neither "
+     "end is closed and both are live at exit. Same guard class as ctr_random_get's `fd > 0` and the `ch_event.fd` "
+     "nonzero guard (W43-DESC-FLB-CONFIG-CHANNEL-DOUBLE-CLOSE). A process launched without standard input is the "
+     "precondition; the CLI then exits, so the leak outlives nothing there, while an embedding calling flb_destroy and "
+     "continuing would keep both descriptors (inferred). Native observation, source-confirmed; not a static verdict. "
+     "Discharge: an upstream `>= 0` guard with the pinned scenario showing no live pipe at exit, or a recorded decision."),
     ("W43-DESC-OBSERVER-ORDERING-BOUNDARY",
      "The native descriptor observer can miss a multithreaded use after release and cannot tell the intended generation on reuse",
      "descriptor_observer.c records uses before the call and releases under its lock, so a use recorded before a "
@@ -89,9 +103,14 @@ FOLLOWUPS = [
 ]
 
 
+# Discharged by this card's Phase B binding (docs/reports/w43-descriptor-native-check/README.md §8).
+RETIRED = ["W43-DESC-NATIVE-PHASE-B"]
+
+
 def main() -> int:
     path = pathlib.Path(sys.argv[1])
     matrix = json.loads(path.read_text())
+    matrix["named_followups"] = [entry for entry in matrix["named_followups"] if entry["id"] not in RETIRED]
     present = {entry["id"] for entry in matrix["named_followups"]}
     added = []
     for identifier, title, why in FOLLOWUPS:

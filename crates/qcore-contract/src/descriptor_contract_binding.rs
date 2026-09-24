@@ -497,18 +497,13 @@ impl<'a> Binder<'a> {
                             owned,
                         },
                     );
-                    if let Some(child) = operand.child {
-                        self.live.insert(
-                            key(Kind::Fd, child),
-                            Live {
-                                kind: Kind::Fd,
-                                generation: self
-                                    .live
-                                    .get(&key(Kind::Fd, child))
-                                    .map_or(1, |live| live.generation),
-                                owned: true,
-                            },
-                        );
+                    // An inherited stdio stream owns its descriptor only if
+                    // that descriptor is itself live (a process started with
+                    // descriptor 0 closed still has a `stdin` object).
+                    if let Some(child) = operand.child
+                        && let Some(live) = self.live.get_mut(&key(Kind::Fd, child))
+                    {
+                        live.owned = true;
                     }
                 }
                 Role::Derived | Role::Adopted => {

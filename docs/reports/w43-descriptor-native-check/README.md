@@ -1,9 +1,10 @@
 # W43-DESCRIPTOR-NATIVE-CHECK: descriptor lifecycles checked on native executions
 
-Card W43-DESCRIPTOR-NATIVE-CHECK, 2026-09-25, on base `f8b41209`, with main
-`0a07cb57` merged at `662af52f` (the measured tip). **Phase A is
-complete. Phase B is waiting** for W43-DESCRIPTOR-RESOURCE-TRACKING to land its
-libc descriptor contracts on main.
+Card W43-DESCRIPTOR-NATIVE-CHECK, 2026-09-25, on base `f8b41209`. Phase A was
+measured with main `0a07cb57` merged. **Phase B** binds the records to the libc
+descriptor contracts that W43-DESCRIPTOR-RESOURCE-TRACKING landed on main
+`d2dd61c1`, merged here at `cf3d1b75`. **Both phases are complete.** The
+gate and arbiter figures in §9 and §11 are measured on the merged tree.
 
 The tracking card's descriptor contracts are trusted assumptions. This card
 builds the evidence that validates them against real executions, the way
@@ -17,8 +18,10 @@ five parts:
 * a Rust replay that evaluates a QCore lifecycle policy through the shared
   predicate interpreter;
 * a Lean model of the observation-level properties;
-* 77 pinned runs of the pinned Fluent Bit build, Monkey sockets and libc,
-  including 36 deterministic failure injections.
+* 81 pinned runs of the pinned Fluent Bit build, Monkey sockets, ctraces and
+  libc, including 36 deterministic failure injections;
+* (Phase B) a Rust binding that checks every recorded execution of a declared
+  libc callee against that callee's **loaded** contract.
 
 **Native observations are evidence separate from static proof and from
 mapping.** Nothing here is a static verdict. No `Unknown` moves, and the
@@ -46,36 +49,59 @@ corpus arbiter is byte-identical ([§9](#9-corpus-arbiter)).
   Seven configure-generated files differ only in their checkout path and
   enclosing git hash; the build records them. The pinned checkout is only
   read.
-* **Runs: 77, 76 accepted as evidence, 6,730 records.**
+* **Runs: 81, 80 accepted as evidence, 7,416 records.**
   * 35 upstream `tests/internal` runs: pipe, file, network, fstore and utils,
     one process per test case.
-  * 16 runs of the actual `fluent-bit` binary: dummy, tcp input with
-    filesystem storage, the HTTP server, and dynamic plugin loading.
+  * 18 runs of the actual `fluent-bit` binary: dummy, tcp input with
+    filesystem storage, the HTTP server, dynamic plugin loading, and (Phase B)
+    `event_type` traces with standard input open and closed.
   * 6 Monkey `mk_socket.c` driver runs.
+  * 2 (Phase B) runs of the actual `ctr_random_get`, called directly.
   * 20 libc-probe runs.
 
   The one rejected run aborted in a heap **double free**
   ([§4.3](#43-storage-scan-failure-double-free-f3)). It has no exit record,
   so it is not descriptor evidence.
 * **Properties.** Over every accepted run:
-  * **Hold:** no use after release (4,890 checks), release matches kind
-    (1,217), leak set well defined (76), generation discipline (1,680),
-    counted dl references (20), sentinel validity (1,289), relations (168) and
+  * **Hold:** no use after release (5,459 checks), release matches kind
+    (1,338), leak set well defined (80), generation discipline (1,827),
+    counted dl references (20), sentinel validity (1,375), relations (168) and
     mapping extents (63).
-  * **Violated: each generation is released at most once.** 49 violations in
-    11 runs, from two upstream double closes
+  * **Violated: each generation is released at most once.** 61 violations in
+    13 runs, from two upstream double closes
     ([§4.1](#41-engine-channel-double-close-f1),
     [§4.2](#42-scheduler-timer-double-close-f2)). Each second close was
     answered with `EBADF`.
   * **Violated: operand identity valid.** 37 runs call `close(-1)`
     ([§4.1](#41-engine-channel-double-close-f1)).
+* **Phase B: 0 contradictions.** 3,149 recorded executions of the 18 declared
+  libc callees the runs reach were bound to their loaded contracts. Of these,
+  1,562 are the eight descriptor-family callees: `open`, `close`, `socket`,
+  `fopen`, `fclose`, `fileno`, `opendir` and `closedir`. No execution
+  contradicts a contract ([§8](#8-phase-b-the-landed-contracts-against-the-executions)).
+  * **Caller breaks, not contract faults:** 98 `close` executions broke the
+    `valid` precondition: 37 `close(-1)` and 61 second closes.
+  * **`open` returned 0 once**, in the direct `ctr_random_get` run with
+    standard input closed. That run leaves descriptor 0 live at exit, which is
+    the native witness the tracking card's provisional Unsafe lacked. The real
+    binary reached `ctr_random_get` 10 times but never with a free descriptor
+    0, because `flb_create`'s data pipe takes it first and is then never
+    closed ([§4.6](#46-data-pipe-zero-guard-f6)).
+* **Refusals.** The recorded shapes support every refusal ground of the
+  tracking card that an execution can speak to. They add one ground for
+  `dlopen`: the loader returns an already-live handle. For `accept4` the
+  executions follow the `socket` shape exactly; its refusal rests on the ABI
+  reader, which executions cannot address.
 * **Lean.** [`QCore.DescriptorNativeObservation`](../../../proof/QCore/DescriptorNativeObservation.lean)
-  is audited by `AuditDescriptorNativeObservation.lean`: 25 theorems, no
-  placeholders, no project axioms. It proves the four required properties
-  over accepted traces: at-most-once release, no use after release, release
-  matching the acquired kind, and a well-defined leak set with an origin for
-  every leaked generation.
-* **Follow-ups.** This card registers 8 and retires none (see the list in [§10](#10-follow-ups)).
+  is audited by `AuditDescriptorNativeObservation.lean`: 35 theorems, no
+  placeholders, no project axioms. Phase A's 25 prove the four required
+  properties over accepted traces: at-most-once release, no use after release,
+  release matching the acquired kind, and a well-defined leak set with an
+  origin for every leaked generation. Phase B's 10 model the owned-result
+  binding rule, show that a caller's precondition break is a rejected
+  lifecycle step, and state the `fd > 0` shape.
+* **Follow-ups.** This card registers 9 and retires its own Phase B follow-up
+  (see the list in [§10](#10-follow-ups)).
 
 ## 1. Method and identity
 
@@ -83,14 +109,16 @@ corpus arbiter is byte-identical ([§9](#9-corpus-arbiter)).
 |---|---|
 | Observer (C) | [`harness/descriptor_observer.c`](harness/descriptor_observer.c) |
 | Monkey socket driver | [`harness/monkey_socket_driver.c`](harness/monkey_socket_driver.c) |
+| ctraces random driver (Phase B) | [`harness/ctraces_random_driver.c`](harness/ctraces_random_driver.c) |
 | libc probe | [`harness/libc_descriptor_probe.c`](harness/libc_descriptor_probe.c) |
 | Fixture plugin DSO | [`harness/flb_out_qdesc_plugin.c`](harness/flb_out_qdesc_plugin.c) |
 | Build / relink / interposition audit | [`scripts/build_targets.py`](scripts/build_targets.py), [`build.json`](build.json) |
 | Compile-database identity | [`scripts/compare_compile_db.py`](scripts/compare_compile_db.py) |
 | Scenarios and runner | [`scripts/run_scenarios.py`](scripts/run_scenarios.py) |
 | Aggregation | [`scripts/aggregate.py`](scripts/aggregate.py), [`aggregate.json`](aggregate.json) |
-| Pinned records | [`records/observations.tar.gz`](records/observations.tar.gz) (SHA-256 `0f8f9397…`), [`records/manifest.json`](records/manifest.json) |
-| Replay re-check | [`scripts/verify_records.py`](scripts/verify_records.py) |
+| Pinned records | [`records/observations.tar.gz`](records/observations.tar.gz) (SHA-256 `d83d1377…`), [`records/manifest.json`](records/manifest.json) |
+| Replay and binding re-check | [`scripts/verify_records.py`](scripts/verify_records.py) |
+| Contract binding (Rust, Phase B) | [`qcore_contract::descriptor_contract_binding`](../../../crates/qcore-contract/src/descriptor_contract_binding.rs), example `bind_descriptor_contracts`, [`scripts/bind_contracts.py`](scripts/bind_contracts.py), [`binding.json`](binding.json) |
 | Policy (QCore) | [`library/descriptor_native_observation.qcore`](../../../providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qcore) |
 | Replay (Rust) | [`qcore_contract::descriptor_observation`](../../../crates/qcore-contract/src/descriptor_observation.rs), example `check_descriptor_observations` |
 | Model (Lean) | [`QCore.DescriptorNativeObservation`](../../../proof/QCore/DescriptorNativeObservation.lean) |
@@ -165,15 +193,15 @@ violation and that an unsupplied fact fails closed.
 
 | Property | Checks | Violations | Runs violated / checked |
 |---|---:|---:|---:|
-| `release_at_most_once` | 1,266 | **49** | 11 / 51 |
-| `no_use_after_release` | 4,890 | 0 | 0 / 75 |
-| `release_matches_kind` (incl. custody: a stream's descriptor released only through the stream) | 1,217 | 0 | 0 / 51 |
-| `leak_set_well_defined` (observer live set = replayed; one generation per identity; every live generation has an origin) | 76 | 0 | 0 / 76 |
-| `generation_fresh` (acquire only a non-live identity; generation + 1; a kernel `EBADF` on an observed-live close also fails here) | 1,680 | 0 | 0 / 76 |
+| `release_at_most_once` | 1,399 | **61** | 13 / 55 |
+| `no_use_after_release` | 5,459 | 0 | 0 / 78 |
+| `release_matches_kind` (incl. custody: a stream's descriptor released only through the stream) | 1,338 | 0 | 0 / 55 |
+| `leak_set_well_defined` (observer live set = replayed; one generation per identity; every live generation has an origin) | 80 | 0 | 0 / 80 |
+| `generation_fresh` (acquire only a non-live identity; generation + 1; a kernel `EBADF` on an observed-live close also fails here) | 1,827 | 0 | 0 / 80 |
 | `counted_reference` (dl handles) | 20 | 0 | 0 / 20 |
-| `sentinel_validity` (failure returns the call's sentinel, acquires nothing, errno where required; success returns a valid identity and acquires what the call makes) | 1,289 | 0 | 0 / 57 |
+| `sentinel_validity` (failure returns the call's sentinel, acquires nothing, errno where required; success returns a valid identity and acquires what the call makes) | 1,375 | 0 | 0 / 61 |
 | `relation_holds` (`fileno`/`dirfd` return the owner's descriptor; `fdopen` adopts a live caller-owned descriptor; `dup` distinct; `dup2` returns its target) | 168 | 0 | 0 / 21 |
-| `operand_identity_valid` (no release/use receives `-1`/`NULL`) | 6,193 | **37** | 37 / 76 |
+| `operand_identity_valid` (no release/use receives `-1`/`NULL`) | 6,895 | **37** | 37 / 80 |
 | `mapping_extent` (`munmap`/`mremap` name the recorded base and length) | 63 | 0 | 0 / 26 |
 
 `untracked_uses` and `untracked_releases`, which count identities never seen
@@ -191,7 +219,7 @@ what its evidence establishes.
 ### 4.1 Engine channel double close (F1)
 
 **Observed.** Every run that reaches full engine teardown shows the same
-sequence (11 runs). `flb_config_exit` (`src/flb_config.c:607`) closes
+sequence (13 runs). `flb_config_exit` (`src/flb_config.c:607`) closes
 descriptor 14 through `config->ch_event.fd`, and at `:617` closes the same
 generation again through `config->ch_manager[0]`, which returns `EBADF`.
 
@@ -212,7 +240,7 @@ from the code and **not observed**.
 
 ### 4.2 Scheduler timer double close (F2)
 
-**Observed.** 38 second closes in 10 runs. `flb_sched_destroy`
+**Observed.** 48 second closes in 12 runs. `flb_sched_destroy`
 (`src/flb_scheduler.c:843`) calls `mk_event_timeout_destroy(&timer->event)`
 for each timer, which closes the timer descriptor. It then calls
 `flb_sched_timer_destroy(timer)`. That calls `flb_sched_timer_cb_disable`, and
@@ -271,6 +299,28 @@ which `flb_config_exit` never walks, so it is live at exit.
 `flb_destroy` and keeps running, the handle and the proxy allocations would
 outlive the context. That is inferred and not measured.
 
+### 4.6 Data-pipe zero guard (F6)
+
+This finding is Phase B's; the stdin-closed `event_type` scenario surfaced it.
+
+**Observed.** Fluent Bit is started with descriptor 0 closed, as a service
+launched without standard input would be. `flb_create`'s
+`flb_pipe_create(config->ch_data)` (`src/flb_lib.c:181`) then returns the pair
+`[0, 3]`, and both descriptors are live at exit
+(`engine.event_type_traces_stdin_closed`).
+
+**Mechanism.** `flb_config_exit` guards the pipe's destroy with
+`if (config->ch_data[0])` (`src/flb_config.c:611`), a nonzero test. A pipe
+whose read end is descriptor 0 is therefore never destroyed. This is the same
+guard class as `ctr_random_get`'s `fd > 0` and the `ch_event.fd` test in
+§4.1.
+
+**Consequence.** In the CLI the process exits right after, so the leak
+outlives nothing. An embedding that calls `flb_destroy` and keeps running
+would keep both descriptors; that is inferred, not measured. The same
+startup is why the real binary never hands descriptor 0 to `ctr_random_get`
+(§8.2).
+
 ## 5. Live at exit
 
 Only non-inherited generations are listed; inherited stdio and descriptors 0–2
@@ -278,8 +328,10 @@ are always live.
 
 | Origin | Runs | Reading |
 |---|---:|---|
-| `mmap` in `backtrace_alloc` ← `flb_stacktrace_init` | 15 | libbacktrace's process-lifetime arena; intentional, not a defect |
+| `mmap` in `backtrace_alloc` ← `flb_stacktrace_init` | 17 | libbacktrace's process-lifetime arena; intentional, not a defect |
 | `epoll_create1` and two `pipe`s in `flb_create` | 2 | `plugin_missing` and the injected-`dlopen` run exit from `flb_main_run` right after the failure without `flb_destroy`; process exit follows; not a defect |
+| `pipe` in `flb_create` (`ch_data`, descriptors 0 and 3) | 1 | §4.6 |
+| `open` in `ctr_random_get` (descriptor 0) | 1 | §8.2 |
 | `dlopen` in `flb_plugin_proxy_create` | 1 | §4.5 |
 | `socket` in `mk_socket_create` ← `mk_socket_server` | 1 | §4.4 |
 
@@ -288,23 +340,23 @@ descriptor, stream, directory, handle, list and mapping it acquired.
 
 ## 6. Coverage
 
-Executions per callee, summed over all 77 runs. "Natural failures" counts
+Executions per callee, summed over all 81 runs. "Natural failures" counts
 records carrying a nonzero errno that were not injected.
 
 | Callee | Executions | Natural failures | Injected | Reached from |
 |---|---:|---:|---:|---|
-| `open` | 169 | 23 | 3 | Fluent Bit, tests, probe |
+| `open` | 181 | 23 | 3 | Fluent Bit (incl. `ctr_random_get`), tests, ctraces driver, probe |
 | `socket` | 85 | 20 | 5 | Fluent Bit, tests, Monkey, probe |
 | `accept4` | 57 | 25 | 4 | Fluent Bit, tests, Monkey, probe |
-| `pipe` | 169 | 0 | 2 | Fluent Bit, tests, probe |
-| `epoll_create1` | 91 | 20 | 2 | Fluent Bit, tests, probe |
-| `timerfd_create` | 97 | 0 | 0 | Fluent Bit |
-| `fopen` / `fclose` | 57 / 71 | 22 | 1 | Fluent Bit, tests, probe |
+| `pipe` | 205 | 0 | 2 | Fluent Bit, tests, probe |
+| `epoll_create1` | 101 | 20 | 2 | Fluent Bit, tests, probe |
+| `timerfd_create` | 121 | 0 | 0 | Fluent Bit |
+| `fopen` / `fclose` | 59 / 74 | 22 | 1 | Fluent Bit, tests, probe |
 | `opendir` / `closedir` | 50 / 47 | 20 | 2 | Fluent Bit (ChunkIO scan), tests, probe |
 | `dlopen` / `dlsym` / `dlclose` | 66 / 24 / 42 | — | 2 | Fluent Bit (`flb_plugin_load`, proxy), probe |
 | `getaddrinfo` / `freeaddrinfo` | 64 / 41 | — | 3 | Fluent Bit, tests, Monkey, probe |
-| `mmap` / `munmap` | 83 / 44 | 20 | 3 | Fluent Bit (ChunkIO, libbacktrace), tests, probe |
-| `close` | 904 | — | — | all |
+| `mmap` / `munmap` | 85 / 44 | 20 | 3 | Fluent Bit (ChunkIO, libbacktrace), tests, probe |
+| `close` | 1,031 | — | — | all |
 | `dup`, `dup2`, `fcntl(F_DUPFD_CLOEXEC)`, `fdopen`, `fdopendir`, `dirfd`, `fileno`, `openat`, `pipe2`, `socketpair`, `eventfd`, `tmpfile`, `mremap` | 19–40 each | per probe | 1 each where a constructor | **probe only**; the observed Fluent Bit paths do not call them |
 | `accept`, `dup3`, `memfd_create`, `mkstemp`, `popen`/`pclose`, `getifaddrs`/`freeifaddrs` | 0 | | | **not observed** |
 
@@ -331,23 +383,143 @@ records carrying a nonzero errno that were not injected.
 * **Scratch paths.** The upstream fstore test writes its fixed `/tmp/flb-fstore`
   path; every other scenario keeps its scratch inside the worktree.
 
-## 8. Phase B: waiting
+## 8. Phase B: the landed contracts against the executions
 
-Main at `f8b41209` does not contain W43-DESCRIPTOR-RESOURCE-TRACKING, so no
-libc descriptor contract has landed to bind to.
+W43-DESCRIPTOR-RESOURCE-TRACKING landed on main `d2dd61c1`, which this card
+merged at `cf3d1b75`. Its descriptor contracts live in
+`providers/quirin-provider-libc/contracts/libc/`:
 
-The records already carry what Phase B needs: every execution of each declared
-callee, with its result, errno, sentinel, kind and relation facts. They are
-pinned, and `verify_records.py` replays them under any policy.
+* `open` and `close` in `unistd.qcore`;
+* `socket` in `socket.qcore`;
+* `fopen`, `fclose` and `fileno` in `stdio.qcore`;
+* `opendir` and `closedir` in `dirent.qcore`.
 
-When the integrator resumes the card, it will do three things:
+They are trusted assumptions: `resource_return_owned(sentinel|nullable)` with
+`resource_return_kind(descriptor|stream|directory)` for the constructors,
+`resource_released(valid|nonnull)` with `resource_kind(...)` for the
+releases, and a neutral `fileno`.
 
-* merge main;
-* derive each landed contract's clauses as facts over that callee's records;
-* report every contradiction as a finding.
+### 8.1 Method
 
-A contradiction will not be resolved by weakening the observation.
-`W43-DESC-NATIVE-PHASE-B` tracks it.
+[`qcore_contract::descriptor_contract_binding`](../../../crates/qcore-contract/src/descriptor_contract_binding.rs)
+loads the four modules with the resource-v1 loader and checks each recorded
+execution against the **loaded record** of its callee's contract. It uses no
+per-callee table:
+
+| Contract position | What every recorded execution must show |
+|---|---|
+| owned result of kind `K` | A failing execution returns `K`'s failure value (`-1` for the integer `descriptor` kind, NULL otherwise), is admitted only if the contract says the result may fail, and acquires nothing. Any other execution acquires exactly one identity, of kind `K`, equal to the result, not live before, and (descriptor) nonnegative. A new stream or directory may derive its own descriptor. |
+| released parameter of kind `K` | The record releases exactly one identity, of kind `K`; a stream or directory release may end its own descriptor with it. |
+| borrowed parameters, `none` result | The record acquires, adopts, derives, replaces and releases nothing. |
+
+A failure of any of these is a **contradiction**, meaning the contract states
+something an execution did not do.
+
+A caller that breaks a release's precondition is recorded separately, as a
+**caller observation**, and is not a contradiction. The precondition is a
+`valid`/`nonnull` identity that is live and not owned by a stream or
+directory. The Lean theorems `release_of_a_dead_identity_is_rejected` and
+`release_of_another_kind_is_rejected` state that such a call is a rejected
+lifecycle step.
+
+The binding refuses rather than passes three cases:
+
+* a contract shape it cannot bind, such as a heap-kind owned result, a
+  reallocated or derived result, or an out, stored or consumed parameter;
+* injected failures, which are counted but never bound;
+* calls without a loaded contract, which get a descriptive shape profile and
+  nothing else.
+
+The unit tests are in
+[`descriptor_contract_binding.rs`](../../../crates/qcore-contract/tests/unit/descriptor_contract_binding.rs):
+12 of them.
+
+* **Faithful executions** of every landed contract bind cleanly.
+* **Contradictions:** each mutated execution contradicts. The mutations are a
+  wrong kind, a wrong identity, a missing acquisition, a failure that acquires,
+  a result of `-2`, a stale owned result, a neutral call that acquires or
+  releases, and a release of another kind.
+* **Caller observations:** a caller break yields one, not a contradiction.
+* **Fail-closed:**
+  * a hypothetical `valid` result is contradicted by one `-1`, which the
+    landed `sentinel` admits;
+  * an unbindable heap shape fails closed.
+* **Pinned real runs:** three tests replay pinned runs.
+
+`verify_records.py` re-derives every run's `binding.json` and the
+[`binding.json`](binding.json) aggregate byte for byte.
+
+### 8.2 Results over the 80 accepted runs
+
+**0 contradictions.** 18 declared callees are reached, for 3,149 executions
+(10 of them injected).
+
+| Callee | Executions | Successes / failures (sentinel or NULL) | Injected | Contradictions | Notes |
+|---|---:|---:|---:|---:|---|
+| `open` | 181 | 155 / 23 | 3 | 0 | **one success returned descriptor 0** (below) |
+| `socket` | 85 | 60 / 20 | 5 | 0 | |
+| `fopen` | 58 | 35 / 22 | 1 | 0 | every success derives the stream's descriptor |
+| `opendir` | 49 | 28 / 20 | 1 | 0 | every success derives the directory's descriptor |
+| `close` | 1,031 | — | — | 0 | caller observations: 37 `invalid_argument` (`close(-1)`, §4.1), 61 `not_live` (the second closes of §4.1 and §4.2); no close of a live descriptor failed |
+| `fclose` | 73 | — | — | 0 | each ended the stream's descriptor with it; none failed |
+| `closedir` | 47 | — | — | 0 | likewise |
+| `fileno` | 38 | — | — | 0 | never acquired; the replay's `relation_holds` shows each result is the stream's own descriptor |
+| `read`, `write`, `recv`, `send`, `listen`, `setsockopt`, `getsockopt`, `getpeername`, `fprintf`, `fflush` | 1,587 | — | — | 0 | neutral: no custody moved |
+
+A contract's declared failure mode is exercised whenever a failure was
+observed. `open`, `socket`, `fopen` and `opendir` all failed naturally
+(`ENOENT` for the path and directory constructors, `EAFNOSUPPORT` for `socket`) in addition to the injected failures.
+None of the three releases was observed failing on a live identity, so "a
+failed release still releases" (the Linux reading both contracts state) was
+**not exercised**.
+
+**`ctr_random_get` and descriptor 0.** The tracking card reports
+`ctr_random_get` provisional Unsafe. Its `if (fd > 0)` guard skips `read` and
+`close` when `open` returns 0, and the card recorded the witness status as
+"reachable only if `open` returns 0; not observed natively". The pinned build
+compiles that arm: its configure test leaves `CTR_HAVE_GETRANDOM` empty, so
+the `/dev/urandom` route is the live Linux path.
+
+* **In none of the 77 Phase A runs** did `open` or `socket` return 0.
+  Descriptor 0 was always inherited.
+* **Through the real binary** (`engine.event_type_traces`, `in_event_type`
+  generating traces), `ctr_random_get` ran 5 times and each `open` descriptor
+  was closed. With descriptor 0 closed at spawn
+  (`engine.event_type_traces_stdin_closed`), it ran 5 more times and `open`
+  returned 54 every time. `flb_create`'s data pipe had already taken
+  descriptor 0, and that pipe is itself never closed (§4.6).
+* **Called directly** (`ctraces.random.stdin_closed`), with the driver's own
+  `stdin` stream closed first, `open` **returned 0**. The landed `open`
+  contract admits 0 as a valid descriptor, and the binding records it as a
+  success, not a contradiction. The guard then skipped `read`/`close`, and
+  descriptor 0 generation 2 is **live at exit**.
+
+This is a native witness of the provisional Unsafe under its stated
+precondition, a process without standard input. It is recorded as
+`W43-DESC-CTR-RANDOM-ZERO-DESCRIPTOR`, not as an upstream defect claim. The
+Lean theorem `zero_descriptor_is_acquired_and_missed_by_a_positive_guard`
+states the shape. The companion `stdin_open` run closes its descriptor.
+
+### 8.3 The refused callees against their executions
+
+The tracking card refused several callees by name. The shape profiles in
+[`binding.json`](binding.json) (`unbound`) record what those callees did. This
+is evidence only: nothing is declared.
+
+| Refused callee | Tracking card's ground | What the executions show | Verdict on the refusal |
+|---|---|---|---|
+| `getaddrinfo` / `freeaddrinfo` | the list is valid exactly when the call returns 0 | 41/41 returns of 0 acquired a list, the 20 nonzero (EAI) returns acquired nothing, and the result never equals the list | **ground confirmed.** A nullable or owned result would misstate both arms. |
+| `fcntl` | a creator only for `F_DUPFD`/`F_DUPFD_CLOEXEC` | 38 executions with commands 2, 3 and 4 (`F_SETFD`, `F_GETFL`, `F_SETFL`) acquired nothing; all 18 non-injected `F_DUPFD_CLOEXEC` executions acquired a descriptor | **ground confirmed.** The creator effect is command-dependent. |
+| `accept4` | `__SOCKADDR_ARG` is unreadable to the declared-ABI reader | 25 returns of `-1` acquired nothing; 28 successes each acquired one descriptor equal to the result, never live before | the executions follow the landed `socket` shape exactly. **The semantic reading would hold, but the refusal rests on the ABI reader, which executions cannot address**, so it stays necessary. |
+| `dlopen` / `dlclose` | withdrawn for the cast-return false leak (`RETURN-CAST-PLACE-NOT-ESCAPED`) | 43 successes; in 20 runs the second `dlopen` of one object returned the **already-live** handle, and the replay's `counted_reference` holds. That is 19 probe runs loading `libm` twice, plus the real binary in `engine.dynamic_plugin_twice`, which loaded the same plugin DSO twice through `flb_plugin_load` | **a further, semantic ground.** A single-owner `owned(nullable)` result would misstate the second acquisition as fresh custody. |
+| `pipe`, `socketpair` | an `int[2]` out slot | 197 + 19 successes returned 0 and acquired two descriptors that are not the result | **ground confirmed.** |
+| `fdopen` | transfer into the stream on success only | 18 successes adopted the descriptor; the 19 NULL returns adopted nothing, and the caller then closed its own descriptor | **ground confirmed.** |
+| `mmap` / `munmap` | pointer sentinel `MAP_FAILED` | 20 failures returned `MAP_FAILED` (recorded as `-1`) and acquired nothing | **ground confirmed.** |
+| `fts_open`/`fts_close`, `glob`/`globfree` | unreadable prototype; in-place lifecycle plus callback | **not executed** by any run | no evidence either way. |
+
+No execution shows any refusal to be unnecessary on semantic grounds. The one
+refusal whose ground executions cannot reach is `accept4`, and its recorded
+behaviour matches the declared `socket` contract.
 
 ## 9. Corpus arbiter
 
@@ -377,9 +549,8 @@ verdict-bearing code path. It ran the arbiter once at the measured tip
 
 ## 10. Follow-ups
 
-**Registered (8)** in `named_followups`, each with its discharge condition:
+**Registered (9)** in `named_followups`, each with its discharge condition:
 
-* `W43-DESC-NATIVE-PHASE-B`
 * `W43-DESC-NATIVE-COVERAGE-GAPS`
 * `W43-DESC-FLB-CONFIG-CHANNEL-DOUBLE-CLOSE`
 * `W43-DESC-FLB-SCHED-TIMER-DOUBLE-CLOSE`
@@ -387,9 +558,16 @@ verdict-bearing code path. It ran the arbiter once at the measured tip
 * `W43-DESC-MONKEY-BIND-FAILURE-LEAK`
 * `W43-DESC-FLB-PROXY-HANDLE-UNRELEASED`
 * `W43-DESC-OBSERVER-ORDERING-BOUNDARY`
+* `W43-DESC-CTR-RANDOM-ZERO-DESCRIPTOR` (Phase B)
+* `W43-DESC-FLB-CONFIG-DATA-PIPE-ZERO-GUARD` (Phase B)
 
-**Retired: none.** `W43-LIBC-DESCRIPTOR-LIFECYCLE` belongs to the tracking
-card. `CT50-PROOF-ADDRESS-REUSE-UNPROVED` is unchanged.
+**Retired (1): `W43-DESC-NATIVE-PHASE-B`.** It was registered with the Phase A
+report and is discharged by §8, where every landed contract is bound to its
+callee's records and every contradiction would be reported. There are none.
+The retirement is recorded in [`retired-followups.json`](retired-followups.json).
+The tracking card's `W43-DESCRIPTOR-REFUSED-SHAPES`, `RETURN-CAST-PLACE-NOT-ESCAPED`
+and `W43-DESCRIPTOR-ACCUSING-ARMS-UNEXERCISED-IN-CORPUS` are unchanged: this
+card declares nothing. `CT50-PROOF-ADDRESS-REUSE-UNPROVED` is also unchanged.
 
 ## 11. Validation and reproduction
 
@@ -480,13 +658,15 @@ the aggregate byte for byte (exit 0).
 
 ## 12. Files likely to conflict
 
-* `compiler/tests/qcore_contract_corpus.rs` and `compiler/tests/contract_loader.rs`:
-  module count 108 → 109, the new entries, and rejected declarations 206 → 216.
-  The tracking card also edits these tables.
+* `compiler/tests/qcore_contract_corpus.rs`, `compiler/tests/contract_loader.rs`
+  and `scripts/tests/test_contract_corpus.py`: on main's figures, module count
+  110 → 111, the new entries, `quirin-provider-*` modules 38 → 39, and
+  rejected declarations 206 → 216 (selection 47 and v1 declarations 152
+  unchanged).
 * `providers/contract-load-path.json` and
   `providers/quirin-provider-shared/src/lib.rs`: the new shared module.
 * `proof/QCore.lean`: one import.
-* `crates/qcore-contract/src/lib.rs`: one `pub mod`.
+* `crates/qcore-contract/src/lib.rs`: two `pub mod`s.
 * `docs/STATUS.md`, `docs/reviews/r0_3/acceptance_matrix.json`,
   `docs/development/increments/wave-43.md` and its index, and
   `docs/reports/INDEX.md`.

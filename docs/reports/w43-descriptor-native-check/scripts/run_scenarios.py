@@ -147,15 +147,22 @@ def scenarios(targets):
                      "argv": [scenario], "inject": None, "note": note, "kind": "probe", "timeout": 30})
 
     def engine(name, argv=None, service="", inputs="", outputs="", action=None, inject=None,
-               note="", expect_exit_alone=False, duration=2.5):
+               note="", expect_exit_alone=False, duration=2.5, close_stdin=False):
         runs.append({"name": f"engine.{name}" + (f".inject-{inject[0]}" if inject else ""),
                      "target": "fluent-bit", "argv": argv, "config": (service, inputs, outputs),
                      "action": action, "inject": inject, "note": note, "kind": "engine",
-                     "expect_exit_alone": expect_exit_alone, "duration": duration, "timeout": 40})
+                     "expect_exit_alone": expect_exit_alone, "duration": duration, "timeout": 40,
+                     "close_stdin": close_stdin})
 
     null_out = "[OUTPUT]\n    Name null\n    Match *\n"
     dummy_in = "[INPUT]\n    Name dummy\n    Rate 5\n"
     engine("dummy_null", inputs=dummy_in, outputs=null_out)
+    # Phase B: in_event_type's traces call ctr_id_create_random -> ctr_random_get.
+    traces_in = "[INPUT]\n    Name event_type\n    Type traces\n"
+    engine("event_type_traces", inputs=traces_in, outputs=null_out,
+           note="trace generation reaches ctr_random_get's open(/dev/urandom)")
+    engine("event_type_traces_stdin_closed", inputs=traces_in, outputs=null_out, close_stdin=True,
+           note="the same with descriptor 0 closed at spawn, so open can return 0")
     engine("tcp_filesystem_storage",
            service="    storage.path {run}/storage\n    storage.sync normal\n",
            inputs="[INPUT]\n    Name tcp\n    Listen 127.0.0.1\n    Port {port}\n    Format none\n    storage.type filesystem\n",
@@ -245,7 +252,10 @@ def execute(run, targets, out, ranges, env_base):
                                    for arg in run["argv"]]]
     started = time.time()
     with open(run_dir / "stdout", "wb") as stdout, open(run_dir / "stderr", "wb") as stderr:
-        process = subprocess.Popen(argv, cwd=run_dir, env=env, stdout=stdout, stderr=stderr)
+        # A run with `close_stdin` starts with descriptor 0 closed (as a service
+        # launched without standard input); every other run inherits the runner's.
+        spawn = {"preexec_fn": lambda: os.close(0)} if run.get("close_stdin") else {}
+        process = subprocess.Popen(argv, cwd=run_dir, env=env, stdout=stdout, stderr=stderr, **spawn)
         action_result = None
         terminated = False
         try:
@@ -280,6 +290,7 @@ def execute(run, targets, out, ranges, env_base):
     record = {"name": run["name"], "kind": run["kind"], "target": run["target"], "argv": argv,
               "port": port, "injection": injection, "note": run.get("note", ""), "sigterm_sent": terminated,
               "expected_exit_without_signal": run.get("expect_exit_alone", False),
+              "stdin_closed_at_spawn": run.get("close_stdin", False),
               "returncode": returncode, "timed_out": timed_out, "action": action_result,
               "seconds": round(time.time() - started, 2)}
     checked = subprocess.run([str(CHECKER), str(POLICY), str(records)], text=True, capture_output=True)

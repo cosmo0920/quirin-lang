@@ -1,7 +1,7 @@
 {
  "schema_version": 1,
- "runs": 79,
- "accepted_runs": 78,
+ "runs": 81,
+ "accepted_runs": 80,
  "rejected_runs": [
   {
    "name": "engine.tcp_filesystem_storage.inject-opendir",
@@ -10,15 +10,15 @@
   }
  ],
  "totals": {
-  "acquisitions": 1694,
-  "constructor_failures": 307,
+  "acquisitions": 1827,
+  "constructor_failures": 305,
   "injected_failures": 35,
-  "records": 6689,
-  "releases": 1220,
-  "reused_identities": 518,
+  "records": 7416,
+  "releases": 1338,
+  "reused_identities": 528,
   "untracked_releases": 0,
   "untracked_uses": 0,
-  "uses": 4847
+  "uses": 5459
  },
  "properties": {
   "counted_reference": {
@@ -28,15 +28,15 @@
    "runs_violated": []
   },
   "generation_fresh": {
-   "checks": 1694,
+   "checks": 1827,
    "violations": 0,
-   "runs_checked": 78,
+   "runs_checked": 80,
    "runs_violated": []
   },
   "leak_set_well_defined": {
-   "checks": 78,
+   "checks": 80,
    "violations": 0,
-   "runs_checked": 78,
+   "runs_checked": 80,
    "runs_violated": []
   },
   "mapping_extent": {
@@ -46,15 +46,15 @@
    "runs_violated": []
   },
   "no_use_after_release": {
-   "checks": 4847,
+   "checks": 5459,
    "violations": 0,
-   "runs_checked": 76,
+   "runs_checked": 78,
    "runs_violated": []
   },
   "operand_identity_valid": {
-   "checks": 6153,
+   "checks": 6895,
    "violations": 37,
-   "runs_checked": 78,
+   "runs_checked": 80,
    "runs_violated": [
     "test.pipe.pipe_usage",
     "test.file.file_read_text_file",
@@ -102,11 +102,13 @@
    "runs_violated": []
   },
   "release_at_most_once": {
-   "checks": 1269,
-   "violations": 49,
-   "runs_checked": 53,
+   "checks": 1399,
+   "violations": 61,
+   "runs_checked": 55,
    "runs_violated": [
     "engine.dummy_null",
+    "engine.event_type_traces",
+    "engine.event_type_traces_stdin_closed",
     "engine.tcp_filesystem_storage",
     "engine.http_server_monkey",
     "engine.dynamic_plugin",
@@ -120,15 +122,15 @@
    ]
   },
   "release_matches_kind": {
-   "checks": 1220,
+   "checks": 1338,
    "violations": 0,
-   "runs_checked": 53,
+   "runs_checked": 55,
    "runs_violated": []
   },
   "sentinel_validity": {
-   "checks": 1293,
+   "checks": 1375,
    "violations": 0,
-   "runs_checked": 59,
+   "runs_checked": 61,
    "runs_violated": []
   }
  },
@@ -731,7 +733,7 @@
   {
    "run": "engine.dummy_null",
    "property": "release_at_most_once",
-   "sequence": 307,
+   "sequence": 304,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -748,7 +750,7 @@
   {
    "run": "engine.dummy_null",
    "property": "release_at_most_once",
-   "sequence": 348,
+   "sequence": 345,
    "call": "close",
    "site": "flb_config_exit (src/flb_config.c:617:9)",
    "stack": [
@@ -765,7 +767,7 @@
   {
    "run": "engine.dummy_null",
    "property": "release_at_most_once",
-   "sequence": 358,
+   "sequence": 355,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -785,7 +787,7 @@
   {
    "run": "engine.dummy_null",
    "property": "release_at_most_once",
-   "sequence": 361,
+   "sequence": 358,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -805,7 +807,7 @@
   {
    "run": "engine.dummy_null",
    "property": "release_at_most_once",
-   "sequence": 364,
+   "sequence": 361,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -823,9 +825,231 @@
    "detail": "fd 41 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
   },
   {
+   "run": "engine.event_type_traces",
+   "property": "release_at_most_once",
+   "sequence": 310,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "output_thread (src/flb_output_thread.c:397)",
+    "step_callback (src/flb_worker.c:43)"
+   ],
+   "detail": "fd 49 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.event_type_traces",
+   "property": "release_at_most_once",
+   "sequence": 336,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "input_thread (src/flb_input_thread.c:517)",
+    "step_callback (src/flb_worker.c:43)"
+   ],
+   "detail": "fd 31 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.event_type_traces",
+   "property": "release_at_most_once",
+   "sequence": 373,
+   "call": "close",
+   "site": "flb_config_exit (src/flb_config.c:617:9)",
+   "stack": [
+    "flb_config_exit (src/flb_config.c:617)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)",
+    "main (src/fluent-bit.c:1611)",
+    "_start (??:0)"
+   ],
+   "detail": "fd 14 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.event_type_traces",
+   "property": "release_at_most_once",
+   "sequence": 383,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "flb_config_exit (src/flb_config.c:686)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)"
+   ],
+   "detail": "fd 45 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.event_type_traces",
+   "property": "release_at_most_once",
+   "sequence": 386,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "flb_config_exit (src/flb_config.c:686)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)"
+   ],
+   "detail": "fd 52 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.event_type_traces",
+   "property": "release_at_most_once",
+   "sequence": 389,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "flb_config_exit (src/flb_config.c:686)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)"
+   ],
+   "detail": "fd 54 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.event_type_traces_stdin_closed",
+   "property": "release_at_most_once",
+   "sequence": 301,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "output_thread (src/flb_output_thread.c:397)",
+    "step_callback (src/flb_worker.c:43)"
+   ],
+   "detail": "fd 48 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.event_type_traces_stdin_closed",
+   "property": "release_at_most_once",
+   "sequence": 331,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "input_thread (src/flb_input_thread.c:517)",
+    "step_callback (src/flb_worker.c:43)"
+   ],
+   "detail": "fd 30 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.event_type_traces_stdin_closed",
+   "property": "release_at_most_once",
+   "sequence": 366,
+   "call": "close",
+   "site": "flb_config_exit (src/flb_config.c:617:9)",
+   "stack": [
+    "flb_config_exit (src/flb_config.c:617)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)",
+    "main (src/fluent-bit.c:1611)",
+    "_start (??:0)"
+   ],
+   "detail": "fd 13 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.event_type_traces_stdin_closed",
+   "property": "release_at_most_once",
+   "sequence": 376,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "flb_config_exit (src/flb_config.c:686)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)"
+   ],
+   "detail": "fd 44 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.event_type_traces_stdin_closed",
+   "property": "release_at_most_once",
+   "sequence": 379,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "flb_config_exit (src/flb_config.c:686)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)"
+   ],
+   "detail": "fd 51 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.event_type_traces_stdin_closed",
+   "property": "release_at_most_once",
+   "sequence": 382,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "flb_config_exit (src/flb_config.c:686)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)"
+   ],
+   "detail": "fd 53 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
    "run": "engine.tcp_filesystem_storage",
    "property": "release_at_most_once",
-   "sequence": 363,
+   "sequence": 353,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -842,7 +1066,7 @@
   {
    "run": "engine.tcp_filesystem_storage",
    "property": "release_at_most_once",
-   "sequence": 408,
+   "sequence": 407,
    "call": "close",
    "site": "flb_config_exit (src/flb_config.c:617:9)",
    "stack": [
@@ -859,7 +1083,7 @@
   {
    "run": "engine.tcp_filesystem_storage",
    "property": "release_at_most_once",
-   "sequence": 418,
+   "sequence": 417,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -879,7 +1103,7 @@
   {
    "run": "engine.tcp_filesystem_storage",
    "property": "release_at_most_once",
-   "sequence": 421,
+   "sequence": 420,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -899,7 +1123,7 @@
   {
    "run": "engine.tcp_filesystem_storage",
    "property": "release_at_most_once",
-   "sequence": 424,
+   "sequence": 423,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -919,7 +1143,7 @@
   {
    "run": "engine.http_server_monkey",
    "property": "release_at_most_once",
-   "sequence": 408,
+   "sequence": 399,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -931,12 +1155,12 @@
     "output_thread (src/flb_output_thread.c:397)",
     "step_callback (src/flb_worker.c:43)"
    ],
-   "detail": "fd 35 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+   "detail": "fd 37 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
   },
   {
    "run": "engine.http_server_monkey",
    "property": "release_at_most_once",
-   "sequence": 456,
+   "sequence": 447,
    "call": "close",
    "site": "flb_config_exit (src/flb_config.c:617:9)",
    "stack": [
@@ -953,7 +1177,7 @@
   {
    "run": "engine.http_server_monkey",
    "property": "release_at_most_once",
-   "sequence": 466,
+   "sequence": 457,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -968,12 +1192,12 @@
     "flb_supervisor_run (src/flb_supervisor.c:626)",
     "flb_main (src/fluent-bit.c:1603)"
    ],
-   "detail": "fd 34 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+   "detail": "fd 32 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
   },
   {
    "run": "engine.http_server_monkey",
    "property": "release_at_most_once",
-   "sequence": 469,
+   "sequence": 460,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -993,7 +1217,7 @@
   {
    "run": "engine.http_server_monkey",
    "property": "release_at_most_once",
-   "sequence": 472,
+   "sequence": 463,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1090,7 +1314,7 @@
   {
    "run": "engine.dynamic_plugin_twice",
    "property": "release_at_most_once",
-   "sequence": 280,
+   "sequence": 278,
    "call": "close",
    "site": "flb_config_exit (src/flb_config.c:617:9)",
    "stack": [
@@ -1107,7 +1331,7 @@
   {
    "run": "engine.dynamic_plugin_twice",
    "property": "release_at_most_once",
-   "sequence": 292,
+   "sequence": 290,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1127,7 +1351,7 @@
   {
    "run": "engine.dynamic_plugin_twice",
    "property": "release_at_most_once",
-   "sequence": 295,
+   "sequence": 293,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1147,7 +1371,7 @@
   {
    "run": "engine.dynamic_plugin_twice",
    "property": "release_at_most_once",
-   "sequence": 298,
+   "sequence": 296,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1167,7 +1391,7 @@
   {
    "run": "engine.plugin_invalid_name",
    "property": "release_at_most_once",
-   "sequence": 307,
+   "sequence": 304,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1184,7 +1408,7 @@
   {
    "run": "engine.plugin_invalid_name",
    "property": "release_at_most_once",
-   "sequence": 351,
+   "sequence": 350,
    "call": "close",
    "site": "flb_config_exit (src/flb_config.c:617:9)",
    "stack": [
@@ -1201,7 +1425,7 @@
   {
    "run": "engine.plugin_invalid_name",
    "property": "release_at_most_once",
-   "sequence": 361,
+   "sequence": 360,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1221,7 +1445,7 @@
   {
    "run": "engine.plugin_invalid_name",
    "property": "release_at_most_once",
-   "sequence": 364,
+   "sequence": 363,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1241,7 +1465,7 @@
   {
    "run": "engine.plugin_invalid_name",
    "property": "release_at_most_once",
-   "sequence": 367,
+   "sequence": 366,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1261,7 +1485,7 @@
   {
    "run": "engine.tcp_filesystem_storage.inject-socket",
    "property": "release_at_most_once",
-   "sequence": 139,
+   "sequence": 133,
    "call": "close",
    "site": "flb_config_exit (src/flb_config.c:617:9)",
    "stack": [
@@ -1278,7 +1502,7 @@
   {
    "run": "engine.tcp_filesystem_storage.inject-accept4",
    "property": "release_at_most_once",
-   "sequence": 379,
+   "sequence": 366,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1290,12 +1514,12 @@
     "output_thread (src/flb_output_thread.c:397)",
     "step_callback (src/flb_worker.c:43)"
    ],
-   "detail": "fd 39 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+   "detail": "fd 42 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
   },
   {
    "run": "engine.tcp_filesystem_storage.inject-accept4",
    "property": "release_at_most_once",
-   "sequence": 424,
+   "sequence": 411,
    "call": "close",
    "site": "flb_config_exit (src/flb_config.c:617:9)",
    "stack": [
@@ -1311,6 +1535,140 @@
   },
   {
    "run": "engine.tcp_filesystem_storage.inject-accept4",
+   "property": "release_at_most_once",
+   "sequence": 421,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "flb_config_exit (src/flb_config.c:686)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)"
+   ],
+   "detail": "fd 35 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.tcp_filesystem_storage.inject-accept4",
+   "property": "release_at_most_once",
+   "sequence": 424,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "flb_config_exit (src/flb_config.c:686)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)"
+   ],
+   "detail": "fd 40 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.tcp_filesystem_storage.inject-accept4",
+   "property": "release_at_most_once",
+   "sequence": 427,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "flb_config_exit (src/flb_config.c:686)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)"
+   ],
+   "detail": "fd 41 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.tcp_filesystem_storage.inject-open",
+   "property": "release_at_most_once",
+   "sequence": 367,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "output_thread (src/flb_output_thread.c:397)",
+    "step_callback (src/flb_worker.c:43)"
+   ],
+   "detail": "fd 39 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.tcp_filesystem_storage.inject-open",
+   "property": "release_at_most_once",
+   "sequence": 418,
+   "call": "close",
+   "site": "flb_config_exit (src/flb_config.c:617:9)",
+   "stack": [
+    "flb_config_exit (src/flb_config.c:617)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)",
+    "main (src/fluent-bit.c:1611)",
+    "_start (??:0)"
+   ],
+   "detail": "fd 14 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.tcp_filesystem_storage.inject-open",
+   "property": "release_at_most_once",
+   "sequence": 428,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "flb_config_exit (src/flb_config.c:686)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)"
+   ],
+   "detail": "fd 35 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.tcp_filesystem_storage.inject-open",
+   "property": "release_at_most_once",
+   "sequence": 431,
+   "call": "close",
+   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
+   "stack": [
+    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
+    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
+    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
+    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
+    "flb_sched_destroy (src/flb_scheduler.c:844)",
+    "flb_config_exit (src/flb_config.c:686)",
+    "flb_destroy (src/flb_lib.c:249)",
+    "flb_main_run (src/fluent-bit.c:1595)",
+    "flb_supervisor_run (src/flb_supervisor.c:626)",
+    "flb_main (src/fluent-bit.c:1603)"
+   ],
+   "detail": "fd 43 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+  },
+  {
+   "run": "engine.tcp_filesystem_storage.inject-open",
    "property": "release_at_most_once",
    "sequence": 434,
    "call": "close",
@@ -1327,52 +1685,12 @@
     "flb_supervisor_run (src/flb_supervisor.c:626)",
     "flb_main (src/fluent-bit.c:1603)"
    ],
-   "detail": "fd 35 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
-  },
-  {
-   "run": "engine.tcp_filesystem_storage.inject-accept4",
-   "property": "release_at_most_once",
-   "sequence": 437,
-   "call": "close",
-   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
-   "stack": [
-    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
-    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
-    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
-    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
-    "flb_sched_destroy (src/flb_scheduler.c:844)",
-    "flb_config_exit (src/flb_config.c:686)",
-    "flb_destroy (src/flb_lib.c:249)",
-    "flb_main_run (src/fluent-bit.c:1595)",
-    "flb_supervisor_run (src/flb_supervisor.c:626)",
-    "flb_main (src/fluent-bit.c:1603)"
-   ],
-   "detail": "fd 43 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
-  },
-  {
-   "run": "engine.tcp_filesystem_storage.inject-accept4",
-   "property": "release_at_most_once",
-   "sequence": 440,
-   "call": "close",
-   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
-   "stack": [
-    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
-    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
-    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
-    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
-    "flb_sched_destroy (src/flb_scheduler.c:844)",
-    "flb_config_exit (src/flb_config.c:686)",
-    "flb_destroy (src/flb_lib.c:249)",
-    "flb_main_run (src/fluent-bit.c:1595)",
-    "flb_supervisor_run (src/flb_supervisor.c:626)",
-    "flb_main (src/fluent-bit.c:1603)"
-   ],
    "detail": "fd 44 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
   },
   {
-   "run": "engine.tcp_filesystem_storage.inject-open",
+   "run": "engine.tcp_filesystem_storage.inject-mmap",
    "property": "release_at_most_once",
-   "sequence": 388,
+   "sequence": 399,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1384,106 +1702,12 @@
     "output_thread (src/flb_output_thread.c:397)",
     "step_callback (src/flb_worker.c:43)"
    ],
-   "detail": "fd 37 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
-  },
-  {
-   "run": "engine.tcp_filesystem_storage.inject-open",
-   "property": "release_at_most_once",
-   "sequence": 433,
-   "call": "close",
-   "site": "flb_config_exit (src/flb_config.c:617:9)",
-   "stack": [
-    "flb_config_exit (src/flb_config.c:617)",
-    "flb_destroy (src/flb_lib.c:249)",
-    "flb_main_run (src/fluent-bit.c:1595)",
-    "flb_supervisor_run (src/flb_supervisor.c:626)",
-    "flb_main (src/fluent-bit.c:1603)",
-    "main (src/fluent-bit.c:1611)",
-    "_start (??:0)"
-   ],
-   "detail": "fd 14 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
-  },
-  {
-   "run": "engine.tcp_filesystem_storage.inject-open",
-   "property": "release_at_most_once",
-   "sequence": 443,
-   "call": "close",
-   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
-   "stack": [
-    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
-    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
-    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
-    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
-    "flb_sched_destroy (src/flb_scheduler.c:844)",
-    "flb_config_exit (src/flb_config.c:686)",
-    "flb_destroy (src/flb_lib.c:249)",
-    "flb_main_run (src/fluent-bit.c:1595)",
-    "flb_supervisor_run (src/flb_supervisor.c:626)",
-    "flb_main (src/fluent-bit.c:1603)"
-   ],
-   "detail": "fd 38 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
-  },
-  {
-   "run": "engine.tcp_filesystem_storage.inject-open",
-   "property": "release_at_most_once",
-   "sequence": 446,
-   "call": "close",
-   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
-   "stack": [
-    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
-    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
-    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
-    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
-    "flb_sched_destroy (src/flb_scheduler.c:844)",
-    "flb_config_exit (src/flb_config.c:686)",
-    "flb_destroy (src/flb_lib.c:249)",
-    "flb_main_run (src/fluent-bit.c:1595)",
-    "flb_supervisor_run (src/flb_supervisor.c:626)",
-    "flb_main (src/fluent-bit.c:1603)"
-   ],
-   "detail": "fd 43 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
-  },
-  {
-   "run": "engine.tcp_filesystem_storage.inject-open",
-   "property": "release_at_most_once",
-   "sequence": 449,
-   "call": "close",
-   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
-   "stack": [
-    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
-    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
-    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
-    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
-    "flb_sched_destroy (src/flb_scheduler.c:844)",
-    "flb_config_exit (src/flb_config.c:686)",
-    "flb_destroy (src/flb_lib.c:249)",
-    "flb_main_run (src/fluent-bit.c:1595)",
-    "flb_supervisor_run (src/flb_supervisor.c:626)",
-    "flb_main (src/fluent-bit.c:1603)"
-   ],
-   "detail": "fd 44 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
+   "detail": "fd 39 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
   },
   {
    "run": "engine.tcp_filesystem_storage.inject-mmap",
    "property": "release_at_most_once",
-   "sequence": 395,
-   "call": "close",
-   "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
-   "stack": [
-    "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350)",
-    "mk_event_timeout_destroy (lib/monkey/mk_core/mk_event.c:177)",
-    "flb_sched_timer_cb_disable (src/flb_scheduler.c:723)",
-    "flb_sched_timer_destroy (src/flb_scheduler.c:907)",
-    "flb_sched_destroy (src/flb_scheduler.c:844)",
-    "output_thread (src/flb_output_thread.c:397)",
-    "step_callback (src/flb_worker.c:43)"
-   ],
-   "detail": "fd 38 generation 1 released again (result -1, errno 9); descriptor_release_at_most_once: observed contract violation: not released_before"
-  },
-  {
-   "run": "engine.tcp_filesystem_storage.inject-mmap",
-   "property": "release_at_most_once",
-   "sequence": 440,
+   "sequence": 444,
    "call": "close",
    "site": "flb_config_exit (src/flb_config.c:617:9)",
    "stack": [
@@ -1500,7 +1724,7 @@
   {
    "run": "engine.tcp_filesystem_storage.inject-mmap",
    "property": "release_at_most_once",
-   "sequence": 450,
+   "sequence": 454,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1520,7 +1744,7 @@
   {
    "run": "engine.tcp_filesystem_storage.inject-mmap",
    "property": "release_at_most_once",
-   "sequence": 453,
+   "sequence": 457,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1540,7 +1764,7 @@
   {
    "run": "engine.tcp_filesystem_storage.inject-mmap",
    "property": "release_at_most_once",
-   "sequence": 456,
+   "sequence": 460,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1594,7 +1818,7 @@
   {
    "run": "engine.http_server_monkey.inject-accept4",
    "property": "release_at_most_once",
-   "sequence": 429,
+   "sequence": 419,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1611,7 +1835,7 @@
   {
    "run": "engine.http_server_monkey.inject-accept4",
    "property": "release_at_most_once",
-   "sequence": 477,
+   "sequence": 469,
    "call": "close",
    "site": "flb_config_exit (src/flb_config.c:617:9)",
    "stack": [
@@ -1628,7 +1852,7 @@
   {
    "run": "engine.http_server_monkey.inject-accept4",
    "property": "release_at_most_once",
-   "sequence": 487,
+   "sequence": 479,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1648,7 +1872,7 @@
   {
    "run": "engine.http_server_monkey.inject-accept4",
    "property": "release_at_most_once",
-   "sequence": 490,
+   "sequence": 482,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1668,7 +1892,7 @@
   {
    "run": "engine.http_server_monkey.inject-accept4",
    "property": "release_at_most_once",
-   "sequence": 493,
+   "sequence": 485,
    "call": "close",
    "site": "_mk_event_timeout_destroy (lib/monkey/mk_core/mk_event_epoll.c:350:5)",
    "stack": [
@@ -1698,6 +1922,8 @@
     "engine.dynamic_plugin",
     "engine.dynamic_plugin.inject-dlopen",
     "engine.dynamic_plugin_twice",
+    "engine.event_type_traces",
+    "engine.event_type_traces_stdin_closed",
     "engine.http_server_monkey",
     "engine.http_server_monkey.inject-accept4",
     "engine.plugin_invalid_name",
@@ -1708,10 +1934,26 @@
     "engine.tcp_filesystem_storage.inject-open",
     "engine.tcp_filesystem_storage.inject-socket"
    ],
-   "run_count": 15,
-   "generations": 15,
+   "run_count": 17,
+   "generations": 17,
    "kinds": [
     "mapping"
+   ],
+   "paths": []
+  },
+  {
+   "call": "pipe",
+   "site": "flb_pipe_create (src/flb_pipe.c:102:12)",
+   "stack": "flb_pipe_create (src/flb_pipe.c:102) <- flb_create (src/flb_lib.c:181) <- flb_main_run (src/fluent-bit.c:1107) <- flb_supervisor_run (src/flb_supervisor.c:626) <- flb_main (src/fluent-bit.c:1603) <- main (src/fluent-bit.c:1611)",
+   "runs": [
+    "engine.dynamic_plugin.inject-dlopen",
+    "engine.event_type_traces_stdin_closed",
+    "engine.plugin_missing"
+   ],
+   "run_count": 3,
+   "generations": 6,
+   "kinds": [
+    "fd"
    ],
    "paths": []
   },
@@ -1746,21 +1988,6 @@
    "paths": []
   },
   {
-   "call": "pipe",
-   "site": "flb_pipe_create (src/flb_pipe.c:102:12)",
-   "stack": "flb_pipe_create (src/flb_pipe.c:102) <- flb_create (src/flb_lib.c:181) <- flb_main_run (src/fluent-bit.c:1107) <- flb_supervisor_run (src/flb_supervisor.c:626) <- flb_main (src/fluent-bit.c:1603) <- main (src/fluent-bit.c:1611)",
-   "runs": [
-    "engine.dynamic_plugin.inject-dlopen",
-    "engine.plugin_missing"
-   ],
-   "run_count": 2,
-   "generations": 4,
-   "kinds": [
-    "fd"
-   ],
-   "paths": []
-  },
-  {
    "call": "dlopen",
    "site": "flb_plugin_proxy_create (src/flb_plugin_proxy.c:605:14)",
    "stack": "flb_plugin_proxy_create (src/flb_plugin_proxy.c:605) <- flb_plugin_load_router (src/flb_plugin.c:343) <- flb_main_run (src/fluent-bit.c:1155) <- flb_supervisor_run (src/flb_supervisor.c:626) <- flb_main (src/fluent-bit.c:1603) <- main (src/fluent-bit.c:1611)",
@@ -1773,7 +2000,7 @@
     "dl_handle"
    ],
    "paths": [
-    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/private/w43-descriptor/final-20260925c/run/runs/engine.plugin_invalid_name/qdesc-invalid.so"
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/private/w43-descriptor/final-20260925d/run/runs/engine.plugin_invalid_name/qdesc-invalid.so"
    ]
   },
   {
@@ -3329,7 +3556,7 @@
    "kind": "engine",
    "returncode": 0,
    "sigterm": true,
-   "records": 369,
+   "records": 366,
    "acquisitions": {
     "fd": 44,
     "file": 4,
@@ -3349,11 +3576,59 @@
    "untracked_releases": 0
   },
   {
+   "name": "engine.event_type_traces",
+   "kind": "engine",
+   "returncode": 0,
+   "sigterm": true,
+   "records": 394,
+   "acquisitions": {
+    "fd": 62,
+    "file": 4,
+    "mapping": 1
+   },
+   "releases": {
+    "fd": 59,
+    "file": 1
+   },
+   "injected_failures": 0,
+   "injection_reached_function": null,
+   "violations": {
+    "release_at_most_once": 6
+   },
+   "live_at_exit_not_inherited": 1,
+   "untracked_uses": 0,
+   "untracked_releases": 0
+  },
+  {
+   "name": "engine.event_type_traces_stdin_closed",
+   "kind": "engine",
+   "returncode": 0,
+   "sigterm": true,
+   "records": 387,
+   "acquisitions": {
+    "fd": 61,
+    "file": 4,
+    "mapping": 1
+   },
+   "releases": {
+    "fd": 57,
+    "file": 1
+   },
+   "injected_failures": 0,
+   "injection_reached_function": null,
+   "violations": {
+    "release_at_most_once": 6
+   },
+   "live_at_exit_not_inherited": 3,
+   "untracked_uses": 0,
+   "untracked_releases": 0
+  },
+  {
    "name": "engine.tcp_filesystem_storage",
    "kind": "engine",
    "returncode": 0,
    "sigterm": true,
-   "records": 429,
+   "records": 428,
    "acquisitions": {
     "addrinfo": 1,
     "dir": 1,
@@ -3382,7 +3657,7 @@
    "kind": "engine",
    "returncode": 0,
    "sigterm": true,
-   "records": 477,
+   "records": 468,
    "acquisitions": {
     "addrinfo": 1,
     "fd": 52,
@@ -3434,7 +3709,7 @@
    "kind": "engine",
    "returncode": 0,
    "sigterm": true,
-   "records": 303,
+   "records": 301,
    "acquisitions": {
     "dl_handle": 1,
     "fd": 33,
@@ -3461,7 +3736,7 @@
    "kind": "engine",
    "returncode": 0,
    "sigterm": true,
-   "records": 372,
+   "records": 371,
    "acquisitions": {
     "dl_handle": 1,
     "fd": 44,
@@ -3505,7 +3780,7 @@
    "kind": "engine",
    "returncode": 255,
    "sigterm": false,
-   "records": 149,
+   "records": 143,
    "acquisitions": {
     "addrinfo": 1,
     "dir": 1,
@@ -3533,7 +3808,7 @@
    "kind": "engine",
    "returncode": 0,
    "sigterm": true,
-   "records": 445,
+   "records": 432,
    "acquisitions": {
     "addrinfo": 1,
     "dir": 1,
@@ -3562,7 +3837,7 @@
    "kind": "engine",
    "returncode": 0,
    "sigterm": true,
-   "records": 454,
+   "records": 439,
    "acquisitions": {
     "addrinfo": 1,
     "dir": 1,
@@ -3591,7 +3866,7 @@
    "kind": "engine",
    "returncode": 0,
    "sigterm": true,
-   "records": 461,
+   "records": 465,
    "acquisitions": {
     "addrinfo": 1,
     "dir": 1,
@@ -3683,7 +3958,7 @@
    "kind": "engine",
    "returncode": 0,
    "sigterm": true,
-   "records": 498,
+   "records": 490,
    "acquisitions": {
     "addrinfo": 1,
     "fd": 52,
