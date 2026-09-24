@@ -30,23 +30,11 @@
 //! evaluate; the only fact kept about it is whether it is a positive integer
 //! literal, which is what lets a stepped pointer be told apart from its base.
 
+pub(crate) use crate::legacy_c::StepOffset;
 use crate::typed_field_access::{
     FunctionTypes, PointerKind, TypedAccessModel, TypedScalarPlan, is_name,
     is_scalar_value_expression, typed_scalar_statement,
 };
-
-/// What a pointer step does to the pointer's offset in its object, as far as
-/// the rule commits to it.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum StepOffset {
-    /// `P++`, `++P`, `P += N` or `Q + N` with `N` a positive decimal integer
-    /// literal: the result lies strictly after the pointer it was computed
-    /// from.
-    Forward,
-    /// Every other offset: a decrement, a subtraction, or a variable or zero
-    /// amount. The result may lie anywhere in the object, its start included.
-    Unknown,
-}
 
 /// One recognised pointer step: `destination = source ± offset`.
 #[derive(Clone, Debug, PartialEq, Eq)]

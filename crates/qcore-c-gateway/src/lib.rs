@@ -18,7 +18,6 @@ mod clang;
 pub mod cleanup_replay_source;
 pub mod composition_source;
 pub mod counter_source;
-#[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
 mod index_traversal;
 #[cfg(feature = "indirect-census")]
 pub mod indirect_census;

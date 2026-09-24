@@ -489,12 +489,22 @@ fn a_branch_on_an_unrelated_field_keeps_its_existing_refusal() {
     if !clang_available() {
         return;
     }
-    let cases: [(&str, &str); 3] = [
-        (
-            "a scalar member is not a null test this rule reads",
-            "void k_w(int n) { struct k_box *b; b = k_make(n); if (!b) { return; } \
-             if (b->flag == 0) { k_drop(b); return; } k_drop(b); }",
-        ),
+    // Deliberate pin update, card W43-INDEX-TRAVERSAL: `b->flag == 0` over a
+    // live, null-tested identity is now the typed condition read, whose
+    // dereference obligation `b` meets, so the first row this test carried
+    // certifies. It is still not a null test: nothing about `b` is refined.
+    let measured = summary_of(
+        "void k_w(int n) { struct k_box *b; b = k_make(n); if (!b) { return; } \
+         if (b->flag == 0) { k_drop(b); return; } k_drop(b); }",
+        "k_w",
+    );
+    assert_eq!(
+        measured.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        measured.diagnostics
+    );
+    let cases: [(&str, &str); 2] = [
         (
             // Card REACH-GATE's F4 admits a member read on a base this body
             // never binds, so the base here is bound — by `k_drop(o)` — which

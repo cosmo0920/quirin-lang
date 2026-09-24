@@ -1405,7 +1405,6 @@ impl FunctionTypes {
     /// scalar, and every name it declares as a single-level pointer object
     /// ([`Self::pointer_kind`]). Both empty when the reader refused the
     /// function, so no transfer rule keyed on them can fire there.
-    #[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
     pub(crate) fn traversal_names(&self) -> (BTreeSet<String>, BTreeSet<String>) {
         let Some(variables) = self.variables.as_ref() else {
             return (BTreeSet::new(), BTreeSet::new());
@@ -2092,7 +2091,19 @@ fn typed_access<'a>(
             types.scalar_element(text)?;
             let close = matching_close(texts, index + 1, "[", "]")?;
             let subscript = &texts[index + 2..close];
-            if subscript.is_empty() || scalar_statement_accesses(subscript, model, types) != Some(0)
+            // Card W43-INDEX-TRAVERSAL, a fail-closed repair: the index must
+            // not write. `scalar_statement_accesses` admits `+`, `-` and `=`
+            // as punctuation, so `out[m++] = c` was admitted with `m`'s old
+            // branch fact kept, and a later `if (m)` could prune the branch C
+            // takes. An index that increments, decrements or assigns now
+            // refuses here; `crate::index_traversal::stepped_access` admits
+            // the `[ X ++ ]` shape with the forget it needs.
+            if subscript.is_empty()
+                || scalar_statement_accesses(subscript, model, types) != Some(0)
+                || subscript.contains(&"=")
+                || subscript
+                    .windows(2)
+                    .any(|pair| matches!(pair, ["+", "+"] | ["-", "-"]))
             {
                 return None;
             }
@@ -2343,7 +2354,6 @@ pub(crate) fn typed_scalar_statement(
 /// names keeps its dereference obligation, which the flow analysis checks at
 /// the header **even for an operand a short-circuit could skip**: requiring an
 /// obligation that was not needed can only refuse more.
-#[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
 pub(crate) fn typed_scalar_condition(
     texts: &[&str],
     model: &TypedAccessModel,
@@ -2366,7 +2376,6 @@ pub(crate) fn typed_scalar_condition(
 /// memory access at all — declared scalars, enumeration constants, numeric and
 /// character literals, casts to scalar type names and arithmetic. The offset
 /// of a pointer step must be one.
-#[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
 pub(crate) fn is_scalar_value_expression(
     texts: &[&str],
     model: &TypedAccessModel,

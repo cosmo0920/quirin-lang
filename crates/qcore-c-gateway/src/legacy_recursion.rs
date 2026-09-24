@@ -422,6 +422,22 @@ pub(crate) fn combine(mut zero: LegacyCfg, mut nonzero: LegacyCfg) -> LegacyCfg 
     // context survives into the combination.
     zero.publications
         .absorb(std::mem::take(&mut nonzero.publications));
+    // Card W43-INDEX-TRAVERSAL: the traversal names only *admit* (a joined
+    // or copied fact becomes no fact), so a combination keeps a name only when
+    // both contexts declared it the same way. They are built from one body, so
+    // this is the identity in practice and the fail-closed answer otherwise.
+    zero.traversal.scalars = zero
+        .traversal
+        .scalars
+        .intersection(&nonzero.traversal.scalars)
+        .cloned()
+        .collect();
+    zero.traversal.pointers = zero
+        .traversal
+        .pointers
+        .intersection(&nonzero.traversal.pointers)
+        .cloned()
+        .collect();
     zero.nodes.extend(nonzero.nodes);
     zero.entry = zero.nodes.len();
     zero.nodes.push(LegacyCfgNode {

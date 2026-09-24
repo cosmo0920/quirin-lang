@@ -252,6 +252,11 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             destination.as_deref().unwrap_or("-"),
             frame.is_some()
         ),
+        LegacyInstruction::PointerStep {
+            destination,
+            source,
+            offset,
+        } => format!("PointerStep {destination} = {source} {offset:?}"),
         LegacyInstruction::AggregateStore { place } => format!("AggregateStore {place}"),
         LegacyInstruction::ForgetScalar { destination } => format!("ForgetScalar {destination}"),
         LegacyInstruction::Unknown { description, .. } => format!("Unknown: {description}"),

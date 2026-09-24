@@ -260,6 +260,25 @@ pub enum LegacyInstruction {
         /// store, which writes one scalar and nothing else.
         frame: Option<RefusedWrites>,
     },
+    /// Card **W43-INDEX-TRAVERSAL**: `destination = source ± offset` over two
+    /// declared single-level pointer objects (`P++`, `P += E`, `P = Q + E`,
+    /// and the step half of `*P++`); see [`crate::index_traversal`].
+    ///
+    /// The result points into the object `source` points into (C11 6.5.6p8
+    /// under the no-undefined-behaviour reading), so it keeps `source`'s
+    /// targets, nullness and unknownness, and is **derived** from them with an
+    /// interior extent: it owns nothing, a release through it is never a
+    /// release of the base, and a use after the base's release is a candidate.
+    /// An unbound `source` gives an unbound `destination`: arithmetic on a
+    /// pointer into an object this projection does not track stays there.
+    /// Stepping in place the only identity binding of a live tracked object
+    /// refuses, because the base would then be named by nothing but
+    /// arithmetic the projection does not evaluate. Bounds are not decided.
+    PointerStep {
+        destination: String,
+        source: String,
+        offset: StepOffset,
+    },
     /// A store into an admitted field of an aggregate this function tracks
     /// whose stored value carries no tracked identity (O00 blocker B08): a
     /// scalar expression into a scalar member, or a declared pointer this
@@ -283,6 +302,41 @@ pub enum LegacyInstruction {
         /// rests on.
         writes: RefusedWrites,
     },
+}
+
+/// Card **W43-INDEX-TRAVERSAL**: what a pointer step does to the pointer's
+/// position in its object, as far as the rule commits to it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum StepOffset {
+    /// `P++`, `++P`, `P += N`, `Q + N` with `N` a positive decimal integer
+    /// literal: the result lies strictly after the pointer it was computed
+    /// from.
+    Forward,
+    /// Any other amount — a decrement, a subtraction, zero or a variable: the
+    /// result may lie anywhere in the object, its start included.
+    Unknown,
+}
+
+/// Card **W43-INDEX-TRAVERSAL**: the declared names of one function the
+/// traversal transfer rules key on, read from the same preprocessed token
+/// stream as every other typed premise (so W4 derivation, W4 validation and
+/// certificate rederivation reproduce them).
+///
+/// * `scalars`: declared non-pointer arithmetic or enumeration variables. Their
+///   bindings carry only a branch fact (the null constant's "zero"), never a
+///   custody claim, so a path on which one has no fact and a path on which it
+///   has a target-free one join to no fact, and copying one with no fact gives
+///   no fact.
+/// * `pointers`: declared `SCALAR *`, `SCALAR [N]` and `struct T *` objects
+///   other than the formal parameters.
+///   Copying one that no reaching path bound gives a copy no path binds.
+///
+/// Both are empty when the declaration reader refused the function, which
+/// restores every pre-card answer there.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct TraversalNames {
+    pub scalars: BTreeSet<String>,
+    pub pointers: BTreeSet<String>,
 }
 
 /// Card **AOM-BINDING-POISON**. What a refused statement may do to the binding
@@ -541,6 +595,9 @@ pub struct LegacyCfg {
     /// Unshadowed automatic local names, never address-taken, eligible for
     /// the bounded conditional-provenance analysis. Derived from source.
     pub conditional_names: BTreeSet<String>,
+    /// Card **W43-INDEX-TRAVERSAL**: the declared scalar and single-level
+    /// pointer names the traversal transfer rules key on. Derived from source.
+    pub traversal: TraversalNames,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -2356,6 +2413,14 @@ pub(crate) fn build_function_cfg(
                 line: failure_line.max(line),
             })?;
     let mut cfg = CfgBuilder::build(function, &statements, publications);
+    let (scalars, mut pointers) = parser.typed_types.traversal_names();
+    // A copy of an unbound *formal* pointer keeps its unresolved-alias answer:
+    // W4 summary derivation reads exactly that answer as the signal to bind
+    // the formal (`legacy_summary::bind_unresolved_formals`), and a formal it
+    // binds is then seeded, copied and walked as a tracked identity. Only a
+    // local's copy (an automatic array, a never-bound pointer) is unbound.
+    pointers.retain(|name| !parser.formal_parameters.contains(name));
+    cfg.traversal = TraversalNames { scalars, pointers };
     if let Some(body_end) = matching(tokens, body_start, "{", "}") {
         let body = tokens[body_start + 1..body_end]
             .iter()
@@ -3349,6 +3414,11 @@ enum Statement {
         /// isolated instruction is produced by the ordinary statement
         /// classifier; `Some` therefore adds no second call-effect model.
         condition_call: Option<Box<LegacyInstruction>>,
+        /// Card **W43-INDEX-TRAVERSAL**: the typed read a refused condition
+        /// lowers to when its every memory access is a typed scalar access
+        /// (see [`Parser::condition_access`]). Consulted only where the
+        /// existing lowering would have been the refusal.
+        condition_access: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         /// C02-P-ALIAS: the pointer-inequality guard this condition expresses,
@@ -3364,6 +3434,11 @@ enum Statement {
         /// Card **B03-LOOP-AND-SWITCH**: the one contracted call evaluated at
         /// every visit to this loop header, before either successor is chosen.
         condition_call: Option<Box<LegacyInstruction>>,
+        /// Card **W43-INDEX-TRAVERSAL**: the typed read a refused condition
+        /// lowers to when its every memory access is a typed scalar access
+        /// (see [`Parser::condition_access`]). Consulted only where the
+        /// existing lowering would have been the refusal.
+        condition_access: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         body: Vec<Statement>,
@@ -3376,6 +3451,11 @@ enum Statement {
         /// Card **B03-LOOP-AND-SWITCH**: the one contracted call evaluated at
         /// every visit to this loop header, before either successor is chosen.
         condition_call: Option<Box<LegacyInstruction>>,
+        /// Card **W43-INDEX-TRAVERSAL**: the typed read a refused condition
+        /// lowers to when its every memory access is a typed scalar access
+        /// (see [`Parser::condition_access`]). Consulted only where the
+        /// existing lowering would have been the refusal.
+        condition_access: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         increment: Option<Box<(LegacyInstruction, usize)>>,
@@ -3387,6 +3467,11 @@ enum Statement {
         /// Card **B03-LOOP-AND-SWITCH**: the one contracted call evaluated
         /// after every completed body execution, before the back/exit choice.
         condition_call: Option<Box<LegacyInstruction>>,
+        /// Card **W43-INDEX-TRAVERSAL**: the typed read a refused condition
+        /// lowers to when its every memory access is a typed scalar access
+        /// (see [`Parser::condition_access`]). Consulted only where the
+        /// existing lowering would have been the refusal.
+        condition_access: Option<Box<LegacyInstruction>>,
         /// The controlling expression is the single literal token `0`, so the
         /// body runs exactly once (C11 §6.8.5.2) and the CFG carries no back
         /// edge. Keyed on the *token*, never on an evaluated expression
@@ -3403,6 +3488,11 @@ enum Statement {
         /// Card **B03-LOOP-AND-SWITCH**: the one contracted call evaluated
         /// once before control enters the selected switch arm.
         expression_call: Option<Box<LegacyInstruction>>,
+        /// Card **W43-INDEX-TRAVERSAL**: the typed read a refused switch expression
+        /// lowers to when its every memory access is a typed scalar access
+        /// (see [`Parser::expression_access`]). Consulted only where the
+        /// existing lowering would have been the refusal.
+        expression_access: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         body: Vec<Statement>,
     },
@@ -3889,6 +3979,45 @@ impl Parser<'_> {
         }
     }
 
+    /// Card **W43-INDEX-TRAVERSAL**: the typed read a refused controlling
+    /// expression lowers to.
+    ///
+    /// Asked only where every existing route refused the condition: it is not
+    /// a supported neutral expression, no contracted call was isolated from
+    /// it, and (for the branch positions) it is no null test. The condition
+    /// must carry no call and no brace, and
+    /// [`crate::typed_field_access::typed_scalar_condition`] must admit it:
+    /// every memory access in it is `*B`, `B[I]`, `B->F` or `S.F` over the
+    /// declarations the statement route reads, and nothing in it writes. It
+    /// lowers to [`LegacyInstruction::IndirectScalarAccess`] with no
+    /// destination and no frame — a read that changes no binding — whose bases
+    /// keep their dereference obligation at the header. Bounds are not
+    /// decided.
+    fn condition_access(&self, condition: &[Token]) -> Option<Box<LegacyInstruction>> {
+        if contains_call(condition) || contains_braces(condition) {
+            return None;
+        }
+        let texts = condition
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let plan = crate::typed_field_access::typed_scalar_condition(
+            &texts,
+            &self.typed_model,
+            &self.typed_types,
+        )?;
+        Some(Box::new(LegacyInstruction::IndirectScalarAccess {
+            alias_reads: plan
+                .record_bases
+                .iter()
+                .filter_map(|base| self.read_alias(Some(base)))
+                .collect(),
+            bases: plan.bases,
+            destination: None,
+            frame: None,
+        }))
+    }
+
     /// The null test a branch condition expresses, including the one
     /// aggregate-field form card O04-B08 admits.
     ///
@@ -4102,6 +4231,9 @@ impl Parser<'_> {
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
                     .map(Box::new);
+                let condition_access = (!condition_supported && condition_call.is_none())
+                    .then(|| self.condition_access(&condition))
+                    .flatten();
                 #[cfg(feature = "indirect-census")]
                 self.census_traversal_condition(
                     line,
@@ -4123,6 +4255,7 @@ impl Parser<'_> {
                     writes: self.expression_writes(&condition),
                     condition_supported,
                     condition_call,
+                    condition_access,
                     null_condition: self.null_condition(&condition),
                     distinct_condition: self.distinct_condition(&condition),
                     then_body,
@@ -4138,6 +4271,9 @@ impl Parser<'_> {
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
                     .map(Box::new);
+                let condition_access = (!condition_supported && condition_call.is_none())
+                    .then(|| self.condition_access(&condition))
+                    .flatten();
                 #[cfg(feature = "indirect-census")]
                 self.census_traversal_condition(
                     line,
@@ -4153,6 +4289,7 @@ impl Parser<'_> {
                     writes: self.expression_writes(&condition),
                     condition_supported,
                     condition_call,
+                    condition_access,
                     null_condition: self.null_condition(&condition),
                     body,
                 })
@@ -4187,6 +4324,9 @@ impl Parser<'_> {
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
                     .map(Box::new);
+                let condition_access = (!condition_supported && condition_call.is_none())
+                    .then(|| self.condition_access(&condition))
+                    .flatten();
                 #[cfg(feature = "indirect-census")]
                 self.census_traversal_condition(
                     line,
@@ -4223,6 +4363,7 @@ impl Parser<'_> {
                     condition_always_true: condition.is_empty(),
                     condition_supported,
                     condition_call,
+                    condition_access,
                     null_condition: self.null_condition(&condition),
                     increment,
                     body,
@@ -4246,6 +4387,9 @@ impl Parser<'_> {
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
                     .map(Box::new);
+                let condition_access = (!condition_supported && condition_call.is_none())
+                    .then(|| self.condition_access(&condition))
+                    .flatten();
                 #[cfg(feature = "indirect-census")]
                 self.census_traversal_condition(
                     line,
@@ -4260,6 +4404,7 @@ impl Parser<'_> {
                     writes: self.expression_writes(&condition),
                     condition_supported,
                     condition_call,
+                    condition_access,
                     condition_is_literal_zero: condition_is_literal_zero(&condition),
                     null_condition: self.null_condition(&condition),
                     body,
@@ -4274,6 +4419,9 @@ impl Parser<'_> {
                     .then(|| self.condition_call_instruction(&expression))
                     .flatten()
                     .map(Box::new);
+                let expression_access = (!expression_supported && expression_call.is_none())
+                    .then(|| self.condition_access(&expression))
+                    .flatten();
                 #[cfg(feature = "indirect-census")]
                 self.census_traversal_condition(
                     line,
@@ -4287,6 +4435,7 @@ impl Parser<'_> {
                     writes: self.expression_writes(&expression),
                     expression_supported,
                     expression_call,
+                    expression_access,
                     body,
                 })
             }
@@ -4413,6 +4562,14 @@ impl Parser<'_> {
                 self.census_statement(line, &tokens, &instruction);
                 #[cfg(feature = "indirect-census")]
                 self.census_traversal_statement(line, "statement", &tokens, &instruction);
+                if let Some(sequence) = self.stepped_access(&tokens, &instruction) {
+                    return Ok(Statement::Block(
+                        sequence
+                            .into_iter()
+                            .map(|instruction| Statement::Instruction(instruction, line))
+                            .collect(),
+                    ));
+                }
                 Ok(Statement::Instruction(instruction, line))
             }
             None => Err(line),
@@ -4649,6 +4806,35 @@ impl Parser<'_> {
     /// obligations the flow analysis then checks.
     fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {
         let instruction = self.classify_simple_base(tokens);
+        // Card W43-INDEX-TRAVERSAL: the formal-mutation gate refuses `q++` for
+        // every protected name, and protection reaches a *local* through a
+        // copy (`q = p;` with `p` later released). A step of a local changes
+        // no caller slot and no entry identity: the flow rule derives `q` from
+        // its own binding and refuses a step that would lose a live object's
+        // only name. The gate keeps every formal parameter and every other
+        // shape; only a recognised pointer step of a non-formal passes it.
+        if let LegacyInstruction::Unknown { description, .. } = &instruction
+            && description == FORMAL_MUTATION_REFUSAL
+            && !contains_call(tokens)
+            && !contains_braces(tokens)
+        {
+            let texts = tokens
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            if let Some(step) =
+                crate::index_traversal::pointer_step(&texts, &self.typed_model, &self.typed_types)
+                && !self.formal_parameters.contains(&step.destination)
+                && !self.formal_parameters.contains(&step.source)
+            {
+                return LegacyInstruction::PointerStep {
+                    destination: step.destination,
+                    source: step.source,
+                    offset: step.offset,
+                };
+            }
+            return instruction;
+        }
         let consulted = match &instruction {
             LegacyInstruction::Unknown { description, .. } => {
                 TYPED_SCALAR_CONSULTED.contains(&description.as_str())
@@ -4669,6 +4855,24 @@ impl Parser<'_> {
             &self.typed_model,
             &self.typed_types,
         ) else {
+            // Card W43-INDEX-TRAVERSAL: a statement that moves a declared
+            // pointer (`p++`, `p += k`, `p = q + k`) is consulted in the same
+            // position and for the same refusals, after the typed access route.
+            // It binds nothing new: the flow analysis derives the result from
+            // the source's own binding (see `LegacyInstruction::PointerStep`).
+            if matches!(instruction, LegacyInstruction::Unknown { .. })
+                && let Some(step) = crate::index_traversal::pointer_step(
+                    &texts,
+                    &self.typed_model,
+                    &self.typed_types,
+                )
+            {
+                return LegacyInstruction::PointerStep {
+                    destination: step.destination,
+                    source: step.source,
+                    offset: step.offset,
+                };
+            }
             return instruction;
         };
         LegacyInstruction::IndirectScalarAccess {
@@ -4690,6 +4894,81 @@ impl Parser<'_> {
                 .writes_through_pointer
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
         }
+    }
+
+    /// Card **W43-INDEX-TRAVERSAL**: a refused statement that is one typed
+    /// scalar access over the old value of a pointer it steps (`*p++ = c`,
+    /// `c = *p++`) or of an index it steps (`buf[n++] = c`), lowered to the
+    /// access followed by the step or the index's forgotten fact — the order C
+    /// sequences them in. Consulted only for the refusals the typed access
+    /// route is consulted for, and only for a statement carrying no call and
+    /// no brace; see [`crate::index_traversal::stepped_access`] for the shape.
+    /// `None` keeps the refusal.
+    fn stepped_access(
+        &self,
+        tokens: &[Token],
+        instruction: &LegacyInstruction,
+    ) -> Option<Vec<LegacyInstruction>> {
+        let LegacyInstruction::Unknown { description, .. } = instruction else {
+            return None;
+        };
+        let gated = description == FORMAL_MUTATION_REFUSAL;
+        if !(gated || TYPED_SCALAR_CONSULTED.contains(&description.as_str()))
+            || contains_call(tokens)
+            || contains_braces(tokens)
+        {
+            return None;
+        }
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let (plan, effects) =
+            crate::index_traversal::stepped_access(&texts, &self.typed_model, &self.typed_types)?;
+        // Past the formal-mutation gate only when nothing the statement writes
+        // is a formal: every step and forget names a local, and so does the
+        // scalar destination. A write through a formal's object is not a
+        // write of the formal.
+        if gated
+            && (effects.iter().any(|effect| match effect {
+                crate::index_traversal::TraversalEffect::Step(step) => {
+                    self.formal_parameters.contains(&step.destination)
+                }
+                crate::index_traversal::TraversalEffect::Forget(name) => {
+                    self.formal_parameters.contains(name)
+                }
+            }) || plan
+                .destination
+                .as_ref()
+                .is_some_and(|name| self.formal_parameters.contains(name)))
+        {
+            return None;
+        }
+        let mut sequence = vec![LegacyInstruction::IndirectScalarAccess {
+            alias_reads: plan
+                .record_bases
+                .iter()
+                .filter_map(|base| self.read_alias(Some(base)))
+                .collect(),
+            bases: plan.bases,
+            destination: plan.destination,
+            // Exactly the typed route's frame: the access writes only its
+            // typed destination, and the steps below write only their names.
+            frame: plan
+                .writes_through_pointer
+                .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
+        }];
+        sequence.extend(effects.into_iter().map(|effect| match effect {
+            crate::index_traversal::TraversalEffect::Step(step) => LegacyInstruction::PointerStep {
+                destination: step.destination,
+                source: step.source,
+                offset: step.offset,
+            },
+            crate::index_traversal::TraversalEffect::Forget(name) => {
+                LegacyInstruction::ForgetScalar { destination: name }
+            }
+        }));
+        Some(sequence)
     }
 
     fn classify_simple_base(&mut self, tokens: &[Token]) -> LegacyInstruction {
@@ -4731,7 +5010,7 @@ impl Parser<'_> {
         });
         if mentions_formal && (has_increment || nested_assignment) {
             return LegacyInstruction::Unknown {
-                description: "unmodeled expression may mutate a formal resource identity".into(),
+                description: FORMAL_MUTATION_REFUSAL.into(),
                 writes: self.refused_writes(&texts),
             };
         }
@@ -5693,6 +5972,11 @@ fn contains_call(tokens: &[Token]) -> bool {
 /// Card **W43-INDIRECT-ACCESS-GENERAL**: the refusals after which the typed
 /// scalar-access route is consulted. Each names the access, the destination
 /// or the increment as the reason, never a call or a formal.
+/// The formal-mutation gate's refusal (see `Parser::classify_simple_base`).
+/// Card W43-INDEX-TRAVERSAL consults a recognised step of a non-formal, or a
+/// stepped access none of whose stepped names is a formal, after it.
+const FORMAL_MUTATION_REFUSAL: &str = "unmodeled expression may mutate a formal resource identity";
+
 const TYPED_SCALAR_CONSULTED: &[&str] = &[
     "indirect memory access is outside the resource projection",
     "unsupported assignment expression",
@@ -6223,6 +6507,7 @@ impl CfgBuilder {
             nodes: builder.nodes,
             publications,
             conditional_names: BTreeSet::new(),
+            traversal: TraversalNames::default(),
         }
     }
 
@@ -6291,6 +6576,7 @@ impl CfgBuilder {
                 writes,
                 condition_supported,
                 condition_call,
+                condition_access,
                 null_condition,
                 distinct_condition,
                 then_body,
@@ -6315,6 +6601,10 @@ impl CfgBuilder {
                     }
                 } else if *condition_supported || condition_call.is_some() {
                     LegacyInstruction::NoOp
+                } else if let Some(access) = condition_access {
+                    // Card W43-INDEX-TRAVERSAL: the typed read, with each
+                    // base's dereference obligation at the branch.
+                    (**access).clone()
                 } else {
                     LegacyInstruction::Unknown {
                         description:
@@ -6333,6 +6623,7 @@ impl CfgBuilder {
                 writes,
                 condition_supported,
                 condition_call,
+                condition_access,
                 null_condition,
                 body,
             } => {
@@ -6345,6 +6636,8 @@ impl CfgBuilder {
                     (**call).clone()
                 } else if *condition_supported {
                     LegacyInstruction::NoOp
+                } else if let Some(access) = condition_access {
+                    (**access).clone()
                 } else {
                     LegacyInstruction::Unknown {
                         description:
@@ -6372,6 +6665,7 @@ impl CfgBuilder {
                 condition_always_true,
                 condition_supported,
                 condition_call,
+                condition_access,
                 null_condition,
                 increment,
                 body,
@@ -6381,6 +6675,7 @@ impl CfgBuilder {
                         branch_instruction(
                             *condition_supported,
                             null_condition,
+                            condition_access.as_deref(),
                             writes,
                             "unmodeled call, aggregate or indirect access in for-loop condition",
                         )
@@ -6417,6 +6712,7 @@ impl CfgBuilder {
                 writes,
                 condition_supported,
                 condition_call,
+                condition_access,
                 condition_is_literal_zero,
                 null_condition,
                 body,
@@ -6426,6 +6722,7 @@ impl CfgBuilder {
                         branch_instruction(
                             *condition_supported,
                             null_condition,
+                            condition_access.as_deref(),
                             writes,
                             "unmodeled call, aggregate or indirect access in do-while condition",
                         )
@@ -6464,6 +6761,7 @@ impl CfgBuilder {
                 writes,
                 expression_supported,
                 expression_call,
+                expression_access,
                 body,
             } => {
                 self.break_targets.push(continuation);
@@ -6481,6 +6779,8 @@ impl CfgBuilder {
                     (**call).clone()
                 } else if *expression_supported {
                     LegacyInstruction::NoOp
+                } else if let Some(access) = expression_access {
+                    (**access).clone()
                 } else {
                     LegacyInstruction::Unknown {
                         description:
@@ -6595,6 +6895,7 @@ impl CfgBuilder {
 fn branch_instruction(
     condition_supported: bool,
     null_condition: &Option<PointerNullCondition>,
+    condition_access: Option<&LegacyInstruction>,
     writes: &RefusedWrites,
     unsupported_description: &str,
 ) -> LegacyInstruction {
@@ -6605,6 +6906,9 @@ fn branch_instruction(
         }
     } else if condition_supported {
         LegacyInstruction::NoOp
+    } else if let Some(access) = condition_access {
+        // Card W43-INDEX-TRAVERSAL: the typed read of a refused condition.
+        access.clone()
     } else {
         LegacyInstruction::Unknown {
             description: unsupported_description.to_owned(),
@@ -6646,14 +6950,42 @@ enum Derivation {
     /// The binding denotes its targets' identities themselves.
     #[default]
     Identity,
-    /// The binding was produced by a declared derived result.
+    /// The binding was produced by a declared derived result, or (card
+    /// W43-INDEX-TRAVERSAL) by pointer arithmetic on a binding.
     Derived {
         extent: DerivedExtent,
         const_dropped: bool,
+        stepped: Stepped,
     },
     /// Different paths disagree. Treated as derived wherever that refuses, and
     /// never as derived where that would accuse.
     Mixed,
+}
+
+/// Card **W43-INDEX-TRAVERSAL**: what pointer arithmetic did to a derived
+/// binding's position in its object.
+///
+/// `No` is every derivation card W43-LIBC-RESULT-ALIAS made, and behaves
+/// exactly as it did. The two stepped values describe a binding that went
+/// through at least one `P++`, `P += E`, `P = Q ± E` or `*P++`:
+///
+/// * `Forward` — every step moved it forward by a positive literal amount, so
+///   it lies strictly after the pointer it started from. Releasing it is an
+///   `invalid_release` candidate, as an interior result's release is.
+/// * `Any` — it may lie anywhere in its object, the start included: some step
+///   went backward or by a variable amount, or a path joined it with the base
+///   identity itself (a loop's entry edge). Releasing it is refused, never
+///   accused, because it may be the value the allocator returned.
+///
+/// The join keeps the two families apart: a stepped binding joined with an
+/// unstepped derived one is `Mixed`, so the lattice stays a lattice (see
+/// [`Derivation::join`]) and no existing derived result changes its answer.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+enum Stepped {
+    #[default]
+    No,
+    Forward,
+    Any,
 }
 
 impl Derivation {
@@ -6661,10 +6993,46 @@ impl Derivation {
         matches!(self, Self::Identity)
     }
 
+    /// Card **W43-INDEX-TRAVERSAL**: the derivation of `P ± E` over a binding
+    /// of this derivation. Always interior; a mixed base stays mixed.
+    fn step(self, forward: bool) -> Self {
+        let movement = if forward {
+            Stepped::Forward
+        } else {
+            Stepped::Any
+        };
+        match self {
+            Self::Identity => Self::Derived {
+                extent: DerivedExtent::Interior,
+                const_dropped: false,
+                stepped: movement,
+            },
+            Self::Derived {
+                const_dropped,
+                stepped,
+                ..
+            } => Self::Derived {
+                extent: DerivedExtent::Interior,
+                const_dropped,
+                // A declared interior result stepped forward still lies after
+                // its base's start; anything that may be at the start stays so.
+                stepped: stepped.max(movement),
+            },
+            Self::Mixed => Self::Mixed,
+        }
+    }
+
     /// Join two paths' derivations. A definitely-null binding carries no
     /// relation, so it takes the other path's; otherwise equal derivations are
     /// kept, `const_dropped` is joined by disjunction within one extent, and any
     /// other disagreement is `Mixed`.
+    ///
+    /// Card **W43-INDEX-TRAVERSAL** adds one join and keeps the rest: an
+    /// identity and a *stepped* pointer into it join to a stepped pointer that
+    /// may be anywhere in the object (`Any`), which is what a loop's header
+    /// sees for `for (p = s; *p; p++)`. Two stepped pointers join to the
+    /// larger movement. A stepped and an unstepped derivation, and an identity
+    /// and an unstepped derivation, still join to `Mixed`.
     fn join(one: &AbstractPointer, other: &AbstractPointer) -> Self {
         let definitely_null = |pointer: &AbstractPointer| {
             pointer.targets.is_empty() && !pointer.unknown && pointer.may_be_null
@@ -6675,21 +7043,52 @@ impl Derivation {
         if definitely_null(one) {
             return other.derivation;
         }
-        match (one.derivation, other.derivation) {
+        Self::join_derivations(one.derivation, other.derivation)
+    }
+
+    fn join_derivations(one: Self, other: Self) -> Self {
+        match (one, other) {
             (left, right) if left == right => left,
+            (
+                Self::Identity,
+                Self::Derived {
+                    extent: DerivedExtent::Interior,
+                    const_dropped,
+                    stepped: Stepped::Forward | Stepped::Any,
+                },
+            )
+            | (
+                Self::Derived {
+                    extent: DerivedExtent::Interior,
+                    const_dropped,
+                    stepped: Stepped::Forward | Stepped::Any,
+                },
+                Self::Identity,
+            ) => Self::Derived {
+                extent: DerivedExtent::Interior,
+                const_dropped,
+                stepped: Stepped::Any,
+            },
             (
                 Self::Derived {
                     extent,
                     const_dropped,
+                    stepped,
                 },
                 Self::Derived {
                     extent: other_extent,
                     const_dropped: other_dropped,
+                    stepped: other_stepped,
                 },
-            ) if extent == other_extent => Self::Derived {
-                extent,
-                const_dropped: const_dropped || other_dropped,
-            },
+            ) if extent == other_extent
+                && ((stepped == Stepped::No) == (other_stepped == Stepped::No)) =>
+            {
+                Self::Derived {
+                    extent,
+                    const_dropped: const_dropped || other_dropped,
+                    stepped: stepped.max(other_stepped),
+                }
+            }
             _ => Self::Mixed,
         }
     }
@@ -6723,7 +7122,19 @@ struct AbstractState {
 const MAX_ALIAS_TARGETS: usize = 8;
 
 impl AbstractState {
-    fn join(&mut self, incoming: &Self) -> bool {
+    /// Join an incoming edge's state into this one; returns whether anything
+    /// changed.
+    ///
+    /// Card **W43-INDEX-TRAVERSAL**: `scalars` are the function's declared
+    /// scalar names ([`TraversalNames::scalars`]). A declared scalar's binding
+    /// carries at most a branch fact and never a custody claim, so when one
+    /// path has no binding for it and the other a binding with no target, the
+    /// join has no fact either — the absent binding, which admits both branches
+    /// of a later test and escapes nothing — rather than the unknown, possibly
+    /// null *pointer* the generic arm makes of it. A scalar binding that does
+    /// carry a target (a descriptor a contracted call produced) keeps the
+    /// generic arm.
+    fn join(&mut self, incoming: &Self, scalars: &BTreeSet<String>) -> bool {
         let before = self.clone();
         let variables = self
             .pointers
@@ -6732,6 +7143,18 @@ impl AbstractState {
             .cloned()
             .collect::<BTreeSet<_>>();
         for variable in variables {
+            let one_sided_scalar_fact = scalars.contains(&variable)
+                && match (
+                    self.pointers.get(&variable),
+                    incoming.pointers.get(&variable),
+                ) {
+                    (Some(pointer), None) | (None, Some(pointer)) => pointer.targets.is_empty(),
+                    _ => false,
+                };
+            if one_sided_scalar_fact {
+                self.pointers.remove(&variable);
+                continue;
+            }
             match (
                 self.pointers.get(&variable).cloned(),
                 incoming.pointers.get(&variable),
@@ -6884,6 +7307,7 @@ fn rebound_names(instruction: &LegacyInstruction) -> Vec<&str> {
         | LegacyInstruction::Alias { destination, .. }
         | LegacyInstruction::OpaqueValue { destination, .. }
         | LegacyInstruction::ForgetScalar { destination }
+        | LegacyInstruction::PointerStep { destination, .. }
         | LegacyInstruction::Clear { destination } => vec![destination.as_str()],
         LegacyInstruction::IndirectScalarAccess {
             destination: Some(destination),
@@ -7406,11 +7830,17 @@ fn observe_exit(
     node: &LegacyCfgNode,
     state: &AbstractState,
     entry: &EntryCustody,
+    // Card W43-INDEX-TRAVERSAL: the declared scalars, whose target-free
+    // binding returns no custody (see the `EscapeIfOwned` transfer arm).
+    scalars: &BTreeSet<String>,
 ) -> ExitObservation {
     let returned = match &node.instruction {
         LegacyInstruction::EscapeIfOwned { source } | LegacyInstruction::Escape { source } => {
             match state.pointers.get(source) {
                 None => ReturnedValue::None,
+                Some(pointer) if scalars.contains(source) && pointer.targets.is_empty() => {
+                    ReturnedValue::None
+                }
                 // Card W43-LIBC-RESULT-ALIAS: nor does a returned derived
                 // pointer (whose escape the transfer already refused).
                 Some(pointer)
@@ -7856,6 +8286,9 @@ struct TransferContext<'a> {
     /// the projection does not model, and is refused; see
     /// [`reject_publication`].
     publications: PublicationFacts,
+    /// Card **W43-INDEX-TRAVERSAL**: the declared scalar and pointer names a
+    /// copy from an unbound source is read against.
+    traversal: TraversalNames,
 }
 
 fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
@@ -7876,6 +8309,7 @@ pub(crate) fn analyze_cfg_with_entry(
             .copied()
             .collect(),
         publications: cfg.publications.clone(),
+        traversal: cfg.traversal.clone(),
     };
     // C02-P-ALIAS: computed once, before the custody work list starts, and only
     // read below. See [`alias_facts`].
@@ -8015,7 +8449,7 @@ pub(crate) fn analyze_cfg_with_entry(
                 }
             }
             let changed = match &mut incoming[successor] {
-                Some(current) => current.join(&edge_output),
+                Some(current) => current.join(&edge_output, &cfg.traversal.scalars),
                 slot @ None => {
                     *slot = Some(edge_output);
                     true
@@ -8080,7 +8514,12 @@ pub(crate) fn analyze_cfg_with_entry(
         );
         joined_provenance::finish_release(conditional_release, &mut output, &ignored);
         output.unmodeled |= ignored.iter().any(is_path_poisoning);
-        observations.push(observe_exit(node, &output, entry_custody));
+        observations.push(observe_exit(
+            node,
+            &output,
+            entry_custody,
+            &context.traversal.scalars,
+        ));
         exits.push(observe_residual(
             node_id,
             node,
@@ -8246,6 +8685,7 @@ fn transfer(
         | LegacyInstruction::Alias { destination, .. }
         | LegacyInstruction::OpaqueValue { destination, .. }
         | LegacyInstruction::ForgetScalar { destination }
+        | LegacyInstruction::PointerStep { destination, .. }
         | LegacyInstruction::Clear { destination } => Some(destination.as_str()),
         LegacyInstruction::ContractCall { destination, .. }
         | LegacyInstruction::IndirectScalarAccess { destination, .. } => destination.as_deref(),
@@ -8358,7 +8798,11 @@ fn transfer(
             // per-site status: a formal the projection tracks no identity for
             // still publishes nothing, so a body analyzed with no entry custody
             // keeps its pre-existing answer.
+            // Card W43-INDEX-TRAVERSAL: a stepped pointer into a tracked
+            // object stored into such a destination publishes that object's
+            // interior exactly as a copy publishes it.
             LegacyInstruction::Alias { source, .. }
+            | LegacyInstruction::PointerStep { source, .. }
                 if !context.publications.scalar_sources.contains(source) =>
             {
                 state
@@ -8616,6 +9060,85 @@ fn transfer(
         }
         return state;
     }
+    // Card W43-INDEX-TRAVERSAL: `destination = source ± offset`. The result
+    // keeps `source`'s targets and is derived from them with an interior
+    // extent, so it owns nothing: every custody position refuses or accuses
+    // it, and the base's own obligation is untouched. No resource status,
+    // marker, containment or field link changes.
+    if let LegacyInstruction::PointerStep {
+        destination,
+        source,
+        offset,
+    } = &node.instruction
+    {
+        let before = state.pointers.get(destination).cloned();
+        match state.pointers.get(source).cloned() {
+            // Arithmetic on a pointer into an object no reaching path bound
+            // stays inside that object: the result is unbound too.
+            None => {
+                state.pointers.remove(destination);
+            }
+            Some(pointer) => {
+                let stepped = AbstractPointer {
+                    derivation: pointer.derivation.step(*offset == StepOffset::Forward),
+                    ..pointer
+                };
+                state.pointers.insert(destination.clone(), stepped);
+            }
+        }
+        // Stepping a name in place must not lose the only name of a live
+        // tracked object: `p = malloc(n); p++; free(p - 1);` would otherwise
+        // leave the allocation named by nothing but arithmetic the projection
+        // does not evaluate, and a later leak or credit would be a guess.
+        // Such a step refuses, and the object's fate is left unresolved, so no
+        // leak is reported and no release is credited for it.
+        if destination == source
+            && let Some(before) = before
+            && before.derivation.is_identity()
+        {
+            let lost = before
+                .targets
+                .iter()
+                .copied()
+                .filter(|site| {
+                    state
+                        .resources
+                        .get(site)
+                        .is_some_and(|status| status & LIVE != 0)
+                        && !state.pointers.iter().any(|(name, pointer)| {
+                            name != destination
+                                && pointer.derivation.is_identity()
+                                && pointer.targets.contains(site)
+                        })
+                        && !state
+                            .field_links
+                            .values()
+                            .any(|fields| fields.values().any(|children| children.contains(site)))
+                        && !state
+                            .contained
+                            .values()
+                            .any(|children| children.contains(site))
+                })
+                .collect::<BTreeSet<_>>();
+            if !lost.is_empty() {
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line: node.line,
+                    kind: LegacyDiagnosticKind::UnknownAlias {
+                        variable: destination.clone(),
+                    },
+                });
+                mark_unresolved_effect(
+                    &mut state,
+                    &AbstractPointer {
+                        targets: lost,
+                        ..AbstractPointer::default()
+                    },
+                );
+            }
+        }
+        return state;
+    }
     // O00 blocker B08: every store into an admitted aggregate field requires
     // its aggregate to resolve, here and now, to exactly one live identity
     // *this* body acquired. A released, escaped, refuted, ambiguous, nullable
@@ -8660,6 +9183,26 @@ fn transfer(
                     derivation: Derivation::Identity,
                 },
             );
+        }
+        // Card W43-INDEX-TRAVERSAL: a copy of a declared scalar, or of a
+        // declared single-level pointer object, that no reaching path bound
+        // carries nothing this projection tracks — a scalar has no custody, and
+        // an unbound pointer denotes an object no modeled statement bound, the
+        // reading an unbound base already gets at a dereference or a `Borrowed`
+        // position. The copy is therefore unbound too, rather than an unknown,
+        // possibly-null binding with an unresolved-alias refusal. Any later
+        // custody use of it (a release, an escape, an `Owned` position) finds
+        // no binding and refuses exactly as the source would have.
+        LegacyInstruction::Alias {
+            destination,
+            source,
+        } if !state.pointers.contains_key(source)
+            && ((context.traversal.scalars.contains(destination)
+                && context.traversal.scalars.contains(source))
+                || (context.traversal.pointers.contains(destination)
+                    && context.traversal.pointers.contains(source))) =>
+        {
+            state.pointers.remove(destination);
         }
         LegacyInstruction::Alias {
             destination,
@@ -8716,7 +9259,15 @@ fn transfer(
             );
         }
         LegacyInstruction::EscapeIfOwned { source } => {
-            if state.pointers.contains_key(source) {
+            // Card W43-INDEX-TRAVERSAL: returning a declared scalar whose
+            // binding carries no target (a counter's zero fact) returns no
+            // custody, exactly as returning one with no binding does.
+            let scalar_fact = context.traversal.scalars.contains(source)
+                && state
+                    .pointers
+                    .get(source)
+                    .is_some_and(|pointer| pointer.targets.is_empty());
+            if state.pointers.contains_key(source) && !scalar_fact {
                 apply_resource_action(
                     function,
                     node.line,
@@ -8833,8 +9384,8 @@ fn transfer(
             state.pointers.remove(destination);
         }
         LegacyInstruction::ScalarMemberStore { .. } => {}
-        // Handled completely before this match: it returns there.
-        LegacyInstruction::IndirectScalarAccess { .. } => {}
+        // Handled completely before this match: they return there.
+        LegacyInstruction::IndirectScalarAccess { .. } | LegacyInstruction::PointerStep { .. } => {}
         LegacyInstruction::AggregateStore { place } => {
             // The stored value carries no tracked identity, so the member binds
             // nothing. Whatever it previously linked is unlinked below, which
@@ -9717,6 +10268,7 @@ fn derive_pointer(
             derivation: Derivation::Derived {
                 extent,
                 const_dropped,
+                stepped: Stepped::No,
             },
         };
     };
@@ -9724,10 +10276,15 @@ fn derive_pointer(
         Derivation::Identity => Derivation::Derived {
             extent,
             const_dropped,
+            stepped: Stepped::No,
         },
         Derivation::Derived {
             extent: base_extent,
             const_dropped: base_dropped,
+            // Card W43-INDEX-TRAVERSAL: a result derived from a stepped
+            // pointer keeps its step, so it never joins an unstepped family
+            // and a result that may sit at the object's start stays `Any`.
+            stepped,
         } => Derivation::Derived {
             extent: if base_extent == DerivedExtent::Exact && extent == DerivedExtent::Exact {
                 DerivedExtent::Exact
@@ -9735,6 +10292,7 @@ fn derive_pointer(
                 DerivedExtent::Interior
             },
             const_dropped: const_dropped || base_dropped,
+            stepped,
         },
         Derivation::Mixed => Derivation::Mixed,
     };
@@ -9753,11 +10311,15 @@ fn derive_pointer(
 /// alias is the base's own value, so releasing it is a release of the base
 /// that this projection declines to credit, and is refused instead.
 fn derived_release_is_accusable(mode: ResourceParameterMode, pointer: &AbstractPointer) -> bool {
+    // Card W43-INDEX-TRAVERSAL: a stepped pointer that may sit at its
+    // object's start (`Stepped::Any`) may be the value the allocator
+    // returned, so its release is refused rather than accused.
     matches!(mode, ResourceParameterMode::Released { .. })
         && matches!(
             pointer.derivation,
             Derivation::Derived {
                 extent: DerivedExtent::Interior,
+                stepped: Stepped::No | Stepped::Forward,
                 ..
             }
         )
