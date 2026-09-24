@@ -1,0 +1,48 @@
+{
+ "removed": [],
+ "added": [],
+ "function_moves": [],
+ "unit_moves": [],
+ "diagnostic_counts": {
+  "before": {
+   "leak": 271,
+   "summary_conflict": 1,
+   "unknown_alias": 4727,
+   "unsupported": 47832
+  },
+  "after": {
+   "leak": 271,
+   "summary_conflict": 1,
+   "unknown_alias": 4727,
+   "unsupported": 47832
+  }
+ },
+ "function_statuses": {
+  "before": {
+   "Unknown": 4481,
+   "Safe": 269,
+   "Unsafe": 84
+  },
+  "after": {
+   "Unknown": 4481,
+   "Safe": 269,
+   "Unsafe": 84
+  }
+ },
+ "unit_statuses": {
+  "before": {
+   "Unknown": 136,
+   "Unsafe": 42,
+   "Safe": 3,
+   "data_only": 4
+  },
+  "after": {
+   "Unknown": 136,
+   "Unsafe": 42,
+   "Safe": 3,
+   "data_only": 4
+  }
+ },
+ "scope_changed": true,
+ "other_top_level_fields_differing": []
+}

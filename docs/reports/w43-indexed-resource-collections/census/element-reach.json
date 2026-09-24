@@ -1,0 +1,254 @@
+{
+ "summary": {
+  "distinct_lowered_operations": 27,
+  "null_tests": 6,
+  "stores_or_releases": 21,
+  "functions": 19,
+  "fallback_leaf_kept_in_both_runs": 27
+ },
+ "operations": [
+  {
+   "function": "append_data_point_to_metric",
+   "line": 8920,
+   "base": "data_point_list",
+   "kind": "null test",
+   "fallback": "unmodeled call, aggregate or indirect access in branch condition",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_exponential_histogram_data_point_list",
+   "line": 8391,
+   "base": "data_point_list",
+   "kind": "store or release",
+   "fallback": "unrecognized assignment destination",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_histogram_data_point_list",
+   "line": 8377,
+   "base": "data_point_list",
+   "kind": "store or release",
+   "fallback": "unrecognized assignment destination",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_metric_list",
+   "line": 8936,
+   "base": "metric_list",
+   "kind": "store or release",
+   "fallback": "unrecognized assignment destination",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_numerical_data_point_list",
+   "line": 8349,
+   "base": "data_point_list",
+   "kind": "store or release",
+   "fallback": "unrecognized assignment destination",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_prometheus_label_list",
+   "line": 6714,
+   "base": "label_list",
+   "kind": "null test",
+   "fallback": "unmodeled call, aggregate or indirect access in branch condition",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_prometheus_label_list",
+   "line": 6723,
+   "base": "label_list",
+   "kind": "store or release",
+   "fallback": "indirect memory access is outside the resource projection",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_prometheus_label_list",
+   "line": 6724,
+   "base": "label_list",
+   "kind": "store or release",
+   "fallback": "unrecognized assignment destination",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_prometheus_sample_list",
+   "line": 6700,
+   "base": "sample_list",
+   "kind": "null test",
+   "fallback": "unmodeled call, aggregate or indirect access in branch condition",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_prometheus_sample_list",
+   "line": 6701,
+   "base": "sample_list",
+   "kind": "store or release",
+   "fallback": "indirect memory access is outside the resource projection",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_prometheus_sample_list",
+   "line": 6702,
+   "base": "sample_list",
+   "kind": "store or release",
+   "fallback": "unrecognized assignment destination",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_resource_metrics_list",
+   "line": 8061,
+   "base": "metric_list",
+   "kind": "store or release",
+   "fallback": "unrecognized assignment destination",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_scope_metric_list",
+   "line": 8207,
+   "base": "metric_list",
+   "kind": "store or release",
+   "fallback": "unrecognized assignment destination",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "destroy_summary_data_point_list",
+   "line": 8363,
+   "base": "data_point_list",
+   "kind": "store or release",
+   "fallback": "unrecognized assignment destination",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "free_metrics",
+   "line": 20892,
+   "base": "data_points",
+   "kind": "store or release",
+   "fallback": "indirect memory access is outside the resource projection",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "free_metrics",
+   "line": 20893,
+   "base": "metric_names",
+   "kind": "store or release",
+   "fallback": "indirect memory access is outside the resource projection",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "free_metrics",
+   "line": 20894,
+   "base": "metrics",
+   "kind": "store or release",
+   "fallback": "indirect memory access is outside the resource projection",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "free_resource_attributes",
+   "line": 20909,
+   "base": "resource_attributes_key_values",
+   "kind": "store or release",
+   "fallback": "indirect memory access is outside the resource projection",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "initialize_exemplars_from_metadata",
+   "line": 7101,
+   "base": "exemplars",
+   "kind": "null test",
+   "fallback": "unmodeled call, aggregate or indirect access in branch condition",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "initialize_exemplars_from_metadata",
+   "line": 7104,
+   "base": "exemplars",
+   "kind": "null test",
+   "fallback": "unmodeled call, aggregate or indirect access in branch condition",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "rd_kafka_DeleteGroup_destroy_array",
+   "line": 22976,
+   "base": "del_groups",
+   "kind": "store or release",
+   "fallback": "indirect memory access is outside the resource projection",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "rd_kafka_DeleteTopic_destroy_array",
+   "line": 21420,
+   "base": "del_topics",
+   "kind": "store or release",
+   "fallback": "indirect memory access is outside the resource projection",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "rd_kafka_ListGroups_resp_cb",
+   "line": 24950,
+   "base": "grps",
+   "kind": "store or release",
+   "fallback": "indirect memory access is outside the resource projection",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "rd_kafka_conf_dump_free",
+   "line": 25320,
+   "base": "_arr",
+   "kind": "null test",
+   "fallback": "unmodeled call, aggregate or indirect access in branch condition",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "rd_kafka_conf_dump_free",
+   "line": 25321,
+   "base": "_arr",
+   "kind": "store or release",
+   "fallback": "indirect memory access is outside the resource projection",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "rd_kafka_mock_request_destroy_array",
+   "line": 23505,
+   "base": "mrequests",
+   "kind": "store or release",
+   "fallback": "indirect memory access is outside the resource projection",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  },
+  {
+   "function": "rd_kafka_telemetry_encode_metrics",
+   "line": 21121,
+   "base": "resource_attributes_key_values",
+   "kind": "store or release",
+   "fallback": "discarded owned result of resource API `rd_calloc`",
+   "fallback_leaf_before": true,
+   "fallback_leaf_after": true
+  }
+ ]
+}

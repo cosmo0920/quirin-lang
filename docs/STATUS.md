@@ -1,7 +1,8 @@
 # Current status and evidence boundaries
 
 Re-derived on 2026-09-21 from the sources below; corpus rows re-derived on
-2026-09-24 from the W43-INDIRECT-ACCESS-GENERAL arbiter; contract-corpus rows
+2026-09-24 from the W43-INDIRECT-ACCESS-GENERAL arbiter and re-verified
+unchanged on 2026-09-25 by the W43-INDEXED-RESOURCE-COLLECTIONS arbiter; contract-corpus rows
 re-derived on 2026-09-24 at the CONTRACT-INHERIT-ADOPTION integration, and again on
 2026-09-25 from CONTRACT-INHERIT-QCORE-PROVIDER-NAMING's card branch; follow-up rows
 from the entry-level union of both ledgers. This is the concise status
@@ -22,6 +23,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Projected functions | **269 Safe / 84 provisional Unsafe / 4,481 Unknown**, 4,834 total; the 34 Safe added by the two W43 libc cards are relative to 68 declared libc/POSIX premises, and the 12 added by W43-INDIRECT-ACCESS-GENERAL to the typed scalar-access rule and existing premises | Same baseline |
 | Corpus diagnostics | leak **271**; unknown_alias **4,727**; double_release **0**; unsupported **47,832**; summary_conflict **1**; invalid_release / use_after_release **0 / 0** | Same baseline, `artifacts/diagnostics.json.gz`; the leak move 272 → 271 is one attributed false-leak withdrawal |
 | Indirect-access refusals | **17,300** leaves on **3,291** Unknown functions, sole blocker of **380** (17,665 / 3,315 / 378 before W43-INDIRECT-ACCESS-GENERAL); the typed scalar-access rule removed 1,083 leaves across five access families, and the refused shapes are sized in its [residuals](reports/w43-indirect-access-general/residuals.txt) | [Current blocker census](reports/w43-indirect-access-general/blocker-census.txt) |
+| Indexed resource collections | **27** element operations lowered in **19** corpus functions, **0** on a resolved array (every one keeps its refusal byte for byte); **0** leaves, functions or units moved; the array allocation's `sizeof(*v)` operand is refused in **224** leaves on **211** Unknown functions (4 sole-blocked) | [Collections report](reports/w43-indexed-resource-collections/README.md), [element reach](reports/w43-indexed-resource-collections/census/element-reach.txt), [census](reports/w43-indexed-resource-collections/census/census.txt) |
 | Return-expression refusals | **499** leaves on **422** Unknown functions, sole blocker of **149** (1,440 / 1,109 / 465 before W43-RETURN-EXPRESSION; two returned derived results joined at W43-LIBC-RESULT-ALIAS; 146 sole at that card, 149 after W43-INDIRECT-ACCESS-GENERAL cleared other families); 941 whole-call leaves carry the call classifier's own refusal | [W43 attribution](reports/w43-return-expression/attribution-summary.json), [current blocker census](reports/w43-indirect-access-general/blocker-census.txt) |
 | Unit reasons | **135 unsupported-syntax / 1 incomplete-obligation-coverage / 49 without a reason code** | [W43 indirect-access corpus row](reviews/r0_3/acceptance_matrix.json) (`corpus.cycle19_raw_units`); `cmt_time.c` lost its reason at W43-INDIRECT-ACCESS-GENERAL, and the earlier fields are in the [combined attribution](reports/w42-priority-integration/attribution.json) |
 | Raw source coverage | **4,921 definitions / 4,834 projected / 87 pinned-build exclusions**, across **24 full-path units** | [Verified census](reports/w42-unprojected-definitions/README.md); combined inventory unchanged |
@@ -33,7 +35,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
 | Contract corpus | **108** modules; **130** resource-v1 declarations; **45** manifest-selected, 4 of them by `crate:module` reference; **13** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 36 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) (all 11 contract crates) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md), [executable crates](reports/contract-inherit-qcore-provider-naming/README.md) |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **307** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **314** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -118,7 +120,7 @@ executable crates on the load path, and converts the eight librdkafka and Monkey
 allocator wrappers the same way, again with no verdict-bearing byte moved;
 `qcore.librdkafka` and `qcore.libevent` are the first packages with include pins.
 
-All three broader Cycle 18 follow-ups remain open; **307** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **314** follow-ups are
 registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
@@ -137,7 +139,9 @@ CONTRACT-INHERIT-QCORE-PROVIDER-NAMING retired the naming decision and the alias
 parents against its tests and arbiter and registered `CONTRACT-INHERIT-PERMUTED-PARAMETER-NAMES`;
 W43-INDIRECT-ACCESS-GENERAL retired `INDIRECT-CENSUS-FEATURE-UNBUILT`,
 `BASE-TYPE-READER-CENSUS-FEATURE-UNBUILT` and `INDIRECT-EXCHANGE-PROXY-UNVALIDATED`
-and registered twelve refused-shape, premise and census residuals. Production callback composition, task/cancellation/event-generation
+and registered twelve refused-shape, premise and census residuals;
+W43-INDEXED-RESOURCE-COLLECTIONS retired nothing and registered seven collection residuals,
+led by the `sizeof(*v)` allocation. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
 

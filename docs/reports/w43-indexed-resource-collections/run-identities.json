@@ -1,0 +1,137 @@
+{
+ "before vs after3": {
+  "resource-diagnostics.json": {
+   "left": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
+   "right": "c7175ae3d74e71754687c55f42203cd656972c6df6d0b47ae97accda22ca0385",
+   "identical": false
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "1161b57e60e19c799e2fb560616d3136081bda0b907a78747300a9ac3ff384fd",
+   "right": "1161b57e60e19c799e2fb560616d3136081bda0b907a78747300a9ac3ff384fd",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "b06f6a78c5d482212946a0d481abf7b7e9920e7d14a6c6ed9c8a31709a08d83a",
+   "right": "b06f6a78c5d482212946a0d481abf7b7e9920e7d14a6c6ed9c8a31709a08d83a",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ },
+ "after3 vs census-after": {
+  "resource-diagnostics.json": {
+   "left": "c7175ae3d74e71754687c55f42203cd656972c6df6d0b47ae97accda22ca0385",
+   "right": "c7175ae3d74e71754687c55f42203cd656972c6df6d0b47ae97accda22ca0385",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "1161b57e60e19c799e2fb560616d3136081bda0b907a78747300a9ac3ff384fd",
+   "right": "1161b57e60e19c799e2fb560616d3136081bda0b907a78747300a9ac3ff384fd",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "b06f6a78c5d482212946a0d481abf7b7e9920e7d14a6c6ed9c8a31709a08d83a",
+   "right": "b06f6a78c5d482212946a0d481abf7b7e9920e7d14a6c6ed9c8a31709a08d83a",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ },
+ "after1 vs after3": {
+  "resource-diagnostics.json": {
+   "left": "c7175ae3d74e71754687c55f42203cd656972c6df6d0b47ae97accda22ca0385",
+   "right": "c7175ae3d74e71754687c55f42203cd656972c6df6d0b47ae97accda22ca0385",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "1161b57e60e19c799e2fb560616d3136081bda0b907a78747300a9ac3ff384fd",
+   "right": "1161b57e60e19c799e2fb560616d3136081bda0b907a78747300a9ac3ff384fd",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "b06f6a78c5d482212946a0d481abf7b7e9920e7d14a6c6ed9c8a31709a08d83a",
+   "right": "b06f6a78c5d482212946a0d481abf7b7e9920e7d14a6c6ed9c8a31709a08d83a",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ },
+ "after2 vs after3": {
+  "resource-diagnostics.json": {
+   "left": "c7175ae3d74e71754687c55f42203cd656972c6df6d0b47ae97accda22ca0385",
+   "right": "c7175ae3d74e71754687c55f42203cd656972c6df6d0b47ae97accda22ca0385",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "1161b57e60e19c799e2fb560616d3136081bda0b907a78747300a9ac3ff384fd",
+   "right": "1161b57e60e19c799e2fb560616d3136081bda0b907a78747300a9ac3ff384fd",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "b06f6a78c5d482212946a0d481abf7b7e9920e7d14a6c6ed9c8a31709a08d83a",
+   "right": "b06f6a78c5d482212946a0d481abf7b7e9920e7d14a6c6ed9c8a31709a08d83a",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ },
+ "before vs capture": {
+  "resource-diagnostics.json": {
+   "left": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
+   "right": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "1161b57e60e19c799e2fb560616d3136081bda0b907a78747300a9ac3ff384fd",
+   "right": "1161b57e60e19c799e2fb560616d3136081bda0b907a78747300a9ac3ff384fd",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "b06f6a78c5d482212946a0d481abf7b7e9920e7d14a6c6ed9c8a31709a08d83a",
+   "right": "5cdccdc65e15e53730b9d3f4b6de329cf25983ab3ee042e2d9e4c459e56be7b0",
+   "identical": false
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ }
+}
