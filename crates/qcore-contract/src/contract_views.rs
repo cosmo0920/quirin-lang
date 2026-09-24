@@ -226,10 +226,11 @@ pub fn vocabulary(declaration: &ViewDeclaration) -> Vocabulary {
     }
     let atomic = declaration.clauses.iter().all(|clause| {
         lex_tokens(&clause.expression).is_ok_and(|tokens| {
-            tokens.iter().all(|token| match token {
-                TokenKind::Word(_) => true,
-                TokenKind::Symbol(Symbol::LeftParen | Symbol::RightParen) => true,
-                _ => false,
+            tokens.iter().all(|token| {
+                matches!(
+                    token,
+                    TokenKind::Word(_) | TokenKind::Symbol(Symbol::LeftParen | Symbol::RightParen)
+                )
             })
         })
     });
@@ -350,7 +351,10 @@ pub fn read_corpus(index: &Path) -> Result<BTreeMap<String, String>, String> {
                     pending.push(path);
                     continue;
                 }
-                if path.extension().is_none_or(|extension| extension != "qcore") {
+                if path
+                    .extension()
+                    .is_none_or(|extension| extension != "qcore")
+                {
                     continue;
                 }
                 let logical = path
@@ -548,7 +552,9 @@ impl Term {
                 .get(name.as_str())
                 .ok_or_else(|| format!("unassigned ghost name {name}"))?,
             Self::Not(inner) => i128::from(inner.evaluate(values)? == 0),
-            Self::Equal(left, right) => i128::from(left.evaluate(values)? == right.evaluate(values)?),
+            Self::Equal(left, right) => {
+                i128::from(left.evaluate(values)? == right.evaluate(values)?)
+            }
             Self::NotEqual(left, right) => {
                 i128::from(left.evaluate(values)? != right.evaluate(values)?)
             }
@@ -1115,8 +1121,14 @@ const MEMORY_CLOSE_ASSUMED: &[(&str, PremiseClass)] = &[
         "embedded_links_have_distinct_stream_memberships",
         PremiseClass::Environment,
     ),
-    ("context_and_stream_outlive_chunk", PremiseClass::Environment),
-    ("context_counter_covers_live_chunk", PremiseClass::Environment),
+    (
+        "context_and_stream_outlive_chunk",
+        PremiseClass::Environment,
+    ),
+    (
+        "context_counter_covers_live_chunk",
+        PremiseClass::Environment,
+    ),
     (
         "no_lock_busy_task_route_or_transaction_obligations",
         PremiseClass::Environment,
@@ -1456,7 +1468,10 @@ fn check_projection(
                 // view applies, which cannot make it harder to entail.
                 continue;
             }
-            return Err(format!("unbridged view precondition `{}`", clause.expression));
+            return Err(format!(
+                "unbridged view precondition `{}`",
+                clause.expression
+            ));
         }
         if clause.kind != "normal" {
             return Err(format!("unbridged view clause kind `{}`", clause.kind));
@@ -1610,7 +1625,8 @@ fn check_renamed_frame(
         .collect();
     let family = frame_family(&stronger.name, &footprint);
     for protected in protected_sets {
-        let protected: BTreeSet<String> = protected.iter().map(|field| (*field).to_owned()).collect();
+        let protected: BTreeSet<String> =
+            protected.iter().map(|field| (*field).to_owned()).collect();
         if !protected.is_disjoint(&footprint) || !protected.contains("lock") {
             return Err(format!(
                 "protected set {protected:?} must contain `lock` and exclude the footprint {footprint:?}"
@@ -1651,7 +1667,10 @@ fn check_renamed_frame(
 
 /// Every write vector of length ≤ 2 over the footprint fields and the frame
 /// fields `lock`/`busy`, each with values 0 and 1.
-pub(crate) fn frame_family(function: &str, footprint: &BTreeSet<String>) -> Vec<ChunkFrameSummaryRecord> {
+pub(crate) fn frame_family(
+    function: &str,
+    footprint: &BTreeSet<String>,
+) -> Vec<ChunkFrameSummaryRecord> {
     let mut fields: Vec<String> = footprint.iter().cloned().collect();
     fields.extend(["lock".to_owned(), "busy".to_owned()]);
     let mut writes: Vec<Vec<(String, i32)>> = vec![Vec::new()];
@@ -1739,9 +1758,7 @@ fn c_agrees(
     let category = abi_category(typed)?;
     match c {
         CType::Void if category == "unit" => Ok(format!("{position}: void = unit")),
-        CType::Scalar(scalar) if category == *scalar => {
-            Ok(format!("{position}: {scalar}"))
-        }
+        CType::Scalar(scalar) if category == *scalar => Ok(format!("{position}: {scalar}")),
         CType::Pointer { is_const, tag } if category.starts_with("ptr<") => {
             // A C non-const pointer may be borrowed const by a callee that does
             // not write through it; a C const pointer must stay const.
@@ -1753,7 +1770,9 @@ fn c_agrees(
                     .iter()
                     .find(|(c_tag, _)| c_tag == tag)
                     .map(|(_, nominal)| *nominal)
-                    .ok_or_else(|| format!("{position}: no registered nominal for `struct {tag}`"))?;
+                    .ok_or_else(|| {
+                        format!("{position}: no registered nominal for `struct {tag}`")
+                    })?;
                 if pointer_nominal(typed) != Some(expected) {
                     return Err(format!(
                         "{position}: `struct {tag} *` is {expected}, declared {typed}"
@@ -1798,9 +1817,7 @@ fn signature_alternatives(metadata: &ViewDeclaration) -> Result<Vec<String>, Str
                     }
                 }
                 other => {
-                    return Err(format!(
-                        "unsupported token {other:?} in a signature clause"
-                    ));
+                    return Err(format!("unsupported token {other:?} in a signature clause"));
                 }
             }
         }
@@ -1856,7 +1873,12 @@ fn check_source_shape(
                 &format!("`{alternative}` parameter {c_index}"),
             )?;
         }
-        c_agrees(&result, &typed.result, nominals, &format!("`{alternative}` result"))?;
+        c_agrees(
+            &result,
+            &typed.result,
+            nominals,
+            &format!("`{alternative}` result"),
+        )?;
         discharged.push(format!("C signature `{alternative}` agrees"));
     }
     // Every recorded declaration fact equals the typed declaration's.
@@ -1871,10 +1893,7 @@ fn check_source_shape(
         .collect::<Result<Vec<_>, _>>()?
         .join("|");
     let facts = [
-        (
-            "declaration_is_extern",
-            ContractFact::Integer(1),
-        ),
+        ("declaration_is_extern", ContractFact::Integer(1)),
         (
             "declaration_has_body",
             ContractFact::Integer(i128::from(typed.has_body)),
@@ -1906,7 +1925,11 @@ fn check_source_shape(
         (
             "parameter_usages",
             ContractFact::Text(join(
-                typed.parameters.iter().map(|p| p.usage.to_owned()).collect(),
+                typed
+                    .parameters
+                    .iter()
+                    .map(|p| p.usage.to_owned())
+                    .collect(),
             )),
         ),
         ("result_type", ContractFact::Text(typed.result.clone())),

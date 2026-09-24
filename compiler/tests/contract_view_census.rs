@@ -14,7 +14,7 @@
 use std::collections::BTreeMap;
 
 use qcore_contract::contract_views::{
-    REGISTERED_RELATIONS, check_registry, census_pairs, read_corpus,
+    REGISTERED_RELATIONS, census_pairs, check_registry, read_corpus,
 };
 
 #[path = "support/contract_corpus.rs"]
@@ -149,7 +149,7 @@ fn every_multi_module_declaration_is_a_registered_checked_relation() {
 /// corpus test pins.
 #[test]
 fn the_census_reads_the_corpus_the_corpus_test_reads() {
-    let index = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../contract/corpus.json");
+    let index =
+        std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../contract/corpus.json");
     assert_eq!(read_corpus(&index).unwrap(), corpus());
 }

@@ -10,8 +10,8 @@ use qcore_contract::chunk_contract::{
     evaluate_boolean_frame_contract, evaluate_chunk_frame_contract,
 };
 use qcore_contract::contract_views::{
-    PremiseClass, REGISTERED_RELATIONS, RegisteredRelation, RelationCheck, check_registry,
-    entails, read_corpus,
+    PremiseClass, REGISTERED_RELATIONS, RegisteredRelation, RelationCheck, check_registry, entails,
+    read_corpus,
 };
 use qcore_schemas::chunk_summary::ChunkFrameSummaryRecord;
 
@@ -372,7 +372,9 @@ fn the_guard_refuses_new_stale_and_unjustified_registrations() {
 
 #[test]
 fn entailment_refuses_a_domain_it_cannot_enumerate() {
-    let premises: Vec<String> = (0..20).map(|index| format!("x{index} == y{index}")).collect();
+    let premises: Vec<String> = (0..20)
+        .map(|index| format!("x{index} == y{index}"))
+        .collect();
     let premises: Vec<&str> = premises.iter().map(String::as_str).collect();
     let goal = (0..20)
         .map(|index| format!("x{index} == y{index}"))
