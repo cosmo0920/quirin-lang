@@ -361,13 +361,62 @@ Measured in this worktree (`agent-ad6e8e3163534f46e`) by
 [`../w43-libc-result-alias/scripts/run_gate.py`](../w43-libc-result-alias/scripts/run_gate.py),
 unchanged. It sets `CARGO_BUILD_JOBS=6` and `RUST_TEST_THREADS=2`, turns debug
 info off, and captures every exit to a file, never through a pipe. The core
-and provider gates ran on `8a1a6117`, the commit carrying the declarations
-(`84c5d217`) and the re-pins. Later commits change documents, the ledger,
-report scripts and evidence only. Logs are worktree-private under
-`measure/gate/`. The generator input is [gate.json](gate.json), with the
+gate ran on `8a1a6117`, the commit carrying the declarations (`84c5d217`) and
+the re-pins. The provider gate was rerun on `22974972`, whose tree outside
+`docs/` is identical to `8a1a6117`. Later commits change documents, the
+ledger, report scripts and evidence only. Logs are worktree-private under
+`measure/gate/` and `measure/provider-gate/`. The generator input is [gate.json](gate.json), with the
 [Clang recording](clang-version.txt) taken in this checkout beside it.
 
-GATE-TABLE
+| Command | Exit | Result | Log |
+|---|---:|---|---|
+| `git submodule update --init --recursive` | 0 | libevent at `d82464a2…` | `measure/gate/submodules.log` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 | `measure/gate/clang.log` |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,208 passed / 0 failed / 11 ignored**, 278 summaries | `measure/gate/test.log` |
+| `cargo fmt --all -- --check` | 0 | clean | `measure/gate/fmt.log` |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean | `measure/gate/clippy.log` |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | | `measure/gate/probe.log` |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | | `measure/gate/followup.log` |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **170** audits | `measure/gate/lean.log` |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w43-libc-printf-family/gate.json` | 0 | 301 follow-ups, 108 contract modules, 170 Lean audits | `measure/build-matrix.log` |
+| `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | index regenerated and matching | `measure/docs-index-check.log` |
+| `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **330** tests | `measure/python-final.log` |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **117 passed / 0 failed / 0 ignored**, 39 summaries | `measure/provider-gate/ptest.log` |
+| `… -p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations … -- --exact --test-threads=1` | 0 | 1 passed (isolated, constraint 16) | `measure/provider-gate/pisolated.log` |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean | `measure/provider-gate/pfmt.log` |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean | `measure/provider-gate/pclippy.log` |
+| `python3 providers/contracts.py check` | 0 | inventories and load path unchanged | `measure/provider-gate/pcontracts.log` |
+| `python3 providers/package.py build --output measure/provider-gate/packages` | 0 | 5 packages | `measure/provider-gate/pbuild.log` |
+| `python3 providers/package.py verify …/<id>` (×5: chunkio, cmetrics, ctraces, libevent, librdkafka) | 0 ×5 | | `measure/provider-gate/pverify.log` |
+| `python3 -m unittest discover -s providers/tests` | 0 | 12 tests | `measure/provider-gate/ppython.log` |
+
+**Counts equal the base.** The CONTRACT-INHERIT-ADOPTION integration gate at
+`f8b41209` records 5,208 core tests, 117 provider tests, 330 Python tests and
+170 Lean audits. This card adds no test and no audit. It re-pins existing
+tests. No `P02-FLAKE` row failed.
+
+**Attempts that are not the gate, disclosed.**
+
+* The first provider-gate run ran out of disk. Its `ptest` step exited 101
+  with `No space left on device` while compiling. The runner then stopped
+  before recording `pisolated`'s exit. The shared volume had 261 GB free when
+  this card began, filled during that run (this worktree's own build output is about 12 GB), and
+  had 83 GB free afterwards. Per the measurement-hygiene
+  rule, that attempt is kept privately at `measure/gate-disk-exhausted/`,
+  discarded as evidence, and the whole provider gate was rerun into fresh paths
+  (`measure/provider-gate/`) on the same tree. No build output was freed; none
+  of this worktree's was needed.
+* The report, ledger, STATUS and increment edits were made in the working
+  tree while the core `cargo test` step was running. No Rust test reads those
+  files, and the Rust, contract and test sources under test were already
+  committed at `8a1a6117`. The Python suite ran after every edit.
+* A temporary gateway integration test (the [probe](probe/)) was compiled and
+  run before the gate and removed from `crates/qcore-c-gateway/tests/` before
+  the gate started. A wider probe run was stopped by hand
+  ([§5](#5-the-exchange-and-why-the-tail-rule-was-not-widened)).
+* Two focused runs of `contract_loader` and `qcore_contract_corpus` after the
+  re-pin passed 10/10 and 4/4 (`measure/focused-tests.log`). They are
+  measurements, not gate steps.
 
 ## 7. Prediction against outcome
 
