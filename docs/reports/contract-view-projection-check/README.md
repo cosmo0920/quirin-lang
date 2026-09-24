@@ -303,7 +303,43 @@ Run records: [`arbiter/before-run.json`](arbiter/before-run.json),
 
 ### 8.3 Gates and packages
 
-GATE-PLACEHOLDER
+Measured on `a1d86ddd` with [`scripts/run_gate.py`](scripts/run_gate.py),
+each step's exit captured from the process, logs in worktree-private
+`measure/gate/`. Figures in [`gate.json`](gate.json); Clang recorded in this
+checkout ([`clang-version.txt`](clang-version.txt), exit 0).
+
+| Step | Exit | Figure |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,221 passed / 0 failed / 11 ignored**, 280 summaries |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | **171** audits |
+| `python3 -m unittest discover -s scripts/tests` (after regeneration) | 0 | **330** tests |
+| `python3 scripts/build_docs_index.py --check` | 0 | |
+| provider `cargo test … --workspace --locked --offline --no-fail-fast` | 0 | **117 passed / 0 failed / 0 ignored**, 39 summaries |
+| provider fmt, clippy `-D warnings` | 0, 0 | |
+| isolated `real_packages_preserve_unknown_and_reject_mutations` | 0 | 1/1 |
+| `providers/contracts.py check` | 0 | |
+| `python3 -m unittest discover -s providers/tests` | 0 | 12 tests |
+| `package.py build`; `verify` ×5 | 0; 0 ×5 | [`packages.json`](packages.json) |
+
+A first run of the Python suite before regenerating the matrix failed its two
+matrix self-consistency tests, as the suite is documented to; after
+`build_matrix.py . --gate gate.json` it passed. The earlier `cargo fmt` and
+`clippy` findings on the new module (formatting, one `match`→`matches!`) were
+fixed before the measured gate.
+
+**Packages.** Removing `source_identity` changes `qcore.libevent`'s contract
+inventory, and the `i32` repair changes `qcore.chunkio`'s; the other three
+inventories are unchanged. `verify` accepts all five rebuilt packages, and the
+package mutation control still refuses mutations. Card-specific control
+([`scripts/package_controls.py`](scripts/package_controls.py),
+[`package-controls.json`](package-controls.json)): writing each module's
+**base** text into a copy of its built package makes `verify` refuse it
+(`contract asset digest mismatch`, exit 1); restoring the built bytes, checked
+byte for byte, makes it accept again (exit 0), in both packages.
 
 ## 9. Follow-ups
 
