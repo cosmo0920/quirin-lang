@@ -1,0 +1,270 @@
+{
+ "compared_shapes": 17,
+ "overall_predicted_vs_measured": {
+  "cleared -> cleared": 4,
+  "cleared -> unmoved (a statement is outside the typed rule)": 7,
+  "exchanged -> unmoved (a statement is outside the typed rule)": 4
+ },
+ "rows": [
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "functions_touched": 225,
+   "predicted": {
+    "unmoved": 220,
+    "cleared": 5
+   },
+   "predicted_vs_measured": {
+    "cleared -> unmoved (a statement is outside the typed rule)": 5
+   }
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "functions_touched": 110,
+   "predicted": {
+    "unmoved": 110
+   },
+   "predicted_vs_measured": {}
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "*",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "functions_touched": 90,
+   "predicted": {
+    "unmoved": 89,
+    "cleared": 1
+   },
+   "predicted_vs_measured": {
+    "cleared -> unmoved (a statement is outside the typed rule)": 1
+   }
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "Scalar",
+    "AssignmentValue"
+   ],
+   "functions_touched": 80,
+   "predicted": {
+    "unmoved": 77,
+    "exchanged": 3
+   },
+   "predicted_vs_measured": {
+    "exchanged -> unmoved (a statement is outside the typed rule)": 3
+   }
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "functions_touched": 46,
+   "predicted": {
+    "unmoved": 46
+   },
+   "predicted_vs_measured": {}
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "functions_touched": 45,
+   "predicted": {
+    "unmoved": 44,
+    "exchanged": 1
+   },
+   "predicted_vs_measured": {
+    "exchanged -> unmoved (a statement is outside the typed rule)": 1
+   }
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "Scalar",
+    "AssignmentValue"
+   ],
+   "functions_touched": 37,
+   "predicted": {
+    "unmoved": 37
+   },
+   "predicted_vs_measured": {}
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "Scalar",
+    "AssignmentDestination"
+   ],
+   "functions_touched": 26,
+   "predicted": {
+    "unmoved": 26
+   },
+   "predicted_vs_measured": {}
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "Scalar",
+    "AssignmentDestination"
+   ],
+   "functions_touched": 24,
+   "predicted": {
+    "unmoved": 24
+   },
+   "predicted_vs_measured": {}
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "Scalar",
+    "AssignmentDestination"
+   ],
+   "functions_touched": 24,
+   "predicted": {
+    "unmoved": 24
+   },
+   "predicted_vs_measured": {}
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "functions_touched": 19,
+   "predicted": {
+    "unmoved": 17,
+    "cleared": 2
+   },
+   "predicted_vs_measured": {
+    "cleared -> cleared": 1,
+    "cleared -> unmoved (a statement is outside the typed rule)": 1
+   }
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "Scalar",
+    "AssignmentValue"
+   ],
+   "functions_touched": 17,
+   "predicted": {
+    "unmoved": 17
+   },
+   "predicted_vs_measured": {}
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "never-bound",
+    "[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "functions_touched": 10,
+   "predicted": {
+    "unmoved": 10
+   },
+   "predicted_vs_measured": {}
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "Scalar",
+    "AssignmentDestination"
+   ],
+   "functions_touched": 8,
+   "predicted": {
+    "unmoved": 7,
+    "cleared": 1
+   },
+   "predicted_vs_measured": {
+    "cleared -> cleared": 1
+   }
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "Scalar",
+    "AssignmentValue"
+   ],
+   "functions_touched": 8,
+   "predicted": {
+    "unmoved": 6,
+    "cleared": 2
+   },
+   "predicted_vs_measured": {
+    "cleared -> cleared": 2
+   }
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "functions_touched": 4,
+   "predicted": {
+    "unmoved": 4
+   },
+   "predicted_vs_measured": {}
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "functions_touched": 1,
+   "predicted": {
+    "unmoved": 1
+   },
+   "predicted_vs_measured": {}
+  }
+ ]
+}
