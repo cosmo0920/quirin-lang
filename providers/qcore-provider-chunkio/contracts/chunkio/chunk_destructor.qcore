@@ -11,9 +11,15 @@ resource type Chunk {
     move: allowed;
 }
 
+// Card CONTRACT-VIEW-PROJECTION-CHECK: `delete_backing` is `i32`, not `bool`.
+// The C declaration is `void cio_chunk_close(struct cio_chunk *ch, int delete)`
+// (`lib/chunkio/include/chunkio/cio_chunk.h:56` and `src/cio_chunk.c:111` in
+// the pinned audit source), and `bool` projects C `_Bool`, a different ABI
+// type. The two other declarations of this function already say `i32`; the
+// checked view relation refused the disagreement.
 extern fn cio_chunk_close(
     chunk: own<Chunk> use one,
-    delete_backing: bool
+    delete_backing: i32
 ) -> unit
 effects { io }
 contract {

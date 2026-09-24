@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 307
+  "named_followups": 324
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for CONTRACT-INHERIT-QCORE-PROVIDER-NAMING on merge e7ef0887 (onto main f8b41209, which the card had already merged), measured by the integrator in its own worktree from a cold build; every exit captured to a file, not piped. 5216 core Rust passed / 0 failed / 11 ignored over 281 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 170 Lean audits; 330 root Python tests; 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-result-alias/artifacts/; against the CONTRACT-INHERIT-ADOPTION integration run in the same checkout, source-effects is byte-identical and contracts differs only by the two qcore-provider memory modules now keyed crate:module (token-identical to their hand-written texts), the schema-2 manifest entries and the eight added inheritance chains.",
-  "workspace_tests": 5216,
+  "note": "Integration gate for W43-INDIRECT-ACCESS-GENERAL on merge 10b8c607 (onto main 65b5df37, after the three verdict-neutral contract cards), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0 from a cold build; every exit captured to a file, not piped. 5254 core Rust passed / 0 failed / 11 ignored over 284 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 172 Lean audits; 330 root Python tests after regenerating this section (the first run failed only the derived-facts check, 171 vs 172 Lean audits, because the merged validation section predated AuditIndirectScalarAccess); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the card's own verdict-bearing diagnostics byte for byte against docs/reports/w43-indirect-access-general/artifacts/ on the combined tree; source-effects is identical to that baseline modulo checkout-path identity digests, and contracts is byte-identical to the CONTRACT-VIEW-PROJECTION-CHECK integration run in the same checkout.",
+  "workspace_tests": 5254,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 170,
+  "lean_audits": 172,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6770,6 +6770,7 @@
    "AuditConstantDoWhile.lean",
    "AuditContractBundle.lean",
    "AuditContractInherit.lean",
+   "AuditContractViewProjection.lean",
    "AuditCt01OwnedTransfer.lean",
    "AuditCt03ReadShares.lean",
    "AuditCt07LeaseLedger.lean",
@@ -6915,7 +6916,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/contract-inherit-qcore-provider-naming/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-indirect-access-general/integration/gate.json)"
  },
  "named_followups": [
   {
@@ -8921,6 +8922,48 @@
    "why": "Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING tested inheritance from derived-result parents (CONTRACT-INHERIT-ALIAS-RESULT-PARENTS). A child that reorders its parameters so that a type moves is refused (QI010), but when the moved parameters have one type the reordering is invisible to the signature check: `extern fn app_search(needle: ptr<const, u8>, haystack: ptr<const, u8>) -> ptr<mut, u8> contract inherit libc::strstr;` is admitted, and its elaborated clause is `resource_return_interior(needle, nullable)` with base index 0, exactly the parent's record (compiler/tests/contract_inherit_qcore_provider.rs, swapped_parameter_names_do_not_move_the_base). That is the positional rule C15 states, and it is sound for the declaration as written; but a C wrapper that really swaps its arguments before calling strstr would receive a wrong trusted assumption, and a reader could take the child's parameter names as re-binding the base. The rename check refuses only capture (a child name equal to a non-parameter word), not a child name equal to a parent parameter at a different position. None of the 13 inheriting declarations on the tree has such a name (flb_*, rd_* and mk_* keep the parent's order; rd_strdup/rd_strndup rename s/n to str/len). Discharge: either refuse a child parameter named like a parent parameter at another position (a C15 change with a code, a negative control, a Lean statement over rename_clauses, and a census of the inheriting declarations), or record that the positional rule alone is the intended contract and close this entry with that decision.",
    "source": "docs/reports/contract-inherit-qcore-provider-naming/README.md",
    "recorded_by": "CONTRACT-INHERIT-QCORE-PROVIDER-NAMING"
+  },
+  {
+   "id": "CONTRACT-VIEW-CHUNK-CLOSE-BACKEND-COVERAGE",
+   "recorded_by": "CONTRACT-VIEW-PROJECTION-CHECK",
+   "source": "docs/reports/contract-view-projection-check/README.md",
+   "title": "chunkio/memory_close.qcore supports the resource-v1 cio_chunk_close view only on memory-backed chunks",
+   "why": "Card CONTRACT-VIEW-PROJECTION-CHECK checks every multi-module declaration as a registered relation (qcore_contract::contract_views). The relation memory_close.qcore -> resource_open_close.qcore holds only under the computed, pinned premise nonnull_chunk_has_memory_backend, classified Coverage: outside it the detailed contract says nothing about the chunk (Lean QCore.ContractViewProjection.outside_the_memory_backend_the_view_is_not_implied), while chunkio/resource_open_close.qcore's resource_released(chunk, nonnull) is applied by the resource loader to every call whatever the backend. The view is also entailed by chunkio/chunk_destructor.qcore on every backend, but that is a language-level lifecycle contract, not a source-checked one. The filesystem and unsupported-backend policies (filesystem_chunk_close.qcore, unsupported_close.qcore) declare other names and are not related to the view. Nothing moves a verdict: the view was already a trusted assumption. Discharge: a checked relation from a source-checked declaration of cio_chunk_close covering the other backends to the view, or a premise on the view that narrows it to what is supported."
+  },
+  {
+   "id": "CONTRACT-VIEW-UNENFORCED-PREMISES",
+   "recorded_by": "CONTRACT-VIEW-PROJECTION-CHECK",
+   "source": "docs/reports/contract-view-projection-check/README.md",
+   "title": "The resource-v1 views are entailed only under detailed premises the v1 checker does not enforce",
+   "why": "Card CONTRACT-VIEW-PROJECTION-CHECK computes, for each projection, which detailed requires clauses the view's own custody discipline discharges; the rest are pinned per relation with a class (Profile, Environment, Coverage). flb_malloc/flb_calloc/flb_free assume ordinary_allocator_profile == 1 (Profile, fixed for the audited build). chunk_destructor.qcore -> resource_open_close.qcore assumes chunk_is_not_busy and chunk_has_no_task_or_route_custody (Environment). memory_close.qcore -> resource_open_close.qcore assumes nine premises besides its Coverage one (seven Environment: disjoint owned provenance, live reciprocal and distinct link memberships, context/stream lifetime, counter coverage, no lock/busy/task/route/transaction obligations, exclusive access; two Profile: cross-unit source/ABI bindings, free resolving to libc). The v1 vocabulary has no clause for any of them, so every call site the view covers assumes them. Discharge: a v1 premise vocabulary the loader checks at call sites, or a per-premise argument that the pinned corpus establishes it."
+  },
+  {
+   "id": "CONTRACT-VIEW-ERROR-RESET-RENAMED-EQUIVALENT",
+   "recorded_by": "CONTRACT-VIEW-PROJECTION-CHECK",
+   "source": "docs/reports/contract-view-projection-check/README.md",
+   "title": "chunkio/error_frame.qcore and chunkio/error_state.qcore are renamed equivalents kept as two views",
+   "why": "Card CONTRACT-VIEW-PROJECTION-CHECK measured the two cio_error_reset declarations: token-equal under the four-word renaming Chunk->cio_chunk, chunk_is_live->object_is_live, exclusive_chunk_access->exclusive_object_access, lock_is_preserved->modeled_fields_are_preserved, and both real frame evaluators (evaluate_chunk_frame_contract, evaluate_boolean_frame_contract) accept exactly the same write vectors over a 31-summary family for both imported protected sets {lock} and {busy, lock}; the equivalence holds exactly when the protected set contains lock and excludes the written field error_n (Lean QCore.ContractViewProjection.the_frame_evaluators_agree_under_the_condition, the_condition_is_load_bearing). They are not deleted: each is the pinned contract of a different evaluator flavour (qcore_verification::frame_source::FrameContractFlavour), bound by digest into its frame-helper task identity, and the Chunk flavour is also bundled by compiler/src/verifier_plugins/chunkio/memory_close.rs and the retained Cycle 19 adapters; an evaluator refuses the other vocabulary by design, and retiring the Chunk flavour's contract is a route change under invariant 3. Discharge: retire the Chunk flavour's own contract with archived parity, or give it a checked renaming input from error_frame.qcore, then delete error_state.qcore's declaration."
+  },
+  {
+   "id": "CONTRACT-VIEW-SMALL-MODEL-UNPROVED",
+   "recorded_by": "CONTRACT-VIEW-PROJECTION-CHECK",
+   "source": "docs/reports/contract-view-projection-check/README.md",
+   "title": "The view-entailment decision procedure's exactness is argued, not proved in Lean",
+   "why": "qcore_contract::contract_views::entails decides entailment over the equality fragment (literals, ghost names, ==, !=, and, or, not) by enumerating each name over the involved literals, 0 and 1, plus fresh values sized by the largest group of directly compared names, after restricting premises to the goal's cone of influence. Its exactness rests on a small-model argument documented in the Rust module; the Lean model (QCore.ContractViewProjection) proves each registered entailment directly over the integers and that dropping premises is sound, but not the enumeration lemma itself, and the fragment evaluator's parity with the shared interpreter is a Rust test over a grid. Discharge: a Lean proof of the small-model lemma for the fragment, or an extraction of the Rust enumerator."
+  },
+  {
+   "id": "CONTRACT-VIEW-BRIDGES-DECLARED",
+   "recorded_by": "CONTRACT-VIEW-PROJECTION-CHECK",
+   "source": "docs/reports/contract-view-projection-check/README.md",
+   "title": "The bridges from detailed vocabularies to resource-v1 predicates are declared translations",
+   "why": "Card CONTRACT-VIEW-PROJECTION-CHECK checks a projection through a declared bridge per detailed vocabulary (ALLOCATOR_OBSERVATION_BRIDGE, CHUNK_CLOSE_MECHANISM_BRIDGE, CHUNK_CLOSE_LANGUAGE_BRIDGE): for example resource_return_owned(nullable) means (result_null == 1 and live_after == 0) or (result_null == 0 and live_after == 1 and result_is_backend == 1); v1 nullable custody of flb_free's argument is identified with valid_input_extent == 1 (null or a live allocation of the same allocator, so the allocator-family match is part of the identification); result_null is 0/1 by the native adapter; chunk release is chunk_released (memory_close) or chunk_name_and_object_are_released with a consumed own<Chunk> (chunk_destructor). These identifications are premises of every projection check, stated in code and in the report, not derived from the resource checker's semantics. Discharge: a Lean or Rust statement of the v1 custody semantics from which each bridge rule follows."
+  },
+  {
+   "id": "CONTRACT-VIEW-TIMEOUT-POLICY-NATIVE-RERUN",
+   "recorded_by": "CONTRACT-VIEW-PROJECTION-CHECK",
+   "source": "docs/reports/contract-view-projection-check/README.md",
+   "title": "The retained Cycle 18 timeout-teardown evidence binds the pre-card timeout policy digest",
+   "why": "Card CONTRACT-VIEW-PROJECTION-CHECK removed monkey/timeout_teardown.qcore's source_identity declaration, a textual duplicate of monkey/wait_source_policy.qcore's; qcore_verification::timeout_teardown now evaluates the owner's declaration and binds its SHA-256 as source_identity_digest in the projection and in TimeoutTeardownEvidence. The timeout policy's own digest therefore moves (516fa1fe... -> the card's), and the retained native evidence in docs/reports/cycle18-priority1-integration/ (timeout-report.json) records the old one. The workspace tests that derive evidence from the projection pass; no native quirin-audit timeout-teardown or cycle18-composition run was made by this card. Discharge: rerun the configured timeout-teardown and Cycle 18 composition audits natively against the canonical files and publish the new digests beside the frozen report."
   },
   {
    "id": "W43-INDIRECT-CALL-ARGUMENT-ACCESS",

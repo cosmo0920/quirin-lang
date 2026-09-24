@@ -10,6 +10,7 @@ pub mod bundle;
 pub mod contract_inclusion;
 pub mod contract_loader;
 pub mod contract_observation;
+pub mod contract_views;
 pub mod extern_bridge;
 pub mod load_path_manifest;
 pub mod profile_loader;

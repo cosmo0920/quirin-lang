@@ -48,7 +48,7 @@ spatial-safety claim is made.** The verdict's scope string and spec L18 say so.
 * **Moves: 11 functions Unknown → Safe** (all 11 forecast; 2 forecast
   functions stay Unknown). **0 unit moves. 0 violation candidates. Leak pin
   271 unchanged.**
-* **Ledger 307 → 318**: `W43-INDIRECT-POINTER-INCREMENT` retired against its
+* **Ledger 307 → 318** on the card branch, **313 → 324** after merging main (`0a07cb57`): `W43-INDIRECT-POINTER-INCREMENT` retired against its
   own discharge condition; twelve residuals registered, one per refused shape
   with its size ([§6](#6-ledger)).
 
@@ -409,7 +409,7 @@ records `for` clauses and conditions, but its own class is not split here);
 `W43-INDIRECT-PROTECTED-FORMAL-INCREMENT` (pointee increments, untouched);
 `POISON-UNMASK-ON-ADMISSION` (measured for this admission, §4.2).
 
-Follow-ups go from **307 to 318**. `corpus.cycle19_raw_units` points at this
+Follow-ups go from **307 to 318** on the card branch, and from **313 to 324** after main `0a07cb57` (the indirect card's integration and three contract cards) was merged; the entry-level merge kept both sides' entries. `corpus.cycle19_raw_units` points at this
 report's artifacts; its previous contents are in
 [previous-corpus-row.json](previous-corpus-row.json).
 
