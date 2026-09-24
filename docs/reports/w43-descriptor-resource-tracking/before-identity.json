@@ -1,0 +1,44 @@
+{
+  "run": "measure/before-main",
+  "baseline": "docs/reports/w43-indirect-access-general/artifacts",
+  "artifacts": {
+    "diagnostics": {
+      "file": "resource-diagnostics.json",
+      "run_sha256": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
+      "baseline_raw_sha256": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "chunk-contracts": {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "run_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "baseline_raw_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "contracts": {
+      "file": "resource-diagnostics.contracts.json",
+      "run_sha256": "33518b51a3adcfc2e49275a073ee2d97ed61f8c598744242b537fe2ef5ba7d14",
+      "baseline_raw_sha256": "c66aabee5d938352cc121012c4014bc05ef981efc59d9cd200a4a8133c2d3543",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false
+    },
+    "source-effects": {
+      "file": "resource-diagnostics.source-effects.json",
+      "run_sha256": "f23c8eb0d80d8d1ff0e15040e99dbee241992b09ba376074cc98ca7ea62cae41",
+      "baseline_raw_sha256": "0b7ce72d00131c7c410541bd8f3396189cfc9b3c21a90289cf3e303dd1b79964",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false
+    },
+    "source": {
+      "file": "monkey-source.json",
+      "run_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "baseline_raw_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    }
+  },
+  "verdict_bearing_identical": true
+}

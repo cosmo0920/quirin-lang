@@ -1,0 +1,97 @@
+{
+ "measure/before": {
+  "functions": {
+   "Unknown": 4493,
+   "Safe": 257,
+   "Unsafe": 84
+  },
+  "units": {
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4,
+   "Safe": 2
+  },
+  "diagnostic_counts": {
+   "leak": 272,
+   "summary_conflict": 1,
+   "unknown_alias": 4657,
+   "unsupported": 48930
+  }
+ },
+ "measure/stages/printf": {
+  "functions": {
+   "Unknown": 4493,
+   "Safe": 257,
+   "Unsafe": 84
+  },
+  "units": {
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4,
+   "Safe": 2
+  },
+  "diagnostic_counts": {
+   "leak": 272,
+   "summary_conflict": 1,
+   "unknown_alias": 4657,
+   "unsupported": 48917
+  }
+ },
+ "measure/stages/fprintf": {
+  "functions": {
+   "Unknown": 4490,
+   "Safe": 260,
+   "Unsafe": 84
+  },
+  "units": {
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4,
+   "Safe": 2
+  },
+  "diagnostic_counts": {
+   "leak": 272,
+   "summary_conflict": 1,
+   "unknown_alias": 4657,
+   "unsupported": 48934
+  }
+ },
+ "measure/stages/snprintf": {
+  "functions": {
+   "Unknown": 4489,
+   "Safe": 261,
+   "Unsafe": 84
+  },
+  "units": {
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4,
+   "Safe": 2
+  },
+  "diagnostic_counts": {
+   "leak": 272,
+   "summary_conflict": 1,
+   "unknown_alias": 4657,
+   "unsupported": 47989
+  }
+ },
+ "measure/after": {
+  "functions": {
+   "Unknown": 4488,
+   "Safe": 262,
+   "Unsafe": 84
+  },
+  "units": {
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4,
+   "Safe": 2
+  },
+  "diagnostic_counts": {
+   "leak": 272,
+   "summary_conflict": 1,
+   "unknown_alias": 4657,
+   "unsupported": 47984
+  }
+ }
+}

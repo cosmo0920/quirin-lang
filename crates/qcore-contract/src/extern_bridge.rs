@@ -111,6 +111,15 @@ pub fn declared_contract(
             contract.parameters.len()
         ));
     }
+    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the checked extern-call model has
+    // one custody kind, so a declaration naming another is refused rather than
+    // projected onto the heap kind, which would let `free` discharge a stream.
+    if contract.has_non_heap_kind() {
+        return Err(format!(
+            "`{name}`: a non-heap resource kind (card W43-DESCRIPTOR-RESOURCE-TRACKING) \
+             has no extern-call model; the checked extern-call route has one custody kind"
+        ));
+    }
     let mut parameters = Vec::with_capacity(contract.parameters.len());
     for (index, (spelling, mode)) in signature
         .parameter_types
@@ -232,5 +241,38 @@ mod tests {
             )
             .is_ok()
         );
+    }
+
+    /// Card W43-DESCRIPTOR-RESOURCE-TRACKING: the extern-call model has one
+    /// custody kind, so a kinded declaration — pointer- or integer-carried —
+    /// is refused by name rather than projected onto the heap kind.
+    #[test]
+    fn a_non_heap_kind_is_refused_not_projected_onto_the_heap() {
+        let contracts = load_resource_contract_sources(&BTreeMap::from([(
+            "k.qcore".to_owned(),
+            "module contract;\n\
+             extern fn k_open(p: ptr<const, u8>) -> ptr<mut, u8>\n\
+             contract {\n    requires resource_contract_v1;\n    \
+             ensures normal resource_borrowed(p);\n    \
+             ensures normal resource_return_owned(nullable);\n    \
+             ensures normal resource_return_kind(stream);\n};\n\
+             extern fn k_close(fd: i32) -> i32\n\
+             contract {\n    requires resource_contract_v1;\n    \
+             ensures normal resource_released(fd, valid);\n    \
+             ensures normal resource_kind(fd, descriptor);\n    \
+             ensures normal resource_return_none();\n};\n"
+                .to_owned(),
+        )]))
+        .expect("the module loads");
+        let signatures = declared_signatures(&contracts).expect("signatures read");
+        for name in ["k_open", "k_close"] {
+            let refusal = declared_contract(
+                name,
+                &signatures[name],
+                contracts.contract(name).expect("declared"),
+            )
+            .expect_err("a kinded declaration has no extern-call model");
+            assert!(refusal.contains("non-heap resource kind"), "{refusal}");
+        }
     }
 }

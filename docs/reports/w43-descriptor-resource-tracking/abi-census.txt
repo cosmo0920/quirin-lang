@@ -1,0 +1,14 @@
+units 185 exit 0
+accept4      {'withdrawn:abi-unreadable-declaration': 93}
+close        {'agreed': 137, 'undeclared': 36}
+closedir     {'agreed': 17, 'undeclared': 1}
+dlclose      {'agreed': 4}
+dlopen       {'agreed': 4, 'undeclared': 1}
+fclose       {'agreed': 168}
+fileno       {'agreed': 168}
+fopen        {'agreed': 168}
+fts_close    {'agreed': 1}
+fts_open     {'withdrawn:abi-unreadable-declaration': 1}
+open         {'agreed': 112, 'undeclared': 63}
+opendir      {'agreed': 17, 'undeclared': 1}
+socket       {'agreed': 105, 'undeclared': 16}

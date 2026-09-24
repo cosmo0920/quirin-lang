@@ -1,0 +1,124 @@
+module contract;
+
+// Card W43-DESCRIPTOR-RESOURCE-TRACKING: MEASUREMENT-ONLY module, as measured
+// (the `file_tree` kind of the two `fts` drafts was withdrawn afterwards, so
+// this file loads only with the census binary that measured it). Every
+// descriptor or handle declaration this card drafted, in one file, for the
+// declared-ABI census over the 185 captured units (`../scripts/census.sh`).
+// It is not selected by any manifest and is not a contract. The shipped
+// declarations are the ones that survived the census, in their own
+// `quirin-provider-libc` modules.
+
+extern fn open(file: ptr<const, u8>, oflag: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(oflag);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_owned(sentinel);
+    ensures normal resource_return_kind(descriptor);
+};
+
+extern fn close(fd: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(fd, valid);
+    ensures normal resource_kind(fd, descriptor);
+    ensures normal resource_return_none();
+};
+
+extern fn socket(domain: i32, type_: i32, protocol: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(domain);
+    ensures normal resource_borrowed(type_);
+    ensures normal resource_borrowed(protocol);
+    ensures normal resource_return_owned(sentinel);
+    ensures normal resource_return_kind(descriptor);
+};
+
+extern fn accept4(fd: i32, addr: ptr<mut, u8>, addr_len: ptr<mut, u8>, flags: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(addr);
+    ensures normal resource_borrowed(addr_len);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_owned(sentinel);
+    ensures normal resource_return_kind(descriptor);
+};
+
+extern fn fopen(filename: ptr<const, u8>, modes: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(filename);
+    ensures normal resource_borrowed(modes);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(stream);
+};
+
+extern fn fclose(stream: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(stream, nonnull);
+    ensures normal resource_kind(stream, stream);
+    ensures normal resource_return_none();
+};
+
+extern fn fileno(stream: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(stream);
+    ensures normal resource_return_none();
+};
+
+extern fn opendir(name: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(name);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(directory);
+};
+
+extern fn closedir(dirp: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(dirp, nonnull);
+    ensures normal resource_kind(dirp, directory);
+    ensures normal resource_return_none();
+};
+
+extern fn dlopen(file: ptr<const, u8>, mode: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(mode);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(dynamic_library);
+};
+
+extern fn dlclose(handle: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(handle, nonnull);
+    ensures normal resource_kind(handle, dynamic_library);
+    ensures normal resource_return_none();
+};
+
+extern fn fts_close(ftsp: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(ftsp, nonnull);
+    ensures normal resource_kind(ftsp, file_tree);
+    ensures normal resource_return_none();
+};
+
+extern fn fts_open(path_argv: ptr<mut, ptr<mut, u8>>, options: i32, compar: fnptr) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(path_argv);
+    ensures normal resource_borrowed(options);
+    ensures normal resource_borrowed(compar);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(file_tree);
+};

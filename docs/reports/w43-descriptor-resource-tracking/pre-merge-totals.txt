@@ -1,0 +1,9 @@
+Pre-merge arbiter on base f8b41209 (baseline docs/reports/w43-libc-result-alias/artifacts/):
+before = base binary; class-a = 1a5ebc5a (no declaration); after1 = a888657f (ten declarations,
+dlopen/dlclose included); after2 = b2c4213e (eight declarations). Superseded as the published
+baseline by the combined-tree runs in totals.txt after merging main 0a07cb57.
+
+measure/before {"diagnostic_counts": {"leak": 272, "summary_conflict": 1, "unknown_alias": 4657, "unsupported": 48930}, "functions": {"Safe": 257, "Unknown": 4493, "Unsafe": 84}, "uncontracted_on_unknown": {"functions": 2688, "leaves": 11652, "sole": 295}, "units": {"Safe": 2, "Unknown": 137, "Unsafe": 42, "data_only": 4}}
+measure/class-a {"diagnostic_counts": {"leak": 272, "summary_conflict": 1, "unknown_alias": 4657, "unsupported": 48930}, "functions": {"Safe": 257, "Unknown": 4493, "Unsafe": 84}, "uncontracted_on_unknown": {"functions": 2688, "leaves": 11652, "sole": 295}, "units": {"Safe": 2, "Unknown": 137, "Unsafe": 42, "data_only": 4}}
+measure/after1 {"diagnostic_counts": {"leak": 273, "summary_conflict": 1, "unknown_alias": 4698, "unsupported": 48872}, "functions": {"Safe": 257, "Unknown": 4491, "Unsafe": 86}, "uncontracted_on_unknown": {"functions": 2674, "leaves": 11604, "sole": 292}, "units": {"Safe": 2, "Unknown": 135, "Unsafe": 44, "data_only": 4}}
+measure/after2 {"diagnostic_counts": {"leak": 272, "summary_conflict": 1, "unknown_alias": 4695, "unsupported": 48875}, "functions": {"Safe": 257, "Unknown": 4492, "Unsafe": 85}, "uncontracted_on_unknown": {"functions": 2677, "leaves": 11611, "sole": 294}, "units": {"Safe": 2, "Unknown": 136, "Unsafe": 43, "data_only": 4}}

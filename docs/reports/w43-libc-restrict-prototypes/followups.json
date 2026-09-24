@@ -1,0 +1,16 @@
+[
+  {
+    "id": "W43-LIBC-GETPEERNAME-SOCKADDR-UNION",
+    "title": "`getpeername` is declared but withdrawn in 93 of 105 declaring units, including its only pinned call site, because `_GNU_SOURCE` spells its address as the `__SOCKADDR_ARG` transparent union",
+    "why": "Card W43-LIBC-RESTRICT-PROTOTYPES declared `getpeername` in providers/quirin-provider-libc/contracts/libc/socket.qcore (every parameter borrowed, `resource_return_none()`). The census over the 185 captured units (docs/reports/w43-libc-restrict-prototypes/abi-evidence.json, `new10`) agrees in 12 units and withdraws it in 93 with abi-unreadable-declaration: under `_GNU_SOURCE` glibc declares `typedef union { struct sockaddr *__restrict __sockaddr__; ... } __SOCKADDR_ARG __attribute__ ((__transparent_union__));`, which the declared-ABI reader does not read. The one pinned call site, `mk_socket_ip_str` in monkey's mk_socket.c (which defines `_GNU_SOURCE`), therefore only renamed its leaf from `call to uncontracted function` to `whose declared contract was withdrawn`; nothing was decided. The card left the union out of scope on measured yield (one leaf, in a function with seven other blockers) and because it needs its own typedef class and Lean model. Discharge condition: the declared-ABI reader reads a transparent union whose members are all single-level object pointers of one constness as that pointer projection, with Lean parity and its own attribution class (together with W43-LIBC-ABI-READER-SHAPES' `__CONST_SOCKADDR_ARG` for `bind`/`connect`), or a recorded refusal.",
+    "source": "docs/reports/w43-libc-restrict-prototypes/README.md",
+    "recorded_by": "W43-LIBC-RESTRICT-PROTOTYPES"
+  },
+  {
+    "id": "W43-LIBC-DLSYM-HANDLE-LIFETIME",
+    "title": "`dlsym`'s declared `resource_return_none()` says nothing about the symbol address dying at `dlclose` of its handle",
+    "why": "Card W43-LIBC-RESTRICT-PROTOTYPES declared `dlsym` (providers/quirin-provider-libc/contracts/libc/dlfcn.qcore) with `resource_return_none()`: the result is neither fresh custody nor derived from an argument's C object, and the caller acquires no obligation, the `dlerror`/`gai_strerror` precedent. It moved `mk_plugin_load_symbol` Unknown -> Safe relative to that premise. A use of the address after `dlclose(handle)` is invisible to the declaration. In the pinned corpus that cannot yet make a verdict Safe, because `dlopen`/`dlclose` stay undeclared (W43-LIBC-DESCRIPTOR-LIFECYCLE), so any function that closes a handle keeps an uncontracted call. Discharge condition: when a card declares `dlclose` (or a handle lifecycle), it either models the symbol as derived from the handle so that a use after the close is a `use_after_release` candidate, or records measured evidence that no pinned path uses a symbol after its handle is closed.",
+    "source": "docs/reports/w43-libc-restrict-prototypes/README.md",
+    "recorded_by": "W43-LIBC-RESTRICT-PROTOTYPES"
+  }
+]

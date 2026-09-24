@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W43-LIBC-PRINTF-FAMILY on merge bc3b26c2 (onto main d2e8683a, after W43-INDEX-TRAVERSAL), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5301 core Rust passed / 0 failed / 11 ignored over 286 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 174 Lean audits; 330 root Python tests after regenerating this section (08-python exit 0 before regeneration); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w43-index-traversal/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+ "workspace_tests": 5301,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 330,
+ "lean_audits": 174,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "entry": {
+      "id": "W43-RESULT-ALIAS-RETURNED",
+      "title": "Returning a derived result is refused, so a wrapper that returns `memcpy(...)` or `strcasestr(...)` stays Unknown",
+      "why": "Card W43-LIBC-RESULT-ALIAS refuses every escape of a derived pointer (`return p;` with `p` derived, and `legacy_return_call::escapes_only_fresh_custody` answers false for `Derived`), because escaping it would either discharge the base (an alias is not fresh custody) or publish a pointer the caller cannot release. W4 has no inferred mode for \"the result is derived from parameter k\" either. Measured cost at the arbiter: `rdxxhash.c` `XXH_memcpy` (`return memcpy(dest, src, size);`), the eighth memcpy-sole-blocked function LIBC-MEM-RESULT-ALIAS counted, and `mk_string.c` `mk_string_casestr` (`return strcasestr(heystack, needle);`) each exchange their uncontracted-call leaf for a return-expression refusal and stay Unknown. Discharge condition: an inferred (validated) derived-result summary for a body whose every exit returns a pointer derived from one borrowed formal, with Lean parity and a re-arbiter, or a recorded refusal.",
+      "source": "docs/reports/w43-libc-result-alias/README.md",
+      "recorded_by": "W43-LIBC-RESULT-ALIAS"
+    },
+    "discharged_by": "W43-RESULT-ALIAS-RETURNED",
+    "ground": "Its discharge condition is an inferred (validated) derived-result summary for a body whose every exit returns a pointer derived from one borrowed formal, with Lean parity and a re-arbiter. Card W43-RESULT-ALIAS-RETURNED adds that route to W4 (crates/qcore-c-gateway/src/legacy_derived_summary.rs): the base formal is bound to a name-only site that carries no custody, every exit must return NULL or a derived binding over it, and the ordinary gate re-checks the proposal (result_matches' new derived arm); the summary is ResourceReturnMode::Derived, so callers apply it through the unchanged W43-LIBC-RESULT-ALIAS rules. Lean: QCore.DerivedResultInference (gate sound against the contract meaning; every refused shape refused), audited by AuditDerivedResultInference.lean. Re-arbiter: exactly the two predicted functions move Unknown -> Safe (rdxxhash.c XXH_memcpy, Derived{0, Exact, nonnull}; mk_core/mk_string.c mk_string_casestr, Derived{0, Interior, nullable, const_dropped}), removing their two return-expression leaves and adding none; leak 272; 0 violation candidates. docs/reports/w43-result-alias-returned/README.md."
+  },
+  {
+    "entry": {
+      "id": "W43-RESULT-ALIAS-EXACT-RELEASE",
+      "title": "Releasing an exact alias (`free(memcpy(b, ...))`) is refused rather than credited as the base's release",
+      "why": "The card brief asked that releasing any derived result be a violation candidate and not a release of the base. For an EXACT alias that is false of C: `memcpy` returns the value of its first argument, so `free(memcpy(b, s, n))` frees `b` validly. Card W43-LIBC-RESULT-ALIAS therefore splits the rule by extent: an interior pointer handed to a release is an `invalid_release` candidate; an exact alias handed to a release, consumption, store, removal, reallocation or return is refused (`unknown_alias`, the base marked with an unresolved effect so no leak is claimed) and never credited to the base. Crediting it would be faithful but is the discharging direction and needs its own measured admission. No corpus function reaches the shape at the arbiter. Discharge condition: a measured decision to credit an exact alias's release to its base (with Lean parity: the alias's value equals the base's), or this refusal kept on a recorded ground.",
+      "source": "docs/reports/w43-libc-result-alias/README.md",
+      "recorded_by": "W43-LIBC-RESULT-ALIAS"
+    },
+    "discharged_by": "W43-RESULT-ALIAS-RETURNED",
+    "ground": "Its discharge condition allows this refusal to be kept on a recorded ground. Card W43-RESULT-ALIAS-RETURNED keeps it, on three grounds recorded in its report (section 5): no corpus function reaches the shape (re-measured with the two new wrapper summaries in force: no invalid_release, use_after_release or exact-alias release leaf appears, and no caller of XXH_memcpy reaches its contract); crediting is the discharging direction, so admitting it for zero measured yield would add an arm no corpus function exercises, the RETURN-POSITION-ACCUSING-UNEXERCISED-IN-CORPUS shape in the discharging direction; and the value-equality premise it needs is now faithful (a `place \u00b1 offset` base reads as interior, QCore.DerivedResultInference.an_offset_result_is_not_an_exact_alias), so a later card can admit it with its own attribution class when a corpus function reaches it. The refusal is pinned by crates/qcore-c-gateway/tests/derived_result_returned.rs (releasing_an_exact_wrapper_result_is_refused_not_credited) beside derived_result.rs."
+  }
+]

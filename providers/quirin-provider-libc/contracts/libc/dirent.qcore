@@ -1,0 +1,47 @@
+module contract;
+
+// <dirent.h> -- resource-projection vocabulary version 1.
+//
+// Card W43-DESCRIPTOR-RESOURCE-TRACKING. TRUSTED ASSUMPTIONS about the C library (trust
+// boundary 28); no libc body is analysed. Read from the prototypes the
+// analysed units declare (`/usr/include/dirent.h` on the audited host):
+//
+//   extern DIR *opendir (const char *__name) __nonnull ((1))
+//     __attribute__ ((__malloc__));
+//   extern int closedir (DIR *__dirp) __nonnull ((1));
+//
+// ## The custody statements
+//
+// `opendir` returns a fresh directory stream or NULL
+// (`resource_return_owned(nullable)` of the `directory` kind, contract spec
+// §C04.6). `closedir` releases a non-NULL directory stream
+// (`resource_released(dirp, nonnull)` of the same kind), whether or not it
+// reports an error.
+//
+// ## Deliberately NOT declared here (recorded in the card report)
+//
+//   `readdir` returns a pointer into storage the directory stream owns and
+//   invalidates on the next call: a derived result of a `directory` base,
+//   which the derived-result mode (heap-base only) does not state.
+//   `fdopendir` moves a descriptor into the stream on success only.
+//
+// ## What no declaration here says
+//
+// Nothing about entry order, `errno`, or the file system. A `directory` is
+// released only by a directory release: `free(d)` discharges nothing.
+
+extern fn opendir(name: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(name);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(directory);
+};
+
+extern fn closedir(dirp: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(dirp, nonnull);
+    ensures normal resource_kind(dirp, directory);
+    ensures normal resource_return_none();
+};

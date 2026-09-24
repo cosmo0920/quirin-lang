@@ -1,0 +1,13 @@
+{
+  "note": "W43-RESULT-ALIAS-RETURNED: core Rust, fmt, clippy (--workspace), probes and Lean measured on c7470e42 (the final implementation commit; later commits change documents, the ledger, report scripts and evidence files only, no Rust, Lean, contract or test source). 5231 core Rust passed / 0 failed / 11 ignored over 279 summaries (23 tests and one test binary added by this card: derived_result_returned.rs 15, the legacy_summary::derived unit module 8); 171 Lean audits (1 added: AuditDerivedResultInference); root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace remeasured on the same tree after a first provider attempt died of host disk exhaustion (retained privately as measure/provider-gate-aborted-disk, not evidence): 117 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 12 package Python tests. Logs: worktree-private measure/gate and measure/provider-gate of agent-a9aaf39e9a91c260e. Clang recorded in this checkout. Corpus: 2 functions Unknown -> Safe on validated inferred derived-result summaries, 0 unit moves, leak 272, 0 derived-pointer violation candidates.",
+  "workspace_tests": 5231,
+  "provider_tests": 117,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 171,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

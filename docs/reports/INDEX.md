@@ -816,13 +816,23 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-descriptor-native-check](w43-descriptor-native-check/README.md) | W43-DESCRIPTOR-NATIVE-CHECK: descriptor lifecycles checked on native executions |
 
+| [w43-descriptor-resource-tracking](w43-descriptor-resource-tracking/README.md) | W43-DESCRIPTOR-RESOURCE-TRACKING: kind-indexed custody, integer-carried descriptors and eight libc declarations |
+
+| [w43-index-traversal](w43-index-traversal/README.md) | W43-INDEX-TRAVERSAL: index and pointer traversal |
+
 | [w43-indirect-access-general](w43-indirect-access-general/README.md) | W43-INDIRECT-ACCESS-GENERAL: typed scalar accesses through pointers |
 
 | [w43-libc-contracts](w43-libc-contracts/README.md) | W43-LIBC-CONTRACTS: trusted libc/POSIX contracts, measured first and placed only in the libc crate |
 
+| [w43-libc-printf-family](w43-libc-printf-family/README.md) | W43-LIBC-PRINTF-FAMILY: the printf family, declared and attributed leaf by leaf |
+
+| [w43-libc-restrict-prototypes](w43-libc-restrict-prototypes/README.md) | W43-LIBC-RESTRICT-PROTOTYPES: ten `__restrict` libc prototypes, and the array-bound qualifier |
+
 | [w43-libc-result-alias](w43-libc-result-alias/README.md) | W43-LIBC-RESULT-ALIAS: derived results, the `__restrict` reader, and thirteen libc declarations |
 
 | [w43-monkey-callback-composition](w43-monkey-callback-composition/README.md) | W43 Monkey callback Cycle 18 composition |
+
+| [w43-result-alias-returned](w43-result-alias-returned/README.md) | W43-RESULT-ALIAS-RETURNED: inferred derived-result summaries |
 
 | [w43-return-expression](w43-return-expression/README.md) | W43-RETURN-EXPRESSION — the refused return expressions, measured and re-attributed |
 

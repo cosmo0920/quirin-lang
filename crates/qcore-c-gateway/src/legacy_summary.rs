@@ -75,6 +75,13 @@
 //! still takes precedence, so store-then-remove does not gain a false entry
 //! containment requirement.
 //!
+//! Card W43-RESULT-ALIAS-RETURNED adds a third ordinary route, consulted only
+//! after the two above publish nothing: a body whose every exit returns NULL or
+//! a pointer derived from one borrowed formal gets a validated
+//! `ResourceReturnMode::Derived` summary ([`derived`]). The formal is tracked by
+//! a name-only site that carries no custody, so the summary's `Borrowed` claim
+//! for it is checked, not assumed.
+//!
 //! Likewise, a formal handed straight back to the caller, a formal whose
 //! disposition differs between exits with no reallocation explaining it, an
 //! out slot left unwritten on some path, and an out slot holding a value the
@@ -121,8 +128,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_schemas::contract::{
-    ContractTrust, ResourceContracts, ResourceFunctionContract, ResourceParameterMode,
-    ResourceReturnMode, ResourceSummaryRecord,
+    ContractTrust, DerivedExtent, ResourceContracts, ResourceFunctionContract,
+    ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
 };
 
 use crate::legacy_c::{
@@ -421,6 +428,28 @@ fn infer_validated_summary(
 ) -> Option<ResourceFunctionContract> {
     infer_live_entry_summary(tokens, function, environment)
         .or_else(|| infer_removed_wrapper(tokens, function, environment))
+        .or_else(|| infer_derived_result(tokens, function, environment))
+}
+
+/// Card **W43-RESULT-ALIAS-RETURNED**: the derived-result route, consulted
+/// only after both routes above published nothing. See [`derived`].
+fn infer_derived_result(
+    tokens: &[Token],
+    function: &str,
+    environment: &ResourceContracts,
+) -> Option<ResourceFunctionContract> {
+    let decision = derived::infer_derived_result_summary(tokens, function, environment);
+    #[cfg(feature = "indirect-census")]
+    match &decision {
+        Ok(contract) => crate::indirect_census::record_derived(
+            function,
+            "admitted",
+            Some(format!("{:?}", contract.result)),
+        ),
+        Err(derived::DerivedRefusal::NotCandidate) => {}
+        Err(refusal) => crate::indirect_census::record_derived(function, refusal.label(), None),
+    }
+    decision.ok()
 }
 
 /// Preserve the existing least-binding search before considering a contained
@@ -765,9 +794,12 @@ fn out_mode(index: usize, observations: &[ExitObservation]) -> Option<ResourcePa
             OutSlotValue::Site {
                 nullable: site_nullable,
                 disposition,
+                kind,
                 ..
             } => {
-                if site_nullable || disposition != SiteDisposition::Live {
+                // Card W43-DESCRIPTOR-RESOURCE-TRACKING: no non-heap out slot
+                // is inferred; the probe's slot is heap-kinded.
+                if site_nullable || disposition != SiteDisposition::Live || !kind.is_heap() {
                     return None;
                 }
                 delivered = true;
@@ -801,17 +833,21 @@ fn reallocation_exit(
 ) -> Option<ReallocationExit> {
     let disposition = observation.parameters.get(index).copied().flatten();
     match observation.returned {
-        ReturnedValue::Ambiguous => None,
-        ReturnedValue::None => (observation.pending_replacements.is_empty()
+        ReturnedValue::Ambiguous | ReturnedValue::Derived { .. } => None,
+        ReturnedValue::None | ReturnedValue::Null => (observation.pending_replacements.is_empty()
             && disposition == Some(SiteDisposition::Live))
         .then_some(ReallocationExit::Kept),
         ReturnedValue::Site {
             site: returned,
             nullable,
             disposition: returned_disposition,
+            kind,
         } => {
+            // Card W43-DESCRIPTOR-RESOURCE-TRACKING: a replacement relation is
+            // specified for heap allocations only.
             if parameter_sites.contains(&returned)
                 || returned_disposition != SiteDisposition::Escaped
+                || !kind.is_heap()
             {
                 return None;
             }
@@ -901,8 +937,8 @@ fn propose_result(
 
     for observation in observations {
         match observation.returned {
-            ReturnedValue::Ambiguous => return None,
-            ReturnedValue::None => {
+            ReturnedValue::Ambiguous | ReturnedValue::Derived { .. } => return None,
+            ReturnedValue::None | ReturnedValue::Null => {
                 if !observation.pending_replacements.is_empty() {
                     return None;
                 }
@@ -912,10 +948,20 @@ fn propose_result(
                 site,
                 nullable,
                 disposition,
+                kind,
             } => {
                 // A formal handed straight back is an alias the summary
                 // vocabulary cannot express without double-counting custody.
                 if parameter_sites.contains(&site) || disposition != SiteDisposition::Escaped {
+                    return None;
+                }
+                // Card W43-DESCRIPTOR-RESOURCE-TRACKING: no summary is inferred
+                // for a non-heap result. A body returning `-1` on one path and
+                // a descriptor on another reads as a nullable result only if
+                // every non-site return is the literal sentinel, which the
+                // exit observation does not record, so the kinded result is
+                // declined rather than guessed (`W43-DESCRIPTOR-W4-SUMMARIES`).
+                if !kind.is_heap() {
                     return None;
                 }
                 // An unresolved reallocation would make the result's custody
@@ -1087,8 +1133,12 @@ fn out_slots_match(
                     site,
                     nullable: site_nullable,
                     disposition,
+                    kind,
                 }) => {
-                    disposition == SiteDisposition::Live
+                    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the slot delivers
+                    // exactly the declared kind.
+                    kind == contract.parameter_kind(index)
+                        && disposition == SiteDisposition::Live
                         && !site_nullable
                         && !parameter_sites.contains(&site)
                         && claimed.insert(site)
@@ -1136,19 +1186,27 @@ fn result_matches(
 ) -> bool {
     match contract.result {
         ResourceReturnMode::None => {
-            observation.returned == ReturnedValue::None
-                && observation.pending_replacements.is_empty()
+            matches!(
+                observation.returned,
+                ReturnedValue::None | ReturnedValue::Null
+            ) && observation.pending_replacements.is_empty()
         }
         ResourceReturnMode::Owned { nullable } => match observation.returned {
             // Returning nothing is only consistent with a nullable result.
-            ReturnedValue::None => nullable && observation.pending_replacements.is_empty(),
-            ReturnedValue::Ambiguous => false,
+            ReturnedValue::None | ReturnedValue::Null => {
+                nullable && observation.pending_replacements.is_empty()
+            }
+            ReturnedValue::Ambiguous | ReturnedValue::Derived { .. } => false,
             ReturnedValue::Site {
                 site,
                 nullable: site_nullable,
                 disposition,
+                kind,
             } => {
-                !parameter_sites.contains(&site)
+                // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the exit returns
+                // exactly the declared kind.
+                kind == contract.result_kind
+                    && !parameter_sites.contains(&site)
                     && disposition == SiteDisposition::Escaped
                     && (nullable || !site_nullable)
                     && observation.pending_replacements.is_empty()
@@ -1171,10 +1229,43 @@ fn result_matches(
             }
             None => false,
         },
-        // Card W43-LIBC-RESULT-ALIAS: no exit observation exhibits "the result
-        // is derived from parameter k", so a body is never validated against a
-        // declared derived result. It falls back to the contract-free analysis.
-        ResourceReturnMode::Derived { .. } => false,
+        // Card W43-RESULT-ALIAS-RETURNED (W43-LIBC-RESULT-ALIAS answered
+        // `false` here). Every exit hands back either a null pointer constant,
+        // which only a nullable result permits, or a derived binding over the
+        // named formal's name-only site whose relation the contract covers: an
+        // exact step is covered by either extent and an interior one only by
+        // `Interior`; a step that may be null, or drops `const`, only by a
+        // contract that says so. Every other returned value — none, a fresh or
+        // formal site, an ambiguous or mixed binding, or a pointer derived from
+        // anything else — refutes it. An exit may not leave a reallocation
+        // pending either.
+        ResourceReturnMode::Derived {
+            parameter,
+            extent,
+            nullable,
+            const_dropped,
+        } => {
+            observation.pending_replacements.is_empty()
+                && !observation.derived_base_touched
+                && match observation.returned {
+                    ReturnedValue::Null => nullable,
+                    ReturnedValue::Derived {
+                        site,
+                        extent: observed_extent,
+                        nullable: observed_nullable,
+                        const_dropped: observed_dropped,
+                    } => {
+                        entry.derived_bases.get(&site) == Some(&parameter)
+                            && (observed_extent == DerivedExtent::Exact
+                                || extent == DerivedExtent::Interior)
+                            && (!observed_nullable || nullable)
+                            && (!observed_dropped || const_dropped)
+                    }
+                    ReturnedValue::None | ReturnedValue::Site { .. } | ReturnedValue::Ambiguous => {
+                        false
+                    }
+                }
+        }
     }
 }
 
@@ -1279,6 +1370,9 @@ fn strongly_connected_components(graph: &BTreeMap<String, BTreeSet<String>>) -> 
 
 #[path = "legacy_neutral.rs"]
 mod neutral;
+
+#[path = "legacy_derived_summary.rs"]
+mod derived;
 
 #[cfg(test)]
 #[path = "../tests/unit/legacy_summary.rs"]

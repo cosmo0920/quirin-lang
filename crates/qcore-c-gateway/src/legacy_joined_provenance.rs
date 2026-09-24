@@ -239,12 +239,26 @@ fn outgoing(cfg: &LegacyCfg, node: usize, incoming: &Facts) -> Vec<Facts> {
     (0..cfg.nodes[node].successors.len())
         .map(|edge| {
             let mut branch = out.clone();
-            if let LegacyInstruction::BranchOnNull {
-                source,
-                true_is_null,
-            } = &cfg.nodes[node].instruction
-                && ((edge == 0) == *true_is_null)
-            {
+            // Card W43-DESCRIPTOR-RESOURCE-TRACKING: a validity test's invalid
+            // edge carries no resource at the tested identity, exactly as a
+            // null test's null edge does.
+            let absent_source = match &cfg.nodes[node].instruction {
+                LegacyInstruction::BranchOnNull {
+                    source,
+                    true_is_null,
+                } if (edge == 0) == *true_is_null => Some(source),
+                LegacyInstruction::BranchOnValidity {
+                    source,
+                    when_true,
+                    when_false,
+                } if super::descriptor_custody::edge_fact(*when_true, *when_false, edge)
+                    == super::ValidityFact::Invalid =>
+                {
+                    Some(source)
+                }
+                _ => None,
+            };
+            if let Some(source) = absent_source {
                 let absent = branch
                     .bindings
                     .iter()
@@ -584,6 +598,7 @@ mod tests {
             nodes,
             publications: PublicationFacts::default(),
             conditional_names: BTreeSet::from(["p".to_string()]),
+            traversal: Default::default(),
         }
     }
 
@@ -630,6 +645,7 @@ mod tests {
             nodes,
             publications: PublicationFacts::default(),
             conditional_names: BTreeSet::from(["p".to_string()]),
+            traversal: Default::default(),
         }
     }
 
@@ -1015,6 +1031,7 @@ mod tests {
             nodes,
             publications: PublicationFacts::default(),
             conditional_names: BTreeSet::from(["p".to_string()]),
+            traversal: Default::default(),
         };
         assert_eq!(
             derive(&cfg)[2].get(&7),

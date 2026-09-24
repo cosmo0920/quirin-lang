@@ -2,7 +2,7 @@
 
 Library crate `quirin-provider-libc` (Rust library `quirin_provider_libc`) in the separate
 `providers/` workspace. It owns the shared Quirin contract modules for
-the C standard library and POSIX, under `contracts/libc/` (14 modules: `errno`, heap memory, `pthread_mutex`, and card W43-LIBC-CONTRACTS' `dlfcn`, `math`, `process`, `socket`, `stdio`, `stdlib`, `string`, `sys_stat`, `threads`, `time`, `unistd`). Every declaration is a trusted assumption about the C library, read from the prototype the pinned units declare; the modules' comments record what each declines and why. These are canonical
+the C standard library and POSIX, under `contracts/libc/` (15 modules: `errno`, heap memory, `pthread_mutex`, card W43-LIBC-CONTRACTS' `dlfcn`, `math`, `process`, `socket`, `stdio`, `stdlib`, `string`, `sys_stat`, `threads`, `time`, `unistd`, and card W43-LIBC-RESTRICT-PROTOTYPES' `regex`). Every declaration is a trusted assumption about the C library, read from the prototype the pinned units declare; the modules' comments record what each declines and why. These are canonical
 sources, not copies: the [corpus index](../../contract/corpus.json) names this
 crate's `contracts/` as a root and rejects duplicate logical names. The crate is
 data only; it links no provider runtime and is not an executable package.

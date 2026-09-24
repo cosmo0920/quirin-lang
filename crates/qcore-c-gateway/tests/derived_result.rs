@@ -120,6 +120,8 @@ fn outcome_with(body: &str, contracts: &ResourceContracts) -> (&'static str, Vec
             LegacyDiagnosticKind::CustodyConflict { .. } => "custody_conflict".to_owned(),
             LegacyDiagnosticKind::InvalidRelease { .. } => "invalid_release".to_owned(),
             LegacyDiagnosticKind::UseAfterRelease { .. } => "use_after_release".to_owned(),
+            LegacyDiagnosticKind::KindMismatchedRelease { .. } => "invalid_release".to_owned(),
+            LegacyDiagnosticKind::UseAfterClose { .. } => "use_after_release".to_owned(),
             LegacyDiagnosticKind::Unsupported { description } => {
                 format!("unsupported:{description}")
             }

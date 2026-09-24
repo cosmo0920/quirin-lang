@@ -1,0 +1,29 @@
+{
+ "note": "W43-INDEX-TRAVERSAL integration, 2026-09-25. The card (measured against docs/reports/w43-indirect-access-general/artifacts) composed onto the combined tree docs/reports/w43-result-alias-returned/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 1479 added 130 functions 11 units 0); functions moved (combined): [('bitLen', ('Unknown', 'Safe')), ('char_lookup', ('Unknown', 'Safe')), ('cio_file_native_filename_check', ('Unknown', 'Safe')), ('cio_file_native_get_size', ('Unknown', 'Safe')), ('cio_os_isdir', ('Unknown', 'Safe')), ('decode_hex_digit', ('Unknown', 'Safe')), ('mk_kernel_features', ('Unknown', 'Safe')), ('mk_server_lib_notify_event_loop_break', ('Unknown', 'Safe')), ('rd_kafka_q_check_yield', ('Unknown', 'Safe')), ('rd_string_hash', ('Unknown', 'Safe')), ('reverse_char_lookup', ('Unknown', 'Safe')), ('str_searchr', ('Unknown', 'Safe')), ('ut_write_varint', ('Unknown', 'Safe'))]. overlap (already removed by earlier integrations): 1 [('cio_utils_recursive_delete', 'unresolved resource identity `ret`', 'cio_utils.c:96')] complementary Unknown->Safe (card cleared the last blocker): ['cio_file_native_get_size', 'cio_os_isdir'] No bounds claim. Closes the out[m++] soundness hole W43-INDIRECT-ACCESS-GENERAL introduced (no published verdict relied on it). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-index-traversal/integration/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 3,
+ "provisional_unsafe": 42,
+ "unknown": 136,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 271,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w43-index-traversal/integration/artifacts/",
+ "source": "docs/reports/w43-index-traversal/integration/integration-confirmation.md; preceding baseline docs/reports/w43-result-alias-returned/integration/artifacts",
+ "unknown_alias_diagnostics": 4320,
+ "unsupported_diagnostics": 46855,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 287,
+  "provisional_unsafe": 84,
+  "unknown": 4463
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 135,
+  "none": 49,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

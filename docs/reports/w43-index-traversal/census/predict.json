@@ -1,0 +1,86 @@
+{
+ "family_leaves_forecast_to_leave": {
+  "unknown_alias": 650,
+  "unmodeled call, aggregate or indirect access in branch condition": 394,
+  "unmodeled call, aggregate or indirect access in do-while condition": 2,
+  "unmodeled call, aggregate or indirect access in for-loop condition": 86,
+  "unmodeled call, aggregate or indirect access in loop condition": 24,
+  "unmodeled call, aggregate or indirect access in switch expression": 18,
+  "unmodeled expression may mutate a formal resource identity": 30,
+  "unmodeled increment or decrement expression": 149,
+  "unrecognized assignment destination": 104,
+  "unsupported assignment expression": 39
+ },
+ "family_leaves_in_unknown_functions": {
+  "indirect memory access is outside the resource projection": 17300,
+  "unknown_alias": 4512,
+  "unmodeled call, aggregate or indirect access in branch condition": 8712,
+  "unmodeled call, aggregate or indirect access in do-while condition": 31,
+  "unmodeled call, aggregate or indirect access in for-loop condition": 927,
+  "unmodeled call, aggregate or indirect access in loop condition": 318,
+  "unmodeled call, aggregate or indirect access in return expression": 499,
+  "unmodeled call, aggregate or indirect access in switch expression": 96,
+  "unmodeled expression may mutate a formal resource identity": 118,
+  "unmodeled increment or decrement expression": 678,
+  "unrecognized assignment destination": 772,
+  "unsupported assignment expression": 1645
+ },
+ "function_forecast": {
+  "all classes": 13,
+  "lexical + gated-step": 8,
+  "lexical + scalar-alias": 12,
+  "lexical only (condition, step)": 8
+ },
+ "functions_all_classes": [
+  "chunkio/cio_chunk.c/cio_chunk_is_file",
+  "chunkio/cio_file_unix.c/cio_file_native_filename_check",
+  "ctraces/ctr_id.c/decode_hex_digit",
+  "librdkafka/crc32c.c/gf2_matrix_times",
+  "librdkafka/rdhdrhistogram.c/bitLen",
+  "librdkafka/rdkafka_queue.c/rd_kafka_q_check_yield",
+  "librdkafka/rdstring.c/rd_string_hash",
+  "librdkafka/rdunittest_msgset_errors.c/ut_write_varint",
+  "monkey-libevent/mk_server/mk_http_parser.c/char_lookup",
+  "monkey-libevent/mk_server/mk_http_parser.c/reverse_char_lookup",
+  "monkey-libevent/mk_server/mk_http_parser.c/str_searchr",
+  "monkey-libevent/mk_server/mk_kernel.c/mk_kernel_features",
+  "monkey-libevent/mk_server/mk_server.c/mk_server_lib_notify_event_loop_break"
+ ],
+ "functions_all_classes_by_file": {
+  "cio_chunk.c": 1,
+  "cio_file_unix.c": 1,
+  "crc32c.c": 1,
+  "ctr_id.c": 1,
+  "mk_server": 5,
+  "rdhdrhistogram.c": 1,
+  "rdkafka_queue.c": 1,
+  "rdstring.c": 1,
+  "rdunittest_msgset_errors.c": 1
+ },
+ "functions_lexical": [
+  "chunkio/cio_file_unix.c/cio_file_native_filename_check",
+  "ctraces/ctr_id.c/decode_hex_digit",
+  "librdkafka/rdkafka_queue.c/rd_kafka_q_check_yield",
+  "librdkafka/rdstring.c/rd_string_hash",
+  "monkey-libevent/mk_server/mk_http_parser.c/char_lookup",
+  "monkey-libevent/mk_server/mk_http_parser.c/reverse_char_lookup",
+  "monkey-libevent/mk_server/mk_http_parser.c/str_searchr",
+  "monkey-libevent/mk_server/mk_server.c/mk_server_lib_notify_event_loop_break"
+ ],
+ "leaves_by_class_all_statuses": {
+  "condition": 580,
+  "gated-step": 32,
+  "scalar-alias": 698,
+  "step": 302
+ },
+ "leaves_by_class_unknown_functions": {
+  "condition": 524,
+  "gated-step": 30,
+  "scalar-alias": 650,
+  "step": 292
+ },
+ "run": "private/runs/census2",
+ "unexplained_leaves": {
+  "indirect memory access is outside the resource projection": 259
+ }
+}

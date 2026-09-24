@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W43-LIBC-RESTRICT-PROTOTYPES on merge 891850e4 (onto main 0a07cb57, after W43-INDIRECT-ACCESS-GENERAL), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5254 core Rust passed / 0 failed / 11 ignored over 284 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 172 Lean audits; 330 root Python tests; 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w43-indirect-access-general/artifacts/ exits 1 by design (this card moves the corpus); the composition check shows the combined run's delta against that baseline equals the card's own delta against its baseline exactly (36 leaves removed, 2 added, 3 functions Unknown -> Safe, 0 unit moves). The combined run is archived as the new baseline in integration/artifacts/.",
+ "workspace_tests": 5254,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 330,
+ "lean_audits": 172,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

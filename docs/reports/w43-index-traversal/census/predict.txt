@@ -1,0 +1,39 @@
+W43-INDEX-TRAVERSAL forecast from the traversal census
+
+Leaves by forecast class (all statuses / Unknown functions):
+  condition         580 /    524
+  gated-step         32 /     30
+  scalar-alias      698 /    650
+  step              302 /    292
+
+Families in Unknown functions: leaves / forecast to leave:
+   17300 /      0  indirect memory access is outside the resource projection
+    4512 /    650  unknown_alias
+    8712 /    394  unmodeled call, aggregate or indirect access in branch condition
+      31 /      2  unmodeled call, aggregate or indirect access in do-while condition
+     927 /     86  unmodeled call, aggregate or indirect access in for-loop condition
+     318 /     24  unmodeled call, aggregate or indirect access in loop condition
+     499 /      0  unmodeled call, aggregate or indirect access in return expression
+      96 /     18  unmodeled call, aggregate or indirect access in switch expression
+     118 /     30  unmodeled expression may mutate a formal resource identity
+     678 /    149  unmodeled increment or decrement expression
+     772 /    104  unrecognized assignment destination
+    1645 /     39  unsupported assignment expression
+
+Unexplained leaves (no census record at the key): {'indirect memory access is outside the resource projection': 259}
+
+Unknown functions forecast to move (upper bounds):
+      8  lexical only (condition, step)
+      8  lexical + gated-step
+     12  lexical + scalar-alias
+     13  all classes
+
+Functions under the lexical classes alone:
+  chunkio/cio_file_unix.c/cio_file_native_filename_check
+  ctraces/ctr_id.c/decode_hex_digit
+  librdkafka/rdkafka_queue.c/rd_kafka_q_check_yield
+  librdkafka/rdstring.c/rd_string_hash
+  monkey-libevent/mk_server/mk_http_parser.c/char_lookup
+  monkey-libevent/mk_server/mk_http_parser.c/reverse_char_lookup
+  monkey-libevent/mk_server/mk_http_parser.c/str_searchr
+  monkey-libevent/mk_server/mk_server.c/mk_server_lib_notify_event_loop_break

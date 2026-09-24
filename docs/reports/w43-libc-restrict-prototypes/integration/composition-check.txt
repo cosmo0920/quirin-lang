@@ -1,0 +1,4 @@
+card delta:     removed 36 added 2 functions 3 units 0
+combined delta: removed 36 added 2 functions 3 units 0
+functions moved (combined): [('mk_plugin_load_symbol', ('Unknown', 'Safe')), ('mk_signal_thread_sigpipe_safe', ('Unknown', 'Safe')), ('rd_regex_exec', ('Unknown', 'Safe'))]
+COMPOSES

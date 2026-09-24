@@ -272,17 +272,32 @@ fn a_body_that_writes_the_deciding_scalar_reaches_the_unknown_arm() {
     if !clang_available() {
         return;
     }
-    for body in ["flag = 1;", "flag++;", "flag = z_unknown(1);", "flag = -1;"] {
+    // Deliberate pin update, card W43-INDEX-TRAVERSAL. `flag` is a declared
+    // scalar, and a declared scalar's fact joined with no fact is now no fact
+    // (the index-fact join), rather than the unknown, possibly-null pointer
+    // the generic arm made of it. The header then sees no binding at all,
+    // which refines nothing and propagates both edges exactly as the Unknown
+    // arm did, without an unresolved alias. A body whose write the projection
+    // refuses (`z_unknown`) still poisons the binding, so it still reaches
+    // the Unknown arm. Either way nothing is Infeasible, nothing is retained,
+    // and the exit is reached.
+    for (body, unknown_arm) in [
+        ("flag = 1;", false),
+        ("flag++;", false),
+        ("flag = z_unknown(1);", true),
+        ("flag = -1;", false),
+    ] {
         let run = run(&format!(
             "void subject(void) {{ int flag = 0; (void)flag; void *p = q_alloc(); \
              while (!flag) {{ {body} }} (void)p; }}"
         ));
-        assert!(
+        assert_eq!(
             run.diagnostics.iter().any(|kind| matches!(
                 kind,
                 LegacyDiagnosticKind::UnknownAlias { variable } if variable == "flag"
             )),
-            "`{body}` must reach the Unknown arm: {:?}",
+            unknown_arm,
+            "`{body}`: {:?}",
             run.diagnostics
         );
         assert_eq!(

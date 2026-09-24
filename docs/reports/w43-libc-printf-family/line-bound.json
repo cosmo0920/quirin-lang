@@ -1,0 +1,288 @@
+{
+ "names": [
+  "printf",
+  "fprintf",
+  "snprintf",
+  "sprintf"
+ ],
+ "all_leaves_on_family_lines": 6,
+ "by_status": {
+  "Unknown": 6
+ },
+ "candidates": [
+  {
+   "unit": "cmetrics/cmt_log.c",
+   "function": "cmt_errno_print",
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `fprintf`": 1
+   }
+  },
+  {
+   "unit": "ctraces/ctr_log.c",
+   "function": "ctr_errno_print",
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `fprintf`": 1
+   }
+  },
+  {
+   "unit": "librdkafka/cJSON.c",
+   "function": "cJSON_Version",
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `sprintf`": 1
+   }
+  },
+  {
+   "unit": "librdkafka/rdkafka_broker.c",
+   "function": "rd_kafka_mk_nodename",
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `snprintf`": 1
+   }
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_buf_read_CurrentLeader",
+   "status": "Unknown",
+   "leaves": {
+    "unresolved resource identity `RD_KAFKA_RESP_ERR__UNDERFLOW`": 3,
+    "C operator `sizeof` requires type/operand analysis": 2,
+    "call to uncontracted function `__bswap_32`": 2,
+    "call to uncontracted function `snprintf`": 3,
+    "indirect memory access is outside the resource projection": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unsupported assignment expression": 3,
+    "store through `*_vp` without an out-parameter contract": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1
+   }
+  },
+  {
+   "unit": "chunkio/cio_log.c",
+   "function": "cio_errno_print",
+   "status": "Unknown",
+   "leaves": {
+    "call to uncontracted function `fprintf`": 1
+   }
+  }
+ ],
+ "same_line_leaves": [
+  {
+   "status": "Unknown",
+   "category": "unsupported",
+   "shape": "indirect memory access is outside the resource projection",
+   "leaves": 1235
+  },
+  {
+   "status": "Unknown",
+   "category": "unknown_alias",
+   "shape": "unresolved resource identity `_`",
+   "leaves": 1024
+  },
+  {
+   "status": "Unknown",
+   "category": "unsupported",
+   "shape": "unmodeled call, aggregate or indirect access in branch condition",
+   "leaves": 1013
+  },
+  {
+   "status": "Unknown",
+   "category": "unsupported",
+   "shape": "unsupported assignment expression",
+   "leaves": 724
+  },
+  {
+   "status": "Unknown",
+   "category": "unsupported",
+   "shape": "braced initializer, expression, or declaration is not modeled",
+   "leaves": 621
+  },
+  {
+   "status": "Unknown",
+   "category": "unsupported",
+   "shape": "call to uncontracted function `_`",
+   "leaves": 583
+  },
+  {
+   "status": "Unknown",
+   "category": "unsupported",
+   "shape": "C operator `_` requires type/operand analysis",
+   "leaves": 393
+  },
+  {
+   "status": "Unknown",
+   "category": "unsupported",
+   "shape": "store through `_` without an out-parameter contract",
+   "leaves": 341
+  },
+  {
+   "status": "Unsafe",
+   "category": "unsupported",
+   "shape": "braced initializer, expression, or declaration is not modeled",
+   "leaves": 142
+  },
+  {
+   "status": "Unknown",
+   "category": "unsupported",
+   "shape": "unrecognized assignment destination",
+   "leaves": 101
+  },
+  {
+   "status": "Unsafe",
+   "category": "unsupported",
+   "shape": "unmodeled call, aggregate or indirect access in branch condition",
+   "leaves": 93
+  },
+  {
+   "status": "Unknown",
+   "category": "unsupported",
+   "shape": "unmodeled call, aggregate or indirect access in loop condition",
+   "leaves": 80
+  },
+  {
+   "status": "Unsafe",
+   "category": "unsupported",
+   "shape": "indirect memory access is outside the resource projection",
+   "leaves": 60
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "leaves": 26
+  },
+  {
+   "status": "Unsafe",
+   "category": "unknown_alias",
+   "shape": "unresolved resource identity `_`",
+   "leaves": 21
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "leaves": 16
+  },
+  {
+   "status": "Unsafe",
+   "category": "unsupported",
+   "shape": "unsupported assignment expression",
+   "leaves": 14
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "leaves": 13
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "leaves": 13
+  },
+  {
+   "status": "Unsafe",
+   "category": "unsupported",
+   "shape": "call to uncontracted function `_`",
+   "leaves": 12
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "leaves": 12
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "leaves": 12
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdunittest_msgset_errors.c:1200",
+   "leaves": 11
+  },
+  {
+   "status": "Unsafe",
+   "category": "unsupported",
+   "shape": "C operator `_` requires type/operand analysis",
+   "leaves": 9
+  },
+  {
+   "status": "Unsafe",
+   "category": "unsupported",
+   "shape": "store through `_` without an out-parameter contract",
+   "leaves": 8
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdunittest_msgset_errors.c:445",
+   "leaves": 8
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdunittest_msgset_errors.c:551",
+   "leaves": 7
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdunittest_msgset_errors.c:657",
+   "leaves": 7
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdunittest_msgset_errors.c:1125",
+   "leaves": 5
+  },
+  {
+   "status": "Unknown",
+   "category": "unsupported",
+   "shape": "unmodeled expression may mutate a formal resource identity",
+   "leaves": 4
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1203",
+   "leaves": 4
+  },
+  {
+   "status": "Unsafe",
+   "category": "unsupported",
+   "shape": "unrecognized assignment destination",
+   "leaves": 3
+  },
+  {
+   "status": "Unsafe",
+   "category": "leak",
+   "shape": "live obligation acquired at rdbuf.c:1847",
+   "leaves": 2
+  },
+  {
+   "status": "Unsafe",
+   "category": "unsupported",
+   "shape": "unmodeled call, aggregate or indirect access in loop condition",
+   "leaves": 2
+  },
+  {
+   "status": "Unknown",
+   "category": "unsupported",
+   "shape": "local declaration may shadow a formal resource identity",
+   "leaves": 2
+  },
+  {
+   "status": "Unknown",
+   "category": "unsupported",
+   "shape": "unmodeled increment or decrement expression",
+   "leaves": 1
+  }
+ ]
+}

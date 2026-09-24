@@ -1,0 +1,80 @@
+{
+  "added_leaves": [],
+  "added_total": 0,
+  "after": "measure/after",
+  "before": "measure/before",
+  "diagnostic_counts": {
+    "after": {
+      "leak": 272,
+      "summary_conflict": 1,
+      "unknown_alias": 4657,
+      "unsupported": 48928
+    },
+    "before": {
+      "leak": 272,
+      "summary_conflict": 1,
+      "unknown_alias": 4657,
+      "unsupported": 48930
+    }
+  },
+  "function_moves": [
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "mk_string_casestr",
+      "unit": "mk_core/mk_string.c"
+    },
+    {
+      "after": "Safe",
+      "before": "Unknown",
+      "function": "XXH_memcpy",
+      "unit": "rdxxhash.c"
+    }
+  ],
+  "function_status": {
+    "after": {
+      "Safe": 259,
+      "Unknown": 4491,
+      "Unsafe": 84
+    },
+    "before": {
+      "Safe": 257,
+      "Unknown": 4493,
+      "Unsafe": 84
+    }
+  },
+  "removed_leaves": [
+    {
+      "category": "unsupported",
+      "count": 1,
+      "description": "unmodeled call, aggregate or indirect access in return expression",
+      "function": "mk_string_casestr",
+      "origin": "mk_core/mk_string.c:316",
+      "unit": "mk_core/mk_string.c"
+    },
+    {
+      "category": "unsupported",
+      "count": 1,
+      "description": "unmodeled call, aggregate or indirect access in return expression",
+      "function": "XXH_memcpy",
+      "origin": "rdxxhash.c:112",
+      "unit": "rdxxhash.c"
+    }
+  ],
+  "removed_total": 2,
+  "unit_moves": [],
+  "unit_status": {
+    "after": {
+      "Safe": 2,
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4
+    },
+    "before": {
+      "Safe": 2,
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4
+    }
+  }
+}

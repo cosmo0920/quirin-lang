@@ -1,0 +1,76 @@
+module contract;
+
+// Card W43-DESCRIPTOR-RESOURCE-TRACKING: a generic surface for kind-indexed
+// custody. Test assumptions, not a model of any real library. `k_open` and
+// `k_close` stand for a descriptor pair (`open`/`close`), `k_fopen` and
+// `k_fclose` for a stream pair (`fopen`/`fclose`), `k_alloc` and `k_free` for
+// the heap, `k_read` for a declared descriptor use and `k_conn_new` for a
+// heap-allocated record a descriptor might be stored into.
+
+extern fn k_open(path: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(path);
+    ensures normal resource_return_owned(sentinel);
+    ensures normal resource_return_kind(descriptor);
+};
+
+extern fn k_close(fd: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(fd, valid);
+    ensures normal resource_kind(fd, descriptor);
+    ensures normal resource_return_none();
+};
+
+extern fn k_read(fd: i32, buffer: ptr<mut, u8>, size: usize) -> isize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(buffer);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_none();
+};
+
+extern fn k_fopen(path: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(path);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(stream);
+};
+
+extern fn k_fclose(stream: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(stream, nonnull);
+    ensures normal resource_kind(stream, stream);
+    ensures normal resource_return_none();
+};
+
+extern fn k_fflush(stream: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(stream);
+    ensures normal resource_return_none();
+};
+
+extern fn k_alloc(size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn k_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn k_conn_new() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nullable);
+};

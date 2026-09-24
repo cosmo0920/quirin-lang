@@ -313,10 +313,23 @@ fn a_released_base_read_in_a_condition_keeps_its_refusal() {
          q_free(n); if (n->flag) { return; } }",
     );
     assert_ne!(measured.status, AnalysisStatus::Safe);
+    // Deliberate pin update, card W43-INDEX-TRAVERSAL: the condition is now
+    // the typed read of `n->flag`, whose base was released on the reaching
+    // path. The read is refused (`unknown_alias`) and accused: a
+    // `use_after_release` candidate, provisional `Unsafe`, which is stronger
+    // than the lexical branch refusal it replaces and still never neutralizes
+    // the read.
     assert!(
-        measured.unsupported().contains(&BRANCH.to_owned()),
-        "the existing branch refusal must be retained, got {:?}",
-        measured.unsupported()
+        measured
+            .diagnostics
+            .iter()
+            .any(|kind| matches!(kind, LegacyDiagnosticKind::UseAfterRelease { .. }))
+            && measured.diagnostics.iter().any(|kind| matches!(
+                kind,
+                LegacyDiagnosticKind::UnknownAlias { variable } if variable == "n"
+            )),
+        "the released read must be refused and accused, got {:?}",
+        measured.diagnostics
     );
     // And the whole point: no arm of it reports a discharge the release would
     // have contradicted.

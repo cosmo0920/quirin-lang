@@ -13,11 +13,13 @@ class CanonicalCorpus(unittest.TestCase):
         root = Path(__file__).resolve().parents[2]
         self.assertFalse((root / "contract/qcore").exists())
         modules = contract_corpus.sources(root)
-        # 108 -> 109: W43-DESCRIPTOR-NATIVE-CHECK's shared observation policy
+        # 108 -> 109: W43-LIBC-RESTRICT-PROTOTYPES adds libc/regex.qcore.
+        # 109 -> 110: W43-DESCRIPTOR-RESOURCE-TRACKING adds libc/dirent.qcore.
+        # 110 -> 111: W43-DESCRIPTOR-NATIVE-CHECK's shared observation policy
         # library/descriptor_native_observation.qcore in quirin-provider-shared.
-        self.assertEqual(len(modules), 109)
+        self.assertEqual(len(modules), 111)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 72)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 37)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 39)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 

@@ -1,0 +1,4 @@
+card delta:     removed 2 added 0 functions 2 units 0
+combined delta: removed 2 added 0 functions 2 units 0
+functions moved (combined): [('XXH_memcpy', ('Unknown', 'Safe')), ('mk_string_casestr', ('Unknown', 'Safe'))]
+COMPOSES

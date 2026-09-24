@@ -358,6 +358,8 @@ fn describe_diagnostic(diagnostic: &qcore_compiler::LegacyDiagnostic) -> String 
         Kind::CustodyConflict { .. } => "conflicting custody".to_owned(),
         Kind::InvalidRelease { .. } => "release of a derived pointer".to_owned(),
         Kind::UseAfterRelease { .. } => "use of a derived pointer after release".to_owned(),
+        Kind::KindMismatchedRelease { .. } => "release of another resource kind".to_owned(),
+        Kind::UseAfterClose { .. } => "use of a released handle".to_owned(),
         Kind::SummaryConflict { .. } => "inferred summary contradicts declaration".to_owned(),
     }
 }

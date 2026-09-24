@@ -81,6 +81,16 @@
 //!   the argument's own value or a pointer into its object, so returning it
 //!   hands the caller an alias of an object whose custody is not fresh.
 //!
+//!   **Amended by card W43-RESULT-ALIAS-RETURNED.** The refusal above is still
+//!   the answer on every CFG the analyzer decides a function on, except one: a
+//!   CFG built with `admit_derived_returns` (`build_derived_return_cfg`)
+//!   desugars the derived call exactly as this module desugars an owned one.
+//!   That CFG is analysed only under an entry whose result is itself `Derived`
+//!   from a borrowed formal, and there the exit escapes *nothing*: the
+//!   returned pointer owns nothing, and the summary hands the caller the same
+//!   non-owning relation the callee's contract stated. See
+//!   `legacy_summary`'s derived-result route for the validation.
+//!
 //! The **parameter** modes are applied by `apply_contract_call` unchanged, and
 //! that is not a new trust: a statement-position call has applied them at every
 //! other position since Cycle 9, and constraint 4's contract-or-validated-
@@ -194,6 +204,53 @@ pub(crate) fn escapes_only_fresh_custody(result: ResourceReturnMode) -> bool {
         // custody, so it is refused by name exactly as a reallocation is.
         ResourceReturnMode::Reallocated { .. } | ResourceReturnMode::Derived { .. } => false,
     }
+}
+
+/// Card **W43-RESULT-ALIAS-RETURNED**: the place a null-constant `return`
+/// escapes in a CFG built for derived-result validation.
+///
+/// `canonical_place` refuses `NULL` as a place, so no statement can ever bind
+/// it: the escape's transfer finds no binding and is the `NoOp` it replaces.
+/// Only `observe_exit` reads the name, to tell "returns a null pointer
+/// constant" from "returns some pointer this projection does not track", which
+/// a `NoOp` exit cannot distinguish.
+pub(crate) const NULL_RETURN_PLACE: &str = "NULL";
+
+/// Card **W43-RESULT-ALIAS-RETURNED**: is the whole `return` expression a null
+/// pointer constant (C11 6.3.2.3p3)?
+///
+/// Read structurally after outer parentheses: `0`, `NULL`, `nullptr`, or a
+/// cast of `0` to `void *` (glibc's preprocessed `NULL` is `((void *)0)`).
+/// Anything else, including a cast of `0` to another pointer type, answers
+/// `false` and is observed as an untracked return, which the derived route
+/// refuses.
+pub(crate) fn is_null_pointer_constant(texts: &[&str]) -> bool {
+    let mut texts = texts;
+    loop {
+        match texts {
+            ["0"] | ["NULL"] | ["nullptr"] => return true,
+            ["(", "void", "*", ")", rest @ ..] => texts = rest,
+            ["(", inner @ .., ")"] if balanced(inner) => texts = inner,
+            _ => return false,
+        }
+    }
+}
+
+/// Whether every parenthesis in `texts` closes inside it, so stripping one
+/// enclosing pair keeps the expression's structure.
+fn balanced(texts: &[&str]) -> bool {
+    let mut depth = 0usize;
+    for text in texts {
+        match *text {
+            "(" => depth += 1,
+            ")" => match depth.checked_sub(1) {
+                Some(next) => depth = next,
+                None => return false,
+            },
+            _ => {}
+        }
+    }
+    depth == 0
 }
 
 /// Is `place` spelled nowhere in `tokens`?

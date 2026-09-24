@@ -1206,6 +1206,26 @@ fn c11_memory_read_projection_and_certificate_recheck_fail_closed() {
             &contracts(),
         )
         .unwrap();
+        // Deliberate pin update, card W43-INDEX-TRAVERSAL: the condition
+        // `*p` is now a typed read whose base was released on the reaching
+        // path, so it is a `use_after_release` candidate (provisional
+        // `Unsafe`) rather than a bare refusal. Never `Safe` either way.
+        if tail.starts_with("if") {
+            let UnrestrictedLegacyResult::Unsafe(summary) = &result else {
+                panic!("{tail}: {result:?}");
+            };
+            assert!(
+                summary.functions["subject"]
+                    .diagnostics
+                    .iter()
+                    .any(|diagnostic| matches!(
+                        diagnostic.kind,
+                        LegacyDiagnosticKind::UseAfterRelease { .. }
+                    )),
+                "{tail}: {result:?}"
+            );
+            continue;
+        }
         assert!(
             matches!(result, UnrestrictedLegacyResult::Unknown { .. }),
             "{tail}: {result:?}"
@@ -1248,6 +1268,7 @@ fn alias_cfg(nodes: Vec<LegacyCfgNode>) -> LegacyCfg {
         // pre-pass measures exactly what it measured before those cards.
         publications: PublicationFacts::default(),
         conditional_names: BTreeSet::new(),
+        traversal: Default::default(),
     }
 }
 
@@ -1510,7 +1531,6 @@ fn increment_side_effects_outside_the_unary_scalar_statement_remain_refused() {
         "int n = 0; do {} while (n++);",
         "int n = 0; switch(n++) { default: break; }",
         "int n = 0; return n++;",
-        "char *p = q_alloc(); p++; q_free(p);",
         "int n = 0; consume(n++);",
     ] {
         let summary = analyze(&format!("int subject(void) {{ {body} }}"));
@@ -1524,6 +1544,26 @@ fn increment_side_effects_outside_the_unary_scalar_statement_remain_refused() {
             summary.diagnostics
         );
     }
+    // Deliberate pin update, card W43-INDEX-TRAVERSAL. `p++` on a declared
+    // `char *` is now a modeled pointer step. It refuses because it steps the
+    // allocation's only name (`unknown_alias`), and releasing the stepped
+    // pointer is an `invalid_release` candidate: `p` no longer holds the value
+    // the allocator returned. Stronger than the refusal it replaces, and still
+    // never `Safe`.
+    let body = "char *p = q_alloc(); p++; q_free(p);";
+    let summary = analyze(&format!("int subject(void) {{ {body} }}"));
+    assert_eq!(summary.status, AnalysisStatus::Unsafe, "{body}");
+    assert!(
+        has(&summary, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::UnknownAlias { variable } if variable == "p"
+        )) && has(&summary, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::InvalidRelease { .. }
+        )),
+        "{body}: {:?}",
+        summary.diagnostics
+    );
 }
 
 #[test]

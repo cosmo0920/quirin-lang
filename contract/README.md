@@ -12,7 +12,7 @@ crates: `providers/quirin-provider-{libc,cfl,mpack,msgpack,fluent-bit}/contracts
 per library, and `providers/quirin-provider-shared/contracts/` for the
 `language/` and `library/` policies. libc contracts live only in
 `quirin-provider-libc`.
-The [corpus index](corpus.json) selects these roots for all 109 module and clause
+The [corpus index](corpus.json) selects these roots for all 111 module and clause
 pins; it is validation metadata, not an implicit runtime contract selection.
 Its schema 2 also names the published load path
 (`providers/contract-load-path.json`, card CONTRACT-INHERIT-ADOPTION), so a
@@ -276,9 +276,11 @@ are removed instead: `monkey/wait_source_policy.qcore` is the single owner of
 `source_identity`, which the timeout-teardown consumer now reads from it. See
 the [report](../docs/reports/contract-view-projection-check/README.md).
 
-Non-null error sentinels (a resource returned as `MAP_FAILED` or `-1` rather than null) stay
-unrepresentable: the target interface records only nullability, so they need
-interface work rather than loader vocabulary.
+A pointer error sentinel (a resource returned as `MAP_FAILED` rather than null)
+stays unrepresentable. The integer sentinel `-1` of a file descriptor is
+representable through the `descriptor` kind and its `sentinel`/`valid`
+validity words (`resource_kind`, `resource_return_kind`; contract spec §C04.6,
+card W43-DESCRIPTOR-RESOURCE-TRACKING), and only there.
 
 `contract_loader::load_resource_contract_manifest` loads these files at runtime;
 `load_resource_contract_files` and `load_resource_contract_sources` expose the

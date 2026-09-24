@@ -656,7 +656,7 @@ fn a_recursive_component_carrying_a_declaration_publishes_no_inferred_record() {
 /// refused before any recursion rule is consulted, so the neutral route neither
 /// admits them nor makes them reachable.
 #[test]
-fn heap_link_chain_teardown_and_pointer_field_recursion_stay_refused() {
+fn heap_link_chain_teardown_stays_refused_and_a_pointer_field_search_certifies() {
     if !clang_available() {
         return;
     }
@@ -678,8 +678,35 @@ fn heap_link_chain_teardown_and_pointer_field_recursion_stay_refused() {
         int seek(struct node *n, int key) { if (!n) { return 0; } if (n->key == key) { return 1; } int r = seek(n->next, key); return r; }\n\
         void subject(void) { void *p = q_alloc(); seek(p, 1); q_free(p); }";
     let outcome = run(seek, None);
-    assert_eq!(outcome.status("seek"), AnalysisStatus::Unknown);
-    assert!(outcome.records.is_empty());
+    // Deliberate pin update, card W43-INDEX-TRAVERSAL. Pointer-field
+    // *recursion* was refused here only because its branch condition
+    // `n->key == key` was an unmodeled read; the recursion rule never refused
+    // it (design §6.4). That read is now the typed condition read, with its
+    // dereference obligation on `n` (an unbound formal after its null test),
+    // so the search is a neutral recursive component and certifies. The
+    // heap-link *teardown* above, which releases through the chain, keeps its
+    // refusal: that boundary is architectural (§8) and untouched.
+    assert_eq!(outcome.status("seek"), AnalysisStatus::Safe);
+    assert_eq!(
+        outcome
+            .records
+            .keys()
+            .map(String::as_str)
+            .collect::<Vec<_>>(),
+        ["seek", "subject"],
+        "{:?}",
+        outcome.records
+    );
+    assert!(
+        outcome.records["seek"]
+            .contract
+            .parameters
+            .iter()
+            .all(|mode| *mode == ResourceParameterMode::Borrowed)
+            && outcome.records["seek"].contract.result == ResourceReturnMode::None,
+        "{:?}",
+        outcome.records
+    );
 }
 
 /// U3 / V10. The recheck repeats component detection, seeding and the descent

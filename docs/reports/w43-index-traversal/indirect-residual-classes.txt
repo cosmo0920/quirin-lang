@@ -1,0 +1,29 @@
+class                     leaves  funcs  sole
+call-argument               9539   2408   246
+      9533  indirect memory access is outside the resource projection
+         6  unmodeled increment or decrement expression
+chain                       5573   2051   204
+      3998  indirect memory access is outside the resource projection
+      1268  unsupported assignment expression
+       198  unmodeled increment or decrement expression
+       109  unrecognized assignment destination
+pointer-value-store          306    207    18
+       249  indirect memory access is outside the resource projection
+        43  store through `X` without an out-parameter contract
+        10  unrecognized assignment destination
+         4  unsupported assignment expression
+pointer-increment            257    159     0
+       136  unrecognized assignment destination
+       101  indirect memory access is outside the resource projection
+        20  unmodeled increment or decrement expression
+untyped-single-access       3136   1212    95
+      2668  indirect memory access is outside the resource projection
+       247  unrecognized assignment destination
+       187  store through `X` without an out-parameter contract
+        19  unsupported assignment expression
+        15  unmodeled increment or decrement expression
+other                       1522    724    31
+       751  indirect memory access is outside the resource projection
+       315  unsupported assignment expression
+       290  unmodeled increment or decrement expression
+       166  unrecognized assignment destination

@@ -1,0 +1,40 @@
+//! TEMPORARY probe (W43-LIBC-PRINTF-FAMILY measurement), not committed.
+
+use qcore_c_gateway::legacy_c::{
+    C11TranslationUnit, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+};
+use qcore_contract::contract_loader::load_resource_contract_manifest;
+
+#[test]
+fn probe() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let contracts =
+        load_resource_contract_manifest(&root.join("cycle19-resource-contracts.json")).unwrap();
+    let unit = std::env::var("PROBE_UNIT").unwrap();
+    let entry = std::env::var("PROBE_ENTRY").unwrap();
+    let source = std::fs::read_to_string(root.join(&unit))
+        .unwrap()
+        .replace("<stdin>", "<in>");
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        },
+        &entry,
+        &contracts,
+    )
+    .unwrap();
+    match &result {
+        UnrestrictedLegacyResult::Unknown {
+            partial: Some(summary),
+            ..
+        }
+        | UnrestrictedLegacyResult::Unsafe(summary) => {
+            for d in &summary.functions.get(&entry).unwrap().diagnostics {
+                println!("DIAG {} {:?}", d.line, d.kind);
+            }
+        }
+        UnrestrictedLegacyResult::Safe(_) => println!("DIAG SAFE"),
+        _ => println!("DIAG other"),
+    }
+}

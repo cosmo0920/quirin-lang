@@ -1,0 +1,12 @@
+# The ten names this card declares, as `extern fn` lines, for
+# `w43-libc-contracts/scripts/attribute.py`, which reads only these lines.
+extern fn open(file: ptr<const, u8>, oflag: i32) -> i32
+extern fn close(fd: i32) -> i32
+extern fn socket(domain: i32, type_: i32, protocol: i32) -> i32
+extern fn fopen(filename: ptr<const, u8>, modes: ptr<const, u8>) -> ptr<mut, u8>
+extern fn fclose(stream: ptr<mut, u8>) -> i32
+extern fn fileno(stream: ptr<mut, u8>) -> i32
+extern fn opendir(name: ptr<const, u8>) -> ptr<mut, u8>
+extern fn closedir(dirp: ptr<mut, u8>) -> i32
+extern fn dlopen(file: ptr<const, u8>, mode: i32) -> ptr<mut, u8>
+extern fn dlclose(handle: ptr<mut, u8>) -> i32
