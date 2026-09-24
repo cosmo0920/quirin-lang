@@ -32,9 +32,9 @@ numbers from those sources, not from an older summary. History belongs in the
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
 | Contract corpus | **111** modules; **152** resource-v1 declarations; **47** manifest-selected, 4 of them by `crate:module` reference; **13** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 39 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md) |
 | Multi-module declarations | **10** functions in **12** module pairs, every pair a registered checked relation: 5 projections, 1 renamed equivalence, 5 source-shape agreements, 1 lifecycle agreement; **0** textual duplicates; 1 view not implied outside a coverage premise (`CONTRACT-VIEW-CHUNK-CLOSE-BACKEND-COVERAGE`) | [View projection check](reports/contract-view-projection-check/README.md), `qcore_contract::contract_views::REGISTERED_RELATIONS`, guard `compiler/tests/contract_view_census.rs` |
-| Native descriptor observation | **77 pinned Linux runs** (76 accepted, 36 with injected failures), 6,730 records of the pinned Fluent Bit build, Monkey `mk_socket.c` and a libc probe; 8 of 10 lifecycle properties hold on every accepted run; release-at-most-once fails in 11 runs (two source-confirmed upstream double closes) and operand validity in 37 (`close(-1)`); **observation, not proof or mapping** | [W43 descriptor native check](reports/w43-descriptor-native-check/README.md), `aggregate.json`, pinned `records/` |
+| Native descriptor observation | **81 pinned Linux runs** (80 accepted, 36 with injected failures), 7,416 records of the pinned Fluent Bit build, Monkey `mk_socket.c`, ctraces `ctr_random_get` and a libc probe; 8 of 10 lifecycle properties hold on every accepted run; release-at-most-once fails in 13 runs (two source-confirmed upstream double closes) and operand validity in 37 (`close(-1)`); the landed libc descriptor, stream and directory contracts bound to **3,149** executions of 18 declared callees with **0 contradictions**; `ctr_random_get`'s descriptor-0 leak reproduced by a direct driver, not through the binary; **observation, not proof or mapping** | [W43 descriptor native check](reports/w43-descriptor-native-check/README.md), `aggregate.json`, `binding.json`, pinned `records/` |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **337** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **338** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -127,7 +127,7 @@ every scalar route including the typed indirect one
 ([W43-DESCRIPTOR-RESOURCE-TRACKING](reports/w43-descriptor-resource-tracking/README.md),
 Lean `QCore.KindedCustody`).
 
-All three broader Cycle 18 follow-ups remain open; **337** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **338** follow-ups are
 registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
@@ -160,9 +160,10 @@ refused-shape and premise residuals; W43-LIBC-PRINTF-FAMILY retired `LIBC-PRINTF
 and registered the `va_list` members, the declared-tail exchange and its nested inner callees; W43-DESCRIPTOR-RESOURCE-TRACKING retired `W43-LIBC-DESCRIPTOR-LIFECYCLE`, discharged
 `CT-CTWIN-O`'s descriptor arm and amended `EXTERN-CALL-F`, and registered descriptor summaries,
 refused descriptor callees, the cast-return false leak and its unexercised accusing arms;
-W43-DESCRIPTOR-NATIVE-CHECK registered eight native-descriptor residuals and findings (Phase B
-binding, coverage gaps, two double closes, a storage-scan double free, a Monkey bind-failure
-leak, an unreleased proxy handle and the observer's ordering boundary) and retired none. Production callback composition, task/cancellation/event-generation
+W43-DESCRIPTOR-NATIVE-CHECK registered nine native-descriptor residuals and findings (coverage
+gaps, two double closes, a storage-scan double free, a Monkey bind-failure leak, an unreleased
+proxy handle, the observer's ordering boundary, `ctr_random_get`'s descriptor-0 witness and
+the data-pipe zero guard) and retired its own Phase B binding follow-up. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
 

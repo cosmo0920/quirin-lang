@@ -282,11 +282,7 @@ impl<'a> Binder<'a> {
                     }
                     match acquired.as_slice() {
                         [one] if one.kind == kind && one.id == row.result => {
-                            if self
-                                .live
-                                .get(&key(one.kind, one.id))
-                                .is_some()
-                            {
+                            if self.live.contains_key(&key(one.kind, one.id)) {
                                 entry.contradict(
                                     row,
                                     format!("owned result {} was already live", one.id),
