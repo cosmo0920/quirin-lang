@@ -135,7 +135,8 @@ fn qcore_files(root: &Path) -> Result<BTreeSet<String>, String> {
     let mut found = BTreeSet::new();
     let mut pending = vec![root.to_path_buf()];
     while let Some(directory) = pending.pop() {
-        let entries = fs::read_dir(&directory).map_err(|e| format!("{}: {e}", directory.display()))?;
+        let entries =
+            fs::read_dir(&directory).map_err(|e| format!("{}: {e}", directory.display()))?;
         for entry in entries {
             let entry = entry.map_err(|e| e.to_string())?;
             let kind = entry.file_type().map_err(|e| e.to_string())?;
@@ -152,7 +153,10 @@ fn qcore_files(root: &Path) -> Result<BTreeSet<String>, String> {
                     found.insert(logical);
                 }
             } else {
-                return Err(format!("{}: not a regular file or directory", path.display()));
+                return Err(format!(
+                    "{}: not a regular file or directory",
+                    path.display()
+                ));
             }
         }
     }
@@ -166,15 +170,19 @@ pub fn load_contract_load_path_manifest(
     path: &Path,
 ) -> Result<LoadPathManifest, ContractInclusionError> {
     let origin = path.display().to_string();
-    let refuse =
-        |subject: &str, message: String| ContractInclusionError::new(InclusionCode::Qi014, subject, message);
+    let refuse = |subject: &str, message: String| {
+        ContractInclusionError::new(InclusionCode::Qi014, subject, message)
+    };
     let metadata = fs::symlink_metadata(path).map_err(|e| refuse(&origin, e.to_string()))?;
     if !metadata.is_file() {
-        return Err(refuse(&origin, "the load-path manifest is not a regular file".into()));
+        return Err(refuse(
+            &origin,
+            "the load-path manifest is not a regular file".into(),
+        ));
     }
     let text = fs::read_to_string(path).map_err(|e| refuse(&origin, e.to_string()))?;
-    let manifest: Manifest =
-        serde_json::from_str(&text).map_err(|e| refuse(&origin, format!("malformed load-path manifest: {e}")))?;
+    let manifest: Manifest = serde_json::from_str(&text)
+        .map_err(|e| refuse(&origin, format!("malformed load-path manifest: {e}")))?;
     if manifest.schema_version != LOAD_PATH_MANIFEST_SCHEMA || manifest.crates.is_empty() {
         return Err(refuse(
             &origin,
@@ -189,21 +197,42 @@ pub fn load_contract_load_path_manifest(
         if !relative_directory(&record.contracts) {
             return Err(refuse(
                 &name,
-                format!("contract directory `{}` is not relative without traversal", record.contracts),
+                format!(
+                    "contract directory `{}` is not relative without traversal",
+                    record.contracts
+                ),
             ));
         }
         let root = base.join(&record.contracts);
-        let root_metadata = fs::symlink_metadata(&root).map_err(|e| refuse(&name, format!("{}: {e}", root.display())))?;
+        let root_metadata = fs::symlink_metadata(&root)
+            .map_err(|e| refuse(&name, format!("{}: {e}", root.display())))?;
         if !root_metadata.is_dir() {
-            return Err(refuse(&name, format!("{} is not a directory", root.display())));
+            return Err(refuse(
+                &name,
+                format!("{} is not a directory", root.display()),
+            ));
         }
         if record.modules.windows(2).any(|pair| pair[0] >= pair[1]) {
-            return Err(refuse(&name, "owned modules are not sorted and unique".into()));
+            return Err(refuse(
+                &name,
+                "owned modules are not sorted and unique".into(),
+            ));
         }
-        if record.dependencies.windows(2).any(|pair| pair[0] >= pair[1]) {
-            return Err(refuse(&name, "dependencies are not sorted and unique".into()));
+        if record
+            .dependencies
+            .windows(2)
+            .any(|pair| pair[0] >= pair[1])
+        {
+            return Err(refuse(
+                &name,
+                "dependencies are not sorted and unique".into(),
+            ));
         }
-        if let Some(module) = record.modules.iter().find(|m| !valid_contract_module_path(m)) {
+        if let Some(module) = record
+            .modules
+            .iter()
+            .find(|m| !valid_contract_module_path(m))
+        {
             return Err(refuse(&name, format!("malformed module path `{module}`")));
         }
         let on_disk = qcore_files(&root).map_err(|e| refuse(&name, e))?;
@@ -221,7 +250,8 @@ pub fn load_contract_load_path_manifest(
         let mut modules = BTreeMap::new();
         for module in &record.modules {
             let file = root.join(module);
-            let bytes = fs::read(&file).map_err(|e| refuse(&name, format!("{}: {e}", file.display())))?;
+            let bytes =
+                fs::read(&file).map_err(|e| refuse(&name, format!("{}: {e}", file.display())))?;
             if let Some(pin) = record.published.get(module) {
                 if !is_sha256_hex(pin) {
                     return Err(refuse(&name, format!("invalid SHA-256 pin for `{module}`")));
@@ -236,7 +266,8 @@ pub fn load_contract_load_path_manifest(
                     ));
                 }
             }
-            let text = String::from_utf8(bytes).map_err(|e| refuse(&name, format!("{module}: {e}")))?;
+            let text =
+                String::from_utf8(bytes).map_err(|e| refuse(&name, format!("{module}: {e}")))?;
             modules.insert(module.clone(), text);
         }
         contract_roots.insert(name.clone(), root);

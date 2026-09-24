@@ -73,8 +73,15 @@ fn pinned_includes_load_and_serve_their_exact_text() {
     let f = Fixture::new();
     let bundle = f.load(&f.inventory()).unwrap();
     assert_eq!(bundle.included(KEY).unwrap(), PARENT);
-    assert!(bundle.included("quirin-provider-libc:libc/other.qcore").is_err());
-    assert_eq!(bundle.contract("contracts/example/wrap.qcore").unwrap(), CHILD);
+    assert!(
+        bundle
+            .included("quirin-provider-libc:libc/other.qcore")
+            .is_err()
+    );
+    assert_eq!(
+        bundle.contract("contracts/example/wrap.qcore").unwrap(),
+        CHILD
+    );
 }
 
 #[test]
@@ -92,7 +99,11 @@ fn every_include_departure_refuses_the_bundle() {
     let mut inventory = f.inventory();
     inventory.as_object_mut().unwrap().remove("includes");
     inventory["contracts"]["contracts/example/wrap.qcore"] = json!(sha256_hex(PARENT.as_bytes()));
-    assert!(f.load(&inventory).unwrap_err().contains("no pinned identities"));
+    assert!(
+        f.load(&inventory)
+            .unwrap_err()
+            .contains("no pinned identities")
+    );
 
     // A changed parent.
     let f = Fixture::new();
@@ -120,7 +131,11 @@ fn every_include_departure_refuses_the_bundle() {
     fs::write(f.0.join("contracts/example/wrap.qcore"), PARENT).unwrap();
     let mut inventory = f.inventory();
     inventory["contracts"]["contracts/example/wrap.qcore"] = json!(sha256_hex(PARENT.as_bytes()));
-    assert!(f.load(&inventory).unwrap_err().contains("no contract reaches"));
+    assert!(
+        f.load(&inventory)
+            .unwrap_err()
+            .contains("no contract reaches")
+    );
 
     // Malformed pins: unknown field, key/identity mismatch, bad digest,
     // empty version, empty object.

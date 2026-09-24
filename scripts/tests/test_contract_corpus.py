@@ -13,9 +13,9 @@ class CanonicalCorpus(unittest.TestCase):
         root = Path(__file__).resolve().parents[2]
         self.assertFalse((root / "contract/qcore").exists())
         modules = contract_corpus.sources(root)
-        self.assertEqual(len(modules), 107)
+        self.assertEqual(len(modules), 108)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 72)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 35)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 36)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 
@@ -76,10 +76,13 @@ class CanonicalCorpus(unittest.TestCase):
         references, violations = contract_corpus.libc_inheritance(root)
         self.assertEqual(violations, [])
         memory = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore"
+        string = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qcore"
         self.assertEqual(references, [
             (memory, "flb_malloc", "libc::malloc"),
             (memory, "flb_calloc", "libc::calloc"),
             (memory, "flb_free", "libc::free"),
+            (string, "flb_strdup", "libc::strdup"),
+            (string, "flb_strndup", "libc::strndup"),
         ])
 
     def test_libc_inheritance_refuses_unpublished_and_undeclared_parents(self):

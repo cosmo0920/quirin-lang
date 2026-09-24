@@ -2537,6 +2537,24 @@ The include string carries the **package name** (`quirin-provider-libc`), which
 the dependency rule checks; the qualifier carries the **namespace** derived from
 it (`libc`: the package name without `quirin-provider-`, `-` read as `_`).
 
+Card CONTRACT-INHERIT-ADOPTION adds the selection form. A schema-2 resource
+manifest (`cycle19-resource-contracts.json`) is JSON, not QCore source:
+
+```ebnf
+manifest = "{", '"schema_version": 2', ",", '"load_path": ', PATH, ",",
+           '"modules": [', entry, {",", entry}, "]", "}" ;
+entry    = PATH | REFERENCE ;          (* a REFERENCE contains ":"; a PATH may not *)
+REFERENCE = CRATE ":" MODULE ;         (* exactly the include target above *)
+```
+
+`PATH` is relative with no traversal and resolves as in schema 1; the load path
+is the generated `providers/contract-load-path.json`. Schema 1 (paths only, no
+`load_path`) is unchanged. The first adopting modules are
+`fluent_bit/resource_memory.qcore` (`flb_malloc`, `flb_calloc`, `flb_free`
+inherit `libc::malloc`, `libc::calloc`, `libc::free`) and
+`fluent_bit/resource_string.qcore` (`flb_strdup`, `flb_strndup` inherit
+`libc::strdup`, `libc::strndup`).
+
 ## G06. Observation predicate grammar
 
 ```ebnf

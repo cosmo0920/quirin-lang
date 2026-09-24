@@ -115,10 +115,7 @@ mod tests {
         assert_eq!(NAMESPACE, derived);
         assert!(PUBLISHED.windows(2).all(|pair| pair[0] < pair[1]));
         for module in PUBLISHED {
-            assert!(
-                CONTRACTS.iter().any(|(name, _)| name == module),
-                "{module}"
-            );
+            assert!(CONTRACTS.iter().any(|(name, _)| name == module), "{module}");
         }
     }
 

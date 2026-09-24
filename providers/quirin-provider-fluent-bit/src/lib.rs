@@ -1,4 +1,4 @@
-//! Shared Quirin contract modules for Fluent Bit application code (input chunks, routing, hash tables, logging, memory, time).
+//! Shared Quirin contract modules for Fluent Bit application code (input chunks, routing, hash tables, logging, memory, strings, time).
 //!
 //! The `.qcore` sources under this crate's `contracts/` are canonical: the
 //! corpus index `contract/corpus.json` names that directory as one of its
@@ -62,6 +62,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/fluent_bit/resource_memory.qcore"),
     ),
     (
+        "fluent_bit/resource_string.qcore",
+        include_str!("../contracts/fluent_bit/resource_string.qcore"),
+    ),
+    (
         "fluent_bit/routes_mask.qcore",
         include_str!("../contracts/fluent_bit/routes_mask.qcore"),
     ),
@@ -95,10 +99,7 @@ mod tests {
         assert_eq!(NAMESPACE, derived);
         assert!(PUBLISHED.windows(2).all(|pair| pair[0] < pair[1]));
         for module in PUBLISHED {
-            assert!(
-                CONTRACTS.iter().any(|(name, _)| name == module),
-                "{module}"
-            );
+            assert!(CONTRACTS.iter().any(|(name, _)| name == module), "{module}");
         }
     }
 

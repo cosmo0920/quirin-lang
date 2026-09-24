@@ -399,6 +399,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/resource_memory.qcore", "flb_free", 3),
     ("fluent_bit/resource_memory.qcore", "flb_sds_create_len", 4),
     ("fluent_bit/resource_memory.qcore", "flb_sds_destroy", 3),
+    // Card CONTRACT-INHERIT-ADOPTION: user-directed declared assumptions,
+    // each inheriting `libc::strdup` / `libc::strndup`; elaborated counts.
+    ("fluent_bit/resource_string.qcore", "flb_strdup", 3),
+    ("fluent_bit/resource_string.qcore", "flb_strndup", 4),
     // Card PROD-CONTRACTS, continued.
     (
         "fluent_bit/routes_mask.qcore",
@@ -1013,7 +1017,11 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // did NOT land the alias-returning (`memcpy`, `strchr`, ...), no-return,
     // lifecycle and `__restrict`-withdrawn prototypes; every reading is in
     // `docs/reports/w43-libc-contracts/README.md`.
-    assert_eq!(sources.len(), 107, "unexpected contract corpus size");
+    // 107 -> 108 by card CONTRACT-INHERIT-ADOPTION's
+    // `fluent_bit/resource_string.qcore` (`flb_strdup`, `flb_strndup`
+    // inheriting libc). Its conversion of `fluent_bit/resource_memory.qcore`
+    // to `contract inherit` changes no module count.
+    assert_eq!(sources.len(), 108, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");
@@ -1232,9 +1240,21 @@ const EXPECTED_INHERITANCE: &[(&str, &str, &str)] = &[
     // `flb_free` is `free(ptr)`. The elaborations equal the hand-written
     // contracts they replace, clause for clause
     // (`compiler/tests/contract_inherit_adoption.rs`).
-    ("fluent_bit/resource_memory.qcore", "flb_malloc", "libc::malloc"),
-    ("fluent_bit/resource_memory.qcore", "flb_calloc", "libc::calloc"),
+    (
+        "fluent_bit/resource_memory.qcore",
+        "flb_malloc",
+        "libc::malloc",
+    ),
+    (
+        "fluent_bit/resource_memory.qcore",
+        "flb_calloc",
+        "libc::calloc",
+    ),
     ("fluent_bit/resource_memory.qcore", "flb_free", "libc::free"),
+    // `include/fluent-bit/flb_str.h`: user-directed declared assumptions over
+    // `static inline` bodies the analyzer could read (the report says so).
+    ("fluent_bit/resource_string.qcore", "flb_strdup", "libc::strdup"),
+    ("fluent_bit/resource_string.qcore", "flb_strndup", "libc::strndup"),
 ];
 
 #[test]

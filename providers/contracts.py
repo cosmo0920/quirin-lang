@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
-"""Maintain the inventories for canonical provider-owned contracts.
+"""Maintain the inventories for canonical provider-owned contracts, and the
+published contract load path (card CONTRACT-INHERIT-ADOPTION).
 
 Edit contracts in their provider crate, then run `sync`. `check` never writes.
+Both also maintain `contract-load-path.json`: one record per
+`quirin-provider-*` crate from `cargo metadata` and the crate's `NAMESPACE`
+and `PUBLISHED` constants, with every published module's SHA-256 pinned; and
+a provider inventory's `includes` pins, resolved on that load path.
 The retired ``contract/qcore`` compatibility tree is refused so it cannot
 silently become a second source of provider contracts again.
 """

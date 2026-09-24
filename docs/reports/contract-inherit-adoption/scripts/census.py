@@ -145,7 +145,13 @@ def main():
             continue
         key = json.dumps([decl["types"], decl["result"], decl["clauses"]])
         for parent in parent_keys.get(key, []):
-            v1 = "resource_contract_v1" in decl["clauses"]
+            v1 = any("resource_contract_v1" in clause for clause in decl["clauses"])
+            # The neutral element (every parameter borrowed, no custody result)
+            # matches every other neutral declaration of the same signature:
+            # a coincidence of shape, not a wrapper relation.
+            custody = [c for c in decl["clauses"]
+                       if "resource_" in c and "resource_borrowed" not in c
+                       and "resource_return_none" not in c and "resource_contract_v1" not in c]
             on_load_path = decl["crate"].startswith("quirin-provider-")
             may_include_libc = libc_dependency(repository, decl["crate"])
             same_name = decl["name"] == parent["name"]
@@ -165,6 +171,7 @@ def main():
                 "parent": f"libc::{parent['name']}",
                 "parent_module": parent["module"],
                 "resource_v1": v1,
+                "shape": "custody-bearing" if custody else "neutral",
                 "cycle19_selected": decl["module"] in selected_logical,
                 "admitted": not refusals,
                 "refusals": refusals,
@@ -174,6 +181,8 @@ def main():
         "libc_declarations": len(parents),
         "provider_declarations_outside_libc": len(candidates),
         "matches": len(rows),
+        "custody_bearing_matches": sum(row["shape"] == "custody-bearing" for row in rows),
+        "neutral_matches": sum(row["shape"] == "neutral" for row in rows),
         "admitted": sum(row["admitted"] for row in rows),
         "refused": sum(not row["admitted"] for row in rows),
         "already_inheriting": converted,
@@ -181,8 +190,12 @@ def main():
     }
     out.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps({k: result[k] for k in ("libc_declarations", "provider_declarations_outside_libc",
-                                              "matches", "admitted", "refused")}))
+                                              "matches", "custody_bearing_matches", "neutral_matches",
+                                              "admitted", "refused")}))
+    print(f"  already inheriting: {len(converted)}")
     for row in rows:
+        if row["shape"] == "neutral":
+            continue
         print(f"  {row['crate']}:{row['module']}#{row['name']} = {row['parent']}  "
               f"{'ADMITTED' if row['admitted'] else 'refused: ' + '; '.join(row['refusals'])}")
 

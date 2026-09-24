@@ -36,7 +36,10 @@ const LIBC: &str = "quirin-provider-libc";
 const RESOURCE_MEMORY: &str = "fluent_bit/resource_memory.qcore";
 
 fn repository() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().to_owned()
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .to_owned()
 }
 
 fn hand_written() -> String {
@@ -100,9 +103,10 @@ fn the_real_load_path_reads_and_records_what_the_crates_declare() {
 #[test]
 fn adopted_inheritance_elaborates_to_the_hand_written_contracts() {
     let manifest = real_load_path();
-    let elaborated =
-        elaborate_contract_module(&manifest.load_path, FLB, RESOURCE_MEMORY).unwrap();
-    let evidence = elaborated.evidence.expect("the adopted module uses inclusion");
+    let elaborated = elaborate_contract_module(&manifest.load_path, FLB, RESOURCE_MEMORY).unwrap();
+    let evidence = elaborated
+        .evidence
+        .expect("the adopted module uses inclusion");
     let before = hand_written();
     let parsed_after = parse_source_program(&elaborated.text).unwrap();
     let parsed_before = parse_source_program(&before).unwrap();
@@ -114,7 +118,11 @@ fn adopted_inheritance_elaborates_to_the_hand_written_contracts() {
             .collect::<Vec<_>>()
     };
     assert_eq!(names(&parsed_after), names(&parsed_before));
-    for (after, before) in parsed_after.declarations.iter().zip(&parsed_before.declarations) {
+    for (after, before) in parsed_after
+        .declarations
+        .iter()
+        .zip(&parsed_before.declarations)
+    {
         assert_eq!(
             after.value.tokens, before.value.tokens,
             "{}: the elaboration is not the hand-written declaration",
@@ -175,6 +183,45 @@ fn adopted_inheritance_elaborates_to_the_hand_written_contracts() {
     );
 }
 
+/// `fluent_bit/resource_string.qcore` (user-directed): `flb_strdup` and
+/// `flb_strndup` elaborate to exactly the written-out `strdup`/`strndup`
+/// statements under their own parameter names, with one-link chains into the
+/// published `libc/string.qcore`.
+#[test]
+fn string_wrappers_elaborate_to_the_libc_statements() {
+    let manifest = real_load_path();
+    let elaborated =
+        elaborate_contract_module(&manifest.load_path, FLB, "fluent_bit/resource_string.qcore")
+            .unwrap();
+    let written_out = fs::read_to_string(
+        Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/fixtures/contract_inherit_adoption/resource_string_written_out.qcore"),
+    )
+    .unwrap()
+    .replace("\r\n", "\n");
+    let after = parse_source_program(&elaborated.text).unwrap();
+    let before = parse_source_program(&written_out).unwrap();
+    assert_eq!(after.declarations.len(), 2);
+    for (a, b) in after.declarations.iter().zip(&before.declarations) {
+        assert_eq!(a.value.name, b.value.name);
+        assert_eq!(a.value.tokens, b.value.tokens, "{}", a.value.name);
+    }
+    let evidence = elaborated.evidence.unwrap();
+    let parents: Vec<_> = evidence
+        .inherited
+        .iter()
+        .map(|(child, chain)| {
+            assert_eq!(chain.len(), 1);
+            assert_eq!(chain[0].module.module, "libc/string.qcore");
+            (child.as_str(), chain[0].declaration.as_str())
+        })
+        .collect();
+    assert_eq!(
+        parents,
+        [("flb_strdup", "strdup"), ("flb_strndup", "strndup")]
+    );
+}
+
 /// The Cycle 19 manifest selects the adopted module by reference; the
 /// environment equals the one the hand-written module gave, in every fact a
 /// consumer rederives, and carries the chains a report publishes.
@@ -184,9 +231,10 @@ fn the_resource_manifest_selects_the_adopted_module_with_equal_meaning() {
     let contracts = load_resource_contract_manifest(&manifest).unwrap();
     let key = format!("{FLB}:{RESOURCE_MEMORY}");
     assert!(contracts.source_assumptions().contains_key(&key));
+    let strings = format!("{FLB}:fluent_bit/resource_string.qcore");
     assert_eq!(
         contracts.inclusion_evidence().keys().collect::<Vec<_>>(),
-        [&key]
+        [&key, &strings]
     );
     check_source_assumptions(&contracts).unwrap();
     let provenance = inclusion_provenance(&contracts).unwrap();
@@ -226,8 +274,16 @@ impl Scratch {
         let _ = fs::remove_dir_all(&root);
         fs::create_dir_all(root.join("quirin-provider-demo/contracts/demo")).unwrap();
         fs::create_dir_all(root.join("quirin-provider-app/contracts/app")).unwrap();
-        fs::write(root.join("quirin-provider-demo/contracts/demo/heap.qcore"), HEAP).unwrap();
-        fs::write(root.join("quirin-provider-app/contracts/app/wrap.qcore"), WRAP).unwrap();
+        fs::write(
+            root.join("quirin-provider-demo/contracts/demo/heap.qcore"),
+            HEAP,
+        )
+        .unwrap();
+        fs::write(
+            root.join("quirin-provider-app/contracts/app/wrap.qcore"),
+            WRAP,
+        )
+        .unwrap();
         let scratch = Self(root);
         scratch.write_load_path(&load_path_json(&sha256_hex(HEAP.as_bytes())));
         scratch
@@ -389,36 +445,68 @@ fn a_stale_or_invalid_load_path_is_refused() {
     let selection = r#"{"schema_version":2,"load_path":"load-path.json","modules":["quirin-provider-app:app/wrap.qcore"]}"#;
     let valid = load_path_json(&sha256_hex(HEAP.as_bytes()));
     let mutations: Vec<(&str, Box<dyn Fn(&mut serde_json::Value)>)> = vec![
-        ("differs from its pinned SHA-256", Box::new(|v| {
-            v["crates"][1]["published"]["demo/heap.qcore"] = sha256_hex(b"other").into();
-        })),
-        ("invalid SHA-256 pin", Box::new(|v| {
-            v["crates"][1]["published"]["demo/heap.qcore"] = "0".into();
-        })),
-        ("differ from the contract directory", Box::new(|v| {
-            v["crates"][1]["modules"] = serde_json::json!(["demo/absent.qcore", "demo/heap.qcore"]);
-        })),
-        ("not sorted and unique", Box::new(|v| {
-            v["crates"][1]["modules"] = serde_json::json!(["demo/heap.qcore", "demo/heap.qcore"]);
-        })),
-        ("relative without traversal", Box::new(|v| {
-            v["crates"][1]["contracts"] = "../quirin-provider-demo/contracts".into();
-        })),
-        ("QI017", Box::new(|v| {
-            v["crates"][1]["namespace"] = "other".into();
-        })),
-        ("QI017", Box::new(|v| {
-            v["crates"][0]["name"] = "qcore-provider-app".into();
-        })),
-        ("is not on the load path", Box::new(|v| {
-            v["crates"][0]["dependencies"] = serde_json::json!(["quirin-provider-absent"]);
-        })),
-        ("malformed load-path manifest", Box::new(|v| {
-            v["crates"][0]["extra"] = true.into();
-        })),
-        ("unsupported load-path manifest schema", Box::new(|v| {
-            v["schema_version"] = 2.into();
-        })),
+        (
+            "differs from its pinned SHA-256",
+            Box::new(|v| {
+                v["crates"][1]["published"]["demo/heap.qcore"] = sha256_hex(b"other").into();
+            }),
+        ),
+        (
+            "invalid SHA-256 pin",
+            Box::new(|v| {
+                v["crates"][1]["published"]["demo/heap.qcore"] = "0".into();
+            }),
+        ),
+        (
+            "differ from the contract directory",
+            Box::new(|v| {
+                v["crates"][1]["modules"] =
+                    serde_json::json!(["demo/absent.qcore", "demo/heap.qcore"]);
+            }),
+        ),
+        (
+            "not sorted and unique",
+            Box::new(|v| {
+                v["crates"][1]["modules"] =
+                    serde_json::json!(["demo/heap.qcore", "demo/heap.qcore"]);
+            }),
+        ),
+        (
+            "relative without traversal",
+            Box::new(|v| {
+                v["crates"][1]["contracts"] = "../quirin-provider-demo/contracts".into();
+            }),
+        ),
+        (
+            "QI017",
+            Box::new(|v| {
+                v["crates"][1]["namespace"] = "other".into();
+            }),
+        ),
+        (
+            "QI017",
+            Box::new(|v| {
+                v["crates"][0]["name"] = "qcore-provider-app".into();
+            }),
+        ),
+        (
+            "is not on the load path",
+            Box::new(|v| {
+                v["crates"][0]["dependencies"] = serde_json::json!(["quirin-provider-absent"]);
+            }),
+        ),
+        (
+            "malformed load-path manifest",
+            Box::new(|v| {
+                v["crates"][0]["extra"] = true.into();
+            }),
+        ),
+        (
+            "unsupported load-path manifest schema",
+            Box::new(|v| {
+                v["schema_version"] = 2.into();
+            }),
+        ),
     ];
     for (expected, mutate) in mutations {
         let mut value = valid.clone();
@@ -433,7 +521,9 @@ fn a_stale_or_invalid_load_path_is_refused() {
     scratch.write_load_path(&valid);
     load_resource_contract_manifest(&scratch.manifest(selection)).unwrap();
     fs::write(
-        scratch.0.join("quirin-provider-demo/contracts/demo/stray.qcore"),
+        scratch
+            .0
+            .join("quirin-provider-demo/contracts/demo/stray.qcore"),
         HEAP,
     )
     .unwrap();
@@ -442,9 +532,16 @@ fn a_stale_or_invalid_load_path_is_refused() {
         .to_string();
     assert!(error.contains("unlisted"), "{error}");
     // A changed parent without a regenerated pin is refused (QI014), not read.
-    fs::remove_file(scratch.0.join("quirin-provider-demo/contracts/demo/stray.qcore")).unwrap();
+    fs::remove_file(
+        scratch
+            .0
+            .join("quirin-provider-demo/contracts/demo/stray.qcore"),
+    )
+    .unwrap();
     fs::write(
-        scratch.0.join("quirin-provider-demo/contracts/demo/heap.qcore"),
+        scratch
+            .0
+            .join("quirin-provider-demo/contracts/demo/heap.qcore"),
         HEAP.replace("nullable", "nonnull"),
     )
     .unwrap();

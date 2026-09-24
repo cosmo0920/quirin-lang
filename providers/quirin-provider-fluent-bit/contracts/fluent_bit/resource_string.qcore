@@ -1,0 +1,31 @@
+module contract;
+#include "quirin-provider-libc:libc/string.qcore";
+
+// Trusted resource-projection assumptions, vocabulary version 1.
+//
+// Card CONTRACT-INHERIT-ADOPTION (user-directed declared assumptions for later
+// corpus scope). Fluent Bit's string-duplication helpers take the custody
+// statements of the libc functions they stand for:
+//
+//   static inline char *flb_strndup(const char *s, size_t n)
+//     -- `flb_malloc(n + 1)`, NULL on failure, else `memcpy(str, s, n)` and a
+//        terminator (`include/fluent-bit/flb_str.h`).
+//   static inline char *flb_strdup(const char *s)
+//     -- `flb_strndup(s, strlen(s))`.
+//
+// Each reads its string (borrowed), takes a size by value (borrowed) and
+// returns a fresh `malloc` allocation or NULL: the caller acquires an
+// obligation that `flb_free`/`free` discharges. That is `libc::strdup`'s and
+// `libc::strndup`'s statement exactly, so the contracts are inherited rather
+// than restated. `flb_strndup` is NOT a byte-exact forward of `strndup` (it
+// copies exactly `n` bytes with `memcpy` instead of stopping at a terminator,
+// and allocates through `flb_malloc`); the custody statement, which is all
+// resource v1 says, is the same.
+//
+// These are TRUSTED ASSUMPTIONS over code the analyzer could read: both bodies
+// are `static inline` in a header every including unit carries. Wherever this
+// module is selected, the contract stands in for the body at every call site.
+
+extern fn flb_strdup(s: ptr<const, u8>) -> ptr<mut, u8> contract inherit libc::strdup;
+
+extern fn flb_strndup(s: ptr<const, u8>, n: usize) -> ptr<mut, u8> contract inherit libc::strndup;

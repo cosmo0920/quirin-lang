@@ -892,5 +892,8 @@ fn the_modules_under_test_are_the_production_ones() {
     // 33 -> 44 by card W43-LIBC-CONTRACTS: eleven `libc/` modules owned by
     // `providers/quirin-provider-libc` (55 trusted libc/POSIX declarations,
     // each read from the prototype the pinned units declare).
-    assert_eq!(contracts.source_assumptions().len(), 44);
+    // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qcore`
+    // selected by `crate:module` reference (schema 2); `resource_memory.qcore`
+    // moved from a path entry to a reference without changing the count.
+    assert_eq!(contracts.source_assumptions().len(), 45);
 }

@@ -394,9 +394,10 @@ pub fn load_resource_contract_manifest(path: &Path) -> Result<ResourceContracts,
     let mut references = Vec::new();
     for entry in &manifest.modules {
         if manifest.schema_version == 2 && entry.contains(':') {
-            references.push(published_module_reference(entry).map_err(|e| {
-                format!("{}: {e}", path.display())
-            })?);
+            references.push(
+                published_module_reference(entry)
+                    .map_err(|e| format!("{}: {e}", path.display()))?,
+            );
         } else {
             paths.push(relative(entry)?);
         }
