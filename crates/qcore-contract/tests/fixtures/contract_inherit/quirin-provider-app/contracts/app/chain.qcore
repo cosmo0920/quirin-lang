@@ -1,0 +1,12 @@
+module contract;
+#include "quirin-provider-fluent-bit:fluent_bit/wrappers.qcore";
+
+// Fixture for card CONTRACT-INHERIT: a chain across three crates,
+// app_copy -> fluent_bit::flb_memcpy -> libc::memcpy. The app crate declares
+// only fluent-bit as a dependency, so libc is not visible to it directly.
+
+extern fn app_copy(out: ptr<mut, u8>, input: ptr<const, u8>, len: usize) -> ptr<mut, u8>
+contract inherit fluent_bit::flb_memcpy;
+
+extern fn app_release(handle: ptr<mut, u8>) -> unit
+contract inherit fluent_bit::flb_sds_destroy;

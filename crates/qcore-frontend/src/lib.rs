@@ -6,6 +6,7 @@
 //! re-exports every module here at its previous path.
 
 pub mod check;
+pub mod contract_inclusion;
 pub mod frontend;
 pub mod lexer;
 pub mod module_imports;

@@ -210,3 +210,22 @@ Refusal categories are typed, not inferred from English message substrings.
 Q058 remains Event-owned. This adds one condition-extension instance on the
 existing ordinary/buffer bands, no band or code; the preceding historical
 tallies retain their checkpoint scope. Canonical meanings are in §L21.
+
+### Contract inclusion namespace (`QI`)
+
+Card `CONTRACT-INHERIT` opens `QI001`–`QI020`, owned by the contract loader
+(`qcore_contract::contract_inclusion`), on the `QP***` precedent. It allocates
+**no `Q` route code** and does not settle `Q-NAMESPACE-DECISION`; unresolved
+inclusion at the structural parser stays `Q000` (a new message, not a code).
+Conditions (full text in contract specification C15): `QI001` malformed form
+or inheriting declaration; `QI002` clauses after `inherit`; `QI003` target not
+`crate:module`; `QI004` crate absent or not own/declared dependency; `QI005`
+module not published; `QI006` include cycle; `QI007` repeated include;
+`QI008` no parent in scope; `QI009` two parents in scope; `QI010` arity, type
+or result disagreement; `QI011` inheritance cycle; `QI012` capture or
+consumer reading differs; `QI013` inclusion without a load path; `QI014`
+invalid load path; `QI015` parent not inheritable; `QI016` evidence replay
+differs; `QI017` crate not `quirin-provider-*`, namespace not derived, or
+shared; `QI018` unqualified parent only an included module declares;
+`QI019` namespace names no directly included crate; `QI020` child named like
+its qualified parent.

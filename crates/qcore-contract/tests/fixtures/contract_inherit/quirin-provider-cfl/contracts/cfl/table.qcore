@@ -1,0 +1,14 @@
+module contract;
+
+// Fixture for card CONTRACT-INHERIT: a parent with a literal-argument premise
+// and an owner-indexed stored mode, so both index-bearing forms are inherited.
+
+extern fn cfl_table_put(table: ptr<mut, u8>, value: ptr<mut, u8>, size: usize) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_literal_argument(size, 0);
+    ensures normal resource_owned(table, nonnull);
+    ensures normal resource_stored(value, table, nonnull);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_none();
+};

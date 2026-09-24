@@ -112,7 +112,7 @@ impl CurrentAudit {
                 ),
             ),
         ]);
-        let assumptions = json!({
+        let mut assumptions = json!({
             "schema_version": 1, "source_revision": revision,
             "source_revision_policy": "checkout_head", "profile": profile.assumptions(),
             "contract_manifest": manifest_text, "contracts": contracts.source_assumptions(),
@@ -120,6 +120,11 @@ impl CurrentAudit {
             "historical_evidence": "Unknown: historical source summaries, native observations and provider evidence are not admitted",
             "profile_pin_role": "historical reference only; historical file digests and construct witnesses are not admitted",
         });
+        // Card CONTRACT-INHERIT: inheritance chains travel with the sources.
+        if let Some(provenance) = qcore_contract::contract_loader::inclusion_provenance(&contracts)
+        {
+            assumptions["contract_inclusion"] = provenance;
+        }
         Ok(Self {
             report: AuditReport::new(&revision),
             checkout,

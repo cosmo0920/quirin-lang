@@ -150,11 +150,72 @@ impl ResourceSummaryRecord {
     }
 }
 
+/// The identity of one contract module on a published load path (card
+/// **CONTRACT-INHERIT**): which crate, at which version, published which
+/// module, with which exact bytes.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct ContractModuleIdentity {
+    /// The owning crate's package name.
+    pub crate_name: String,
+    /// The owning crate's version.
+    pub crate_version: String,
+    /// The module's logical path under the crate's `contracts/` tree.
+    pub module: String,
+    /// SHA-256 of the module's source text as written.
+    pub sha256: String,
+}
+
+/// One module an inheriting module reached through `#include`, retained with
+/// its exact text so the elaboration can be replayed without a load path.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct IncludedContractModule {
+    pub identity: ContractModuleIdentity,
+    pub source: String,
+}
+
+/// One step of an inheritance chain: the parent declaration and the module
+/// that declares it.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct ContractInheritanceLink {
+    pub declaration: String,
+    pub module: ContractModuleIdentity,
+}
+
+/// The provenance of one selected module that uses contract inclusion or
+/// inheritance (card **CONTRACT-INHERIT**).
+///
+/// The environment's source assumption for that module is its **elaborated**
+/// text: the text a person would have written by hand. This record says where
+/// each inherited contract came from, and retains every text needed to
+/// reproduce the elaboration, so a certificate checker can replay it and a
+/// reviewer can read the chain. An inherited contract is a trusted assumption
+/// of the same strength as a hand-written one; this record is its provenance,
+/// not evidence that it is true.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ContractInclusionEvidence {
+    /// The selected module itself.
+    pub module: ContractModuleIdentity,
+    /// The selected module's text as written, directives included.
+    pub source: String,
+    /// Every module reached through `#include`, transitively, keyed by its
+    /// `crate:module` target spelling.
+    pub included: BTreeMap<String, IncludedContractModule>,
+    /// For each inheriting declaration, its chain from the immediate parent to
+    /// the declaration whose contract is written out.
+    pub inherited: BTreeMap<String, Vec<ContractInheritanceLink>>,
+}
+
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ResourceContracts {
     functions: BTreeMap<String, ResourceFunctionContract>,
     // Exact trusted inputs travel with the environment into safety certificates.
     source_assumptions: BTreeMap<String, String>,
+    /// Card CONTRACT-INHERIT: provenance of every selected module that used
+    /// contract inclusion, keyed like `source_assumptions`. Omitted from the
+    /// serialized form when empty, so every environment without inclusion
+    /// serializes byte-for-byte as it did before the card.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    inclusion_evidence: BTreeMap<String, ContractInclusionEvidence>,
 }
 
 impl ResourceContracts {
@@ -166,6 +227,7 @@ impl ResourceContracts {
                 .map(|(name, kind)| (name.into(), ResourceFunctionContract::from(kind)))
                 .collect(),
             source_assumptions: BTreeMap::new(),
+            inclusion_evidence: BTreeMap::new(),
         }
     }
 
@@ -189,6 +251,23 @@ impl ResourceContracts {
     /// rechecks them against the declared text.
     pub fn set_source_assumptions(&mut self, sources: BTreeMap<String, String>) {
         self.source_assumptions = sources;
+    }
+
+    /// Provenance of every selected module that used contract inclusion
+    /// (card CONTRACT-INHERIT). Empty for every environment loaded without it.
+    #[must_use]
+    pub fn inclusion_evidence(&self) -> &BTreeMap<String, ContractInclusionEvidence> {
+        &self.inclusion_evidence
+    }
+
+    /// Declares the inclusion provenance of this environment's elaborated
+    /// source assumptions. The contract loader rechecks it by replaying the
+    /// elaboration from the retained texts.
+    pub fn set_inclusion_evidence(
+        &mut self,
+        evidence: BTreeMap<String, ContractInclusionEvidence>,
+    ) {
+        self.inclusion_evidence = evidence;
     }
 
     #[must_use]

@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-afca7a363739adbfc/docs/reports/w43-return-expression/scripts/baseline_identity.py",
+    "measure/arbiter-after",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-afca7a363739adbfc/docs/reports/w43-return-expression/artifacts",
+    "--root-alias",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-afca7a363739adbfc=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae2a69ef909727ba3"
+  ],
+  "exit": 0,
+  "stdout": "{\n  \"run\": \"measure/arbiter-after\",\n  \"baseline\": \"/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-afca7a363739adbfc/docs/reports/w43-return-expression/artifacts\",\n  \"artifacts\": {\n    \"diagnostics\": {\n      \"file\": \"resource-diagnostics.json\",\n      \"run_sha256\": \"f07ba9777cf4ced4e5da5b7c359b81ca8ae96357cc9104820ba74bcd200e1ab3\",\n      \"baseline_raw_sha256\": \"f07ba9777cf4ced4e5da5b7c359b81ca8ae96357cc9104820ba74bcd200e1ab3\",\n      \"archive_matches_manifest\": true,\n      \"byte_identical\": true\n    },\n    \"chunk-contracts\": {\n      \"file\": \"resource-diagnostics.chunk-contracts.json\",\n      \"run_sha256\": \"cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484\",\n      \"baseline_raw_sha256\": \"cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484\",\n      \"archive_matches_manifest\": true,\n      \"byte_identical\": true\n    },\n    \"contracts\": {\n      \"file\": \"resource-diagnostics.contracts.json\",\n      \"run_sha256\": \"b6fad1574848c8d383b79c06aea28be77d35abd029dd65393a0f3bbcbb14cccc\",\n      \"baseline_raw_sha256\": \"a24e0268b74a325606af8a47432a5e662bbf5082faee9b8e9ddc7c1d174a9bf9\",\n      \"archive_matches_manifest\": true,\n      \"byte_identical\": false,\n      \"identical_after_root_alias\": false\n    },\n    \"source-effects\": {\n      \"file\": \"resource-diagnostics.source-effects.json\",\n      \"run_sha256\": \"7382249c30b8d3d157c3fe5a9a70e1856f9c213b770feb7080b9fac7945f2706\",\n      \"baseline_raw_sha256\": \"55fa756fe4e0cb349ac1f9239dc83af3638c9047aef5caf657e9df9dc092f668\",\n      \"archive_matches_manifest\": true,\n      \"byte_identical\": false,\n      \"identical_after_root_alias\": false\n    },\n    \"source\": {\n      \"file\": \"monkey-source.json\",\n      \"run_sha256\": \"57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11\",\n      \"baseline_raw_sha256\": \"57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11\",\n      \"archive_matches_manifest\": true,\n      \"byte_identical\": true\n    }\n  },\n  \"verdict_bearing_identical\": true\n}\n",
+  "stderr": ""
+}

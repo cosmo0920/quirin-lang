@@ -7,6 +7,7 @@
 //! separately checked boundary in the caller.
 
 pub mod bundle;
+pub mod contract_inclusion;
 pub mod contract_loader;
 pub mod contract_observation;
 pub mod extern_bridge;

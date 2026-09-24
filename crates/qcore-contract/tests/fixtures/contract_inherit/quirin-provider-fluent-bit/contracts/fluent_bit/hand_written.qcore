@@ -1,0 +1,54 @@
+module contract;
+
+// Fixture for card CONTRACT-INHERIT: what wrappers.qcore means, written out by
+// hand. The inherited environment must load exactly like this module. It is
+// owned by the fixture fluent-bit crate and deliberately not published.
+
+extern fn flb_memcpy(to: ptr<mut, u8>, from: ptr<const, u8>, bytes: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(to);
+    ensures normal resource_borrowed(from);
+    ensures normal resource_borrowed(bytes);
+    ensures normal resource_return_none();
+};
+
+extern fn flb_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn flb_realloc(buffer: ptr<mut, u8>, bytes: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(buffer, nonnull);
+    ensures normal resource_borrowed(bytes);
+    ensures normal resource_return_reallocated(buffer, nullable);
+};
+
+extern fn flb_printf(fmt: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fmt);
+    ensures normal resource_return_none();
+    ensures normal resource_variadic_data_tail();
+};
+
+extern fn flb_table_put(ht: ptr<mut, u8>, val: ptr<mut, u8>, val_size: usize) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_literal_argument(val_size, 0);
+    ensures normal resource_owned(ht, nonnull);
+    ensures normal resource_stored(val, ht, nonnull);
+    ensures normal resource_borrowed(val_size);
+    ensures normal resource_return_none();
+};
+
+extern fn flb_sds_destroy(s: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(s, nullable);
+    ensures normal resource_return_none();
+};

@@ -30,7 +30,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
 | Contract corpus | **107** modules; **114** resource-v1 declarations; **44** manifest-selected | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 35 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (11 roots), [selection](../cycle19-resource-contracts.json) and pinned tests |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **291** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **294** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -99,9 +99,12 @@ executables; policy selection and independent checking remain explicit. This
 changes source locations, with no predicate or verdict promotion. The bundle
 pilot adds independently pinned data-only selection for the CMetrics policy,
 retains version-1 paths and existing adapters, and models admission separately
-from policy truth. Four scoped follow-ons remain in its report.
+from policy truth. Four scoped follow-ons remain in its report. Contract
+modules can take a declaration's contract from another published module
+(`#include` / `contract inherit NS::NAME`, [CONTRACT-INHERIT](reports/contract-inherit/README.md));
+it is exercised on fixture crates only, and no real contract or manifest uses it yet.
 
-All three broader Cycle 18 follow-ups remain open; **291** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **294** follow-ups are
 registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
@@ -110,7 +113,8 @@ retired `RETURN-CALL-INCOMPLETE-LINE-455` against its census;
 registered; QUIRIN-PROVIDER-SHARED registered
 `PROVIDER-CONFORMANCE-CORE-FIXTURE-PATHS`; the Windows F02 run and active
 cross-host pin check retired three F02 follow-ups; W43-LIBC-CONTRACTS registered ten libc
-residuals and retired `LOADER-ABI-RESTRICT-QUALIFIER` against its measurement. Production callback composition, task/cancellation/event-generation
+residuals and retired `LOADER-ABI-RESTRICT-QUALIFIER` against its measurement; CONTRACT-INHERIT registered its
+real-crate adoption, extension clauses and non-v1 consumers. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
 

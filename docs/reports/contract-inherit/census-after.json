@@ -1,0 +1,966 @@
+{
+  "archived_probe_sources": 174,
+  "embedder_files_scanned": 2492,
+  "embedder_hash_include_in_quirin_context": [
+    {
+      "file": "compiler/tests/native_library_header.rs",
+      "line": 506,
+      "text": "// `#include` this reader does not follow. That is the census's headline and"
+    },
+    {
+      "file": "crates/qcore-audit/tests/contract_inherit_identity.rs",
+      "line": 24,
+      "text": "#include \\\"quirin-provider-libc:libc/heap.qcore\\\";\\n\\"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 5,
+      "text": "//! #include \"quirin-provider-libc:libc/string.qcore\";"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 13,
+      "text": "//! It resolves every `#include \"crate:module\";` directive against an explicit"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 216,
+      "text": "\"contract inclusion (`#include` or `contract inherit`) is resolved only against a \\"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 455,
+      "text": "/// How an `#include` is turned into a module."
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 480,
+      "text": "\"`#include \\\"{target}\\\"`: crate `{}` is not on the load path\","
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 496,
+      "text": "\"`#include \\\"{target}\\\"`: crate `{}` is neither `{}` nor one of its declared \\"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 512,
+      "text": "\"`#include \\\"{target}\\\"`: `{}` {why} crate `{}`\","
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 582,
+      "text": "/// Every module reached through `#include`, transitively."
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 161,
+      "text": "assert!(!text.contains(\"#include\"));"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 440,
+      "text": "text.push_str(&format!(\"#include \\\"{include}\\\";\\n\"));"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 467,
+      "text": "\"{HEADER}extern fn f(p: ptr<mut, u8>) -> unit contract inherit libc::free;\\n#include \\\"{HEAP}\\\";\\n\""
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 8,
+      "text": "//! #include \"quirin-provider-libc:libc/string.qcore\";"
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 36,
+      "text": "/// One `#include \"crate:module\";` directive."
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 194,
+      "text": "/// * `# include \"crate:module\" ;` \u2014 only in a module that begins with"
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 242,
+      "text": "\"`#include` requires one string operand\","
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 248,
+      "text": "\"expected `;` after the `#include` operand\","
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 283,
+      "text": "\"an `#include` directive must follow `module contract;` and precede every declaration\","
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 5,
+      "text": "#include \\\"fixture-libc:libc/string.qcore\\\";\\n\\"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 6,
+      "text": "#include \\\"fixture-libc:libc/heap.qcore\\\";\\n\\"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 22,
+      "text": "assert_eq!(first, \"#include \\\"fixture-libc:libc/string.qcore\\\";\");"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 58,
+      "text": "assert!(error.message.contains(\"`#include`\"), \"{error}\");"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 74,
+      "text": "(\"#include \\\"a:b.qcore\\\";\\n\", Malformed),"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 75,
+      "text": "(\"module library;\\n#include \\\"a:b.qcore\\\";\\n\", Malformed),"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 77,
+      "text": "(\"module contract;\\n#include a;\\n\", Malformed),"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 78,
+      "text": "(\"module contract;\\n#include \\\"a:b.qcore\\\"\\n\", Malformed),"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 81,
+      "text": "\"module contract;\\nextern fn f() -> unit contract inherit g;\\n#include \\\"a:b.qcore\\\";\\n\","
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 111,
+      "text": "scan_contract_inclusion(&format!(\"module contract;\\n#include \\\"{text}\\\";\\n\"))"
+    },
+    {
+      "file": "crates/qcorec/src/main.rs",
+      "line": 166,
+      "text": "// own `#include`s are read from resolve the same way, against the"
+    },
+    {
+      "file": "crates/qcorec/tests/cli.rs",
+      "line": 438,
+      "text": "#include <stdint.h>\\n\\"
+    },
+    {
+      "file": "crates/qcorec/tests/cli.rs",
+      "line": 540,
+      "text": "#include <stdint.h>\\n\\"
+    },
+    {
+      "file": "crates/qcorec/tests/cli.rs",
+      "line": 541,
+      "text": "#include \\\"demo_visibility.h\\\"\\n\\"
+    },
+    {
+      "file": "docs/reports/contract-inherit/scripts/keyword_census.py",
+      "line": 102,
+      "text": "# A `#include` inside an embedded Quirin program would sit next to"
+    },
+    {
+      "file": "docs/reports/contract-inherit/scripts/keyword_census.py",
+      "line": 103,
+      "text": "# `module contract;`; C fixtures carry `#include` legitimately."
+    },
+    {
+      "file": "scripts/tests/test_package_contract_includes.py",
+      "line": 33,
+      "text": "f'#include \"{LIBC}:libc/heap.qcore\";\\n'"
+    },
+    {
+      "file": "scripts/tests/test_package_contract_includes.py",
+      "line": 34,
+      "text": "\"// A comment naming #include \\\"x:y.qcore\\\"; is not a directive.\\n\""
+    },
+    {
+      "file": "scripts/tests/test_package_contract_includes.py",
+      "line": 85,
+      "text": "plain = CHILD.replace(f'#include \"{LIBC}:libc/heap.qcore\";\\n', \"\")"
+    },
+    {
+      "file": "scripts/tests/test_package_contract_includes.py",
+      "line": 112,
+      "text": "plain = CHILD.replace(f'#include \"{LIBC}:libc/heap.qcore\";\\n', \"\")"
+    },
+    {
+      "file": "scripts/tests/test_package_contract_includes.py",
+      "line": 117,
+      "text": "plain = CHILD.replace(f'#include \"{LIBC}:libc/heap.qcore\";\\n', \"\")"
+    },
+    {
+      "file": "scripts/tests/test_package_contract_includes.py",
+      "line": 124,
+      "text": "for directive in ('#include \"../escape.qcore\";', \"#include libc;\","
+    },
+    {
+      "file": "scripts/tests/test_package_contract_includes.py",
+      "line": 124,
+      "text": "for directive in ('#include \"../escape.qcore\";', \"#include libc;\","
+    },
+    {
+      "file": "scripts/tests/test_package_contract_includes.py",
+      "line": 125,
+      "text": "f'#include \"{LIBC}:/abs.qcore\";'):"
+    },
+    {
+      "file": "scripts/tests/test_package_contract_includes.py",
+      "line": 127,
+      "text": "child = CHILD.replace(f'#include \"{LIBC}:libc/heap.qcore\";', directive)"
+    },
+    {
+      "file": "scripts/tests/test_package_contract_includes.py",
+      "line": 129,
+      "text": "with self.assertRaisesRegex(ValueError, \"malformed #include\"):"
+    },
+    {
+      "file": "scripts/tests/test_package_contract_includes.py",
+      "line": 134,
+      "text": "nested = f'module contract;\\n#include \"{LIBC}:libc/base.qcore\";\\n' + PARENT[len(\"module contract;\\n\"):]"
+    }
+  ],
+  "embedder_inherit_words": [
+    {
+      "file": "compiler/tests/bitwise_conditions.rs",
+      "line": 264,
+      "text": "// revision deliberately does not inherit \u2014 and a condition is not an"
+    },
+    {
+      "file": "compiler/tests/logical_connectives.rs",
+      "line": 239,
+      "text": "// inherit it, since associativity would stop being free the moment a leaf"
+    },
+    {
+      "file": "compiler/tests/pipe_operator.rs",
+      "line": 583,
+      "text": "// to decide this case deliberately rather than inherit it."
+    },
+    {
+      "file": "crates/qcore-audit/tests/contract_inherit_identity.rs",
+      "line": 26,
+      "text": "contract inherit libc::free;\\n\";"
+    },
+    {
+      "file": "crates/qcore-c-gateway/tests/neutral_frame_recursion.rs",
+      "line": 10,
+      "text": "//! route does *not* inherit that permissiveness."
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 8,
+      "text": "//! contract inherit libc::memcpy;"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 14,
+      "text": "//! [`ContractLoadPath`], resolves every `contract inherit NAME;` against the"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 95,
+      "text": "/// Extension clauses after `contract inherit NAME`."
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 216,
+      "text": "\"contract inclusion (`#include` or `contract inherit`) is resolved only against a \\"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 573,
+      "text": "/// The elaborated text: directives blanked, every `inherit NAME` replaced"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 912,
+      "text": "// Probe: the module with directives blanked and each `inherit NAME`"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 948,
+      "text": "\"`contract inherit` is not a declaration's contract\".into(),"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 958,
+      "text": "\"`contract inherit` on `{}` requires a plain \\"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 959,
+      "text": "`extern fn NAME(PARAMS) -> TYPE contract inherit PARENT;` declaration\","
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 981,
+      "text": "// Elaborated text: directives blanked; each `inherit NAME` replaced by"
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_inclusion.rs",
+      "line": 1116,
+      "text": "module declares it; write `contract inherit {}`\","
+    },
+    {
+      "file": "crates/qcore-contract/src/contract_loader.rs",
+      "line": 627,
+      "text": "/// under the publication rule, every `contract inherit PARENT;` replaced by"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 162,
+      "text": "assert!(!text.contains(\"inherit\"));"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 452,
+      "text": "// `inherit` on `unsafe extern fn`."
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 457,
+      "text": "\"unsafe extern fn f(p: ptr<mut, u8>) -> unit contract inherit libc::free;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 467,
+      "text": "\"{HEADER}extern fn f(p: ptr<mut, u8>) -> unit contract inherit libc::free;\\n#include \\\"{HEAP}\\\";\\n\""
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 478,
+      "text": "\"extern fn f(p: ptr<mut, u8>) -> unit contract inherit a::libc::free;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 489,
+      "text": "\"extern fn f(p: ptr<mut, u8>) -> unit effects { io } contract inherit libc::free;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 504,
+      "text": "\"{COPY} contract inherit libc::memcpy {{ requires resource_literal_argument(n, 0); }};\\n\""
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 524,
+      "text": "&format!(\"{COPY} contract inherit libc::memcpy;\\n\"),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 541,
+      "text": "&format!(\"{COPY} contract inherit libc::memcpy;\\n\"),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 556,
+      "text": "\"extern fn f() -> unit contract inherit mpack::g;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 566,
+      "text": "child(&[\"quirin-provider-cfl:cfl/table.qcore\"], \"extern fn f(p: ptr<mut, u8>, q: ptr<mut, u8>, n: usize) -> i32 contract inherit cfl::cfl_table_put;\\n\"),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 583,
+      "text": "\"extern fn f(p: ptr<mut, u8>) -> unit contract inherit libc::internal_release;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 593,
+      "text": "\"extern fn f(p: ptr<mut, u8>) -> unit contract inherit libc::free;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 604,
+      "text": "\"extern fn f(p: ptr<mut, u8>) -> unit contract inherit fluent_bit::flb_free;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 619,
+      "text": "\"extern fn a(p: ptr<mut, u8>) -> unit contract inherit libc::b;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 626,
+      "text": "\"extern fn b(p: ptr<mut, u8>) -> unit contract inherit libc::a;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 651,
+      "text": "\"extern fn s(p: ptr<mut, u8>) -> unit contract inherit libc::s;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 670,
+      "text": "&format!(\"{COPY} contract inherit libc::memcpy;\\n\"),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 684,
+      "text": "&format!(\"{COPY} contract inherit libc::memmove;\\n\"),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 692,
+      "text": "&child(&[], &format!(\"{COPY} contract inherit nowhere;\\n\")),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 706,
+      "text": "&format!(\"{COPY} contract inherit libc::memcpy;\\n\"),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 729,
+      "text": "&format!(\"{signature} contract inherit libc::memcpy;\\n\"),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 744,
+      "text": "\"extern fn f(p: ptr<mut, u8>) -> unit contract inherit g;\\nextern fn g(p: ptr<mut, u8>) -> unit contract inherit f;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 744,
+      "text": "\"extern fn f(p: ptr<mut, u8>) -> unit contract inherit g;\\nextern fn g(p: ptr<mut, u8>) -> unit contract inherit f;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 754,
+      "text": "\"extern fn f(p: ptr<mut, u8>) -> unit contract inherit f;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 770,
+      "text": "\"extern fn f(nullable: ptr<mut, u8>) -> unit contract inherit libc::free;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 791,
+      "text": "\"extern fn f(nonnull: ptr<mut, u8>, y: ptr<mut, u8>) -> unit contract inherit libc::odd;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 805,
+      "text": "\"extern fn f(y: i32) -> i32 contract inherit libc::obs;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 820,
+      "text": "// An inherit tail alone, without any directive, is refused the same way."
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 823,
+      "text": "\"module contract;\\nextern fn f(p: ptr<mut, u8>) -> unit contract inherit g;\\n\".to_owned(),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 902,
+      "text": "\"extern fn f(p: ptr<mut, u8>) -> unit contract inherit libc::{parent};\\n\""
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 915,
+      "text": "\"extern fn f(p: ptr<mut, u8>) -> unit contract inherit libc::g;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 961,
+      "text": "&child(&[STRING], &format!(\"{COPY} contract inherit memcpy;\\n\")),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 966,
+      "text": "assert!(error.contains(\"contract inherit libc::memcpy\"), \"{error}\");"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 976,
+      "text": "&format!(\"{COPY} contract inherit posix::memcpy;\\n\"),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 985,
+      "text": "&child(&[HEAP], &format!(\"{COPY} contract inherit cfl::memcpy;\\n\")),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 997,
+      "text": "&format!(\"{COPY} contract inherit libc::memcpy;\\n\"),"
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 1015,
+      "text": "\"extern fn memcpy(a: ptr<mut, u8>, b: ptr<const, u8>, n: usize) -> ptr<mut, u8> contract inherit libc::memcpy;\\n\","
+    },
+    {
+      "file": "crates/qcore-contract/tests/contract_inherit.rs",
+      "line": 1031,
+      "text": "&format!(\"{COPY} contract inherit libc::memmove;\\n\"),"
+    },
+    {
+      "file": "crates/qcore-core/src/std_buffer.rs",
+      "line": 41,
+      "text": "//! \"inherit, don't reimplement\" precedent)."
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 11,
+      "text": "//! contract inherit libc::memcpy;"
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 15,
+      "text": "//! `contract inherit NAME;` tail, checks their token shape, and reports their"
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 29,
+      "text": "//! a `#` at a contract module's top level, and `inherit` only directly after"
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 32,
+      "text": "//! `docs/reports/contract-inherit/`."
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 55,
+      "text": "/// One `contract inherit [NAMESPACE::]NAME;` tail."
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 60,
+      "text": "/// From `inherit` through `NAME` (the `;` is not included)."
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 63,
+      "text": "/// `inherit libc::memcpy`), or `None` for an own-module parent."
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 101,
+      "text": "/// `contract inherit NAME { \u2026 }`: extension clauses, refused in this"
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 137,
+      "text": "/// `contract` directly followed by the word `inherit`."
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 150,
+      "text": "|| (is_word(&tokens, index, \"contract\") && is_word(&tokens, index + 1, \"inherit\"))"
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 197,
+      "text": "/// * `contract inherit NAME ;` \u2014 at brace, bracket and parenthesis depth 0."
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 287,
+      "text": "if word == \"contract\" && is_word(&tokens, index + 1, \"inherit\") =>"
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 292,
+      "text": "\"`contract inherit` is admitted only as a declaration's contract\","
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 298,
+      "text": "\"`contract inherit` requires one parent declaration name\","
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 324,
+      "text": "message: \"clauses after `contract inherit PARENT` are not admitted in \\"
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 325,
+      "text": "this version; write the whole contract or inherit it unchanged\""
+    },
+    {
+      "file": "crates/qcore-frontend/src/contract_inclusion.rs",
+      "line": 332,
+      "text": "\"expected `;` after `contract inherit PARENT`\","
+    },
+    {
+      "file": "crates/qcore-frontend/src/frontend.rs",
+      "line": 868,
+      "text": "// Card `CONTRACT-INHERIT`: `contract inherit NAME;` is resolved"
+    },
+    {
+      "file": "crates/qcore-frontend/src/frontend.rs",
+      "line": 871,
+      "text": "if self.word(cursor + 1, \"inherit\") {"
+    },
+    {
+      "file": "crates/qcore-frontend/src/frontend.rs",
+      "line": 874,
+      "text": "\"`contract inherit NAME;` is resolved only by the contract loader, \\"
+    },
+    {
+      "file": "crates/qcore-frontend/src/source_mutex.rs",
+      "line": 1284,
+      "text": "// untested reading of what it would inherit."
+    },
+    {
+      "file": "crates/qcore-frontend/src/source_region.rs",
+      "line": 237,
+      "text": "/// The model's wording is kept verbatim otherwise \u2014 \"inherit, don't"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/mutex_share_cross.rs",
+      "line": 342,
+      "text": "/// admitted on an untested reading of what it would inherit."
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 8,
+      "text": "contract inherit libc::memcpy;\\n\\"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 9,
+      "text": "extern fn drop_it(p: ptr<mut, u8>) -> unit contract inherit libc::free;\\n\";"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 28,
+      "text": "\"inherit libc::memcpy\""
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 46,
+      "text": "let words = \"module contract;\\nextern fn f(inherit: usize, include: usize) -> unit contract {\\n\\"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 48,
+      "text": "ensures normal resource_borrowed(inherit);\\n\\"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 60,
+      "text": "\"module contract;\\nextern fn f(p: ptr<mut, u8>) -> unit contract inherit libc::free;\\n\";"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 62,
+      "text": "assert!(error.message.contains(\"`contract inherit\"), \"{error}\");"
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 81,
+      "text": "\"module contract;\\nextern fn f() -> unit contract inherit g;\\n#include \\\"a:b.qcore\\\";\\n\","
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 86,
+      "text": "\"module contract;\\nextern fn f() -> unit contract inherit;\\n\","
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 90,
+      "text": "\"module contract;\\nextern fn f() -> unit contract inherit g h;\\n\","
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 94,
+      "text": "\"module contract;\\nextern fn f() -> unit contract { requires contract inherit g; };\\n\","
+    },
+    {
+      "file": "crates/qcore-frontend/tests/unit/contract_inclusion.rs",
+      "line": 99,
+      "text": "\"module contract;\\nextern fn f() -> unit contract inherit g { requires resource_contract_v1; };\\n\","
+    },
+    {
+      "file": "crates/qcore-schemas/src/composition_summary.rs",
+      "line": 813,
+      "text": "/// itself. A family whose nested question is derived does not inherit its"
+    },
+    {
+      "file": "crates/qcore-verification/src/driver.rs",
+      "line": 3184,
+      "text": "// C idiom this revision deliberately does not inherit, because"
+    },
+    {
+      "file": "crates/qcore-verification/src/driver.rs",
+      "line": 6080,
+      "text": "/// way. What differs is that there is no custody step to inherit: a view is not"
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 35,
+      "text": "\"text\": \"// revision deliberately does not inherit \\u2014 and a condition is not an\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 40,
+      "text": "\"text\": \"// inherit it, since associativity would stop being free the moment a leaf\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 45,
+      "text": "\"text\": \"// to decide this case deliberately rather than inherit it.\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 50,
+      "text": "\"text\": \"//! route does *not* inherit that permissiveness.\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 55,
+      "text": "\"text\": \"//! \\\"inherit, don't reimplement\\\" precedent).\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 60,
+      "text": "\"text\": \"// untested reading of what it would inherit.\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 65,
+      "text": "\"text\": \"/// The model's wording is kept verbatim otherwise \\u2014 \\\"inherit, don't\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 70,
+      "text": "\"text\": \"/// admitted on an untested reading of what it would inherit.\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 75,
+      "text": "\"text\": \"/// itself. A family whose nested question is derived does not inherit its\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 80,
+      "text": "\"text\": \"// C idiom this revision deliberately does not inherit, because\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 85,
+      "text": "\"text\": \"/// way. What differs is that there is no custody step to inherit: a view is not\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 95,
+      "text": "\"text\": \"\\\"around wave 37 and will inherit the question.\\\",\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/census-base.json",
+      "line": 105,
+      "text": "\"text\": \"# another host cannot inherit `executed`.\""
+    },
+    {
+      "file": "docs/reports/contract-inherit/scripts/keyword_census.py",
+      "line": 8,
+      "text": "* the word `inherit` anywhere (as a whole word);"
+    },
+    {
+      "file": "docs/reports/contract-inherit/scripts/keyword_census.py",
+      "line": 9,
+      "text": "* `contract` followed by anything other than `{` (the position `inherit` takes);"
+    },
+    {
+      "file": "docs/reports/wave36-close/reconciliation.json",
+      "line": 963,
+      "text": "\"ground\": \"Still deferred - explicitly a question raised for the user, which no card and no close may answer. NEW EVIDENCE from this close, offered as a data po"
+    },
+    {
+      "file": "docs/reports/wave36-close/scripts/write_reconciliation.py",
+      "line": 837,
+      "text": "\"around wave 37 and will inherit the question.\","
+    },
+    {
+      "file": "docs/reviews/r0_3/acceptance_matrix.json",
+      "line": 8614,
+      "text": "\"why\": \"Two independent mappings of CT41 were built from the same base and reached the same row. Both measured the SAME obstruction -- that the wave-9 attributi"
+    },
+    {
+      "file": "docs/reviews/r0_3/acceptance_matrix.json",
+      "line": 8831,
+      "text": "\"why\": \"Card CONTRACT-INHERIT added `#include \\\"crate:module\\\";` and `contract inherit [NS::]NAME;` with a published load path (ContractLoadPath: crate name, re"
+    },
+    {
+      "file": "docs/reviews/r0_3/acceptance_matrix.json",
+      "line": 8832,
+      "text": "\"source\": \"docs/reports/contract-inherit/README.md\","
+    },
+    {
+      "file": "docs/reviews/r0_3/acceptance_matrix.json",
+      "line": 8837,
+      "text": "\"title\": \"Clauses after `contract inherit PARENT` are refused (QI002); no sound per-consumer extension rule exists yet\","
+    },
+    {
+      "file": "docs/reviews/r0_3/acceptance_matrix.json",
+      "line": 8838,
+      "text": "\"why\": \"Card CONTRACT-INHERIT refuses `contract inherit P { \u2026 };`. Whether an added clause is sound depends on the consumer and the clause family: in resource v"
+    },
+    {
+      "file": "docs/reviews/r0_3/acceptance_matrix.json",
+      "line": 8839,
+      "text": "\"source\": \"docs/reports/contract-inherit/README.md\","
+    },
+    {
+      "file": "docs/reviews/r0_3/acceptance_matrix.json",
+      "line": 8846,
+      "text": "\"source\": \"docs/reports/contract-inherit/README.md\","
+    },
+    {
+      "file": "proof/QCore/ContractInherit.lean",
+      "line": 8,
+      "text": "against a published load path and elaborates `contract inherit [NS::]NAME;`"
+    },
+    {
+      "file": "proof/QCore/ContractInherit.lean",
+      "line": 618,
+      "text": "/-- Clauses written after `inherit PARENT`; none are admitted. -/"
+    },
+    {
+      "file": "scripts/ct_stage_summary.py",
+      "line": 699,
+      "text": "# another host cannot inherit `executed`."
+    },
+    {
+      "file": "scripts/tests/test_package_contract_includes.py",
+      "line": 36,
+      "text": "\"contract inherit libc::free;\\n\""
+    }
+  ],
+  "quirin_sources": 578,
+  "source_code_hashes": [
+    {
+      "context": "module contract;\n#include \"quirin-pro",
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-app/contracts/app/chain.qcore"
+    },
+    {
+      "context": "module contract;\n#include \"quirin-pro",
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore"
+    },
+    {
+      "context": "libc/string.qcore\";\n#include \"quirin-pro",
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore"
+    },
+    {
+      "context": "c:libc/heap.qcore\";\n#include \"quirin-pro",
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore"
+    }
+  ],
+  "source_contract_non_block_tails": [
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-app/contracts/app/chain.qcore",
+      "word": "inherit"
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-app/contracts/app/chain.qcore",
+      "word": "inherit"
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "word": "inherit"
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "word": "inherit"
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "word": "inherit"
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "word": "inherit"
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "word": "inherit"
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "word": "inherit"
+    }
+  ],
+  "source_hash_include": [
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-app/contracts/app/chain.qcore",
+      "offset": 17
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "offset": 17
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "offset": 68
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "offset": 117
+    }
+  ],
+  "source_inherit_words": [
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-app/contracts/app/chain.qcore",
+      "in_code": true,
+      "offset": 402
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-app/contracts/app/chain.qcore",
+      "in_code": true,
+      "offset": 496
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "in_code": true,
+      "offset": 468
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "in_code": true,
+      "offset": 544
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "in_code": true,
+      "offset": 648
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "in_code": true,
+      "offset": 730
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "in_code": true,
+      "offset": 847
+    },
+    {
+      "file": "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qcore",
+      "in_code": true,
+      "offset": 1003
+    }
+  ]
+}

@@ -67,6 +67,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [confined-exit-precedence](confined-exit-precedence/README.md) | Confined process failure precedence |
 
+| [contract-inherit](contract-inherit/README.md) | CONTRACT-INHERIT: contract inclusion and contract inheritance |
+
 | [core-concurrency-prelude](core-concurrency-prelude/README.md) | Core concurrency prelude — 2026-09-08 |
 
 | [corpus-repin](corpus-repin/README.md) | CORPUS-REPIN — re-measurement and deliberate re-pin of the four 185-unit artifacts |

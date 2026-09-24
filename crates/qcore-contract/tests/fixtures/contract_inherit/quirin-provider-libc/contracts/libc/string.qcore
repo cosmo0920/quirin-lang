@@ -1,0 +1,28 @@
+module contract;
+
+// Fixture for card CONTRACT-INHERIT: a memcpy-shaped parent. Not a real libc
+// contract; the real ones live in providers/quirin-provider-libc.
+
+extern fn memcpy(dest: ptr<mut, u8>, src: ptr<const, u8>, n: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(dest);
+    ensures normal resource_borrowed(src);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};
+
+extern fn strlen(s: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_none();
+};
+
+extern fn printf(format: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(format);
+    ensures normal resource_return_none();
+    ensures normal resource_variadic_data_tail();
+};

@@ -642,6 +642,18 @@ impl<'a> SourceParser<'a> {
                 });
                 continue;
             }
+            // Card `CONTRACT-INHERIT`: an `#include` directive is resolved by
+            // the contract loader against a published load path and elaborated
+            // away before any consumer parses the module, so reaching it here
+            // means nothing resolved it. It stays a parse error — exactly as a
+            // top-level `#` was before the card — with a message naming why.
+            if self.symbol(cursor, Symbol::Hash) && self.word(cursor + 1, "include") {
+                return Err(self.error(
+                    cursor,
+                    "`#include` is a contract-inclusion directive; only the contract loader \
+                     resolves it, against a published contract load path",
+                ));
+            }
             let (declaration, next) = self.declaration(cursor)?;
             declarations.push(declaration);
             cursor = next;
@@ -852,6 +864,16 @@ impl<'a> SourceParser<'a> {
             if self.word(cursor, "contract") {
                 if contract.is_some() {
                     return Err(self.error(cursor, "function has more than one contract block"));
+                }
+                // Card `CONTRACT-INHERIT`: `contract inherit NAME;` is resolved
+                // and elaborated by the contract loader; unresolved, it is a
+                // parse error, as every non-block contract tail was before.
+                if self.word(cursor + 1, "inherit") {
+                    return Err(self.error(
+                        cursor + 1,
+                        "`contract inherit NAME;` is resolved only by the contract loader, \
+                         against a published contract load path",
+                    ));
                 }
                 if !self.symbol(cursor + 1, Symbol::LeftBrace) {
                     return Err(self.error(cursor + 1, "function contract requires a block"));

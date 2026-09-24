@@ -6,6 +6,7 @@ import hashlib
 import io
 import json
 import os
+import re
 from pathlib import Path, PurePosixPath
 import shutil
 import subprocess
@@ -79,8 +80,8 @@ def contract_path(name):
     return path
 
 
-def installed_contract_files(package):
-    root = package / "contracts"
+def installed_contract_files(package, tree="contracts"):
+    root = package / tree
     if root.is_symlink() or not root.is_dir():
         raise ValueError(f"missing or symbolic-link contract directory: {root}")
     found = {}
@@ -100,6 +101,103 @@ def installed_contract_files(package):
     return found
 
 
+# Card CONTRACT-INHERIT. A contract module may name another crate's published
+# module with `#include "crate:module";`. The grammar is the Rust scanner's
+# (`qcore_frontend::contract_inclusion`): a lowercase crate name, `:`, and a
+# relative `[a-z0-9_/-]+.qcore` module path with nonempty segments.
+INCLUDE_LINE = re.compile(r"^[ \t]*#[ \t]*include\b")
+INCLUDE_DIRECTIVE = re.compile(
+    r'^[ \t]*#include[ \t]+"([a-z0-9][a-z0-9_-]*):([a-z0-9_-]+(?:/[a-z0-9_-]+)*\.qcore)"[ \t]*;[ \t]*$')
+INCLUDE_PIN_FIELDS = {"crate", "version", "module", "sha256"}
+
+
+def contract_include_targets(text, name):
+    """The `crate:module` targets a contract text includes, in order.
+
+    Comments are removed first, so prose about a directive is not one. A line
+    that starts a directive but is not exactly the admitted form is refused,
+    never skipped."""
+    without_blocks = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+    targets = []
+    for line in without_blocks.split("\n"):
+        line = line.split("//", 1)[0]
+        if not INCLUDE_LINE.match(line):
+            continue
+        match = INCLUDE_DIRECTIVE.match(line)
+        if match is None:
+            raise ValueError(f"malformed #include directive in {name}: {line.strip()!r}")
+        targets.append(f"{match.group(1)}:{match.group(2)}")
+    return targets
+
+
+def is_sha256_hex(value):
+    return (isinstance(value, str) and len(value) == 64
+            and all(char in "0123456789abcdef" for char in value))
+
+
+def verify_contract_includes(package, inventory, found):
+    """Check the identities of every included parent a package's contracts
+    reach (card CONTRACT-INHERIT).
+
+    A package whose contracts include another module must pin each reached
+    module (its crate, crate version, module path and SHA-256) in the
+    inventory's `includes` object and install its exact text under
+    `includes/<crate>/<module>`. Verification fails if a directive is
+    unpinned, a pin is unused, a pinned text is missing or changed, or an
+    `includes/` tree exists without pins. Returns the number of pins, or None
+    for a package that includes nothing, which is every package today."""
+    pins = inventory.get("includes")
+    tree = package / "includes"
+    tree_present = tree.exists() or tree.is_symlink()
+    pending = []
+    for name, data in sorted(found.items()):
+        pending.extend(contract_include_targets(data.decode("utf-8"), name))
+    if pins is None:
+        if pending:
+            raise ValueError(f"contract includes are not pinned: {sorted(set(pending))}")
+        if tree_present:
+            raise ValueError("installed includes/ tree has no pinned identities")
+        return None
+    if not isinstance(pins, dict) or not pins:
+        raise ValueError("contract include pins must be a nonempty object")
+    installed = installed_contract_files(package, "includes")
+    expected_files = {}
+    for key, pin in pins.items():
+        if not isinstance(pin, dict) or set(pin) != INCLUDE_PIN_FIELDS:
+            raise ValueError(f"include pin {key!r} has unknown or missing fields")
+        crate, module = pin["crate"], pin["module"]
+        if (not isinstance(crate, str) or not isinstance(module, str)
+                or f"{crate}:{module}" != key
+                or not INCLUDE_DIRECTIVE.match(f'#include "{key}";')):
+            raise ValueError(f"include pin {key!r} does not name its crate and module")
+        if not isinstance(pin["version"], str) or not pin["version"]:
+            raise ValueError(f"include pin {key!r} has no crate version")
+        if not is_sha256_hex(pin["sha256"]):
+            raise ValueError(f"invalid SHA-256 for include pin {key!r}")
+        expected_files[f"includes/{crate}/{module}"] = key
+    if set(installed) != set(expected_files):
+        missing = sorted(set(expected_files) - set(installed))
+        extra = sorted(set(installed) - set(expected_files))
+        raise ValueError(f"included parent set mismatch: missing={missing}, extra={extra}")
+    reached = set()
+    while pending:
+        key = pending.pop()
+        if key in reached:
+            continue
+        if key not in pins:
+            raise ValueError(f"included parent {key} is not pinned")
+        reached.add(key)
+        path = f"includes/{pins[key]['crate']}/{pins[key]['module']}"
+        data = installed[path]
+        if hashlib.sha256(data).hexdigest() != pins[key]["sha256"]:
+            raise ValueError(f"included parent changed: {key}")
+        pending.extend(contract_include_targets(data.decode("utf-8"), path))
+    unused = sorted(set(pins) - reached)
+    if unused:
+        raise ValueError(f"pinned included parents no contract reaches: {unused}")
+    return len(pins)
+
+
 def verify_contracts(package, executable_bytes, plugin_id):
     embedded = embedded_contracts(executable_bytes)
     inventory_path = package / "contracts.json"
@@ -116,7 +214,7 @@ def verify_contracts(package, executable_bytes, plugin_id):
     installed_bytes = regular_bytes(inventory_path, "contract inventory")
     if json.loads(installed_bytes.decode()) != inventory:
         raise ValueError("installed contracts.json diverges from the embedded inventory")
-    if set(inventory) != {"schema_version", "plugin_id", "contracts"}:
+    if set(inventory) - {"includes"} != {"schema_version", "plugin_id", "contracts"}:
         raise ValueError("contract inventory has unknown or missing fields")
     if inventory["schema_version"] != 1 or inventory["plugin_id"] != plugin_id:
         raise ValueError("contract inventory schema or plugin identity mismatch")
@@ -141,7 +239,11 @@ def verify_contracts(package, executable_bytes, plugin_id):
         actual = hashlib.sha256(found[name]).hexdigest()
         if actual != expected:
             raise ValueError(f"contract asset digest mismatch: {name}")
-    return {"payload_sha256": hashlib.sha256(payload).hexdigest(), "contracts": len(normalized)}
+    includes = verify_contract_includes(package, inventory, found)
+    result = {"payload_sha256": hashlib.sha256(payload).hexdigest(), "contracts": len(normalized)}
+    if includes is not None:
+        result["includes"] = includes
+    return result
 
 
 def verify(package):

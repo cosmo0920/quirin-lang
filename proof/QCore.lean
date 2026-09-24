@@ -211,6 +211,7 @@ import QCore.EventPayloadBoundary
 import QCore.TimeoutTeardown
 import QCore.Cycle18Composition
 import QCore.Cycle18CallbackObligations
+import QCore.ContractInherit
 import QCore.NativePlatformMatrix
 import QCore.CallbackTaskHandoff
 
