@@ -1,0 +1,29 @@
+{
+  "note": "W43-LIBC-CONTRACTS, 2026-09-23. Declarative arbiter, one audit binary for both stages. BEFORE reproduces the W43-RETURN-EXPRESSION diagnostics byte for byte. AFTER selects eleven new libc/ modules (55 trusted libc/POSIX declarations in providers/quirin-provider-libc): 314 leaves removed, 27 added, all attributed (229 declared-callee, 4 newly-Safe callee summaries, 86 same line, 22 same function); 22 functions Unknown -> Safe, each relative to the declared premises; 0 unit status moves. Leak 272 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-libc-contracts/previous-corpus-row.json.",
+  "units": 185,
+  "safe": 2,
+  "provisional_unsafe": 42,
+  "unknown": 137,
+  "data_only": 4,
+  "projected_functions": 4834,
+  "leak_diagnostics": 272,
+  "process_sidecar": "3 checked function contracts / 93 Unknown",
+  "baseline": "docs/reports/w43-libc-contracts/artifacts/",
+  "source": "docs/reports/w43-libc-contracts/README.md; preceding baseline docs/reports/w43-return-expression/artifacts/",
+  "unknown_alias_diagnostics": 4655,
+  "unsupported_diagnostics": 49094,
+  "double_release_diagnostics": 0,
+  "function_statuses": {
+    "safe": 245,
+    "provisional_unsafe": 84,
+    "unknown": 4505
+  },
+  "source_definitions": 4921,
+  "unprojected_definitions": 87,
+  "unit_reason_codes": {
+    "unsupported-syntax": 136,
+    "none": 48,
+    "incomplete-obligation-coverage": 1
+  },
+  "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

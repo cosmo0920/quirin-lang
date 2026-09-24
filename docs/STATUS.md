@@ -1,8 +1,8 @@
 # Current status and evidence boundaries
 
-Re-derived on 2026-09-21 from the sources below; corpus rows re-derived on
-2026-09-23 from the W43-LIBC-CONTRACTS arbiter and the live follow-up count on
-2026-09-24 at its integration. This is the concise status
+Re-derived on 2026-09-21 from the sources below; corpus, contract-corpus and
+follow-up rows re-derived on 2026-09-24 from the W43-LIBC-RESULT-ALIAS arbiter
+and ledger. This is the concise status
 authority routed by `AGENTS.md`; reports own the underlying evidence. Update
 numbers from those sources, not from an older summary. History belongs in the
 [increment records](development/increments/README.md).
@@ -16,10 +16,10 @@ numbers from those sources, not from an older summary. History belongs in the
 | CT independent artifacts | **48** distinct source-fixture programs behind the 50 mapped cases (CT01/CT12/CT14 share one); **9** reviewed byte-identical fixture groups | Same manifest, `artifact_identity`, recomputed by `ct_corpus.rs`; [disclosure](reports/ct-shared-fixture-disclosure/README.md) |
 | CT case-bound proof | **5/50**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
 | CT gated sanitized-native | **10/50, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
-| Cycle 19 units | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only**, 185 total | [W43 libc-contracts corpus](reports/w43-libc-contracts/README.md) |
-| Projected functions | **245 Safe / 84 provisional Unsafe / 4,505 Unknown**, 4,834 total; the 22 new Safe are relative to 55 declared libc/POSIX premises | Same baseline |
-| Corpus diagnostics | leak **272**; unknown_alias **4,655**; double_release **0**; unsupported **49,094**; summary_conflict **1** | Same baseline, `artifacts/diagnostics.json.gz` |
-| Return-expression refusals | **497** leaves on **420** Unknown functions, sole blocker of **144** (1,440 / 1,109 / 465 before W43-RETURN-EXPRESSION); 941 whole-call leaves carry the call classifier's own refusal | [W43 attribution](reports/w43-return-expression/attribution-summary.json), [current blocker census](reports/w43-libc-contracts/blocker-census.txt) |
+| Cycle 19 units | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only**, 185 total | [W43 libc result-alias corpus](reports/w43-libc-result-alias/README.md) |
+| Projected functions | **257 Safe / 84 provisional Unsafe / 4,493 Unknown**, 4,834 total; the 34 Safe added by the two W43 libc cards are relative to 68 declared libc/POSIX premises | Same baseline |
+| Corpus diagnostics | leak **272**; unknown_alias **4,657**; double_release **0**; unsupported **48,930**; summary_conflict **1**; invalid_release / use_after_release **0 / 0** | Same baseline, `artifacts/diagnostics.json.gz` |
+| Return-expression refusals | **499** leaves on **422** Unknown functions, sole blocker of **146** (1,440 / 1,109 / 465 before W43-RETURN-EXPRESSION; two returned derived results joined at W43-LIBC-RESULT-ALIAS); 941 whole-call leaves carry the call classifier's own refusal | [W43 attribution](reports/w43-return-expression/attribution-summary.json), [current blocker census](reports/w43-libc-result-alias/blocker-census.txt) |
 | Unit reasons | **136 unsupported-syntax / 1 incomplete-obligation-coverage / 48 without a reason code** | [Combined attribution](reports/w42-priority-integration/attribution.json); unit fields unchanged at W43 |
 | Raw source coverage | **4,921 definitions / 4,834 projected / 87 pinned-build exclusions**, across **24 full-path units** | [Verified census](reports/w42-unprojected-definitions/README.md); combined inventory unchanged |
 | Monkey callback accounting | **3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown**; 8 source paths; per-callback obligations **51 relevant cells, 17 discharged / 34 open** (was 5 / 46) | [Callback report](reports/w42-monkey-callback-coverage/README.md); ordinary audit checks 0/8 native paths, optional focused replay 8/8; [per-callback composition](reports/w43-monkey-callback-composition/README.md) discharges initialization reachability (3 callbacks) and natural activation (2) from the pinned compile task |
@@ -28,9 +28,9 @@ numbers from those sources, not from an older summary. History belongs in the
 | Cycle 18 bounded aggregate | **3 joined families / 8 source paths / 7 unresolved obligations**, aggregate Unknown | [Broader integration](reports/cycle18-broader-integration/aggregate.json) |
 | Callback task handoff | **12 source-derived operations**, one Linux pthread fixture; production acceptance pending | [Integrated lifetime evidence](reports/cycle18-broader-integration/task-handoff.json) |
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
-| Contract corpus | **107** modules; **114** resource-v1 declarations; **44** manifest-selected | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 35 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (11 roots), [selection](../cycle19-resource-contracts.json) and pinned tests |
+| Contract corpus | **107** modules; **127** resource-v1 declarations; **44** manifest-selected | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 35 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (11 roots), [selection](../cycle19-resource-contracts.json) and pinned tests |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **291** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **294** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -53,8 +53,8 @@ and the chunk **lifecycle** result are separate dimensions: no selected chunk
 function's lifecycle post-state is established, `flb_input_chunk_create`
 included, and a checked field contract is not a lifecycle result. Provisional Unsafe
 findings are not validated upstream defects. Unknowns stay in the denominator.
-The baseline is `docs/reports/w43-libc-contracts/artifacts/` (its predecessor
-`docs/reports/w43-return-expression/artifacts/` is frozen); an arbiter must
+The baseline is `docs/reports/w43-libc-result-alias/artifacts/` (its predecessor
+`docs/reports/w43-libc-contracts/artifacts/` is frozen); an arbiter must
 reproduce its predecessor's verdict-bearing artifacts byte-for-byte and
 attribute every delta. The chain and leaf identities are preserved in the
 individual reports, [wave history](development/increments/README.md), and
@@ -101,7 +101,7 @@ pilot adds independently pinned data-only selection for the CMetrics policy,
 retains version-1 paths and existing adapters, and models admission separately
 from policy truth. Four scoped follow-ons remain in its report.
 
-All three broader Cycle 18 follow-ups remain open; **291** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **294** follow-ups are
 registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
@@ -110,7 +110,9 @@ retired `RETURN-CALL-INCOMPLETE-LINE-455` against its census;
 registered; QUIRIN-PROVIDER-SHARED registered
 `PROVIDER-CONFORMANCE-CORE-FIXTURE-PATHS`; the Windows F02 run and active
 cross-host pin check retired three F02 follow-ups; W43-LIBC-CONTRACTS registered ten libc
-residuals and retired `LOADER-ABI-RESTRICT-QUALIFIER` against its measurement. Production callback composition, task/cancellation/event-generation
+residuals and retired `LOADER-ABI-RESTRICT-QUALIFIER` against its measurement; W43-LIBC-RESULT-ALIAS
+retired `LIBC-MEM-RESULT-ALIAS`, `W43-LIBC-RESULT-ALIAS-NAMES` and
+`W43-LIBC-POINTER-QUALIFIER-READER` and registered six derived-result and reader residuals. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
 
