@@ -5,7 +5,13 @@ edition = "2024"
 license = "MIT OR Apache-2.0"
 publish = false
 
+# Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: a contract-use edge. This
+# crate's contracts `#include "quirin-provider-libc:..."` published libc
+# modules and inherit their contracts, and the load path admits an include
+# only along a declared dependency. Data only: the executable reads nothing
+# from it.
 [dependencies]
+quirin-provider-libc.workspace = true
 quirin-provider-shared.workspace = true
 qcore-schemas.workspace = true
 serde.workspace = true

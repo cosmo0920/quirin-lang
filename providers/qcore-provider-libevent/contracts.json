@@ -10,12 +10,20 @@
     "contracts/monkey/event_payload.qcore": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a",
     "contracts/monkey/intrusive_list.qcore": "b887797ad818ac1aca840d09a27ec905fd22b5985365fb65b6ed4bab76c3236e",
     "contracts/monkey/logging.qcore": "82e2d05d6cc85a1980fff21df55dd8c3b10849936780c9fa1d4ddba5d048dade",
-    "contracts/monkey/memory.qcore": "9ae4da4aad598b9c9f20d793a1dd53fd23806d9446575a082c3b6b7f061fc7c1",
+    "contracts/monkey/memory.qcore": "661dbb51f45552bcb357022f70be035745727284d6f66ded9ee6e3bbf330ecbe",
     "contracts/monkey/native_platform_matrix.qcore": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2",
     "contracts/monkey/timeout_teardown.qcore": "516fa1fee1732f3523a373f625333f87df7ca89239569ccbbf4ece7d37800e27",
     "contracts/monkey/wait_failure_policy.qcore": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
     "contracts/monkey/wait_identity_policy.qcore": "131694dd932954d26cb085224bd6d25edfc02867e88863ca46de6f6c7572c1c3",
     "contracts/monkey/wait_source_policy.qcore": "b78d56857a059c96d0d748e8dd6a4c3ee9bbf527c21e17f3ce9ebcad4fe0c393",
     "contracts/monkey/wrapper_paths.qcore": "c5c51240aafc42b293f715113c76706e656ac51548b1be065536c83f6167bdb0"
+  },
+  "includes": {
+    "quirin-provider-libc:libc/memory.qcore": {
+      "crate": "quirin-provider-libc",
+      "version": "0.1.0",
+      "module": "libc/memory.qcore",
+      "sha256": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
+    }
   }
 }

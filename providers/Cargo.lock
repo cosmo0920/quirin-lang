@@ -125,6 +125,7 @@ name = "qcore-provider-libevent"
 version = "0.1.0"
 dependencies = [
  "qcore-schemas",
+ "quirin-provider-libc",
  "quirin-provider-shared",
  "serde",
  "serde_json",
@@ -135,6 +136,7 @@ name = "qcore-provider-librdkafka"
 version = "0.1.0"
 dependencies = [
  "qcore-schemas",
+ "quirin-provider-libc",
  "quirin-provider-shared",
  "serde",
  "serde_json",
