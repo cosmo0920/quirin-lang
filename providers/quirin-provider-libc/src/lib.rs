@@ -13,6 +13,22 @@
 //! `fluent_bit/` or another corpus module. The crate has no dependency and is
 //! usable on its own, without the `quirin-provider-shared` bundle.
 
+/// The crate's contract-inheritance namespace (card CONTRACT-INHERIT-ADOPTION):
+/// the package name without `quirin-provider-`, `-` read as `_`. A parent
+/// this crate owns is written `libc::NAME`. Recorded here, checked
+/// against the derivation rule by this crate's tests, and carried into
+/// `providers/contract-load-path.json`, where the load path checks it again.
+pub const NAMESPACE: &str = "libc";
+
+/// The owned modules another contract module may `#include`, sorted: a
+/// subset of [`CONTRACTS`]' logical paths. `libc/memory.qcore` (`malloc`,
+/// `calloc`, `free`) and `libc/string.qcore` (`strdup`, `strndup`) are
+/// published: `quirin-provider-fluent-bit` inherits its allocator and
+/// string-duplication wrappers from them. Publication makes a module's text
+/// part of every inheriting contract's identity, so a published module's
+/// SHA-256 is pinned in `providers/contract-load-path.json`.
+pub const PUBLISHED: &[&str] = &["libc/memory.qcore", "libc/string.qcore"];
+
 /// Every contract module this crate owns, as `(logical path, source text)`,
 /// sorted by logical path. The logical path is relative to `contracts/`, which
 /// is the name `contract/corpus.json` resolves (for example `libc/errno.qcore`).
@@ -86,6 +102,22 @@ pub fn contract(path: &str) -> Option<&'static str> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Card CONTRACT-INHERIT-ADOPTION: the recorded namespace is the one the
+    /// load path derives from the package name, and every published module
+    /// is an owned one, listed once, in order.
+    #[test]
+    fn namespace_is_derived_and_published_modules_are_owned() {
+        let derived = env!("CARGO_PKG_NAME")
+            .strip_prefix("quirin-provider-")
+            .expect("a contract crate is named quirin-provider-NAME")
+            .replace('-', "_");
+        assert_eq!(NAMESPACE, derived);
+        assert!(PUBLISHED.windows(2).all(|pair| pair[0] < pair[1]));
+        for module in PUBLISHED {
+            assert!(CONTRACTS.iter().any(|(name, _)| name == module), "{module}");
+        }
+    }
 
     /// The index is exactly the `.qcore` tree on disk, byte for byte: a module
     /// added under `contracts/` without an index entry, or an entry without its

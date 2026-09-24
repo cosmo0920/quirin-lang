@@ -180,6 +180,9 @@ version = "0.1.0"
 [[package]]
 name = "quirin-provider-fluent-bit"
 version = "0.1.0"
+dependencies = [
+ "quirin-provider-libc",
+]
 
 [[package]]
 name = "quirin-provider-libc"

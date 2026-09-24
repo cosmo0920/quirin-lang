@@ -28,6 +28,18 @@ pub use quirin_provider_libc as libc;
 pub use quirin_provider_mpack as mpack;
 pub use quirin_provider_msgpack as msgpack;
 
+/// The crate's contract-inheritance namespace (card CONTRACT-INHERIT-ADOPTION):
+/// the package name without `quirin-provider-`, `-` read as `_`. A parent
+/// this crate owns is written `shared::NAME`. Recorded here, checked
+/// against the derivation rule by this crate's tests, and carried into
+/// `providers/contract-load-path.json`, where the load path checks it again.
+pub const NAMESPACE: &str = "shared";
+
+/// The owned modules another contract module may `#include`, sorted: a
+/// subset of [`CONTRACTS`]' logical paths. None yet; publishing a module is
+/// a deliberate, reviewed act (card CONTRACT-INHERIT-ADOPTION).
+pub const PUBLISHED: &[&str] = &[];
+
 /// The contract modules this crate owns itself, as `(logical path, source
 /// text)`, sorted by logical path relative to `contracts/`.
 pub const CONTRACTS: &[(&str, &str)] = &[
@@ -72,6 +84,22 @@ pub fn shared_contract(path: &str) -> Option<&'static str> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Card CONTRACT-INHERIT-ADOPTION: the recorded namespace is the one the
+    /// load path derives from the package name, and every published module
+    /// is an owned one, listed once, in order.
+    #[test]
+    fn namespace_is_derived_and_published_modules_are_owned() {
+        let derived = env!("CARGO_PKG_NAME")
+            .strip_prefix("quirin-provider-")
+            .expect("a contract crate is named quirin-provider-NAME")
+            .replace('-', "_");
+        assert_eq!(NAMESPACE, derived);
+        assert!(PUBLISHED.windows(2).all(|pair| pair[0] < pair[1]));
+        for module in PUBLISHED {
+            assert!(CONTRACTS.iter().any(|(name, _)| name == module), "{module}");
+        }
+    }
     use std::collections::BTreeSet;
 
     /// This crate's own index is exactly its `contracts/` tree, byte for byte.
@@ -99,6 +127,84 @@ mod tests {
             .map(|(name, text)| (name.to_string(), text.to_string()))
             .collect();
         assert_eq!(indexed, on_disk);
+    }
+
+    /// Card CONTRACT-INHERIT-ADOPTION: the generated load-path manifest
+    /// (`providers/contract-load-path.json`, which core consumers read as data)
+    /// says exactly what the six linked crates record: namespace, owned
+    /// modules, and each published module with the SHA-256 of its linked text.
+    /// Versions and dependency edges come from Cargo metadata and are checked by
+    /// `providers/contracts.py check`.
+    #[test]
+    fn load_path_manifest_matches_the_linked_crates() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("..")
+            .join("contract-load-path.json");
+        let manifest: serde_json::Value =
+            serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+        let crates = manifest["crates"].as_array().unwrap();
+        type Linked = (
+            &'static str,
+            &'static str,
+            &'static [&'static str],
+            &'static [(&'static str, &'static str)],
+        );
+        let linked: [Linked; 6] = [
+            (
+                "quirin-provider-cfl",
+                cfl::NAMESPACE,
+                cfl::PUBLISHED,
+                cfl::CONTRACTS,
+            ),
+            (
+                "quirin-provider-fluent-bit",
+                fluent_bit::NAMESPACE,
+                fluent_bit::PUBLISHED,
+                fluent_bit::CONTRACTS,
+            ),
+            (
+                "quirin-provider-libc",
+                libc::NAMESPACE,
+                libc::PUBLISHED,
+                libc::CONTRACTS,
+            ),
+            (
+                "quirin-provider-mpack",
+                mpack::NAMESPACE,
+                mpack::PUBLISHED,
+                mpack::CONTRACTS,
+            ),
+            (
+                "quirin-provider-msgpack",
+                msgpack::NAMESPACE,
+                msgpack::PUBLISHED,
+                msgpack::CONTRACTS,
+            ),
+            ("quirin-provider-shared", NAMESPACE, PUBLISHED, CONTRACTS),
+        ];
+        assert_eq!(crates.len(), linked.len());
+        for (record, (name, namespace, published, contracts)) in crates.iter().zip(linked) {
+            assert_eq!(record["name"], name);
+            assert_eq!(record["namespace"], namespace, "{name}");
+            let modules: Vec<_> = contracts.iter().map(|(module, _)| *module).collect();
+            assert_eq!(record["modules"], serde_json::json!(modules), "{name}");
+            let pins: serde_json::Map<String, serde_json::Value> = published
+                .iter()
+                .map(|module| {
+                    let text = contracts.iter().find(|(m, _)| m == module).unwrap().1;
+                    let text = text.replace("\r\n", "\n");
+                    (
+                        (*module).to_owned(),
+                        qcore_schemas::sha256_hex(text.as_bytes()).into(),
+                    )
+                })
+                .collect();
+            assert_eq!(
+                record["published"],
+                serde_json::Value::Object(pins),
+                "{name}"
+            );
+        }
     }
 
     /// The bundle names each shared module exactly once, and each member

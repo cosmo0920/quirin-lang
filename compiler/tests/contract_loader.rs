@@ -72,7 +72,10 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 33 -> 44 by card W43-LIBC-CONTRACTS: eleven `libc/` modules owned by
     // `providers/quirin-provider-libc` (55 trusted libc/POSIX declarations,
     // each read from the prototype the pinned units declare).
-    assert_eq!(contracts.source_assumptions().len(), 44);
+    // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qcore`
+    // selected by `crate:module` reference (schema 2); `resource_memory.qcore`
+    // moved from a path entry to a reference without changing the count.
+    assert_eq!(contracts.source_assumptions().len(), 45);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -437,6 +440,19 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             ),
         );
     }
+    // Card CONTRACT-INHERIT-ADOPTION: `strndup` is `strdup` with a borrowed
+    // size (the trailing borrow is canonicalised away below).
+    old.insert_contract(
+        "strndup",
+        ResourceFunctionContract::new([P::Borrowed], R::Owned { nullable: true }),
+    );
+    // And `flb_strdup` / `flb_strndup`, which inherit exactly those two.
+    for name in ["flb_strdup", "flb_strndup"] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new([P::Borrowed], R::Owned { nullable: true }),
+        );
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -720,7 +736,10 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 33 -> 44 by card W43-LIBC-CONTRACTS: eleven `libc/` modules owned by
     // `providers/quirin-provider-libc` (55 trusted libc/POSIX declarations,
     // each read from the prototype the pinned units declare).
-    assert_eq!(certificate.contracts.source_assumptions().len(), 44);
+    // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qcore`
+    // selected by `crate:module` reference (schema 2); `resource_memory.qcore`
+    // moved from a path entry to a reference without changing the count.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 45);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -894,13 +913,20 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 96 -> 107: card W43-LIBC-CONTRACTS adds eleven `libc/` modules in
     // `providers/quirin-provider-libc`, all entirely v1 and all
     // manifest-selected.
-    assert_eq!(modules.len(), 107, "corpus module count");
+    // 107 -> 108: card CONTRACT-INHERIT-ADOPTION adds
+    // `fluent_bit/resource_string.qcore`, entirely v1 (two inherited
+    // declarations) and manifest-selected.
+    assert_eq!(modules.len(), 108, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
     let mut rejected_declarations = 0;
     for (relative, path) in &modules {
-        let source = std::fs::read_to_string(path).unwrap();
+        // Card CONTRACT-INHERIT-ADOPTION: a module that inherits is read as its
+        // elaboration, the text every loader parses; so every count here is of
+        // elaborated declarations, and a conversion to `contract inherit`
+        // moves none of them.
+        let source = contract_corpus::text(relative, path);
         let parsed = qcore_compiler::parse_source_program(&source).unwrap();
         let marked = |declaration: &qcore_compiler::SourceDeclaration| {
             declaration.function_contract.as_ref().is_some_and(|c| {
@@ -1006,9 +1032,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // declarations added to the already-selected `libc/string.qcore` (eleven)
     // and `libc/time.qcore` (two), so the selection stays at 44 modules and the
     // rejected count is unchanged.
+    // 127 -> 128 by card CONTRACT-INHERIT-ADOPTION: `strndup` appended to
+    // `libc/string.qcore`. Its conversion of `flb_malloc`, `flb_calloc` and
+    // `flb_free` to `contract inherit` moves nothing here: these counts are
+    // of elaborated declarations. 44 -> 45 and 128 -> 130 by the same card's
+    // `fluent_bit/resource_string.qcore` (`flb_strdup`, `flb_strndup`).
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (44, 127, 207)
+        (45, 130, 207)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

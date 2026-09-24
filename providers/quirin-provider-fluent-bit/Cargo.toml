@@ -8,3 +8,10 @@ description = "Shared Quirin contract modules: fluent_bit"
 
 [lib]
 name = "quirin_provider_fluent_bit"
+
+# Card CONTRACT-INHERIT-ADOPTION: a contract-use edge. Modules under
+# `contracts/fluent_bit/` `#include "quirin-provider-libc:..."` published libc
+# modules and inherit their contracts, and the load path admits an include only
+# along a declared dependency. Data only; no code is linked into a provider.
+[dependencies]
+quirin-provider-libc.workspace = true

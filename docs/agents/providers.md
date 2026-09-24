@@ -169,5 +169,19 @@ install the exact texts under `includes/<crate>/<module>`;
 `providers/package.py verify` refuses an unpinned directive, a changed or
 missing parent, an unused pin and an unpinned `includes/` tree. No package
 includes anything yet, so every existing inventory and package identity is
-unchanged. Building the pins from the real crates' published sets is
-`CONTRACT-INHERIT-ADOPTION`. [Report](../reports/contract-inherit/README.md).
+unchanged. Card `CONTRACT-INHERIT-ADOPTION` builds the pins from the real
+crates' published sets (below). [Report](../reports/contract-inherit/README.md).
+
+**Load path (CONTRACT-INHERIT-ADOPTION).** Each `quirin-provider-*` crate
+records `NAMESPACE` and `PUBLISHED` beside `CONTRACTS`; a contract-use edge is
+a real Cargo dependency (`quirin-provider-fluent-bit` → `quirin-provider-libc`).
+`python3 providers/contracts.py sync` also writes
+`providers/contract-load-path.json` from Cargo metadata and those constants,
+pinning every published module's SHA-256, and computes an inventory's
+`includes` pins from it; `check` refuses a stale file, and `package.py build`
+installs the pinned texts. After editing a published module (today
+`libc/memory.qcore` and `libc/string.qcore`) or a crate's constants, run
+`sync`: core consumers refuse a stale pin (`QI014`). The five
+`qcore-provider-*` crates are not on the load path (`QI017`);
+`CONTRACT-INHERIT-QCORE-PROVIDER-NAMING` records that decision.
+[Report](../reports/contract-inherit-adoption/README.md).

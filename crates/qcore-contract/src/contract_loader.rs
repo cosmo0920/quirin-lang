@@ -370,6 +370,110 @@ fn result_abi_types() -> impl Iterator<Item = &'static str> {
 
 /// Load all selected modules atomically. No partial environment escapes on error.
 pub fn load_resource_contract_files(paths: &[PathBuf]) -> Result<ResourceContracts, String> {
+    load_resource_contract_sources(&read_resource_contract_files(paths)?)
+}
+
+/// Versioned selection of resource modules; paths are relative to the manifest.
+///
+/// **Schema 1** selects files: every entry is a path relative to the manifest.
+///
+/// **Schema 2** (card **CONTRACT-INHERIT-ADOPTION**) adds a required
+/// `load_path` (a load-path manifest, relative to this one; see
+/// [`crate::load_path_manifest`]) and admits a second kind of entry: a
+/// `crate:module` reference, spelled exactly like an `#include` target, which
+/// selects a module owned by a crate on that load path and is loaded through
+/// [`load_published_resource_contracts`]'s elaboration and v1 agreement gate.
+/// An entry is a reference when it contains `:`; a path entry may not. Path
+/// entries resolve **identically** to schema 1: the same file, read the same
+/// way, retained under the same key. So a schema-2 manifest whose entries are
+/// all paths loads exactly the environment its schema-1 twin loads (test
+/// `schema_two_path_entries_load_exactly_as_schema_one`). Everything is
+/// total-or-reject: a stale or invalid load path, a malformed reference, a
+/// module selected twice, or two declarations of one function refuse the
+/// whole selection.
+pub fn load_resource_contract_manifest(path: &Path) -> Result<ResourceContracts, String> {
+    #[derive(serde::Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct Manifest {
+        schema_version: u32,
+        #[serde(default)]
+        load_path: Option<String>,
+        modules: Vec<String>,
+    }
+    let source = fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    let manifest: Manifest =
+        serde_json::from_str(&source).map_err(|e| format!("{}: {e}", path.display()))?;
+    let supported = match manifest.schema_version {
+        1 => manifest.load_path.is_none(),
+        2 => manifest.load_path.is_some(),
+        _ => false,
+    };
+    if !supported || manifest.modules.is_empty() {
+        return Err(format!(
+            "{}: unsupported version or empty module selection",
+            path.display()
+        ));
+    }
+    let parent = path.parent().unwrap_or_else(|| Path::new("."));
+    let relative = |entry: &str| -> Result<PathBuf, String> {
+        let module = Path::new(entry);
+        if entry.is_empty()
+            || module
+                .components()
+                .any(|part| !matches!(part, std::path::Component::Normal(_)))
+        {
+            return Err("contract module paths must be relative without traversal".to_owned());
+        }
+        Ok(parent.join(module))
+    };
+    let mut paths = Vec::new();
+    let mut references = Vec::new();
+    for entry in &manifest.modules {
+        if manifest.schema_version == 2 && entry.contains(':') {
+            references.push(
+                published_module_reference(entry)
+                    .map_err(|e| format!("{}: {e}", path.display()))?,
+            );
+        } else {
+            paths.push(relative(entry)?);
+        }
+    }
+    let Some(load_path) = manifest.load_path else {
+        return load_resource_contract_files(&paths);
+    };
+    let load_path = relative(&load_path)?;
+    // Validated even when every entry is a path: a schema-2 manifest names a
+    // load path, so a stale one is refused rather than ignored.
+    let load_path = crate::load_path_manifest::load_contract_load_path_manifest(&load_path)?;
+    let path_sources = read_resource_contract_files(&paths)?;
+    if references.is_empty() {
+        return load_resource_contract_sources(&path_sources);
+    }
+    load_resource_contract_selection(&load_path.load_path, path_sources, &references)
+}
+
+/// Parse a manifest's `crate:module` entry, with the `#include` target's
+/// admitted spelling (card **CONTRACT-INHERIT-ADOPTION**).
+fn published_module_reference(entry: &str) -> Result<PublishedModuleRef, String> {
+    use qcore_frontend::contract_inclusion::{
+        valid_contract_crate_name, valid_contract_module_path,
+    };
+    match entry.split_once(':') {
+        Some((crate_name, module))
+            if valid_contract_crate_name(crate_name) && valid_contract_module_path(module) =>
+        {
+            Ok(PublishedModuleRef::new(crate_name, module))
+        }
+        _ => Err(format!(
+            "`{entry}` is not a `crate:module` reference (a lowercase crate name, `:`, and a \
+             relative `[a-z0-9_/-]+.qcore` module path)"
+        )),
+    }
+}
+
+/// Read selected files into the snapshot [`load_resource_contract_files`]
+/// loads, keyed by the path as spelled.
+fn read_resource_contract_files(paths: &[PathBuf]) -> Result<BTreeMap<String, String>, String> {
     let mut sources = BTreeMap::new();
     for path in paths {
         let name = path.to_string_lossy().into_owned();
@@ -379,41 +483,7 @@ pub fn load_resource_contract_files(paths: &[PathBuf]) -> Result<ResourceContrac
             return Err(format!("duplicate contract input {name}"));
         }
     }
-    load_resource_contract_sources(&sources)
-}
-
-/// Versioned selection of resource modules; paths are relative to the manifest.
-pub fn load_resource_contract_manifest(path: &Path) -> Result<ResourceContracts, String> {
-    #[derive(serde::Deserialize)]
-    #[serde(deny_unknown_fields)]
-    struct Manifest {
-        schema_version: u32,
-        modules: Vec<PathBuf>,
-    }
-    let source = fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
-    let manifest: Manifest =
-        serde_json::from_str(&source).map_err(|e| format!("{}: {e}", path.display()))?;
-    if manifest.schema_version != 1 || manifest.modules.is_empty() {
-        return Err(format!(
-            "{}: unsupported version or empty module selection",
-            path.display()
-        ));
-    }
-    let parent = path.parent().unwrap_or_else(|| Path::new("."));
-    let paths = manifest
-        .modules
-        .iter()
-        .map(|module| {
-            if module
-                .components()
-                .any(|part| !matches!(part, std::path::Component::Normal(_)))
-            {
-                return Err("contract module paths must be relative without traversal".to_owned());
-            }
-            Ok(parent.join(module))
-        })
-        .collect::<Result<Vec<_>, String>>()?;
-    load_resource_contract_files(&paths)
+    Ok(sources)
 }
 
 /// Load an immutable source snapshot, also used for certificate replay.
@@ -681,12 +751,28 @@ pub fn load_published_resource_contracts(
     load_path: &ContractLoadPath,
     selection: &[PublishedModuleRef],
 ) -> Result<ResourceContracts, String> {
-    if selection.is_empty() {
+    load_resource_contract_selection(load_path, BTreeMap::new(), selection)
+}
+
+/// Load a mixed selection (card **CONTRACT-INHERIT-ADOPTION**): modules
+/// already read from files, retained under their path keys exactly as
+/// [`load_resource_contract_sources`] retains them, together with modules
+/// selected on a published load path, elaborated and gated exactly as
+/// [`load_published_resource_contracts`] does and retained under their
+/// `crate:module` keys. One total-or-reject load over the union: a key
+/// selected twice, or a function declared twice across the two kinds, refuses
+/// the whole selection.
+pub fn load_resource_contract_selection(
+    load_path: &ContractLoadPath,
+    path_sources: BTreeMap<String, String>,
+    selection: &[PublishedModuleRef],
+) -> Result<ResourceContracts, String> {
+    if selection.is_empty() && path_sources.is_empty() {
         return Err("no resource contract inputs selected".into());
     }
     let resolver = LoadPathResolver(load_path);
     let mut elaborator = Elaborator::new(&resolver);
-    let mut sources = BTreeMap::new();
+    let mut sources = path_sources;
     let mut evidence = BTreeMap::new();
     let mut elaborated_modules = Vec::new();
     for reference in selection {

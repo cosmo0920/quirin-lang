@@ -224,7 +224,9 @@ module not published; `QI006` include cycle; `QI007` repeated include;
 `QI008` no parent in scope; `QI009` two parents in scope; `QI010` arity, type
 or result disagreement; `QI011` inheritance cycle; `QI012` capture or
 consumer reading differs; `QI013` inclusion without a load path; `QI014`
-invalid load path; `QI015` parent not inheritable; `QI016` evidence replay
+invalid load path, or a load-path manifest that is malformed, lists other modules than its
+crate's contract directory, or pins a changed published module (card
+`CONTRACT-INHERIT-ADOPTION`); `QI015` parent not inheritable; `QI016` evidence replay
 differs; `QI017` crate not `quirin-provider-*`, namespace not derived, or
 shared; `QI018` unqualified parent only an included module declares;
 `QI019` namespace names no directly included crate; `QI020` child named like

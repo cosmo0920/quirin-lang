@@ -1,5 +1,6 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
+  "load_path": "../providers/contract-load-path.json",
   "roots": [
     "../providers/quirin-provider-shared/contracts",
     "../providers/quirin-provider-libc/contracts",

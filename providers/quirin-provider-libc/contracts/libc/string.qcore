@@ -236,3 +236,22 @@ contract {
     ensures normal resource_borrowed(n);
     ensures normal resource_return_interior(s, nullable);
 };
+
+// Card CONTRACT-INHERIT-ADOPTION (user-directed declared assumption).
+//
+//   extern char *strndup (const char *__string, size_t __n)
+//     __THROW __attribute_malloc__ __nonnull ((1));
+//
+//   Reads at most `__n` bytes of `__string` (borrowed; the size is a borrowed
+//   scalar) and returns a FRESH `malloc` allocation of the copied prefix plus
+//   a terminator, or NULL on failure (POSIX.1-2008, C23 7.26.2.7). That is
+//   `strdup`'s custody statement exactly: `resource_return_owned(nullable)`,
+//   an obligation `free` from `libc/memory.qcore` discharges. Nothing about
+//   the copied bytes, their termination or the bound is stated.
+extern fn strndup(s: ptr<const, u8>, n: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};

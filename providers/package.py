@@ -198,6 +198,34 @@ def verify_contract_includes(package, inventory, found):
     return len(pins)
 
 
+def install_includes(package, inventory, root=ROOT):
+    """Install every pinned included parent (card CONTRACT-INHERIT-ADOPTION).
+
+    `providers/contracts.py sync` writes the pins into the provider's
+    `contracts.json` from the load-path manifest; the build copies each pinned
+    module's text from its crate's contract directory, as that manifest names
+    it, to `includes/<crate>/<module>`, and refuses a text whose digest is not
+    its pin. `verify` then checks the installed tree. A package without pins
+    installs nothing, which is every package today."""
+    pins = inventory.get("includes")
+    if not pins:
+        return 0
+    load_path = json.loads((root / "contract-load-path.json").read_text())
+    crates = {record["name"]: record for record in load_path["crates"]}
+    for key, pin in sorted(pins.items()):
+        record = crates.get(pin["crate"])
+        if record is None or record["version"] != pin["version"] or f"{pin['crate']}:{pin['module']}" != key:
+            raise ValueError(f"include pin {key} does not match the load path")
+        source = root / record["contracts"] / pin["module"]
+        data = regular_bytes(source, "included parent")
+        if hashlib.sha256(data).hexdigest() != pin["sha256"]:
+            raise ValueError(f"included parent changed since it was pinned: {key}")
+        target = package / "includes" / pin["crate"] / pin["module"]
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+    return len(pins)
+
+
 def verify_contracts(package, executable_bytes, plugin_id):
     embedded = embedded_contracts(executable_bytes)
     inventory_path = package / "contracts.json"
@@ -330,6 +358,7 @@ def build(output, target):
         (package / "provider").chmod(0o755)
         shutil.copyfile(template.parent / "contracts.json", package / "contracts.json")
         shutil.copytree(template.parent / "contracts", package / "contracts")
+        install_includes(package, json.loads((template.parent / "contracts.json").read_text()))
         manifest["package_digest"] = digest(package / "provider")
         (package / "verifier-plugin.json").write_text(json.dumps(manifest, indent=2) + "\n")
         verify(package)

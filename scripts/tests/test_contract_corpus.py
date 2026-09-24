@@ -13,9 +13,9 @@ class CanonicalCorpus(unittest.TestCase):
         root = Path(__file__).resolve().parents[2]
         self.assertFalse((root / "contract/qcore").exists())
         modules = contract_corpus.sources(root)
-        self.assertEqual(len(modules), 107)
+        self.assertEqual(len(modules), 108)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 72)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 35)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 36)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 
@@ -67,6 +67,81 @@ class CanonicalCorpus(unittest.TestCase):
                 ("providers/quirin-provider-fluent-bit/contracts/fluent_bit/bad.qcore", "memcpy"),
                 ("providers/quirin-provider-fluent-bit/contracts/fluent_bit/copy.qcore", "only_in_libc_crate"),
             ])
+
+    def test_libc_contracts_are_taken_by_reference_outside_the_libc_crate(self):
+        # Card CONTRACT-INHERIT-ADOPTION: a Fluent Bit wrapper takes its libc
+        # contract by `#include` of a published libc module plus
+        # `contract inherit libc::NAME`; the libc text stays in the libc crate.
+        root = Path(__file__).resolve().parents[2]
+        references, violations = contract_corpus.libc_inheritance(root)
+        self.assertEqual(violations, [])
+        memory = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore"
+        string = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qcore"
+        self.assertEqual(references, [
+            (memory, "flb_malloc", "libc::malloc"),
+            (memory, "flb_calloc", "libc::calloc"),
+            (memory, "flb_free", "libc::free"),
+            (string, "flb_strdup", "libc::strdup"),
+            (string, "flb_strndup", "libc::strndup"),
+        ])
+
+    def test_libc_inheritance_refuses_unpublished_and_undeclared_parents(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "contract").mkdir()
+            libc = root / contract_corpus.LIBC_CRATE / "contracts/libc"
+            libc.mkdir(parents=True)
+            (libc / "heap.qcore").write_text("module contract;\nextern fn free(p: ptr<mut, u8>) -> unit\n")
+            (libc / "other.qcore").write_text("module contract;\nextern fn strlen(s: ptr<const, u8>) -> usize\n")
+            other = root / "providers/quirin-provider-fluent-bit/contracts/fluent_bit"
+            other.mkdir(parents=True)
+            (root / "providers/contract-load-path.json").write_text(json.dumps({
+                "schema_version": 1,
+                "crates": [{"name": "quirin-provider-libc", "published": {"libc/heap.qcore": "0" * 64}}],
+            }))
+            (root / "contract/corpus.json").write_text(json.dumps({
+                "schema_version": 2,
+                "load_path": "../providers/contract-load-path.json",
+                "roots": ["../" + contract_corpus.LIBC_CRATE + "/contracts",
+                          "../providers/quirin-provider-fluent-bit/contracts"],
+            }))
+            (other / "good.qcore").write_text(
+                'module contract;\n#include "quirin-provider-libc:libc/heap.qcore";\n'
+                "extern fn flb_free(p: ptr<mut, u8>) -> unit contract inherit libc::free;\n")
+            self.assertEqual(contract_corpus.libc_inheritance(root), ([
+                ("providers/quirin-provider-fluent-bit/contracts/fluent_bit/good.qcore",
+                 "flb_free", "libc::free")], []))
+            (other / "bad.qcore").write_text(
+                'module contract;\n#include "quirin-provider-libc:libc/other.qcore";\n'
+                "extern fn flb_len(s: ptr<const, u8>) -> usize contract inherit libc::strlen;\n"
+                "extern fn flb_nothing(p: ptr<mut, u8>) -> unit contract inherit libc::free;\n")
+            _, violations = contract_corpus.libc_inheritance(root)
+            bad = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/bad.qcore"
+            self.assertEqual(violations, [
+                (bad, "includes unpublished libc module libc/other.qcore"),
+                (bad, "flb_len inherits libc::strlen, which no included libc module declares"),
+                (bad, "flb_nothing inherits libc::free, which no included libc module declares"),
+            ])
+
+    def test_schema_two_index_names_a_load_path(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            directory = root / "contract"
+            (directory / "one").mkdir(parents=True)
+            (directory / "one/api.qcore").write_text("module contract;")
+            index = directory / "corpus.json"
+            index.write_text(json.dumps({"schema_version": 2, "roots": ["one"]}))
+            with self.assertRaisesRegex(ValueError, "unsupported corpus index"):
+                contract_corpus.sources(root)
+            index.write_text(json.dumps({"schema_version": 2, "roots": ["one"], "load_path": "absent.json"}))
+            with self.assertRaisesRegex(ValueError, "invalid corpus load path"):
+                contract_corpus.sources(root)
+            (directory / "load-path.json").write_text("{}")
+            index.write_text(json.dumps({"schema_version": 2, "roots": ["one"], "load_path": "load-path.json"}))
+            self.assertEqual(list(contract_corpus.sources(root)), ["api.qcore"])
+            index.write_text(json.dumps({"schema_version": 1, "roots": ["one"], "load_path": "load-path.json"}))
+            with self.assertRaisesRegex(ValueError, "unsupported corpus index"):
+                contract_corpus.sources(root)
 
     def test_missing_root_duplicate_and_symlink_are_refused(self):
         with tempfile.TemporaryDirectory() as temporary:

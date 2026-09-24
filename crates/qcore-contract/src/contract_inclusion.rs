@@ -182,7 +182,11 @@ pub struct ContractInclusionError {
 }
 
 impl ContractInclusionError {
-    fn new(code: InclusionCode, module: impl Into<String>, message: impl Into<String>) -> Self {
+    pub(crate) fn new(
+        code: InclusionCode,
+        module: impl Into<String>,
+        message: impl Into<String>,
+    ) -> Self {
         Self {
             code,
             module: module.into(),

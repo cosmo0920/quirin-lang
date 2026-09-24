@@ -230,7 +230,7 @@ pub fn run(
     let contracts = load_resource_contract_manifest(contract_manifest)?;
     if let Some(path) = diagnostic_report {
         let sidecar = path.with_extension("contracts.json");
-        let inputs = serde_json::json!({
+        let mut inputs = serde_json::json!({
             "schema_version": 1,
             "trust": "declared resource-projection assumptions, not verified C behavior",
             "manifest": fs::read_to_string(contract_manifest).map_err(|e| e.to_string())?,
@@ -238,6 +238,14 @@ pub fn run(
             "source_profile": profile.assumptions(),
             "audit_selection": fs::read_to_string(profile.directory().join("audit.json")).map_err(|error| error.to_string())?,
         });
+        // Card CONTRACT-INHERIT-ADOPTION: an environment that inherited any
+        // contract publishes every inheritance chain beside the elaborated
+        // sources, as the configured audit's assumptions block does. Absent
+        // otherwise, so a selection without inclusion writes the same bytes.
+        if let Some(provenance) = qcore_compiler::contract_loader::inclusion_provenance(&contracts)
+        {
+            inputs["contract_inclusion"] = provenance;
+        }
         let bytes = serde_json::to_vec_pretty(&inputs).map_err(|e| e.to_string())?;
         fs::write(&sidecar, bytes).map_err(|e| format!("{}: {e}", sidecar.display()))?;
     }

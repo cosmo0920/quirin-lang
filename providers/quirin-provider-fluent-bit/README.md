@@ -2,7 +2,7 @@
 
 Library crate `quirin-provider-fluent-bit` (Rust library `quirin_provider_fluent_bit`) in the separate
 `providers/` workspace. It owns the shared Quirin contract modules for
-Fluent Bit application code (input chunks, routing, hash tables, logging, memory, time), under `contracts/fluent_bit/` (12 modules). These are canonical
+Fluent Bit application code (input chunks, routing, hash tables, logging, memory, strings, time), under `contracts/fluent_bit/` (13 modules). Two of them take their contracts from published `quirin-provider-libc` modules by `#include` and `contract inherit` (card CONTRACT-INHERIT-ADOPTION), through the crate's Cargo dependency on that crate. These are canonical
 sources, not copies: the [corpus index](../../contract/corpus.json) names this
 crate's `contracts/` as a root and rejects duplicate logical names. The crate is
 data only; it links no provider runtime and is not an executable package.

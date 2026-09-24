@@ -7,6 +7,10 @@ use std::fs::{self, File};
 use std::io::Read;
 use std::path::{Path, PathBuf};
 
+use qcore_frontend::contract_inclusion::{
+    contains_contract_inclusion_syntax, scan_contract_inclusion, valid_contract_crate_name,
+    valid_contract_module_path,
+};
 use qcore_schemas::{PluginId, sha256_hex};
 use serde::Deserialize;
 
@@ -22,6 +26,23 @@ struct Inventory {
     // The custom visitor rejects duplicate keys rather than overwriting them.
     #[serde(deserialize_with = "distinct_contracts")]
     contracts: BTreeMap<String, String>,
+    /// Card CONTRACT-INHERIT-ADOPTION: the pinned identity of every module a
+    /// packaged contract reaches through `#include "crate:module";`, keyed by
+    /// that target. Absent for a package that includes nothing.
+    #[serde(default)]
+    includes: Option<BTreeMap<String, IncludePin>>,
+}
+
+/// One pinned included parent: crate, crate version, module path and the
+/// SHA-256 of the text installed at `includes/<crate>/<module>`.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct IncludePin {
+    #[serde(rename = "crate")]
+    crate_name: String,
+    version: String,
+    module: String,
+    sha256: String,
 }
 
 fn distinct_contracts<'de, D: serde::Deserializer<'de>>(
@@ -154,6 +175,108 @@ fn files(
 #[derive(Debug)]
 pub struct ContractBundle {
     contracts: BTreeMap<String, String>,
+    included: BTreeMap<String, String>,
+}
+
+/// The `crate:module` targets a text includes; a malformed directive refuses.
+fn include_targets(name: &str, source: &str) -> Result<Vec<String>, String> {
+    if !contains_contract_inclusion_syntax(source) {
+        return Ok(Vec::new());
+    }
+    let syntax = scan_contract_inclusion(source).map_err(|e| format!("{name}: {e}"))?;
+    Ok(syntax.includes.iter().map(|d| d.target()).collect())
+}
+
+/// Card CONTRACT-INHERIT-ADOPTION: the Rust twin of `providers/package.py
+/// verify`'s include rule. A bundle whose contracts use `#include` must pin
+/// every module they reach (transitively) and carry exactly those texts under
+/// `includes/<crate>/<module>`; an unpinned directive, a changed, missing or
+/// stray text and an unused pin all refuse. A bundle without pins may carry
+/// neither a directive nor an `includes/` tree. Returns the pinned texts.
+fn load_includes(
+    root: &Path,
+    pins: Option<BTreeMap<String, IncludePin>>,
+    contracts: &BTreeMap<String, String>,
+    retained: &mut u64,
+) -> Result<BTreeMap<String, String>, String> {
+    let tree = root.join("includes");
+    let tree_present = fs::symlink_metadata(&tree).is_ok();
+    let mut pending = Vec::new();
+    for (name, source) in contracts {
+        pending.extend(include_targets(name, source)?);
+    }
+    let Some(pins) = pins else {
+        if !pending.is_empty() {
+            return Err(format!("contract includes are not pinned: {pending:?}"));
+        }
+        if tree_present {
+            return Err("installed includes/ tree has no pinned identities".into());
+        }
+        return Ok(BTreeMap::new());
+    };
+    if pins.is_empty() || pins.len() > 4096 {
+        return Err("contract include pins must be a nonempty, bounded object".into());
+    }
+    let mut expected = Vec::new();
+    for (key, pin) in &pins {
+        if !valid_contract_crate_name(&pin.crate_name)
+            || !valid_contract_module_path(&pin.module)
+            || format!("{}:{}", pin.crate_name, pin.module) != *key
+        {
+            return Err(format!(
+                "include pin {key} does not name its crate and module"
+            ));
+        }
+        if pin.version.is_empty() || !digest(&pin.sha256) {
+            return Err(format!(
+                "include pin {key} has no version or an invalid SHA-256"
+            ));
+        }
+        expected.push(PathBuf::from(format!(
+            "includes/{}/{}",
+            pin.crate_name, pin.module
+        )));
+    }
+    if !tree_present {
+        return Err("pinned included parents are not installed".into());
+    }
+    let mut actual = Vec::new();
+    files(root, &tree, &mut actual, &mut 0, 0)?;
+    actual.sort();
+    expected.sort();
+    if actual != expected {
+        return Err("included parent file set differs from the pins".into());
+    }
+    let mut texts = BTreeMap::new();
+    for (key, pin) in &pins {
+        let path = root.join(format!("includes/{}/{}", pin.crate_name, pin.module));
+        let bytes = read(&path, MAX_FILE.min(MAX_TOTAL - *retained))?;
+        *retained += bytes.len() as u64;
+        if !matches_checkout_digest(&bytes, &pin.sha256) {
+            return Err(format!("included parent changed: {key}"));
+        }
+        texts.insert(
+            key.clone(),
+            String::from_utf8(bytes).map_err(|e| e.to_string())?,
+        );
+    }
+    let mut reached = std::collections::BTreeSet::new();
+    while let Some(key) = pending.pop() {
+        if !reached.insert(key.clone()) {
+            continue;
+        }
+        let text = texts
+            .get(&key)
+            .ok_or_else(|| format!("included parent {key} is not pinned"))?;
+        pending.extend(include_targets(&key, text)?);
+    }
+    if reached.len() != pins.len() {
+        let unused: Vec<_> = pins.keys().filter(|key| !reached.contains(*key)).collect();
+        return Err(format!(
+            "pinned included parents no contract reaches: {unused:?}"
+        ));
+    }
+    Ok(texts)
 }
 
 impl ContractBundle {
@@ -216,7 +339,20 @@ impl ContractBundle {
             }
             contracts.insert(path, source);
         }
-        Ok(Self { contracts })
+        let included = load_includes(&root, inventory.includes, &contracts, &mut retained)?;
+        Ok(Self {
+            contracts,
+            included,
+        })
+    }
+
+    /// The pinned text of an included parent, by its `crate:module` key (card
+    /// CONTRACT-INHERIT-ADOPTION).
+    pub fn included(&self, key: &str) -> Result<&str, String> {
+        self.included
+            .get(key)
+            .map(String::as_str)
+            .ok_or_else(|| format!("unpinned included module: {key}"))
     }
 
     pub fn contract(&self, path: &str) -> Result<&str, String> {
