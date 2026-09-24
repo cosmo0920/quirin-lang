@@ -168,6 +168,21 @@ impl Facts {
                     names.retain(|name| preserved.contains(name));
                 }
             }
+            // Card W43-INDEXED-RESOURCE-COLLECTIONS: which of an element
+            // operation's two readings runs is decided flow-sensitively, so
+            // this pass forgets what either could have written — its fallback
+            // refusal's frame and, for a store (which writes through `B[I]`
+            // and may call) or a release (which calls), the call frame too.
+            LegacyInstruction::ElementStore { fallback, .. }
+            | LegacyInstruction::ElementRelease { fallback, .. } => {
+                self.step(fallback, preserved);
+                for names in self.bindings.values_mut() {
+                    names.retain(|name| preserved.contains(name));
+                }
+            }
+            LegacyInstruction::BranchOnElementNull { fallback, .. } => {
+                self.step(fallback, preserved);
+            }
             _ => {}
         }
     }

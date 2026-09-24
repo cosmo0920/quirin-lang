@@ -390,11 +390,7 @@ pub(crate) fn combine(mut zero: LegacyCfg, mut nonzero: LegacyCfg) -> LegacyCfg 
     let site_offset = zero
         .nodes
         .iter()
-        .flat_map(|n| match &n.instruction {
-            LegacyInstruction::Acquire { site, .. } => vec![*site],
-            LegacyInstruction::ContractCall { produced_sites, .. } => produced_sites.clone(),
-            _ => Vec::new(),
-        })
+        .flat_map(|n| super::instruction_produced_sites(&n.instruction))
         .max()
         .map_or(0, |site| site + 1);
     let node_offset = zero.nodes.len();
@@ -402,15 +398,7 @@ pub(crate) fn combine(mut zero: LegacyCfg, mut nonzero: LegacyCfg) -> LegacyCfg 
         for successor in &mut node.successors {
             *successor += node_offset;
         }
-        match &mut node.instruction {
-            LegacyInstruction::Acquire { site, .. } => *site += site_offset,
-            LegacyInstruction::ContractCall { produced_sites, .. } => {
-                for site in produced_sites {
-                    *site += site_offset;
-                }
-            }
-            _ => {}
-        }
+        super::offset_produced_sites(&mut node.instruction, site_offset);
     }
     let entries = vec![zero.entry, nonzero.entry + node_offset];
     // Both contexts are built from the same body, so their CTWIN-PUBLISH

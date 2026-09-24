@@ -18,6 +18,7 @@ mod clang;
 pub mod cleanup_replay_source;
 pub mod composition_source;
 pub mod counter_source;
+pub mod indexed_collection;
 #[cfg(feature = "indirect-census")]
 pub mod indirect_census;
 pub mod legacy_c;

@@ -2445,6 +2445,145 @@ fn scalar_statement_accesses(
     Some(accesses)
 }
 
+/// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the integer class of one
+/// specifier list — signedness and conversion rank (`char` 1, `short` 2,
+/// `int` 3, `long` 4, `long long` 5) — resolved through this unit's typedefs
+/// exactly as [`TypedAccessModel::classify_specifiers`] resolves them.
+///
+/// `None` for everything else: a floating, `_Bool`, enumeration, pointer,
+/// record, `volatile` or `_Atomic` type, a plain `char` (whose signedness is
+/// implementation-defined), and every name this reader does not resolve.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct IntegerClass {
+    pub(crate) signed: bool,
+    pub(crate) rank: u8,
+}
+
+impl TypedAccessModel {
+    pub(crate) fn integer_class(&self, specifiers: &[&str]) -> Option<IntegerClass> {
+        self.integer_class_at(specifiers, 0)
+    }
+
+    fn integer_class_at(&self, specifiers: &[&str], depth: usize) -> Option<IntegerClass> {
+        if specifiers
+            .iter()
+            .any(|text| REJECTING_QUALIFIERS.contains(text))
+        {
+            return None;
+        }
+        let core = specifiers
+            .iter()
+            .copied()
+            .filter(|text| !IGNORED_SPECIFIERS.contains(text))
+            .collect::<Vec<_>>();
+        if let [name] = core.as_slice()
+            && is_name(name)
+            && !ARITHMETIC_KEYWORDS.contains(name)
+        {
+            if depth >= TYPEDEF_DEPTH_LIMIT {
+                return None;
+            }
+            return match self.typedefs.get(*name) {
+                Some(Some(TypedefTarget::Specifiers(target))) => {
+                    let target = target.iter().map(String::as_str).collect::<Vec<_>>();
+                    self.integer_class_at(&target, depth + 1)
+                }
+                _ => None,
+            };
+        }
+        if core.is_empty()
+            || !core
+                .iter()
+                .all(|text| matches!(*text, "char" | "short" | "int" | "long" | "signed" | "unsigned"))
+        {
+            return None;
+        }
+        let count = |word: &str| core.iter().filter(|text| **text == word).count();
+        let unsigned = count("unsigned");
+        let signed = count("signed");
+        if unsigned + signed > 1 {
+            return None;
+        }
+        let rank = match (count("char"), count("short"), count("long"), count("int")) {
+            (1, 0, 0, 0) if unsigned + signed == 1 => 1,
+            (0, 1, 0, 0 | 1) => 2,
+            (0, 0, 0, 0 | 1) => 3,
+            (0, 0, 1, 0 | 1) => 4,
+            (0, 0, 2, 0 | 1) => 5,
+            _ => return None,
+        };
+        Some(IntegerClass {
+            signed: unsigned == 0,
+            rank,
+        })
+    }
+}
+
+/// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: one declarator of a function's
+/// formals or locals, as read by the same total-or-reject reader
+/// [`FunctionTypes::read`] uses.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct DeclaratorFact {
+    pub(crate) specifiers: Vec<String>,
+    pub(crate) name: String,
+    pub(crate) stars: usize,
+    pub(crate) dimensions: usize,
+}
+
+/// Every named declarator of one function's parameter list and body, or
+/// `None` exactly where [`FunctionTypes::read`] would refuse the function.
+/// It walks the same statements with the same helpers; it classifies
+/// nothing, so no existing answer of this module changes.
+pub(crate) fn declarator_facts(parameters: &[&str], body: &[&str]) -> Option<Vec<DeclaratorFact>> {
+    let mut facts = Vec::new();
+    let mut push = |specifiers: &[&str], declarator: Declarator| {
+        if let Some(name) = declarator.name {
+            facts.push(DeclaratorFact {
+                specifiers: specifiers.iter().map(|text| (*text).to_owned()).collect(),
+                name,
+                stars: declarator.stars,
+                dimensions: declarator.dimensions,
+            });
+        }
+    };
+    if parameters
+        .iter()
+        .any(|text| matches!(*text, "(" | ")" | "{" | "}" | "." | ";" | "="))
+    {
+        return None;
+    }
+    if !(parameters.is_empty() || parameters == ["void"]) {
+        for group in parameters.split(|text| *text == ",") {
+            let (specifiers, declarator) = split_declarator(group)?;
+            push(&specifiers, declarator);
+        }
+    }
+    for start in 0..body.len() {
+        if start > 0 && !matches!(body[start - 1], "{" | "}" | ";" | "(" | ":") {
+            continue;
+        }
+        if !is_declaration_candidate(body, start) {
+            continue;
+        }
+        let end = statement_end(body, start)?;
+        let mut groups = split_top_level(&body[start..end], ",").into_iter();
+        let first = truncate_at_initializer(&groups.next()?);
+        if unreadable_declarator_token(&first).is_some() {
+            return None;
+        }
+        let (specifiers, declarator) = split_declarator(&first)?;
+        push(&specifiers, declarator);
+        for group in groups {
+            let group = truncate_at_initializer(&group);
+            if unreadable_declarator_token(&group).is_some() {
+                return None;
+            }
+            push(&specifiers, read_declarator(&group)?);
+        }
+    }
+    Some(facts)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
