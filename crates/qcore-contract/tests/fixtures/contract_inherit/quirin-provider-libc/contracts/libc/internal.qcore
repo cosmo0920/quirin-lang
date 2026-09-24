@@ -1,0 +1,11 @@
+module contract;
+
+// Fixture for card CONTRACT-INHERIT: owned by the fixture libc crate but NOT
+// published, so no module may include it.
+
+extern fn internal_release(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};

@@ -1,0 +1,27 @@
+module contract;
+#include "quirin-provider-libc:libc/string.qcore";
+#include "quirin-provider-libc:libc/heap.qcore";
+#include "quirin-provider-cfl:cfl/table.qcore";
+
+// Fixture for card CONTRACT-INHERIT: wrappers that behave exactly like the
+// libc and cfl functions they wrap. Parameter names deliberately differ from
+// the parents' names; binding is by position.
+
+extern fn flb_memcpy(to: ptr<mut, u8>, from: ptr<const, u8>, bytes: usize) -> ptr<mut, u8>
+contract inherit libc::memcpy;
+
+extern fn flb_free(p: ptr<mut, u8>) -> unit
+contract inherit libc::free;
+
+extern fn flb_realloc(buffer: ptr<mut, u8>, bytes: usize) -> ptr<mut, u8>
+contract inherit libc::realloc;
+
+extern fn flb_printf(fmt: ptr<const, u8>) -> i32
+contract inherit libc::printf;
+
+extern fn flb_table_put(ht: ptr<mut, u8>, val: ptr<mut, u8>, val_size: usize) -> i32
+contract inherit cfl::cfl_table_put;
+
+// An own-module chain: flb_sds_destroy -> flb_free -> libc::free.
+extern fn flb_sds_destroy(s: ptr<mut, u8>) -> unit
+contract inherit flb_free;

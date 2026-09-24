@@ -184,6 +184,10 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use crate::contract_inclusion::{
+    ContractInclusionError, ContractLoadPath, Elaborated, Elaborator, InclusionCode,
+    LoadPathResolver, module_key, reject_unresolved_inclusion, replay_evidence,
+};
 use qcore_frontend::frontend::{
     DeclarationKind, SourceContractClauseKind, SourceContractExitSelector, SourceDeclaration,
     SourceModuleMode, parse_source_program,
@@ -386,6 +390,7 @@ pub fn load_resource_contract_sources(
     let mut contracts = ResourceContracts::default();
     for (path, source) in sources {
         reject_retired_premise_directive(path, source)?;
+        reject_unresolved_inclusion(path, source)?;
         let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
         if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
             return Err(format!("{path}: expected a nonempty module contract"));
@@ -413,6 +418,7 @@ pub fn variadic_data_tails(sources: &BTreeMap<String, String>) -> Result<BTreeSe
     let mut tails = BTreeSet::new();
     for (path, source) in sources {
         reject_retired_premise_directive(path, source)?;
+        reject_unresolved_inclusion(path, source)?;
         let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
         if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
             return Err(format!("{path}: expected a nonempty module contract"));
@@ -444,6 +450,7 @@ pub fn declared_abi_signatures(
     let mut signatures = BTreeMap::new();
     for (path, source) in sources {
         reject_retired_premise_directive(path, source)?;
+        reject_unresolved_inclusion(path, source)?;
         let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
         if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
             return Err(format!("{path}: expected a nonempty module contract"));
@@ -490,6 +497,7 @@ pub fn literal_argument_premises(
     let mut premises = BTreeMap::new();
     for (path, source) in sources {
         reject_retired_premise_directive(path, source)?;
+        reject_unresolved_inclusion(path, source)?;
         let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
         if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
             return Err(format!("{path}: expected a nonempty module contract"));
@@ -550,11 +558,147 @@ pub fn declared_variadic_data_tails(
 /// without consulting mutable files. Lives here rather than on
 /// `ResourceContracts` because the recheck needs the front-end parser, which
 /// the schema crate must not depend on.
+///
+/// Card CONTRACT-INHERIT: an environment that carries inclusion evidence is
+/// also rechecked by **replaying** every elaboration from the retained texts
+/// alone — no load path, no file — and requiring the replay to reproduce the
+/// retained elaborated source byte for byte, the recorded chains, and the
+/// consumer agreement between every inherited declaration and its parent.
+/// Evidence for a module the environment does not retain is refused.
 pub fn check_source_assumptions(contracts: &ResourceContracts) -> Result<(), String> {
     if !contracts.source_assumptions().is_empty() {
         let loaded = load_resource_contract_sources(contracts.source_assumptions())?;
         if loaded.functions() != contracts.functions() {
             return Err("resource contracts differ from their declared source assumptions".into());
+        }
+    }
+    for (key, evidence) in contracts.inclusion_evidence() {
+        let Some(elaborated_source) = contracts.source_assumptions().get(key) else {
+            return Err(ContractInclusionError {
+                code: InclusionCode::Qi016,
+                module: key.clone(),
+                message: "inclusion evidence for a module the environment does not retain".into(),
+            }
+            .into());
+        };
+        let elaborated = replay_evidence(key, evidence, elaborated_source)?;
+        inherited_declarations_agree(&elaborated)?;
+    }
+    Ok(())
+}
+
+/// A module selected from a published load path, by crate and logical path.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct PublishedModuleRef {
+    pub crate_name: String,
+    pub module: String,
+}
+
+impl PublishedModuleRef {
+    #[must_use]
+    pub fn new(crate_name: impl Into<String>, module: impl Into<String>) -> Self {
+        Self {
+            crate_name: crate_name.into(),
+            module: module.into(),
+        }
+    }
+}
+
+/// Load resource-v1 contracts from modules selected on a published load path
+/// (card **CONTRACT-INHERIT**).
+///
+/// Each selected module is elaborated — its `#include` directives resolved
+/// under the publication rule, every `contract inherit PARENT;` replaced by
+/// the parent's clauses under the positional renaming — and the elaborated
+/// texts are loaded by the unchanged total-or-reject v1 loader, keyed
+/// `crate:module`. Only the selected modules' declarations enter the
+/// environment; an included module contributes parents, not functions.
+///
+/// Then, for every inherited declaration, the elaborated child and its
+/// immediate parent are both loaded as v1 declarations and must be **equal**:
+/// custody modes, result mode, literal-argument premises, variadic tail and
+/// ABI projection (`QI012` otherwise). That is the check that the renaming
+/// means the same thing to this consumer, which reads some positions
+/// structurally rather than by parameter lookup. Equality makes every
+/// inherited contract exactly as strong as its parent: never weaker.
+///
+/// The environment carries [`ContractInclusionEvidence`] for every selected
+/// module that used inclusion, and is rechecked by
+/// [`check_source_assumptions`] before it is returned.
+pub fn load_published_resource_contracts(
+    load_path: &ContractLoadPath,
+    selection: &[PublishedModuleRef],
+) -> Result<ResourceContracts, String> {
+    if selection.is_empty() {
+        return Err("no resource contract inputs selected".into());
+    }
+    let resolver = LoadPathResolver(load_path);
+    let mut elaborator = Elaborator::new(&resolver);
+    let mut sources = BTreeMap::new();
+    let mut evidence = BTreeMap::new();
+    let mut elaborated_modules = Vec::new();
+    for reference in selection {
+        let (identity, text) = load_path.owned_module(&reference.crate_name, &reference.module)?;
+        let key = module_key(&identity);
+        let elaborated = elaborator.elaborate(identity, &text)?;
+        if sources
+            .insert(key.clone(), elaborated.text.clone())
+            .is_some()
+        {
+            return Err(format!("duplicate contract input {key}"));
+        }
+        if elaborated.uses_inclusion {
+            evidence.insert(key, elaborated.evidence());
+        }
+        elaborated_modules.push(elaborated);
+    }
+    // Agreement first, so a renaming the v1 reading cannot accept is reported
+    // as the inheritance refusal it is rather than as an anonymous v1 error.
+    for elaborated in &elaborated_modules {
+        inherited_declarations_agree(elaborated)?;
+    }
+    let mut contracts = load_resource_contract_sources(&sources)?;
+    contracts.set_inclusion_evidence(evidence);
+    check_source_assumptions(&contracts)?;
+    Ok(contracts)
+}
+
+/// The v1 consumer's agreement check for every inherited declaration of one
+/// elaborated module: the loaded child equals the loaded immediate parent.
+fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
+    for child_name in elaborated.chains.keys() {
+        let refuse = |message: String| -> String {
+            ContractInclusionError {
+                code: InclusionCode::Qi012,
+                module: module_key(&elaborated.identity),
+                message,
+            }
+            .into()
+        };
+        let child = elaborated
+            .declaration(child_name)
+            .ok_or_else(|| refuse(format!("`{child_name}` is missing after elaboration")))?;
+        let parent = elaborated
+            .parent_declaration(child_name)
+            .ok_or_else(|| refuse(format!("the parent of `{child_name}` is missing")))?;
+        let child_loaded = load_function(child)
+            .map_err(|e| refuse(format!("`{child_name}` does not load as resource v1: {e}")))?;
+        let parent_loaded = load_function(parent).map_err(|e| {
+            refuse(format!(
+                "the parent `{}` of `{child_name}` does not load as resource v1: {e}",
+                parent.name
+            ))
+        })?;
+        if child_loaded.contract != parent_loaded.contract
+            || child_loaded.variadic_data_tail != parent_loaded.variadic_data_tail
+            || child_loaded.literal_arguments != parent_loaded.literal_arguments
+            || child_loaded.abi != parent_loaded.abi
+        {
+            return Err(refuse(format!(
+                "`{child_name}` would not mean what its parent `{}` means under the resource-v1 \
+                 reading: the renamed contract loads differently",
+                parent.name
+            )));
         }
     }
     Ok(())
