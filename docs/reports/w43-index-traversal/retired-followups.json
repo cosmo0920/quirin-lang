@@ -1,0 +1,13 @@
+[
+  {
+    "entry": {
+      "id": "W43-INDIRECT-POINTER-INCREMENT",
+      "title": "Stores through a moving or computed pointer stay refused: 335 leaves on 172 Unknown functions",
+      "why": "`*p++ = c` increments the pointer it dereferences (C11 6.5.2.4), and `*(p + i) = c` dereferences a computed pointer; neither is a typed scalar access, so card W43-INDIRECT-ACCESS-GENERAL refuses both. A tracked pointer that moves becomes an interior pointer to its allocation, which the projection would have to rebind as derived (the W43-LIBC-RESULT-ALIAS vocabulary) before its release could be judged. Measured at the AFTER census (residuals.txt, class pointer-increment): 335 leaves (136 unrecognized-destination, 101 indirect-access, 98 increment) in 172 Unknown functions, 0 sole-blocked. DISCHARGE: a card that models pointer arithmetic on a bound name as an interior derivation of the same site, with the release rules of QCore.DerivedResult, and a measured re-pin.",
+      "source": "docs/reports/w43-indirect-access-general/README.md",
+      "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+    },
+    "discharged_by": "W43-INDEX-TRAVERSAL",
+    "ground": "Its discharge condition: \"a card that models pointer arithmetic on a bound name as an interior derivation of the same site, with the release rules of QCore.DerivedResult, and a measured re-pin\". Card W43-INDEX-TRAVERSAL models `P++`, `P += E`, `P = Q +/- E` and the step of `*P++` as `LegacyInstruction::PointerStep`, an interior derivation of the source binding's own sites (Derivation::Derived with a Stepped marker), with DerivedResult's release rules (a forward-stepped release is an invalid_release candidate, one that may be at the start refuses, a use after the base's release is a use_after_release candidate), Lean parity in QCore.IndexTraversal, and a measured re-pin (docs/reports/w43-index-traversal/README.md). Its `*p++ = c` / `c = *p++` shapes are admitted as the typed access followed by the step. The same residual classifier over this card's AFTER census measures the class at 257 leaves / 159 functions (from 335 / 172); the remainder, `*(p + i)` and steps the reader does not type, is re-registered, narrower, as W43-INDEX-TRAVERSAL-COMPUTED-POINTER-ACCESS."
+  }
+]

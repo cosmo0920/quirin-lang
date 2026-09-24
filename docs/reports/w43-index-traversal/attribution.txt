@@ -1,0 +1,39 @@
+W43-INDEX-TRAVERSAL attribution (BEFORE -> AFTER)
+
+diagnostic counts: {'leak': 271, 'summary_conflict': 1, 'unknown_alias': 4727, 'unsupported': 47832} -> {'leak': 271, 'summary_conflict': 1, 'unknown_alias': 4321, 'unsupported': 46889}
+
+Leaf classes:
+  added    exchange                127
+  added    exchange:scalar-join      3
+  removed  downstream               20
+  removed  rule:condition          614
+  removed  rule:gated-step          16
+  removed  rule:scalar-alias       517
+  removed  rule:step               302
+  removed  summary                  10
+
+Function status moves:
+  Unknown -> Safe: 11
+
+Unit status moves:
+
+Moved functions:
+  ctraces/ctr_id.c/decode_hex_digit: Unknown -> Safe
+  librdkafka/rdhdrhistogram.c/bitLen: Unknown -> Safe
+  librdkafka/rdkafka_queue.c/rd_kafka_q_check_yield: Unknown -> Safe
+  librdkafka/rdstring.c/rd_string_hash: Unknown -> Safe
+  librdkafka/rdunittest_msgset_errors.c/ut_write_varint: Unknown -> Safe
+  chunkio/cio_file_unix.c/cio_file_native_filename_check: Unknown -> Safe
+  monkey-libevent/mk_server/mk_http_parser.c/char_lookup: Unknown -> Safe
+  monkey-libevent/mk_server/mk_http_parser.c/reverse_char_lookup: Unknown -> Safe
+  monkey-libevent/mk_server/mk_http_parser.c/str_searchr: Unknown -> Safe
+  monkey-libevent/mk_server/mk_kernel.c/mk_kernel_features: Unknown -> Safe
+  monkey-libevent/mk_server/mk_server.c/mk_server_lib_notify_event_loop_break: Unknown -> Safe
+
+Forecast Unknown->Safe hit: 11
+  missed: chunkio/cio_chunk.c/cio_chunk_is_file
+  missed: librdkafka/crc32c.c/gf2_matrix_times
+
+Violations, leaks and unattributed leaves:
+
+attribution_complete: True
