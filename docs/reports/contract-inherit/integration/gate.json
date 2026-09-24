@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for CONTRACT-INHERIT on merge 6ae583ca (onto main a7a936d9, after W43-LIBC-CONTRACTS), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5176 core Rust passed / 0 failed / 11 ignored over 277 summaries; 109 provider Rust passed / 0 / 0 over 39 summaries; 168 Lean audits; 327 root Python tests after regenerating this section (the first run failed only the derived-facts check, 167 vs 168 Lean audits, because the merged validation section predated AuditContractInherit); 5 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-contracts/artifacts/; contracts is identical after the checkout-root alias, and source-effects is byte-identical to the W43-LIBC-CONTRACTS integration run in the same checkout. No verdict or coverage change.",
+ "workspace_tests": 5176,
+ "provider_tests": 109,
+ "python_evidence_validator_tests": 327,
+ "lean_audits": 168,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

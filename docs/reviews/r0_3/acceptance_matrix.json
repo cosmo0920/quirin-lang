@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W43-LIBC-CONTRACTS on merge b5f45079 (onto main fa7ab464, after WINDOWS-TEST-PORTABILITY), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5139 core Rust passed / 0 failed / 11 ignored over 274 summaries; 109 provider Rust passed / 0 / 0 over 39 summaries; 167 Lean audits; 319 root Python tests; 5 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-contracts/artifacts/ (checkout root aliased to the card worktree). The core count differs from the card's own gate (5136/0/12 on 9edad50c) by main's intervening Windows test commit; that difference was not measured separately.",
-  "workspace_tests": 5139,
+  "note": "Integration gate for CONTRACT-INHERIT on merge 6ae583ca (onto main a7a936d9, after W43-LIBC-CONTRACTS), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5176 core Rust passed / 0 failed / 11 ignored over 277 summaries; 109 provider Rust passed / 0 / 0 over 39 summaries; 168 Lean audits; 327 root Python tests after regenerating this section (the first run failed only the derived-facts check, 167 vs 168 Lean audits, because the merged validation section predated AuditContractInherit); 5 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-contracts/artifacts/; contracts is identical after the checkout-root alias, and source-effects is byte-identical to the W43-LIBC-CONTRACTS integration run in the same checkout. No verdict or coverage change.",
+  "workspace_tests": 5176,
   "provider_tests": 109,
-  "python_evidence_validator_tests": 319,
-  "lean_audits": 167,
+  "python_evidence_validator_tests": 327,
+  "lean_audits": 168,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6769,6 +6769,7 @@
    "AuditConnectives.lean",
    "AuditConstantDoWhile.lean",
    "AuditContractBundle.lean",
+   "AuditContractInherit.lean",
    "AuditCt01OwnedTransfer.lean",
    "AuditCt03ReadShares.lean",
    "AuditCt07LeaseLedger.lean",
@@ -6911,7 +6912,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-libc-contracts/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/contract-inherit/integration/gate.json)"
  },
  "named_followups": [
   {
