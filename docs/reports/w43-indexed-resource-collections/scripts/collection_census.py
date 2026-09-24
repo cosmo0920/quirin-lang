@@ -280,12 +280,6 @@ class Function:
         for index, close in self.calls():
             contract = self.contracts.get(self.value(index))
             if contract and contract["owned"]:
-                back = index - 1
-                while back > self.open and self.value(back) == ")":
-                    back -= 1
-                # skip a cast `( T * )`
-                if self.value(back) == ")":
-                    pass
                 cursor = index - 1
                 # walk back over a cast
                 if self.value(cursor) == ")":
@@ -579,10 +573,6 @@ def main() -> int:
     sizeof_leaves = 0
     sizeof_functions = set()
     sizeof_sole = set()
-    sizeof_collection_allocations = 0
-    collection_allocation_lines = set()
-    for record in per_function:
-        pass
     for unit in diagnostics["units"]:
         key = f"{unit['library']}__{unit['file'].replace('/', '__')}.i"
         path = texts / key
