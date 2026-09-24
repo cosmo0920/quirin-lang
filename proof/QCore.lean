@@ -214,6 +214,7 @@ import QCore.TimeoutTeardown
 import QCore.Cycle18Composition
 import QCore.Cycle18CallbackObligations
 import QCore.ContractInherit
+import QCore.ContractViewProjection
 import QCore.NativePlatformMatrix
 import QCore.CallbackTaskHandoff
 
