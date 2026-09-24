@@ -71,6 +71,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [contract-inherit-adoption](contract-inherit-adoption/README.md) | CONTRACT-INHERIT-ADOPTION: contract inclusion and inheritance in the real provider crates |
 
+| [contract-inherit-qcore-provider-naming](contract-inherit-qcore-provider-naming/README.md) | CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: the executable provider crates on the contract load path |
+
 | [core-concurrency-prelude](core-concurrency-prelude/README.md) | Core concurrency prelude — 2026-09-08 |
 
 | [corpus-repin](corpus-repin/README.md) | CORPUS-REPIN — re-measurement and deliberate re-pin of the four 185-unit artifacts |
