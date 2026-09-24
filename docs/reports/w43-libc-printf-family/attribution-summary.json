@@ -1,0 +1,1076 @@
+{
+ "declared_names": 4,
+ "unpaired_units": [
+  "ctraces/ctr_utils.c",
+  "librdkafka/opentelemetry/common.pb.c",
+  "librdkafka/opentelemetry/metrics.pb.c",
+  "librdkafka/opentelemetry/resource.pb.c",
+  "librdkafka/tinycthread.c"
+ ],
+ "leaves_removed": 2229,
+ "leaves_added": 1283,
+ "functions_with_leaf_changes": 487,
+ "by_class": {
+  "added same-function": 1,
+  "added same-line": 1282,
+  "removed declared-callee": 2212,
+  "removed newly-safe-callee": 1,
+  "removed same-function": 2,
+  "removed same-line": 14
+ },
+ "by_class_and_shape": [
+  {
+   "direction": "added",
+   "class": "same-function",
+   "category": "unsupported",
+   "shape": "arguments beyond the declared parameters of `_` are outside the resource projection",
+   "leaves": 1
+  },
+  {
+   "direction": "added",
+   "class": "same-line",
+   "category": "unsupported",
+   "shape": "arguments beyond the declared parameters of `_` are outside the resource projection",
+   "leaves": 1178
+  },
+  {
+   "direction": "added",
+   "class": "same-line",
+   "category": "unsupported",
+   "shape": "call has an unmodeled formal address or borrowed expression",
+   "leaves": 1
+  },
+  {
+   "direction": "added",
+   "class": "same-line",
+   "category": "unsupported",
+   "shape": "nested call `_` inside a modeled call is outside the resource projection",
+   "leaves": 100
+  },
+  {
+   "direction": "added",
+   "class": "same-line",
+   "category": "unsupported",
+   "shape": "resource call with a formal embedded in an unmodeled expression",
+   "leaves": 3
+  },
+  {
+   "direction": "removed",
+   "class": "declared-callee",
+   "category": "unsupported",
+   "shape": "call to uncontracted function `_`",
+   "leaves": 2212
+  },
+  {
+   "direction": "removed",
+   "class": "newly-safe-callee",
+   "category": "unsupported",
+   "shape": "call to uncontracted function `_`",
+   "leaves": 1
+  },
+  {
+   "direction": "removed",
+   "class": "same-function",
+   "category": "unsupported",
+   "shape": "indirect memory access is outside the resource projection",
+   "leaves": 2
+  },
+  {
+   "direction": "removed",
+   "class": "same-line",
+   "category": "unsupported",
+   "shape": "indirect memory access is outside the resource projection",
+   "leaves": 14
+  }
+ ],
+ "removed_uncontracted_by_callee": {
+  "fprintf": 1138,
+  "snprintf": 1044,
+  "printf": 22,
+  "sprintf": 8,
+  "rd_kafka_mk_nodename": 1
+ },
+ "status_moves": {
+  "Unknown -> Safe": 5
+ },
+ "moved_functions": [
+  [
+   "chunkio",
+   "cio_log.c",
+   "cio_errno_print",
+   "Unknown",
+   "Safe"
+  ],
+  [
+   "cmetrics",
+   "cmt_log.c",
+   "cmt_errno_print",
+   "Unknown",
+   "Safe"
+  ],
+  [
+   "ctraces",
+   "ctr_log.c",
+   "ctr_errno_print",
+   "Unknown",
+   "Safe"
+  ],
+  [
+   "librdkafka",
+   "cJSON.c",
+   "cJSON_Version",
+   "Unknown",
+   "Safe"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_broker.c",
+   "rd_kafka_mk_nodename",
+   "Unknown",
+   "Safe"
+  ]
+ ],
+ "newly_safe_names": [
+  "cJSON_Version",
+  "cio_errno_print",
+  "cmt_errno_print",
+  "ctr_errno_print",
+  "rd_kafka_mk_nodename"
+ ],
+ "unit_changes": [
+  {
+   "unit": "cmetrics/cmt_encode_cloudwatch_emf.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "cmetrics/cmt_encode_influx.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "cmetrics/cmt_encode_msgpack.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "cmetrics/cmt_encode_prometheus.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "cmetrics/cmt_encode_splunk_hec.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "cmetrics/cmt_encode_text.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "cmetrics/cmt_log.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": true,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "ctraces/ctr_decode_opentelemetry.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "ctraces/ctr_encode_msgpack.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "ctraces/ctr_encode_text.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "ctraces/ctr_log.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": true,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/cJSON.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": true,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdbuf.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_assignment.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_assignor.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_background.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_broker.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": true,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_cert.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_conf.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_coord.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_fetcher.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_idempotence.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_metadata.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_handlers.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_msgset_reader.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_offset.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_plain.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_scram.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_ssl.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_sticky_assignor.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_transport.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_txnmgr.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdlog.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdmap.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdunittest_acknowledge.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdunittest_fetcher.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/rdunittest_msgset_errors.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "librdkafka/snappy.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "chunkio/chunkio.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "chunkio/cio_file.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "chunkio/cio_file_unix.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "chunkio/cio_log.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": true,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "chunkio/cio_stats.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "fluent-bit-chunk/flb_input_chunk.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "monkey-libevent/mk_core/mk_iov.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "monkey-libevent/mk_core/mk_memory.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "monkey-libevent/mk_server/mk_fifo.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "monkey-libevent/mk_server/mk_kernel.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "monkey-libevent/mk_server/mk_net.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "monkey-libevent/mk_server/mk_plugin.c",
+   "fields": [
+    "diagnostic_counts"
+   ],
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "monkey-libevent/mk_server/mk_utils.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  },
+  {
+   "unit": "monkey-libevent/mk_server/monkey.c",
+   "fields": [
+    "diagnostic_counts",
+    "reason"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "has_function_move": false,
+   "counts_match_leaf_delta": true,
+   "reason_matches_leaf_delta": true,
+   "other_fields": []
+  }
+ ],
+ "top_level_changes": [],
+ "diagnostic_counts": {
+  "before": {
+   "leak": 272,
+   "summary_conflict": 1,
+   "unknown_alias": 4657,
+   "unsupported": 48930
+  },
+  "after": {
+   "leak": 272,
+   "summary_conflict": 1,
+   "unknown_alias": 4657,
+   "unsupported": 47984
+  }
+ },
+ "unattributed": 0,
+ "unanchored_moves": [],
+ "unexplained_unit_changes": [],
+ "attribution_complete": true,
+ "same_body_closure": 0
+}

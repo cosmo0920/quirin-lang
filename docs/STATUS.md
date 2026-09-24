@@ -1,7 +1,7 @@
 # Current status and evidence boundaries
 
 Re-derived on 2026-09-21 from the sources below; corpus rows re-derived on
-2026-09-25 from the W43-INDEX-TRAVERSAL integration arbiter on the combined tree;
+2026-09-25 from the W43-LIBC-PRINTF-FAMILY integration arbiter on the combined tree;
 contract-corpus and follow-up rows re-derived on 2026-09-25 at the integrations. This is the concise status
 authority routed by `AGENTS.md`; reports own the underlying evidence. Update
 numbers from those sources, not from an older summary. History belongs in the
@@ -29,10 +29,10 @@ numbers from those sources, not from an older summary. History belongs in the
 | Cycle 18 bounded aggregate | **3 joined families / 8 source paths / 7 unresolved obligations**, aggregate Unknown | [Broader integration](reports/cycle18-broader-integration/aggregate.json) |
 | Callback task handoff | **12 source-derived operations**, one Linux pthread fixture; production acceptance pending | [Integrated lifetime evidence](reports/cycle18-broader-integration/task-handoff.json) |
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
-| Contract corpus | **109** modules; **140** resource-v1 declarations; **46** manifest-selected, 4 of them by `crate:module` reference; **13** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 37 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md) |
+| Contract corpus | **109** modules; **144** resource-v1 declarations; **46** manifest-selected, 4 of them by `crate:module` reference; **13** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 37 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md) |
 | Multi-module declarations | **10** functions in **12** module pairs, every pair a registered checked relation: 5 projections, 1 renamed equivalence, 5 source-shape agreements, 1 lifecycle agreement; **0** textual duplicates; 1 view not implied outside a coverage premise (`CONTRACT-VIEW-CHUNK-CLOSE-BACKEND-COVERAGE`) | [View projection check](reports/contract-view-projection-check/README.md), `qcore_contract::contract_views::REGISTERED_RELATIONS`, guard `compiler/tests/contract_view_census.rs` |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **324** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **326** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -120,7 +120,7 @@ allocator wrappers the same way, again with no verdict-bearing byte moved;
 one textual duplicate (`source_identity`) was removed, with no verdict-bearing
 byte moved.
 
-All three broader Cycle 18 follow-ups remain open; **324** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **326** follow-ups are
 registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
@@ -149,7 +149,8 @@ W43-RESULT-ALIAS-RETURNED retired `W43-RESULT-ALIAS-RETURNED` and
 `W43-RESULT-ALIAS-EXACT-RELEASE` (refusal kept on a recorded ground) and registered
 `W43-DERIVED-SUMMARY-CONST-DROPPED-FROM-CHAIN`;
 W43-INDEX-TRAVERSAL retired `W43-INDIRECT-POINTER-INCREMENT` and registered twelve
-refused-shape and premise residuals. Production callback composition, task/cancellation/event-generation
+refused-shape and premise residuals; W43-LIBC-PRINTF-FAMILY retired `LIBC-PRINTF-FAMILY`
+and registered the `va_list` members, the declared-tail exchange and its nested inner callees. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
 

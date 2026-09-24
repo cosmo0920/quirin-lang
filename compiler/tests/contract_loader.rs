@@ -331,6 +331,15 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("pthread_sigmask", 3),
         ("strftime", 4),
         ("gettimeofday", 2),
+        // Card W43-LIBC-PRINTF-FAMILY: the formatted-output family. Every
+        // declared parameter is borrowed (a written-through buffer or stream
+        // the caller keeps, a size, a read format), the result is an `int`
+        // count, and the `...` is `resource_variadic_data_tail()`, carried by
+        // no parameter, exactly as `mk_print` above.
+        ("printf", 1),
+        ("fprintf", 2),
+        ("snprintf", 3),
+        ("sprintf", 2),
     ] {
         old.insert_contract(
             name,
@@ -1063,9 +1072,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 45 -> 46 and 130 -> 140 by card W43-LIBC-RESTRICT-PROTOTYPES: ten
     // neutral declarations, two in the new `libc/regex.qcore` and eight
     // appended to already-selected libc modules.
+    // 140 -> 144 by card W43-LIBC-PRINTF-FAMILY: `printf`, `fprintf`,
+    // `snprintf` and `sprintf` appended to the already-selected
+    // `libc/stdio.qcore`, so the selection and the rejected count are unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (46, 140, 206)
+        (46, 144, 206)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

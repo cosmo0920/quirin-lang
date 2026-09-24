@@ -1,0 +1,19 @@
+{
+ "before": 295,
+ "after": 296,
+ "left": {
+  "chunkio/cio_log.c::cio_errno_print": "fprintf",
+  "cmetrics/cmt_log.c::cmt_errno_print": "fprintf",
+  "ctraces/ctr_log.c::ctr_errno_print": "fprintf",
+  "librdkafka/cJSON.c::cJSON_Version": "sprintf",
+  "librdkafka/rdkafka_broker.c::rd_kafka_mk_nodename": "snprintf"
+ },
+ "entered": {
+  "cmetrics/cmt_encode_splunk_hec.c::format_metric_type": "cfl_sds_cat_safe",
+  "ctraces/ctr_encode_text.c::format_double": "sds_cat_safe",
+  "ctraces/ctr_encode_text.c::format_int64": "sds_cat_safe",
+  "ctraces/ctr_encode_text.c::format_string": "sds_cat_safe",
+  "librdkafka/rdkafka_admin.c::rd_kafka_AclBindingFilter_new": "rd_kafka_AclBinding_new0",
+  "librdkafka/rdkafka_admin.c::rd_kafka_AclBinding_new": "rd_kafka_AclBinding_new0"
+ }
+}

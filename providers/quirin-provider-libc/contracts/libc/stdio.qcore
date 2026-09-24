@@ -27,7 +27,9 @@ module contract;
 //   (gateway constraint 8) does not read: this card measured each of them
 //   withdrawn with `abi-unreadable-declaration` at every call site in the
 //   pinned corpus (`LOADER-ABI-RESTRICT-QUALIFIER`). A declaration withdrawn
-//   everywhere decides nothing, so none is shipped.
+//   everywhere decides nothing, so none is shipped. [Superseded for these
+//   four by card W43-LIBC-PRINTF-FAMILY once card W43-LIBC-RESULT-ALIAS had
+//   repaired the reader: see the section at the end of this module.]
 //   `vprintf`/`vsnprintf` take a `va_list` (`__builtin_va_list`), for which
 //   this vocabulary has no ABI spelling.
 //   `fopen`/`fclose` open and close a STREAM: a v1 owned/released pair would
@@ -57,5 +59,106 @@ extern fn remove(filename: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(filename);
+    ensures normal resource_return_none();
+};
+
+// ---------------------------------------------------------------------------
+// Card W43-LIBC-PRINTF-FAMILY: the formatted-output family.
+//
+// Each declaration below is a TRUSTED ASSUMPTION about the C library (trust
+// boundary 28); no libc body is analysed. Each was read from the prototype the
+// analysed units declare (`/usr/include/stdio.h` on the audited host, glibc,
+// x86-64, LP64), after preprocessing:
+//
+//   extern int printf (const char *__restrict __format, ...);
+//   extern int fprintf (FILE *__restrict __stream,
+//         const char *__restrict __format, ...) __attribute__ ((__nonnull__ (1)));
+//   extern int snprintf (char *__restrict __s, size_t __maxlen,
+//          const char *__restrict __format, ...)
+//        __attribute__ ((__nothrow__)) __attribute__ ((__format__ (__printf__, 3, 4)));
+//   extern int sprintf (char *__restrict __s,
+//         const char *__restrict __format, ...) __attribute__ ((__nothrow__));
+//
+// A qualifier after a parameter's last `*` is read as the unqualified type
+// (C11 6.7.6.3p15; card W43-LIBC-RESULT-ALIAS's reader repair). The
+// declared-ABI census over the 185 captured units reads each of the four as
+// agreeing in all 168 units that declare it and withdrawn in none
+// (`docs/reports/w43-libc-printf-family/census/family9.txt`).
+//
+// ## The custody statements
+//
+// * The RESULT is an `int` (a count, or a negative error): a scalar, so
+//   `resource_return_none()` is the literally faithful mode, not an
+//   approximation.
+// * `stream` (`FILE *`) is a stream the caller keeps. The call writes to it
+//   and neither opens, closes nor retains it: `resource_borrowed`, exactly as
+//   `fflush` above. `__nonnull__ (1)` is a precondition, not custody.
+// * `s`, the destination buffer of `snprintf` and `sprintf`, is WRITTEN
+//   THROUGH and is the caller's before and after the call:
+//   `resource_borrowed`, the mode `msgpack_packer_init`'s written-through `pk`
+//   already establishes. The call neither frees nor retains it, and the
+//   result is a count, not a pointer into it.
+// * `maxlen` is a `size_t` by value, and `format` is a string that is read.
+// * The variadic tail is consumed by the call and rendered as text. No tail
+//   argument is freed, and no pointer to one is retained past the call:
+//   `resource_variadic_data_tail()`, exactly as Monkey's `mk_print` declares
+//   it (`qcore-provider-libevent/contracts/monkey/logging.qcore`). The clause
+//   admits nothing on its own: the gateway still requires, per call site,
+//   that every tail actual is data.
+//
+// ## What no declaration here says
+//
+// Nothing about buffer bounds or truncation (`sprintf` overrunning `s`, or
+// `snprintf` given a `maxlen` larger than `s`), about agreement between the
+// format and the tail, about `%n` (which WRITES through a tail pointer; the
+// tail rule refuses a pointer-valued tail actual whose target this function
+// can bind, and admitting any other pointer is the tail premise, not a claim
+// about `%n`), about `%s` reading through a released pointer (the gateway's
+// own liveness precondition, unchanged), stream errors, `errno`, locale, or
+// interleaving across threads. These are per-call custody statements about the
+// CALLER's obligations, and nothing more.
+//
+// ## Refused by name (recorded in the card report)
+//
+//   `vprintf`, `vfprintf`, `vsprintf`, `vsnprintf` take a `__gnuc_va_list`
+//   (`__builtin_va_list`) parameter, which the declared-ABI reader cannot
+//   read: the census withdraws each with `abi-unreadable-declaration` in all
+//   168 units, so a declaration would decide nothing and only rename leaves
+//   (`LIBC-PRINTF-VA-LIST`). `dprintf` agrees everywhere, but no analysed unit
+//   calls it, so it is not declared.
+
+extern fn printf(format: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(format);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};
+
+extern fn fprintf(stream: ptr<mut, u8>, format: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(stream);
+    ensures normal resource_borrowed(format);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};
+
+extern fn snprintf(s: ptr<mut, u8>, maxlen: usize, format: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(maxlen);
+    ensures normal resource_borrowed(format);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};
+
+extern fn sprintf(s: ptr<mut, u8>, format: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(format);
+    ensures normal resource_variadic_data_tail();
     ensures normal resource_return_none();
 };

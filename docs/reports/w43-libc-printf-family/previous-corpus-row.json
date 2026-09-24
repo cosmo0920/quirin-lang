@@ -1,0 +1,29 @@
+{
+  "note": "W43-LIBC-RESULT-ALIAS, 2026-09-24. Staged arbiter: BEFORE (base binary) reproduces the W43-LIBC-CONTRACTS diagnostics byte for byte; the card's binary with no new declaration (reader change alone) reproduces all five BEFORE artifacts byte for byte; seven exact-alias declarations then remove 169 leaves and add 20, and six interior-pointer declarations remove 14 and add 1, all attributed. 12 functions Unknown -> Safe, each relative to the declared premises; 0 unit status moves; 0 invalid_release and 0 use_after_release candidates. Leak 272 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-libc-result-alias/previous-corpus-row.json.",
+  "units": 185,
+  "safe": 2,
+  "provisional_unsafe": 42,
+  "unknown": 137,
+  "data_only": 4,
+  "projected_functions": 4834,
+  "leak_diagnostics": 272,
+  "process_sidecar": "3 checked function contracts / 93 Unknown",
+  "baseline": "docs/reports/w43-libc-result-alias/artifacts/",
+  "source": "docs/reports/w43-libc-result-alias/README.md; preceding baseline docs/reports/w43-libc-contracts/artifacts/",
+  "unknown_alias_diagnostics": 4657,
+  "unsupported_diagnostics": 48930,
+  "double_release_diagnostics": 0,
+  "function_statuses": {
+    "safe": 257,
+    "provisional_unsafe": 84,
+    "unknown": 4493
+  },
+  "source_definitions": 4921,
+  "unprojected_definitions": 87,
+  "unit_reason_codes": {
+    "unsupported-syntax": 136,
+    "none": 48,
+    "incomplete-obligation-coverage": 1
+  },
+  "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}
