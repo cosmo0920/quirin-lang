@@ -2,7 +2,9 @@
 
 Card W43-INDEXED-RESOURCE-COLLECTIONS, 2026-09-25, on base `ec70709a` (main
 after the qcore-provider naming integration) merged with the finished
-W43-INDIRECT-ACCESS-GENERAL branch (`6bb838c8`, merge `9c7774dc`). The card
+W43-INDIRECT-ACCESS-GENERAL branch (`6bb838c8`, merge `9c7774dc`), and then
+with main `0a07cb57` once that contained the indirect card (merge
+`6bcfae3d`). The card
 teaches the C gateway to track **indexed resources**: a heap array whose
 elements hold owned resources, filled and released in index loops. The
 forecast was frozen before any rule existed ([PREDICTION.md](PREDICTION.md),
@@ -61,7 +63,7 @@ commit `ea33ff70`).
   * In every one the array is a formal, a cast alias of one, or an array whose
     own allocation is refused. So every one keeps its fallback refusal, and
     the leaf is present in both runs.
-* **Ledger: 307 → 314.** Nothing is retired. `W43-INDIRECT-POINTER-VALUE-STORE`
+* **Ledger: 313 → 320** (main's 313 at `0a07cb57`). Nothing is retired. `W43-INDIRECT-POINTER-VALUE-STORE`
   is not discharged: its `a[i] = q` shape is exactly the name store this card
   keeps refused. Seven residuals are registered ([§7](#7-ledger)).
 
@@ -361,8 +363,8 @@ pin, Clang and ChunkIO package as the baseline.
 |---|---|---|---:|---|
 | BEFORE | `7ba13086…` | merge `9c7774dc` | 0 | [before-run.json](before-run.json), [before-identity.json](before-identity.json) |
 | capture | `7ba13086…` | the same, through the tee wrapper | 0 | private; see §1 |
-| AFTER | `b6278fd7…` | `850bed9c` (the audit binary is unchanged by the later commits) | 0 | [after-run.json](after-run.json), [after-diff.json](after-diff.json), [artifacts/](artifacts/) |
-| CENSUS (after) | `20e4ee44…` | `850bed9c` + `indirect-census` | 0 | [census-after-run.json](census-after-run.json), [census/element-reach.txt](census/element-reach.txt) |
+| AFTER | `65853f67…` | merge `6bcfae3d` (this card on main `0a07cb57`) | 0 | [after-run.json](after-run.json), [after-diff.json](after-diff.json), [after-vs-baseline.json](after-vs-baseline.json), [artifacts/](artifacts/) |
+| CENSUS (after) | `384de580…` | `6bcfae3d` + `indirect-census` | 0 | [census-after-run.json](census-after-run.json), [census/element-reach.txt](census/element-reach.txt) |
 
 **BEFORE against the W43-INDIRECT-ACCESS-GENERAL baseline**
 ([`scripts/identity.sh`](scripts/identity.sh)):
@@ -371,6 +373,13 @@ pin, Clang and ChunkIO package as the baseline.
 * `contracts` differs, because main's verdict-neutral contract changes (the
   inherit adoption and naming) sit on this merged base;
 * `source-effects` carries the checkout-path digests the brief lists.
+
+**AFTER against the W43-INDIRECT-ACCESS-GENERAL baseline**
+([`scripts/scope_only.py`](scripts/scope_only.py),
+[after-vs-baseline.json](after-vs-baseline.json)): the diagnostics are equal
+except for the `scope` string. On the combined tree this card therefore
+reproduces the baseline's verdict-bearing content, and main's three contract
+cards change none of it.
 
 **AFTER against BEFORE** ([`scripts/diff_runs.py`](scripts/diff_runs.py),
 [run-identities.json](run-identities.json)):
@@ -384,8 +393,10 @@ pin, Clang and ChunkIO package as the baseline.
 The census run's five artifacts are byte-identical to AFTER, which is the
 feature's inertness claim.
 
-Two earlier AFTER runs, on `48c468c1` and `ae3f1439`, are byte-identical to
-this one and kept privately. One AFTER run was stopped by its task handle
+Three earlier AFTER runs are byte-identical to this one in all five artifacts
+and are kept privately: `48c468c1`, `ae3f1439`, and `850bed9c` before main was
+merged. So is the pre-merge census run. The combined tree changed no artifact,
+not even `contracts`. One AFTER run was stopped by its task handle
 because it was launched with a mislabelled source commit. It was set aside as
 `aborted-after3-mislabelled` and is not evidence.
 
@@ -453,7 +464,46 @@ coordinator's disk rule. It captures every exit to a file and never through a
 pipe. Logs are in `private/gate/` and `private/provider-gate/`, and the
 generator input is [gate.json](gate.json).
 
-GATE_TABLE
+The core and provider gates ran on `6bcfae3d`, this card merged with main
+`0a07cb57`. Later commits change documents, the ledger, report scripts and
+evidence only. A first core gate on the pre-merge tree was stopped by its task
+handle when the coordinator asked for main to be merged, after its
+submodule and Clang steps. It is kept as `private/aborted-gate-1-premerge/`
+and is not evidence.
+
+| Command | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | libevent `d82464a2…` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 ([recording](clang-version.txt)) |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,289 passed / 0 failed / 11 ignored**, 283 summaries |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **173** audits |
+| `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings` and `cargo test -p qcore-c-gateway --features indirect-census --lib` | 0 | clean; 433 passed |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w43-indexed-resource-collections/gate.json` | 0 | 320 follow-ups, 108 contract modules, 173 Lean audits |
+| `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **330** tests |
+| `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | regenerated and matching |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **124 passed / 0 failed / 0 ignored**, 39 summaries |
+| `… -p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations … -- --exact --test-threads=1` | 0 | 1 passed (isolated, constraint 16) |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean |
+| `python3 providers/contracts.py check` | 0 | inventories unchanged |
+| `python3 providers/package.py build --output private/provider-gate/packages` | 0 | 5 packages |
+| `python3 providers/package.py verify …/<id>` (×5) | 0 ×5 | chunkio, cmetrics, ctraces, libevent, librdkafka |
+| `python3 -m unittest discover -s providers/tests` | 0 | 13 tests |
+
+**Counts.** This card adds:
+
+* the 30-test `indexed_collection.rs` binary;
+* 5 unit tests of `indexed_collection.rs`;
+* one Lean audit.
+
+No existing pin moved. The base's figures on this merged tree were not
+remeasured separately, so the delta is stated by test, not by subtraction.
+The debug profile was cleaned after the core gate (`cargo clean --profile
+dev`), following the coordinator's disk rule.
 
 ## 7. Ledger
 
@@ -482,7 +532,8 @@ entry moved. It stays registered and unedited.
 * `POISON-UNMASK-ON-ADMISSION`: no admission reached the corpus, so it was not
   measured here.
 
-Follow-ups go from **307 to 314**. `corpus.cycle19_raw_units` points at this
+Follow-ups go from **313 to 320** (307 → 314 on the branch before main's six
+contract-view entries arrived). `corpus.cycle19_raw_units` points at this
 report's artifacts, and its previous contents are in
 [previous-corpus-row.json](previous-corpus-row.json).
 
@@ -551,13 +602,14 @@ report's artifacts, and its previous contents are in
   * The shared records: `docs/reviews/r0_3/acceptance_matrix.json`,
     `docs/STATUS.md`, `docs/development/increments/wave-43.md` and
     `README.md`, and `docs/reports/INDEX.md`.
-* **The merge base.** This branch merged W43-INDIRECT-ACCESS-GENERAL
-  (`6bb838c8`) into `ec70709a` itself (merge `9c7774dc`).
-  * The ledger was resolved entry by entry: 298 on main plus the card's 12,
-    minus its 3 retired, is 307.
+* **The merges.** This branch merged W43-INDIRECT-ACCESS-GENERAL
+  (`6bb838c8`) into `ec70709a` itself (merge `9c7774dc`), then main
+  `0a07cb57` (merge `6bcfae3d`).
+  * Both ledger merges were resolved entry by entry. The second is main's 313
+    plus this card's 7, which is 320. The corpus row is this card's; main's is
+    preserved in [previous-corpus-row.json](previous-corpus-row.json).
   * `STATUS.md` keeps main's rows and adds the card's.
-  * The increment index names `wave-43.md` as the current record, with both
-    wave-41 continuations listed.
+  * `wave-43.md` is the single current increment record, as on main.
 * The `contracts` and `source-effects` artifacts embed this worktree's path,
   as earlier isolated cards' artifacts did.
 

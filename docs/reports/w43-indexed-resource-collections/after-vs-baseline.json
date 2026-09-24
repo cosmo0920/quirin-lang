@@ -1,0 +1,6 @@
+{
+ "run_scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation",
+ "baseline_scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track",
+ "equal_except_scope": true,
+ "canonical_equal_except_scope": true
+}

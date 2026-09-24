@@ -1,23 +1,23 @@
 {
   "command": [
-    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a21f70f046fa88069/private/bin/census-after",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a21f70f046fa88069/private/bin/census-after4",
     "--pinned-evidence",
     "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
     "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
-    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a21f70f046fa88069/private/runs/census-after/monkey-source.json",
-    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a21f70f046fa88069/private/runs/census-after/resource-diagnostics.json"
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a21f70f046fa88069/private/runs/census-after4/monkey-source.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a21f70f046fa88069/private/runs/census-after4/resource-diagnostics.json"
   ],
-  "source_commit": "850bed9c+census",
-  "binary_sha256": "20e4ee440f9dbb9660b17f528d86e1c4b75d283e971bc033320053c4e9bed7fe",
+  "source_commit": "6bcfae3d+census",
+  "binary_sha256": "384de58054c6330020b57321d63f3f0e3ac2762dcef71fa16bcf645367ea8986",
   "environment": {
     "QCORE_CLANG": "/usr/bin/clang",
     "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
     "QCORE_SOURCE_CONTRACTS": "unset",
-    "QCORE_RETURN_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a21f70f046fa88069/private/runs/census-after/return-census.jsonl",
-    "QCORE_INDIRECT_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a21f70f046fa88069/private/runs/census-after/indirect-census.jsonl",
-    "QCORE_STATEMENT_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a21f70f046fa88069/private/runs/census-after/statement-census.jsonl"
+    "QCORE_RETURN_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a21f70f046fa88069/private/runs/census-after4/return-census.jsonl",
+    "QCORE_INDIRECT_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a21f70f046fa88069/private/runs/census-after4/indirect-census.jsonl",
+    "QCORE_STATEMENT_CENSUS": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a21f70f046fa88069/private/runs/census-after4/statement-census.jsonl"
   },
-  "start": "2026-09-24T18:19:25.689035+00:00",
+  "start": "2026-09-24T18:49:08.261378+00:00",
   "exit": 0,
-  "end": "2026-09-24T18:30:40.620615+00:00"
+  "end": "2026-09-24T18:59:06.936480+00:00"
 }

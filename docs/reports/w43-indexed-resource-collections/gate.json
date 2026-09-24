@@ -1,0 +1,13 @@
+{
+  "note": "W43-INDEXED-RESOURCE-COLLECTIONS: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured on 6bcfae3d (this card merged with main 0a07cb57; later commits change documents, the ledger, report scripts and evidence only, no Rust, Lean, contract or test source), with CARGO_INCREMENTAL=0. 5289 core Rust passed / 0 failed / 11 ignored over 283 summaries (the card adds the 30-test indexed_collection.rs binary and 5 unit tests of indexed_collection.rs; no existing pin moved); 173 Lean audits (1 added: AuditIndexedCollection, 44 theorems); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 433 feature-on library tests passed; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed (1 test); provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. A first core gate on the pre-merge tree was stopped by its task handle when main was merged (private/aborted-gate-1-premerge, not evidence). Logs: worktree-private private/gate and private/provider-gate of agent-a21f70f046fa88069. Clang recorded in this checkout. Corpus: 0 leaves, 0 functions, 0 units moved, leak 271, 0 violation candidates; the diagnostics differ from the W43-INDIRECT-ACCESS-GENERAL baseline only in the scope string.",
+  "workspace_tests": 5289,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 173,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
