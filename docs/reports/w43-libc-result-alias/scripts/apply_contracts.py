@@ -34,7 +34,7 @@ if stage == "exact":
 """
     assert string.count(old) == 1
     string = string.replace(old, new, 1)
-    string = string.rstrip("\n") + "\n" + (DRAFTS / "string-exact.qcore").read_text()
+    string = string.rstrip("\n") + "\n" + (DRAFTS / "string-exact.qcore.txt").read_text()
     rewrite(LIBC / "string.qcore", string)
     time = (LIBC / "time.qcore").read_text()
     old = """//   `gmtime_r`/`localtime_r` return their SECOND argument (or NULL), an alias
@@ -45,12 +45,12 @@ if stage == "exact":
 """
     assert time.count(old) == 1
     time = time.replace(old, new, 1)
-    time = time.rstrip("\n") + "\n" + (DRAFTS / "time-exact.qcore").read_text()
+    time = time.rstrip("\n") + "\n" + (DRAFTS / "time-exact.qcore.txt").read_text()
     rewrite(LIBC / "time.qcore", time)
 elif stage == "interior":
     string = (LIBC / "string.qcore").read_text()
     assert "extern fn strchr(" not in string
-    string = string.rstrip("\n") + "\n" + (DRAFTS / "string-interior.qcore").read_text()
+    string = string.rstrip("\n") + "\n" + (DRAFTS / "string-interior.qcore.txt").read_text()
     rewrite(LIBC / "string.qcore", string)
 else:
     raise SystemExit("usage: apply_contracts.py exact|interior")
