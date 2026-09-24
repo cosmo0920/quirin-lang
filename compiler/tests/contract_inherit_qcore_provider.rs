@@ -75,8 +75,11 @@ fn libc_text(module: &str) -> String {
     .unwrap()
 }
 
+/// One chain link: (child, parent declaration, parent module).
+type Chain = (&'static str, &'static str, &'static str);
+
 /// The eight conversions: (crate, module, hand-written fixture, chains).
-const CONVERSIONS: [(&str, &str, &str, &[(&str, &str, &str)]); 2] = [
+const CONVERSIONS: [(&str, &str, &str, &[Chain]); 2] = [
     (
         LIBRDKAFKA,
         "librdkafka/memory.qcore",
@@ -343,6 +346,13 @@ impl ScratchPackage {
             .join(pin["module"].as_str().unwrap())
     }
 
+    fn refused(&self, owner: &str, what: &str) -> String {
+        match self.load(owner) {
+            Ok(_) => panic!("{what} must be refused"),
+            Err(error) => error,
+        }
+    }
+
     fn load(&self, owner: &str) -> Result<ContractBundle, String> {
         let manifest = self.0.join("contracts.json");
         let digest = sha256_hex(&fs::read(&manifest).unwrap());
@@ -405,10 +415,10 @@ fn real_package_inventories_pin_their_included_parents() {
             let mut changed = original.clone();
             changed.extend_from_slice(b"// changed\n");
             fs::write(&path, &changed).unwrap();
-            let error = scratch.load(owner).err().expect("a changed parent");
+            let error = scratch.refused(owner, "a changed parent");
             assert!(error.contains("included parent changed"), "{key}: {error}");
             fs::remove_file(&path).unwrap();
-            let error = scratch.load(owner).err().expect("a missing parent");
+            let error = scratch.refused(owner, "a missing parent");
             assert!(
                 error.contains("included parent file set differs"),
                 "{key}: {error}"
@@ -528,7 +538,7 @@ fn alias_and_interior_parents_are_inherited_with_their_base_index() {
 }
 
 fn refused(child: &str, code: &str) -> String {
-    let error = load_alias(child).err().expect("refused");
+    let error = load_alias(child).expect_err("refused");
     assert!(error.starts_with(code), "{code}: {error}");
     error
 }

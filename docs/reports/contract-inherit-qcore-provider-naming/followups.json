@@ -1,0 +1,9 @@
+[
+ {
+  "id": "CONTRACT-INHERIT-PERMUTED-PARAMETER-NAMES",
+  "title": "A child whose same-typed parameters carry the parent's names in another order is admitted, and binds by position",
+  "why": "Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING tested inheritance from derived-result parents (CONTRACT-INHERIT-ALIAS-RESULT-PARENTS). A child that reorders its parameters so that a type moves is refused (QI010), but when the moved parameters have one type the reordering is invisible to the signature check: `extern fn app_search(needle: ptr<const, u8>, haystack: ptr<const, u8>) -> ptr<mut, u8> contract inherit libc::strstr;` is admitted, and its elaborated clause is `resource_return_interior(needle, nullable)` with base index 0, exactly the parent's record (compiler/tests/contract_inherit_qcore_provider.rs, swapped_parameter_names_do_not_move_the_base). That is the positional rule C15 states, and it is sound for the declaration as written; but a C wrapper that really swaps its arguments before calling strstr would receive a wrong trusted assumption, and a reader could take the child's parameter names as re-binding the base. The rename check refuses only capture (a child name equal to a non-parameter word), not a child name equal to a parent parameter at a different position. None of the 13 inheriting declarations on the tree has such a name (flb_*, rd_* and mk_* keep the parent's order; rd_strdup/rd_strndup rename s/n to str/len). Discharge: either refuse a child parameter named like a parent parameter at another position (a C15 change with a code, a negative control, a Lean statement over rename_clauses, and a census of the inheriting declarations), or record that the positional rule alone is the intended contract and close this entry with that decision.",
+  "source": "docs/reports/contract-inherit-qcore-provider-naming/README.md",
+  "recorded_by": "CONTRACT-INHERIT-QCORE-PROVIDER-NAMING"
+ }
+]
