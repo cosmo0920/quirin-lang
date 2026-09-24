@@ -1,0 +1,13 @@
+{
+  "note": "CONTRACT-VIEW-PROJECTION-CHECK: core and provider gates measured on a1d86ddd (later commits change the report, gate record, matrix and package-control script only), run by scripts/run_gate.py into worktree-private measure/gate of agent-adc29c8598e7c880b. 5221 core Rust passed / 0 failed / 11 ignored over 280 summaries; 171 Lean audits (AuditContractViewProjection new, 22 theorems); root Python tests counted after the final matrix regeneration. Step exits: submodules 0, clang 0, test 0, fmt 0, clippy --workspace --all-targets 0, probe 0, followup 0, lean 0. Provider workspace: 117 passed / 0 failed / 0 ignored over 39 summaries, isolated package mutation control 1/1, provider fmt and clippy clean, contracts.py check 0, five package builds and verifications 0, 12 providers/tests Python tests. Card package controls: the base text of each changed module refused by verify in qcore.libevent and qcore.chunkio, restored copies accepted. Clang recorded in this checkout. Corpus arbiter: all five artifacts byte-identical BEFORE (f8b41209) and AFTER (bdf2233b) in this checkout; diagnostics byte-identical to the W43-LIBC-RESULT-ALIAS baseline. No coverage promotion.",
+  "workspace_tests": 5221,
+  "provider_tests": 117,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 171,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

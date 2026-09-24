@@ -73,6 +73,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [contract-inherit-qcore-provider-naming](contract-inherit-qcore-provider-naming/README.md) | CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: the executable provider crates on the contract load path |
 
+| [contract-view-projection-check](contract-view-projection-check/README.md) | CONTRACT-VIEW-PROJECTION-CHECK: checked relations between the views of one function |
+
 | [core-concurrency-prelude](core-concurrency-prelude/README.md) | Core concurrency prelude — 2026-09-08 |
 
 | [corpus-repin](corpus-repin/README.md) | CORPUS-REPIN — re-measurement and deliberate re-pin of the four 185-unit artifacts |

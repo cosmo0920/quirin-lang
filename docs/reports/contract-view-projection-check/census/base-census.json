@@ -1,0 +1,627 @@
+{
+  "census": [
+    {
+      "declarations": [
+        [
+          "monkey/wait_source_policy.qcore",
+          "source_shape_metadata"
+        ],
+        [
+          "monkey/wrapper_paths.qcore",
+          "atomic_lifecycle"
+        ]
+      ],
+      "function": "_mk_event_loop_create",
+      "token_identical": false
+    },
+    {
+      "declarations": [
+        [
+          "monkey/wait_source_policy.qcore",
+          "source_shape_metadata"
+        ],
+        [
+          "monkey/wrapper_paths.qcore",
+          "atomic_lifecycle"
+        ]
+      ],
+      "function": "_mk_event_loop_destroy",
+      "token_identical": false
+    },
+    {
+      "declarations": [
+        [
+          "monkey/wait_source_policy.qcore",
+          "source_shape_metadata"
+        ],
+        [
+          "monkey/wrapper_paths.qcore",
+          "atomic_lifecycle"
+        ]
+      ],
+      "function": "_mk_event_wait_2",
+      "token_identical": false
+    },
+    {
+      "declarations": [
+        [
+          "monkey/wait_source_policy.qcore",
+          "source_shape_metadata"
+        ],
+        [
+          "monkey/wrapper_paths.qcore",
+          "atomic_lifecycle"
+        ]
+      ],
+      "function": "_mk_event_wait_with_flags",
+      "token_identical": false
+    },
+    {
+      "declarations": [
+        [
+          "monkey/composition.qcore",
+          "atomic_lifecycle"
+        ],
+        [
+          "monkey/wait_source_policy.qcore",
+          "source_shape_metadata"
+        ]
+      ],
+      "function": "cb_wait_2_timeout",
+      "token_identical": false
+    },
+    {
+      "declarations": [
+        [
+          "chunkio/chunk_destructor.qcore",
+          "language"
+        ],
+        [
+          "chunkio/memory_close.qcore",
+          "integer_observation"
+        ],
+        [
+          "chunkio/resource_open_close.qcore",
+          "resource_v1"
+        ]
+      ],
+      "function": "cio_chunk_close",
+      "token_identical": false
+    },
+    {
+      "declarations": [
+        [
+          "chunkio/error_frame.qcore",
+          "integer_observation"
+        ],
+        [
+          "chunkio/error_state.qcore",
+          "integer_observation"
+        ]
+      ],
+      "function": "cio_error_reset",
+      "token_identical": false
+    },
+    {
+      "declarations": [
+        [
+          "fluent_bit/memory.qcore",
+          "integer_observation"
+        ],
+        [
+          "fluent_bit/resource_memory.qcore",
+          "resource_v1"
+        ]
+      ],
+      "function": "flb_calloc",
+      "token_identical": false
+    },
+    {
+      "declarations": [
+        [
+          "fluent_bit/memory.qcore",
+          "integer_observation"
+        ],
+        [
+          "fluent_bit/resource_memory.qcore",
+          "resource_v1"
+        ]
+      ],
+      "function": "flb_free",
+      "token_identical": false
+    },
+    {
+      "declarations": [
+        [
+          "fluent_bit/memory.qcore",
+          "integer_observation"
+        ],
+        [
+          "fluent_bit/resource_memory.qcore",
+          "resource_v1"
+        ]
+      ],
+      "function": "flb_malloc",
+      "token_identical": false
+    },
+    {
+      "declarations": [
+        [
+          "monkey/timeout_teardown.qcore",
+          "typed_policy"
+        ],
+        [
+          "monkey/wait_source_policy.qcore",
+          "typed_policy"
+        ]
+      ],
+      "function": "source_identity",
+      "token_identical": true
+    }
+  ],
+  "modules": 108,
+  "refusals": [
+    "unregistered multi-module declaration: `source_identity` in monkey/timeout_teardown.qcore and monkey/wait_source_policy.qcore; register a checked relation in qcore_contract::contract_views::REGISTERED_RELATIONS or remove the duplicate",
+    "cio_chunk_close (chunkio/chunk_destructor.qcore / chunkio/resource_open_close.qcore): parameter 1 disagrees: `delete_backing: bool` in chunkio/chunk_destructor.qcore is bool, `delete: i32` in chunkio/resource_open_close.qcore is i32",
+    "cio_chunk_close (chunkio/chunk_destructor.qcore / chunkio/memory_close.qcore): parameter 1 disagrees: `delete_backing: bool` in chunkio/chunk_destructor.qcore is bool, `delete: i32` in chunkio/memory_close.qcore is i32"
+  ],
+  "registry": [
+    {
+      "assumed_premises": [
+        [
+          "ordinary_allocator_profile == 1",
+          "profile"
+        ]
+      ],
+      "check": {
+        "Projection": {
+          "bridge": {
+            "domains": [
+              "result_null == 0 or result_null == 1"
+            ],
+            "name": "allocator-observation",
+            "rules": [
+              {
+                "meaning": "Marker",
+                "view_clause": "resource_contract_v1"
+              },
+              {
+                "meaning": "ScalarBorrowed",
+                "view_clause": "resource_borrowed($*)"
+              },
+              {
+                "meaning": "UnitResult",
+                "view_clause": "resource_return_none()"
+              },
+              {
+                "meaning": {
+                  "Custody": {
+                    "obligation": "(result_null == 1 and live_after == 0) or (result_null == 0 and live_after == 1 and result_is_backend == 1)",
+                    "premise": "true",
+                    "shape": null
+                  }
+                },
+                "view_clause": "resource_return_owned(nullable)"
+              },
+              {
+                "meaning": {
+                  "Custody": {
+                    "obligation": "live_after == 0 and forwarded_input == 1",
+                    "premise": "valid_input_extent == 1",
+                    "shape": "Pointer"
+                  }
+                },
+                "view_clause": "resource_released($*,nullable)"
+              }
+            ]
+          }
+        }
+      },
+      "detailed": "fluent_bit/memory.qcore",
+      "finding": null,
+      "function": "flb_calloc",
+      "view": "fluent_bit/resource_memory.qcore"
+    },
+    {
+      "assumed_premises": [
+        [
+          "ordinary_allocator_profile == 1",
+          "profile"
+        ]
+      ],
+      "check": {
+        "Projection": {
+          "bridge": {
+            "domains": [
+              "result_null == 0 or result_null == 1"
+            ],
+            "name": "allocator-observation",
+            "rules": [
+              {
+                "meaning": "Marker",
+                "view_clause": "resource_contract_v1"
+              },
+              {
+                "meaning": "ScalarBorrowed",
+                "view_clause": "resource_borrowed($*)"
+              },
+              {
+                "meaning": "UnitResult",
+                "view_clause": "resource_return_none()"
+              },
+              {
+                "meaning": {
+                  "Custody": {
+                    "obligation": "(result_null == 1 and live_after == 0) or (result_null == 0 and live_after == 1 and result_is_backend == 1)",
+                    "premise": "true",
+                    "shape": null
+                  }
+                },
+                "view_clause": "resource_return_owned(nullable)"
+              },
+              {
+                "meaning": {
+                  "Custody": {
+                    "obligation": "live_after == 0 and forwarded_input == 1",
+                    "premise": "valid_input_extent == 1",
+                    "shape": "Pointer"
+                  }
+                },
+                "view_clause": "resource_released($*,nullable)"
+              }
+            ]
+          }
+        }
+      },
+      "detailed": "fluent_bit/memory.qcore",
+      "finding": null,
+      "function": "flb_free",
+      "view": "fluent_bit/resource_memory.qcore"
+    },
+    {
+      "assumed_premises": [
+        [
+          "ordinary_allocator_profile == 1",
+          "profile"
+        ]
+      ],
+      "check": {
+        "Projection": {
+          "bridge": {
+            "domains": [
+              "result_null == 0 or result_null == 1"
+            ],
+            "name": "allocator-observation",
+            "rules": [
+              {
+                "meaning": "Marker",
+                "view_clause": "resource_contract_v1"
+              },
+              {
+                "meaning": "ScalarBorrowed",
+                "view_clause": "resource_borrowed($*)"
+              },
+              {
+                "meaning": "UnitResult",
+                "view_clause": "resource_return_none()"
+              },
+              {
+                "meaning": {
+                  "Custody": {
+                    "obligation": "(result_null == 1 and live_after == 0) or (result_null == 0 and live_after == 1 and result_is_backend == 1)",
+                    "premise": "true",
+                    "shape": null
+                  }
+                },
+                "view_clause": "resource_return_owned(nullable)"
+              },
+              {
+                "meaning": {
+                  "Custody": {
+                    "obligation": "live_after == 0 and forwarded_input == 1",
+                    "premise": "valid_input_extent == 1",
+                    "shape": "Pointer"
+                  }
+                },
+                "view_clause": "resource_released($*,nullable)"
+              }
+            ]
+          }
+        }
+      },
+      "detailed": "fluent_bit/memory.qcore",
+      "finding": null,
+      "function": "flb_malloc",
+      "view": "fluent_bit/resource_memory.qcore"
+    },
+    {
+      "assumed_premises": [
+        [
+          "chunk_is_not_busy",
+          "environment"
+        ],
+        [
+          "chunk_has_no_task_or_route_custody",
+          "environment"
+        ]
+      ],
+      "check": {
+        "Projection": {
+          "bridge": {
+            "domains": [],
+            "name": "chunk-close-language",
+            "rules": [
+              {
+                "meaning": "Marker",
+                "view_clause": "resource_contract_v1"
+              },
+              {
+                "meaning": "ScalarBorrowed",
+                "view_clause": "resource_borrowed($*)"
+              },
+              {
+                "meaning": "UnitResult",
+                "view_clause": "resource_return_none()"
+              },
+              {
+                "meaning": {
+                  "Custody": {
+                    "obligation": "chunk_name_and_object_are_released",
+                    "premise": "chunk_is_live",
+                    "shape": "OwnedConsumed"
+                  }
+                },
+                "view_clause": "resource_released($*,nonnull)"
+              }
+            ]
+          }
+        }
+      },
+      "detailed": "chunkio/chunk_destructor.qcore",
+      "finding": "CONTRACT-VIEW-UNENFORCED-PREMISES",
+      "function": "cio_chunk_close",
+      "view": "chunkio/resource_open_close.qcore"
+    },
+    {
+      "assumed_premises": [
+        [
+          "nonnull_chunk_has_memory_backend",
+          "coverage"
+        ],
+        [
+          "backend_and_name_have_disjoint_owned_provenance",
+          "environment"
+        ],
+        [
+          "both_links_are_live_reciprocal_memberships",
+          "environment"
+        ],
+        [
+          "embedded_links_have_distinct_stream_memberships",
+          "environment"
+        ],
+        [
+          "context_and_stream_outlive_chunk",
+          "environment"
+        ],
+        [
+          "context_counter_covers_live_chunk",
+          "environment"
+        ],
+        [
+          "no_lock_busy_task_route_or_transaction_obligations",
+          "environment"
+        ],
+        [
+          "exclusive_access",
+          "environment"
+        ],
+        [
+          "cross_unit_source_and_abi_bindings",
+          "profile"
+        ],
+        [
+          "free_resolves_to_libc",
+          "profile"
+        ]
+      ],
+      "check": {
+        "Projection": {
+          "bridge": {
+            "domains": [],
+            "name": "chunk-close-mechanism",
+            "rules": [
+              {
+                "meaning": "Marker",
+                "view_clause": "resource_contract_v1"
+              },
+              {
+                "meaning": "ScalarBorrowed",
+                "view_clause": "resource_borrowed($*)"
+              },
+              {
+                "meaning": "UnitResult",
+                "view_clause": "resource_return_none()"
+              },
+              {
+                "meaning": {
+                  "Custody": {
+                    "obligation": "chunk_released",
+                    "premise": "nullable_owned_chunk and chunk_was_nonnull",
+                    "shape": "Pointer"
+                  }
+                },
+                "view_clause": "resource_released($*,nonnull)"
+              }
+            ]
+          }
+        }
+      },
+      "detailed": "chunkio/memory_close.qcore",
+      "finding": "CONTRACT-VIEW-CHUNK-CLOSE-BACKEND-COVERAGE",
+      "function": "cio_chunk_close",
+      "view": "chunkio/resource_open_close.qcore"
+    },
+    {
+      "assumed_premises": [],
+      "check": "LifecycleProfiles",
+      "detailed": "chunkio/chunk_destructor.qcore",
+      "finding": null,
+      "function": "cio_chunk_close",
+      "view": "chunkio/memory_close.qcore"
+    },
+    {
+      "assumed_premises": [],
+      "check": {
+        "RenamedFrame": {
+          "protected_sets": [
+            [
+              "lock"
+            ],
+            [
+              "busy",
+              "lock"
+            ]
+          ],
+          "record": "cio_chunk",
+          "renaming": [
+            [
+              "Chunk",
+              "cio_chunk"
+            ],
+            [
+              "chunk_is_live",
+              "object_is_live"
+            ],
+            [
+              "exclusive_chunk_access",
+              "exclusive_object_access"
+            ],
+            [
+              "lock_is_preserved",
+              "modeled_fields_are_preserved"
+            ]
+          ]
+        }
+      },
+      "detailed": "chunkio/error_frame.qcore",
+      "finding": "CONTRACT-VIEW-ERROR-RESET-RENAMED-EQUIVALENT",
+      "function": "cio_error_reset",
+      "view": "chunkio/error_state.qcore"
+    },
+    {
+      "assumed_premises": [],
+      "check": {
+        "SourceShape": {
+          "nominals": [
+            [
+              "mk_event_loop",
+              "EventLoop"
+            ],
+            [
+              "mk_event_ctx",
+              "EventContext"
+            ]
+          ],
+          "projection": null
+        }
+      },
+      "detailed": "monkey/wait_source_policy.qcore",
+      "finding": null,
+      "function": "_mk_event_loop_create",
+      "view": "monkey/wrapper_paths.qcore"
+    },
+    {
+      "assumed_premises": [],
+      "check": {
+        "SourceShape": {
+          "nominals": [
+            [
+              "mk_event_loop",
+              "EventLoop"
+            ],
+            [
+              "mk_event_ctx",
+              "EventContext"
+            ]
+          ],
+          "projection": null
+        }
+      },
+      "detailed": "monkey/wait_source_policy.qcore",
+      "finding": null,
+      "function": "_mk_event_loop_destroy",
+      "view": "monkey/wrapper_paths.qcore"
+    },
+    {
+      "assumed_premises": [],
+      "check": {
+        "SourceShape": {
+          "nominals": [
+            [
+              "mk_event_loop",
+              "EventLoop"
+            ],
+            [
+              "mk_event_ctx",
+              "EventContext"
+            ]
+          ],
+          "projection": null
+        }
+      },
+      "detailed": "monkey/wait_source_policy.qcore",
+      "finding": null,
+      "function": "_mk_event_wait_2",
+      "view": "monkey/wrapper_paths.qcore"
+    },
+    {
+      "assumed_premises": [],
+      "check": {
+        "SourceShape": {
+          "nominals": [
+            [
+              "mk_event_loop",
+              "EventLoop"
+            ],
+            [
+              "mk_event_ctx",
+              "EventContext"
+            ]
+          ],
+          "projection": null
+        }
+      },
+      "detailed": "monkey/wait_source_policy.qcore",
+      "finding": null,
+      "function": "_mk_event_wait_with_flags",
+      "view": "monkey/wrapper_paths.qcore"
+    },
+    {
+      "assumed_premises": [],
+      "check": {
+        "SourceShape": {
+          "nominals": [
+            [
+              "mk_event_loop",
+              "EventLoop"
+            ],
+            [
+              "mk_event_ctx",
+              "EventContext"
+            ]
+          ],
+          "projection": [
+            2
+          ]
+        }
+      },
+      "detailed": "monkey/wait_source_policy.qcore",
+      "finding": null,
+      "function": "cb_wait_2_timeout",
+      "view": "monkey/composition.qcore"
+    }
+  ],
+  "relations": [],
+  "schema_version": 1
+}
