@@ -1,8 +1,9 @@
 # Current status and evidence boundaries
 
-Re-derived on 2026-09-21 from the sources below; corpus rows re-derived on
-2026-09-24 from the W43-LIBC-RESULT-ALIAS arbiter; contract-corpus and follow-up
-rows re-derived on 2026-09-24 at the CONTRACT-INHERIT-ADOPTION integration. This is the concise status
+Re-derived on 2026-09-21 from the sources below; corpus, contract-corpus,
+unit-reason and follow-up rows re-derived on 2026-09-25 from the
+W43-DESCRIPTOR-RESOURCE-TRACKING arbiter (card branch; the integrator
+reconciles with the concurrent W43 cards). This is the concise status
 authority routed by `AGENTS.md`; reports own the underlying evidence. Update
 numbers from those sources, not from an older summary. History belongs in the
 [increment records](development/increments/README.md).
@@ -16,11 +17,11 @@ numbers from those sources, not from an older summary. History belongs in the
 | CT independent artifacts | **48** distinct source-fixture programs behind the 50 mapped cases (CT01/CT12/CT14 share one); **9** reviewed byte-identical fixture groups | Same manifest, `artifact_identity`, recomputed by `ct_corpus.rs`; [disclosure](reports/ct-shared-fixture-disclosure/README.md) |
 | CT case-bound proof | **5/50**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
 | CT gated sanitized-native | **10/50, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
-| Cycle 19 units | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only**, 185 total | [W43 libc result-alias corpus](reports/w43-libc-result-alias/README.md) |
-| Projected functions | **257 Safe / 84 provisional Unsafe / 4,493 Unknown**, 4,834 total; the 34 Safe added by the two W43 libc cards are relative to 68 declared libc/POSIX premises | Same baseline |
-| Corpus diagnostics | leak **272**; unknown_alias **4,657**; double_release **0**; unsupported **48,930**; summary_conflict **1**; invalid_release / use_after_release **0 / 0** | Same baseline, `artifacts/diagnostics.json.gz` |
+| Cycle 19 units | **2 Safe / 43 provisional Unsafe / 136 Unknown / 4 data-only**, 185 total | [W43 descriptor corpus](reports/w43-descriptor-resource-tracking/README.md) |
+| Projected functions | **257 Safe / 85 provisional Unsafe / 4,492 Unknown**, 4,834 total; the 34 Safe added by the two W43 libc cards are relative to 68 declared libc/POSIX premises; the one provisional Unsafe added by W43-DESCRIPTOR-RESOURCE-TRACKING (`ctr_random_get`, an `if (fd > 0)` guard) is a candidate reachable only if `open` returns descriptor 0 | Same baseline |
+| Corpus diagnostics | leak **272** (one added on a descriptor, one withdrawn by refusal); unknown_alias **4,695**; double_release **0**; unsupported **48,875**; summary_conflict **1**; invalid_release / use_after_release **0 / 0** (including the kind-mismatch and use-after-close candidates) | Same baseline, `artifacts/diagnostics.json.gz` |
 | Return-expression refusals | **499** leaves on **422** Unknown functions, sole blocker of **146** (1,440 / 1,109 / 465 before W43-RETURN-EXPRESSION; two returned derived results joined at W43-LIBC-RESULT-ALIAS); 941 whole-call leaves carry the call classifier's own refusal | [W43 attribution](reports/w43-return-expression/attribution-summary.json), [current blocker census](reports/w43-libc-result-alias/blocker-census.txt) |
-| Unit reasons | **136 unsupported-syntax / 1 incomplete-obligation-coverage / 48 without a reason code** | [Combined attribution](reports/w42-priority-integration/attribution.json); unit fields unchanged at W43 |
+| Unit reasons | **135 unsupported-syntax / 1 incomplete-obligation-coverage / 49 without a reason code** | [Combined attribution](reports/w42-priority-integration/attribution.json); `ctr_random.c` moved to provisional Unsafe at [W43-DESCRIPTOR-RESOURCE-TRACKING](reports/w43-descriptor-resource-tracking/README.md#5-arbiter) |
 | Raw source coverage | **4,921 definitions / 4,834 projected / 87 pinned-build exclusions**, across **24 full-path units** | [Verified census](reports/w42-unprojected-definitions/README.md); combined inventory unchanged |
 | Monkey callback accounting | **3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown**; 8 source paths; per-callback obligations **51 relevant cells, 17 discharged / 34 open** (was 5 / 46) | [Callback report](reports/w42-monkey-callback-coverage/README.md); ordinary audit checks 0/8 native paths, optional focused replay 8/8; [per-callback composition](reports/w43-monkey-callback-composition/README.md) discharges initialization reachability (3 callbacks) and natural activation (2) from the pinned compile task |
 | Observed Monkey timed wait | **1 instrumented Linux epoll success run**, 11 identity records and 11 model operations; conditional replay, no coverage promotion | [Observed integration](reports/cycle18-observed-integration/README.md) |
@@ -28,9 +29,9 @@ numbers from those sources, not from an older summary. History belongs in the
 | Cycle 18 bounded aggregate | **3 joined families / 8 source paths / 7 unresolved obligations**, aggregate Unknown | [Broader integration](reports/cycle18-broader-integration/aggregate.json) |
 | Callback task handoff | **12 source-derived operations**, one Linux pthread fixture; production acceptance pending | [Integrated lifetime evidence](reports/cycle18-broader-integration/task-handoff.json) |
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
-| Contract corpus | **108** modules; **130** resource-v1 declarations; **45** manifest-selected, 2 of them by `crate:module` reference; **5** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 36 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md) |
+| Contract corpus | **109** modules; **138** resource-v1 declarations, **8** of them kinded (`descriptor`, `stream`, `directory`; contract spec §C04.6); **46** manifest-selected, 2 of them by `crate:module` reference; **5** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 37 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md) |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **299** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **303** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -53,8 +54,9 @@ and the chunk **lifecycle** result are separate dimensions: no selected chunk
 function's lifecycle post-state is established, `flb_input_chunk_create`
 included, and a checked field contract is not a lifecycle result. Provisional Unsafe
 findings are not validated upstream defects. Unknowns stay in the denominator.
-The baseline is `docs/reports/w43-libc-result-alias/artifacts/` (its predecessor
-`docs/reports/w43-libc-contracts/artifacts/` is frozen); an arbiter must
+The baseline is `docs/reports/w43-descriptor-resource-tracking/artifacts/` (its
+predecessors `docs/reports/w43-libc-result-alias/artifacts/` and
+`docs/reports/w43-libc-contracts/artifacts/` are frozen); an arbiter must
 reproduce its predecessor's verdict-bearing artifacts byte-for-byte and
 attribute every delta. The chain and leaf identities are preserved in the
 individual reports, [wave history](development/increments/README.md), and
@@ -109,8 +111,10 @@ path read as data. Five Fluent Bit wrappers (`flb_malloc`, `flb_calloc`,
 verdict-bearing byte moved. The `qcore-provider-*` crates stay off the load path
 pending a naming decision.
 
-All three broader Cycle 18 follow-ups remain open; **299** follow-ups are
-registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
+All three broader Cycle 18 follow-ups remain open; **303** follow-ups are
+registered — W43-DESCRIPTOR-RESOURCE-TRACKING retired
+`W43-LIBC-DESCRIPTOR-LIFECYCLE`, discharged the `CT-CTWIN-DESCRIPTOR` arm of
+`CT-CTWIN-O` and registered five descriptor residuals; `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
 retired `RETURN-CALL-INCOMPLETE-LINE-455` against its census;
@@ -123,7 +127,11 @@ real-crate adoption, extension clauses and non-v1 consumers; W43-LIBC-RESULT-ALI
 retired `LIBC-MEM-RESULT-ALIAS`, `W43-LIBC-RESULT-ALIAS-NAMES` and
 `W43-LIBC-POINTER-QUALIFIER-READER` and registered six derived-result and reader residuals;
 CONTRACT-INHERIT-ADOPTION retired the adoption and registered the `qcore-provider-*`
-naming decision, alias-result parents and the Fluent Bit string-wrapper assumptions. Production callback composition, task/cancellation/event-generation
+naming decision, alias-result parents and the Fluent Bit string-wrapper assumptions.
+Resource custody is now kind-indexed: a release discharges only an obligation of
+its own kind, and a file descriptor is tracked as an `int` with sentinel
+validity ([W43-DESCRIPTOR-RESOURCE-TRACKING](reports/w43-descriptor-resource-tracking/README.md),
+Lean `QCore.KindedCustody`); every heap-only verdict-bearing byte is unchanged. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
 

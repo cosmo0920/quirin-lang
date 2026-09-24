@@ -1,0 +1,13 @@
+[
+  {
+    "entry": {
+      "id": "W43-LIBC-DESCRIPTOR-LIFECYCLE",
+      "title": "Seventeen libc callees create or release a descriptor or handle that v1's pointer-only, kind-less custody cannot state",
+      "why": "Card W43-LIBC-CONTRACTS declined open, close, socket, accept4, fcntl (F_DUPFD), fopen, fclose, opendir, closedir, dlopen, dlclose, getaddrinfo, freeaddrinfo, fts_open, fts_close, glob and globfree. A file descriptor is an `int`, which v1 never treats as custody, so a neutral declaration would erase a real acquire/release; a pointer handle (FILE *, DIR *, dlopen handle, addrinfo list) could be declared owned/released, but v1 custody has one kind, so `free(fopen(...))` and `fclose(malloc(...))` would both discharge. getaddrinfo's out list is established on a `0` return, not by a null test. close is the sole blocker of 1 function at the baseline, fclose blocks 6. Discharge condition: a kind-indexed custody vocabulary or a descriptor profile carried into the C gateway, with Lean parity, then per-callee declarations.",
+      "source": "docs/reports/w43-libc-contracts/README.md",
+      "recorded_by": "W43-LIBC-CONTRACTS"
+    },
+    "discharged_by": "W43-DESCRIPTOR-RESOURCE-TRACKING",
+    "ground": "Its discharge condition is \"a kind-indexed custody vocabulary or a descriptor profile carried into the C gateway, with Lean parity, then per-callee declarations\". Card W43-DESCRIPTOR-RESOURCE-TRACKING added `resource_kind(p, KIND)` / `resource_return_kind(KIND)` (heap by absence; `descriptor` on `i32` with `sentinel`/`valid` validity; `stream`; `directory`) to resource vocabulary version 1 (contract spec C04.6), carried the kinds into the gateway (a release discharges only its own kind; validity guards narrow like null tests; a tracked descriptor on a custody-neutral scalar route is refused), modelled them in QCore.KindedCustody (30 audited theorems), and declared eight of the seventeen named callees in providers/quirin-provider-libc: open, close, socket, fopen, fclose, opendir, closedir (and fileno, neutral). Class (a) of the arbiter is byte-identical; the declarations decide 56 uncontracted-call leaves. The other nine (accept4, fcntl, dlopen, dlclose, getaddrinfo, freeaddrinfo, fts_open, fts_close, glob, globfree) are refused by name with measured grounds in W43-DESCRIPTOR-REFUSED-SHAPES and RETURN-CAST-PLACE-NOT-ESCAPED. docs/reports/w43-descriptor-resource-tracking/README.md."
+  }
+]
