@@ -1,0 +1,280 @@
+{
+ "stages": [
+  {
+   "stage": "printf",
+   "member_leaves_removed": 22,
+   "member_leaves_decided_with_no_leaf_on_their_line": 13,
+   "member_leaves_on_a_line_that_gained_a_leaf": 9,
+   "new_reasons_on_those_lines": {
+    "arguments beyond the declared parameters of `_` are outside the resource projection": 8,
+    "nested call `_` inside a modeled call is outside the resource projection": 1
+   },
+   "other_changed_leaves": [
+    {
+     "direction": "added",
+     "class": "same-line",
+     "shape": "arguments beyond the declared parameters of `_` are outside the resource projection",
+     "leaves": 8
+    },
+    {
+     "direction": "added",
+     "class": "same-line",
+     "shape": "nested call `_` inside a modeled call is outside the resource projection",
+     "leaves": 1
+    }
+   ],
+   "leaves_removed": 22,
+   "leaves_added": 9,
+   "status_moves": {},
+   "moved_functions": [],
+   "diagnostic_counts": {
+    "before": {
+     "leak": 272,
+     "summary_conflict": 1,
+     "unknown_alias": 4657,
+     "unsupported": 48930
+    },
+    "after": {
+     "leak": 272,
+     "summary_conflict": 1,
+     "unknown_alias": 4657,
+     "unsupported": 48917
+    }
+   },
+   "attribution_complete": true,
+   "unit_status_moves": []
+  },
+  {
+   "stage": "fprintf",
+   "member_leaves_removed": 1138,
+   "member_leaves_decided_with_no_leaf_on_their_line": 41,
+   "member_leaves_on_a_line_that_gained_a_leaf": 1097,
+   "new_reasons_on_those_lines": {
+    "arguments beyond the declared parameters of `_` are outside the resource projection": 1032,
+    "nested call `_` inside a modeled call is outside the resource projection": 3,
+    "arguments beyond the declared parameters of `_` are outside the resource projection + nested call `_` inside a modeled call is outside the resource projection": 62
+   },
+   "other_changed_leaves": [
+    {
+     "direction": "added",
+     "class": "same-line",
+     "shape": "arguments beyond the declared parameters of `_` are outside the resource projection",
+     "leaves": 1094
+    },
+    {
+     "direction": "added",
+     "class": "same-line",
+     "shape": "nested call `_` inside a modeled call is outside the resource projection",
+     "leaves": 65
+    },
+    {
+     "direction": "removed",
+     "class": "same-function",
+     "shape": "indirect memory access is outside the resource projection",
+     "leaves": 2
+    },
+    {
+     "direction": "removed",
+     "class": "same-line",
+     "shape": "indirect memory access is outside the resource projection",
+     "leaves": 2
+    }
+   ],
+   "leaves_removed": 1142,
+   "leaves_added": 1159,
+   "status_moves": {
+    "Unknown -> Safe": 3
+   },
+   "moved_functions": [
+    [
+     "chunkio",
+     "cio_log.c",
+     "cio_errno_print",
+     "Unknown",
+     "Safe"
+    ],
+    [
+     "cmetrics",
+     "cmt_log.c",
+     "cmt_errno_print",
+     "Unknown",
+     "Safe"
+    ],
+    [
+     "ctraces",
+     "ctr_log.c",
+     "ctr_errno_print",
+     "Unknown",
+     "Safe"
+    ]
+   ],
+   "diagnostic_counts": {
+    "before": {
+     "leak": 272,
+     "summary_conflict": 1,
+     "unknown_alias": 4657,
+     "unsupported": 48917
+    },
+    "after": {
+     "leak": 272,
+     "summary_conflict": 1,
+     "unknown_alias": 4657,
+     "unsupported": 48934
+    }
+   },
+   "attribution_complete": true,
+   "unit_status_moves": []
+  },
+  {
+   "stage": "snprintf",
+   "member_leaves_removed": 1044,
+   "member_leaves_decided_with_no_leaf_on_their_line": 934,
+   "member_leaves_on_a_line_that_gained_a_leaf": 110,
+   "new_reasons_on_those_lines": {
+    "nested call `_` inside a modeled call is outside the resource projection": 32,
+    "arguments beyond the declared parameters of `_` are outside the resource projection": 77,
+    "call has an unmodeled formal address or borrowed expression": 1
+   },
+   "other_changed_leaves": [
+    {
+     "direction": "added",
+     "class": "same-line",
+     "shape": "arguments beyond the declared parameters of `_` are outside the resource projection",
+     "leaves": 78
+    },
+    {
+     "direction": "added",
+     "class": "same-line",
+     "shape": "nested call `_` inside a modeled call is outside the resource projection",
+     "leaves": 32
+    },
+    {
+     "direction": "added",
+     "class": "same-function",
+     "shape": "arguments beyond the declared parameters of `_` are outside the resource projection",
+     "leaves": 1
+    },
+    {
+     "direction": "added",
+     "class": "same-line",
+     "shape": "resource call with a formal embedded in an unmodeled expression",
+     "leaves": 1
+    },
+    {
+     "direction": "added",
+     "class": "same-line",
+     "shape": "call has an unmodeled formal address or borrowed expression",
+     "leaves": 1
+    },
+    {
+     "direction": "removed",
+     "class": "same-line",
+     "shape": "indirect memory access is outside the resource projection",
+     "leaves": 12
+    },
+    {
+     "direction": "removed",
+     "class": "newly-safe-callee",
+     "shape": "call to uncontracted function `_`",
+     "leaves": 1
+    },
+    {
+     "direction": "removed",
+     "class": "same-body-closure",
+     "shape": "arguments beyond the declared parameters of `_` are outside the resource projection",
+     "leaves": 1
+    }
+   ],
+   "leaves_removed": 1058,
+   "leaves_added": 113,
+   "status_moves": {
+    "Unknown -> Safe": 1
+   },
+   "moved_functions": [
+    [
+     "librdkafka",
+     "rdkafka_broker.c",
+     "rd_kafka_mk_nodename",
+     "Unknown",
+     "Safe"
+    ]
+   ],
+   "diagnostic_counts": {
+    "before": {
+     "leak": 272,
+     "summary_conflict": 1,
+     "unknown_alias": 4657,
+     "unsupported": 48934
+    },
+    "after": {
+     "leak": 272,
+     "summary_conflict": 1,
+     "unknown_alias": 4657,
+     "unsupported": 47989
+    }
+   },
+   "attribution_complete": true,
+   "unit_status_moves": []
+  },
+  {
+   "stage": "sprintf",
+   "member_leaves_removed": 8,
+   "member_leaves_decided_with_no_leaf_on_their_line": 4,
+   "member_leaves_on_a_line_that_gained_a_leaf": 4,
+   "new_reasons_on_those_lines": {
+    "resource call with a formal embedded in an unmodeled expression": 2,
+    "nested call `_` inside a modeled call is outside the resource projection": 2
+   },
+   "other_changed_leaves": [
+    {
+     "direction": "added",
+     "class": "same-line",
+     "shape": "resource call with a formal embedded in an unmodeled expression",
+     "leaves": 2
+    },
+    {
+     "direction": "added",
+     "class": "same-line",
+     "shape": "nested call `_` inside a modeled call is outside the resource projection",
+     "leaves": 2
+    },
+    {
+     "direction": "removed",
+     "class": "same-function",
+     "shape": "arguments beyond the declared parameters of `_` are outside the resource projection",
+     "leaves": 1
+    }
+   ],
+   "leaves_removed": 9,
+   "leaves_added": 4,
+   "status_moves": {
+    "Unknown -> Safe": 1
+   },
+   "moved_functions": [
+    [
+     "librdkafka",
+     "cJSON.c",
+     "cJSON_Version",
+     "Unknown",
+     "Safe"
+    ]
+   ],
+   "diagnostic_counts": {
+    "before": {
+     "leak": 272,
+     "summary_conflict": 1,
+     "unknown_alias": 4657,
+     "unsupported": 47989
+    },
+    "after": {
+     "leak": 272,
+     "summary_conflict": 1,
+     "unknown_alias": 4657,
+     "unsupported": 47984
+    }
+   },
+   "attribution_complete": true,
+   "unit_status_moves": []
+  }
+ ]
+}

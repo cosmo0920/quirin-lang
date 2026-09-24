@@ -464,6 +464,15 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/stdio.qcore", "perror", 3),
     ("libc/stdio.qcore", "fflush", 3),
     ("libc/stdio.qcore", "remove", 3),
+    // Card W43-LIBC-PRINTF-FAMILY: the formatted-output family, each a
+    // trusted assumption read from the prototype the pinned units declare. The
+    // marker, one borrowed clause per declared parameter, the variadic data
+    // tail and the scalar result: 3 + parameters clauses each. Deliberate; see
+    // `docs/reports/w43-libc-printf-family/README.md`.
+    ("libc/stdio.qcore", "printf", 4),
+    ("libc/stdio.qcore", "fprintf", 5),
+    ("libc/stdio.qcore", "snprintf", 6),
+    ("libc/stdio.qcore", "sprintf", 5),
     ("libc/stdlib.qcore", "atoi", 3),
     ("libc/stdlib.qcore", "srand", 3),
     ("libc/stdlib.qcore", "rand_r", 3),

@@ -1,0 +1,83 @@
+{
+ "tail_refusals_added": 1179,
+ "tail_refusals_by_label": {
+  "name-or-unreadable": 1169,
+  "literal-tail": 5,
+  "in-unreadable-function": 5
+ },
+ "tail_refusals_by_callee_and_label": {
+  "fprintf in-unreadable-function": 5,
+  "fprintf literal-tail": 2,
+  "fprintf name-or-unreadable": 1086,
+  "printf name-or-unreadable": 8,
+  "snprintf literal-tail": 3,
+  "snprintf name-or-unreadable": 75
+ },
+ "functions_proved_unreadable": 2,
+ "nested_call_refusals_added_by_inner_callee": {
+  "rd_kafka_err2str": 42,
+  "rd_kafka_msgq_len": 13,
+  "rd_list_cnt": 9,
+  "rd_kafka_error_string": 7,
+  "rd_buf_len": 3,
+  "cmt_metric_hist_get_sum_value": 2,
+  "cmt_metric_hist_get_count_value": 2,
+  "cmt_summary_get_sum_value": 2,
+  "cmt_summary_get_count_value": 2,
+  "rd_kafka_broker_name": 2,
+  "rd_kafka_msgq_size": 2,
+  "rd_clock": 2,
+  "sasl_errstring": 2,
+  "strerror": 2,
+  "getpid": 2,
+  "strlen": 1,
+  "rd_kafka_event_name": 1,
+  "rd_list_elem": 1,
+  "rd_kafka_err2name": 1,
+  "rd_sockaddr2str": 1,
+  "rd_kafka_txn_state2str": 1
+ },
+ "nested_call_refusals_added": 100,
+ "functions_blocked_only_by_family_tail_or_nested_refusals": [
+  {
+   "unit": "ctraces/ctr_encode_msgpack.c",
+   "function": "pack_string",
+   "status": "Unknown",
+   "leaves": {
+    "nested call `cfl_sds_len` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "unit": "librdkafka/cJSON.c",
+   "function": "cJSON_DeleteItemFromArray",
+   "status": "Unknown",
+   "leaves": {
+    "nested call `cJSON_DetachItemFromArray` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "unit": "librdkafka/cJSON.c",
+   "function": "cJSON_DeleteItemFromObject",
+   "status": "Unknown",
+   "leaves": {
+    "nested call `cJSON_DetachItemFromObject` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "unit": "librdkafka/cJSON.c",
+   "function": "cJSON_DeleteItemFromObjectCaseSensitive",
+   "status": "Unknown",
+   "leaves": {
+    "nested call `cJSON_DetachItemFromObjectCaseSensitive` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "unit": "librdkafka/rdkafka.c",
+   "function": "rd_kafka_srand",
+   "status": "Unknown",
+   "leaves": {
+    "nested call `rd_seed` inside a modeled call is outside the resource projection": 1
+   }
+  }
+ ]
+}
