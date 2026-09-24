@@ -1,31 +1,28 @@
 module contract;
+#include "quirin-provider-libc:libc/memory.qcore";
 
 // Trusted resource-projection assumptions, vocabulary version 1.
 // These preserve the Cycle 19 audit table; they do not verify the C bodies.
 // Borrowed scalar/opaque arguments carry no resource custody requirement.
 // Detailed observation/lifecycle contracts remain separate semantic profiles.
+//
+// Card CONTRACT-INHERIT-ADOPTION: Fluent Bit's allocator wrappers take their
+// contracts from the libc declarations they wrap instead of restating them.
+// `include/fluent-bit/flb_mem.h` defines `flb_malloc` as `size == 0 -> NULL`,
+// then `malloc(size)`; `flb_calloc` as `size == 0 -> NULL`, then
+// `calloc(n, size)`; and `flb_free` as `free(ptr)` (the OSS-Fuzz arms are not
+// in the audited build). The `size == 0` guard returns NULL, which the
+// `nullable` owned result already covers, so the custody statement is the
+// parent's exactly. Each elaborates to the clauses these declarations carried
+// when they were written out by hand (clause for clause, parameter names
+// included); an inherited contract is a trusted assumption of the same
+// strength as that hand-written one, never a proof.
 
-extern fn flb_malloc(size: usize) -> ptr<mut, u8>
-contract {
-    requires resource_contract_v1;
-    ensures normal resource_borrowed(size);
-    ensures normal resource_return_owned(nullable);
-};
+extern fn flb_malloc(size: usize) -> ptr<mut, u8> contract inherit libc::malloc;
 
-extern fn flb_calloc(count: usize, size: usize) -> ptr<mut, u8>
-contract {
-    requires resource_contract_v1;
-    ensures normal resource_borrowed(count);
-    ensures normal resource_borrowed(size);
-    ensures normal resource_return_owned(nullable);
-};
+extern fn flb_calloc(count: usize, size: usize) -> ptr<mut, u8> contract inherit libc::calloc;
 
-extern fn flb_free(ptr: ptr<mut, u8>) -> unit
-contract {
-    requires resource_contract_v1;
-    ensures normal resource_released(ptr, nullable);
-    ensures normal resource_return_none();
-};
+extern fn flb_free(ptr: ptr<mut, u8>) -> unit contract inherit libc::free;
 
 // Card LOADER-ABI: `len` is `int`, not a size. Upstream declares
 // `flb_sds_t flb_sds_create_len(const char *str, int len);`
@@ -41,6 +38,10 @@ contract {
     ensures normal resource_return_owned(nullable);
 };
 
+// Fluent Bit's own function (it frees the header in front of the string, not
+// the pointer it is given), so it stays written out even though its clauses
+// coincide with `libc::free`'s: an inherited contract tracks its parent, and
+// this one must not.
 extern fn flb_sds_destroy(ptr: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;

@@ -4,12 +4,37 @@ import re
 from pathlib import Path
 
 
-def sources(repository):
+def index_manifest(repository):
+    """The corpus index. Schema 1 is `{schema_version, roots}`; schema 2 (card
+    CONTRACT-INHERIT-ADOPTION) adds `load_path`, the published contract load
+    path a module using `#include` is elaborated against. Roots resolve
+    identically under both."""
     repository = Path(repository).resolve()
     index = repository / "contract/corpus.json"
     manifest = json.loads(index.read_text())
-    if set(manifest) != {"schema_version", "roots"} or manifest["schema_version"] != 1:
+    version = manifest.get("schema_version")
+    expected = {1: {"schema_version", "roots"}, 2: {"schema_version", "roots", "load_path"}}.get(version)
+    if expected is None or set(manifest) != expected:
         raise ValueError("unsupported corpus index")
+    if version == 2:
+        load_path = index.parent / manifest["load_path"]
+        if (not isinstance(manifest["load_path"], str) or load_path.is_symlink()
+                or not load_path.resolve().is_relative_to(repository) or not load_path.is_file()):
+            raise ValueError(f"invalid corpus load path: {load_path}")
+    return index, manifest
+
+
+def load_path(repository):
+    """The load-path manifest the corpus index names, or None under schema 1."""
+    index, manifest = index_manifest(repository)
+    if "load_path" not in manifest:
+        return None
+    return json.loads((index.parent / manifest["load_path"]).read_text())
+
+
+def sources(repository):
+    repository = Path(repository).resolve()
+    index, manifest = index_manifest(repository)
     if not isinstance(manifest["roots"], list) or not manifest["roots"]:
         raise ValueError("empty or invalid corpus roots")
     result = {}

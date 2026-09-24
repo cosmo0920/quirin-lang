@@ -1,5 +1,6 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
+  "load_path": "providers/contract-load-path.json",
   "modules": [
     "providers/quirin-provider-libc/contracts/libc/errno.qcore",
     "providers/quirin-provider-libc/contracts/libc/memory.qcore",
@@ -39,7 +40,7 @@
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qcore",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qcore",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qcore",
-    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore",
+    "quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qcore",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qcore",
     "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qcore",

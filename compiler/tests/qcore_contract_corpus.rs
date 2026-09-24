@@ -1012,8 +1012,16 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `docs/reports/w43-libc-contracts/README.md`.
     assert_eq!(sources.len(), 107, "unexpected contract corpus size");
 
-    for path in sources.values() {
-        let source = fs::read_to_string(path).expect("contract source is readable");
+    for (logical, path) in &sources {
+        let written = fs::read_to_string(path).expect("contract source is readable");
+        assert!(
+            !written.contains(qcore_contract::contract_loader::RETIRED_PREMISE_DIRECTIVE),
+            "{}: the retired premise directive must not reappear",
+            path.display()
+        );
+        // Card CONTRACT-INHERIT-ADOPTION: a module that inherits is checked as
+        // its elaboration, the text every loader parses and retains.
+        let source = contract_corpus::text(logical, path);
         // Card HASH-CLAUSE. The `qcore-premise` comment directive is retired in
         // favour of §C04.5's `resource_literal_argument` clause. The resource
         // loader rejects a module carrying it, but only the modules the
@@ -1064,7 +1072,12 @@ fn contract_surface_is_pinned_as_structured_clauses() {
     let mut has_any = false;
 
     for (relative, path) in contract_corpus::sources() {
-        let source = fs::read_to_string(&path).expect("contract source is readable");
+        // Card CONTRACT-INHERIT-ADOPTION: the pins count **elaborated** clauses
+        // (what the loader loads and the environment retains), so converting a
+        // hand-written declaration to `contract inherit` leaves its pin
+        // unchanged; the written form is pinned separately by
+        // `EXPECTED_INHERITANCE`.
+        let source = contract_corpus::text(&relative, &path);
         let parsed = parse_source_program(&source).expect("contract source parses");
         for declaration in &parsed.declarations {
             if declaration.value.kind == SourceDeclarationKind::ExternFunction {
@@ -1202,4 +1215,68 @@ fn the_closesocket_error_arm_states_an_unresolved_endpoint() {
         checked, 1,
         "expected exactly one evutil_closesocket declaration"
     );
+}
+
+/// Card CONTRACT-INHERIT-ADOPTION: every declaration in the corpus whose
+/// contract is written `contract inherit NS::NAME;`, as
+/// `(logical module, child, parent as written)`, in logical-path then source
+/// order. The clause pins above count each child's **elaborated** clauses; this
+/// table pins the written form, so a conversion to or from inheritance is a
+/// deliberate edit here even though it moves no clause pin.
+const EXPECTED_INHERITANCE: &[(&str, &str, &str)] = &[
+    // `include/fluent-bit/flb_mem.h`: `flb_malloc` and `flb_calloc` return
+    // NULL for a zero size and otherwise forward to `malloc` / `calloc`;
+    // `flb_free` is `free(ptr)`. The elaborations equal the hand-written
+    // contracts they replace, clause for clause
+    // (`compiler/tests/contract_inherit_adoption.rs`).
+    ("fluent_bit/resource_memory.qcore", "flb_malloc", "libc::malloc"),
+    ("fluent_bit/resource_memory.qcore", "flb_calloc", "libc::calloc"),
+    ("fluent_bit/resource_memory.qcore", "flb_free", "libc::free"),
+];
+
+#[test]
+fn inherited_contracts_are_pinned_in_their_written_form() {
+    let mut actual = Vec::new();
+    for (logical, path) in contract_corpus::sources() {
+        let written = fs::read_to_string(&path).expect("contract source is readable");
+        let syntax = qcore_frontend::contract_inclusion::scan_contract_inclusion(&written)
+            .unwrap_or_else(|error| panic!("{logical}: {error}"));
+        if syntax.is_empty() {
+            continue;
+        }
+        // The module must elaborate (and so load) at all.
+        let elaborated = contract_corpus::text(&logical, &path);
+        parse_source_program(&elaborated).unwrap();
+        for site in &syntax.inherits {
+            // The child is the `extern fn` whose signature the `contract`
+            // token closes.
+            let head = &written[..site.contract_span.start];
+            let child = head
+                .rfind("extern fn ")
+                .map(|start| {
+                    head[start + "extern fn ".len()..]
+                        .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+                        .next()
+                        .unwrap()
+                        .to_owned()
+                })
+                .unwrap_or_else(|| panic!("{logical}: an inheriting site names no declaration"));
+            let parent = match &site.namespace {
+                Some(namespace) => format!("{namespace}::{}", site.parent),
+                None => site.parent.clone(),
+            };
+            actual.push((logical.clone(), child, parent));
+        }
+    }
+    let expected = EXPECTED_INHERITANCE
+        .iter()
+        .map(|(module, child, parent)| {
+            (
+                (*module).to_owned(),
+                (*child).to_owned(),
+                (*parent).to_owned(),
+            )
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(actual, expected);
 }

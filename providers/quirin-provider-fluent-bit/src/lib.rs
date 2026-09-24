@@ -5,6 +5,18 @@
 //! roots, and every consumer selects the modules it needs explicitly. This
 //! crate is data only; it links no provider runtime and installs nothing.
 
+/// The crate's contract-inheritance namespace (card CONTRACT-INHERIT-ADOPTION):
+/// the package name without `quirin-provider-`, `-` read as `_`. A parent
+/// this crate owns is written `fluent_bit::NAME`. Recorded here, checked
+/// against the derivation rule by this crate's tests, and carried into
+/// `providers/contract-load-path.json`, where the load path checks it again.
+pub const NAMESPACE: &str = "fluent_bit";
+
+/// The owned modules another contract module may `#include`, sorted: a
+/// subset of [`CONTRACTS`]' logical paths. None yet; publishing a module is
+/// a deliberate, reviewed act (card CONTRACT-INHERIT-ADOPTION).
+pub const PUBLISHED: &[&str] = &[];
+
 /// Every contract module this crate owns, as `(logical path, source text)`,
 /// sorted by logical path. The logical path is relative to `contracts/`, which
 /// is the name `contract/corpus.json` resolves (for example `fluent_bit/hash_table_publication.qcore`).
@@ -70,6 +82,55 @@ pub fn contract(path: &str) -> Option<&'static str> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Card CONTRACT-INHERIT-ADOPTION: the recorded namespace is the one the
+    /// load path derives from the package name, and every published module
+    /// is an owned one, listed once, in order.
+    #[test]
+    fn namespace_is_derived_and_published_modules_are_owned() {
+        let derived = env!("CARGO_PKG_NAME")
+            .strip_prefix("quirin-provider-")
+            .expect("a contract crate is named quirin-provider-NAME")
+            .replace('-', "_");
+        assert_eq!(NAMESPACE, derived);
+        assert!(PUBLISHED.windows(2).all(|pair| pair[0] < pair[1]));
+        for module in PUBLISHED {
+            assert!(
+                CONTRACTS.iter().any(|(name, _)| name == module),
+                "{module}"
+            );
+        }
+    }
+
+    /// Card CONTRACT-INHERIT-ADOPTION: every `#include` this crate's contracts
+    /// write names a module the libc crate publishes (the load path would
+    /// refuse anything else with `QI004`/`QI005`), through the declared Cargo
+    /// edge this test links, so the edge is load-bearing and not decorative.
+    #[test]
+    fn every_include_names_a_published_libc_module() {
+        let mut includes = 0;
+        for (name, text) in CONTRACTS {
+            for line in text.lines() {
+                let line = line.split("//").next().unwrap().trim();
+                if !line.starts_with('#') {
+                    continue;
+                }
+                let target = line
+                    .strip_prefix("#include \"")
+                    .and_then(|rest| rest.strip_suffix("\";"))
+                    .unwrap_or_else(|| panic!("{name}: malformed directive `{line}`"));
+                let (krate, module) = target.split_once(':').unwrap();
+                assert_eq!(krate, "quirin-provider-libc", "{name}: {target}");
+                assert!(
+                    quirin_provider_libc::PUBLISHED.contains(&module),
+                    "{name}: {target} is not published"
+                );
+                assert!(quirin_provider_libc::contract(module).is_some());
+                includes += 1;
+            }
+        }
+        assert!(includes > 0, "no contract includes a libc module");
+    }
 
     /// The index is exactly the `.qcore` tree on disk, byte for byte: a module
     /// added under `contracts/` without an index entry, or an entry without its

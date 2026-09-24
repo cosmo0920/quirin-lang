@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "crates": [
+    {
+      "name": "quirin-provider-cfl",
+      "namespace": "cfl",
+      "version": "0.1.0",
+      "contracts": "quirin-provider-cfl/contracts",
+      "dependencies": [],
+      "modules": [
+        "cfl/arena_lifetime.qcore",
+        "cfl/intrusive_list.qcore",
+        "cfl/sds_lifetime.qcore",
+        "cfl/time.qcore"
+      ],
+      "published": {}
+    },
+    {
+      "name": "quirin-provider-fluent-bit",
+      "namespace": "fluent_bit",
+      "version": "0.1.0",
+      "contracts": "quirin-provider-fluent-bit/contracts",
+      "dependencies": [
+        "quirin-provider-libc"
+      ],
+      "modules": [
+        "fluent_bit/hash_table_publication.qcore",
+        "fluent_bit/input_chunk_destroy.qcore",
+        "fluent_bit/input_chunk_destroy_direct_routes.qcore",
+        "fluent_bit/input_chunk_helpers.qcore",
+        "fluent_bit/input_chunk_name.qcore",
+        "fluent_bit/input_chunk_sizes.qcore",
+        "fluent_bit/input_chunk_total_size.qcore",
+        "fluent_bit/logging.qcore",
+        "fluent_bit/memory.qcore",
+        "fluent_bit/resource_memory.qcore",
+        "fluent_bit/routes_mask.qcore",
+        "fluent_bit/time.qcore"
+      ],
+      "published": {}
+    },
+    {
+      "name": "quirin-provider-libc",
+      "namespace": "libc",
+      "version": "0.1.0",
+      "contracts": "quirin-provider-libc/contracts",
+      "dependencies": [],
+      "modules": [
+        "libc/dlfcn.qcore",
+        "libc/errno.qcore",
+        "libc/math.qcore",
+        "libc/memory.qcore",
+        "libc/process.qcore",
+        "libc/pthread_mutex.qcore",
+        "libc/socket.qcore",
+        "libc/stdio.qcore",
+        "libc/stdlib.qcore",
+        "libc/string.qcore",
+        "libc/sys_stat.qcore",
+        "libc/threads.qcore",
+        "libc/time.qcore",
+        "libc/unistd.qcore"
+      ],
+      "published": {
+        "libc/memory.qcore": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5",
+        "libc/string.qcore": "712d3c827fc74299d494388dc9c06116fed6c1d004392d8893ee9afa7512b5b2"
+      }
+    },
+    {
+      "name": "quirin-provider-mpack",
+      "namespace": "mpack",
+      "version": "0.1.0",
+      "contracts": "quirin-provider-mpack/contracts",
+      "dependencies": [],
+      "modules": [
+        "mpack/writer.qcore"
+      ],
+      "published": {}
+    },
+    {
+      "name": "quirin-provider-msgpack",
+      "namespace": "msgpack",
+      "version": "0.1.0",
+      "contracts": "quirin-provider-msgpack/contracts",
+      "dependencies": [],
+      "modules": [
+        "msgpack/packer.qcore"
+      ],
+      "published": {}
+    },
+    {
+      "name": "quirin-provider-shared",
+      "namespace": "shared",
+      "version": "0.1.0",
+      "contracts": "quirin-provider-shared/contracts",
+      "dependencies": [
+        "quirin-provider-cfl",
+        "quirin-provider-fluent-bit",
+        "quirin-provider-libc",
+        "quirin-provider-mpack",
+        "quirin-provider-msgpack"
+      ],
+      "modules": [
+        "language/quantified_indices.qcore",
+        "library/custody_evidence.qcore",
+        "library/source_projection.qcore"
+      ],
+      "published": {}
+    }
+  ]
+}

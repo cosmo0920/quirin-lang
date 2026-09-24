@@ -867,7 +867,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     let mut v1_declarations = 0;
     let mut rejected_declarations = 0;
     for (relative, path) in &modules {
-        let source = std::fs::read_to_string(path).unwrap();
+        // Card CONTRACT-INHERIT-ADOPTION: a module that inherits is read as its
+        // elaboration, the text every loader parses; so every count here is of
+        // elaborated declarations, and a conversion to `contract inherit`
+        // moves none of them.
+        let source = contract_corpus::text(relative, path);
         let parsed = qcore_compiler::parse_source_program(&source).unwrap();
         let marked = |declaration: &qcore_compiler::SourceDeclaration| {
             declaration.function_contract.as_ref().is_some_and(|c| {

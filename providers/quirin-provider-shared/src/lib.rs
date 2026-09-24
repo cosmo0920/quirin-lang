@@ -28,6 +28,18 @@ pub use quirin_provider_libc as libc;
 pub use quirin_provider_mpack as mpack;
 pub use quirin_provider_msgpack as msgpack;
 
+/// The crate's contract-inheritance namespace (card CONTRACT-INHERIT-ADOPTION):
+/// the package name without `quirin-provider-`, `-` read as `_`. A parent
+/// this crate owns is written `shared::NAME`. Recorded here, checked
+/// against the derivation rule by this crate's tests, and carried into
+/// `providers/contract-load-path.json`, where the load path checks it again.
+pub const NAMESPACE: &str = "shared";
+
+/// The owned modules another contract module may `#include`, sorted: a
+/// subset of [`CONTRACTS`]' logical paths. None yet; publishing a module is
+/// a deliberate, reviewed act (card CONTRACT-INHERIT-ADOPTION).
+pub const PUBLISHED: &[&str] = &[];
+
 /// The contract modules this crate owns itself, as `(logical path, source
 /// text)`, sorted by logical path relative to `contracts/`.
 pub const CONTRACTS: &[(&str, &str)] = &[
@@ -72,6 +84,25 @@ pub fn shared_contract(path: &str) -> Option<&'static str> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Card CONTRACT-INHERIT-ADOPTION: the recorded namespace is the one the
+    /// load path derives from the package name, and every published module
+    /// is an owned one, listed once, in order.
+    #[test]
+    fn namespace_is_derived_and_published_modules_are_owned() {
+        let derived = env!("CARGO_PKG_NAME")
+            .strip_prefix("quirin-provider-")
+            .expect("a contract crate is named quirin-provider-NAME")
+            .replace('-', "_");
+        assert_eq!(NAMESPACE, derived);
+        assert!(PUBLISHED.windows(2).all(|pair| pair[0] < pair[1]));
+        for module in PUBLISHED {
+            assert!(
+                CONTRACTS.iter().any(|(name, _)| name == module),
+                "{module}"
+            );
+        }
+    }
     use std::collections::BTreeSet;
 
     /// This crate's own index is exactly its `contracts/` tree, byte for byte.
