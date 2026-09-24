@@ -1,21 +1,29 @@
 #!/usr/bin/env python3
-"""Card W43-INDIRECT-ACCESS-GENERAL: the shape census of the
-`indirect memory access is outside the resource projection` family.
+"""Card W43-INDIRECT-ACCESS-GENERAL: the shape census of indirect memory access.
 
-Input: one instrumented run directory holding `resource-diagnostics.json` (the
-authority for which leaves exist and for every function's other blockers) and
-`indirect-census.jsonl` (one record per refused statement, written by the
-`indirect-census` feature after the classifier had already refused). The
-records carry the statement's complete token text as the classifier read it,
-so the shape is read from the analyzer's own token view, never from source
-text (card C-GATEWAY-INDIRECT-CENSUS-2 §2).
+Input: one instrumented run directory holding
+
+* `resource-diagnostics.json` - the authority for which leaves exist and for
+  every function's other blockers;
+* `indirect-census.jsonl` - one record per refused `indirect memory access`
+  statement (every `classify_simple` call site), written by the
+  `indirect-census` feature after the classifier had already refused;
+* `statement-census.jsonl` - one record per ordinary statement the classifier
+  refused, or lowered to an indirect destination that only an out-parameter
+  contract can sanction (`*p = v`), with the refusal's own description.
+
+Every record carries the statement's complete token text as the classifier
+read it, so the shape is read from the analyzer's own token view, never from
+source text (card C-GATEWAY-INDIRECT-CENSUS-2 section 2).
 
 The join follows that card: `unit_seq` is matched to a document unit by
-greatest overlap (checked injective), a leaf `(unit, function, line)` is
-explained by every distinct statement record at that key, and a leaf clears
-only if every one of its statements does.
+greatest overlap (checked injective); a leaf `(unit, function, line,
+description)` is explained by every distinct statement record at that key
+whose outcome maps to that description; a leaf clears only if every one of its
+statements is admitted; and a function is decided only if every leaf it holds,
+in every family, clears.
 
-Usage: shape_census.py RUN_DIR OUT_JSON [--text OUT_TXT]
+Usage: shape_census.py RUN_DIR OUT_JSON OUT_TXT
 """
 
 import collections
@@ -25,66 +33,17 @@ import re
 import sys
 
 INDIRECT = "indirect memory access is outside the resource projection"
-ASSIGN_OPS = {"+", "-", "*", "/", "%", "&", "|", "^", "<", ">"}
-NON_CALLS = {"sizeof", "_Alignof", "__alignof__", "alignof"}
+ASSIGNMENT_EXPRESSION = "unsupported assignment expression"
+UNRECOGNIZED_DESTINATION = "unrecognized assignment destination"
+INCREMENT = "unmodeled increment or decrement expression"
+STORE_THROUGH = re.compile(r"store through `(\*[A-Za-z_][A-Za-z0-9_]*)` without an out-parameter contract")
+FAMILIES = (INDIRECT, ASSIGNMENT_EXPRESSION, UNRECOGNIZED_DESTINATION, INCREMENT, "store through `X` without an out-parameter contract")
+ASSIGN_OPS = {"+", "-", "*", "/", "%", "&", "|", "^"}
+NON_CALLS = {"sizeof", "_Alignof", "__alignof__", "alignof", "typeof", "__typeof__", "__typeof"}
 
 
 def normalize(description):
     return re.sub(r"`[^`]*`", "`X`", description)
-
-
-def family(description):
-    text = normalize(description)
-    return text
-
-
-def load_document(path):
-    doc = json.load(open(path))
-    blockers = {}
-    unit_leaves = collections.defaultdict(set)
-    statuses = {}
-    for unit in doc["units"]:
-        ukey = (unit.get("library"), unit["file"])
-        for function in unit["functions"]:
-            fkey = ukey + (function["function"],)
-            statuses[fkey] = function["status"]
-            blockers[fkey] = [family(d["description"]) for d in function["diagnostics"]]
-            for d in function["diagnostics"]:
-                if d["description"] == INDIRECT:
-                    unit_leaves[ukey].add((function["function"], d["line"]))
-    return doc, blockers, dict(unit_leaves), statuses
-
-
-def load_census(path):
-    census = collections.defaultdict(lambda: collections.defaultdict(list))
-    seen = collections.defaultdict(set)
-    for line in open(path):
-        record = json.loads(line)
-        seq = record.pop("unit_seq")
-        key = (record["function"], record["line"])
-        blob = json.dumps(record, sort_keys=True)
-        if blob in seen[(seq, key)]:
-            continue
-        seen[(seq, key)].add(blob)
-        census[seq][key].append(record)
-    return census
-
-
-def match_units(census, unit_leaves):
-    scores = []
-    for ukey, keys in unit_leaves.items():
-        for seq, records in census.items():
-            overlap = len(keys & set(records))
-            if overlap:
-                scores.append((overlap, ukey, seq))
-    scores.sort(key=lambda row: (-row[0], str(row[1]), row[2]))
-    assigned, used = {}, set()
-    for _, ukey, seq in scores:
-        if ukey in assigned or seq in used:
-            continue
-        assigned[ukey] = seq
-        used.add(seq)
-    return assigned
 
 
 def is_name(text):
@@ -94,29 +53,45 @@ def is_name(text):
 def is_literal(text):
     return bool(
         re.fullmatch(r"[0-9][0-9A-Za-z_.]*", text)
-        or (text.startswith("'") and text.endswith("'"))
+        or (len(text) >= 3 and text.startswith("'") and text.endswith("'"))
     )
 
 
+def strip_parens(tokens):
+    tokens = list(tokens)
+    while len(tokens) >= 2 and tokens[0] == "(" and tokens[-1] == ")":
+        depth = 0
+        whole = True
+        for index, text in enumerate(tokens):
+            if text == "(":
+                depth += 1
+            elif text == ")":
+                depth -= 1
+                if depth == 0 and index != len(tokens) - 1:
+                    whole = False
+                    break
+        if not whole:
+            break
+        tokens = tokens[1:-1]
+    return tokens
+
+
 def top_level_assignment(texts):
-    """Index of the assignment operator's `=` at bracket depth 0, and the
-    compound operator run before it ('' for plain `=`), or (None, None)."""
+    """(index of the assignment's `=`, compound operator or '') or (None, None).
+
+    The importer lexes one token per punctuation character, so `+=` is `+ =`,
+    `==` is `= =` and `<<=` is `< < =`."""
     depth = 0
     for index, text in enumerate(texts):
-        if text in "([":
+        if text in ("(", "["):
             depth += 1
-        elif text in ")]":
+        elif text in (")", "]"):
             depth -= 1
         elif text == "=" and depth == 0:
             nxt = texts[index + 1] if index + 1 < len(texts) else ""
             prev = texts[index - 1] if index else ""
-            if nxt == "=":
-                return None, None  # `==` at depth 0 is not an assignment statement
-            if prev == "=":
+            if nxt == "=" or prev in ("=", "!"):
                 continue
-            if prev in ("!",):
-                continue
-            # `<=`/`>=` are comparisons unless a shift precedes (`<<=`).
             if prev in ("<", ">"):
                 before = texts[index - 2] if index >= 2 else ""
                 if before != prev:
@@ -136,13 +111,10 @@ def has_call(texts):
 
 
 def has_increment(texts):
-    return any(
-        texts[i] == texts[i + 1] and texts[i] in "+-" for i in range(len(texts) - 1)
-    )
+    return any(texts[i] == texts[i + 1] and texts[i] in "+-" for i in range(len(texts) - 1))
 
 
-def access_kind(texts):
-    """Whether a run of tokens carries an indirect access, lexically."""
+def has_access(texts):
     for index, text in enumerate(texts):
         if text == "-" and index + 1 < len(texts) and texts[index + 1] == ">":
             return True
@@ -156,14 +128,12 @@ def access_kind(texts):
 
 
 def place_form(place):
-    """The syntactic form of a destination place (token list)."""
-    toks = list(place)
-    while len(toks) >= 2 and toks[0] == "(" and toks[-1] == ")":
-        toks = toks[1:-1]
+    """The syntactic form of a place and its base name."""
+    toks = strip_parens(place)
     if len(toks) == 1 and is_name(toks[0]):
         return "name", toks[0]
     if len(toks) == 2 and toks[0] == "*" and is_name(toks[1]):
-        return "deref", toks[1]
+        return "*p", toks[1]
     if len(toks) >= 4 and is_name(toks[0]) and toks[1] == "[" and toks[-1] == "]":
         depth = 0
         for index, text in enumerate(toks[1:], 1):
@@ -173,80 +143,75 @@ def place_form(place):
                 depth -= 1
                 if depth == 0 and index != len(toks) - 1:
                     return "chain", toks[0]
-        return "subscript", toks[0]
+        return "p[i]", toks[0]
     if len(toks) == 4 and is_name(toks[0]) and toks[1:3] == ["-", ">"] and is_name(toks[3]):
-        return "member", toks[0]
+        return "p->f", toks[0]
+    if len(toks) == 3 and is_name(toks[0]) and toks[1] == "." and is_name(toks[2]):
+        return "s.f", toks[0]
     if toks and is_name(toks[0]):
         return "chain", toks[0]
-    if toks and toks[0] == "*":
-        return "deref-expr", None
+    if len(toks) >= 2 and toks[0] == "*":
+        return "*(expr)", None
     return "other", None
 
 
 def value_kind(texts, declared):
-    """scalar / pointer / call / access / unknown for an assignment's value."""
+    """scalar / pointer / call / access / mutating / undeclared for a value."""
     if not texts:
         return "empty"
     if has_call(texts):
         return "call"
-    if access_kind(texts):
-        return "access"
     if has_increment(texts) or "=" in texts:
         return "mutating"
+    if has_access(texts):
+        return "access"
+    if "&" in texts and texts.index("&") == 0:
+        return "address"
     labels = []
     for index, text in enumerate(texts):
-        if is_name(text):
-            if texts[index - 1:index] == ["("] and index + 1 < len(texts) and texts[index + 1] in (")", "*"):
-                continue  # a cast's type name
-            labels.append(declared.get(text))
-    if any(label and (label.startswith("record_pointer") or "Pointer" in label) for label in labels):
+        if not is_name(text):
+            continue
+        # A cast's type name: `( T )` or `( T * )`.
+        if index and texts[index - 1] == "(" and index + 1 < len(texts) and texts[index + 1] in (")", "*"):
+            continue
+        labels.append(declared.get(text, "undeclared"))
+    if any(label.startswith("record_pointer") or "Pointer" in label for label in labels):
         return "pointer"
-    if "&" in texts:
-        return "address"
-    if all(label == "scalar" for label in labels if label is not None) and all(
-        label is not None for label in labels
-    ):
-        return "scalar"
-    if all(label in (None, "scalar") for label in labels):
-        # Undeclared names: enumeration constants, macros-turned-literals, file-scope names.
-        return "scalar-or-undeclared"
-    return "unknown"
+    if any(label.startswith("opaque") for label in labels):
+        return "opaque"
+    if any(label == "undeclared" for label in labels):
+        return "undeclared-name"
+    return "scalar"
 
 
-def classify(record):
-    """(shape, value kind, base name) for one refused statement."""
-    texts = record["texts"]
-    declared = record.get("declared", {})
+def classify(texts, declared):
+    """(shape, value kind, base name) for one statement's token text."""
     equal, operator = top_level_assignment(texts)
     if equal is not None:
-        left, right = texts[:equal - len(operator)], texts[equal + 1:]
-        form, base = place_form(left)
+        left = texts[: equal - len(operator)]
+        right = texts[equal + 1:]
         value = value_kind(right, declared)
-        compound = operator != ""
-        if form in ("deref", "subscript", "member", "chain", "deref-expr"):
-            kind = {"deref": "*p", "subscript": "p[i]", "member": "p->f", "chain": "chain", "deref-expr": "*(expr)"}[form]
-            if has_increment(left):
-                return ("store:" + kind + ":lhs-increment", value, base)
-            return (("compound:" if compound else "store:") + kind, value, base)
-        if form == "name":
-            # The access is on the value side: a read.
-            rform, rbase = place_form(right)
-            if compound:
-                return ("compound-read:" + rform, value, rbase)
-            if rform in ("deref", "subscript", "member", "chain"):
-                kind = {"deref": "*p", "subscript": "p[i]", "member": "p->f", "chain": "chain"}[rform]
-                return ("read:" + kind, declared.get(base) or "undeclared", rbase)
-            if has_call(right):
-                return ("read:in-call", value, base)
-            return ("read:expression", value, base)
-        return ("assign:other-destination", value, base)
+        if has_increment(left):
+            stripped = [t for i, t in enumerate(left) if not (t in "+-" and ((i + 1 < len(left) and left[i + 1] == t) or (i and left[i - 1] == t)))]
+            form, base = place_form(stripped)
+            return ("store-postinc:" + form, value, base)
+        form, base = place_form(left)
+        if form != "name":
+            return (("compound:" if operator else "store:") + form, value, base)
+        rform, rbase = place_form(right)
+        if operator:
+            return ("compound-into-name:" + rform, value, rbase)
+        if rform in ("*p", "p[i]", "p->f", "s.f", "chain", "*(expr)"):
+            return ("read:" + rform, declared.get(base, "undeclared"), rbase)
+        if has_call(right):
+            return ("assign-call", value, base)
+        return ("assign-expression", value, base)
     if has_increment(texts):
-        stripped = [t for t in texts]
-        body = [t for t in stripped if t not in ("+", "-")] if len(stripped) > 2 else stripped
+        body = [t for t in texts if t not in ("+", "-")]
         form, base = place_form(body)
         return ("increment:" + form, "-", base)
     if has_call(texts):
-        return ("call-argument", "-", None)
+        return ("call-statement", "call", None)
     return ("expression", "-", None)
 
 
@@ -257,165 +222,256 @@ def base_axis(record, base):
         return "derived"
     if base in record.get("owned_names", []):
         return "owned"
-    for chain in record["chains"]:
+    may_bind = record.get("may_bind")
+    if may_bind is not None:
+        return "may-bind" if base in may_bind else "never-bound"
+    for chain in record.get("chains", []):
         if chain["base"] == base:
-            if not chain["base_may_bind"]:
-                return "never-bound"
-            return "may-bind"
-    return "may-bind" if base else "no-base"
+            return "may-bind" if chain["base_may_bind"] else "never-bound"
+    return "may-bind"
 
 
 def base_type(record, base):
     if base is None:
         return "-"
-    label = record.get("declared", {}).get(base)
-    if label is None:
-        return "undeclared"
+    label = record.get("declared", {}).get(base, "undeclared")
     if label.startswith("record_pointer"):
         return "record_pointer"
     if label.startswith("record:"):
         return "record"
-    if label.startswith("opaque:"):
-        return label
     return label
 
 
-def statement_key(record):
-    shape, value, base = classify(record)
-    return (shape, value, base_axis(record, base), base_type(record, base))
+def statement_key(record, family=None):
+    shape, value, base = classify(record["texts"], record.get("declared", {}))
+    return (shape, value, base_axis(record, base), base_type(record, base), normalize(family or ""))
+
+
+def outcome_family(outcome):
+    match = re.fullmatch(r"indirect destination `(\*[^`]*)`", outcome)
+    if match:
+        return f"store through `{match.group(1)}` without an out-parameter contract"
+    return outcome
+
+
+def load_document(path):
+    doc = json.load(open(path))
+    functions = {}
+    unit_keys = collections.defaultdict(set)
+    for unit in doc["units"]:
+        ukey = (unit.get("library"), unit["file"])
+        for function in unit["functions"]:
+            fkey = ukey + (function["function"],)
+            functions[fkey] = {
+                "status": function["status"],
+                "leaves": [(d["line"], d["description"]) for d in function["diagnostics"]],
+            }
+            for d in function["diagnostics"]:
+                unit_keys[ukey].add((function["function"], d["line"]))
+    return doc, functions, unit_keys
+
+
+def load_stream(path, family_of):
+    stream = collections.defaultdict(lambda: collections.defaultdict(list))
+    seen = collections.defaultdict(set)
+    if not path.exists():
+        return stream
+    for line in open(path):
+        record = json.loads(line)
+        seq = record.pop("unit_seq")
+        description = family_of(record)
+        key = (record["function"], record["line"], description)
+        blob = json.dumps(record, sort_keys=True)
+        if blob in seen[(seq, key)]:
+            continue
+        seen[(seq, key)].add(blob)
+        stream[seq][key].append(record)
+    return stream
+
+
+def match_units(streams, unit_keys):
+    per_seq = collections.defaultdict(set)
+    for stream in streams:
+        for seq, records in stream.items():
+            per_seq[seq].update((f, l) for f, l, _ in records)
+    scores = []
+    for ukey, keys in unit_keys.items():
+        for seq, records in per_seq.items():
+            overlap = len(keys & records)
+            if overlap:
+                scores.append((overlap, ukey, seq))
+    scores.sort(key=lambda row: (-row[0], str(row[1]), row[2]))
+    assigned, used = {}, set()
+    for _, ukey, seq in scores:
+        if ukey in assigned or seq in used:
+            continue
+        assigned[ukey] = seq
+        used.add(seq)
+    return assigned
 
 
 def main():
     run = pathlib.Path(sys.argv[1])
     out_json = pathlib.Path(sys.argv[2])
-    text_path = None
-    if "--text" in sys.argv:
-        text_path = pathlib.Path(sys.argv[sys.argv.index("--text") + 1])
-    doc, blockers, unit_leaves, statuses = load_document(run / "resource-diagnostics.json")
-    census = load_census(run / "indirect-census.jsonl")
-    assignment = match_units(census, unit_leaves)
+    out_txt = pathlib.Path(sys.argv[3])
+    _, functions, unit_keys = load_document(run / "resource-diagnostics.json")
+    indirect = load_stream(run / "indirect-census.jsonl", lambda record: INDIRECT)
+    statements = load_stream(run / "statement-census.jsonl", lambda record: outcome_family(record["outcome"]))
+    assignment = match_units([indirect, statements], unit_keys)
 
-    leaves = []  # (fkey, line, [statement keys], [records])
-    unexplained = []
-    for ukey, keys in unit_leaves.items():
+    # Every leaf of a census-covered family, with its statement keys.
+    leaf_keys = {}
+    leaf_records = {}
+    unexplained = collections.Counter()
+    for fkey, data in functions.items():
+        if data["status"] != "Unknown":
+            continue
+        ukey, function = fkey[:2], fkey[2]
         seq = assignment.get(ukey)
-        for function, line in sorted(keys):
-            records = census.get(seq, {}).get((function, line), []) if seq is not None else []
-            fkey = ukey + (function,)
-            if not records:
-                unexplained.append(list(fkey) + [line])
-                leaves.append((fkey, line, [("unexplained", "-", "-", "-")], []))
+        for line, description in data["leaves"]:
+            fam = normalize(description)
+            if fam not in FAMILIES:
                 continue
-            leaves.append((fkey, line, [statement_key(r) for r in records], records))
+            key = (function, line, description)
+            records = []
+            if seq is not None:
+                records = statements.get(seq, {}).get(key, [])
+                if description == INDIRECT:
+                    # The indirect stream sees every classify_simple call site,
+                    # for-clauses and synthetic condition calls included.
+                    records = indirect.get(seq, {}).get(key, []) or records
+            if not records:
+                unexplained[fam] += 1
+                leaf_keys[(fkey, line, description)] = [("unexplained", "-", "-", "-", fam)]
+                continue
+            leaf_keys[(fkey, line, description)] = sorted({statement_key(r, description) for r in records})
+            leaf_records[(fkey, line, description)] = records
 
-    # Per-function facts.
-    other_families = {}
-    for fkey, families in blockers.items():
-        other_families[fkey] = sorted({f for f in families if f != INDIRECT})
-    function_leaves = collections.defaultdict(list)
-    for leaf in leaves:
-        function_leaves[leaf[0]].append(leaf)
+    unknown = {f for f, d in functions.items() if d["status"] == "Unknown"}
 
-    def shape_of(key):
-        return key[0]
+    def blockers(fkey):
+        return {normalize(description) for _, description in functions[fkey]["leaves"]}
 
-    # Distribution by shape (a leaf counts under each distinct shape it holds;
-    # also under its "hardest" = the lexicographically largest non-admitted key).
-    per_shape = collections.defaultdict(lambda: {"statements": 0, "leaves": set(), "functions": set()})
-    per_key = collections.defaultdict(lambda: {"statements": 0, "leaves": set(), "functions": set()})
-    for fkey, line, keys, records in leaves:
+    def decided(fkey, admitted):
+        """Every leaf of the function clears under `admitted`."""
+        for line, description in functions[fkey]["leaves"]:
+            keys = leaf_keys.get((fkey, line, description))
+            if keys is None or not all(admitted(k) for k in keys):
+                return False
+        return True
+
+    family_rows = {}
+    for fam in FAMILIES:
+        touched = {f for f in unknown if fam in blockers(f)}
+        sole = {f for f in touched if blockers(f) == {fam}}
+        leaves = sum(1 for (f, l, d) in leaf_keys if normalize(d) == fam)
+        family_rows[fam] = {
+            "leaves": leaves,
+            "functions": len(touched),
+            "sole_functions": len(sole),
+            "unexplained_leaves": unexplained[fam],
+        }
+
+    per_shape = collections.defaultdict(lambda: collections.defaultdict(lambda: {"statements": 0, "leaves": set(), "functions": set()}))
+    for (fkey, line, description), keys in leaf_keys.items():
+        fam = normalize(description)
         for key in keys:
-            per_shape[shape_of(key)]["statements"] += 1
-            per_shape[shape_of(key)]["leaves"].add((fkey, line))
-            per_shape[shape_of(key)]["functions"].add(fkey)
-            per_key[key]["statements"] += 1
-            per_key[key]["leaves"].add((fkey, line))
-            per_key[key]["functions"].add(fkey)
-
-    unknown_functions = [f for f, s in statuses.items() if s == "Unknown"]
-    touched = sorted(function_leaves)
-    sole = [f for f in touched if not other_families[f] and statuses[f] == "Unknown"]
-    pairs = collections.Counter()
-    for f in touched:
-        if len(other_families[f]) == 1 and statuses[f] == "Unknown":
-            pairs[other_families[f][0]] += 1
-
-    def clears(fkey, admitted):
-        return all(all(admitted(key) for key in keys) for _, _, keys, _ in function_leaves[fkey])
+            row = per_shape[fam][key]
+            row["statements"] += 1
+            row["leaves"].add((fkey, line))
+            row["functions"].add(fkey)
 
     def reach(admitted):
-        sole_cleared = [f for f in sole if clears(f, admitted)]
-        pair_cleared = collections.Counter()
-        for f in touched:
-            if statuses[f] == "Unknown" and len(other_families[f]) == 1 and clears(f, admitted):
-                pair_cleared[other_families[f][0]] += 1
-        leaves_cleared = sum(1 for _, _, keys, _ in leaves if all(admitted(k) for k in keys))
+        decided_functions = sorted(f for f in unknown if decided(f, admitted))
+        leaves_cleared = collections.Counter()
+        for (fkey, line, description), keys in leaf_keys.items():
+            if all(admitted(k) for k in keys):
+                leaves_cleared[normalize(description)] += 1
+        # Functions left blocked by exactly one other family once admitted leaves clear.
+        completes = collections.Counter()
+        for f in unknown:
+            remaining = set()
+            for line, description in functions[f]["leaves"]:
+                keys = leaf_keys.get((f, line, description))
+                if keys is None or not all(admitted(k) for k in keys):
+                    remaining.add(normalize(description))
+            before = blockers(f)
+            if len(before) == 2 and len(remaining) == 1 and remaining < before:
+                completes[next(iter(remaining))] += 1
         return {
-            "leaves_cleared": leaves_cleared,
-            "sole_functions_cleared": len(sole_cleared),
-            "sole_functions": [list(f) for f in sole_cleared],
-            "pair_functions_cleared": dict(pair_cleared.most_common()),
+            "leaves_cleared": dict(leaves_cleared),
+            "functions_decided": len(decided_functions),
+            "decided": ["/".join(str(p) for p in f) for f in decided_functions],
+            "pairs_reduced_to_one": dict(completes.most_common(8)),
         }
 
+    shape_rows = []
+    for fam in FAMILIES:
+        by_shape = collections.defaultdict(lambda: {"statements": 0, "leaves": set(), "functions": set()})
+        for key, row in per_shape[fam].items():
+            agg = by_shape[key[0]]
+            agg["statements"] += row["statements"]
+            agg["leaves"] |= row["leaves"]
+            agg["functions"] |= row["functions"]
+        for shape, row in sorted(by_shape.items(), key=lambda kv: -len(kv[1]["leaves"])):
+            r = reach(lambda key, shape=shape, fam=fam: key[0] == shape and key[4] == fam)
+            shape_rows.append(
+                {
+                    "family": fam,
+                    "shape": shape,
+                    "statements": row["statements"],
+                    "leaves": len(row["leaves"]),
+                    "functions": len(row["functions"]),
+                    "sole_touched": sum(1 for f in row["functions"] if f in unknown and len(blockers(f)) == 1),
+                    "alone": {k: v for k, v in r.items() if k != "decided"},
+                    "alone_decided": r["decided"],
+                }
+            )
+    key_rows = []
+    for fam in FAMILIES:
+        for key, row in sorted(per_shape[fam].items(), key=lambda kv: -len(kv[1]["leaves"])):
+            key_rows.append(
+                {
+                    "family": fam,
+                    "shape": key[0],
+                    "value": key[1],
+                    "base": key[2],
+                    "base_type": key[3],
+                    "statements": row["statements"],
+                    "leaves": len(row["leaves"]),
+                    "functions": len(row["functions"]),
+                    "sole_touched": sum(1 for f in row["functions"] if f in unknown and len(blockers(f)) == 1),
+                }
+            )
     result = {
         "run": str(run),
-        "family_leaves": len(leaves),
-        "unexplained_leaves": unexplained,
         "units_matched": len(assignment),
-        "units_with_leaves": len(unit_leaves),
-        "functions_touched": len(touched),
-        "unknown_functions": len(unknown_functions),
-        "sole_blocked_functions": len(sole),
-        "sole_blocked_leaves": sum(len(function_leaves[f]) for f in sole),
-        "two_blocker_partners": dict(pairs.most_common(12)),
-        "shapes": {},
-        "keys": [],
+        "units_with_leaves": len(unit_keys),
+        "families": family_rows,
+        "shapes": shape_rows,
+        "keys": key_rows,
     }
-    for shape, data in sorted(per_shape.items(), key=lambda kv: -len(kv[1]["leaves"])):
-        single = lambda key, shape=shape: shape_of(key) == shape
-        r = reach(single)
-        result["shapes"][shape] = {
-            "statements": data["statements"],
-            "leaves": len(data["leaves"]),
-            "functions": len(data["functions"]),
-            "sole_functions_touched": sum(1 for f in data["functions"] if f in set(sole)),
-            "alone": {k: v for k, v in r.items() if k != "sole_functions"},
-        }
-    sole_set = set(sole)
-    for key, data in sorted(per_key.items(), key=lambda kv: -len(kv[1]["leaves"])):
-        result["keys"].append(
-            {
-                "shape": key[0],
-                "value": key[1],
-                "base": key[2],
-                "base_type": key[3],
-                "statements": data["statements"],
-                "leaves": len(data["leaves"]),
-                "functions": len(data["functions"]),
-                "sole_functions_touched": sum(1 for f in data["functions"] if f in sole_set),
-            }
-        )
     out_json.write_text(json.dumps(result, indent=1) + "\n")
-    if text_path:
-        lines = []
-        lines.append(f"run: {run}")
-        lines.append(f"family leaves {len(leaves)}; unexplained {len(unexplained)}; units {len(assignment)}/{len(unit_leaves)}")
-        lines.append(f"functions touched {len(touched)}; sole-blocked {len(sole)} holding {result['sole_blocked_leaves']} leaves")
-        lines.append("")
-        lines.append(f"{'shape':40} {'stmts':>7} {'leaves':>7} {'funcs':>6} {'soleT':>6} {'clrL':>6} {'clrS':>5}  pairs completed")
-        for shape, data in result["shapes"].items():
-            alone = data["alone"]
-            pairs_text = ", ".join(f"{k[:28]}:{v}" for k, v in list(alone["pair_functions_cleared"].items())[:3])
-            lines.append(
-                f"{shape:40} {data['statements']:7} {data['leaves']:7} {data['functions']:6} {data['sole_functions_touched']:6} {alone['leaves_cleared']:6} {alone['sole_functions_cleared']:5}  {pairs_text}"
-            )
-        lines.append("")
-        lines.append("top statement keys (shape, value, base axis, base type)")
-        for row in result["keys"][:80]:
-            lines.append(
-                f"{row['leaves']:6} {row['functions']:5} {row['sole_functions_touched']:4}  {row['shape']:30} {row['value']:22} {row['base']:12} {row['base_type']}"
-            )
-        text_path.write_text("\n".join(lines) + "\n")
+
+    lines = [f"run: {run}", f"units matched {len(assignment)} / {len(unit_keys)}", ""]
+    lines.append(f"{'family':62} {'leaves':>7} {'funcs':>6} {'sole':>5} {'unexpl':>6}")
+    for fam, row in family_rows.items():
+        lines.append(f"{fam[:62]:62} {row['leaves']:7} {row['functions']:6} {row['sole_functions']:5} {row['unexplained_leaves']:6}")
+    for fam in FAMILIES:
+        lines += ["", f"== {fam}", f"{'shape':34} {'stmts':>6} {'leaves':>6} {'funcs':>6} {'soleT':>5} {'clrL':>6} {'dec':>4}  pairs reduced to one"]
+        for row in shape_rows:
+            if row["family"] != fam:
+                continue
+            alone = row["alone"]
+            cleared = alone["leaves_cleared"].get(fam, 0)
+            pairs = ", ".join(f"{k[:24]}:{v}" for k, v in list(alone["pairs_reduced_to_one"].items())[:3])
+            lines.append(f"{row['shape'][:34]:34} {row['statements']:6} {row['leaves']:6} {row['functions']:6} {row['sole_touched']:5} {cleared:6} {alone['functions_decided']:4}  {pairs}")
+    lines += ["", "statement keys (family, shape, value, base axis, base type): leaves funcs soleTouched"]
+    for row in key_rows:
+        if row["leaves"] < 15:
+            continue
+        lines.append(f"{row['leaves']:6} {row['functions']:5} {row['sole_touched']:4}  {row['family'][:18]:18} {row['shape'][:24]:24} {row['value'][:18]:18} {row['base']:11} {row['base_type'][:40]}")
+    out_txt.write_text("\n".join(lines) + "\n")
     return 0
 
 

@@ -1,0 +1,62 @@
+run: private/runs/census-base6
+leaves predicted to leave their family: 985
+unexplained intercepted leaves: 237
+
+by shape (leaves, functions, families):
+     502   194  store:*p                                 store through `X` without an o=446, unsupported assignment express=38, indirect memory access is outs=18
+     149    54  store:p[i]                               indirect memory access is outs=68, unrecognized assignment destin=60, unmodeled increment or decreme=21
+     107    63  read-into-scalar                         indirect memory access is outs=105, unmodeled increment or decreme=2
+      61    32  compound-store:p->f                      unrecognized assignment destin=60, indirect memory access is outs=1
+      51    19  store:s.f                                indirect memory access is outs=51
+      39    27  increment:p->f                           unmodeled increment or decreme=39
+      25    14  compound-into-scalar                     indirect memory access is outs=25
+      25     9  store:p->f                               indirect memory access is outs=25
+      16     9  compound-store:*p                        unrecognized assignment destin=16
+       6     2  compound-store:p[i]                      unrecognized assignment destin=6
+       2     2  increment:*p                             unmodeled increment or decreme=2
+       2     1  compound-store:s.f                       unrecognized assignment destin=2
+
+dereference bases by static axis:
+       4  compound-into-scalar | owned
+      19  compound-into-scalar | untracked-or-other
+      16  compound-store:*p | untracked-or-other
+       2  compound-store:p->f | owned
+      79  compound-store:p->f | untracked-or-other
+       2  compound-store:p[i] | owned
+       4  compound-store:p[i] | untracked-or-other
+       3  increment:*p | untracked-or-other
+      39  increment:p->f | untracked-or-other
+       5  read-into-scalar | derived
+      11  read-into-scalar | owned
+      72  read-into-scalar | untracked-or-other
+       1  store:*p | derived
+       3  store:*p | owned
+     512  store:*p | untracked-or-other
+      25  store:p->f | untracked-or-other
+      65  store:p[i] | owned
+     103  store:p[i] | untracked-or-other
+       2  store:s.f | untracked-or-other
+
+Unknown functions whose every leaf is predicted to clear: 10
+  chunkio/cio_chunk.c/cio_chunk_counter_total_add  leaves=1  increment:p->f
+  chunkio/cio_chunk.c/cio_chunk_counter_total_sub  leaves=1  increment:p->f
+  chunkio/cio_chunk.c/cio_chunk_counter_total_up_add  leaves=1  increment:p->f
+  chunkio/cio_chunk.c/cio_chunk_counter_total_up_sub  leaves=1  increment:p->f
+  cmetrics/cmt_encode_opentelemetry_batch.c/set_result  leaves=1  store:*p
+  fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_output_would_exceed_limit  leaves=2  store:*p
+  librdkafka/rdkafka_admin.c/rd_kafka_ConsumerGroupDescription_authorized_operations  leaves=1  store:*p
+  librdkafka/rdkafka_admin.c/rd_kafka_TopicDescription_authorized_operations  leaves=1  store:*p
+  librdkafka/rdmap.c/rd_bytes_hash  leaves=1  read-into-scalar
+  monkey-libevent/mk_core/mk_string.c/mk_string_dup  leaves=1  store:p[i]
+
+transitive callers forecast (W4 summaries of the above): 1
+  cmetrics/cmt_encode_opentelemetry_batch.c/empty_batches_create
+
+functions reduced to exactly one remaining family:
+      6  indirect memory access is outside the resource projection
+      6  call to uncontracted function `X`
+      3  unmodeled call, aggregate or indirect access in branch condition
+      3  unmodeled call, aggregate or indirect access in return expression
+      1  unresolved resource identity `X`
+      1  unmodeled call, aggregate or indirect access in for-loop condition
+      1  unsupported assignment expression

@@ -3524,6 +3524,48 @@ impl Parser<'_> {
         );
     }
 
+    /// Card **W43-INDIRECT-ACCESS-GENERAL**: hand one already-classified
+    /// statement to the statement census when the classifier refused it, or
+    /// named an indirect destination that only an out-parameter contract can
+    /// sanction. Compiled out with the feature off; it reads the instruction
+    /// after it was produced and cannot change it.
+    #[cfg(feature = "indirect-census")]
+    fn census_statement(&self, line: usize, tokens: &[Token], instruction: &LegacyInstruction) {
+        let outcome = match instruction {
+            LegacyInstruction::Unknown { description, .. } => description.clone(),
+            LegacyInstruction::Alias { destination, .. }
+            | LegacyInstruction::Clear { destination }
+                if is_indirect_place(destination) =>
+            {
+                format!("indirect destination `{destination}`")
+            }
+            LegacyInstruction::ContractCall {
+                destination: Some(destination),
+                ..
+            } if is_indirect_place(destination) => {
+                format!("indirect call destination `{destination}`")
+            }
+            _ => return,
+        };
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        crate::indirect_census::record_statement(
+            &crate::indirect_census::Context {
+                function: &self.census_function,
+                formal_parameters: &self.formal_parameters,
+                typed_model: &self.typed_model,
+                typed_types: &self.typed_types,
+                typed_bases: &self.typed_bases,
+            },
+            line,
+            &texts,
+            outcome,
+            &self.census_bindings,
+        );
+    }
+
     /// Card **W43-RETURN-EXPRESSION**: hand one already-decided return
     /// expression refusal to the instrumented census. Compiled out with the
     /// feature off; called only after every return route has refused.
@@ -4161,7 +4203,10 @@ impl Parser<'_> {
             }
             Some(_) => {
                 let tokens = self.consume_to_semicolon()?;
-                Ok(Statement::Instruction(self.classify_simple(&tokens), line))
+                let instruction = self.classify_simple(&tokens);
+                #[cfg(feature = "indirect-census")]
+                self.census_statement(line, &tokens, &instruction);
+                Ok(Statement::Instruction(instruction, line))
             }
             None => Err(line),
         }

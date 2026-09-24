@@ -50,11 +50,17 @@ def main() -> int:
     environment["QCORE_CLANG"] = "/usr/bin/clang"
     environment["QCORE_CHUNKIO_PACKAGE"] = str(PIN / "provider-packages-wave20/qcore.chunkio")
     environment.pop("QCORE_SOURCE_CONTRACTS", None)
-    for variable in ("QCORE_RETURN_CENSUS", "QCORE_INDIRECT_CENSUS", "QCORE_INDIRECT_CENSUS_RECORDS"):
+    for variable in (
+        "QCORE_RETURN_CENSUS",
+        "QCORE_INDIRECT_CENSUS",
+        "QCORE_INDIRECT_CENSUS_RECORDS",
+        "QCORE_STATEMENT_CENSUS",
+    ):
         environment.pop(variable, None)
     if census:
         environment["QCORE_RETURN_CENSUS"] = str(out / "return-census.jsonl")
         environment["QCORE_INDIRECT_CENSUS"] = str(out / "indirect-census.jsonl")
+        environment["QCORE_STATEMENT_CENSUS"] = str(out / "statement-census.jsonl")
     record = {
         "command": command,
         "source_commit": commit,
@@ -65,6 +71,7 @@ def main() -> int:
             "QCORE_SOURCE_CONTRACTS": "unset",
             "QCORE_RETURN_CENSUS": environment.get("QCORE_RETURN_CENSUS", "unset"),
             "QCORE_INDIRECT_CENSUS": environment.get("QCORE_INDIRECT_CENSUS", "unset"),
+            "QCORE_STATEMENT_CENSUS": environment.get("QCORE_STATEMENT_CENSUS", "unset"),
         },
         "start": datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }

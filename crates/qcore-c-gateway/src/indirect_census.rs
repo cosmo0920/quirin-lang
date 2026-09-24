@@ -430,6 +430,22 @@ fn names_in(texts: &[&str], names: &BTreeSet<String>) -> Vec<String> {
 
 /// The declaration reader's own answer for one name, as a census label.
 fn declared_label(context: &Context<'_>, name: &str) -> Option<String> {
+    let Some(label) = declared_type_label(context, name) else {
+        if context.typed_model.is_enum_constant(name) {
+            return Some("enum_constant".to_owned());
+        }
+        return context
+            .typed_model
+            .scalar_type_name(&[name])
+            .then(|| "scalar_type_name".to_owned());
+    };
+    Some(match context.typed_types.scalar_element(name) {
+        Some(element) => format!("{label}|element:{element:?}"),
+        None => label,
+    })
+}
+
+fn declared_type_label(context: &Context<'_>, name: &str) -> Option<String> {
     Some(match context.typed_types.declared_type(name)? {
         DeclaredType::Scalar => "scalar".to_owned(),
         DeclaredType::Record(tag) => format!("record:{tag}"),
@@ -989,6 +1005,90 @@ pub(crate) fn record_return(
         return;
     };
     if let Ok(line) = serde_json::to_string(&leaf) {
+        let _ = writeln!(writer, "{line}");
+        let _ = writer.flush();
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Card W43-INDIRECT-ACCESS-GENERAL
+// ---------------------------------------------------------------------------
+
+/// The environment variable naming the statement census stream: one record per
+/// statement the classifier refused, or lowered to an indirect destination
+/// only an out-parameter contract can sanction. Read only with the
+/// `indirect-census` feature on.
+pub const STATEMENT_CENSUS_PATH_VARIABLE: &str = "QCORE_STATEMENT_CENSUS";
+
+static STATEMENTS: Mutex<Option<Option<BufWriter<File>>>> = Mutex::new(None);
+
+/// One classified statement of the statement census.
+#[derive(Clone, Debug, serde::Serialize)]
+pub struct StatementRecord {
+    pub unit_seq: u64,
+    pub function: String,
+    /// The statement's attributed internal preprocessed line.
+    pub line: usize,
+    /// The refusal description, or `indirect destination `*p``.
+    pub outcome: String,
+    pub texts: Vec<String>,
+    pub derived_names: Vec<String>,
+    pub owned_names: Vec<String>,
+    pub declared: std::collections::BTreeMap<String, String>,
+    /// [`FunctionTypes::may_bind`] per identifier of the statement.
+    pub may_bind: Vec<String>,
+    /// Every access chain in the whole statement, as the indirect census
+    /// reads it (member classes in the record reader's own vocabulary).
+    pub chains: Vec<Chain>,
+}
+
+/// Record one already-classified statement. A no-op unless
+/// [`STATEMENT_CENSUS_PATH_VARIABLE`] names a path.
+pub(crate) fn record_statement(
+    context: &Context<'_>,
+    line: usize,
+    texts: &[&str],
+    outcome: String,
+    bindings: &BodyBindings,
+) {
+    if std::env::var_os(STATEMENT_CENSUS_PATH_VARIABLE).is_none() {
+        return;
+    }
+    let record = StatementRecord {
+        unit_seq: UNIT_SEQ.load(Ordering::Relaxed),
+        function: context.function.to_owned(),
+        line,
+        outcome,
+        texts: texts.iter().map(|text| (*text).to_owned()).collect(),
+        derived_names: names_in(texts, &bindings.derived),
+        owned_names: names_in(texts, &bindings.owned),
+        declared: texts
+            .iter()
+            .filter(|text| is_name(text))
+            .filter_map(|name| {
+                declared_label(context, name).map(|label| ((*name).to_owned(), label))
+            })
+            .collect(),
+        may_bind: texts
+            .iter()
+            .filter(|text| is_name(text) && context.typed_types.may_bind(text))
+            .map(|text| (*text).to_owned())
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+            .collect(),
+        chains: chains(context, texts, &(0..texts.len()).collect::<Vec<_>>()),
+    };
+    let Ok(mut guard) = STATEMENTS.lock() else {
+        return;
+    };
+    let opened = guard.get_or_insert_with(|| {
+        let path = std::env::var_os(STATEMENT_CENSUS_PATH_VARIABLE)?;
+        File::create(path).ok().map(BufWriter::new)
+    });
+    let Some(writer) = opened.as_mut() else {
+        return;
+    };
+    if let Ok(line) = serde_json::to_string(&record) {
         let _ = writeln!(writer, "{line}");
         let _ = writer.flush();
     }
