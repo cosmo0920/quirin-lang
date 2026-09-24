@@ -120,6 +120,8 @@ fn vector(summary: &LegacyFunctionSummary) -> Vec<String> {
             LegacyDiagnosticKind::DoubleRelease { .. } => "double_release".to_owned(),
             LegacyDiagnosticKind::ReleaseAfterEscape { .. } => "release_after_escape".to_owned(),
             LegacyDiagnosticKind::CustodyConflict { .. } => "custody_conflict".to_owned(),
+            LegacyDiagnosticKind::InvalidRelease { .. } => "invalid_release".to_owned(),
+            LegacyDiagnosticKind::UseAfterRelease { .. } => "use_after_release".to_owned(),
             LegacyDiagnosticKind::Unsupported { .. } => "unsupported".to_owned(),
             LegacyDiagnosticKind::SummaryConflict { .. } => "summary_conflict".to_owned(),
         })

@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 294
+  "named_followups": 297
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W43-LIBC-CONTRACTS, 2026-09-23. Declarative arbiter, one audit binary for both stages. BEFORE reproduces the W43-RETURN-EXPRESSION diagnostics byte for byte. AFTER selects eleven new libc/ modules (55 trusted libc/POSIX declarations in providers/quirin-provider-libc): 314 leaves removed, 27 added, all attributed (229 declared-callee, 4 newly-Safe callee summaries, 86 same line, 22 same function); 22 functions Unknown -> Safe, each relative to the declared premises; 0 unit status moves. Leak 272 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-libc-contracts/previous-corpus-row.json.",
+   "note": "W43-LIBC-RESULT-ALIAS, 2026-09-24. Staged arbiter: BEFORE (base binary) reproduces the W43-LIBC-CONTRACTS diagnostics byte for byte; the card's binary with no new declaration (reader change alone) reproduces all five BEFORE artifacts byte for byte; seven exact-alias declarations then remove 169 leaves and add 20, and six interior-pointer declarations remove 14 and add 1, all attributed. 12 functions Unknown -> Safe, each relative to the declared premises; 0 unit status moves; 0 invalid_release and 0 use_after_release candidates. Leak 272 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-libc-result-alias/previous-corpus-row.json.",
    "units": 185,
    "safe": 2,
    "provisional_unsafe": 42,
@@ -6642,15 +6642,15 @@
    "projected_functions": 4834,
    "leak_diagnostics": 272,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w43-libc-contracts/artifacts/",
-   "source": "docs/reports/w43-libc-contracts/README.md; preceding baseline docs/reports/w43-return-expression/artifacts/",
-   "unknown_alias_diagnostics": 4655,
-   "unsupported_diagnostics": 49094,
+   "baseline": "docs/reports/w43-libc-result-alias/artifacts/",
+   "source": "docs/reports/w43-libc-result-alias/README.md; preceding baseline docs/reports/w43-libc-contracts/artifacts/",
+   "unknown_alias_diagnostics": 4657,
+   "unsupported_diagnostics": 48930,
    "double_release_diagnostics": 0,
    "function_statuses": {
-    "safe": 245,
+    "safe": 257,
     "provisional_unsafe": 84,
-    "unknown": 4505
+    "unknown": 4493
    },
    "source_definitions": 4921,
    "unprojected_definitions": 87,
@@ -7897,13 +7897,6 @@
    "recorded_by": "WAVE-36-CLOSE"
   },
   {
-   "id": "LIBC-MEM-RESULT-ALIAS",
-   "title": "v1 cannot say a result aliases parameter 1, so memcpy/memset stay undeclared",
-   "why": "`memcpy`/`memset` were read and DELIBERATELY NOT declared by W36-CORPUS-CONTRACTS-3, because resource-v1 has no way to say 'the result aliases parameter 1'. Worth roughly 9 sole-blocked functions plus 130 leaves for one vocabulary addition, which makes it the highest-yield single item the card found. DISCHARGE: a v1 result mode meaning exactly that.",
-   "source": "docs/reports/w36-corpus-contracts-3/README.md",
-   "recorded_by": "WAVE-36-CLOSE"
-  },
-  {
    "id": "ADD-NAME-COLLISION",
    "title": "`add` cannot be declared: three definitions, three signatures, one of them static inline",
    "why": "Declined by W36-CORPUS-CONTRACTS-3 because the pinned corpus carries three distinct definitions of `add` with three signatures, the cmetrics one `static inline` with no header declaration, and a `.qcore` declaration is corpus-wide. DISCHARGE: a unit-scoped declaration vocabulary, which v1 has none of; W4 summary inference is the right lever meanwhile. RESTATED by card W37-CORPUS-CONTRACTS-4 (wave 37, section 10 item 10; applied at the wave-37 close in the card's words): the rule is about definitions that DISAGREE, not about several definitions. Four identical vendored copies are safe to declare; three copies with three signatures are not. Without that refinement the rule would have declined that card's largest module.",
@@ -8821,23 +8814,9 @@
    "recorded_by": "QUIRIN-PROVIDER-SHARED"
   },
   {
-   "id": "W43-LIBC-POINTER-QUALIFIER-READER",
-   "title": "The declared-ABI reader withdraws every prototype that spells a qualifier after the `*` (`T *__restrict p`), which blocks the printf family and 10 other faithful libc declarations",
-   "why": "Card W43-LIBC-CONTRACTS measured what LOADER-ABI-RESTRICT-QUALIFIER asked for: `project_declarator` (crates/qcore-c-gateway/src/legacy_declared_abi.rs) counts only TRAILING `*` words, so a parameter spelled `const char *__restrict __format` ends in a qualifier, has zero trailing stars and a `*` in its head, and projects to `None` (`abi-unreadable-declaration`). A five-unit probe isolates the token: the same printf prototype without `__restrict` agrees. In the trial arbiter the drafted declarations of printf, fprintf, snprintf, sprintf, stat, strftime, gettimeofday, getsockopt, getpeername, dlsym, cnd_timedwait, pthread_sigmask, regexec and regerror were withdrawn at every call site (2,577 withdrawn call-site leaves, 1,192 fprintf and 1,290 snprintf), so none was shipped. A qualifier after the last `*` qualifies the parameter object itself and is dropped for type compatibility (C11 6.7.6.3p15), so reading it is a faithful widening, but it is analyzer semantics: it needs Rust, a Lean model of the projection step and a re-arbiter. memcpy/memset/strcpy also spell `__restrict`, so LIBC-MEM-RESULT-ALIAS's result mode alone would not make them declarable. LIBC-PRINTF-FAMILY stays open behind this. Discharge condition: the reader drops top-level qualifiers after the last `*` (and still refuses a qualifier between two `*`), with matching audited Lean and tests, then a declarative card lands the 14 prototypes above with its own leaf-by-leaf attribution.",
-   "source": "docs/reports/w43-libc-contracts/README.md",
-   "recorded_by": "W43-LIBC-CONTRACTS"
-  },
-  {
    "id": "W43-LIBC-ABI-READER-SHAPES",
    "title": "Three more prototype shapes the declared-ABI reader cannot project keep six faithful libc callees undeclared: `__CONST_SOCKADDR_ARG`, an enum typedef, and `va_list`",
    "why": "Card W43-LIBC-CONTRACTS drafted and measured them: `bind`/`connect` take `__CONST_SOCKADDR_ARG`, a transparent union under `_GNU_SOURCE` (withdrawn at every call site); `getrlimit`/`setrlimit` take the enumeration typedef `__rlimit_resource_t` (withdrawn at every call site); `vprintf`/`vsnprintf` take `__gnuc_va_list` (`__builtin_va_list`), for which the v1 vocabulary has no spelling at all. Each custody statement is otherwise the neutral element. Discharge condition: a measured reader widening per shape (transparent union of object pointers -> pointer projection; enum typedef -> its integer projection; a va_list spelling) with Lean parity, or a recorded decision that the shape stays refused.",
-   "source": "docs/reports/w43-libc-contracts/README.md",
-   "recorded_by": "W43-LIBC-CONTRACTS"
-  },
-  {
-   "id": "W43-LIBC-RESULT-ALIAS-NAMES",
-   "title": "Thirteen more libc callees than LIBC-MEM-RESULT-ALIAS names return an alias of an argument or of retained storage",
-   "why": "Card W43-LIBC-CONTRACTS inventoried every libc/POSIX callee of the uncontracted-call family. Besides memcpy and memset (LIBC-MEM-RESULT-ALIAS), memmove, strcpy and strncpy return their first argument; strchr, strrchr, strstr, strcasestr, memchr and memrchr return a pointer into it; gmtime_r and localtime_r return their second argument; realpath returns its second argument or a fresh malloc allocation; pthread_getspecific returns a pointer an earlier pthread_setspecific retained. resource_return_none() would drop the alias, so none was declared. Measured yield at the W43-LIBC-CONTRACTS baseline: memcpy 8 sole-blocked functions, memset 2, memmove 1, the rest 0. Discharge condition: the result mode LIBC-MEM-RESULT-ALIAS asks for (plus an interior-pointer and a conditional-alias reading, or a recorded refusal for those), and W43-LIBC-POINTER-QUALIFIER-READER for the `__restrict` prototypes among them.",
    "source": "docs/reports/w43-libc-contracts/README.md",
    "recorded_by": "W43-LIBC-CONTRACTS"
   },
@@ -8910,6 +8889,48 @@
    "why": "Card CONTRACT-INHERIT's elaboration (elaborate_contract_module) is interpreter-independent and proves (Lean rename_preserves_meaning) that the positional renaming preserves meaning for any reading that resolves clause words by parameter lookup, but a consumer that reads some positions structurally can diverge (Lean positional_reading_can_diverge), so each consumer must compare its own reading of child and parent before trusting an inherited contract. Only the resource-v1 loader has that comparison. contract_observation, chunk_contract, the lifecycle and source-bound adapters and the frontend's contract envelope all receive unresolved inclusion as a Q000 parse refusal (fail-closed), which is correct but means an observation or lifecycle policy cannot be inherited. Discharge: for each consumer that should accept inherited contracts, add its reading-equality gate over elaborated text with negative controls, or record that it stays refusing.",
    "source": "docs/reports/contract-inherit/README.md",
    "recorded_by": "CONTRACT-INHERIT"
+  },
+  {
+   "id": "W43-RESULT-ALIAS-ACCUSING-UNEXERCISED-IN-CORPUS",
+   "title": "The two derived-pointer violation candidates (`invalid_release`, `use_after_release`) reach no function of the pinned corpus",
+   "why": "Card W43-LIBC-RESULT-ALIAS added `LegacyDiagnosticKind::InvalidRelease` (an interior pointer from a declared derived result handed to a release) and `UseAfterRelease` (a derived pointer used, released or returned on a path where its base was released), both reported from settled states by `report_derived_pointer_violations`. They are unit-tested in crates/qcore-c-gateway/tests/derived_result.rs and modelled in QCore.DerivedResult, but the arbiter over the 185 pinned units added **zero** leaves of either category: no modeled use or release of a derived binding in the corpus follows a release of a tracked base, and no interior result reaches a release. The unchanged provisional-Unsafe count therefore records the absence of such code in the corpus, not a verification of the arms (the RETURN-POSITION-ACCUSING-UNEXERCISED-IN-CORPUS shape). Discharge condition: a pinned or held-out real-code fixture in which a declared derived result's base is released before a use, or an interior result is released, reaches the arm, with the leaf attributed and never presented as an upstream defect.",
+   "source": "docs/reports/w43-libc-result-alias/README.md",
+   "recorded_by": "W43-LIBC-RESULT-ALIAS"
+  },
+  {
+   "id": "W43-RESULT-ALIAS-CONST-WRITE",
+   "title": "A derived result that dropped `const` records it, but no check refuses a write through it at a borrowed position",
+   "why": "Card W43-LIBC-RESULT-ALIAS's loader sets `const_dropped` on a derived result whose base is `ptr<const, u8>` under a `ptr<mut, u8>` result (`strchr`, `strrchr`, `strstr`, `strcasestr`, `memchr`, `memrchr`), and the gateway carries it on the derived binding through copies, joins and re-derivation (QCore.DerivedResult.const_dropped_survives_derivation). A direct write through such a pointer (`*p = 0`) is already refused by the indirect-store gate, but a contracted callee that writes through a `resource_borrowed` parameter (`memcpy(p, ...)`, `strcpy(p, ...)`) is not distinguished from one that reads, because the v1 vocabulary has no per-parameter read/write fact and the transfer function does not see declared ABI types. Writing through a pointer derived from an object defined `const` is undefined (C11 6.7.3p6), but that is a const-correctness property outside the custody projection. Discharge condition: either a read/write distinction on borrowed parameters (or the declared `ptr<mut, …>` type threaded to the transfer function) with a refusal at a const-dropped actual, measured on the corpus, or a recorded decision that const-correctness stays outside the published verdict's property.",
+   "source": "docs/reports/w43-libc-result-alias/README.md",
+   "recorded_by": "W43-LIBC-RESULT-ALIAS"
+  },
+  {
+   "id": "W43-RESULT-ALIAS-RETURNED",
+   "title": "Returning a derived result is refused, so a wrapper that returns `memcpy(...)` or `strcasestr(...)` stays Unknown",
+   "why": "Card W43-LIBC-RESULT-ALIAS refuses every escape of a derived pointer (`return p;` with `p` derived, and `legacy_return_call::escapes_only_fresh_custody` answers false for `Derived`), because escaping it would either discharge the base (an alias is not fresh custody) or publish a pointer the caller cannot release. W4 has no inferred mode for \"the result is derived from parameter k\" either. Measured cost at the arbiter: `rdxxhash.c` `XXH_memcpy` (`return memcpy(dest, src, size);`), the eighth memcpy-sole-blocked function LIBC-MEM-RESULT-ALIAS counted, and `mk_string.c` `mk_string_casestr` (`return strcasestr(heystack, needle);`) each exchange their uncontracted-call leaf for a return-expression refusal and stay Unknown. Discharge condition: an inferred (validated) derived-result summary for a body whose every exit returns a pointer derived from one borrowed formal, with Lean parity and a re-arbiter, or a recorded refusal.",
+   "source": "docs/reports/w43-libc-result-alias/README.md",
+   "recorded_by": "W43-LIBC-RESULT-ALIAS"
+  },
+  {
+   "id": "W43-RESULT-ALIAS-EXACT-RELEASE",
+   "title": "Releasing an exact alias (`free(memcpy(b, ...))`) is refused rather than credited as the base's release",
+   "why": "The card brief asked that releasing any derived result be a violation candidate and not a release of the base. For an EXACT alias that is false of C: `memcpy` returns the value of its first argument, so `free(memcpy(b, s, n))` frees `b` validly. Card W43-LIBC-RESULT-ALIAS therefore splits the rule by extent: an interior pointer handed to a release is an `invalid_release` candidate; an exact alias handed to a release, consumption, store, removal, reallocation or return is refused (`unknown_alias`, the base marked with an unresolved effect so no leak is claimed) and never credited to the base. Crediting it would be faithful but is the discharging direction and needs its own measured admission. No corpus function reaches the shape at the arbiter. Discharge condition: a measured decision to credit an exact alias's release to its base (with Lean parity: the alias's value equals the base's), or this refusal kept on a recorded ground.",
+   "source": "docs/reports/w43-libc-result-alias/README.md",
+   "recorded_by": "W43-LIBC-RESULT-ALIAS"
+  },
+  {
+   "id": "W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED",
+   "title": "`realpath` (argument 2 or fresh allocation) and `pthread_getspecific` (retained storage) stay undeclared",
+   "why": "Of W43-LIBC-RESULT-ALIAS-NAMES's list, card W43-LIBC-RESULT-ALIAS declared the exact aliases (`memcpy`, `memmove`, `memset`, `strcpy`, `strncpy`, `gmtime_r`, `localtime_r`) and the interior pointers (`strchr`, `strrchr`, `strstr`, `strcasestr`, `memchr`, `memrchr`) and refused two by name. `realpath(path, resolved)` returns `resolved` when it is non-null and otherwise a fresh `malloc` allocation the caller must free: its result mode depends on an argument's value, which v1 cannot state (C04.4, no value-dependent modes; `resource_literal_argument(resolved, 0)` could restrict a declaration to the fresh arm, but function names are unique across a selection, so the derived arm would stay undeclared). `pthread_getspecific(key)` returns a pointer an earlier `pthread_setspecific` retained, which aliases no argument of this call. Measured at the baseline: 1 leaf / 1 function for `realpath`, 16 leaves / 15 functions for `pthread_getspecific`; `realpath` sole-blocks no function and `pthread_getspecific` one. Discharge condition: a value-conditional result reading of `realpath` (owned when `resolved` is NULL, derived otherwise) with Lean parity, measured on the corpus, or its literal-premise fresh arm alone; and a retained-storage mode (or recorded refusal) for `pthread_getspecific` together with W43-LIBC-CALLBACK-RETAIN's `pthread_setspecific`.",
+   "source": "docs/reports/w43-libc-result-alias/README.md",
+   "recorded_by": "W43-LIBC-RESULT-ALIAS"
+  },
+  {
+   "id": "W43-LIBC-RESTRICT-PROTOTYPES-UNDECLARED",
+   "title": "Ten faithful `__restrict` libc prototypes are now readable but undeclared; `regexec` and most `getpeername` units keep other reader shapes",
+   "why": "Card W43-LIBC-RESULT-ALIAS repaired the declared-ABI reader (W43-LIBC-POINTER-QUALIFIER-READER) and measured the fourteen prototypes card W43-LIBC-CONTRACTS withdrew, through the same census tool over the 185 captured units (docs/reports/w43-libc-result-alias/abi-evidence.json): printf, fprintf, snprintf and sprintf now agree in all 168 units that declare them; stat (109), strftime (144), gettimeofday (107), getsockopt (105), dlsym (4), cnd_timedwait (83), pthread_sigmask (5) and regerror (1) agree everywhere they are declared; getpeername agrees in 12 units and is still withdrawn in 93, where `_GNU_SOURCE` spells its address as the `__SOCKADDR_ARG` transparent union (W43-LIBC-ABI-READER-SHAPES' bind/connect shape); regexec is still withdrawn in its 1 unit because `regmatch_t __pmatch[__restrict_arr]` puts the qualifier inside an array bound, which the reader refuses. This card declared none of them: the printf family is LIBC-PRINTF-FAMILY's leaf-directed card, and the other ten were outside its brief. Discharge condition: a declarative card lands the ten non-printf prototypes (or refuses them by name) with its own leaf-by-leaf attribution, and the array-bound qualifier is either read (C11 6.7.6.3p7 adjusts `T a[restrict]` to `T *restrict a`) with Lean parity or refused on record.",
+   "source": "docs/reports/w43-libc-result-alias/README.md",
+   "recorded_by": "W43-LIBC-RESULT-ALIAS"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

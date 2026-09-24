@@ -77,6 +77,8 @@ import QCore.TwoDerivationAdmission
 import QCore.SymbolicClassAdmission
 import QCore.DeclaredAbiAgreement
 import QCore.TypedefProjection
+import QCore.PointerQualifierReader
+import QCore.DerivedResult
 import QCore.DeclaredModeAgreement
 import QCore.FrameHelperTask
 import QCore.ControlFlow

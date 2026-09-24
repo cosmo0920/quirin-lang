@@ -63,6 +63,34 @@ pub enum ResourceReturnMode {
         parameter: usize,
         nullable: bool,
     },
+    /// Card W43-LIBC-RESULT-ALIAS: the result is **derived from** the pointer
+    /// passed at `parameter` and owns nothing.
+    ///
+    /// It never acquires, discharges or transfers custody of the base.
+    /// Releasing the result is not a release of the base, and releasing the
+    /// base invalidates the result. `nullable` states whether the call may
+    /// return NULL in place of a derived pointer; `const_dropped` records that
+    /// the base parameter is declared `ptr<const, u8>` while the result is
+    /// `ptr<mut, u8>` (`strchr`'s `const char *` in, `char *` out). The loader
+    /// admits this mode only on a `Borrowed` pointer parameter and a pointer
+    /// result, both of depth one.
+    Derived {
+        parameter: usize,
+        extent: DerivedExtent,
+        nullable: bool,
+        const_dropped: bool,
+    },
+}
+
+/// Which part of the base object a [`ResourceReturnMode::Derived`] result may
+/// designate.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DerivedExtent {
+    /// The result is the base pointer's own value (`memcpy` returns `dst`).
+    Exact,
+    /// The result points somewhere into the base object (`strchr`, `memchr`).
+    Interior,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]

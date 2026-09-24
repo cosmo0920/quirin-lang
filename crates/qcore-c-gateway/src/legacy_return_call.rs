@@ -47,8 +47,8 @@
 //!
 //! # Why the discharging direction is excluded, per result mode
 //!
-//! `ResourceReturnMode` has exactly three constructors, and the soundness
-//! question splits cleanly along them. Write `S` for the abstract state before
+//! `ResourceReturnMode` had exactly three constructors when this route was
+//! written, and the soundness question splits cleanly along them. Write `S` for the abstract state before
 //! the call and `S'` for the state [`super::apply_contract_call`] leaves.
 //!
 //! * [`ResourceReturnMode::None`] — the destination is *removed* from the
@@ -75,6 +75,11 @@
 //!   it. That is precisely "a `Consumed`/`Released` mode discharging a live
 //!   obligation of the caller at that exit", and it is the case ground 2 was
 //!   right about. It keeps the refusal it has today.
+//!
+//! * [`ResourceReturnMode::Derived`] (card W43-LIBC-RESULT-ALIAS, a fourth
+//!   constructor) — **refused, by name**, for the same reason: the result is
+//!   the argument's own value or a pointer into its object, so returning it
+//!   hands the caller an alias of an object whose custody is not fresh.
 //!
 //! The **parameter** modes are applied by `apply_contract_call` unchanged, and
 //! that is not a new trust: a statement-position call has applied them at every
@@ -184,7 +189,10 @@ pub(crate) fn whole_expression_call<'a>(tokens: &'a [Token], texts: &[&'a str]) 
 pub(crate) fn escapes_only_fresh_custody(result: ResourceReturnMode) -> bool {
     match result {
         ResourceReturnMode::None | ResourceReturnMode::Owned { .. } => true,
-        ResourceReturnMode::Reallocated { .. } => false,
+        // Card W43-LIBC-RESULT-ALIAS: returning a pointer derived from an
+        // argument escapes an alias of that argument's object, not fresh
+        // custody, so it is refused by name exactly as a reallocation is.
+        ResourceReturnMode::Reallocated { .. } | ResourceReturnMode::Derived { .. } => false,
     }
 }
 

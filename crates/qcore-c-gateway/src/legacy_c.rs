@@ -67,7 +67,7 @@ use std::process::Stdio;
 pub type LegacyNodeId = usize;
 
 pub use qcore_schemas::contract::{
-    ContractTrust, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
+    ContractTrust, DerivedExtent, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
     ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
 };
 
@@ -531,6 +531,25 @@ pub enum LegacyDiagnosticKind {
         acquisition_line: usize,
     },
     CustodyConflict {
+        acquisition_line: usize,
+    },
+    /// Card W43-LIBC-RESULT-ALIAS: a pointer **into** the object acquired at
+    /// `acquisition_line` — an interior pointer a declared derived result
+    /// produced — was handed to a release. Freeing it is not freeing the
+    /// object; the object's own obligation stays open. A violation
+    /// *candidate*: the projection does not know the pointer's offset, and an
+    /// interior pointer that happens to sit at offset zero would be a valid
+    /// release.
+    InvalidRelease {
+        acquisition_line: usize,
+    },
+    /// Card W43-LIBC-RESULT-ALIAS: a pointer derived from the object acquired
+    /// at `acquisition_line` was used after that object was released on some
+    /// path reaching the use. The value of a pointer to an object whose
+    /// lifetime has ended is indeterminate (C11 6.2.4p2). A violation
+    /// candidate, reported only for a derived binding that resolves to one
+    /// identity.
+    UseAfterRelease {
         acquisition_line: usize,
     },
     UnknownAlias {
@@ -4859,9 +4878,14 @@ impl Parser<'_> {
                 // A call result carrying custody may only be stored into a
                 // member declared with exactly one `*`; a scalar member cannot
                 // hold an identity, and no other member shape is admitted.
+                // Card W43-LIBC-RESULT-ALIAS: a derived result is never stored
+                // into a member either. A field link would make an escape of
+                // the aggregate cascade to the *base*, which the derived
+                // pointer does not own.
                 if let Some(store) = &admitted_store
                     && !matches!(contract.result, ResourceReturnMode::None)
-                    && !store.pointer_field
+                    && (!store.pointer_field
+                        || matches!(contract.result, ResourceReturnMode::Derived { .. }))
                 {
                     #[cfg(feature = "indirect-census")]
                     self.census_indirect(
@@ -4884,7 +4908,14 @@ impl Parser<'_> {
                         writes: self.refused_writes(&texts),
                     };
                 }
-                if !matches!(contract.result, ResourceReturnMode::None) && destination.is_none() {
+                // Card W43-LIBC-RESULT-ALIAS: a discarded derived result is
+                // exactly a discarded `None` — it owns nothing, and no later
+                // statement can use a value nothing holds (`memcpy(d, s, n);`).
+                if !matches!(
+                    contract.result,
+                    ResourceReturnMode::None | ResourceReturnMode::Derived { .. }
+                ) && destination.is_none()
+                {
                     return LegacyInstruction::Unknown {
                         description: format!("discarded owned result of resource API `{function}`"),
                         writes: self.refused_writes(&texts),
@@ -4962,7 +4993,7 @@ impl Parser<'_> {
                         writes: self.refused_writes(&texts),
                     };
                 }
-                let arguments = contract
+                let mut arguments = contract
                     .parameters
                     .iter()
                     .enumerate()
@@ -4973,13 +5004,43 @@ impl Parser<'_> {
                             .and_then(|argument| contract_argument_place(argument, *mode))
                     })
                     .collect::<Vec<_>>();
-                let produced_count =
-                    usize::from(!matches!(contract.result, ResourceReturnMode::None))
-                        + contract
-                            .parameters
-                            .iter()
-                            .filter(|mode| matches!(mode, ResourceParameterMode::Out { .. }))
-                            .count();
+                // Card W43-LIBC-RESULT-ALIAS: a derived result names its base,
+                // and the base must be something this projection can look up.
+                // `derived_base` reads a place, a place plus or minus one
+                // offset token (which stays inside the same object), or a base
+                // no tracked identity can stand for. Any other expression (a
+                // cast, a call, a member address) could denote a tracked object
+                // under a name the binding would lose, so a later release of
+                // that object would not invalidate the result: a *bound* result
+                // over one is refused rather than bound to nothing. A discarded
+                // result binds nothing and keeps its ordinary argument places.
+                if let ResourceReturnMode::Derived { parameter, .. } = contract.result {
+                    match raw_arguments
+                        .as_ref()
+                        .and_then(|arguments| arguments.get(parameter))
+                        .map(|argument| derived_base(argument))
+                    {
+                        Some(DerivedBase::Place(place)) => arguments[parameter] = Some(place),
+                        Some(DerivedBase::Untracked) => arguments[parameter] = None,
+                        Some(DerivedBase::Unmodeled) | None if destination.is_some() => {
+                            return LegacyInstruction::Unknown {
+                                description: format!(
+                                    "derived result of `{function}` from an unmodeled base expression"
+                                ),
+                                writes: self.refused_writes(&texts),
+                            };
+                        }
+                        Some(DerivedBase::Unmodeled) | None => {}
+                    }
+                }
+                let produced_count = usize::from(!matches!(
+                    contract.result,
+                    ResourceReturnMode::None | ResourceReturnMode::Derived { .. }
+                )) + contract
+                    .parameters
+                    .iter()
+                    .filter(|mode| matches!(mode, ResourceParameterMode::Out { .. }))
+                    .count();
                 let produced_sites = (0..produced_count)
                     .map(|_| {
                         let site = self.next_site;
@@ -5625,6 +5686,46 @@ fn contract_argument_place(argument: &[&str], mode: ResourceParameterMode) -> Op
     }
 }
 
+/// What the base actual of a declared derived result denotes (card
+/// W43-LIBC-RESULT-ALIAS).
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum DerivedBase {
+    /// A place, or a place plus or minus one offset token. C pointer arithmetic
+    /// that is defined stays inside the object the place points to (C11
+    /// 6.5.6p8), so the result is derived from the place's targets.
+    Place(String),
+    /// A string literal or the address of a plain name: an object with static
+    /// or automatic storage that no tracked identity can stand for.
+    Untracked,
+    /// Anything else.
+    Unmodeled,
+}
+
+/// Read the base actual of a declared derived result. Structural only: no
+/// value is computed, and every shape not listed on [`DerivedBase`] is
+/// `Unmodeled`.
+fn derived_base(argument: &[&str]) -> DerivedBase {
+    let argument = strip_parentheses(argument);
+    if let Some(place) = canonical_place(argument) {
+        return DerivedBase::Place(place);
+    }
+    match argument {
+        [literal] if literal.starts_with('"') => return DerivedBase::Untracked,
+        ["&", name] if is_identifier(name) && !matches!(*name, "NULL" | "nullptr") => {
+            return DerivedBase::Untracked;
+        }
+        _ => {}
+    }
+    if let [place @ .., "+" | "-", offset] = argument
+        && (is_identifier(offset) || offset.bytes().all(|byte| byte.is_ascii_digit()))
+        && !matches!(place.last(), Some(&("+" | "-")))
+        && let Some(place) = canonical_place(place)
+    {
+        return DerivedBase::Place(place);
+    }
+    DerivedBase::Unmodeled
+}
+
 fn direct_assignment_destination(tokens: &[&str]) -> Option<String> {
     if tokens.first() == Some(&"*") {
         // A single dereference of a plain identifier is the only indirect
@@ -6155,6 +6256,73 @@ struct AbstractPointer {
     targets: BTreeSet<usize>,
     unknown: bool,
     may_be_null: bool,
+    /// Card W43-LIBC-RESULT-ALIAS: whether this binding *is* its targets'
+    /// identity or a non-owning pointer derived from them by a declared
+    /// [`ResourceReturnMode::Derived`] result. Copied by every alias, joined by
+    /// [`Derivation::join`].
+    derivation: Derivation,
+}
+
+/// How a pointer binding relates to the resource identities it targets.
+///
+/// Card W43-LIBC-RESULT-ALIAS. A `Derived` binding shares its base's targets,
+/// so releasing the base invalidates it through the ordinary site status, but
+/// it owns nothing: a release, escape, consumption, store or reallocation
+/// through it is never applied to the base (see [`derived_custody_refusal`]),
+/// its null test narrows only itself, and its nullness never flows back onto
+/// the base's site.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+enum Derivation {
+    /// The binding denotes its targets' identities themselves.
+    #[default]
+    Identity,
+    /// The binding was produced by a declared derived result.
+    Derived {
+        extent: DerivedExtent,
+        const_dropped: bool,
+    },
+    /// Different paths disagree. Treated as derived wherever that refuses, and
+    /// never as derived where that would accuse.
+    Mixed,
+}
+
+impl Derivation {
+    const fn is_identity(self) -> bool {
+        matches!(self, Self::Identity)
+    }
+
+    /// Join two paths' derivations. A definitely-null binding carries no
+    /// relation, so it takes the other path's; otherwise equal derivations are
+    /// kept, `const_dropped` is joined by disjunction within one extent, and any
+    /// other disagreement is `Mixed`.
+    fn join(one: &AbstractPointer, other: &AbstractPointer) -> Self {
+        let definitely_null = |pointer: &AbstractPointer| {
+            pointer.targets.is_empty() && !pointer.unknown && pointer.may_be_null
+        };
+        if definitely_null(other) {
+            return one.derivation;
+        }
+        if definitely_null(one) {
+            return other.derivation;
+        }
+        match (one.derivation, other.derivation) {
+            (left, right) if left == right => left,
+            (
+                Self::Derived {
+                    extent,
+                    const_dropped,
+                },
+                Self::Derived {
+                    extent: other_extent,
+                    const_dropped: other_dropped,
+                },
+            ) if extent == other_extent => Self::Derived {
+                extent,
+                const_dropped: const_dropped || other_dropped,
+            },
+            _ => Self::Mixed,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -6199,6 +6367,7 @@ impl AbstractState {
                 incoming.pointers.get(&variable),
             ) {
                 (Some(mut current), Some(other)) => {
+                    current.derivation = Derivation::join(&current, other);
                     current.targets.extend(other.targets.iter().copied());
                     current.unknown |= other.unknown;
                     current.may_be_null |= other.may_be_null;
@@ -6234,7 +6403,9 @@ impl AbstractState {
         self.unresolved_effect_sites
             .extend(incoming.unresolved_effect_sites.iter().copied());
         for pointer in self.pointers.values() {
-            if pointer.may_be_null {
+            // Card W43-LIBC-RESULT-ALIAS: a derived pointer's nullness is its
+            // own (`strchr` returns NULL for a live base), never its base's.
+            if pointer.may_be_null && !matches!(pointer.derivation, Derivation::Derived { .. }) {
                 self.nullable_sites.extend(pointer.targets.iter().copied());
             }
         }
@@ -6620,6 +6791,11 @@ impl EntryCustody {
                 ResourceReturnMode::None => false,
                 ResourceReturnMode::Owned { nullable }
                 | ResourceReturnMode::Reallocated { nullable, .. } => nullable,
+                // Card W43-LIBC-RESULT-ALIAS: no exit can exhibit "the result
+                // is derived from parameter k", so a body is never checked
+                // against a declared derived result; it is analysed
+                // contract-free instead.
+                ResourceReturnMode::Derived { .. } => return None,
             },
         };
         for (index, mode) in contract.parameters.iter().copied().enumerate() {
@@ -6650,6 +6826,7 @@ impl EntryCustody {
                     targets: BTreeSet::from([site]),
                     unknown: false,
                     may_be_null: nullable,
+                    derivation: Derivation::Identity,
                 },
             );
             if nullable {
@@ -6799,7 +6976,16 @@ pub(crate) enum OutSlotValue {
 fn observe_out_slot(state: &AbstractState, place: &str) -> OutSlotValue {
     match state.pointers.get(place) {
         None => OutSlotValue::Unwritten,
-        Some(pointer) if pointer.unknown || pointer.targets.len() > 1 => OutSlotValue::Ambiguous,
+        // Card W43-LIBC-RESULT-ALIAS: a derived pointer is not the identity it
+        // targets, so a slot holding one delivers no custody a summary could
+        // name.
+        Some(pointer)
+            if pointer.unknown
+                || pointer.targets.len() > 1
+                || !pointer.derivation.is_identity() =>
+        {
+            OutSlotValue::Ambiguous
+        }
         Some(pointer) => match pointer.targets.first().copied() {
             None => OutSlotValue::Null,
             Some(site) => OutSlotValue::Site {
@@ -6851,7 +7037,13 @@ fn observe_exit(
         LegacyInstruction::EscapeIfOwned { source } | LegacyInstruction::Escape { source } => {
             match state.pointers.get(source) {
                 None => ReturnedValue::None,
-                Some(pointer) if pointer.unknown || pointer.targets.len() > 1 => {
+                // Card W43-LIBC-RESULT-ALIAS: nor does a returned derived
+                // pointer (whose escape the transfer already refused).
+                Some(pointer)
+                    if pointer.unknown
+                        || pointer.targets.len() > 1
+                        || !pointer.derivation.is_identity() =>
+                {
                     ReturnedValue::Ambiguous
                 }
                 Some(pointer) => match pointer.targets.first().copied() {
@@ -6969,6 +7161,100 @@ fn report_retained_loop_exit_edges(
                 kind: LegacyDiagnosticKind::Unsupported {
                     description: LOOP_EXIT_EDGE_RETAINED.to_owned(),
                 },
+            });
+        }
+    }
+}
+
+/// Card W43-LIBC-RESULT-ALIAS: the derived-pointer violation candidates, read
+/// from the settled incoming states.
+///
+/// A *use* is an actual at any declared position of a contracted call (its
+/// admitted nested calls included) other than an `Out` slot, which the call
+/// writes rather than reads, and a released or returned place. Only a binding
+/// that is derived on every reaching path and resolves to exactly one identity
+/// is examined; every other binding supports no claim and keeps whatever
+/// answer the transfer function already gave it.
+///
+/// * The identity carries the `RELEASED` bit: the base was released on some
+///   path reaching this use, so the derived value is indeterminate there —
+///   `UseAfterRelease`. This is the `DoubleRelease` reading of the same bit.
+/// * Otherwise, an interior pointer handed to a release — `InvalidRelease`.
+///
+/// Nothing here changes a state; it only reports.
+fn report_derived_pointer_violations(
+    cfg: &LegacyCfg,
+    incoming: &[Option<AbstractState>],
+    acquisition_lines: &BTreeMap<usize, usize>,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    for (node_id, node) in cfg.nodes.iter().enumerate() {
+        let Some(state) = incoming[node_id].as_ref() else {
+            continue;
+        };
+        let mut uses: Vec<(ResourceParameterMode, &str)> = Vec::new();
+        match &node.instruction {
+            LegacyInstruction::ContractCall {
+                arguments,
+                contract,
+                nested,
+                ..
+            } => {
+                let calls = std::iter::once((arguments, contract)).chain(
+                    nested
+                        .iter()
+                        .map(|nested| (&nested.arguments, &nested.contract)),
+                );
+                for (arguments, contract) in calls {
+                    for (mode, argument) in contract.parameters.iter().zip(arguments) {
+                        if matches!(mode, ResourceParameterMode::Out { .. }) {
+                            continue;
+                        }
+                        if let Some(place) = argument.as_deref() {
+                            uses.push((*mode, place));
+                        }
+                    }
+                }
+            }
+            LegacyInstruction::Release { source } => {
+                uses.push((ResourceParameterMode::Released { nullable: false }, source));
+            }
+            LegacyInstruction::Escape { source } | LegacyInstruction::EscapeIfOwned { source } => {
+                uses.push((ResourceParameterMode::Consumed { nullable: true }, source));
+            }
+            _ => continue,
+        }
+        for (mode, place) in uses {
+            let Some(pointer) = state.pointers.get(place) else {
+                continue;
+            };
+            if !matches!(pointer.derivation, Derivation::Derived { .. })
+                || pointer.unknown
+                || pointer.targets.len() != 1
+            {
+                continue;
+            }
+            let Some(site) = pointer.targets.first().copied() else {
+                continue;
+            };
+            let Some(status) = state.resources.get(&site).copied() else {
+                continue;
+            };
+            let kind = if status & RELEASED != 0 {
+                LegacyDiagnosticKind::UseAfterRelease {
+                    acquisition_line: acquisition_line(acquisition_lines, site),
+                }
+            } else if derived_release_is_accusable(mode, pointer) {
+                LegacyDiagnosticKind::InvalidRelease {
+                    acquisition_line: acquisition_line(acquisition_lines, site),
+                }
+            } else {
+                continue;
+            };
+            diagnostics.insert(LegacyDiagnostic {
+                function: cfg.function.clone(),
+                line: node.line,
+                kind,
             });
         }
     }
@@ -7104,6 +7390,8 @@ fn classify_diagnostics(diagnostics: &[LegacyDiagnostic]) -> AnalysisStatus {
                 | LegacyDiagnosticKind::DoubleRelease { .. }
                 | LegacyDiagnosticKind::ReleaseAfterEscape { .. }
                 | LegacyDiagnosticKind::CustodyConflict { .. }
+                | LegacyDiagnosticKind::InvalidRelease { .. }
+                | LegacyDiagnosticKind::UseAfterRelease { .. }
         )
     });
     let unknown_found = diagnostics.iter().any(|diagnostic| {
@@ -7335,6 +7623,10 @@ pub(crate) fn analyze_cfg_with_entry(
     // [`crate::borrow_liveness`].
     require_live_borrowed_actuals(&cfg, &incoming, &mut diagnostics);
     report_retained_loop_exit_edges(&cfg, &incoming, &mut diagnostics);
+    // Card W43-LIBC-RESULT-ALIAS: the two derived-pointer violation candidates,
+    // read from the same settled states for the same reason — a binding's
+    // derivation can still widen to `Mixed` on a later iterate.
+    report_derived_pointer_violations(&cfg, &incoming, &acquisition_lines, &mut diagnostics);
 
     // Read the settled exit states once the work list is stable, so that a
     // summary describes the joined behavior of every reachable return rather
@@ -7400,6 +7692,8 @@ fn is_path_poisoning(diagnostic: &LegacyDiagnostic) -> bool {
             | LegacyDiagnosticKind::DoubleRelease { .. }
             | LegacyDiagnosticKind::ReleaseAfterEscape { .. }
             | LegacyDiagnosticKind::CustodyConflict { .. }
+            | LegacyDiagnosticKind::InvalidRelease { .. }
+            | LegacyDiagnosticKind::UseAfterRelease { .. }
     )
 }
 
@@ -7684,6 +7978,31 @@ fn transfer(
         reject_unsanctioned_store(function, node.line, destination, &mut state, diagnostics);
         return state;
     }
+    // Card W43-LIBC-RESULT-ALIAS: a derived pointer stored through a sanctioned
+    // out slot would be observed at the exit as delivering its base's
+    // identity, which a W4 summary could then publish as fresh `Out` custody.
+    // The store is refused and the slot left as it was.
+    if let LegacyInstruction::Alias {
+        destination,
+        source,
+    } = &node.instruction
+        && is_indirect_place(destination)
+        && let Some(pointer) = state
+            .pointers
+            .get(source)
+            .filter(|pointer| !pointer.derivation.is_identity())
+            .cloned()
+    {
+        diagnostics.insert(LegacyDiagnostic {
+            function: function.to_owned(),
+            line: node.line,
+            kind: LegacyDiagnosticKind::UnknownAlias {
+                variable: destination.clone(),
+            },
+        });
+        mark_unresolved_effect(&mut state, &pointer);
+        return state;
+    }
     // Forwarded Out arguments denote indirect writes just like *out = value.
     // A local alias or an unbound pointer must never gain a fabricated slot.
     if let LegacyInstruction::ContractCall {
@@ -7863,6 +8182,7 @@ fn transfer(
                     targets: BTreeSet::from([*site]),
                     unknown: false,
                     may_be_null: false,
+                    derivation: Derivation::Identity,
                 },
             );
         }
@@ -7882,6 +8202,7 @@ fn transfer(
                     targets: BTreeSet::new(),
                     unknown: true,
                     may_be_null: true,
+                    derivation: Derivation::Identity,
                 }
             });
             state.pointers.insert(destination.clone(), pointer);
@@ -8029,6 +8350,7 @@ fn transfer(
                     targets: BTreeSet::new(),
                     unknown: true,
                     may_be_null: true,
+                    derivation: Derivation::Identity,
                 },
             );
         }
@@ -8144,6 +8466,32 @@ fn transfer(
         }
     }
     if let Some((owner_site, field, place)) = stored_field {
+        // Card W43-LIBC-RESULT-ALIAS: a derived pointer stored into a member
+        // would link the *base* under the aggregate, so escaping the aggregate
+        // would cascade to an object the member does not own. Refuse the link.
+        if let Some(pointer) = state
+            .pointers
+            .get(&place)
+            .filter(|pointer| !pointer.derivation.is_identity())
+            .cloned()
+        {
+            diagnostics.insert(LegacyDiagnostic {
+                function: function.to_owned(),
+                line: node.line,
+                kind: LegacyDiagnosticKind::UnknownAlias {
+                    variable: place.clone(),
+                },
+            });
+            mark_unresolved_effect(&mut state, &pointer);
+            state.pointers.remove(&place);
+            if let Some(fields) = state.field_links.get_mut(&owner_site) {
+                fields.remove(&field);
+                if fields.is_empty() {
+                    state.field_links.remove(&owner_site);
+                }
+            }
+            return state;
+        }
         let children = state
             .pointers
             .get(&place)
@@ -8208,7 +8556,7 @@ fn bound_read_resolves(state: &AbstractState, place: &str, caller_sites: &BTreeS
     let Some(pointer) = state.pointers.get(place) else {
         return false;
     };
-    if pointer.unknown || pointer.targets.is_empty() {
+    if pointer.unknown || pointer.targets.is_empty() || !pointer.derivation.is_identity() {
         return false;
     }
     if state
@@ -8232,7 +8580,13 @@ fn resolved_aggregate_owner(
     caller_sites: &BTreeSet<usize>,
 ) -> Option<usize> {
     let pointer = state.pointers.get(owner)?;
-    if pointer.unknown || pointer.may_be_null || pointer.targets.len() != 1 {
+    // Card W43-LIBC-RESULT-ALIAS: a derived pointer is not the aggregate's own
+    // identity, so it resolves no owner.
+    if pointer.unknown
+        || pointer.may_be_null
+        || pointer.targets.len() != 1
+        || !pointer.derivation.is_identity()
+    {
         return None;
     }
     let site = pointer.targets.first().copied()?;
@@ -8254,7 +8608,12 @@ fn scalar_member_store_base_resolves(state: &AbstractState, base: &str) -> bool 
     let Some(pointer) = state.pointers.get(base) else {
         return false;
     };
-    if pointer.unknown || pointer.may_be_null || pointer.targets.len() != 1 {
+    // Card W43-LIBC-RESULT-ALIAS: nor is a derived pointer a store base.
+    if pointer.unknown
+        || pointer.may_be_null
+        || pointer.targets.len() != 1
+        || !pointer.derivation.is_identity()
+    {
         return false;
     }
     let Some(site) = pointer.targets.first() else {
@@ -8284,7 +8643,19 @@ fn apply_resource_action(
             targets: BTreeSet::new(),
             unknown: true,
             may_be_null: true,
+            derivation: Derivation::Identity,
         });
+    // Card W43-LIBC-RESULT-ALIAS: never release, escape or consume a base
+    // through a pointer derived from it.
+    if !pointer.derivation.is_identity() {
+        let mode = if escape {
+            ResourceParameterMode::Consumed { nullable }
+        } else {
+            ResourceParameterMode::Released { nullable }
+        };
+        derived_custody_refusal(function, line, source, &pointer, mode, state, diagnostics);
+        return;
+    }
     let unresolved = pointer.unknown
         || pointer.targets.len() > 1
         || (!nullable && (pointer.targets.is_empty() || pointer.may_be_null));
@@ -8499,6 +8870,36 @@ fn apply_contract_call(
     acquisition_lines: &BTreeMap<usize, usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
+    // Card W43-LIBC-RESULT-ALIAS: a derived pointer owns nothing, so no
+    // custody-bearing parameter effect is ever applied through one. Each such
+    // position is skipped below; the one accusable shape (an interior pointer
+    // handed to a release) is reported from the settled states by
+    // `report_derived_pointer_violations`, and every other one refuses here.
+    let mut derived_positions = BTreeSet::new();
+    for (index, mode) in contract.parameters.iter().copied().enumerate() {
+        if matches!(
+            mode,
+            ResourceParameterMode::Borrowed | ResourceParameterMode::Out { .. }
+        ) {
+            continue;
+        }
+        let Some(source) = arguments.get(index).and_then(Option::as_deref) else {
+            continue;
+        };
+        let Some(pointer) = state.pointers.get(source).cloned() else {
+            continue;
+        };
+        if pointer.derivation.is_identity() {
+            continue;
+        }
+        derived_positions.insert(index);
+        derived_custody_refusal(function, line, source, &pointer, mode, state, diagnostics);
+    }
+    if let ResourceReturnMode::Reallocated { parameter, .. } = contract.result
+        && derived_positions.contains(&parameter)
+    {
+        return;
+    }
     // Reallocation consumes at most one proven live original on success.
     // A null old value carries no custody only when its input contract permits it.
     // Validate it before any other parameter effect or result allocation.
@@ -8544,6 +8945,39 @@ fn apply_contract_call(
     // essential when the destination aliases a consumed/reallocated argument.
     for (index, mode) in contract.parameters.iter().copied().enumerate() {
         let source = arguments.get(index).and_then(Option::as_deref);
+        if derived_positions.contains(&index) {
+            continue;
+        }
+        // An aggregate owner that is itself a derived pointer relates the child
+        // to an object the owner does not own.
+        if let ResourceParameterMode::Stored {
+            owner_parameter, ..
+        }
+        | ResourceParameterMode::Removed {
+            owner_parameter, ..
+        } = mode
+            && derived_positions.contains(&owner_parameter)
+        {
+            if let Some(source) = source {
+                let child = state
+                    .pointers
+                    .get(source)
+                    .cloned()
+                    .unwrap_or(AbstractPointer {
+                        unknown: true,
+                        ..AbstractPointer::default()
+                    });
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line,
+                    kind: LegacyDiagnosticKind::UnknownAlias {
+                        variable: source.to_owned(),
+                    },
+                });
+                mark_unresolved_effect(state, &child);
+            }
+            continue;
+        }
         match mode {
             ResourceParameterMode::Borrowed | ResourceParameterMode::Out { .. } => {}
             ResourceParameterMode::Owned { nullable } => {
@@ -8688,6 +9122,43 @@ fn apply_contract_call(
                 finalize_replacement_success(state, site);
             }
         }
+        ResourceReturnMode::Derived {
+            parameter,
+            extent,
+            nullable,
+            const_dropped,
+        } => {
+            // A discarded derived result binds nothing and owns nothing, which
+            // is exactly a discarded `None`. One written through an out slot
+            // is refused, as a derived `*out = p;` is in `transfer`.
+            if let Some(destination) = destination.filter(|place| is_indirect_place(place)) {
+                let base = arguments
+                    .get(parameter)
+                    .and_then(Option::as_deref)
+                    .and_then(|base| state.pointers.get(base))
+                    .cloned()
+                    .unwrap_or(AbstractPointer {
+                        unknown: true,
+                        ..AbstractPointer::default()
+                    });
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line,
+                    kind: LegacyDiagnosticKind::UnknownAlias {
+                        variable: destination.to_owned(),
+                    },
+                });
+                mark_unresolved_effect(state, &base);
+            } else if let Some(destination) = destination {
+                let base = arguments
+                    .get(parameter)
+                    .and_then(Option::as_deref)
+                    .and_then(|base| state.pointers.get(base))
+                    .cloned();
+                let derived = derive_pointer(base.as_ref(), extent, nullable, const_dropped);
+                state.pointers.insert(destination.to_owned(), derived);
+            }
+        }
     }
 
     for (index, mode) in contract.parameters.iter().copied().enumerate() {
@@ -8700,6 +9171,112 @@ fn apply_contract_call(
             create_resource(state, destination, site, nullable);
         }
     }
+}
+
+/// The binding a declared derived result gives its destination (card
+/// W43-LIBC-RESULT-ALIAS).
+///
+/// It shares the base binding's targets, so releasing the base invalidates it
+/// through the ordinary site status, and it creates no site and changes no
+/// resource. A base this projection does not track (an untracked name, a
+/// string literal, the address of a plain name) gives an *unknown* derived
+/// binding: nothing it could denote is resolved, so it supports no claim, and
+/// it is still a derived binding, so it can never be escaped or released as if
+/// it owned something. A derived pointer derived again stays derived: interior
+/// unless both steps are exact, `const_dropped` if either step dropped it, and
+/// `Mixed` over a mixed base.
+fn derive_pointer(
+    base: Option<&AbstractPointer>,
+    extent: DerivedExtent,
+    nullable: bool,
+    const_dropped: bool,
+) -> AbstractPointer {
+    let Some(base) = base else {
+        return AbstractPointer {
+            targets: BTreeSet::new(),
+            unknown: true,
+            may_be_null: true,
+            derivation: Derivation::Derived {
+                extent,
+                const_dropped,
+            },
+        };
+    };
+    let derivation = match base.derivation {
+        Derivation::Identity => Derivation::Derived {
+            extent,
+            const_dropped,
+        },
+        Derivation::Derived {
+            extent: base_extent,
+            const_dropped: base_dropped,
+        } => Derivation::Derived {
+            extent: if base_extent == DerivedExtent::Exact && extent == DerivedExtent::Exact {
+                DerivedExtent::Exact
+            } else {
+                DerivedExtent::Interior
+            },
+            const_dropped: const_dropped || base_dropped,
+        },
+        Derivation::Mixed => Derivation::Mixed,
+    };
+    AbstractPointer {
+        targets: base.targets.clone(),
+        unknown: base.unknown,
+        may_be_null: base.may_be_null || nullable,
+        derivation,
+    }
+}
+
+/// Whether a custody-bearing position may *accuse* a derived pointer rather
+/// than refuse: exactly an interior pointer that resolves to one identity,
+/// handed to a release. Freeing a pointer into an object is not freeing the
+/// object (C11 7.22.3.3p2 requires the value an allocator returned). An exact
+/// alias is the base's own value, so releasing it is a release of the base
+/// that this projection declines to credit, and is refused instead.
+fn derived_release_is_accusable(mode: ResourceParameterMode, pointer: &AbstractPointer) -> bool {
+    matches!(mode, ResourceParameterMode::Released { .. })
+        && matches!(
+            pointer.derivation,
+            Derivation::Derived {
+                extent: DerivedExtent::Interior,
+                ..
+            }
+        )
+        && !pointer.unknown
+        && pointer.targets.len() == 1
+}
+
+/// A derived pointer at a custody-bearing position (card W43-LIBC-RESULT-ALIAS).
+///
+/// The effect is never applied: the base's obligation stays exactly as it was.
+/// The accusable shape changes nothing here and is reported from the settled
+/// states. Every other shape refuses: an `UnknownAlias`, and the pointer's
+/// targets carry an unresolved effect, so no residual that depends on this
+/// statement is claimed either way.
+fn derived_custody_refusal(
+    function: &str,
+    line: usize,
+    source: &str,
+    pointer: &AbstractPointer,
+    mode: ResourceParameterMode,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    if derived_release_is_accusable(mode, pointer) {
+        // Reported from the settled states. The path carries a violation
+        // candidate, so its exits support no custody claim.
+        state.unmodeled = true;
+        return;
+    }
+    diagnostics.insert(LegacyDiagnostic {
+        function: function.to_owned(),
+        line,
+        kind: LegacyDiagnosticKind::UnknownAlias {
+            variable: source.to_owned(),
+        },
+    });
+    mark_unresolved_effect(state, pointer);
 }
 
 fn create_resource(state: &mut AbstractState, destination: &str, site: usize, nullable: bool) {
@@ -8720,6 +9297,7 @@ fn create_resource(state: &mut AbstractState, destination: &str, site: usize, nu
             targets: BTreeSet::from([site]),
             unknown: false,
             may_be_null: nullable,
+            derivation: Derivation::Identity,
         },
     );
 }
@@ -8871,7 +9449,10 @@ fn require_live_resource(
         });
         return false;
     };
+    // Card W43-LIBC-RESULT-ALIAS: a derived pointer is not the live identity
+    // an `Owned` position or an aggregate owner requires.
     let invalid = pointer.unknown
+        || !pointer.derivation.is_identity()
         || (!nullable && (pointer.targets.is_empty() || pointer.may_be_null))
         || (!nullable
             && pointer
@@ -8941,6 +9522,28 @@ fn refine_pointer_null(
         // identifier may be an ordinary integer condition, so leave it alone.
         return PointerRefinement::Refined;
     };
+    // Card W43-LIBC-RESULT-ALIAS. A derived pointer's nullness says nothing
+    // about its base: `strchr` returns NULL for a live base, and a null base is
+    // outside every declared derived result. Narrow the derived binding alone
+    // and keep every site and every other alias exactly as they were. Both
+    // edges stay feasible. A binding that is derived on only some paths keeps
+    // the identity refusal, because on the others a null test *would* decide
+    // the site.
+    match pointer.derivation {
+        Derivation::Identity => {}
+        Derivation::Derived { .. } => {
+            let narrowed = state.pointers.get_mut(source).expect("existing binding");
+            if assume_null {
+                narrowed.targets.clear();
+                narrowed.unknown = false;
+                narrowed.may_be_null = true;
+            } else {
+                narrowed.may_be_null = false;
+            }
+            return PointerRefinement::Refined;
+        }
+        Derivation::Mixed => return PointerRefinement::Unknown,
+    }
     if pointer.unknown || pointer.targets.len() > 1 {
         // Nullness is independent of identity. A guard narrows its own
         // binding, never another alias or a resource's existence. Keep the
@@ -8994,7 +9597,9 @@ fn refine_pointer_null(
     } else {
         finalize_replacement_success(state, site);
         for alias in state.pointers.values_mut() {
-            if alias.targets.contains(&site) {
+            // Card W43-LIBC-RESULT-ALIAS: a non-null base does not make a
+            // pointer derived from it non-null.
+            if alias.targets.contains(&site) && alias.derivation.is_identity() {
                 alias.may_be_null = false;
             }
         }

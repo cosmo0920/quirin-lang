@@ -1,0 +1,285 @@
+{
+ "a_reader_change_alone": {
+  "artifacts_byte_identical": {
+   "resource-diagnostics.json": true,
+   "resource-diagnostics.chunk-contracts.json": true,
+   "resource-diagnostics.contracts.json": true,
+   "resource-diagnostics.source-effects.json": true,
+   "monkey-source.json": true
+  },
+  "leaves_moved": 0
+ },
+ "b_exact_alias": {
+  "functions": {
+   "before": {
+    "Safe": 245,
+    "Unknown": 4505,
+    "Unsafe": 84
+   },
+   "after": {
+    "Safe": 256,
+    "Unknown": 4494,
+    "Unsafe": 84
+   }
+  },
+  "units": {
+   "before": {
+    "Safe": 2,
+    "Unknown": 137,
+    "Unsafe": 42,
+    "data_only": 4
+   },
+   "after": {
+    "Safe": 2,
+    "Unknown": 137,
+    "Unsafe": 42,
+    "data_only": 4
+   }
+  },
+  "families": {
+   "leak": [
+    272,
+    272,
+    0
+   ],
+   "summary_conflict": [
+    1,
+    1,
+    0
+   ],
+   "unknown_alias": [
+    4655,
+    4657,
+    2
+   ],
+   "unsupported": [
+    49094,
+    48943,
+    -151
+   ]
+  },
+  "leaves_removed": 169,
+  "leaves_added": 20,
+  "by_class": {
+   "added same-function": 1,
+   "added same-line": 19,
+   "removed declared-callee": 145,
+   "removed newly-safe-callee": 8,
+   "removed same-function": 1,
+   "removed same-line": 15
+  },
+  "status_moves": {
+   "Unknown -> Safe": 11
+  },
+  "moved_functions": [
+   [
+    "ctraces",
+    "ctraces.c",
+    "ctr_opts_init",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "librdkafka",
+    "lz4.c",
+    "LZ4_resetStream",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "librdkafka",
+    "rdxxhash.c",
+    "XXH_read32",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "librdkafka",
+    "rdxxhash.c",
+    "XXH_read64",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "librdkafka",
+    "snappy.c",
+    "get_eight_bytes_at",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "librdkafka",
+    "snappy.c",
+    "get_unaligned32",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "librdkafka",
+    "snappy.c",
+    "get_unaligned64",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "librdkafka",
+    "snappy.c",
+    "put_unaligned16",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "librdkafka",
+    "snappy.c",
+    "put_unaligned32",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "librdkafka",
+    "snappy.c",
+    "put_unaligned64",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "monkey-libevent",
+    "mk_server/mk_fifo.c",
+    "consume_bytes",
+    "Unknown",
+    "Safe"
+   ]
+  ],
+  "unit_status_moves": [],
+  "attribution_complete": true,
+  "violation_candidates": []
+ },
+ "b_interior_pointer": {
+  "functions": {
+   "before": {
+    "Safe": 256,
+    "Unknown": 4494,
+    "Unsafe": 84
+   },
+   "after": {
+    "Safe": 257,
+    "Unknown": 4493,
+    "Unsafe": 84
+   }
+  },
+  "units": {
+   "before": {
+    "Safe": 2,
+    "Unknown": 137,
+    "Unsafe": 42,
+    "data_only": 4
+   },
+   "after": {
+    "Safe": 2,
+    "Unknown": 137,
+    "Unsafe": 42,
+    "data_only": 4
+   }
+  },
+  "families": {
+   "leak": [
+    272,
+    272,
+    0
+   ],
+   "summary_conflict": [
+    1,
+    1,
+    0
+   ],
+   "unknown_alias": [
+    4657,
+    4657,
+    0
+   ],
+   "unsupported": [
+    48943,
+    48930,
+    -13
+   ]
+  },
+  "leaves_removed": 14,
+  "leaves_added": 1,
+  "by_class": {
+   "added same-line": 1,
+   "removed declared-callee": 11,
+   "removed same-line": 3
+  },
+  "status_moves": {
+   "Unknown -> Safe": 1
+  },
+  "moved_functions": [
+   [
+    "monkey-libevent",
+    "mk_core/mk_string.c",
+    "mk_string_char_search_r",
+    "Unknown",
+    "Safe"
+   ]
+  ],
+  "unit_status_moves": [],
+  "attribution_complete": true,
+  "violation_candidates": []
+ },
+ "c_violation_candidates": {
+  "exact_alias_stage": 0,
+  "interior_pointer_stage": 0,
+  "leaves": []
+ },
+ "total": {
+  "functions": {
+   "before": {
+    "Safe": 245,
+    "Unknown": 4505,
+    "Unsafe": 84
+   },
+   "after": {
+    "Safe": 257,
+    "Unknown": 4493,
+    "Unsafe": 84
+   }
+  },
+  "units": {
+   "before": {
+    "Safe": 2,
+    "Unknown": 137,
+    "Unsafe": 42,
+    "data_only": 4
+   },
+   "after": {
+    "Safe": 2,
+    "Unknown": 137,
+    "Unsafe": 42,
+    "data_only": 4
+   }
+  },
+  "families": {
+   "leak": [
+    272,
+    272,
+    0
+   ],
+   "summary_conflict": [
+    1,
+    1,
+    0
+   ],
+   "unknown_alias": [
+    4655,
+    4657,
+    2
+   ],
+   "unsupported": [
+    49094,
+    48930,
+    -164
+   ]
+  }
+ },
+ "complete": true
+}

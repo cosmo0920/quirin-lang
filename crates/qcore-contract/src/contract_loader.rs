@@ -35,6 +35,10 @@
 //! - `resource_return_none()` -> None; `resource_return_owned(nullability)` -> Owned.
 //! - `resource_return_reallocated(p, nullability)` -> Reallocated, requiring
 //!   an Owned parameter; null failure preserves it, success replaces it once.
+//! - `resource_return_alias(p, nullability)` and
+//!   `resource_return_interior(p, nullability)` -> Derived (card
+//!   W43-LIBC-RESULT-ALIAS): the result is `p`'s own value, or a pointer into
+//!   the object `p` points to, and owns nothing. See below.
 //! - `resource_variadic_data_tail()` -> the declaration additionally covers
 //!   calls that pass *more* actuals than it names. See below.
 //!
@@ -74,6 +78,37 @@
 //! [`variadic_data_tails`], so a contract environment that has no declared
 //! sources — an inferred W4 summary, a provider proposal, a directly
 //! constructed table — has no tails at all, which is the fail-closed direction.
+//!
+//! # Derived results (card W43-LIBC-RESULT-ALIAS)
+//!
+//! `memcpy` returns its first argument and `strchr` returns a pointer into its
+//! first argument or NULL. Neither result is fresh custody, and
+//! `resource_return_none()` would drop the relation between the result and the
+//! base, so neither was declarable. Two result predicates now state it:
+//!
+//! * `resource_return_alias(p, n)` — the result is the value of `p` itself
+//!   ([`DerivedExtent::Exact`]); with `nullable` the call may return NULL
+//!   instead (`gmtime_r`), with `nonnull` it never substitutes NULL (`memcpy`).
+//! * `resource_return_interior(p, n)` — the result points into the object `p`
+//!   points to ([`DerivedExtent::Interior`]); with `nullable` it may be NULL.
+//!
+//! Both load to [`ResourceReturnMode::Derived`]. The result is **non-owning**:
+//! it acquires, discharges and transfers nothing. `p` must be a
+//! `resource_borrowed` parameter of type `ptr<mut, u8>` or `ptr<const, u8>`,
+//! and the result type must be one of those two; a base declared
+//! `ptr<const, u8>` under a `ptr<mut, u8>` result records `const_dropped`.
+//! Every other placement rejects the module. What a consumer must do with the
+//! relation — a release of the result is not a release of the base, a release
+//! of the base invalidates the result — is contract spec §C04.3; this loader
+//! only states it.
+//!
+//! **Version.** This is an addition to resource vocabulary version 1, as the
+//! variadic tail and the literal premise were: the marker is unchanged, every
+//! module that loaded before loads to the same functions, and a loader that
+//! predates the predicates rejects a module using them (unknown predicate)
+//! rather than misreading it. The exact module texts travel with every
+//! verdict in `source_assumptions`, so the evidence identity already names
+//! which declarations — and therefore which vocabulary — a verdict rests on.
 //!
 //! # The literal-argument premise (card HASH-CLAUSE)
 //!
@@ -194,7 +229,8 @@ use qcore_frontend::frontend::{
 };
 use qcore_frontend::lexer::{Symbol, TokenKind, lex};
 use qcore_schemas::contract::{
-    ResourceContracts, ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode,
+    DerivedExtent, ResourceContracts, ResourceFunctionContract, ResourceParameterMode,
+    ResourceReturnMode,
 };
 
 /// Opaque C ABI scalar projections. Borrowed only: they carry sizes, counts,
@@ -856,6 +892,22 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                     nullable: nullability(null)?,
                 })
             }
+            // Card W43-LIBC-RESULT-ALIAS. `const_dropped` is decided below,
+            // from the declared types, once the whole signature is known.
+            [
+                name @ ("resource_return_alias" | "resource_return_interior"),
+                parameter,
+                null,
+            ] => Some(ResourceReturnMode::Derived {
+                parameter: index(parameter)?,
+                extent: if *name == "resource_return_alias" {
+                    DerivedExtent::Exact
+                } else {
+                    DerivedExtent::Interior
+                },
+                nullable: nullability(null)?,
+                const_dropped: false,
+            }),
             _ => None,
         };
         if let Some(mode) = return_mode {
@@ -913,9 +965,32 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         .into_iter()
         .collect::<Option<Vec<_>>>()
         .ok_or("missing parameter mode")?;
-    let result = result.ok_or("missing result mode")?;
+    let mut result = result.ok_or("missing result mode")?;
     if result != ResourceReturnMode::None && !return_type.starts_with("ptr<") {
         return Err("owned result requires a pointer return type".into());
+    }
+    // Card W43-LIBC-RESULT-ALIAS. A derived result names a borrowed base of
+    // depth one and is itself a pointer of depth one: the base passes no
+    // custody through the call, so the relation is the only thing the result
+    // carries, and a pointer-to-pointer or function pointer has no object for
+    // it to point into.
+    if let ResourceReturnMode::Derived {
+        parameter,
+        ref mut const_dropped,
+        ..
+    } = result
+    {
+        const DEPTH_ONE: [&str; 2] = ["ptr<mut, u8>", "ptr<const, u8>"];
+        if parameters[parameter] != ResourceParameterMode::Borrowed {
+            return Err("a derived result requires a borrowed base parameter".into());
+        }
+        if !DEPTH_ONE.contains(&parameter_types[parameter].as_str())
+            || !DEPTH_ONE.contains(&return_type)
+        {
+            return Err("a derived result requires a depth-one pointer base and result".into());
+        }
+        *const_dropped =
+            parameter_types[parameter] == "ptr<const, u8>" && return_type == "ptr<mut, u8>";
     }
     for (i, mode) in parameters.iter().enumerate() {
         let ty = token_kinds(&decl.parameters[i].type_source)?;

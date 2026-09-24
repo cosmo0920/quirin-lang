@@ -5665,6 +5665,12 @@ fn legacy_diagnostic_label(kind: &LegacyDiagnosticKind) -> String {
         LegacyDiagnosticKind::CustodyConflict { acquisition_line } => {
             format!("custody-conflict:{acquisition_line}")
         }
+        LegacyDiagnosticKind::InvalidRelease { acquisition_line } => {
+            format!("invalid-release:{acquisition_line}")
+        }
+        LegacyDiagnosticKind::UseAfterRelease { acquisition_line } => {
+            format!("use-after-release:{acquisition_line}")
+        }
         LegacyDiagnosticKind::UnknownAlias { variable } => format!("unknown-alias:{variable}"),
         LegacyDiagnosticKind::Unsupported { description } => format!("unsupported:{description}"),
         LegacyDiagnosticKind::SummaryConflict { .. } => "summary-conflict".to_owned(),

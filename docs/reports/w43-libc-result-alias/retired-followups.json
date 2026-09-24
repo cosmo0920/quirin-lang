@@ -1,0 +1,35 @@
+[
+  {
+    "entry": {
+      "id": "LIBC-MEM-RESULT-ALIAS",
+      "title": "v1 cannot say a result aliases parameter 1, so memcpy/memset stay undeclared",
+      "why": "`memcpy`/`memset` were read and DELIBERATELY NOT declared by W36-CORPUS-CONTRACTS-3, because resource-v1 has no way to say 'the result aliases parameter 1'. Worth roughly 9 sole-blocked functions plus 130 leaves for one vocabulary addition, which makes it the highest-yield single item the card found. DISCHARGE: a v1 result mode meaning exactly that.",
+      "source": "docs/reports/w36-corpus-contracts-3/README.md",
+      "recorded_by": "WAVE-36-CLOSE"
+    },
+    "discharged_by": "W43-LIBC-RESULT-ALIAS",
+    "ground": "Its discharge condition is \"a v1 result mode meaning exactly that\" (the result aliases parameter 1). Card W43-LIBC-RESULT-ALIAS added `resource_return_alias(p, n)` (ResourceReturnMode::Derived, extent Exact) to resource vocabulary version 1, specified in contract spec C04.3.1, implemented in the gateway and modelled in QCore.DerivedResult, and declared memcpy and memset (with memmove, strcpy, strncpy) with it in providers/quirin-provider-libc/contracts/libc/string.qcore. Measured at the arbiter: 145 declared-callee leaves decided in the exact-alias stage and 11 functions Unknown -> Safe (memcpy 7 directly, memset 2, memmove 1, one callee cascade); the eighth memcpy-sole-blocked function, XXH_memcpy, returns the derived result and stays Unknown (W43-RESULT-ALIAS-RETURNED). docs/reports/w43-libc-result-alias/README.md."
+  },
+  {
+    "entry": {
+      "id": "W43-LIBC-RESULT-ALIAS-NAMES",
+      "title": "Thirteen more libc callees than LIBC-MEM-RESULT-ALIAS names return an alias of an argument or of retained storage",
+      "why": "Card W43-LIBC-CONTRACTS inventoried every libc/POSIX callee of the uncontracted-call family. Besides memcpy and memset (LIBC-MEM-RESULT-ALIAS), memmove, strcpy and strncpy return their first argument; strchr, strrchr, strstr, strcasestr, memchr and memrchr return a pointer into it; gmtime_r and localtime_r return their second argument; realpath returns its second argument or a fresh malloc allocation; pthread_getspecific returns a pointer an earlier pthread_setspecific retained. resource_return_none() would drop the alias, so none was declared. Measured yield at the W43-LIBC-CONTRACTS baseline: memcpy 8 sole-blocked functions, memset 2, memmove 1, the rest 0. Discharge condition: the result mode LIBC-MEM-RESULT-ALIAS asks for (plus an interior-pointer and a conditional-alias reading, or a recorded refusal for those), and W43-LIBC-POINTER-QUALIFIER-READER for the `__restrict` prototypes among them.",
+      "source": "docs/reports/w43-libc-contracts/README.md",
+      "recorded_by": "W43-LIBC-CONTRACTS"
+    },
+    "discharged_by": "W43-LIBC-RESULT-ALIAS",
+    "ground": "Its discharge condition is the LIBC-MEM-RESULT-ALIAS result mode plus an interior-pointer and a conditional-alias reading, or a recorded refusal for those, and the pointer-qualifier reader for the `__restrict` prototypes among them. Card W43-LIBC-RESULT-ALIAS added both the exact alias and the interior pointer (`resource_return_interior(p, n)`), repaired the reader, and declared thirteen of the fifteen named callees: memcpy, memmove, memset, strcpy, strncpy, gmtime_r, localtime_r (exact) and strchr, strrchr, strstr, strcasestr, memchr, memrchr (interior); every declaration agrees with every one of the 185 captured units that declares it (abi-evidence.json). The conditional alias `realpath` and the retained storage `pthread_getspecific` are refused by name and registered as W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED."
+  },
+  {
+    "entry": {
+      "id": "W43-LIBC-POINTER-QUALIFIER-READER",
+      "title": "The declared-ABI reader withdraws every prototype that spells a qualifier after the `*` (`T *__restrict p`), which blocks the printf family and 10 other faithful libc declarations",
+      "why": "Card W43-LIBC-CONTRACTS measured what LOADER-ABI-RESTRICT-QUALIFIER asked for: `project_declarator` (crates/qcore-c-gateway/src/legacy_declared_abi.rs) counts only TRAILING `*` words, so a parameter spelled `const char *__restrict __format` ends in a qualifier, has zero trailing stars and a `*` in its head, and projects to `None` (`abi-unreadable-declaration`). A five-unit probe isolates the token: the same printf prototype without `__restrict` agrees. In the trial arbiter the drafted declarations of printf, fprintf, snprintf, sprintf, stat, strftime, gettimeofday, getsockopt, getpeername, dlsym, cnd_timedwait, pthread_sigmask, regexec and regerror were withdrawn at every call site (2,577 withdrawn call-site leaves, 1,192 fprintf and 1,290 snprintf), so none was shipped. A qualifier after the last `*` qualifies the parameter object itself and is dropped for type compatibility (C11 6.7.6.3p15), so reading it is a faithful widening, but it is analyzer semantics: it needs Rust, a Lean model of the projection step and a re-arbiter. memcpy/memset/strcpy also spell `__restrict`, so LIBC-MEM-RESULT-ALIAS's result mode alone would not make them declarable. LIBC-PRINTF-FAMILY stays open behind this. Discharge condition: the reader drops top-level qualifiers after the last `*` (and still refuses a qualifier between two `*`), with matching audited Lean and tests, then a declarative card lands the 14 prototypes above with its own leaf-by-leaf attribution.",
+      "source": "docs/reports/w43-libc-contracts/README.md",
+      "recorded_by": "W43-LIBC-CONTRACTS"
+    },
+    "discharged_by": "W43-LIBC-RESULT-ALIAS",
+    "ground": "Its discharge condition: the reader drops top-level qualifiers after the last `*` (and still refuses one between two `*`), with matching audited Lean and tests, then a declarative card lands the 14 prototypes. Card W43-LIBC-RESULT-ALIAS repaired the reader (legacy_declared_abi.rs `drop_parameter_object_qualifiers`, parameters only, C11 6.7.6.3p15), with Rust table rows in crates/qcore-c-gateway/tests/loader_abi.rs and the audited model QCore.PointerQualifierReader; a reader-only arbiter moved no leaf and no census row of the 114 declarations selected at the base. The declarative half was measured, not landed: 12 of the 14 prototypes now agree wherever declared (the printf family in all 168 declaring units), getpeername agrees in 12 units and keeps the sockaddr transparent-union shape in 93, and regexec keeps an array-bound qualifier. The printf family stays with LIBC-PRINTF-FAMILY and the other ten are registered as W43-LIBC-RESTRICT-PROTOTYPES-UNDECLARED."
+  }
+]

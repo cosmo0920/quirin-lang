@@ -1,0 +1,76 @@
+module contract;
+
+// MEASUREMENT ONLY, never shipped. The fourteen prototypes card
+// W43-LIBC-CONTRACTS withdrew for a qualifier after the `*`, spelled with the
+// ABI projections its report records, so the declared-ABI census can measure
+// what the pointer-qualifier reader alone does to their availability. The
+// modes are placeholders (every parameter borrowed, no custody result): the
+// census compares types only.
+
+extern fn printf(format: ptr<const, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(format);
+  ensures normal resource_variadic_data_tail(); ensures normal resource_return_none(); };
+
+extern fn fprintf(stream: ptr<mut, u8>, format: ptr<const, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(stream);
+  ensures normal resource_borrowed(format); ensures normal resource_variadic_data_tail();
+  ensures normal resource_return_none(); };
+
+extern fn snprintf(s: ptr<mut, u8>, maxlen: usize, format: ptr<const, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(s);
+  ensures normal resource_borrowed(maxlen); ensures normal resource_borrowed(format);
+  ensures normal resource_variadic_data_tail(); ensures normal resource_return_none(); };
+
+extern fn sprintf(s: ptr<mut, u8>, format: ptr<const, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(s);
+  ensures normal resource_borrowed(format); ensures normal resource_variadic_data_tail();
+  ensures normal resource_return_none(); };
+
+extern fn stat(file: ptr<const, u8>, buf: ptr<mut, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(file);
+  ensures normal resource_borrowed(buf); ensures normal resource_return_none(); };
+
+extern fn strftime(s: ptr<mut, u8>, maxsize: usize, format: ptr<const, u8>, tp: ptr<const, u8>) -> usize
+contract { requires resource_contract_v1; ensures normal resource_borrowed(s);
+  ensures normal resource_borrowed(maxsize); ensures normal resource_borrowed(format);
+  ensures normal resource_borrowed(tp); ensures normal resource_return_none(); };
+
+extern fn gettimeofday(tv: ptr<mut, u8>, tz: ptr<mut, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(tv);
+  ensures normal resource_borrowed(tz); ensures normal resource_return_none(); };
+
+extern fn getsockopt(fd: i32, level: i32, optname: i32, optval: ptr<mut, u8>, optlen: ptr<mut, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(fd);
+  ensures normal resource_borrowed(level); ensures normal resource_borrowed(optname);
+  ensures normal resource_borrowed(optval); ensures normal resource_borrowed(optlen);
+  ensures normal resource_return_none(); };
+
+extern fn getpeername(fd: i32, addr: ptr<mut, u8>, len: ptr<mut, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(fd);
+  ensures normal resource_borrowed(addr); ensures normal resource_borrowed(len);
+  ensures normal resource_return_none(); };
+
+extern fn dlsym(handle: ptr<mut, u8>, name: ptr<const, u8>) -> ptr<mut, u8>
+contract { requires resource_contract_v1; ensures normal resource_borrowed(handle);
+  ensures normal resource_borrowed(name); ensures normal resource_return_none(); };
+
+extern fn cnd_timedwait(cond: ptr<mut, u8>, mutex: ptr<mut, u8>, time_point: ptr<const, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(cond);
+  ensures normal resource_borrowed(mutex); ensures normal resource_borrowed(time_point);
+  ensures normal resource_return_none(); };
+
+extern fn pthread_sigmask(how: i32, newmask: ptr<const, u8>, oldmask: ptr<mut, u8>) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(how);
+  ensures normal resource_borrowed(newmask); ensures normal resource_borrowed(oldmask);
+  ensures normal resource_return_none(); };
+
+extern fn regexec(preg: ptr<const, u8>, string: ptr<const, u8>, nmatch: usize, pmatch: ptr<mut, u8>, eflags: i32) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(preg);
+  ensures normal resource_borrowed(string); ensures normal resource_borrowed(nmatch);
+  ensures normal resource_borrowed(pmatch); ensures normal resource_borrowed(eflags);
+  ensures normal resource_return_none(); };
+
+extern fn regerror(errcode: i32, preg: ptr<const, u8>, errbuf: ptr<mut, u8>, errbuf_size: usize) -> usize
+contract { requires resource_contract_v1; ensures normal resource_borrowed(errcode);
+  ensures normal resource_borrowed(preg); ensures normal resource_borrowed(errbuf);
+  ensures normal resource_borrowed(errbuf_size); ensures normal resource_return_none(); };

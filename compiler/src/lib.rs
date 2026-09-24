@@ -175,8 +175,8 @@ pub use inference::{
     check_inference_certificate, infer_principal,
 };
 pub use legacy_c::{
-    AnalysisStatus, C11TranslationUnit, CCompilerDialect, ContractTrust, EnumerationRefusal,
-    LegacyCError, LegacyCertificateCoverage, LegacyCertificateDefinition,
+    AnalysisStatus, C11TranslationUnit, CCompilerDialect, ContractTrust, DerivedExtent,
+    EnumerationRefusal, LegacyCError, LegacyCertificateCoverage, LegacyCertificateDefinition,
     LegacyCertificateExpectedContext, LegacyCertificateInputIdentity, LegacyCertificateRequest,
     LegacyCertificateScope, LegacyCertificateScopeEvidence, LegacyCfg, LegacyCfgNode,
     LegacyDiagnostic, LegacyDiagnosticKind, LegacyFunctionScope, LegacyFunctionSummary,

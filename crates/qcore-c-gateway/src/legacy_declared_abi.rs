@@ -139,6 +139,21 @@
 //! An *inline* function-pointer parameter — `int (*cb)(void *)` written out at
 //! the parameter position rather than behind a typedef — also still refuses, as
 //! every nested declarator does.
+//!
+//! # What card W43-LIBC-RESULT-ALIAS widened
+//!
+//! A qualifier after a **parameter** declarator's last `*` — glibc's
+//! `const char *__restrict __format`, `void *const p` — qualifies the parameter
+//! object, and C11 6.7.6.3p15 drops it for type compatibility. The reader used
+//! to count only trailing `*` words, so every such parameter projected to
+//! nothing and its declaration was withdrawn with `abi-unreadable-declaration`
+//! (card W43-LIBC-CONTRACTS measured 2,577 call-site leaves across fourteen
+//! drafted libc declarations). `drop_parameter_object_qualifiers` now reads
+//! it as the unqualified type. A qualifier *between* two `*` still refuses, a
+//! result declarator is not widened, and the measured effect on the 114
+//! declarations selected at the card's base was nil: every one of the 8,292
+//! (unit, name) census rows kept its outcome. `QCore.PointerQualifierReader`
+//! is the Lean model of this step.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -1052,10 +1067,41 @@ fn project_parameter(
     {
         rest.pop();
     }
+    drop_parameter_object_qualifiers(&mut rest);
     if array_levels == 1 {
         rest.push("*");
     }
     project_declarator(&rest, typedefs, false)
+}
+
+/// Card W43-LIBC-RESULT-ALIAS (`W43-LIBC-POINTER-QUALIFIER-READER`): drop the
+/// qualifiers that follow a parameter declarator's **last** `*`.
+///
+/// Those qualifiers qualify the parameter object itself — the pointer — not
+/// anything it points to, and C drops them for type compatibility: "each
+/// parameter declared with qualified type is taken as having the unqualified
+/// version of its declared type" (C11 6.7.6.3p15). So `const char *__restrict
+/// __format` and `const char *__format` are one parameter type, and glibc
+/// spells `__restrict` on `memcpy`, `strcpy`, `strncpy`, the printf family and
+/// others. Before this card the reader counted only *trailing* `*` words, so
+/// such a parameter projected to nothing and its declaration was withdrawn
+/// with `abi-unreadable-declaration` at every call site.
+///
+/// Exactly one position is widened. A qualifier *between* two `*` qualifies an
+/// inner pointer, which this vocabulary cannot spell, and still refuses in
+/// [`project_declarator`]; a qualifier with no `*` before it qualifies the
+/// pointee or a scalar and is read there exactly as before; and a result type
+/// is not a parameter, so this is applied to parameters only.
+fn drop_parameter_object_qualifiers(words: &mut Vec<&str>) {
+    let Some(last_star) = words.iter().rposition(|word| *word == "*") else {
+        return;
+    };
+    if words[last_star + 1..]
+        .iter()
+        .all(|word| QUALIFIERS.contains(word))
+    {
+        words.truncate(last_star + 1);
+    }
 }
 
 const ARITHMETIC_WORDS: &[&str] = &[
