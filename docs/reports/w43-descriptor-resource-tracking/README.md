@@ -207,16 +207,21 @@ Measured on the corpus: one leaf, `mk_vhost_fdt_open`'s `hc->fd = fd;`
 (`mk_vhost.c:229`), whose previous refusal was an `unknown_alias` on `hc`; the
 function was and stays Unknown. The prediction had said zero.
 
-**Composition with W43-INDIRECT-ACCESS-GENERAL** (not on this base). That card
-admits `*p = e`, `p[i] = e`, `p->f = e` and `s.f = e` as custody-neutral when
-`e` is a declared scalar. Its admission happens inside statement
-classification, so its instruction passes through this card's guard; its own
-"value is scalar" test should additionally call `value_carries_descriptor`. The
-test `a_tracked_descriptor_on_every_scalar_store_route_is_refused` pins all four
-shapes, plus W42's bound `ScalarMemberStore`, refused and never accused; on
-this base the indirect shapes are refused by the lexical gate. The combination
-is registered for the integrator (`W43-DESCRIPTOR-INDIRECT-ACCESS-WIRING`) and
-will be wired and re-tested when main contains that card.
+**Composition with W43-INDIRECT-ACCESS-GENERAL** (branch tip `6bb838c8`, not on
+this base; read, not merged). That card admits `*p = e`, `p[i] = e`, `p->f = e`
+and `s.f = e` as a new `LegacyInstruction::IndirectScalarAccess` when `e` is a
+declared scalar, by wrapping `Parser::classify_simple` exactly as this card does
+(both rename the old body; the textual merge conflicts there). The composition
+is: this card's descriptor guard outermost, their typed-scalar route inside it,
+the old classifier innermost — so their admitted instruction is checked by the
+guard. `admits_descriptor_read` names every variant with no wildcard arm, so the
+merge does not compile until `IndirectScalarAccess` is placed; it belongs with
+the refused variants (it treats the value as custody-neutral data). The test
+`a_tracked_descriptor_on_every_scalar_store_route_is_refused` pins all four
+shapes, plus W42's bound `ScalarMemberStore`, refused and never accused; on this
+base the indirect shapes are refused by the lexical gate. Registered for the
+combined tree (`W43-DESCRIPTOR-INDIRECT-ACCESS-WIRING`); this card wires and
+re-tests it when main contains that card.
 
 ### 2.4 `dup`, `fdopen`, `fileno`, `fcntl`
 
