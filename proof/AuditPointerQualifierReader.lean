@@ -34,3 +34,29 @@ declarators are deliberately not widened. -/
 #print axioms QCore.PointerQualifierReader.the_pointee_constness_is_kept
 #print axioms QCore.PointerQualifierReader.a_const_pointer_to_mutable_bytes_is_mutable
 #print axioms QCore.PointerQualifierReader.a_restrict_between_two_stars_refuses
+
+/-! Card **W43-LIBC-RESTRICT-PROTOTYPES**: a qualifier inside an array
+parameter's bound (C11 6.7.6.3p7) is read as the adjusted pointer's, and so
+dropped (p15); an array of qualified pointers now refuses as its pointer
+spelling does. -/
+
+-- The rule, as an equation, and its conservativity.
+#print axioms QCore.PointerQualifierReader.the_array_parameter_is_the_adjusted_pointer
+#print axioms QCore.PointerQualifierReader.a_bound_read_before_is_read_now
+#print axioms QCore.PointerQualifierReader.the_array_widening_only_adds
+
+-- The one narrowing, and exactly where it is.
+#print axioms QCore.PointerQualifierReader.an_array_of_qualified_pointers_refuses
+#print axioms QCore.PointerQualifierReader.the_array_and_pointer_spellings_agree_on_it
+#print axioms QCore.PointerQualifierReader.the_earlier_reader_read_it_as_two_levels
+
+-- What still refuses.
+#print axioms QCore.PointerQualifierReader.a_static_bound_still_refuses
+#print axioms QCore.PointerQualifierReader.a_star_bound_still_refuses
+#print axioms QCore.PointerQualifierReader.a_qualifier_after_the_size_refuses
+#print axioms QCore.PointerQualifierReader.a_multi_word_size_refuses
+
+-- Non-vacuity, with the measured glibc witness.
+#print axioms QCore.PointerQualifierReader.the_regexec_match_array_was_unreadable
+#print axioms QCore.PointerQualifierReader.the_regexec_match_array_is_now_read
+#print axioms QCore.PointerQualifierReader.an_array_element_constness_is_kept
