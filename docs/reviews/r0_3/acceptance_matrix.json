@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for CONTRACT-INHERIT-QCORE-PROVIDER-NAMING on merge e7ef0887 (onto main f8b41209, which the card had already merged), measured by the integrator in its own worktree from a cold build; every exit captured to a file, not piped. 5216 core Rust passed / 0 failed / 11 ignored over 281 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 170 Lean audits; 330 root Python tests; 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-result-alias/artifacts/; against the CONTRACT-INHERIT-ADOPTION integration run in the same checkout, source-effects is byte-identical and contracts differs only by the two qcore-provider memory modules now keyed crate:module (token-identical to their hand-written texts), the schema-2 manifest entries and the eight added inheritance chains.",
-  "workspace_tests": 5216,
+  "note": "Integration gate for CONTRACT-VIEW-PROJECTION-CHECK on merge fc3509ba (onto main ec70709a, after CONTRACT-INHERIT-QCORE-PROVIDER-NAMING), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5229 core Rust passed / 0 failed / 11 ignored over 283 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 171 Lean audits; 330 root Python tests after regenerating this section (the first run failed only the derived-facts check, 170 vs 171 Lean audits, because the merged validation section predated AuditContractViewProjection); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-result-alias/artifacts/, and all five artifacts are byte-identical to the CONTRACT-INHERIT-QCORE-PROVIDER-NAMING integration run in the same checkout.",
+  "workspace_tests": 5229,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 170,
+  "lean_audits": 171,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6770,6 +6770,7 @@
    "AuditConstantDoWhile.lean",
    "AuditContractBundle.lean",
    "AuditContractInherit.lean",
+   "AuditContractViewProjection.lean",
    "AuditCt01OwnedTransfer.lean",
    "AuditCt03ReadShares.lean",
    "AuditCt07LeaseLedger.lean",
@@ -6914,7 +6915,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/contract-inherit-qcore-provider-naming/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/contract-view-projection-check/integration/gate.json)"
  },
  "named_followups": [
   {
