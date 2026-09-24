@@ -286,6 +286,58 @@ pub enum LegacyInstruction {
         /// store, which writes one scalar and nothing else.
         frame: Option<RefusedWrites>,
     },
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: `BASE[INDEX] = CALL(...)`
+    /// or `BASE[INDEX] = NULL`, where `BASE` is declared `T **BASE` and the
+    /// existing classifier refused the statement; see
+    /// [`crate::indexed_collection`].
+    ///
+    /// `call` is the acquiring contract call (every parameter `Borrowed`, an
+    /// owned result) with its destination renamed to the element place, or
+    /// `None` for the null constant. When `BASE` does not resolve to exactly
+    /// one live, non-null identity this body acquired, the node is exactly
+    /// `fallback`, the refusal the classifier gave it: no effect of the call
+    /// applies. Otherwise the call's result moves into the collection at
+    /// `INDEX`, and a `name++` index is stepped afterwards.
+    ElementStore {
+        base: String,
+        index: crate::indexed_collection::IndexSpelling,
+        call: Option<Box<LegacyInstruction>>,
+        fallback: Box<LegacyInstruction>,
+    },
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: `CALLEE(BASE[INDEX]);` with a
+    /// one-parameter `resource_released` contract and no result. Releases the
+    /// element through the collection; `fallback` as for [`Self::ElementStore`].
+    ElementRelease {
+        base: String,
+        index: crate::indexed_collection::IndexSpelling,
+        callee: String,
+        /// The contract's `nullable` flag: whether a null element may be passed.
+        nullable: bool,
+        fallback: Box<LegacyInstruction>,
+    },
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: an `if` testing one element
+    /// against the null constant. The first successor is the true edge.
+    BranchOnElementNull {
+        base: String,
+        index: crate::indexed_collection::IndexSpelling,
+        true_is_null: bool,
+        fallback: Box<LegacyInstruction>,
+    },
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the header of a canonical
+    /// counted loop `for (INDEX = 0; INDEX < BOUND; INDEX++)` whose body
+    /// neither writes `INDEX` or `BOUND` nor leaves or enters except through
+    /// the header. Its body edge carries `INDEX < BOUND`; its exit edge
+    /// rewrites a collection bound `INDEX` to `BOUND`. Otherwise a `NoOp`.
+    CountedLoopHeader {
+        index: String,
+        bound: crate::indexed_collection::Term,
+    },
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: that loop's `INDEX++`. It
+    /// forgets `INDEX`'s scalar fact exactly as [`Self::ForgetScalar`] does and
+    /// renames every collection bound `INDEX + k` to `INDEX + (k - 1)`.
+    CountedLoopStep {
+        index: String,
+    },
     /// Card **W43-INDEX-TRAVERSAL**: `destination = source ± offset` over two
     /// declared single-level pointer objects (`P++`, `P += E`, `P = Q + E`,
     /// and the step half of `*P++`); see [`crate::index_traversal`].
@@ -2492,6 +2544,7 @@ fn build_function_cfg_with(
             &variadic_tails,
         );
     let alias_classes = crate::may_alias::MayAliasClasses::read(&typed_types);
+    let collection_types = collection_types(tokens, function, body_start, &typed_model);
     let descriptor_names = matching(tokens, body_start, "{", "}").map_or_else(
         descriptor_custody::DescriptorNames::default,
         |body_end| {
@@ -2526,6 +2579,8 @@ fn build_function_cfg_with(
         alias_classes,
         variadic_tails,
         frame_protected,
+        collection_types,
+        element_lowerings: 0,
         descriptor_names,
         declared_callees,
         #[cfg(feature = "indirect-census")]
@@ -2693,6 +2748,31 @@ fn typed_access_facts(
     let frame_protected =
         frame_protected_locals(&texts, &texts[body_start + 1..body_end], &formals);
     (model, types, bases, stores, publications, frame_protected)
+}
+
+/// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the declaration facts of the
+/// collection rules, read from the same token stream as every typed fact.
+fn collection_types(
+    tokens: &[Token],
+    function: &str,
+    body_start: usize,
+    model: &TypedAccessModel,
+) -> crate::indexed_collection::CollectionTypes {
+    let (Some((open, close)), Some(body_end)) = (
+        function_parameter_range(tokens, function, body_start),
+        matching(tokens, body_start, "{", "}"),
+    ) else {
+        return crate::indexed_collection::CollectionTypes::default();
+    };
+    let texts = tokens
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
+    crate::indexed_collection::CollectionTypes::read(
+        model,
+        &texts[open + 1..close],
+        &texts[body_start + 1..body_end],
+    )
 }
 
 /// The parenthesis indices of the definition whose body starts at `body_start`.
@@ -3556,6 +3636,10 @@ enum Statement {
         /// when it relates two names the may-alias rule relates. Consulted only
         /// when `null_condition` is `None`, so no null test changes shape.
         distinct_condition: Option<PointerDistinctCondition>,
+        /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the element null test this
+        /// refused condition expresses, when its premises hold. Consulted only
+        /// when the condition is otherwise refused.
+        element_condition: Option<(String, crate::indexed_collection::IndexSpelling, bool)>,
         then_body: Vec<Statement>,
         else_body: Vec<Statement>,
     },
@@ -3576,6 +3660,9 @@ enum Statement {
     },
     For {
         line: usize,
+        /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the index and bound of a
+        /// canonical counted loop around at least one element operation.
+        counted: Option<(String, crate::indexed_collection::Term)>,
         init: Option<Box<(LegacyInstruction, usize)>>,
         condition_always_true: bool,
         condition_supported: bool,
@@ -3743,6 +3830,13 @@ struct Parser<'a> {
     /// binding environment. Empty whenever the body could not be delimited,
     /// which restores the pre-repair blanket poison for the whole function.
     frame_protected: BTreeSet<String>,
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: pointer-to-pointer bases and
+    /// integer scalars of this function, from the same declaration reader.
+    collection_types: crate::indexed_collection::CollectionTypes,
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: how many element operations
+    /// the classifier has lowered so far. A counted loop is recognised only
+    /// around a body that lowered at least one, so no other loop's CFG changes.
+    element_lowerings: usize,
     /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: the names of this body that
     /// may hold a tracked integer-carried identity. Empty in every environment
     /// that declares no integer-kinded result, which makes every rule reading
@@ -3829,6 +3923,31 @@ impl Parser<'_> {
     /// named an indirect destination that only an out-parameter contract can
     /// sanction. Compiled out with the feature off; it reads the instruction
     /// after it was produced and cannot change it.
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: record one element null test
+    /// the condition parser lowered. Compiled out with the feature off.
+    #[cfg(feature = "indirect-census")]
+    fn census_element_condition(&self, line: usize, condition: &[Token], base: &str) {
+        let texts = condition
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        crate::indirect_census::record_statement(
+            &crate::indirect_census::Context {
+                function: &self.census_function,
+                formal_parameters: &self.formal_parameters,
+                typed_model: &self.typed_model,
+                typed_types: &self.typed_types,
+                typed_bases: &self.typed_bases,
+            },
+            line,
+            &texts,
+            format!(
+                "element null test over `{base}`; fallback: unmodeled call, aggregate or indirect access in branch condition"
+            ),
+            &self.census_bindings,
+        );
+    }
+
     #[cfg(feature = "indirect-census")]
     fn census_statement(&self, line: usize, tokens: &[Token], instruction: &LegacyInstruction) {
         let outcome = match instruction {
@@ -3844,6 +3963,15 @@ impl Parser<'_> {
                 ..
             } if is_indirect_place(destination) => {
                 format!("indirect call destination `{destination}`")
+            }
+            // Card W43-INDEXED-RESOURCE-COLLECTIONS: an element operation the
+            // classifier lowered, with the refusal it keeps as its fallback.
+            LegacyInstruction::ElementStore { base, fallback, .. }
+            | LegacyInstruction::ElementRelease { base, fallback, .. } => {
+                let LegacyInstruction::Unknown { description, .. } = fallback.as_ref() else {
+                    return;
+                };
+                format!("element operation over `{base}`; fallback: {description}")
             }
             _ => return,
         };
@@ -4444,6 +4572,17 @@ impl Parser<'_> {
                         && condition_call.is_none()
                         && self.null_condition(&condition).is_none(),
                 );
+                let element_condition = (!condition_supported
+                    && condition_call.is_none()
+                    && condition_access.is_none()
+                    && self.null_condition(&condition).is_none())
+                .then(|| self.element_condition(&condition))
+                .flatten();
+                if let Some((_base, _, _)) = &element_condition {
+                    self.element_lowerings += 1;
+                    #[cfg(feature = "indirect-census")]
+                    self.census_element_condition(line, &condition, _base);
+                }
                 let then_body = self.parse_statement_body()?;
                 let else_body = if self.text() == Some("else") {
                     self.cursor += 1;
@@ -4459,6 +4598,7 @@ impl Parser<'_> {
                     condition_access,
                     null_condition: self.null_condition(&condition),
                     distinct_condition: self.distinct_condition(&condition),
+                    element_condition,
                     then_body,
                     else_body,
                 })
@@ -4525,6 +4665,8 @@ impl Parser<'_> {
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
                     .map(Box::new);
+                let lowered_before = self.element_lowerings;
+                let body_start = self.cursor;
                 let condition_access = (!condition_supported && condition_call.is_none())
                     .then(|| self.condition_access(&condition))
                     .flatten();
@@ -4538,10 +4680,26 @@ impl Parser<'_> {
                         && self.null_condition(&condition).is_none(),
                 );
                 let body = self.parse_statement_body()?;
+                let body_end = self.cursor;
                 let init =
                     (!init.is_empty()).then(|| Box::new((self.classify_simple(&init), line)));
+                let increment_clause = increment.clone();
                 let increment = (!increment.is_empty())
                     .then(|| Box::new((self.classify_simple(&increment), line)));
+                let counted = (self.element_lowerings > lowered_before
+                    && condition_supported
+                    && condition_call.is_none()
+                    && self.null_condition(&condition).is_none())
+                .then(|| {
+                    self.counted_loop(
+                        init.as_deref(),
+                        &condition,
+                        &increment_clause,
+                        increment.as_deref(),
+                        &self.tokens[body_start..body_end],
+                    )
+                })
+                .flatten();
                 #[cfg(feature = "indirect-census")]
                 {
                     let clauses = split_for_clauses(&clauses).unwrap_or_default();
@@ -4559,6 +4717,7 @@ impl Parser<'_> {
                 }
                 Ok(Statement::For {
                     line,
+                    counted,
                     writes: self.expression_writes(&condition),
                     init,
                     condition_always_true: condition.is_empty(),
@@ -5065,6 +5224,15 @@ impl Parser<'_> {
     /// obligations the flow analysis then checks.
     fn classify_simple_unguarded(&mut self, tokens: &[Token]) -> LegacyInstruction {
         let instruction = self.classify_simple_base(tokens);
+        // Card W43-INDEXED-RESOURCE-COLLECTIONS: an element store or release
+        // the classifier refused, over a pointer-to-pointer base. The refusal
+        // is carried as the node's fallback, byte for byte.
+        if matches!(instruction, LegacyInstruction::Unknown { .. })
+            && let Some(element) = self.element_statement(tokens, &instruction)
+        {
+            self.element_lowerings += 1;
+            return element;
+        }
         // Card W43-INDEX-TRAVERSAL: the formal-mutation gate refuses `q++` for
         // every protected name, and protection reaches a *local* through a
         // copy (`q = p;` with `p` later released). A step of a local changes
@@ -5228,6 +5396,249 @@ impl Parser<'_> {
             }
         }));
         Some(sequence)
+    }
+
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the syntactic premises of
+    /// every element operation. The base is declared `T **BASE` at every
+    /// declaration and is a slot no other lvalue designates (so no callee can
+    /// rebind it); a named index is a declared integer with the same slot
+    /// premise, and a `name++` index is additionally a counter that cannot
+    /// wrap. Everything flow-sensitive is decided by `transfer`.
+    fn element_premises(
+        &self,
+        base: &str,
+        index: &crate::indexed_collection::IndexSpelling,
+    ) -> bool {
+        use crate::indexed_collection::IndexSpelling;
+        // W43-DESCRIPTOR-RESOURCE-TRACKING integration: an index that may hold
+        // a tracked descriptor would be read as custody-neutral data.
+        let neutral = |name: &str| !self.descriptor_names.contains(name);
+        self.collection_types.pointer_element(base)
+            && self.frame_protected.contains(base)
+            && neutral(base)
+            && match index {
+                IndexSpelling::Literal(_) => true,
+                IndexSpelling::Name(name) => {
+                    self.collection_types.integer(name).is_some()
+                        && self.frame_protected.contains(name)
+                        && neutral(name)
+                }
+                IndexSpelling::PostIncrement(name) => {
+                    self.collection_types.counter(name)
+                        && self.frame_protected.contains(name)
+                        && neutral(name)
+                }
+            }
+    }
+
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: lower a refused
+    /// `BASE[INDEX] = CALL(...)`, `BASE[INDEX] = NULL` or `RELEASE(BASE[INDEX])`.
+    ///
+    /// The call is classified by the ordinary classifier with the element
+    /// place renamed to a plain temporary, so every premise of a contracted
+    /// call — the declared-ABI and literal-premise withdrawals, the borrowed
+    /// actuals, the nested-call rule — is the one it always was. Only an
+    /// acquiring call whose every parameter is `Borrowed`, or a
+    /// one-parameter release with no result, is taken; anything else keeps
+    /// the refusal, with the site counter restored.
+    fn element_statement(
+        &mut self,
+        tokens: &[Token],
+        fallback: &LegacyInstruction,
+    ) -> Option<LegacyInstruction> {
+        use crate::indexed_collection::IndexSpelling;
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        // W43-DESCRIPTOR-RESOURCE-TRACKING integration: a statement that reads
+        // a tracked descriptor keeps the classifier's refusal, which the
+        // descriptor guard then sees exactly as it did before this card.
+        if !self.descriptor_names.is_empty()
+            && descriptor_custody::statement_reads_descriptor(&texts, &self.descriptor_names)
+                .is_some()
+        {
+            return None;
+        }
+        let line = tokens.first().map_or(0, |token| token.line);
+        let synthetic = |text: &str| Token {
+            text: text.to_owned(),
+            line,
+        };
+        if let Some(((base, index), value)) = crate::indexed_collection::store_statement(&texts) {
+            if !self.element_premises(&base, &index) {
+                return None;
+            }
+            if let IndexSpelling::PostIncrement(counter) = &index
+                && value.contains(&counter.as_str())
+            {
+                return None;
+            }
+            let place = crate::indexed_collection::place_spelling(&base, &index.term());
+            let call = if crate::indexed_collection::is_null_value(value) {
+                None
+            } else {
+                let mut rewritten = vec![synthetic(ELEMENT_TEMPORARY), synthetic("=")];
+                rewritten.extend(tokens[texts.len() - value.len()..].iter().cloned());
+                let saved = self.next_site;
+                let mut instruction = self.classify_simple_base(&rewritten);
+                let admitted = matches!(
+                    &instruction,
+                    LegacyInstruction::ContractCall {
+                        destination: Some(destination),
+                        contract,
+                        ..
+                    } if destination == ELEMENT_TEMPORARY
+                        && matches!(contract.result, ResourceReturnMode::Owned { .. })
+                        // W43-DESCRIPTOR-RESOURCE-TRACKING integration: a
+                        // collection holds heap elements only; a stream, a
+                        // directory or a descriptor keeps the refusal.
+                        && contract.result_kind.is_heap()
+                        && contract
+                            .parameters
+                            .iter()
+                            .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
+                );
+                if !admitted {
+                    self.next_site = saved;
+                    return None;
+                }
+                if let LegacyInstruction::ContractCall { destination, .. } = &mut instruction {
+                    *destination = Some(place);
+                }
+                Some(Box::new(instruction))
+            };
+            return Some(LegacyInstruction::ElementStore {
+                base,
+                index,
+                call,
+                fallback: Box::new(fallback.clone()),
+            });
+        }
+        let (callee, (base, index)) = crate::indexed_collection::release_statement(&texts)?;
+        if !self.element_premises(&base, &index) {
+            return None;
+        }
+        let rewritten = [
+            synthetic(&callee),
+            synthetic("("),
+            synthetic(ELEMENT_TEMPORARY),
+            synthetic(")"),
+        ];
+        let saved = self.next_site;
+        let instruction = self.classify_simple_base(&rewritten);
+        self.next_site = saved;
+        let LegacyInstruction::ContractCall {
+            function,
+            destination: None,
+            arguments,
+            contract,
+            nested,
+            ..
+        } = instruction
+        else {
+            return None;
+        };
+        let [ResourceParameterMode::Released { nullable }] = contract.parameters.as_slice() else {
+            return None;
+        };
+        // W43-DESCRIPTOR-RESOURCE-TRACKING integration: only a heap release
+        // discharges a (heap) collection element; `fclose(v[i])` or
+        // `close(fds[i])` keeps the refusal.
+        if !contract.parameter_kind(0).is_heap() {
+            return None;
+        }
+        (function == callee
+            && arguments == [Some(ELEMENT_TEMPORARY.to_owned())]
+            && matches!(contract.result, ResourceReturnMode::None)
+            && nested.is_empty())
+        .then(|| LegacyInstruction::ElementRelease {
+            base,
+            index,
+            callee,
+            nullable: *nullable,
+            fallback: Box::new(fallback.clone()),
+        })
+    }
+
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: whether a `for` loop is a
+    /// canonical counted loop whose exit leaves `INDEX = max(0, BOUND)`: the
+    /// header spells `INDEX = 0; INDEX < BOUND; INDEX++`, the init and
+    /// increment clauses were lowered to exactly `INDEX = 0` and a forget of
+    /// `INDEX`, both names are declared integers whose slot no other lvalue
+    /// designates, an unsigned index cannot wrap before the bound, and the
+    /// body neither writes either name nor leaves or enters except through
+    /// the header.
+    fn counted_loop(
+        &self,
+        init: Option<&(LegacyInstruction, usize)>,
+        condition: &[Token],
+        increment: &[Token],
+        lowered_increment: Option<&(LegacyInstruction, usize)>,
+        body: &[Token],
+    ) -> Option<(String, crate::indexed_collection::Term)> {
+        let texts = |tokens: &[Token]| {
+            tokens
+                .iter()
+                .map(|token| token.text.clone())
+                .collect::<Vec<_>>()
+        };
+        let (condition_texts, increment_texts, body_texts) =
+            (texts(condition), texts(increment), texts(body));
+        let (Some((LegacyInstruction::Clear { destination }, _)), Some((step, _))) =
+            (init, lowered_increment)
+        else {
+            return None;
+        };
+        let init_view = [destination.as_str(), "=", "0"];
+        let condition_view = condition_texts
+            .iter()
+            .map(String::as_str)
+            .collect::<Vec<_>>();
+        let increment_view = increment_texts
+            .iter()
+            .map(String::as_str)
+            .collect::<Vec<_>>();
+        let (index, bound) = crate::indexed_collection::counted_header(
+            &init_view,
+            &condition_view,
+            &increment_view,
+        )?;
+        if index != *destination
+            || !matches!(step, LegacyInstruction::ForgetScalar { destination } if *destination == index)
+            || !self.frame_protected.contains(&index)
+            || !self.collection_types.counted(&index, &bound)
+        {
+            return None;
+        }
+        let bound_name = match &bound {
+            crate::indexed_collection::BoundSpelling::Name(name) => {
+                if !self.frame_protected.contains(name) {
+                    return None;
+                }
+                Some(name.as_str())
+            }
+            crate::indexed_collection::BoundSpelling::Literal(_) => None,
+        };
+        let body_view = body_texts.iter().map(String::as_str).collect::<Vec<_>>();
+        crate::indexed_collection::body_keeps_exit_equation(&body_view, &index, bound_name)
+            .then(|| (index.clone(), bound.term()))
+    }
+
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: a refused `if` condition that
+    /// tests one element of a pointer-to-pointer base against the null
+    /// constant.
+    fn element_condition(
+        &self,
+        condition: &[Token],
+    ) -> Option<(String, crate::indexed_collection::IndexSpelling, bool)> {
+        let texts = condition
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let ((base, index), true_is_null) = crate::indexed_collection::null_condition(&texts)?;
+        self.element_premises(&base, &index)
+            .then_some((base, index, true_is_null))
     }
 
     fn classify_simple_base(&mut self, tokens: &[Token]) -> LegacyInstruction {
@@ -6248,6 +6659,10 @@ fn contains_call(tokens: &[Token]) -> bool {
 /// Card W43-INDEX-TRAVERSAL consults a recognised step of a non-formal, or a
 /// stepped access none of whose stepped names is a formal, after it.
 const FORMAL_MUTATION_REFUSAL: &str = "unmodeled expression may mutate a formal resource identity";
+/// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the plain name an element place
+/// is renamed to while the ordinary classifier reads the call around it. A
+/// reserved-looking identifier no C program of the corpus declares.
+const ELEMENT_TEMPORARY: &str = "__qcore_element__";
 
 const TYPED_SCALAR_CONSULTED: &[&str] = &[
     "indirect memory access is outside the resource projection",
@@ -6879,12 +7294,28 @@ impl CfgBuilder {
                 condition_access,
                 null_condition,
                 distinct_condition,
+                element_condition,
                 then_body,
                 else_body,
             } => {
                 let then_entry = self.compile_sequence(then_body, continuation);
                 let else_entry = self.compile_sequence(else_body, continuation);
-                let instruction = if let Some(condition) = null_condition {
+                let instruction = if let Some((base, index, true_is_null)) = element_condition {
+                    // W43-INDEXED-RESOURCE-COLLECTIONS: the condition was
+                    // refused (see its parse), so the fallback is exactly the
+                    // refusal the arm below would have pushed.
+                    LegacyInstruction::BranchOnElementNull {
+                        base: base.clone(),
+                        index: index.clone(),
+                        true_is_null: *true_is_null,
+                        fallback: Box::new(LegacyInstruction::Unknown {
+                            description:
+                                "unmodeled call, aggregate or indirect access in branch condition"
+                                    .to_owned(),
+                            writes: writes.clone(),
+                        }),
+                    }
+                } else if let Some(condition) = null_condition {
                     condition.branch()
                 } else if let Some(condition) = distinct_condition {
                     // C02-P-ALIAS. A supported neutral condition would have
@@ -6954,6 +7385,7 @@ impl CfgBuilder {
             }
             Statement::For {
                 line,
+                counted,
                 writes,
                 init,
                 condition_always_true,
@@ -6976,10 +7408,27 @@ impl CfgBuilder {
                     },
                     |call| (**call).clone(),
                 );
+                // W43-INDEXED-RESOURCE-COLLECTIONS: a recognised counted loop's
+                // header and step replace exactly a `NoOp` and a forget of the
+                // index (see `counted_loop`), with the same effect on every map
+                // but the collections.
+                let instruction = match counted {
+                    Some((index, bound)) => LegacyInstruction::CountedLoopHeader {
+                        index: index.clone(),
+                        bound: bound.clone(),
+                    },
+                    None => instruction,
+                };
                 let header = self.push(instruction, Vec::new(), *line, false);
                 let increment_entry = increment.as_ref().map_or(header, |clause| {
                     let (instruction, line) = clause.as_ref();
-                    self.push(instruction.clone(), vec![header], *line, false)
+                    let instruction = match counted {
+                        Some((index, _)) => LegacyInstruction::CountedLoopStep {
+                            index: index.clone(),
+                        },
+                        None => instruction.clone(),
+                    };
+                    self.push(instruction, vec![header], *line, false)
                 });
                 self.break_targets.push(continuation);
                 self.continue_targets.push(increment_entry);
@@ -7428,6 +7877,50 @@ struct AbstractState {
     /// custody claim at the exits it reaches. Joined by disjunction, so it is
     /// monotone and the work list still terminates.
     unmodeled: bool,
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the element ranges of every
+    /// array site an element operation touched. A site absent here was never
+    /// stored into, so all its elements are unfilled. Empty in every function
+    /// that lowers no element operation, which keeps the join, and with it
+    /// the work-list schedule, exactly as it was there (constraint 6).
+    collections: BTreeMap<usize, crate::indexed_collection::Collection>,
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: `name < bound` facts a
+    /// counted loop's body edge established, dropped when either name is
+    /// written. Recorded only while some collection exists.
+    index_bounds: BTreeMap<String, BTreeSet<crate::indexed_collection::Term>>,
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: bound names whose clamped
+    /// value `max(0, name)` is zero — a counted loop left with its index still
+    /// zero, so it ran no iteration. Dropped when the name is written.
+    clamped_zero: BTreeSet<String>,
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the collection names
+    /// (indices, bounds, counters) this path binds to zero, kept by the
+    /// collection rules themselves so that a vacuous path cannot weaken them.
+    index_zero: BTreeSet<String>,
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: no execution reaches here for
+    /// the collection facts — a counted loop's body edge whose bound is zero
+    /// when clamped, which its never-negative index cannot be below. The
+    /// collection part of this state claims nothing and joins as the
+    /// identity; the edge, and every other map on it, is kept.
+    collection_vacuous: bool,
+}
+
+/// The scalar facts one abstract state proves: a name bound to the null
+/// constant (the lowering of `i = 0`) is zero, and a counted loop's body edge
+/// bounds its index.
+impl crate::indexed_collection::Scalars for AbstractState {
+    fn is_zero(&self, name: &str) -> bool {
+        self.index_zero.contains(name)
+    }
+
+    fn clamped_zero(&self, name: &str) -> bool {
+        self.clamped_zero.contains(name)
+    }
+
+    fn upper_bounds(&self, name: &str) -> Vec<crate::indexed_collection::Term> {
+        self.index_bounds
+            .get(name)
+            .map(|bounds| bounds.iter().cloned().collect())
+            .unwrap_or_default()
+    }
 }
 
 const MAX_ALIAS_TARGETS: usize = 8;
@@ -7528,8 +8021,85 @@ impl AbstractState {
         self.join_field_links(incoming);
         self.widened |= incoming.widened;
         self.unmodeled |= incoming.unmodeled;
+        self.join_collections(&before, incoming);
         *self != before
     }
+
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: join the element ranges of
+    /// each collection, each side under its own scalar facts (`before` is
+    /// this side as it was before the pointer join forgot them). Two sides
+    /// that do not collapse to one form make the collection `Unknown`, which
+    /// is absorbing, so the work list still terminates. Index facts are
+    /// intersected.
+    fn join_collections(&mut self, before: &Self, incoming: &Self) {
+        use crate::indexed_collection::{Collection, Ranges};
+        // A vacuous side reaches here with no execution: the other side's
+        // collection facts stand.
+        if incoming.collection_vacuous && !before.collection_vacuous {
+            self.restore_collection_facts(before);
+            return;
+        }
+        if before.collection_vacuous {
+            self.restore_collection_facts(incoming);
+            self.collection_vacuous = incoming.collection_vacuous;
+            return;
+        }
+        self.clamped_zero = before
+            .clamped_zero
+            .intersection(&incoming.clamped_zero)
+            .cloned()
+            .collect();
+        self.index_zero = before
+            .index_zero
+            .intersection(&incoming.index_zero)
+            .cloned()
+            .collect();
+        self.index_bounds = intersect_bounds(&before.index_bounds, &incoming.index_bounds);
+        if before.collections.is_empty() && incoming.collections.is_empty() {
+            return;
+        }
+        let sites = before
+            .collections
+            .keys()
+            .chain(incoming.collections.keys())
+            .copied()
+            .collect::<BTreeSet<_>>();
+        for site in sites {
+            let mine = before.collections.get(&site).cloned().unwrap_or_default();
+            let theirs = incoming.collections.get(&site).cloned().unwrap_or_default();
+            let joined = match (&mine, &theirs) {
+                (Collection::Known(left), Collection::Known(right)) => {
+                    Ranges::join(left, before, right, incoming)
+                        .map_or(Collection::Unknown, Collection::Known)
+                }
+                _ => Collection::Unknown,
+            };
+            self.collections.insert(site, joined);
+        }
+    }
+
+    fn restore_collection_facts(&mut self, from: &Self) {
+        self.collections = from.collections.clone();
+        self.index_bounds = from.index_bounds.clone();
+        self.clamped_zero = from.clamped_zero.clone();
+        self.index_zero = from.index_zero.clone();
+        self.collection_vacuous = from.collection_vacuous;
+    }
+}
+
+fn intersect_bounds(
+    left: &BTreeMap<String, BTreeSet<crate::indexed_collection::Term>>,
+    right: &BTreeMap<String, BTreeSet<crate::indexed_collection::Term>>,
+) -> BTreeMap<String, BTreeSet<crate::indexed_collection::Term>> {
+    left.iter()
+        .filter_map(|(name, bounds)| {
+            let common = bounds
+                .intersection(right.get(name)?)
+                .cloned()
+                .collect::<BTreeSet<_>>();
+            (!common.is_empty()).then(|| (name.clone(), common))
+        })
+        .collect()
 }
 
 /// C02-P-ALIAS: the may-alias facts in force on entry to one node.
@@ -7624,6 +8194,11 @@ fn rebound_names(instruction: &LegacyInstruction) -> Vec<&str> {
             destination: Some(destination),
             ..
         } => vec![destination.as_str()],
+        LegacyInstruction::CountedLoopStep { index } => vec![index.as_str()],
+        LegacyInstruction::ElementStore {
+            index: crate::indexed_collection::IndexSpelling::PostIncrement(counter),
+            ..
+        } => vec![counter.as_str()],
         LegacyInstruction::ContractCall {
             destination,
             arguments,
@@ -8064,11 +8639,7 @@ impl EntryCustody {
 pub(crate) fn first_free_site(cfg: &LegacyCfg) -> usize {
     cfg.nodes
         .iter()
-        .flat_map(|node| match &node.instruction {
-            LegacyInstruction::Acquire { site, .. } => vec![*site],
-            LegacyInstruction::ContractCall { produced_sites, .. } => produced_sites.clone(),
-            _ => Vec::new(),
-        })
+        .flat_map(|node| instruction_produced_sites(&node.instruction))
         .max()
         .map_or(0, |site| site.saturating_add(1))
 }
@@ -8173,6 +8744,16 @@ fn observe_out_slot(
             if pointer.unknown
                 || pointer.targets.len() > 1
                 || !pointer.derivation.is_identity() =>
+        {
+            OutSlotValue::Ambiguous
+        }
+        // Card W43-INDEXED-RESOURCE-COLLECTIONS: an array still owing elements
+        // delivers more than the identity a summary can name.
+        Some(pointer)
+            if pointer
+                .targets
+                .first()
+                .is_some_and(|site| carries_collection(state, *site)) =>
         {
             OutSlotValue::Ambiguous
         }
@@ -8283,6 +8864,14 @@ fn observe_exit(
             }
         }
         _ => ReturnedValue::None,
+    };
+    // Card W43-INDEXED-RESOURCE-COLLECTIONS: a returned array still owing
+    // elements is more than the identity a summary can name.
+    let returned = match returned {
+        ReturnedValue::Site { site, .. } if carries_collection(state, site) => {
+            ReturnedValue::Ambiguous
+        }
+        other => other,
     };
     let exempt = entry.exempt_sites(state);
     ExitObservation {
@@ -8407,6 +8996,7 @@ fn report_derived_pointer_violations(
     cfg: &LegacyCfg,
     incoming: &[Option<AbstractState>],
     acquisition_lines: &BTreeMap<usize, usize>,
+    owners: &CollectionOwners<'_>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     for (node_id, node) in cfg.nodes.iter().enumerate() {
@@ -8414,7 +9004,7 @@ fn report_derived_pointer_violations(
             continue;
         };
         let mut uses: Vec<(ResourceParameterMode, &str)> = Vec::new();
-        match &node.instruction {
+        match element_call_view(node, state, owners) {
             LegacyInstruction::ContractCall {
                 arguments,
                 contract,
@@ -8533,6 +9123,7 @@ fn report_indirect_scalar_violations(
 fn require_live_borrowed_actuals(
     cfg: &LegacyCfg,
     incoming: &[Option<AbstractState>],
+    owners: &CollectionOwners<'_>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     for (node_id, node) in cfg.nodes.iter().enumerate() {
@@ -8545,7 +9136,7 @@ fn require_live_borrowed_actuals(
             contract,
             nested,
             ..
-        } = &node.instruction
+        } = element_call_view(node, state, owners)
         else {
             continue;
         };
@@ -8640,6 +9231,24 @@ fn require_live_borrowed_actuals(
     }
 }
 
+/// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the call a settled-state pass
+/// must examine at `node` — an element store's inner call when its array
+/// resolved (so the call ran), and otherwise the node's own instruction.
+fn element_call_view<'a>(
+    node: &'a LegacyCfgNode,
+    state: &AbstractState,
+    owners: &CollectionOwners<'_>,
+) -> &'a LegacyInstruction {
+    match &node.instruction {
+        LegacyInstruction::ElementStore {
+            base,
+            call: Some(call),
+            ..
+        } if owners.owner(state, base).is_some() => call,
+        other => other,
+    }
+}
+
 /// One tracked pointer's binding, as [`crate::may_alias::Denotation`] reads it.
 ///
 /// Borrowed rather than copied, so that neither of the two read-only decisions
@@ -8683,6 +9292,33 @@ fn classify_diagnostics(diagnostics: &[LegacyDiagnostic]) -> AnalysisStatus {
     }
 }
 
+/// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: what decides a collection's
+/// owner: `resolved_aggregate_owner` (one known, non-null, live identity this
+/// body acquired, not a caller's) of **heap** kind. A stream, directory or
+/// descriptor identity is never a collection (integration of
+/// W43-DESCRIPTOR-RESOURCE-TRACKING), so an element operation over one keeps
+/// its fallback refusal.
+struct CollectionOwners<'a> {
+    caller_sites: &'a BTreeSet<usize>,
+    kinds: &'a BTreeMap<usize, ResourceKind>,
+}
+
+impl CollectionOwners<'_> {
+    fn owner(&self, state: &AbstractState, base: &str) -> Option<usize> {
+        resolved_aggregate_owner(state, base, self.caller_sites)
+            .filter(|site| kind_of(self.kinds, *site).is_heap())
+    }
+}
+
+impl TransferContext<'_> {
+    fn collection_owners(&self) -> CollectionOwners<'_> {
+        CollectionOwners {
+            caller_sites: &self.caller_sites,
+            kinds: &self.site_kinds,
+        }
+    }
+}
+
 /// The parts of the contract in force that the transfer function consults.
 ///
 /// Both fields default to the most conservative setting, which is what the
@@ -8716,6 +9352,10 @@ struct TransferContext<'a> {
     /// site this analysis can hold, the CFG's produced sites and the entry
     /// custody's formal sites together. A site absent here is heap.
     site_kinds: BTreeMap<usize, ResourceKind>,
+    /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the scalar names this CFG's
+    /// element operations and counted loops read. Empty in every function
+    /// with none, so no other function's state gains a fact.
+    collection_names: BTreeSet<String>,
 }
 
 /// The kind of `site` under `kinds`: heap unless recorded otherwise.
@@ -8739,6 +9379,29 @@ fn carries_integer_identity(
     })
 }
 
+/// The scalar names a CFG's element operations and counted loops read.
+fn collection_names(cfg: &LegacyCfg) -> BTreeSet<String> {
+    let mut names = BTreeSet::new();
+    for node in &cfg.nodes {
+        match &node.instruction {
+            LegacyInstruction::ElementStore { index, .. }
+            | LegacyInstruction::ElementRelease { index, .. }
+            | LegacyInstruction::BranchOnElementNull { index, .. } => {
+                names.extend(index.name().map(str::to_owned));
+            }
+            LegacyInstruction::CountedLoopHeader { index, bound } => {
+                names.insert(index.clone());
+                names.extend(bound.name().map(str::to_owned));
+            }
+            LegacyInstruction::CountedLoopStep { index } => {
+                names.insert(index.clone());
+            }
+            _ => {}
+        }
+    }
+    names
+}
+
 fn analyze_cfg(cfg: LegacyCfg) -> LegacyFunctionSummary {
     analyze_cfg_with_entry(cfg, &EntryCustody::default()).0
 }
@@ -8760,6 +9423,7 @@ pub(crate) fn analyze_cfg_with_entry(
             .chain(entry_custody.derived_bases.keys().copied())
             .collect(),
         publications: cfg.publications.clone(),
+        collection_names: collection_names(&cfg),
         derived_bases: entry_custody.derived_bases.keys().copied().collect(),
         traversal: cfg.traversal.clone(),
         site_kinds: descriptor_custody::site_kinds(cfg.nodes.iter().map(|node| &node.instruction))
@@ -8779,13 +9443,10 @@ pub(crate) fn analyze_cfg_with_entry(
     let acquisition_lines = cfg
         .nodes
         .iter()
-        .flat_map(|node| match &node.instruction {
-            LegacyInstruction::Acquire { site, .. } => vec![(*site, node.line)],
-            LegacyInstruction::ContractCall { produced_sites, .. } => produced_sites
-                .iter()
-                .map(|site| (*site, node.line))
-                .collect(),
-            _ => Vec::new(),
+        .flat_map(|node| {
+            instruction_produced_sites(&node.instruction)
+                .into_iter()
+                .map(|site| (site, node.line))
         })
         .collect::<BTreeMap<_, _>>();
 
@@ -8900,6 +9561,13 @@ pub(crate) fn analyze_cfg_with_entry(
                     PointerRefinement::Refined => {}
                 }
             }
+            // Card W43-INDEXED-RESOURCE-COLLECTIONS: an element null test
+            // refines the tested element on each edge, and a counted loop's
+            // header carries its bound into the body and its exit equation
+            // out of the loop.
+            if !refine_collection_edge(node, edge, &mut edge_output, &context.collection_owners()) {
+                continue;
+            }
             let changed = match &mut incoming[successor] {
                 Some(current) => current.join(&edge_output, &cfg.traversal.scalars),
                 slot @ None => {
@@ -8930,7 +9598,12 @@ pub(crate) fn analyze_cfg_with_entry(
     // is: it is a *must* fact, and a must fact read on an intermediate iterate
     // would depend on the work-list schedule. Read-only — see
     // [`crate::borrow_liveness`].
-    require_live_borrowed_actuals(&cfg, &incoming, &mut diagnostics);
+    require_live_borrowed_actuals(
+        &cfg,
+        &incoming,
+        &context.collection_owners(),
+        &mut diagnostics,
+    );
     report_retained_loop_exit_edges(&cfg, &incoming, &context.site_kinds, &mut diagnostics);
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the kind-mismatched release and the
     // use-after-close candidates, from the same settled states.
@@ -8944,10 +9617,26 @@ pub(crate) fn analyze_cfg_with_entry(
     // Card W43-LIBC-RESULT-ALIAS: the two derived-pointer violation candidates,
     // read from the same settled states for the same reason — a binding's
     // derivation can still widen to `Mixed` on a later iterate.
-    report_derived_pointer_violations(&cfg, &incoming, &acquisition_lines, &mut diagnostics);
+    report_derived_pointer_violations(
+        &cfg,
+        &incoming,
+        &acquisition_lines,
+        &context.collection_owners(),
+        &mut diagnostics,
+    );
     // Card W43-INDIRECT-ACCESS-GENERAL: a typed scalar access through a base
     // released on some reaching path, from the same settled states.
     report_indirect_scalar_violations(&cfg, &incoming, &acquisition_lines, &mut diagnostics);
+    // Card W43-INDEXED-RESOURCE-COLLECTIONS: element double releases,
+    // element uses after release, overwritten live elements and element
+    // operations through a released array, from the same settled states.
+    report_collection_violations(
+        &cfg,
+        &incoming,
+        &acquisition_lines,
+        &context.collection_owners(),
+        &mut diagnostics,
+    );
 
     // Read the settled exit states once the work list is stable, so that a
     // summary describes the joined behavior of every reachable return rather
@@ -8975,6 +9664,16 @@ pub(crate) fn analyze_cfg_with_entry(
         );
         joined_provenance::finish_release(conditional_release, &mut output, &ignored);
         output.unmodeled |= ignored.iter().any(is_path_poisoning);
+        // Card W43-INDEXED-RESOURCE-COLLECTIONS: an element obligation left at
+        // this settled exit.
+        report_collection_exit(
+            &cfg.function,
+            node.line,
+            &output,
+            &entry_custody.exempt_sites(&output),
+            &acquisition_lines,
+            &mut diagnostics,
+        );
         observations.push(observe_exit(
             node,
             &output,
@@ -9026,6 +9725,277 @@ fn is_path_poisoning(diagnostic: &LegacyDiagnostic) -> bool {
     )
 }
 
+/// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: one edge's refinement. `false`
+/// when the edge is infeasible.
+fn refine_collection_edge(
+    node: &LegacyCfgNode,
+    edge: usize,
+    state: &mut AbstractState,
+    owners: &CollectionOwners<'_>,
+) -> bool {
+    match &node.instruction {
+        LegacyInstruction::BranchOnElementNull {
+            base,
+            index,
+            true_is_null,
+            ..
+        } => {
+            let Some(owner) = owners.owner(state, base) else {
+                return true;
+            };
+            let assume_null = if edge == 0 {
+                *true_is_null
+            } else {
+                !*true_is_null
+            };
+            let mut feasible = true;
+            with_collection(state, owner, |ranges, facts| {
+                if ranges.test_null(&index.term(), assume_null, facts)
+                    == crate::indexed_collection::TestOutcome::Infeasible
+                {
+                    feasible = false;
+                }
+                true
+            });
+            feasible
+        }
+        LegacyInstruction::CountedLoopHeader { index, bound } => {
+            if edge == 0 {
+                // The index is never negative, so a bound that is zero when
+                // clamped admits no iteration: the body edge's collection
+                // facts are vacuous.
+                if crate::indexed_collection::le(
+                    bound,
+                    &crate::indexed_collection::Term::Const(0),
+                    state,
+                ) {
+                    state.collection_vacuous = true;
+                }
+                state
+                    .index_bounds
+                    .entry(index.clone())
+                    .or_default()
+                    .insert(bound.clone());
+            } else {
+                state.index_bounds.remove(index);
+                // `index = max(0, bound)` here: an index still zero means the
+                // loop ran no iteration, so the bound is zero when clamped.
+                if crate::indexed_collection::Scalars::is_zero(state, index)
+                    && let Some(name) = bound.name()
+                {
+                    state.clamped_zero.insert(name.to_owned());
+                }
+                let owners = state.collections.keys().copied().collect::<Vec<_>>();
+                for owner in owners {
+                    if let Some(crate::indexed_collection::Collection::Known(mut ranges)) =
+                        state.collections.get(&owner).cloned()
+                    {
+                        let collection = if ranges.substitute(index, bound, state) {
+                            crate::indexed_collection::Collection::Known(ranges)
+                        } else {
+                            crate::indexed_collection::Collection::Unknown
+                        };
+                        state.collections.insert(owner, collection);
+                    }
+                }
+            }
+            true
+        }
+        _ => true,
+    }
+}
+
+/// The acquisition line of the lowest site in `sites`, for a diagnostic.
+fn element_line(acquisition_lines: &BTreeMap<usize, usize>, sites: &BTreeSet<usize>) -> usize {
+    sites
+        .first()
+        .map_or(0, |site| acquisition_line(acquisition_lines, *site))
+}
+
+/// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the element violation
+/// candidates, read from the **settled** incoming states (constraint 6). The
+/// transfer function has already refused or poisoned each of these paths; this
+/// only reports. Every candidate is provisional `Unsafe` under the existing
+/// policy and never a validated upstream defect.
+///
+/// * an element operation through an array settled on one identity released
+///   on a reaching path — `use_after_release` (the array's own acquisition);
+/// * releasing an element provably released already — `double_release`;
+/// * testing an element provably released — `use_after_release`;
+/// * storing over an element provably holding a live, non-null resource —
+///   `leak` of that resource.
+fn report_collection_violations(
+    cfg: &LegacyCfg,
+    incoming: &[Option<AbstractState>],
+    acquisition_lines: &BTreeMap<usize, usize>,
+    owners: &CollectionOwners<'_>,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    for (node_id, node) in cfg.nodes.iter().enumerate() {
+        let Some(state) = incoming[node_id]
+            .as_ref()
+            .filter(|state| !state.collection_vacuous)
+        else {
+            continue;
+        };
+        let (base, index) = match &node.instruction {
+            LegacyInstruction::ElementStore { base, index, .. }
+            | LegacyInstruction::ElementRelease { base, index, .. }
+            | LegacyInstruction::BranchOnElementNull { base, index, .. } => (base, index),
+            _ => continue,
+        };
+        let mut report = |kind| {
+            diagnostics.insert(LegacyDiagnostic {
+                function: cfg.function.clone(),
+                line: node.line,
+                kind,
+            });
+        };
+        if let Some(pointer) = state.pointers.get(base)
+            && !pointer.unknown
+            && pointer.targets.len() == 1
+            && let Some(site) = pointer.targets.first().copied()
+            && !state.unresolved_effect_sites.contains(&site)
+            && state
+                .resources
+                .get(&site)
+                .is_some_and(|status| status & RELEASED != 0)
+        {
+            report(LegacyDiagnosticKind::UseAfterRelease {
+                acquisition_line: acquisition_line(acquisition_lines, site),
+            });
+            continue;
+        }
+        let Some(owner) = owners.owner(state, base) else {
+            continue;
+        };
+        let crate::indexed_collection::Collection::Known(mut ranges) =
+            state.collections.get(&owner).cloned().unwrap_or_default()
+        else {
+            continue;
+        };
+        match &node.instruction {
+            LegacyInstruction::ElementRelease { .. } => {
+                if let crate::indexed_collection::ReleaseOutcome::Again(sites) =
+                    ranges.release(&index.term(), state)
+                {
+                    report(LegacyDiagnosticKind::DoubleRelease {
+                        acquisition_line: element_line(acquisition_lines, &sites),
+                    });
+                }
+            }
+            LegacyInstruction::BranchOnElementNull { .. } => {
+                if let crate::indexed_collection::TestOutcome::Released(sites) =
+                    ranges.test_null(&index.term(), true, state)
+                {
+                    report(LegacyDiagnosticKind::UseAfterRelease {
+                        acquisition_line: element_line(acquisition_lines, &sites),
+                    });
+                }
+            }
+            LegacyInstruction::ElementStore { .. } => {
+                let slot = crate::indexed_collection::Slot::Null;
+                if let crate::indexed_collection::StoreOutcome::Overwrote(sites) =
+                    ranges.store(&index.term(), slot, state)
+                {
+                    report(LegacyDiagnosticKind::Leak {
+                        acquisition_line: element_line(acquisition_lines, &sites),
+                    });
+                }
+            }
+            _ => {}
+        }
+    }
+}
+
+/// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: what one settled exit leaves in
+/// its collections. An array released, still held, or refuted at this exit
+/// while a live segment remains leaks those elements — no name but the array
+/// holds them (a `leak` candidate at the exit, named by an element's
+/// acquisition). An array that escaped carries its elements with it, as a
+/// member link's children escape with their aggregate. A collection whose
+/// ranges are `Unknown`, or whose array escaped on some paths only, supports
+/// no claim: the exit is refused unless its path is already refused.
+fn report_collection_exit(
+    function: &str,
+    line: usize,
+    state: &AbstractState,
+    // Sites the caller receives through a declared out slot: an array handed
+    // back that way carries its elements with it, exactly as a returned one.
+    exempt: &BTreeSet<usize>,
+    acquisition_lines: &BTreeMap<usize, usize>,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    if state.collection_vacuous {
+        return;
+    }
+    for (owner, collection) in &state.collections {
+        let status = state.resources.get(owner).copied().unwrap_or(0);
+        let status = if exempt.contains(owner) && status == LIVE {
+            ESCAPED
+        } else {
+            status
+        };
+        let escaped = status & ESCAPED != 0;
+        let unresolved = state.unresolved_effect_sites.contains(owner);
+        let undecided = match collection {
+            crate::indexed_collection::Collection::Unknown => true,
+            crate::indexed_collection::Collection::Known(ranges) => {
+                match ranges.live_sites(state) {
+                    None => false,
+                    Some(_) if escaped && status == ESCAPED => false,
+                    Some(_) if escaped || unresolved => true,
+                    Some(sites) => {
+                        diagnostics.insert(LegacyDiagnostic {
+                            function: function.to_owned(),
+                            line,
+                            kind: LegacyDiagnosticKind::Leak {
+                                acquisition_line: element_line(acquisition_lines, &sites),
+                            },
+                        });
+                        false
+                    }
+                }
+            }
+        };
+        if undecided && !state.unmodeled {
+            diagnostics.insert(LegacyDiagnostic {
+                function: function.to_owned(),
+                line,
+                kind: LegacyDiagnosticKind::Unsupported {
+                    description: COLLECTION_UNDECIDED.to_owned(),
+                },
+            });
+        }
+    }
+}
+
+/// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the refusal an exit reports when
+/// a collection's element obligations could not be settled on its path.
+pub(crate) const COLLECTION_UNDECIDED: &str =
+    "indexed collection element ranges are not established at this exit";
+
+/// Whether any collection at this state keeps a custody claim from being made:
+/// an `Unknown` one, or one that may still owe under an array that did not
+/// escape exactly.
+fn collection_blocks_claim(state: &AbstractState) -> bool {
+    !state.collection_vacuous
+        && state.collections.iter().any(|(owner, collection)| {
+            matches!(collection, crate::indexed_collection::Collection::Unknown)
+                || (collection.may_owe(state) && state.resources.get(owner) != Some(&ESCAPED))
+        })
+}
+
+/// Whether `site` carries a collection that may still owe, or whose ranges are
+/// unknown: its exit value is then not the plain identity a summary names.
+fn carries_collection(state: &AbstractState, site: usize) -> bool {
+    !state.collection_vacuous
+        && state
+            .collections
+            .get(&site)
+            .is_some_and(|collection| collection.may_owe(state))
+}
+
 /// Read one exit's custody residual out of its settled state.
 fn observe_residual(
     node_id: LegacyNodeId,
@@ -9048,6 +10018,9 @@ fn observe_residual(
         .collect::<Vec<_>>();
     let indeterminate = state.unmodeled
         || state.widened
+        // Card W43-INDEXED-RESOURCE-COLLECTIONS: element obligations this
+        // record's per-site dispositions cannot name.
+        || collection_blocks_claim(state)
         || sites
             .iter()
             .any(|site| site.disposition == SiteDisposition::Mixed);
@@ -9129,7 +10102,461 @@ fn reject_unsanctioned_store(
     }
 }
 
+/// The transfer function: the pre-card transfer, plus card
+/// **W43-INDEXED-RESOURCE-COLLECTIONS**'s element operations and the three
+/// effects every other instruction has on collections. In a function with no
+/// element operation the state carries no collection, and this is exactly
+/// [`transfer_base`].
 fn transfer(
+    function: &str,
+    node: &LegacyCfgNode,
+    state: AbstractState,
+    acquisition_lines: &BTreeMap<usize, usize>,
+    context: &TransferContext<'_>,
+    alias: &NodeAliasFacts,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) -> AbstractState {
+    let base = |node: &LegacyCfgNode,
+                state: AbstractState,
+                diagnostics: &mut BTreeSet<LegacyDiagnostic>| {
+        transfer_base(
+            function,
+            node,
+            state,
+            acquisition_lines,
+            context,
+            alias,
+            diagnostics,
+        )
+    };
+    match &node.instruction {
+        LegacyInstruction::ElementStore {
+            base: array,
+            index,
+            call,
+            fallback,
+        } => {
+            let Some(owner) = context.collection_owners().owner(&state, array) else {
+                return base(&with_instruction(node, fallback), state, diagnostics);
+            };
+            let place = crate::indexed_collection::place_spelling(array, &index.term());
+            let (mut state, slot) = match call {
+                None => (state, Some(crate::indexed_collection::Slot::Null)),
+                Some(call) => {
+                    let call_node = with_instruction(node, call);
+                    let mut state = state;
+                    // The inner call is a call like any other: it may not be
+                    // handed a collection that still owes an element.
+                    refuse_collection_owner_uses(function, &call_node, &mut state, diagnostics);
+                    let mut state = base(&call_node, state, diagnostics);
+                    let slot = take_element_result(&mut state, &place);
+                    (state, slot)
+                }
+            };
+            let stored = slot.is_some_and(|slot| {
+                with_collection(&mut state, owner, |ranges, facts| {
+                    ranges.store(&index.term(), slot, facts)
+                        != crate::indexed_collection::StoreOutcome::Refused
+                })
+            });
+            if !stored {
+                refuse_element(function, node.line, &place, owner, &mut state, diagnostics);
+            }
+            if let crate::indexed_collection::IndexSpelling::PostIncrement(counter) = index {
+                step_collections(&mut state, counter);
+            }
+            state
+        }
+        LegacyInstruction::ElementRelease {
+            base: array,
+            index,
+            nullable,
+            fallback,
+            ..
+        } => {
+            let Some(owner) = context.collection_owners().owner(&state, array) else {
+                return base(&with_instruction(node, fallback), state, diagnostics);
+            };
+            let mut state = state;
+            let place = crate::indexed_collection::place_spelling(array, &index.term());
+            let mut again = false;
+            let released = with_collection(&mut state, owner, |ranges, facts| {
+                match ranges.release(&index.term(), facts) {
+                    crate::indexed_collection::ReleaseOutcome::Released { may_be_null } => {
+                        *nullable || !may_be_null
+                    }
+                    crate::indexed_collection::ReleaseOutcome::Null => *nullable,
+                    crate::indexed_collection::ReleaseOutcome::Again(_) => {
+                        again = true;
+                        false
+                    }
+                    crate::indexed_collection::ReleaseOutcome::Refused => false,
+                }
+            });
+            if again {
+                // A `double_release` candidate, reported from the settled
+                // states by `report_collection_violations`. The ranges are kept
+                // as they were, so the settled state still shows the element
+                // released; the path supports no further custody claim.
+                state.unmodeled = true;
+            } else if !released {
+                refuse_element(function, node.line, &place, owner, &mut state, diagnostics);
+            }
+            state
+        }
+        LegacyInstruction::BranchOnElementNull {
+            base: array,
+            index,
+            fallback,
+            ..
+        } => {
+            let Some(owner) = context.collection_owners().owner(&state, array) else {
+                return base(&with_instruction(node, fallback), state, diagnostics);
+            };
+            let mut state = state;
+            let place = crate::indexed_collection::place_spelling(array, &index.term());
+            let mut released = false;
+            let decided = [true, false].into_iter().all(|assume_null| {
+                let mut probe = state.clone();
+                with_collection(&mut probe, owner, |ranges, facts| {
+                    match ranges.test_null(&index.term(), assume_null, facts) {
+                        crate::indexed_collection::TestOutcome::Refined
+                        | crate::indexed_collection::TestOutcome::Infeasible => true,
+                        crate::indexed_collection::TestOutcome::Released(_) => {
+                            released = true;
+                            false
+                        }
+                        crate::indexed_collection::TestOutcome::Refused => false,
+                    }
+                })
+            });
+            if released {
+                // A `use_after_release` candidate, reported from the settled
+                // states; the ranges are kept, as for a second release.
+                state.unmodeled = true;
+            } else if !decided {
+                refuse_element(function, node.line, &place, owner, &mut state, diagnostics);
+            }
+            state
+        }
+        LegacyInstruction::CountedLoopStep { index } => {
+            let mut state = state;
+            state.pointers.remove(index);
+            step_collections(&mut state, index);
+            state
+        }
+        LegacyInstruction::CountedLoopHeader { .. } => state,
+        _ => {
+            let mut state = state;
+            if !state.collections.is_empty() {
+                refuse_collection_owner_uses(function, node, &mut state, diagnostics);
+            }
+            let mut output = base(node, state, diagnostics);
+            if !context.collection_names.is_empty() {
+                // The zero fact of a collection name: `NAME = 0` sets it, any
+                // other write by name drops it.
+                forget_written_bounds(&node.instruction, &mut output);
+                if let LegacyInstruction::Clear { destination } = &node.instruction
+                    && context.collection_names.contains(destination)
+                {
+                    output.index_zero.insert(destination.clone());
+                }
+                for site in instruction_produced_sites(&node.instruction) {
+                    retire_reacquired_collection(&mut output, site);
+                }
+            }
+            output
+        }
+    }
+}
+
+/// One node with another instruction (an element operation's inner call or
+/// its fallback refusal), at the same line and with the same successors.
+fn with_instruction(node: &LegacyCfgNode, instruction: &LegacyInstruction) -> LegacyCfgNode {
+    LegacyCfgNode {
+        instruction: instruction.clone(),
+        ..node.clone()
+    }
+}
+
+/// The abstract sites an instruction creates, including those of an element
+/// store's inner call.
+pub(crate) fn instruction_produced_sites(instruction: &LegacyInstruction) -> Vec<usize> {
+    match instruction {
+        LegacyInstruction::Acquire { site, .. } => vec![*site],
+        LegacyInstruction::ContractCall { produced_sites, .. } => produced_sites.clone(),
+        LegacyInstruction::ElementStore {
+            call: Some(call), ..
+        } => instruction_produced_sites(call),
+        _ => Vec::new(),
+    }
+}
+
+/// Shift every site an instruction creates (card W43-INDEXED-RESOURCE-
+/// COLLECTIONS keeps the recursion combiner's disjointness for inner calls).
+pub(crate) fn offset_produced_sites(instruction: &mut LegacyInstruction, offset: usize) {
+    match instruction {
+        LegacyInstruction::Acquire { site, .. } => *site += offset,
+        LegacyInstruction::ContractCall { produced_sites, .. } => {
+            for site in produced_sites {
+                *site += offset;
+            }
+        }
+        LegacyInstruction::ElementStore {
+            call: Some(call), ..
+        } => offset_produced_sites(call, offset),
+        _ => {}
+    }
+}
+
+/// Take the acquired element out of its temporary binding: the one fresh
+/// identity the inner call bound at `place`, with its nullability. Its site
+/// leaves the resource map, because its custody now belongs to the collection.
+/// `None` when the call bound anything else.
+fn take_element_result(
+    state: &mut AbstractState,
+    place: &str,
+) -> Option<crate::indexed_collection::Slot> {
+    let binding = state.pointers.remove(place)?;
+    let site = match binding
+        .targets
+        .iter()
+        .copied()
+        .collect::<Vec<_>>()
+        .as_slice()
+    {
+        [site] if !binding.unknown && binding.derivation.is_identity() => *site,
+        _ => {
+            mark_unresolved_effect(state, &binding);
+            return None;
+        }
+    };
+    if state.resources.get(&site) != Some(&LIVE) || state.unresolved_effect_sites.contains(&site) {
+        mark_unresolved_effect(state, &binding);
+        return None;
+    }
+    let may_be_null = binding.may_be_null || state.nullable_sites.remove(&site);
+    state.resources.remove(&site);
+    state.conditional_replacements.remove(&site);
+    for alias in state.pointers.values_mut() {
+        if alias.targets.remove(&site) {
+            alias.unknown = true;
+            alias.may_be_null = true;
+        }
+    }
+    Some(crate::indexed_collection::Slot::Live {
+        may_be_null,
+        sites: BTreeSet::from([site]),
+    })
+}
+
+/// Run `operation` on the known ranges of `owner`'s collection (an absent one
+/// is all unfilled) under this state's scalar facts, and write the ranges
+/// back. An `Unknown` collection answers `false` without running it.
+fn with_collection(
+    state: &mut AbstractState,
+    owner: usize,
+    operation: impl FnOnce(
+        &mut crate::indexed_collection::Ranges,
+        &dyn crate::indexed_collection::Scalars,
+    ) -> bool,
+) -> bool {
+    if state.collection_vacuous {
+        return true;
+    }
+    let mut ranges = match state.collections.get(&owner).cloned().unwrap_or_default() {
+        crate::indexed_collection::Collection::Known(ranges) => ranges,
+        crate::indexed_collection::Collection::Unknown => return false,
+    };
+    let answer = operation(&mut ranges, state);
+    state
+        .collections
+        .insert(owner, crate::indexed_collection::Collection::Known(ranges));
+    answer
+}
+
+/// An element operation whose base resolved but whose ranges could not be
+/// proved: `UnknownAlias` on the element place, and the collection is
+/// `Unknown` from here on. The path supports no custody claim.
+fn refuse_element(
+    function: &str,
+    line: usize,
+    place: &str,
+    owner: usize,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    diagnostics.insert(LegacyDiagnostic {
+        function: function.to_owned(),
+        line,
+        kind: LegacyDiagnosticKind::UnknownAlias {
+            variable: place.to_owned(),
+        },
+    });
+    state
+        .collections
+        .insert(owner, crate::indexed_collection::Collection::Unknown);
+}
+
+/// The modeled `name++` of an index or counter: forget its scalar fact and
+/// rename every collection bound `name + k` to `name + (k - 1)`.
+fn step_collections(state: &mut AbstractState, name: &str) {
+    state.pointers.remove(name);
+    state.index_bounds.remove(name);
+    state.clamped_zero.remove(name);
+    state.index_zero.remove(name);
+    for bounds in state.index_bounds.values_mut() {
+        bounds.retain(|bound| bound.name() != Some(name));
+    }
+    let owners = state.collections.keys().copied().collect::<Vec<_>>();
+    for owner in owners {
+        if let Some(crate::indexed_collection::Collection::Known(mut ranges)) =
+            state.collections.get(&owner).cloned()
+            && ranges.mentions(name)
+        {
+            ranges.step(name, state);
+            state
+                .collections
+                .insert(owner, crate::indexed_collection::Collection::Known(ranges));
+        }
+    }
+}
+
+/// Whether `instruction` may write the scalar `name` other than by a modeled
+/// step. Every name a collection bound reads is a slot no other lvalue
+/// designates (the classifier's premise), so only a write *by name* reaches
+/// it: a rebinding, or a refusal whose frame does not spare it.
+fn writes_scalar(instruction: &LegacyInstruction, name: &str) -> bool {
+    if rebound_names(instruction).contains(&name) {
+        return true;
+    }
+    match instruction {
+        LegacyInstruction::Unknown { writes, .. } => writes.poisons(name),
+        LegacyInstruction::IndirectScalarAccess {
+            frame: Some(frame), ..
+        } => frame.poisons(name),
+        _ => false,
+    }
+}
+
+/// A write to a scalar a collection bound or an index fact reads: the
+/// collection is `Unknown` and the fact is dropped.
+fn forget_written_bounds(instruction: &LegacyInstruction, state: &mut AbstractState) {
+    let owners = state.collections.keys().copied().collect::<Vec<_>>();
+    for owner in owners {
+        let written = match state.collections.get(&owner) {
+            Some(crate::indexed_collection::Collection::Known(ranges)) => ranges
+                .points()
+                .iter()
+                .filter_map(crate::indexed_collection::Term::name)
+                .any(|name| writes_scalar(instruction, name)),
+            _ => false,
+        };
+        if written {
+            state
+                .collections
+                .insert(owner, crate::indexed_collection::Collection::Unknown);
+        }
+    }
+    state
+        .index_bounds
+        .retain(|name, _| !writes_scalar(instruction, name));
+    state
+        .clamped_zero
+        .retain(|name| !writes_scalar(instruction, name));
+    state
+        .index_zero
+        .retain(|name| !writes_scalar(instruction, name));
+    for bounds in state.index_bounds.values_mut() {
+        bounds.retain(|bound| {
+            bound
+                .name()
+                .is_none_or(|name| !writes_scalar(instruction, name))
+        });
+    }
+}
+
+/// A site acquired again (an allocation inside a loop) is a new array: its
+/// elements are unfilled. If the old array may still owe an element, that
+/// obligation cannot be followed, so the collection is `Unknown` instead.
+fn retire_reacquired_collection(state: &mut AbstractState, site: usize) {
+    let Some(collection) = state.collections.get(&site) else {
+        return;
+    };
+    if collection.may_owe(state) {
+        state
+            .collections
+            .insert(site, crate::indexed_collection::Collection::Unknown);
+    } else {
+        state.collections.remove(&site);
+    }
+}
+
+/// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: a collection that may still owe
+/// an element is handed to a call only to be released (the element
+/// obligations are then checked at the exits) or consumed (they leave with
+/// it, as a member link's do). Any other position — a borrow, an owned or
+/// stored parameter, a reallocation — could move, overwrite or release
+/// elements the ranges do not see, so it refuses with `UnknownAlias` before
+/// the call's own effects apply, and the collection is `Unknown`.
+fn refuse_collection_owner_uses(
+    function: &str,
+    node: &LegacyCfgNode,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    let LegacyInstruction::ContractCall {
+        arguments,
+        contract,
+        nested,
+        ..
+    } = &node.instruction
+    else {
+        return;
+    };
+    let calls = std::iter::once((arguments, contract)).chain(
+        nested
+            .iter()
+            .map(|nested| (&nested.arguments, &nested.contract)),
+    );
+    let mut refused = Vec::new();
+    for (arguments, contract) in calls {
+        for (index, argument) in arguments.iter().enumerate() {
+            let Some(place) = argument.as_deref() else {
+                continue;
+            };
+            let transfers = matches!(
+                contract.parameters.get(index),
+                Some(
+                    ResourceParameterMode::Released { .. } | ResourceParameterMode::Consumed { .. }
+                )
+            ) && !matches!(
+                contract.result,
+                ResourceReturnMode::Reallocated { parameter, .. } if parameter == index
+            );
+            if transfers {
+                continue;
+            }
+            let Some(binding) = state.pointers.get(place) else {
+                continue;
+            };
+            for site in &binding.targets {
+                if state
+                    .collections
+                    .get(site)
+                    .is_some_and(|collection| collection.may_owe(state))
+                {
+                    refused.push((place.to_owned(), *site));
+                }
+            }
+        }
+    }
+    for (place, site) in refused {
+        refuse_element(function, node.line, &place, site, state, diagnostics);
+    }
+}
+
+fn transfer_base(
     function: &str,
     node: &LegacyCfgNode,
     mut state: AbstractState,
@@ -9978,6 +11405,18 @@ fn transfer(
             }
         }
         LegacyInstruction::NoOp => {}
+        // Card W43-INDEXED-RESOURCE-COLLECTIONS: decided by [`transfer`]
+        // before this function is reached; as a base instruction a counted
+        // loop's header is a `NoOp` and its step a forget.
+        LegacyInstruction::CountedLoopHeader { .. } => {}
+        LegacyInstruction::CountedLoopStep { index } => {
+            state.pointers.remove(index);
+        }
+        LegacyInstruction::ElementStore { .. }
+        | LegacyInstruction::ElementRelease { .. }
+        | LegacyInstruction::BranchOnElementNull { .. } => {
+            unreachable!("element operations are transferred by `transfer`")
+        }
     }
     // O04-B09B10: a custody-taking member read handed the linked child to the
     // callee, whose contract effect above released or consumed it. The member
@@ -11417,6 +12856,8 @@ fn refine_pointer_null(
         state.resources.remove(&site);
         state.nullable_sites.remove(&site);
         state.conditional_replacements.remove(&site);
+        // Card W43-INDEXED-RESOURCE-COLLECTIONS: a null array has no elements.
+        state.collections.remove(&site);
         // The null alternative has no child at this site. Remove precisely
         // its incoming aggregate edges, retaining every sibling obligation.
         state.contained.retain(|_, children| {

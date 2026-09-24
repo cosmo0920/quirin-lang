@@ -1,0 +1,13 @@
+{
+  "note": "W43-INDEXED-RESOURCE-COLLECTIONS: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured on eea0b30b (this card merged with main d2dd61c1; later commits change documents, the ledger, report scripts and evidence only, no Rust, Lean, contract or test source), with CARGO_INCREMENTAL=0; the dev profile was reclaimed (cargo clean --profile dev) after the test step, before fmt. 5362 core Rust passed / 0 failed / 11 ignored over 287 summaries (the card adds the 32-test indexed_collection.rs binary and 5 unit tests of indexed_collection.rs; no existing pin moved); 176 Lean audits (main's 175 plus AuditIndexedCollection, 47 theorems); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 450 feature-on library tests passed; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed (1 test); provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. Logs: worktree-private private/gate and private/provider-gate of agent-a21f70f046fa88069 (the pre-merge gates on 6bcfae3d are kept as private/gate-premerge2-6bcfae3d and private/provider-gate-premerge2-6bcfae3d). Clang recorded in this checkout. Corpus against the W43-DESCRIPTOR-RESOURCE-TRACKING integration baseline: 0 leaves, 0 functions, 0 units moved, leak 271, 0 violation candidates; the diagnostics differ only in the scope string.",
+  "workspace_tests": 5362,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 176,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

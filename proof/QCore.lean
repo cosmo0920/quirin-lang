@@ -147,6 +147,7 @@ import QCore.AggregateStore
 import QCore.ScalarMemberStore
 import QCore.IndirectScalarAccess
 import QCore.IndexTraversal
+import QCore.IndexedCollection
 import QCore.AtomicPublication
 import QCore.BoundFieldRead
 import QCore.MemberAddress

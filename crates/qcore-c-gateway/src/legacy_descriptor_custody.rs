@@ -304,6 +304,20 @@ pub(crate) fn admits_descriptor_read(
         // descriptor read on the same line does, so it is refused
         // (integration of W43-DESCRIPTOR-RESOURCE-TRACKING).
         | LegacyInstruction::PointerStep { .. }
+        // Card W43-INDEXED-RESOURCE-COLLECTIONS's element operations and
+        // counted-loop nodes (integration of W43-DESCRIPTOR-RESOURCE-TRACKING).
+        // An element store or release is lowered only for a statement that
+        // reads no descriptor name (`Parser::element_statement` declines one,
+        // keeping the classifier's refusal), and the loop nodes and element
+        // null tests are never produced by this classifier. Each is refused
+        // here anyway: an element operation reads its index as custody-neutral
+        // data and moves custody into a heap collection, and states nothing
+        // about a descriptor read on the same line.
+        | LegacyInstruction::ElementStore { .. }
+        | LegacyInstruction::ElementRelease { .. }
+        | LegacyInstruction::BranchOnElementNull { .. }
+        | LegacyInstruction::CountedLoopHeader { .. }
+        | LegacyInstruction::CountedLoopStep { .. }
         | LegacyInstruction::AggregateStore { .. }
         | LegacyInstruction::NoOp => false,
     }

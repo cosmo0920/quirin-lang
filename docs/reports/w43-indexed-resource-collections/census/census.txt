@@ -1,0 +1,68 @@
+W43-INDEXED-RESOURCE-COLLECTIONS census
+
+sizeof_dereference_operand:
+  leaves_only_blocked_by_a_sizeof_dereference_operand: 224
+  unknown_functions: 211
+  sole_blocked_functions: 4
+functions_scanned_with_element_statements:
+  251
+status_counts:
+  Unknown: 235
+  Unsafe: 15
+  Safe: 1
+element_store_rhs:
+  other: 1687
+  name: 53
+  null: 41
+  uncontracted-call: 25
+  acquire: 12
+  owned-name: 4
+  contracted-non-owning-call: 2
+owned_store_index_shapes:
+  name: 8
+  post-increment: 5
+  expression: 3
+release_shapes:
+  pointer/name: 13
+  pointer/expression: 2
+  pointer/constant: 1
+loop_roles:
+  release: 11
+  fill: 9
+loop_canonical_and_indexed:
+  release/canonical: 9
+  fill/other: 8
+  release/other: 2
+  fill/canonical: 1
+blocked:
+  unknown functions with a collection leaf: 12
+  functions with an element release (Unknown): 9
+  functions with an owned element store (Unknown): 6
+  functions with an owned element store (Unsafe): 4
+collection_leaf_descriptions:
+  indirect memory access is outside the resource projection: 12
+  unmodeled increment or decrement expression: 3
+  resource call with a formal embedded in an unmodeled expression: 1
+  unmodeled call, aggregate or indirect access in loop condition: 1
+  unmodeled expression may mutate a formal resource identity: 1
+  unmodeled call, aggregate or indirect access in branch condition: 1
+  discarded owned result of resource API `rd_calloc`: 1
+  unmodeled call, aggregate or indirect access in for-loop condition: 1
+
+functions with an owned element store or an element release:
+  Unknown  cmetrics__cmt_decode_statsd.c.i::decode_labels stores=0 releases=4 loops=release*,release*,release*,release* collection_leaves=8 other_leaves=47
+  Unsafe   cmetrics__cmt_encode_opentelemetry_batch.c.i::batch_add_resource stores=1 releases=0 loops=- collection_leaves=1 other_leaves=15
+  Unsafe   cmetrics__cmt_encode_opentelemetry_batch.c.i::batch_add_scope stores=1 releases=0 loops=- collection_leaves=1 other_leaves=12
+  Unknown  cmetrics__cmt_encode_prometheus_remote_write.c.i::append_entry_to_prometheus_label_list stores=1 releases=2 loops=- collection_leaves=3 other_leaves=9
+  Unknown  cmetrics__cmt_encode_prometheus_remote_write.c.i::destroy_prometheus_label_list stores=0 releases=1 loops=release* collection_leaves=1 other_leaves=7
+  Unknown  cmetrics__cmt_encode_prometheus_remote_write.c.i::destroy_prometheus_sample_list stores=0 releases=1 loops=release* collection_leaves=1 other_leaves=3
+  Unsafe   ctraces__ctr_encode_opentelemetry.c.i::otel_span_set_links stores=1 releases=0 loops=fill collection_leaves=2 other_leaves=20
+  Unknown  librdkafka__rdkafka.c.i::rd_kafka_ListGroups_resp_cb stores=1 releases=1 loops=fill,release collection_leaves=5 other_leaves=43
+  Unsafe   librdkafka__rdkafka_conf.c.i::rd_kafka_anyconf_dump stores=2 releases=0 loops=fill collection_leaves=6 other_leaves=7
+  Unknown  librdkafka__rdkafka_conf.c.i::rd_kafka_conf_dump_free stores=0 releases=1 loops=release* collection_leaves=2 other_leaves=2
+  Unknown  librdkafka__rdkafka_mock_sharegrp.c.i::rd_kafka_mock_sharegroup_get_member_ids stores=1 releases=0 loops=fill collection_leaves=3 other_leaves=12
+  Unknown  librdkafka__rdkafka_sasl_oauthbearer.c.i::rd_kafka_oauthbearer_unsecured_token0 stores=2 releases=0 loops=fill collection_leaves=4 other_leaves=45
+  Unknown  librdkafka__rdkafka_telemetry_encode.c.i::free_metrics stores=0 releases=3 loops=release* collection_leaves=3 other_leaves=4
+  Unknown  librdkafka__rdkafka_telemetry_encode.c.i::free_resource_attributes stores=0 releases=1 loops=release* collection_leaves=1 other_leaves=2
+  Unknown  librdkafka__rdkafka_telemetry_encode.c.i::rd_kafka_telemetry_encode_metrics stores=5 releases=0 loops=fill*,fill,fill collection_leaves=7 other_leaves=111
+  Unknown  librdkafka__rdunittest.c.i::ut_tq_test stores=1 releases=2 loops=fill,release collection_leaves=5 other_leaves=57
