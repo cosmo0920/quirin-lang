@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W43-RESULT-ALIAS-RETURNED integration, 2026-09-25. The card (measured against docs/reports/w43-libc-result-alias/artifacts) composed onto the combined tree docs/reports/w43-libc-restrict-prototypes/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 2 added 0 functions 2 units 0); functions moved (combined): [('XXH_memcpy', ('Unknown', 'Safe')), ('mk_string_casestr', ('Unknown', 'Safe'))]. Both movers are Safe relative to the declared memcpy/strcasestr premises; 0 violation candidates. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-result-alias-returned/integration/previous-corpus-row.json.",
+   "note": "W43-INDEX-TRAVERSAL integration, 2026-09-25. The card (measured against docs/reports/w43-indirect-access-general/artifacts) composed onto the combined tree docs/reports/w43-result-alias-returned/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 1479 added 130 functions 11 units 0); functions moved (combined): [('bitLen', ('Unknown', 'Safe')), ('char_lookup', ('Unknown', 'Safe')), ('cio_file_native_filename_check', ('Unknown', 'Safe')), ('cio_file_native_get_size', ('Unknown', 'Safe')), ('cio_os_isdir', ('Unknown', 'Safe')), ('decode_hex_digit', ('Unknown', 'Safe')), ('mk_kernel_features', ('Unknown', 'Safe')), ('mk_server_lib_notify_event_loop_break', ('Unknown', 'Safe')), ('rd_kafka_q_check_yield', ('Unknown', 'Safe')), ('rd_string_hash', ('Unknown', 'Safe')), ('reverse_char_lookup', ('Unknown', 'Safe')), ('str_searchr', ('Unknown', 'Safe')), ('ut_write_varint', ('Unknown', 'Safe'))]. overlap (already removed by earlier integrations): 1 [('cio_utils_recursive_delete', 'unresolved resource identity `ret`', 'cio_utils.c:96')] complementary Unknown->Safe (card cleared the last blocker): ['cio_file_native_get_size', 'cio_os_isdir'] No bounds claim. Closes the out[m++] soundness hole W43-INDIRECT-ACCESS-GENERAL introduced (no published verdict relied on it). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-index-traversal/integration/previous-corpus-row.json.",
    "units": 185,
    "safe": 3,
    "provisional_unsafe": 42,
@@ -6642,15 +6642,15 @@
    "projected_functions": 4834,
    "leak_diagnostics": 271,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w43-result-alias-returned/integration/artifacts/",
-   "source": "docs/reports/w43-result-alias-returned/integration/integration-confirmation.md; preceding baseline docs/reports/w43-libc-restrict-prototypes/integration/artifacts",
-   "unknown_alias_diagnostics": 4725,
-   "unsupported_diagnostics": 47798,
+   "baseline": "docs/reports/w43-index-traversal/integration/artifacts/",
+   "source": "docs/reports/w43-index-traversal/integration/integration-confirmation.md; preceding baseline docs/reports/w43-result-alias-returned/integration/artifacts",
+   "unknown_alias_diagnostics": 4320,
+   "unsupported_diagnostics": 46855,
    "double_release_diagnostics": 0,
    "function_statuses": {
-    "safe": 274,
+    "safe": 287,
     "provisional_unsafe": 84,
-    "unknown": 4476
+    "unknown": 4463
    },
    "source_definitions": 4921,
    "unprojected_definitions": 87,
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W43-RESULT-ALIAS-RETURNED on merge 0d131503 (onto main 25b43584, after W43-LIBC-RESTRICT-PROTOTYPES), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5277 core Rust passed / 0 failed / 11 ignored over 285 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 173 Lean audits; 330 root Python tests after regenerating this section (08-python exit 1 before regeneration); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w43-libc-restrict-prototypes/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
-  "workspace_tests": 5277,
+  "note": "Integration gate for W43-INDEX-TRAVERSAL on merge b89e0a45+b79aa07e (onto main 48732424, after W43-RESULT-ALIAS-RETURNED), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5301 core Rust passed / 0 failed / 11 ignored over 286 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 174 Lean audits; 330 root Python tests after regenerating this section (08-python exit 1 before regeneration); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w43-result-alias-returned/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+  "workspace_tests": 5301,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 173,
+  "lean_audits": 174,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6813,6 +6813,7 @@
    "AuditFrameHelperTask.lean",
    "AuditGenericNames.lean",
    "AuditHttpComputedLength.lean",
+   "AuditIndexTraversal.lean",
    "AuditIndirectScalarAccess.lean",
    "AuditJoinedProvenanceCallFrames.lean",
    "AuditJoinedProvenanceCycles.lean",
@@ -6917,9 +6918,8 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-result-alias-returned/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-index-traversal/integration/gate.json)"
  },
- "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)",
  "named_followups": [
   {
    "id": "P02-FLAKE",
@@ -9128,5 +9128,6 @@
    "source": "docs/reports/w43-index-traversal/README.md",
    "recorded_by": "W43-INDEX-TRAVERSAL"
   }
- ]
+ ],
+ "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"
 }

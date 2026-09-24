@@ -1,0 +1,6 @@
+card delta:     removed 1479 added 130 functions 11 units 0
+overlap (already removed by earlier integrations): 1 [('cio_utils_recursive_delete', 'unresolved resource identity `ret`', 'cio_utils.c:96')]
+combined delta: removed 1478 added 130
+complementary Unknown->Safe (card cleared the last blocker): ['cio_file_native_get_size', 'cio_os_isdir']
+functions moved (combined): [('bitLen', ('Unknown', 'Safe')), ('char_lookup', ('Unknown', 'Safe')), ('cio_file_native_filename_check', ('Unknown', 'Safe')), ('cio_file_native_get_size', ('Unknown', 'Safe')), ('cio_os_isdir', ('Unknown', 'Safe')), ('decode_hex_digit', ('Unknown', 'Safe')), ('mk_kernel_features', ('Unknown', 'Safe')), ('mk_server_lib_notify_event_loop_break', ('Unknown', 'Safe')), ('rd_kafka_q_check_yield', ('Unknown', 'Safe')), ('rd_string_hash', ('Unknown', 'Safe')), ('reverse_char_lookup', ('Unknown', 'Safe')), ('str_searchr', ('Unknown', 'Safe')), ('ut_write_varint', ('Unknown', 'Safe'))]
+COMPOSES
