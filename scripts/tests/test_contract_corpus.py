@@ -13,9 +13,9 @@ class CanonicalCorpus(unittest.TestCase):
         root = Path(__file__).resolve().parents[2]
         self.assertFalse((root / "contract/qcore").exists())
         modules = contract_corpus.sources(root)
-        self.assertEqual(len(modules), 108)
+        self.assertEqual(len(modules), 109)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 72)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 36)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 37)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 

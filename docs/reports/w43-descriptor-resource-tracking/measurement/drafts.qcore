@@ -1,6 +1,8 @@
 module contract;
 
-// Card W43-DESCRIPTOR-RESOURCE-TRACKING: MEASUREMENT-ONLY module. Every
+// Card W43-DESCRIPTOR-RESOURCE-TRACKING: MEASUREMENT-ONLY module, as measured
+// (the `file_tree` kind of the two `fts` drafts was withdrawn afterwards, so
+// this file loads only with the census binary that measured it). Every
 // descriptor or handle declaration this card drafted, in one file, for the
 // declared-ABI census over the 185 captured units (`../scripts/census.sh`).
 // It is not selected by any manifest and is not a contract. The shipped
@@ -109,4 +111,14 @@ contract {
     ensures normal resource_released(ftsp, nonnull);
     ensures normal resource_kind(ftsp, file_tree);
     ensures normal resource_return_none();
+};
+
+extern fn fts_open(path_argv: ptr<mut, ptr<mut, u8>>, options: i32, compar: fnptr) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(path_argv);
+    ensures normal resource_borrowed(options);
+    ensures normal resource_borrowed(compar);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(file_tree);
 };

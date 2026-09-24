@@ -37,6 +37,9 @@ module contract;
 //   `getaddrinfo` allocates a list released by `freeaddrinfo`, through a
 //   `struct addrinfo **` out slot whose success arm is the `0` return, not a
 //   null test. Neither lifecycle is expressible as v1 pointer custody.
+//   Superseded for `socket` by the descriptor section at the end of this
+//   module (card W43-DESCRIPTOR-RESOURCE-TRACKING); `accept4`, `getaddrinfo`
+//   and `freeaddrinfo` stay undeclared, see there.
 //   `getsockopt`, `getpeername`: faithful in v1, but the prototype spells a qualifier AFTER the
 //   `*` (`T *__restrict p`), which the declared-ABI reader (gateway
 //   constraint 8) does not read; this card measured the declaration withdrawn
@@ -119,4 +122,37 @@ contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(ecode);
     ensures normal resource_return_none();
+};
+
+// ## Descriptors (Card W43-DESCRIPTOR-RESOURCE-TRACKING)
+//
+// A TRUSTED ASSUMPTION, read from the prototype the analysed units declare:
+//
+//   extern int socket (int __domain, int __type, int __protocol) __THROW;
+//
+// `socket` returns a fresh descriptor or the sentinel `-1`
+// (`resource_return_owned(sentinel)` of the `descriptor` kind, contract spec
+// §C04.6); its three arguments are scalars. `close` (in `libc/unistd.qcore`)
+// releases it. The descriptor-using calls above (`setsockopt`, `send`,
+// `recv`, `listen`, `sendfile`) borrow a descriptor: a tracked one handed to
+// them is a use, and a use after its `close` is a violation candidate.
+//
+// ## Deliberately NOT declared (recorded in the card report)
+//
+//   `accept4` takes `__SOCKADDR_ARG`, a transparent union under
+//   `_GNU_SOURCE`: the declared-ABI census withdraws it in all 93 units that
+//   declare it (`abi-unreadable-declaration`), so it decides nothing.
+//   `accept` likewise. `getaddrinfo`'s list is valid exactly when the call
+//   returns `0`, which needs a status witness bound to the out slot; a
+//   `nullable` out slot would misstate the failure arm, and `freeaddrinfo`
+//   without its acquisition decides nothing. `socketpair` writes an `int[2]`.
+
+extern fn socket(domain: i32, kind: i32, protocol: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(domain);
+    ensures normal resource_borrowed(kind);
+    ensures normal resource_borrowed(protocol);
+    ensures normal resource_return_owned(sentinel);
+    ensures normal resource_return_kind(descriptor);
 };

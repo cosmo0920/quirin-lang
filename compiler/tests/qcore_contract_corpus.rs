@@ -433,7 +433,19 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // (`return_owned(nullable)`, 3) and `prctl` (literal premise on its
     // option plus a variadic tail, 5). Deliberate; see
     // `docs/reports/w43-libc-contracts/README.md`.
+    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the new `libc/dirent.qcore`, a
+    // directory-stream pair. `opendir`: the marker, one borrowed path, the
+    // owned result and its `directory` kind (4); `closedir`: the marker, the
+    // released stream, its kind and `none` (4). Deliberate; see
+    // `docs/reports/w43-descriptor-resource-tracking/README.md`.
+    ("libc/dirent.qcore", "opendir", 4),
+    ("libc/dirent.qcore", "closedir", 4),
     ("libc/dlfcn.qcore", "dlerror", 2),
+    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the library-handle pair, appended.
+    // `dlopen`: marker, two borrowed, owned result, `dynamic_library` kind (5);
+    // `dlclose`: marker, released handle, kind, `none` (4).
+    ("libc/dlfcn.qcore", "dlopen", 5),
+    ("libc/dlfcn.qcore", "dlclose", 4),
     // Card CONSTRUCTOR-RESIDUALS, continued. Two clauses: the marker and the
     // result mode. It takes no parameter, so it has no parameter clause — the
     // same shape as `fluent_bit/time.qcore`'s `flb_time_now`.
@@ -461,9 +473,20 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/socket.qcore", "htonl", 3),
     ("libc/socket.qcore", "ntohl", 3),
     ("libc/socket.qcore", "gai_strerror", 3),
+    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: `socket`, appended. The marker,
+    // three borrowed scalars, the `sentinel` owned result and its `descriptor`
+    // kind (6).
+    ("libc/socket.qcore", "socket", 6),
     ("libc/stdio.qcore", "perror", 3),
     ("libc/stdio.qcore", "fflush", 3),
     ("libc/stdio.qcore", "remove", 3),
+    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the stream pair and `fileno`,
+    // appended. `fopen`: marker, two borrowed, owned result, `stream` kind (5);
+    // `fclose`: marker, released stream, kind, `none` (4); `fileno`: the
+    // neutral element over one parameter (3).
+    ("libc/stdio.qcore", "fopen", 5),
+    ("libc/stdio.qcore", "fclose", 4),
+    ("libc/stdio.qcore", "fileno", 3),
     ("libc/stdlib.qcore", "atoi", 3),
     ("libc/stdlib.qcore", "srand", 3),
     ("libc/stdlib.qcore", "rand_r", 3),
@@ -526,6 +549,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/unistd.qcore", "unlink", 3),
     ("libc/unistd.qcore", "read", 5),
     ("libc/unistd.qcore", "write", 5),
+    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the descriptor pair, appended.
+    // `open`: marker, two borrowed, the variadic data tail, the `sentinel`
+    // owned result and its `descriptor` kind (6); `close`: marker, the `valid`
+    // released descriptor, its kind and `none` (4).
+    ("libc/unistd.qcore", "open", 6),
+    ("libc/unistd.qcore", "close", 4),
     (
         "library/custody_evidence.qcore",
         "publish_library_resource",
@@ -1042,7 +1071,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `fluent_bit/resource_string.qcore` (`flb_strdup`, `flb_strndup`
     // inheriting libc). Its conversion of `fluent_bit/resource_memory.qcore`
     // to `contract inherit` changes no module count.
-    assert_eq!(sources.len(), 108, "unexpected contract corpus size");
+    // 108 -> 109 by card W43-DESCRIPTOR-RESOURCE-TRACKING's `libc/dirent.qcore`.
+    assert_eq!(sources.len(), 109, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

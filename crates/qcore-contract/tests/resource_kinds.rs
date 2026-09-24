@@ -95,14 +95,6 @@ fn every_kind_loads_where_it_may_stand() {
             None,
             ResourceKind::DynamicLibrary,
         ),
-        (
-            "(p: ptr<const, u8>) -> ptr<mut, u8>",
-            "    ensures normal resource_borrowed(p);\n    \
-             ensures normal resource_return_owned(nullable);\n    \
-             ensures normal resource_return_kind(file_tree);\n",
-            None,
-            ResourceKind::FileTree,
-        ),
     ];
     for (signature, clauses, parameter, result_kind) in admitted {
         let source = module(signature, clauses);
@@ -175,10 +167,10 @@ fn every_other_placement_rejects_the_module() {
             module(
                 "(p: ptr<mut, u8>) -> unit",
                 "    ensures normal resource_released(p, nullable);\n    \
-                 ensures normal resource_kind(p, socket);\n    \
+                 ensures normal resource_kind(p, file_tree);\n    \
                  ensures normal resource_return_none();\n",
             ),
-            "unsupported resource kind socket",
+            "unsupported resource kind file_tree",
         ),
         (
             "a descriptor spelled with pointer nullability",

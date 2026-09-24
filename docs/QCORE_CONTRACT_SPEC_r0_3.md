@@ -261,7 +261,7 @@ ensures normal resource_kind(p, KIND);
 ensures normal resource_return_kind(KIND);
 ```
 
-`KIND` is exactly one of `descriptor`, `stream`, `directory`, `dynamic_library` and `file_tree`. The **heap** kind is what a position with no kind clause means, and it is spelled only by that absence: writing `heap` rejects the module, so every meaning has one spelling. Every declaration written before this card therefore loads to exactly the contract it loaded to before, with every position heap. Kinds load onto `ResourceFunctionContract` as `parameter_kinds` (non-heap entries only) and `result_kind`, both omitted from the serialized form and from the diagnostic text when heap, so a contract without a kind is byte-identical in every artifact.
+`KIND` is exactly one of `descriptor`, `stream`, `directory` and `dynamic_library`, each the kind of a pair this card declares; no kind is added without a declared use (an `FTS *` kind waits on a readable `fts_open`). The **heap** kind is what a position with no kind clause means, and it is spelled only by that absence: writing `heap` rejects the module, so every meaning has one spelling. Every declaration written before this card therefore loads to exactly the contract it loaded to before, with every position heap. Kinds load onto `ResourceFunctionContract` as `parameter_kinds` (non-heap entries only) and `result_kind`, both omitted from the serialized form and from the diagnostic text when heap, so a contract without a kind is byte-identical in every artifact.
 
 **Placement.** A kind clause names a custody-bearing position:
 

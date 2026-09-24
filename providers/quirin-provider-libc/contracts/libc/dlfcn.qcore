@@ -21,6 +21,9 @@ module contract;
 //
 //   `dlopen`/`dlclose` open and close a handle: a v1 owned/released pair would
 //   put the handle in the one kind-less pointer class `malloc`/`free` use.
+//   Superseded by the handle section at the end of this module (card
+//   W43-DESCRIPTOR-RESOURCE-TRACKING), which gives them the `dynamic_library`
+//   kind.
 //   `dlsym` (whose result, a symbol address, would otherwise be `resource_return_none()`): faithful in v1, but the prototype spells a qualifier AFTER the
 //   `*` (`T *__restrict p`), which the declared-ABI reader (gateway
 //   constraint 8) does not read; this card measured the declaration withdrawn
@@ -36,5 +39,36 @@ module contract;
 extern fn dlerror() -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+// ## Library handles (Card W43-DESCRIPTOR-RESOURCE-TRACKING)
+//
+// TRUSTED ASSUMPTIONS, read from the prototypes the analysed units declare:
+//
+//   extern void *dlopen (const char *__file, int __mode) __THROWNL;
+//   extern int dlclose (void *__handle) __THROWNL __nonnull ((1));
+//
+// `dlopen` returns a fresh handle or NULL (`resource_return_owned(nullable)`
+// of the `dynamic_library` kind, contract spec §C04.6). `dlclose` releases a
+// non-NULL handle (`resource_released(handle, nonnull)` of the same kind).
+// glibc reference-counts a library opened twice; each `dlopen` result is its
+// own obligation, discharged by its own `dlclose`, which is what this pair
+// says. Nothing about symbol lifetimes after `dlclose` is stated.
+
+extern fn dlopen(file: ptr<const, u8>, mode: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(mode);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(dynamic_library);
+};
+
+extern fn dlclose(handle: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(handle, nonnull);
+    ensures normal resource_kind(handle, dynamic_library);
     ensures normal resource_return_none();
 };

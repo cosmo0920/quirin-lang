@@ -126,19 +126,16 @@ pub enum ResourceKind {
     Directory,
     /// A dynamic-library handle (`dlopen`; `dlclose`).
     DynamicLibrary,
-    /// An `FTS *` file-tree traversal (`fts_open`; `fts_close`).
-    FileTree,
 }
 
 impl ResourceKind {
     /// Every kind, in declaration order.
-    pub const ALL: [Self; 6] = [
+    pub const ALL: [Self; 5] = [
         Self::Heap,
         Self::Descriptor,
         Self::Stream,
         Self::Directory,
         Self::DynamicLibrary,
-        Self::FileTree,
     ];
 
     #[must_use]
@@ -165,7 +162,6 @@ impl ResourceKind {
             Self::Stream => "stream",
             Self::Directory => "directory",
             Self::DynamicLibrary => "dynamic_library",
-            Self::FileTree => "file_tree",
         }
     }
 

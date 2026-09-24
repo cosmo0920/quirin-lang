@@ -1,5 +1,6 @@
 //! Shared Quirin contract modules for the C standard library and POSIX: `errno`, heap
-//! memory, `pthread_mutex`, and (card W43-LIBC-CONTRACTS) `<dlfcn.h>`, `<math.h>`,
+//! memory, `pthread_mutex`, (card W43-DESCRIPTOR-RESOURCE-TRACKING) `<dirent.h>`, and
+//! (card W43-LIBC-CONTRACTS) `<dlfcn.h>`, `<math.h>`,
 //! process/regex/rlimit helpers, sockets, `<stdio.h>`, `<stdlib.h>`, `<string.h>`,
 //! `<sys/stat.h>`, threads and signals, `<time.h>` and `<unistd.h>`.
 //!
@@ -33,6 +34,10 @@ pub const PUBLISHED: &[&str] = &["libc/memory.qcore", "libc/string.qcore"];
 /// sorted by logical path. The logical path is relative to `contracts/`, which
 /// is the name `contract/corpus.json` resolves (for example `libc/errno.qcore`).
 pub const CONTRACTS: &[(&str, &str)] = &[
+    (
+        "libc/dirent.qcore",
+        include_str!("../contracts/libc/dirent.qcore"),
+    ),
     (
         "libc/dlfcn.qcore",
         include_str!("../contracts/libc/dlfcn.qcore"),
