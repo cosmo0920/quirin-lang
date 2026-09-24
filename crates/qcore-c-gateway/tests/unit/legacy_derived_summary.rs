@@ -134,11 +134,31 @@ fn a_non_formal_base_is_named() {
 
 #[test]
 fn a_mutated_local_copy_is_named() {
-    // The rebinding is refused by the classifier, whose poison drops the copy's
-    // binding: no exit is derived from a formal any longer.
+    // Integration of W43-INDEX-TRAVERSAL: a copy stepped forward by a literal
+    // amount is an interior pointer strictly after the formal's start, so the
+    // body's result is derived from that formal. Before traversal the
+    // classifier dropped the copy's binding and the body was refused.
     for body in [
         "char *f(char *d) { char *q; q = d; q = q + 1; return d_copy(q, \"x\", 1); }",
         "char *f(char *d) { char *q; q = d; q++; return d_copy(q, \"x\", 1); }",
+    ] {
+        assert_eq!(
+            decide(body, "f").expect(body).result,
+            ResourceReturnMode::Derived {
+                parameter: 0,
+                extent: DerivedExtent::Interior,
+                nullable: false,
+                const_dropped: false,
+            },
+            "{body}"
+        );
+    }
+    // A copy that may be stepped back to the formal's start (`Stepped::Any`)
+    // is never published as derived: a caller's release of it could be the
+    // formal's own allocation, so it must not be accused.
+    for body in [
+        "char *f(char *d) { char *q; q = d; q = q - 1; return d_copy(q, \"x\", 1); }",
+        "char *f(char *d) { char *q; q = d; q--; return d_copy(q, \"x\", 1); }",
     ] {
         assert_eq!(refusal(body, "f"), DerivedRefusal::NoFormalBase, "{body}");
     }

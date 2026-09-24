@@ -561,28 +561,64 @@ fn a_derivation_through_a_mutated_local_copy_is_refused() {
     if !clang_available() {
         return;
     }
-    refused(
-        "a copy offset in place",
-        "char *wmut(char *d) { char *q; q = d; q = q + 1; return d_copy(q, \"x\", 1); }",
-        "wmut",
-        "wmut(s)",
-        &[
-            "unknown_alias:d",
-            RETURN_REFUSAL,
-            "unsupported:unsupported assignment expression",
-        ],
-    );
-    refused(
-        "a copy incremented",
-        "char *wmut(char *d) { char *q; q = d; q++; return d_copy(q, \"x\", 1); }",
-        "wmut",
-        "wmut(s)",
-        &[
-            "unknown_alias:d",
-            RETURN_REFUSAL,
-            "unsupported:unmodeled increment or decrement expression",
-        ],
-    );
+    // Integration of W43-INDEX-TRAVERSAL: a copy stepped forward by a literal
+    // amount is an interior pointer strictly after the formal's start, so the
+    // wrapper now publishes an interior derived result and its caller, which
+    // only reads through it, certifies. Before traversal the copy's binding
+    // was dropped and the wrapper was refused.
+    for (label, wrapper) in [
+        (
+            "a copy offset forward in place",
+            "char *wmut(char *d) { char *q; q = d; q = q + 1; return d_copy(q, \"x\", 1); }",
+        ),
+        (
+            "a copy incremented",
+            "char *wmut(char *d) { char *q; q = d; q++; return d_copy(q, \"x\", 1); }",
+        ),
+    ] {
+        let body = format!(
+            "{wrapper} void w(char *s) {{ char *p; p = wmut(s); d_len(p); }} \
+             void x(void) {{ char *b; char *p; b = d_alloc(8); p = wmut(b); d_free(p); d_free(b); }}"
+        );
+        let result = analyze(&body);
+        assert_eq!(
+            function_outcome(&result, "wmut"),
+            ("Safe".to_owned(), vec![]),
+            "{label}\n{body}"
+        );
+        assert_eq!(
+            function_outcome(&result, "w"),
+            ("Safe".to_owned(), vec![]),
+            "{label}\n{body}"
+        );
+        // Releasing `b + 1` is not a release of `b`: an invalid-release candidate.
+        assert_eq!(
+            function_outcome(&result, "x"),
+            ("Unsafe".to_owned(), vec!["invalid_release".to_owned()]),
+            "{label}\n{body}"
+        );
+    }
+    // A copy that may be stepped back to the formal's start is never published
+    // as derived, so the wrapper keeps a refusal and its caller sees an
+    // uncontracted call.
+    for (label, wrapper) in [
+        (
+            "a copy offset backward in place",
+            "char *wmut(char *d) { char *q; q = d; q = q - 1; return d_copy(q, \"x\", 1); }",
+        ),
+        (
+            "a copy decremented",
+            "char *wmut(char *d) { char *q; q = d; q--; return d_copy(q, \"x\", 1); }",
+        ),
+    ] {
+        refused(
+            label,
+            wrapper,
+            "wmut",
+            "wmut(s)",
+            &["unknown_alias:d", RETURN_REFUSAL],
+        );
+    }
 }
 
 // -- The offset base -------------------------------------------------------------
