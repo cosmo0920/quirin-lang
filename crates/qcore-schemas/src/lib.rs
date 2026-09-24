@@ -19,7 +19,7 @@ pub mod reason;
 pub mod witness;
 
 pub use contract::{
-    ContractTrust, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
+    ContractTrust, DerivedExtent, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
     ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
 };
 pub use digest::{CANONICAL_SERIALIZER, sha256_hex};

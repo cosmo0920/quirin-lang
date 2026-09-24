@@ -1787,6 +1787,7 @@ fn unknown_identity_null_refinement_never_erases_a_resource() {
                 targets,
                 unknown: true,
                 may_be_null: true,
+                derivation: Derivation::Identity,
             },
         );
         let before = state.clone();

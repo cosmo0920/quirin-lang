@@ -1171,6 +1171,10 @@ fn result_matches(
             }
             None => false,
         },
+        // Card W43-LIBC-RESULT-ALIAS: no exit observation exhibits "the result
+        // is derived from parameter k", so a body is never validated against a
+        // declared derived result. It falls back to the contract-free analysis.
+        ResourceReturnMode::Derived { .. } => false,
     }
 }
 

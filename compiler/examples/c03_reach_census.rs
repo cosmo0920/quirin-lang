@@ -356,6 +356,8 @@ fn describe_diagnostic(diagnostic: &qcore_compiler::LegacyDiagnostic) -> String 
         Kind::DoubleRelease { .. } => "repeated release".to_owned(),
         Kind::ReleaseAfterEscape { .. } => "release after transfer".to_owned(),
         Kind::CustodyConflict { .. } => "conflicting custody".to_owned(),
+        Kind::InvalidRelease { .. } => "release of a derived pointer".to_owned(),
+        Kind::UseAfterRelease { .. } => "use of a derived pointer after release".to_owned(),
         Kind::SummaryConflict { .. } => "inferred summary contradicts declaration".to_owned(),
     }
 }

@@ -424,6 +424,22 @@ fn diagnostic_description(
                 site(*acquisition_line)
             ),
         ),
+        // Card W43-LIBC-RESULT-ALIAS: the two derived-pointer violation
+        // candidates. Provisional, like every other defect category here.
+        LegacyDiagnosticKind::InvalidRelease { acquisition_line } => (
+            "invalid_release",
+            format!(
+                "release of a pointer into, not the identity of, the acquisition at {}",
+                site(*acquisition_line)
+            ),
+        ),
+        LegacyDiagnosticKind::UseAfterRelease { acquisition_line } => (
+            "use_after_release",
+            format!(
+                "use of a pointer derived from the acquisition at {} after its release",
+                site(*acquisition_line)
+            ),
+        ),
         LegacyDiagnosticKind::SummaryConflict { inferred, declared } => (
             "summary_conflict",
             format!(

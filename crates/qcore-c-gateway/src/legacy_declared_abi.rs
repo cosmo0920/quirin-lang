@@ -1052,10 +1052,41 @@ fn project_parameter(
     {
         rest.pop();
     }
+    drop_parameter_object_qualifiers(&mut rest);
     if array_levels == 1 {
         rest.push("*");
     }
     project_declarator(&rest, typedefs, false)
+}
+
+/// Card W43-LIBC-RESULT-ALIAS (`W43-LIBC-POINTER-QUALIFIER-READER`): drop the
+/// qualifiers that follow a parameter declarator's **last** `*`.
+///
+/// Those qualifiers qualify the parameter object itself — the pointer — not
+/// anything it points to, and C drops them for type compatibility: "each
+/// parameter declared with qualified type is taken as having the unqualified
+/// version of its declared type" (C11 6.7.6.3p15). So `const char *__restrict
+/// __format` and `const char *__format` are one parameter type, and glibc
+/// spells `__restrict` on `memcpy`, `strcpy`, `strncpy`, the printf family and
+/// others. Before this card the reader counted only *trailing* `*` words, so
+/// such a parameter projected to nothing and its declaration was withdrawn
+/// with `abi-unreadable-declaration` at every call site.
+///
+/// Exactly one position is widened. A qualifier *between* two `*` qualifies an
+/// inner pointer, which this vocabulary cannot spell, and still refuses in
+/// [`project_declarator`]; a qualifier with no `*` before it qualifies the
+/// pointee or a scalar and is read there exactly as before; and a result type
+/// is not a parameter, so this is applied to parameters only.
+fn drop_parameter_object_qualifiers(words: &mut Vec<&str>) {
+    let Some(last_star) = words.iter().rposition(|word| *word == "*") else {
+        return;
+    };
+    if words[last_star + 1..]
+        .iter()
+        .all(|word| QUALIFIERS.contains(word))
+    {
+        words.truncate(last_star + 1);
+    }
 }
 
 const ARITHMETIC_WORDS: &[&str] = &[

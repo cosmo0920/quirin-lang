@@ -259,6 +259,12 @@ fn describe(diagnostic: &LegacyDiagnostic) -> String {
         LegacyDiagnosticKind::CustodyConflict { acquisition_line } => {
             format!("custody conflict at L{acquisition_line}")
         }
+        LegacyDiagnosticKind::InvalidRelease { acquisition_line } => {
+            format!("invalid release of a pointer into L{acquisition_line}")
+        }
+        LegacyDiagnosticKind::UseAfterRelease { acquisition_line } => {
+            format!("use after release of a pointer derived from L{acquisition_line}")
+        }
         LegacyDiagnosticKind::UnknownAlias { variable } => {
             format!("unresolved resource identity `{variable}`")
         }

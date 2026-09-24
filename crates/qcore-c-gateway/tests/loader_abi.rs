@@ -502,6 +502,49 @@ const ROWS: &[Row] = &[
         c: "void k_use(void (*p)(int), int n);",
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
+    // -- a qualifier after the last `*` (card W43-LIBC-RESULT-ALIAS) -------
+    Row {
+        label: "`__restrict` after the last `*` qualifies the parameter object (C11 6.7.6.3p15)",
+        declared: "p: ptr<const, u8>, n: i32",
+        c: "void k_use(const void *__restrict p, int n);",
+        outcome: None,
+    },
+    Row {
+        label: "so does `const` after the last `*`: a const pointer to mutable bytes",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void k_use(void *const p, int n);",
+        outcome: None,
+    },
+    Row {
+        label: "an unnamed parameter ending in a qualifier reads the same way",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void k_use(void *restrict, int n);",
+        outcome: None,
+    },
+    Row {
+        label: "several trailing qualifiers are all the parameter object's",
+        declared: "p: ptr<const, u8>, n: i32",
+        c: "void k_use(const char *const volatile __restrict__ p, int n);",
+        outcome: None,
+    },
+    Row {
+        label: "dropping the object's qualifier keeps the pointee's constness",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void k_use(const void *__restrict p, int n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "a qualifier between two `*` still qualifies an inner pointer and refuses",
+        declared: "p: ptr<mut, ptr<mut, u8>>, n: i32",
+        c: "void k_use(void *const *p, int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "and so does one between two `*` with a trailing one after them",
+        declared: "p: ptr<mut, ptr<mut, u8>>, n: i32",
+        c: "void k_use(void *__restrict *__restrict p, int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
     // -- arity -------------------------------------------------------------
     Row {
         label: "a C declaration with more parameters disagrees",
@@ -572,6 +615,39 @@ fn the_admission_and_refusal_table_decides_row_by_row() {
             "{}: {}",
             row.label,
             row.c
+        );
+    }
+}
+
+/// Card W43-LIBC-RESULT-ALIAS: C11 6.7.6.3p15 speaks of *parameters*, and the
+/// reader's widening is applied to parameters only. A result declarator that
+/// ends in a qualifier after its `*` stays unreadable, exactly as it was.
+#[test]
+fn a_result_ending_in_a_qualifier_is_not_widened() {
+    let contracts = load(
+        "\
+extern fn k_make() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nullable);
+};
+",
+    );
+    for (c, expected) in [
+        (
+            "char *const k_make(void);",
+            AbiOutcome::Withdrawn(AbiRefusal::UnreadableDeclaration),
+        ),
+        ("char *k_make(void);", AbiOutcome::Agreed),
+    ] {
+        let source = format!("{c}\nvoid w(void) {{ }}");
+        assert_eq!(
+            declared_abi_census(&source, &contracts)
+                .into_iter()
+                .map(|row| row.outcome)
+                .collect::<Vec<_>>(),
+            [expected],
+            "{c}"
         );
     }
 }

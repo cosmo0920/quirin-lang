@@ -318,7 +318,9 @@ enum ResultDuty {
 impl ResultDuty {
     const fn of(mode: ResourceReturnMode) -> Self {
         match mode {
-            ResourceReturnMode::None => Self::Absent,
+            // Card W43-LIBC-RESULT-ALIAS: a derived result owns nothing, so it
+            // places no custody duty on the caller.
+            ResourceReturnMode::None | ResourceReturnMode::Derived { .. } => Self::Absent,
             ResourceReturnMode::Owned { .. } | ResourceReturnMode::Reallocated { .. } => {
                 Self::Produced
             }

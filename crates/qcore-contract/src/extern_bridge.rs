@@ -129,10 +129,16 @@ pub fn declared_contract(
             signature.result_type
         )
     })?;
+    let result_mode = return_mode(contract.result).ok_or_else(|| {
+        format!(
+            "`{name}`: a derived result (card W43-LIBC-RESULT-ALIAS) has no extern-call model; \
+             the checked extern-call route admits only fresh, reallocated or no custody"
+        )
+    })?;
     Ok(DeclaredContract {
         parameters,
         result,
-        result_mode: return_mode(contract.result),
+        result_mode,
     })
 }
 
@@ -164,16 +170,20 @@ const fn parameter_mode(mode: ResourceParameterMode) -> ContractParameterMode {
     }
 }
 
-const fn return_mode(mode: ResourceReturnMode) -> ContractReturnMode {
+/// `None` for a derived result: the extern-call model has no constructor for a
+/// non-owning result that aliases a parameter, so the declaration is refused
+/// rather than projected onto `None` (which would drop the alias).
+const fn return_mode(mode: ResourceReturnMode) -> Option<ContractReturnMode> {
     match mode {
-        ResourceReturnMode::None => ContractReturnMode::None,
-        ResourceReturnMode::Owned { nullable } => ContractReturnMode::Owned { nullable },
+        ResourceReturnMode::None => Some(ContractReturnMode::None),
+        ResourceReturnMode::Owned { nullable } => Some(ContractReturnMode::Owned { nullable }),
         ResourceReturnMode::Reallocated {
             parameter,
             nullable,
-        } => ContractReturnMode::Reallocated {
+        } => Some(ContractReturnMode::Reallocated {
             parameter,
             nullable,
-        },
+        }),
+        ResourceReturnMode::Derived { .. } => None,
     }
 }

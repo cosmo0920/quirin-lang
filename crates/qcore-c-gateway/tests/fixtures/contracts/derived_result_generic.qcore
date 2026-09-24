@@ -1,0 +1,52 @@
+module contract;
+
+// Card W43-LIBC-RESULT-ALIAS: a generic surface for the derived-result mode.
+// Test assumptions, not a model of any real library. `d_copy` stands for the
+// exact-alias shape (`memcpy` returns `dst`), `d_chr` for the interior-pointer
+// shape (`strchr` returns a pointer into `s` or NULL), and its `const`-in,
+// mutable-out signature records `const_dropped`.
+
+extern fn d_alloc(n: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn d_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn d_consume(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(p, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn d_len(s: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_none();
+};
+
+extern fn d_chr(s: ptr<const, u8>, c: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(c);
+    ensures normal resource_return_interior(s, nullable);
+};
+
+extern fn d_copy(dst: ptr<mut, u8>, src: ptr<const, u8>, n: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(dst);
+    ensures normal resource_borrowed(src);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_alias(dst, nonnull);
+};
