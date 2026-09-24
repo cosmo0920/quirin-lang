@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 294
+  "named_followups": 296
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6611,7 +6611,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 107,
+  "contract_modules": 108,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6731,10 +6731,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for CONTRACT-INHERIT on merge 6ae583ca (onto main a7a936d9, after W43-LIBC-CONTRACTS), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5176 core Rust passed / 0 failed / 11 ignored over 277 summaries; 109 provider Rust passed / 0 / 0 over 39 summaries; 168 Lean audits; 327 root Python tests after regenerating this section (the first run failed only the derived-facts check, 167 vs 168 Lean audits, because the merged validation section predated AuditContractInherit); 5 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-contracts/artifacts/; contracts is identical after the checkout-root alias, and source-effects is byte-identical to the W43-LIBC-CONTRACTS integration run in the same checkout. No verdict or coverage change.",
-  "workspace_tests": 5176,
-  "provider_tests": 109,
-  "python_evidence_validator_tests": 327,
+  "note": "CONTRACT-INHERIT-ADOPTION: core and provider gates measured on 2d6de0d9 (later commits change the report, ledger, status, index and matrix only). 5187 core Rust passed / 0 failed / 11 ignored over 277 summaries; 168 Lean audits (AuditContractInherit 38 -> 46 theorems); root Python tests counted after the final matrix regeneration. Step exits (measure/gate2): submodules 0, clang 0, test 0, fmt 0, clippy --workspace 0, probe 0, followup 0, lean 0. Provider workspace: 117 passed / 0 failed / 0 ignored over 39 summaries, isolated package mutation control 1/1, provider fmt and clippy clean, contracts.py check 0, five package builds and verifications 0, 12 providers/tests Python tests. A first gate run (measure/gate) failed fmt, clippy, provider fmt/clippy and one provider test (the data-crate dependency pin), all repaired in 2d6de0d9 and rerun in full. Logs: worktree-private measure/gate2 of agent-ac5154b5c6b7f17b9. Clang recorded in this checkout. Corpus arbiter: verdict-bearing diagnostics byte-identical to the W43-LIBC-CONTRACTS baseline at BEFORE and after every stage. No coverage promotion.",
+  "workspace_tests": 5187,
+  "provider_tests": 117,
+  "python_evidence_validator_tests": 330,
   "lean_audits": 168,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
@@ -6912,7 +6912,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/contract-inherit/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/contract-inherit-adoption/gate.json)"
  },
  "named_followups": [
   {
@@ -8915,6 +8915,13 @@
    "id": "CONTRACT-INHERIT-FLB-STRING-ASSUMPTIONS",
    "title": "flb_strdup/flb_strndup contracts are trusted assumptions over static inline header bodies the analyzer could read, and the pinned corpus has no call site that exercises them",
    "why": "Card CONTRACT-INHERIT-ADOPTION declared, at the user's direction, fluent_bit/resource_string.qcore: flb_strdup and flb_strndup inherit libc::strdup and libc::strndup, and the module is selected in cycle19-resource-contracts.json. Both are static inline in include/fluent-bit/flb_str.h, so wherever the module is selected the contract stands in for a body the unit carries. flb_strndup is not a byte-exact forward of strndup (memcpy of exactly n bytes through flb_malloc); only the custody statement is the same. Measured: of the 185 pinned units exactly one (flb_input_chunk.c) includes flb_str.h, it calls neither function outside the header's own inline bodies, and the arbiter moved no byte of the verdict-bearing diagnostics (class c: 0 leaves). The declared-ABI gate agrees in that unit. The assumption therefore has no measured effect yet and no measured evidence either. Discharge: when the corpus scope reaches units that call flb_strdup/flb_strndup, attribute the arbiter delta leaf by leaf and decide, with W4 summaries of the header bodies as the comparison, whether to keep the contract selected or let the analyzer check the bodies (the W43-LIBC-HEADER-INLINE-BODIES precedent for glibc inline bodies).",
+   "source": "docs/reports/contract-inherit-adoption/README.md",
+   "recorded_by": "CONTRACT-INHERIT-ADOPTION"
+  },
+  {
+   "id": "CONTRACT-INHERIT-ALIAS-RESULT-PARENTS",
+   "title": "Inheriting a parent whose result is resource_return_alias(p, n) / resource_return_interior(p, n) is analysed but not exercised",
+   "why": "W43-LIBC-RESULT-ALIAS (merged on main after this card's base dfe10c92) adds two v1 result predicates whose first argument is a parameter name. Card CONTRACT-INHERIT-ADOPTION could not test them on its base. By construction the positional renaming (rename_clauses) replaces every parent-parameter word in every clause, the capture check refuses a child parameter that occurs as any other word, and the v1 agreement gate requires the loaded child record to equal the parent's, the same path the realloc fixture (resource_return_reallocated(ptr, nullable), index-bearing) already exercises. The answer is exact only if the new modes load the aliased parameter by index; if a mode retained a name, every renamed child would be refused (QI012, fail-closed). Discharge: on the combined tree, a load-path test that inherits a resource_return_alias parent and a resource_return_interior parent with renamed parameters and asserts equal loaded records, plus a capture control on the second argument; or a recorded refusal.",
    "source": "docs/reports/contract-inherit-adoption/README.md",
    "recorded_by": "CONTRACT-INHERIT-ADOPTION"
   }

@@ -44,9 +44,12 @@ by inheritance at the user's direction.
 * **Lean.** `proof/QCore/ContractInherit.lean` gains a load-path-from-metadata
   section: 8 theorems, 38 → 46, audited, with no placeholder and no project
   axiom.
-* **Follow-ups 294 → 295.** `CONTRACT-INHERIT-ADOPTION` is retired.
-  `CONTRACT-INHERIT-QCORE-PROVIDER-NAMING` and
-  `CONTRACT-INHERIT-FLB-STRING-ASSUMPTIONS` are registered.
+* **Follow-ups 294 → 296.** `CONTRACT-INHERIT-ADOPTION` is retired.
+  `CONTRACT-INHERIT-QCORE-PROVIDER-NAMING`,
+  `CONTRACT-INHERIT-FLB-STRING-ASSUMPTIONS` and
+  `CONTRACT-INHERIT-ALIAS-RESULT-PARENTS` are registered. The last answers the
+  coordinator's question about the W43-LIBC-RESULT-ALIAS result predicates
+  (§12).
 
 ## 1. Real-crate wiring
 
@@ -433,7 +436,74 @@ captured each step's exit to a file, never through a pipe
 worktree-private under `measure/gate/`. [gate.json](gate.json) is the generator
 input. Clang was recorded in this checkout ([clang-version.txt](clang-version.txt)).
 
-GATE_TABLE
+The core and provider gates ran on `2d6de0d9`. Later commits change the
+report, ledger, status, index and matrix only.
+
+| Command | Exit | Result | Log |
+|---|---:|---|---|
+| `git submodule update --init --recursive` | 0 | libevent at `d82464a2…` | `measure/gate2/submodules.log` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 | `measure/gate2/clang.log` |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,187 passed / 0 failed / 11 ignored**, 277 summaries | `measure/gate2/test.log` |
+| `cargo fmt --all -- --check` | 0 | clean | `measure/gate2/fmt.log` |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean | `measure/gate2/clippy.log` |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | | `measure/gate2/probe.log` |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | | `measure/gate2/followup.log` |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **168** audits (`AuditContractInherit` 38 → 46 theorems) | `measure/gate2/lean.log` |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **117 passed / 0 failed / 0 ignored**, 39 summaries | `measure/gate2/ptest.log` |
+| `… -p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations --exact --test-threads=1` | 0 | 1 passed (isolated, constraint 16) | `measure/gate2/pisolated.log` |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean | `measure/gate2/pfmt.log` |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean | `measure/gate2/pclippy.log` |
+| `python3 providers/contracts.py check` | 0 | 72 provider-owned, 0 includes, inventories unchanged; load path current | `measure/gate2/pcontracts.log` |
+| `python3 providers/package.py build --output measure/gate2/packages` | 0 | 5 packages | `measure/gate2/pbuild.log` |
+| `python3 providers/package.py verify …/<id>` (×5) | 0 ×5 | | `measure/gate2/pverify-<id>.log` |
+| `python3 -m unittest discover -s providers/tests` | 0 | **12** tests (+7) | `measure/gate2/ppython.log` |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/contract-inherit-adoption/gate.json` | 0 | 296 follow-ups, 168 Lean audits, 108 contract modules | `measure/build-matrix-3.log` |
+| `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **330** tests | `measure/gate4/python.log` |
+| `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | index regenerated and matching | `measure/docs-index-2.log`, `measure/gate4/docs-index.log` |
+
+**Where the deltas come from.**
+
+* **Core Rust**, +11 over the CONTRACT-INHERIT gate's 5,176:
+  * 8 in `contract_inherit_adoption.rs`;
+  * 2 in `contract_bundle_includes.rs`;
+  * 1 corpus inheritance-pin test.
+
+  The two new test binaries account for summaries 275 → 277.
+* **Provider Rust**, +8 over 109:
+  * six `namespace_is_derived_and_published_modules_are_owned`;
+  * `every_include_names_a_published_libc_module`;
+  * `load_path_manifest_matches_the_linked_crates`.
+* **Python.** +3 root tests in `test_contract_corpus.py` (327 at base).
+  Provider Python +7 in `test_contract_load_path.py`.
+* **Load-sensitive rows.** No `P02-FLAKE` row failed in either full run. The
+  isolated package run above is the constraint-16 record, not a retry.
+
+**Failed attempts, disclosed.** The first full gate (`measure/gate/`, on
+`fb9e9146`) passed the core tests (5,187 / 0 / 11), Lean and the probes. It
+failed in four places:
+
+* `fmt` (exit 1): the stage-C pin edits had not been formatted;
+* `clippy` (101): `type_complexity` in two new tests;
+* provider `fmt`/`clippy` (1 / 101), for the same two reasons;
+* provider `test` (101): `artifact_dependencies_are_only_schemas_and_serialization`
+  pins that data contract crates have **no** dependency, and the brief's
+  fluent-bit → libc edge contradicts that pin.
+
+The pin is **deliberately updated**, not weakened. A data crate may depend
+only on another data crate, never on the shared bundle or anything else. libc
+stays dependency-free in effect, and the exact edge set is pinned to the one
+edge. All four were repaired in `2d6de0d9`, and the gate was rerun **in full**
+(`measure/gate2/`). A pre-final Python run recorded 328 in `gate.json` against
+a measured 330. The file was corrected, the matrix regenerated, and the suite
+rerun (`measure/gate3/`). Registering the third residual after that moved the matrix once more, so it was regenerated again and the suite and index check rerun (`measure/gate4/`, 330 tests, exit 0).
+
+**Confirmation arbiter.** The stage runs used a binary built at `b0a91e17`
+(`00185b63…929f`). A fresh release binary built at the gated tip `2d6de0d9`
+(`d7839a31…a01c`, [final-run.json](arbiter/final-run.json), exit 0)
+reproduces AFTER-C **byte for byte in all five artifacts**
+([final-vs-after-c.json](arbiter/final-vs-after-c.json)). So the rustfmt-only
+source changes after the stage binary were confirmed, not assumed, to move
+nothing.
 
 ## 10. Records and pins, each deliberate
 
@@ -477,10 +547,13 @@ No assertion is weakened.
   * `CONTRACT-INHERIT-QCORE-PROVIDER-NAMING`: the §6 decision, the eight
     blocked wrappers, and real-package include pins;
   * `CONTRACT-INHERIT-FLB-STRING-ASSUMPTIONS`: §5's trusted assumptions over
-    readable bodies, with no call site yet.
+    readable bodies, with no call site yet;
+  * `CONTRACT-INHERIT-ALIAS-RESULT-PARENTS`: inheriting a parent whose result
+    is `resource_return_alias`/`resource_return_interior` (W43-LIBC-RESULT-ALIAS,
+    on main) is analysed in §12 but not exercised on this base.
 * **Still open:** `CONTRACT-INHERIT-EXTENSION-CLAUSES` and
   `CONTRACT-INHERIT-NON-V1-CONSUMERS` are untouched.
-* Follow-ups **294 → 295**. `docs/STATUS.md` is updated from this report's
+* Follow-ups **294 → 296**. `docs/STATUS.md` is updated from this report's
   evidence: the contract corpus is 108 modules, 117 v1 declarations and 45
   manifest-selected.
 * The increment record `wave-41-continuation.md` was already 32,801 bytes, over
@@ -512,6 +585,44 @@ Files likely to conflict:
 * **After merging,** if W43-LIBC-RESULT-ALIAS adds v1 declarations, run
   `python3 providers/contracts.py sync` so that the libc pin, the counts and
   the "every v1 declaration is manifest-selected" test agree.
+
+**Coordinator's question: can a parent's `resource_return_alias(p, …)` or
+`resource_return_interior(p, …)` be inherited?** W43-LIBC-RESULT-ALIAS adds
+these two predicates on `main`, so they do not exist on this card's base.
+Nothing here declares or tests such a wrapper. By construction the answer
+should be yes, under two conditions.
+
+* **Why it should work.**
+  * `rename_clauses` replaces every word token equal to a parent parameter in
+    every clause expression, whatever the predicate. So `p` in the first
+    argument becomes the child's parameter at the same position.
+  * The capture check refuses a child parameter name that occurs as any other
+    word in the parent's clauses. That includes the predicate's second
+    argument, if that argument is a word rather than a number.
+  * The v1 agreement gate then requires the loaded child record to **equal**
+    the parent's.
+* **The same shape is already tested.** The CONTRACT-INHERIT fixture inherits
+  `libc::realloc`, whose `resource_return_reallocated(ptr, nullable)` puts a
+  parameter word first in a result predicate and loads to an index-bearing
+  `ResourceReturnMode::Reallocated { parameter, .. }`.
+* **Condition 1: the new modes load by index.** If W43-LIBC-RESULT-ALIAS
+  records the aliased parameter **by index**, an equal record means the same
+  position, and inheritance is exact.
+* **Condition 2: a name must not survive.** If a new mode kept the parameter
+  **name** in the loaded record, the gate would refuse every renamed child with
+  `QI012`. That fails closed, but no alias wrapper could then be inherited.
+* **A second parameter-reading position.** If the second argument `n` can name
+  a parameter, it is renamed like any other word. If it is a literal or
+  keyword, it is copied unchanged, unless it coincides with a parent parameter
+  name. In that case it is renamed, and the gate's structural comparison
+  decides, exactly as `positional_reading_can_diverge` describes.
+
+This is analysed, not exercised: the combined tree needs one test. The
+integrator's re-arbitration should add a load-path inheritance of a
+`resource_return_alias` parent, for example a fixture wrapper of
+`libc::memcpy`, with the realloc fixture as its model. Until that test exists,
+the claim is recorded here rather than asserted, and registered as
+`CONTRACT-INHERIT-ALIAS-RESULT-PARENTS`.
 
 ## Reproduction
 

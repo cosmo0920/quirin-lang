@@ -1,0 +1,13 @@
+{
+  "note": "CONTRACT-INHERIT-ADOPTION: core and provider gates measured on 2d6de0d9 (later commits change the report, ledger, status, index and matrix only). 5187 core Rust passed / 0 failed / 11 ignored over 277 summaries; 168 Lean audits (AuditContractInherit 38 -> 46 theorems); root Python tests counted after the final matrix regeneration. Step exits (measure/gate2): submodules 0, clang 0, test 0, fmt 0, clippy --workspace 0, probe 0, followup 0, lean 0. Provider workspace: 117 passed / 0 failed / 0 ignored over 39 summaries, isolated package mutation control 1/1, provider fmt and clippy clean, contracts.py check 0, five package builds and verifications 0, 12 providers/tests Python tests. A first gate run (measure/gate) failed fmt, clippy, provider fmt/clippy and one provider test (the data-crate dependency pin), all repaired in 2d6de0d9 and rerun in full. Logs: worktree-private measure/gate2 of agent-ac5154b5c6b7f17b9. Clang recorded in this checkout. Corpus arbiter: verdict-bearing diagnostics byte-identical to the W43-LIBC-CONTRACTS baseline at BEFORE and after every stage. No coverage promotion.",
+  "workspace_tests": 5187,
+  "provider_tests": 117,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 168,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

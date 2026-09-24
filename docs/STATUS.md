@@ -30,7 +30,7 @@ numbers from those sources, not from an older summary. History belongs in the
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
 | Contract corpus | **108** modules; **117** resource-v1 declarations; **45** manifest-selected, 2 of them by `crate:module` reference; **5** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 36 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md) |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **295** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **296** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -109,7 +109,7 @@ path read as data. Five Fluent Bit wrappers (`flb_malloc`, `flb_calloc`,
 verdict-bearing byte moved. The `qcore-provider-*` crates stay off the load path
 pending a naming decision.
 
-All three broader Cycle 18 follow-ups remain open; **295** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **296** follow-ups are
 registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
@@ -120,7 +120,7 @@ registered; QUIRIN-PROVIDER-SHARED registered
 cross-host pin check retired three F02 follow-ups; W43-LIBC-CONTRACTS registered ten libc
 residuals and retired `LOADER-ABI-RESTRICT-QUALIFIER` against its measurement; CONTRACT-INHERIT registered its
 real-crate adoption, extension clauses and non-v1 consumers; CONTRACT-INHERIT-ADOPTION
-retired the adoption and registered the `qcore-provider-*` naming decision and
+retired the adoption and registered the `qcore-provider-*` naming decision, the
 the Fluent Bit string-wrapper assumptions. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
