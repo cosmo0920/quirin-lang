@@ -545,6 +545,85 @@ const ROWS: &[Row] = &[
         c: "void k_use(void *__restrict *__restrict p, int n);",
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
+    // -- a qualifier inside an array bound (card W43-LIBC-RESTRICT-PROTOTYPES)
+    Row {
+        label: "`[__restrict]` is `*__restrict`, and the qualifier is the object's (C11 6.7.6.3p7, p15)",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void k_use(char p[__restrict], int n);",
+        outcome: None,
+    },
+    Row {
+        label: "glibc `regexec`'s bound: a qualifier then a variable size naming a parameter",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "typedef struct { long so; long eo; } k_match;\nvoid k_use(k_match p[__restrict n], int n);",
+        outcome: None,
+    },
+    Row {
+        label: "a qualifier then a constant size is the same adjustment",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void k_use(char p[const 4], int n);",
+        outcome: None,
+    },
+    Row {
+        label: "several qualifiers in a bound are all the object's",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void k_use(char p[const volatile restrict], int n);",
+        outcome: None,
+    },
+    Row {
+        label: "a qualifier in the bound keeps the element's constness",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void k_use(const char p[__restrict], int n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "and the faithful const spelling of that element agrees",
+        declared: "p: ptr<const, u8>, n: i32",
+        c: "void k_use(const char p[__restrict], int n);",
+        outcome: None,
+    },
+    Row {
+        label: "`[static 4]` still refuses",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void k_use(char p[static 4], int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "`[*]` still refuses",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void k_use(char p[*], int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "a size of more than one token still refuses",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void k_use(char p[__restrict n + 1], int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "a qualifier after the size is not C, and refuses",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void k_use(char p[4 const], int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "an array of pointers with a qualified bound is still two levels",
+        declared: "p: ptr<mut, ptr<mut, u8>>, n: i32",
+        c: "void k_use(char *p[__restrict], int n);",
+        outcome: None,
+    },
+    Row {
+        label: "an array of const pointers is `char *const *`: an inner qualifier, refused as the pointer spelling is",
+        declared: "p: ptr<mut, ptr<mut, u8>>, n: i32",
+        c: "void k_use(char *const p[], int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "and so with a qualified bound",
+        declared: "p: ptr<mut, ptr<mut, u8>>, n: i32",
+        c: "void k_use(char *__restrict p[__restrict], int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
     // -- arity -------------------------------------------------------------
     Row {
         label: "a C declaration with more parameters disagrees",

@@ -21,11 +21,9 @@ module contract;
 //
 //   `dlopen`/`dlclose` open and close a handle: a v1 owned/released pair would
 //   put the handle in the one kind-less pointer class `malloc`/`free` use.
-//   `dlsym` (whose result, a symbol address, would otherwise be `resource_return_none()`): faithful in v1, but the prototype spells a qualifier AFTER the
-//   `*` (`T *__restrict p`), which the declared-ABI reader (gateway
-//   constraint 8) does not read; this card measured the declaration withdrawn
-//   with `abi-unreadable-declaration` at every call site in the pinned corpus
-//   (`LOADER-ABI-RESTRICT-QUALIFIER`), so it is not shipped.
+//   (`dlsym` spells `T *__restrict p`, which this card's reader withdrew;
+//   card W43-LIBC-RESTRICT-PROTOTYPES declares it at the end of this module,
+//   with the reading of its result.)
 //
 // ## What no declaration here says
 //
@@ -36,5 +34,42 @@ module contract;
 extern fn dlerror() -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+// ## Card W43-LIBC-RESTRICT-PROTOTYPES: `dlsym`
+//
+//   extern void *dlsym (void *__restrict __handle,
+//                       const char *__restrict __name) __THROW __nonnull ((2));
+//
+// `dlsym` looks a symbol up and returns its ADDRESS inside an object the
+// dynamic loader mapped (or NULL). Why `resource_return_none()` is exact:
+//
+//   * it is not fresh custody: nothing is allocated for the caller, and no
+//     release function applies to a symbol address (freeing it is undefined);
+//   * it is not derived from an argument: it points into neither `__name`'s
+//     string nor any object `__handle` points to as a C object -- the handle
+//     is opaque, and the pseudo-handles `RTLD_DEFAULT`/`RTLD_NEXT` point to
+//     nothing at all;
+//   * so the caller acquires no obligation, which is the `dlerror` /
+//     `gai_strerror` / `__errno_location` precedent for a pointer result
+//     carrying no custody. The gateway binds no identity to it.
+//
+// Both parameters are read and retained by nothing the caller owns:
+// `resource_borrowed`. TRUSTED ASSUMPTION; the `__restrict` spellings are read
+// by the declared-ABI reader since card W43-LIBC-RESULT-ALIAS.
+//
+// NOT stated: the symbol's lifetime ends at the `dlclose` of the handle that
+// found it. A use after that is invisible to this declaration. It cannot make
+// a verdict `Safe` in the pinned corpus today, because `dlopen`/`dlclose` stay
+// undeclared (`W43-LIBC-DESCRIPTOR-LIFECYCLE`), so any function that closes a
+// handle keeps an uncontracted call. A handle-lifecycle card that declares
+// `dlclose` must revisit this result.
+
+extern fn dlsym(handle: ptr<mut, u8>, name: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(handle);
+    ensures normal resource_borrowed(name);
     ensures normal resource_return_none();
 };

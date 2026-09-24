@@ -69,7 +69,7 @@ shared runtime crate):
 
 | Crate | Shared contract modules |
 |---|---|
-| [`quirin-provider-libc`](quirin-provider-libc/README.md) | `libc/` (14): the only home for libc contracts, enforced by the placement test in `scripts/tests/test_contract_corpus.py` |
+| [`quirin-provider-libc`](quirin-provider-libc/README.md) | `libc/` (15): the only home for libc contracts, enforced by the placement test in `scripts/tests/test_contract_corpus.py` |
 | [`quirin-provider-cfl`](quirin-provider-cfl/README.md) | `cfl/` (4) |
 | [`quirin-provider-mpack`](quirin-provider-mpack/README.md) | `mpack/` (1) |
 | [`quirin-provider-msgpack`](quirin-provider-msgpack/README.md) | `msgpack/` (1) |

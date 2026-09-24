@@ -187,6 +187,7 @@
         "libc/memory.qcore",
         "libc/process.qcore",
         "libc/pthread_mutex.qcore",
+        "libc/regex.qcore",
         "libc/socket.qcore",
         "libc/stdio.qcore",
         "libc/stdlib.qcore",

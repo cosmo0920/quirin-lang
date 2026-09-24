@@ -154,6 +154,17 @@
 //! declarations selected at the card's base was nil: every one of the 8,292
 //! (unit, name) census rows kept its outcome. `QCore.PointerQualifierReader`
 //! is the Lean model of this step.
+//!
+//! # What card W43-LIBC-RESTRICT-PROTOTYPES widened
+//!
+//! The same parameter-object qualifier, spelled inside an **array bound**:
+//! C11 6.7.6.3p7 adjusts `T a[restrict n]` to `T *restrict a`, and
+//! 6.7.6.3p15 then drops the `restrict`. `array_bound_is_read` reads a bound
+//! that is a run of qualifiers followed by at most one size word (a decimal
+//! constant or an identifier); `static`, `[*]` and multi-token sizes still
+//! refuse. glibc's `regexec` (`regmatch_t __pmatch[__restrict __nmatch]` after
+//! preprocessing) was the measured witness. `QCore.PointerQualifierReader`
+//! models this step too.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -1035,14 +1046,7 @@ fn project_parameter(
     while rest.last() == Some(&"]") {
         let open = rest.iter().rposition(|text| *text == "[")?;
         let bounds = &rest[open + 1..rest.len() - 1];
-        // Only an empty or plainly constant bound: `[static 4]`, `[const 4]`
-        // and `[*]` carry qualifiers and a variable length this reader does
-        // not read.
-        if bounds.len() > 1
-            || bounds
-                .iter()
-                .any(|text| !text.bytes().all(|byte| byte.is_ascii_digit()))
-        {
+        if !array_bound_is_read(bounds) {
             return None;
         }
         rest.truncate(open);
@@ -1067,11 +1071,59 @@ fn project_parameter(
     {
         rest.pop();
     }
-    drop_parameter_object_qualifiers(&mut rest);
     if array_levels == 1 {
+        // The adjusted pointer's own qualifiers are the bound's, and
+        // `array_bound_is_read` has already dropped them (C11 6.7.6.3p7,
+        // p15). A qualifier left at the end of the *element* declarator —
+        // `char *const p[]`, an array of const pointers — qualifies the inner
+        // pointer of `char *const *`, which this vocabulary cannot spell, so it
+        // is not dropped here and `project_declarator` refuses it, exactly as
+        // it refuses the pointer spelling (card W43-LIBC-RESTRICT-PROTOTYPES).
         rest.push("*");
+    } else {
+        drop_parameter_object_qualifiers(&mut rest);
     }
     project_declarator(&rest, typedefs, false)
+}
+
+/// Whether one array parameter's bound — the words between its `[` and `]` —
+/// is read.
+///
+/// C adjusts a parameter declared "array of T" to "qualified pointer to T,
+/// where the type qualifiers (if any) are those specified within the `[` and
+/// `]`" (C11 6.7.6.3p7), and then takes the parameter as having the
+/// unqualified version of that type (6.7.6.3p15). So `T a[]`, `T a[8]`,
+/// `T a[restrict]` and `T a[restrict n]` are one parameter type, `T *`: the
+/// bound's qualifiers qualify the parameter object exactly as a qualifier after
+/// the last `*` does, and a size — constant or, at function prototype scope,
+/// variable (6.7.6.2p5 treats it as `*`) — is not part of the adjusted type.
+///
+/// Before card W43-LIBC-RESTRICT-PROTOTYPES only an empty or plain decimal
+/// bound was read. glibc's `regexec` spells `regmatch_t
+/// __pmatch[_Restrict_arr_ _REGEX_NELTS (__nmatch)]`, which Clang preprocesses
+/// to `[__restrict __nmatch]`, so it was withdrawn with
+/// `abi-unreadable-declaration`. A bound is now read when it is a run of
+/// qualifiers followed by at most one size word, a decimal constant or an
+/// identifier. `static`, `[*]` and a size of more than one token still refuse:
+/// no measured prototype needs them, so they stay refused rather than admitted
+/// untested. `QCore.PointerQualifierReader`'s array-bound section is the Lean
+/// model.
+fn array_bound_is_read(bounds: &[&str]) -> bool {
+    let qualifiers = bounds
+        .iter()
+        .take_while(|word| QUALIFIERS.contains(word))
+        .count();
+    match &bounds[qualifiers..] {
+        [] => true,
+        [size] => {
+            size.bytes().all(|byte| byte.is_ascii_digit())
+                || (is_c_identifier(size)
+                    && *size != "static"
+                    && !RESERVED_NON_SPECIFIERS.contains(size)
+                    && !ARITHMETIC_WORDS.contains(size))
+        }
+        _ => false,
+    }
 }
 
 /// Card W43-LIBC-RESULT-ALIAS (`W43-LIBC-POINTER-QUALIFIER-READER`): drop the
