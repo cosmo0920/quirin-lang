@@ -75,7 +75,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qcore`
     // selected by `crate:module` reference (schema 2); `resource_memory.qcore`
     // moved from a path entry to a reference without changing the count.
-    assert_eq!(contracts.source_assumptions().len(), 45);
+    // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
+    assert_eq!(contracts.source_assumptions().len(), 46);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -315,6 +316,21 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("unlink", 1),
         ("read", 3),
         ("write", 3),
+        // Card W43-LIBC-RESTRICT-PROTOTYPES adds ten `__restrict` prototypes,
+        // each the neutral element and each a trusted assumption: every
+        // parameter is read or written through into caller storage, and every
+        // result is a scalar or (`dlsym`) a symbol address the caller acquires
+        // no obligation for.
+        ("dlsym", 2),
+        ("regexec", 5),
+        ("regerror", 4),
+        ("getsockopt", 5),
+        ("getpeername", 3),
+        ("stat", 2),
+        ("cnd_timedwait", 3),
+        ("pthread_sigmask", 3),
+        ("strftime", 4),
+        ("gettimeofday", 2),
     ] {
         old.insert_contract(
             name,
@@ -739,7 +755,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qcore`
     // selected by `crate:module` reference (schema 2); `resource_memory.qcore`
     // moved from a path entry to a reference without changing the count.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 45);
+    // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
+    assert_eq!(certificate.contracts.source_assumptions().len(), 46);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -916,7 +933,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 107 -> 108: card CONTRACT-INHERIT-ADOPTION adds
     // `fluent_bit/resource_string.qcore`, entirely v1 (two inherited
     // declarations) and manifest-selected.
-    assert_eq!(modules.len(), 108, "corpus module count");
+    // 108 -> 109: card W43-LIBC-RESTRICT-PROTOTYPES adds `libc/regex.qcore`,
+    // entirely v1 and manifest-selected.
+    assert_eq!(modules.len(), 109, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1037,9 +1056,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `flb_free` to `contract inherit` moves nothing here: these counts are
     // of elaborated declarations. 44 -> 45 and 128 -> 130 by the same card's
     // `fluent_bit/resource_string.qcore` (`flb_strdup`, `flb_strndup`).
+    // 45 -> 46 and 130 -> 140 by card W43-LIBC-RESTRICT-PROTOTYPES: ten
+    // neutral declarations, two in the new `libc/regex.qcore` and eight
+    // appended to already-selected libc modules.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (45, 130, 207)
+        (46, 140, 207)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

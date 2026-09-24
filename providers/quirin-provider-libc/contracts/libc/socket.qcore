@@ -37,11 +37,10 @@ module contract;
 //   `getaddrinfo` allocates a list released by `freeaddrinfo`, through a
 //   `struct addrinfo **` out slot whose success arm is the `0` return, not a
 //   null test. Neither lifecycle is expressible as v1 pointer custody.
-//   `getsockopt`, `getpeername`: faithful in v1, but the prototype spells a qualifier AFTER the
-//   `*` (`T *__restrict p`), which the declared-ABI reader (gateway
-//   constraint 8) does not read; this card measured the declaration withdrawn
-//   with `abi-unreadable-declaration` at every call site in the pinned corpus
-//   (`LOADER-ABI-RESTRICT-QUALIFIER`), so it is not shipped.
+//   (`getsockopt`, `getpeername` spell `T *__restrict p`, which this card's
+//   reader withdrew; card W43-LIBC-RESTRICT-PROTOTYPES declares both at the
+//   end of this module, where `getpeername`'s remaining `_GNU_SOURCE`
+//   withdrawal is recorded.)
 //   `bind`/`connect` take `__CONST_SOCKADDR_ARG`, a transparent union under
 //   `_GNU_SOURCE`, which the reader does not read in the units that call them
 //   (measured withdrawn at every call site), so they are not shipped either.
@@ -118,5 +117,52 @@ extern fn gai_strerror(ecode: i32) -> ptr<const, u8>
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(ecode);
+    ensures normal resource_return_none();
+};
+
+// ## Card W43-LIBC-RESTRICT-PROTOTYPES: `getsockopt` and `getpeername`
+//
+//   extern int getsockopt (int __fd, int __level, int __optname,
+//                          void *__restrict __optval,
+//                          socklen_t *__restrict __optlen) __THROW;
+//   extern int getpeername (int __fd, __SOCKADDR_ARG __addr,
+//                           socklen_t *__restrict __len) __THROW;
+//
+// Each USES an existing descriptor and writes through out-pointers into caller
+// storage: the kernel copies the option value (at most `*__optlen` bytes) or
+// the peer address into the caller's buffer and updates the caller's length.
+// These are value copies of scalars and records, never a pointer the caller
+// would own: no custody moves, nothing is allocated, freed or retained, and
+// neither out-pointer is a pointer-to-pointer (`W43-LIBC-OUT-POINTER-ALIAS`'s
+// shape does not arise). So every parameter is `resource_borrowed` and the
+// `int` result is `resource_return_none()`. TRUSTED ASSUMPTIONS.
+//
+// `__SOCKADDR_ARG` is `struct sockaddr *__restrict` without `_GNU_SOURCE`,
+// and the declared-ABI reader reads it there. Under `_GNU_SOURCE` it is a
+// transparent union of `struct sockaddr_* *__restrict` members, which the
+// reader does not read, so the gate withdraws `getpeername` in those units
+// (`abi-unreadable-declaration`; card W43-LIBC-RESTRICT-PROTOTYPES measured 12
+// agreeing units and 93 withdrawing, including the one pinned call site's
+// `mk_socket.c`). Reading the union is `W43-LIBC-ABI-READER-SHAPES`, with
+// `bind`/`connect`. Nothing here says anything about connection state,
+// option semantics, truncation or `errno`.
+
+extern fn getsockopt(fd: i32, level: i32, optname: i32, optval: ptr<mut, u8>, optlen: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(level);
+    ensures normal resource_borrowed(optname);
+    ensures normal resource_borrowed(optval);
+    ensures normal resource_borrowed(optlen);
+    ensures normal resource_return_none();
+};
+
+extern fn getpeername(fd: i32, addr: ptr<mut, u8>, len: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(addr);
+    ensures normal resource_borrowed(len);
     ensures normal resource_return_none();
 };

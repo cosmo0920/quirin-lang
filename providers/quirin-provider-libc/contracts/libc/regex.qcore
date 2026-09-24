@@ -1,0 +1,68 @@
+module contract;
+
+// <regex.h> -- resource-projection vocabulary version 1.
+//
+// Card W43-LIBC-RESTRICT-PROTOTYPES. TRUSTED ASSUMPTIONS about POSIX regular
+// expressions (trust boundary 28); no libc body is analysed. Read from the
+// prototypes the analysed unit declares (`/usr/include/regex.h` on the audited
+// host), after preprocessing under Clang's default C17:
+//
+//   extern int regexec (const regex_t *__restrict __preg,
+//                       const char *__restrict __String, size_t __nmatch,
+//                       regmatch_t __pmatch[__restrict __nmatch],
+//                       int __eflags);
+//   extern size_t regerror (int __errcode, const regex_t *__restrict __preg,
+//                           char *__restrict __errbuf, size_t __errbuf_size);
+//
+// `regmatch_t __pmatch[__restrict __nmatch]` is `_Restrict_arr_
+// _REGEX_NELTS (__nmatch)` expanded. C11 6.7.6.3p7 adjusts it to
+// `regmatch_t *__restrict __pmatch`, and the declared-ABI reader reads that
+// bound since this card; before it, `regexec` was withdrawn with
+// `abi-unreadable-declaration`.
+//
+// ## The custody statements
+//
+// `regexec` reads the compiled pattern `*__preg` and the string, and writes at
+// most `__nmatch` match records into the caller's array (`NULL` when
+// `__nmatch` is 0, as at the pinned call sites). `regerror` reads `__errcode`
+// (and, in glibc, ignores `__preg`), writes at most `__errbuf_size` bytes of a
+// message into the caller's buffer, and returns the size the whole message
+// needs. Neither call allocates storage the caller must release, frees
+// anything, or retains a pointer past the call; the compiled pattern stays the
+// caller's, unchanged. So every parameter is `resource_borrowed` and each
+// scalar result is `resource_return_none()`, exactly.
+//
+// ## Deliberately NOT declared here (recorded in the card reports)
+//
+//   `regcomp` allocates storage inside the caller's `regex_t`, released by
+//   `regfree`: an in-place object lifecycle v1 cannot state
+//   (`W43-LIBC-IN-PLACE-LIFECYCLE`). A neutral `regcomp` would erase the
+//   obligation to call `regfree`.
+//
+// ## What no declaration here says
+//
+// Nothing about whether `*__preg` was compiled by `regcomp` (a precondition
+// v1 cannot state), matching semantics, errors, or truncation of the message.
+// Per-call custody statements about the CALLER's obligations, and nothing
+// more.
+
+extern fn regexec(preg: ptr<const, u8>, string: ptr<const, u8>, nmatch: usize, pmatch: ptr<mut, u8>, eflags: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(preg);
+    ensures normal resource_borrowed(string);
+    ensures normal resource_borrowed(nmatch);
+    ensures normal resource_borrowed(pmatch);
+    ensures normal resource_borrowed(eflags);
+    ensures normal resource_return_none();
+};
+
+extern fn regerror(errcode: i32, preg: ptr<const, u8>, errbuf: ptr<mut, u8>, errbuf_size: usize) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(errcode);
+    ensures normal resource_borrowed(preg);
+    ensures normal resource_borrowed(errbuf);
+    ensures normal resource_borrowed(errbuf_size);
+    ensures normal resource_return_none();
+};

@@ -8,6 +8,7 @@
     "providers/quirin-provider-libc/contracts/libc/dlfcn.qcore",
     "providers/quirin-provider-libc/contracts/libc/math.qcore",
     "providers/quirin-provider-libc/contracts/libc/process.qcore",
+    "providers/quirin-provider-libc/contracts/libc/regex.qcore",
     "providers/quirin-provider-libc/contracts/libc/socket.qcore",
     "providers/quirin-provider-libc/contracts/libc/stdio.qcore",
     "providers/quirin-provider-libc/contracts/libc/stdlib.qcore",

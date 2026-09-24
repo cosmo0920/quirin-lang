@@ -434,6 +434,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // option plus a variadic tail, 5). Deliberate; see
     // `docs/reports/w43-libc-contracts/README.md`.
     ("libc/dlfcn.qcore", "dlerror", 2),
+    // Card W43-LIBC-RESTRICT-PROTOTYPES: ten `__restrict` prototypes, each
+    // the neutral element (the marker, one borrowed clause per parameter,
+    // `none`), in `dlfcn`, `socket`, `sys_stat`, `threads`, `time` and the new
+    // `libc/regex.qcore`. Deliberate; see
+    // `docs/reports/w43-libc-restrict-prototypes/README.md`.
+    ("libc/dlfcn.qcore", "dlsym", 4),
     // Card CONSTRUCTOR-RESIDUALS, continued. Two clauses: the marker and the
     // result mode. It takes no parameter, so it has no parameter clause — the
     // same shape as `fluent_bit/time.qcore`'s `flb_time_now`.
@@ -453,6 +459,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // object, so `resource_borrowed` is the whole custody statement.
     ("libc/pthread_mutex.qcore", "pthread_mutex_lock", 3),
     ("libc/pthread_mutex.qcore", "pthread_mutex_unlock", 3),
+    // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: `libc/regex.qcore`: neutral (2 + 1 per parameter).
+    ("libc/regex.qcore", "regexec", 7),
+    ("libc/regex.qcore", "regerror", 6),
     ("libc/socket.qcore", "setsockopt", 7),
     ("libc/socket.qcore", "send", 6),
     ("libc/socket.qcore", "recv", 6),
@@ -461,6 +470,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/socket.qcore", "htonl", 3),
     ("libc/socket.qcore", "ntohl", 3),
     ("libc/socket.qcore", "gai_strerror", 3),
+    // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
+    ("libc/socket.qcore", "getsockopt", 7),
+    ("libc/socket.qcore", "getpeername", 5),
     ("libc/stdio.qcore", "perror", 3),
     ("libc/stdio.qcore", "fflush", 3),
     ("libc/stdio.qcore", "remove", 3),
@@ -497,6 +509,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/sys_stat.qcore", "fstat", 4),
     ("libc/sys_stat.qcore", "mkdir", 4),
     ("libc/sys_stat.qcore", "umask", 3),
+    // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
+    ("libc/sys_stat.qcore", "stat", 4),
     ("libc/threads.qcore", "mtx_lock", 3),
     ("libc/threads.qcore", "mtx_unlock", 3),
     ("libc/threads.qcore", "cnd_wait", 4),
@@ -511,10 +525,16 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/threads.qcore", "sigemptyset", 3),
     ("libc/threads.qcore", "sigfillset", 3),
     ("libc/threads.qcore", "sigaddset", 4),
+    // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
+    ("libc/threads.qcore", "cnd_timedwait", 5),
+    ("libc/threads.qcore", "pthread_sigmask", 5),
     ("libc/time.qcore", "time", 3),
     ("libc/time.qcore", "timegm", 3),
     ("libc/time.qcore", "gmtime_r", 4),
     ("libc/time.qcore", "localtime_r", 4),
+    // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
+    ("libc/time.qcore", "strftime", 6),
+    ("libc/time.qcore", "gettimeofday", 4),
     ("libc/unistd.qcore", "sleep", 3),
     ("libc/unistd.qcore", "usleep", 3),
     ("libc/unistd.qcore", "sysconf", 3),
@@ -1042,7 +1062,10 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `fluent_bit/resource_string.qcore` (`flb_strdup`, `flb_strndup`
     // inheriting libc). Its conversion of `fluent_bit/resource_memory.qcore`
     // to `contract inherit` changes no module count.
-    assert_eq!(sources.len(), 108, "unexpected contract corpus size");
+    // 108 -> 109 by card W43-LIBC-RESTRICT-PROTOTYPES' `libc/regex.qcore`
+    // (`regexec`, `regerror`); its eight other declarations are appended to
+    // existing libc modules.
+    assert_eq!(sources.len(), 109, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");
