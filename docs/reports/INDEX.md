@@ -810,6 +810,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-chunk-source-profile](w43-chunk-source-profile/README.md) | W43 chunk source profile |
 
+| [w43-descriptor-native-check](w43-descriptor-native-check/README.md) | W43-DESCRIPTOR-NATIVE-CHECK: descriptor lifecycles checked on native executions |
+
 | [w43-libc-contracts](w43-libc-contracts/README.md) | W43-LIBC-CONTRACTS: trusted libc/POSIX contracts, measured first and placed only in the libc crate |
 
 | [w43-libc-result-alias](w43-libc-result-alias/README.md) | W43-LIBC-RESULT-ALIAS: derived results, the `__restrict` reader, and thirteen libc declarations |

@@ -12,7 +12,7 @@ crates: `providers/quirin-provider-{libc,cfl,mpack,msgpack,fluent-bit}/contracts
 per library, and `providers/quirin-provider-shared/contracts/` for the
 `language/` and `library/` policies. libc contracts live only in
 `quirin-provider-libc`.
-The [corpus index](corpus.json) selects these roots for all 108 module and clause
+The [corpus index](corpus.json) selects these roots for all 109 module and clause
 pins; it is validation metadata, not an implicit runtime contract selection.
 Its schema 2 also names the published load path
 (`providers/contract-load-path.json`, card CONTRACT-INHERIT-ADOPTION), so a

@@ -21,8 +21,10 @@ conformance tests read.
 
 ## Shared contract assets
 
-This crate's own `contracts/` owns the three provider-owner-less policies:
-`language/quantified_indices.qcore`, `library/custody_evidence.qcore` and
+This crate's own `contracts/` owns the four provider-owner-less policies:
+`language/quantified_indices.qcore`, `library/custody_evidence.qcore`,
+`library/descriptor_native_observation.qcore` (the native descriptor
+observation policy, card W43-DESCRIPTOR-NATIVE-CHECK) and
 `library/source_projection.qcore`. The per-library modules live in their own
 crates, which this crate re-exports as `libc`, `cfl`, `mpack`, `msgpack` and
 `fluent_bit`:
