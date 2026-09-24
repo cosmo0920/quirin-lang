@@ -28,6 +28,8 @@ disagree). The instructions are the ones the rules speak about.
   `useAfterRelease` violation candidate.
 * **A derived null test narrows only itself**: no status and no other binding
   moves, so a null derived pointer cannot make its base's obligation disappear.
+* **Never delivered**: a derived pointer stored through an out slot delivers
+  nothing and is refused.
 * **No `Safe` from any of it**: each new diagnostic is a safety issue, and a
   refusal keeps the result imprecise.
 * **Conservativity**: on identity bindings every instruction behaves exactly as
@@ -85,6 +87,8 @@ structure State where
   status : Nat → Option Status
   binding : Nat → Option Binding
   diagnostics : List Diagnostic
+  /-- Sites delivered to the caller through an out slot. -/
+  delivered : List Nat
 
 inductive Instruction where
   /-- `x = acquire()` at a fresh site. -/
@@ -97,13 +101,15 @@ inductive Instruction where
   | use (x : Nat)
   /-- The edge of `if (x == NULL)` on which `x` is null (`true`) or not. -/
   | nullTest (x : Nat) (isNull : Bool)
+  /-- `*out = x` through a sanctioned out slot. -/
+  | deliver (x : Nat)
   deriving DecidableEq, Repr
 
 def update {β : Type} (f : Nat → β) (a : Nat) (b : β) : Nat → β :=
   fun x => if x = a then b else f x
 
 def initial : State :=
-  { status := fun _ => none, binding := fun _ => none, diagnostics := [] }
+  { status := fun _ => none, binding := fun _ => none, diagnostics := [], delivered := [] }
 
 /-- The relation a derived result gives its destination, over its base's
 (`derive_pointer`): interior unless both steps are exact, `const` dropped if
@@ -147,6 +153,10 @@ def transferBase (s : State) : Instruction → State
                      binding := update s.binding x (some ⟨none, d⟩) }
           else s
       | _ => s
+  | .deliver x =>
+      match s.binding x with
+      | some ⟨some site, _⟩ => { s with delivered := site :: s.delivered }
+      | _ => s
 
 /-- The transfer after this card. -/
 def transfer (s : State) : Instruction → State
@@ -186,6 +196,11 @@ def transfer (s : State) : Instruction → State
           else { s with binding := update s.binding x (some ⟨target, .derived e c⟩) }
       | some ⟨_, .mixed⟩ => { s with diagnostics := .unknown :: s.diagnostics }
       | _ => transferBase s (.nullTest x isNull)
+  | .deliver x =>
+      match s.binding x with
+      | some ⟨_, .derived _ _⟩ | some ⟨_, .mixed⟩ =>
+          { s with diagnostics := .unknown :: s.diagnostics }
+      | _ => transferBase s (.deliver x)
   | i => transferBase s i
 
 def run (program : List Instruction) : State :=
@@ -319,6 +334,27 @@ theorem an_identity_null_test_removes_its_site (s : State) (x site : Nat)
     (transfer s (.nullTest x true)).status site = none := by
   simp [transfer, transferBase, hb, update]
 
+/-! ### A derived pointer is never delivered as custody -/
+
+/-- A derived or mixed pointer stored through an out slot delivers nothing and
+is refused: a summary could otherwise publish a pointer into an object as fresh
+custody the caller must release. -/
+theorem a_derived_pointer_is_never_delivered (s : State) (x : Nat) (b : Binding)
+    (hb : s.binding x = some b) (hd : b.derivation ≠ .identity) :
+    (transfer s (.deliver x)).delivered = s.delivered
+      ∧ (transfer s (.deliver x)).diagnostics = .unknown :: s.diagnostics := by
+  obtain ⟨t, d⟩ := b
+  cases d with
+  | identity => exact absurd rfl hd
+  | derived e c => simp [transfer, hb]
+  | mixed => simp [transfer, hb]
+
+/-- Whereas an identity is delivered: the rule is not vacuous. -/
+theorem an_identity_is_delivered (s : State) (x site : Nat)
+    (hb : s.binding x = some ⟨some site, .identity⟩) :
+    (transfer s (.deliver x)).delivered = site :: s.delivered := by
+  simp [transfer, transferBase, hb]
+
 /-! ### No `Safe` from any of it -/
 
 theorem the_derived_candidates_are_safety_issues (site : Nat) :
@@ -376,6 +412,15 @@ theorem identity_bindings_are_unaffected (s : State) (i : Instruction)
           subst this
           cases t <;> simp [transfer, hb]
   | nullTest x isNull =>
+      cases hb : s.binding x with
+      | none => simp [transfer, hb]
+      | some b =>
+          have := hid x b hb
+          obtain ⟨t, d⟩ := b
+          simp only at this
+          subst this
+          simp [transfer, hb]
+  | deliver x =>
       cases hb : s.binding x with
       | none => simp [transfer, hb]
       | some b =>

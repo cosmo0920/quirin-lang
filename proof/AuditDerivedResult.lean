@@ -41,6 +41,10 @@ candidate is never a validated upstream defect. -/
 #print axioms QCore.DerivedResult.a_derived_null_test_keeps_every_other_binding
 #print axioms QCore.DerivedResult.an_identity_null_test_removes_its_site
 
+-- Never delivered through an out slot.
+#print axioms QCore.DerivedResult.a_derived_pointer_is_never_delivered
+#print axioms QCore.DerivedResult.an_identity_is_delivered
+
 -- No `Safe` from any of it.
 #print axioms QCore.DerivedResult.the_derived_candidates_are_safety_issues
 #print axioms QCore.DerivedResult.a_candidate_is_never_safe
