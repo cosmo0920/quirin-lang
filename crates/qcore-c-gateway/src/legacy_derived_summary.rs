@@ -115,9 +115,13 @@ use super::{
 /// function without a summary, so its calls stay uncontracted: `Unknown`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum DerivedRefusal {
-    /// The body calls no callee with a derived result, or no exit returns the
-    /// destination of such a call. Not a candidate; never counted.
+    /// The body calls no callee with a derived result, or has no `return`.
+    /// Not a candidate; never counted.
     NotCandidate,
+    /// The body calls a derived-result callee and returns, but no exit returns
+    /// the destination of such a call. Not a candidate either; counted only to
+    /// size the population the route looked at.
+    NoDerivedExit,
     /// No exit returns a pointer derived from a formal.
     NoFormalBase,
     /// Different exits return pointers derived from different formals.
@@ -139,6 +143,7 @@ impl DerivedRefusal {
     pub(crate) const fn label(self) -> &'static str {
         match self {
             Self::NotCandidate => "not_candidate",
+            Self::NoDerivedExit => "no_derived_exit",
             Self::NoFormalBase => "no_formal_base",
             Self::SeveralFormals => "several_formals",
             Self::BaseCustody => "base_custody",
@@ -162,7 +167,7 @@ pub(crate) fn infer_derived_result_summary(
     let cfg = build_derived_return_cfg(tokens, function, environment)
         .map_err(|_| DerivedRefusal::NotCandidate)?;
     if !returns_derived_destination(&cfg) {
-        return Err(DerivedRefusal::NotCandidate);
+        return Err(DerivedRefusal::NoDerivedExit);
     }
     let out = out_parameter_candidates(&cfg, &parameters);
     let base = select_base(&cfg, &parameters, &out)?;

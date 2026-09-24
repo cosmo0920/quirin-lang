@@ -69,11 +69,18 @@ fn the_two_ledger_shapes_are_admitted() {
 #[test]
 fn a_body_with_no_derived_return_is_not_a_candidate() {
     for body in [
-        "char *f(char *d) { d_copy(d, \"x\", 1); return 0; }",
         "unsigned long f(char *d) { return d_len(d); }",
         "char *f(char *d) { return d; }",
+        "void f(char *d) { d_copy(d, \"x\", 1); }",
     ] {
         assert_eq!(refusal(body, "f"), DerivedRefusal::NotCandidate, "{body}");
+    }
+    // A derived call whose result no exit returns.
+    for body in [
+        "char *f(char *d) { d_copy(d, \"x\", 1); return 0; }",
+        "char *f(char *d) { char *p; p = d_chr(d, 58); if (p) { return 0; } return 0; }",
+    ] {
+        assert_eq!(refusal(body, "f"), DerivedRefusal::NoDerivedExit, "{body}");
     }
 }
 
