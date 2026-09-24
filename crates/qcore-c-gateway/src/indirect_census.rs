@@ -264,6 +264,12 @@ pub fn next_unit() {
     UNIT_SEQ.fetch_add(1, Ordering::Relaxed);
 }
 
+/// The current unit ordinal, so a sibling census (card W43-INDEX-TRAVERSAL's
+/// traversal stream) joins on the same grouping key.
+pub(crate) fn unit_seq() -> u64 {
+    UNIT_SEQ.load(Ordering::Relaxed)
+}
+
 fn emit(leaf: &IndirectLeaf) {
     let Ok(mut guard) = SINK.lock() else {
         return;

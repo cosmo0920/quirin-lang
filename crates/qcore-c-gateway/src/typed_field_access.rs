@@ -1387,6 +1387,43 @@ impl FunctionTypes {
         self.declared(name) == Some(&DeclaredType::Scalar)
     }
 
+    /// Card **W43-INDEX-TRAVERSAL**: what kind of single-level pointer object
+    /// `name` is, when the reader committed to one: `SCALAR * name`,
+    /// `SCALAR name [ N ]` or `struct T * name`. `None` for every other
+    /// declaration, an undeclared name and an unreadable function.
+    pub(crate) fn pointer_kind(&self, name: &str) -> Option<PointerKind> {
+        match self.scalar_element(name) {
+            Some(ScalarElement::Pointer) => return Some(PointerKind::Scalar),
+            Some(ScalarElement::Array) => return Some(PointerKind::Array),
+            None => {}
+        }
+        matches!(self.declared(name), Some(DeclaredType::RecordPointer(_)))
+            .then_some(PointerKind::Record)
+    }
+
+    /// Card **W43-INDEX-TRAVERSAL**: every name this function declares as a
+    /// scalar, and every name it declares as a single-level pointer object
+    /// ([`Self::pointer_kind`]). Both empty when the reader refused the
+    /// function, so no transfer rule keyed on them can fire there.
+    #[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
+    pub(crate) fn traversal_names(&self) -> (BTreeSet<String>, BTreeSet<String>) {
+        let Some(variables) = self.variables.as_ref() else {
+            return (BTreeSet::new(), BTreeSet::new());
+        };
+        let scalars = variables
+            .iter()
+            .filter(|(_, declared)| **declared == DeclaredType::Scalar)
+            .map(|(name, _)| name.clone())
+            .collect();
+        let pointers = variables
+            .keys()
+            .chain(self.elements.keys())
+            .filter(|name| self.pointer_kind(name).is_some())
+            .cloned()
+            .collect();
+        (scalars, pointers)
+    }
+
     /// Whether every declaration of this function was read. When false, no
     /// typed rule may admit anything in it.
     pub(crate) fn is_readable(&self) -> bool {
@@ -1525,6 +1562,20 @@ pub(crate) enum ScalarElement {
     /// `*`. A formal spelled this way is a pointer (C11 6.7.6.3p7); a local is
     /// an automatic array. Either way one subscript designates one scalar.
     Array,
+}
+
+/// Card **W43-INDEX-TRAVERSAL**: the single-level pointer objects whose
+/// arithmetic, copies and null tests the traversal rules read.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum PointerKind {
+    /// `SCALAR * name`.
+    Scalar,
+    /// `SCALAR name [ N ]`: an array local or an array-spelled formal. It is
+    /// never stepped in place (an array local is not an lvalue that `++`
+    /// accepts, and the rule does not distinguish the formal).
+    Array,
+    /// `struct T * name`.
+    Record,
 }
 
 /// The [`ScalarElement`] one declarator gives its name, if any. `volatile` and
@@ -2066,6 +2117,24 @@ fn typed_scalar_expression(
     types: &FunctionTypes,
     plan: &mut TypedScalarPlan,
 ) -> Option<usize> {
+    typed_operand_expression(texts, model, types, plan, false)
+}
+
+/// The walker behind [`typed_scalar_expression`] and
+/// [`typed_scalar_condition`]. `pointer_operands` additionally admits, as a
+/// whole operand, a declared single-level pointer name ([`PointerKind`]) and
+/// the null constant `( void * ) 0`: a **condition** compares or tests such a
+/// value and discards it into a control-flow decision, which is exactly what
+/// the lexical predicate already admits in `p < end` or `p != 0`. It reads the
+/// pointer's value, never its object, so it carries no obligation. It is off
+/// for every statement value, which must stay scalar.
+fn typed_operand_expression(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    plan: &mut TypedScalarPlan,
+    pointer_operands: bool,
+) -> Option<usize> {
     let mut accesses = 0usize;
     let mut expect_operand = true;
     let mut depth = 0usize;
@@ -2073,6 +2142,11 @@ fn typed_scalar_expression(
     while index < texts.len() {
         let text = texts[index];
         if expect_operand {
+            if pointer_operands && texts[index..].starts_with(&["(", "void", "*", ")"]) {
+                // The null constant's cast; its operand `0` follows.
+                index += 4;
+                continue;
+            }
             if text == "(" {
                 let close = matching_close(texts, index, "(", ")")?;
                 let inner = &texts[index + 1..close];
@@ -2109,7 +2183,8 @@ fn typed_scalar_expression(
             if is_name(text)
                 && texts.get(index + 1) != Some(&"(")
                 && (model.enum_constants.contains(text)
-                    || types.declared(text) == Some(&DeclaredType::Scalar))
+                    || types.declared(text) == Some(&DeclaredType::Scalar)
+                    || (pointer_operands && types.pointer_kind(text).is_some()))
             {
                 expect_operand = false;
                 index += 1;
@@ -2251,6 +2326,58 @@ pub(crate) fn typed_scalar_statement(
     }
     let accesses = typed_scalar_expression(right, model, types, &mut plan)?;
     (lhs_access || accesses > 0).then_some(plan)
+}
+
+/// Card **W43-INDEX-TRAVERSAL**: a complete controlling expression (of an
+/// `if`, `while`, `for`, `do`-`while` or `switch`) whose every memory access is
+/// a typed scalar access, and which therefore reads memory and decides a branch
+/// without writing, calling or binding anything.
+///
+/// Built by the same walker as a statement's value ([`typed_scalar_expression`])
+/// with one widening that only a condition may have: a declared single-level
+/// pointer name and the null constant are admitted as whole operands, so
+/// `p != 0 && *p != ':'` and `p < end && *p` read like the lexical
+/// predicate's `p < end`. No call, brace, comma, unary `&`, assignment or
+/// increment is admitted, and at least one access is required (a condition
+/// with none is the lexical predicate's, not this rule's). Every base the plan
+/// names keeps its dereference obligation, which the flow analysis checks at
+/// the header **even for an operand a short-circuit could skip**: requiring an
+/// obligation that was not needed can only refuse more.
+#[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
+pub(crate) fn typed_scalar_condition(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> Option<TypedScalarPlan> {
+    types.variables.as_ref()?;
+    if texts.is_empty()
+        || texts
+            .iter()
+            .any(|text| matches!(*text, "{" | "}" | ";" | ","))
+    {
+        return None;
+    }
+    let mut plan = TypedScalarPlan::default();
+    let accesses = typed_operand_expression(texts, model, types, &mut plan, true)?;
+    (accesses > 0).then_some(plan)
+}
+
+/// Card **W43-INDEX-TRAVERSAL**: whether `texts` is a scalar value with no
+/// memory access at all — declared scalars, enumeration constants, numeric and
+/// character literals, casts to scalar type names and arithmetic. The offset
+/// of a pointer step must be one.
+#[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
+pub(crate) fn is_scalar_value_expression(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> bool {
+    types.variables.is_some()
+        && !texts.is_empty()
+        && !texts
+            .iter()
+            .any(|text| matches!(*text, "{" | "}" | ";" | ","))
+        && typed_scalar_expression(texts, model, types, &mut TypedScalarPlan::default()) == Some(0)
 }
 
 /// The statement's own assignment: the index of its top-level `=` and the

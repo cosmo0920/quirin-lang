@@ -2346,6 +2346,8 @@ pub(crate) fn build_function_cfg(
         #[cfg(feature = "indirect-census")]
         census_bindings: census_body_bindings(tokens, body_start, contracts),
     };
+    #[cfg(feature = "indirect-census")]
+    crate::traversal_census::record_function(function, &parser.typed_types);
     let statements =
         parser
             .parse_block()
@@ -3597,6 +3599,120 @@ impl Parser<'_> {
         );
     }
 
+    /// Card **W43-INDEX-TRAVERSAL**: hand one already-decided controlling
+    /// expression to the traversal census when the classifier refused it.
+    /// Compiled out with the feature off.
+    #[cfg(feature = "indirect-census")]
+    fn census_traversal_condition(
+        &self,
+        line: usize,
+        position: &'static str,
+        condition: &[Token],
+        refused: bool,
+    ) {
+        if !refused {
+            return;
+        }
+        let texts = condition
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        crate::traversal_census::record_condition(
+            &self.census_function,
+            line,
+            position,
+            &texts,
+            contains_call(condition) || contains_braces(condition),
+            &self.typed_model,
+            &self.typed_types,
+        );
+    }
+
+    /// Card **W43-INDEX-TRAVERSAL**: hand one already-classified statement or
+    /// `for` clause to the traversal census. Compiled out with the feature off;
+    /// it reads the instruction after it was produced and cannot change it.
+    #[cfg(feature = "indirect-census")]
+    fn census_traversal_statement(
+        &self,
+        line: usize,
+        clause: &'static str,
+        tokens: &[Token],
+        instruction: &LegacyInstruction,
+    ) {
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let outcome = match instruction {
+            LegacyInstruction::Unknown { description, .. } => Some(description.clone()),
+            LegacyInstruction::Alias { destination, .. }
+            | LegacyInstruction::Clear { destination }
+                if is_indirect_place(destination) =>
+            {
+                Some(format!("indirect destination `{destination}`"))
+            }
+            _ => None,
+        };
+        let copy = match instruction {
+            LegacyInstruction::Alias {
+                destination,
+                source,
+            } if is_plain_name_place(destination) && is_plain_name_place(source) => {
+                if self.typed_types.pointer_kind(destination).is_some()
+                    && self.typed_types.pointer_kind(source).is_some()
+                {
+                    Some(("pointer-copy", destination.clone(), source.clone()))
+                } else if self.typed_types.declared_is_scalar(destination)
+                    && self.typed_types.declared_is_scalar(source)
+                {
+                    Some(("scalar-copy", destination.clone(), source.clone()))
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        };
+        let typed_with_subscript_write =
+            matches!(instruction, LegacyInstruction::IndirectScalarAccess { .. }) && {
+                let mut depth = 0usize;
+                let mut written = false;
+                for (index, text) in texts.iter().enumerate() {
+                    match *text {
+                        "[" => depth += 1,
+                        "]" => depth = depth.saturating_sub(1),
+                        "+" | "-" if depth > 0 && texts.get(index + 1) == Some(text) => {
+                            written = true;
+                        }
+                        "=" if depth > 0
+                            && texts.get(index + 1) != Some(&"=")
+                            && !matches!(
+                                index.checked_sub(1).map(|at| texts[at]),
+                                Some("=" | "!" | "<" | ">")
+                            ) =>
+                        {
+                            written = true;
+                        }
+                        _ => {}
+                    }
+                }
+                written
+            };
+        crate::traversal_census::record_statement(
+            crate::traversal_census::StatementView {
+                function: &self.census_function,
+                line,
+                clause,
+                outcome,
+                copy,
+                typed_with_subscript_write,
+                contains_call: contains_call(tokens) || contains_braces(tokens),
+            },
+            &texts,
+            &self.typed_model,
+            &self.typed_types,
+        );
+    }
+
     /// Card **W43-RETURN-EXPRESSION**: hand one already-decided return
     /// expression refusal to the instrumented census. Compiled out with the
     /// feature off; called only after every return route has refused.
@@ -3986,6 +4102,15 @@ impl Parser<'_> {
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
                     .map(Box::new);
+                #[cfg(feature = "indirect-census")]
+                self.census_traversal_condition(
+                    line,
+                    "if",
+                    &condition,
+                    !condition_supported
+                        && condition_call.is_none()
+                        && self.null_condition(&condition).is_none(),
+                );
                 let then_body = self.parse_statement_body()?;
                 let else_body = if self.text() == Some("else") {
                     self.cursor += 1;
@@ -4013,6 +4138,15 @@ impl Parser<'_> {
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
                     .map(Box::new);
+                #[cfg(feature = "indirect-census")]
+                self.census_traversal_condition(
+                    line,
+                    "while",
+                    &condition,
+                    !condition_supported
+                        && condition_call.is_none()
+                        && self.null_condition(&condition).is_none(),
+                );
                 let body = self.parse_statement_body()?;
                 Ok(Statement::While {
                     line,
@@ -4053,11 +4187,35 @@ impl Parser<'_> {
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
                     .map(Box::new);
+                #[cfg(feature = "indirect-census")]
+                self.census_traversal_condition(
+                    line,
+                    "for",
+                    &condition,
+                    !condition_supported
+                        && condition_call.is_none()
+                        && self.null_condition(&condition).is_none(),
+                );
                 let body = self.parse_statement_body()?;
                 let init =
                     (!init.is_empty()).then(|| Box::new((self.classify_simple(&init), line)));
                 let increment = (!increment.is_empty())
                     .then(|| Box::new((self.classify_simple(&increment), line)));
+                #[cfg(feature = "indirect-census")]
+                {
+                    let clauses = split_for_clauses(&clauses).unwrap_or_default();
+                    if let Some(clause) = &init {
+                        self.census_traversal_statement(line, "for-init", &clauses[0], &clause.0);
+                    }
+                    if let Some(clause) = &increment {
+                        self.census_traversal_statement(
+                            line,
+                            "for-increment",
+                            &clauses[2],
+                            &clause.0,
+                        );
+                    }
+                }
                 Ok(Statement::For {
                     line,
                     writes: self.expression_writes(&condition),
@@ -4088,6 +4246,15 @@ impl Parser<'_> {
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
                     .map(Box::new);
+                #[cfg(feature = "indirect-census")]
+                self.census_traversal_condition(
+                    line,
+                    "do-while",
+                    &condition,
+                    !condition_supported
+                        && condition_call.is_none()
+                        && self.null_condition(&condition).is_none(),
+                );
                 Ok(Statement::DoWhile {
                     line,
                     writes: self.expression_writes(&condition),
@@ -4107,6 +4274,13 @@ impl Parser<'_> {
                     .then(|| self.condition_call_instruction(&expression))
                     .flatten()
                     .map(Box::new);
+                #[cfg(feature = "indirect-census")]
+                self.census_traversal_condition(
+                    line,
+                    "switch",
+                    &expression,
+                    !expression_supported && expression_call.is_none(),
+                );
                 let body = self.parse_statement_body()?;
                 Ok(Statement::Switch {
                     line,
@@ -4237,6 +4411,8 @@ impl Parser<'_> {
                 let instruction = self.classify_simple(&tokens);
                 #[cfg(feature = "indirect-census")]
                 self.census_statement(line, &tokens, &instruction);
+                #[cfg(feature = "indirect-census")]
+                self.census_traversal_statement(line, "statement", &tokens, &instruction);
                 Ok(Statement::Instruction(instruction, line))
             }
             None => Err(line),
