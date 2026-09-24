@@ -436,25 +436,33 @@ fn a_tracked_descriptor_on_every_scalar_store_route_is_refused() {
             "{label} must refuse: {keys:?}"
         );
     }
-    // The member shapes a pre-card classifier admitted reach the descriptor
-    // guard itself, which says so by name.
+    // Every one of these shapes is admitted as custody-neutral for an ordinary
+    // scalar — by W42's `ScalarMemberStore`, the typed scalar-field no-op or
+    // W43-INDIRECT-ACCESS-GENERAL's `IndirectScalarAccess` — so each reaches
+    // the descriptor guard itself, which refuses it by name.
     for body in [
         format!("void w(struct k_conn *c) {{ {open} c->fd = fd; k_close(fd); }}"),
         format!(
             "void w(void) {{ struct k_conn *c = k_conn_new(); if (!c) return; {open} \
              c->fd = fd; k_close(fd); k_free(c); }}"
         ),
+        format!("void w(void) {{ struct k_conn s; {open} s.fd = fd; k_close(fd); }}"),
+        format!("void w(int *p) {{ {open} *p = fd; k_close(fd); }}"),
+        format!("void w(int *p, int i) {{ {open} p[i] = fd; k_close(fd); }}"),
     ] {
         let (_, keys) = outcome_of(&body, "w");
         assert!(keys.contains(&refused_route("fd")), "{keys:?}\n{body}");
     }
-    // The same stores of an ordinary integer stay admitted.
-    expect(
-        "an ordinary int in a member",
+    // The same stores of an ordinary integer stay admitted, through each route:
+    // the guard refuses the descriptor, not the shape.
+    for body in [
         "void w(struct k_conn *c, int n) { c->flags = n; }",
-        "Safe",
-        &[],
-    );
+        "void w(void) { struct k_conn s; int n = 1; s.fd = n; }",
+        "void w(int *p, int n) { *p = n; }",
+        "void w(int *p, int i, int n) { p[i] = n; }",
+    ] {
+        expect("an ordinary int through a scalar route", body, "Safe", &[]);
+    }
 }
 
 /// Publication into a file-scope object: the declared-scalar source exemption

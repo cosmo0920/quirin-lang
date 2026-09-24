@@ -2,7 +2,7 @@
   "schema_version": 1,
   "plugin_id": "qcore.chunkio",
   "contracts": {
-    "contracts/chunkio/chunk_destructor.qcore": "3e621aa75b7088b834dfcae5881ffa186cc1a105c7437674d2a0784274aa00b9",
+    "contracts/chunkio/chunk_destructor.qcore": "fe629d890215ff3ce59a4097cbd73ba007bf9c7108c80f7aa4b4c2823af2bc2d",
     "contracts/chunkio/chunk_residency.qcore": "901dee8413de0b35f29be6dd1ed82a9764a0995f565836d273d8e013eba1efd8",
     "contracts/chunkio/chunk_sizes.qcore": "8c348e549de7e80d7aac28a7ba57beddd1a68d8d0f0975b517c2bfb01088dd24",
     "contracts/chunkio/constructor_failure_observation.qcore": "95e9a31aff7f665a3b8c290e34e7be16c426c2b3b845b2dbf3d7d521dd802b3e",

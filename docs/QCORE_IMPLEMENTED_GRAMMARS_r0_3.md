@@ -2535,7 +2535,11 @@ requires the child's loaded record to equal the parent's.
 
 The include string carries the **package name** (`quirin-provider-libc`), which
 the dependency rule checks; the qualifier carries the **namespace** derived from
-it (`libc`: the package name without `quirin-provider-`, `-` read as `_`).
+it (`libc`: the package name without `quirin-provider-`, `-` read as `_`). Card
+CONTRACT-INHERIT-QCORE-PROVIDER-NAMING admits exactly one second prefix,
+`qcore-provider-` (`qcore-provider-libevent` → `libevent`, so Monkey's
+`mk_mem_alloc` is written `libevent::mk_mem_alloc`); one remainder under both
+prefixes is one namespace and is refused (`QI017`).
 
 Card CONTRACT-INHERIT-ADOPTION adds the selection form. A schema-2 resource
 manifest (`cycle19-resource-contracts.json`) is JSON, not QCore source:

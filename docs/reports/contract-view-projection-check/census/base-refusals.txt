@@ -1,0 +1,3 @@
+refused: unregistered multi-module declaration: `source_identity` in monkey/timeout_teardown.qcore and monkey/wait_source_policy.qcore; register a checked relation in qcore_contract::contract_views::REGISTERED_RELATIONS or remove the duplicate
+refused: cio_chunk_close (chunkio/chunk_destructor.qcore / chunkio/resource_open_close.qcore): parameter 1 disagrees: `delete_backing: bool` in chunkio/chunk_destructor.qcore is bool, `delete: i32` in chunkio/resource_open_close.qcore is i32
+refused: cio_chunk_close (chunkio/chunk_destructor.qcore / chunkio/memory_close.qcore): parameter 1 disagrees: `delete_backing: bool` in chunkio/chunk_destructor.qcore is bool, `delete: i32` in chunkio/memory_close.qcore is i32

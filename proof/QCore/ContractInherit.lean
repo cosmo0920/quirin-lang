@@ -14,9 +14,12 @@ parent's. This module models:
 * the load path: a crate includes only from itself or a declared dependency,
   and only published modules; a crate without dependencies includes nothing
   foreign; duplicate crate names never resolve by order;
-* namespaces: a namespace is derived from the crate name (prefix removed,
-  `-` read as `_`), contains no `-`, and — under the load-path validity check —
-  names exactly one crate;
+* namespaces: a namespace is derived from the crate name (one of exactly
+  two admitted prefixes removed — `quirin-provider-`, and since card
+  CONTRACT-INHERIT-QCORE-PROVIDER-NAMING `qcore-provider-` — `-` read as
+  `_`), contains no `-`, derives equally under either prefix, and — under the
+  load-path validity check — names exactly one crate, so one remainder under
+  both prefixes is refused;
 * include and inheritance cycles: a depth-first walk with a visiting stack
   refuses every cycle reachable from its start, and fuel exhaustion is itself
   a refusal, so the walk is total-or-refuse by construction;
@@ -157,29 +160,71 @@ theorem unpublished_is_refused {crates : List Crate} {fromCrate : Name} {src tgt
   unfold resolveInclude
   simp [hsrc, hreach, htgt, hpub]
 
-/-! ## 2. Namespaces -/
+/-! ## 2. Namespaces
 
-/-- The prefix every contract crate carries, as a character list. -/
-def cratePrefix : List Char := "quirin-provider-".toList
+Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING (the user's option B): exactly two
+package-name prefixes are admitted, `quirin-provider-` (the data-only contract
+crates) and `qcore-provider-` (the executable provider crates). A namespace is
+always the package name without its prefix, `-` read as `_`; there is no other
+prefix and no freely recorded namespace. The prefixes are spelled as explicit
+character lists so that the kernel can evaluate them. -/
+
+/-- The data-only contract crates' prefix, `quirin-provider-`. -/
+def cratePrefix : List Char :=
+  ['q', 'u', 'i', 'r', 'i', 'n', '-', 'p', 'r', 'o', 'v', 'i', 'd', 'e', 'r', '-']
+
+/-- The executable provider crates' prefix, `qcore-provider-`. -/
+def executablePrefix : List Char :=
+  ['q', 'c', 'o', 'r', 'e', '-', 'p', 'r', 'o', 'v', 'i', 'd', 'e', 'r', '-']
+
+/-- Exactly the admitted prefixes, in the order the derivation tries them. -/
+def cratePrefixes : List (List Char) := [cratePrefix, executablePrefix]
 
 def dashToUnderscore (c : Char) : Char := if c = '-' then '_' else c
 
-/-- `quirin-provider-fluent-bit` ↦ `fluent_bit`; `none` without the prefix
-or with an empty remainder. (The Rust derivation additionally requires an
-identifier shape; that refinement only refuses more.) -/
+/-- The remainder after the first listed prefix the name carries. -/
+def stripPrefixes : List (List Char) → List Char → Option (List Char)
+  | [], _ => none
+  | p :: ps, name => if p.isPrefixOf name = true then some (name.drop p.length)
+    else stripPrefixes ps name
+
+/-- `quirin-provider-fluent-bit` ↦ `fluent_bit`, `qcore-provider-librdkafka` ↦
+`librdkafka`; `none` without an admitted prefix or with an empty remainder.
+(The Rust derivation additionally requires an identifier shape; that
+refinement only refuses more.) -/
 def deriveNamespace (name : List Char) : Option (List Char) :=
-  if cratePrefix.isPrefixOf name = true then
-    match (name.drop cratePrefix.length).map dashToUnderscore with
+  match stripPrefixes cratePrefixes name with
+  | none => none
+  | some rest =>
+    match rest.map dashToUnderscore with
     | [] => none
     | c :: cs => some (c :: cs)
-  else none
 
+theorem stripPrefixes_sound :
+    ∀ {ps : List (List Char)} {name rest : List Char},
+      stripPrefixes ps name = some rest →
+        ∃ p ∈ ps, p.isPrefixOf name = true ∧ rest = name.drop p.length
+  | [], _, _, h => by cases h
+  | p :: ps, name, rest, h => by
+    unfold stripPrefixes at h
+    split at h
+    · rename_i hp
+      cases h
+      exact ⟨p, List.mem_cons_self .., hp, rfl⟩
+    · obtain ⟨q, hq, hpre, hrest⟩ := stripPrefixes_sound h
+      exact ⟨q, List.mem_cons_of_mem _ hq, hpre, hrest⟩
+
+/-- A derived namespace comes from a name that carries one of exactly the two
+admitted prefixes. -/
 theorem deriveNamespace_requires_prefix {name ns : List Char}
-    (h : deriveNamespace name = some ns) : cratePrefix.isPrefixOf name = true := by
+    (h : deriveNamespace name = some ns) :
+    ∃ p ∈ cratePrefixes, p.isPrefixOf name = true := by
   unfold deriveNamespace at h
   split at h
-  · assumption
   · cases h
+  · rename_i rest hstrip
+    obtain ⟨p, hp, hpre, _⟩ := stripPrefixes_sound hstrip
+    exact ⟨p, hp, hpre⟩
 
 theorem dashToUnderscore_ne_dash (c : Char) : dashToUnderscore c ≠ '-' := by
   unfold dashToUnderscore
@@ -193,6 +238,7 @@ theorem deriveNamespace_has_no_dash {name ns : List Char}
     (h : deriveNamespace name = some ns) : '-' ∉ ns := by
   unfold deriveNamespace at h
   split at h
+  · cases h
   · split at h
     · cases h
     · rename_i c cs hmap
@@ -202,7 +248,85 @@ theorem deriveNamespace_has_no_dash {name ns : List Char}
       rw [List.mem_map] at hmem
       obtain ⟨x, _, hx⟩ := hmem
       exact dashToUnderscore_ne_dash x hx
-  · cases h
+
+theorem isPrefixOf_append_self : ∀ (p r : List Char), p.isPrefixOf (p ++ r) = true
+  | [], _ => rfl
+  | a :: as, r => by
+    simp [isPrefixOf_append_self as r]
+
+/-- The two prefixes exclude each other: no name carries both, so which prefix
+a name carries is never a matter of order. -/
+theorem prefixes_exclusive (r : List Char) :
+    cratePrefix.isPrefixOf (executablePrefix ++ r) = false ∧
+      executablePrefix.isPrefixOf (cratePrefix ++ r) = false := by
+  constructor <;> rfl
+
+/-- A `quirin-provider-` name derives its remainder, `-` read as `_`. -/
+theorem deriveNamespace_data {r : List Char} (hr : r ≠ []) :
+    deriveNamespace (cratePrefix ++ r) = some (r.map dashToUnderscore) := by
+  have hstrip : stripPrefixes cratePrefixes (cratePrefix ++ r) = some r := by
+    simp [cratePrefixes, stripPrefixes, isPrefixOf_append_self]
+  unfold deriveNamespace
+  rw [hstrip]
+  cases r with
+  | nil => exact absurd rfl hr
+  | cons c cs => rfl
+
+/-- A `qcore-provider-` name derives its remainder the same way (option B):
+`qcore-provider-librdkafka` ↦ `librdkafka`. -/
+theorem deriveNamespace_executable {r : List Char} (hr : r ≠ []) :
+    deriveNamespace (executablePrefix ++ r) = some (r.map dashToUnderscore) := by
+  have hstrip : stripPrefixes cratePrefixes (executablePrefix ++ r) = some r := by
+    simp [cratePrefixes, stripPrefixes, (prefixes_exclusive r).1, isPrefixOf_append_self]
+  unfold deriveNamespace
+  rw [hstrip]
+  cases r with
+  | nil => exact absurd rfl hr
+  | cons c cs => rfl
+
+/-- One remainder under both prefixes derives one namespace
+(`quirin-provider-libc` and `qcore-provider-libc` both derive `libc`); the
+load-path check below therefore refuses such a pair. -/
+theorem same_remainder_same_namespace (r : List Char) :
+    deriveNamespace (cratePrefix ++ r) = deriveNamespace (executablePrefix ++ r) := by
+  cases r with
+  | nil => rfl
+  | cons c cs =>
+    rw [deriveNamespace_data (List.cons_ne_nil c cs),
+      deriveNamespace_executable (List.cons_ne_nil c cs)]
+
+/-- A name with neither admitted prefix derives nothing. -/
+theorem deriveNamespace_other_prefix_none {name : List Char}
+    (h1 : cratePrefix.isPrefixOf name = false) (h2 : executablePrefix.isPrefixOf name = false) :
+    deriveNamespace name = none := by
+  unfold deriveNamespace
+  simp [cratePrefixes, stripPrefixes, h1, h2]
+
+/-- The explicit spellings are the package-name prefixes as strings. -/
+theorem cratePrefix_spelling : cratePrefix = "quirin-provider-".toList := by decide
+
+theorem executablePrefix_spelling : executablePrefix = "qcore-provider-".toList := by decide
+
+/-- Evaluated on every crate on the real load path (card
+CONTRACT-INHERIT-QCORE-PROVIDER-NAMING): the eleven package names derive the
+eleven recorded namespaces, the Monkey contracts' owner is `libevent`, a name
+with another prefix derives nothing, and `libc` under both prefixes collides. -/
+theorem real_namespaces :
+    deriveNamespace "quirin-provider-libc".toList = some "libc".toList ∧
+    deriveNamespace "quirin-provider-cfl".toList = some "cfl".toList ∧
+    deriveNamespace "quirin-provider-mpack".toList = some "mpack".toList ∧
+    deriveNamespace "quirin-provider-msgpack".toList = some "msgpack".toList ∧
+    deriveNamespace "quirin-provider-fluent-bit".toList = some "fluent_bit".toList ∧
+    deriveNamespace "quirin-provider-shared".toList = some "shared".toList ∧
+    deriveNamespace "qcore-provider-chunkio".toList = some "chunkio".toList ∧
+    deriveNamespace "qcore-provider-cmetrics".toList = some "cmetrics".toList ∧
+    deriveNamespace "qcore-provider-ctraces".toList = some "ctraces".toList ∧
+    deriveNamespace "qcore-provider-libevent".toList = some "libevent".toList ∧
+    deriveNamespace "qcore-provider-librdkafka".toList = some "librdkafka".toList ∧
+    deriveNamespace "other-provider-libc".toList = none ∧
+    deriveNamespace "quirin-provider-libc".toList =
+      deriveNamespace "qcore-provider-libc".toList := by
+  decide
 
 /-- The load-path check on namespaces: every recorded namespace is the derived
 one, and no two crates share one. -/
@@ -237,6 +361,16 @@ theorem namespacesValid_records_derived {derive : Name → Option Name} {crates 
   unfold namespacesValid at hvalid
   rw [Bool.and_eq_true, List.all_eq_true] at hvalid
   simpa using hvalid.1 c hc
+
+/-- Two distinct crates that derive one namespace — for example the same
+remainder under both prefixes — fail the load-path check (`QI017`), whatever
+the derivation. -/
+theorem shared_namespace_refused {derive : Name → Option Name} {crates : List Crate}
+    {a b : Crate} (ha : a ∈ crates) (hb : b ∈ crates) (hne : a ≠ b) (hns : a.ns = b.ns) :
+    namespacesValid derive crates = false := by
+  cases hvalid : namespacesValid derive crates with
+  | false => rfl
+  | true => exact absurd (namespace_names_one_crate hvalid ha hb hns) hne
 
 /-! ## 3. Walks with a visiting stack: include and inheritance cycles -/
 

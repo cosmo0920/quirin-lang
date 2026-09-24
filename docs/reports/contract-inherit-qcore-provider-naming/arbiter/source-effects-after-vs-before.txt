@@ -1,0 +1,1 @@
+{"leaves": 29, "classes": {"resource_contracts:<digest> key": 6, "checkout-path digest": 20, "contract_sources digest": 3}, "renamed_bound_keys_keep_values": true}

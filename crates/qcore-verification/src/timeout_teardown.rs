@@ -34,9 +34,19 @@ fn text_fact(source: &str, function: &str, fact: &str) -> Result<String, Timeout
     }
 }
 
+/// The single owner of the Monkey `source_identity` declaration (card
+/// CONTRACT-VIEW-PROJECTION-CHECK). The timeout policy used to carry a
+/// textually identical copy; it now evaluates the owner's declaration and
+/// binds the owner's digest beside its own.
+const SOURCE_IDENTITY_OWNER: &str = include_str!(
+    "../../../providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qcore"
+);
+const SOURCE_IDENTITY: &str = "source_identity";
+
 #[derive(Clone, Debug)]
 pub struct TimeoutTeardownContracts {
     source: String,
+    identity_source: String,
     callback: String,
 }
 
@@ -46,8 +56,29 @@ impl TimeoutTeardownContracts {
     }
 
     fn parse_policy(source: &str) -> Result<Self, TimeoutTeardownError> {
+        Self::parse_policies(source, SOURCE_IDENTITY_OWNER)
+    }
+
+    /// Total-or-refuse: the owner must declare `source_identity` exactly once
+    /// (its revision literal is read to prove it), and the timeout policy must
+    /// not declare its own, so there is exactly one declaration to evaluate.
+    fn parse_policies(source: &str, identity_source: &str) -> Result<Self, TimeoutTeardownError> {
+        text_fact(identity_source, SOURCE_IDENTITY, "source_revision")?;
+        let parsed = qcore_frontend::frontend::parse_source_program(source)
+            .map_err(|error| TimeoutTeardownError::Policy(error.to_string()))?;
+        if parsed
+            .declarations
+            .iter()
+            .any(|declaration| declaration.value.name == SOURCE_IDENTITY)
+        {
+            return Err(TimeoutTeardownError::Policy(format!(
+                "the timeout policy must not redeclare `{SOURCE_IDENTITY}`; its owner is \
+                 monkey/wait_source_policy.qcore"
+            )));
+        }
         Ok(Self {
             source: source.into(),
+            identity_source: identity_source.into(),
             callback: text_fact(source, "teardown_obligations", "callback")?,
         })
     }
@@ -63,6 +94,9 @@ pub struct TimeoutTeardownSourceProjection {
     source_summary_digest: String,
     libevent_event_c_digest: String,
     contract_digest: String,
+    /// SHA-256 of the module owning the evaluated `source_identity`
+    /// declaration (`monkey/wait_source_policy.qcore`).
+    source_identity_digest: String,
     teardown_path_indices: Vec<usize>,
     path_call_sequences: Vec<Vec<String>>,
 }
@@ -82,6 +116,9 @@ impl TimeoutTeardownSourceProjection {
     }
     pub fn contract_digest(&self) -> &str {
         &self.contract_digest
+    }
+    pub fn source_identity_digest(&self) -> &str {
+        &self.source_identity_digest
     }
     pub fn teardown_path_indices(&self) -> &[usize] {
         &self.teardown_path_indices
@@ -120,8 +157,8 @@ pub fn project_cb_timeout_source(
     }
     let assumptions = summary.profile_assumptions();
     check_typed_contract_facts(
-        &contracts.source,
-        "source_identity",
+        &contracts.identity_source,
+        SOURCE_IDENTITY,
         &[
             (
                 "source_revision",
@@ -264,6 +301,7 @@ pub fn project_cb_timeout_source(
         source_summary_digest: source_digest,
         libevent_event_c_digest: libevent_digest,
         contract_digest: sha256_hex(contracts.source.as_bytes()),
+        source_identity_digest: sha256_hex(contracts.identity_source.as_bytes()),
         teardown_path_indices: teardown_paths,
         path_call_sequences: sequences,
     })
@@ -286,6 +324,7 @@ pub struct TimeoutTeardownEvidence {
     pub source_summary_digest: String,
     pub libevent_event_c_digest: String,
     pub contract_digest: String,
+    pub source_identity_digest: String,
     pub path_index: usize,
     pub callback: String,
     pub base: u32,
@@ -379,6 +418,7 @@ pub fn check_timeout_teardown_evidence(
     if evidence.source_summary_digest != projection.source_summary_digest
         || evidence.libevent_event_c_digest != projection.libevent_event_c_digest
         || evidence.contract_digest != projection.contract_digest
+        || evidence.source_identity_digest != projection.source_identity_digest
         || !projection
             .teardown_path_indices
             .contains(&evidence.path_index)
@@ -597,6 +637,47 @@ pub fn check_timeout_teardown_evidence(
 #[cfg(test)]
 mod policy_tests {
     use super::*;
+
+    /// Card CONTRACT-VIEW-PROJECTION-CHECK: the identity is evaluated from its
+    /// single owner, a redeclaration in the timeout policy is refused, and an
+    /// owner without the declaration is refused.
+    #[test]
+    fn source_identity_has_one_owner() {
+        let contracts = TimeoutTeardownContracts::parse().unwrap();
+        assert_eq!(contracts.identity_source, SOURCE_IDENTITY_OWNER);
+        assert_eq!(
+            text_fact(&contracts.identity_source, SOURCE_IDENTITY, "library").unwrap(),
+            "monkey"
+        );
+        let redeclared = format!(
+            "{POLICY}\nextern fn source_identity() -> unit\ncontract {{\n    \
+             ensures normal library == \"monkey\";\n}};\n"
+        );
+        assert!(matches!(
+            TimeoutTeardownContracts::parse_policy(&redeclared),
+            Err(TimeoutTeardownError::Policy(reason)) if reason.contains("redeclare")
+        ));
+        let ownerless = SOURCE_IDENTITY_OWNER.replace("fn source_identity()", "fn renamed()");
+        assert_ne!(ownerless, SOURCE_IDENTITY_OWNER);
+        assert!(TimeoutTeardownContracts::parse_policies(POLICY, &ownerless).is_err());
+        // The owner's facts are load-bearing: a changed revision refuses the
+        // pinned facts the projection supplies.
+        let facts = [
+            (
+                "source_revision",
+                ContractFact::Text("66910c10a4d7eafa810b84229cf2dcf7b0f26f97".into()),
+            ),
+            ("library", ContractFact::Text("monkey".into())),
+            ("source_set", ContractFact::Text("fluent-bit".into())),
+            ("profile_digest", ContractFact::Text("digest".into())),
+        ];
+        assert!(check_typed_contract_facts(SOURCE_IDENTITY_OWNER, SOURCE_IDENTITY, &facts).is_ok());
+        let changed = SOURCE_IDENTITY_OWNER.replace(
+            "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+            "0000000000000000000000000000000000000000",
+        );
+        assert!(check_typed_contract_facts(&changed, SOURCE_IDENTITY, &facts).is_err());
+    }
 
     #[test]
     fn every_obligation_literal_is_load_bearing() {

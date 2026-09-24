@@ -2,6 +2,140 @@
   "schema_version": 1,
   "crates": [
     {
+      "name": "qcore-provider-chunkio",
+      "namespace": "chunkio",
+      "version": "0.5.0",
+      "contracts": "qcore-provider-chunkio/contracts",
+      "dependencies": [
+        "quirin-provider-shared"
+      ],
+      "modules": [
+        "chunkio/chunk_destructor.qcore",
+        "chunkio/chunk_residency.qcore",
+        "chunkio/chunk_sizes.qcore",
+        "chunkio/constructor_failure_observation.qcore",
+        "chunkio/context_destructor.qcore",
+        "chunkio/counters.qcore",
+        "chunkio/error_frame.qcore",
+        "chunkio/error_state.qcore",
+        "chunkio/file_close.qcore",
+        "chunkio/file_close_delete.qcore",
+        "chunkio/filesystem_attempts.qcore",
+        "chunkio/filesystem_chunk_close.qcore",
+        "chunkio/filesystem_constructor_failure_observation.qcore",
+        "chunkio/filesystem_delete.qcore",
+        "chunkio/filesystem_delete_attempt.qcore",
+        "chunkio/filesystem_delete_observation.qcore",
+        "chunkio/filesystem_descriptor_failure_observation.qcore",
+        "chunkio/filesystem_existing_observation.qcore",
+        "chunkio/filesystem_integrity_observation.qcore",
+        "chunkio/filesystem_observation.qcore",
+        "chunkio/filesystem_os_constructor_observation.qcore",
+        "chunkio/filesystem_os_observation.qcore",
+        "chunkio/filesystem_outcomes.qcore",
+        "chunkio/filesystem_reopen_failure_observation.qcore",
+        "chunkio/filesystem_sync_failure_observation.qcore",
+        "chunkio/filesystem_teardown_observation.qcore",
+        "chunkio/filesystem_transition_observation.qcore",
+        "chunkio/filesystem_unmap_failure_observation.qcore",
+        "chunkio/import_composition.qcore",
+        "chunkio/list_unlink.qcore",
+        "chunkio/lock_state.qcore",
+        "chunkio/memory_backend.qcore",
+        "chunkio/memory_close.qcore",
+        "chunkio/nested_cleanup.qcore",
+        "chunkio/nested_memory_teardown.qcore",
+        "chunkio/parent_teardown.qcore",
+        "chunkio/resource_open_close.qcore",
+        "chunkio/stream_destructor.qcore",
+        "chunkio/teardown_observation.qcore",
+        "chunkio/teardown_traversal.qcore",
+        "chunkio/unmap_wrapper.qcore",
+        "chunkio/unsupported_close.qcore",
+        "chunkio/unsupported_constructor_observation.qcore",
+        "fluent_bit/busy_state.qcore"
+      ],
+      "published": {}
+    },
+    {
+      "name": "qcore-provider-cmetrics",
+      "namespace": "cmetrics",
+      "version": "0.2.0",
+      "contracts": "qcore-provider-cmetrics/contracts",
+      "dependencies": [
+        "quirin-provider-shared"
+      ],
+      "modules": [
+        "cmetrics/context_lifetime.qcore",
+        "cmetrics/counter_reset.qcore",
+        "cmetrics/metric_values.qcore",
+        "cmetrics/mpack_utils.qcore"
+      ],
+      "published": {}
+    },
+    {
+      "name": "qcore-provider-ctraces",
+      "namespace": "ctraces",
+      "version": "0.1.0",
+      "contracts": "qcore-provider-ctraces/contracts",
+      "dependencies": [
+        "quirin-provider-shared"
+      ],
+      "modules": [
+        "ctraces/context_lifetime.qcore"
+      ],
+      "published": {}
+    },
+    {
+      "name": "qcore-provider-libevent",
+      "namespace": "libevent",
+      "version": "0.1.0",
+      "contracts": "qcore-provider-libevent/contracts",
+      "dependencies": [
+        "quirin-provider-libc",
+        "quirin-provider-shared"
+      ],
+      "modules": [
+        "monkey/callback_binding.qcore",
+        "monkey/callback_task_handoff.qcore",
+        "monkey/composition.qcore",
+        "monkey/cycle18_composition.qcore",
+        "monkey/descriptor_observation.qcore",
+        "monkey/event_payload.qcore",
+        "monkey/intrusive_list.qcore",
+        "monkey/logging.qcore",
+        "monkey/memory.qcore",
+        "monkey/native_platform_matrix.qcore",
+        "monkey/timeout_teardown.qcore",
+        "monkey/wait_failure_policy.qcore",
+        "monkey/wait_identity_policy.qcore",
+        "monkey/wait_source_policy.qcore",
+        "monkey/wrapper_paths.qcore"
+      ],
+      "published": {}
+    },
+    {
+      "name": "qcore-provider-librdkafka",
+      "namespace": "librdkafka",
+      "version": "0.1.0",
+      "contracts": "qcore-provider-librdkafka/contracts",
+      "dependencies": [
+        "quirin-provider-libc",
+        "quirin-provider-shared"
+      ],
+      "modules": [
+        "librdkafka/cjson.qcore",
+        "librdkafka/kafka_mem.qcore",
+        "librdkafka/lz4_stream.qcore",
+        "librdkafka/memory.qcore",
+        "librdkafka/queue_destructor.qcore",
+        "librdkafka/refcount.qcore",
+        "librdkafka/topic_partition.qcore",
+        "librdkafka/typed_queue.qcore"
+      ],
+      "published": {}
+    },
+    {
       "name": "quirin-provider-cfl",
       "namespace": "cfl",
       "version": "0.1.0",

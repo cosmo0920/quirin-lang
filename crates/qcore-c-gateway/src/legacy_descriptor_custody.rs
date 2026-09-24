@@ -295,6 +295,10 @@ pub(crate) fn admits_descriptor_read(
         | LegacyInstruction::BranchOnDistinct { .. }
         | LegacyInstruction::OpaqueValue { .. }
         | LegacyInstruction::ScalarMemberStore { .. }
+        // Card W43-INDIRECT-ACCESS-GENERAL's typed scalar store or read
+        // through `*B`, `B[I]`, `B->F` or `S.F`: its value is custody-neutral
+        // data by construction, which a tracked descriptor is not.
+        | LegacyInstruction::IndirectScalarAccess { .. }
         | LegacyInstruction::AggregateStore { .. }
         | LegacyInstruction::NoOp => false,
     }

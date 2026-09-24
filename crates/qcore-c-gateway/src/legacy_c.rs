@@ -255,6 +255,37 @@ pub enum LegacyInstruction {
         /// a declared record pointer.
         alias_read: Option<AliasPeers>,
     },
+    /// Card **W43-INDIRECT-ACCESS-GENERAL**: one complete statement whose
+    /// every memory access is a typed scalar access (`*B`, `B[I]`, `B->F`,
+    /// `S.F`) and whose destination and value are scalar; see
+    /// [`crate::typed_field_access::typed_scalar_statement`].
+    ///
+    /// It is custody-neutral: it acquires, releases, transfers and rebinds no
+    /// tracked identity, so every projection map is preserved, admitted or
+    /// refused. What it adds is the dereference obligation of each base,
+    /// checked by [`transfer`]: a base must be unbound on every reaching path,
+    /// a non-null binding with no tracked target, or exactly one known,
+    /// non-null, live identity with no nullable or unresolved-effect marker.
+    /// Anything else records `UnknownAlias`. A base settled on one released
+    /// identity is also a `use_after_release` candidate, reported from the
+    /// settled states. Bounds are not decided: a subscript's index is read as
+    /// a scalar and nothing is claimed about the object's extent.
+    IndirectScalarAccess {
+        bases: Vec<String>,
+        /// The C02-P-ALIAS obligations of the bases read through `->`.
+        alias_reads: Vec<AliasPeers>,
+        /// The declared scalar variable written, whose old scalar fact is
+        /// forgotten exactly as [`Self::ForgetScalar`] forgets it.
+        destination: Option<String>,
+        /// For a write through `*B` or `B[I]` only: the bindings it may have
+        /// rewritten, bounded exactly as the refusal it replaces bounded them
+        /// ([`RefusedWrites`]). A character-typed write may rewrite a pointer
+        /// object's representation, so every binding outside this frame is
+        /// made unknown and possibly null, as before; the resource, custody
+        /// and field-link maps are untouched. `None` for a read or a member
+        /// store, which writes one scalar and nothing else.
+        frame: Option<RefusedWrites>,
+    },
     /// A store into an admitted field of an aggregate this function tracks
     /// whose stored value carries no tracked identity (O00 blocker B08): a
     /// scalar expression into a scalar member, or a declared pointer this
@@ -2380,6 +2411,8 @@ pub(crate) fn build_function_cfg(
         declared_callees,
         #[cfg(feature = "indirect-census")]
         census_function: function.to_owned(),
+        #[cfg(feature = "indirect-census")]
+        census_bindings: census_body_bindings(tokens, body_start, contracts),
     };
     let statements =
         parser
@@ -2924,6 +2957,48 @@ pub(crate) fn tokenize_with_conditionals(source: &str) -> (Vec<Token>, Vec<Condi
         }
     }
     (tokens, conditionals)
+}
+
+/// Card **W43-INDIRECT-ACCESS-GENERAL**, census only: every `NAME = CALLEE (`
+/// in the body starting at `body_start` whose callee's in-force contract
+/// declares a derived or an owned result. A label for the census's base axis,
+/// never consulted by any rule.
+#[cfg(feature = "indirect-census")]
+fn census_body_bindings(
+    tokens: &[Token],
+    body_start: usize,
+    contracts: &ResourceContracts,
+) -> crate::indirect_census::BodyBindings {
+    let mut bindings = crate::indirect_census::BodyBindings::default();
+    let Some(body_end) = matching(tokens, body_start, "{", "}") else {
+        return bindings;
+    };
+    let texts = tokens[body_start..body_end]
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
+    for (index, window) in texts.windows(4).enumerate() {
+        let [name, "=", callee, "("] = window else {
+            continue;
+        };
+        // A chained assignment `a = NAME = f (` is left unlabelled.
+        if index > 0 && texts[index - 1] == "=" {
+            continue;
+        }
+        if !is_identifier(name) || !is_identifier(callee) {
+            continue;
+        }
+        match contracts.contract(callee).map(|contract| contract.result) {
+            Some(ResourceReturnMode::Derived { .. }) => {
+                bindings.derived.insert((*name).to_owned());
+            }
+            Some(ResourceReturnMode::Owned { .. } | ResourceReturnMode::Reallocated { .. }) => {
+                bindings.owned.insert((*name).to_owned());
+            }
+            _ => {}
+        }
+    }
+    bindings
 }
 
 pub(crate) fn find_function_body(tokens: &[Token], function: &str) -> Option<(usize, usize)> {
@@ -3521,6 +3596,13 @@ struct Parser<'a> {
     /// feature off, and read by nothing else.
     #[cfg(feature = "indirect-census")]
     census_function: String,
+    /// Card **W43-INDIRECT-ACCESS-GENERAL**: the names this body assigns the
+    /// result of a contracted call whose declared result is derived
+    /// (`resource_return_alias`/`resource_return_interior`) or owned, read
+    /// once from the body's own tokens and the classifier's own contracts.
+    /// Census labels only; compiled out with the feature off.
+    #[cfg(feature = "indirect-census")]
+    census_bindings: crate::indirect_census::BodyBindings,
 }
 
 impl Parser<'_> {
@@ -3566,6 +3648,49 @@ impl Parser<'_> {
             texts,
             exempt,
             refusal,
+            &self.census_bindings,
+        );
+    }
+
+    /// Card **W43-INDIRECT-ACCESS-GENERAL**: hand one already-classified
+    /// statement to the statement census when the classifier refused it, or
+    /// named an indirect destination that only an out-parameter contract can
+    /// sanction. Compiled out with the feature off; it reads the instruction
+    /// after it was produced and cannot change it.
+    #[cfg(feature = "indirect-census")]
+    fn census_statement(&self, line: usize, tokens: &[Token], instruction: &LegacyInstruction) {
+        let outcome = match instruction {
+            LegacyInstruction::Unknown { description, .. } => description.clone(),
+            LegacyInstruction::Alias { destination, .. }
+            | LegacyInstruction::Clear { destination }
+                if is_indirect_place(destination) =>
+            {
+                format!("indirect destination `{destination}`")
+            }
+            LegacyInstruction::ContractCall {
+                destination: Some(destination),
+                ..
+            } if is_indirect_place(destination) => {
+                format!("indirect call destination `{destination}`")
+            }
+            _ => return,
+        };
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        crate::indirect_census::record_statement(
+            &crate::indirect_census::Context {
+                function: &self.census_function,
+                formal_parameters: &self.formal_parameters,
+                typed_model: &self.typed_model,
+                typed_types: &self.typed_types,
+                typed_bases: &self.typed_bases,
+            },
+            line,
+            &texts,
+            outcome,
+            &self.census_bindings,
         );
     }
 
@@ -4227,7 +4352,10 @@ impl Parser<'_> {
             }
             Some(_) => {
                 let tokens = self.consume_to_semicolon()?;
-                Ok(Statement::Instruction(self.classify_simple(&tokens), line))
+                let instruction = self.classify_simple(&tokens);
+                #[cfg(feature = "indirect-census")]
+                self.census_statement(line, &tokens, &instruction);
+                Ok(Statement::Instruction(instruction, line))
             }
             None => Err(line),
         }
@@ -4499,7 +4627,68 @@ impl Parser<'_> {
         instruction
     }
 
+    /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: the classifier the descriptor
+    /// guard above wraps. Card W43-INDIRECT-ACCESS-GENERAL's typed-scalar route
+    /// is inside the guard, so every instruction it admits is checked by
+    /// [`descriptor_custody::admits_descriptor_read`] like any other.
+    ///
+    /// Card **W43-INDIRECT-ACCESS-GENERAL**: the statement classifier, with
+    /// one route consulted only after the existing classifier has refused.
+    ///
+    /// The route is tried for exactly the refusals whose cause is the access
+    /// itself — the lexical indirect-access gate, an unsupported assignment
+    /// expression, an unrecognized destination, an unmodeled increment — and
+    /// for a `*B` store the existing classifier named for an out-parameter
+    /// slot. Every statement the existing classifier admits keeps its exact
+    /// lowering, so the route can only replace a refusal (or an unsanctioned
+    /// `*B` store, itself refused in transfer) by a statement whose own
+    /// obligations the flow analysis then checks.
     fn classify_simple_unguarded(&mut self, tokens: &[Token]) -> LegacyInstruction {
+        let instruction = self.classify_simple_base(tokens);
+        let consulted = match &instruction {
+            LegacyInstruction::Unknown { description, .. } => {
+                TYPED_SCALAR_CONSULTED.contains(&description.as_str())
+            }
+            LegacyInstruction::Alias { destination, .. }
+            | LegacyInstruction::Clear { destination } => is_indirect_place(destination),
+            _ => false,
+        };
+        if !consulted || contains_call(tokens) || contains_braces(tokens) {
+            return instruction;
+        }
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let Some(plan) = crate::typed_field_access::typed_scalar_statement(
+            &texts,
+            &self.typed_model,
+            &self.typed_types,
+        ) else {
+            return instruction;
+        };
+        LegacyInstruction::IndirectScalarAccess {
+            alias_reads: plan
+                .record_bases
+                .iter()
+                .filter_map(|base| self.read_alias(Some(base)))
+                .collect(),
+            bases: plan.bases,
+            destination: plan.destination,
+            // The statement's only writes are its typed destination: the
+            // object `*B`/`B[I]` designates, never the slot of `B` itself, and
+            // a declared scalar, which binds nothing. So every name whose slot
+            // no other lvalue designates is spared, and every other binding is
+            // poisoned exactly as the refusal's frame would have poisoned it.
+            // (`may_write_names` would read `* p =` as a write of `p`, which is
+            // right for an unparsed refusal and wrong for this parsed store.)
+            frame: plan
+                .writes_through_pointer
+                .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
+        }
+    }
+
+    fn classify_simple_base(&mut self, tokens: &[Token]) -> LegacyInstruction {
         // Retain the enclosing function and subsequent cleanup, but never
         // mistake nested initializers or GNU statement expressions for a
         // single modeled call/assignment. Their custody effects are unknown.
@@ -5497,6 +5686,16 @@ fn contains_call(tokens: &[Token]) -> bool {
 /// Every admitted span is a *whole* call argument, so deleting it leaves the
 /// surrounding punctuation adjacent (`( ,` or `( )`) and can never manufacture
 /// a unary `*` or a member `.` out of neighbours that did not have one.
+/// Card **W43-INDIRECT-ACCESS-GENERAL**: the refusals after which the typed
+/// scalar-access route is consulted. Each names the access, the destination
+/// or the increment as the reason, never a call or a formal.
+const TYPED_SCALAR_CONSULTED: &[&str] = &[
+    "indirect memory access is outside the resource projection",
+    "unsupported assignment expression",
+    "unrecognized assignment destination",
+    "unmodeled increment or decrement expression",
+];
+
 fn outside_spans<'a>(texts: &[&'a str], spans: &[(usize, usize)], from: usize) -> Vec<&'a str> {
     texts
         .iter()
@@ -6675,6 +6874,10 @@ fn rebound_names(instruction: &LegacyInstruction) -> Vec<&str> {
         | LegacyInstruction::OpaqueValue { destination, .. }
         | LegacyInstruction::ForgetScalar { destination }
         | LegacyInstruction::Clear { destination } => vec![destination.as_str()],
+        LegacyInstruction::IndirectScalarAccess {
+            destination: Some(destination),
+            ..
+        } => vec![destination.as_str()],
         LegacyInstruction::ContractCall {
             destination,
             arguments,
@@ -7434,6 +7637,55 @@ fn report_derived_pointer_violations(
     }
 }
 
+/// Card **W43-INDIRECT-ACCESS-GENERAL**: a typed scalar access whose base is
+/// settled on exactly one identity that was released on some path reaching
+/// it is a `use_after_release` violation candidate — the reading
+/// [`report_derived_pointer_violations`] and `DoubleRelease` give the same
+/// bit. Read from the **settled** states (constraint 6), and never through a
+/// site under an unresolved effect, whose fate the projection declined to
+/// commit to. It only reports; the transfer has already refused the access.
+fn report_indirect_scalar_violations(
+    cfg: &LegacyCfg,
+    incoming: &[Option<AbstractState>],
+    acquisition_lines: &BTreeMap<usize, usize>,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    for (node_id, node) in cfg.nodes.iter().enumerate() {
+        let Some(state) = incoming[node_id].as_ref() else {
+            continue;
+        };
+        let LegacyInstruction::IndirectScalarAccess { bases, .. } = &node.instruction else {
+            continue;
+        };
+        for base in bases {
+            let Some(pointer) = state.pointers.get(base) else {
+                continue;
+            };
+            if pointer.unknown || pointer.targets.len() != 1 {
+                continue;
+            }
+            let Some(site) = pointer.targets.first().copied() else {
+                continue;
+            };
+            if state.unresolved_effect_sites.contains(&site) {
+                continue;
+            }
+            let Some(status) = state.resources.get(&site).copied() else {
+                continue;
+            };
+            if status & RELEASED != 0 {
+                diagnostics.insert(LegacyDiagnostic {
+                    function: cfg.function.clone(),
+                    line: node.line,
+                    kind: LegacyDiagnosticKind::UseAfterRelease {
+                        acquisition_line: acquisition_line(acquisition_lines, site),
+                    },
+                });
+            }
+        }
+    }
+}
+
 fn require_live_borrowed_actuals(
     cfg: &LegacyCfg,
     incoming: &[Option<AbstractState>],
@@ -7837,6 +8089,9 @@ pub(crate) fn analyze_cfg_with_entry(
     // read from the same settled states for the same reason — a binding's
     // derivation can still widen to `Mixed` on a later iterate.
     report_derived_pointer_violations(&cfg, &incoming, &acquisition_lines, &mut diagnostics);
+    // Card W43-INDIRECT-ACCESS-GENERAL: a typed scalar access through a base
+    // released on some reaching path, from the same settled states.
+    report_indirect_scalar_violations(&cfg, &incoming, &acquisition_lines, &mut diagnostics);
 
     // Read the settled exit states once the work list is stable, so that a
     // summary describes the joined behavior of every reachable return rather
@@ -8038,7 +8293,8 @@ fn transfer(
         | LegacyInstruction::OpaqueValue { destination, .. }
         | LegacyInstruction::ForgetScalar { destination }
         | LegacyInstruction::Clear { destination } => Some(destination.as_str()),
-        LegacyInstruction::ContractCall { destination, .. } => destination.as_deref(),
+        LegacyInstruction::ContractCall { destination, .. }
+        | LegacyInstruction::IndirectScalarAccess { destination, .. } => destination.as_deref(),
         _ => None,
     };
     let changes_slot_identity = |place: &str| {
@@ -8339,6 +8595,15 @@ fn transfer(
             alias,
             diagnostics,
         ),
+        LegacyInstruction::IndirectScalarAccess { alias_reads, .. } => require_unaliased_reads(
+            function,
+            node.line,
+            alias_reads,
+            &state,
+            &context.caller_sites,
+            alias,
+            diagnostics,
+        ),
         _ => {}
     }
     // W42-INDIRECT-ACCESS: a scalar destination store dereferences its base.
@@ -8360,6 +8625,45 @@ fn transfer(
         // statement still writes only a scalar field from a scalar-only RHS.
         // It cannot rebind any pointer or resource identity, so retain the
         // incoming frame and keep later residual/double-release evidence.
+        return state;
+    }
+    // W43-INDIRECT-ACCESS-GENERAL: every base the typed scalar statement
+    // dereferences must pass the dereference obligation here, after the
+    // may-alias obligations above. A slot an out-parameter contract sanctions
+    // is never written by this route: it keeps the out-slot machinery's own
+    // decision, so a `*B` store naming one refuses. Admitted or refused, the
+    // statement writes only a scalar, so every projection map is preserved;
+    // the one effect is forgetting the scalar destination's old fact.
+    if let LegacyInstruction::IndirectScalarAccess {
+        bases,
+        destination,
+        frame,
+        ..
+    } = &node.instruction
+    {
+        for base in bases {
+            let sanctioned = context.sanctioned.contains(format!("*{base}").as_str());
+            if sanctioned || !indirect_scalar_base_resolves(&state, base) {
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line: node.line,
+                    kind: LegacyDiagnosticKind::UnknownAlias {
+                        variable: base.clone(),
+                    },
+                });
+            }
+        }
+        if let Some(destination) = destination {
+            state.pointers.remove(destination);
+        }
+        if let Some(frame) = frame {
+            for (place, pointer) in state.pointers.iter_mut() {
+                if frame.poisons(place) {
+                    pointer.unknown = true;
+                    pointer.may_be_null = true;
+                }
+            }
+        }
         return state;
     }
     // O00 blocker B08: every store into an admitted aggregate field requires
@@ -8606,6 +8910,8 @@ fn transfer(
             state.pointers.remove(destination);
         }
         LegacyInstruction::ScalarMemberStore { .. } => {}
+        // Handled completely before this match: it returns there.
+        LegacyInstruction::IndirectScalarAccess { .. } => {}
         LegacyInstruction::AggregateStore { place } => {
             // The stored value carries no tracked identity, so the member binds
             // nothing. Whatever it previously linked is unlinked below, which
@@ -8867,6 +9173,47 @@ fn scalar_member_store_base_resolves(state: &AbstractState, base: &str) -> bool 
         || pointer.targets.len() != 1
         || !pointer.derivation.is_identity()
     {
+        return false;
+    }
+    let Some(site) = pointer.targets.first() else {
+        return false;
+    };
+    !state.nullable_sites.contains(site)
+        && !state.unresolved_effect_sites.contains(site)
+        && state.resources.get(site) == Some(&LIVE)
+}
+
+/// Card **W43-INDIRECT-ACCESS-GENERAL**: whether a typed scalar access may
+/// dereference `base` at this point. Exactly three bindings are admitted:
+///
+/// 1. **no binding on any reaching path.** No modeled statement ever bound the
+///    name, so the object it designates is none this projection tracks: a
+///    formal's caller-provided pointer, an automatic array, or a name whose only
+///    binding statement was itself refused, which already keeps the function
+///    `Unknown`. Its nullness and extent are outside the property, exactly as
+///    they are for an unbound name at a `Borrowed` position;
+/// 2. **a non-null binding with no tracked target**: an untracked or
+///    derived-untracked pointer after its null test, or an opaque member value
+///    after its null test. The only other way to lose every target, widening,
+///    is itself refused wherever it happens;
+/// 3. **exactly one known, non-null, live identity** with neither a nullable
+///    nor an unresolved-effect marker, identity or derived alike: a derived
+///    pointer dereferences its base's allocation.
+///
+/// A possibly-null binding (it must be guarded), a mixed derivation, an
+/// ambiguous, released, escaped or unresolved identity, and an unknown binding
+/// that still carries a tracked target all refuse.
+fn indirect_scalar_base_resolves(state: &AbstractState, base: &str) -> bool {
+    let Some(pointer) = state.pointers.get(base) else {
+        return true;
+    };
+    if pointer.may_be_null || matches!(pointer.derivation, Derivation::Mixed) {
+        return false;
+    }
+    if pointer.targets.is_empty() {
+        return pointer.unknown;
+    }
+    if pointer.unknown || pointer.targets.len() != 1 {
         return false;
     }
     let Some(site) = pointer.targets.first() else {

@@ -159,6 +159,15 @@ impl Facts {
                 }
             }
             LegacyInstruction::AggregateStore { .. } => self.bindings.clear(),
+            // Card W43-INDIRECT-ACCESS-GENERAL: a write through `*B` or `B[I]`
+            // may reach any byte of the object `B` points into, so it keeps a
+            // relation only for a name whose slot no other lvalue designates —
+            // the call frame's rule, for the same reason.
+            LegacyInstruction::IndirectScalarAccess { frame: Some(_), .. } => {
+                for names in self.bindings.values_mut() {
+                    names.retain(|name| preserved.contains(name));
+                }
+            }
             _ => {}
         }
     }

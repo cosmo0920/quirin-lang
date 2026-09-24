@@ -970,6 +970,23 @@ Variable-length arrays, opaque types and compound operands are outside this
 admission. The same token-derived decision governs summary validation and
 certificate rechecking. See [the bounded implementation record](reports/wave23-c-operations/README.md).
 
+The typed scalar-access rule is consulted only for a statement the generic
+gateway already refused for its access, destination or increment, or named as
+an unsanctioned `*p` store. It admits a statement whose every memory access is
+`*p` or `p[i]` over a declared `SCALAR *p` or `SCALAR p[N]`, `p->f` over a
+declared record pointer and scalar member, or `s.f` over a declared record
+object, whose destination and value are scalar, and which carries no call,
+unary `&`, comma, nested write or pointer increment. Such a statement is
+custody-neutral. Each dereferenced base MUST be unbound on every reaching path,
+a non-null binding with no tracked target, or exactly one known, non-null,
+live identity; otherwise the function stays Unknown, and a base released on a
+reaching path is a `use_after_release` candidate. This property is custody
+only: bounds, alignment, and the liveness or nullness of an object the
+projection does not track are outside it, and an admitted subscript claims
+nothing about the object's extent. A write through `*p` or `p[i]` keeps the
+refused statement's binding frame. See
+[the implementation record](reports/w43-indirect-access-general/README.md).
+
 The bounded B-series lowering models one unconditional externally declared
 contracted call (no local definition) in an
 otherwise custody-neutral return or controlling expression, preserving its

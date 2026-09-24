@@ -1,0 +1,13 @@
+shapes compared: 17
+overall (predicted -> measured), over functions the proxy calls CLEAR or EXCH:
+      4  cleared -> cleared
+      7  cleared -> unmoved (a statement is outside the typed rule)
+      4  exchanged -> unmoved (a statement is outside the typed rule)
+
+AutomaticLocal | may-bind | * | NoMember | AssignmentValue: touched 225, {'cleared -> unmoved (a statement is outside the typed rule)': 5}
+Formal | may-bind | * | NoMember | AssignmentValue: touched 90, {'cleared -> unmoved (a statement is outside the typed rule)': 1}
+Formal | may-bind | -> | Scalar | AssignmentValue: touched 80, {'exchanged -> unmoved (a statement is outside the typed rule)': 3}
+Formal | may-bind | [] | NoMember | AssignmentValue: touched 45, {'exchanged -> unmoved (a statement is outside the typed rule)': 1}
+Formal | never-bound | [] | NoMember | AssignmentValue: touched 19, {'cleared -> cleared': 1, 'cleared -> unmoved (a statement is outside the typed rule)': 1}
+Formal | never-bound | -> | Scalar | AssignmentDestination: touched 8, {'cleared -> cleared': 1}
+Formal | never-bound | -> | Scalar | AssignmentValue: touched 8, {'cleared -> cleared': 2}

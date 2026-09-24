@@ -144,6 +144,7 @@ import QCore.RawDirectiveLexing
 import QCore.ConditionalGroupDepth
 import QCore.AggregateStore
 import QCore.ScalarMemberStore
+import QCore.IndirectScalarAccess
 import QCore.AtomicPublication
 import QCore.BoundFieldRead
 import QCore.MemberAddress
@@ -215,6 +216,7 @@ import QCore.TimeoutTeardown
 import QCore.Cycle18Composition
 import QCore.Cycle18CallbackObligations
 import QCore.ContractInherit
+import QCore.ContractViewProjection
 import QCore.NativePlatformMatrix
 import QCore.CallbackTaskHandoff
 

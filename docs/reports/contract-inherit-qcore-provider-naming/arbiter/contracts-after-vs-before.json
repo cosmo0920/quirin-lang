@@ -1,0 +1,33 @@
+{
+ "checks": {
+  "other_top_level_keys_equal": true,
+  "manifest_moves_only_two_entries_in_place": true,
+  "other_sources_byte_equal": true,
+  "removed_sources_are_the_hand_written_modules": true,
+  "added_sources_are_the_two_references": true,
+  "inclusion_keeps_before_records": true,
+  "inclusion_adds_the_two_modules": true,
+  "contract_inclusion_trust_equal": true
+ },
+ "sources_removed": [
+  "ROOT/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/memory.qcore",
+  "ROOT/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore"
+ ],
+ "sources_added": [
+  "qcore-provider-libevent:monkey/memory.qcore",
+  "qcore-provider-librdkafka:librdkafka/memory.qcore"
+ ],
+ "sources_kept": 43,
+ "inclusion_modules_before": [
+  "quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore",
+  "quirin-provider-fluent-bit:fluent_bit/resource_string.qcore"
+ ],
+ "inclusion_modules_added": [
+  "qcore-provider-libevent:monkey/memory.qcore",
+  "qcore-provider-librdkafka:librdkafka/memory.qcore"
+ ],
+ "chains_added": {
+  "qcore-provider-libevent:monkey/memory.qcore": 3,
+  "qcore-provider-librdkafka:librdkafka/memory.qcore": 5
+ }
+}

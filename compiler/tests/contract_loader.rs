@@ -1075,13 +1075,17 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `flb_free` to `contract inherit` moves nothing here: these counts are
     // of elaborated declarations. 44 -> 45 and 128 -> 130 by the same card's
     // `fluent_bit/resource_string.qcore` (`flb_strdup`, `flb_strndup`).
+    // 207 -> 206 rejected by card CONTRACT-VIEW-PROJECTION-CHECK: the
+    // duplicate `source_identity` typed policy left
+    // `monkey/timeout_teardown.qcore` (its owner is
+    // `monkey/wait_source_policy.qcore`); the v1 selection is unchanged.
     // 45 -> 46 and 130 -> 138 by card W43-DESCRIPTOR-RESOURCE-TRACKING: eight
     // declarations, six appended to already-selected modules (`open`, `close`,
     // `socket`, `fopen`, `fclose`, `fileno`) and two in the new
     // `libc/dirent.qcore`. Rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (46, 138, 207)
+        (46, 138, 206)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())
