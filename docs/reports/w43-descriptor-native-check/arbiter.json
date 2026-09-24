@@ -1,16 +1,17 @@
 {
  "card": "W43-DESCRIPTOR-NATIVE-CHECK",
+ "phase": "B",
  "after_run": {
   "command": [
    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/target/release/examples/cycle19_fluent_bit_libraries_audit",
    "--pinned-evidence",
    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
-   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/arbiter-1/monkey-source.json",
-   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/arbiter-1/resource-diagnostics.json"
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/arbiter-b/monkey-source.json",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/arbiter-b/resource-diagnostics.json"
   ],
-  "source_commit": "662af52f",
-  "binary_sha256": "d761123cc19afa18d1da6b3a0cf318d42168237eb0b1b4f2fbb9b7494b2fa2b4",
+  "source_commit": "c18a0675",
+  "binary_sha256": "9b559fe83f9043c10426544cc5c5c479a77753850f3372383f5c8d5caea235d6",
   "environment": {
    "QCORE_CLANG": "/usr/bin/clang",
    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
@@ -19,44 +20,22 @@
    "QCORE_INDIRECT_CENSUS": "unset",
    "QCORE_STATEMENT_CENSUS": "unset"
   },
-  "start": "2026-09-24T19:18:15.943435+00:00",
+  "start": "2026-09-24T23:09:20.128635+00:00",
   "exit": 0,
-  "end": "2026-09-24T19:25:55.854156+00:00"
+  "end": "2026-09-24T23:14:10.021418+00:00"
  },
- "before_run": {
-  "command": [
-   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/private/main-0a07cb57/target/release/examples/cycle19_fluent_bit_libraries_audit",
-   "--pinned-evidence",
-   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
-   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
-   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/arbiter-before-main-2/monkey-source.json",
-   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/arbiter-before-main-2/resource-diagnostics.json"
-  ],
-  "source_commit": "0a07cb57",
-  "binary_sha256": "194c9565ca2a37824b76e7aa9059c4bc037f65c4bdef85aa52df5ef18eb38f71",
-  "environment": {
-   "QCORE_CLANG": "/usr/bin/clang",
-   "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
-   "QCORE_SOURCE_CONTRACTS": "unset",
-   "QCORE_RETURN_CENSUS": "unset",
-   "QCORE_INDIRECT_CENSUS": "unset",
-   "QCORE_STATEMENT_CENSUS": "unset"
-  },
-  "start": "2026-09-24T19:35:11.769967+00:00",
-  "exit": 0,
-  "end": "2026-09-24T19:41:27.211230+00:00"
- },
- "baseline": "docs/reports/w43-indirect-access-general/artifacts",
+ "baseline": "docs/reports/w43-descriptor-resource-tracking/integration/artifacts",
+ "baseline_root": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/hungry-thompson-1740da",
  "baseline_identity": {
   "exit": 0,
   "result": {
-   "run": "measure/arbiter-1",
-   "baseline": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/docs/reports/w43-indirect-access-general/artifacts",
+   "run": "measure/arbiter-b",
+   "baseline": "docs/reports/w43-descriptor-resource-tracking/integration/artifacts",
    "artifacts": {
     "diagnostics": {
      "file": "resource-diagnostics.json",
-     "run_sha256": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
-     "baseline_raw_sha256": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
+     "run_sha256": "65d1a94307a18f89ebb41da0fa4e21177e13bcc3b2f468c2fffae2644cc3c70d",
+     "baseline_raw_sha256": "65d1a94307a18f89ebb41da0fa4e21177e13bcc3b2f468c2fffae2644cc3c70d",
      "archive_matches_manifest": true,
      "byte_identical": true
     },
@@ -69,16 +48,16 @@
     },
     "contracts": {
      "file": "resource-diagnostics.contracts.json",
-     "run_sha256": "4d4a4d89394d9b379c74b1bafea95648f8559429799712a4f261bd24a6d5fbbd",
-     "baseline_raw_sha256": "c66aabee5d938352cc121012c4014bc05ef981efc59d9cd200a4a8133c2d3543",
+     "run_sha256": "9266ed599cab4a6744efb97d92a1a2378c1596017e24070cffd3c4cc89edea11",
+     "baseline_raw_sha256": "aedfc98507c93429235fd013d38abe4afd9b8d323d7b9a1236805b8bed40917d",
      "archive_matches_manifest": true,
      "byte_identical": false,
-     "identical_after_root_alias": false
+     "identical_after_root_alias": true
     },
     "source-effects": {
      "file": "resource-diagnostics.source-effects.json",
      "run_sha256": "9a02dc0609a93efd05d8832e2277b80f781a860d6d7215585c20823ae99fbd67",
-     "baseline_raw_sha256": "0b7ce72d00131c7c410541bd8f3396189cfc9b3c21a90289cf3e303dd1b79964",
+     "baseline_raw_sha256": "f43b5a9c860457a03bc1b88ac64380460b4abecc4da239460804f9750eebcf35",
      "archive_matches_manifest": true,
      "byte_identical": false,
      "identical_after_root_alias": false
@@ -94,17 +73,361 @@
    "verdict_bearing_identical": true
   }
  },
+ "phase_a": {
+  "card": "W43-DESCRIPTOR-NATIVE-CHECK",
+  "after_run": {
+   "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/target/release/examples/cycle19_fluent_bit_libraries_audit",
+    "--pinned-evidence",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/arbiter-1/monkey-source.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/arbiter-1/resource-diagnostics.json"
+   ],
+   "source_commit": "662af52f",
+   "binary_sha256": "d761123cc19afa18d1da6b3a0cf318d42168237eb0b1b4f2fbb9b7494b2fa2b4",
+   "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset",
+    "QCORE_INDIRECT_CENSUS": "unset",
+    "QCORE_STATEMENT_CENSUS": "unset"
+   },
+   "start": "2026-09-24T19:18:15.943435+00:00",
+   "exit": 0,
+   "end": "2026-09-24T19:25:55.854156+00:00"
+  },
+  "before_run": {
+   "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/private/main-0a07cb57/target/release/examples/cycle19_fluent_bit_libraries_audit",
+    "--pinned-evidence",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/arbiter-before-main-2/monkey-source.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/arbiter-before-main-2/resource-diagnostics.json"
+   ],
+   "source_commit": "0a07cb57",
+   "binary_sha256": "194c9565ca2a37824b76e7aa9059c4bc037f65c4bdef85aa52df5ef18eb38f71",
+   "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset",
+    "QCORE_INDIRECT_CENSUS": "unset",
+    "QCORE_STATEMENT_CENSUS": "unset"
+   },
+   "start": "2026-09-24T19:35:11.769967+00:00",
+   "exit": 0,
+   "end": "2026-09-24T19:41:27.211230+00:00"
+  },
+  "baseline": "docs/reports/w43-indirect-access-general/artifacts",
+  "baseline_identity": {
+   "exit": 0,
+   "result": {
+    "run": "measure/arbiter-1",
+    "baseline": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/docs/reports/w43-indirect-access-general/artifacts",
+    "artifacts": {
+     "diagnostics": {
+      "file": "resource-diagnostics.json",
+      "run_sha256": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
+      "baseline_raw_sha256": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+     },
+     "chunk-contracts": {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "run_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "baseline_raw_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+     },
+     "contracts": {
+      "file": "resource-diagnostics.contracts.json",
+      "run_sha256": "4d4a4d89394d9b379c74b1bafea95648f8559429799712a4f261bd24a6d5fbbd",
+      "baseline_raw_sha256": "c66aabee5d938352cc121012c4014bc05ef981efc59d9cd200a4a8133c2d3543",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false
+     },
+     "source-effects": {
+      "file": "resource-diagnostics.source-effects.json",
+      "run_sha256": "9a02dc0609a93efd05d8832e2277b80f781a860d6d7215585c20823ae99fbd67",
+      "baseline_raw_sha256": "0b7ce72d00131c7c410541bd8f3396189cfc9b3c21a90289cf3e303dd1b79964",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false
+     },
+     "source": {
+      "file": "monkey-source.json",
+      "run_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "baseline_raw_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+     }
+    },
+    "verdict_bearing_identical": true
+   }
+  },
+  "same_source_before_after": {
+   "exit": 0,
+   "result": {
+    "before": "measure/arbiter-before-main-2",
+    "after": "measure/arbiter-1",
+    "before_root": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/private/main-0a07cb57",
+    "after_root": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c",
+    "artifacts": {
+     "resource-diagnostics.json": {
+      "before_sha256": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
+      "after_sha256": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
+      "byte_identical": true,
+      "identical_after_root_rewrite": true
+     },
+     "resource-diagnostics.chunk-contracts.json": {
+      "before_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "after_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "byte_identical": true,
+      "identical_after_root_rewrite": true
+     },
+     "resource-diagnostics.contracts.json": {
+      "before_sha256": "5a9b2bfbd7f3f1fcd9d52ce3368f64170f8df49d269838f18f7c5e855eb27c34",
+      "after_sha256": "4d4a4d89394d9b379c74b1bafea95648f8559429799712a4f261bd24a6d5fbbd",
+      "byte_identical": false,
+      "identical_after_root_rewrite": true
+     },
+     "resource-diagnostics.source-effects.json": {
+      "before_sha256": "9a02dc0609a93efd05d8832e2277b80f781a860d6d7215585c20823ae99fbd67",
+      "after_sha256": "9a02dc0609a93efd05d8832e2277b80f781a860d6d7215585c20823ae99fbd67",
+      "byte_identical": true,
+      "identical_after_root_rewrite": true
+     },
+     "monkey-source.json": {
+      "before_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "after_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "byte_identical": true,
+      "identical_after_root_rewrite": true
+     }
+    },
+    "all_identical_after_root_rewrite": true
+   }
+  },
+  "baseline_attribution": {
+   "exit": 0,
+   "result": {
+    "contracts": {
+     "identical_after_root_rewrite": false,
+     "differing_leaves": 120,
+     "differing_modules": [
+      "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/memory.qcore",
+      "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore",
+      "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore",
+      "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qcore",
+      "qcore-provider-libevent:monkey/memory.qcore",
+      "qcore-provider-librdkafka:librdkafka/memory.qcore",
+      "quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore",
+      "quirin-provider-fluent-bit:fluent_bit/resource_string.qcore",
+      "quirin-provider-libc:libc/memory.qcore",
+      "quirin-provider-libc:libc/string.qcore"
+     ],
+     "differing_key_names": [
+      "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/memory.qcore",
+      "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore",
+      "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore",
+      "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qcore",
+      "crate_name",
+      "crate_version",
+      "declaration",
+      "manifest",
+      "module",
+      "qcore-provider-libevent:monkey/memory.qcore",
+      "qcore-provider-librdkafka:librdkafka/memory.qcore",
+      "quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore",
+      "quirin-provider-fluent-bit:fluent_bit/resource_string.qcore",
+      "sha256",
+      "source",
+      "trust"
+     ],
+     "mentions_descriptor_native_observation": false,
+     "examples": [
+      {
+       "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/included/quirin-provider-libc:libc/memory.qcore/identity/crate_name",
+       "baseline": null,
+       "run": "quirin-provider-libc"
+      },
+      {
+       "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/included/quirin-provider-libc:libc/memory.qcore/identity/crate_version",
+       "baseline": null,
+       "run": "0.1.0"
+      },
+      {
+       "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/included/quirin-provider-libc:libc/memory.qcore/identity/module",
+       "baseline": null,
+       "run": "libc/memory.qcore"
+      },
+      {
+       "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/included/quirin-provider-libc:libc/memory.qcore/identity/sha256",
+       "baseline": null,
+       "run": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
+      },
+      {
+       "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/included/quirin-provider-libc:libc/memory.qcore/source",
+       "baseline": null,
+       "run": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn malloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn calloc(count: usize, size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(count);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn free(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n"
+      },
+      {
+       "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc/0/declaration",
+       "baseline": null,
+       "run": "malloc"
+      },
+      {
+       "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc/0/module/crate_name",
+       "baseline": null,
+       "run": "quirin-provider-libc"
+      },
+      {
+       "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc/0/module/crate_version",
+       "baseline": null,
+       "run": "0.1.0"
+      },
+      {
+       "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc/0/module/module",
+       "baseline": null,
+       "run": "libc/memory.qcore"
+      },
+      {
+       "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc/0/module/sha256",
+       "baseline": null,
+       "run": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
+      },
+      {
+       "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc_z/0/declaration",
+       "baseline": null,
+       "run": "malloc"
+      },
+      {
+       "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc_z/0/module/crate_name",
+       "baseline": null,
+       "run": "quirin-provider-libc"
+      }
+     ]
+    },
+    "source-effects": {
+     "identical_after_root_rewrite": false,
+     "differing_leaves": 53,
+     "differing_modules": [],
+     "differing_key_names": [
+      "build_digest",
+      "configuration_digest",
+      "kind",
+      "max_operations",
+      "obligation_id",
+      "observed_runs_only",
+      "paths",
+      "qcore:boolean-field-import:v1",
+      "schedules_explored",
+      "task_digest"
+     ],
+     "mentions_descriptor_native_observation": false,
+     "examples": [
+      {
+       "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/max_operations",
+       "baseline": null,
+       "run": null
+      },
+      {
+       "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/observed_runs_only",
+       "baseline": null,
+       "run": false
+      },
+      {
+       "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/path_exploration/kind",
+       "baseline": null,
+       "run": "bounded_paths"
+      },
+      {
+       "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/path_exploration/paths",
+       "baseline": null,
+       "run": 4
+      },
+      {
+       "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/schedules_explored",
+       "baseline": null,
+       "run": null
+      },
+      {
+       "path": "results/16/bounds/resource_contracts:77c63ea3efe50617499743bb/max_operations",
+       "baseline": null,
+       "run": null
+      },
+      {
+       "path": "results/16/bounds/resource_contracts:77c63ea3efe50617499743bb/observed_runs_only",
+       "baseline": false,
+       "run": null
+      },
+      {
+       "path": "results/16/bounds/resource_contracts:77c63ea3efe50617499743bb/path_exploration/kind",
+       "baseline": "bounded_paths",
+       "run": null
+      },
+      {
+       "path": "results/16/bounds/resource_contracts:77c63ea3efe50617499743bb/path_exploration/paths",
+       "baseline": 4,
+       "run": null
+      },
+      {
+       "path": "results/16/bounds/resource_contracts:77c63ea3efe50617499743bb/schedules_explored",
+       "baseline": null,
+       "run": null
+      },
+      {
+       "path": "results/16/evidence/coverage/0",
+       "baseline": "resource_contracts:77c63ea3efe50617499743bb",
+       "run": "resource_contracts:0f7974627ff808123a175ac4"
+      },
+      {
+       "path": "results/16/evidence/unit/build_digest",
+       "baseline": "b35099c9f177610877dd200c66ad846baa0795a9cc80e3d6e349f07eb0825ec6",
+       "run": "9085ba1e7d5f41e8b4f997b01a22d7c2cd30410d9ac84ffdacb12109ffccb6d8"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "before_run": {
+  "command": [
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/private/main-d2dd61c1/target/release/examples/cycle19_fluent_bit_libraries_audit",
+   "--pinned-evidence",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/arbiter-before-d/monkey-source.json",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/measure/arbiter-before-d/resource-diagnostics.json"
+  ],
+  "source_commit": "d2dd61c1",
+  "binary_sha256": "3787ab43aa021c7eb88f3505a275280b945f96f7c62664c7b9714aaaf92977a6",
+  "environment": {
+   "QCORE_CLANG": "/usr/bin/clang",
+   "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+   "QCORE_SOURCE_CONTRACTS": "unset",
+   "QCORE_RETURN_CENSUS": "unset",
+   "QCORE_INDIRECT_CENSUS": "unset",
+   "QCORE_STATEMENT_CENSUS": "unset"
+  },
+  "start": "2026-09-24T23:15:33.905974+00:00",
+  "exit": 0,
+  "end": "2026-09-24T23:20:21.928564+00:00"
+ },
  "same_source_before_after": {
   "exit": 0,
   "result": {
-   "before": "measure/arbiter-before-main-2",
-   "after": "measure/arbiter-1",
-   "before_root": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/private/main-0a07cb57",
+   "before": "measure/arbiter-before-d",
+   "after": "measure/arbiter-b",
+   "before_root": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c/private/main-d2dd61c1",
    "after_root": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aad8c419f5be3b28c",
    "artifacts": {
     "resource-diagnostics.json": {
-     "before_sha256": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
-     "after_sha256": "4cfc7fe1801e5af4e42f556c2f1e70644d979bce7f6da5424930b6b0b5d48657",
+     "before_sha256": "65d1a94307a18f89ebb41da0fa4e21177e13bcc3b2f468c2fffae2644cc3c70d",
+     "after_sha256": "65d1a94307a18f89ebb41da0fa4e21177e13bcc3b2f468c2fffae2644cc3c70d",
      "byte_identical": true,
      "identical_after_root_rewrite": true
     },
@@ -115,8 +438,8 @@
      "identical_after_root_rewrite": true
     },
     "resource-diagnostics.contracts.json": {
-     "before_sha256": "5a9b2bfbd7f3f1fcd9d52ce3368f64170f8df49d269838f18f7c5e855eb27c34",
-     "after_sha256": "4d4a4d89394d9b379c74b1bafea95648f8559429799712a4f261bd24a6d5fbbd",
+     "before_sha256": "ca3624dc62e51514ff5fda2a0c58ead4287004b1a21ae20cf3bd7863f27d9135",
+     "after_sha256": "9266ed599cab4a6744efb97d92a1a2378c1596017e24070cffd3c4cc89edea11",
      "byte_identical": false,
      "identical_after_root_rewrite": true
     },
@@ -137,185 +460,94 @@
   }
  },
  "baseline_attribution": {
-  "exit": 0,
-  "result": {
-   "contracts": {
-    "identical_after_root_rewrite": false,
-    "differing_leaves": 120,
-    "differing_modules": [
-     "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/memory.qcore",
-     "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore",
-     "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore",
-     "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qcore",
-     "qcore-provider-libevent:monkey/memory.qcore",
-     "qcore-provider-librdkafka:librdkafka/memory.qcore",
-     "quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore",
-     "quirin-provider-fluent-bit:fluent_bit/resource_string.qcore",
-     "quirin-provider-libc:libc/memory.qcore",
-     "quirin-provider-libc:libc/string.qcore"
-    ],
-    "differing_key_names": [
-     "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/memory.qcore",
-     "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore",
-     "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore",
-     "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8d24f7f717a987c1/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qcore",
-     "crate_name",
-     "crate_version",
-     "declaration",
-     "manifest",
-     "module",
-     "qcore-provider-libevent:monkey/memory.qcore",
-     "qcore-provider-librdkafka:librdkafka/memory.qcore",
-     "quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore",
-     "quirin-provider-fluent-bit:fluent_bit/resource_string.qcore",
-     "sha256",
-     "source",
-     "trust"
-    ],
-    "mentions_descriptor_native_observation": false,
-    "examples": [
-     {
-      "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/included/quirin-provider-libc:libc/memory.qcore/identity/crate_name",
-      "baseline": null,
-      "run": "quirin-provider-libc"
-     },
-     {
-      "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/included/quirin-provider-libc:libc/memory.qcore/identity/crate_version",
-      "baseline": null,
-      "run": "0.1.0"
-     },
-     {
-      "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/included/quirin-provider-libc:libc/memory.qcore/identity/module",
-      "baseline": null,
-      "run": "libc/memory.qcore"
-     },
-     {
-      "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/included/quirin-provider-libc:libc/memory.qcore/identity/sha256",
-      "baseline": null,
-      "run": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
-     },
-     {
-      "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/included/quirin-provider-libc:libc/memory.qcore/source",
-      "baseline": null,
-      "run": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn malloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn calloc(count: usize, size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(count);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn free(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n"
-     },
-     {
-      "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc/0/declaration",
-      "baseline": null,
-      "run": "malloc"
-     },
-     {
-      "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc/0/module/crate_name",
-      "baseline": null,
-      "run": "quirin-provider-libc"
-     },
-     {
-      "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc/0/module/crate_version",
-      "baseline": null,
-      "run": "0.1.0"
-     },
-     {
-      "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc/0/module/module",
-      "baseline": null,
-      "run": "libc/memory.qcore"
-     },
-     {
-      "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc/0/module/sha256",
-      "baseline": null,
-      "run": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
-     },
-     {
-      "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc_z/0/declaration",
-      "baseline": null,
-      "run": "malloc"
-     },
-     {
-      "path": "contract_inclusion/modules/qcore-provider-libevent:monkey/memory.qcore/inherited/mk_mem_alloc_z/0/module/crate_name",
-      "baseline": null,
-      "run": "quirin-provider-libc"
-     }
-    ]
-   },
-   "source-effects": {
-    "identical_after_root_rewrite": false,
-    "differing_leaves": 53,
-    "differing_modules": [],
-    "differing_key_names": [
-     "build_digest",
-     "configuration_digest",
-     "kind",
-     "max_operations",
-     "obligation_id",
-     "observed_runs_only",
-     "paths",
-     "qcore:boolean-field-import:v1",
-     "schedules_explored",
-     "task_digest"
-    ],
-    "mentions_descriptor_native_observation": false,
-    "examples": [
-     {
-      "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/max_operations",
-      "baseline": null,
-      "run": null
-     },
-     {
-      "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/observed_runs_only",
-      "baseline": null,
-      "run": false
-     },
-     {
-      "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/path_exploration/kind",
-      "baseline": null,
-      "run": "bounded_paths"
-     },
-     {
-      "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/path_exploration/paths",
-      "baseline": null,
-      "run": 4
-     },
-     {
-      "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/schedules_explored",
-      "baseline": null,
-      "run": null
-     },
-     {
-      "path": "results/16/bounds/resource_contracts:77c63ea3efe50617499743bb/max_operations",
-      "baseline": null,
-      "run": null
-     },
-     {
-      "path": "results/16/bounds/resource_contracts:77c63ea3efe50617499743bb/observed_runs_only",
-      "baseline": false,
-      "run": null
-     },
-     {
-      "path": "results/16/bounds/resource_contracts:77c63ea3efe50617499743bb/path_exploration/kind",
-      "baseline": "bounded_paths",
-      "run": null
-     },
-     {
-      "path": "results/16/bounds/resource_contracts:77c63ea3efe50617499743bb/path_exploration/paths",
-      "baseline": 4,
-      "run": null
-     },
-     {
-      "path": "results/16/bounds/resource_contracts:77c63ea3efe50617499743bb/schedules_explored",
-      "baseline": null,
-      "run": null
-     },
-     {
-      "path": "results/16/evidence/coverage/0",
-      "baseline": "resource_contracts:77c63ea3efe50617499743bb",
-      "run": "resource_contracts:0f7974627ff808123a175ac4"
-     },
-     {
-      "path": "results/16/evidence/unit/build_digest",
-      "baseline": "b35099c9f177610877dd200c66ad846baa0795a9cc80e3d6e349f07eb0825ec6",
-      "run": "9085ba1e7d5f41e8b4f997b01a22d7c2cd30410d9ac84ffdacb12109ffccb6d8"
-     }
-    ]
-   }
+  "contracts": {
+   "identical_after_root_rewrite": true,
+   "differing_leaves": 0,
+   "differing_modules": [],
+   "differing_key_names": [],
+   "mentions_descriptor_native_observation": false,
+   "examples": []
+  },
+  "source-effects": {
+   "identical_after_root_rewrite": false,
+   "differing_leaves": 53,
+   "differing_modules": [],
+   "differing_key_names": [
+    "build_digest",
+    "configuration_digest",
+    "kind",
+    "max_operations",
+    "obligation_id",
+    "observed_runs_only",
+    "paths",
+    "qcore:boolean-field-import:v1",
+    "schedules_explored",
+    "task_digest"
+   ],
+   "mentions_descriptor_native_observation": false,
+   "examples": [
+    {
+     "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/max_operations",
+     "baseline": null,
+     "run": null
+    },
+    {
+     "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/observed_runs_only",
+     "baseline": null,
+     "run": false
+    },
+    {
+     "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/path_exploration/kind",
+     "baseline": null,
+     "run": "bounded_paths"
+    },
+    {
+     "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/path_exploration/paths",
+     "baseline": null,
+     "run": 4
+    },
+    {
+     "path": "results/16/bounds/resource_contracts:0f7974627ff808123a175ac4/schedules_explored",
+     "baseline": null,
+     "run": null
+    },
+    {
+     "path": "results/16/bounds/resource_contracts:685cbcf86628412b2587fe35/max_operations",
+     "baseline": null,
+     "run": null
+    },
+    {
+     "path": "results/16/bounds/resource_contracts:685cbcf86628412b2587fe35/observed_runs_only",
+     "baseline": false,
+     "run": null
+    },
+    {
+     "path": "results/16/bounds/resource_contracts:685cbcf86628412b2587fe35/path_exploration/kind",
+     "baseline": "bounded_paths",
+     "run": null
+    },
+    {
+     "path": "results/16/bounds/resource_contracts:685cbcf86628412b2587fe35/path_exploration/paths",
+     "baseline": 4,
+     "run": null
+    },
+    {
+     "path": "results/16/bounds/resource_contracts:685cbcf86628412b2587fe35/schedules_explored",
+     "baseline": null,
+     "run": null
+    },
+    {
+     "path": "results/16/evidence/coverage/0",
+     "baseline": "resource_contracts:685cbcf86628412b2587fe35",
+     "run": "resource_contracts:0f7974627ff808123a175ac4"
+    },
+    {
+     "path": "results/16/evidence/unit/build_digest",
+     "baseline": "cde96e4e92180e326fb823481d1209be32f40d68260126ee6db447107593f099",
+     "run": "9085ba1e7d5f41e8b4f997b01a22d7c2cd30410d9ac84ffdacb12109ffccb6d8"
+    }
+   ]
   }
- }
+ },
+ "conclusion": "Verdict-bearing diagnostics byte-identical to docs/reports/w43-descriptor-resource-tracking/integration/artifacts/ (root alias this worktree -> hungry-thompson-1740da); chunk-contracts and monkey-source byte-identical; contracts identical after the alias. source-effects differs from the frozen baseline in 53 leaves, all under digest-keyed bounds entries (obligation ids, build/configuration/task digests), none mentioning this card's module; a same-source audit of main d2dd61c1 built in its own checkout reproduces this card's source-effects byte for byte, and all five artifacts equal that BEFORE run after rewriting the checkout root. Verdict-neutral."
 }

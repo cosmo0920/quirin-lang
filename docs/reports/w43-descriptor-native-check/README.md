@@ -523,29 +523,31 @@ behaviour matches the declared `socket` contract.
 
 ## 9. Corpus arbiter
 
-This card changes no gateway, no contract selected for the corpus, and no
-verdict-bearing code path. It ran the arbiter once at the measured tip
-`662af52f`, with `docs/reports/w43-indirect-access-general/scripts/run_audit.py`
-(main's current runner). The record is [`arbiter.json`](arbiter.json).
+This card changes no gateway, no contract selected for the corpus and no
+verdict-bearing code path. The arbiter ran once at the measured tip
+`c18a0675` (main `d2dd61c1` merged), with main's runner
+`docs/reports/w43-indirect-access-general/scripts/run_audit.py`. The record is
+[`arbiter.json`](arbiter.json); Phase A's record is kept in it under
+`phase_a`.
 
-* **Against the main baseline.** Main moved the corpus baseline to
-  `docs/reports/w43-indirect-access-general/artifacts/` (root alias
-  `agent-a8d24f7f717a987c1`). `baseline_identity.py` reports the
-  verdict-bearing diagnostics **byte-identical** (`4cfc7fe1…`), and
-  `chunk-contracts` and `monkey-source` are also byte-identical.
-  `contracts` and `source-effects` differ from that frozen baseline. Every
-  differing leaf lies in modules that main's CONTRACT-INHERIT-QCORE-PROVIDER-NAMING
-  changed, or in identity digests that follow from them, and none mentions
-  this card's module. The integrator recorded the same two differences on
-  main's combined tree.
-* **Against a same-source BEFORE run.** Main `0a07cb57` was built in its own
-  temporary checkout and audited the same way. Every one of the five artifacts
-  is identical to the AFTER run once the checkout root is rewritten: four are
+* **Against the combined baseline.** The baseline is
+  `docs/reports/w43-descriptor-resource-tracking/integration/artifacts/`, with
+  the root alias this worktree → `hungry-thompson-1740da`.
+  `baseline_identity.py` reports the verdict-bearing diagnostics
+  **byte-identical**. `chunk-contracts` and `monkey-source` are also
+  byte-identical, and `contracts` is identical after the alias.
+  `source-effects` differs in 53 leaves. All of them lie under digest-keyed
+  `bounds` entries (obligation ids and build, configuration and task digests),
+  and none mentions this card's module.
+* **Against a same-source BEFORE run.** Main `d2dd61c1` was built in its own
+  temporary checkout (libevent submodule initialized) and audited the same
+  way. Its `source-effects` is **byte-identical** to this card's, so the
+  53-leaf difference is main's own and not this card's. All five artifacts
+  equal the AFTER run once the checkout root is rewritten: four are
   byte-identical, and `contracts` differs only in its root spelling. The
-  first BEFORE attempt failed because that checkout lacked the libevent
-  submodule (a pin mismatch). It is kept as `measure/arbiter-before-main`,
-  discarded as evidence, and was rerun after the submodule was initialized.
-  The temporary checkout has been removed.
+  temporary checkout has been removed.
+
+The card is verdict-neutral.
 
 ## 10. Follow-ups
 
@@ -571,18 +573,21 @@ card declares nothing. `CT50-PROOF-ADDRESS-REUSE-UNPROVED` is also unchanged.
 
 ## 11. Validation and reproduction
 
-The gate was measured at `662af52f` with `scripts/run_gate.py` and
-`CARGO_INCREMENTAL=0`. Every exit was captured to a file. The records are
-[`gate.json`](gate.json) and [`gate-facts.json`](gate-facts.json), and the
-logs are in worktree-private `measure/gate-4` and `measure/gate-7`; `measure/gate-8` reran the Python suite and docs index after the final matrix regeneration (330 tests, exit 0).
+The gate was measured on the merged tree at `c18a0675` with
+`scripts/run_gate.py` and `CARGO_INCREMENTAL=0`. The dev profile was reclaimed
+after the test step. Every exit was captured to a file. The records are
+[`gate.json`](gate.json) and [`gate-facts.json`](gate-facts.json). The logs
+are in worktree-private `measure/gate-b3` (submodules, clang, tests),
+`measure/gate-b4` (lint, probes, Lean and the provider gate) and
+`measure/gate-b7` (Python and docs index after the final matrix regeneration).
 
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | exit 0 |
-| `cargo test --workspace --no-fail-fast` | **5,270 passed / 0 failed / 11 ignored** over 282 summaries |
+| `cargo test --workspace --no-fail-fast` | **5,353 passed / 0 failed / 11 ignored** over 286 summaries |
 | `cargo fmt --all -- --check`; `cargo clippy --workspace --all-targets -- -D warnings` | exit 0 / exit 0 |
 | `reevaluation_probe`, `reevaluation_followup` | exit 0 / exit 0 |
-| `python3 scripts/check_lean_audits.py` | **173 Lean audits** passed (one added: `AuditDescriptorNativeObservation.lean`) |
+| `python3 scripts/check_lean_audits.py` | **176 Lean audits** passed |
 | `python3 -m unittest discover -s scripts/tests` (after the final matrix regeneration) | **330** tests, exit 0 |
 | `python3 scripts/build_docs_index.py --check` | exit 0 |
 | provider `cargo test ... --workspace --locked --offline --no-fail-fast` | **124 passed / 0 / 0** over 39 summaries |
@@ -592,20 +597,20 @@ logs are in worktree-private `measure/gate-4` and `measure/gate-7`; `measure/gat
 | `providers/package.py build`, then `verify` for all five packages | exit 0 (build) and exit 0 (each of the five) |
 | `python3 -m unittest discover -s providers/tests` | 13 tests, exit 0 |
 
-The failed attempts are kept and are not evidence:
-
-* `measure/gate-2`, on the pre-merge tree, failed one test.
-  `contract_loader.rs` still pinned 108 modules and 207 rejected declarations.
-  The pin was updated deliberately: the corpus now has 109 modules, and the
-  rejected count went 206 → 216 after main's 207 → 206.
-* `measure/gate-3` was stopped when main moved.
-* `measure/gate-5` ran the Python suite before the matrix was regenerated,
-  and its two derived-facts checks failed as expected.
+The failed attempt is kept and is not evidence. `measure/gate-b1` + `gate-b2`
+at `3ff08bdb` passed every step except workspace clippy (exit 101): one
+`unnecessary_get_then_check` in the new binding. The fix, `c18a0675`, changes
+that expression only, and the whole gate was rerun as `gate-b3` + `gate-b4`.
+`measure/gate-b5` ran the Python suite before the matrix was regenerated, and
+its two derived-facts checks failed as expected. `gate-b6` was the first run
+after the regeneration. `gate-b8` confirms the Python suite and the docs index
+after the last one.
+Phase A's gate at `662af52f` (5,270 / 0 / 11, 173 Lean audits, 330 Python
+tests, provider 124 / 0 / 0) is superseded by this one.
 
 The acceptance matrix was regenerated with
 `build_matrix.py . --gate docs/reports/w43-descriptor-native-check/gate.json`.
-`clang-version.txt` beside the gate is this checkout's own recording. The
-matrix has 321 follow-ups, 173 Lean audits and 109 contract modules.
+`clang-version.txt` beside the gate is this checkout's own recording.
 
 ```sh
 # 1. Private copy and build of the pinned profile (the pinned checkout is only read).
@@ -618,13 +623,15 @@ python3 docs/reports/w43-descriptor-native-check/scripts/compare_compile_db.py \
   "$PWD/private/w43-descriptor/fluent-bit-source" "$PWD/private/w43-descriptor/fluent-bit-build"
 cmake --build private/w43-descriptor/fluent-bit-build --target fluent-bit-bin flb-it-pipe flb-it-network \
   flb-it-fstore flb-it-utils flb-it-file -j14
-# 2. Relink observed targets, run, aggregate, pin.
-CARGO_INCREMENTAL=0 cargo build --release -p qcore-contract --example check_descriptor_observations
+# 2. Relink observed targets, run, aggregate, bind (Phase B), pin.
+CARGO_INCREMENTAL=0 cargo build --release -p qcore-contract --example check_descriptor_observations \
+  --example bind_descriptor_contracts
 python3 docs/reports/w43-descriptor-native-check/scripts/build_targets.py <pin>/fluent-bit-clang-source \
   private/w43-descriptor/fluent-bit-source private/w43-descriptor/fluent-bit-build OUT/targets
 python3 docs/reports/w43-descriptor-native-check/scripts/run_scenarios.py OUT/targets OUT/run \
   --source-root private/w43-descriptor/fluent-bit-source
 python3 docs/reports/w43-descriptor-native-check/scripts/aggregate.py OUT/run OUT/aggregate.json
+python3 docs/reports/w43-descriptor-native-check/scripts/bind_contracts.py OUT/run OUT/binding.json
 python3 docs/reports/w43-descriptor-native-check/scripts/pin_records.py OUT docs/reports/w43-descriptor-native-check
 # 3. Re-check the pinned records alone (no native rebuild needed).
 python3 docs/reports/w43-descriptor-native-check/scripts/verify_records.py docs/reports/w43-descriptor-native-check SCRATCH
@@ -633,28 +640,40 @@ python3 docs/reports/w43-descriptor-native-check/scripts/verify_records.py docs/
 `<pin>` is `/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin`.
 
 **Recorded measurement.** The pinned run is
-`private/w43-descriptor/final-20260925b` in this worktree. Two earlier
-complete measurements were superseded:
+`private/w43-descriptor/final-20260925d` in this worktree: 81 runs, including
+Phase B's `event_type` and `ctr_random_get` scenarios. It supersedes three
+earlier complete measurements:
 
-* `final-20260925`, 71 runs, before the Monkey driver and a corrected scenario
-  note;
-* the `dev*` iterations, which found three observer artifacts (an `openat`
-  injection source, an `EAI_SYSTEM` injection errno and an overlong Unix
-  socket path). All three were fixed before the pinned run.
+* `final-20260925b`, 77 runs, pinned by Phase A at `662af52f`;
+* `final-20260925c`, 79 runs, pinned at `ad5a0f21` before the `event_type`
+  scenarios existed;
+* `final-20260925`, 71 runs, before the Monkey driver.
 
-`verify_records.py` over the pinned archive reproduced all 77 run results and
-the aggregate byte for byte (exit 0).
+The `dev*` iterations found four harness artifacts, all fixed before the
+pinned runs: an `openat` injection source, an `EAI_SYSTEM` injection errno, an
+overlong Unix socket path, and a driver that closed descriptor 0 directly
+instead of through its stream.
+
+`verify_records.py` over the pinned archive reproduced all 81 run results, the
+aggregate, every run's `binding.json` and the binding aggregate byte for byte
+(exit 0). Phase A's records are those of its commit.
 
 **Regression pins.**
 * `crates/qcore-contract/tests/unit/descriptor_observation.rs` has 16 tests:
   * 13 synthetic tests, covering each property, each rejection, and policy
     mutation;
-  * 3 that replay pinned real runs (`engine.dummy_null`, `probe.libc`,
-    `monkey.bind_in_use`) from `tests/fixtures/descriptor/`.
-* The Lean executable anchors (`double_close_rejected`,
-  `use_after_close_rejected`, `stream_released_as_directory_rejected`,
-  `counted_dl_references_accepted`, `live_identity_reacquisition_rejected`)
-  have the same shapes as those Rust tests.
+  * 3 that replay real runs pinned by Phase A (`engine.dummy_null`,
+    `probe.libc`, `monkey.bind_in_use`, from `final-20260925b`).
+* `crates/qcore-contract/tests/unit/descriptor_contract_binding.rs` has 12
+  tests: 10 synthetic, 1 over two Phase A runs, and 1 over
+  `ctraces.random.stdin_closed` (from `final-20260925c`). The fixtures are in
+  `tests/fixtures/descriptor/`.
+* The Lean executable anchors have the same shapes as those Rust tests:
+  * the lifecycle anchors `double_close_rejected`, `use_after_close_rejected`,
+    `stream_released_as_directory_rejected`, `counted_dl_references_accepted`
+    and `live_identity_reacquisition_rejected`;
+  * the binding anchors `open_failure_binding_anchor`,
+    `open_success_binding_anchor` and `wrong_kind_success_binding_anchor`.
 
 ## 12. Files likely to conflict
 
