@@ -19,11 +19,9 @@ module contract;
 //
 // ## Deliberately NOT declared here (recorded in the card report)
 //
-//   `stat`: faithful in v1, but the prototype spells a qualifier AFTER the
-//   `*` (`T *__restrict p`), which the declared-ABI reader (gateway
-//   constraint 8) does not read; this card measured the declaration withdrawn
-//   with `abi-unreadable-declaration` at every call site in the pinned corpus
-//   (`LOADER-ABI-RESTRICT-QUALIFIER`), so it is not shipped.
+//   (`stat` spells `T *__restrict p`, which this card's reader withdrew; card
+//   W43-LIBC-RESULT-ALIAS taught the reader that qualifier, and card
+//   W43-LIBC-RESTRICT-PROTOTYPES declares `stat` at the end of this module.)
 //
 // ## What no declaration here says
 //
@@ -50,5 +48,26 @@ extern fn umask(mask: u32) -> u32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(mask);
+    ensures normal resource_return_none();
+};
+
+// ## Card W43-LIBC-RESTRICT-PROTOTYPES: `stat`
+//
+//   extern int stat (const char *__restrict __file,
+//                    struct stat *__restrict __buf) __THROW __nonnull ((1, 2));
+//
+// `stat` reads the path and fills the caller's `struct stat` -- a value write
+// through a borrowed pointer into caller storage, exactly `fstat`'s shape above.
+// Nothing is allocated, freed or retained, and the `int` result is a scalar:
+// `resource_borrowed` on both parameters, `resource_return_none()`. TRUSTED
+// ASSUMPTION; the `__restrict` spellings are read by the declared-ABI reader
+// since card W43-LIBC-RESULT-ALIAS. Nothing here says anything about the file
+// system, symbolic links, permissions or `errno`.
+
+extern fn stat(file: ptr<const, u8>, buf: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(buf);
     ensures normal resource_return_none();
 };

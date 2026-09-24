@@ -1,0 +1,33 @@
+Unknown functions whose only blocker is one uncontracted callee: 297
+distinct callees: 229
+functions  callee
+        9  LZ4_decompress_generic (defined in: lz4.c)
+        5  cmt_mpack_unpack_array
+        5  ctr_mpack_unpack_array
+        4  LZ4_compress_HC (defined in: lz4hc.c)
+        4  LZ4_compress_HC_extStateHC (defined in: lz4hc.c)
+        4  rd_kafka_admin_result_ret_groups (defined in: rdkafka_admin.c)
+        3  fprintf
+        3  add (defined in: cmt_metric.c)
+        3  add_item_to_object (defined in: cJSON.c)
+        3  LZ4_compress_fast_continue (defined in: lz4.c)
+        3  LZ4_decompress_unsafe_generic (defined in: lz4.c)
+        3  LZ4_compress_HC_continue (defined in: lz4hc.c)
+        3  rd_kafka_admin_result_ret_resources (defined in: rdkafka_admin.c)
+        3  rd_kafka_admin_result_ret_topics (defined in: rdkafka_admin.c)
+        3  rd_kafka_assignor_add
+        2  ctr_mpack_consume_int_tag (defined in: ctr_mpack_utils.c)
+        2  ctr_mpack_consume_uint_tag (defined in: ctr_mpack_utils.c)
+        2  add_item_to_array (defined in: cJSON.c)
+        2  get_object_item (defined in: cJSON.c)
+        2  cJSON_ParseWithLengthOpts (defined in: cJSON.c)
+        2  replace_item_in_object (defined in: cJSON.c)
+        2  LZ4_compress_default (defined in: lz4.c)
+        2  LZ4_compress_fast_extState (defined in: lz4.c)
+        2  pb_write (defined in: nanopb/pb_encode.c)
+        2  rd_slice_reader0 (defined in: rdbuf.c)
+        2  rd_kafka_destroy_app (defined in: rdkafka.c)
+        2  rd_kafka_anyconf_dump (defined in: rdkafka_conf.c)
+        2  rd_kafka_metadata_copy_internal (defined in: rdkafka_metadata.c)
+        2  rd_kafka_aborted_txns_next_offset (defined in: rdkafka_msgset_reader.c)
+        2  rd_kafka_topic_partition_destroy0 (defined in: rdkafka_partition.c)

@@ -649,12 +649,18 @@ fn a_branch_condition_refuses_a_read_through_a_bound_base() {
             if (c->hits > 2) { q_free(p); } else { q_free(p); }
         }");
     assert_eq!(run.status("subject"), AnalysisStatus::Unknown);
+    // Deliberate pin update, card W43-INDEX-TRAVERSAL: the condition is now
+    // the typed read of `c->hits`, and its dereference obligation refuses
+    // the base `q_transfer` consumed, as an unresolved alias of `c`, rather
+    // than the lexical branch refusal. Premise 8 still holds: the read is
+    // never neutralized through a base this body may bind.
     assert!(
-        run.unsupported("subject").iter().any(|description| {
-            description == "unmodeled call, aggregate or indirect access in branch condition"
-        }),
-        "unsupported: {:?}",
-        run.unsupported("subject")
+        run.diagnostics["subject"].iter().any(|kind| matches!(
+            kind,
+            LegacyDiagnosticKind::UnknownAlias { variable } if variable == "c"
+        )),
+        "diagnostics: {:?}",
+        run.diagnostics
     );
 }
 
@@ -761,26 +767,45 @@ fn a_for_condition_is_classified_from_its_original_spelling() {
     if !clang_available() {
         return;
     }
-    for header in [
-        "for (; external(n); ) { n = n + 1; }",
-        "for (; table[n]; ) { n = n + 1; }",
-    ] {
-        let program = format!(
-            "unsigned long external(unsigned long);
-            void subject(unsigned long n, unsigned long *table) {{
-                {header}
-            }}"
-        );
-        let run = run(&program);
-        assert_eq!(run.status("subject"), AnalysisStatus::Unknown, "{header}");
-        assert!(
-            run.unsupported("subject").iter().any(|description| {
-                description == "unmodeled call, aggregate or indirect access in for-loop condition"
-            }),
-            "`{header}` unsupported: {:?}",
-            run.unsupported("subject")
-        );
+    // Deliberate pin update, card W43-INDEX-TRAVERSAL: `table[n]` over a
+    // declared `unsigned long *` formal is now the typed condition read, so
+    // the subscript spelling certifies (see `subscript_condition_certifies`
+    // below); the call spelling keeps the refusal this card measured.
+    let header = "for (; external(n); ) { n = n + 1; }";
+    let program = format!(
+        "unsigned long external(unsigned long);
+        void subject(unsigned long n, unsigned long *table) {{
+            {header}
+        }}"
+    );
+    let run = run(&program);
+    assert_eq!(run.status("subject"), AnalysisStatus::Unknown, "{header}");
+    assert!(
+        run.unsupported("subject").iter().any(|description| {
+            description == "unmodeled call, aggregate or indirect access in for-loop condition"
+        }),
+        "`{header}` unsupported: {:?}",
+        run.unsupported("subject")
+    );
+}
+
+/// Card W43-INDEX-TRAVERSAL: the subscript spelling of the header above is
+/// classified from its original tokens too, and is now the typed condition
+/// read through an unbound formal. Bounds are not decided.
+#[test]
+fn subscript_condition_certifies() {
+    if !clang_available() {
+        return;
     }
+    let run = run("void subject(unsigned long n, unsigned long *table) {
+            for (; table[n]; ) { n = n + 1; }
+        }");
+    assert_eq!(
+        run.status("subject"),
+        AnalysisStatus::Safe,
+        "{:?}",
+        run.diagnostics
+    );
 }
 
 /// The repair is confined to the condition: `init` and `increment` keep the

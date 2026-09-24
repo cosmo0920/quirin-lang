@@ -46,3 +46,6 @@ import QCore.IndexedCollection
 #print axioms QCore.IndexedCollection.three_filled_elements_are_live
 #print axioms QCore.IndexedCollection.eval_const
 #print axioms QCore.IndexedCollection.eval_var
+#print axioms QCore.IndexedCollection.only_heap_elements_are_collected
+#print axioms QCore.IndexedCollection.a_descriptor_read_keeps_the_fallback
+#print axioms QCore.IndexedCollection.a_non_heap_element_keeps_the_fallback

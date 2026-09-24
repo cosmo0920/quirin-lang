@@ -1,0 +1,15 @@
+callee           leaves funcs sole  status
+accept4               1     1    0  {'Unknown': 1}
+fcntl                 2     2    1  {'Unknown': 2}
+dlopen                2     2    1  {'Unknown': 2}
+dlclose               3     2    1  {'Unknown': 2}
+getaddrinfo           4     4    0  {'Unknown': 4}
+freeaddrinfo          6     4    0  {'Unknown': 4}
+fts_open              1     1    0  {'Unknown': 1}
+fts_close             1     1    0  {'Unknown': 1}
+glob                  1     1    0  {'Unknown': 1}
+globfree              1     1    0  {'Unknown': 1}
+regcomp               1     1    0  {'Unknown': 1}
+regfree               1     1    0  {'Unknown': 1}
+total: 24 leaves, 14 functions, 3 sole-blocked, 12 callees present
+absent: open openat open64 creat close close_range socket socketpair accept dup dup2 dup3 pipe pipe2 fopen fdopen freopen fclose fileno popen pclose tmpfile opendir fdopendir closedir epoll_create epoll_create1 eventfd timerfd_create signalfd inotify_init inotify_init1 mkstemp mkostemp mkstemps mmap munmap shm_open memfd_create kqueue if_nameindex if_freenameindex getifaddrs freeifaddrs scandir setmntent endmntent iconv_open iconv_close

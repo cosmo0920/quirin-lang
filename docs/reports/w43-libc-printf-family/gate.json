@@ -1,0 +1,13 @@
+{
+  "note": "W43-LIBC-PRINTF-FAMILY: core Rust, fmt, clippy (--workspace), probes and Lean measured on 8a1a6117 (the declarations of 84c5d217 plus the re-pinned tests; later commits change documents, the ledger, report scripts and evidence files only, no Rust, Lean, contract or test source). 5208 core Rust passed / 0 failed / 11 ignored over 278 summaries (no test added; equal to the CONTRACT-INHERIT-ADOPTION integration gate at the base); 170 Lean audits (none added); root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace: a first attempt ran out of disk (ptest exit 101, 'No space left on device'), is kept privately under measure/gate-disk-exhausted and is not evidence; remeasured into fresh paths on the same tree: 117 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 12 package Python tests. Logs: worktree-private measure/gate and measure/provider-gate of agent-ad6e8e3163534f46e. Clang recorded in this checkout. Corpus: 5 functions Unknown -> Safe relative to 4 declared printf-family premises, 0 unit moves, leak 272, 0 violation candidates.",
+  "workspace_tests": 5208,
+  "provider_tests": 117,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 170,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

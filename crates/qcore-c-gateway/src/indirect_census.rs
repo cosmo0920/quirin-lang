@@ -264,6 +264,12 @@ pub fn next_unit() {
     UNIT_SEQ.fetch_add(1, Ordering::Relaxed);
 }
 
+/// The current unit ordinal, so a sibling census (card W43-INDEX-TRAVERSAL's
+/// traversal stream) joins on the same grouping key.
+pub(crate) fn unit_seq() -> u64 {
+    UNIT_SEQ.load(Ordering::Relaxed)
+}
+
 fn emit(leaf: &IndirectLeaf) {
     let Ok(mut guard) = SINK.lock() else {
         return;
@@ -1089,6 +1095,54 @@ pub(crate) fn record_statement(
         return;
     };
     if let Ok(line) = serde_json::to_string(&record) {
+        let _ = writeln!(writer, "{line}");
+        let _ = writer.flush();
+    }
+}
+
+/// Card **W43-RESULT-ALIAS-RETURNED**: the environment variable naming the
+/// derived-result summary census stream. Read only with the `indirect-census`
+/// feature on; with it unset, [`record_derived`] is a no-op. It is written only
+/// after the derived route has already decided, so it can neither admit nor
+/// refuse anything.
+pub const DERIVED_CENSUS_PATH_VARIABLE: &str = "QCORE_DERIVED_CENSUS";
+
+static DERIVED: Mutex<Option<Option<BufWriter<File>>>> = Mutex::new(None);
+
+/// One decision of the derived-result route for one candidate function.
+#[derive(Clone, Debug, serde::Serialize)]
+pub struct DerivedLeaf {
+    pub unit_seq: u64,
+    pub function: String,
+    /// `admitted` or the refused shape's name.
+    pub outcome: String,
+    /// The admitted summary's result mode, spelled as its `Debug` text.
+    pub result: Option<String>,
+}
+
+/// Record one already-decided derived-result route outcome. A no-op unless
+/// [`DERIVED_CENSUS_PATH_VARIABLE`] names a path.
+pub(crate) fn record_derived(function: &str, outcome: &str, result: Option<String>) {
+    if std::env::var_os(DERIVED_CENSUS_PATH_VARIABLE).is_none() {
+        return;
+    }
+    let leaf = DerivedLeaf {
+        unit_seq: UNIT_SEQ.load(Ordering::Relaxed),
+        function: function.to_owned(),
+        outcome: outcome.to_owned(),
+        result,
+    };
+    let Ok(mut guard) = DERIVED.lock() else {
+        return;
+    };
+    let opened = guard.get_or_insert_with(|| {
+        let path = std::env::var_os(DERIVED_CENSUS_PATH_VARIABLE)?;
+        File::create(path).ok().map(BufWriter::new)
+    });
+    let Some(writer) = opened.as_mut() else {
+        return;
+    };
+    if let Ok(line) = serde_json::to_string(&leaf) {
         let _ = writeln!(writer, "{line}");
         let _ = writer.flush();
     }

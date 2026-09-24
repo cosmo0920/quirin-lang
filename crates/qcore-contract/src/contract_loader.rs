@@ -41,6 +41,9 @@
 //!   the object `p` points to, and owns nothing. See below.
 //! - `resource_variadic_data_tail()` -> the declaration additionally covers
 //!   calls that pass *more* actuals than it names. See below.
+//! - `resource_kind(p, KIND)` and `resource_return_kind(KIND)` -> the non-heap
+//!   kind of a custody position (card W43-DESCRIPTOR-RESOURCE-TRACKING). See
+//!   below.
 //!
 //! and one further **precondition** beside the marker:
 //!
@@ -109,6 +112,32 @@
 //! rather than misreading it. The exact module texts travel with every
 //! verdict in `source_assumptions`, so the evidence identity already names
 //! which declarations — and therefore which vocabulary — a verdict rests on.
+//!
+//! # Resource kinds (card W43-DESCRIPTOR-RESOURCE-TRACKING)
+//!
+//! A custody position carries a [`ResourceKind`]: `heap` (spelled by the
+//! **absence** of a kind clause, so every earlier module loads to exactly the
+//! contract it loaded to before), `descriptor`, `stream`
+//! or `directory`. A consumer discharges an obligation only
+//! with a release of its own kind (contract spec §C04.6). The clauses are
+//! `ensures normal resource_kind(p, KIND);` on an owned, consumed, released or
+//! out parameter and `ensures normal resource_return_kind(KIND);` on an owned
+//! result; a borrowed, stored, removed or reallocated position, a derived or
+//! `none` result, an unknown kind, the spelled-out `heap` and a duplicate each
+//! reject the whole module.
+//!
+//! `descriptor` is the one kind carried by an **integer**. Its position must be
+//! typed `i32`, and its validity is spelled `sentinel` (may be the failure value
+//! `-1`) or `valid`, never `nullable`/`nonnull`; conversely `sentinel`/`valid`
+//! on any other position rejects the module. That is the only way a scalar ever
+//! carries custody here: an `i32` position without the `descriptor` kind keeps
+//! the borrowed-only rule and its verbatim refusals. A descriptor has no out
+//! slot in this vocabulary.
+//!
+//! **Version.** An addition to vocabulary version 1, as the derived results
+//! were: the marker is unchanged, kinds serialize only when non-heap, and a
+//! loader that predates the clauses rejects them (unsupported predicate or
+//! nullability) rather than misreading them.
 //!
 //! # The literal-argument premise (card HASH-CLAUSE)
 //!
@@ -189,8 +218,9 @@
 //! vocabulary is likewise an explicit table, not a wildcard:
 //!
 //! - [`SCALAR_ABI_TYPES`] — sizes, counts, flags, descriptors, offsets and
-//!   real-valued readings. Borrowed only: a scalar cannot carry custody, so
-//!   every custody mode on one is rejected. Card NEIGHBOURS admitted `f32` and
+//!   real-valued readings. Borrowed only, unless the position declares the
+//!   integer-carried `descriptor` kind on an `i32` (see *Resource kinds*):
+//!   every other custody mode on a scalar is rejected. Card NEIGHBOURS admitted `f32` and
 //!   `f64` under exactly the condition this note stated for them — a resource
 //!   API in scope that passes one: Fluent Bit's `double flb_time_now()`
 //!   (`src/flb_lib.c:936`), whose reading `flb_input_chunk_create` stores in
@@ -205,10 +235,11 @@
 //!
 //! Acquire/Release/Escape/Neutral compatibility kinds map respectively to Owned
 //! results, Released/Consumed parameters, and borrowed-only/None contracts.
-//! Non-null error sentinels (a resource returned as `MAP_FAILED` or `-1` rather
-//! than null) remain unrepresentable: [`ResourceReturnMode`] records only
-//! nullability, so expressing them needs target-interface work, not loader
-//! vocabulary, and they are rejected meanwhile. Conditional effects, effects
+//! A pointer error sentinel (a resource returned as `MAP_FAILED` rather than
+//! null) remains unrepresentable and is rejected. The integer sentinel `-1` of
+//! a file descriptor is representable only through the `descriptor` kind and
+//! its `sentinel`/`valid` words (card W43-DESCRIPTOR-RESOURCE-TRACKING); no
+//! other scalar sentinel is, and nullability is never reinterpreted as one. Conditional effects, effects
 //! rows, quantitative clauses, arbitrary predicates and other exits are
 //! likewise rejected.
 //!
@@ -229,8 +260,8 @@ use qcore_frontend::frontend::{
 };
 use qcore_frontend::lexer::{Symbol, TokenKind, lex};
 use qcore_schemas::contract::{
-    DerivedExtent, ResourceContracts, ResourceFunctionContract, ResourceParameterMode,
-    ResourceReturnMode,
+    DerivedExtent, ResourceContracts, ResourceFunctionContract, ResourceKind,
+    ResourceParameterMode, ResourceReturnMode,
 };
 
 /// Opaque C ABI scalar projections. Borrowed only: they carry sizes, counts,
@@ -912,6 +943,12 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     let mut literal_arguments: Vec<DeclaredLiteralArgument> = Vec::new();
     let mut parameters = vec![None; decl.parameters.len()];
     let mut result = None;
+    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: which validity vocabulary each
+    // position's nullability word was spelled in, and each declared kind.
+    let mut parameter_words: Vec<Option<ValidityWord>> = vec![None; decl.parameters.len()];
+    let mut result_word: Option<ValidityWord> = None;
+    let mut parameter_kinds: Vec<Option<ResourceKind>> = vec![None; decl.parameters.len()];
+    let mut result_kind: Option<ResourceKind> = None;
     let mut names = BTreeMap::new();
     for (index, parameter) in decl.parameters.iter().enumerate() {
         if names.insert(parameter.name.value.as_str(), index).is_some() {
@@ -967,16 +1004,41 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             variadic_data_tail = true;
             continue;
         }
+        // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the two kind clauses. Heap is
+        // spelled by the absence of a clause, so `heap` itself is refused: one
+        // spelling per meaning.
+        match words.as_slice() {
+            ["resource_kind", p, kind] => {
+                let kind = declared_kind(kind)?;
+                if parameter_kinds[index(p)?].replace(kind).is_some() {
+                    return Err(format!("duplicate kind for {p}"));
+                }
+                continue;
+            }
+            ["resource_return_kind", kind] => {
+                let kind = declared_kind(kind)?;
+                if result_kind.replace(kind).is_some() {
+                    return Err("duplicate result kind".into());
+                }
+                continue;
+            }
+            _ => {}
+        }
         let return_mode = match words.as_slice() {
-            ["resource_return_none"] => Some(ResourceReturnMode::None),
-            ["resource_return_owned", null] => Some(ResourceReturnMode::Owned {
-                nullable: nullability(null)?,
-            }),
+            ["resource_return_none"] => Some((ResourceReturnMode::None, None)),
+            ["resource_return_owned", null] => {
+                let (nullable, word) = validity(null)?;
+                Some((ResourceReturnMode::Owned { nullable }, Some(word)))
+            }
             ["resource_return_reallocated", parameter, null] => {
-                Some(ResourceReturnMode::Reallocated {
-                    parameter: index(parameter)?,
-                    nullable: nullability(null)?,
-                })
+                let (nullable, word) = validity(null)?;
+                Some((
+                    ResourceReturnMode::Reallocated {
+                        parameter: index(parameter)?,
+                        nullable,
+                    },
+                    Some(word),
+                ))
             }
             // Card W43-LIBC-RESULT-ALIAS. `const_dropped` is decided below,
             // from the declared types, once the whole signature is known.
@@ -984,28 +1046,35 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                 name @ ("resource_return_alias" | "resource_return_interior"),
                 parameter,
                 null,
-            ] => Some(ResourceReturnMode::Derived {
-                parameter: index(parameter)?,
-                extent: if *name == "resource_return_alias" {
-                    DerivedExtent::Exact
-                } else {
-                    DerivedExtent::Interior
-                },
-                nullable: nullability(null)?,
-                const_dropped: false,
-            }),
+            ] => {
+                let (nullable, word) = validity(null)?;
+                Some((
+                    ResourceReturnMode::Derived {
+                        parameter: index(parameter)?,
+                        extent: if *name == "resource_return_alias" {
+                            DerivedExtent::Exact
+                        } else {
+                            DerivedExtent::Interior
+                        },
+                        nullable,
+                        const_dropped: false,
+                    },
+                    Some(word),
+                ))
+            }
             _ => None,
         };
-        if let Some(mode) = return_mode {
+        if let Some((mode, word)) = return_mode {
             if result.replace(mode).is_some() {
                 return Err("duplicate result mode".into());
             }
+            result_word = word;
             continue;
         }
-        let (parameter, mode) = match words.as_slice() {
-            ["resource_borrowed", p] => (*p, ResourceParameterMode::Borrowed),
+        let (parameter, mode, word) = match words.as_slice() {
+            ["resource_borrowed", p] => (*p, ResourceParameterMode::Borrowed, None),
             [name, p, null] => {
-                let nullable = nullability(null)?;
+                let (nullable, word) = validity(null)?;
                 let mode = match *name {
                     "resource_owned" => ResourceParameterMode::Owned { nullable },
                     "resource_consumed" => ResourceParameterMode::Consumed { nullable },
@@ -1013,7 +1082,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                     "resource_out" => ResourceParameterMode::Out { nullable },
                     _ => return Err(format!("unsupported predicate `{expression}`")),
                 };
-                (*p, mode)
+                (*p, mode, Some(word))
             }
             [
                 name @ ("resource_stored" | "resource_removed"),
@@ -1022,7 +1091,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                 null,
             ] => {
                 let owner_parameter = index(owner)?;
-                let nullable = nullability(null)?;
+                let (nullable, word) = validity(null)?;
                 (
                     *p,
                     if *name == "resource_stored" {
@@ -1036,13 +1105,16 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                             nullable,
                         }
                     },
+                    Some(word),
                 )
             }
             _ => return Err(format!("unsupported predicate `{expression}`")),
         };
-        if parameters[index(parameter)?].replace(mode).is_some() {
+        let position = index(parameter)?;
+        if parameters[position].replace(mode).is_some() {
             return Err(format!("duplicate mode for {parameter}"));
         }
+        parameter_words[position] = word;
     }
     if !marker {
         return Err("missing resource_contract_v1 requirement".into());
@@ -1052,7 +1124,26 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         .collect::<Option<Vec<_>>>()
         .ok_or("missing parameter mode")?;
     let mut result = result.ok_or("missing result mode")?;
-    if result != ResourceReturnMode::None && !return_type.starts_with("ptr<") {
+    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: where a kind may stand, and which
+    // validity words and ABI types it takes. Checked before the pointer-only
+    // rules below, to which an integer-carried kind is the one exception.
+    let kinds = check_kinds(
+        &KindPositions {
+            parameters: &parameters,
+            parameter_types: &parameter_types,
+            parameter_words: &parameter_words,
+            parameter_kinds: &parameter_kinds,
+        },
+        result,
+        return_type,
+        result_word,
+        result_kind,
+    )?;
+    let integer_parameter = |i: usize| kinds.parameter_kind(i).is_integer();
+    if result != ResourceReturnMode::None
+        && !return_type.starts_with("ptr<")
+        && !kinds.result_kind.is_integer()
+    {
         return Err("owned result requires a pointer return type".into());
     }
     // Card W43-LIBC-RESULT-ALIAS. A derived result names a borrowed base of
@@ -1082,6 +1173,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         let ty = token_kinds(&decl.parameters[i].type_source)?;
         if *mode != ResourceParameterMode::Borrowed
             && !matches!(ty.first(), Some(TokenKind::Word(word)) if word == "ptr")
+            && !integer_parameter(i)
         {
             return Err("custody mode requires a pointer parameter".into());
         }
@@ -1110,8 +1202,11 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     {
         return Err("reallocation requires an owned input parameter".into());
     }
+    let mut contract = ResourceFunctionContract::new(parameters, result);
+    contract.parameter_kinds = kinds.parameter_kinds;
+    contract.result_kind = kinds.result_kind;
     Ok(LoadedDeclaration {
-        contract: ResourceFunctionContract::new(parameters, result),
+        contract,
         variadic_data_tail,
         literal_arguments,
         abi: DeclaredAbiSignature {
@@ -1187,12 +1282,163 @@ fn literal_argument_clause(source: &str) -> Result<(String, Vec<String>), String
     ))
 }
 
-fn nullability(word: &str) -> Result<bool, String> {
+/// Card W43-DESCRIPTOR-RESOURCE-TRACKING: which validity vocabulary a
+/// position's nullability word belongs to.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ValidityWord {
+    /// `nullable` / `nonnull`: a pointer-carried identity whose failure value
+    /// is NULL.
+    Pointer,
+    /// `sentinel` / `valid`: an integer-carried identity whose failure value is
+    /// the sentinel `-1`.
+    Integer,
+}
+
+/// A position's nullability word: whether the position may carry the failure
+/// value, and in which vocabulary that was said. `nullable`/`nonnull` keep
+/// their v1 meaning exactly; `sentinel`/`valid` are their integer-carried
+/// counterparts and are admitted only where the position's kind is carried by
+/// an integer (checked in [`check_kinds`]).
+fn validity(word: &str) -> Result<(bool, ValidityWord), String> {
     match word {
-        "nullable" => Ok(true),
-        "nonnull" => Ok(false),
+        "nullable" => Ok((true, ValidityWord::Pointer)),
+        "nonnull" => Ok((false, ValidityWord::Pointer)),
+        "sentinel" => Ok((true, ValidityWord::Integer)),
+        "valid" => Ok((false, ValidityWord::Integer)),
         _ => Err(format!("unsupported nullability {word}")),
     }
+}
+
+/// A declared non-heap kind. `heap` is spelled by absence and refused here, so
+/// every meaning has exactly one spelling.
+fn declared_kind(word: &str) -> Result<ResourceKind, String> {
+    match ResourceKind::from_spelling(word) {
+        Some(ResourceKind::Heap) => {
+            Err("the heap kind is spelled by omitting the kind clause, not by `heap`".into())
+        }
+        Some(kind) => Ok(kind),
+        None => Err(format!("unsupported resource kind {word}")),
+    }
+}
+
+/// The parameter half of one declaration, as [`check_kinds`] reads it.
+struct KindPositions<'a> {
+    parameters: &'a [ResourceParameterMode],
+    parameter_types: &'a [String],
+    parameter_words: &'a [Option<ValidityWord>],
+    parameter_kinds: &'a [Option<ResourceKind>],
+}
+
+/// The kinds a declaration's positions carry, once every placement rule holds.
+struct DeclaredKinds {
+    parameter_kinds: BTreeMap<usize, ResourceKind>,
+    result_kind: ResourceKind,
+}
+
+impl DeclaredKinds {
+    fn parameter_kind(&self, index: usize) -> ResourceKind {
+        self.parameter_kinds
+            .get(&index)
+            .copied()
+            .unwrap_or(ResourceKind::Heap)
+    }
+}
+
+/// One position's validity word and ABI type against its kind.
+fn kind_agrees(kind: ResourceKind, word: Option<ValidityWord>, ty: &str) -> Result<(), String> {
+    let expected = if kind.is_integer() {
+        ValidityWord::Integer
+    } else {
+        ValidityWord::Pointer
+    };
+    if word.is_some_and(|word| word != expected) {
+        return Err(if kind.is_integer() {
+            format!(
+                "a {} position spells its validity `sentinel` or `valid`",
+                kind.spelling()
+            )
+        } else {
+            format!(
+                "a {} position spells its nullability `nullable` or `nonnull`",
+                kind.spelling()
+            )
+        });
+    }
+    if kind.is_integer() && ty != "i32" {
+        return Err(format!("a {} position requires `i32`", kind.spelling()));
+    }
+    if !kind.is_heap() && !kind.is_integer() && !ty.starts_with("ptr<") {
+        return Err(format!(
+            "a {} position requires a pointer type",
+            kind.spelling()
+        ));
+    }
+    Ok(())
+}
+
+/// Card W43-DESCRIPTOR-RESOURCE-TRACKING: every placement rule of a kind.
+///
+/// * A kind clause names a custody-bearing position: an owned, consumed,
+///   released or out parameter, or an owned result. A borrowed position
+///   touches no obligation, and a stored, removed or reallocated position is
+///   heap only, because the owner cascade and the replacement relation were
+///   specified for allocations and a descriptor has neither.
+/// * An integer-carried kind (`descriptor`) sits on an `i32`, spells its
+///   validity `sentinel`/`valid`, and has no out slot here.
+/// * Every other kind sits on an admitted pointer and spells its nullability
+///   `nullable`/`nonnull`, exactly as a heap position does; so `sentinel` or
+///   `valid` on a heap or pointer-kind position is refused.
+fn check_kinds(
+    positions: &KindPositions<'_>,
+    result: ResourceReturnMode,
+    return_type: &str,
+    result_word: Option<ValidityWord>,
+    result_kind: Option<ResourceKind>,
+) -> Result<DeclaredKinds, String> {
+    let mut declared = DeclaredKinds {
+        parameter_kinds: BTreeMap::new(),
+        result_kind: ResourceKind::Heap,
+    };
+    for (index, mode) in positions.parameters.iter().enumerate() {
+        let kind = positions.parameter_kinds[index].unwrap_or(ResourceKind::Heap);
+        if !kind.is_heap() {
+            match mode {
+                ResourceParameterMode::Owned { .. }
+                | ResourceParameterMode::Consumed { .. }
+                | ResourceParameterMode::Released { .. } => {}
+                ResourceParameterMode::Out { .. } if !kind.is_integer() => {}
+                ResourceParameterMode::Out { .. } => {
+                    return Err(format!(
+                        "a {} has no out slot in this vocabulary",
+                        kind.spelling()
+                    ));
+                }
+                ResourceParameterMode::Borrowed => {
+                    return Err(
+                        "a kind names a custody-bearing parameter, not a borrowed one".into(),
+                    );
+                }
+                ResourceParameterMode::Stored { .. } | ResourceParameterMode::Removed { .. } => {
+                    return Err("a stored or removed parameter is heap only".into());
+                }
+            }
+            declared.parameter_kinds.insert(index, kind);
+        }
+        kind_agrees(
+            kind,
+            positions.parameter_words[index],
+            &positions.parameter_types[index],
+        )?;
+    }
+    let kind = result_kind.unwrap_or(ResourceKind::Heap);
+    if !kind.is_heap() {
+        if !matches!(result, ResourceReturnMode::Owned { .. }) {
+            return Err("a result kind requires an owned result".into());
+        }
+        declared.result_kind = kind;
+    }
+    kind_agrees(kind, result_word, return_type)?;
+    Ok(declared)
 }
 
 fn predicate_call(source: &str) -> Result<Vec<String>, String> {

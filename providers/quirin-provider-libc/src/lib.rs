@@ -1,7 +1,9 @@
 //! Shared Quirin contract modules for the C standard library and POSIX: `errno`, heap
-//! memory, `pthread_mutex`, and (card W43-LIBC-CONTRACTS) `<dlfcn.h>`, `<math.h>`,
+//! memory, `pthread_mutex`, (card W43-DESCRIPTOR-RESOURCE-TRACKING) `<dirent.h>`, and
+//! (card W43-LIBC-CONTRACTS) `<dlfcn.h>`, `<math.h>`,
 //! process/regex/rlimit helpers, sockets, `<stdio.h>`, `<stdlib.h>`, `<string.h>`,
-//! `<sys/stat.h>`, threads and signals, `<time.h>` and `<unistd.h>`.
+//! `<sys/stat.h>`, threads and signals, `<time.h>` and `<unistd.h>`, and (card
+//! W43-LIBC-RESTRICT-PROTOTYPES) `<regex.h>`.
 //!
 //! The `.qcore` sources under this crate's `contracts/` are canonical: the
 //! corpus index `contract/corpus.json` names that directory as one of its
@@ -34,6 +36,10 @@ pub const PUBLISHED: &[&str] = &["libc/memory.qcore", "libc/string.qcore"];
 /// is the name `contract/corpus.json` resolves (for example `libc/errno.qcore`).
 pub const CONTRACTS: &[(&str, &str)] = &[
     (
+        "libc/dirent.qcore",
+        include_str!("../contracts/libc/dirent.qcore"),
+    ),
+    (
         "libc/dlfcn.qcore",
         include_str!("../contracts/libc/dlfcn.qcore"),
     ),
@@ -56,6 +62,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
     (
         "libc/pthread_mutex.qcore",
         include_str!("../contracts/libc/pthread_mutex.qcore"),
+    ),
+    (
+        "libc/regex.qcore",
+        include_str!("../contracts/libc/regex.qcore"),
     ),
     (
         "libc/socket.qcore",

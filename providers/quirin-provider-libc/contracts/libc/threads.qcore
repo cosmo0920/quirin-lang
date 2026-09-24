@@ -45,11 +45,9 @@ module contract;
 //   effects the declaration cannot state. `pthread_setspecific` RETAINS its
 //   pointer argument past the call, and `pthread_getspecific` returns that
 //   retained pointer -- an alias this vocabulary cannot state.
-//   `cnd_timedwait`, `pthread_sigmask`: faithful in v1, but the prototype spells a qualifier AFTER the
-//   `*` (`T *__restrict p`), which the declared-ABI reader (gateway
-//   constraint 8) does not read; this card measured the declaration withdrawn
-//   with `abi-unreadable-declaration` at every call site in the pinned corpus
-//   (`LOADER-ABI-RESTRICT-QUALIFIER`), so it is not shipped.
+//   (`cnd_timedwait`, `pthread_sigmask` spell `T *__restrict p`, which this
+//   card's reader withdrew; card W43-LIBC-RESTRICT-PROTOTYPES declares both at
+//   the end of this module.)
 //
 // ## What no declaration here says
 //
@@ -158,5 +156,53 @@ contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(set);
     ensures normal resource_borrowed(signo);
+    ensures normal resource_return_none();
+};
+
+// ## Card W43-LIBC-RESTRICT-PROTOTYPES: `cnd_timedwait` and `pthread_sigmask`
+//
+//   extern int cnd_timedwait (cnd_t *__restrict __cond,
+//                             mtx_t *__restrict __mutex,
+//                             const struct timespec *__restrict __time_point);
+//   extern int pthread_sigmask (int __how,
+//                               const __sigset_t *__restrict __newmask,
+//                               __sigset_t *__restrict __oldmask) __THROW;
+//
+// `cnd_timedwait` is `cnd_wait` above with a deadline the caller keeps: it
+// atomically unlocks `*__mutex`, waits, and locks `*__mutex` again before it
+// returns, on success and on timeout alike (C11 7.26.3.5). That is the same
+// custody statement as `cnd_wait` and the `libc/pthread_mutex.qcore`
+// lock/unlock pair: the condition, the mutex and the deadline stay the
+// caller's on both sides of the call, so each is `resource_borrowed`, and the
+// `int` result is `resource_return_none()`. It says no more about the mutex
+// than `cnd_wait` does -- in particular it states no lock state, so it is
+// consistent with the other lock declarations here and leaves constraint 27's
+// checked mutex model untouched.
+//
+// `pthread_sigmask` reads the new mask through `__newmask` (which may be NULL)
+// and writes the old mask through `__oldmask` (which may be NULL): value
+// reads and writes of a `sigset_t` in caller storage, like `sigemptyset`
+// above. Nothing is allocated, freed or retained; `resource_borrowed` on
+// every parameter, `resource_return_none()`.
+//
+// TRUSTED ASSUMPTIONS; the `__restrict` spellings are read by the declared-ABI
+// reader since card W43-LIBC-RESULT-ALIAS. Nothing here says anything about
+// timeouts, spurious wake-ups, error returns, or signal delivery.
+
+extern fn cnd_timedwait(cond: ptr<mut, u8>, mutex: ptr<mut, u8>, time_point: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(cond);
+    ensures normal resource_borrowed(mutex);
+    ensures normal resource_borrowed(time_point);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_sigmask(how: i32, newmask: ptr<const, u8>, oldmask: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(how);
+    ensures normal resource_borrowed(newmask);
+    ensures normal resource_borrowed(oldmask);
     ensures normal resource_return_none();
 };

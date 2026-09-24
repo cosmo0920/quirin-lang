@@ -1,0 +1,56 @@
+import QCore.DerivedResultInference
+
+/-! Card **W43-RESULT-ALIAS-RETURNED**: inferred derived-result summaries
+(`crates/qcore-c-gateway/src/legacy_derived_summary.rs`) and the gate's derived
+arm (`result_matches`).
+
+Six directions are audited. **The gate is sound against the contract meaning**:
+every concrete result an accepted exit denotes is admitted by the spec, for
+every base value. **The proposal validates and is tight** (exact exactly when no
+exit is interior). **Every refused shape is refused**: a mixed exit, a pointer
+derived from another site, a touched base, an unclean or exitless run, and the
+proposal declines a mixed and an all-null body. **The name-only base stays
+name-only** under borrowing, and a release reaching it is never silent. **An
+offset base is interior**, not an exact alias. **Callers apply the summary as a
+declaration**: no status moves, a wrapper's result is invalidated by its base's
+release, and releasing it never releases the base. Three witnesses complete it.
+
+What this is not: a proof about the Rust transfer (trust boundary 28's
+correspondence premise). A candidate is never a validated upstream defect. -/
+
+-- The gate is sound.
+#print axioms QCore.DerivedResultInference.an_accepted_exit_is_admitted
+#print axioms QCore.DerivedResultInference.validation_is_sound
+
+-- Every refused shape is refused.
+#print axioms QCore.DerivedResultInference.a_mixed_exit_refuses
+#print axioms QCore.DerivedResultInference.another_base_refuses
+#print axioms QCore.DerivedResultInference.a_touched_base_refuses
+#print axioms QCore.DerivedResultInference.an_unclean_or_exitless_run_refuses
+
+-- The proposal.
+#print axioms QCore.DerivedResultInference.step_none
+#print axioms QCore.DerivedResultInference.fold_some
+#print axioms QCore.DerivedResultInference.the_proposal_accepts_every_exit
+#print axioms QCore.DerivedResultInference.the_proposal_validates
+#print axioms QCore.DerivedResultInference.the_proposal_is_exact_iff_every_exit_is
+#print axioms QCore.DerivedResultInference.the_proposal_declines_a_mixed_exit
+#print axioms QCore.DerivedResultInference.an_all_null_body_proposes_nothing
+
+-- The name-only base.
+#print axioms QCore.DerivedResultInference.borrowing_keeps_the_base_name_only
+#print axioms QCore.DerivedResultInference.a_release_reaching_the_base_is_seen
+
+-- An offset base.
+#print axioms QCore.DerivedResultInference.an_offset_result_is_not_an_exact_alias
+#print axioms QCore.DerivedResultInference.an_offset_result_is_interior
+
+-- Callers apply the summary as a declaration.
+#print axioms QCore.DerivedResultInference.applying_the_summary_changes_no_status
+#print axioms QCore.DerivedResultInference.a_wrapper_result_is_invalidated
+#print axioms QCore.DerivedResultInference.releasing_a_wrapper_result_never_releases_its_base
+
+-- Witnesses.
+#print axioms QCore.DerivedResultInference.the_exact_wrapper_witness
+#print axioms QCore.DerivedResultInference.the_nullable_interior_wrapper_witness
+#print axioms QCore.DerivedResultInference.the_mixed_exit_witness

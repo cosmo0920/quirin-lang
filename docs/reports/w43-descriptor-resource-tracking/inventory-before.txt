@@ -1,0 +1,23 @@
+callee           leaves funcs sole  status
+open                  3     3    1  {'Unknown': 3}
+close                20    11    1  {'Unknown': 10, 'Unsafe': 1}
+socket                3     3    1  {'Unknown': 3}
+accept4               1     1    0  {'Unknown': 1}
+fcntl                 2     2    0  {'Unknown': 2}
+fopen                 1     1    0  {'Unknown': 1}
+fclose               22     6    0  {'Unknown': 5, 'Unsafe': 1}
+opendir               2     2    0  {'Unknown': 2}
+closedir              5     4    0  {'Unknown': 4}
+dlopen                2     2    1  {'Unknown': 2}
+dlclose               3     2    1  {'Unknown': 2}
+getaddrinfo           4     4    0  {'Unknown': 4}
+freeaddrinfo          6     4    0  {'Unknown': 4}
+fts_open              1     1    0  {'Unknown': 1}
+fts_close             1     1    0  {'Unknown': 1}
+glob                  1     1    0  {'Unknown': 1}
+globfree              1     1    0  {'Unknown': 1}
+regcomp               1     1    0  {'Unknown': 1}
+regfree               1     1    0  {'Unknown': 1}
+total: 80 leaves, 38 functions, 5 sole-blocked, 19 callees present
+absent: openat open64 creat close_range socketpair accept dup dup2 dup3 pipe pipe2 fdopen freopen fileno popen pclose tmpfile fdopendir epoll_create epoll_create1 eventfd timerfd_create signalfd inotify_init inotify_init1 mkstemp mkostemp mkstemps mmap munmap shm_open memfd_create kqueue if_nameindex if_freenameindex getifaddrs freeifaddrs scandir setmntent endmntent iconv_open iconv_close
+  other 1: nested call `fileno` inside a modeled call is outside the resource projection

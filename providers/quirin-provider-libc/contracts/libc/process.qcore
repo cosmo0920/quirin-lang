@@ -24,10 +24,9 @@ module contract;
 //
 // ## Deliberately NOT declared (recorded in the card report)
 //
-//   `regexec`, `regerror`: faithful in v1, but their prototypes spell a
-//   qualifier AFTER the `*` (`const regex_t *__restrict __preg`), which the
-//   declared-ABI reader (gateway constraint 8) does not read; measured
-//   withdrawn at every call site (`LOADER-ABI-RESTRICT-QUALIFIER`).
+//   (`regexec`, `regerror` spell `const regex_t *__restrict __preg`, which
+//   this card's reader withdrew; card W43-LIBC-RESTRICT-PROTOTYPES declares
+//   both in `libc/regex.qcore`.)
 //   `getrlimit`, `setrlimit`: their first parameter is the enumeration typedef
 //   `__rlimit_resource_t`, which the reader does not project; measured
 //   withdrawn at every call site.

@@ -79,6 +79,8 @@ import QCore.DeclaredAbiAgreement
 import QCore.TypedefProjection
 import QCore.PointerQualifierReader
 import QCore.DerivedResult
+import QCore.DerivedResultInference
+import QCore.KindedCustody
 import QCore.DeclaredModeAgreement
 import QCore.FrameHelperTask
 import QCore.ControlFlow
@@ -144,6 +146,7 @@ import QCore.ConditionalGroupDepth
 import QCore.AggregateStore
 import QCore.ScalarMemberStore
 import QCore.IndirectScalarAccess
+import QCore.IndexTraversal
 import QCore.IndexedCollection
 import QCore.AtomicPublication
 import QCore.BoundFieldRead

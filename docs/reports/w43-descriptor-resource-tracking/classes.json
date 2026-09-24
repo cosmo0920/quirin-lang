@@ -1,0 +1,62 @@
+{
+ "a_vocabulary_and_gateway_alone": {
+  "chunk-contracts": true,
+  "contracts": false,
+  "diagnostics": true,
+  "source": true,
+  "source-effects": false
+ },
+ "attribution_complete": true,
+ "b_declarations": {
+  "by_class": {
+   "added descriptor-guard": 1,
+   "added same-function": 1,
+   "added same-line": 41,
+   "removed declared-callee": 56,
+   "removed descriptor-guard": 1,
+   "removed same-function": 1,
+   "removed same-line": 2
+  },
+  "moved_functions": [
+   [
+    "ctraces",
+    "ctr_random.c",
+    "ctr_random_get",
+    "Unknown",
+    "Unsafe"
+   ]
+  ],
+  "removed_uncontracted_by_callee": {
+   "close": 20,
+   "closedir": 5,
+   "fclose": 22,
+   "fopen": 1,
+   "open": 3,
+   "opendir": 2,
+   "socket": 3
+  },
+  "status_moves": {
+   "Unknown -> Unsafe": 1
+  }
+ },
+ "c_wrappers": "none declared",
+ "d_violation_candidates": [
+  {
+   "category": "leak",
+   "description": "live obligation acquired at ctr_random.c:66",
+   "direction": "added",
+   "function": "ctr_random_get",
+   "origin": "ctr_random.c:85",
+   "unit": "ctr_random.c"
+  },
+  {
+   "category": "leak",
+   "description": "live obligation acquired at mk_core/mk_rconf.c:254",
+   "direction": "removed",
+   "function": "mk_rconf_read",
+   "origin": "mk_core/mk_rconf.c:383",
+   "unit": "mk_core/mk_rconf.c"
+  }
+ ],
+ "unattributed": []
+}

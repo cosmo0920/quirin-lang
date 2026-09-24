@@ -1,0 +1,11 @@
+{
+ "differences": [
+  {
+   "path": "/sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad6e8e3163534f46e/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qcore",
+   "kind": "value",
+   "before_length": 2572,
+   "after_length": 7683,
+   "after_starts_with_before": false
+  }
+ ]
+}

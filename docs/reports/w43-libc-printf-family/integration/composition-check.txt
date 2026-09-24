@@ -1,0 +1,7 @@
+card delta:     removed 2229 added 1283 functions 5 units 0
+overlap (already removed by earlier integrations): 0 []
+combined delta: removed 2231 added 1283
+transitive (callers of combined-only Safe functions): 2 [('rd_kafka_transport_ssl_set_endpoint_id', 'call to uncontracted function `rd_kafka_ssl_normalize_hostna'), ('unittest_ssl', 'call to uncontracted function `rd_kafka_ssl_normalize_hostna')]
+complementary Unknown->Safe (card cleared the last blocker): ['mk_kernel_features_print', 'rd_kafka_ssl_normalize_hostname']
+functions moved (combined): [('cJSON_Version', ('Unknown', 'Safe')), ('cio_errno_print', ('Unknown', 'Safe')), ('cmt_errno_print', ('Unknown', 'Safe')), ('ctr_errno_print', ('Unknown', 'Safe')), ('mk_kernel_features_print', ('Unknown', 'Safe')), ('rd_kafka_mk_nodename', ('Unknown', 'Safe')), ('rd_kafka_ssl_normalize_hostname', ('Unknown', 'Safe'))]
+COMPOSES

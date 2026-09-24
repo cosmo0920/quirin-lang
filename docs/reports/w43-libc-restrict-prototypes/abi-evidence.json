@@ -1,0 +1,1800 @@
+{
+ "manifest": {
+  "moved": [],
+  "old_tool_output_head": null,
+  "per_name_new": {
+   "LZ4_resetStream": {
+    "agreed": 3
+   },
+   "__errno_location": {
+    "agreed": 168
+   },
+   "access": {
+    "agreed": 137
+   },
+   "atoi": {
+    "agreed": 174
+   },
+   "cJSON_Delete": {
+    "agreed": 4
+   },
+   "calloc": {
+    "agreed": 174,
+    "undeclared": 2
+   },
+   "ceil": {
+    "agreed": 9,
+    "undeclared": 108
+   },
+   "cfl_sds_destroy": {
+    "agreed": 46
+   },
+   "cfl_time_now": {
+    "agreed": 45
+   },
+   "cio_chunk_close": {
+    "agreed": 13
+   },
+   "cio_chunk_down": {
+    "agreed": 13
+   },
+   "cio_chunk_get_content_size": {
+    "agreed": 13
+   },
+   "cio_chunk_is_up": {
+    "agreed": 13
+   },
+   "cio_chunk_open": {
+    "agreed": 13
+   },
+   "cio_chunk_up_force": {
+    "agreed": 13
+   },
+   "cmt_destroy": {
+    "agreed": 30
+   },
+   "cmt_metric_get_timestamp": {
+    "agreed": 24
+   },
+   "cmt_metric_set_double": {
+    "agreed": 24
+   },
+   "cmt_mpack_consume_uint_tag": {
+    "agreed": 2
+   },
+   "cnd_wait": {
+    "agreed": 83
+   },
+   "ctr_destroy": {
+    "agreed": 16
+   },
+   "dlerror": {
+    "agreed": 4
+   },
+   "fabs": {
+    "agreed": 9
+   },
+   "fflush": {
+    "agreed": 168
+   },
+   "flb_calloc": {
+    "agreed": 1
+   },
+   "flb_errno_print": {
+    "agreed": 1
+   },
+   "flb_free": {
+    "agreed": 1
+   },
+   "flb_hash_table_add": {
+    "agreed": 1
+   },
+   "flb_input_chunk_destroy": {
+    "agreed": 1
+   },
+   "flb_input_chunk_destroy_direct_routes": {
+    "agreed": 1
+   },
+   "flb_input_chunk_get_name": {
+    "agreed": 1
+   },
+   "flb_input_chunk_get_real_size": {
+    "agreed": 1
+   },
+   "flb_input_chunk_get_size": {
+    "agreed": 1
+   },
+   "flb_input_chunk_total_size": {
+    "agreed": 1
+   },
+   "flb_log_check": {
+    "agreed": 1
+   },
+   "flb_log_print": {
+    "agreed": 1
+   },
+   "flb_malloc": {
+    "agreed": 1
+   },
+   "flb_routes_mask_get_size": {
+    "agreed": 1
+   },
+   "flb_routes_mask_set_by_tag": {
+    "agreed": 1
+   },
+   "flb_sds_create_len": {
+    "agreed": 1
+   },
+   "flb_sds_destroy": {
+    "agreed": 1
+   },
+   "flb_strdup": {
+    "agreed": 1
+   },
+   "flb_strndup": {
+    "agreed": 1
+   },
+   "flb_time_now": {
+    "agreed": 1
+   },
+   "floor": {
+    "agreed": 9,
+    "undeclared": 1
+   },
+   "free": {
+    "agreed": 174,
+    "undeclared": 2
+   },
+   "fstat": {
+    "agreed": 109
+   },
+   "gai_strerror": {
+    "agreed": 90
+   },
+   "generate_chunk_name": {
+    "agreed": 1
+   },
+   "getegid": {
+    "agreed": 137
+   },
+   "geteuid": {
+    "agreed": 137
+   },
+   "getpagesize": {
+    "agreed": 137
+   },
+   "gmtime_r": {
+    "agreed": 144
+   },
+   "htonl": {
+    "agreed": 103
+   },
+   "input_chunk_write_header": {
+    "agreed": 1
+   },
+   "listen": {
+    "agreed": 105,
+    "undeclared": 2
+   },
+   "localtime_r": {
+    "agreed": 144
+   },
+   "malloc": {
+    "agreed": 174,
+    "undeclared": 8
+   },
+   "memchr": {
+    "agreed": 181
+   },
+   "memcpy": {
+    "agreed": 181
+   },
+   "memmove": {
+    "agreed": 181
+   },
+   "memrchr": {
+    "agreed": 113
+   },
+   "memset": {
+    "agreed": 181
+   },
+   "mk_list_add": {
+    "agreed": 39
+   },
+   "mk_mem_alloc": {
+    "agreed": 29
+   },
+   "mk_mem_alloc_z": {
+    "agreed": 29
+   },
+   "mk_mem_free": {
+    "agreed": 29
+   },
+   "mk_print": {
+    "agreed": 29
+   },
+   "mkdir": {
+    "agreed": 109
+   },
+   "mpack_write_cstr": {
+    "agreed": 21
+   },
+   "mpack_write_double": {
+    "agreed": 21
+   },
+   "mpack_write_i64": {
+    "agreed": 21
+   },
+   "mpack_write_str": {
+    "agreed": 21
+   },
+   "msgpack_packer_init": {
+    "agreed": 1
+   },
+   "mtx_lock": {
+    "agreed": 83
+   },
+   "mtx_unlock": {
+    "agreed": 83
+   },
+   "ntohl": {
+    "agreed": 103
+   },
+   "perror": {
+    "agreed": 168,
+    "undeclared": 1
+   },
+   "pow": {
+    "agreed": 9
+   },
+   "prctl": {
+    "agreed": 1
+   },
+   "pthread_attr_setdetachstate": {
+    "agreed": 113
+   },
+   "pthread_kill": {
+    "agreed": 5
+   },
+   "pthread_mutex_lock": {
+    "agreed": 113
+   },
+   "pthread_mutex_unlock": {
+    "agreed": 113
+   },
+   "pthread_rwlock_rdlock": {
+    "agreed": 113
+   },
+   "pthread_rwlock_unlock": {
+    "agreed": 113
+   },
+   "pthread_rwlock_wrlock": {
+    "agreed": 113
+   },
+   "pthread_self": {
+    "agreed": 113
+   },
+   "pthread_setcancelstate": {
+    "agreed": 113
+   },
+   "pthread_setcanceltype": {
+    "agreed": 113
+   },
+   "rand_r": {
+    "agreed": 174
+   },
+   "rd_calloc": {
+    "agreed": 83
+   },
+   "rd_free": {
+    "agreed": 83
+   },
+   "rd_kafka_mem_free": {
+    "agreed": 66
+   },
+   "rd_kafka_topic_partition_list_sort": {
+    "withdrawn:abi-unreadable-declaration": 64
+   },
+   "rd_malloc": {
+    "agreed": 83
+   },
+   "rd_realloc": {
+    "agreed": 83
+   },
+   "rd_strdup": {
+    "agreed": 83
+   },
+   "rd_strndup": {
+    "agreed": 83
+   },
+   "read": {
+    "agreed": 137,
+    "undeclared": 41
+   },
+   "recv": {
+    "agreed": 105,
+    "undeclared": 2
+   },
+   "remove": {
+    "agreed": 168
+   },
+   "send": {
+    "agreed": 105,
+    "undeclared": 3
+   },
+   "sendfile": {
+    "agreed": 1,
+    "undeclared": 65
+   },
+   "setsid": {
+    "agreed": 137
+   },
+   "setsockopt": {
+    "agreed": 105
+   },
+   "sigaddset": {
+    "agreed": 5
+   },
+   "sigemptyset": {
+    "agreed": 5
+   },
+   "sigfillset": {
+    "agreed": 5
+   },
+   "sleep": {
+    "agreed": 137,
+    "undeclared": 34
+   },
+   "srand": {
+    "agreed": 174
+   },
+   "strcasestr": {
+    "agreed": 181
+   },
+   "strchr": {
+    "agreed": 181
+   },
+   "strcmp": {
+    "agreed": 181
+   },
+   "strcpy": {
+    "agreed": 181
+   },
+   "strdup": {
+    "agreed": 181
+   },
+   "strerror_r": {
+    "agreed": 68,
+    "withdrawn:abi-return-type-disagreement": 113
+   },
+   "strlen": {
+    "agreed": 181
+   },
+   "strncpy": {
+    "agreed": 181
+   },
+   "strndup": {
+    "agreed": 181
+   },
+   "strrchr": {
+    "agreed": 181
+   },
+   "strstr": {
+    "agreed": 181
+   },
+   "sysconf": {
+    "agreed": 137,
+    "undeclared": 3
+   },
+   "system": {
+    "agreed": 174
+   },
+   "time": {
+    "agreed": 144,
+    "undeclared": 40
+   },
+   "timegm": {
+    "agreed": 144
+   },
+   "umask": {
+    "agreed": 109
+   },
+   "unlink": {
+    "agreed": 137
+   },
+   "usleep": {
+    "agreed": 137
+   },
+   "write": {
+    "agreed": 137,
+    "undeclared": 40
+   }
+  },
+  "per_name_old": {
+   "LZ4_resetStream": {
+    "agreed": 3
+   },
+   "__errno_location": {
+    "agreed": 168
+   },
+   "access": {
+    "agreed": 137
+   },
+   "atoi": {
+    "agreed": 174
+   },
+   "cJSON_Delete": {
+    "agreed": 4
+   },
+   "calloc": {
+    "agreed": 174,
+    "undeclared": 2
+   },
+   "ceil": {
+    "agreed": 9,
+    "undeclared": 108
+   },
+   "cfl_sds_destroy": {
+    "agreed": 46
+   },
+   "cfl_time_now": {
+    "agreed": 45
+   },
+   "cio_chunk_close": {
+    "agreed": 13
+   },
+   "cio_chunk_down": {
+    "agreed": 13
+   },
+   "cio_chunk_get_content_size": {
+    "agreed": 13
+   },
+   "cio_chunk_is_up": {
+    "agreed": 13
+   },
+   "cio_chunk_open": {
+    "agreed": 13
+   },
+   "cio_chunk_up_force": {
+    "agreed": 13
+   },
+   "cmt_destroy": {
+    "agreed": 30
+   },
+   "cmt_metric_get_timestamp": {
+    "agreed": 24
+   },
+   "cmt_metric_set_double": {
+    "agreed": 24
+   },
+   "cmt_mpack_consume_uint_tag": {
+    "agreed": 2
+   },
+   "cnd_wait": {
+    "agreed": 83
+   },
+   "ctr_destroy": {
+    "agreed": 16
+   },
+   "dlerror": {
+    "agreed": 4
+   },
+   "fabs": {
+    "agreed": 9
+   },
+   "fflush": {
+    "agreed": 168
+   },
+   "flb_calloc": {
+    "agreed": 1
+   },
+   "flb_errno_print": {
+    "agreed": 1
+   },
+   "flb_free": {
+    "agreed": 1
+   },
+   "flb_hash_table_add": {
+    "agreed": 1
+   },
+   "flb_input_chunk_destroy": {
+    "agreed": 1
+   },
+   "flb_input_chunk_destroy_direct_routes": {
+    "agreed": 1
+   },
+   "flb_input_chunk_get_name": {
+    "agreed": 1
+   },
+   "flb_input_chunk_get_real_size": {
+    "agreed": 1
+   },
+   "flb_input_chunk_get_size": {
+    "agreed": 1
+   },
+   "flb_input_chunk_total_size": {
+    "agreed": 1
+   },
+   "flb_log_check": {
+    "agreed": 1
+   },
+   "flb_log_print": {
+    "agreed": 1
+   },
+   "flb_malloc": {
+    "agreed": 1
+   },
+   "flb_routes_mask_get_size": {
+    "agreed": 1
+   },
+   "flb_routes_mask_set_by_tag": {
+    "agreed": 1
+   },
+   "flb_sds_create_len": {
+    "agreed": 1
+   },
+   "flb_sds_destroy": {
+    "agreed": 1
+   },
+   "flb_strdup": {
+    "agreed": 1
+   },
+   "flb_strndup": {
+    "agreed": 1
+   },
+   "flb_time_now": {
+    "agreed": 1
+   },
+   "floor": {
+    "agreed": 9,
+    "undeclared": 1
+   },
+   "free": {
+    "agreed": 174,
+    "undeclared": 2
+   },
+   "fstat": {
+    "agreed": 109
+   },
+   "gai_strerror": {
+    "agreed": 90
+   },
+   "generate_chunk_name": {
+    "agreed": 1
+   },
+   "getegid": {
+    "agreed": 137
+   },
+   "geteuid": {
+    "agreed": 137
+   },
+   "getpagesize": {
+    "agreed": 137
+   },
+   "gmtime_r": {
+    "agreed": 144
+   },
+   "htonl": {
+    "agreed": 103
+   },
+   "input_chunk_write_header": {
+    "agreed": 1
+   },
+   "listen": {
+    "agreed": 105,
+    "undeclared": 2
+   },
+   "localtime_r": {
+    "agreed": 144
+   },
+   "malloc": {
+    "agreed": 174,
+    "undeclared": 8
+   },
+   "memchr": {
+    "agreed": 181
+   },
+   "memcpy": {
+    "agreed": 181
+   },
+   "memmove": {
+    "agreed": 181
+   },
+   "memrchr": {
+    "agreed": 113
+   },
+   "memset": {
+    "agreed": 181
+   },
+   "mk_list_add": {
+    "agreed": 39
+   },
+   "mk_mem_alloc": {
+    "agreed": 29
+   },
+   "mk_mem_alloc_z": {
+    "agreed": 29
+   },
+   "mk_mem_free": {
+    "agreed": 29
+   },
+   "mk_print": {
+    "agreed": 29
+   },
+   "mkdir": {
+    "agreed": 109
+   },
+   "mpack_write_cstr": {
+    "agreed": 21
+   },
+   "mpack_write_double": {
+    "agreed": 21
+   },
+   "mpack_write_i64": {
+    "agreed": 21
+   },
+   "mpack_write_str": {
+    "agreed": 21
+   },
+   "msgpack_packer_init": {
+    "agreed": 1
+   },
+   "mtx_lock": {
+    "agreed": 83
+   },
+   "mtx_unlock": {
+    "agreed": 83
+   },
+   "ntohl": {
+    "agreed": 103
+   },
+   "perror": {
+    "agreed": 168,
+    "undeclared": 1
+   },
+   "pow": {
+    "agreed": 9
+   },
+   "prctl": {
+    "agreed": 1
+   },
+   "pthread_attr_setdetachstate": {
+    "agreed": 113
+   },
+   "pthread_kill": {
+    "agreed": 5
+   },
+   "pthread_mutex_lock": {
+    "agreed": 113
+   },
+   "pthread_mutex_unlock": {
+    "agreed": 113
+   },
+   "pthread_rwlock_rdlock": {
+    "agreed": 113
+   },
+   "pthread_rwlock_unlock": {
+    "agreed": 113
+   },
+   "pthread_rwlock_wrlock": {
+    "agreed": 113
+   },
+   "pthread_self": {
+    "agreed": 113
+   },
+   "pthread_setcancelstate": {
+    "agreed": 113
+   },
+   "pthread_setcanceltype": {
+    "agreed": 113
+   },
+   "rand_r": {
+    "agreed": 174
+   },
+   "rd_calloc": {
+    "agreed": 83
+   },
+   "rd_free": {
+    "agreed": 83
+   },
+   "rd_kafka_mem_free": {
+    "agreed": 66
+   },
+   "rd_kafka_topic_partition_list_sort": {
+    "withdrawn:abi-unreadable-declaration": 64
+   },
+   "rd_malloc": {
+    "agreed": 83
+   },
+   "rd_realloc": {
+    "agreed": 83
+   },
+   "rd_strdup": {
+    "agreed": 83
+   },
+   "rd_strndup": {
+    "agreed": 83
+   },
+   "read": {
+    "agreed": 137,
+    "undeclared": 41
+   },
+   "recv": {
+    "agreed": 105,
+    "undeclared": 2
+   },
+   "remove": {
+    "agreed": 168
+   },
+   "send": {
+    "agreed": 105,
+    "undeclared": 3
+   },
+   "sendfile": {
+    "agreed": 1,
+    "undeclared": 65
+   },
+   "setsid": {
+    "agreed": 137
+   },
+   "setsockopt": {
+    "agreed": 105
+   },
+   "sigaddset": {
+    "agreed": 5
+   },
+   "sigemptyset": {
+    "agreed": 5
+   },
+   "sigfillset": {
+    "agreed": 5
+   },
+   "sleep": {
+    "agreed": 137,
+    "undeclared": 34
+   },
+   "srand": {
+    "agreed": 174
+   },
+   "strcasestr": {
+    "agreed": 181
+   },
+   "strchr": {
+    "agreed": 181
+   },
+   "strcmp": {
+    "agreed": 181
+   },
+   "strcpy": {
+    "agreed": 181
+   },
+   "strdup": {
+    "agreed": 181
+   },
+   "strerror_r": {
+    "agreed": 68,
+    "withdrawn:abi-return-type-disagreement": 113
+   },
+   "strlen": {
+    "agreed": 181
+   },
+   "strncpy": {
+    "agreed": 181
+   },
+   "strndup": {
+    "agreed": 181
+   },
+   "strrchr": {
+    "agreed": 181
+   },
+   "strstr": {
+    "agreed": 181
+   },
+   "sysconf": {
+    "agreed": 137,
+    "undeclared": 3
+   },
+   "system": {
+    "agreed": 174
+   },
+   "time": {
+    "agreed": 144,
+    "undeclared": 40
+   },
+   "timegm": {
+    "agreed": 144
+   },
+   "umask": {
+    "agreed": 109
+   },
+   "unlink": {
+    "agreed": 137
+   },
+   "usleep": {
+    "agreed": 137
+   },
+   "write": {
+    "agreed": 137,
+    "undeclared": 40
+   }
+  },
+  "rows_new": 10686,
+  "rows_old": 10686
+ },
+ "manifest-after": {
+  "moved": [
+   {
+    "example_unit": "595d4eef08af53ae.i",
+    "name": "regexec",
+    "new": "agreed",
+    "old": "withdrawn:abi-unreadable-declaration",
+    "rows": 1
+   }
+  ],
+  "old_tool_output_head": null,
+  "per_name_new": {
+   "LZ4_resetStream": {
+    "agreed": 3
+   },
+   "__errno_location": {
+    "agreed": 168
+   },
+   "access": {
+    "agreed": 137
+   },
+   "atoi": {
+    "agreed": 174
+   },
+   "cJSON_Delete": {
+    "agreed": 4
+   },
+   "calloc": {
+    "agreed": 174,
+    "undeclared": 2
+   },
+   "ceil": {
+    "agreed": 9,
+    "undeclared": 108
+   },
+   "cfl_sds_destroy": {
+    "agreed": 46
+   },
+   "cfl_time_now": {
+    "agreed": 45
+   },
+   "cio_chunk_close": {
+    "agreed": 13
+   },
+   "cio_chunk_down": {
+    "agreed": 13
+   },
+   "cio_chunk_get_content_size": {
+    "agreed": 13
+   },
+   "cio_chunk_is_up": {
+    "agreed": 13
+   },
+   "cio_chunk_open": {
+    "agreed": 13
+   },
+   "cio_chunk_up_force": {
+    "agreed": 13
+   },
+   "cmt_destroy": {
+    "agreed": 30
+   },
+   "cmt_metric_get_timestamp": {
+    "agreed": 24
+   },
+   "cmt_metric_set_double": {
+    "agreed": 24
+   },
+   "cmt_mpack_consume_uint_tag": {
+    "agreed": 2
+   },
+   "cnd_timedwait": {
+    "agreed": 83
+   },
+   "cnd_wait": {
+    "agreed": 83
+   },
+   "ctr_destroy": {
+    "agreed": 16
+   },
+   "dlerror": {
+    "agreed": 4
+   },
+   "dlsym": {
+    "agreed": 4
+   },
+   "fabs": {
+    "agreed": 9
+   },
+   "fflush": {
+    "agreed": 168
+   },
+   "flb_calloc": {
+    "agreed": 1
+   },
+   "flb_errno_print": {
+    "agreed": 1
+   },
+   "flb_free": {
+    "agreed": 1
+   },
+   "flb_hash_table_add": {
+    "agreed": 1
+   },
+   "flb_input_chunk_destroy": {
+    "agreed": 1
+   },
+   "flb_input_chunk_destroy_direct_routes": {
+    "agreed": 1
+   },
+   "flb_input_chunk_get_name": {
+    "agreed": 1
+   },
+   "flb_input_chunk_get_real_size": {
+    "agreed": 1
+   },
+   "flb_input_chunk_get_size": {
+    "agreed": 1
+   },
+   "flb_input_chunk_total_size": {
+    "agreed": 1
+   },
+   "flb_log_check": {
+    "agreed": 1
+   },
+   "flb_log_print": {
+    "agreed": 1
+   },
+   "flb_malloc": {
+    "agreed": 1
+   },
+   "flb_routes_mask_get_size": {
+    "agreed": 1
+   },
+   "flb_routes_mask_set_by_tag": {
+    "agreed": 1
+   },
+   "flb_sds_create_len": {
+    "agreed": 1
+   },
+   "flb_sds_destroy": {
+    "agreed": 1
+   },
+   "flb_strdup": {
+    "agreed": 1
+   },
+   "flb_strndup": {
+    "agreed": 1
+   },
+   "flb_time_now": {
+    "agreed": 1
+   },
+   "floor": {
+    "agreed": 9,
+    "undeclared": 1
+   },
+   "free": {
+    "agreed": 174,
+    "undeclared": 2
+   },
+   "fstat": {
+    "agreed": 109
+   },
+   "gai_strerror": {
+    "agreed": 90
+   },
+   "generate_chunk_name": {
+    "agreed": 1
+   },
+   "getegid": {
+    "agreed": 137
+   },
+   "geteuid": {
+    "agreed": 137
+   },
+   "getpagesize": {
+    "agreed": 137
+   },
+   "getpeername": {
+    "agreed": 12,
+    "withdrawn:abi-unreadable-declaration": 93
+   },
+   "getsockopt": {
+    "agreed": 105
+   },
+   "gettimeofday": {
+    "agreed": 107
+   },
+   "gmtime_r": {
+    "agreed": 144
+   },
+   "htonl": {
+    "agreed": 103
+   },
+   "input_chunk_write_header": {
+    "agreed": 1
+   },
+   "listen": {
+    "agreed": 105,
+    "undeclared": 2
+   },
+   "localtime_r": {
+    "agreed": 144
+   },
+   "malloc": {
+    "agreed": 174,
+    "undeclared": 8
+   },
+   "memchr": {
+    "agreed": 181
+   },
+   "memcpy": {
+    "agreed": 181
+   },
+   "memmove": {
+    "agreed": 181
+   },
+   "memrchr": {
+    "agreed": 113
+   },
+   "memset": {
+    "agreed": 181
+   },
+   "mk_list_add": {
+    "agreed": 39
+   },
+   "mk_mem_alloc": {
+    "agreed": 29
+   },
+   "mk_mem_alloc_z": {
+    "agreed": 29
+   },
+   "mk_mem_free": {
+    "agreed": 29
+   },
+   "mk_print": {
+    "agreed": 29
+   },
+   "mkdir": {
+    "agreed": 109
+   },
+   "mpack_write_cstr": {
+    "agreed": 21
+   },
+   "mpack_write_double": {
+    "agreed": 21
+   },
+   "mpack_write_i64": {
+    "agreed": 21
+   },
+   "mpack_write_str": {
+    "agreed": 21
+   },
+   "msgpack_packer_init": {
+    "agreed": 1
+   },
+   "mtx_lock": {
+    "agreed": 83
+   },
+   "mtx_unlock": {
+    "agreed": 83
+   },
+   "ntohl": {
+    "agreed": 103
+   },
+   "perror": {
+    "agreed": 168,
+    "undeclared": 1
+   },
+   "pow": {
+    "agreed": 9
+   },
+   "prctl": {
+    "agreed": 1
+   },
+   "pthread_attr_setdetachstate": {
+    "agreed": 113
+   },
+   "pthread_kill": {
+    "agreed": 5
+   },
+   "pthread_mutex_lock": {
+    "agreed": 113
+   },
+   "pthread_mutex_unlock": {
+    "agreed": 113
+   },
+   "pthread_rwlock_rdlock": {
+    "agreed": 113
+   },
+   "pthread_rwlock_unlock": {
+    "agreed": 113
+   },
+   "pthread_rwlock_wrlock": {
+    "agreed": 113
+   },
+   "pthread_self": {
+    "agreed": 113
+   },
+   "pthread_setcancelstate": {
+    "agreed": 113
+   },
+   "pthread_setcanceltype": {
+    "agreed": 113
+   },
+   "pthread_sigmask": {
+    "agreed": 5
+   },
+   "rand_r": {
+    "agreed": 174
+   },
+   "rd_calloc": {
+    "agreed": 83
+   },
+   "rd_free": {
+    "agreed": 83
+   },
+   "rd_kafka_mem_free": {
+    "agreed": 66
+   },
+   "rd_kafka_topic_partition_list_sort": {
+    "withdrawn:abi-unreadable-declaration": 64
+   },
+   "rd_malloc": {
+    "agreed": 83
+   },
+   "rd_realloc": {
+    "agreed": 83
+   },
+   "rd_strdup": {
+    "agreed": 83
+   },
+   "rd_strndup": {
+    "agreed": 83
+   },
+   "read": {
+    "agreed": 137,
+    "undeclared": 41
+   },
+   "recv": {
+    "agreed": 105,
+    "undeclared": 2
+   },
+   "regerror": {
+    "agreed": 1
+   },
+   "regexec": {
+    "agreed": 1
+   },
+   "remove": {
+    "agreed": 168
+   },
+   "send": {
+    "agreed": 105,
+    "undeclared": 3
+   },
+   "sendfile": {
+    "agreed": 1,
+    "undeclared": 65
+   },
+   "setsid": {
+    "agreed": 137
+   },
+   "setsockopt": {
+    "agreed": 105
+   },
+   "sigaddset": {
+    "agreed": 5
+   },
+   "sigemptyset": {
+    "agreed": 5
+   },
+   "sigfillset": {
+    "agreed": 5
+   },
+   "sleep": {
+    "agreed": 137,
+    "undeclared": 34
+   },
+   "srand": {
+    "agreed": 174
+   },
+   "stat": {
+    "agreed": 109,
+    "undeclared": 70
+   },
+   "strcasestr": {
+    "agreed": 181
+   },
+   "strchr": {
+    "agreed": 181
+   },
+   "strcmp": {
+    "agreed": 181
+   },
+   "strcpy": {
+    "agreed": 181
+   },
+   "strdup": {
+    "agreed": 181
+   },
+   "strerror_r": {
+    "agreed": 68,
+    "withdrawn:abi-return-type-disagreement": 113
+   },
+   "strftime": {
+    "agreed": 144
+   },
+   "strlen": {
+    "agreed": 181
+   },
+   "strncpy": {
+    "agreed": 181
+   },
+   "strndup": {
+    "agreed": 181
+   },
+   "strrchr": {
+    "agreed": 181
+   },
+   "strstr": {
+    "agreed": 181
+   },
+   "sysconf": {
+    "agreed": 137,
+    "undeclared": 3
+   },
+   "system": {
+    "agreed": 174
+   },
+   "time": {
+    "agreed": 144,
+    "undeclared": 40
+   },
+   "timegm": {
+    "agreed": 144
+   },
+   "umask": {
+    "agreed": 109
+   },
+   "unlink": {
+    "agreed": 137
+   },
+   "usleep": {
+    "agreed": 137
+   },
+   "write": {
+    "agreed": 137,
+    "undeclared": 40
+   }
+  },
+  "per_name_old": {
+   "LZ4_resetStream": {
+    "agreed": 3
+   },
+   "__errno_location": {
+    "agreed": 168
+   },
+   "access": {
+    "agreed": 137
+   },
+   "atoi": {
+    "agreed": 174
+   },
+   "cJSON_Delete": {
+    "agreed": 4
+   },
+   "calloc": {
+    "agreed": 174,
+    "undeclared": 2
+   },
+   "ceil": {
+    "agreed": 9,
+    "undeclared": 108
+   },
+   "cfl_sds_destroy": {
+    "agreed": 46
+   },
+   "cfl_time_now": {
+    "agreed": 45
+   },
+   "cio_chunk_close": {
+    "agreed": 13
+   },
+   "cio_chunk_down": {
+    "agreed": 13
+   },
+   "cio_chunk_get_content_size": {
+    "agreed": 13
+   },
+   "cio_chunk_is_up": {
+    "agreed": 13
+   },
+   "cio_chunk_open": {
+    "agreed": 13
+   },
+   "cio_chunk_up_force": {
+    "agreed": 13
+   },
+   "cmt_destroy": {
+    "agreed": 30
+   },
+   "cmt_metric_get_timestamp": {
+    "agreed": 24
+   },
+   "cmt_metric_set_double": {
+    "agreed": 24
+   },
+   "cmt_mpack_consume_uint_tag": {
+    "agreed": 2
+   },
+   "cnd_timedwait": {
+    "agreed": 83
+   },
+   "cnd_wait": {
+    "agreed": 83
+   },
+   "ctr_destroy": {
+    "agreed": 16
+   },
+   "dlerror": {
+    "agreed": 4
+   },
+   "dlsym": {
+    "agreed": 4
+   },
+   "fabs": {
+    "agreed": 9
+   },
+   "fflush": {
+    "agreed": 168
+   },
+   "flb_calloc": {
+    "agreed": 1
+   },
+   "flb_errno_print": {
+    "agreed": 1
+   },
+   "flb_free": {
+    "agreed": 1
+   },
+   "flb_hash_table_add": {
+    "agreed": 1
+   },
+   "flb_input_chunk_destroy": {
+    "agreed": 1
+   },
+   "flb_input_chunk_destroy_direct_routes": {
+    "agreed": 1
+   },
+   "flb_input_chunk_get_name": {
+    "agreed": 1
+   },
+   "flb_input_chunk_get_real_size": {
+    "agreed": 1
+   },
+   "flb_input_chunk_get_size": {
+    "agreed": 1
+   },
+   "flb_input_chunk_total_size": {
+    "agreed": 1
+   },
+   "flb_log_check": {
+    "agreed": 1
+   },
+   "flb_log_print": {
+    "agreed": 1
+   },
+   "flb_malloc": {
+    "agreed": 1
+   },
+   "flb_routes_mask_get_size": {
+    "agreed": 1
+   },
+   "flb_routes_mask_set_by_tag": {
+    "agreed": 1
+   },
+   "flb_sds_create_len": {
+    "agreed": 1
+   },
+   "flb_sds_destroy": {
+    "agreed": 1
+   },
+   "flb_strdup": {
+    "agreed": 1
+   },
+   "flb_strndup": {
+    "agreed": 1
+   },
+   "flb_time_now": {
+    "agreed": 1
+   },
+   "floor": {
+    "agreed": 9,
+    "undeclared": 1
+   },
+   "free": {
+    "agreed": 174,
+    "undeclared": 2
+   },
+   "fstat": {
+    "agreed": 109
+   },
+   "gai_strerror": {
+    "agreed": 90
+   },
+   "generate_chunk_name": {
+    "agreed": 1
+   },
+   "getegid": {
+    "agreed": 137
+   },
+   "geteuid": {
+    "agreed": 137
+   },
+   "getpagesize": {
+    "agreed": 137
+   },
+   "getpeername": {
+    "agreed": 12,
+    "withdrawn:abi-unreadable-declaration": 93
+   },
+   "getsockopt": {
+    "agreed": 105
+   },
+   "gettimeofday": {
+    "agreed": 107
+   },
+   "gmtime_r": {
+    "agreed": 144
+   },
+   "htonl": {
+    "agreed": 103
+   },
+   "input_chunk_write_header": {
+    "agreed": 1
+   },
+   "listen": {
+    "agreed": 105,
+    "undeclared": 2
+   },
+   "localtime_r": {
+    "agreed": 144
+   },
+   "malloc": {
+    "agreed": 174,
+    "undeclared": 8
+   },
+   "memchr": {
+    "agreed": 181
+   },
+   "memcpy": {
+    "agreed": 181
+   },
+   "memmove": {
+    "agreed": 181
+   },
+   "memrchr": {
+    "agreed": 113
+   },
+   "memset": {
+    "agreed": 181
+   },
+   "mk_list_add": {
+    "agreed": 39
+   },
+   "mk_mem_alloc": {
+    "agreed": 29
+   },
+   "mk_mem_alloc_z": {
+    "agreed": 29
+   },
+   "mk_mem_free": {
+    "agreed": 29
+   },
+   "mk_print": {
+    "agreed": 29
+   },
+   "mkdir": {
+    "agreed": 109
+   },
+   "mpack_write_cstr": {
+    "agreed": 21
+   },
+   "mpack_write_double": {
+    "agreed": 21
+   },
+   "mpack_write_i64": {
+    "agreed": 21
+   },
+   "mpack_write_str": {
+    "agreed": 21
+   },
+   "msgpack_packer_init": {
+    "agreed": 1
+   },
+   "mtx_lock": {
+    "agreed": 83
+   },
+   "mtx_unlock": {
+    "agreed": 83
+   },
+   "ntohl": {
+    "agreed": 103
+   },
+   "perror": {
+    "agreed": 168,
+    "undeclared": 1
+   },
+   "pow": {
+    "agreed": 9
+   },
+   "prctl": {
+    "agreed": 1
+   },
+   "pthread_attr_setdetachstate": {
+    "agreed": 113
+   },
+   "pthread_kill": {
+    "agreed": 5
+   },
+   "pthread_mutex_lock": {
+    "agreed": 113
+   },
+   "pthread_mutex_unlock": {
+    "agreed": 113
+   },
+   "pthread_rwlock_rdlock": {
+    "agreed": 113
+   },
+   "pthread_rwlock_unlock": {
+    "agreed": 113
+   },
+   "pthread_rwlock_wrlock": {
+    "agreed": 113
+   },
+   "pthread_self": {
+    "agreed": 113
+   },
+   "pthread_setcancelstate": {
+    "agreed": 113
+   },
+   "pthread_setcanceltype": {
+    "agreed": 113
+   },
+   "pthread_sigmask": {
+    "agreed": 5
+   },
+   "rand_r": {
+    "agreed": 174
+   },
+   "rd_calloc": {
+    "agreed": 83
+   },
+   "rd_free": {
+    "agreed": 83
+   },
+   "rd_kafka_mem_free": {
+    "agreed": 66
+   },
+   "rd_kafka_topic_partition_list_sort": {
+    "withdrawn:abi-unreadable-declaration": 64
+   },
+   "rd_malloc": {
+    "agreed": 83
+   },
+   "rd_realloc": {
+    "agreed": 83
+   },
+   "rd_strdup": {
+    "agreed": 83
+   },
+   "rd_strndup": {
+    "agreed": 83
+   },
+   "read": {
+    "agreed": 137,
+    "undeclared": 41
+   },
+   "recv": {
+    "agreed": 105,
+    "undeclared": 2
+   },
+   "regerror": {
+    "agreed": 1
+   },
+   "regexec": {
+    "withdrawn:abi-unreadable-declaration": 1
+   },
+   "remove": {
+    "agreed": 168
+   },
+   "send": {
+    "agreed": 105,
+    "undeclared": 3
+   },
+   "sendfile": {
+    "agreed": 1,
+    "undeclared": 65
+   },
+   "setsid": {
+    "agreed": 137
+   },
+   "setsockopt": {
+    "agreed": 105
+   },
+   "sigaddset": {
+    "agreed": 5
+   },
+   "sigemptyset": {
+    "agreed": 5
+   },
+   "sigfillset": {
+    "agreed": 5
+   },
+   "sleep": {
+    "agreed": 137,
+    "undeclared": 34
+   },
+   "srand": {
+    "agreed": 174
+   },
+   "stat": {
+    "agreed": 109,
+    "undeclared": 70
+   },
+   "strcasestr": {
+    "agreed": 181
+   },
+   "strchr": {
+    "agreed": 181
+   },
+   "strcmp": {
+    "agreed": 181
+   },
+   "strcpy": {
+    "agreed": 181
+   },
+   "strdup": {
+    "agreed": 181
+   },
+   "strerror_r": {
+    "agreed": 68,
+    "withdrawn:abi-return-type-disagreement": 113
+   },
+   "strftime": {
+    "agreed": 144
+   },
+   "strlen": {
+    "agreed": 181
+   },
+   "strncpy": {
+    "agreed": 181
+   },
+   "strndup": {
+    "agreed": 181
+   },
+   "strrchr": {
+    "agreed": 181
+   },
+   "strstr": {
+    "agreed": 181
+   },
+   "sysconf": {
+    "agreed": 137,
+    "undeclared": 3
+   },
+   "system": {
+    "agreed": 174
+   },
+   "time": {
+    "agreed": 144,
+    "undeclared": 40
+   },
+   "timegm": {
+    "agreed": 144
+   },
+   "umask": {
+    "agreed": 109
+   },
+   "unlink": {
+    "agreed": 137
+   },
+   "usleep": {
+    "agreed": 137
+   },
+   "write": {
+    "agreed": 137,
+    "undeclared": 40
+   }
+  },
+  "rows_new": 11420,
+  "rows_old": 11420
+ },
+ "new10": {
+  "moved": [
+   {
+    "example_unit": "595d4eef08af53ae.i",
+    "name": "regexec",
+    "new": "agreed",
+    "old": "withdrawn:abi-unreadable-declaration",
+    "rows": 1
+   }
+  ],
+  "old_tool_output_head": null,
+  "per_name_new": {
+   "cnd_timedwait": {
+    "agreed": 83
+   },
+   "dlsym": {
+    "agreed": 4
+   },
+   "getpeername": {
+    "agreed": 12,
+    "withdrawn:abi-unreadable-declaration": 93
+   },
+   "getsockopt": {
+    "agreed": 105
+   },
+   "gettimeofday": {
+    "agreed": 107
+   },
+   "pthread_sigmask": {
+    "agreed": 5
+   },
+   "regerror": {
+    "agreed": 1
+   },
+   "regexec": {
+    "agreed": 1
+   },
+   "stat": {
+    "agreed": 109,
+    "undeclared": 70
+   },
+   "strftime": {
+    "agreed": 144
+   }
+  },
+  "per_name_old": {
+   "cnd_timedwait": {
+    "agreed": 83
+   },
+   "dlsym": {
+    "agreed": 4
+   },
+   "getpeername": {
+    "agreed": 12,
+    "withdrawn:abi-unreadable-declaration": 93
+   },
+   "getsockopt": {
+    "agreed": 105
+   },
+   "gettimeofday": {
+    "agreed": 107
+   },
+   "pthread_sigmask": {
+    "agreed": 5
+   },
+   "regerror": {
+    "agreed": 1
+   },
+   "regexec": {
+    "withdrawn:abi-unreadable-declaration": 1
+   },
+   "stat": {
+    "agreed": 109,
+    "undeclared": 70
+   },
+   "strftime": {
+    "agreed": 144
+   }
+  },
+  "rows_new": 734,
+  "rows_old": 734
+ }
+}

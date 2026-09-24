@@ -42,13 +42,22 @@ contract { requires resource_contract_v1; ensures normal resource_borrowed(p);\n
 extern fn x_copy(p: ptr<mut, u8>) -> ptr<mut, u8>\n\
 contract { requires resource_contract_v1; ensures normal resource_borrowed(p);\n\
            ensures normal resource_return_owned(nullable); };\n\
+extern fn x_sopen(n: usize) -> ptr<mut, u8>\n\
+contract { requires resource_contract_v1; ensures normal resource_borrowed(n);\n\
+           ensures normal resource_return_owned(nullable);\n\
+           ensures normal resource_return_kind(stream); };\n\
+extern fn x_sclose(p: ptr<mut, u8>) -> unit\n\
+contract { requires resource_contract_v1; ensures normal resource_released(p, nonnull);\n\
+           ensures normal resource_kind(p, stream);\n\
+           ensures normal resource_return_none(); };\n\
 extern fn x_take(p: ptr<mut, u8>) -> unit\n\
 contract { requires resource_contract_v1; ensures normal resource_consumed(p, nullable);\n\
            ensures normal resource_return_none(); };";
 
 const DECLARATIONS: &str = "\
 void *x_alloc(unsigned long n); char *x_fresh(unsigned long n); char *x_dup(const char *s); \
-void x_free(void *p); void x_close(void *p); void x_note(void *p); void x_take(void *p); char *x_copy(void *p);";
+void x_free(void *p); void x_close(void *p); void x_note(void *p); void x_take(void *p); char *x_copy(void *p); \
+void *x_sopen(unsigned long n); void x_sclose(void *p);";
 
 fn contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(
@@ -123,6 +132,8 @@ fn outcome(body: &str) -> (&'static str, Vec<String>) {
             LegacyDiagnosticKind::CustodyConflict { .. } => "custody_conflict".to_owned(),
             LegacyDiagnosticKind::InvalidRelease { .. } => "invalid_release".to_owned(),
             LegacyDiagnosticKind::UseAfterRelease { .. } => "use_after_release".to_owned(),
+            LegacyDiagnosticKind::KindMismatchedRelease { .. } => "invalid_release".to_owned(),
+            LegacyDiagnosticKind::UseAfterClose { .. } => "use_after_release".to_owned(),
             LegacyDiagnosticKind::Unsupported { description } => {
                 format!("unsupported:{description}")
             }
@@ -505,6 +516,33 @@ fn a_helper_returning_a_filled_collection_publishes_no_summary() {
             "unknown_alias:v",
             "unsupported:call to uncontracted function `mk`",
         ],
+    );
+}
+
+// -- Kinds (integration of W43-DESCRIPTOR-RESOURCE-TRACKING) ------------------
+
+#[test]
+fn a_stream_element_keeps_the_refusal_it_had() {
+    expect(
+        "a collection holds heap elements only: a stream-kind acquisition is not stored",
+        "void w(void) { char **v = x_alloc(16); if (!v) return; v[0] = x_sopen(1); \
+         x_sclose(v[0]); x_free(v); }",
+        "Unknown",
+        &[INDIRECT],
+    );
+}
+
+#[test]
+fn a_stream_release_of_a_heap_element_keeps_the_refusal_it_had() {
+    // The kind-mismatched release keeps its refusal, so the element is still
+    // owed when the array is freed: an element leak candidate, exactly as a
+    // refused release of a named heap pointer leaves its site owed.
+    expect(
+        "`x_sclose` releases a stream, so it never discharges a heap element",
+        "void w(void) { char **v = x_alloc(16); if (!v) return; v[0] = x_fresh(1); \
+         x_sclose(v[0]); x_free(v); }",
+        "Unsafe",
+        &["leak", INDIRECT],
     );
 }
 

@@ -1,0 +1,172 @@
+{
+ "a_reader_change_alone": {
+  "byte_identical": {
+   "resource-diagnostics.json": true,
+   "resource-diagnostics.chunk-contracts.json": true,
+   "resource-diagnostics.contracts.json": true,
+   "resource-diagnostics.source-effects.json": true,
+   "monkey-source.json": true
+  },
+  "all_identical": true
+ },
+ "b_declarations": {
+  "functions_reader": {
+   "Safe": 257,
+   "Unknown": 4493,
+   "Unsafe": 84
+  },
+  "functions_decl": {
+   "Safe": 260,
+   "Unknown": 4490,
+   "Unsafe": 84
+  },
+  "units_reader": {
+   "Safe": 2,
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4
+  },
+  "units_decl": {
+   "Safe": 2,
+   "Unknown": 137,
+   "Unsafe": 42,
+   "data_only": 4
+  },
+  "function_moves": [
+   [
+    "librdkafka/rdregex.c::rd_regex_exec",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "monkey-libevent/mk_server/mk_plugin.c::mk_plugin_load_symbol",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "monkey-libevent/mk_server/mk_scheduler.c::mk_signal_thread_sigpipe_safe",
+    "Unknown",
+    "Safe"
+   ]
+  ],
+  "diagnostic_counts": {
+   "before": {
+    "leak": 272,
+    "summary_conflict": 1,
+    "unknown_alias": 4657,
+    "unsupported": 48930
+   },
+   "after": {
+    "leak": 272,
+    "summary_conflict": 1,
+    "unknown_alias": 4655,
+    "unsupported": 48898
+   }
+  },
+  "by_class": {
+   "added same-line": 2,
+   "removed declared-callee": 26,
+   "removed newly-safe-callee": 2,
+   "removed same-function": 2,
+   "removed same-line": 6
+  },
+  "per_name": {
+   "(newly Safe callee or same-function)": {
+    "removed same-function": 2,
+    "removed newly-safe-callee": 2
+   },
+   "cnd_timedwait": {
+    "removed declared-callee": 1
+   },
+   "dlsym": {
+    "removed declared-callee": 2
+   },
+   "getpeername": {
+    "removed declared-callee": 1,
+    "added same-line": 1
+   },
+   "getsockopt": {
+    "removed declared-callee": 1,
+    "removed same-line": 1
+   },
+   "gettimeofday": {
+    "removed declared-callee": 3
+   },
+   "pthread_sigmask": {
+    "removed declared-callee": 10
+   },
+   "regerror": {
+    "removed declared-callee": 1
+   },
+   "regexec": {
+    "removed same-line": 1,
+    "removed declared-callee": 1
+   },
+   "stat": {
+    "removed same-line": 4,
+    "removed declared-callee": 3
+   },
+   "strftime": {
+    "removed declared-callee": 3,
+    "added same-line": 1
+   }
+  },
+  "functions_by_name": {
+   "(newly Safe callee or same-function)": [
+    "cio_utils.c::cio_utils_recursive_delete",
+    "mk_server/mk_plugin.c::mk_plugin_load",
+    "mk_server/mk_scheduler.c::mk_sched_launch_worker_loop"
+   ],
+   "cnd_timedwait": [
+    "tinycthread_extra.c::cnd_timedwait_ms"
+   ],
+   "dlsym": [
+    "mk_server/mk_plugin.c::mk_plugin_load_symbol",
+    "rddl.c::rd_dl_sym"
+   ],
+   "getpeername": [
+    "mk_server/mk_socket.c::mk_socket_ip_str"
+   ],
+   "getsockopt": [
+    "mk_server/mk_net.c::mk_net_conn_create",
+    "mk_server/mk_net.c::mk_net_conn_write"
+   ],
+   "gettimeofday": [
+    "rdkafka.c::rd_kafka_log_print",
+    "rdrand.c::rd_seed",
+    "tinycthread_extra.c::cnd_timedwait_ms"
+   ],
+   "pthread_sigmask": [
+    "mk_server/mk_scheduler.c::mk_signal_thread_sigpipe_safe",
+    "rdkafka.c::rd_kafka_new",
+    "rdkafka_background.c::rd_kafka_background_thread_create",
+    "rdkafka_broker.c::rd_kafka_broker_add"
+   ],
+   "regerror": [
+    "rdregex.c::rd_regex_match"
+   ],
+   "regexec": [
+    "rdregex.c::rd_regex_exec",
+    "rdregex.c::rd_regex_match"
+   ],
+   "stat": [
+    "cio_file_unix.c::cio_file_native_get_size",
+    "cio_os.c::cio_os_isdir",
+    "cio_os.c::cio_os_mkpath",
+    "cio_utils.c::cio_utils_recursive_delete",
+    "mk_core/mk_file.c::mk_file_get_info",
+    "mk_core/mk_rconf.c::mk_rconf_read",
+    "mk_core/mk_utils.c::mk_utils_register_pid"
+   ],
+   "strftime": [
+    "cmt_encode_text.c::format_metric",
+    "mk_server/mk_clock.c::mk_clock_headers_preset",
+    "mk_server/mk_clock.c::mk_clock_log_set_time"
+   ]
+  },
+  "attribution_complete": true,
+  "unattributed": 0,
+  "unit_status_moves": []
+ },
+ "c_violation_candidates": []
+}

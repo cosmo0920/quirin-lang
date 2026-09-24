@@ -10,7 +10,7 @@ use qcore_compiler::contract_loader::{
 };
 use qcore_compiler::{
     AnalysisStatus, C11TranslationUnit, DerivedExtent, ResourceApiKind, ResourceContracts,
-    ResourceFunctionContract, ResourceParameterMode as P, ResourceReturnMode as R,
+    ResourceFunctionContract, ResourceKind, ResourceParameterMode as P, ResourceReturnMode as R,
     UnrestrictedLegacyResult, analyze_legacy_c_translation_unit, analyze_unrestricted_c11,
     check_legacy_safety_certificate,
 };
@@ -75,7 +75,9 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qcore`
     // selected by `crate:module` reference (schema 2); `resource_memory.qcore`
     // moved from a path entry to a reference without changing the count.
-    assert_eq!(contracts.source_assumptions().len(), 45);
+    // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
+    // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
+    assert_eq!(contracts.source_assumptions().len(), 47);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -315,6 +317,30 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("unlink", 1),
         ("read", 3),
         ("write", 3),
+        // Card W43-LIBC-RESTRICT-PROTOTYPES adds ten `__restrict` prototypes,
+        // each the neutral element and each a trusted assumption: every
+        // parameter is read or written through into caller storage, and every
+        // result is a scalar or (`dlsym`) a symbol address the caller acquires
+        // no obligation for.
+        ("dlsym", 2),
+        ("regexec", 5),
+        ("regerror", 4),
+        ("getsockopt", 5),
+        ("getpeername", 3),
+        ("stat", 2),
+        ("cnd_timedwait", 3),
+        ("pthread_sigmask", 3),
+        ("strftime", 4),
+        ("gettimeofday", 2),
+        // Card W43-LIBC-PRINTF-FAMILY: the formatted-output family. Every
+        // declared parameter is borrowed (a written-through buffer or stream
+        // the caller keeps, a size, a read format), the result is an `int`
+        // count, and the `...` is `resource_variadic_data_tail()`, carried by
+        // no parameter, exactly as `mk_print` above.
+        ("printf", 1),
+        ("fprintf", 2),
+        ("snprintf", 3),
+        ("sprintf", 2),
     ] {
         old.insert_contract(
             name,
@@ -453,6 +479,40 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             ResourceFunctionContract::new([P::Borrowed], R::Owned { nullable: true }),
         );
     }
+    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: eight kinded libc declarations. The
+    // old table had no kind, so each is listed with the kind the card reads off
+    // the prototype; the two `descriptor` results are `sentinel` (may be `-1`),
+    // the `descriptor` release is `valid`, and `fileno` is the neutral element.
+    for (name, parameters, kind) in [
+        ("open", 2, ResourceKind::Descriptor),
+        ("socket", 3, ResourceKind::Descriptor),
+        ("fopen", 2, ResourceKind::Stream),
+        ("opendir", 1, ResourceKind::Directory),
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new(
+                vec![P::Borrowed; parameters],
+                R::Owned { nullable: true },
+            )
+            .with_result_kind(kind),
+        );
+    }
+    for (name, kind) in [
+        ("close", ResourceKind::Descriptor),
+        ("fclose", ResourceKind::Stream),
+        ("closedir", ResourceKind::Directory),
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new([P::Released { nullable: false }], R::None)
+                .with_parameter_kind(0, kind),
+        );
+    }
+    old.insert_contract(
+        "fileno",
+        ResourceFunctionContract::new([P::Borrowed], R::None),
+    );
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -739,7 +799,9 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 44 -> 45 by card CONTRACT-INHERIT-ADOPTION: `fluent_bit/resource_string.qcore`
     // selected by `crate:module` reference (schema 2); `resource_memory.qcore`
     // moved from a path entry to a reference without changing the count.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 45);
+    // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
+    // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 47);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -916,7 +978,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 107 -> 108: card CONTRACT-INHERIT-ADOPTION adds
     // `fluent_bit/resource_string.qcore`, entirely v1 (two inherited
     // declarations) and manifest-selected.
-    assert_eq!(modules.len(), 108, "corpus module count");
+    // 108 -> 109: card W43-LIBC-RESTRICT-PROTOTYPES adds `libc/regex.qcore`,
+    // entirely v1 and manifest-selected.
+    // 109 -> 110: card W43-DESCRIPTOR-RESOURCE-TRACKING adds `libc/dirent.qcore`,
+    // entirely v1 (a kinded pair) and manifest-selected.
+    assert_eq!(modules.len(), 110, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1041,9 +1107,19 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // duplicate `source_identity` typed policy left
     // `monkey/timeout_teardown.qcore` (its owner is
     // `monkey/wait_source_policy.qcore`); the v1 selection is unchanged.
+    // 45 -> 46 and 130 -> 140 by card W43-LIBC-RESTRICT-PROTOTYPES: ten
+    // neutral declarations, two in the new `libc/regex.qcore` and eight
+    // appended to already-selected libc modules.
+    // 140 -> 144 by card W43-LIBC-PRINTF-FAMILY: `printf`, `fprintf`,
+    // `snprintf` and `sprintf` appended to the already-selected
+    // `libc/stdio.qcore`, so the selection and the rejected count are unchanged.
+    // 46 -> 47 and 144 -> 152 by card W43-DESCRIPTOR-RESOURCE-TRACKING: eight
+    // declarations, six appended to already-selected modules (`open`, `close`,
+    // `socket`, `fopen`, `fclose`, `fileno`) and two in the new
+    // `libc/dirent.qcore`. Rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (45, 130, 206)
+        (47, 152, 206)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

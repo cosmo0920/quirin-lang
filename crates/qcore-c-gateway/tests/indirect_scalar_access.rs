@@ -129,6 +129,8 @@ fn outcome(body: &str) -> (&'static str, Vec<String>) {
             LegacyDiagnosticKind::CustodyConflict { .. } => "custody_conflict".to_owned(),
             LegacyDiagnosticKind::InvalidRelease { .. } => "invalid_release".to_owned(),
             LegacyDiagnosticKind::UseAfterRelease { .. } => "use_after_release".to_owned(),
+            LegacyDiagnosticKind::KindMismatchedRelease { .. } => "invalid_release".to_owned(),
+            LegacyDiagnosticKind::UseAfterClose { .. } => "use_after_release".to_owned(),
             LegacyDiagnosticKind::Unsupported { description } => {
                 format!("unsupported:{description}")
             }
@@ -308,14 +310,16 @@ fn a_post_increment_through_the_pointer_stays_refused() {
         "Unknown",
         &["unsupported:unmodeled expression may mutate a formal resource identity"],
     );
+    // Deliberate pin update, card W43-INDEX-TRAVERSAL: through a local
+    // pointer, `*p++ = c` is now the typed store through the old `p` followed
+    // by a modeled pointer step, and `p = buf` copies an automatic array no
+    // path bound, so the copy is unbound too. The formal case above keeps the
+    // formal-mutation refusal (W43-INDIRECT-PROTECTED-FORMAL-INCREMENT).
     expect(
         "`*p++ = c` through a local pointer",
         "void w(char c) { char buf[4]; char *p; p = buf; *p++ = c; }",
-        "Unknown",
-        &[
-            "unknown_alias:buf",
-            "unsupported:unmodeled increment or decrement expression",
-        ],
+        "Safe",
+        &[],
     );
 }
 

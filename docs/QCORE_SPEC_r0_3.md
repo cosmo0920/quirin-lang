@@ -987,6 +987,27 @@ nothing about the object's extent. A write through `*p` or `p[i]` keeps the
 refused statement's binding frame. See
 [the implementation record](reports/w43-indirect-access-general/README.md).
 
+The index-traversal rules extend that property to code that walks a buffer or
+a string. A refused controlling expression (of an `if`, `while`, `for`,
+`do`-`while` or `switch`) with no call, whose every memory access is such a
+typed access and which writes nothing, lowers to a read with the same
+dereference obligation for every base, required even for an operand a
+short-circuit could skip. `p++`, `p += e`, `p = q ± e` and the step of
+`*p++` over declared single-level pointers yield a pointer **derived** from
+`q`'s binding with an interior extent: it owns nothing, so it never discharges
+its base's custody; releasing one that moved forward by a positive literal is
+an `invalid_release` candidate, and releasing one that may sit at its object's
+start (a backward or variable step, or a loop header joining it with the base
+identity) is refused; using one after its base's release is a
+`use_after_release` candidate. Stepping in place a live object's only identity
+binding MUST refuse. A declared scalar's branch fact joined with no fact is no
+fact, and a copy or return of a declared scalar with no fact carries no
+custody. The existing work list reaches the loop's fixed point over these
+finite facts; anything it cannot represent keeps Unknown. **No bounds claim is
+made**: an index or offset is never evaluated beyond whether a step is a
+positive literal, and the published scope string says so. See
+[the implementation record](reports/w43-index-traversal/README.md).
+
 An indexed resource collection is a heap array a body acquired, declared
 `T **v`, whose elements hold owned resources. Its element obligations are a
 partition of the index line into half-open segments `[lo, hi)` over symbolic
@@ -1009,8 +1030,10 @@ returned or consumed carries them with it, and no one-identity summary is
 published for it. Releasing an element twice is a `double_release` candidate,
 reading or operating through a released element or array a
 `use_after_release` candidate, and storing over a live non-null element a leak
-candidate. The collection decides which indices owe a release, never that an
-index is inside the allocation. See
+candidate. Elements, and the contracts that acquire and release them, are of
+heap kind: a stream, directory or descriptor element keeps its refusal, and so
+does a statement that reads a tracked descriptor. The collection decides which
+indices owe a release, never that an index is inside the allocation. See
 [the implementation record](reports/w43-indexed-resource-collections/README.md).
 
 The bounded B-series lowering models one unconditional externally declared

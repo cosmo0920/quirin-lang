@@ -516,7 +516,7 @@ fn an_assumed_effectful_contract_validates_vacuously_under_divergence() {
 /// identity of the gate that refuses it moved, and the expectation was updated
 /// deliberately rather than dropped.
 #[test]
-fn pointer_field_recursion_is_refused_before_the_recursion_rule_applies() {
+fn a_pointer_field_search_certifies_once_its_branch_read_is_modeled() {
     if !clang_available() {
         return;
     }
@@ -531,15 +531,18 @@ fn pointer_field_recursion_is_refused_before_the_recursion_rule_applies() {
         &format!("{chain}\nvoid subject(void) {{ void *p = q_alloc(); seek(p, 1); q_free(p); }}"),
         Some(&declared),
     );
-    assert_eq!(probe.status("seek"), AnalysisStatus::Unknown);
-    assert!(
-        probe
-            .unsupported("seek")
-            .iter()
-            .any(|description| description
-                == "unmodeled call, aggregate or indirect access in branch condition"),
-        "an unmodeled branch condition, not the recursion, decides this case"
-    );
+    // Deliberate pin update, card W43-INDEX-TRAVERSAL. The branch condition
+    // `n->key == key` is now the typed read of a scalar member through `n`,
+    // whose dereference obligation holds (an unbound formal, after its null
+    // test). That was the only blocker: the recursive call was already a
+    // modeled borrowed actual, so the search now certifies against its
+    // declared neutral contract. This is the dependency ordering the comment
+    // above and `docs/design/W4_RECURSIVE_SUMMARY_PROFILES.md` §6.4 record:
+    // the pointer-field read was the gate, and the recursion rule never
+    // refused it. The heap-link teardown stays refused (see
+    // `neutral_frame_recursion.rs`).
+    assert_eq!(probe.status("seek"), AnalysisStatus::Safe);
+    assert!(probe.unsupported("seek").is_empty());
 }
 
 /// The one place the declared-contract emulation is more permissive than the

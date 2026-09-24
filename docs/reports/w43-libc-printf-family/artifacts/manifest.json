@@ -1,0 +1,32 @@
+{
+  "diagnostics": {
+    "file": "diagnostics.json.gz",
+    "raw_sha256": "df342eeb4e4ffcaa5dda7a1f217674992ff845f0b96acf2fe10f8371de542bf7",
+    "gzip_sha256": "e8db50dd16aafc018b19cc28049399d8122a5ae08ba30e3ea7229f114173f419",
+    "raw_bytes": 13562683
+  },
+  "chunk-contracts": {
+    "file": "chunk-contracts.json.gz",
+    "raw_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+    "gzip_sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703",
+    "raw_bytes": 4186178
+  },
+  "contracts": {
+    "file": "contracts.json.gz",
+    "raw_sha256": "fdccbbd773ed0375a5c57e820004eeea893f58e4c0a6212c41733e85b2ca1283",
+    "gzip_sha256": "2dbcb91e59743cac2d50ae1ca46b11e701815703d5a9e1159d71d8452d0a3da0",
+    "raw_bytes": 261837
+  },
+  "source-effects": {
+    "file": "source-effects.json.gz",
+    "raw_sha256": "d09959f1af1b8e049a3c6b301a1871cc11033856047fbfef377be992dda86fc4",
+    "gzip_sha256": "9f0b5782f34e6e9b9405c0dac9af9a7b6558cd65e8a03858dd097b2b1a0c5a69",
+    "raw_bytes": 118505
+  },
+  "source": {
+    "file": "source.json.gz",
+    "raw_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+    "gzip_sha256": "fe80d190e2c0e5c6ca4d24f057add3ee3ff85bd48882a5e3525c7568c28b2fb8",
+    "raw_bytes": 1665950
+  }
+}

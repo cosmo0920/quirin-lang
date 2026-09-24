@@ -337,7 +337,7 @@ impl AuditReport {
     pub fn write_with_revision_key(&self, path: &Path, revision_key: &str) -> Result<(), String> {
         let mut report = json!({
             "schema_version": 1, revision_key: self.revision,
-            "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation",
+            "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation",
             "line_coordinates": "`line` is the Clang -E -P preprocessed translation unit's line, not the original file; line 0 is synthetic. It is retained as the internal leaf identity every pinned comparison is keyed on, and is not a coordinate anyone can open; `origin` beside it is the original pre-preprocessing coordinate and is what diagnostic text presents",
             "origin_meaning": "the original `file:line` of the C a person wrote (card GATEWAY-C-LOCATION), derived from the line markers of the same unit's marked preprocessing and paired content line by content line with the analysed -E -P text; a diagnostic inside a macro expansion carries the expansion site's line. No presented file spelling is ever read from a flagless marker: an included file is named by its own entering (flag 1) marker and the primary input by this report's own `file`, so a `#line` directive in analysed source can neither move the audited scope (standing constraint 12) nor name a file here. A flagless marker that renames its frame withdraws that frame's coordinates instead of adopting the name, and `null` asserts no coordinate at all; `origin_coordinates` carries the per-unit account",
             "not_projected_meaning": "raw source definitions absent from the projection, including build-excluded definitions; see unit reason for parser failures",
@@ -437,6 +437,32 @@ fn diagnostic_description(
             "use_after_release",
             format!(
                 "use of a pointer derived from the acquisition at {} after its release",
+                site(*acquisition_line)
+            ),
+        ),
+        // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the kind candidates, in the
+        // same two categories, with their own wording.
+        LegacyDiagnosticKind::KindMismatchedRelease {
+            acquisition_line,
+            acquired,
+            released,
+        } => (
+            "invalid_release",
+            format!(
+                "{} release of the {} acquired at {}",
+                released.spelling(),
+                acquired.spelling(),
+                site(*acquisition_line)
+            ),
+        ),
+        LegacyDiagnosticKind::UseAfterClose {
+            acquisition_line,
+            kind,
+        } => (
+            "use_after_release",
+            format!(
+                "use of the {} acquired at {} after its release",
+                kind.spelling(),
                 site(*acquisition_line)
             ),
         ),

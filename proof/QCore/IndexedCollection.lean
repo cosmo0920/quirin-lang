@@ -540,4 +540,41 @@ theorem three_filled_elements_are_live :
     ∧ cell (fun _ => 3) (fillForm 0) 3 = .unfilled := by
   simp [fillForm, cell, Term.eval]
 
+/-! ## Kinds (integration of W43-DESCRIPTOR-RESOURCE-TRACKING)
+
+A collection's owner, its elements' acquisitions and the releases that
+discharge them are all of heap kind; a stream, directory or descriptor keeps
+the classifier's refusal, and so does any statement that reads a tracked
+descriptor. -/
+
+inductive Kind where
+  | heap
+  | descriptor
+  | stream
+  | directory
+  deriving DecidableEq, Repr
+
+def Kind.isHeap : Kind → Bool
+  | .heap => true
+  | _ => false
+
+/-- Whether one element operation is lowered: the owner, the acquisition (or
+release) and the statement's descriptor reads all qualify. -/
+def elementLowered (owner operation : Kind) (readsDescriptor : Bool) : Bool :=
+  owner.isHeap && operation.isHeap && !readsDescriptor
+
+theorem only_heap_elements_are_collected (owner operation : Kind) (d : Bool) :
+    elementLowered owner operation d = true ↔
+      (owner = .heap ∧ operation = .heap ∧ d = false) := by
+  cases owner <;> cases operation <;> cases d <;> simp [elementLowered, Kind.isHeap]
+
+theorem a_descriptor_read_keeps_the_fallback (owner operation : Kind) (fallback modeled : Nat) :
+    elementNode (elementLowered owner operation true) fallback modeled = fallback := by
+  simp [elementLowered, elementNode]
+
+theorem a_non_heap_element_keeps_the_fallback (owner : Kind) (operation : Kind)
+    (h : operation ≠ .heap) (d : Bool) (fallback modeled : Nat) :
+    elementNode (elementLowered owner operation d) fallback modeled = fallback := by
+  cases operation <;> simp_all [elementLowered, elementNode, Kind.isHeap]
+
 end QCore.IndexedCollection

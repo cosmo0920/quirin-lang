@@ -21,11 +21,9 @@ module contract;
 //
 //   (`gmtime_r`/`localtime_r` return their SECOND argument or NULL; card
 //   W43-LIBC-RESULT-ALIAS declares them at the end of this module.)
-//   `gettimeofday`, `strftime`: faithful in v1, but the prototype spells a qualifier AFTER the
-//   `*` (`T *__restrict p`), which the declared-ABI reader (gateway
-//   constraint 8) does not read; this card measured the declaration withdrawn
-//   with `abi-unreadable-declaration` at every call site in the pinned corpus
-//   (`LOADER-ABI-RESTRICT-QUALIFIER`), so it is not shipped.
+//   (`gettimeofday`, `strftime` spell `T *__restrict p`, which this card's
+//   reader withdrew; card W43-LIBC-RESTRICT-PROTOTYPES declares both at the
+//   end of this module.)
 //
 // ## What no declaration here says
 //
@@ -75,4 +73,41 @@ contract {
     ensures normal resource_borrowed(timer);
     ensures normal resource_borrowed(tp);
     ensures normal resource_return_alias(tp, nullable);
+};
+
+// ## Card W43-LIBC-RESTRICT-PROTOTYPES: `strftime` and `gettimeofday`
+//
+//   extern size_t strftime (char *__restrict __s, size_t __maxsize,
+//                           const char *__restrict __format,
+//                           const struct tm *__restrict __tp) __THROW;
+//   extern int gettimeofday (struct timeval *__restrict __tv,
+//                            void *__restrict __tz) __THROW __nonnull ((1));
+//
+// `strftime` reads the format and the caller's broken-down time and writes at
+// most `__maxsize` bytes into the caller's buffer, returning a count.
+// `gettimeofday` writes the caller's `struct timeval` (and ignores the
+// obsolete `__tz`, which may be NULL), returning an `int`. Both are value
+// writes through borrowed pointers into caller storage: nothing is allocated,
+// freed or retained, and each result is a scalar, so `resource_borrowed` on
+// every parameter and `resource_return_none()` are exact. TRUSTED
+// ASSUMPTIONS; the `__restrict` spellings are read by the declared-ABI reader
+// since card W43-LIBC-RESULT-ALIAS. Nothing here says anything about clocks,
+// time zones, locales, buffer bounds or truncation.
+
+extern fn strftime(s: ptr<mut, u8>, maxsize: usize, format: ptr<const, u8>, tp: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(maxsize);
+    ensures normal resource_borrowed(format);
+    ensures normal resource_borrowed(tp);
+    ensures normal resource_return_none();
+};
+
+extern fn gettimeofday(tv: ptr<mut, u8>, tz: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(tv);
+    ensures normal resource_borrowed(tz);
+    ensures normal resource_return_none();
 };

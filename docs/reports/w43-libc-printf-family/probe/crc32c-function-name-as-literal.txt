@@ -1,0 +1,13 @@
+DIAG 3067 Unsupported { description: "unsupported assignment expression" }
+DIAG 3087 UnknownAlias { variable: "__qcore_literal__" }
+DIAG 3089 UnknownAlias { variable: "__qcore_literal__" }
+DIAG 3090 Unsupported { description: "arguments beyond the declared parameters of `fprintf` are outside the resource projection" }
+DIAG 3091 Unsupported { description: "call to uncontracted function `rd_crc32c`" }
+DIAG 3092 Unsupported { description: "arguments beyond the declared parameters of `fprintf` are outside the resource projection" }
+DIAG 3092 Unsupported { description: "braced initializer, expression, or declaration is not modeled" }
+DIAG 3093 Unsupported { description: "call to uncontracted function `crc32c_init_sw`" }
+DIAG 3094 Unsupported { description: "arguments beyond the declared parameters of `fprintf` are outside the resource projection" }
+DIAG 3095 Unsupported { description: "call to uncontracted function `crc32c_sw`" }
+DIAG 3096 Unsupported { description: "arguments beyond the declared parameters of `fprintf` are outside the resource projection" }
+DIAG 3096 Unsupported { description: "braced initializer, expression, or declaration is not modeled" }
+DIAG 3097 Unsupported { description: "arguments beyond the declared parameters of `fprintf` are outside the resource projection" }

@@ -1230,6 +1230,7 @@ mod tests {
             ResourceFunctionContract {
                 parameters: vec![ResourceParameterMode::Borrowed; arity],
                 result: ResourceReturnMode::None,
+                ..ResourceFunctionContract::default()
             },
         );
         contracts.insert_contract(
@@ -1237,6 +1238,7 @@ mod tests {
             ResourceFunctionContract {
                 parameters: vec![ResourceParameterMode::Released { nullable: false }],
                 result: ResourceReturnMode::None,
+                ..ResourceFunctionContract::default()
             },
         );
         contracts.insert_contract(
@@ -1247,6 +1249,7 @@ mod tests {
                     nullable: false,
                 }],
                 result: ResourceReturnMode::None,
+                ..ResourceFunctionContract::default()
             },
         );
         contracts.insert_contract(
@@ -1254,6 +1257,7 @@ mod tests {
             ResourceFunctionContract {
                 parameters: vec![ResourceParameterMode::Owned { nullable: false }],
                 result: ResourceReturnMode::None,
+                ..ResourceFunctionContract::default()
             },
         );
         contracts.insert_contract(
@@ -1264,6 +1268,7 @@ mod tests {
                     nullable: false,
                 }],
                 result: ResourceReturnMode::None,
+                ..ResourceFunctionContract::default()
             },
         );
         contracts
