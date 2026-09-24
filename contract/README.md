@@ -12,7 +12,7 @@ crates: `providers/quirin-provider-{libc,cfl,mpack,msgpack,fluent-bit}/contracts
 per library, and `providers/quirin-provider-shared/contracts/` for the
 `language/` and `library/` policies. libc contracts live only in
 `quirin-provider-libc`.
-The [corpus index](corpus.json) selects these roots for all 96 module and clause
+The [corpus index](corpus.json) selects these roots for all 107 module and clause
 pins; it is validation metadata, not an implicit runtime contract selection.
 See the [provider editing workflow](../providers/README.md#contract-ownership).
 There are no compatibility copies or symlinks at `contract/qcore`.

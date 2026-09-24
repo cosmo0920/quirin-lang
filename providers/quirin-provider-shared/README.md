@@ -29,7 +29,7 @@ crates, which this crate re-exports as `libc`, `cfl`, `mpack`, `msgpack` and
 
 | Crate | Modules |
 |---|---|
-| [`quirin-provider-libc`](../quirin-provider-libc/README.md) | `libc/` (3); the only home for libc contracts, usable without this bundle |
+| [`quirin-provider-libc`](../quirin-provider-libc/README.md) | `libc/` (14); the only home for libc contracts, usable without this bundle |
 | [`quirin-provider-cfl`](../quirin-provider-cfl/README.md) | `cfl/` (4) |
 | [`quirin-provider-mpack`](../quirin-provider-mpack/README.md) | `mpack/` (1) |
 | [`quirin-provider-msgpack`](../quirin-provider-msgpack/README.md) | `msgpack/` (1) |

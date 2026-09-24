@@ -1,0 +1,12 @@
+[
+  {
+    "entry": {
+      "id": "LOADER-ABI-RESTRICT-QUALIFIER",
+      "title": "Narrows LIBC-MEM-RESULT-ALIAS's ABI half: glibc DECORATION is already exercised in production; what is untested is specifically `__restrict` on a pointer parameter",
+      "why": "Card W36-CORPUS-CONTRACTS-3 declined memcpy/memset on two grounds, one of them that surviving glibc's decorated prototypes is an untested ABI path. Card W37-CORPUS-CONTRACTS-4 re-read that ground and found it narrower than recorded: libc/memory.qcore already declares malloc, whose glibc prototype is `extern void *malloc (size_t __size) __THROW __attribute_malloc__ __attribute_alloc_size__ ((1)) __wur;` (/usr/include/stdlib.h:676), manifest-selected and NOT withdrawn, so the decoration class as such is exercised. What memcpy/memset add over malloc/free is specifically `__restrict` on the pointer parameters (/usr/include/string.h:46-48 and :65), which no corpus declaration has yet met. The RESULT-MODE half of LIBC-MEM-RESULT-ALIAS is untouched and still stands. Discharge condition: One measurement: declare any `__restrict`-qualified libc callee and observe whether the declared-ABI reader withdraws it.",
+      "source": "docs/reports/w37-corpus-contracts-4/README.md"
+    },
+    "discharged_by": "W43-LIBC-CONTRACTS",
+    "ground": "Its discharge condition is one measurement: declare a `__restrict`-qualified libc callee and observe whether the declared-ABI reader withdraws it. This card declared fourteen (printf, fprintf, snprintf, sprintf, stat, strftime, gettimeofday, getsockopt, getpeername, dlsym, cnd_timedwait, pthread_sigmask, regexec, regerror) in a private trial arbiter: every one was withdrawn with `abi-unreadable-declaration` at every call site (2,577 withdrawn call-site leaves), and a five-unit probe isolates the cause to a qualifier written after the `*`. abi-evidence.json. The open repair is registered as W43-LIBC-POINTER-QUALIFIER-READER."
+  }
+]

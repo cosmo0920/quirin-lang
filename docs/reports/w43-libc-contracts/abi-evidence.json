@@ -1,0 +1,265 @@
+{
+ "abi_census_units_by_name": {
+  "access": {
+   "agreed": 137
+  },
+  "atoi": {
+   "agreed": 174
+  },
+  "bind": {
+   "withdrawn:abi-unreadable-declaration": 93,
+   "undeclared": 2,
+   "agreed": 12
+  },
+  "ceil": {
+   "undeclared": 108,
+   "agreed": 9
+  },
+  "cnd_timedwait": {
+   "withdrawn:abi-unreadable-declaration": 83
+  },
+  "cnd_wait": {
+   "agreed": 83
+  },
+  "connect": {
+   "withdrawn:abi-unreadable-declaration": 93,
+   "undeclared": 2,
+   "agreed": 12
+  },
+  "dlerror": {
+   "agreed": 4
+  },
+  "dlsym": {
+   "withdrawn:abi-unreadable-declaration": 4
+  },
+  "fabs": {
+   "agreed": 9
+  },
+  "fflush": {
+   "agreed": 168
+  },
+  "floor": {
+   "agreed": 9,
+   "undeclared": 1
+  },
+  "fprintf": {
+   "withdrawn:abi-unreadable-declaration": 168
+  },
+  "fstat": {
+   "agreed": 109
+  },
+  "gai_strerror": {
+   "agreed": 90
+  },
+  "getegid": {
+   "agreed": 137
+  },
+  "geteuid": {
+   "agreed": 137
+  },
+  "getpagesize": {
+   "agreed": 137
+  },
+  "getpeername": {
+   "withdrawn:abi-unreadable-declaration": 105
+  },
+  "getrlimit": {
+   "withdrawn:abi-unreadable-declaration": 2
+  },
+  "getsockopt": {
+   "withdrawn:abi-unreadable-declaration": 105
+  },
+  "gettimeofday": {
+   "withdrawn:abi-unreadable-declaration": 107
+  },
+  "htonl": {
+   "agreed": 103
+  },
+  "listen": {
+   "agreed": 105,
+   "undeclared": 2
+  },
+  "mkdir": {
+   "agreed": 109
+  },
+  "mtx_lock": {
+   "agreed": 83
+  },
+  "mtx_unlock": {
+   "agreed": 83
+  },
+  "ntohl": {
+   "agreed": 103
+  },
+  "perror": {
+   "agreed": 168,
+   "undeclared": 1
+  },
+  "pow": {
+   "agreed": 9
+  },
+  "prctl": {
+   "agreed": 1
+  },
+  "printf": {
+   "withdrawn:abi-unreadable-declaration": 168
+  },
+  "pthread_attr_setdetachstate": {
+   "agreed": 113
+  },
+  "pthread_kill": {
+   "agreed": 5
+  },
+  "pthread_rwlock_rdlock": {
+   "agreed": 113
+  },
+  "pthread_rwlock_unlock": {
+   "agreed": 113
+  },
+  "pthread_rwlock_wrlock": {
+   "agreed": 113
+  },
+  "pthread_self": {
+   "agreed": 113
+  },
+  "pthread_setcancelstate": {
+   "agreed": 113
+  },
+  "pthread_setcanceltype": {
+   "agreed": 113
+  },
+  "pthread_sigmask": {
+   "withdrawn:abi-unreadable-declaration": 5
+  },
+  "rand_r": {
+   "agreed": 174
+  },
+  "read": {
+   "agreed": 137,
+   "undeclared": 41
+  },
+  "recv": {
+   "agreed": 105,
+   "undeclared": 2
+  },
+  "regerror": {
+   "withdrawn:abi-unreadable-declaration": 1
+  },
+  "regexec": {
+   "withdrawn:abi-unreadable-declaration": 1
+  },
+  "remove": {
+   "agreed": 168
+  },
+  "send": {
+   "agreed": 105,
+   "undeclared": 3
+  },
+  "sendfile": {
+   "undeclared": 65,
+   "agreed": 1
+  },
+  "setrlimit": {
+   "withdrawn:abi-unreadable-declaration": 2
+  },
+  "setsid": {
+   "agreed": 137
+  },
+  "setsockopt": {
+   "agreed": 105
+  },
+  "sigaddset": {
+   "agreed": 5
+  },
+  "sigemptyset": {
+   "agreed": 5
+  },
+  "sigfillset": {
+   "agreed": 5
+  },
+  "sleep": {
+   "agreed": 137,
+   "undeclared": 34
+  },
+  "snprintf": {
+   "withdrawn:abi-unreadable-declaration": 168
+  },
+  "sprintf": {
+   "withdrawn:abi-unreadable-declaration": 168
+  },
+  "srand": {
+   "agreed": 174
+  },
+  "stat": {
+   "withdrawn:abi-unreadable-declaration": 109,
+   "undeclared": 70
+  },
+  "strcmp": {
+   "agreed": 181
+  },
+  "strdup": {
+   "agreed": 181
+  },
+  "strerror_r": {
+   "withdrawn:abi-return-type-disagreement": 113,
+   "agreed": 68
+  },
+  "strftime": {
+   "withdrawn:abi-unreadable-declaration": 144
+  },
+  "strlen": {
+   "agreed": 181
+  },
+  "sysconf": {
+   "agreed": 137,
+   "undeclared": 3
+  },
+  "system": {
+   "agreed": 174
+  },
+  "time": {
+   "agreed": 144,
+   "undeclared": 40
+  },
+  "timegm": {
+   "agreed": 144
+  },
+  "umask": {
+   "agreed": 109
+  },
+  "unlink": {
+   "agreed": 137
+  },
+  "usleep": {
+   "agreed": 137
+  },
+  "write": {
+   "agreed": 137,
+   "undeclared": 40
+  }
+ },
+ "trial_withdrawn_call_site_leaves": {
+  "bind (abi-unreadable-declaration)": 1,
+  "cnd_timedwait (abi-unreadable-declaration)": 1,
+  "connect (abi-unreadable-declaration)": 3,
+  "dlsym (abi-unreadable-declaration)": 2,
+  "fprintf (abi-unreadable-declaration)": 1192,
+  "getpeername (abi-unreadable-declaration)": 1,
+  "getrlimit (abi-unreadable-declaration)": 1,
+  "getsockopt (abi-unreadable-declaration)": 2,
+  "gettimeofday (abi-unreadable-declaration)": 3,
+  "printf (abi-unreadable-declaration)": 50,
+  "pthread_sigmask (abi-unreadable-declaration)": 10,
+  "rd_kafka_topic_partition_list_sort (abi-unreadable-declaration)": 11,
+  "regerror (abi-unreadable-declaration)": 2,
+  "regexec (abi-unreadable-declaration)": 1,
+  "setrlimit (abi-unreadable-declaration)": 1,
+  "snprintf (abi-unreadable-declaration)": 1290,
+  "sprintf (abi-unreadable-declaration)": 10,
+  "stat (abi-unreadable-declaration)": 4,
+  "strftime (abi-unreadable-declaration)": 3
+ },
+ "probe": {
+  "note": "Five one-line units through the same census tool: `extern int printf (const char *__restrict __format, ...);` and the same without `...` are withdrawn (abi-unreadable-declaration); `const char * __format` and `const char *__format` with a trailing `__attribute__` agree. The unread token is a qualifier AFTER the `*`."
+ }
+}

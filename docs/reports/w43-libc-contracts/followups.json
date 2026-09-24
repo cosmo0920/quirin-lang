@@ -1,0 +1,72 @@
+[
+ {
+  "id": "W43-LIBC-POINTER-QUALIFIER-READER",
+  "title": "The declared-ABI reader withdraws every prototype that spells a qualifier after the `*` (`T *__restrict p`), which blocks the printf family and 10 other faithful libc declarations",
+  "why": "Card W43-LIBC-CONTRACTS measured what LOADER-ABI-RESTRICT-QUALIFIER asked for: `project_declarator` (crates/qcore-c-gateway/src/legacy_declared_abi.rs) counts only TRAILING `*` words, so a parameter spelled `const char *__restrict __format` ends in a qualifier, has zero trailing stars and a `*` in its head, and projects to `None` (`abi-unreadable-declaration`). A five-unit probe isolates the token: the same printf prototype without `__restrict` agrees. In the trial arbiter the drafted declarations of printf, fprintf, snprintf, sprintf, stat, strftime, gettimeofday, getsockopt, getpeername, dlsym, cnd_timedwait, pthread_sigmask, regexec and regerror were withdrawn at every call site (2,577 withdrawn call-site leaves, 1,192 fprintf and 1,290 snprintf), so none was shipped. A qualifier after the last `*` qualifies the parameter object itself and is dropped for type compatibility (C11 6.7.6.3p15), so reading it is a faithful widening, but it is analyzer semantics: it needs Rust, a Lean model of the projection step and a re-arbiter. memcpy/memset/strcpy also spell `__restrict`, so LIBC-MEM-RESULT-ALIAS's result mode alone would not make them declarable. LIBC-PRINTF-FAMILY stays open behind this. Discharge condition: the reader drops top-level qualifiers after the last `*` (and still refuses a qualifier between two `*`), with matching audited Lean and tests, then a declarative card lands the 14 prototypes above with its own leaf-by-leaf attribution.",
+  "source": "docs/reports/w43-libc-contracts/README.md",
+  "recorded_by": "W43-LIBC-CONTRACTS"
+ },
+ {
+  "id": "W43-LIBC-ABI-READER-SHAPES",
+  "title": "Three more prototype shapes the declared-ABI reader cannot project keep six faithful libc callees undeclared: `__CONST_SOCKADDR_ARG`, an enum typedef, and `va_list`",
+  "why": "Card W43-LIBC-CONTRACTS drafted and measured them: `bind`/`connect` take `__CONST_SOCKADDR_ARG`, a transparent union under `_GNU_SOURCE` (withdrawn at every call site); `getrlimit`/`setrlimit` take the enumeration typedef `__rlimit_resource_t` (withdrawn at every call site); `vprintf`/`vsnprintf` take `__gnuc_va_list` (`__builtin_va_list`), for which the v1 vocabulary has no spelling at all. Each custody statement is otherwise the neutral element. Discharge condition: a measured reader widening per shape (transparent union of object pointers -> pointer projection; enum typedef -> its integer projection; a va_list spelling) with Lean parity, or a recorded decision that the shape stays refused.",
+  "source": "docs/reports/w43-libc-contracts/README.md",
+  "recorded_by": "W43-LIBC-CONTRACTS"
+ },
+ {
+  "id": "W43-LIBC-RESULT-ALIAS-NAMES",
+  "title": "Thirteen more libc callees than LIBC-MEM-RESULT-ALIAS names return an alias of an argument or of retained storage",
+  "why": "Card W43-LIBC-CONTRACTS inventoried every libc/POSIX callee of the uncontracted-call family. Besides memcpy and memset (LIBC-MEM-RESULT-ALIAS), memmove, strcpy and strncpy return their first argument; strchr, strrchr, strstr, strcasestr, memchr and memrchr return a pointer into it; gmtime_r and localtime_r return their second argument; realpath returns its second argument or a fresh malloc allocation; pthread_getspecific returns a pointer an earlier pthread_setspecific retained. resource_return_none() would drop the alias, so none was declared. Measured yield at the W43-LIBC-CONTRACTS baseline: memcpy 8 sole-blocked functions, memset 2, memmove 1, the rest 0. Discharge condition: the result mode LIBC-MEM-RESULT-ALIAS asks for (plus an interior-pointer and a conditional-alias reading, or a recorded refusal for those), and W43-LIBC-POINTER-QUALIFIER-READER for the `__restrict` prototypes among them.",
+  "source": "docs/reports/w43-libc-contracts/README.md",
+  "recorded_by": "W43-LIBC-CONTRACTS"
+ },
+ {
+  "id": "W43-LIBC-OUT-POINTER-ALIAS",
+  "title": "strtol/strtoll/strtoull/strtod, getpwnam_r/getgrnam_r and backtrace write a pointer through a pointer-to-pointer parameter that v1 admits only as a custody `resource_out`",
+  "why": "Card W43-LIBC-CONTRACTS read them: the strto* family stores an alias INTO its first argument through `char **endptr`; getpwnam_r/getgrnam_r store a pointer to their caller-supplied record through `struct passwd **result`; backtrace writes return addresses through `void **`. `ptr<mut, ptr<mut, u8>>` is admitted only for `resource_out`, which would assert fresh custody the caller does not acquire. Discharge condition: a v1 mode for a borrowed pointer-to-pointer that receives an alias or a non-custody value, with Lean parity, or a recorded refusal.",
+  "source": "docs/reports/w43-libc-contracts/README.md",
+  "recorded_by": "W43-LIBC-CONTRACTS"
+ },
+ {
+  "id": "W43-LIBC-DESCRIPTOR-LIFECYCLE",
+  "title": "Seventeen libc callees create or release a descriptor or handle that v1's pointer-only, kind-less custody cannot state",
+  "why": "Card W43-LIBC-CONTRACTS declined open, close, socket, accept4, fcntl (F_DUPFD), fopen, fclose, opendir, closedir, dlopen, dlclose, getaddrinfo, freeaddrinfo, fts_open, fts_close, glob and globfree. A file descriptor is an `int`, which v1 never treats as custody, so a neutral declaration would erase a real acquire/release; a pointer handle (FILE *, DIR *, dlopen handle, addrinfo list) could be declared owned/released, but v1 custody has one kind, so `free(fopen(...))` and `fclose(malloc(...))` would both discharge. getaddrinfo's out list is established on a `0` return, not by a null test. close is the sole blocker of 1 function at the baseline, fclose blocks 6. Discharge condition: a kind-indexed custody vocabulary or a descriptor profile carried into the C gateway, with Lean parity, then per-callee declarations.",
+  "source": "docs/reports/w43-libc-contracts/README.md",
+  "recorded_by": "W43-LIBC-CONTRACTS"
+ },
+ {
+  "id": "W43-LIBC-IN-PLACE-LIFECYCLE",
+  "title": "Init/destroy pairs on caller-owned objects (mtx_init/mtx_destroy, pthread_rwlock_init/destroy, pthread_attr_init, pthread_key_create, regcomp/regfree) stay undeclared",
+  "why": "Card W43-LIBC-CONTRACTS read them: each initialises an object the caller owns in place and opens an obligation to destroy it (regcomp allocates inside the caller's regex_t; POSIX requires pthread_attr_destroy), which v1 cannot state, so a neutral declaration would erase the obligation. mtx_destroy, pthread_rwlock_init, pthread_rwlock_destroy and pthread_key_create are each the sole blocker of one function at the baseline. Discharge condition: an in-place lifecycle mode (or a typed profile) the gateway checks, with Lean parity.",
+  "source": "docs/reports/w43-libc-contracts/README.md",
+  "recorded_by": "W43-LIBC-CONTRACTS"
+ },
+ {
+  "id": "W43-LIBC-NORETURN",
+  "title": "exit and abort stay undeclared: v1 has no no-return mode",
+  "why": "Card W43-LIBC-CONTRACTS declined both: their custody effect is neutral, but `ensures normal` would give the call a continuation the C does not have, which is not exact. exit blocks 13 functions and abort 10 at the baseline, neither as a sole blocker. Discharge condition: a v1 `noreturn` clause the C gateway models as a path end (and matching Lean), then a declaration.",
+  "source": "docs/reports/w43-libc-contracts/README.md",
+  "recorded_by": "W43-LIBC-CONTRACTS"
+ },
+ {
+  "id": "W43-LIBC-CALLBACK-RETAIN",
+  "title": "Callback-invoking (qsort, call_once, pthread_once) and pointer-retaining (pthread_setspecific) libc callees stay undeclared",
+  "why": "Card W43-LIBC-CONTRACTS declined them: a declaration cannot state the effects of the caller-supplied function the call invokes, and pthread_setspecific retains its pointer argument past the call with no owner v1 can name (`resource_stored` needs an owned owner parameter). call_once and pthread_once are each the sole blocker of one function. W37 did declare a sort with a comparator (rd_kafka_topic_partition_list_sort); this card took the stricter reading for libc, recorded rather than resolved. Discharge condition: a decision, with its reasons, on whether a borrowed fnptr parameter may be declared when the callee invokes it, and a retained-pointer mode for pthread_setspecific.",
+  "source": "docs/reports/w43-libc-contracts/README.md",
+  "recorded_by": "W43-LIBC-CONTRACTS"
+ },
+ {
+  "id": "W43-LIBC-HEADER-INLINE-BODIES",
+  "title": "glibc's header-defined `__bswap_16/32/64` and `__uint64_identity` carry 599 uncontracted-call leaves and were deliberately not declared",
+  "why": "Card W43-LIBC-CONTRACTS classified them `libc-inline`: each is `static __inline` with its body in a glibc header inside every unit that uses it (`bits/byteswap.h`, `bits/uintn-identity.h`), so a name-keyed contract would replace a checkable body with a trusted assumption, and there is no extern prototype for the declared-ABI gate. They block 87, 84, 33 and 1 functions, 0 of them solely. Discharge condition: model `__builtin_bswap16/32/64` (scalar builtins) so W4 can derive the header bodies, or a recorded decision to contract header-inline libc bodies.",
+  "source": "docs/reports/w43-libc-contracts/README.md",
+  "recorded_by": "W43-LIBC-CONTRACTS"
+ },
+ {
+  "id": "W43-LIBC-NAME-LIST-HOST-BOUND",
+  "title": "The libc placement test's name list is generated from the audited host's glibc and the 185 pinned units, not from a libc specification",
+  "why": "Card W43-LIBC-CONTRACTS added `providers/quirin-provider-libc/libc-names.txt` (2,762 names: every identifier followed by `(` at file scope in a libc6-dev or linux-libc-dev header across the pinned units, `scripts/libc_names.py`) and a test in scripts/tests/test_contract_corpus.py that fails when any corpus module or any `.qcore` under providers/ outside the libc crate declares a listed name or a name the libc crate declares. A libc function no pinned unit's headers declare (another libc, a header no unit includes) is not in the list, and QCore test fixtures outside providers/ and the corpus are out of the test's scope by design. Discharge condition: regenerate the list whenever the pinned corpus or audited host changes, or derive it from a specification-level name set (C23 Annex B plus POSIX), and record which.",
+  "source": "docs/reports/w43-libc-contracts/README.md",
+  "recorded_by": "W43-LIBC-CONTRACTS"
+ }
+]

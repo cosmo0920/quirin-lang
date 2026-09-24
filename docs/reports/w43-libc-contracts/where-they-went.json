@@ -1,0 +1,149 @@
+{
+ "functions_naming_a_declared_callee": {
+  "Unknown -> Unknown": 141,
+  "Unsafe -> Unsafe": 10,
+  "Unknown -> Safe": 18
+ },
+ "their_remaining_blockers_top": {
+  "call to uncontracted function `_`": 11,
+  "call to uncontracted function `_` + indirect memory access is outside the resource projection + unmodeled call, aggregate or indirect access in branch condition + unresolved resource identity `_`": 9,
+  "indirect memory access is outside the resource projection": 7,
+  "call to uncontracted function `_` + unmodeled call, aggregate or indirect access in branch condition": 7,
+  "call to uncontracted function `_` + indirect memory access is outside the resource projection + unmodeled call, aggregate or indirect access in branch condition": 4,
+  "braced initializer, expression, or declaration is not modeled": 4,
+  "indirect memory access is outside the resource projection + nullable resource `_` used by a non-null contract + unmodeled call, aggregate or indirect access in branch condition + unresolved resource identity `_`": 3,
+  "call to uncontracted function `_` + indirect memory access is outside the resource projection + unresolved resource identity `_`": 3,
+  "braced initializer, expression, or declaration is not modeled + indirect memory access is outside the resource projection": 3,
+  "indirect memory access is outside the resource projection + unrecognized assignment destination": 3,
+  "braced initializer, expression, or declaration is not modeled + call to uncontracted function `_` + unresolved resource identity `_`": 3,
+  "unmodeled call, aggregate or indirect access in branch condition": 3,
+  "indirect memory access is outside the resource projection + unresolved resource identity `_`": 3,
+  "indirect memory access is outside the resource projection + unmodeled call, aggregate or indirect access in branch condition": 2,
+  "indirect memory access is outside the resource projection + unmodeled call, aggregate or indirect access in branch condition + unmodeled call, aggregate or indirect access in for-loop condition": 2
+ },
+ "sole_blocked_by_a_declared_callee": {
+  "Unknown -> Unknown": 1,
+  "Unknown -> Safe": 18
+ },
+ "sole_remaining_blockers": {
+  "nested call `_` inside a modeled call is outside the resource projection": 1
+ },
+ "sole_rows": [
+  {
+   "function": "librdkafka/rdkafka.c/rd_kafka_srand",
+   "callee": "srand",
+   "after": "Unknown",
+   "remaining": [
+    "nested call `_` inside a modeled call is outside the resource projection"
+   ]
+  },
+  {
+   "function": "librdkafka/rdkafka_admin.c/rd_kafka_DescribeConsumerGroups_cmp",
+   "callee": "strcmp",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "librdkafka/rdkafka_admin.c/rd_kafka_DescribeTopics_cmp",
+   "callee": "strcmp",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "librdkafka/rdlist.c/rd_list_cmp_str",
+   "callee": "strcmp",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "librdkafka/rdmap.c/rd_map_str_cmp",
+   "callee": "strcmp",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "librdkafka/rdstring.c/rd_strcmp",
+   "callee": "strcmp",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "chunkio/cio_utils.c/cio_getpagesize",
+   "callee": "getpagesize",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "monkey-libevent/mk_core/mk_utils.c/mk_utils_worker_rename",
+   "callee": "prctl",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "monkey-libevent/mk_server/mk_lib.c/mk_main",
+   "callee": "sleep",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "monkey-libevent/mk_server/mk_mimetype.c/rbtree_compare",
+   "callee": "strcmp",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "monkey-libevent/mk_server/mk_net.c/net_plain_read",
+   "callee": "recv",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "monkey-libevent/mk_server/mk_net.c/net_plain_write",
+   "callee": "send",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "monkey-libevent/mk_server/mk_socket.c/mk_socket_set_cork_flag",
+   "callee": "setsockopt",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "monkey-libevent/mk_server/mk_socket.c/mk_socket_set_tcp_defer_accept",
+   "callee": "setsockopt",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "monkey-libevent/mk_server/mk_socket.c/mk_socket_set_tcp_fastopen",
+   "callee": "setsockopt",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "monkey-libevent/mk_server/mk_socket.c/mk_socket_set_tcp_nodelay",
+   "callee": "setsockopt",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "monkey-libevent/mk_server/mk_socket.c/mk_socket_set_tcp_reuseport",
+   "callee": "setsockopt",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "monkey-libevent/mk_server/mk_utils.c/mk_utils_get_system_core_count",
+   "callee": "sysconf",
+   "after": "Safe",
+   "remaining": []
+  },
+  {
+   "function": "monkey-libevent/mk_server/mk_utils.c/mk_utils_get_system_page_size",
+   "callee": "sysconf",
+   "after": "Safe",
+   "remaining": []
+  }
+ ]
+}

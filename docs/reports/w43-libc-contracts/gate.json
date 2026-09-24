@@ -1,0 +1,13 @@
+{
+  "note": "W43-LIBC-CONTRACTS: core Rust, fmt, clippy, probes and Lean measured on d5b90c6d (the implementation commit; later commits change documents, the ledger, report scripts and the report's evidence files only, no Rust, Lean, contract or test source). 5136 core Rust passed / 0 failed / 12 ignored over 272 summaries (equal to the base: this card adds no Rust test and re-pins existing ones); 167 Lean audits; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace remeasured on the same tree: 109 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0 (72 provider-owned); five package builds and verifications exit 0; 5 package Python tests. Logs: worktree-private measure/gate and measure/provider-gate of agent-a2aa6b1173f195eb0. Clang recorded in this checkout. Corpus: 22 functions Unknown -> Safe relative to 55 declared libc/POSIX premises, 0 unit moves, leak 272.",
+  "workspace_tests": 5136,
+  "provider_tests": 109,
+  "python_evidence_validator_tests": 319,
+  "lean_audits": 167,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
