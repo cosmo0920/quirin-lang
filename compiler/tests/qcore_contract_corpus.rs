@@ -1101,7 +1101,7 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // (`regexec`, `regerror`); its eight other declarations are appended to
     // existing libc modules.
     // 109 -> 110 by card W43-DESCRIPTOR-RESOURCE-TRACKING's `libc/dirent.qcore`.
-    assert_eq!(sources.len(), 109, "unexpected contract corpus size");
+    assert_eq!(sources.len(), 110, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");
