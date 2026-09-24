@@ -159,16 +159,24 @@ fn le_evaluated(a: &Term, b: &Term, facts: &dyn Scalars) -> bool {
 /// counted loop's body edge, whose index is never negative, so the clamp
 /// preserves the order.
 fn le_fact(a: &Term, b: &Term, facts: &dyn Scalars) -> bool {
-    let Term::Var { name: x, offset: ka } = a else {
+    let Term::Var {
+        name: x,
+        offset: ka,
+    } = a
+    else {
         return false;
     };
     facts.upper_bounds(x).iter().any(|bound| match (bound, b) {
-        (Term::Const(c), Term::Const(d)) => {
-            i128::from(*c) + i128::from(*ka) - 1 <= i128::from(*d)
-        }
+        (Term::Const(c), Term::Const(d)) => i128::from(*c) + i128::from(*ka) - 1 <= i128::from(*d),
         (
-            Term::Var { name: y, offset: kt },
-            Term::Var { name: z, offset: kb },
+            Term::Var {
+                name: y,
+                offset: kt,
+            },
+            Term::Var {
+                name: z,
+                offset: kb,
+            },
         ) if y == z => i128::from(*kt) + i128::from(*ka) - 1 <= i128::from(*kb),
         _ => false,
     })
@@ -209,8 +217,7 @@ impl Slot {
                     may_be_null: left, ..
                 },
                 Self::Live {
-                    may_be_null: right,
-                    ..
+                    may_be_null: right, ..
                 },
             ) => left == right,
             (Self::Released { .. }, Self::Released { .. }) => true,
@@ -276,7 +283,9 @@ pub enum StoreOutcome {
 pub enum ReleaseOutcome {
     /// A live element was released. `may_be_null` says whether it may have
     /// been a null pointer, which a non-null contract must not receive.
-    Released { may_be_null: bool },
+    Released {
+        may_be_null: bool,
+    },
     /// The element provably holds a null pointer.
     Null,
     /// The element was provably released already: a `double_release`
@@ -432,7 +441,12 @@ impl Ranges {
     }
 
     /// Refine element `index` on one edge of a null test.
-    pub fn test_null(&mut self, index: &Term, assume_null: bool, facts: &dyn Scalars) -> TestOutcome {
+    pub fn test_null(
+        &mut self,
+        index: &Term,
+        assume_null: bool,
+        facts: &dyn Scalars,
+    ) -> TestOutcome {
         let Some(Position::In(k)) = self.position(index, facts) else {
             return TestOutcome::Refused;
         };
@@ -454,8 +468,7 @@ impl Ranges {
                 TestOutcome::Refined
             }
             Slot::Live {
-                may_be_null: false,
-                ..
+                may_be_null: false, ..
             } => {
                 return if assume_null {
                     TestOutcome::Infeasible
@@ -679,7 +692,9 @@ fn is_plain_name(text: &str) -> bool {
     text.as_bytes()
         .first()
         .is_some_and(|byte| byte.is_ascii_alphabetic() || *byte == b'_')
-        && text.bytes().all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
+        && text
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
         && !matches!(
             text,
             "NULL" | "nullptr" | "sizeof" | "return" | "if" | "for" | "while" | "do" | "else"
@@ -720,7 +735,9 @@ fn is_null_constant(tokens: &[&str]) -> bool {
 }
 
 /// An element store `BASE [ INDEX ] = VALUE`: the place and the value tokens.
-pub fn store_statement<'a>(texts: &'a [&'a str]) -> Option<((String, IndexSpelling), &'a [&'a str])> {
+pub fn store_statement<'a>(
+    texts: &'a [&'a str],
+) -> Option<((String, IndexSpelling), &'a [&'a str])> {
     let close = texts.iter().position(|text| *text == "]")?;
     if texts.get(close + 1) != Some(&"=") || texts.get(close + 2) == Some(&"=") {
         return None;
@@ -789,7 +806,11 @@ pub fn null_condition(texts: &[&str]) -> Option<((String, IndexSpelling), bool)>
 
 /// A canonical counted loop header `for (I = 0; I < B; I++)`: the index and
 /// the bound spelling. `init` may declare the index (`size_t I = 0`).
-pub fn counted_header(init: &[&str], condition: &[&str], increment: &[&str]) -> Option<(String, BoundSpelling)> {
+pub fn counted_header(
+    init: &[&str],
+    condition: &[&str],
+    increment: &[&str],
+) -> Option<(String, BoundSpelling)> {
     let [.., index, "=", "0"] = init else {
         return None;
     };
@@ -844,8 +865,7 @@ pub fn body_keeps_exit_equation(body: &[&str], index: &str, bound: Option<&str>)
         if matches!(*text, "break" | "goto" | "switch" | "case" | "default") {
             return false;
         }
-        if *text == ":" && at > 0 && is_plain_name(body[at - 1]) && body.get(at + 1) != Some(&":")
-        {
+        if *text == ":" && at > 0 && is_plain_name(body[at - 1]) && body.get(at + 1) != Some(&":") {
             // `LABEL :` (a conditional expression's `:` follows a value too,
             // and refusing it is the harmless direction).
             return false;
@@ -856,15 +876,21 @@ pub fn body_keeps_exit_equation(body: &[&str], index: &str, bound: Option<&str>)
             let previous = at.checked_sub(1).map(|p| body[p]);
             let before = at.checked_sub(2).map(|p| body[p]);
             let assigns = (next == Some("=") && after != Some("="))
+                || (matches!(next, Some("+" | "-" | "*" | "/" | "%" | "&" | "|" | "^"))
+                    && after == Some("="))
+                || matches!(
+                    (next, after),
+                    (Some("+"), Some("+")) | (Some("-"), Some("-"))
+                )
                 || (matches!(
-                    next,
-                    Some("+" | "-" | "*" | "/" | "%" | "&" | "|" | "^")
-                ) && after == Some("="))
-                || matches!((next, after), (Some("+"), Some("+")) | (Some("-"), Some("-")))
-                || (matches!((next, after), (Some("<"), Some("<")) | (Some(">"), Some(">")))
-                    && body.get(at + 3) == Some(&"="))
+                    (next, after),
+                    (Some("<"), Some("<")) | (Some(">"), Some(">"))
+                ) && body.get(at + 3) == Some(&"="))
                 || previous == Some("&")
-                || matches!((before, previous), (Some("+"), Some("+")) | (Some("-"), Some("-")));
+                || matches!(
+                    (before, previous),
+                    (Some("+"), Some("+")) | (Some("-"), Some("-"))
+                );
             if assigns {
                 return false;
             }
@@ -901,7 +927,11 @@ impl CollectionTypes {
             Option<crate::typed_field_access::IntegerClass>,
         >::new();
         for fact in facts {
-            let specifiers = fact.specifiers.iter().map(String::as_str).collect::<Vec<_>>();
+            let specifiers = fact
+                .specifiers
+                .iter()
+                .map(String::as_str)
+                .collect::<Vec<_>>();
             let rejecting = specifiers
                 .iter()
                 .any(|text| matches!(*text, "volatile" | "_Atomic"));
@@ -965,9 +995,9 @@ impl CollectionTypes {
         }
         match bound {
             BoundSpelling::Literal(value) => *value <= i32::MAX as u64,
-            BoundSpelling::Name(name) => self.integer(name).is_some_and(|bound| {
-                class.signed || (!bound.signed && bound.rank <= class.rank)
-            }),
+            BoundSpelling::Name(name) => self
+                .integer(name)
+                .is_some_and(|bound| class.signed || (!bound.signed && bound.rank <= class.rank)),
         }
     }
 }
@@ -1003,13 +1033,19 @@ mod tests {
         let entry = Zero(&["i"], Vec::new());
         let body = Zero(&[], Vec::new());
         let mut first = Ranges::default();
-        assert_eq!(first.store(&Term::var("i"), live(7), &entry), StoreOutcome::Stored);
+        assert_eq!(
+            first.store(&Term::var("i"), live(7), &entry),
+            StoreOutcome::Stored
+        );
         first.step("i", &body);
         assert_eq!(first.points(), &[Term::Const(0), Term::var("i")]);
         let joined = Ranges::join(&Ranges::default(), &entry, &first, &body).expect("joins");
         assert_eq!(joined, first);
         let mut second = joined.clone();
-        assert_eq!(second.store(&Term::var("i"), live(7), &body), StoreOutcome::Stored);
+        assert_eq!(
+            second.store(&Term::var("i"), live(7), &body),
+            StoreOutcome::Stored
+        );
         second.step("i", &body);
         assert_eq!(second, joined, "the invariant `[0, i)` live is stable");
         let mut exit = joined;
@@ -1042,7 +1078,11 @@ mod tests {
         assert_eq!(second, joined);
         let mut exit = joined;
         assert!(exit.substitute("j", &Term::var("n"), &NoFacts));
-        assert_eq!(exit.live_sites(&NoFacts), None, "nothing is owed after the sweep");
+        assert_eq!(
+            exit.live_sites(&NoFacts),
+            None,
+            "nothing is owed after the sweep"
+        );
     }
 
     #[test]
@@ -1065,7 +1105,10 @@ mod tests {
             points: vec![Term::Const(0), Term::var("n")],
             slots: vec![live(1)],
         };
-        assert_eq!(ranges.release(&Term::var("k"), &NoFacts), ReleaseOutcome::Refused);
+        assert_eq!(
+            ranges.release(&Term::var("k"), &NoFacts),
+            ReleaseOutcome::Refused
+        );
         assert_eq!(
             ranges.store(&Term::var("k"), live(2), &NoFacts),
             StoreOutcome::Refused
@@ -1088,8 +1131,15 @@ mod tests {
             counted_header(&["i", "=", "0"], &["i", "<", "n"], &["i", "+", "+"]),
             Some(("i".to_owned(), BoundSpelling::Name("n".to_owned())))
         );
-        assert_eq!(counted_header(&["i", "=", "1"], &["i", "<", "n"], &["i", "+", "+"]), None);
-        assert!(!body_keeps_exit_equation(&["n", "-", "-", ";"], "i", Some("n")));
+        assert_eq!(
+            counted_header(&["i", "=", "1"], &["i", "<", "n"], &["i", "+", "+"]),
+            None
+        );
+        assert!(!body_keeps_exit_equation(
+            &["n", "-", "-", ";"],
+            "i",
+            Some("n")
+        ));
         assert!(!body_keeps_exit_equation(&["break", ";"], "i", Some("n")));
         assert!(body_keeps_exit_equation(
             &["x_free", "(", "v", "[", "i", "]", ")", ";"],

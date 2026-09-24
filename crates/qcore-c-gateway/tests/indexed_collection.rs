@@ -39,13 +39,16 @@ contract { requires resource_contract_v1; ensures normal resource_released(p, no
 extern fn x_note(p: ptr<mut, u8>) -> unit\n\
 contract { requires resource_contract_v1; ensures normal resource_borrowed(p);\n\
            ensures normal resource_return_none(); };\n\
+extern fn x_copy(p: ptr<mut, u8>) -> ptr<mut, u8>\n\
+contract { requires resource_contract_v1; ensures normal resource_borrowed(p);\n\
+           ensures normal resource_return_owned(nullable); };\n\
 extern fn x_take(p: ptr<mut, u8>) -> unit\n\
 contract { requires resource_contract_v1; ensures normal resource_consumed(p, nullable);\n\
            ensures normal resource_return_none(); };";
 
 const DECLARATIONS: &str = "\
 void *x_alloc(unsigned long n); char *x_fresh(unsigned long n); char *x_dup(const char *s); \
-void x_free(void *p); void x_close(void *p); void x_note(void *p); void x_take(void *p);";
+void x_free(void *p); void x_close(void *p); void x_note(void *p); void x_take(void *p); char *x_copy(void *p);";
 
 fn contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(
@@ -384,6 +387,21 @@ fn handing_a_filled_collection_to_a_borrowing_callee_refuses() {
 }
 
 #[test]
+fn an_element_store_whose_call_borrows_the_collection_refuses() {
+    expect(
+        "the acquiring call is handed the array that already owes `v[0]`",
+        "void w(const char *s) { char **v = x_alloc(16); if (!v) return; v[0] = x_dup(s); \
+         v[1] = x_copy(v); x_free(v[0]); x_free(v[1]); x_free(v); }",
+        "Unknown",
+        &[
+            "unknown_alias:v",
+            "unknown_alias:v[0]",
+            "unknown_alias:v[1]",
+        ],
+    );
+}
+
+#[test]
 fn a_possibly_null_element_refuses_a_non_null_release() {
     expect(
         "`x_close` requires a non-null element; `x_dup` may return null",
@@ -483,7 +501,10 @@ fn a_helper_returning_a_filled_collection_publishes_no_summary() {
          v[0] = x_fresh(1); return v; } \
          void w(const char *s) { char **v = mk(s); if (!v) return; x_free(v); }",
         "Unknown",
-        &["unknown_alias:v", "unsupported:call to uncontracted function `mk`"],
+        &[
+            "unknown_alias:v",
+            "unsupported:call to uncontracted function `mk`",
+        ],
     );
 }
 

@@ -2492,9 +2492,12 @@ impl TypedAccessModel {
             };
         }
         if core.is_empty()
-            || !core
-                .iter()
-                .all(|text| matches!(*text, "char" | "short" | "int" | "long" | "signed" | "unsigned"))
+            || !core.iter().all(|text| {
+                matches!(
+                    *text,
+                    "char" | "short" | "int" | "long" | "signed" | "unsigned"
+                )
+            })
         {
             return None;
         }

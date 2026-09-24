@@ -4653,7 +4653,11 @@ impl Parser<'_> {
     /// rebind it); a named index is a declared integer with the same slot
     /// premise, and a `name++` index is additionally a counter that cannot
     /// wrap. Everything flow-sensitive is decided by `transfer`.
-    fn element_premises(&self, base: &str, index: &crate::indexed_collection::IndexSpelling) -> bool {
+    fn element_premises(
+        &self,
+        base: &str,
+        index: &crate::indexed_collection::IndexSpelling,
+    ) -> bool {
         use crate::indexed_collection::IndexSpelling;
         self.collection_types.pointer_element(base)
             && self.frame_protected.contains(base)
@@ -4703,8 +4707,7 @@ impl Parser<'_> {
             {
                 return None;
             }
-            let place =
-                crate::indexed_collection::place_spelling(&base, &index.term());
+            let place = crate::indexed_collection::place_spelling(&base, &index.term());
             let call = if crate::indexed_collection::is_null_value(value) {
                 None
             } else {
@@ -4811,8 +4814,14 @@ impl Parser<'_> {
             return None;
         };
         let init_view = [destination.as_str(), "=", "0"];
-        let condition_view = condition_texts.iter().map(String::as_str).collect::<Vec<_>>();
-        let increment_view = increment_texts.iter().map(String::as_str).collect::<Vec<_>>();
+        let condition_view = condition_texts
+            .iter()
+            .map(String::as_str)
+            .collect::<Vec<_>>();
+        let increment_view = increment_texts
+            .iter()
+            .map(String::as_str)
+            .collect::<Vec<_>>();
         let (index, bound) = crate::indexed_collection::counted_header(
             &init_view,
             &condition_view,
@@ -8496,6 +8505,7 @@ pub(crate) fn analyze_cfg_with_entry(
             &cfg.function,
             node.line,
             &output,
+            &entry_custody.exempt_sites(&output),
             &acquisition_lines,
             &mut diagnostics,
         );
@@ -8649,7 +8659,9 @@ fn report_collection_violations(
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     for (node_id, node) in cfg.nodes.iter().enumerate() {
-        let Some(state) = incoming[node_id].as_ref().filter(|state| !state.collection_vacuous)
+        let Some(state) = incoming[node_id]
+            .as_ref()
+            .filter(|state| !state.collection_vacuous)
         else {
             continue;
         };
@@ -8735,6 +8747,9 @@ fn report_collection_exit(
     function: &str,
     line: usize,
     state: &AbstractState,
+    // Sites the caller receives through a declared out slot: an array handed
+    // back that way carries its elements with it, exactly as a returned one.
+    exempt: &BTreeSet<usize>,
     acquisition_lines: &BTreeMap<usize, usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
@@ -8743,6 +8758,11 @@ fn report_collection_exit(
     }
     for (owner, collection) in &state.collections {
         let status = state.resources.get(owner).copied().unwrap_or(0);
+        let status = if exempt.contains(owner) && status == LIVE {
+            ESCAPED
+        } else {
+            status
+        };
         let escaped = status & ESCAPED != 0;
         let unresolved = state.unresolved_effect_sites.contains(owner);
         let undecided = match collection {
@@ -8788,9 +8808,9 @@ pub(crate) const COLLECTION_UNDECIDED: &str =
 fn collection_blocks_claim(state: &AbstractState) -> bool {
     !state.collection_vacuous
         && state.collections.iter().any(|(owner, collection)| {
-        matches!(collection, crate::indexed_collection::Collection::Unknown)
-            || (collection.may_owe(state) && state.resources.get(owner) != Some(&ESCAPED))
-    })
+            matches!(collection, crate::indexed_collection::Collection::Unknown)
+                || (collection.may_owe(state) && state.resources.get(owner) != Some(&ESCAPED))
+        })
 }
 
 /// Whether `site` carries a collection that may still owe, or whose ranges are
@@ -8799,8 +8819,8 @@ fn carries_collection(state: &AbstractState, site: usize) -> bool {
     !state.collection_vacuous
         && state
             .collections
-        .get(&site)
-        .is_some_and(|collection| collection.may_owe(state))
+            .get(&site)
+            .is_some_and(|collection| collection.may_owe(state))
 }
 
 /// Read one exit's custody residual out of its settled state.
@@ -8923,7 +8943,9 @@ fn transfer(
     alias: &NodeAliasFacts,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) -> AbstractState {
-    let base = |node: &LegacyCfgNode, state: AbstractState, diagnostics: &mut BTreeSet<LegacyDiagnostic>| {
+    let base = |node: &LegacyCfgNode,
+                state: AbstractState,
+                diagnostics: &mut BTreeSet<LegacyDiagnostic>| {
         transfer_base(
             function,
             node,
@@ -8948,7 +8970,12 @@ fn transfer(
             let (mut state, slot) = match call {
                 None => (state, Some(crate::indexed_collection::Slot::Null)),
                 Some(call) => {
-                    let mut state = base(&with_instruction(node, call), state, diagnostics);
+                    let call_node = with_instruction(node, call);
+                    let mut state = state;
+                    // The inner call is a call like any other: it may not be
+                    // handed a collection that still owes an element.
+                    refuse_collection_owner_uses(function, &call_node, &mut state, diagnostics);
+                    let mut state = base(&call_node, state, diagnostics);
                     let slot = take_element_result(&mut state, &place);
                     (state, slot)
                 }
@@ -9118,7 +9145,13 @@ fn take_element_result(
     place: &str,
 ) -> Option<crate::indexed_collection::Slot> {
     let binding = state.pointers.remove(place)?;
-    let site = match binding.targets.iter().copied().collect::<Vec<_>>().as_slice() {
+    let site = match binding
+        .targets
+        .iter()
+        .copied()
+        .collect::<Vec<_>>()
+        .as_slice()
+    {
         [site] if !binding.unknown && binding.derivation.is_identity() => *site,
         _ => {
             mark_unresolved_effect(state, &binding);
@@ -9150,7 +9183,10 @@ fn take_element_result(
 fn with_collection(
     state: &mut AbstractState,
     owner: usize,
-    operation: impl FnOnce(&mut crate::indexed_collection::Ranges, &dyn crate::indexed_collection::Scalars) -> bool,
+    operation: impl FnOnce(
+        &mut crate::indexed_collection::Ranges,
+        &dyn crate::indexed_collection::Scalars,
+    ) -> bool,
 ) -> bool {
     if state.collection_vacuous {
         return true;
@@ -9259,7 +9295,11 @@ fn forget_written_bounds(instruction: &LegacyInstruction, state: &mut AbstractSt
         .index_zero
         .retain(|name| !writes_scalar(instruction, name));
     for bounds in state.index_bounds.values_mut() {
-        bounds.retain(|bound| bound.name().is_none_or(|name| !writes_scalar(instruction, name)));
+        bounds.retain(|bound| {
+            bound
+                .name()
+                .is_none_or(|name| !writes_scalar(instruction, name))
+        });
     }
 }
 
@@ -9314,7 +9354,9 @@ fn refuse_collection_owner_uses(
             };
             let transfers = matches!(
                 contract.parameters.get(index),
-                Some(ResourceParameterMode::Released { .. } | ResourceParameterMode::Consumed { .. })
+                Some(
+                    ResourceParameterMode::Released { .. } | ResourceParameterMode::Consumed { .. }
+                )
             ) && !matches!(
                 contract.result,
                 ResourceReturnMode::Reallocated { parameter, .. } if parameter == index
