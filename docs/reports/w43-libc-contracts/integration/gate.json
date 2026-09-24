@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W43-LIBC-CONTRACTS on merge b5f45079 (onto main fa7ab464, after WINDOWS-TEST-PORTABILITY), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5139 core Rust passed / 0 failed / 11 ignored over 274 summaries; 109 provider Rust passed / 0 / 0 over 39 summaries; 167 Lean audits; 319 root Python tests; 5 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-contracts/artifacts/ (checkout root aliased to the card worktree). The core count differs from the card's own gate (5136/0/12 on 9edad50c) by main's intervening Windows test commit; that difference was not measured separately.",
+ "workspace_tests": 5139,
+ "provider_tests": 109,
+ "python_evidence_validator_tests": 319,
+ "lean_audits": 167,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

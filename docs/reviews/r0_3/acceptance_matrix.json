@@ -6731,8 +6731,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W43-LIBC-CONTRACTS: core Rust, fmt, clippy, probes and Lean measured on d5b90c6d (the implementation commit; later commits change documents, the ledger, report scripts and the report's evidence files only, no Rust, Lean, contract or test source). 5136 core Rust passed / 0 failed / 12 ignored over 272 summaries (equal to the base: this card adds no Rust test and re-pins existing ones); 167 Lean audits; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace remeasured on the same tree: 109 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0 (72 provider-owned); five package builds and verifications exit 0; 5 package Python tests. Logs: worktree-private measure/gate and measure/provider-gate of agent-a2aa6b1173f195eb0. Clang recorded in this checkout. Corpus: 22 functions Unknown -> Safe relative to 55 declared libc/POSIX premises, 0 unit moves, leak 272.",
-  "workspace_tests": 5136,
+  "note": "Integration gate for W43-LIBC-CONTRACTS on merge b5f45079 (onto main fa7ab464, after WINDOWS-TEST-PORTABILITY), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5139 core Rust passed / 0 failed / 11 ignored over 274 summaries; 109 provider Rust passed / 0 / 0 over 39 summaries; 167 Lean audits; 319 root Python tests; 5 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-contracts/artifacts/ (checkout root aliased to the card worktree). The core count differs from the card's own gate (5136/0/12 on 9edad50c) by main's intervening Windows test commit; that difference was not measured separately.",
+  "workspace_tests": 5139,
   "provider_tests": 109,
   "python_evidence_validator_tests": 319,
   "lean_audits": 167,
@@ -6911,7 +6911,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-libc-contracts/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-libc-contracts/integration/gate.json)"
  },
  "named_followups": [
   {
