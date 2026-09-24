@@ -6731,7 +6731,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: core and provider gates measured on 3044f204 (later commits change the report, ledger, status, increment record, index and matrix only). measure/gate: submodules 0, clang 0, fmt 0, clippy --workspace 0, probe 0, followup 0, lean 0 (170 audits; AuditContractInherit 46 -> 57 theorems); the test step exited 101 with 5215 passed / 1 failed / 11 ignored over 281 summaries: compiler/tests/std_socket_inet.rs this_card_reserves_no_word_and_its_address_rule_collides_with_nothing, a repository-wide .qcore census, saw this card's worktree-private base export (private/base-src, used for the arbiter's BEFORE binary) as a second copy of examples/sockets. The export was deleted and the test step rerun in full in measure/gate-test2: exit 0, 5216 core Rust passed / 0 failed / 11 ignored over 281 summaries. Provider workspace: 124 passed / 0 failed / 0 ignored over 39 summaries, isolated package mutation control 1/1 (rerun with --nocapture: 6 changed or missing included parents refused in 2 packages), provider fmt and clippy clean, contracts.py check 0, five package builds and verifications 0, 13 providers/tests Python tests. Root Python tests counted after the final matrix regeneration. Logs: worktree-private measure/ of agent-a5e7dd5583fb9ea29. Clang recorded in this checkout. Corpus arbiter: verdict-bearing diagnostics byte-identical to docs/reports/w43-libc-result-alias/artifacts/ at BEFORE and AFTER. No coverage promotion.",
+  "note": "Integration gate for CONTRACT-INHERIT-QCORE-PROVIDER-NAMING on merge e7ef0887 (onto main f8b41209, which the card had already merged), measured by the integrator in its own worktree from a cold build; every exit captured to a file, not piped. 5216 core Rust passed / 0 failed / 11 ignored over 281 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 170 Lean audits; 330 root Python tests; 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-result-alias/artifacts/; against the CONTRACT-INHERIT-ADOPTION integration run in the same checkout, source-effects is byte-identical and contracts differs only by the two qcore-provider memory modules now keyed crate:module (token-identical to their hand-written texts), the schema-2 manifest entries and the eight added inheritance chains.",
   "workspace_tests": 5216,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
@@ -6914,7 +6914,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/contract-inherit-qcore-provider-naming/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/contract-inherit-qcore-provider-naming/integration/gate.json)"
  },
  "named_followups": [
   {
