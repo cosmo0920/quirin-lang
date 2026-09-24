@@ -816,6 +816,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-monkey-callback-composition](w43-monkey-callback-composition/README.md) | W43 Monkey callback Cycle 18 composition |
 
+| [w43-result-alias-returned](w43-result-alias-returned/README.md) | W43-RESULT-ALIAS-RETURNED: inferred derived-result summaries |
+
 | [w43-return-expression](w43-return-expression/README.md) | W43-RETURN-EXPRESSION — the refused return expressions, measured and re-attributed |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |

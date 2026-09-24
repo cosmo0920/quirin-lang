@@ -391,7 +391,57 @@ W43-LIBC-RESULT-ALIAS. It sets `CARGO_BUILD_JOBS=6` and `RUST_TEST_THREADS=2`,
 turns debug info off, and captures every exit to a file, never through a pipe.
 The logs are worktree-private under `measure/`.
 
-GATE-TABLE
+The core and provider gates ran on the final implementation commit `c7470e42`.
+Later commits change documents, the ledger, report scripts and evidence only.
+The generator input is [gate.json](gate.json), with the
+[Clang recording](clang-version.txt) taken in this checkout beside it.
+
+| Command | Exit | Result | Log |
+|---|---:|---|---|
+| `git submodule update --init --recursive` | 0 | libevent at `d82464a2…` | `measure/gate/submodules.log` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 | `measure/gate/clang.log` |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,231 passed / 0 failed / 11 ignored**, 279 summaries | `measure/gate/test.log` |
+| `cargo fmt --all -- --check` | 0 | clean | `measure/gate/fmt.log` |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean | `measure/gate/clippy.log` |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | | `measure/gate/probe.log` |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | | `measure/gate/followup.log` |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **171** audits | `measure/gate/lean.log` |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w43-result-alias-returned/gate.json` | 0 | 298 follow-ups, 108 contract modules, 171 Lean audits | `measure/build-matrix.log` |
+| `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | index regenerated and matching | `measure/docs-index-check.log` |
+| `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **330** tests | `measure/python-final.log` |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **117 passed / 0 failed / 0 ignored**, 39 summaries | `measure/provider-gate/ptest.log` |
+| `… -p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations … -- --exact --test-threads=1` | 0 | 1 passed (isolated, constraint 16) | `measure/provider-gate/pisolated.log` |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean | `measure/provider-gate/pfmt.log` |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean | `measure/provider-gate/pclippy.log` |
+| `python3 providers/contracts.py check` | 0 | inventories unchanged | `measure/provider-gate/pcontracts.log` |
+| `python3 providers/package.py build --output measure/provider-gate/packages` | 0 | 5 packages | `measure/provider-gate/pbuild.log` |
+| `python3 providers/package.py verify …/<id>` (×5: chunkio, cmetrics, ctraces, libevent, librdkafka) | 0 ×5 | | `measure/provider-gate/pverify.log` |
+| `python3 -m unittest discover -s providers/tests` | 0 | 12 tests | `measure/provider-gate/ppython.log` |
+
+**Counts.** This card adds 23 Rust tests and one test binary:
+
+* `crates/qcore-c-gateway/tests/derived_result_returned.rs`: 15 tests;
+* the `legacy_summary::derived` unit module
+  (`crates/qcore-c-gateway/tests/unit/legacy_derived_summary.rs`): 8 tests.
+
+It also adds one Lean audit. The base's own gate figures at `f8b41209` were not
+remeasured here, so the delta is stated by test, not by subtraction. No
+`P02-FLAKE` row failed.
+
+**Attempts that are not the gate, disclosed.**
+
+* **First core gate, stopped by hand** after its submodule and Clang steps,
+  while `cargo test` was running. A census refinement (`c7470e42`, which splits
+  the not-a-candidate class) was about to change Rust source. Its partial logs
+  are in `measure/gate-aborted-1/`.
+* **First provider gate, died of host disk exhaustion** (`No space left on
+  device` in `providers/target`, with the shared disk at 100%). It measured the
+  disk, not the program. It is retained at `measure/provider-gate-aborted-disk/`
+  and is not evidence. Only this worktree's own `target/debug` (21 GB) and
+  provider conformance artifacts were freed, after the core gate had completed.
+  The provider gate was then rerun from scratch; that run is the one above.
+* **First Python run, before the final regeneration:** 330 tests, exit 0
+  (`measure/python1.log`). It is superseded by the final run above.
 
 ## 7. Ledger and status
 
