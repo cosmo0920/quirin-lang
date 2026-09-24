@@ -1,9 +1,9 @@
 {
   "diagnostics": {
     "file": "diagnostics.json.gz",
-    "raw_sha256": "c7175ae3d74e71754687c55f42203cd656972c6df6d0b47ae97accda22ca0385",
-    "gzip_sha256": "d17caa2c90ebff2a7432a3e60dadcb567f0ee2c8f24c257729fa9c5e4569629a",
-    "raw_bytes": 13469299
+    "raw_sha256": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+    "gzip_sha256": "ff30e32512cd1c86b42400de1f4c4737fcb2232d48e5b5c148ae5523544f7be4",
+    "raw_bytes": 12999645
   },
   "chunk-contracts": {
     "file": "chunk-contracts.json.gz",
@@ -13,9 +13,9 @@
   },
   "contracts": {
     "file": "contracts.json.gz",
-    "raw_sha256": "1161b57e60e19c799e2fb560616d3136081bda0b907a78747300a9ac3ff384fd",
-    "gzip_sha256": "a4af75310a025be8bf25ea7261e1c53b285139b6b4e03c49975f2f2004083a2d",
-    "raw_bytes": 280135
+    "raw_sha256": "f22bee6c4ce05f2d72a78dbc4272e6b229065d9b480920a320c4c7f529466266",
+    "gzip_sha256": "b2450ed28290e2ad658653242d61b30a107aaababc9333fb42decb17d9335609",
+    "raw_bytes": 306342
   },
   "source-effects": {
     "file": "source-effects.json.gz",

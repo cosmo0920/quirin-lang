@@ -4,7 +4,10 @@ Card W43-INDEXED-RESOURCE-COLLECTIONS, 2026-09-25, on base `ec70709a` (main
 after the qcore-provider naming integration) merged with the finished
 W43-INDIRECT-ACCESS-GENERAL branch (`6bb838c8`, merge `9c7774dc`), and then
 with main `0a07cb57` once that contained the indirect card (merge
-`6bcfae3d`). The card
+`6bcfae3d`), and finally with main `d2dd61c1` (merge `eea0b30b`), which added
+W43-LIBC-RESTRICT-PROTOTYPES, W43-RESULT-ALIAS-RETURNED, W43-INDEX-TRAVERSAL,
+W43-LIBC-PRINTF-FAMILY and W43-DESCRIPTOR-RESOURCE-TRACKING. The merges and their
+resolutions are in [§9](#9-the-d2dd61c1-merge). The card
 teaches the C gateway to track **indexed resources**: a heap array whose
 elements hold owned resources, filled and released in index loops. The
 forecast was frozen before any rule existed ([PREDICTION.md](PREDICTION.md),
@@ -47,12 +50,14 @@ commit `ea33ff70`).
 
   Every unproved range refuses. That includes releasing `[0, n)` after filling
   `[0, i)`, a `break`, a bound written in the body, a narrower unsigned index,
-  a borrowing callee, and paths that disagree. There are 30 tests
+  a borrowing callee, paths that disagree, and any non-heap element. There are 32 tests
   ([§4](#4-tests)).
-* **Lean.** `QCore.IndexedCollection` has 44 theorems, audited by
+* **Lean.** `QCore.IndexedCollection` has 47 theorems, audited by
   `AuditIndexedCollection.lean`. It has no placeholders and no project axioms
   ([§3](#3-lean-parity)).
-* **Arbiter** ([§5](#5-arbiter)). BEFORE reproduces the W43-INDIRECT-ACCESS-GENERAL
+* **Arbiter** ([§5](#5-arbiter), [§9](#9-the-d2dd61c1-merge)). On the final merged tree
+  AFTER equals the W43-DESCRIPTOR-RESOURCE-TRACKING integration baseline except for the
+  `scope` string. Before that merge, BEFORE reproduced the W43-INDIRECT-ACCESS-GENERAL
   diagnostics byte for byte. AFTER removes **0** leaves and adds **0**. It
   moves **0** functions and **0** units. The leak pin stays at **271**, and
   there are **0** violation candidates. The diagnostics differ from BEFORE
@@ -63,15 +68,15 @@ commit `ea33ff70`).
   * In every one the array is a formal, a cast alias of one, or an array whose
     own allocation is refused. So every one keeps its fallback refusal, and
     the leaf is present in both runs.
-* **Ledger: 313 → 320** (main's 313 at `0a07cb57`). Nothing is retired. `W43-INDIRECT-POINTER-VALUE-STORE`
+* **Ledger: 329 → 336** (main's 329 at `d2dd61c1`). Nothing is retired. `W43-INDIRECT-POINTER-VALUE-STORE`
   is not discharged: its `a[i] = q` shape is exactly the name store this card
   keeps refused. Seven residuals are registered ([§7](#7-ledger)).
 
-| Measure | BEFORE (W43-INDIRECT-ACCESS-GENERAL) | AFTER | Delta |
+| Measure | Combined baseline (W43-DESCRIPTOR-RESOURCE-TRACKING integration) | AFTER (`eea0b30b`) | Delta |
 |---|---:|---:|---:|
-| Functions Safe / provisional Unsafe / Unknown | 269 / 84 / 4,481 | 269 / 84 / 4,481 | 0 |
-| Units Safe / provisional Unsafe / Unknown / data-only | 3 / 42 / 136 / 4 | 3 / 42 / 136 / 4 | 0 |
-| `leak` / `unknown_alias` / `unsupported` | 271 / 4,727 / 47,832 | 271 / 4,727 / 47,832 | 0 |
+| Functions Safe / provisional Unsafe / Unknown | 294 / 85 / 4,455 | 294 / 85 / 4,455 | 0 |
+| Units Safe / provisional Unsafe / Unknown / data-only | 3 / 43 / 135 / 4 | 3 / 43 / 135 / 4 | 0 |
+| `leak` / `unknown_alias` / `unsupported` | 271 / 4,358 / 45,848 | 271 / 4,358 / 45,848 | 0 |
 | `double_release` / `invalid_release` / `use_after_release` | 0 / 0 / 0 | 0 / 0 / 0 | 0 |
 | element operations lowered (census run) | — | 27 in 19 functions, all on their fallback | — |
 
@@ -250,7 +255,7 @@ here.
 
 [`QCore.IndexedCollection`](../../../proof/QCore/IndexedCollection.lean) is
 audited by [`AuditIndexedCollection.lean`](../../../proof/AuditIndexedCollection.lean).
-It has 44 theorems, no placeholders and no project axioms. It models the
+It has 47 theorems, no placeholders and no project axioms. It models the
 following:
 
 * **Meaning.** A segment list denotes an element-state function under a
@@ -311,7 +316,7 @@ correspondence.
 ## 4. Tests
 
 [`crates/qcore-c-gateway/tests/indexed_collection.rs`](../../../crates/qcore-c-gateway/tests/indexed_collection.rs)
-has 30 tests. Each asserts the complete diagnostic vector with the status, and
+has 32 tests. Each asserts the complete diagnostic vector with the status, and
 rechecks every `Safe` certificate.
 
 * **Safe:**
@@ -464,25 +469,28 @@ coordinator's disk rule. It captures every exit to a file and never through a
 pipe. Logs are in `private/gate/` and `private/provider-gate/`, and the
 generator input is [gate.json](gate.json).
 
-The core and provider gates ran on `6bcfae3d`, this card merged with main
-`0a07cb57`. Later commits change documents, the ledger, report scripts and
-evidence only. A first core gate on the pre-merge tree was stopped by its task
-handle when the coordinator asked for main to be merged, after its
-submodule and Clang steps. It is kept as `private/aborted-gate-1-premerge/`
-and is not evidence.
+The core and provider gates ran on `eea0b30b`, this card merged with main
+`d2dd61c1`. Later commits change documents, the ledger, report scripts and
+evidence only. The test step ran first, the dev profile was reclaimed
+(`cargo clean --profile dev`), and the remaining steps followed, with at least
+170G free throughout. The gates on the previous merge (`6bcfae3d`: 5,289 core,
+173 audits, 124 provider) are kept as `private/gate-premerge2-6bcfae3d/` and
+superseded. A first core gate before that was stopped when main was merged
+(`private/aborted-gate-1-premerge/`) and is not evidence.
 
 | Command | Exit | Result |
 |---|---:|---|
 | `git submodule update --init --recursive` | 0 | libevent `d82464a2…` |
 | `clang --version` | 0 | Ubuntu clang 21.1.8 ([recording](clang-version.txt)) |
-| `cargo test --workspace --no-fail-fast` | 0 | **5,289 passed / 0 failed / 11 ignored**, 283 summaries |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,362 passed / 0 failed / 11 ignored**, 287 summaries |
+| `cargo clean --profile dev` | 0 | reclaimed after the test step |
 | `cargo fmt --all -- --check` | 0 | clean |
 | `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
 | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
-| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **173** audits |
-| `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings` and `cargo test -p qcore-c-gateway --features indirect-census --lib` | 0 | clean; 433 passed |
-| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w43-indexed-resource-collections/gate.json` | 0 | 320 follow-ups, 108 contract modules, 173 Lean audits |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **176** audits |
+| `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings` and `cargo test -p qcore-c-gateway --features indirect-census --lib` | 0 | clean; 450 passed |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w43-indexed-resource-collections/gate.json` | 0 | 336 follow-ups, 110 contract modules, 176 Lean audits |
 | `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **330** tests |
 | `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | regenerated and matching |
 | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **124 passed / 0 failed / 0 ignored**, 39 summaries |
@@ -496,14 +504,14 @@ and is not evidence.
 
 **Counts.** This card adds:
 
-* the 30-test `indexed_collection.rs` binary;
+* the 32-test `indexed_collection.rs` binary;
 * 5 unit tests of `indexed_collection.rs`;
 * one Lean audit.
 
 No existing pin moved. The base's figures on this merged tree were not
 remeasured separately, so the delta is stated by test, not by subtraction.
-The debug profile was cleaned after the core gate (`cargo clean --profile
-dev`), following the coordinator's disk rule.
+The debug profile was reclaimed after the test step, following the
+coordinator's disk rule.
 
 ## 7. Ledger
 
@@ -532,8 +540,8 @@ entry moved. It stays registered and unedited.
 * `POISON-UNMASK-ON-ADMISSION`: no admission reached the corpus, so it was not
   measured here.
 
-Follow-ups go from **313 to 320** (307 → 314 on the branch before main's six
-contract-view entries arrived). `corpus.cycle19_raw_units` points at this
+Follow-ups go from **329 to 336** (307 → 314 on the first base, 313 → 320 after
+the `0a07cb57` merge; main's own entries arrived with each merge). `corpus.cycle19_raw_units` points at this
 report's artifacts, and its previous contents are in
 [previous-corpus-row.json](previous-corpus-row.json).
 
@@ -604,10 +612,15 @@ report's artifacts, and its previous contents are in
     `README.md`, and `docs/reports/INDEX.md`.
 * **The merges.** This branch merged W43-INDIRECT-ACCESS-GENERAL
   (`6bb838c8`) into `ec70709a` itself (merge `9c7774dc`), then main
-  `0a07cb57` (merge `6bcfae3d`).
-  * Both ledger merges were resolved entry by entry. The second is main's 313
-    plus this card's 7, which is 320. The corpus row is this card's; main's is
+  `0a07cb57` (merge `6bcfae3d`), then main `d2dd61c1` (merge `eea0b30b`, §9).
+  * Every ledger merge was resolved entry by entry. The last is main's 329
+    plus this card's 7, which is 336. The corpus row is this card's; main's is
     preserved in [previous-corpus-row.json](previous-corpus-row.json).
+  * The proposed constraint 5i should add: collections are heap-kind only
+    (owner, acquisition and release), and a statement reading a tracked
+    descriptor keeps its refusal.
+  * `crates/qcore-c-gateway/src/legacy_descriptor_custody.rs` now also
+    conflicts: five arms in `admits_descriptor_read`.
   * `STATUS.md` keeps main's rows and adds the card's.
   * `wave-43.md` is the single current increment record, as on main.
 * The `contracts` and `source-effects` artifacts embed this worktree's path,
@@ -632,3 +645,164 @@ python3 docs/reports/w43-libc-contracts/scripts/archive.py <after> docs/reports/
 python3 docs/reports/w43-indexed-resource-collections/scripts/update_ledger.py
 python3 docs/reports/w43-indexed-resource-collections/scripts/run_gate.py <gate-dir> submodules clang test fmt clippy probe followup lean census
 ```
+
+## 9. The `d2dd61c1` merge
+
+Main moved from `0a07cb57` to `d2dd61c1` with five cards. The merge commit is
+`eea0b30b`; every conflict was resolved by hand, and
+`git grep -n '^<<<<<<< '` was empty before committing.
+
+### 9.1 Code resolutions
+
+* **`legacy_c.rs`** (16 conflict hunks).
+  * `LegacyInstruction`, `Parser`, `TransferContext`, the `if`/`for` parse and
+    compile arms and the settled post-passes keep both sides.
+  * The element lowering in `classify_simple_unguarded` runs first, before
+    W43-INDEX-TRAVERSAL's formal-mutation step and typed routes. It replaces
+    only a refusal, as before, so neither route sees a statement the other
+    admitted. `stepped_access` is consulted only for an `Unknown`, so an
+    admitted element store is never also split into a stepped access.
+  * git interleaved my element functions with traversal's `stepped_access`.
+    `stepped_access` was taken from main, and my functions were re-inserted
+    whole from the pre-merge head.
+  * An element null test is now consulted only after traversal's
+    `condition_access` also refused the condition. The null-test compile arm
+    uses main's `condition.branch()`.
+  * `observe_exit` takes main's `scalars` and `kinds`. My exit-leak report sits
+    beside it, unchanged.
+* **`report.rs`.** The `scope` string is main's (with traversal's no-bounds
+  clause) plus this card's clause.
+* **`lib.rs` and `QCore.lean`.** Both modules are kept.
+
+### 9.2 W43-DESCRIPTOR-RESOURCE-TRACKING
+
+Collections are **heap-kind only**. Integer-carried descriptor collections
+were not cheap, so they stay the registered residual (below). The rules:
+
+* **Owner.** `CollectionOwners::owner` is `resolved_aggregate_owner`, filtered
+  to a site whose `kind_of` is `Heap`. A stream, directory or descriptor
+  identity is never a collection, so every element operation over one takes
+  its fallback.
+* **Element store.** The inner call must have `result_kind` heap.
+* **Element release.** The release contract's `parameter_kind(0)` must be
+  heap. `fclose(v[i])` and `close(v[i])` keep the refusal.
+* **Descriptor reads.** A statement that reads a tracked descriptor
+  (`statement_reads_descriptor`) is never lowered. It keeps its refusal, and
+  the guard sees it exactly as before. An index name that may hold a
+  descriptor fails the element premises.
+* **The guard.** `admits_descriptor_read` refuses all five new variants
+  (`ElementStore`, `ElementRelease`, `BranchOnElementNull`,
+  `CountedLoopHeader`, `CountedLoopStep`). In practice it never meets one: the
+  element lowering declines first, and the other three are never produced by
+  the classifier. The arms are decided, not left to a catch-all.
+* **Diagnostics.** The test helper maps `KindMismatchedRelease` to
+  `invalid_release` and `UseAfterClose` to `use_after_release`.
+* **Tests.**
+  * `a_stream_element_keeps_the_refusal_it_had` gives `Unknown` with the
+    original refusal.
+  * `a_stream_release_of_a_heap_element_keeps_the_refusal_it_had` gives
+    `Unsafe`: the element leak plus the kept refusal. A refused release leaves
+    the element owed, exactly as a refused release of a named heap pointer
+    (`my_free(p)`) leaves its site owed on main.
+* **Lean.** `only_heap_elements_are_collected`,
+  `a_descriptor_read_keeps_the_fallback` and
+  `a_non_heap_element_keeps_the_fallback`.
+* **Residual.** `W43-COLLECTION-AUTOMATIC-AND-DESCRIPTOR-ARRAYS` is amended
+  with why a kind-indexed collection is not cheap. Descriptor arrays are
+  `int *fds` or `int fds[N]`, so none of these apply to them:
+  * the `T **` premise;
+  * the null-test refinement;
+  * the null-constant store.
+
+  Their validity is a `-1` sentinel, and a mismatched element release would
+  need its own settled accusation.
+
+I also checked that no access through an element slips past the rules:
+`v[0][1] = 'c'`, `c = v[0][1]`, `c = *v[0]` and `if (v[0][0])` after
+`x_free(v[0])` all stay refused (`indirect memory access`, or the branch
+condition refusal). So no released element's memory is read under a `Safe`.
+
+### 9.3 Loop reconciliation with W43-INDEX-TRAVERSAL
+
+W43-INDEX-TRAVERSAL adds no separate fixpoint: the existing work list reaches
+the loop's fixed point. The only fact both cards state is a **declared
+scalar's zero**. They keep it differently:
+
+| Fact | W43-INDEX-TRAVERSAL | This card |
+|---|---|---|
+| a scalar is zero (`i = 0`) | a target-free binding in the custody pointer map, joined by `AbstractState::join` with `traversal.scalars`: a path that lacks it drops it | `index_zero`, a collection-only set joined by intersection, where a path that is vacuous for the collection contributes nothing |
+| `i < n` on a counted loop's body edge | none (no bound is evaluated) | `index_bounds` |
+| `max(0, n) = 0` after a loop left at zero | none | `clamped_zero` |
+| the exit equation `i = max(0, n)` | none | `CountedLoopHeader`'s exit edge |
+| a body edge that cannot run | none | `collection_vacuous` |
+| an index stepped in a subscript | `B[X++]` forgets `X` | `v[n++]` forgets and steps `n` |
+
+**Measured.** Reading traversal's zero fact in place of `index_zero` makes
+**5 of 32** collection tests regress:
+* the brief's fill with partial cleanup;
+* the returned collection;
+* the second release loop;
+* the cleanup that frees only the array;
+* releasing past the prefix, which gains an extra refusal.
+
+The cause is structural. The partial cleanup's first-iteration body edge is
+vacuous for the collection (`i` is zero, so `j < i` cannot hold). The custody
+map must still join that edge normally, and its stepped `j` then erases the
+entry zero at the cleanup header.
+
+So the collection copy of the zero fact stays, and the other four facts have
+no traversal counterpart. `W43-COLLECTION-LOOP-SHAPES` records this. Its
+discharge now asks for a vacuity-aware zero in the shared custody map, so that
+the copy can be deleted.
+
+### 9.4 Arbiter on the merged tree
+
+| Run | Binary | Tree | Exit | Record |
+|---|---|---|---:|---|
+| AFTER | `6ef33fa2…` | `eea0b30b` | 0 | [after-run.json](after-run.json), [after-diff.json](after-diff.json), [artifacts/](artifacts/) |
+| CENSUS | `b830a4bb…` | `eea0b30b` + `indirect-census` | 0 | [census-after-run.json](census-after-run.json), [census/element-reach.txt](census/element-reach.txt) |
+
+AFTER was compared with the combined baseline
+`docs/reports/w43-descriptor-resource-tracking/integration/artifacts/`, with
+`--root-alias <this worktree>=…/hungry-thompson-1740da`
+([after-vs-combined-identity.json](after-vs-combined-identity.json)):
+
+* **diagnostics** are equal except for the `scope` string
+  ([after-vs-baseline.json](after-vs-baseline.json),
+  [`scripts/scope_only.py`](scripts/scope_only.py)).
+  [after-diff.json](after-diff.json) shows 0 leaves removed or added and 0
+  function or unit moves: functions 294 / 85 / 4,455, units 3 / 43 / 135 / 4,
+  leak 271, unknown_alias 4,358, unsupported 45,848.
+* **contracts** are identical after the root alias.
+* **chunk-contracts** and **source** are byte-identical.
+* **source-effects** differ in 29 leaves of 3 results, all checkout-path
+  digests ([after-vs-combined-source-effects.txt](after-vs-combined-source-effects.txt),
+  [`scripts/effects_paths.py`](scripts/effects_paths.py)). The fields are
+  `build_digest`, `configuration_digest`, the `resource_contracts:` coverage
+  key, `obligation_id`, `task_digest` and a contract-source digest. The same
+  artifact is byte-identical between this worktree's pre-merge AFTER and this
+  one ([run-identities.json](run-identities.json)), so the digests follow the
+  checkout path, not the analysis.
+
+**Nothing to attribute.** The combined tree changes none of this card's
+reach. The census run again lowers **27** element operations in **19**
+functions, each keeping its fallback leaf, and
+[census/element-reach.txt](census/element-reach.txt) is byte-identical to the
+pre-merge one. The new libc declarations do not resolve any array:
+* the `sizeof(*v)` allocation shape is still refused;
+* the caller-owned arrays are still formals.
+
+The census run's five artifacts are byte-identical to AFTER. The corpus row
+points at the re-archived [artifacts/](artifacts/), and main's row is kept in
+[previous-corpus-row.json](previous-corpus-row.json)
+([`scripts/update_corpus_row.py`](scripts/update_corpus_row.py)).
+
+### 9.5 Records
+
+* **Ledger.** Merged entry by entry: main's 329 plus this card's 7 is 336. No
+  common entry differs.
+* **Increment record.** `wave-43.md` keeps this card's paragraph newest.
+* **STATUS.** Keeps main's rows and adds the collections row.
+* **Corpus pins.** Main's are untouched: 110 modules, 47 selected, 152 v1
+  declarations, 47 source assumptions.
+

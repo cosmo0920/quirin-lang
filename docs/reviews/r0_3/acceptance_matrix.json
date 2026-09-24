@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W43-DESCRIPTOR-RESOURCE-TRACKING integration, 2026-09-25. The card (measured against docs/reports/w43-indirect-access-general/artifacts) composed onto the combined tree docs/reports/w43-libc-printf-family/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 60 added 43 functions 1 units 1); functions moved (combined): [('ctr_random_get', ('Unknown', 'Unsafe'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] ctr_random_get (and its unit) is provisional Unsafe: its fd > 0 guard lets descriptor 0 leak on the fallback path, reachable only if open returns 0; not observed natively and not an upstream defect claim. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-descriptor-resource-tracking/integration/previous-corpus-row.json.",
+   "note": "W43-INDEXED-RESOURCE-COLLECTIONS on main d2dd61c1 (merge eea0b30b), 2026-09-25. Measured against the W43-DESCRIPTOR-RESOURCE-TRACKING integration baseline: 0 leaves removed or added, 0 function or unit status moves, leak 271, 0 violation candidates; the diagnostics are equal to that baseline except for the report's `scope` string, contracts are identical after the root alias, and source-effects differ only in checkout-path-derived digests. 27 element operations are lowered in 19 functions and every one keeps its fallback refusal. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-indexed-resource-collections/previous-corpus-row.json.",
    "units": 185,
    "safe": 3,
    "provisional_unsafe": 43,
@@ -6642,8 +6642,8 @@
    "projected_functions": 4834,
    "leak_diagnostics": 271,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w43-descriptor-resource-tracking/integration/artifacts/",
-   "source": "docs/reports/w43-descriptor-resource-tracking/integration/integration-confirmation.md; preceding baseline docs/reports/w43-libc-printf-family/integration/artifacts",
+   "baseline": "docs/reports/w43-indexed-resource-collections/artifacts/",
+   "source": "docs/reports/w43-indexed-resource-collections/README.md; preceding baseline docs/reports/w43-descriptor-resource-tracking/integration/artifacts/",
    "unknown_alias_diagnostics": 4358,
    "unsupported_diagnostics": 45848,
    "double_release_diagnostics": 0,
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W43-DESCRIPTOR-RESOURCE-TRACKING on merge e7094948+87fa29e7 (onto main 58359503, after W43-LIBC-PRINTF-FAMILY), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5325 core Rust passed / 0 failed / 11 ignored over 288 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 175 Lean audits; 330 root Python tests after regenerating this section (08-python exit 1 before regeneration); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w43-libc-printf-family/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
-  "workspace_tests": 5325,
+  "note": "W43-INDEXED-RESOURCE-COLLECTIONS: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured on eea0b30b (this card merged with main d2dd61c1; later commits change documents, the ledger, report scripts and evidence only, no Rust, Lean, contract or test source), with CARGO_INCREMENTAL=0; the dev profile was reclaimed (cargo clean --profile dev) after the test step, before fmt. 5362 core Rust passed / 0 failed / 11 ignored over 287 summaries (the card adds the 32-test indexed_collection.rs binary and 5 unit tests of indexed_collection.rs; no existing pin moved); 176 Lean audits (main's 175 plus AuditIndexedCollection, 47 theorems); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 450 feature-on library tests passed; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed (1 test); provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. Logs: worktree-private private/gate and private/provider-gate of agent-a21f70f046fa88069 (the pre-merge gates on 6bcfae3d are kept as private/gate-premerge2-6bcfae3d and private/provider-gate-premerge2-6bcfae3d). Clang recorded in this checkout. Corpus against the W43-DESCRIPTOR-RESOURCE-TRACKING integration baseline: 0 leaves, 0 functions, 0 units moved, leak 271, 0 violation candidates; the diagnostics differ only in the scope string.",
+  "workspace_tests": 5362,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 175,
+  "lean_audits": 176,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6814,6 +6814,7 @@
    "AuditGenericNames.lean",
    "AuditHttpComputedLength.lean",
    "AuditIndexTraversal.lean",
+   "AuditIndexedCollection.lean",
    "AuditIndirectScalarAccess.lean",
    "AuditJoinedProvenanceCallFrames.lean",
    "AuditJoinedProvenanceCycles.lean",
@@ -6919,7 +6920,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-descriptor-resource-tracking/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-indexed-resource-collections/gate.json)"
  },
  "named_followups": [
   {
@@ -9182,7 +9183,7 @@
   {
    "id": "W43-COLLECTION-LOOP-SHAPES",
    "title": "Only the canonical counted `for (i = 0; i < n; i++)` carries an exit equation; the corpus fills by append over traversals and releases with `while (i-- > 0)`",
-   "why": "Card W43-INDEXED-RESOURCE-COLLECTIONS recognises a counted loop only as `for (I = 0; I < B; I++)` around at least one lowered element operation, with `I` and `B` declared integers no other lvalue designates, no write of either in the body, no `break`/`goto`/label/`switch`, and an unsigned index no narrower than an unsigned bound. The append `v[n++] = ACQUIRE(...)` needs no loop recognition and is admitted in any loop. The base census found 20 loops around element stores or releases: 9 fill loops (1 canonical; the rest append over pointer or list traversals, which W43-INDEX-TRAVERSAL owns), 11 release loops (9 canonical), 0 partial-cleanup loops, 2 `while` loops (`while (i-- > 0) rd_free(grps[i]);`), and 6 non-canonical `for` loops (a member bound `args->qcnt`, a narrower unsigned index against a `size_t` bound in rd_kafka_conf_dump_free). The card also carries its own index facts (`i < n`, a known zero, a clamped zero, the vacuous body edge) rather than W43-INDEX-TRAVERSAL's loop fixpoint, which had not landed: the two must be reconciled by the integrator. DISCHARGE: a decrementing release sweep, `while` headers and member bounds read under their own premises, and the collection facts moved onto the shared custody-neutral loop analysis once it lands, each with Lean parity and a measured re-pin.",
+   "why": "Card W43-INDEXED-RESOURCE-COLLECTIONS recognises a counted loop only as `for (I = 0; I < B; I++)` around at least one lowered element operation, with `I` and `B` declared integers no other lvalue designates, no write of either in the body, no `break`/`goto`/label/`switch`, and an unsigned index no narrower than an unsigned bound. The append `v[n++] = ACQUIRE(...)` needs no loop recognition and is admitted in any loop. The base census found 20 loops around element stores or releases: 9 fill loops (1 canonical; the rest append over pointer or list traversals, which W43-INDEX-TRAVERSAL owns), 11 release loops (9 canonical), 0 partial-cleanup loops, 2 `while` loops (`while (i-- > 0) rd_free(grps[i]);`), and 6 non-canonical `for` loops (a member bound `args->qcnt`, a narrower unsigned index against a `size_t` bound in rd_kafka_conf_dump_free). Reconciled with W43-INDEX-TRAVERSAL on the merged tree (merge eea0b30b): traversal adds no separate fixpoint (the existing work list reaches the loop's fixed point), and the only fact both state is a declared scalar's zero. Traversal keeps it as a target-free binding in the custody pointer map, joined by the custody join, where any joining path lacking it drops it; this card keeps it in a collection-only set whose join ignores a path that is vacuous for the collection (a counted loop's body edge under a bound that is zero when clamped). Reading traversal's fact instead was measured: 5 of the 32 collection tests regress, the brief's fill-with-partial-cleanup among them, because the partial cleanup's first-iteration body edge is vacuous and its stepped index would erase the entry zero at the cleanup header. The body-edge `i < n` fact, the clamped zero, the exit equation `i = max(0, n)` and the vacuous edge have no traversal counterpart (traversal evaluates no bound). Both cards forget an index stepped in a subscript (`v[n++]`, `B[X++]`). DISCHARGE: a decrementing release sweep, `while` headers and member bounds read under their own premises, and the zero fact made vacuity-aware in the shared custody map so the collection-only copy can be deleted, each with Lean parity and a measured re-pin.",
    "source": "docs/reports/w43-indexed-resource-collections/README.md",
    "recorded_by": "W43-INDEXED-RESOURCE-COLLECTIONS"
   },
@@ -9196,7 +9197,7 @@
   {
    "id": "W43-COLLECTION-AUTOMATIC-AND-DESCRIPTOR-ARRAYS",
    "title": "Automatic arrays of owned pointers (`T *a[N]`) and descriptor arrays (`int fds[N]`) are not collection owners",
-   "why": "Card W43-INDEXED-RESOURCE-COLLECTIONS keys a collection by the heap identity of a `T **` base. An automatic array has no identity, its lifetime is the frame's, and it decays to a pointer a callee can reach whenever it is named without a subscript; `ut_tq_test`'s `struct ut_tq_head *tqh[3] = {NULL, …}` is the corpus witness (its braced initializer is refused as well). Descriptor elements (`int fds[N]`, `struct pollfd`) need a descriptor custody kind, which W43-DESCRIPTOR-RESOURCE-TRACKING is adding; the card's element slot records one kind (an owned pointer) so that a kind index can be added there. No descriptor release is contracted in the pinned corpus (the census found no `close(fds[i])`). DISCHARGE: an automatic-array owner with its lifetime and decay premises, and descriptor-kind elements once the descriptor card lands, each with Lean parity and a measured re-pin.",
+   "why": "Card W43-INDEXED-RESOURCE-COLLECTIONS keys a collection by the heap identity of a `T **` base. An automatic array has no identity, its lifetime is the frame's, and it decays to a pointer a callee can reach whenever it is named without a subscript; `ut_tq_test`'s `struct ut_tq_head *tqh[3] = {NULL, …}` is the corpus witness (its braced initializer is refused as well). Descriptor, stream and directory elements are refused. On the merged tree with W43-DESCRIPTOR-RESOURCE-TRACKING (merge eea0b30b) a collection's owner, every element's acquisition and every discharging release must be of heap kind, a statement reading a tracked descriptor keeps its refusal, and all five element and loop instruction variants are refused by `admits_descriptor_read` (tests `a_stream_element_keeps_the_refusal_it_had`, `a_stream_release_of_a_heap_element_keeps_the_refusal_it_had`; Lean `only_heap_elements_are_collected`). A kind-indexed collection is not cheap: descriptor arrays are `int *fds` or `int fds[N]`, whose elements are integers (the `T **` premise, the null-test refinement and the null-constant store do not apply; validity is a `-1` sentinel), and a kind mismatch on an element would need its own settled-state accusation. At this card's census no descriptor release was contracted; W43-DESCRIPTOR-RESOURCE-TRACKING has since declared `close`. DISCHARGE: an automatic-array owner with its lifetime and decay premises, and kind-indexed elements (integer-carried descriptor collections with sentinel validity, stream and directory elements with kind-matched releases), each with Lean parity and a measured re-pin.",
    "source": "docs/reports/w43-indexed-resource-collections/README.md",
    "recorded_by": "W43-INDEXED-RESOURCE-COLLECTIONS"
   },
