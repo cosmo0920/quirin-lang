@@ -1,0 +1,280 @@
+{
+  "libc_declared_names": 62,
+  "headers": 203,
+  "inline_flb_functions": 144,
+  "candidates": 14,
+  "by_shape": {
+    "exact-forward": 1,
+    "single-callee": 7,
+    "composite": 6
+  },
+  "rows": [
+    {
+      "header": "include/fluent-bit/flb_input.h",
+      "line_in_comment_stripped_text": 444,
+      "wrapper": "flb_input_coro_create",
+      "parameters": [
+        "ins",
+        "config"
+      ],
+      "declared_libc_callees": [
+        "time"
+      ],
+      "all_callees": [
+        "flb_calloc",
+        "flb_coro_create",
+        "flb_errno",
+        "flb_free",
+        "flb_input_coro_id_get",
+        "mk_list_add",
+        "time"
+      ],
+      "shape": "composite"
+    },
+    {
+      "header": "include/fluent-bit/flb_mem.h",
+      "line_in_comment_stripped_text": 30,
+      "wrapper": "flb_malloc",
+      "parameters": [
+        "size"
+      ],
+      "declared_libc_callees": [
+        "malloc"
+      ],
+      "all_callees": [
+        "malloc"
+      ],
+      "shape": "single-callee"
+    },
+    {
+      "header": "include/fluent-bit/flb_mem.h",
+      "line_in_comment_stripped_text": 42,
+      "wrapper": "flb_calloc",
+      "parameters": [
+        "n",
+        "size"
+      ],
+      "declared_libc_callees": [
+        "calloc"
+      ],
+      "all_callees": [
+        "calloc"
+      ],
+      "shape": "single-callee"
+    },
+    {
+      "header": "include/fluent-bit/flb_mem.h",
+      "line_in_comment_stripped_text": 82,
+      "wrapper": "flb_free",
+      "parameters": [
+        "ptr"
+      ],
+      "declared_libc_callees": [
+        "free"
+      ],
+      "all_callees": [
+        "free"
+      ],
+      "shape": "exact-forward"
+    },
+    {
+      "header": "include/fluent-bit/flb_opentelemetry.h",
+      "line_in_comment_stripped_text": 172,
+      "wrapper": "flb_opentelemetry_error_code",
+      "parameters": [
+        "err_msg"
+      ],
+      "declared_libc_callees": [
+        "strcmp"
+      ],
+      "all_callees": [
+        "strcmp"
+      ],
+      "shape": "single-callee"
+    },
+    {
+      "header": "include/fluent-bit/flb_output.h",
+      "line_in_comment_stripped_text": 580,
+      "wrapper": "flb_output_flush_create",
+      "parameters": [
+        "task",
+        "i_ins",
+        "o_ins",
+        "config"
+      ],
+      "declared_libc_callees": [
+        "pthread_mutex_lock",
+        "pthread_mutex_unlock"
+      ],
+      "all_callees": [
+        "VALGRIND_STACK_REGISTER",
+        "cfl_sds_len",
+        "cmt_decode_msgpack_create",
+        "cmt_destroy",
+        "cmt_encode_msgpack_create",
+        "cmt_encode_msgpack_destroy",
+        "co_active",
+        "co_create",
+        "cprof_decode_msgpack_create",
+        "cprof_destroy",
+        "cprof_encode_msgpack_create",
+        "cprof_encode_msgpack_destroy",
+        "ctr_decode_msgpack_create",
+        "ctr_destroy",
+        "ctr_encode_msgpack_create",
+        "ctr_encode_msgpack_destroy",
+        "flb_calloc",
+        "flb_coro_create",
+        "flb_coro_destroy",
+        "flb_debug",
+        "flb_errno",
+        "flb_event_chunk_create",
+        "flb_event_chunk_destroy",
+        "flb_free",
+        "flb_metrics_is_empty",
+        "flb_mp_count_log_records",
+        "flb_mp_normalize_log_buffer_groups_msgpack",
+        "flb_output_flush_id_get",
+        "flb_output_thread_instance_get",
+        "flb_processor_is_active",
+        "flb_processor_run",
+        "flb_realloc",
+        "flb_sds_len",
+        "memcpy",
+        "mk_list_add",
+        "output_params_set",
+        "pthread_mutex_lock",
+        "pthread_mutex_unlock"
+      ],
+      "shape": "composite"
+    },
+    {
+      "header": "include/fluent-bit/flb_parser.h",
+      "line_in_comment_stripped_text": 65,
+      "wrapper": "flb_parser_tm2time",
+      "parameters": [
+        "src",
+        "use_system_timezone"
+      ],
+      "declared_libc_callees": [
+        "timegm"
+      ],
+      "all_callees": [
+        "flb_tm_gmtoff",
+        "mktime",
+        "timegm"
+      ],
+      "shape": "composite"
+    },
+    {
+      "header": "include/fluent-bit/flb_str.h",
+      "line_in_comment_stripped_text": 29,
+      "wrapper": "flb_strdup",
+      "parameters": [
+        "s"
+      ],
+      "declared_libc_callees": [
+        "strlen"
+      ],
+      "all_callees": [
+        "flb_strndup",
+        "strlen"
+      ],
+      "shape": "composite"
+    },
+    {
+      "header": "include/fluent-bit/flb_str.h",
+      "line_in_comment_stripped_text": 35,
+      "wrapper": "flb_str_emptyval",
+      "parameters": [
+        "s"
+      ],
+      "declared_libc_callees": [
+        "strcmp"
+      ],
+      "all_callees": [
+        "strcmp"
+      ],
+      "shape": "single-callee"
+    },
+    {
+      "header": "include/fluent-bit/flb_str.h",
+      "line_in_comment_stripped_text": 44,
+      "wrapper": "flb_rtrim",
+      "parameters": [
+        "str",
+        "c"
+      ],
+      "declared_libc_callees": [
+        "strlen"
+      ],
+      "all_callees": [
+        "flb_strndup",
+        "strlen"
+      ],
+      "shape": "composite"
+    },
+    {
+      "header": "include/fluent-bit/flb_stream.h",
+      "line_in_comment_stripped_text": 145,
+      "wrapper": "flb_stream_acquire_lock",
+      "parameters": [
+        "stream",
+        "wait_flag"
+      ],
+      "declared_libc_callees": [
+        "pthread_mutex_lock"
+      ],
+      "all_callees": [
+        "pthread_mutex_lock",
+        "pthread_mutex_trylock"
+      ],
+      "shape": "composite"
+    },
+    {
+      "header": "include/fluent-bit/flb_stream.h",
+      "line_in_comment_stripped_text": 171,
+      "wrapper": "flb_stream_release_lock",
+      "parameters": [
+        "stream"
+      ],
+      "declared_libc_callees": [
+        "pthread_mutex_unlock"
+      ],
+      "all_callees": [
+        "pthread_mutex_unlock"
+      ],
+      "shape": "single-callee"
+    },
+    {
+      "header": "include/fluent-bit/flb_task.h",
+      "line_in_comment_stripped_text": 144,
+      "wrapper": "flb_task_acquire_lock",
+      "parameters": [
+        "task"
+      ],
+      "declared_libc_callees": [
+        "pthread_mutex_lock"
+      ],
+      "all_callees": [
+        "pthread_mutex_lock"
+      ],
+      "shape": "single-callee"
+    },
+    {
+      "header": "include/fluent-bit/flb_task.h",
+      "line_in_comment_stripped_text": 149,
+      "wrapper": "flb_task_release_lock",
+      "parameters": [
+        "task"
+      ],
+      "declared_libc_callees": [
+        "pthread_mutex_unlock"
+      ],
+      "all_callees": [
+        "pthread_mutex_unlock"
+      ],
+      "shape": "single-callee"
+    }
+  ]
+}

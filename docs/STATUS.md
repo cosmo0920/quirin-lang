@@ -1,8 +1,8 @@
 # Current status and evidence boundaries
 
 Re-derived on 2026-09-21 from the sources below; corpus rows re-derived on
-2026-09-23 from the W43-LIBC-CONTRACTS arbiter and the live follow-up count on
-2026-09-24 at its integration. This is the concise status
+2026-09-23 from the W43-LIBC-CONTRACTS arbiter and the live follow-up count and contract-corpus row on
+2026-09-24 from CONTRACT-INHERIT-ADOPTION. This is the concise status
 authority routed by `AGENTS.md`; reports own the underlying evidence. Update
 numbers from those sources, not from an older summary. History belongs in the
 [increment records](development/increments/README.md).
@@ -28,9 +28,9 @@ numbers from those sources, not from an older summary. History belongs in the
 | Cycle 18 bounded aggregate | **3 joined families / 8 source paths / 7 unresolved obligations**, aggregate Unknown | [Broader integration](reports/cycle18-broader-integration/aggregate.json) |
 | Callback task handoff | **12 source-derived operations**, one Linux pthread fixture; production acceptance pending | [Integrated lifetime evidence](reports/cycle18-broader-integration/task-handoff.json) |
 | Current native platform matrix | **4 Linux Observed / 3 foreign-host Unknown**; generic Libevent probe only | [Bounded platform evidence](reports/cycle18-broader-integration/platform.json) |
-| Contract corpus | **107** modules; **114** resource-v1 declarations; **44** manifest-selected | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 35 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (11 roots), [selection](../cycle19-resource-contracts.json) and pinned tests |
+| Contract corpus | **108** modules; **117** resource-v1 declarations; **45** manifest-selected, 2 of them by `crate:module` reference; **5** declarations inherit a libc contract | [Provider ownership](../providers/README.md#contract-ownership) (72 in five provider crates, 36 in six [`quirin-provider-*` shared crates](reports/quirin-provider-shared/README.md#crate-map)), canonical index `contract/corpus.json` (schema 2, 11 roots), [selection](../cycle19-resource-contracts.json) (schema 2), [load path](../providers/contract-load-path.json) and pinned tests; [adoption](reports/contract-inherit-adoption/README.md) |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over **96** selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each; 2 carry a path-incomplete composition from their own pinned unit | [Chunk source profile](reports/w43-chunk-source-profile/README.md), `lifecycle-coverage.json`; [lifecycle certificate](reports/w42-chunk-lifecycle-cert/README.md) |
-| Registered follow-ups | **294** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
+| Registered follow-ups | **295** | [Matrix](reviews/r0_3/acceptance_matrix.json), carried entries and derived dimension agree |
 
 **Mapping is not conformance.** CT01/CT03/CT37/CT50 bind their model proofs
 through the F02 trace/digest relation; CT07 binds through the scoped-task lease
@@ -88,11 +88,11 @@ five package identities match the preceding checkpoint. The focused production
 CMetrics replay preserves report bytes with two attributed provenance changes;
 it does not rerun or promote the 185-unit baseline.
 
-The five provider crates own **72** canonical contract modules; **35** shared or
+The five provider crates own **72** canonical contract modules; **36** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five per-library
 data crates (libc only in `quirin-provider-libc`) and `quirin-provider-shared`, which also
 holds the providers' shared runtime and bundles the five. `contract/corpus.json`
-indexes all **107** without duplicate snapshots. Retained integration adapters
+indexes all **108** without duplicate snapshots. Retained integration adapters
 embed the provider-owned data directly; generic core crates retain no provider
 executable dependency. Package inventories bind supplied contract bytes to their
 executables; policy selection and independent checking remain explicit. This
@@ -101,10 +101,15 @@ pilot adds independently pinned data-only selection for the CMetrics policy,
 retains version-1 paths and existing adapters, and models admission separately
 from policy truth. Four scoped follow-ons remain in its report. Contract
 modules can take a declaration's contract from another published module
-(`#include` / `contract inherit NS::NAME`, [CONTRACT-INHERIT](reports/contract-inherit/README.md));
-it is exercised on fixture crates only, and no real contract or manifest uses it yet.
+(`#include` / `contract inherit NS::NAME`, [CONTRACT-INHERIT](reports/contract-inherit/README.md)).
+[CONTRACT-INHERIT-ADOPTION](reports/contract-inherit-adoption/README.md) wires it
+into the six `quirin-provider-*` crates through a generated, digest-pinned load
+path read as data. Five Fluent Bit wrappers (`flb_malloc`, `flb_calloc`,
+`flb_free`, `flb_strdup`, `flb_strndup`) inherit libc contracts, with no
+verdict-bearing byte moved. The `qcore-provider-*` crates stay off the load path
+pending a naming decision.
 
-All three broader Cycle 18 follow-ups remain open; **294** follow-ups are
+All three broader Cycle 18 follow-ups remain open; **295** follow-ups are
 registered — `W42-CHUNK-LIFECYCLE-CERT` retired against its own report and two
 narrower lifecycle residuals took its place; W43-RETURN-EXPRESSION registered six
 refused return-expression families and the `report_leaks` premise finding, and
@@ -114,7 +119,9 @@ registered; QUIRIN-PROVIDER-SHARED registered
 `PROVIDER-CONFORMANCE-CORE-FIXTURE-PATHS`; the Windows F02 run and active
 cross-host pin check retired three F02 follow-ups; W43-LIBC-CONTRACTS registered ten libc
 residuals and retired `LOADER-ABI-RESTRICT-QUALIFIER` against its measurement; CONTRACT-INHERIT registered its
-real-crate adoption, extension clauses and non-v1 consumers. Production callback composition, task/cancellation/event-generation
+real-crate adoption, extension clauses and non-v1 consumers; CONTRACT-INHERIT-ADOPTION
+retired the adoption and registered the `qcore-provider-*` naming decision and
+the Fluent Bit string-wrapper assumptions. Production callback composition, task/cancellation/event-generation
 coverage and current foreign-host observations remain outstanding. Callback,
 CT and full-conformance coverage are unchanged.
 

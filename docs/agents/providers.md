@@ -169,8 +169,8 @@ install the exact texts under `includes/<crate>/<module>`;
 `providers/package.py verify` refuses an unpinned directive, a changed or
 missing parent, an unused pin and an unpinned `includes/` tree. No package
 includes anything yet, so every existing inventory and package identity is
-unchanged. Building the pins from the real crates' published sets is
-`CONTRACT-INHERIT-ADOPTION`. [Report](../reports/contract-inherit/README.md).
+unchanged. Card `CONTRACT-INHERIT-ADOPTION` builds the pins from the real
+crates' published sets (below). [Report](../reports/contract-inherit/README.md).
 
 **Load path (CONTRACT-INHERIT-ADOPTION).** Each `quirin-provider-*` crate
 records `NAMESPACE` and `PUBLISHED` beside `CONTRACTS`; a contract-use edge is

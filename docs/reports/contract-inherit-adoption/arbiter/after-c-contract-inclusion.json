@@ -1,0 +1,104 @@
+{
+ "modules": {
+  "quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore": {
+   "included": {
+    "quirin-provider-libc:libc/memory.qcore": {
+     "identity": {
+      "crate_name": "quirin-provider-libc",
+      "crate_version": "0.1.0",
+      "module": "libc/memory.qcore",
+      "sha256": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
+     },
+     "source": "module contract;\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n\nextern fn malloc(size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn calloc(count: usize, size: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(count);\n    ensures normal resource_borrowed(size);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn free(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n"
+    }
+   },
+   "inherited": {
+    "flb_calloc": [
+     {
+      "declaration": "calloc",
+      "module": {
+       "crate_name": "quirin-provider-libc",
+       "crate_version": "0.1.0",
+       "module": "libc/memory.qcore",
+       "sha256": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
+      }
+     }
+    ],
+    "flb_free": [
+     {
+      "declaration": "free",
+      "module": {
+       "crate_name": "quirin-provider-libc",
+       "crate_version": "0.1.0",
+       "module": "libc/memory.qcore",
+       "sha256": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
+      }
+     }
+    ],
+    "flb_malloc": [
+     {
+      "declaration": "malloc",
+      "module": {
+       "crate_name": "quirin-provider-libc",
+       "crate_version": "0.1.0",
+       "module": "libc/memory.qcore",
+       "sha256": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
+      }
+     }
+    ]
+   },
+   "module": {
+    "crate_name": "quirin-provider-fluent-bit",
+    "crate_version": "0.1.0",
+    "module": "fluent_bit/resource_memory.qcore",
+    "sha256": "237565176dcba6ea0549d2cc6b50fcf8744da8e6742c2d4f6745ade9cf59f71e"
+   },
+   "source": "module contract;\n#include \"quirin-provider-libc:libc/memory.qcore\";\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n// These preserve the Cycle 19 audit table; they do not verify the C bodies.\n// Borrowed scalar/opaque arguments carry no resource custody requirement.\n// Detailed observation/lifecycle contracts remain separate semantic profiles.\n//\n// Card CONTRACT-INHERIT-ADOPTION: Fluent Bit's allocator wrappers take their\n// contracts from the libc declarations they wrap instead of restating them.\n// `include/fluent-bit/flb_mem.h` defines `flb_malloc` as `size == 0 -> NULL`,\n// then `malloc(size)`; `flb_calloc` as `size == 0 -> NULL`, then\n// `calloc(n, size)`; and `flb_free` as `free(ptr)` (the OSS-Fuzz arms are not\n// in the audited build). The `size == 0` guard returns NULL, which the\n// `nullable` owned result already covers, so the custody statement is the\n// parent's exactly. Each elaborates to the clauses these declarations carried\n// when they were written out by hand (clause for clause, parameter names\n// included); an inherited contract is a trusted assumption of the same\n// strength as that hand-written one, never a proof.\n\nextern fn flb_malloc(size: usize) -> ptr<mut, u8> contract inherit libc::malloc;\n\nextern fn flb_calloc(count: usize, size: usize) -> ptr<mut, u8> contract inherit libc::calloc;\n\nextern fn flb_free(ptr: ptr<mut, u8>) -> unit contract inherit libc::free;\n\n// Card LOADER-ABI: `len` is `int`, not a size. Upstream declares\n// `flb_sds_t flb_sds_create_len(const char *str, int len);`\n// (`include/fluent-bit/flb_sds.h:99` at the pinned revision) and defines it with\n// the same signature; the earlier `usize` here was an unfaithful projection,\n// found by the declared/C ABI comparison and corrected against the read body.\n// The mode is unchanged: a scalar carries no custody either way.\nextern fn flb_sds_create_len(str: ptr<const, u8>, len: i32) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(str);\n    ensures normal resource_borrowed(len);\n    ensures normal resource_return_owned(nullable);\n};\n\n// Fluent Bit's own function (it frees the header in front of the string, not\n// the pointer it is given), so it stays written out even though its clauses\n// coincide with `libc::free`'s: an inherited contract tracks its parent, and\n// this one must not.\nextern fn flb_sds_destroy(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nullable);\n    ensures normal resource_return_none();\n};\n"
+  },
+  "quirin-provider-fluent-bit:fluent_bit/resource_string.qcore": {
+   "included": {
+    "quirin-provider-libc:libc/string.qcore": {
+     "identity": {
+      "crate_name": "quirin-provider-libc",
+      "crate_version": "0.1.0",
+      "module": "libc/string.qcore",
+      "sha256": "1aa549b6e89beaee58fc0146aa0d291e2f8977be6ff2747f9104c481d6676bf6"
+     },
+     "source": "module contract;\n\n// <string.h> -- resource-projection vocabulary version 1.\n//\n// Card W43-LIBC-CONTRACTS. Every declaration below is a TRUSTED ASSUMPTION\n// about the C library. It verifies nothing: no libc body is analysed, and a\n// declaration is a premise (trust boundary 28). Each was read from the\n// prototype the analysed units themselves declare (glibc 2.x headers on the\n// audited host, `/usr/include/string.h`), after preprocessing.\n//\n// ## The custody statements\n//\n//   extern int strcmp (const char *__s1, const char *__s2)\n//     __THROW __attribute_pure__ __nonnull ((1, 2));\n//   extern size_t strlen (const char *__s) __THROW __attribute_pure__ __nonnull ((1));\n//\n//   Both only READ their arguments and return a scalar. They allocate, free\n//   and retain nothing, so every pointer is `resource_borrowed` and the result\n//   is `resource_return_none()` -- a scalar result, so the mode is exact, not\n//   an approximation.\n//\n//   extern char *strdup (const char *__s) __THROW __attribute_malloc__ __nonnull ((1));\n//\n//   Reads `__s` (borrowed) and returns a FRESH `malloc` allocation or NULL on\n//   failure (C23 7.26.2.6, POSIX). That is exactly\n//   `resource_return_owned(nullable)`: the caller acquires an obligation that\n//   `free` (declared in `libc/memory.qcore`) discharges, from the same\n//   allocator, and must test the result for null before relying on it.\n//\n//   extern int strerror_r (int __errnum, char *__buf, size_t __buflen)\n//     __asm__ (\"__xpg_strerror_r\") __THROW __nonnull ((2));\n//\n//   The XSI form: writes a message into the caller's buffer and returns an\n//   `int` status. Borrowed buffer, scalar result. glibc ALSO has a GNU form,\n//   `char *strerror_r (int, char *, size_t)`, selected by `_GNU_SOURCE`, whose\n//   result is either `__buf` or a pointer to static storage -- a conditional\n//   alias this vocabulary cannot state. This declaration speaks only for the\n//   XSI prototype: in a unit that declares the GNU form, the declared-ABI gate\n//   (gateway constraint 8) sees `-> i32` against `char *` and WITHDRAWS the\n//   declaration at every call site, which is the refusing direction.\n//\n// ## Deliberately NOT declared here (recorded in the card report)\n//\n//   `memcpy`, `memmove`, `memset`, `strcpy`, `strncpy` return their FIRST\n//   ARGUMENT, and `strchr`, `strrchr`, `strstr`, `strcasestr`, `memchr`,\n//   `memrchr` return a pointer INTO their first argument. v1 has no result\n//   mode meaning \"aliases parameter n\"; `resource_return_none()` would drop the\n//   alias and is therefore not exact (`LIBC-MEM-RESULT-ALIAS`).\n//\n// ## What no declaration here says\n//\n// Nothing about string contents, termination, bounds, overlap, or the value of\n// any result. These are per-call custody statements about the CALLER's\n// obligations, and nothing more.\n\nextern fn strcmp(s1: ptr<const, u8>, s2: ptr<const, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(s1);\n    ensures normal resource_borrowed(s2);\n    ensures normal resource_return_none();\n};\n\nextern fn strlen(s: ptr<const, u8>) -> usize\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(s);\n    ensures normal resource_return_none();\n};\n\nextern fn strdup(s: ptr<const, u8>) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(s);\n    ensures normal resource_return_owned(nullable);\n};\n\nextern fn strerror_r(errnum: i32, buf: ptr<mut, u8>, buflen: usize) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(errnum);\n    ensures normal resource_borrowed(buf);\n    ensures normal resource_borrowed(buflen);\n    ensures normal resource_return_none();\n};\n\n// Card CONTRACT-INHERIT-ADOPTION (user-directed declared assumption).\n//\n//   extern char *strndup (const char *__string, size_t __n)\n//     __THROW __attribute_malloc__ __nonnull ((1));\n//\n//   Reads at most `__n` bytes of `__string` (borrowed; the size is a borrowed\n//   scalar) and returns a FRESH `malloc` allocation of the copied prefix plus\n//   a terminator, or NULL on failure (POSIX.1-2008, C23 7.26.2.7). That is\n//   `strdup`'s custody statement exactly: `resource_return_owned(nullable)`,\n//   an obligation `free` from `libc/memory.qcore` discharges. Nothing about\n//   the copied bytes, their termination or the bound is stated.\nextern fn strndup(s: ptr<const, u8>, n: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(s);\n    ensures normal resource_borrowed(n);\n    ensures normal resource_return_owned(nullable);\n};\n"
+    }
+   },
+   "inherited": {
+    "flb_strdup": [
+     {
+      "declaration": "strdup",
+      "module": {
+       "crate_name": "quirin-provider-libc",
+       "crate_version": "0.1.0",
+       "module": "libc/string.qcore",
+       "sha256": "1aa549b6e89beaee58fc0146aa0d291e2f8977be6ff2747f9104c481d6676bf6"
+      }
+     }
+    ],
+    "flb_strndup": [
+     {
+      "declaration": "strndup",
+      "module": {
+       "crate_name": "quirin-provider-libc",
+       "crate_version": "0.1.0",
+       "module": "libc/string.qcore",
+       "sha256": "1aa549b6e89beaee58fc0146aa0d291e2f8977be6ff2747f9104c481d6676bf6"
+      }
+     }
+    ]
+   },
+   "module": {
+    "crate_name": "quirin-provider-fluent-bit",
+    "crate_version": "0.1.0",
+    "module": "fluent_bit/resource_string.qcore",
+    "sha256": "5011aca45d0f12a1c62fd2794f71b5cedc30a97603843076b256db61b2256e49"
+   },
+   "source": "module contract;\n#include \"quirin-provider-libc:libc/string.qcore\";\n\n// Trusted resource-projection assumptions, vocabulary version 1.\n//\n// Card CONTRACT-INHERIT-ADOPTION (user-directed declared assumptions for later\n// corpus scope). Fluent Bit's string-duplication helpers take the custody\n// statements of the libc functions they stand for:\n//\n//   static inline char *flb_strndup(const char *s, size_t n)\n//     -- `flb_malloc(n + 1)`, NULL on failure, else `memcpy(str, s, n)` and a\n//        terminator (`include/fluent-bit/flb_str.h`).\n//   static inline char *flb_strdup(const char *s)\n//     -- `flb_strndup(s, strlen(s))`.\n//\n// Each reads its string (borrowed), takes a size by value (borrowed) and\n// returns a fresh `malloc` allocation or NULL: the caller acquires an\n// obligation that `flb_free`/`free` discharges. That is `libc::strdup`'s and\n// `libc::strndup`'s statement exactly, so the contracts are inherited rather\n// than restated. `flb_strndup` is NOT a byte-exact forward of `strndup` (it\n// copies exactly `n` bytes with `memcpy` instead of stopping at a terminator,\n// and allocates through `flb_malloc`); the custody statement, which is all\n// resource v1 says, is the same.\n//\n// These are TRUSTED ASSUMPTIONS over code the analyzer could read: both bodies\n// are `static inline` in a header every including unit carries. Wherever this\n// module is selected, the contract stands in for the body at every call site.\n\nextern fn flb_strdup(s: ptr<const, u8>) -> ptr<mut, u8> contract inherit libc::strdup;\n\nextern fn flb_strndup(s: ptr<const, u8>, n: usize) -> ptr<mut, u8> contract inherit libc::strndup;\n"
+  }
+ },
+ "trust": "inherited contracts are declared assumptions of the same strength as hand-written ones; each chain records where the assumption was written, not evidence that it holds"
+}

@@ -73,7 +73,7 @@ shared runtime crate):
 | [`quirin-provider-cfl`](quirin-provider-cfl/README.md) | `cfl/` (4) |
 | [`quirin-provider-mpack`](quirin-provider-mpack/README.md) | `mpack/` (1) |
 | [`quirin-provider-msgpack`](quirin-provider-msgpack/README.md) | `msgpack/` (1) |
-| [`quirin-provider-fluent-bit`](quirin-provider-fluent-bit/README.md) | `fluent_bit/` (12) |
+| [`quirin-provider-fluent-bit`](quirin-provider-fluent-bit/README.md) | `fluent_bit/` (13); the first crate with a contract-use Cargo edge (to `quirin-provider-libc`), whose `resource_memory.qcore` and `resource_string.qcore` inherit libc contracts |
 | [`quirin-provider-shared`](quirin-provider-shared/README.md) | `language/` (1), `library/` (2); re-exports the five above as one bundle |
 
 Each exposes its modules as `CONTRACTS` (logical path, source text), pinned to
