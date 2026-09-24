@@ -999,7 +999,7 @@ impl<'r> Elaborator<'r> {
                 format!("{{ {} }}", render_clauses(clauses)),
             ));
         }
-        replacements.sort_by(|a, b| b.0.cmp(&a.0));
+        replacements.sort_by_key(|replacement| std::cmp::Reverse(replacement.0));
         for (start, end, block) in replacements {
             text.replace_range(start..end, &block);
         }
