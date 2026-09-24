@@ -852,7 +852,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     ("monkey/native_platform_matrix.qcore", "observed_row", 14),
     ("monkey/native_platform_matrix.qcore", "unknown_row", 4),
-    ("monkey/timeout_teardown.qcore", "source_identity", 4),
+    // Card CONTRACT-VIEW-PROJECTION-CHECK removed this module's
+    // `source_identity` (4 clauses), a textual duplicate of
+    // `monkey/wait_source_policy.qcore`'s, which is now its single owner.
     ("monkey/timeout_teardown.qcore", "cb_timeout_source", 7),
     (
         "monkey/timeout_teardown.qcore",
@@ -1341,6 +1343,21 @@ const EXPECTED_INHERITANCE: &[(&str, &str, &str)] = &[
         "flb_strndup",
         "libc::strndup",
     ),
+    // Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: `src/rd.h` forwards to
+    // `malloc`, `calloc`, `strdup`, `strndup` and `free` (with `rd_assert`),
+    // and `mk_memory.h` to `malloc`, `calloc(1, n)` and `free`. Each
+    // elaboration equals the hand-written contract it replaces, clause for
+    // clause (`compiler/tests/contract_inherit_qcore_provider.rs`), so the
+    // elaborated clause pins in `EXPECTED_CONTRACTS` are unchanged.
+    ("librdkafka/memory.qcore", "rd_malloc", "libc::malloc"),
+    ("librdkafka/memory.qcore", "rd_calloc", "libc::calloc"),
+    ("librdkafka/memory.qcore", "rd_strdup", "libc::strdup"),
+    ("librdkafka/memory.qcore", "rd_strndup", "libc::strndup"),
+    ("librdkafka/memory.qcore", "rd_free", "libc::free"),
+    ("monkey/memory.qcore", "mk_mem_alloc", "libc::malloc"),
+    // `calloc(1, size)` in the body; `malloc` by signature (one parameter).
+    ("monkey/memory.qcore", "mk_mem_alloc_z", "libc::malloc"),
+    ("monkey/memory.qcore", "mk_mem_free", "libc::free"),
 ];
 
 #[test]

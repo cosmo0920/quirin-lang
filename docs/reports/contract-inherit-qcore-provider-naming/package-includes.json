@@ -1,0 +1,79 @@
+{
+ "source": "measure/gate/packages (worktree-private), built by `python3 providers/package.py build --output measure/gate/packages` (exit 0), each package verified with `package.py verify` (exit 0)",
+ "packages": [
+  {
+   "plugin_id": "qcore.chunkio",
+   "executable_sha256": "941aeeee4a6c62cb3ee7a3c04e6dde6e29a901720738e55f509c90c78678db0c",
+   "manifest_sha256": "5d86e569c8210647be3480e9bb6eaba58e7e0c9a8e2a6a726a7c976f937e66eb",
+   "contracts_manifest_sha256": "321e74ee51e2a819b7f1fa2f75f2b065c8243852d3895bff75d5dbcce0458023",
+   "archive_sha256": "91347c0e4d9edaae66be361691a58eff3367c4957bc9d879bfc13fc0234a596d"
+  },
+  {
+   "plugin_id": "qcore.cmetrics",
+   "executable_sha256": "cf5f45123de0330e9794e875595b329a32613f1c85202b5b2fcc1c4235f1c76a",
+   "manifest_sha256": "c7bfc15596609240f8d1c5189b2a73fcf9296bac9bc143730674fb77a4868024",
+   "contracts_manifest_sha256": "49fd41b508a766577435e4ba81d30598ba53177b97a6216d2ca1cdd25ac14b93",
+   "archive_sha256": "1fa57a387e930e7589544aa9524aa6a8d60509450146c3d55742bcaf6ff3f010"
+  },
+  {
+   "plugin_id": "qcore.ctraces",
+   "executable_sha256": "d9746a4483edaf2c52c772cc9d6f33860d0cddb13ed080900841a0822bd6f7d8",
+   "manifest_sha256": "c4ba8468e616bc1f8976b2ff9daf1c95d4f2392ba846964e82caedf9df2e25f3",
+   "contracts_manifest_sha256": "491a0d7a3ee123587bc84050fe4c5bf83cde5a539a52a9cc8c0cd1fdc99628ac",
+   "archive_sha256": "b118bdfa9b148e7faace1758d9f11efdc6239a956e2774c8e7f7244432e04e3e"
+  },
+  {
+   "plugin_id": "qcore.libevent",
+   "executable_sha256": "78a63e7432c9d088cac35ebbb47a4748be8f5b5a71bb6bdfb8a32595b1a1c769",
+   "manifest_sha256": "388e164ea10902ce540edb2634629cbf740b54777417187bc040bd828cd3b189",
+   "contracts_manifest_sha256": "99ebb5bd504d1aab0478b5691a735fc7bc22feaca44c38de0585bff353b6b694",
+   "archive_sha256": "68b2f4f6e5642081077fe51b752f539eb282ff9c0e80e982f37176fd94c4e224"
+  },
+  {
+   "plugin_id": "qcore.librdkafka",
+   "executable_sha256": "8a026be5d382962f6cfedaad679cd6c1e9cc75b823c22e4d52d2238209b3bb52",
+   "manifest_sha256": "b8744c856af33b304b6b2efe04e378b484687e67d29b597c7422e2fde10fb2d7",
+   "contracts_manifest_sha256": "abed1f1a370e8a69c33e10afaecb28fefebd0ce2e033f3dfa2420d15cdc8413f",
+   "archive_sha256": "36dd3e765c10d48ac2530c31c01c03a2470a1b3889703872572769eae118f100"
+  }
+ ],
+ "inventory_includes": {
+  "qcore.chunkio": {},
+  "qcore.cmetrics": {},
+  "qcore.ctraces": {},
+  "qcore.libevent": {
+   "quirin-provider-libc:libc/memory.qcore": {
+    "crate": "quirin-provider-libc",
+    "version": "0.1.0",
+    "module": "libc/memory.qcore",
+    "sha256": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
+   }
+  },
+  "qcore.librdkafka": {
+   "quirin-provider-libc:libc/memory.qcore": {
+    "crate": "quirin-provider-libc",
+    "version": "0.1.0",
+    "module": "libc/memory.qcore",
+    "sha256": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
+   },
+   "quirin-provider-libc:libc/string.qcore": {
+    "crate": "quirin-provider-libc",
+    "version": "0.1.0",
+    "module": "libc/string.qcore",
+    "sha256": "ab20b8a8839bca1231c7075b21a1812ef67e13b4655f3123adc6f3b1e480d0b2"
+   }
+  }
+ },
+ "installed_includes": {
+  "qcore.chunkio": {},
+  "qcore.cmetrics": {},
+  "qcore.ctraces": {},
+  "qcore.libevent": {
+   "includes/quirin-provider-libc/libc/memory.qcore": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5"
+  },
+  "qcore.librdkafka": {
+   "includes/quirin-provider-libc/libc/memory.qcore": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5",
+   "includes/quirin-provider-libc/libc/string.qcore": "ab20b8a8839bca1231c7075b21a1812ef67e13b4655f3123adc6f3b1e480d0b2"
+  }
+ }
+}

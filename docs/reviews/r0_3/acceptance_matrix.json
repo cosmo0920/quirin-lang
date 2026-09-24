@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 299
+  "named_followups": 313
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6633,30 +6633,30 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W43-LIBC-RESULT-ALIAS, 2026-09-24. Staged arbiter: BEFORE (base binary) reproduces the W43-LIBC-CONTRACTS diagnostics byte for byte; the card's binary with no new declaration (reader change alone) reproduces all five BEFORE artifacts byte for byte; seven exact-alias declarations then remove 169 leaves and add 20, and six interior-pointer declarations remove 14 and add 1, all attributed. 12 functions Unknown -> Safe, each relative to the declared premises; 0 unit status moves; 0 invalid_release and 0 use_after_release candidates. Leak 272 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-libc-result-alias/previous-corpus-row.json.",
+   "note": "W43-INDIRECT-ACCESS-GENERAL, 2026-09-24. BEFORE (base binary) reproduces the W43-LIBC-RESULT-ALIAS diagnostics byte for byte, and so do the census-instrumented base runs. A typed scalar-access route (statements the classifier refused for their access, destination or increment, or named as an unsanctioned *p store) removes 1,112 leaves and adds 83, all attributed: 985 forecast rule leaves, 98 unforecast rule leaves, 1 unreached, 16 summary, 12 binding-precision; 78 exchanges, 5 summary-side additions, 0 violation candidates. 12 functions Unknown -> Safe (11 forecast), 1 unit Unknown -> Safe (cmt_time.c). Leak 272 -> 271: snappy.c L1694 withdrawn because the release before it is now credited (a framed store replaced a blanket poison). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-indirect-access-general/previous-corpus-row.json.",
    "units": 185,
-   "safe": 2,
+   "safe": 3,
    "provisional_unsafe": 42,
-   "unknown": 137,
+   "unknown": 136,
    "data_only": 4,
    "projected_functions": 4834,
-   "leak_diagnostics": 272,
+   "leak_diagnostics": 271,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w43-libc-result-alias/artifacts/",
-   "source": "docs/reports/w43-libc-result-alias/README.md; preceding baseline docs/reports/w43-libc-contracts/artifacts/",
-   "unknown_alias_diagnostics": 4657,
-   "unsupported_diagnostics": 48930,
+   "baseline": "docs/reports/w43-indirect-access-general/artifacts/",
+   "source": "docs/reports/w43-indirect-access-general/README.md; preceding baseline docs/reports/w43-libc-result-alias/artifacts/",
+   "unknown_alias_diagnostics": 4727,
+   "unsupported_diagnostics": 47832,
    "double_release_diagnostics": 0,
    "function_statuses": {
-    "safe": 257,
+    "safe": 269,
     "provisional_unsafe": 84,
-    "unknown": 4493
+    "unknown": 4481
    },
    "source_definitions": 4921,
    "unprojected_definitions": 87,
    "unit_reason_codes": {
-    "unsupported-syntax": 136,
-    "none": 48,
+    "unsupported-syntax": 135,
+    "none": 49,
     "incomplete-obligation-coverage": 1
    },
    "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for CONTRACT-INHERIT-ADOPTION on merge 2d0b77e1 plus the ledger repair (onto main d3cd8d81, after W43-LIBC-RESULT-ALIAS), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5208 core Rust passed / 0 failed / 11 ignored over 280 summaries; 117 provider Rust passed / 0 / 0 over 39 summaries; 170 Lean audits; 330 root Python tests after the ledger repair and this regeneration (the gate's own Python step failed because the merge commit carried unresolved conflict markers in the acceptance matrix; see integration-confirmation.md); 12 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-result-alias/artifacts/; source-effects is identical modulo checkout-path identity digests; contracts differs only by the inclusion record, the schema-2 manifest, the crate:module source keys, the token-identical elaborated resource_memory.qcore, the new resource_string.qcore and the appended strndup.",
-  "workspace_tests": 5208,
-  "provider_tests": 117,
+  "note": "Integration gate for W43-INDIRECT-ACCESS-GENERAL on merge 10b8c607 (onto main 65b5df37, after the three verdict-neutral contract cards), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0 from a cold build; every exit captured to a file, not piped. 5254 core Rust passed / 0 failed / 11 ignored over 284 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 172 Lean audits; 330 root Python tests after regenerating this section (the first run failed only the derived-facts check, 171 vs 172 Lean audits, because the merged validation section predated AuditIndirectScalarAccess); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the card's own verdict-bearing diagnostics byte for byte against docs/reports/w43-indirect-access-general/artifacts/ on the combined tree; source-effects is identical to that baseline modulo checkout-path identity digests, and contracts is byte-identical to the CONTRACT-VIEW-PROJECTION-CHECK integration run in the same checkout.",
+  "workspace_tests": 5254,
+  "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 170,
+  "lean_audits": 172,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6770,6 +6770,7 @@
    "AuditConstantDoWhile.lean",
    "AuditContractBundle.lean",
    "AuditContractInherit.lean",
+   "AuditContractViewProjection.lean",
    "AuditCt01OwnedTransfer.lean",
    "AuditCt03ReadShares.lean",
    "AuditCt07LeaseLedger.lean",
@@ -6811,6 +6812,7 @@
    "AuditFrameHelperTask.lean",
    "AuditGenericNames.lean",
    "AuditHttpComputedLength.lean",
+   "AuditIndirectScalarAccess.lean",
    "AuditJoinedProvenanceCallFrames.lean",
    "AuditJoinedProvenanceCycles.lean",
    "AuditJoinedProvenanceRoundBound.lean",
@@ -6914,7 +6916,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/contract-inherit-adoption/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w43-indirect-access-general/integration/gate.json)"
  },
  "named_followups": [
   {
@@ -7948,20 +7950,6 @@
    "recorded_by": "WAVE-36-CLOSE"
   },
   {
-   "id": "INDIRECT-EXCHANGE-PROXY-UNVALIDATED",
-   "title": "The census's three-way split rests on a proxy never validated against an admission",
-   "why": "A statement carrying an uncontracted call, or a second chain of a different shape, is PREDICTED to stay refused. The proxy has never been validated against an actual admission, because the census makes none. It errs toward exchange, so the CLEAR column is an upper bound - but the SIZE of the error is unmeasured. DISCHARGE: the first wave-37 arbiter to admit any shape publishes its measured three-way split beside this card's prediction for the same shape, and the difference is recorded.",
-   "source": "docs/reports/c-gateway-indirect-census-2/README.md",
-   "recorded_by": "WAVE-36-CLOSE"
-  },
-  {
-   "id": "INDIRECT-CENSUS-FEATURE-UNBUILT",
-   "title": "The indirect-census instrumentation is built by no CI job and will rot silently",
-   "why": "The `indirect-census` feature is built by no CI job and by no gate step other than the one the card adds to its own gate script. A later refactor of `legacy_c.rs` or `typed_field_access.rs` will break it silently, and the next card wanting the census pays to repair it. The card states this is a DECISION rather than a task and declines to take it, since the answer depends on whether wave 37 takes a gateway card at all - and the card's own recommendation is that it should not take this one. DISCHARGE: either a CI job building `-p qcore-c-gateway --features indirect-census`, or a recorded decision that the instrumentation is disposable and a future census re-derives it.",
-   "source": "docs/reports/c-gateway-indirect-census-2/README.md",
-   "recorded_by": "WAVE-36-CLOSE"
-  },
-  {
    "id": "CENSUS-DECLARATION-WINDOW-APPROXIMATE",
    "title": "The Declaration arm's census reads a window the gate did not read",
    "why": "For the 15 `Declaration`-arm leaves the gate's predicate is not `contains_unmodeled_access` but a separate bracket/dot test over the declaration prefix, so the census reads a different window from the gate. 15 leaves of 18,555; recorded rather than repaired. DISCHARGE: give the declaration arm its own census window, or state the arm is out of every arbiter's scope and drop the axis for it.",
@@ -8004,12 +7992,6 @@
    "id": "W36-CENSUS-FIGURES-PRE-CONTRACT-CARD",
    "title": "C-GATEWAY-INDIRECT-CENSUS-2's 18,555 / 284 / 833 describe the corpus before its own wave's contract arbiter landed",
    "why": "Measured by BASE-TYPE-READER-CENSUS (wave 37), which counts 18,549 family leaves, 285 sole-blocked functions and 835 sole-blocked leaves on the current baseline by the same method. The delta is attributed exactly rather than plausibly, by counting the family in each archived diagnostics.json.gz of the chain: c-gateway-constant-do-while, joined-provenance-cycles and w36-corpus-contracts-3's BEFORE all hold 18,555 / 284 / 833; w36-corpus-contracts-3's AFTER and both sides of joined-provenance-call-frames hold 18,549 / 285 / 835. Wave 36's FIRST, declarative arbiter decided six leaves of this family and moved one function INTO the sole-blocked set with two leaves; the wave's second arbiter moved this family by zero. Neither card is wrong and the frozen archives must not be edited (constraint 21). This is the first measured instance of the registered residual JPC-CENSUS-CONTRACT-SET-DEPENDENT, which is therefore confirmed rather than hypothetical. DISCHARGE: publish the baseline a census was taken against beside every census figure, as BASE-TYPE-READER-CENSUS section 3.1 does.",
-   "source": "docs/reports/base-type-reader-census/README.md"
-  },
-  {
-   "id": "BASE-TYPE-READER-CENSUS-FEATURE-UNBUILT",
-   "title": "The indirect-census feature now carries two cards' instrumentation and is still built by no CI job",
-   "why": "Raised by C-GATEWAY-INDIRECT-CENSUS-2 (wave 36) as INDIRECT-CENSUS-FEATURE-UNBUILT, left to the integrator, and not registered. BASE-TYPE-READER-CENSUS (wave 37) has now paid into it a second time: the feature gates hooks in legacy_c.rs, typed_field_access.rs and indirect_census.rs, including note sinks threaded through classify_specifiers, declared_type, read_parameters, read_locals, read_declaration and record_variable. No workspace member enables it, so the standing gate never compiles it; each card adds its own extra clippy pass and nothing else checks it. A refactor of the declaration reader will break the census silently and the next card will pay to repair it. DISCHARGE: a CI job building `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings`, or a recorded decision that the instrumentation is disposable and a future census re-derives it.",
    "source": "docs/reports/base-type-reader-census/README.md"
   },
   {
@@ -8928,13 +8910,6 @@
    "recorded_by": "W43-LIBC-RESULT-ALIAS"
   },
   {
-   "id": "CONTRACT-INHERIT-QCORE-PROVIDER-NAMING",
-   "title": "The five qcore-provider-* crates cannot join the contract load path (QI017), so eight provider-owned wrappers keep restating libc contracts; the naming decision is the user's",
-   "why": "Card CONTRACT-INHERIT-ADOPTION wired the real load path (providers/contract-load-path.json from Cargo metadata, NAMESPACE/PUBLISHED constants, schema-2 manifest references, package include pins) for the six quirin-provider-* crates only. Its census (docs/reports/contract-inherit-adoption/census.json) finds 11 custody-bearing provider declarations whose clauses equal a libc contract under positional renaming, 9 of them in qcore-provider-* crates the derivation rule refuses: rd_malloc, rd_calloc, rd_strdup, rd_strndup, rd_free (librdkafka/memory.qcore; rd.h forwards to malloc/calloc/strdup/strndup/free with rd_assert), mk_mem_alloc, mk_mem_alloc_z, mk_mem_free (monkey/memory.qcore; mk_memory.h forwards to malloc/calloc(1,n)/free) and cJSON_Delete (not a wrapper: a recursive delete; stays written out). The card did not rename crates or change the rule. Options, each with its cost, are in the report's naming section: (A) rename the five to quirin-provider-* (113 tracked files / 233 occurrences outside docs/reports and docs/plans at base dfe10c92; 51 files in 27 frozen report directories keep the old paths; archived contract-path keys under providers/qcore-provider-* change spelling; plugin ids qcore.* can stay, but the executables are named after their crates, so package digests are expected to move, not measured); (B) widen the derivation to a second fixed prefix qcore-provider-NAME -> NAME (derive_contract_namespace, Lean deriveNamespace, C15/QI017 text, a NAMESPACE/PUBLISHED record for bin crates, e.g. [package.metadata.quirin], and a Cargo edge qcore-provider-{librdkafka,libevent} -> quirin-provider-libc); (C) an explicitly recorded namespace accepted without derivation (weakest: a reader can no longer derive the qualifier from the package name). Recommendation recorded: (B). Until decided, package include pins are exercised by synthetic packages only (providers/tests/test_contract_load_path.py, crates/qcore-contract/tests/contract_bundle_includes.rs): no real package can include. Discharge: a recorded user decision; if (A) or (B), convert the eight wrappers with the same parity test and arbiter attribution this card used, and build and verify a real package with include pins.",
-   "source": "docs/reports/contract-inherit-adoption/README.md",
-   "recorded_by": "CONTRACT-INHERIT-ADOPTION"
-  },
-  {
    "id": "CONTRACT-INHERIT-FLB-STRING-ASSUMPTIONS",
    "title": "flb_strdup/flb_strndup contracts are trusted assumptions over static inline header bodies the analyzer could read, and the pinned corpus has no call site that exercises them",
    "why": "Card CONTRACT-INHERIT-ADOPTION declared, at the user's direction, fluent_bit/resource_string.qcore: flb_strdup and flb_strndup inherit libc::strdup and libc::strndup, and the module is selected in cycle19-resource-contracts.json. Both are static inline in include/fluent-bit/flb_str.h, so wherever the module is selected the contract stands in for a body the unit carries. flb_strndup is not a byte-exact forward of strndup (memcpy of exactly n bytes through flb_malloc); only the custody statement is the same. Measured: of the 185 pinned units exactly one (flb_input_chunk.c) includes flb_str.h, it calls neither function outside the header's own inline bodies, and the arbiter moved no byte of the verdict-bearing diagnostics (class c: 0 leaves). The declared-ABI gate agrees in that unit. The assumption therefore has no measured effect yet and no measured evidence either. Discharge: when the corpus scope reaches units that call flb_strdup/flb_strndup, attribute the arbiter delta leaf by leaf and decide, with W4 summaries of the header bodies as the comparison, whether to keep the contract selected or let the analyzer check the bodies (the W43-LIBC-HEADER-INLINE-BODIES precedent for glibc inline bodies).",
@@ -8942,11 +8917,137 @@
    "recorded_by": "CONTRACT-INHERIT-ADOPTION"
   },
   {
-   "id": "CONTRACT-INHERIT-ALIAS-RESULT-PARENTS",
-   "title": "Inheriting a parent whose result is resource_return_alias(p, n) / resource_return_interior(p, n) is analysed but not exercised",
-   "why": "W43-LIBC-RESULT-ALIAS (merged on main after this card's base dfe10c92) adds two v1 result predicates whose first argument is a parameter name. Card CONTRACT-INHERIT-ADOPTION could not test them on its base. By construction the positional renaming (rename_clauses) replaces every parent-parameter word in every clause, the capture check refuses a child parameter that occurs as any other word, and the v1 agreement gate requires the loaded child record to equal the parent's, the same path the realloc fixture (resource_return_reallocated(ptr, nullable), index-bearing) already exercises. The answer is exact only if the new modes load the aliased parameter by index; if a mode retained a name, every renamed child would be refused (QI012, fail-closed). Discharge: on the combined tree, a load-path test that inherits a resource_return_alias parent and a resource_return_interior parent with renamed parameters and asserts equal loaded records, plus a capture control on the second argument; or a recorded refusal.",
-   "source": "docs/reports/contract-inherit-adoption/README.md",
-   "recorded_by": "CONTRACT-INHERIT-ADOPTION"
+   "id": "CONTRACT-INHERIT-PERMUTED-PARAMETER-NAMES",
+   "title": "A child whose same-typed parameters carry the parent's names in another order is admitted, and binds by position",
+   "why": "Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING tested inheritance from derived-result parents (CONTRACT-INHERIT-ALIAS-RESULT-PARENTS). A child that reorders its parameters so that a type moves is refused (QI010), but when the moved parameters have one type the reordering is invisible to the signature check: `extern fn app_search(needle: ptr<const, u8>, haystack: ptr<const, u8>) -> ptr<mut, u8> contract inherit libc::strstr;` is admitted, and its elaborated clause is `resource_return_interior(needle, nullable)` with base index 0, exactly the parent's record (compiler/tests/contract_inherit_qcore_provider.rs, swapped_parameter_names_do_not_move_the_base). That is the positional rule C15 states, and it is sound for the declaration as written; but a C wrapper that really swaps its arguments before calling strstr would receive a wrong trusted assumption, and a reader could take the child's parameter names as re-binding the base. The rename check refuses only capture (a child name equal to a non-parameter word), not a child name equal to a parent parameter at a different position. None of the 13 inheriting declarations on the tree has such a name (flb_*, rd_* and mk_* keep the parent's order; rd_strdup/rd_strndup rename s/n to str/len). Discharge: either refuse a child parameter named like a parent parameter at another position (a C15 change with a code, a negative control, a Lean statement over rename_clauses, and a census of the inheriting declarations), or record that the positional rule alone is the intended contract and close this entry with that decision.",
+   "source": "docs/reports/contract-inherit-qcore-provider-naming/README.md",
+   "recorded_by": "CONTRACT-INHERIT-QCORE-PROVIDER-NAMING"
+  },
+  {
+   "id": "CONTRACT-VIEW-CHUNK-CLOSE-BACKEND-COVERAGE",
+   "recorded_by": "CONTRACT-VIEW-PROJECTION-CHECK",
+   "source": "docs/reports/contract-view-projection-check/README.md",
+   "title": "chunkio/memory_close.qcore supports the resource-v1 cio_chunk_close view only on memory-backed chunks",
+   "why": "Card CONTRACT-VIEW-PROJECTION-CHECK checks every multi-module declaration as a registered relation (qcore_contract::contract_views). The relation memory_close.qcore -> resource_open_close.qcore holds only under the computed, pinned premise nonnull_chunk_has_memory_backend, classified Coverage: outside it the detailed contract says nothing about the chunk (Lean QCore.ContractViewProjection.outside_the_memory_backend_the_view_is_not_implied), while chunkio/resource_open_close.qcore's resource_released(chunk, nonnull) is applied by the resource loader to every call whatever the backend. The view is also entailed by chunkio/chunk_destructor.qcore on every backend, but that is a language-level lifecycle contract, not a source-checked one. The filesystem and unsupported-backend policies (filesystem_chunk_close.qcore, unsupported_close.qcore) declare other names and are not related to the view. Nothing moves a verdict: the view was already a trusted assumption. Discharge: a checked relation from a source-checked declaration of cio_chunk_close covering the other backends to the view, or a premise on the view that narrows it to what is supported."
+  },
+  {
+   "id": "CONTRACT-VIEW-UNENFORCED-PREMISES",
+   "recorded_by": "CONTRACT-VIEW-PROJECTION-CHECK",
+   "source": "docs/reports/contract-view-projection-check/README.md",
+   "title": "The resource-v1 views are entailed only under detailed premises the v1 checker does not enforce",
+   "why": "Card CONTRACT-VIEW-PROJECTION-CHECK computes, for each projection, which detailed requires clauses the view's own custody discipline discharges; the rest are pinned per relation with a class (Profile, Environment, Coverage). flb_malloc/flb_calloc/flb_free assume ordinary_allocator_profile == 1 (Profile, fixed for the audited build). chunk_destructor.qcore -> resource_open_close.qcore assumes chunk_is_not_busy and chunk_has_no_task_or_route_custody (Environment). memory_close.qcore -> resource_open_close.qcore assumes nine premises besides its Coverage one (seven Environment: disjoint owned provenance, live reciprocal and distinct link memberships, context/stream lifetime, counter coverage, no lock/busy/task/route/transaction obligations, exclusive access; two Profile: cross-unit source/ABI bindings, free resolving to libc). The v1 vocabulary has no clause for any of them, so every call site the view covers assumes them. Discharge: a v1 premise vocabulary the loader checks at call sites, or a per-premise argument that the pinned corpus establishes it."
+  },
+  {
+   "id": "CONTRACT-VIEW-ERROR-RESET-RENAMED-EQUIVALENT",
+   "recorded_by": "CONTRACT-VIEW-PROJECTION-CHECK",
+   "source": "docs/reports/contract-view-projection-check/README.md",
+   "title": "chunkio/error_frame.qcore and chunkio/error_state.qcore are renamed equivalents kept as two views",
+   "why": "Card CONTRACT-VIEW-PROJECTION-CHECK measured the two cio_error_reset declarations: token-equal under the four-word renaming Chunk->cio_chunk, chunk_is_live->object_is_live, exclusive_chunk_access->exclusive_object_access, lock_is_preserved->modeled_fields_are_preserved, and both real frame evaluators (evaluate_chunk_frame_contract, evaluate_boolean_frame_contract) accept exactly the same write vectors over a 31-summary family for both imported protected sets {lock} and {busy, lock}; the equivalence holds exactly when the protected set contains lock and excludes the written field error_n (Lean QCore.ContractViewProjection.the_frame_evaluators_agree_under_the_condition, the_condition_is_load_bearing). They are not deleted: each is the pinned contract of a different evaluator flavour (qcore_verification::frame_source::FrameContractFlavour), bound by digest into its frame-helper task identity, and the Chunk flavour is also bundled by compiler/src/verifier_plugins/chunkio/memory_close.rs and the retained Cycle 19 adapters; an evaluator refuses the other vocabulary by design, and retiring the Chunk flavour's contract is a route change under invariant 3. Discharge: retire the Chunk flavour's own contract with archived parity, or give it a checked renaming input from error_frame.qcore, then delete error_state.qcore's declaration."
+  },
+  {
+   "id": "CONTRACT-VIEW-SMALL-MODEL-UNPROVED",
+   "recorded_by": "CONTRACT-VIEW-PROJECTION-CHECK",
+   "source": "docs/reports/contract-view-projection-check/README.md",
+   "title": "The view-entailment decision procedure's exactness is argued, not proved in Lean",
+   "why": "qcore_contract::contract_views::entails decides entailment over the equality fragment (literals, ghost names, ==, !=, and, or, not) by enumerating each name over the involved literals, 0 and 1, plus fresh values sized by the largest group of directly compared names, after restricting premises to the goal's cone of influence. Its exactness rests on a small-model argument documented in the Rust module; the Lean model (QCore.ContractViewProjection) proves each registered entailment directly over the integers and that dropping premises is sound, but not the enumeration lemma itself, and the fragment evaluator's parity with the shared interpreter is a Rust test over a grid. Discharge: a Lean proof of the small-model lemma for the fragment, or an extraction of the Rust enumerator."
+  },
+  {
+   "id": "CONTRACT-VIEW-BRIDGES-DECLARED",
+   "recorded_by": "CONTRACT-VIEW-PROJECTION-CHECK",
+   "source": "docs/reports/contract-view-projection-check/README.md",
+   "title": "The bridges from detailed vocabularies to resource-v1 predicates are declared translations",
+   "why": "Card CONTRACT-VIEW-PROJECTION-CHECK checks a projection through a declared bridge per detailed vocabulary (ALLOCATOR_OBSERVATION_BRIDGE, CHUNK_CLOSE_MECHANISM_BRIDGE, CHUNK_CLOSE_LANGUAGE_BRIDGE): for example resource_return_owned(nullable) means (result_null == 1 and live_after == 0) or (result_null == 0 and live_after == 1 and result_is_backend == 1); v1 nullable custody of flb_free's argument is identified with valid_input_extent == 1 (null or a live allocation of the same allocator, so the allocator-family match is part of the identification); result_null is 0/1 by the native adapter; chunk release is chunk_released (memory_close) or chunk_name_and_object_are_released with a consumed own<Chunk> (chunk_destructor). These identifications are premises of every projection check, stated in code and in the report, not derived from the resource checker's semantics. Discharge: a Lean or Rust statement of the v1 custody semantics from which each bridge rule follows."
+  },
+  {
+   "id": "CONTRACT-VIEW-TIMEOUT-POLICY-NATIVE-RERUN",
+   "recorded_by": "CONTRACT-VIEW-PROJECTION-CHECK",
+   "source": "docs/reports/contract-view-projection-check/README.md",
+   "title": "The retained Cycle 18 timeout-teardown evidence binds the pre-card timeout policy digest",
+   "why": "Card CONTRACT-VIEW-PROJECTION-CHECK removed monkey/timeout_teardown.qcore's source_identity declaration, a textual duplicate of monkey/wait_source_policy.qcore's; qcore_verification::timeout_teardown now evaluates the owner's declaration and binds its SHA-256 as source_identity_digest in the projection and in TimeoutTeardownEvidence. The timeout policy's own digest therefore moves (516fa1fe... -> the card's), and the retained native evidence in docs/reports/cycle18-priority1-integration/ (timeout-report.json) records the old one. The workspace tests that derive evidence from the projection pass; no native quirin-audit timeout-teardown or cycle18-composition run was made by this card. Discharge: rerun the configured timeout-teardown and Cycle 18 composition audits natively against the canonical files and publish the new digests beside the frozen report."
+  },
+  {
+   "id": "W43-INDIRECT-CALL-ARGUMENT-ACCESS",
+   "title": "An access inside a call's arguments or result assignment stays refused: 9,539 leaves on 2,408 Unknown functions, 242 sole-blocked",
+   "why": "Card W43-INDIRECT-ACCESS-GENERAL admits only statements with no call (the typed scalar-access route is never consulted for a statement that carries one). Measured at its AFTER census (docs/reports/w43-indirect-access-general/residuals.txt, class call-argument): 9,539 leaves of the five access-refusal families in 2,408 Unknown functions, 242 of them blocked by that family alone. These are `f(p->x)`, `x = f(p->x)` and `p->f = g()`; the borrowed-actual, bound-read and member-address routes already admit narrow cases. Admitting one needs the call's own contract (and, for an uncontracted callee, the call leaf remains: the census-2 exchange proxy). DISCHARGE: a card that admits a typed scalar access in a Borrowed data argument or as a call result's scalar destination, with the call's existing obligations retained, and a measured re-pin; or a recorded decision that the class belongs to the call routes.",
+   "source": "docs/reports/w43-indirect-access-general/README.md",
+   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+  },
+  {
+   "id": "W43-INDIRECT-CHAIN-ACCESS",
+   "title": "Member chains of depth two or more stay refused: 5,616 leaves on 2,057 Unknown functions, 188 sole-blocked",
+   "why": "The typed scalar-access route admits one selection per access (`*B`, `B[I]`, `B->F`, `S.F`). `a->b->c`, `a->b.c` and `a[i].f` stay refused. Measured at the AFTER census (residuals.txt, class chain): 5,616 leaves (3,998 indirect-access, 1,306 unsupported-assignment, 199 increment, 113 unrecognized-destination) in 2,057 Unknown functions, 188 sole-blocked. The intermediate member is a pointer loaded from memory, which the projection binds only through a field link; admitting it needs the intermediate dereference's own obligation (the owner's field link live, or the owner untracked) and a member reader that classifies the intermediate (census-2 section 7 measured most chains end Unresolved). DISCHARGE: a card that extends the route to record-pointer member chains with each intermediate dereference checked against field links, Lean parity and a measured re-pin; or a measured decision that the reader classes do not justify it.",
+   "source": "docs/reports/w43-indirect-access-general/README.md",
+   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+  },
+  {
+   "id": "W43-INDIRECT-UNTYPED-SINGLE-ACCESS",
+   "title": "Single accesses whose base or member the declaration reader does not classify stay refused: 3,136 leaves on 1,212 Unknown functions, 94 sole-blocked",
+   "why": "A single `*B`, `B[I]`, `B->F` or `S.F` is admitted only when the reader commits to `SCALAR *B`/`SCALAR B[N]`, `struct T *B` with a scalar member `F` of a completely read `struct T`, or `struct T S`. Measured at the AFTER census (residuals.txt, class untyped-single-access): 3,136 leaves (2,668 indirect-access, 247 unrecognized-destination, 187 store-through, 19 unsupported-assignment, 15 increment) in 1,212 Unknown functions, 94 sole-blocked. The causes are the readers already registered (RECORD-BODY-TOTAL-OR-REJECT, TYPEDEF-ANONYMOUS-AGGREGATE-UNREACHED, BASE-CAUSE-SECOND-DISCOUNT-PARTIAL) plus pointees the rule deliberately excludes (`void *`, `T **`, records). A reader repair now has a consumer: every base it commits to reaches this route. DISCHARGE: re-measure this class after any of those reader repairs lands, and attribute the moves to the reader, not the route; or a recorded decision that the class is closed.",
+   "source": "docs/reports/w43-indirect-access-general/README.md",
+   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+  },
+  {
+   "id": "W43-INDIRECT-POINTER-VALUE-STORE",
+   "title": "Pointer-valued stores through a single access stay refused: 306 leaves on 207 Unknown functions, 18 sole-blocked",
+   "why": "`p->f = q`, `*pp = q` and `a[i] = q` store an identity, which is an escape or custody question. The existing member-link (aggregate store) and out-slot machinery state that effect only for their own premises; card W43-INDIRECT-ACCESS-GENERAL admits no pointer-valued store. Measured at the AFTER census (residuals.txt, class pointer-value-store): 306 leaves (249 indirect-access, 43 store-through, 10 unrecognized-destination, 4 unsupported-assignment) in 207 Unknown functions, 18 sole-blocked. DISCHARGE: a card that states the custody effect of storing a tracked or untracked pointer into an untracked object (publication? escape? loss of the residual claim?) and admits exactly that, with Lean parity and a measured re-pin.",
+   "source": "docs/reports/w43-indirect-access-general/README.md",
+   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+  },
+  {
+   "id": "W43-INDIRECT-POINTER-INCREMENT",
+   "title": "Stores through a moving or computed pointer stay refused: 335 leaves on 172 Unknown functions",
+   "why": "`*p++ = c` increments the pointer it dereferences (C11 6.5.2.4), and `*(p + i) = c` dereferences a computed pointer; neither is a typed scalar access, so card W43-INDIRECT-ACCESS-GENERAL refuses both. A tracked pointer that moves becomes an interior pointer to its allocation, which the projection would have to rebind as derived (the W43-LIBC-RESULT-ALIAS vocabulary) before its release could be judged. Measured at the AFTER census (residuals.txt, class pointer-increment): 335 leaves (136 unrecognized-destination, 101 indirect-access, 98 increment) in 172 Unknown functions, 0 sole-blocked. DISCHARGE: a card that models pointer arithmetic on a bound name as an interior derivation of the same site, with the release rules of QCore.DerivedResult, and a measured re-pin.",
+   "source": "docs/reports/w43-indirect-access-general/README.md",
+   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+  },
+  {
+   "id": "W43-INDIRECT-OTHER-STATEMENTS",
+   "title": "Access refusals outside every named shape: 1,693 leaves on 764 Unknown functions, 25 sole-blocked, including uncensused for-clauses",
+   "why": "The residual class `other` of card W43-INDIRECT-ACCESS-GENERAL's AFTER census (residuals.txt): 1,693 leaves (751 indirect-access, 360 increment, 316 unsupported-assignment, 266 unrecognized-destination) in 764 Unknown functions, 25 sole-blocked. It holds expression statements, declarations with bracketed or dotted initializers, compound assignments into names from non-access values, and the increment-family leaves of `for` clauses, which the card's statement census does not stream (it records only `parse_statement`'s statements; 189 such leaves at the BEFORE census). DISCHARGE: stream the for-clause and synthetic-condition statements into the statement census and split this class by shape before any card is cut on it; not a discharge: citing the leaf count.",
+   "source": "docs/reports/w43-indirect-access-general/README.md",
+   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+  },
+  {
+   "id": "W43-INDIRECT-ACCUSING-UNEXERCISED-IN-CORPUS",
+   "title": "The typed scalar access's use_after_release arm reaches no function of the pinned corpus",
+   "why": "Card W43-INDIRECT-ACCESS-GENERAL reports a `use_after_release` candidate when a typed scalar access dereferences a base settled on one identity whose status carries the released bit (`report_indirect_scalar_violations`, from the settled states). It is unit-tested (crates/qcore-c-gateway/tests/indirect_scalar_access.rs: store, read, member and derived cases) and modelled (QCore.IndirectScalarAccess.an_accusation_names_a_released_settled_identity), but the arbiter over the 185 pinned units added zero use_after_release and zero invalid_release leaves: no admitted access in the corpus follows a release of its base. The unchanged provisional-Unsafe count records that absence, not the arm's verification (the RETURN-POSITION-ACCUSING-UNEXERCISED-IN-CORPUS shape). DISCHARGE: a pinned or held-out real-code fixture reaches the arm, with the leaf attributed and never presented as an upstream defect.",
+   "source": "docs/reports/w43-indirect-access-general/README.md",
+   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+  },
+  {
+   "id": "W43-INDIRECT-BYTE-STORE-REPRESENTATION-PREMISE",
+   "title": "A character-typed store through a pointer may rewrite a tracked pointer object's representation; the frame and the no-undefined-behaviour reading carry the claim",
+   "why": "C lets a character lvalue modify any object's representation (C11 6.5p7), so `*c = 0` or `c[i] = 0` through an untracked `char *c` could rewrite the bytes of a pointer the projection tracks. Card W43-INDIRECT-ACCESS-GENERAL bounds that exactly as the refusal it replaces did: a write through `*B`/`B[I]` poisons every binding outside the constraint-10a frame (a name whose slot no other lvalue designates is spared), and QCore.IndirectScalarAccess states the frame as a premise, not a proof. Two things remain premises: (1) a field link (an aggregate member's tracked child) is not invalidated by such a store, exactly as it is not invalidated by a `memset`/`memcpy` through a Borrowed position today (W43-LIBC-RESULT-ALIAS); (2) a subsequent use of a rewritten pointer is excluded by the no-undefined-behaviour reading. DISCHARGE: invalidate the field links of the targeted site (and of every site, for an untracked base) on a character-typed write, with a measured re-pin; or record that the premise is the same one the Borrowed `memset`/`memcpy` declarations already rest on, in constraint 10a's words.",
+   "source": "docs/reports/w43-indirect-access-general/README.md",
+   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+  },
+  {
+   "id": "W43-INDIRECT-CONST-DROPPED-WRITE",
+   "title": "A direct write through a const-dropped derived pointer is now admitted, so W43-LIBC-RESULT-ALIAS's 'already refused' sentence no longer holds",
+   "why": "W43-LIBC-RESULT-ALIAS section 1.3 wrote that a direct write through a `const_dropped` derived pointer (a `strchr` result over a `const char *` parameter) is already refused by the indirect-store gate, and registered only the borrowed-position case as W43-RESULT-ALIAS-CONST-WRITE. Card W43-INDIRECT-ACCESS-GENERAL admits `*p = '\\0'` through such a pointer when its base resolves, because the flag is set from the contract's parameter type and says nothing about whether the object is const, and constness is outside the custody property (as bounds are; spec L18 and the report's scope field). The forecast mirror counts 1 store and 5 reads through a name the body assigns a derived result in the pinned corpus. DISCHARGE: carry the argument's declared constness (not the parameter's) into the derived binding and refuse a write through a genuinely const object, with a measured re-pin; or fold this into W43-RESULT-ALIAS-CONST-WRITE with a recorded decision that constness stays outside the property.",
+   "source": "docs/reports/w43-indirect-access-general/README.md",
+   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+  },
+  {
+   "id": "W43-INDIRECT-PROTECTED-FORMAL-INCREMENT",
+   "title": "The older formal-mutation refusal blocks 15 leaves of typed scalar statements before the new route is consulted",
+   "why": "`classify_simple` refuses `unmodeled expression may mutate a formal resource identity` for any statement with an increment or nested write that mentions a protected name, and `*n` anywhere in a body protects the formal `n`, so `(*n)++` and `p->count++` on a protected `p` never reach card W43-INDIRECT-ACCESS-GENERAL's route (pinned by an_increment_of_a_protected_name_keeps_its_refusal). Measured at the AFTER census (scripts/formal_mutation.py): 118 leaves of that family in Unknown functions, 15 of them (9 functions) statements the typed rule would otherwise admit. The refusal protects a formal's identity from `p++`; an increment of the pointee does not change it. DISCHARGE: narrow the formal-mutation gate to writes of the protected name itself (not of an object it designates), with a test that `p++` on a protected formal still refuses, and a measured re-pin.",
+   "source": "docs/reports/w43-indirect-access-general/README.md",
+   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+  },
+  {
+   "id": "INDIRECT-EXCHANGE-PROXY-EXCH-ARM-UNTESTED",
+   "title": "The census-2 proxy's EXCH arm has still met no admission that covers every statement of its shape",
+   "why": "Narrowed from INDIRECT-EXCHANGE-PROXY-UNVALIDATED by card W43-INDIRECT-ACCESS-GENERAL, which published the proxy's per-shape prediction beside its measured outcome for the 17 census-2 shapes its typed rule touches (proxy-validation.txt): of 11 functions the proxy calls CLEAR, 4 measured cleared and 7 kept a leaf only because another statement of the same shape is outside the typed rule; no CLEAR prediction was wrong where the rule covered the shape. The 4 EXCH predictions all kept a leaf for the same reason, so the exchange arm is still unmeasured. DISCHARGE: an admission whose rule covers every statement of a census-2 shape measures that shape's EXCH functions, and the difference is recorded.",
+   "source": "docs/reports/w43-indirect-access-general/README.md",
+   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
+  },
+  {
+   "id": "W43-INDIRECT-FORECAST-CENSUS-WINDOW",
+   "title": "The indirect census omits a destination-refused statement's value-side chains, so a forecast from it misses two-base member copies",
+   "why": "`indirect_census::record` reads only the destination window for an AssignmentDestination refusal, so `a->f = b->g` carries no chain (and no member class) for `b`. Card W43-INDIRECT-ACCESS-GENERAL's forecast mirror therefore refused 98 leaves the implementation admitted (unforecast.txt: all indirect-access, all two-base scalar member copies such as `metric_dst->x = metric_src->x`), which is the whole of its leaf-level forecast miss and its one function-level miss (`cmt_time_from_ns`, whose unit `cmt_time.c` then moved to Safe). The card's statement stream carries whole-statement chains; the indirect stream does not. DISCHARGE: record the whole statement's chains in the indirect census as well, keeping the gate's own window as a separate field, and re-run the forecast.",
+   "source": "docs/reports/w43-indirect-access-general/README.md",
+   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
   },
   {
    "id": "W43-DESC-NATIVE-PHASE-B",

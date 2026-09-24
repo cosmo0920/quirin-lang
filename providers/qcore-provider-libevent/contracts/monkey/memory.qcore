@@ -1,27 +1,27 @@
 module contract;
+#include "quirin-provider-libc:libc/memory.qcore";
 
 // Trusted resource-projection assumptions, vocabulary version 1.
 // These preserve the Cycle 19 audit table; they do not verify the C bodies.
 // Borrowed scalar/opaque arguments carry no resource custody requirement.
 // Detailed observation/lifecycle contracts remain separate semantic profiles.
+//
+// Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: Monkey's allocator wrappers take
+// their contracts from the libc declarations they wrap instead of restating
+// them. `include/monkey/mk_core/mk_memory.h` defines `mk_mem_alloc` as
+// `malloc(size)` and `mk_mem_alloc_z` as `calloc(1, size)` (each NULL on
+// failure; `je_malloc`/`je_calloc` under `MALLOC_JEMALLOC`), and `mk_mem_free`
+// as `free(ptr)`. `mk_mem_alloc_z` inherits `libc::malloc`, not `calloc`: the
+// signatures must agree position by position, and `calloc`'s two parameters
+// do not match its one. The zeroing is not a custody fact; the custody
+// statement (a borrowed size, a `nullable` owned result) is `malloc`'s
+// exactly. Each elaborates to the clauses these declarations carried when they
+// were written out by hand (clause for clause, parameter names included); an
+// inherited contract is a trusted assumption of the same strength as that
+// hand-written one, never a proof.
 
-extern fn mk_mem_alloc(size: usize) -> ptr<mut, u8>
-contract {
-    requires resource_contract_v1;
-    ensures normal resource_borrowed(size);
-    ensures normal resource_return_owned(nullable);
-};
+extern fn mk_mem_alloc(size: usize) -> ptr<mut, u8> contract inherit libc::malloc;
 
-extern fn mk_mem_alloc_z(size: usize) -> ptr<mut, u8>
-contract {
-    requires resource_contract_v1;
-    ensures normal resource_borrowed(size);
-    ensures normal resource_return_owned(nullable);
-};
+extern fn mk_mem_alloc_z(size: usize) -> ptr<mut, u8> contract inherit libc::malloc;
 
-extern fn mk_mem_free(ptr: ptr<mut, u8>) -> unit
-contract {
-    requires resource_contract_v1;
-    ensures normal resource_released(ptr, nullable);
-    ensures normal resource_return_none();
-};
+extern fn mk_mem_free(ptr: ptr<mut, u8>) -> unit contract inherit libc::free;

@@ -71,6 +71,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [contract-inherit-adoption](contract-inherit-adoption/README.md) | CONTRACT-INHERIT-ADOPTION: contract inclusion and inheritance in the real provider crates |
 
+| [contract-inherit-qcore-provider-naming](contract-inherit-qcore-provider-naming/README.md) | CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: the executable provider crates on the contract load path |
+
+| [contract-view-projection-check](contract-view-projection-check/README.md) | CONTRACT-VIEW-PROJECTION-CHECK: checked relations between the views of one function |
+
 | [core-concurrency-prelude](core-concurrency-prelude/README.md) | Core concurrency prelude — 2026-09-08 |
 
 | [corpus-repin](corpus-repin/README.md) | CORPUS-REPIN — re-measurement and deliberate re-pin of the four 185-unit artifacts |
@@ -811,6 +815,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w43-chunk-source-profile](w43-chunk-source-profile/README.md) | W43 chunk source profile |
 
 | [w43-descriptor-native-check](w43-descriptor-native-check/README.md) | W43-DESCRIPTOR-NATIVE-CHECK: descriptor lifecycles checked on native executions |
+
+| [w43-indirect-access-general](w43-indirect-access-general/README.md) | W43-INDIRECT-ACCESS-GENERAL: typed scalar accesses through pointers |
 
 | [w43-libc-contracts](w43-libc-contracts/README.md) | W43-LIBC-CONTRACTS: trusted libc/POSIX contracts, measured first and placed only in the libc crate |
 

@@ -1,0 +1,237 @@
+run: private/runs/census-base6
+units matched 178 / 178
+
+family                                                          leaves  funcs  sole unexpl
+indirect memory access is outside the resource projection        17665   3315   378      1
+unsupported assignment expression                                 1683    589     4     33
+unrecognized assignment destination                                901    434     3      2
+unmodeled increment or decrement expression                        734    378     5    189
+store through `X` without an out-parameter contract                656    253     2      0
+
+== indirect memory access is outside the resource projection
+shape                               stmts leaves  funcs soleT   clrL  dec  pairs reduced to one
+call-statement                       8128   8128   2131   206   7284   81  unresolved resource iden:49, call to uncontracted fun:45, unmodeled call, aggregat:33
+store:chain                          2877   2862   1097    87   2389   22  call to uncontracted fun:23, unmodeled call, aggregat:13, unmodeled call, aggregat:6
+store:p->f                           2602   2602    869    91   2578   19  call to uncontracted fun:30, unmodeled call, aggregat:6, braced initializer, expr:3
+read:chain                           2286   2262   1410   162   1922   57  call to uncontracted fun:32, unmodeled call, aggregat:17, unresolved resource iden:7
+assign-expression                    1135    973    546    19    397    2  unmodeled call, aggregat:1, unmodeled call, aggregat:1, call to uncontracted fun:1
+store:p[i]                            841    841    135     2    109    1  unsupported assignment e:2
+read:p->f                             575    569    344     2    360    0  call to uncontracted fun:2, unresolved resource iden:2
+store:s.f                             379    373    132    26    367   13  braced initializer, expr:4, unmodeled increment or d:2, call to uncontracted fun:1
+store:other                           256    210    136    13    130    1  unrecognized assignment :1
+expression                            182    182    159     7    182    3  call to uncontracted fun:3
+store:*p                              167    167    112     3    167    3  unmodeled call, aggregat:8, unsupported assignment e:1, store through `X` withou:1
+compound-into-name:chain               87     87     55     0     69    0  unmodeled call, aggregat:1
+assign-call                            75     75     51     1     75    0  unresolved resource iden:1, unmodeled call, aggregat:1, unmodeled call, aggregat:1
+store:*(expr)                          60     60     52     0      5    0  
+compound-into-name:other               51     51     22     0     47    0  
+read:*(expr)                           45     45     25     0     45    0  unmodeled expression may:1
+compound:p->f                          44     44     33     0     44    0  
+compound:other                         38     38     11     2     38    2  
+read:p[i]                              37     37     28     0     37    0  
+read:s.f                               20     20     14     0     20    0  
+compound-into-name:p->f                11     11     11     0     11    0  
+read:*p                                10     10      8     0     10    0  
+compound-into-name:p[i]                 8      8      6     0      8    0  
+compound:s.f                            8      8      5     0      8    0  
+compound:chain                          5      5      4     0      5    0  
+compound:p[i]                           4      4      1     0      4    0  
+compound-into-name:*p                   3      3      3     0      3    0  
+compound-into-name:s.f                  1      1      1     0      1    0  
+unexplained                             1      1      1     0      1    0  
+compound-into-name:*(expr)              1      1      1     0      1    0  
+
+== unsupported assignment expression
+shape                               stmts leaves  funcs soleT   clrL  dec  pairs reduced to one
+store:chain                          1781   1190    356     1   1003    1  indirect memory access i:9, call to uncontracted fun:8, unmodeled call, aggregat:4
+assign-expression                     279    279    190     3    264    2  indirect memory access i:24, unresolved resource iden:1, unmodeled call, aggregat:1
+store:other                           172    172     67     0     10    0  
+read:chain                            116    116     56     1    116    0  call to uncontracted fun:1
+store:*p                               71     71     43     0     61    0  call to uncontracted fun:2, unmodeled call, aggregat:1
+unexplained                            33     33     27     0     33    0  
+expression                              9      9      8     0      9    0  
+
+== unrecognized assignment destination
+shape                               stmts leaves  funcs soleT   clrL  dec  pairs reduced to one
+compound:p->f                         249    249    147     0    249    0  unmodeled call, aggregat:2, indirect memory access i:1, call to uncontracted fun:1
+compound-into-name:other              160    160     59     0    136    0  unresolved resource iden:1, call to uncontracted fun:1
+store:*(expr)                         136    136     89     0    136    0  indirect memory access i:3, call to uncontracted fun:1, unmodeled call, aggregat:1
+compound-into-name:name               124    124     39     0    100    0  
+store:p[i]                            104    104     69     1    104    1  unsupported assignment e:1
+store:chain                            61     61     51     0     61    0  indirect memory access i:5, unmodeled call, aggregat:1, unmodeled call, aggregat:1
+compound:chain                         28     28     22     2     28    2  unmodeled call, aggregat:2, indirect memory access i:1
+compound-into-name:chain               24     24     13     0     24    0  local declaration may sh:2
+compound:*p                            23     23     12     0     23    0  unmodeled call, aggregat:1
+compound:s.f                            6      6      5     0      6    0  indirect memory access i:1
+store:other                             4      4      2     0      4    0  
+compound:p[i]                           4      4      1     0      4    0  
+unexplained                             2      2      1     0      2    0  
+
+== unmodeled increment or decrement expression
+shape                               stmts leaves  funcs soleT   clrL  dec  pairs reduced to one
+increment:chain                       200    200    144     5    200    5  indirect memory access i:2, unmodeled call, aggregat:2
+unexplained                           189    189    117     0    189    0  call to uncontracted fun:1
+increment:name                        148    148     83     0    148    0  call to uncontracted fun:2
+compound:*(expr)                       62     62     13     0     62    0  
+store-postinc:p[i]                     31     31     21     0     31    0  unresolved resource iden:1
+store-postinc:*(expr)                  19     19      4     0     19    0  unsupported assignment e:1
+compound-into-name:other               18     18      2     0     18    0  
+read:chain                             15     15      7     0     15    0  
+store-postinc:chain                    14     14     12     0     14    0  
+increment:s.f                          12     12      8     0     12    0  indirect memory access i:2
+read:*(expr)                            7      7      2     0      7    0  
+store:chain                             7      7      7     0      7    0  
+assign-expression                       4      4      3     0      4    0  
+store:p->f                              3      3      3     0      3    0  
+increment:*p                            2      2      2     0      2    0  
+read:p[i]                               2      2      2     0      2    0  
+increment:other                         1      1      1     0      1    0  
+
+== store through `X` without an out-parameter contract
+shape                               stmts leaves  funcs soleT   clrL  dec  pairs reduced to one
+store:*p                              656    656    253     2    656    2  indirect memory access i:6, call to uncontracted fun:2
+
+statement keys (family, shape, value, base axis, base type): leaves funcs soleTouched
+  8128  2131  206  indirect memory ac call-statement           call               no-base     -
+   721   496   16  indirect memory ac store:chain              access             may-bind    undeclared
+   620    87    0  indirect memory ac store:p[i]               undeclared-name    may-bind    opaque:ArrayDeclarator|element:Array
+   580   398   88  indirect memory ac read:chain               undeclared         may-bind    undeclared
+   517   317   19  indirect memory ac read:chain               scalar             may-bind    undeclared
+   417   131    4  indirect memory ac store:chain              call               may-bind    scalar_type_name
+   356   194   13  indirect memory ac store:chain              scalar             may-bind    record_pointer
+   310   154    7  indirect memory ac store:p->f               scalar             may-bind    record_pointer
+   291   143    0  indirect memory ac assign-expression        access             may-bind    undeclared
+   277   144    0  indirect memory ac read:p->f                undeclared         may-bind    undeclared
+   272   137    8  indirect memory ac store:chain              access             may-bind    scalar_type_name
+   255   189   14  indirect memory ac store:chain              call               may-bind    undeclared
+   217   113    3  indirect memory ac assign-expression        access             may-bind    scalar
+   195    85    2  indirect memory ac store:p->f               access             may-bind    record_pointer
+   183   119    4  indirect memory ac store:p->f               call               may-bind    record_pointer
+   182   159    7  indirect memory ac expression               -                  no-base     -
+   172   114   13  indirect memory ac store:other              access             no-base     -
+   146    59    1  indirect memory ac assign-expression        mutating           may-bind    scalar
+   144   121    6  indirect memory ac assign-expression        access             may-bind    record_pointer
+   132    92    0  indirect memory ac read:chain               scalar             may-bind    record_pointer
+   128    79    1  indirect memory ac store:chain              call               may-bind    record_pointer
+   120    64   10  indirect memory ac store:p->f               call               owned       record_pointer
+   116    91    4  indirect memory ac read:chain               opaque:TypedefDefi may-bind    undeclared
+   115     7    0  indirect memory ac store:p[i]               undeclared-name    may-bind    undeclared
+   100    67    0  indirect memory ac store:p->f               pointer            may-bind    record_pointer
+    88    31    0  indirect memory ac store:p->f               scalar             may-bind    undeclared
+    75    36    1  indirect memory ac store:chain              access             may-bind    record_pointer
+    74    44    0  indirect memory ac assign-expression        mutating           may-bind    undeclared
+    73    27    1  indirect memory ac store:p->f               call               may-bind    undeclared
+    72    35    1  indirect memory ac store:p->f               undeclared-name    may-bind    undeclared
+    66    50    0  indirect memory ac read:chain               opaque:PointerToSc may-bind    undeclared
+    65    24    3  indirect memory ac store:p->f               scalar             owned       record_pointer
+    63    26    2  indirect memory ac store:s.f                scalar             may-bind    record
+    61    48    2  indirect memory ac store:*p                 access             may-bind    opaque:PointerToScalar|element:Pointer
+    60    52    0  indirect memory ac store:*(expr)            access             no-base     -
+    60    29    1  indirect memory ac store:p->f               scalar             may-bind    opaque:TypedefDisagreeing
+    58     2    0  indirect memory ac assign-expression        undeclared-name    may-bind    scalar
+    57    47    1  indirect memory ac store:p->f               opaque             may-bind    record_pointer
+    57    50   12  indirect memory ac store:chain              mutating           may-bind    undeclared
+    57    34    1  indirect memory ac store:chain              undeclared-name    may-bind    undeclared
+    56    31    0  indirect memory ac compound-into-name:chain call               may-bind    undeclared
+    52    46    0  indirect memory ac store:other              scalar             no-base     -
+    48    40    1  indirect memory ac read:p->f                scalar             may-bind    record_pointer
+    45    45    1  indirect memory ac store:chain              pointer            may-bind    record_pointer
+    43    12    0  indirect memory ac store:chain              scalar             may-bind    undeclared
+    42    15    0  indirect memory ac store:p->f               access             may-bind    undeclared
+    41    24    4  indirect memory ac store:p->f               access             owned       record_pointer
+    40    40    1  indirect memory ac read:chain               record_pointer:rd_ may-bind    undeclared
+    36    15    0  indirect memory ac store:p->f               scalar             may-bind    opaque:UnreadableSpecifiers
+    36    30    0  indirect memory ac store:chain              opaque             may-bind    record_pointer
+    35    16    1  indirect memory ac store:p->f               undeclared-name    owned       undeclared
+    35    20    0  indirect memory ac store:p->f               scalar             may-bind    opaque:TypedefDefinesAggregate("struct r
+    34    23    2  indirect memory ac store:p->f               pointer            owned       record_pointer
+    34    34    0  indirect memory ac read:p->f                opaque:TypedefDefi may-bind    record_pointer
+    33    29    0  indirect memory ac assign-call              call               may-bind    scalar
+    30    10    1  indirect memory ac store:s.f                scalar             may-bind    undeclared
+    29    14    0  indirect memory ac read:*(expr)             scalar             no-base     -
+    29    27    0  indirect memory ac read:chain               record_pointer:rd_ may-bind    record_pointer
+    29    23    0  indirect memory ac assign-expression        access             may-bind    opaque:TypedefDefinesAggregate("struct r
+    27    22    0  indirect memory ac read:chain               record_pointer:rd_ may-bind    undeclared
+    26    25    0  indirect memory ac store:chain              mutating           may-bind    scalar_type_name
+    25    19    3  indirect memory ac store:p->f               opaque             owned       record_pointer
+    25    25    1  indirect memory ac read:chain               record_pointer:rd_ may-bind    undeclared
+    25     3    1  indirect memory ac store:p->f               scalar             owned       opaque:TypedefDefinesAggregate("struct r
+    24    24    0  indirect memory ac store:*p                 call               may-bind    opaque:PointerToScalar|element:Pointer
+    23    13    0  indirect memory ac compound-into-name:other access             no-base     -
+    23    20    0  indirect memory ac read:chain               opaque:TypedefDefi may-bind    undeclared
+    22    15    0  indirect memory ac store:s.f                access             may-bind    record
+    22     4    0  indirect memory ac store:p->f               scalar             may-bind    opaque:TypedefDefinesAggregate("struct r
+    21     7    0  indirect memory ac read:chain               record_pointer:cfl may-bind    undeclared
+    21     9    1  indirect memory ac store:chain              call               owned       record_pointer
+    21     9    0  indirect memory ac store:s.f                undeclared-name    may-bind    undeclared
+    21    16    0  indirect memory ac store:p->f               scalar             may-bind    opaque:TypedefDefinesAggregate("struct c
+    21    19    0  indirect memory ac read:chain               opaque:TypedefDefi may-bind    undeclared
+    21    12    1  indirect memory ac store:p->f               access             may-bind    opaque:TypedefDefinesAggregate("struct r
+    21     8    0  indirect memory ac compound:other           access             no-base     -
+    20    14    0  indirect memory ac read:chain               scalar             may-bind    scalar
+    20    10    0  indirect memory ac read:p->f                opaque:PointerToSc may-bind    record_pointer
+    19     5    1  indirect memory ac store:chain              scalar             owned       record_pointer
+    19     7    1  indirect memory ac store:p->f               call               may-bind    opaque:TypedefDefinesAggregate("struct r
+    18    12    0  indirect memory ac store:s.f                call               may-bind    record
+    18     6    3  indirect memory ac store:p->f               scalar             never-bound record_pointer
+    18    10    1  indirect memory ac store:p->f               opaque             may-bind    opaque:TypedefDefinesAggregate("struct c
+    18    14    1  indirect memory ac store:p->f               call               may-bind    opaque:TypedefDisagreeing
+    17    15    6  indirect memory ac store:chain              scalar             never-bound record_pointer
+    17     7    0  indirect memory ac store:s.f                scalar             may-bind    opaque:TypedefDefinesAggregate("struct")
+    17    10    1  indirect memory ac store:chain              scalar             may-bind    opaque:TypedefDisagreeing
+    17     4    1  indirect memory ac store:p->f               call               owned       opaque:TypedefDisagreeing
+    17     6    0  indirect memory ac store:p->f               scalar             may-bind    opaque:TypedefDefinesAggregate("struct r
+    16    13    1  indirect memory ac assign-expression        access             may-bind    opaque:TypedefDefinesAggregate("struct r
+    16     7    0  indirect memory ac compound-into-name:other mutating           no-base     -
+    16     9    2  indirect memory ac read:chain               opaque:TypedefDefi may-bind    undeclared
+    16    12    9  indirect memory ac store:s.f                scalar             never-bound opaque:TypedefDefinesAggregate("union")
+    16    16   14  indirect memory ac store:s.f                access             never-bound opaque:TypedefDefinesAggregate("union")
+    15     7    0  indirect memory ac store:chain              access             may-bind    opaque:TypedefDefinesAggregate("struct r
+   664    74    0  unsupported assign store:chain              scalar             may-bind    scalar_type_name
+   563    88    0  unsupported assign store:chain              address            never-bound scalar_type_name
+   155    62    0  unsupported assign store:other              scalar             no-base     -
+   110    61    1  unsupported assign store:chain              scalar             never-bound scalar_type_name
+    98    65    0  unsupported assign store:chain              opaque             never-bound undeclared
+    81    76    0  unsupported assign store:chain              scalar             never-bound undeclared
+    73    52    1  unsupported assign assign-expression        scalar             may-bind    scalar
+    69    66    0  unsupported assign assign-expression        opaque             may-bind    record_pointer
+    64    32    1  unsupported assign assign-expression        scalar             may-bind    undeclared
+    47    32    0  unsupported assign store:*p                 scalar             may-bind    opaque:PointerToScalar|element:Pointer
+    41    30    0  unsupported assign store:chain              undeclared-name    never-bound undeclared
+    36    16    0  unsupported assign store:chain              undeclared-name    never-bound scalar_type_name
+    33    24    0  unsupported assign store:chain              pointer            never-bound undeclared
+    33    27    0  unsupported assign unexplained              -                  -           -
+    31    18    0  unsupported assign read:chain               opaque:PointerToSc may-bind    opaque:PointerToScalar|element:Pointer
+    27    10    0  unsupported assign read:chain               undeclared         may-bind    undeclared
+    27    19    0  unsupported assign store:chain              opaque             never-bound scalar_type_name
+    26     5    0  unsupported assign store:chain              address            may-bind    scalar_type_name
+    20    20    0  unsupported assign store:chain              mutating           never-bound undeclared
+    19    11    1  unsupported assign read:chain               scalar             may-bind    scalar
+    19     6    0  unsupported assign store:chain              pointer            never-bound scalar_type_name
+    17     5    0  unsupported assign read:chain               opaque:PointerToSc may-bind    undeclared
+    17     5    0  unsupported assign store:other              undeclared-name    no-base     -
+   159    58    0  unrecognized assig compound-into-name:other scalar             no-base     -
+   117    79    0  unrecognized assig store:*(expr)            scalar             no-base     -
+   111    75    0  unrecognized assig compound:p->f            scalar             may-bind    record_pointer
+    80    22    0  unrecognized assig compound-into-name:name  undeclared-name    may-bind    undeclared
+    47    20    0  unrecognized assig compound:p->f            scalar             may-bind    opaque:TypedefDisagreeing
+    41    18    0  unrecognized assig compound-into-name:name  scalar             may-bind    scalar
+    19     5    0  unrecognized assig compound:p->f            undeclared-name    may-bind    undeclared
+    18    10    0  unrecognized assig compound:p->f            scalar             may-bind    undeclared
+    17     8    0  unrecognized assig store:*(expr)            undeclared-name    no-base     -
+    15    13    1  unrecognized assig store:p[i]               undeclared-name    owned       opaque:PointerToScalar|element:Pointer
+   189   117    0  unmodeled incremen unexplained              -                  -           -
+    98    53    0  unmodeled incremen increment:name           -                  may-bind    undeclared
+    77    60    0  unmodeled incremen increment:chain          -                  may-bind    record_pointer
+    42    23    0  unmodeled incremen increment:name           -                  may-bind    opaque:PointerToScalar|element:Pointer
+    37     6    0  unmodeled incremen compound:*(expr)         undeclared-name    no-base     -
+    20     4    0  unmodeled incremen increment:chain          -                  may-bind    opaque:UnreadableSpecifiers
+    18     2    0  unmodeled incremen compound-into-name:other mutating           no-base     -
+    17     9    0  unmodeled incremen increment:chain          -                  may-bind    undeclared
+    15     3    0  unmodeled incremen compound:*(expr)         scalar             no-base     -
+    15     1    0  unmodeled incremen store-postinc:*(expr)    scalar             no-base     -
+   382   134    2  store through `X`  store:*p                 scalar             may-bind    opaque:PointerToScalar|element:Pointer
+    70    20    0  store through `X`  store:*p                 undeclared-name    may-bind    undeclared
+    40    23    0  store through `X`  store:*p                 undeclared-name    may-bind    opaque:PointerToScalar|element:Pointer
+    34    32    0  store through `X`  store:*p                 pointer            may-bind    opaque:PointerDepthAboveOne
+    17     7    0  store through `X`  store:*p                 scalar             may-bind    opaque:TypedefDefinesAggregate("enum")

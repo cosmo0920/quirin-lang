@@ -79,7 +79,19 @@ class CanonicalCorpus(unittest.TestCase):
         self.assertEqual(violations, [])
         memory = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qcore"
         string = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qcore"
+        # Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: the Monkey and
+        # librdkafka allocator wrappers, owned by the executable crates.
+        monkey = "providers/qcore-provider-libevent/contracts/monkey/memory.qcore"
+        rdkafka = "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qcore"
         self.assertEqual(references, [
+            (monkey, "mk_mem_alloc", "libc::malloc"),
+            (monkey, "mk_mem_alloc_z", "libc::malloc"),
+            (monkey, "mk_mem_free", "libc::free"),
+            (rdkafka, "rd_malloc", "libc::malloc"),
+            (rdkafka, "rd_calloc", "libc::calloc"),
+            (rdkafka, "rd_strdup", "libc::strdup"),
+            (rdkafka, "rd_strndup", "libc::strndup"),
+            (rdkafka, "rd_free", "libc::free"),
             (memory, "flb_malloc", "libc::malloc"),
             (memory, "flb_calloc", "libc::calloc"),
             (memory, "flb_free", "libc::free"),

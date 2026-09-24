@@ -360,6 +360,7 @@ fn derive_evidence(
         source_summary_digest: projection.source_summary_digest().into(),
         libevent_event_c_digest: projection.libevent_event_c_digest().into(),
         contract_digest: projection.contract_digest().into(),
+        source_identity_digest: projection.source_identity_digest().into(),
         path_index: *path_index,
         callback: text(&entered["action"], "callback")?.into(),
         base,

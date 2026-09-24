@@ -146,7 +146,36 @@ mod tests {
             .join("contract-load-path.json");
         let manifest: serde_json::Value =
             serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
-        let crates = manifest["crates"].as_array().unwrap();
+        // Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: the five executable
+        // `qcore-provider-*` crates are on the load path too. A library cannot
+        // link a binary, so they are checked by their own crate tests and by
+        // `providers/contracts.py check`; here, exactly those five names are
+        // set aside and every other record must be a crate linked below.
+        let all = manifest["crates"].as_array().unwrap();
+        let executables: Vec<_> = all
+            .iter()
+            .filter_map(|record| record["name"].as_str())
+            .filter(|name| name.starts_with("qcore-provider-"))
+            .collect();
+        assert_eq!(
+            executables,
+            [
+                "qcore-provider-chunkio",
+                "qcore-provider-cmetrics",
+                "qcore-provider-ctraces",
+                "qcore-provider-libevent",
+                "qcore-provider-librdkafka",
+            ]
+        );
+        let crates: Vec<_> = all
+            .iter()
+            .filter(|record| {
+                !record["name"]
+                    .as_str()
+                    .unwrap()
+                    .starts_with("qcore-provider-")
+            })
+            .collect();
         type Linked = (
             &'static str,
             &'static str,

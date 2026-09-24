@@ -60,9 +60,17 @@ fn real_load_path() -> qcore_contract::load_path_manifest::LoadPathManifest {
 fn the_real_load_path_reads_and_records_what_the_crates_declare() {
     let manifest = real_load_path();
     let crates: Vec<_> = manifest.contract_roots.keys().cloned().collect();
+    // Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING (deliberate update): the
+    // five executable `qcore-provider-*` crates joined the load path; their
+    // records are pinned in `contract_inherit_qcore_provider.rs`.
     assert_eq!(
         crates,
         [
+            "qcore-provider-chunkio",
+            "qcore-provider-cmetrics",
+            "qcore-provider-ctraces",
+            "qcore-provider-libevent",
+            "qcore-provider-librdkafka",
             "quirin-provider-cfl",
             "quirin-provider-fluent-bit",
             "quirin-provider-libc",
@@ -232,9 +240,16 @@ fn the_resource_manifest_selects_the_adopted_module_with_equal_meaning() {
     let key = format!("{FLB}:{RESOURCE_MEMORY}");
     assert!(contracts.source_assumptions().contains_key(&key));
     let strings = format!("{FLB}:fluent_bit/resource_string.qcore");
+    // Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING adds the two converted
+    // provider modules (`contract_inherit_qcore_provider.rs`).
     assert_eq!(
         contracts.inclusion_evidence().keys().collect::<Vec<_>>(),
-        [&key, &strings]
+        [
+            &"qcore-provider-libevent:monkey/memory.qcore".to_owned(),
+            &"qcore-provider-librdkafka:librdkafka/memory.qcore".to_owned(),
+            &key,
+            &strings
+        ]
     );
     check_source_assumptions(&contracts).unwrap();
     let provenance = inclusion_provenance(&contracts).unwrap();
@@ -485,9 +500,11 @@ fn a_stale_or_invalid_load_path_is_refused() {
             }),
         ),
         (
+            // Neither admitted prefix. (`qcore-provider-app` is admitted since
+            // card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING, and derives `app`.)
             "QI017",
             Box::new(|v| {
-                v["crates"][0]["name"] = "qcore-provider-app".into();
+                v["crates"][0]["name"] = "other-provider-app".into();
             }),
         ),
         (

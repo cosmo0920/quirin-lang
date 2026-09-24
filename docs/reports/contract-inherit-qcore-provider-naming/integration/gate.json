@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for CONTRACT-INHERIT-QCORE-PROVIDER-NAMING on merge e7ef0887 (onto main f8b41209, which the card had already merged), measured by the integrator in its own worktree from a cold build; every exit captured to a file, not piped. 5216 core Rust passed / 0 failed / 11 ignored over 281 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 170 Lean audits; 330 root Python tests; 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-result-alias/artifacts/; against the CONTRACT-INHERIT-ADOPTION integration run in the same checkout, source-effects is byte-identical and contracts differs only by the two qcore-provider memory modules now keyed crate:module (token-identical to their hand-written texts), the schema-2 manifest entries and the eight added inheritance chains.",
+ "workspace_tests": 5216,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 330,
+ "lean_audits": 170,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -397,6 +397,16 @@ pub fn replay_observation_witness(
     Ok(replay)
 }
 
+/// The shared interpreter's evaluation of one predicate, for the parity test
+/// of `contract_views`' fragment evaluator.
+#[cfg(test)]
+pub(crate) fn evaluate_predicate(
+    source: &str,
+    values: &BTreeMap<String, i128>,
+) -> Result<i128, String> {
+    evaluate(source, values)
+}
+
 fn evaluate(source: &str, values: &BTreeMap<String, i128>) -> Result<i128, String> {
     let tokens: Vec<_> = lex(source)
         .map_err(|e| e.to_string())?
@@ -458,7 +468,7 @@ fn integer_truth(value: &ContractFact) -> Result<i128, String> {
     }
 }
 
-fn decode_text_literal(raw: &str) -> Result<String, String> {
+pub(crate) fn decode_text_literal(raw: &str) -> Result<String, String> {
     let bytes = qcore_core::std_string::decode_string_literal(raw)
         .map_err(|error| format!("invalid contract policy text literal: {error}"))?;
     if bytes.len() > MAX_POLICY_TEXT_BYTES {

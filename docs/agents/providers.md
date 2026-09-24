@@ -167,10 +167,10 @@ uses `#include "crate:module";` must pin every module it reaches — crate,
 crate version, module path, SHA-256 — in its inventory's `includes` object and
 install the exact texts under `includes/<crate>/<module>`;
 `providers/package.py verify` refuses an unpinned directive, a changed or
-missing parent, an unused pin and an unpinned `includes/` tree. No package
-includes anything yet, so every existing inventory and package identity is
-unchanged. Card `CONTRACT-INHERIT-ADOPTION` builds the pins from the real
-crates' published sets (below). [Report](../reports/contract-inherit/README.md).
+missing parent, an unused pin and an unpinned `includes/` tree. Card
+`CONTRACT-INHERIT-ADOPTION` builds the pins from the real crates' published
+sets (below); since `CONTRACT-INHERIT-QCORE-PROVIDER-NAMING`, `qcore.librdkafka`
+(2 pins) and `qcore.libevent` (1) include libc modules. [Report](../reports/contract-inherit/README.md).
 
 **Load path (CONTRACT-INHERIT-ADOPTION).** Each `quirin-provider-*` crate
 records `NAMESPACE` and `PUBLISHED` beside `CONTRACTS`; a contract-use edge is
@@ -181,7 +181,17 @@ pinning every published module's SHA-256, and computes an inventory's
 `includes` pins from it; `check` refuses a stale file, and `package.py build`
 installs the pinned texts. After editing a published module (today
 `libc/memory.qcore` and `libc/string.qcore`) or a crate's constants, run
-`sync`: core consumers refuse a stale pin (`QI014`). The five
-`qcore-provider-*` crates are not on the load path (`QI017`);
-`CONTRACT-INHERIT-QCORE-PROVIDER-NAMING` records that decision.
+`sync`: core consumers refuse a stale pin (`QI014`).
 [Report](../reports/contract-inherit-adoption/README.md).
+
+**Executable crates (CONTRACT-INHERIT-QCORE-PROVIDER-NAMING, the user's option
+B).** The five `qcore-provider-*` crates are on the load path too: their
+namespace is the package name without `qcore-provider-` (`librdkafka`,
+`libevent`, …), recorded as `NAMESPACE`/`PUBLISHED` in `src/main.rs`, which
+`contracts.py` reads; `qcore-provider-conformance` owns no contracts and is
+excluded by name. `qcore-provider-{librdkafka,libevent}` → `quirin-provider-libc`
+are real Cargo edges, pinned exactly in the conformance dependency test beside
+the data-crate edge. Their packages carry include pins, `package.py build`
+installs the parents and `verify` accepts them; the real-package mutation test
+refuses a changed and a missing included parent.
+[Report](../reports/contract-inherit-qcore-provider-naming/README.md).
