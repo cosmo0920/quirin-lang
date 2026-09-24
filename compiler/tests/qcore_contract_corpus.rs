@@ -799,7 +799,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     ("monkey/native_platform_matrix.qcore", "observed_row", 14),
     ("monkey/native_platform_matrix.qcore", "unknown_row", 4),
-    ("monkey/timeout_teardown.qcore", "source_identity", 4),
+    // Card CONTRACT-VIEW-PROJECTION-CHECK removed this module's
+    // `source_identity` (4 clauses), a textual duplicate of
+    // `monkey/wait_source_policy.qcore`'s, which is now its single owner.
     ("monkey/timeout_teardown.qcore", "cb_timeout_source", 7),
     (
         "monkey/timeout_teardown.qcore",

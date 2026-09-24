@@ -12,7 +12,7 @@
     "contracts/monkey/logging.qcore": "82e2d05d6cc85a1980fff21df55dd8c3b10849936780c9fa1d4ddba5d048dade",
     "contracts/monkey/memory.qcore": "9ae4da4aad598b9c9f20d793a1dd53fd23806d9446575a082c3b6b7f061fc7c1",
     "contracts/monkey/native_platform_matrix.qcore": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2",
-    "contracts/monkey/timeout_teardown.qcore": "516fa1fee1732f3523a373f625333f87df7ca89239569ccbbf4ece7d37800e27",
+    "contracts/monkey/timeout_teardown.qcore": "dfbc9a41a0066b1a53913703c3c80100f1536fc4cb9fc3a6488b257538808c7b",
     "contracts/monkey/wait_failure_policy.qcore": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
     "contracts/monkey/wait_identity_policy.qcore": "131694dd932954d26cb085224bd6d25edfc02867e88863ca46de6f6c7572c1c3",
     "contracts/monkey/wait_source_policy.qcore": "b78d56857a059c96d0d748e8dd6a4c3ee9bbf527c21e17f3ce9ebcad4fe0c393",
