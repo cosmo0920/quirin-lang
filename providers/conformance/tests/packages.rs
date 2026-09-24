@@ -534,6 +534,7 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
     let packages = metadata["packages"].as_array().unwrap();
     let mut artifacts = 0;
     let mut shared = 0;
+    let mut data_edges: Vec<(String, String)> = Vec::new();
     for package in packages {
         let name = package["name"].as_str().unwrap();
         // An artifact's only admitted first-party dependency is the shared
@@ -547,11 +548,23 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
             shared += 1;
             // The per-library contract crates are data only, each usable on its
             // own (the libc crate in particular) without the shared bundle.
+            // Card CONTRACT-INHERIT-ADOPTION (deliberate pin update): a data
+            // crate may now depend on another data crate, because that Cargo
+            // edge is the contract-use edge the published load path reads
+            // (`#include` is admitted only along a declared dependency). The
+            // edge set is pinned exactly below; nothing else is admitted, the
+            // shared bundle is never a data crate's dependency, and libc stays
+            // dependency-free.
             if name != "quirin-provider-shared" {
-                assert!(
-                    package["dependencies"].as_array().unwrap().is_empty(),
-                    "{name} is a data-only contract crate"
-                );
+                for dependency in package["dependencies"].as_array().unwrap() {
+                    let dependency_name = dependency["name"].as_str().unwrap();
+                    assert!(
+                        dependency_name.starts_with("quirin-provider-")
+                            && dependency_name != "quirin-provider-shared",
+                        "{name} is a data-only contract crate: {dependency_name}"
+                    );
+                    data_edges.push((name.to_owned(), dependency_name.to_owned()));
+                }
             }
         }
         if is_artifact || is_shared {
@@ -561,6 +574,10 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
                 assert!(
                     matches!(dependency_name, "qcore-schemas" | "serde" | "serde_json")
                         || (is_artifact && dependency_name == "quirin-provider-shared")
+                        || (is_shared
+                            && name != "quirin-provider-shared"
+                            && dependency_name.starts_with("quirin-provider-")
+                            && dependency_name != "quirin-provider-shared")
                         || (name == "quirin-provider-shared"
                             && dependency_name.starts_with("quirin-provider-")),
                     "{name}: {dependency}"
@@ -608,6 +625,16 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
     }
     assert_eq!(artifacts, 5);
     assert_eq!(shared, 6);
+    // Card CONTRACT-INHERIT-ADOPTION: the one contract-use edge among the data
+    // crates. Adding another is a deliberate edit here.
+    data_edges.sort();
+    assert_eq!(
+        data_edges,
+        [(
+            "quirin-provider-fluent-bit".to_owned(),
+            "quirin-provider-libc".to_owned()
+        )]
+    );
 }
 
 /// The packaged artifacts are exactly the crates carrying a package template;

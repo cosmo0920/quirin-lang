@@ -444,7 +444,8 @@ fn a_stale_or_invalid_load_path_is_refused() {
     let scratch = Scratch::new("stale");
     let selection = r#"{"schema_version":2,"load_path":"load-path.json","modules":["quirin-provider-app:app/wrap.qcore"]}"#;
     let valid = load_path_json(&sha256_hex(HEAP.as_bytes()));
-    let mutations: Vec<(&str, Box<dyn Fn(&mut serde_json::Value)>)> = vec![
+    type Mutation = Box<dyn Fn(&mut serde_json::Value)>;
+    let mutations: Vec<(&str, Mutation)> = vec![
         (
             "differs from its pinned SHA-256",
             Box::new(|v| {

@@ -143,16 +143,37 @@ mod tests {
         let manifest: serde_json::Value =
             serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
         let crates = manifest["crates"].as_array().unwrap();
-        let linked: [(&str, &str, &[&str], &[(&str, &str)]); 6] = [
-            ("quirin-provider-cfl", cfl::NAMESPACE, cfl::PUBLISHED, cfl::CONTRACTS),
+        type Linked = (
+            &'static str,
+            &'static str,
+            &'static [&'static str],
+            &'static [(&'static str, &'static str)],
+        );
+        let linked: [Linked; 6] = [
+            (
+                "quirin-provider-cfl",
+                cfl::NAMESPACE,
+                cfl::PUBLISHED,
+                cfl::CONTRACTS,
+            ),
             (
                 "quirin-provider-fluent-bit",
                 fluent_bit::NAMESPACE,
                 fluent_bit::PUBLISHED,
                 fluent_bit::CONTRACTS,
             ),
-            ("quirin-provider-libc", libc::NAMESPACE, libc::PUBLISHED, libc::CONTRACTS),
-            ("quirin-provider-mpack", mpack::NAMESPACE, mpack::PUBLISHED, mpack::CONTRACTS),
+            (
+                "quirin-provider-libc",
+                libc::NAMESPACE,
+                libc::PUBLISHED,
+                libc::CONTRACTS,
+            ),
+            (
+                "quirin-provider-mpack",
+                mpack::NAMESPACE,
+                mpack::PUBLISHED,
+                mpack::CONTRACTS,
+            ),
             (
                 "quirin-provider-msgpack",
                 msgpack::NAMESPACE,
@@ -178,7 +199,11 @@ mod tests {
                     )
                 })
                 .collect();
-            assert_eq!(record["published"], serde_json::Value::Object(pins), "{name}");
+            assert_eq!(
+                record["published"],
+                serde_json::Value::Object(pins),
+                "{name}"
+            );
         }
     }
 

@@ -1253,8 +1253,16 @@ const EXPECTED_INHERITANCE: &[(&str, &str, &str)] = &[
     ("fluent_bit/resource_memory.qcore", "flb_free", "libc::free"),
     // `include/fluent-bit/flb_str.h`: user-directed declared assumptions over
     // `static inline` bodies the analyzer could read (the report says so).
-    ("fluent_bit/resource_string.qcore", "flb_strdup", "libc::strdup"),
-    ("fluent_bit/resource_string.qcore", "flb_strndup", "libc::strndup"),
+    (
+        "fluent_bit/resource_string.qcore",
+        "flb_strdup",
+        "libc::strdup",
+    ),
+    (
+        "fluent_bit/resource_string.qcore",
+        "flb_strndup",
+        "libc::strndup",
+    ),
 ];
 
 #[test]
