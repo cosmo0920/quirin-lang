@@ -1,0 +1,17 @@
+{
+ "diagnostics": {
+  "byte_identical": true
+ },
+ "chunk-contracts": {
+  "byte_identical": true
+ },
+ "contracts": {
+  "byte_identical": true
+ },
+ "source-effects": {
+  "byte_identical": true
+ },
+ "source": {
+  "byte_identical": true
+ }
+}
