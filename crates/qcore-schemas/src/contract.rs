@@ -93,10 +93,127 @@ pub enum DerivedExtent {
     Interior,
 }
 
-#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+/// Card W43-DESCRIPTOR-RESOURCE-TRACKING: **which** obligation a custody
+/// position creates or touches.
+///
+/// Before this card every tracked resource had one kind, so `free(fopen(…))`
+/// and `fclose(malloc(…))` would both have discharged. A release now discharges
+/// only an obligation of its own kind; a release of another kind is a
+/// violation *candidate* and discharges nothing.
+///
+/// [`ResourceKind::Heap`] is the default, and it is what every declaration that
+/// names no kind means, so every contract written before this card keeps its
+/// meaning exactly. It is also the kind of every allocation-family wrapper the
+/// corpus already declares: those declarations mix allocators (`free`,
+/// `cfl_sds_destroy`, `flb_free`) inside one heap kind, as they did before.
+///
+/// [`ResourceKind::Descriptor`] is the one kind carried by an **integer** (a C
+/// `int` file descriptor, whose failure value is `-1`, not NULL); every other
+/// kind is carried by a pointer. See [`ResourceKind::is_integer`].
+#[derive(
+    Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum ResourceKind {
+    /// An allocation from the C heap or an allocator wrapper over it.
+    #[default]
+    Heap,
+    /// A POSIX file descriptor (`open`, `socket`, `accept4`; `close`).
+    Descriptor,
+    /// A `FILE *` stream (`fopen`; `fclose`).
+    Stream,
+    /// A `DIR *` directory stream (`opendir`; `closedir`).
+    Directory,
+    /// A dynamic-library handle (`dlopen`; `dlclose`).
+    DynamicLibrary,
+    /// An `FTS *` file-tree traversal (`fts_open`; `fts_close`).
+    FileTree,
+}
+
+impl ResourceKind {
+    /// Every kind, in declaration order.
+    pub const ALL: [Self; 6] = [
+        Self::Heap,
+        Self::Descriptor,
+        Self::Stream,
+        Self::Directory,
+        Self::DynamicLibrary,
+        Self::FileTree,
+    ];
+
+    #[must_use]
+    pub const fn is_heap(&self) -> bool {
+        matches!(self, Self::Heap)
+    }
+
+    /// Whether this kind's identity is carried by an integer rather than a
+    /// pointer. Its failure value is then a **sentinel** (`-1`), not NULL, so a
+    /// contract states its validity with `sentinel`/`valid` rather than
+    /// `nullable`/`nonnull`, and a null test of it (`if (fd)`) refines nothing.
+    #[must_use]
+    pub const fn is_integer(self) -> bool {
+        matches!(self, Self::Descriptor)
+    }
+
+    /// The contract-module spelling. `heap` is never written: it is spelled by
+    /// the absence of a kind clause.
+    #[must_use]
+    pub const fn spelling(self) -> &'static str {
+        match self {
+            Self::Heap => "heap",
+            Self::Descriptor => "descriptor",
+            Self::Stream => "stream",
+            Self::Directory => "directory",
+            Self::DynamicLibrary => "dynamic_library",
+            Self::FileTree => "file_tree",
+        }
+    }
+
+    /// The kind a contract-module spelling names, if any.
+    #[must_use]
+    pub fn from_spelling(spelling: &str) -> Option<Self> {
+        Self::ALL
+            .into_iter()
+            .find(|kind| kind.spelling() == spelling)
+    }
+}
+
+#[derive(Clone, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct ResourceFunctionContract {
     pub parameters: Vec<ResourceParameterMode>,
     pub result: ResourceReturnMode,
+    /// Card W43-DESCRIPTOR-RESOURCE-TRACKING: the **non-heap** kind of each
+    /// custody-bearing parameter, by index. A parameter absent here is heap.
+    /// Omitted from the serialized form when empty, so every contract without
+    /// a kind serializes byte for byte as it did before the card. Never holds
+    /// [`ResourceKind::Heap`]: [`Self::with_parameter_kind`] normalizes it away,
+    /// so two contracts that mean the same thing compare equal.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub parameter_kinds: BTreeMap<usize, ResourceKind>,
+    /// Card W43-DESCRIPTOR-RESOURCE-TRACKING: the kind of an owned or
+    /// reallocated result. Heap by default, and omitted when heap.
+    #[serde(default, skip_serializing_if = "ResourceKind::is_heap")]
+    pub result_kind: ResourceKind,
+}
+
+/// Written by hand so that a contract with no kind prints exactly as the
+/// derived implementation did before card W43-DESCRIPTOR-RESOURCE-TRACKING:
+/// the corpus audit renders a `SummaryConflict` through this text, and a
+/// vocabulary addition must not move a verdict-bearing byte.
+impl std::fmt::Debug for ResourceFunctionContract {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut debug = f.debug_struct("ResourceFunctionContract");
+        debug
+            .field("parameters", &self.parameters)
+            .field("result", &self.result);
+        if !self.parameter_kinds.is_empty() {
+            debug.field("parameter_kinds", &self.parameter_kinds);
+        }
+        if !self.result_kind.is_heap() {
+            debug.field("result_kind", &self.result_kind);
+        }
+        debug.finish()
+    }
 }
 
 impl ResourceFunctionContract {
@@ -108,7 +225,42 @@ impl ResourceFunctionContract {
         Self {
             parameters: parameters.into_iter().collect(),
             result,
+            parameter_kinds: BTreeMap::new(),
+            result_kind: ResourceKind::Heap,
         }
+    }
+
+    /// The same contract with parameter `index` of kind `kind`.
+    #[must_use]
+    pub fn with_parameter_kind(mut self, index: usize, kind: ResourceKind) -> Self {
+        if kind.is_heap() {
+            self.parameter_kinds.remove(&index);
+        } else {
+            self.parameter_kinds.insert(index, kind);
+        }
+        self
+    }
+
+    /// The same contract with an owned or reallocated result of kind `kind`.
+    #[must_use]
+    pub const fn with_result_kind(mut self, kind: ResourceKind) -> Self {
+        self.result_kind = kind;
+        self
+    }
+
+    /// The kind of parameter `index`: heap unless declared otherwise.
+    #[must_use]
+    pub fn parameter_kind(&self, index: usize) -> ResourceKind {
+        self.parameter_kinds
+            .get(&index)
+            .copied()
+            .unwrap_or(ResourceKind::Heap)
+    }
+
+    /// Whether any position of this contract names a non-heap kind.
+    #[must_use]
+    pub fn has_non_heap_kind(&self) -> bool {
+        !self.parameter_kinds.is_empty() || !self.result_kind.is_heap()
     }
 }
 

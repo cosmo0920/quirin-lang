@@ -440,6 +440,32 @@ fn diagnostic_description(
                 site(*acquisition_line)
             ),
         ),
+        // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the kind candidates, in the
+        // same two categories, with their own wording.
+        LegacyDiagnosticKind::KindMismatchedRelease {
+            acquisition_line,
+            acquired,
+            released,
+        } => (
+            "invalid_release",
+            format!(
+                "{} release of the {} acquired at {}",
+                released.spelling(),
+                acquired.spelling(),
+                site(*acquisition_line)
+            ),
+        ),
+        LegacyDiagnosticKind::UseAfterClose {
+            acquisition_line,
+            kind,
+        } => (
+            "use_after_release",
+            format!(
+                "use of the {} acquired at {} after its release",
+                kind.spelling(),
+                site(*acquisition_line)
+            ),
+        ),
         LegacyDiagnosticKind::SummaryConflict { inferred, declared } => (
             "summary_conflict",
             format!(
