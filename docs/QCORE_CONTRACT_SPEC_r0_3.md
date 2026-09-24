@@ -122,6 +122,8 @@ The result vocabulary adds `unit` to the parameter vocabulary. `unit` is not a p
 
 **Agreement with a derived summary (card LOADER-ABI-MODES).** Where a consumer independently derives a *validated* custody summary from a contracted function's own body in the analysed translation unit, it MUST compare the declared custody duties against the derived ones and MUST withdraw the declaration for that unit, at every call site, when they contradict. A parameter's duty is `retained` for `resource_owned` and `resource_borrowed`, `transferred` for `resource_released`, `resource_consumed` and `resource_stored`, `delivered` for `resource_out` and `restored` for `resource_removed`; a result's duty is `produced` for an owned or reallocated result and absent otherwise. A contradiction is a duty inequality at some position and nothing else: nullability, a `resource_stored`/`resource_removed` owner parameter and a reallocated result's replaced parameter are refinements within one duty and MUST NOT withdraw on their own. A consumer MUST NOT require a derived summary before applying a declaration — absence of evidence is not evidence, and a callee defined in another translation unit is never compared — and MUST NOT install the derived summary in the declaration's place, because a derived summary may be weaker than the declaration it contradicts. Withdrawal makes the callee uncontracted, which is the refusing direction.
 
+**Qualifiers after a parameter's last `*` (card W43-LIBC-RESULT-ALIAS).** A qualifier that follows a parameter declarator's last `*` — `const char *__restrict __format`, `void *const p` — qualifies the parameter object, and C drops it for type compatibility (C11 6.7.6.3p15). A consumer reading the C side MUST read such a parameter as its unqualified type and MUST keep refusing a qualifier *between* two `*`, which qualifies an inner pointer this vocabulary cannot spell. A result declarator is not a parameter and is not widened. The Lean model is `QCore.PointerQualifierReader`.
+
 These are opaque interface projections. They do not check actual C layouts, ABI compatibility, pointee validity, allocation size, alignment, aliasing, or thread-safety. A scalar may carry a descriptor number as data, but it cannot carry descriptor custody in v1. Only `resource_borrowed` may apply to a scalar or to `fnptr`. Every other parameter mode requires an admitted pointer type; `resource_out` specifically requires `ptr<mut, ptr<mut, u8>>`. An owned or reallocated result requires an admitted pointer result.
 
 ### C04.2. Parameter modes
@@ -153,6 +155,8 @@ Exactly one result predicate is required:
 | `resource_return_none()` | No fresh or replacement custody is returned. The ordinary ABI result may still carry scalar data. |
 | `resource_return_owned(n)` | A non-null modeled result establishes fresh custody; the declared nullability controls the null branch. |
 | `resource_return_reallocated(p, n)` | The incoming `p` MUST be `Owned`. A null failure preserves that incoming custody; a successful replacement consumes/replaces the old resource exactly once and establishes the result identity. |
+| `resource_return_alias(p, n)` | The result is the value of `p` itself (`memcpy` returns `dst`). With `nullable` the call may return NULL instead; with `nonnull` it never substitutes NULL. The result owns nothing. See §C04.3.1. |
+| `resource_return_interior(p, n)` | The result points into the object `p` points to (`strchr`, `memchr`), or is NULL when `n` is `nullable`. The result owns nothing. See §C04.3.1. |
 
 The analyzer MUST retain the result-dependent alternatives until control-flow facts resolve them. It MUST NOT treat a possible null realloc result as proof that the old resource was released. Reallocation semantics include identity replacement, not just a zero aggregate net count.
 
@@ -176,6 +180,25 @@ contract {
 ```
 
 This file asserts a trusted external API model. It does not verify the implementation of `allocate` or `release`.
+
+#### C04.3.1. Derived results
+
+Card W43-LIBC-RESULT-ALIAS added the two derived-result predicates. Both load to one mode, `ResourceReturnMode::Derived { parameter, extent, nullable, const_dropped }`, with `extent` `Exact` for `resource_return_alias` and `Interior` for `resource_return_interior`.
+
+**Placement.** `p` MUST name a `resource_borrowed` parameter whose type is `ptr<mut, u8>` or `ptr<const, u8>`, and the result type MUST be one of those two. Every other placement — a custody-bearing base, a scalar, `ptr<mut, ptr<mut, u8>>`, `fnptr`, a scalar or `unit` result — rejects the whole module. `const_dropped` is set exactly when the base is `ptr<const, u8>` and the result `ptr<mut, u8>` (`strchr`: `const char *` in, `char *` out); it is recorded, not inferred from a name.
+
+**Semantics.** A consumer MUST apply all of the following, and MUST NOT approximate any of them:
+
+1. **Non-owning.** The result acquires, discharges and transfers nothing. A discarded derived result is exactly a discarded `resource_return_none()`.
+2. **Releasing the derived result is not a release of the base.** The base's obligation stays exactly as it was. A consumer MUST NOT credit such a release, a consumption, a store, a removal, a reallocation or an escape (a `return`) of the derived result to the base. Handing an **interior** result that resolves to one identity to a release is a violation *candidate* (an invalid free: C11 7.22.3.3p2 requires the value an allocator returned). Every other such position — an exact alias, which *is* the base's value, an ambiguous or unresolved binding, and every non-release custody position — is a refusal.
+3. **Releasing the base invalidates every pointer derived from it.** A later use of the derived result at any position of a contracted call other than an out slot, or a release or return of it, on a path where the base was released, is a violation candidate: the value of a pointer to an object whose lifetime has ended is indeterminate (C11 6.2.4p2).
+4. **Nullness is the result's own.** A null test of a derived result MUST narrow only that result: it establishes nothing about the base's existence or nullness, and the base's nullness establishes nothing about it.
+5. **The base must be denotable.** A consumer binding a derived result MUST be able to name what its base actual denotes; the C gateway admits a place, a place plus or minus one offset token (defined pointer arithmetic stays inside the same object, C11 6.5.6p8), a string literal and the address of a plain name (neither is a tracked identity), and refuses to bind a result over any other base expression.
+6. **`const_dropped` is carried with the result**, so a later check can see that a write through it would write through a pointer the base declared `const`. The v1 vocabulary has no per-parameter read/write distinction, so no consumer in this repository yet refuses such a write through a borrowed position (`W43-RESULT-ALIAS-CONST-WRITE`).
+
+**Verdict contract, unchanged.** A candidate becomes `Unsafe` only under the existing provisional-`Unsafe` policy and is never presented as an upstream defect: the analyzer does not know an interior pointer's offset, and an interior pointer that happens to sit at offset zero would be a valid release. Everything unproven stays `Unknown`. A body *defined* in the analysed unit is never checked against a declared derived result (no exit exhibits the relation); it is analysed contract-free. The checked extern-call route (`qcore-contract::extern_bridge`) has no derived-result constructor and refuses such a declaration rather than projecting it onto `resource_return_none()`.
+
+**Versioning.** This is an addition to resource vocabulary version 1, exactly as the variadic data tail and the literal-argument premise were: the `resource_contract_v1` marker is unchanged, every module that loaded before loads to the same functions (the pinned corpus tables in `compiler/tests/qcore_contract_corpus.rs` are the authority), and a loader that predates the predicates rejects a module using them as an unsupported predicate rather than misreading it. No new evidence version is introduced: every published verdict already carries the exact trusted module texts in `source_assumptions` (and the Cycle 19 audit their digests), so the evidence identity names which declarations — and therefore which vocabulary — a verdict rests on. The Lean model is `QCore.DerivedResult`.
 
 ### C04.4. Unsupported semantics and false declarations
 

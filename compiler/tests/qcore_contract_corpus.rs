@@ -468,6 +468,25 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/string.qcore", "strlen", 3),
     ("libc/string.qcore", "strdup", 3),
     ("libc/string.qcore", "strerror_r", 5),
+    // Card W43-LIBC-RESULT-ALIAS: thirteen derived-result declarations, each a
+    // trusted assumption read from the prototype the pinned units declare. The
+    // shape is the neutral one with a derived result in place of `none`: the
+    // marker, one borrowed clause per parameter and the result mode. Five exact
+    // aliases (`resource_return_alias(dest, nonnull)`) and six interior
+    // pointers (`resource_return_interior(s, nullable)`) here, two exact
+    // aliases in `libc/time.qcore`. Deliberate; see
+    // `docs/reports/w43-libc-result-alias/README.md`.
+    ("libc/string.qcore", "strcpy", 4),
+    ("libc/string.qcore", "strncpy", 5),
+    ("libc/string.qcore", "memcpy", 5),
+    ("libc/string.qcore", "memmove", 5),
+    ("libc/string.qcore", "memset", 5),
+    ("libc/string.qcore", "strchr", 4),
+    ("libc/string.qcore", "strrchr", 4),
+    ("libc/string.qcore", "strstr", 4),
+    ("libc/string.qcore", "strcasestr", 4),
+    ("libc/string.qcore", "memchr", 5),
+    ("libc/string.qcore", "memrchr", 5),
     ("libc/sys_stat.qcore", "fstat", 4),
     ("libc/sys_stat.qcore", "mkdir", 4),
     ("libc/sys_stat.qcore", "umask", 3),
@@ -487,6 +506,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/threads.qcore", "sigaddset", 4),
     ("libc/time.qcore", "time", 3),
     ("libc/time.qcore", "timegm", 3),
+    ("libc/time.qcore", "gmtime_r", 4),
+    ("libc/time.qcore", "localtime_r", 4),
     ("libc/unistd.qcore", "sleep", 3),
     ("libc/unistd.qcore", "usleep", 3),
     ("libc/unistd.qcore", "sysconf", 3),

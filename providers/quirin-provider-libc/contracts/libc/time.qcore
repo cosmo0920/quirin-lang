@@ -19,8 +19,8 @@ module contract;
 //
 // ## Deliberately NOT declared here (recorded in the card report)
 //
-//   `gmtime_r`/`localtime_r` return their SECOND argument (or NULL), an alias
-//   v1 cannot state.
+//   (`gmtime_r`/`localtime_r` return their SECOND argument or NULL; card
+//   W43-LIBC-RESULT-ALIAS declares them at the end of this module.)
 //   `gettimeofday`, `strftime`: faithful in v1, but the prototype spells a qualifier AFTER the
 //   `*` (`T *__restrict p`), which the declared-ABI reader (gateway
 //   constraint 8) does not read; this card measured the declaration withdrawn
@@ -44,4 +44,35 @@ contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(tp);
     ensures normal resource_return_none();
+};
+
+// ## Card W43-LIBC-RESULT-ALIAS: the reentrant broken-down time calls
+//
+//   extern struct tm *gmtime_r (const time_t *__restrict __timer,
+//                               struct tm *__restrict __tp) __THROW;
+//   extern struct tm *localtime_r (const time_t *__restrict __timer,
+//                                  struct tm *__restrict __tp) __THROW;
+//
+// Each reads `*__timer`, writes the caller's `*__tp`, and returns `__tp` on
+// success or NULL on error (POSIX). Nothing is allocated, freed or retained:
+// both pointers are `resource_borrowed`, and the result is
+// `resource_return_alias(tp, nullable)` -- exactly the second argument, or
+// NULL. TRUSTED ASSUMPTIONS; the `__restrict` spellings are read by the
+// declared-ABI reader since this card. Nothing here says anything about time
+// zones or the validity of the broken-down time.
+
+extern fn gmtime_r(timer: ptr<const, u8>, tp: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(timer);
+    ensures normal resource_borrowed(tp);
+    ensures normal resource_return_alias(tp, nullable);
+};
+
+extern fn localtime_r(timer: ptr<const, u8>, tp: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(timer);
+    ensures normal resource_borrowed(tp);
+    ensures normal resource_return_alias(tp, nullable);
 };

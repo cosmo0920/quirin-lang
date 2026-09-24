@@ -9,7 +9,7 @@ use qcore_compiler::contract_loader::{
     load_resource_contract_files, load_resource_contract_manifest, load_resource_contract_sources,
 };
 use qcore_compiler::{
-    AnalysisStatus, C11TranslationUnit, ResourceApiKind, ResourceContracts,
+    AnalysisStatus, C11TranslationUnit, DerivedExtent, ResourceApiKind, ResourceContracts,
     ResourceFunctionContract, ResourceParameterMode as P, ResourceReturnMode as R,
     UnrestrictedLegacyResult, analyze_legacy_c_translation_unit, analyze_unrestricted_c11,
     check_legacy_safety_certificate,
@@ -404,6 +404,39 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "strdup",
         ResourceFunctionContract::new([P::Borrowed], R::Owned { nullable: true }),
     );
+    // Card W43-LIBC-RESULT-ALIAS: thirteen libc declarations whose result is
+    // DERIVED from one borrowed argument and owns nothing. The old table had no
+    // such mode, so each is listed with the mode the card reads off the
+    // prototype: `const_dropped` exactly where a `const` base yields a mutable
+    // result.
+    for (name, parameters, base, extent, nullable, const_dropped) in [
+        ("strcpy", 2, 0, DerivedExtent::Exact, false, false),
+        ("strncpy", 3, 0, DerivedExtent::Exact, false, false),
+        ("memcpy", 3, 0, DerivedExtent::Exact, false, false),
+        ("memmove", 3, 0, DerivedExtent::Exact, false, false),
+        ("memset", 3, 0, DerivedExtent::Exact, false, false),
+        ("gmtime_r", 2, 1, DerivedExtent::Exact, true, false),
+        ("localtime_r", 2, 1, DerivedExtent::Exact, true, false),
+        ("strchr", 2, 0, DerivedExtent::Interior, true, true),
+        ("strrchr", 2, 0, DerivedExtent::Interior, true, true),
+        ("strstr", 2, 0, DerivedExtent::Interior, true, true),
+        ("strcasestr", 2, 0, DerivedExtent::Interior, true, true),
+        ("memchr", 3, 0, DerivedExtent::Interior, true, true),
+        ("memrchr", 3, 0, DerivedExtent::Interior, true, true),
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new(
+                vec![P::Borrowed; parameters],
+                R::Derived {
+                    parameter: base,
+                    extent,
+                    nullable,
+                    const_dropped,
+                },
+            ),
+        );
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -969,9 +1002,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // (`return_owned(nullable)`), and `prctl` applies only under its literal
     // `PR_SET_NAME` premise. The rejected count is unchanged: every added
     // module is entirely v1.
+    // 114 -> 127 by card W43-LIBC-RESULT-ALIAS: thirteen derived-result
+    // declarations added to the already-selected `libc/string.qcore` (eleven)
+    // and `libc/time.qcore` (two), so the selection stays at 44 modules and the
+    // rejected count is unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (44, 114, 207)
+        (44, 127, 207)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())
