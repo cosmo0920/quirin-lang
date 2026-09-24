@@ -195,11 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-<<<<<<< HEAD
-  "named_followups": 297
-=======
-  "named_followups": 296
->>>>>>> worktree-agent-ac5154b5c6b7f17b9
+  "named_followups": 299
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6735,19 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-<<<<<<< HEAD
   "note": "Integration gate for W43-LIBC-RESULT-ALIAS on merge ac241322 (onto main dfe10c92, after CONTRACT-INHERIT), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5197 core Rust passed / 0 failed / 11 ignored over 278 summaries; 109 provider Rust passed / 0 / 0 over 39 summaries; 170 Lean audits; 327 root Python tests after regenerating this section (the first run failed only the derived-facts check, 168 vs 170 Lean audits, because the merged validation section predated the card's two audits); 5 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-result-alias/artifacts/; contracts is identical after the checkout-root alias and source-effects modulo checkout-path identity digests.",
   "workspace_tests": 5197,
   "provider_tests": 109,
   "python_evidence_validator_tests": 327,
   "lean_audits": 170,
-=======
-  "note": "CONTRACT-INHERIT-ADOPTION: core and provider gates measured on 2d6de0d9 (later commits change the report, ledger, status, index and matrix only). 5187 core Rust passed / 0 failed / 11 ignored over 277 summaries; 168 Lean audits (AuditContractInherit 38 -> 46 theorems); root Python tests counted after the final matrix regeneration. Step exits (measure/gate2): submodules 0, clang 0, test 0, fmt 0, clippy --workspace 0, probe 0, followup 0, lean 0. Provider workspace: 117 passed / 0 failed / 0 ignored over 39 summaries, isolated package mutation control 1/1, provider fmt and clippy clean, contracts.py check 0, five package builds and verifications 0, 12 providers/tests Python tests. A first gate run (measure/gate) failed fmt, clippy, provider fmt/clippy and one provider test (the data-crate dependency pin), all repaired in 2d6de0d9 and rerun in full. Logs: worktree-private measure/gate2 of agent-ac5154b5c6b7f17b9. Clang recorded in this checkout. Corpus arbiter: verdict-bearing diagnostics byte-identical to the W43-LIBC-CONTRACTS baseline at BEFORE and after every stage. No coverage promotion.",
-  "workspace_tests": 5187,
-  "provider_tests": 117,
-  "python_evidence_validator_tests": 330,
-  "lean_audits": 168,
->>>>>>> worktree-agent-ac5154b5c6b7f17b9
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6926,11 +6914,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-<<<<<<< HEAD
   "measurement_provenance": "integrator_supplied (docs/reports/w43-libc-result-alias/integration/gate.json)"
-=======
-  "measurement_provenance": "integrator_supplied (docs/reports/contract-inherit-adoption/gate.json)"
->>>>>>> worktree-agent-ac5154b5c6b7f17b9
  },
  "named_followups": [
   {
@@ -8902,7 +8886,6 @@
    "recorded_by": "CONTRACT-INHERIT"
   },
   {
-<<<<<<< HEAD
    "id": "W43-RESULT-ALIAS-ACCUSING-UNEXERCISED-IN-CORPUS",
    "title": "The two derived-pointer violation candidates (`invalid_release`, `use_after_release`) reach no function of the pinned corpus",
    "why": "Card W43-LIBC-RESULT-ALIAS added `LegacyDiagnosticKind::InvalidRelease` (an interior pointer from a declared derived result handed to a release) and `UseAfterRelease` (a derived pointer used, released or returned on a path where its base was released), both reported from settled states by `report_derived_pointer_violations`. They are unit-tested in crates/qcore-c-gateway/tests/derived_result.rs and modelled in QCore.DerivedResult, but the arbiter over the 185 pinned units added **zero** leaves of either category: no modeled use or release of a derived binding in the corpus follows a release of a tracked base, and no interior result reaches a release. The unchanged provisional-Unsafe count therefore records the absence of such code in the corpus, not a verification of the arms (the RETURN-POSITION-ACCUSING-UNEXERCISED-IN-CORPUS shape). Discharge condition: a pinned or held-out real-code fixture in which a declared derived result's base is released before a use, or an interior result is released, reaches the arm, with the leaf attributed and never presented as an upstream defect.",
@@ -8943,7 +8926,8 @@
    "why": "Card W43-LIBC-RESULT-ALIAS repaired the declared-ABI reader (W43-LIBC-POINTER-QUALIFIER-READER) and measured the fourteen prototypes card W43-LIBC-CONTRACTS withdrew, through the same census tool over the 185 captured units (docs/reports/w43-libc-result-alias/abi-evidence.json): printf, fprintf, snprintf and sprintf now agree in all 168 units that declare them; stat (109), strftime (144), gettimeofday (107), getsockopt (105), dlsym (4), cnd_timedwait (83), pthread_sigmask (5) and regerror (1) agree everywhere they are declared; getpeername agrees in 12 units and is still withdrawn in 93, where `_GNU_SOURCE` spells its address as the `__SOCKADDR_ARG` transparent union (W43-LIBC-ABI-READER-SHAPES' bind/connect shape); regexec is still withdrawn in its 1 unit because `regmatch_t __pmatch[__restrict_arr]` puts the qualifier inside an array bound, which the reader refuses. This card declared none of them: the printf family is LIBC-PRINTF-FAMILY's leaf-directed card, and the other ten were outside its brief. Discharge condition: a declarative card lands the ten non-printf prototypes (or refuses them by name) with its own leaf-by-leaf attribution, and the array-bound qualifier is either read (C11 6.7.6.3p7 adjusts `T a[restrict]` to `T *restrict a`) with Lean parity or refused on record.",
    "source": "docs/reports/w43-libc-result-alias/README.md",
    "recorded_by": "W43-LIBC-RESULT-ALIAS"
-=======
+  },
+  {
    "id": "CONTRACT-INHERIT-QCORE-PROVIDER-NAMING",
    "title": "The five qcore-provider-* crates cannot join the contract load path (QI017), so eight provider-owned wrappers keep restating libc contracts; the naming decision is the user's",
    "why": "Card CONTRACT-INHERIT-ADOPTION wired the real load path (providers/contract-load-path.json from Cargo metadata, NAMESPACE/PUBLISHED constants, schema-2 manifest references, package include pins) for the six quirin-provider-* crates only. Its census (docs/reports/contract-inherit-adoption/census.json) finds 11 custody-bearing provider declarations whose clauses equal a libc contract under positional renaming, 9 of them in qcore-provider-* crates the derivation rule refuses: rd_malloc, rd_calloc, rd_strdup, rd_strndup, rd_free (librdkafka/memory.qcore; rd.h forwards to malloc/calloc/strdup/strndup/free with rd_assert), mk_mem_alloc, mk_mem_alloc_z, mk_mem_free (monkey/memory.qcore; mk_memory.h forwards to malloc/calloc(1,n)/free) and cJSON_Delete (not a wrapper: a recursive delete; stays written out). The card did not rename crates or change the rule. Options, each with its cost, are in the report's naming section: (A) rename the five to quirin-provider-* (113 tracked files / 233 occurrences outside docs/reports and docs/plans at base dfe10c92; 51 files in 27 frozen report directories keep the old paths; archived contract-path keys under providers/qcore-provider-* change spelling; plugin ids qcore.* can stay, but the executables are named after their crates, so package digests are expected to move, not measured); (B) widen the derivation to a second fixed prefix qcore-provider-NAME -> NAME (derive_contract_namespace, Lean deriveNamespace, C15/QI017 text, a NAMESPACE/PUBLISHED record for bin crates, e.g. [package.metadata.quirin], and a Cargo edge qcore-provider-{librdkafka,libevent} -> quirin-provider-libc); (C) an explicitly recorded namespace accepted without derivation (weakest: a reader can no longer derive the qualifier from the package name). Recommendation recorded: (B). Until decided, package include pins are exercised by synthetic packages only (providers/tests/test_contract_load_path.py, crates/qcore-contract/tests/contract_bundle_includes.rs): no real package can include. Discharge: a recorded user decision; if (A) or (B), convert the eight wrappers with the same parity test and arbiter attribution this card used, and build and verify a real package with include pins.",
@@ -8963,7 +8947,6 @@
    "why": "W43-LIBC-RESULT-ALIAS (merged on main after this card's base dfe10c92) adds two v1 result predicates whose first argument is a parameter name. Card CONTRACT-INHERIT-ADOPTION could not test them on its base. By construction the positional renaming (rename_clauses) replaces every parent-parameter word in every clause, the capture check refuses a child parameter that occurs as any other word, and the v1 agreement gate requires the loaded child record to equal the parent's, the same path the realloc fixture (resource_return_reallocated(ptr, nullable), index-bearing) already exercises. The answer is exact only if the new modes load the aliased parameter by index; if a mode retained a name, every renamed child would be refused (QI012, fail-closed). Discharge: on the combined tree, a load-path test that inherits a resource_return_alias parent and a resource_return_interior parent with renamed parameters and asserts equal loaded records, plus a capture control on the second argument; or a recorded refusal.",
    "source": "docs/reports/contract-inherit-adoption/README.md",
    "recorded_by": "CONTRACT-INHERIT-ADOPTION"
->>>>>>> worktree-agent-ac5154b5c6b7f17b9
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"
