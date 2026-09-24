@@ -1,0 +1,66 @@
+{
+ "call-argument": {
+  "leaves": 9539,
+  "unknown_functions": 2408,
+  "sole_blocked_functions": 242,
+  "by_family": {
+   "indirect memory access is outside the resource projection": 9533,
+   "unmodeled increment or decrement expression": 6
+  }
+ },
+ "chain": {
+  "leaves": 5616,
+  "unknown_functions": 2057,
+  "sole_blocked_functions": 188,
+  "by_family": {
+   "indirect memory access is outside the resource projection": 3998,
+   "unsupported assignment expression": 1306,
+   "unrecognized assignment destination": 113,
+   "unmodeled increment or decrement expression": 199
+  }
+ },
+ "pointer-value-store": {
+  "leaves": 306,
+  "unknown_functions": 207,
+  "sole_blocked_functions": 18,
+  "by_family": {
+   "indirect memory access is outside the resource projection": 249,
+   "store through `X` without an out-parameter contract": 43,
+   "unrecognized assignment destination": 10,
+   "unsupported assignment expression": 4
+  }
+ },
+ "pointer-increment": {
+  "leaves": 335,
+  "unknown_functions": 172,
+  "sole_blocked_functions": 0,
+  "by_family": {
+   "unmodeled increment or decrement expression": 98,
+   "indirect memory access is outside the resource projection": 101,
+   "unrecognized assignment destination": 136
+  }
+ },
+ "untyped-single-access": {
+  "leaves": 3136,
+  "unknown_functions": 1212,
+  "sole_blocked_functions": 94,
+  "by_family": {
+   "indirect memory access is outside the resource projection": 2668,
+   "store through `X` without an out-parameter contract": 187,
+   "unsupported assignment expression": 19,
+   "unrecognized assignment destination": 247,
+   "unmodeled increment or decrement expression": 15
+  }
+ },
+ "other": {
+  "leaves": 1693,
+  "unknown_functions": 764,
+  "sole_blocked_functions": 25,
+  "by_family": {
+   "unsupported assignment expression": 316,
+   "unmodeled increment or decrement expression": 360,
+   "indirect memory access is outside the resource projection": 751,
+   "unrecognized assignment destination": 266
+  }
+ }
+}

@@ -22,7 +22,7 @@ and [status page](../../STATUS.md); each card's report owns its evidence.
 
 ## Adding a record
 
-Current record file: [wave-41-continuation.md](wave-41-continuation.md). Prepend one paragraph per
+Current record file: [wave-43.md](wave-43.md). Prepend one paragraph per
 new increment below the checkpoint notice — and, in a record file that carries
 a `<!-- migrated-section -->` block, above that block; the current file need not
 have one. Keep that increment's evidence and boundaries together. Start the next wave's
@@ -38,6 +38,7 @@ merge. The migration report maps original line ranges to the new pages.
 
 | Wave | Records |
 |---|---|
+| 43 | [Wave 43 records](wave-43.md); earlier wave-42 and wave-43 paragraphs are in the wave 41 continuation |
 | 41 | [Wave 41 continuation](wave-41-continuation.md) · [Earlier wave 41 records](wave-41.md) |
 | 40 | [Wave 40 records](wave-40.md) · [compaction checkpoints](wave-40-compaction-checkpoints.md) |
 | 39 | [Wave 39 records](wave-39.md) |
