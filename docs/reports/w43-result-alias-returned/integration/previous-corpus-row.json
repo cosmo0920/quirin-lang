@@ -1,0 +1,29 @@
+{
+ "note": "W43-LIBC-RESTRICT-PROTOTYPES integration, 2026-09-25. The card (measured against W43-LIBC-RESULT-ALIAS) composed onto the W43-INDIRECT-ACCESS-GENERAL combined tree: the integration run's leaf/function/unit delta against docs/reports/w43-indirect-access-general/artifacts/ equals the card's own delta exactly (36 leaves removed, 2 added, 3 functions Unknown -> Safe: mk_plugin_load_symbol, mk_signal_thread_sigpipe_safe, rd_regex_exec; 0 unit moves; 0 violation candidates). Safe results are relative to the declared libc/POSIX premises. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-libc-restrict-prototypes/integration/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 3,
+ "provisional_unsafe": 42,
+ "unknown": 136,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 271,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w43-libc-restrict-prototypes/integration/artifacts/",
+ "source": "docs/reports/w43-libc-restrict-prototypes/integration/integration-confirmation.md; preceding baseline docs/reports/w43-indirect-access-general/artifacts/",
+ "unknown_alias_diagnostics": 4725,
+ "unsupported_diagnostics": 47800,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 272,
+  "provisional_unsafe": 84,
+  "unknown": 4478
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 135,
+  "none": 49,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}
