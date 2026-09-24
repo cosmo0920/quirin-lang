@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for CONTRACT-INHERIT-ADOPTION on merge 2d0b77e1 plus the ledger repair (onto main d3cd8d81, after W43-LIBC-RESULT-ALIAS), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5208 core Rust passed / 0 failed / 11 ignored over 280 summaries; 117 provider Rust passed / 0 / 0 over 39 summaries; 170 Lean audits; 330 root Python tests after the ledger repair and this regeneration (the gate's own Python step failed because the merge commit carried unresolved conflict markers in the acceptance matrix; see integration-confirmation.md); 12 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run reproduces the verdict-bearing diagnostics byte for byte against docs/reports/w43-libc-result-alias/artifacts/; source-effects is identical modulo checkout-path identity digests; contracts differs only by the inclusion record, the schema-2 manifest, the crate:module source keys, the token-identical elaborated resource_memory.qcore, the new resource_string.qcore and the appended strndup.",
+ "workspace_tests": 5208,
+ "provider_tests": 117,
+ "python_evidence_validator_tests": 330,
+ "lean_audits": 170,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
