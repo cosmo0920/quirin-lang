@@ -102,3 +102,62 @@ def libc_placement_violations(repository):
             if name in names:
                 violations.append((path.relative_to(repository).as_posix(), name))
     return violations
+
+
+_INCLUDE = re.compile(r'^[ \t]*#[ \t]*include[ \t]+"([a-z0-9][a-z0-9_-]*):([a-z0-9_/-]+\.qcore)"[ \t]*;', re.M)
+_INHERIT = re.compile(r"\bcontract\s+inherit\s+(?:([A-Za-z_]\w*)::)?([A-Za-z_]\w*)\s*;")
+
+
+def _uncommented(text):
+    return "\n".join(line.split("//", 1)[0] for line in text.split("\n"))
+
+
+def libc_inheritance(repository):
+    """Card CONTRACT-INHERIT-ADOPTION: how modules outside the libc crate take
+    libc contracts by reference instead of restating them.
+
+    Returns `(references, violations)`. A reference is `(module, child,
+    "libc::NAME")` for every `contract inherit libc::NAME;`. It is admitted
+    only when the module `#include`s a libc module the libc crate publishes
+    (per the load-path manifest the corpus index names) and that module
+    declares NAME; anything else is a violation row `(module, problem)`, as is
+    an include of an unpublished libc module. The placement rule is thereby
+    kept: the libc contract text stays in the libc crate, and the child names a
+    Fluent Bit (or other) function, never a libc one (`libc_placement_violations`).
+    """
+    repository = Path(repository).resolve()
+    crate = (repository / LIBC_CRATE).resolve()
+    manifest = load_path(repository)
+    published = set()
+    if manifest is not None:
+        for record in manifest["crates"]:
+            if record["name"] == "quirin-provider-libc":
+                published = set(record["published"])
+    modules = {path.resolve() for path in sources(repository).values()}
+    providers = repository / "providers"
+    if providers.is_dir():
+        modules |= {path.resolve() for path in providers.rglob("*.qcore") if path.is_file()}
+    references, violations = [], []
+    for path in sorted(modules):
+        if path.is_relative_to(crate):
+            continue
+        text = _uncommented(path.read_text())
+        name = path.relative_to(repository).as_posix()
+        included = set()
+        for crate_name, module in _INCLUDE.findall(text):
+            if crate_name != "quirin-provider-libc":
+                continue
+            if module not in published:
+                violations.append((name, f"includes unpublished libc module {module}"))
+                continue
+            included |= set(declared_functions(crate / "contracts" / module))
+        for match in _INHERIT.finditer(text):
+            namespace, parent = match.groups()
+            if namespace != "libc":
+                continue
+            children = re.findall(r"extern\s+fn\s+([A-Za-z_]\w*)", text[:match.start()])
+            child = children[-1] if children else "?"
+            references.append((name, child, f"libc::{parent}"))
+            if parent not in included:
+                violations.append((name, f"{child} inherits libc::{parent}, which no included libc module declares"))
+    return references, violations

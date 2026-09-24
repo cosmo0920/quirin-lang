@@ -38,3 +38,11 @@ import QCore.ContractInherit
 #print axioms QCore.ContractInherit.transitive_inheritance_preserves_meaning
 #print axioms QCore.ContractInherit.positional_reading_can_diverge
 #print axioms QCore.ContractInherit.consumerGate_sound
+#print axioms QCore.ContractInherit.contractDeps_sound
+#print axioms QCore.ContractInherit.include_follows_a_cargo_edge
+#print axioms QCore.ContractInherit.no_cargo_edge_includes_nothing_foreign
+#print axioms QCore.ContractInherit.admitPinned_sound
+#print axioms QCore.ContractInherit.changed_parent_refused
+#print axioms QCore.ContractInherit.pathsOf_map_path
+#print axioms QCore.ContractInherit.refsOf_map_path
+#print axioms QCore.ContractInherit.schema_two_paths_are_schema_one

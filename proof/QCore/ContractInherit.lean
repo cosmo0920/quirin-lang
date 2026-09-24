@@ -29,7 +29,11 @@ parent's. This module models:
   lookup, so the inherited contract is not weaker than its parent;
 * why the consumer gate is needed: a reading that treats an argument
   position structurally can diverge under the same renaming, and the gate
-  admits only an equal reading.
+  admits only an equal reading;
+* (card CONTRACT-INHERIT-ADOPTION) the load path built from Cargo metadata:
+  an include follows a declared Cargo edge to a load-path crate or stays in
+  its own crate, a changed published parent is refused by its pin, and a
+  schema-2 resource manifest's path entries load exactly as schema 1.
 
 Words and names are modelled as natural numbers (interned identifiers).
 Correspondence with the Rust implementation is maintained by review; it is
@@ -775,5 +779,144 @@ theorem consumerGate_sound {β : Type} [DecidableEq β] {read : List Word → Li
   split at h
   · assumption
   · cases h
+
+/-! ## 7. The load path built from real metadata (card CONTRACT-INHERIT-ADOPTION)
+
+`providers/contracts.py` builds each load-path crate from `cargo metadata`
+(name, declared normal dependencies) and the crate's recorded constants;
+`qcore_contract::load_path_manifest` reads the result as data, refusing a
+published module whose text is not its pinned digest; and a schema-2 resource
+manifest mixes path entries with `crate:module` references. -/
+
+/-- A Cargo package as `cargo metadata --no-deps` reports it. -/
+structure CargoPackage where
+  name : Name
+  deps : List Name
+  deriving DecidableEq, Repr
+
+/-- The contract-use edges of a package: its declared dependencies that are
+themselves load-path crates. Nothing else becomes an edge. -/
+def contractDeps (onPath : List Name) (p : CargoPackage) : List Name :=
+  p.deps.filter (fun d => decide (d ∈ onPath))
+
+/-- The load-path crate the generator writes for a package. -/
+def crateOf (onPath : List Name) (p : CargoPackage) (ns : Name) (published : List Name) :
+    Crate :=
+  { name := p.name, ns := ns, deps := contractDeps onPath p, published := published }
+
+theorem contractDeps_sound {onPath : List Name} {p : CargoPackage} {d : Name}
+    (h : d ∈ contractDeps onPath p) : d ∈ p.deps ∧ d ∈ onPath := by
+  unfold contractDeps at h
+  rw [List.mem_filter] at h
+  exact ⟨h.1, of_decide_eq_true h.2⟩
+
+/-- No edge is invented: an include that resolves from a crate built from
+Cargo metadata names the crate itself or a crate the package declares as a
+dependency, which is itself on the load path. -/
+theorem include_follows_a_cargo_edge {crates : List Crate} {onPath : List Name}
+    {p : CargoPackage} {ns : Name} {published : List Name} {target r : Name × Name}
+    (hsrc : findCrate crates p.name = .ok (crateOf onPath p ns published))
+    (h : resolveInclude crates p.name target = .ok r) :
+    target.1 = p.name ∨ (target.1 ∈ p.deps ∧ target.1 ∈ onPath) := by
+  obtain ⟨_, ⟨src, hfind, hreach⟩, _⟩ := resolveInclude_sound h
+  rw [hsrc] at hfind
+  cases hfind
+  rcases hreach with hself | hdep
+  · exact Or.inl hself
+  · exact Or.inr (contractDeps_sound hdep)
+
+/-- A package without a declared dependency on a load-path crate yields a
+crate that includes nothing foreign. -/
+theorem no_cargo_edge_includes_nothing_foreign {crates : List Crate} {onPath : List Name}
+    {p : CargoPackage} {ns : Name} {published : List Name} {target : Name × Name}
+    (hsrc : findCrate crates p.name = .ok (crateOf onPath p ns published))
+    (hnone : ∀ d ∈ p.deps, d ∉ onPath) (hother : target.1 ≠ p.name) :
+    resolveInclude crates p.name target = .error .unreachableCrate := by
+  apply no_dependency_includes_nothing_foreign hsrc _ hother
+  show contractDeps onPath p = []
+  unfold contractDeps
+  rw [List.filter_eq_nil_iff]
+  intro d hd
+  simpa using hnone d hd
+
+/-- A published module with its pinned digest and the digest of the text
+read from disk (digests modelled as naturals). -/
+structure PinnedModule where
+  module : Name
+  pin : Nat
+  onDisk : Nat
+  deriving DecidableEq, Repr
+
+/-- The manifest reader's pin check: every published module's text must be
+its pin, or the whole load path is refused. -/
+def admitPinned (modules : List PinnedModule) : Except Refusal (List Name) :=
+  if modules.all (fun m => m.onDisk == m.pin) then .ok (modules.map (·.module))
+  else .error .invalidLoadPath
+
+theorem admitPinned_sound {modules : List PinnedModule} {names : List Name}
+    (h : admitPinned modules = .ok names) :
+    names = modules.map (·.module) ∧ ∀ m ∈ modules, m.onDisk = m.pin := by
+  unfold admitPinned at h
+  split at h
+  · rename_i hall
+    cases h
+    refine ⟨rfl, fun m hm => ?_⟩
+    have := List.all_eq_true.mp hall m hm
+    simpa using this
+  · cases h
+
+/-- A parent that changed without its pin being regenerated is refused, so
+no inheriting contract can silently take a different parent text. -/
+theorem changed_parent_refused {modules : List PinnedModule} {m : PinnedModule}
+    (hm : m ∈ modules) (hchanged : m.onDisk ≠ m.pin) :
+    admitPinned modules = .error .invalidLoadPath := by
+  unfold admitPinned
+  have : modules.all (fun m => m.onDisk == m.pin) = false := by
+    rw [List.all_eq_false]
+    exact ⟨m, hm, by simpa using hchanged⟩
+  simp [this]
+
+/-- One entry of a schema-2 resource manifest. -/
+inductive ManifestEntry where
+  | path (file : Name)
+  | ref (crateName module : Name)
+  deriving DecidableEq, Repr
+
+def pathsOf : List ManifestEntry → List Name
+  | [] => []
+  | .path f :: rest => f :: pathsOf rest
+  | .ref _ _ :: rest => pathsOf rest
+
+def refsOf : List ManifestEntry → List (Name × Name)
+  | [] => []
+  | .path _ :: rest => refsOf rest
+  | .ref c m :: rest => (c, m) :: refsOf rest
+
+/-- Schema 1 loads its files; schema 2 loads its path entries the same way
+and elaborates its references on the load path, in one load. -/
+def selectSchema1 {α : Type} (loadFiles : List Name → α) (files : List Name) : α :=
+  loadFiles files
+
+def selectSchema2 {α : Type} (loadFiles : List Name → α)
+    (loadMixed : List Name → List (Name × Name) → α) (entries : List ManifestEntry) : α :=
+  if refsOf entries = [] then loadFiles (pathsOf entries)
+  else loadMixed (pathsOf entries) (refsOf entries)
+
+theorem pathsOf_map_path (files : List Name) : pathsOf (files.map .path) = files := by
+  induction files with
+  | nil => rfl
+  | cons f rest ih => simp [pathsOf, ih]
+
+theorem refsOf_map_path (files : List Name) : refsOf (files.map .path) = [] := by
+  induction files with
+  | nil => rfl
+  | cons f rest ih => simp [refsOf, ih]
+
+/-- Path entries resolve identically: a schema-2 manifest whose entries are
+the schema-1 manifest's files, in order, loads exactly what schema 1 loads. -/
+theorem schema_two_paths_are_schema_one {α : Type} (loadFiles : List Name → α)
+    (loadMixed : List Name → List (Name × Name) → α) (files : List Name) :
+    selectSchema2 loadFiles loadMixed (files.map .path) = selectSchema1 loadFiles files := by
+  simp [selectSchema2, selectSchema1, refsOf_map_path, pathsOf_map_path]
 
 end QCore.ContractInherit

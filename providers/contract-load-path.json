@@ -63,7 +63,7 @@
       ],
       "published": {
         "libc/memory.qcore": "c7e477f4875bd13b1aeb3d6e4c074d58099caec68e4565bbfaf3b6bfc20f96e5",
-        "libc/string.qcore": "712d3c827fc74299d494388dc9c06116fed6c1d004392d8893ee9afa7512b5b2"
+        "libc/string.qcore": "1aa549b6e89beaee58fc0146aa0d291e2f8977be6ff2747f9104c481d6676bf6"
       }
     },
     {

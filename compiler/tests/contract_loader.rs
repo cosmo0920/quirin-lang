@@ -404,6 +404,12 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "strdup",
         ResourceFunctionContract::new([P::Borrowed], R::Owned { nullable: true }),
     );
+    // Card CONTRACT-INHERIT-ADOPTION: `strndup` is `strdup` with a borrowed
+    // size (the trailing borrow is canonicalised away below).
+    old.insert_contract(
+        "strndup",
+        ResourceFunctionContract::new([P::Borrowed], R::Owned { nullable: true }),
+    );
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -973,9 +979,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // (`return_owned(nullable)`), and `prctl` applies only under its literal
     // `PR_SET_NAME` premise. The rejected count is unchanged: every added
     // module is entirely v1.
+    // 114 -> 115 by card CONTRACT-INHERIT-ADOPTION: `strndup` appended to
+    // `libc/string.qcore`. Its conversion of `flb_malloc`, `flb_calloc` and
+    // `flb_free` to `contract inherit` moves nothing here: these counts are
+    // of elaborated declarations.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (44, 114, 207)
+        (44, 115, 207)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

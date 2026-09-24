@@ -468,6 +468,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/string.qcore", "strlen", 3),
     ("libc/string.qcore", "strdup", 3),
     ("libc/string.qcore", "strerror_r", 5),
+    // Card CONTRACT-INHERIT-ADOPTION: `strndup`, user-directed; `strdup`'s
+    // custody statement plus a borrowed size (2 + 1 per parameter + owned).
+    ("libc/string.qcore", "strndup", 4),
     ("libc/sys_stat.qcore", "fstat", 4),
     ("libc/sys_stat.qcore", "mkdir", 4),
     ("libc/sys_stat.qcore", "umask", 3),
