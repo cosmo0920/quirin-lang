@@ -10,7 +10,8 @@ use qcore_contract::chunk_contract::{
     evaluate_boolean_frame_contract, evaluate_chunk_frame_contract,
 };
 use qcore_contract::contract_views::{
-    PremiseClass, REGISTERED_RELATIONS, RegisteredRelation, check_registry, entails, read_corpus,
+    PremiseClass, REGISTERED_RELATIONS, RegisteredRelation, RelationCheck, check_registry,
+    entails, read_corpus,
 };
 use qcore_schemas::chunk_summary::ChunkFrameSummaryRecord;
 
@@ -325,6 +326,44 @@ fn the_guard_refuses_new_stale_and_unjustified_registrations() {
             .any(|error| error.contains("needs a registered finding")),
         "{errors:#?}"
     );
+    // A textual duplicate cannot be registered as a relation to keep it: it
+    // must be removed, or kept as `Identical` with a registered finding.
+    let restored = mutate(
+        "monkey/timeout_teardown.qcore",
+        "extern fn cb_timeout_source() -> unit",
+        "extern fn source_identity() -> unit\ncontract {\n    ensures normal source_revision == \"66910c10a4d7eafa810b84229cf2dcf7b0f26f97\";\n    ensures normal library == \"monkey\";\n    ensures normal source_set == \"fluent-bit\";\n    ensures normal profile_digest != \"\";\n};\n\nextern fn cb_timeout_source() -> unit",
+    );
+    let mut registry: Vec<RegisteredRelation> = REGISTERED_RELATIONS.to_vec();
+    let mut duplicate = registry[0];
+    duplicate.function = "source_identity";
+    duplicate.detailed = "monkey/wait_source_policy.qcore";
+    duplicate.view = "monkey/timeout_teardown.qcore";
+    duplicate.assumed_premises = &[];
+    duplicate.check = RelationCheck::SourceShape {
+        projection: None,
+        nominals: &[],
+    };
+    registry.push(duplicate);
+    let errors = check_registry(&restored, &registry).unwrap_err();
+    assert!(
+        errors
+            .iter()
+            .any(|error| error.contains("is a textual duplicate")),
+        "{errors:#?}"
+    );
+    duplicate.check = RelationCheck::Identical;
+    duplicate.finding = None;
+    *registry.last_mut().unwrap() = duplicate;
+    let errors = check_registry(&restored, &registry).unwrap_err();
+    assert!(
+        errors
+            .iter()
+            .any(|error| error.contains("without a registered finding")),
+        "{errors:#?}"
+    );
+    duplicate.finding = Some("A-CONSUMER-CANNOT-INCLUDE");
+    *registry.last_mut().unwrap() = duplicate;
+    assert!(check_registry(&restored, &registry).is_ok());
     // A registration whose pinned assumptions differ from the computed ones.
     let mut registry: Vec<RegisteredRelation> = REGISTERED_RELATIONS.to_vec();
     registry[0].assumed_premises = &[];

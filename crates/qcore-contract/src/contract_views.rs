@@ -272,6 +272,9 @@ pub struct CensusEntry {
     pub function: String,
     /// `(module, vocabulary)` in logical-path order.
     pub declarations: Vec<(String, Vocabulary)>,
+    /// Every declaration has the same token sequence (comments aside): a
+    /// genuine duplicate, to be removed rather than registered.
+    pub token_identical: bool,
 }
 
 /// Every function declared in more than one module.
@@ -285,6 +288,9 @@ pub fn census(modules: &BTreeMap<String, String>) -> Result<Vec<CensusEntry>, St
                 .iter()
                 .map(|declaration| (declaration.module.clone(), vocabulary(declaration)))
                 .collect(),
+            token_identical: declarations
+                .windows(2)
+                .all(|pair| pair[0].tokens == pair[1].tokens),
         })
         .collect())
 }
@@ -1949,6 +1955,25 @@ pub fn check_registry(
         let key = (relation.function.to_owned(), a.to_owned(), b.to_owned());
         if !registered.insert(key.clone()) {
             errors.push(format!("pair registered twice: {key:?}"));
+        }
+        // A genuine duplicate is removed, not related. It may be kept only as
+        // an `Identical` registration with a finding naming why a consumer
+        // cannot yet read the single owner.
+        let identical = census
+            .iter()
+            .any(|entry| entry.function == relation.function && entry.token_identical);
+        let kept_as_identical = relation.check == RelationCheck::Identical;
+        if identical && !kept_as_identical {
+            errors.push(format!(
+                "`{}` is a textual duplicate in {a} and {b}: remove one declaration",
+                relation.function
+            ));
+        }
+        if kept_as_identical && relation.finding.is_none() {
+            errors.push(format!(
+                "`{}` is kept as an identical duplicate without a registered finding",
+                relation.function
+            ));
         }
         if !pairs.contains(&key) {
             errors.push(format!(
