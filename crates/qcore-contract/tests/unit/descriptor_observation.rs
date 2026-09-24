@@ -62,7 +62,11 @@ fn violations(report: &DescriptorRunReport, property: &str) -> usize {
 }
 
 fn total_violations(report: &DescriptorRunReport) -> usize {
-    report.properties.values().map(|result| result.violations).sum()
+    report
+        .properties
+        .values()
+        .map(|result| result.violations)
+        .sum()
 }
 
 /// A lifecycle over every observed kind with no violation.
@@ -74,7 +78,10 @@ fn clean_run() -> Vec<Value> {
         json!([]),
         8192,
         0,
-        vec![operand("acquired", "file", 8192, 1), operand("derived", "fd", 5, 1)],
+        vec![
+            operand("acquired", "file", 8192, 1),
+            operand("derived", "fd", 5, 1),
+        ],
     );
     fopen["path"] = json!("/etc/hostname");
     vec![
@@ -85,13 +92,34 @@ fn clean_run() -> Vec<Value> {
             json!([]),
             0,
             0,
-            vec![operand("acquired", "fd", 3, 1), operand("acquired", "fd", 4, 1)],
+            vec![
+                operand("acquired", "fd", 3, 1),
+                operand("acquired", "fd", 4, 1),
+            ],
         ),
         row("write", json!([4]), 0, 0, vec![operand("used", "fd", 4, 1)]),
-        row("close", json!([3]), 0, 0, vec![operand("released", "fd", 3, 1)]),
-        row("close", json!([4]), 0, 0, vec![operand("released", "fd", 4, 1)]),
+        row(
+            "close",
+            json!([3]),
+            0,
+            0,
+            vec![operand("released", "fd", 3, 1)],
+        ),
+        row(
+            "close",
+            json!([4]),
+            0,
+            0,
+            vec![operand("released", "fd", 4, 1)],
+        ),
         // Descriptor 3 is reused: a fresh generation.
-        row("socket", json!([2, 1, 0]), 3, 0, vec![operand("acquired", "fd", 3, 2)]),
+        row(
+            "socket",
+            json!([2, 1, 0]),
+            3,
+            0,
+            vec![operand("acquired", "fd", 3, 2)],
+        ),
         row(
             "dup",
             json!([3]),
@@ -99,30 +127,90 @@ fn clean_run() -> Vec<Value> {
             0,
             vec![operand("used", "fd", 3, 2), operand("acquired", "fd", 6, 1)],
         ),
-        row("close", json!([6]), 0, 0, vec![operand("released", "fd", 6, 1)]),
+        row(
+            "close",
+            json!([6]),
+            0,
+            0,
+            vec![operand("released", "fd", 6, 1)],
+        ),
         fopen,
         row(
             "fileno",
             json!([]),
             5,
             0,
-            vec![operand("used", "file", 8192, 1), operand("related", "fd", 5, 1)],
+            vec![
+                operand("used", "file", 8192, 1),
+                operand("related", "fd", 5, 1),
+            ],
         ),
-        row("fread", json!([]), 0, 0, vec![operand("used", "file", 8192, 1)]),
+        row(
+            "fread",
+            json!([]),
+            0,
+            0,
+            vec![operand("used", "file", 8192, 1)],
+        ),
         row(
             "fclose",
             json!([]),
             0,
             0,
-            vec![operand("released", "file", 8192, 1), operand("released_child", "fd", 5, 1)],
+            vec![
+                operand("released", "file", 8192, 1),
+                operand("released_child", "fd", 5, 1),
+            ],
         ),
-        row("dlopen", json!([1]), 12288, 0, vec![operand("acquired", "dl_handle", 12288, 1)]),
-        row("dlopen", json!([1]), 12288, 0, vec![operand("acquired", "dl_handle", 12288, 1)]),
-        row("dlsym", json!([]), 0, 0, vec![operand("used", "dl_handle", 12288, 1)]),
-        row("dlclose", json!([]), 0, 0, vec![operand("released", "dl_handle", 12288, 1)]),
-        row("dlclose", json!([]), 0, 0, vec![operand("released", "dl_handle", 12288, 1)]),
-        row("getaddrinfo", json!([2, 1]), 0, 0, vec![operand("acquired", "addrinfo", 16384, 1)]),
-        row("freeaddrinfo", json!([]), 0, 0, vec![operand("released", "addrinfo", 16384, 1)]),
+        row(
+            "dlopen",
+            json!([1]),
+            12288,
+            0,
+            vec![operand("acquired", "dl_handle", 12288, 1)],
+        ),
+        row(
+            "dlopen",
+            json!([1]),
+            12288,
+            0,
+            vec![operand("acquired", "dl_handle", 12288, 1)],
+        ),
+        row(
+            "dlsym",
+            json!([]),
+            0,
+            0,
+            vec![operand("used", "dl_handle", 12288, 1)],
+        ),
+        row(
+            "dlclose",
+            json!([]),
+            0,
+            0,
+            vec![operand("released", "dl_handle", 12288, 1)],
+        ),
+        row(
+            "dlclose",
+            json!([]),
+            0,
+            0,
+            vec![operand("released", "dl_handle", 12288, 1)],
+        ),
+        row(
+            "getaddrinfo",
+            json!([2, 1]),
+            0,
+            0,
+            vec![operand("acquired", "addrinfo", 16384, 1)],
+        ),
+        row(
+            "freeaddrinfo",
+            json!([]),
+            0,
+            0,
+            vec![operand("released", "addrinfo", 16384, 1)],
+        ),
         row("getaddrinfo", json!([2, 1]), -2, 0, vec![]),
         row(
             "mmap",
@@ -134,19 +222,33 @@ fn clean_run() -> Vec<Value> {
                 json!({"role":"acquired","kind":"mapping","id":1_048_576,"generation":1,"extent":4096}),
             ],
         ),
-        row("msync", json!([]), 0, 0, vec![operand("used", "mapping", 1_048_576 + 128, 0)]),
+        row(
+            "msync",
+            json!([]),
+            0,
+            0,
+            vec![operand("used", "mapping", 1_048_576 + 128, 0)],
+        ),
         {
             let mut munmap = row(
                 "munmap",
                 json!([4096]),
                 0,
                 0,
-                vec![json!({"role":"released","kind":"mapping","id":1_048_576,"generation":1,"extent":4096})],
+                vec![
+                    json!({"role":"released","kind":"mapping","id":1_048_576,"generation":1,"extent":4096}),
+                ],
             );
             munmap["args"] = json!([4096]);
             munmap
         },
-        row("close", json!([3]), 0, 0, vec![operand("released", "fd", 3, 2)]),
+        row(
+            "close",
+            json!([3]),
+            0,
+            0,
+            vec![operand("released", "fd", 3, 2)],
+        ),
         exit(vec![]),
     ]
 }
@@ -167,7 +269,10 @@ fn clean_run_holds_every_property_over_every_kind() {
     assert!(report.live_at_exit.iter().all(|live| live.inherited));
     for (property, _) in PROPERTIES {
         if *property != "counted_reference" && *property != "mapping_extent" {
-            assert!(report.properties[*property].checks > 0, "{property} unexercised");
+            assert!(
+                report.properties[*property].checks > 0,
+                "{property} unexercised"
+            );
         }
     }
     assert!(report.properties["counted_reference"].checks == 1);
@@ -178,9 +283,27 @@ fn clean_run_holds_every_property_over_every_kind() {
 fn double_close_violates_release_at_most_once() {
     let rows = vec![
         start(),
-        row("socket", json!([2, 1, 0]), 3, 0, vec![operand("acquired", "fd", 3, 1)]),
-        row("close", json!([3]), 0, 0, vec![operand("released", "fd", 3, 1)]),
-        row("close", json!([3]), -1, 9, vec![operand("released", "fd", 3, 1)]),
+        row(
+            "socket",
+            json!([2, 1, 0]),
+            3,
+            0,
+            vec![operand("acquired", "fd", 3, 1)],
+        ),
+        row(
+            "close",
+            json!([3]),
+            0,
+            0,
+            vec![operand("released", "fd", 3, 1)],
+        ),
+        row(
+            "close",
+            json!([3]),
+            -1,
+            9,
+            vec![operand("released", "fd", 3, 1)],
+        ),
         exit(vec![]),
     ];
     let report = check(rows).unwrap();
@@ -192,8 +315,20 @@ fn double_close_violates_release_at_most_once() {
 fn use_after_close_is_recorded() {
     let rows = vec![
         start(),
-        row("socket", json!([2, 1, 0]), 3, 0, vec![operand("acquired", "fd", 3, 1)]),
-        row("close", json!([3]), 0, 0, vec![operand("released", "fd", 3, 1)]),
+        row(
+            "socket",
+            json!([2, 1, 0]),
+            3,
+            0,
+            vec![operand("acquired", "fd", 3, 1)],
+        ),
+        row(
+            "close",
+            json!([3]),
+            0,
+            0,
+            vec![operand("released", "fd", 3, 1)],
+        ),
         row("write", json!([3]), 0, 0, vec![operand("used", "fd", 3, 1)]),
         exit(vec![]),
     ];
@@ -210,15 +345,27 @@ fn closing_a_stream_descriptor_directly_violates_custody_then_release_once() {
             json!([]),
             8192,
             0,
-            vec![operand("acquired", "file", 8192, 1), operand("derived", "fd", 5, 1)],
+            vec![
+                operand("acquired", "file", 8192, 1),
+                operand("derived", "fd", 5, 1),
+            ],
         ),
-        row("close", json!([5]), 0, 0, vec![operand("released", "fd", 5, 1)]),
+        row(
+            "close",
+            json!([5]),
+            0,
+            0,
+            vec![operand("released", "fd", 5, 1)],
+        ),
         row(
             "fclose",
             json!([]),
             -1,
             9,
-            vec![operand("released", "file", 8192, 1), operand("released_child", "fd", 5, 1)],
+            vec![
+                operand("released", "file", 8192, 1),
+                operand("released_child", "fd", 5, 1),
+            ],
         ),
         exit(vec![]),
     ];
@@ -236,14 +383,20 @@ fn releasing_a_pointer_as_another_kind_is_a_kind_mismatch() {
             json!([]),
             8192,
             0,
-            vec![operand("acquired", "dir", 8192, 1), operand("derived", "fd", 5, 1)],
+            vec![
+                operand("acquired", "dir", 8192, 1),
+                operand("derived", "fd", 5, 1),
+            ],
         ),
         row(
             "fclose",
             json!([]),
             0,
             0,
-            vec![operand("released", "file", 8192, 1), operand("released_child", "fd", 5, 1)],
+            vec![
+                operand("released", "file", 8192, 1),
+                operand("released_child", "fd", 5, 1),
+            ],
         ),
         exit(vec![]),
     ];
@@ -255,7 +408,13 @@ fn releasing_a_pointer_as_another_kind_is_a_kind_mismatch() {
 fn sentinel_release_is_an_invalid_operand_not_a_double_release() {
     let rows = vec![
         start(),
-        row("close", json!([-1]), -1, 9, vec![operand("released", "fd", -1, 0)]),
+        row(
+            "close",
+            json!([-1]),
+            -1,
+            9,
+            vec![operand("released", "fd", -1, 0)],
+        ),
         exit(vec![]),
     ];
     let report = check(rows).unwrap();
@@ -272,21 +431,30 @@ fn fileno_must_return_the_stream_descriptor() {
             json!([]),
             8192,
             0,
-            vec![operand("acquired", "file", 8192, 1), operand("derived", "fd", 5, 1)],
+            vec![
+                operand("acquired", "file", 8192, 1),
+                operand("derived", "fd", 5, 1),
+            ],
         ),
         row(
             "fileno",
             json!([]),
             1,
             0,
-            vec![operand("used", "file", 8192, 1), operand("related", "fd", 1, 1)],
+            vec![
+                operand("used", "file", 8192, 1),
+                operand("related", "fd", 1, 1),
+            ],
         ),
         row(
             "fclose",
             json!([]),
             0,
             0,
-            vec![operand("released", "file", 8192, 1), operand("released_child", "fd", 5, 1)],
+            vec![
+                operand("released", "file", 8192, 1),
+                operand("released_child", "fd", 5, 1),
+            ],
         ),
         exit(vec![]),
     ];
@@ -298,7 +466,13 @@ fn fileno_must_return_the_stream_descriptor() {
 fn fdopen_adopts_and_fclose_releases_the_adopted_descriptor() {
     let rows = vec![
         start(),
-        row("open", json!([-100, 0, 0]), 5, 0, vec![operand("acquired", "fd", 5, 1)]),
+        row(
+            "open",
+            json!([-100, 0, 0]),
+            5,
+            0,
+            vec![operand("acquired", "fd", 5, 1)],
+        ),
         row(
             "fdopen",
             json!([]),
@@ -315,7 +489,10 @@ fn fdopen_adopts_and_fclose_releases_the_adopted_descriptor() {
             json!([]),
             0,
             0,
-            vec![operand("released", "file", 8192, 1), operand("released_child", "fd", 5, 1)],
+            vec![
+                operand("released", "file", 8192, 1),
+                operand("released_child", "fd", 5, 1),
+            ],
         ),
         exit(vec![]),
     ];
@@ -332,14 +509,18 @@ fn partial_unmap_violates_the_mapping_extent() {
             json!([8192, 3, 34, -1, 0]),
             1_048_576,
             0,
-            vec![json!({"role":"acquired","kind":"mapping","id":1_048_576,"generation":1,"extent":8192})],
+            vec![
+                json!({"role":"acquired","kind":"mapping","id":1_048_576,"generation":1,"extent":8192}),
+            ],
         ),
         row(
             "munmap",
             json!([4096]),
             0,
             0,
-            vec![json!({"role":"released","kind":"mapping","id":1_048_576,"generation":1,"extent":4096})],
+            vec![
+                json!({"role":"released","kind":"mapping","id":1_048_576,"generation":1,"extent":4096}),
+            ],
         ),
         exit(vec![]),
     ];
@@ -349,17 +530,33 @@ fn partial_unmap_violates_the_mapping_extent() {
 
 #[test]
 fn live_generations_at_exit_are_reported_with_their_origin() {
-    let mut open = row("open", json!([-100, 0, 0]), 3, 0, vec![operand("acquired", "fd", 3, 1)]);
+    let mut open = row(
+        "open",
+        json!([-100, 0, 0]),
+        3,
+        0,
+        vec![operand("acquired", "fd", 3, 1)],
+    );
     open["path"] = json!("/etc/machine-id");
     let rows = vec![start(), open, exit(vec![operand("live", "fd", 3, 1)])];
     let report = check(rows).unwrap();
     assert_eq!(total_violations(&report), 0);
-    let leaked: Vec<_> = report.live_at_exit.iter().filter(|live| !live.inherited).collect();
+    let leaked: Vec<_> = report
+        .live_at_exit
+        .iter()
+        .filter(|live| !live.inherited)
+        .collect();
     assert_eq!(leaked.len(), 1);
     assert_eq!(leaked[0].origin_call, "open");
     assert_eq!(leaked[0].origin_path.as_deref(), Some("/etc/machine-id"));
     // An observer that omits the live descriptor disagrees with the replay.
-    let mut open = row("open", json!([-100, 0, 0]), 3, 0, vec![operand("acquired", "fd", 3, 1)]);
+    let mut open = row(
+        "open",
+        json!([-100, 0, 0]),
+        3,
+        0,
+        vec![operand("acquired", "fd", 3, 1)],
+    );
     open["path"] = json!("/etc/machine-id");
     let report = check(vec![start(), open, exit(vec![])]).unwrap();
     assert_eq!(violations(&report, "leak_set_well_defined"), 1);
@@ -369,9 +566,27 @@ fn live_generations_at_exit_are_reported_with_their_origin() {
 fn acquiring_a_live_identity_records_an_unobserved_release() {
     let rows = vec![
         start(),
-        row("socket", json!([2, 1, 0]), 3, 0, vec![operand("acquired", "fd", 3, 1)]),
-        row("socket", json!([2, 1, 0]), 3, 0, vec![operand("acquired", "fd", 3, 2)]),
-        row("close", json!([3]), 0, 0, vec![operand("released", "fd", 3, 2)]),
+        row(
+            "socket",
+            json!([2, 1, 0]),
+            3,
+            0,
+            vec![operand("acquired", "fd", 3, 1)],
+        ),
+        row(
+            "socket",
+            json!([2, 1, 0]),
+            3,
+            0,
+            vec![operand("acquired", "fd", 3, 2)],
+        ),
+        row(
+            "close",
+            json!([3]),
+            0,
+            0,
+            vec![operand("released", "fd", 3, 2)],
+        ),
         exit(vec![]),
     ];
     let report = check(rows).unwrap();
@@ -383,7 +598,13 @@ fn malformed_or_inconsistent_records_are_not_evidence() {
     // Observer generation stamp disagrees with the replay.
     let rows = vec![
         start(),
-        row("socket", json!([2, 1, 0]), 3, 0, vec![operand("acquired", "fd", 3, 7)]),
+        row(
+            "socket",
+            json!([2, 1, 0]),
+            3,
+            0,
+            vec![operand("acquired", "fd", 3, 7)],
+        ),
         exit(vec![]),
     ];
     assert!(check(rows).unwrap_err().contains("disagrees"));
@@ -392,22 +613,48 @@ fn malformed_or_inconsistent_records_are_not_evidence() {
     // Foreign process.
     let mut foreign = row("write", json!([1]), 0, 0, vec![operand("used", "fd", 1, 1)]);
     foreign["pid"] = json!(8);
-    assert!(check(vec![start(), foreign, exit(vec![])]).unwrap_err().contains("different process"));
+    assert!(
+        check(vec![start(), foreign, exit(vec![])])
+            .unwrap_err()
+            .contains("different process")
+    );
     // Noncontiguous sequence.
     let mut text = render(vec![start(), exit(vec![])]);
     text = text.replace("\"sequence\":2", "\"sequence\":3");
-    assert!(check_descriptor_observations(&text, POLICY).unwrap_err().contains("noncontiguous"));
+    assert!(
+        check_descriptor_observations(&text, POLICY)
+            .unwrap_err()
+            .contains("noncontiguous")
+    );
     // Unknown call and unknown field.
-    assert!(check(vec![start(), row("frobnicate", json!([]), 0, 0, vec![]), exit(vec![])]).is_err());
+    assert!(
+        check(vec![
+            start(),
+            row("frobnicate", json!([]), 0, 0, vec![]),
+            exit(vec![])
+        ])
+        .is_err()
+    );
     let mut extra = row("write", json!([1]), 0, 0, vec![operand("used", "fd", 1, 1)]);
     extra["surprise"] = json!(1);
     assert!(check(vec![start(), extra, exit(vec![])]).is_err());
     // An injected failure cannot report success.
-    let mut injected = row("socket", json!([2, 1, 0]), 3, 0, vec![operand("acquired", "fd", 3, 1)]);
+    let mut injected = row(
+        "socket",
+        json!([2, 1, 0]),
+        3,
+        0,
+        vec![operand("acquired", "fd", 3, 1)],
+    );
     injected["injected"] = json!(true);
     assert!(check(vec![start(), injected, exit(vec![])]).is_err());
     // Failure must return the sentinel and acquire nothing.
-    let report = check(vec![start(), row("socket", json!([2, 1, 0]), -2, 0, vec![]), exit(vec![])]).unwrap();
+    let report = check(vec![
+        start(),
+        row("socket", json!([2, 1, 0]), -2, 0, vec![]),
+        exit(vec![]),
+    ])
+    .unwrap();
     assert_eq!(violations(&report, "sentinel_validity"), 1);
 }
 
@@ -415,21 +662,45 @@ fn malformed_or_inconsistent_records_are_not_evidence() {
 fn policy_text_drives_the_result() {
     let rows = vec![
         start(),
-        row("socket", json!([2, 1, 0]), 3, 0, vec![operand("acquired", "fd", 3, 1)]),
-        row("close", json!([3]), 0, 0, vec![operand("released", "fd", 3, 1)]),
-        row("close", json!([3]), -1, 9, vec![operand("released", "fd", 3, 1)]),
+        row(
+            "socket",
+            json!([2, 1, 0]),
+            3,
+            0,
+            vec![operand("acquired", "fd", 3, 1)],
+        ),
+        row(
+            "close",
+            json!([3]),
+            0,
+            0,
+            vec![operand("released", "fd", 3, 1)],
+        ),
+        row(
+            "close",
+            json!([3]),
+            -1,
+            9,
+            vec![operand("released", "fd", 3, 1)],
+        ),
         exit(vec![]),
     ];
     let text = render(rows);
     let baseline = check_descriptor_observations(&text, POLICY).unwrap();
     assert_eq!(violations(&baseline, "release_at_most_once"), 1);
     // Weakening the clause removes the violation: Rust holds no copy of it.
-    let weakened = POLICY.replace("ensures normal not released_before;", "ensures normal released_before or 1;");
+    let weakened = POLICY.replace(
+        "ensures normal not released_before;",
+        "ensures normal released_before or 1;",
+    );
     assert_ne!(weakened, POLICY);
     let report = check_descriptor_observations(&text, &weakened).unwrap();
     assert_eq!(violations(&report, "release_at_most_once"), 0);
     // A clause naming a fact the interpreter does not supply fails closed.
-    let unknown = POLICY.replace("ensures normal not released_before;", "ensures normal not unsupplied_fact;");
+    let unknown = POLICY.replace(
+        "ensures normal not released_before;",
+        "ensures normal not unsupplied_fact;",
+    );
     assert!(check_descriptor_observations(&text, &unknown).is_err());
     // A policy missing a property function fails closed.
     let missing = POLICY.replace("descriptor_release_at_most_once", "descriptor_renamed");
@@ -453,7 +724,11 @@ fn pinned_fluent_bit_engine_run_reproduces_its_double_closes() {
         assert!(example.detail.contains("errno 9"), "{}", example.detail);
     }
     assert_eq!(total_violations(&report), 5);
-    let leaked: Vec<_> = report.live_at_exit.iter().filter(|live| !live.inherited).collect();
+    let leaked: Vec<_> = report
+        .live_at_exit
+        .iter()
+        .filter(|live| !live.inherited)
+        .collect();
     assert_eq!(leaked.len(), 1);
     assert_eq!(leaked[0].kind, Kind::Mapping);
 }
@@ -474,7 +749,11 @@ fn pinned_monkey_bind_failure_run_leaves_its_socket_live_at_exit() {
     let records = include_str!("../fixtures/descriptor/monkey_bind_in_use.jsonl");
     let report = check_descriptor_observations(records, POLICY).unwrap();
     assert_eq!(total_violations(&report), 0);
-    let leaked: Vec<_> = report.live_at_exit.iter().filter(|live| !live.inherited).collect();
+    let leaked: Vec<_> = report
+        .live_at_exit
+        .iter()
+        .filter(|live| !live.inherited)
+        .collect();
     assert_eq!(leaked.len(), 1);
     assert_eq!(
         (leaked[0].kind, leaked[0].origin_call.as_str()),

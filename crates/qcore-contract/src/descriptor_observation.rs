@@ -195,7 +195,10 @@ pub const PROPERTIES: &[(&str, &str)] = &[
     ("counted_reference", "descriptor_counted_reference"),
     ("sentinel_validity", "descriptor_sentinel_validity"),
     ("relation_holds", "descriptor_relation_holds"),
-    ("operand_identity_valid", "descriptor_operand_identity_valid"),
+    (
+        "operand_identity_valid",
+        "descriptor_operand_identity_valid",
+    ),
     ("mapping_extent", "descriptor_mapping_extent"),
 ];
 
@@ -449,7 +452,9 @@ impl<'a> Replay<'a> {
         let previous_generation = previous.as_ref().map_or(0, |slot| slot.generation);
         let counted = operand.kind.counted()
             && already_live
-            && previous.as_ref().is_some_and(|slot| slot.kind == operand.kind);
+            && previous
+                .as_ref()
+                .is_some_and(|slot| slot.kind == operand.kind);
         if counted {
             expect(
                 operand.generation == previous_generation,
@@ -550,7 +555,13 @@ impl<'a> Replay<'a> {
             "operand_identity_valid",
             row,
             &[("identity_valid", i128::from(valid))],
-            || format!("{} used with invalid identity {}", operand.kind.name(), operand.id),
+            || {
+                format!(
+                    "{} used with invalid identity {}",
+                    operand.kind.name(),
+                    operand.id
+                )
+            },
         )?;
         if !valid {
             return Ok(());
@@ -654,9 +665,12 @@ impl<'a> Replay<'a> {
             }
             return Ok(None);
         }
-        self.property("release_at_most_once", row, &[("released_before", 0)], || {
-            String::new()
-        })?;
+        self.property(
+            "release_at_most_once",
+            row,
+            &[("released_before", 0)],
+            String::new,
+        )?;
         let kind_matches = if operand.kind == Kind::Fd {
             true
         } else {
@@ -793,12 +807,17 @@ impl<'a> Replay<'a> {
                 let injections = row.injections.as_ref().ok_or("start lacks injections")?;
                 self.report.injections_configured = injections.len();
                 for operand in ops {
-                    expect(operand.role == Role::Inherited, "start operand is not inherited")?;
+                    expect(
+                        operand.role == Role::Inherited,
+                        "start operand is not inherited",
+                    )?;
                     self.acquire(row, operand, None, true)?;
                 }
                 // Inherited streams own their recorded descriptors.
                 for operand in ops.iter().filter(|operand| operand.kind.is_stream()) {
-                    let child = operand.child.ok_or("inherited stream lacks its descriptor")?;
+                    let child = operand
+                        .child
+                        .ok_or("inherited stream lacks its descriptor")?;
                     if let Some(slot) = self.fds.get_mut(&child).filter(|slot| slot.live) {
                         slot.owner = Some((operand.kind, operand.id));
                     }
@@ -813,9 +832,8 @@ impl<'a> Replay<'a> {
                 }
                 let succeeded = row.result >= 0;
                 expect(
-                    rest.iter().all(|operand| {
-                        operand.role == Role::Acquired && operand.kind == Kind::Fd
-                    }),
+                    rest.iter()
+                        .all(|operand| operand.role == Role::Acquired && operand.kind == Kind::Fd),
                     "constructor operand is not an acquired descriptor",
                 )?;
                 let acquired = rest.len();
@@ -831,17 +849,20 @@ impl<'a> Replay<'a> {
                     },
                 )?;
                 for operand in rest {
-                    expect(operand.id == row.result, "acquired descriptor is not the result")?;
+                    expect(
+                        operand.id == row.result,
+                        "acquired descriptor is not the result",
+                    )?;
                     self.acquire(row, operand, None, false)?;
                 }
-                if call == "dup" || call == "fcntl_dupfd" {
-                    if let (Some(source), true) = (sources.first(), succeeded) {
-                        self.relation(
-                            row,
-                            row.result != source.id,
-                            format!("dup result {} equals its source", row.result),
-                        )?;
-                    }
+                if (call == "dup" || call == "fcntl_dupfd")
+                    && let (Some(source), true) = (sources.first(), succeeded)
+                {
+                    self.relation(
+                        row,
+                        row.result != source.id,
+                        format!("dup result {} equals its source", row.result),
+                    )?;
                 }
             }
             _ if PAIR_CONSTRUCTORS.contains(&call) => {
@@ -851,7 +872,8 @@ impl<'a> Replay<'a> {
                     "pair operand is not an acquired descriptor",
                 )?;
                 let succeeded = row.result == 0;
-                let valid = ops.len() == 2 && ops[0].id >= 0 && ops[1].id >= 0 && ops[0].id != ops[1].id;
+                let valid =
+                    ops.len() == 2 && ops[0].id >= 0 && ops[1].id >= 0 && ops[0].id != ops[1].id;
                 self.sentinel(
                     row,
                     SentinelFacts {
@@ -869,7 +891,12 @@ impl<'a> Replay<'a> {
             }
             "dup2" | "dup3" => {
                 expect(
-                    matches!(roles.as_slice(), [Role::Used] | [Role::Used, Role::Acquired] | [Role::Used, Role::Replaced, Role::Acquired]),
+                    matches!(
+                        roles.as_slice(),
+                        [Role::Used]
+                            | [Role::Used, Role::Acquired]
+                            | [Role::Used, Role::Replaced, Role::Acquired]
+                    ),
                     "dup2 operand shape",
                 )?;
                 expect(row.args.len() == 3, "dup2 arguments")?;
@@ -914,7 +941,10 @@ impl<'a> Replay<'a> {
                     matches!(roles.as_slice(), [Role::Released]) && ops[0].kind == Kind::Fd,
                     "close operand shape",
                 )?;
-                expect(row.args.first() == Some(&ops[0].id), "close operand is not its argument")?;
+                expect(
+                    row.args.first() == Some(&ops[0].id),
+                    "close operand is not its argument",
+                )?;
                 self.release(row, &ops[0], None)?;
             }
             "fopen" | "tmpfile" | "fdopen" | "popen" | "opendir" | "fdopendir" => {
@@ -927,8 +957,10 @@ impl<'a> Replay<'a> {
                     _ => Kind::Dir,
                 };
                 expect(
-                    matches!(roles.as_slice(), [Role::Released] | [Role::Released, Role::ReleasedChild])
-                        && ops[0].kind == kind,
+                    matches!(
+                        roles.as_slice(),
+                        [Role::Released] | [Role::Released, Role::ReleasedChild]
+                    ) && ops[0].kind == kind,
                     "stream release operand shape",
                 )?;
                 let child = self.release(row, &ops[0], None)?;
@@ -979,7 +1011,9 @@ impl<'a> Replay<'a> {
             }
             "dlopen" => {
                 expect(
-                    ops.iter().all(|operand| operand.role == Role::Acquired && operand.kind == Kind::DlHandle),
+                    ops.iter().all(|operand| {
+                        operand.role == Role::Acquired && operand.kind == Kind::DlHandle
+                    }),
                     "dlopen operand shape",
                 )?;
                 let succeeded = row.result != 0;
@@ -1000,9 +1034,14 @@ impl<'a> Replay<'a> {
                 }
             }
             "getaddrinfo" | "getifaddrs" => {
-                let kind = if call == "getaddrinfo" { Kind::Addrinfo } else { Kind::Ifaddrs };
+                let kind = if call == "getaddrinfo" {
+                    Kind::Addrinfo
+                } else {
+                    Kind::Ifaddrs
+                };
                 expect(
-                    ops.iter().all(|operand| operand.role == Role::Acquired && operand.kind == kind),
+                    ops.iter()
+                        .all(|operand| operand.role == Role::Acquired && operand.kind == kind),
                     "list constructor operand shape",
                 )?;
                 let succeeded = row.result == 0;
@@ -1045,7 +1084,9 @@ impl<'a> Replay<'a> {
                     self.use_operand(row, source)?;
                 }
                 expect(
-                    rest.iter().all(|operand| operand.role == Role::Acquired && operand.kind == Kind::Mapping),
+                    rest.iter().all(|operand| {
+                        operand.role == Role::Acquired && operand.kind == Kind::Mapping
+                    }),
                     "mmap operand shape",
                 )?;
                 let succeeded = row.result != -1;
@@ -1085,7 +1126,10 @@ impl<'a> Replay<'a> {
                     self.release_mapping(row, &ops[0])?;
                     self.acquire(row, &ops[1], None, false)?;
                 } else {
-                    expect(matches!(roles.as_slice(), [Role::Used]), "mremap failure shape")?;
+                    expect(
+                        matches!(roles.as_slice(), [Role::Used]),
+                        "mremap failure shape",
+                    )?;
                     self.use_operand(row, &ops[0])?;
                 }
                 self.sentinel(
@@ -1106,7 +1150,9 @@ impl<'a> Replay<'a> {
             }
             _ if USE_CALLS.contains(&call) => {
                 expect(
-                    !ops.is_empty() && ops.len() <= 2 && ops.iter().all(|operand| operand.role == Role::Used),
+                    !ops.is_empty()
+                        && ops.len() <= 2
+                        && ops.iter().all(|operand| operand.role == Role::Used),
                     "use operand shape",
                 )?;
                 for operand in ops {
@@ -1139,12 +1185,9 @@ impl<'a> Replay<'a> {
             }
             None => {
                 if self.containing_mapping(operand.id).is_some() {
-                    self.property(
-                        "mapping_extent",
-                        row,
-                        &[("extent_matches", 0)],
-                        || format!("partial release inside a live mapping at {}", operand.id),
-                    )?;
+                    self.property("mapping_extent", row, &[("extent_matches", 0)], || {
+                        format!("partial release inside a live mapping at {}", operand.id)
+                    })?;
                     self.stamp(operand)?;
                     return Ok(());
                 }
@@ -1168,7 +1211,10 @@ impl<'a> Replay<'a> {
         let succeeded = row.result != 0;
         let mut rest = ops.as_slice();
         if adopts {
-            expect(matches!(roles.first(), Some(Role::Used)), "adoption lacks its source")?;
+            expect(
+                matches!(roles.first(), Some(Role::Used)),
+                "adoption lacks its source",
+            )?;
             self.use_operand(row, &ops[0])?;
             rest = &ops[1..];
         }
