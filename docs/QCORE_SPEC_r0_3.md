@@ -987,6 +987,32 @@ nothing about the object's extent. A write through `*p` or `p[i]` keeps the
 refused statement's binding frame. See
 [the implementation record](reports/w43-indirect-access-general/README.md).
 
+An indexed resource collection is a heap array a body acquired, declared
+`T **v`, whose elements hold owned resources. Its element obligations are a
+partition of the index line into half-open segments `[lo, hi)` over symbolic
+bounds (a literal, or `max(0, x + k)` for a declared integer `x` no other
+lvalue designates), each unfilled, null, live or released. The rule is
+consulted only for a statement or `if` condition the generic gateway already
+refused: `v[I] = ACQUIRE(...)` (an owned-result contract whose parameters are
+all borrowed), `v[I] = NULL`, `RELEASE(v[I])` (a one-parameter released
+contract with no result) and a null test of `v[I]`, where `I` is a declared
+integer, a literal, or a counter `n++`. A store moves the acquired identity's
+custody into the collection; a release discharges one live element; a canonical
+counted loop `for (i = 0; i < n; i++)` whose body writes neither name and
+neither leaves nor enters except through its header carries `i < n` into its
+body and rewrites `i` to `n` at its exit. Every operation MUST be proved on the
+segments; otherwise it records an unknown alias and the collection supports no
+claim. When `v` does not resolve to exactly one live, non-null identity the
+body acquired, the statement keeps its refusal byte for byte. An array released,
+held or refuted at an exit with a live segment leaks those elements; an array
+returned or consumed carries them with it, and no one-identity summary is
+published for it. Releasing an element twice is a `double_release` candidate,
+reading or operating through a released element or array a
+`use_after_release` candidate, and storing over a live non-null element a leak
+candidate. The collection decides which indices owe a release, never that an
+index is inside the allocation. See
+[the implementation record](reports/w43-indexed-resource-collections/README.md).
+
 The bounded B-series lowering models one unconditional externally declared
 contracted call (no local definition) in an
 otherwise custody-neutral return or controlling expression, preserving its
