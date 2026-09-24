@@ -44,3 +44,5 @@ import QCore.IndexedCollection
 #print axioms QCore.IndexedCollection.a_reallocation_of_an_owing_collection_refuses
 #print axioms QCore.IndexedCollection.releasing_or_consuming_the_array_is_admitted
 #print axioms QCore.IndexedCollection.three_filled_elements_are_live
+#print axioms QCore.IndexedCollection.eval_const
+#print axioms QCore.IndexedCollection.eval_var
