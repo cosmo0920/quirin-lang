@@ -584,6 +584,7 @@ mod tests {
             nodes,
             publications: PublicationFacts::default(),
             conditional_names: BTreeSet::from(["p".to_string()]),
+            traversal: Default::default(),
         }
     }
 
@@ -630,6 +631,7 @@ mod tests {
             nodes,
             publications: PublicationFacts::default(),
             conditional_names: BTreeSet::from(["p".to_string()]),
+            traversal: Default::default(),
         }
     }
 
@@ -1015,6 +1017,7 @@ mod tests {
             nodes,
             publications: PublicationFacts::default(),
             conditional_names: BTreeSet::from(["p".to_string()]),
+            traversal: Default::default(),
         };
         assert_eq!(
             derive(&cfg)[2].get(&7),

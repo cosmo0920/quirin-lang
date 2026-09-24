@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 313
+  "named_followups": 324
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6919,6 +6919,7 @@
   "full_language_conformance": false,
   "measurement_provenance": "integrator_supplied (docs/reports/w43-result-alias-returned/integration/gate.json)"
  },
+ "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)",
  "named_followups": [
   {
    "id": "P02-FLAKE",
@@ -8974,13 +8975,6 @@
    "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
   },
   {
-   "id": "W43-INDIRECT-POINTER-INCREMENT",
-   "title": "Stores through a moving or computed pointer stay refused: 335 leaves on 172 Unknown functions",
-   "why": "`*p++ = c` increments the pointer it dereferences (C11 6.5.2.4), and `*(p + i) = c` dereferences a computed pointer; neither is a typed scalar access, so card W43-INDIRECT-ACCESS-GENERAL refuses both. A tracked pointer that moves becomes an interior pointer to its allocation, which the projection would have to rebind as derived (the W43-LIBC-RESULT-ALIAS vocabulary) before its release could be judged. Measured at the AFTER census (residuals.txt, class pointer-increment): 335 leaves (136 unrecognized-destination, 101 indirect-access, 98 increment) in 172 Unknown functions, 0 sole-blocked. DISCHARGE: a card that models pointer arithmetic on a bound name as an interior derivation of the same site, with the release rules of QCore.DerivedResult, and a measured re-pin.",
-   "source": "docs/reports/w43-indirect-access-general/README.md",
-   "recorded_by": "W43-INDIRECT-ACCESS-GENERAL"
-  },
-  {
    "id": "W43-INDIRECT-OTHER-STATEMENTS",
    "title": "Access refusals outside every named shape: 1,693 leaves on 764 Unknown functions, 25 sole-blocked, including uncensused for-clauses",
    "why": "The residual class `other` of card W43-INDIRECT-ACCESS-GENERAL's AFTER census (residuals.txt): 1,693 leaves (751 indirect-access, 360 increment, 316 unsupported-assignment, 266 unrecognized-destination) in 764 Unknown functions, 25 sole-blocked. It holds expression statements, declarations with bracketed or dotted initializers, compound assignments into names from non-access values, and the increment-family leaves of `for` clauses, which the card's statement census does not stream (it records only `parse_statement`'s statements; 189 such leaves at the BEFORE census). DISCHARGE: stream the for-clause and synthetic-condition statements into the statement census and split this class by shape before any card is cut on it; not a discharge: citing the leaf count.",
@@ -9049,7 +9043,90 @@
    "why": "Card W43-RESULT-ALIAS-RETURNED publishes `ResourceReturnMode::Derived { .., const_dropped }` for a body whose exits return a pointer derived from one borrowed formal. A declared derived result sets `const_dropped` from its declared ABI types (base `ptr<const, u8>`, result `ptr<mut, u8>`). The inferred summary instead takes the disjunction of the flag over the returned bindings' derivation chains, because the gateway's transfer function does not see declared types. For `mk_core/mk_string.c` `mk_string_casestr(char *heystack, char *needle)` the summary therefore says `const_dropped: true` (it comes from `strcasestr`'s `const char *` haystack), although the wrapper's own formal is not `const`. The flag is read by no check today, so no verdict depends on it; it over-states, which is the conservative direction for the unimplemented W43-RESULT-ALIAS-CONST-WRITE. Discharge condition: when W43-RESULT-ALIAS-CONST-WRITE lands a check that reads `const_dropped`, either recompute an inferred summary's flag from the wrapper's declared parameter and result types (with Lean parity), or record that the chain's over-approximation is the intended reading.",
    "source": "docs/reports/w43-result-alias-returned/README.md",
    "recorded_by": "W43-RESULT-ALIAS-RETURNED"
+  },
+  {
+   "id": "W43-INDEX-TRAVERSAL-CONDITION-CALL",
+   "title": "A controlling expression carrying a call the condition-call route does not isolate stays refused: 4,419 leaves on 1,603 Unknown functions, 28 sole-blocked",
+   "why": "Card W43-INDEX-TRAVERSAL lowers a refused controlling expression to the typed read only when it carries no call. Measured at its AFTER census (docs/reports/w43-index-traversal/residuals.txt, conditions class call): 4,419 condition leaves in 1,603 Unknown functions, 28 of them blocked by that family alone. They are `while (i < rd_list_cnt(l))`, `if (strcmp(a, b) == 0 && *p)`, list and queue macros that call, and conditions the B-series route declines (a short-circuited call, a locally defined callee). Admitting one needs the call's own contract and its short-circuit reading, not a typed read. DISCHARGE: a card that composes the B-series isolated call with the typed read for the residual (both obligations kept), with Lean parity and a measured re-pin; or a recorded decision that the class belongs to the call routes.",
+   "source": "docs/reports/w43-index-traversal/README.md",
+   "recorded_by": "W43-INDEX-TRAVERSAL"
+  },
+  {
+   "id": "W43-INDEX-TRAVERSAL-CONDITION-UNTYPED",
+   "title": "A controlling expression whose access the declaration reader does not type stays refused: 2,616 leaves on 1,154 Unknown functions, 28 sole-blocked",
+   "why": "The typed condition read admits `*B`, `B[I]`, `B->F` and `S.F` only where the reader commits to `SCALAR *B`/`SCALAR B[N]`, a scalar member of a completely read record, or a record object, plus declared pointer names and the null constant as whole operands. Measured at the AFTER census (residuals.txt, conditions class untyped): 2,616 leaves in 1,154 Unknown functions, 28 sole-blocked: a `void *` or `char **` base, a pointer-valued member tested for null (`p->next != NULL` on a record the reader refused), an unread typedef, a member of an incomplete record. The causes are the reader residuals W43-INDIRECT-UNTYPED-SINGLE-ACCESS already names. DISCHARGE: re-measure this class after a reader repair lands and attribute the moves to the reader, or admit pointer-valued member tests in a condition with the base's obligation and a measured re-pin.",
+   "source": "docs/reports/w43-index-traversal/README.md",
+   "recorded_by": "W43-INDEX-TRAVERSAL"
+  },
+  {
+   "id": "W43-INDEX-TRAVERSAL-CONDITION-CHAIN",
+   "title": "A controlling expression with a member chain stays refused: 1,248 leaves on 632 Unknown functions, 1 sole-blocked",
+   "why": "The typed condition read admits one selection per access, as the statement route does (W43-INDIRECT-CHAIN-ACCESS). `for (i = 0; i < md->topics[j].partition_cnt; i++)`, `if (a->b->c)` and `x[i].f` stay refused. Measured at the AFTER census (residuals.txt, conditions class chain): 1,248 leaves in 632 Unknown functions, 1 sole-blocked. DISCHARGE: the same card that extends the statement route to record-pointer chains (each intermediate dereference checked against field links) extends the condition read, measured together.",
+   "source": "docs/reports/w43-index-traversal/README.md",
+   "recorded_by": "W43-INDEX-TRAVERSAL"
+  },
+  {
+   "id": "W43-INDEX-TRAVERSAL-CONDITION-ADDRESS",
+   "title": "A controlling expression taking an address stays refused: 976 leaves on 594 Unknown functions, 1 sole-blocked",
+   "why": "Measured at the AFTER census (residuals.txt, conditions class address): 976 leaves in 594 Unknown functions. These are overwhelmingly the list-iteration macros (`mk_list_foreach`, `cfl_list_foreach`, `TAILQ_FOREACH`), whose header compares a cursor with `&list->head` and whose increment clause reads `head->next`: a linked-list walk through record pointers, not a buffer or index walk, and outside this card's scope. DISCHARGE: a card that models an intrusive list walk (the cursor a non-owning pointer into the list's nodes, the member address a comparison operand only), with Lean parity and a measured re-pin.",
+   "source": "docs/reports/w43-index-traversal/README.md",
+   "recorded_by": "W43-INDEX-TRAVERSAL"
+  },
+  {
+   "id": "W43-INDEX-TRAVERSAL-CONDITION-WRITE",
+   "title": "A controlling expression that writes stays refused: 271 leaves on 166 Unknown functions, 0 sole-blocked",
+   "why": "`while (*p++)`, `while (n--)`, `if ((c = *p) == ':')`: the typed read admits no increment and no assignment in a condition, because a write in a controlling expression needs an evaluation order the header node does not carry. Measured at the AFTER census (residuals.txt, conditions class write): 271 leaves in 166 Unknown functions. DISCHARGE: lower such a condition to the read followed by the write's effect on each successor edge (the stepped-access sequencing, per edge), with Lean parity and a measured re-pin.",
+   "source": "docs/reports/w43-index-traversal/README.md",
+   "recorded_by": "W43-INDEX-TRAVERSAL"
+  },
+  {
+   "id": "W43-INDEX-TRAVERSAL-STEP-COMPUTED",
+   "title": "A pointer step whose offset or source carries an access, call or cast stays refused: 102 leaves on 63 Unknown functions, 1 sole-blocked",
+   "why": "The pointer-step recogniser admits `P ± E` with `E` a scalar value with no memory access and `P`, `Q` declared names. `p += strlen(s)`, `p = (char *) q + n`, `p += s[i]`, `end = &buf[len]` stay refused. Measured at the AFTER census (residuals.txt, steps class computed): 102 leaves in 63 Unknown functions, 1 sole-blocked. DISCHARGE: admit a cast to a single-level pointer type over a declared pointer and an offset that is a typed scalar access or a neutral call (each with its own obligation), with a measured re-pin.",
+   "source": "docs/reports/w43-index-traversal/README.md",
+   "recorded_by": "W43-INDEX-TRAVERSAL"
+  },
+  {
+   "id": "W43-INDEX-TRAVERSAL-STEP-UNTYPED",
+   "title": "Counter and pointer steps in functions whose names the reader does not type stay refused: 761 leaves",
+   "why": "Measured at the AFTER census (residuals.txt, steps): 493 leaves in 173 Unknown functions whose declarations the reader did not read at all (so `i++` on a counter is refused: no name is typed), 166 leaves in 101 functions where the stepped name is not a declared scalar or single-level pointer (a `void *`, a `char **`, a global, a typedef the reader refused), and 102 leaves in 76 functions of other shapes. The first population is the largest lever: every counter increment and index scan in those functions waits on the declaration reader (RECORD-BODY-TOTAL-OR-REJECT, TYPEDEF-ANONYMOUS-AGGREGATE-UNREACHED). The census names readability by whether any scalar or pointer was recorded, which is a heuristic. DISCHARGE: re-measure after a reader repair and attribute the moves to the reader; admit steps of `void *` only with a recorded byte-arithmetic premise.",
+   "source": "docs/reports/w43-index-traversal/README.md",
+   "recorded_by": "W43-INDEX-TRAVERSAL"
+  },
+  {
+   "id": "W43-INDEX-TRAVERSAL-FORMAL-STEP",
+   "title": "Stepping a protected formal in place keeps the formal-mutation refusal: 48 leaves on 37 Unknown functions, 1 sole-blocked",
+   "why": "`while (*s) s++;` on a formal `s`: `*s` anywhere in the body protects `s`, and the formal-mutation gate refuses `s++` before the step rule is consulted (card W43-INDEX-TRAVERSAL passes the gate only for a local's step, as its brief directs). A formal's step changes no caller slot when the formal has no out-parameter or custody contract, but the gate also protects the formal-slot identity W4 and the out-slot machinery read. Measured at the AFTER census (residuals.txt, steps class formal): 48 leaves in 37 Unknown functions, 1 sole-blocked. DISCHARGE: narrow the gate so a recognised step of a formal with no out slot and no entry custody is consulted, with a test that an out-slot formal still refuses, Lean parity and a measured re-pin (the sibling of W43-INDIRECT-PROTECTED-FORMAL-INCREMENT).",
+   "source": "docs/reports/w43-index-traversal/README.md",
+   "recorded_by": "W43-INDEX-TRAVERSAL"
+  },
+  {
+   "id": "W43-INDEX-TRAVERSAL-COMPUTED-POINTER-ACCESS",
+   "title": "Stores and reads through a computed pointer stay refused: 257 leaves on 159 Unknown functions, 0 sole-blocked",
+   "why": "Narrowed from W43-INDIRECT-POINTER-INCREMENT (335 / 172 / 0), which card W43-INDEX-TRAVERSAL retired by modelling pointer arithmetic as an interior derivation and admitting `*p++ = c`, `c = *p++` and `B[i++] = c`. What remains, measured with W43-INDIRECT-ACCESS-GENERAL's own residual classifier over this card's AFTER census (class pointer-increment): 257 leaves (136 unrecognized-destination, 101 indirect-access, 20 increment) in 159 Unknown functions: `*(p + i) = c`, `*(p++) = f(x)` with a call, `*p++` through a pointer the reader does not type, and increments inside member chains. DISCHARGE: admit `*(P ± E)` as the typed access through the step's derived binding (the obligation on `P`), with a measured re-pin.",
+   "source": "docs/reports/w43-index-traversal/README.md",
+   "recorded_by": "W43-INDEX-TRAVERSAL"
+  },
+  {
+   "id": "W43-INDEX-TRAVERSAL-ACCUSING-UNEXERCISED-IN-CORPUS",
+   "title": "The stepped pointer's invalid_release and use_after_release arms reach no function of the pinned corpus",
+   "why": "Card W43-INDEX-TRAVERSAL reports an `invalid_release` candidate for the release of a forward-stepped pointer and a `use_after_release` candidate for a typed read (a condition included) or a custody use through a stepped pointer whose base was released on a reaching path. Both are unit-tested (crates/qcore-c-gateway/tests/index_traversal.rs) and modelled (QCore.IndexTraversal), but the arbiter over the 185 pinned units added zero violation leaves: no admitted walk in the corpus releases or outlives its base. The unchanged provisional-Unsafe count records that absence, not the arms' verification. DISCHARGE: a pinned or held-out real-code fixture reaches an arm, with the leaf attributed and never presented as an upstream defect.",
+   "source": "docs/reports/w43-index-traversal/README.md",
+   "recorded_by": "W43-INDEX-TRAVERSAL"
+  },
+  {
+   "id": "W43-INDEX-TRAVERSAL-DESCRIPTOR-PREDICATE",
+   "title": "The scalar-fact join reads every declared scalar as custody-free when its binding has no target; it must consult the custody-carrying value predicate when that lands",
+   "why": "Card W43-INDEX-TRAVERSAL joins a declared scalar's target-free binding with a path that has none to no binding at all, copies a declared scalar with no fact to no fact, and returns such a scalar as returning no custody. A scalar binding that carries a target (a descriptor a contracted call produced) keeps the generic arms, so the rule does not discharge a tracked descriptor today. But an `int` holding a caller-held or untracked descriptor is exactly what the concurrent card W43-DESCRIPTOR-RESOURCE-TRACKING will make a custody-carrying value, and from then on a declared scalar is not a plain index. DISCHARGE: once that card's custody-carrying value predicate lands, exclude its names from TraversalNames::scalars (or record why its names always carry a target), with a test that a descriptor copied and joined across a loop keeps its obligation, and a measured re-pin.",
+   "source": "docs/reports/w43-index-traversal/README.md",
+   "recorded_by": "W43-INDEX-TRAVERSAL"
+  },
+  {
+   "id": "W43-INDEX-TRAVERSAL-FORMAL-COPY",
+   "title": "A copy of an unbound formal pointer keeps its unresolved alias, so a walk over a caller's string certifies only through a W4 summary",
+   "why": "Card W43-INDEX-TRAVERSAL makes a copy of an unbound *local* pointer (an automatic array, a never-bound pointer) unbound, but keeps the unresolved-alias answer for a copy of an unbound *formal*: W4 summary derivation binds exactly the formals an analysis reports as unresolved aliases (legacy_summary::bind_unresolved_formals), and removing that signal stopped it binding them (the measured regression was may_alias_boundary::a_guard_still_discharges_two_locals_that_are_not_a_definite_alias). So `p = s; while (*p) p++;` certifies through the summary W4 derives, which seeds `s` as a live `Owned` resource: stricter than the `Borrowed` the walk needs, so callers that pass an untracked string meet an `Owned` requirement. DISCHARGE: give W4 its own binding signal (the formals a copy names), then admit a formal's copy as unbound, with a measured re-pin of both the walk and the summaries it changes.",
+   "source": "docs/reports/w43-index-traversal/README.md",
+   "recorded_by": "W43-INDEX-TRAVERSAL"
   }
- ],
- "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"
+ ]
 }

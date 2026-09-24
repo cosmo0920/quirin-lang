@@ -1,0 +1,56 @@
+{
+ "conditions": {
+  "address": {
+   "functions": 594,
+   "leaves": 976,
+   "sole": 1
+  },
+  "call": {
+   "functions": 1603,
+   "leaves": 4419,
+   "sole": 28
+  },
+  "chain": {
+   "functions": 632,
+   "leaves": 1248,
+   "sole": 1
+  },
+  "untyped": {
+   "functions": 1154,
+   "leaves": 2616,
+   "sole": 28
+  },
+  "write": {
+   "functions": 166,
+   "leaves": 271,
+   "sole": 0
+  }
+ },
+ "steps": {
+  "computed": {
+   "functions": 63,
+   "leaves": 102,
+   "sole": 1
+  },
+  "formal": {
+   "functions": 37,
+   "leaves": 48,
+   "sole": 1
+  },
+  "other": {
+   "functions": 76,
+   "leaves": 102,
+   "sole": 0
+  },
+  "unreadable": {
+   "functions": 173,
+   "leaves": 493,
+   "sole": 1
+  },
+  "untyped-name": {
+   "functions": 101,
+   "leaves": 166,
+   "sole": 0
+  }
+ }
+}
