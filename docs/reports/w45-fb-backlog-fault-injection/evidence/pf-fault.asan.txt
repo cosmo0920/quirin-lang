@@ -1,0 +1,52 @@
+==426205==ERROR: AddressSanitizer: heap-use-after-free on address 0x7c2ff57fe7f0 at pc 0x555555811c11 bp 0x7bfff39f94c0 sp 0x7bfff39f8c40
+READ of size 3 at 0x7c2ff57fe7f0 thread T1 (flb-pipeline)
+[Detaching after fork from child process 426267]
+    #0 0x555555811c10 in printf_common(void*, char const*, __va_list_tag*) asan_interceptors.cpp.o
+    #1 0x555555811f85 in vsnprintf (/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/build-asan/bin/fluent-bit+0x2bdf85) (BuildId: aad07b512a453152f3c4f050fa179b544380a05c)
+    #2 0x555556749754 in cio_log_print /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/lib/chunkio/src/cio_log.c:45:11
+    #3 0x55555674a7a8 in _cio_file_up /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/lib/chunkio/src/cio_file.c:828:9
+    #4 0x55555674a8f6 in cio_file_up_force /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/lib/chunkio/src/cio_file.c:903:12
+    #5 0x555556747910 in cio_chunk_up_force /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/lib/chunkio/src/cio_chunk.c:599:15
+    #6 0x555555cb0c84 in cb_queue_chunks /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/plugins/in_storage_backlog/sb.c:633:27
+    #7 0x555555928366 in flb_input_collector_fd /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/flb_input.c:3301:13
+    #8 0x5555559ad842 in flb_engine_handle_event /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/flb_engine.c:986:15
+    #9 0x5555559ad842 in flb_engine_start /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/flb_engine.c:1420:23
+    #10 0x5555558f365e in flb_lib_worker /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/flb_lib.c:926:11
+    #11 0x55555588bd7a in asan_thread_start(void*) asan_interceptors.cpp.o
+    #12 0x7ffff6ca3df9 in start_thread nptl/pthread_create.c:454:8
+    #13 0x7ffff6d375cb in __GI___clone3 misc/../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+0x7c2ff57fe7f0 is located 0 bytes inside of 32-byte region [0x7c2ff57fe7f0,0x7c2ff57fe810)
+freed by thread T1 (flb-pipeline) here:
+    #0 0x55555588e25a in free (/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/build-asan/bin/fluent-bit+0x33a25a) (BuildId: aad07b512a453152f3c4f050fa179b544380a05c)
+    #1 0x555556746e28 in cio_chunk_close /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/lib/chunkio/src/cio_chunk.c:133:5
+    #2 0x555555cad2e3 in sb_segregate_chunks /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/plugins/in_storage_backlog/sb.c:472:21
+    #3 0x5555559ad165 in flb_engine_start /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/flb_engine.c:1398:11
+    #4 0x5555558f365e in flb_lib_worker /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/flb_lib.c:926:11
+    #5 0x55555588bd7a in asan_thread_start(void*) asan_interceptors.cpp.o
+
+previously allocated by thread T1 (flb-pipeline) here:
+    #0 0x555555874b2e in strdup (/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/build-asan/bin/fluent-bit+0x320b2e) (BuildId: aad07b512a453152f3c4f050fa179b544380a05c)
+    #1 0x555556746b29 in cio_chunk_open /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/lib/chunkio/src/cio_chunk.c:66:16
+    #2 0x55555674c4af in cio_scan_stream_files /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/lib/chunkio/src/cio_scan.c:105:9
+    #3 0x55555674c25f in cio_scan_streams /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/lib/chunkio/src/cio_scan.c:156:13
+    #4 0x555556749197 in cio_load /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/lib/chunkio/src/chunkio.c:214:15
+    #5 0x5555559c9577 in flb_storage_create /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/flb_storage.c:727:11
+    #6 0x5555559ac707 in flb_engine_start /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/flb_engine.c:1237:11
+    #7 0x5555558f365e in flb_lib_worker /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/flb_lib.c:926:11
+    #8 0x55555588bd7a in asan_thread_start(void*) asan_interceptors.cpp.o
+
+Thread T1 (flb-pipeline) created by T0 here:
+    #0 0x555555872645 in pthread_create (/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/build-asan/bin/fluent-bit+0x31e645) (BuildId: aad07b512a453152f3c4f050fa179b544380a05c)
+    #1 0x555556aac4fc in mk_utils_worker_spawn /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/lib/monkey/mk_core/mk_utils.c:284:9
+    #2 0x5555558f29c7 in do_start /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/flb_lib.c:969:11
+    #3 0x5555558f27e4 in flb_start /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/flb_lib.c:1016:11
+    #4 0x5555558d5aec in flb_main_run /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/fluent-bit.c:1473:11
+    #5 0x555555a1c216 in flb_supervisor_run /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/flb_supervisor.c:626:16
+    #6 0x5555558d3be1 in flb_main /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/fluent-bit.c:1603:12
+    #7 0x5555558d63c1 in main /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit/src/fluent-bit.c:1611:12
+    #8 0x7ffff6c2a600 in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:59:16
+    #9 0x7ffff6c2a717 in __libc_start_main csu/../csu/libc-start.c:360:3
+    #10 0x5555557e8f54 in _start (/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/build-asan/bin/fluent-bit+0x294f54) (BuildId: aad07b512a453152f3c4f050fa179b544380a05c)
+
+SUMMARY: AddressSanitizer: heap-use-after-free asan_interceptors.cpp.o in printf_common(void*, char const*, __va_list_tag*)

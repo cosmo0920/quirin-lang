@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 405
+  "named_followups": 409
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -9714,6 +9714,34 @@
    "why": "`((LZ4_unalign *) p)->u16 = v` (a union: refused anyway), `(*map)->opts = calloc(...)`, `(&rk->rk_coord_reqs)->tqh_first = NULL` keep the gate refusal: the rule reads `N`, `( N )` and `( & N )` roots only. Measured at the AFTER census (reader class destination:prefix). DISCHARGE: a cast root checked against the pointer's declared type (or its object's effective type), a `( * PP )` root through a `T **` base with its own obligation, and a member-address root as a chain; each measured, with Lean parity.",
    "source": "docs/reports/w45-sub-object-stores/README.md",
    "recorded_by": "W45-SUB-OBJECT-STORES"
+  },
+  {
+   "id": "FB-AUDIT-03-ZERO-PROGRESS",
+   "title": "Backlog collector no-yield under persistent CIO_ERROR: observed-local on a real build",
+   "why": "W45-FB-BACKLOG-FAULT-INJECTION reproduced, on fluent-bit 864c3d97 built with Clang, the source-level candidate from fb-system-audit-cards/accounting: gdb forcing cb_queue_chunks' cio_chunk_up_force (sb.c:633) to return CIO_ERROR for every nonempty head made the collector enter once and never return across 400 interceptions (200 passes x 2 queues); a valid-head control and a CIO_CORRUPTED control both yield. Native observation under an injected premise, NOT an upstream defect or production-hang claim; no Quirin verdict moves. DISCHARGE: the investigation question is discharged observed-local; a production-relevant claim would need an unforced native trigger and remains out of scope, and the semantic card FB-ENGINE-PROGRESS is not discharged.",
+   "source": "docs/reports/w45-fb-backlog-fault-injection/README.md",
+   "recorded_by": "W45-FB-BACKLOG-FAULT-INJECTION"
+  },
+  {
+   "id": "FB-AUDIT-03-PARTIAL-FANOUT",
+   "title": "Partial fan-out leaves a charged wrapper on a freed chunk: ASan use-after-free observed-local",
+   "why": "W45-FB-BACKLOG-FAULT-INJECTION forced the second wrapper's flb_calloc (sb.c:121) to fail during segregation; sb_segregate_chunks (sb.c:472) closed the physical chunk (cio_chunk.c:133) while the first output's wrapper kept its stale pointer and fs_backlog_chunks_size charge, and the next collector pass (sb.c:633) read the freed chunk name -> ASan heap-use-after-free. Control clean (26 wrappers, 0 ASan errors). Injected-premise native observation, NOT an upstream defect claim; no Quirin verdict moves. DISCHARGE: discharged observed-local; does not discharge the semantic card FB-BACKLOG-CUSTODY.",
+   "source": "docs/reports/w45-fb-backlog-fault-injection/README.md",
+   "recorded_by": "W45-FB-BACKLOG-FAULT-INJECTION"
+  },
+  {
+   "id": "FB-AUDIT-03-LEDGER-BOUND",
+   "title": "Ledger boundary trace at F+B+P=L / L+1 not yet run",
+   "why": "Priority-2 candidate from fb-system-audit-cards/accounting, not attempted by W45-FB-BACKLOG-FAULT-INJECTION (skipped rather than rushed). DISCHARGE: trace ledger arithmetic at F+B+P=L and L+1 with a large candidate chunk and a truncating map, test the SIZE_MAX projection and the ssize_t cast at flb_input_chunk.c:1115, recording actual bytes, evictions and post-transition per-output ledgers on a pinned build.",
+   "source": "docs/reports/w45-fb-backlog-fault-injection/followups.json",
+   "recorded_by": "W45-FB-BACKLOG-FAULT-INJECTION"
+  },
+  {
+   "id": "FB-AUDIT-03-CROSS-OUTPUT-EVICTION",
+   "title": "Cross-output eviction policy trace not yet run",
+   "why": "Priority-2 candidate from fb-system-audit-cards/accounting, not attempted here. DISCHARGE: two-output eviction trace confirming sb_release_output_queue_space removes wrappers from all routed queues and closes the shared chunk once, and whether the full projected increment P is released versus the actual deficit.",
+   "source": "docs/reports/w45-fb-backlog-fault-injection/followups.json",
+   "recorded_by": "W45-FB-BACKLOG-FAULT-INJECTION"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

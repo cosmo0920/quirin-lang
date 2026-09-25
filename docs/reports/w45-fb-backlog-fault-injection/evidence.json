@@ -1,0 +1,99 @@
+{
+  "card": "W45-FB-BACKLOG-FAULT-INJECTION",
+  "kind": "native_observation_only",
+  "quirin_base": {
+    "worktree_head": "6bd9b38369584d3a018b7da3a7dc8750fb002514",
+    "main": "6bd9b38369584d3a018b7da3a7dc8750fb002514",
+    "note": "no analyzer/contract/provider/Lean change; no Quirin verdict moves from any native observation here"
+  },
+  "source": {
+    "revision": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+    "user_checkout": "/home/cosmo/Documents/GitHub/fluent-bit",
+    "user_checkout_head_verified": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+    "clone": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w45-fb-backlog-fault-injection/attempt-01/fluent-bit",
+    "clone_method": "git clone --no-hardlinks from the user checkout; the checkout HEAD already pinned the revision, so the clone working tree is that revision, fresh and unmodified (clean by construction)",
+    "clone_checked_out_ref": "refs/heads/cosmo0920-mitigate-out_chronicle-failures-on-testing = 864c3d97f3589515285a19396ed8dfc85cda08ae",
+    "no_source_change": true,
+    "submodules": "none (.gitmodules absent; all deps vendored under lib/)"
+  },
+  "toolchain": {
+    "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+    "cmake": "cmake version 4.2.3",
+    "ninja": "1.13.2",
+    "generator": "Ninja"
+  },
+  "builds": {
+    "debug": {
+      "build_dir": "attempt-01/build",
+      "configure": "CC=clang CXX=clang++ cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DFLB_EXAMPLES=Off -DFLB_SHARED_LIB=Off -DFLB_JEMALLOC=Off -DFLB_WASM=Off -DFLB_LUAJIT=Off -DFLB_STREAM_PROCESSOR=Off -DFLB_TESTS_INTERNAL=Off -DFLB_TESTS_RUNTIME=Off <clone>",
+      "target": "ninja fluent-bit",
+      "configure_exit": 0,
+      "build_exit": 0,
+      "binary": "attempt-01/build/bin/fluent-bit",
+      "binary_sha256": "ea5f21be4b6c16cb8dfd405499b770219ecc6aef2f169f060c184635d3ab96ef",
+      "binary_version": "Fluent Bit v5.1.3, Git commit 864c3d97f3589515285a19396ed8dfc85cda08ae"
+    },
+    "asan": {
+      "build_dir": "attempt-01/build-asan",
+      "configure": "same as debug plus -DSANITIZE_ADDRESS=On (Clang flags: -g -fsanitize=address -fno-omit-frame-pointer)",
+      "configure_exit": 0,
+      "build_exit": 0,
+      "binary": "attempt-01/build-asan/bin/fluent-bit",
+      "binary_sha256": "10392a478f621b2456f9df22c96f78e42a20dc2f76455fd9fcb796b0d7cfd90d"
+    }
+  },
+  "fixture": {
+    "phase1_config": "evidence/phase1-generate.conf",
+    "phase1_exit": 124,
+    "phase1_watchdog": "timeout --signal=TERM 12 (SIGTERM at cap; exit 124 expected)",
+    "phase2_config": "evidence/phase2-backlog.conf",
+    "storage_path": "attempt-01/run/storage (pristine snapshot attempt-01/run/storage-pristine, restored before every run)",
+    "chunks": {
+      "count": 13,
+      "sizes": "twelve at 36864 bytes, one at 4096 bytes (naturally empty/small head)",
+      "stream": "dummy.0",
+      "tag": "test.data",
+      "fan_out": "two tcp outputs (127.0.0.1:1, 127.0.0.1:2) both Match test.data, so each physical chunk is shared by two output backlog queues",
+      "hashes_file": "evidence/chunk-hashes.txt",
+      "listing_file": "evidence/chunk-listing.txt"
+    }
+  },
+  "experiments": {
+    "FB-AUDIT-03-ZERO-PROGRESS": {
+      "classification": "observed-local",
+      "fault_point": "plugins/in_storage_backlog/sb.c:633 (cio_chunk_up_force call in cb_queue_chunks), whose CIO_ERROR arm continues at sb.c:649-650; native path cio_chunk.c:599 -> cio_file.c:816-850/901-903",
+      "mechanism": "gdb forces cio_chunk_up_force to return CIO_ERROR (-1) for every collector-originated call, gated to fire only after cb_queue_chunks is first entered so startup segregation is unaffected",
+      "watchdog": "gdb intercept counter capped at 400; breakpoint at sb.c:724 counts collector returns",
+      "fault_result": "cb_queue_chunks entered exactly once (enter=1), 400 up_force->CIO_ERROR interceptions (200 passes over 2 queues), collector returns=0 -- the callback never reached its return under persistent CIO_ERROR (no yield). Loop condition sb.c:611-612 stays true; empty_output_queue_count never counts the nonempty CIO_ERROR heads.",
+      "control_valid_head": "no fault: 15 enters / 15 returns; first pass brought up all 13 chunks and queued them; queues drained, callback yields every pass",
+      "control_corrupted": "gdb forces CIO_CORRUPTED (-3): 13 interceptions each logging 'removing corrupted chunk from the queue' (sb.c:635-647 wrapper removal + cio_chunk_close), queues drain, callback yields (19 enters / 19 returns)",
+      "yielded_under_fault": false,
+      "stale_reference": "none for this candidate",
+      "evidence": ["evidence/zp-fault.wd.txt", "evidence/zp-control.wd.txt", "evidence/zp-corrupted.wd.txt", "gdb/zp-fault.gdb", "gdb/zp-control.gdb", "gdb/zp-corrupted.gdb"],
+      "full_logs": {
+        "zp-fault.log": "c6bb3e7ddd7bbb92fb2cabdcf39a939b11bd5832cf0f2644e53c99bd614dd2cd",
+        "zp-control.log": "d049c012ad71f21e8a8f9b165ce8c9d52e174988d740a2902930196dd21b4578",
+        "zp-corrupted.log": "e80c3398e0ca6403c2d030abe09682eae823b530e5219a944bd845fe2857d0fe"
+      }
+    },
+    "FB-AUDIT-03-PARTIAL-FANOUT": {
+      "classification": "observed-local",
+      "fault_point": "plugins/in_storage_backlog/sb.c:121 (flb_calloc in sb_allocate_chunk), on the second wrapper insertion (sb.c:341-350 loop, helper sb.c:262-289)",
+      "mechanism": "gdb forces the 2nd sb_allocate_chunk call (the second routed output's wrapper for the first fan-out chunk) to return NULL, during startup segregation (sb_segregate_chunks). sb_append_chunk_to_segregated_backlogs then returns -3.",
+      "fault_result_asan": "heap-use-after-free. Freed by cio_chunk_close (lib/chunkio/src/cio_chunk.c:133) called from sb_segregate_chunks (sb.c:472) after the -3 return; the object is the chunk name strdup'd in cio_chunk_open (cio_chunk.c:66) at scan time. The first output's wrapper survived with its stale chunk pointer and its fs_backlog_chunks_size charge, and the next collector pass read the freed memory: cb_queue_chunks (sb.c:633) -> cio_chunk_up_force -> cio_file_up_force -> _cio_file_up (cio_file.c:828) -> cio_log_print.",
+      "control_no_fault_asan": "26 sb_allocate_chunk calls (13 chunks x 2 outputs), all wrappers inserted and charged, 13 queued, zero ASan errors",
+      "yielded_under_fault": "n/a (aborts on the ASan-detected read of freed memory)",
+      "stale_reference": "first output's sb_out_chunk wrapper -> freed cio_chunk (address 0x7c7ff57e4420 in this run); its charge remains counted in fs_backlog_chunks_size",
+      "evidence": ["evidence/pf-fault.asan.txt", "evidence/pf-fault.pf.txt", "evidence/pf-control.pf.txt", "gdb/pf-fault.gdb", "gdb/pf-control.gdb"],
+      "full_logs": {
+        "pf-fault.log": "b7a2ef2899b90ee1c00cdc42f32423374a6ef600e272521d759e3158ae7ae4f5",
+        "pf-control.log": "37fde4cc4194b3144c648425a76e06a29bef0f71ed8c84c7938a855f7778a15d"
+      }
+    },
+    "FB-AUDIT-03-LEDGER-BOUND": {
+      "classification": "not-attempted (bounded, deferred by budget)",
+      "note": "optional per brief; skipped rather than rushed. Discharge condition kept open in followups.json."
+    }
+  },
+  "boundaries": "Each fault is an injected premise (gdb-forced return value / forced allocation failure) on a locally built, unmodified-source binary. A hang observed under a watchdog and a use-after-free observed under ASan are local observations of the named candidates under those premises. They are NOT upstream defect claims, NOT confirmed production bugs, and NOT statements about production failure rates. Nothing was sent upstream. No Quirin verdict is derived from these observations."
+}

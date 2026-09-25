@@ -1,0 +1,43 @@
+[wd] ENTER cb_queue_chunks entercount=1 upsofar=0 retsofar=0
+[wd] up_force call n=1 (enter=1 ret=0) -- passthrough
+[wd] up_force call n=2 (enter=1 ret=0) -- passthrough
+[wd] up_force call n=3 (enter=1 ret=0) -- passthrough
+[wd] up_force call n=4 (enter=1 ret=0) -- passthrough
+[wd] up_force call n=5 (enter=1 ret=0) -- passthrough
+[wd] up_force call n=6 (enter=1 ret=0) -- passthrough
+[wd] up_force call n=7 (enter=1 ret=0) -- passthrough
+[wd] up_force call n=8 (enter=1 ret=0) -- passthrough
+[wd] up_force call n=9 (enter=1 ret=0) -- passthrough
+[wd] up_force call n=10 (enter=1 ret=0) -- passthrough
+[wd] up_force call n=11 (enter=1 ret=0) -- passthrough
+[wd] up_force call n=12 (enter=1 ret=0) -- passthrough
+[wd] up_force call n=13 (enter=1 ret=0) -- passthrough
+[wd] RETURN cb_queue_chunks retcount=1 entercount=1 ups=13
+[wd] ENTER cb_queue_chunks entercount=2 upsofar=13 retsofar=1
+[wd] RETURN cb_queue_chunks retcount=2 entercount=2 ups=13
+[wd] ENTER cb_queue_chunks entercount=3 upsofar=13 retsofar=2
+[wd] RETURN cb_queue_chunks retcount=3 entercount=3 ups=13
+[wd] ENTER cb_queue_chunks entercount=4 upsofar=13 retsofar=3
+[wd] RETURN cb_queue_chunks retcount=4 entercount=4 ups=13
+[wd] ENTER cb_queue_chunks entercount=5 upsofar=13 retsofar=4
+[wd] RETURN cb_queue_chunks retcount=5 entercount=5 ups=13
+[wd] ENTER cb_queue_chunks entercount=6 upsofar=13 retsofar=5
+[wd] RETURN cb_queue_chunks retcount=6 entercount=6 ups=13
+[wd] ENTER cb_queue_chunks entercount=7 upsofar=13 retsofar=6
+[wd] RETURN cb_queue_chunks retcount=7 entercount=7 ups=13
+[wd] ENTER cb_queue_chunks entercount=8 upsofar=13 retsofar=7
+[wd] RETURN cb_queue_chunks retcount=8 entercount=8 ups=13
+[wd] ENTER cb_queue_chunks entercount=9 upsofar=13 retsofar=8
+[wd] RETURN cb_queue_chunks retcount=9 entercount=9 ups=13
+[wd] ENTER cb_queue_chunks entercount=10 upsofar=13 retsofar=9
+[wd] RETURN cb_queue_chunks retcount=10 entercount=10 ups=13
+[wd] ENTER cb_queue_chunks entercount=11 upsofar=13 retsofar=10
+[wd] RETURN cb_queue_chunks retcount=11 entercount=11 ups=13
+[wd] ENTER cb_queue_chunks entercount=12 upsofar=13 retsofar=11
+[wd] RETURN cb_queue_chunks retcount=12 entercount=12 ups=13
+[wd] ENTER cb_queue_chunks entercount=13 upsofar=13 retsofar=12
+[wd] RETURN cb_queue_chunks retcount=13 entercount=13 ups=13
+[wd] ENTER cb_queue_chunks entercount=14 upsofar=13 retsofar=13
+[wd] RETURN cb_queue_chunks retcount=14 entercount=14 ups=13
+[wd] ENTER cb_queue_chunks entercount=15 upsofar=13 retsofar=14
+[wd] RETURN cb_queue_chunks retcount=15 entercount=15 ups=13

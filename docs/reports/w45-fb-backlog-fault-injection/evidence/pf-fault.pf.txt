@@ -1,0 +1,4 @@
+[pf] allocate #1 chunk=0x7c7ff57e4420 (first wrapper, will be left charged/stale)
+[pf] allocate #2 chunk=0x7c7ff57e4420 first=0x7c7ff57e4420 -> FORCING NULL (drop 2nd wrapper)
+[pf] cio_chunk_close CLOSING victim ch=0x7c7ff57e4420 delete=0 -> frees physical chunk; first wrapper (=0x7c7ff57e4420) now stale
+[pf] run returned (program stopped or exited)
