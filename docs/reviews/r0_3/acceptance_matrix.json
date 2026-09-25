@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 345
+  "named_followups": 354
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W43-DESCRIPTOR-NATIVE-CHECK on merge e94f1607 (onto main 08e9a76c, after W43-INDEXED-RESOURCE-COLLECTIONS), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5390 core Rust passed / 0 failed / 11 ignored over 289 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 177 Lean audits; 330 root Python tests after regenerating this section (the first run failed only the derived-facts check because the merged validation section predated this card's audit); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run is byte-identical in all five artifacts to docs/reports/w43-indexed-resource-collections/integration/artifacts/ (baseline_identity exit 0); the card is verdict-neutral and that baseline stays current.",
-  "workspace_tests": 5390,
+  "note": "W44-BRANCH-CONDITION-CALLS: standing gate measured on 0652c59a (implementation 173ae5c2 plus the behaviour-preserving clippy fix 0652c59a; later commits change documents, the ledger, report scripts and evidence only), with CARGO_INCREMENTAL=0, CARGO_BUILD_JOBS=8, RUST_TEST_THREADS=2. 5411 core Rust passed / 0 failed / 11 ignored over 288 summaries (the card adds the 17-test condition_call_desugar.rs binary and 4 parser unit tests, and replaces three B-series refusal pins deliberately, each explained where it stands); fmt clean; clippy --workspace --all-targets -D warnings clean; reevaluation_probe exit 0; reevaluation_followup exit 0; 178 Lean audits (1 added: AuditConditionCallDesugar); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 1287 feature-on gateway tests passed / 0 failed / 7 ignored; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'census-clippy': 0, 'census-test': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. A first gate attempt on 173ae5c2 failed at clippy (needless_range_loop, collapsible_match in the builtin_expect scan; its test step had passed 5411/0/11) and is retained as a failed attempt, not evidence. Logs: worktree-private measure/gate, measure/gate-attempt-1 and measure/provider-gate of agent-a2b742b571d4a1347. Clang recorded in this checkout. Corpus: 292 condition leaves removed, 36 same-line exchanges into unknown_alias, one false leak decided (leak 271 -> 270), 0 function or unit moves, 0 violation candidates; the AFTER diagnostics are reproduced byte for byte by a confirmation run of 0652c59a.",
+  "workspace_tests": 5411,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 177,
+  "lean_audits": 178,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6765,6 +6765,7 @@
    "AuditComposedTasks.lean",
    "AuditCompositionAdmission.lean",
    "AuditConcurrencyPrelude.lean",
+   "AuditConditionCallDesugar.lean",
    "AuditConditionalGroupDepth.lean",
    "AuditConnectives.lean",
    "AuditConstantDoWhile.lean",
@@ -6921,7 +6922,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-descriptor-native-check/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-branch-condition-calls/gate.json)"
  },
  "named_followups": [
   {

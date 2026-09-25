@@ -1,0 +1,13 @@
+{
+  "note": "W44-BRANCH-CONDITION-CALLS: standing gate measured on 0652c59a (implementation 173ae5c2 plus the behaviour-preserving clippy fix 0652c59a; later commits change documents, the ledger, report scripts and evidence only), with CARGO_INCREMENTAL=0, CARGO_BUILD_JOBS=8, RUST_TEST_THREADS=2. 5411 core Rust passed / 0 failed / 11 ignored over 288 summaries (the card adds the 17-test condition_call_desugar.rs binary and 4 parser unit tests, and replaces three B-series refusal pins deliberately, each explained where it stands); fmt clean; clippy --workspace --all-targets -D warnings clean; reevaluation_probe exit 0; reevaluation_followup exit 0; 178 Lean audits (1 added: AuditConditionCallDesugar); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 1287 feature-on gateway tests passed / 0 failed / 7 ignored; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'census-clippy': 0, 'census-test': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. A first gate attempt on 173ae5c2 failed at clippy (needless_range_loop, collapsible_match in the builtin_expect scan; its test step had passed 5411/0/11) and is retained as a failed attempt, not evidence. Logs: worktree-private measure/gate, measure/gate-attempt-1 and measure/provider-gate of agent-a2b742b571d4a1347. Clang recorded in this checkout. Corpus: 292 condition leaves removed, 36 same-line exchanges into unknown_alias, one false leak decided (leak 271 -> 270), 0 function or unit moves, 0 violation candidates; the AFTER diagnostics are reproduced byte for byte by a confirmation run of 0652c59a.",
+  "workspace_tests": 5411,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 178,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

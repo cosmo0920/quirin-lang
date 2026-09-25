@@ -4,8 +4,9 @@ Card W44-BRANCH-CONDITION-CALLS, 2026-09-25, on base `c1e69bb5` ("Open the
 wave-44 increment record"). The recogniser and its census were committed with
 the rule switched off (`2a4fe098`, `45d4c5ce`, `df5edb61`); the forecast was
 frozen from the census before the rule was switched on
-([PREDICTION.md](PREDICTION.md), `80997b44`); the admission is `173ae5c2`.
-Later commits change the report, the ledger, scripts and evidence only.
+([PREDICTION.md](PREDICTION.md), `80997b44`); the admission is `173ae5c2`,
+with one behaviour-preserving clippy fix `0652c59a`. Later commits change the
+report, the ledger, scripts and evidence only.
 
 ## Headline
 
@@ -184,11 +185,12 @@ loops (re-evaluated on the back edge: double release) with both loop exit edges
 recorded, switch, and descriptors (validity leaf refines, owned descriptor
 assignment refused, a descriptor read as data refused). Every `Safe` result is
 rechecked through `check_legacy_safety_certificate`. Four unit tests pin the
-parser. Two B-series pins change **deliberately** and say so where they stand:
-`branch_condition_calls.rs`'s short-circuit and conditional releases (renamed
-`…_is_desugared_…`; they keep the leak the refusal protected) and
-`loop_switch_condition_calls.rs`'s `ready && r_release_code(p)` loop (keeps the
-leak and the back-edge double release). B02's frozen mutation harness names the
+parser. Three B-series refusal pins change **deliberately** and say so where
+they stand: `branch_condition_calls.rs`'s short-circuit and conditional
+releases (renamed `…_is_desugared_…`; they keep the leak the refusal
+protected) and `loop_switch_condition_calls.rs`'s `ready && r_release_code(p)`
+loop (renamed; keeps the leak and the back-edge double release, and its
+post-release access keeps the refusal). B02's frozen mutation harness names the
 old short-circuit test; it is historical and was not rerun.
 
 ## 3. Lean parity
@@ -289,9 +291,43 @@ not upstream defect claims (invariant 2).
 
 ## 5. Validation
 
-Gate commands, exits and counts are in [gate.json](gate.json) and §5.1; logs
-are worktree-private under `measure/gate/` and `measure/provider-gate/` of the
-card's worktree.
+Measured on `0652c59a` (the admission `173ae5c2` plus a behaviour-preserving
+clippy fix; later commits change documents and evidence only), with
+`scripts/run_gate.py` and `scripts/provider_gate.py`, every exit captured from
+the process. Logs are worktree-private under `measure/gate/`,
+`measure/gate-attempt-1/` and `measure/provider-gate/` of worktree
+`agent-a2b742b571d4a1347`; the summary is [gate.json](gate.json), with Clang
+recorded in this checkout ([clang-version.txt](clang-version.txt)).
+
+| Step | Command | Exit | Count |
+|---|---|---:|---|
+| submodules | `git submodule update --init --recursive` | 0 | |
+| test | `cargo test --workspace --no-fail-fast` | 0 | 5,411 passed / 0 failed / 11 ignored, 288 summaries |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --workspace --all-targets -- -D warnings` | 0 | |
+| census clippy | `cargo clippy -p qcore-c-gateway --all-targets --features indirect-census -- -D warnings` | 0 | |
+| census test | `cargo test -p qcore-c-gateway --features indirect-census --no-fail-fast` | 0 | 1,287 passed / 0 failed / 7 ignored |
+| probes | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean | `python3 scripts/check_lean_audits.py --jobs 4` | 0 | 178 audits (1 added) |
+| matrix | `build_matrix.py . --gate docs/reports/w44-branch-condition-calls/gate.json` | 0 | 354 follow-ups |
+| Python | `python3 -m unittest discover -s scripts/tests` (after regeneration) | 0 | 330 tests |
+| docs index | `python3 scripts/build_docs_index.py --check` | 0 | |
+| provider test | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | 124 passed / 0 failed / 0 ignored, 39 summaries |
+| provider fmt / clippy | `cargo fmt … --check`, `cargo clippy … --workspace --all-targets --locked --offline -- -D warnings` | 0, 0 | |
+| mutation control | `-p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations --exact --test-threads=1` | 0 | 1 passed |
+| contracts | `python3 providers/contracts.py check` | 0 | |
+| packages | `providers/package.py build`, then `verify` × 5 | 0 × 6 | chunkio, cmetrics, ctraces, libevent, librdkafka |
+| provider Python | `python3 -m unittest discover -s providers/tests` | 0 | 13 tests |
+
+**Failed attempt, retained.** The first gate run on `173ae5c2` passed its test
+step (5,411 / 0 / 11) and failed `clippy` and `census clippy` with exit 101
+(`needless_range_loop`, `collapsible_match` in the `__builtin_expect` argument
+scan). The fix (`0652c59a`) is behaviour-preserving, and a confirmation corpus
+run of `0652c59a` reproduces the AFTER diagnostics byte for byte
+([after-confirm-run.json](after-confirm-run.json)); the whole gate was then
+rerun on it. Before the Python step the pre-regeneration run failed the two
+self-consistency tests that regeneration exists to satisfy (330 run,
+2 failures); the post-regeneration run above is the evidence.
 
 ## 6. Ledger
 
