@@ -290,7 +290,9 @@ def forecast_class(record):
     reader = record.get("reader", "")
     if not reader.startswith("read:"):
         return "refused"
-    _, member, value, visible = reader.split(":")
+    parts = reader.split(":")
+    member, value = parts[1], parts[2]
+    visible = parts[3] if len(parts) > 3 else "false"
     texts = record["texts"]
     left = texts[: record["equal"]]
     prefix, root, selectors = parse_lhs(left)

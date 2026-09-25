@@ -4,10 +4,10 @@
 //! Gateway constraint 5i refuses every store whose left-hand side is a
 //! sub-object at the lexical gate, and W43's typed route re-admits only the
 //! scalar `p->f = e` / `s.f = e` with no call. This card admits the other
-//! sound shapes through a base the declaration reader resolved, each with its
-//! custody effect: a scalar or untracked value is custody-neutral, an owned
-//! identity stored through a formal the caller reaches escapes, and every
-//! other store keeps the refusal — which still hands its identities on.
+//! sound shapes through a base the declaration reader resolved: a scalar or
+//! untracked value is custody-neutral, and every store of a tracked identity
+//! (owned, a formal's, a descriptor) keeps the refusal — which still hands its
+//! identities on.
 //!
 //! Every test asserts the **complete** diagnostic vector of `w` with its
 //! status, and every `Safe` certificate is rechecked. The fixtures use a
@@ -33,6 +33,9 @@ contract { requires resource_contract_v1; ensures normal resource_released(p, nu
 extern fn x_len(s: ptr<const, u8>) -> usize\n\
 contract { requires resource_contract_v1; ensures normal resource_borrowed(s);\n\
            ensures normal resource_return_none(); };\n\
+extern fn x_name(s: ptr<const, u8>) -> ptr<const, u8>\n\
+contract { requires resource_contract_v1; ensures normal resource_borrowed(s);\n\
+           ensures normal resource_return_none(); };\n\
 extern fn x_record() -> ptr<mut, u8>\n\
 contract { requires resource_contract_v1; ensures normal resource_return_owned(nonnull); };\n\
 extern fn x_record_free(r: ptr<mut, u8>) -> unit\n\
@@ -47,7 +50,7 @@ contract { requires resource_contract_v1; ensures normal resource_released(fd, v
            ensures normal resource_kind(fd, descriptor); ensures normal resource_return_none(); };";
 
 const DECLARATIONS: &str = "\
-char *x_dup(const char *s); void x_free(void *p); unsigned long x_len(const char *s); \
+char *x_dup(const char *s); const char *x_name(const char *s); void x_free(void *p); unsigned long x_len(const char *s); \
 struct x_rec { int count; char *name; struct x_rec *next; }; \
 struct x_holder { struct x_rec *rec; char *name; int fd; }; \
 struct x_rec *x_record(void); void x_record_free(struct x_rec *r); \
@@ -243,35 +246,52 @@ fn a_none_result_call_stored_into_a_scalar_member_keeps_its_refusal() {
     );
 }
 
-// -- Owned identities: escape through a caller-reachable record ---------------
+// -- Owned identities: the refusal stands and hands them on --------------------
 
 /// The brief's counterexample 3: an owned pointer stored into a record the
-/// caller reaches escapes, so it is not reported as a leak.
+/// caller reaches escapes this function's leak accounting — the refusal hands
+/// `n` on, so no leak is claimed — but it does not make the function `Safe`:
+/// the caller now holds an obligation no summary mode states, so a caller's
+/// `Safe` would rest on a transfer it cannot see. This is the decision O04-B08
+/// (`a_store_into_a_borrowed_in_aggregate_is_never_admitted`) and
+/// W44-LEAK-PIN-AUDIT (`a_refused_store_of_the_identity_withdraws_the_leak`)
+/// pin, and this card keeps it.
 #[test]
-fn an_owned_pointer_stored_into_a_caller_visible_record_escapes() {
+fn an_owned_pointer_stored_into_a_caller_visible_record_escapes_the_leak_claim_only() {
     expect(
         "`h->name = n` hands `n` to the caller's record",
         "void w(struct x_holder *h, const char *s) { char *n = x_dup(s); h->name = n; }",
-        "Safe",
-        &[],
+        "Unknown",
+        &[GATE],
     );
 }
 
+/// An owned call result is never read as a stored value: the call keeps the
+/// gate's refusal whole, so no effect of it applies and nothing is claimed.
 #[test]
-fn an_owned_call_result_stored_into_a_caller_visible_record_escapes() {
+fn an_owned_call_result_stored_into_a_caller_visible_record_keeps_its_refusal() {
     expect(
-        "`h->name = x_dup(s)` hands the result to the caller's record",
+        "`h->name = x_dup(s)`",
         "void w(struct x_holder *h, const char *s) { h->name = x_dup(s); }",
+        "Unknown",
+        &[GATE],
+    );
+}
+
+/// A call whose result carries no custody is applied, and its untracked
+/// result stored: custody-neutral.
+#[test]
+fn a_none_result_call_stored_into_a_pointer_member_is_admitted() {
+    expect(
+        "`h->name = x_name(s)` with a `None` result",
+        "void w(struct x_holder *h, const char *s) { h->name = (char *) x_name(s); }",
         "Safe",
         &[],
     );
 }
 
-/// A release after the escape is not `Safe`, and not an accusation either:
-/// the record now holds the object, and whether the code clears the member
-/// before releasing (`ch->backend = cf; … ch->backend = NULL; free(cf);`) is
-/// a protocol this projection does not follow. Every name of the escaped
-/// identity is unknown after the store, so the release reports it unresolved.
+/// A release after the store is not `Safe` and not an accusation: the store
+/// keeps its refusal, which hands `n` on.
 #[test]
 fn releasing_an_identity_after_storing_it_into_the_callers_record_is_not_safe() {
     expect(
@@ -279,13 +299,12 @@ fn releasing_an_identity_after_storing_it_into_the_callers_record_is_not_safe() 
         "void w(struct x_holder *h, const char *s) { char *n = x_dup(s); h->name = n; \
          x_free(n); }",
         "Unknown",
-        &["unknown_alias:n"],
+        &[GATE],
     );
 }
 
-/// An owned identity stored into this function's own record object is a
-/// transfer no rule models: the refusal stands, and hands `n` on, so no leak
-/// is claimed for it.
+/// An owned identity stored into this function's own record object keeps the
+/// refusal, which hands `n` on, so no leak is claimed for it.
 #[test]
 fn an_owned_pointer_stored_into_a_local_record_keeps_its_refusal_and_hands_on() {
     expect(
@@ -293,18 +312,6 @@ fn an_owned_pointer_stored_into_a_local_record_keeps_its_refusal_and_hands_on() 
         "void w(const char *s) { struct x_holder l; char *n = x_dup(s); l.name = n; }",
         "Unknown",
         &[GATE],
-    );
-}
-
-/// A formal the body rebinds is not the caller's record any more.
-#[test]
-fn an_owned_pointer_stored_through_a_rebound_formal_keeps_its_refusal() {
-    expect(
-        "`h = other; h->name = n`",
-        "void w(struct x_holder *h, struct x_holder *other, const char *s) { \
-         char *n = x_dup(s); h = other; h->name = n; }",
-        "Unknown",
-        &[GATE, "unknown_alias:other"],
     );
 }
 
@@ -321,8 +328,8 @@ fn an_owned_call_result_stored_into_a_local_record_keeps_its_refusal() {
 // -- The brief's soundness counterexamples ------------------------------------
 
 /// Counterexample 1: `recs[i].name = x_dup(s); x_free(name);` stays non-Safe.
-/// `recs` is a local array, which the declaration reader does not resolve, so
-/// the store keeps the gate's refusal and binds no `name`.
+/// `recs` is a local array: the store's owned call keeps the gate's refusal
+/// and binds no `name`.
 #[test]
 fn the_misnamed_member_store_stays_refused() {
     expect(
@@ -334,9 +341,7 @@ fn the_misnamed_member_store_stays_refused() {
     );
 }
 
-/// The same store through a caller's array escapes the result into the
-/// caller's element; `x_free(name)` still releases the local `name`, which
-/// nothing bound, and stays unresolved.
+/// The same store through a caller's array binds no local either.
 #[test]
 fn the_member_store_through_a_callers_array_binds_no_local() {
     expect(
@@ -344,7 +349,7 @@ fn the_member_store_through_a_callers_array_binds_no_local() {
         "void w(struct x_rec *recs, const char *s, int i) { char *name; \
          recs[i].name = x_dup(s); x_free(name); }",
         "Unknown",
-        &["unknown_alias:name"],
+        &[GATE, "unknown_alias:name"],
     );
 }
 

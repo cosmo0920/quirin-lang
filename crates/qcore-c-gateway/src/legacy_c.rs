@@ -2673,15 +2673,7 @@ fn build_function_cfg_with(
     } else {
         descriptor_custody::declared_callees(contracts)
     };
-    // Card W45-SUB-OBJECT-STORES: the formals whose record the caller reaches.
-    let sub_object_caller_bases =
-        matching(tokens, body_start, "{", "}").map_or_else(BTreeSet::new, |body_end| {
-            let body = tokens[body_start + 1..body_end]
-                .iter()
-                .map(|token| token.text.as_str())
-                .collect::<Vec<_>>();
-            sub_object_store::caller_bases(&body, &formal_parameters, &frame_protected)
-        });
+    // Card W45-SUB-OBJECT-STORES: the record-typed roots.
     let sub_object_roots = match (
         function_parameter_range(tokens, function, body_start),
         matching(tokens, body_start, "{", "}"),
@@ -2726,7 +2718,6 @@ fn build_function_cfg_with(
         admit_derived_returns,
         argument_probe: call_argument_access::ArgumentProbe::default(),
         desugar: condition_desugar::DesugarState::new(function),
-        sub_object_caller_bases,
         sub_object_roots,
     };
     #[cfg(feature = "indirect-census")]
@@ -4065,9 +4056,6 @@ struct Parser<'a> {
     /// Card **W44-BRANCH-CONDITION-CALLS**: the enclosing function and the
     /// unit call graph the condition desugaring reads lazily.
     desugar: condition_desugar::DesugarState,
-    /// Card **W45-SUB-OBJECT-STORES**: the formals whose record the caller
-    /// reaches ([`sub_object_store::caller_bases`]).
-    sub_object_caller_bases: BTreeSet<String>,
     /// Card **W45-SUB-OBJECT-STORES**: the record-typed roots
     /// ([`sub_object_store::RecordRoots`]).
     sub_object_roots: sub_object_store::RecordRoots,
@@ -4314,7 +4302,6 @@ impl Parser<'_> {
             &self.typed_model,
             &self.typed_types,
             &self.sub_object_roots,
-            &self.sub_object_caller_bases,
         ) {
             Err(refusal) => format!("destination:{refusal}"),
             Ok(destination) => match sub_object_store::read_value(
@@ -4325,7 +4312,7 @@ impl Parser<'_> {
             ) {
                 Err(refusal) => format!("value:{refusal}"),
                 Ok(value) => format!(
-                    "read:{:?}:{}:{}",
+                    "read:{:?}:{}",
                     destination.member,
                     match value {
                         sub_object_store::ValueSyntax::Scalar(_) => "scalar",
@@ -4333,7 +4320,6 @@ impl Parser<'_> {
                         sub_object_store::ValueSyntax::Name(_) => "name",
                         sub_object_store::ValueSyntax::Call(_) => "call",
                     },
-                    destination.caller_visible
                 ),
             },
         };
@@ -6013,7 +5999,6 @@ impl Parser<'_> {
             &self.typed_model,
             &self.typed_types,
             &self.sub_object_roots,
-            &self.sub_object_caller_bases,
         )
         .ok()?;
         let right = &texts[equal + 1..];
@@ -6059,9 +6044,8 @@ impl Parser<'_> {
                 rewritten.extend(tokens[tokens.len() - length..].iter().cloned());
                 let saved = self.next_site;
                 let call = self.classify_simple_base(&rewritten);
-                // A call whose every parameter is borrowed, with no result
-                // custody, or with an owned heap result stored where the
-                // caller reaches it. Every other call keeps the refusal.
+                // A call whose every parameter is borrowed and whose result
+                // carries no custody. Every other call keeps the refusal.
                 let admitted = matches!(
                     &call,
                     LegacyInstruction::ContractCall {
@@ -6079,13 +6063,9 @@ impl Parser<'_> {
                             .parameters
                             .iter()
                             .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
-                        && match contract.result {
-                            ResourceReturnMode::None => true,
-                            ResourceReturnMode::Owned { .. } => {
-                                contract.result_kind.is_heap() && destination.caller_visible
-                            }
-                            _ => false,
-                        }
+                        // An owned result would be a tracked identity stored
+                        // into a record: it keeps the refusal.
+                        && matches!(contract.result, ResourceReturnMode::None)
                 );
                 if !admitted {
                     self.next_site = saved;
@@ -11098,16 +11078,9 @@ fn transfer(
     };
     match &node.instruction {
         // Card W45-SUB-OBJECT-STORES.
-        LegacyInstruction::SubObjectStore { .. } => sub_object_store::transfer(
-            function,
-            node,
-            state,
-            acquisition_lines,
-            context,
-            alias,
-            diagnostics,
-            &base,
-        ),
+        LegacyInstruction::SubObjectStore { .. } => {
+            sub_object_store::transfer(function, node, state, context, alias, diagnostics, &base)
+        }
         LegacyInstruction::ElementStore {
             base: array,
             index,

@@ -67,25 +67,24 @@
 //! 2. A scalar, null or literal value is custody-neutral. The member's place
 //!    binding, if the projection holds one, is forgotten: its old fact no
 //!    longer describes the member.
-//! 3. A named or call-result pointer value is decided on its binding:
-//!    * no binding on any reaching path, or a non-null binding with no target:
-//!      no identity this function tracks is stored — custody-neutral;
-//!    * exactly one known, exactly-live **heap** identity this body acquired
-//!      (an identity binding, not a caller's site, not nullable-unresolved),
-//!      stored through a base the caller can reach (a formal parameter this
-//!      function never writes or address-takes): the identity **escapes** —
-//!      custody leaves with the caller's record, as it does through a return,
-//!      and every name of it becomes unknown, so a later use or release
-//!      reports an unresolved alias rather than `release_after_escape`;
-//!    * anything else — a derived pointer, a caller's own site, a released or
-//!      unresolved identity, a descriptor, a store of an owned identity into a
-//!      record the caller cannot reach — is the fallback.
+//! 3. A named or call-result pointer value is admitted only when it stores no
+//!    identity this function tracks: no binding on any reaching path, or a
+//!    binding with no target that is not unknown. **Every tracked identity —
+//!    owned, derived, a caller's site, a descriptor — keeps the fallback.**
+//!    Storing an owned identity into a record the caller reaches does move
+//!    custody to the caller, but no summary mode states it: a derived summary
+//!    would drop the obligation the caller now holds, so a caller's `Safe`
+//!    would rest on a transfer it cannot see. That is the decision O04-B08
+//!    (`a_store_into_a_borrowed_in_aggregate_is_never_admitted`) and
+//!    W44-LEAK-PIN-AUDIT (`a_refused_store_of_the_identity_withdraws_the_leak`)
+//!    pin, and this rule keeps it: the refusal hands the identity on, so no
+//!    leak is claimed and the function stays `Unknown`.
 //!
 //! A call result is applied first (its own obligations and diagnostics are
 //! the call's), bound to a temporary, decided as a named value and then
 //! forgotten. The classifier admits a call value only when its contract in
-//! force states a `None` result or an owned heap result, and the latter only
-//! into a caller-reachable base; every other call keeps the refusal.
+//! force states a `None` result and borrows every parameter; every other
+//! call keeps the refusal.
 //!
 //! # Composition
 //!
@@ -118,9 +117,6 @@ pub struct Destination {
     /// The member's place spelling, the only place the store may write.
     pub place: String,
     pub member: MemberKind,
-    /// Whether the store is through a formal parameter this function never
-    /// rebinds, so that the record is one the caller can reach.
-    pub caller_visible: bool,
 }
 
 /// The stored value, as the classifier read it.
@@ -133,7 +129,8 @@ pub enum StoredValue {
     Untracked,
     /// A declared name, decided on its binding.
     Name(String),
-    /// One whole contracted call, applied first, whose result is bound to
+    /// One whole contracted call with a `None` result and every parameter
+    /// `Borrowed`, applied first, whose result is bound to
     /// [`STORE_TEMPORARY`] and then decided as a name.
     Call(Box<super::LegacyInstruction>),
 }
@@ -242,64 +239,13 @@ fn member_kind(model: &TypedAccessModel, tag: &str, field: &str) -> Option<Membe
     }
 }
 
-/// The formal parameters whose record the caller can reach through them: a
-/// formal no statement of `body` writes (`p = …`, `p op= …`, `p++`, `--p`)
-/// and, per `unaliased` (the frame-protected names, which exclude every
-/// address-taken one), whose slot no other lvalue designates. Such a formal
-/// holds, at every point of the body, the pointer the caller passed.
-pub fn caller_bases(
-    body: &[&str],
-    formals: &std::collections::BTreeSet<String>,
-    unaliased: &std::collections::BTreeSet<String>,
-) -> std::collections::BTreeSet<String> {
-    let mut bases = formals
-        .intersection(unaliased)
-        .cloned()
-        .collect::<std::collections::BTreeSet<_>>();
-    for (index, text) in body.iter().enumerate() {
-        if !bases.contains(*text) {
-            continue;
-        }
-        let previous = index.checked_sub(1).map(|at| body[at]);
-        let before = index.checked_sub(2).map(|at| body[at]);
-        let next = body.get(index + 1).copied();
-        let after = body.get(index + 2).copied();
-        // A member name (`q->p`, `s.p`) is not the formal.
-        if previous == Some(".") || (previous == Some(">") && before == Some("-")) {
-            continue;
-        }
-        let written = (next == Some("=") && after != Some("="))
-            || (matches!(next, Some("+" | "-" | "*" | "/" | "%" | "&" | "|" | "^"))
-                && after == Some("="))
-            || matches!(
-                (next, after),
-                (Some("+"), Some("+")) | (Some("-"), Some("-"))
-            )
-            || matches!(
-                (next, after),
-                (Some("<"), Some("<")) | (Some(">"), Some(">"))
-            )
-            || matches!(
-                (before, previous),
-                (Some("+"), Some("+")) | (Some("-"), Some("-"))
-            )
-            || previous == Some("&");
-        if written {
-            bases.remove(*text);
-        }
-    }
-    bases
-}
-
 /// Read one left-hand side as a store into one member through a resolved,
-/// typed base. `roots` is [`RecordRoots::read`]'s and `caller_bases`
-/// [`caller_bases`]' answer for the function.
+/// typed base. `roots` is [`RecordRoots::read`]'s answer for the function.
 pub fn read_destination(
     left: &[&str],
     model: &TypedAccessModel,
     types: &FunctionTypes,
     roots: &RecordRoots,
-    caller_bases: &std::collections::BTreeSet<String>,
 ) -> Result<Destination, Refusal> {
     if !types.is_readable() {
         return Err("declarations-unreadable");
@@ -368,7 +314,6 @@ pub fn read_destination(
         base: through_pointer.then(|| root.to_owned()),
         place,
         member,
-        caller_visible: through_pointer && caller_bases.contains(root),
     })
 }
 
@@ -478,12 +423,10 @@ pub enum ValueSyntax {
 /// The flow decision of one admitted sub-object store: the `SubObjectStore`
 /// arm of [`super::transfer`]. `base` is the ordinary transfer, used for the
 /// fallback refusal and for a stored call.
-#[allow(clippy::too_many_arguments)]
 pub(super) fn transfer(
     function: &str,
     node: &super::LegacyCfgNode,
     state: super::AbstractState,
-    acquisition_lines: &std::collections::BTreeMap<usize, usize>,
     context: &super::TransferContext<'_>,
     alias: &super::NodeAliasFacts,
     diagnostics: &mut std::collections::BTreeSet<super::LegacyDiagnostic>,
@@ -520,25 +463,12 @@ pub(super) fn transfer(
         );
     }
     // 1. The dereferenced base, and every base the scalar value reads through.
-    if let Some(pointer_base) = &destination.base {
-        let sanctioned = context
+    let sanctioned = destination.base.as_ref().is_some_and(|pointer_base| {
+        context
             .sanctioned
-            .contains(format!("*{pointer_base}").as_str());
-        let tracked = state
-            .pointers
-            .get(pointer_base)
-            .is_some_and(|pointer| !pointer.targets.is_empty());
-        if sanctioned
-            || !super::indirect_scalar_base_resolves(&state, pointer_base)
-            || (destination.member == MemberKind::Pointer && tracked)
-        {
-            return refuse(state, diagnostics);
-        }
-    }
-    if value_bases
-        .iter()
-        .any(|read| !super::indirect_scalar_base_resolves(&state, read))
-    {
+            .contains(format!("*{pointer_base}").as_str())
+    });
+    if sanctioned || !bases_resolve(destination, value_bases, &state) {
         return refuse(state, diagnostics);
     }
     // 2. and 3. The value.
@@ -546,41 +476,21 @@ pub(super) fn transfer(
     match value {
         StoredValue::Scalar { .. } | StoredValue::Untracked => {}
         StoredValue::Name(name) => {
-            match decide(&state, name, destination.caller_visible, context) {
-                Decision::Neutral => {}
-                Decision::Escape => escape(
-                    function,
-                    node.line,
-                    name,
-                    &mut state,
-                    acquisition_lines,
-                    diagnostics,
-                ),
-                Decision::Refuse => return refuse(state, diagnostics),
+            if !stores_no_identity(&state, name) {
+                return refuse(state, diagnostics);
             }
         }
         StoredValue::Call(call) => {
             state = base(&super::with_instruction(node, call), state, diagnostics);
-            match decide(&state, STORE_TEMPORARY, destination.caller_visible, context) {
-                Decision::Neutral => {}
-                Decision::Escape => escape(
-                    function,
-                    node.line,
-                    STORE_TEMPORARY,
-                    &mut state,
-                    acquisition_lines,
-                    diagnostics,
-                ),
-                Decision::Refuse => {
-                    // The call's result reached a store this rule refuses. The
-                    // refused hand-on rule reads the statement's own tokens,
-                    // which never spell the temporary, so its identities are
-                    // marked here: they may have been stored.
-                    if let Some(pointer) = state.pointers.remove(STORE_TEMPORARY) {
-                        super::mark_unresolved_effect(&mut state, &pointer);
-                    }
-                    return refuse(state, diagnostics);
+            if !stores_no_identity(&state, STORE_TEMPORARY) {
+                // The call's result reached a store this rule refuses. The
+                // refused hand-on rule reads the statement's own tokens, which
+                // never spell the temporary, so its identities are marked here:
+                // they may have been stored.
+                if let Some(pointer) = state.pointers.remove(STORE_TEMPORARY) {
+                    super::mark_unresolved_effect(&mut state, &pointer);
                 }
+                return refuse(state, diagnostics);
             }
             state.pointers.remove(STORE_TEMPORARY);
         }
@@ -588,6 +498,26 @@ pub(super) fn transfer(
     // The member's old fact no longer describes it.
     state.pointers.remove(&destination.place);
     state
+}
+
+/// Step 1: the dereferenced base resolves as W43's obligation requires, a
+/// pointer member's base carries no tracked target, and every base a scalar
+/// value reads through resolves.
+fn bases_resolve(
+    destination: &Destination,
+    value_bases: &[String],
+    state: &super::AbstractState,
+) -> bool {
+    destination.base.as_ref().is_none_or(|pointer_base| {
+        super::indirect_scalar_base_resolves(state, pointer_base)
+            && !(destination.member == MemberKind::Pointer
+                && state
+                    .pointers
+                    .get(pointer_base)
+                    .is_some_and(|pointer| !pointer.targets.is_empty()))
+    }) && value_bases
+        .iter()
+        .all(|read| super::indirect_scalar_base_resolves(state, read))
 }
 
 /// Whether [`transfer`] applies a stored call's effects at this state: its
@@ -607,96 +537,19 @@ pub(super) fn call_runs(
     else {
         return false;
     };
-    destination.base.as_ref().is_none_or(|pointer_base| {
-        super::indirect_scalar_base_resolves(state, pointer_base)
-            && !(destination.member == MemberKind::Pointer
-                && state
-                    .pointers
-                    .get(pointer_base)
-                    .is_some_and(|pointer| !pointer.targets.is_empty()))
-    }) && value_bases
-        .iter()
-        .all(|read| super::indirect_scalar_base_resolves(state, read))
+    bases_resolve(destination, value_bases, state)
 }
 
-/// The escape of a stored identity into the caller's record. Custody leaves
-/// with the record, as through a return; and since the record now holds the
-/// object, a later use or release through a name of this body is a protocol
-/// this projection does not follow (`ch->backend = cf; … free(cf);` may well
-/// clear the member first). So every binding that denotes the escaped identity
-/// is made unknown: a later release through it reports an unresolved alias
-/// and never a `release_after_escape` accusation.
-fn escape(
-    function: &str,
-    line: usize,
-    name: &str,
-    state: &mut super::AbstractState,
-    acquisition_lines: &std::collections::BTreeMap<usize, usize>,
-    diagnostics: &mut std::collections::BTreeSet<super::LegacyDiagnostic>,
-) {
-    let escaped = state
+/// Step 3: whether storing the pointer `name` holds stores no identity this
+/// function tracks — no binding on any reaching path, or a binding with no
+/// target that is not unknown (a null or untracked value). Any target, and an
+/// unknown binding that may denote any identity, is custody the store would
+/// hand on unseen, so the store keeps its refusal.
+fn stores_no_identity(state: &super::AbstractState, name: &str) -> bool {
+    state
         .pointers
         .get(name)
-        .map(|pointer| pointer.targets.clone())
-        .unwrap_or_default();
-    super::apply_resource_action(
-        function,
-        line,
-        name,
-        state,
-        acquisition_lines,
-        diagnostics,
-        true,
-        true,
-    );
-    for pointer in state.pointers.values_mut() {
-        if !pointer.targets.is_disjoint(&escaped) {
-            pointer.unknown = true;
-            pointer.may_be_null = true;
-        }
-    }
-}
-
-enum Decision {
-    Neutral,
-    Escape,
-    Refuse,
-}
-
-/// What storing the pointer `name` holds does to custody.
-fn decide(
-    state: &super::AbstractState,
-    name: &str,
-    caller_visible: bool,
-    context: &super::TransferContext<'_>,
-) -> Decision {
-    let Some(pointer) = state.pointers.get(name) else {
-        // No reaching path bound it: it holds nothing this function tracks.
-        return Decision::Neutral;
-    };
-    if pointer.targets.is_empty() {
-        return if pointer.unknown {
-            Decision::Refuse
-        } else {
-            Decision::Neutral
-        };
-    }
-    let escapes = caller_visible
-        && !pointer.unknown
-        && pointer.derivation.is_identity()
-        && pointer.targets.len() == 1
-        && pointer.targets.iter().all(|site| {
-            !context.caller_sites.contains(site)
-                && state.resources.get(site) == Some(&super::LIVE)
-                && !state.unresolved_effect_sites.contains(site)
-                && !state.collections.contains_key(site)
-                && super::kind_of(&context.site_kinds, *site).is_heap()
-        });
-    if escapes {
-        Decision::Escape
-    } else {
-        Decision::Refuse
-    }
+        .is_none_or(|pointer| pointer.targets.is_empty() && !pointer.unknown)
 }
 
 #[cfg(test)]

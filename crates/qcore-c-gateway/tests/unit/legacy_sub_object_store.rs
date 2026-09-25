@@ -45,9 +45,8 @@ fn read(parameters: &str, body: &str, left: &str) -> Result<Destination, Refusal
         .into_iter()
         .map(str::to_owned)
         .collect::<BTreeSet<_>>();
-    let bases = caller_bases(&texts(body), &formals, &formals);
     let roots = RecordRoots::read(&model, &texts(parameters), &texts(body), &formals);
-    read_destination(&texts(left), &model, &types, &roots, &bases)
+    read_destination(&texts(left), &model, &types, &roots)
 }
 
 const PARAMETERS: &str = "struct r *p, struct r *recs, int i, char *s";
@@ -56,54 +55,28 @@ const PARAMETERS: &str = "struct r *p, struct r *recs, int i, char *s";
 fn each_admitted_destination_shape_names_its_member_place() {
     let body = "struct r l; struct r arr [ 2 ]; t_t * tp; t_alias ta;";
     let cases = [
-        (
-            "arr [ i ] . count",
-            None,
-            "arr[].count",
-            MemberKind::Scalar,
-            false,
-        ),
-        ("tp -> s", Some("tp"), "tp->s", MemberKind::Pointer, false),
-        ("ta . n", None, "ta.n", MemberKind::Scalar, false),
-        (
-            "p -> count",
-            Some("p"),
-            "p->count",
-            MemberKind::Scalar,
-            true,
-        ),
-        (
-            "( p ) -> name",
-            Some("p"),
-            "p->name",
-            MemberKind::Pointer,
-            true,
-        ),
+        ("arr [ i ] . count", None, "arr[].count", MemberKind::Scalar),
+        ("tp -> s", Some("tp"), "tp->s", MemberKind::Pointer),
+        ("ta . n", None, "ta.n", MemberKind::Scalar),
+        ("p -> count", Some("p"), "p->count", MemberKind::Scalar),
+        ("( p ) -> name", Some("p"), "p->name", MemberKind::Pointer),
         (
             "recs [ i ] . next",
             Some("recs"),
             "recs[].next",
             MemberKind::Pointer,
-            true,
         ),
         (
             "( recs ) [ i ] . data",
             Some("recs"),
             "recs[].data",
             MemberKind::Pointer,
-            true,
         ),
-        ("l . count", None, "l.count", MemberKind::Scalar, false),
-        (
-            "( & l ) -> name",
-            None,
-            "l.name",
-            MemberKind::Pointer,
-            false,
-        ),
-        ("( l ) . count", None, "l.count", MemberKind::Scalar, false),
+        ("l . count", None, "l.count", MemberKind::Scalar),
+        ("( & l ) -> name", None, "l.name", MemberKind::Pointer),
+        ("( l ) . count", None, "l.count", MemberKind::Scalar),
     ];
-    for (left, base, place, member, visible) in cases {
+    for (left, base, place, member) in cases {
         let destination = read(PARAMETERS, body, left).unwrap_or_else(|refusal| {
             panic!("{left} refused: {refusal}");
         });
@@ -113,7 +86,6 @@ fn each_admitted_destination_shape_names_its_member_place() {
                 base: base.map(str::to_owned),
                 place: place.to_owned(),
                 member,
-                caller_visible: visible,
             },
             "{left}"
         );
@@ -147,40 +119,6 @@ fn every_other_destination_keeps_its_refusal() {
     for (left, reason) in refused {
         assert_eq!(read(PARAMETERS, body, left), Err(reason), "{left}");
     }
-}
-
-#[test]
-fn a_rebound_or_address_taken_formal_is_not_the_callers_record() {
-    for body in ["p = 0;", "p ++ ;", "p += 1 ;", "q = & p ;", "-- p ;"] {
-        let formals = BTreeSet::from(["p".to_owned()]);
-        assert!(
-            caller_bases(&texts(body), &formals, &formals).is_empty(),
-            "{body}"
-        );
-    }
-    for body in [
-        "x = p ;",
-        "if ( p == q ) { }",
-        "f ( p ) ;",
-        "q -> p = 0 ;",
-        "s . p = 0 ;",
-    ] {
-        let formals = BTreeSet::from(["p".to_owned()]);
-        assert_eq!(
-            caller_bases(&texts(body), &formals, &formals),
-            formals,
-            "{body}"
-        );
-    }
-    // A formal the frame does not protect (its address is taken somewhere)
-    // is never a caller base.
-    let formals = BTreeSet::from(["p".to_owned()]);
-    assert!(caller_bases(&[], &formals, &BTreeSet::new()).is_empty());
-    // A local is never one.
-    assert_eq!(
-        read(PARAMETERS, "struct r * m ;", "m -> count").map(|d| d.caller_visible),
-        Ok(false)
-    );
 }
 
 #[test]
