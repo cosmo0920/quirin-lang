@@ -4120,6 +4120,19 @@ impl Parser<'_> {
             };
             let forecast = census::Forecast {
                 contains_call,
+                scalar_field_noop: !contains_call
+                    && crate::typed_field_access::is_scalar_field_noop(
+                        texts,
+                        &self.typed_model,
+                        &self.typed_types,
+                    ),
+                scalar_member_store: !contains_call
+                    && crate::typed_field_access::scalar_member_store_base(
+                        texts,
+                        &self.typed_model,
+                        &self.typed_types,
+                    )
+                    .is_some(),
                 typed_scalar: !contains_call
                     && crate::typed_field_access::typed_scalar_statement(
                         texts,

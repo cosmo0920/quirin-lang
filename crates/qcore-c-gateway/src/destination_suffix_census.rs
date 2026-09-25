@@ -50,10 +50,15 @@ pub struct NamedRoot {
     pub later_call_argument: bool,
 }
 
-/// The typed routes the repaired classifier consults after the gate refusal.
+/// The routes that can still admit the statement once the reader stops naming
+/// it: the two typed routes the repaired classifier consults before the lexical
+/// gate, which read no destination (`scalar_field_noop`, `scalar_member_store`),
+/// and the typed routes it consults after the gate refusal.
 #[derive(Clone, Debug, serde::Serialize)]
 pub struct Forecast {
     pub contains_call: bool,
+    pub scalar_field_noop: bool,
+    pub scalar_member_store: bool,
     pub typed_scalar: bool,
     pub chain: bool,
     pub stepped: bool,
