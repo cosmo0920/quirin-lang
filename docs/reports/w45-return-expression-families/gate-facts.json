@@ -1,0 +1,312 @@
+{
+ "census": {
+  "step": "census",
+  "commands": [
+   [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-c-gateway",
+    "--features",
+    "indirect-census",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   [
+    "cargo",
+    "test",
+    "-p",
+    "qcore-c-gateway",
+    "--features",
+    "indirect-census",
+    "--lib"
+   ]
+  ],
+  "exits": [
+   0,
+   0
+  ],
+  "environment": {
+   "CARGO_BUILD_JOBS": "6",
+   "RUST_TEST_THREADS": "2",
+   "CARGO_PROFILE_DEV_DEBUG": "0",
+   "CARGO_PROFILE_TEST_DEBUG": "0",
+   "CARGO_INCREMENTAL": "0"
+  },
+  "start": "2026-09-25T15:42:36.295874+00:00",
+  "end": "2026-09-25T15:42:47.593013+00:00",
+  "exit": 0,
+  "totals": {
+   "passed": 543,
+   "failed": 0,
+   "ignored": 0,
+   "summaries": 1
+  },
+  "failed_tests": []
+ },
+ "clang": {
+  "step": "clang",
+  "commands": [
+   [
+    "clang",
+    "--version"
+   ]
+  ],
+  "exits": [
+   0
+  ],
+  "environment": {
+   "CARGO_BUILD_JOBS": "6",
+   "RUST_TEST_THREADS": "2",
+   "CARGO_PROFILE_DEV_DEBUG": "0",
+   "CARGO_PROFILE_TEST_DEBUG": "0",
+   "CARGO_INCREMENTAL": "0"
+  },
+  "start": "2026-09-25T15:36:13.762941+00:00",
+  "end": "2026-09-25T15:36:13.776305+00:00",
+  "exit": 0
+ },
+ "clippy": {
+  "step": "clippy",
+  "commands": [
+   [
+    "cargo",
+    "clippy",
+    "--workspace",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ]
+  ],
+  "exits": [
+   0
+  ],
+  "environment": {
+   "CARGO_BUILD_JOBS": "6",
+   "RUST_TEST_THREADS": "2",
+   "CARGO_PROFILE_DEV_DEBUG": "0",
+   "CARGO_PROFILE_TEST_DEBUG": "0",
+   "CARGO_INCREMENTAL": "0"
+  },
+  "start": "2026-09-25T15:40:48.553724+00:00",
+  "end": "2026-09-25T15:41:08.893291+00:00",
+  "exit": 0
+ },
+ "docsindex": {
+  "step": "docsindex",
+  "commands": [
+   [
+    "python3",
+    "scripts/build_docs_index.py",
+    "--check"
+   ]
+  ],
+  "exits": [
+   0
+  ],
+  "environment": {
+   "CARGO_BUILD_JOBS": "6",
+   "RUST_TEST_THREADS": "2",
+   "CARGO_PROFILE_DEV_DEBUG": "0",
+   "CARGO_PROFILE_TEST_DEBUG": "0",
+   "CARGO_INCREMENTAL": "0"
+  },
+  "start": "2026-09-25T15:42:47.594291+00:00",
+  "end": "2026-09-25T15:42:47.639972+00:00",
+  "exit": 0
+ },
+ "fmt": {
+  "step": "fmt",
+  "commands": [
+   [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ]
+  ],
+  "exits": [
+   0
+  ],
+  "environment": {
+   "CARGO_BUILD_JOBS": "6",
+   "RUST_TEST_THREADS": "2",
+   "CARGO_PROFILE_DEV_DEBUG": "0",
+   "CARGO_PROFILE_TEST_DEBUG": "0",
+   "CARGO_INCREMENTAL": "0"
+  },
+  "start": "2026-09-25T15:40:46.346971+00:00",
+  "end": "2026-09-25T15:40:48.553392+00:00",
+  "exit": 0
+ },
+ "followup": {
+  "step": "followup",
+  "commands": [
+   [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ]
+  ],
+  "exits": [
+   0
+  ],
+  "environment": {
+   "CARGO_BUILD_JOBS": "6",
+   "RUST_TEST_THREADS": "2",
+   "CARGO_PROFILE_DEV_DEBUG": "0",
+   "CARGO_PROFILE_TEST_DEBUG": "0",
+   "CARGO_INCREMENTAL": "0"
+  },
+  "start": "2026-09-25T15:41:29.258183+00:00",
+  "end": "2026-09-25T15:41:29.986728+00:00",
+  "exit": 0
+ },
+ "lean": {
+  "step": "lean",
+  "commands": [
+   [
+    "python3",
+    "scripts/check_lean_audits.py",
+    "--jobs",
+    "4"
+   ]
+  ],
+  "exits": [
+   0
+  ],
+  "environment": {
+   "CARGO_BUILD_JOBS": "6",
+   "RUST_TEST_THREADS": "2",
+   "CARGO_PROFILE_DEV_DEBUG": "0",
+   "CARGO_PROFILE_TEST_DEBUG": "0",
+   "CARGO_INCREMENTAL": "0"
+  },
+  "start": "2026-09-25T15:41:29.987213+00:00",
+  "end": "2026-09-25T15:42:36.295591+00:00",
+  "exit": 0
+ },
+ "probe": {
+  "step": "probe",
+  "commands": [
+   [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ]
+  ],
+  "exits": [
+   0
+  ],
+  "environment": {
+   "CARGO_BUILD_JOBS": "6",
+   "RUST_TEST_THREADS": "2",
+   "CARGO_PROFILE_DEV_DEBUG": "0",
+   "CARGO_PROFILE_TEST_DEBUG": "0",
+   "CARGO_INCREMENTAL": "0"
+  },
+  "start": "2026-09-25T15:41:08.893542+00:00",
+  "end": "2026-09-25T15:41:29.257979+00:00",
+  "exit": 0
+ },
+ "python": {
+  "step": "python",
+  "commands": [
+   [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ]
+  ],
+  "exits": [
+   0
+  ],
+  "environment": {
+   "CARGO_BUILD_JOBS": "6",
+   "RUST_TEST_THREADS": "2",
+   "CARGO_PROFILE_DEV_DEBUG": "0",
+   "CARGO_PROFILE_TEST_DEBUG": "0",
+   "CARGO_INCREMENTAL": "0"
+  },
+  "start": "2026-09-25T15:44:17.112068+00:00",
+  "end": "2026-09-25T15:44:36.157329+00:00",
+  "exit": 0,
+  "totals": {
+   "passed": 0,
+   "failed": 0,
+   "ignored": 0,
+   "summaries": 0,
+   "python_ran": 351
+  },
+  "failed_tests": []
+ },
+ "submodules": {
+  "step": "submodules",
+  "commands": [
+   [
+    "git",
+    "submodule",
+    "update",
+    "--init",
+    "--recursive"
+   ]
+  ],
+  "exits": [
+   0
+  ],
+  "environment": {
+   "CARGO_BUILD_JOBS": "6",
+   "RUST_TEST_THREADS": "2",
+   "CARGO_PROFILE_DEV_DEBUG": "0",
+   "CARGO_PROFILE_TEST_DEBUG": "0",
+   "CARGO_INCREMENTAL": "0"
+  },
+  "start": "2026-09-25T15:36:13.737665+00:00",
+  "end": "2026-09-25T15:36:13.762715+00:00",
+  "exit": 0
+ },
+ "test": {
+  "step": "test",
+  "commands": [
+   [
+    "python3",
+    "scripts/run_test_binaries.py"
+   ]
+  ],
+  "exits": [
+   0
+  ],
+  "environment": {
+   "CARGO_BUILD_JOBS": "6",
+   "RUST_TEST_THREADS": "2",
+   "CARGO_PROFILE_DEV_DEBUG": "0",
+   "CARGO_PROFILE_TEST_DEBUG": "0",
+   "CARGO_INCREMENTAL": "0"
+  },
+  "start": "2026-09-25T15:36:13.776717+00:00",
+  "end": "2026-09-25T15:40:09.710618+00:00",
+  "exit": 0,
+  "totals": {
+   "passed": 0,
+   "failed": 0,
+   "ignored": 0,
+   "summaries": 0,
+   "runner_totals_line": "test binaries: 290 units, 300 summaries; 5665 passed; 0 failed; 11 ignored; 0 measured; 0 filtered out"
+  },
+  "failed_tests": []
+ },
+ "_logs": "private/gate/ in worktree agent-a711574e5b98d0a02; test runner logs private/test-binaries/20260925T153613Z-3166676/"
+}

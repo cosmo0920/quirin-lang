@@ -387,8 +387,18 @@ fn a_call_that_is_not_the_whole_return_expression_is_refused() {
     if !clang_available() {
         return;
     }
+    // Deliberately re-pinned by card W45-RETURN-EXPRESSION-FAMILIES: a pointer
+    // cast of an owned call whose declaration returns an object pointer keeps
+    // the object (C11 6.3.2.3p7), so it is decided exactly as the uncast
+    // `return q_alloc();` — the exit escapes the fresh site and nothing else.
+    let cast = run("void *subject(void) { return (void *) q_alloc(); }");
+    let uncast = run("void *subject(void) { return q_alloc(); }");
+    assert!(!cast.refuses_return(), "{:?}", cast.unsupported());
+    assert_eq!(
+        (cast.status, cast.certified, cast.unsupported()),
+        (uncast.status, uncast.certified, uncast.unsupported())
+    );
     for body in [
-        "void *subject(void) { return (void *) q_alloc(); }",
         "int subject(void) { void *p = q_alloc(); return r_release_code(p) ? 1 : 0; }",
         "int subject(void) { void *p = q_alloc(); return r_release_code(p) & 1; }",
         "int subject(void) { void *p = q_alloc(); return r_release_code(p), 0; }",

@@ -1,0 +1,1499 @@
+{
+ "summary": {
+  "sole_before": 147,
+  "sole_after": 69,
+  "sole_before_outcome": {
+   "Unknown, still sole": 67,
+   "Unknown, other reasons": 8,
+   "Safe": 72
+  },
+  "newly_sole": 2
+ },
+ "functions": [
+  {
+   "function": [
+    "cmetrics",
+    "cmt_decode_statsd.c",
+    "is_incremental"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "cmetrics",
+    "cmt_metric.c",
+    "cmt_metric_get_value_type"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "function": [
+    "cmetrics",
+    "cmt_metric.c",
+    "cmt_metric_has_start_timestamp"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "ctraces",
+    "ctr_id.c",
+    "ctr_id_get_buf"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_GetErrorPtr"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_HasObjectItem"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_IsArray"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_IsBool"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_IsFalse"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_IsInvalid"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_IsNull"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_IsNumber"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_IsObject"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_IsRaw"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_IsString"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_IsTrue"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_Print"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "call to uncontracted function `_`"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_PrintUnformatted"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "call to uncontracted function `_`"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "cJSON.c",
+    "cJSON_malloc"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "crc32c.c",
+    "crc32c_shift"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "lz4.c",
+    "LZ4_read16"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "lz4.c",
+    "LZ4_read32"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "lz4.c",
+    "LZ4_read_ARCH"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "lz4.c",
+    "LZ4_sizeofState"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "lz4.c",
+    "LZ4_sizeofStreamState"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "lz4.c",
+    "LZ4_slideInputBuffer"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "lz4hc.c",
+    "LZ4HC_hashPtr"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "lz4hc.c",
+    "LZ4_sizeofStateHC"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "lz4hc.c",
+    "LZ4_sizeofStreamStateHC"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "nanopb/pb_decode.c",
+    "decode_pointer_field"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdhdrhistogram.c",
+    "rd_hdr_getCountAtIndex"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdhdrhistogram.c",
+    "rd_hdr_getSubBucketIdx"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdhdrhistogram.c",
+    "rd_hdr_highestEquivalentValue"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdhdrhistogram.c",
+    "rd_hdr_medianEquivalentValue"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdhdrhistogram.c",
+    "rd_hdr_nextNonEquivalentValue"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdhdrhistogram.c",
+    "rd_hdr_valueFromIndex"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdhttp.c",
+    "rd_http_req_get_code"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_Uuid_least_significant_bits"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_Uuid_most_significant_bits"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_consumer_group_state_name"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_consumer_group_type_name"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_errno"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_messages_get"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_name"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_opaque"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_outq_len"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_path_is_dir"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_type"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_AclBinding_operation"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_AclBinding_permission_type"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_AclBinding_resource_pattern_type"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_AclBinding_restype"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConfigEntry_is_default"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConfigEntry_is_read_only"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConfigEntry_is_sensitive"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConfigEntry_is_synonym"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConfigEntry_name"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConfigEntry_source"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConfigEntry_value"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConfigResource_error"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConfigResource_type"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConsumerGroupDescription_member"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConsumerGroupDescription_state"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConsumerGroupDescription_type"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConsumerGroupListing_state"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ConsumerGroupListing_type"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_DescribeCluster_result_cluster_id"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_DescribeCluster_result_controller"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ElectLeaders_result_result"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_MemberDescription_assignment"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_ScramCredentialInfo_mechanism"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_TopicDescription_topic_id"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_UserScramCredentialsDescription_scramcredentialinfo"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_admin.c",
+    "rd_kafka_admin_describe_consumer_group_do_fallback_to_classic"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_assignment.c",
+    "rd_kafka_assignment_in_progress"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_assignor.c",
+    "rd_kafka_assignor_find"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_aux.c",
+    "rd_kafka_Node_host"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_aux.c",
+    "rd_kafka_Node_id"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_aux.c",
+    "rd_kafka_Node_port"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_aux.c",
+    "rd_kafka_Node_rack"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_aux.c",
+    "rd_kafka_topic_result_error"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_broker.c",
+    "rd_kafka_broker_ApiVersion_at_least"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_broker.c",
+    "rd_kafka_broker_ApiVersion_at_least_no_lock"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_broker.c",
+    "rd_kafka_broker_addresses_exhausted"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_broker.c",
+    "rd_kafka_broker_destroy_error"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_broker.c",
+    "rd_kafka_broker_id"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_broker.c",
+    "rd_kafka_broker_needs_connection"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_broker.c",
+    "rd_kafka_broker_needs_persistent_connection"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_cgrp.c",
+    "rd_kafka_cgrp_assignment_is_lost"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_cgrp.c",
+    "rd_kafka_cgrp_awaiting_response"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_cgrp.c",
+    "rd_kafka_topic_partition_has_absolute_offset"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_conf.c",
+    "rd_kafka_conf"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_conf.c",
+    "rd_kafka_conf_get_default_topic_conf"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_conf.c",
+    "rd_kafka_conf_validate_partitioner"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_conf.c",
+    "rd_kafka_conf_validate_single"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_conf.c",
+    "rd_kafka_prop2idx"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_error.c",
+    "rd_kafka_error_code"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_error.c",
+    "rd_kafka_error_is_fatal"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_error.c",
+    "rd_kafka_error_is_retriable"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_error.c",
+    "rd_kafka_error_name"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_error.c",
+    "rd_kafka_error_string"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_error.c",
+    "rd_kafka_error_txn_requires_abort"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_event.c",
+    "rd_kafka_event_error"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_event.c",
+    "rd_kafka_event_error_is_fatal"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_event.c",
+    "rd_kafka_event_stats"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_event.c",
+    "rd_kafka_event_type"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_fetcher.c",
+    "rd_kafka_op_matches_toppar"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_fetcher.c",
+    "rd_kafka_toppar_fetch_decide_start_from_next_fetch_start"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_header.c",
+    "rd_kafka_header_cnt"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_mock.c",
+    "rd_kafka_handle_mock_cluster"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_mock.c",
+    "rd_kafka_mock_cluster_bootstraps"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_mock.c",
+    "rd_kafka_mock_cluster_handle"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_mock.c",
+    "rd_kafka_mock_partition_next_leader_response"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_msg.c",
+    "rd_kafka_message_broker_id"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_msg.c",
+    "rd_kafka_message_delivery_count"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_msg.c",
+    "rd_kafka_message_status"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_msg.c",
+    "rd_kafka_msg_partitioner_consistent"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_msg.c",
+    "rd_kafka_msg_partitioner_fnv1a"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_msg.c",
+    "rd_kafka_msg_partitioner_murmur2"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_queue.c",
+    "rd_kafka_queue_length"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_request.c",
+    "rd_kafka_AclBinding_request_size"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_share_acknowledgement.c",
+    "rd_kafka_share_ack_batch_leader_stale"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_share_acknowledgement.c",
+    "rd_kafka_share_acknowledgement_mode_is_explicit"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_share_acknowledgement.c",
+    "rd_kafka_share_acknowledgement_mode_is_implicit"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_share_acknowledgement.c",
+    "rd_kafka_share_partition_offsets_list_get"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_share_acknowledgement.c",
+    "rd_kafka_share_partition_offsets_offsets"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_telemetry_encode.c",
+    "get_client_rack"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_telemetry_encode.c",
+    "get_group_id"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_telemetry_encode.c",
+    "get_group_instance_id"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_telemetry_encode.c",
+    "get_member_id"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_telemetry_encode.c",
+    "get_transactional_id"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_timer.c",
+    "rd_kafka_timer_scheduled"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdkafka_timer.c",
+    "rd_kafka_timer_started"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdmap.c",
+    "rd_map_cnt"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdmap.c",
+    "rd_map_is_empty"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdxxhash.c",
+    "XXH32_createState"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdxxhash.c",
+    "XXH64_createState"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdxxhash.c",
+    "XXH_readBE32"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdxxhash.c",
+    "XXH_readBE64"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdxxhash.c",
+    "XXH_readLE32_align"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "rdxxhash.c",
+    "XXH_readLE64_align"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "snappy.c",
+    "available"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "librdkafka",
+    "snappy.c",
+    "log2_floor"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "librdkafka",
+    "tinycthread_extra.c",
+    "thrd_current_id"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "call to uncontracted function `_`"
+   ]
+  },
+  {
+   "function": [
+    "monkey-libevent",
+    "mk_server/mk_http_parser.c",
+    "mk_http_parser_is_content_chunked"
+   ],
+   "after": "Safe",
+   "reasons": []
+  },
+  {
+   "function": [
+    "monkey-libevent",
+    "mk_server/mk_plugin.c",
+    "mk_plugin_time_now_human"
+   ],
+   "after": "Unknown",
+   "reasons": [
+    "unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "function": [
+    "monkey-libevent",
+    "mk_server/mk_stream.c",
+    "mk_stream_size"
+   ],
+   "after": "Safe",
+   "reasons": []
+  }
+ ],
+ "newly_sole": [
+  [
+   "librdkafka",
+   "cJSON.c",
+   "cJSON_GetStringValue"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_admin.c",
+   "rd_kafka_ConfigResource_configs"
+  ]
+ ]
+}

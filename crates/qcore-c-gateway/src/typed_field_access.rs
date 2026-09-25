@@ -2872,6 +2872,54 @@ impl TypedAccessModel {
     }
 }
 
+/// Card **W45-RETURN-EXPRESSION-FAMILIES**: whether `specifiers` name a
+/// **scalar value type** — an arithmetic or enumeration type, or a typedef
+/// this reader resolves to one — with no pointer level. It is
+/// [`TypedAccessModel::classify_specifiers`]' `Scalar` class plus one reading
+/// that class deliberately leaves `Opaque`: an enumeration a typedef itself
+/// defines (`typedef enum { … } rd_kafka_resp_err_t;`), whose head is read
+/// rather than assumed. A `struct`/`union` a typedef defines, a pointer
+/// typedef, an unresolved or disagreeing name, `void`, `volatile` and
+/// `_Atomic` all answer `false`. Consulted only by
+/// [`crate::legacy_c::return_family`], for the declared result of the
+/// function whose `return` it decides.
+impl TypedAccessModel {
+    pub(crate) fn is_scalar_value_type(&self, specifiers: &[&str]) -> bool {
+        self.scalar_value_type_at(specifiers, 0)
+    }
+
+    fn scalar_value_type_at(&self, specifiers: &[&str], depth: usize) -> bool {
+        if self.classify_specifiers(specifiers, depth) == DeclaredType::Scalar {
+            return true;
+        }
+        if specifiers
+            .iter()
+            .any(|text| REJECTING_QUALIFIERS.contains(text) || *text == "typedef")
+        {
+            return false;
+        }
+        let core = specifiers
+            .iter()
+            .copied()
+            .filter(|text| !IGNORED_SPECIFIERS.contains(text))
+            .collect::<Vec<_>>();
+        let [name] = core.as_slice() else {
+            return false;
+        };
+        if !is_name(name) || depth >= TYPEDEF_DEPTH_LIMIT {
+            return false;
+        }
+        match self.typedefs.get(*name) {
+            Some(Some(TypedefTarget::Aggregate(head))) => head.split(' ').next() == Some("enum"),
+            Some(Some(TypedefTarget::Specifiers(target))) => {
+                let target = target.iter().map(String::as_str).collect::<Vec<_>>();
+                self.scalar_value_type_at(&target, depth + 1)
+            }
+            _ => false,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

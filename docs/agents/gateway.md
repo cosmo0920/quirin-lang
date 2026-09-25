@@ -330,6 +330,22 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     through a misnamed store is withdrawn with it (`mk_iov_init`).
     [Report](../reports/w44-assignment-destination-suffix-place/README.md).
 
+<a id="constraint-5j"></a>
+
+5j. **A scalar-result return decides a read; a cast of a whole call is the
+    call.** In a function whose definition declares a scalar result, a
+    `return` expression that only reads (no call, write, comma, brace, `?:`
+    or unary `&`; no tracked descriptor; a name the body may bind only as the
+    root of one always-evaluated dereference) lowers to a typed read over its
+    dereferenced bases and an exit that hands nothing back. `return (T) CALL(…);`
+    is classified as W4 classifies the call: a refusal stays itself, a `None`
+    result is admitted, an `Owned` result only under a pointer cast of a
+    declared object pointer (escaping its fresh site); everything else keeps
+    the return refusal. A pointer-valued read is never this rule's: an
+    interior address is a derived result (`legacy_return_family.rs`;
+    `QCore.ReturnExpressionFamilies`).
+    [Report](../reports/w45-return-expression-families/README.md).
+
 <a id="constraint-6"></a>
 
 <!-- preserved:constraint-6:start -->

@@ -1,0 +1,29 @@
+{
+  "note": "W44-COLLECTION-ALLOCATION integration, 2026-09-25. The card (measured against docs/reports/w44-libc-residuals/integration/artifacts) composed onto the combined tree docs/reports/w44-indirect-call-argument-access/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 230 added 249 functions 6 units 1); functions moved (combined): [('XXH32_copyState', ('Unknown', 'Safe')), ('XXH64_copyState', ('Unknown', 'Safe')), ('clear_env', ('Unknown', 'Safe')), ('rd_kafka_anyconf_clear_all_is_modified', ('Unknown', 'Safe')), ('unittest_http_get_params_append', ('Unknown', 'Unsafe')), ('ut_sasl_oauthbearer_oidc_assertion_process_template_file', ('Unknown', 'Unsafe'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] Four functions move Unknown -> Safe (XXH32_copyState, XXH64_copyState, clear_env, rd_kafka_anyconf_clear_all_is_modified), none through a collection element node; two unit-test functions (unittest_http_get_params_append, ut_sasl_oauthbearer_oidc_assertion_process_template_file) and the unit rdhttp.c move Unknown -> provisional Unsafe, from real unit-test leaks, not an upstream defect claim; the composition carries 14 combined-only unknown_alias leaves and one _Generic -> bsearch exchange, explained in explained-leaves.json; the integrator fix 7edfd6b9 folds a sizeof operand name as a type only when it is a typedef or a tag. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-collection-allocation/integration/previous-corpus-row.json.",
+  "units": 185,
+  "safe": 3,
+  "provisional_unsafe": 10,
+  "unknown": 168,
+  "data_only": 4,
+  "projected_functions": 4834,
+  "leak_diagnostics": 37,
+  "process_sidecar": "3 checked function contracts / 93 Unknown",
+  "baseline": "docs/reports/w44-collection-allocation/integration/artifacts/",
+  "source": "docs/reports/w44-collection-allocation/integration/integration-confirmation.md; preceding baseline docs/reports/w44-indirect-call-argument-access/integration/artifacts",
+  "unknown_alias_diagnostics": 3507,
+  "unsupported_diagnostics": 43590,
+  "double_release_diagnostics": 0,
+  "function_statuses": {
+    "safe": 306,
+    "provisional_unsafe": 12,
+    "unknown": 4516
+  },
+  "source_definitions": 4921,
+  "unprojected_definitions": 87,
+  "unit_reason_codes": {
+    "unsupported-syntax": 167,
+    "none": 17,
+    "incomplete-obligation-coverage": 1
+  },
+  "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

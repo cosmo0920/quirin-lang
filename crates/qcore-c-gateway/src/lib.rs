@@ -97,6 +97,11 @@ pub fn census_sink_variables() -> Vec<&'static str> {
         // either forces one job like the others.
         legacy_c::leak_witness::LEAK_WITNESS_PATH_VARIABLE,
         destination_suffix_census::DESTINATION_SUFFIX_CENSUS_PATH,
+        // Card W45-RETURN-EXPRESSION-FAMILIES: the return-family decisions,
+        // and W44-INDIRECT-CALL-ARGUMENT-ACCESS's stream, which the guard
+        // below found unlisted on the card's base.
+        legacy_c::return_family::census::RETURN_FAMILY_CENSUS_PATH,
+        legacy_c::call_argument_access::census::CALL_ARGUMENT_CENSUS_PATH,
     ]);
     #[cfg(feature = "provenance-rounds-census")]
     variables.push(legacy_c::joined_provenance::provenance_rounds::CENSUS_PATH_VARIABLE);

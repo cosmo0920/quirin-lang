@@ -249,11 +249,15 @@ fn a_contracted_call_refused_for_its_argument_reports_the_argument() {
 // Fail-closed: nothing escapes, nothing is discharged, nothing is hidden
 // ------------------------------------------------------------------------
 
-/// The return-position refusal this card leaves in place for a cast, measured
-/// on the same body: what it reports is the old answer the lowering must match
-/// on everything except the refusal's wording.
-fn old_answer_leaks(body_with_cast: &str) -> usize {
-    let old = run(body_with_cast);
+/// The return-position refusal this card leaves in place for a call inside
+/// arithmetic, measured on the same body: what it reports is the old answer
+/// the lowering must match on everything except the refusal's wording.
+///
+/// Deliberately re-pinned by card W45-RETURN-EXPRESSION-FAMILIES: the
+/// reference spelling was a cast of the call, which that card now lowers as
+/// this card lowers the uncast call; `CALL + 0` keeps the refusal.
+fn old_answer_leaks(body_with_arithmetic: &str) -> usize {
+    let old = run(body_with_arithmetic);
     assert!(old.refuses_return(), "{old:?}");
     old.leaks()
 }
@@ -266,7 +270,7 @@ fn an_owned_resource_handed_to_an_uncontracted_call_is_not_escaped() {
     // The discharging direction invariant 1 forbids: were the lowering to
     // escape `p` through the call's result, the live obligation would vanish
     // and the body could certify. It is decided exactly as the return
-    // refusal decides it (the cast spelling keeps that refusal), and the
+    // refusal decides it (the `+ 0` spelling keeps that refusal), and the
     // function stays non-`Safe` with the call's refusal.
     let lowered = lowering_agrees(
         "int subject(void) { void *p = q_alloc(); return z_take(p); }",
@@ -275,7 +279,7 @@ fn an_owned_resource_handed_to_an_uncontracted_call_is_not_escaped() {
     );
     assert_eq!(
         lowered.leaks(),
-        old_answer_leaks("int subject(void) { void *p = q_alloc(); return (int) z_take(p); }")
+        old_answer_leaks("int subject(void) { void *p = q_alloc(); return z_take(p) + 0; }")
     );
     // It was accused (1 leak) until card W44-LEAK-PIN-AUDIT: the refused call
     // hands `p` to `z_take`, so the refused hand-on rule withdraws the
@@ -301,7 +305,7 @@ fn a_live_obligation_is_accused_exactly_as_the_return_refusal_accused_it() {
     );
     assert_eq!(
         lowered.leaks(),
-        old_answer_leaks("int subject(int n) { void *p = q_alloc(); return (int) z_unknown(n); }")
+        old_answer_leaks("int subject(int n) { void *p = q_alloc(); return z_unknown(n) + 0; }")
     );
 }
 
@@ -340,11 +344,20 @@ fn stays_refused(returned: &str) -> Run {
 }
 
 #[test]
-fn a_cast_of_an_uncontracted_call_keeps_the_return_refusal() {
+fn a_cast_of_an_uncontracted_call_is_lowered_by_w45() {
     if !clang_available() {
         return;
     }
-    stays_refused("long subject(int n) { return (long) z_unknown(n); }");
+    // Deliberately re-pinned by card W45-RETURN-EXPRESSION-FAMILIES: a cast of
+    // a whole call whose classification is a refusal is lowered to that
+    // refusal exactly as the uncast call is here — re-attribution, nothing
+    // admitted, never `Safe`.
+    let cast = run("long subject(int n) { return (long) z_unknown(n); }");
+    let uncast = run("long subject(int n) { return z_unknown(n); }");
+    assert!(!cast.refuses_return(), "{cast:?}");
+    assert_eq!(cast.shape(), uncast.shape());
+    assert_ne!(cast.status, AnalysisStatus::Safe);
+    assert!(!cast.certified);
 }
 
 #[test]
@@ -379,14 +392,22 @@ fn a_type_operator_is_not_a_callee() {
     // `sizeof ( struct w_pair )` is call-shaped and refused by the fixed
     // scalar type-query rule (the operand is a record). It is not a call, and
     // "call to uncontracted function `sizeof`" would misattribute it.
-    let refused = stays_refused("unsigned long subject(void) { return sizeof (struct w_pair); }");
+    //
+    // Deliberately re-pinned by card W45-RETURN-EXPRESSION-FAMILIES: in a
+    // function returning a scalar, a type operator over a resolved, never
+    // variably modified type name is a translation-time constant that carries
+    // nothing, so the return is decided. It is still never read as a call.
+    let decided = run("unsigned long subject(void) { return sizeof (struct w_pair); }");
+    assert!(!decided.refuses_return(), "{decided:?}");
     assert!(
-        !refused
+        !decided
             .unsupported()
             .iter()
             .any(|text| text.contains("`sizeof`")),
-        "{refused:?}"
+        "{decided:?}"
     );
+    assert_eq!(decided.status, AnalysisStatus::Safe);
+    assert!(decided.certified);
 }
 
 #[test]

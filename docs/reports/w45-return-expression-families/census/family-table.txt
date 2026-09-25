@@ -1,0 +1,10 @@
+family                                            BEFORE leaves/fns/sole (scalar|pointer)    AFTER leaves/fns/sole
+whole call under a cast or in parentheses            26/  21/  11 ( 13| 13)             0/   0/   0
+call inside a larger expression                      52/  48/  18 ( 47|  5)            52/  48/  18
+member, subscript or dereference read               289/ 262/  79 (170|119)           144/ 130/  27
+conditional or short-circuit over a call             27/  25/  17 ( 18|  9)            27/  25/  17
+conditional or short-circuit, no call                26/  26/  17 ( 20|  6)            13/  13/   6
+type operator                                         6/   6/   4 (  6|  0)             0/   0/   0
+comma operator                                       67/  32/   1 ( 67|  0)            67/  32/   1
+statement expression or compound literal              2/   2/   0 (  1|  1)             2/   2/   0
+total                                                       495/417/147                    305/249/69

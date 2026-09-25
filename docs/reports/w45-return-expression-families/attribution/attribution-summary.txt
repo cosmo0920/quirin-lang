@@ -1,0 +1,92 @@
+{
+ "family_records": 867,
+ "family_records_joined": 344,
+ "family_decisions_by_family": {
+  "scalar-read": 318,
+  "cast-call-lowered": 22,
+  "cast-call-admitted": 4
+ },
+ "removed_leaves": 405,
+ "added_leaves": 40,
+ "removed_by_reason": {
+  "direct:scalar-read": 163,
+  "direct:cast-call-lowered": 22,
+  "direct:cast-call-admitted": 4,
+  "cascade:*": 209,
+  "cascade-flow:*": 7
+ },
+ "added_by_reason": {
+  "exchange": 22,
+  "base-obligation": 4,
+  "cascade": 14
+ },
+ "removed_by_category": {
+  "unsupported: indirect memory access is outside the resource projection": 18,
+  "unsupported: unmodeled call, aggregate or indirect access in return expression": 191,
+  "unknown_alias: unresolved resource identity `_`": 4,
+  "unsupported: call to uncontracted function `_`": 53,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": 110,
+  "unsupported: unmodeled call, aggregate or indirect access in do-while condition": 1,
+  "unsupported: nested call `_` inside a modeled call is outside the resource projection": 5,
+  "unsupported: unmodeled call, aggregate or indirect access in loop condition": 7,
+  "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 16
+ },
+ "added_by_category": {
+  "unsupported: indirect memory access is outside the resource projection": 14,
+  "unsupported: call to uncontracted function `_`": 8,
+  "unsupported: nested call `_` inside a modeled call is outside the resource projection": 3,
+  "unsupported: resource call with a formal embedded in an unmodeled expression": 1,
+  "unknown_alias: unresolved resource identity `_`": 14
+ },
+ "function_moves": {
+  "Unknown -> Safe": 76
+ },
+ "moves_direct_only": 72,
+ "moves_with_cascade": 4,
+ "call_graph_closure": 25986,
+ "cascade_by_distance": {
+  "cascade-flow@0": 6,
+  "cascade-flow@1": 1,
+  "cascade@0": 206,
+  "cascade@1": 17
+ },
+ "cascade_callees": {
+  "cio_file_st_get_content": 5,
+  "cio_file_st_get_meta_len": 6,
+  "get_available_size": 2,
+  "cJSON_IsNumber": 1,
+  "cJSON_IsString": 1,
+  "crc32c_shift": 4,
+  "LZ4_read32": 11,
+  "LZ4_read_ARCH": 6,
+  "LZ4_read16": 3,
+  "rd_buf_len": 5,
+  "rd_buf_write_remains": 1,
+  "rd_hdr_getSubBucketIdx": 3,
+  "rd_hdr_valueFromIndex": 1,
+  "rd_list_cnt": 116,
+  "rd_kafka_admin_describe_consumer_group_do_fallback_to_classic": 1,
+  "rd_kafka_broker_addresses_exhausted": 1,
+  "rd_list_empty": 8,
+  "rd_kafka_msgq_len": 23,
+  "rd_kafka_cgrp_awaiting_response": 1,
+  "rd_kafka_prop2idx": 2,
+  "rd_kafka_op_matches_toppar": 1,
+  "rd_tmpabuf_failed": 2,
+  "rd_kafka_msgq_size": 4,
+  "rd_kafka_share_ack_batch_leader_stale": 1,
+  "RD_MAP_FOREACH_ELEM": 4,
+  "rd_kafka_timer_scheduled": 6,
+  "rd_kafka_timer_started": 1,
+  "rd_kafka_metadata_refresh_topics": 1,
+  "mykey_hash": 1,
+  "rd_map_cnt": 1,
+  "available": 1,
+  "mk_http_parser_content_length": 2,
+  "mk_http_parser_is_content_chunked": 4
+ },
+ "unattributed_removed": 0,
+ "unattributed_added": 0,
+ "unattributed_moves": 0,
+ "attribution_complete": true
+}
