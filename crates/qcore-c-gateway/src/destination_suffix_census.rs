@@ -127,9 +127,7 @@ pub(crate) fn strict_suffix(texts: &[&str]) -> Option<(usize, usize, String)> {
 /// The root identifier of a canonical place (`name`, `name.f`, `name->f`,
 /// `name[0]`).
 pub(crate) fn place_root(place: &str) -> &str {
-    let end = place
-        .find(|character: char| matches!(character, '.' | '-' | '['))
-        .unwrap_or(place.len());
+    let end = place.find(['.', '-', '[']).unwrap_or(place.len());
     &place[..end]
 }
 
