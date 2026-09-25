@@ -1,0 +1,15 @@
+build: 	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.04
+run:   	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:00.02
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 119.97s
+build exit 0
+run exit 0
+ 15:10:19 up 2 days,  3:59,  1 user,  load average: 6.37, 9.16, 11.87
+ 15:12:19 up 2 days,  4:01,  1 user,  load average: 4.40, 7.55, 10.96
+--- opt-level=1
+build: 	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:05.67
+run:   	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:56.52
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 116.46s
+build exit 0
+run exit 0
+ 15:07:11 up 2 days,  3:56,  1 user,  load average: 5.01, 8.74, 12.21
+ 15:10:13 up 2 days,  3:59,  1 user,  load average: 6.99, 9.37, 11.97

@@ -1,0 +1,320 @@
+[
+ {
+  "binary": "filesystem_chunk_close_route_parity-90ddba2f66788eee",
+  "test": "both_routes_refuse_the_same_body_mutations",
+  "seconds": 197.55,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_route_parity-a0f6cf25a45a642b",
+  "test": "both_routes_refuse_the_same_body_mutations",
+  "seconds": 190.89,
+  "exit": 0
+ },
+ {
+  "binary": "file_close_composition_mutations-38cc6ea325c113eb",
+  "test": "nested_prerequisite_forgeries_at_both_levels_refuse",
+  "seconds": 162.21,
+  "exit": 0
+ },
+ {
+  "binary": "filesystem_chunk_close_composition_mutations-b04825b668174bba",
+  "test": "every_prerequisite_forgery_is_refused",
+  "seconds": 160.42,
+  "exit": 0
+ },
+ {
+  "binary": "file_close_route_parity-3cf9a68b0f754f2d",
+  "test": "refusal_agreement_on_mutated_bodies",
+  "seconds": 148.93,
+  "exit": 0
+ },
+ {
+  "binary": "memory_close_composition_mutations-2c9db5abd9688f0a",
+  "test": "every_clause_of_the_composition_contract_is_load_bearing",
+  "seconds": 144.68,
+  "exit": 0
+ },
+ {
+  "binary": "cleanup_replay_route_parity-e7c74ee5499d8b08",
+  "test": "the_moved_route_refuses_every_body_the_in_process_route_refuses",
+  "seconds": 142.49,
+  "exit": 0
+ },
+ {
+  "binary": "file_close_composition_mutations-38cc6ea325c113eb",
+  "test": "a_transported_profile_that_is_not_the_declaration_refuses",
+  "seconds": 120.99,
+  "exit": 0
+ },
+ {
+  "binary": "composition_mutations-c107df3da922bd0a",
+  "test": "a_false_composition_contract_cannot_be_discharged_by_agreement",
+  "seconds": 98.53,
+  "exit": 0
+ },
+ {
+  "binary": "filesystem_chunk_close_composition_mutations-b04825b668174bba",
+  "test": "every_derived_text_substitution_is_refused",
+  "seconds": 82.45,
+  "exit": 0
+ },
+ {
+  "binary": "memory_close_composition_mutations-2c9db5abd9688f0a",
+  "test": "prerequisite_forgeries_are_refused",
+  "seconds": 82.31,
+  "exit": 0
+ },
+ {
+  "binary": "filesystem_chunk_close_composition_mutations-b04825b668174bba",
+  "test": "every_nested_question_substitution_is_refused",
+  "seconds": 81.17,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_composition_mutations-1da0562c6057b532",
+  "test": "every_nested_question_substitution_is_refused",
+  "seconds": 78.71,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_composition_mutations-1da0562c6057b532",
+  "test": "the_symbolic_class_refuses_every_split_of_its_domain",
+  "seconds": 76.72,
+  "exit": 0
+ },
+ {
+  "binary": "memory_close_composition_mutations-2c9db5abd9688f0a",
+  "test": "substituted_callee_identities_are_refused",
+  "seconds": 62.66,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_composition_mutations-1da0562c6057b532",
+  "test": "every_prerequisite_forgery_is_refused",
+  "seconds": 56.06,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_composition_mutations-1da0562c6057b532",
+  "test": "a_foreign_family_or_task_binding_is_refused",
+  "seconds": 45.64,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_composition_mutations-1da0562c6057b532",
+  "test": "an_unread_build_option_retires_the_task",
+  "seconds": 44.87,
+  "exit": 0
+ },
+ {
+  "binary": "memory_close_composition_mutations-2c9db5abd9688f0a",
+  "test": "derived_text_substitution_is_refused_in_both_directions",
+  "seconds": 44.52,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_composition_mutations-1da0562c6057b532",
+  "test": "the_probe_selection_is_bound_and_load_bearing",
+  "seconds": 32.38,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_route_parity-a0f6cf25a45a642b",
+  "test": "both_routes_agree_on_every_excluded_constant_pair",
+  "seconds": 32.17,
+  "exit": 0
+ },
+ {
+  "binary": "filesystem_chunk_close_composition_mutations-b04825b668174bba",
+  "test": "an_unread_build_option_retires_the_task",
+  "seconds": 25.76,
+  "exit": 0
+ },
+ {
+  "binary": "filesystem_chunk_close_composition_mutations-b04825b668174bba",
+  "test": "every_figure_of_a_proposed_reading_is_refused",
+  "seconds": 24.85,
+  "exit": 0
+ },
+ {
+  "binary": "filesystem_chunk_close_route_parity-90ddba2f66788eee",
+  "test": "the_two_routes_publish_byte_identical_certificates",
+  "seconds": 22.02,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_composition_mutations-1da0562c6057b532",
+  "test": "a_falsified_prerequisite_contract_refuses_at_evaluation",
+  "seconds": 20.62,
+  "exit": 0
+ },
+ {
+  "binary": "composition_mutations-c107df3da922bd0a",
+  "test": "every_prerequisite_is_re_established_rather_than_read",
+  "seconds": 19.34,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_composition_mutations-1da0562c6057b532",
+  "test": "every_clause_of_the_composition_contract_is_load_bearing",
+  "seconds": 17.33,
+  "exit": 0
+ },
+ {
+  "binary": "memory_close_composition_mutations-2c9db5abd9688f0a",
+  "test": "an_honest_identity_over_a_falsified_prerequisite_contract_discharges_nothing",
+  "seconds": 16.87,
+  "exit": 0
+ },
+ {
+  "binary": "composition_mutations-c107df3da922bd0a",
+  "test": "a_transported_prerequisite_profile_that_is_not_the_declaration_is_refused",
+  "seconds": 16.82,
+  "exit": 0
+ },
+ {
+  "binary": "filesystem_chunk_close_composition_mutations-b04825b668174bba",
+  "test": "a_proposal_from_another_family_or_another_task_is_refused",
+  "seconds": 16.21,
+  "exit": 0
+ },
+ {
+  "binary": "filesystem_chunk_close_composition_mutations-b04825b668174bba",
+  "test": "a_falsified_prerequisite_contract_refuses_at_evaluation",
+  "seconds": 15.96,
+  "exit": 0
+ },
+ {
+  "binary": "file_close_route_parity-3cf9a68b0f754f2d",
+  "test": "both_routes_publish_byte_identical_certificates",
+  "seconds": 13.96,
+  "exit": 0
+ },
+ {
+  "binary": "file_close_composition_mutations-38cc6ea325c113eb",
+  "test": "every_figure_of_a_proposed_reading_is_bound",
+  "seconds": 11.91,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_composition_mutations-1da0562c6057b532",
+  "test": "every_figure_of_a_proposed_reading_is_refused",
+  "seconds": 11.64,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_route_parity-a0f6cf25a45a642b",
+  "test": "the_two_routes_publish_byte_identical_certificates",
+  "seconds": 10.6,
+  "exit": 0
+ },
+ {
+  "binary": "file_close_composition_mutations-38cc6ea325c113eb",
+  "test": "task_and_witness_binding_is_exact",
+  "seconds": 10.42,
+  "exit": 0
+ },
+ {
+  "binary": "filesystem_chunk_close_composition_mutations-b04825b668174bba",
+  "test": "every_clause_of_the_composition_contract_is_load_bearing",
+  "seconds": 10.02,
+  "exit": 0
+ },
+ {
+  "binary": "unsupported_close_composition_mutations-1da0562c6057b532",
+  "test": "the_importer_refuses_a_malformed_question_before_importing",
+  "seconds": 9.15,
+  "exit": 0
+ },
+ {
+  "binary": "memory_close_composition_mutations-2c9db5abd9688f0a",
+  "test": "every_figure_of_a_proposed_reading_is_refused",
+  "seconds": 8.66,
+  "exit": 0
+ },
+ {
+  "binary": "file_close_composition_mutations-38cc6ea325c113eb",
+  "test": "moved_source_bytes_retire_the_task",
+  "seconds": 8.27,
+  "exit": 0
+ },
+ {
+  "binary": "file_close_composition_mutations-38cc6ea325c113eb",
+  "test": "import_and_body_binding_is_exact",
+  "seconds": 8.1,
+  "exit": 0
+ },
+ {
+  "binary": "file_close_composition_mutations-38cc6ea325c113eb",
+  "test": "every_clause_of_both_composition_contracts_is_evaluated",
+  "seconds": 8.06,
+  "exit": 0
+ },
+ {
+  "binary": "memory_close_composition_mutations-2c9db5abd9688f0a",
+  "test": "a_build_change_invisible_to_the_projection_still_retires_the_task",
+  "seconds": 6.57,
+  "exit": 0
+ },
+ {
+  "binary": "cleanup_replay_route_parity-e7c74ee5499d8b08",
+  "test": "both_routes_issue_the_same_certificate_for_all_three_selected_bodies",
+  "seconds": 5.05,
+  "exit": 0
+ },
+ {
+  "binary": "composition_mutations-c107df3da922bd0a",
+  "test": "import_and_body_binding_refusals",
+  "seconds": 4.86,
+  "exit": 0
+ },
+ {
+  "binary": "composition_mutations-c107df3da922bd0a",
+  "test": "moved_source_bytes_retire_the_task",
+  "seconds": 4.48,
+  "exit": 0
+ },
+ {
+  "binary": "composition_mutations-c107df3da922bd0a",
+  "test": "task_and_witness_binding_is_refused_in_both_directions",
+  "seconds": 4.46,
+  "exit": 0
+ },
+ {
+  "binary": "memory_close_composition_mutations-2c9db5abd9688f0a",
+  "test": "another_familys_proposal_and_another_witness_kind_are_refused",
+  "seconds": 3.68,
+  "exit": 0
+ },
+ {
+  "binary": "composition_mutations-c107df3da922bd0a",
+  "test": "every_figure_of_a_proposed_composition_is_bound",
+  "seconds": 2.45,
+  "exit": 0
+ },
+ {
+  "binary": "cleanup_replay_route_parity-e7c74ee5499d8b08",
+  "test": "the_retained_adapters_serde_shape_is_unchanged",
+  "seconds": 0.8,
+  "exit": 0
+ },
+ {
+  "binary": "cleanup_replay_route_parity-e7c74ee5499d8b08",
+  "test": "the_contract_declared_profile_is_the_adapters_hardcoded_profile",
+  "seconds": 0.02,
+  "exit": 0
+ },
+ {
+  "binary": "filesystem_chunk_close_route_parity-90ddba2f66788eee",
+  "test": "the_committed_fixtures_carry_the_shapes_every_route_depends_on",
+  "seconds": 0.01,
+  "exit": 0
+ },
+ {
+  "binary": "file_close_route_parity-3cf9a68b0f754f2d",
+  "test": "the_adapters_profiles_are_the_contracts_own_declarations",
+  "seconds": 0.0,
+  "exit": 0
+ }
+]

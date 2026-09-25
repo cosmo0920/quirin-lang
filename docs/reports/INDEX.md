@@ -856,6 +856,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w44-libc-residuals](w44-libc-residuals/README.md) | W44-LIBC-RESIDUALS: header-inline helpers, `va_list`, literal tails and nested tail callees |
 
+| [w44-test-suite-wall-time](w44-test-suite-wall-time/README.md) | W44-TEST-SUITE-WALL-TIME: the standing gate's Rust suite, from 22 minutes to about 4½ |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |

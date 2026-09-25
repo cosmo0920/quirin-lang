@@ -1,0 +1,848 @@
+[
+ {
+  "run": "base-1",
+  "kind": "base",
+  "configuration": "plain cargo test, base profile (opt 0, full debuginfo)",
+  "exit": 0,
+  "wall_seconds": 1332.87,
+  "peak_rss_kib": 2269100,
+  "target_bytes": 62378811903,
+  "load_before": "8.04, 10.89, 11.32",
+  "load_after": "12.65, 13.97, 14.62",
+  "free_disk_before": "156G",
+  "start": "2026-09-25T14:40:14+09:00",
+  "phases_seconds": {
+   "build": 124.6,
+   "run": 1208.2
+  },
+  "totals": {
+   "passed": 5503,
+   "failed": 0,
+   "ignored": 11,
+   "measured": 0,
+   "filtered": 0,
+   "summaries": 292
+  }
+ },
+ {
+  "run": "profile-plain-1",
+  "kind": "option",
+  "configuration": "plain cargo test, debug = line-tables-only",
+  "exit": 0,
+  "wall_seconds": 1401.38,
+  "peak_rss_kib": 1511508,
+  "target_bytes": 20978712847,
+  "load_before": "23.54, 32.87, 36.40",
+  "load_after": "16.95, 18.97, 25.06",
+  "free_disk_before": "149G",
+  "start": "2026-09-25T16:05:45+09:00",
+  "phases_seconds": {
+   "build": 55.9,
+   "run": 1345.4
+  },
+  "totals": {
+   "passed": 5503,
+   "failed": 0,
+   "ignored": 11,
+   "measured": 0,
+   "filtered": 0,
+   "summaries": 292
+  }
+ },
+ {
+  "run": "runner-j8-a",
+  "kind": "option",
+  "configuration": "runner --jobs 8, base profile, no weights",
+  "exit": 0,
+  "wall_seconds": 748.89,
+  "peak_rss_kib": 2215324,
+  "target_bytes": 62378811903,
+  "load_before": "13.83, 40.01, 37.41",
+  "load_after": "30.82, 44.53, 43.97",
+  "free_disk_before": "144G",
+  "start": "2026-09-25T15:35:41+09:00",
+  "phases_seconds": {
+   "build": 193.389,
+   "capture": 22.449,
+   "run": 532.769
+  },
+  "totals": {
+   "passed": 5503,
+   "failed": 0,
+   "ignored": 11,
+   "measured": 0,
+   "filtered": 0,
+   "summaries": 292
+  },
+  "runner_ok": true,
+  "jobs": 8,
+  "problems": [],
+  "units": 282,
+  "exclusive_units": {
+   "qcore-compiler::test::cycle20_verifier_plugins": {
+    "ok": true,
+    "seconds": 1.503
+   },
+   "qcore-verifier-host::test::confined_process_execution": {
+    "ok": true,
+    "seconds": 0.474
+   },
+   "qcore-verifier-host::test::enforced_process_limits": {
+    "ok": true,
+    "seconds": 1.807
+   },
+   "qcore-verifier-host::test::execution_quota": {
+    "ok": true,
+    "seconds": 6.066
+   },
+   "qcore-verifier-host::test::standalone_host": {
+    "ok": true,
+    "seconds": 2.919
+   }
+  },
+  "parallel_phase_end": 520.0,
+  "exclusive_overlaps": []
+ },
+ {
+  "run": "final-1",
+  "kind": "option",
+  "configuration": "runner --jobs 8 + line-tables-only (before the Clang cache)",
+  "exit": 0,
+  "wall_seconds": 502.19,
+  "peak_rss_kib": 1575648,
+  "target_bytes": 20978712847,
+  "load_before": "16.95, 18.97, 25.06",
+  "load_after": "36.47, 39.55, 33.73",
+  "free_disk_before": "140G",
+  "start": "2026-09-25T16:29:07+09:00",
+  "phases_seconds": {
+   "build": 69.348,
+   "capture": 7.222,
+   "run": 425.358
+  },
+  "totals": {
+   "passed": 5503,
+   "failed": 0,
+   "ignored": 11,
+   "measured": 0,
+   "filtered": 0,
+   "summaries": 292
+  },
+  "runner_ok": true,
+  "jobs": 8,
+  "problems": [],
+  "units": 282,
+  "exclusive_units": {
+   "qcore-compiler::test::cycle20_verifier_plugins": {
+    "ok": true,
+    "seconds": 1.427
+   },
+   "qcore-compiler::test::w3_evidence_v2": {
+    "ok": true,
+    "seconds": 13.033
+   },
+   "qcore-verifier-host::test::confined_process_execution": {
+    "ok": true,
+    "seconds": 0.42
+   },
+   "qcore-verifier-host::test::enforced_process_limits": {
+    "ok": true,
+    "seconds": 1.824
+   },
+   "qcore-verifier-host::test::execution_quota": {
+    "ok": true,
+    "seconds": 6.105
+   },
+   "qcore-verifier-host::test::package_identity": {
+    "ok": true,
+    "seconds": 0.046
+   },
+   "qcore-verifier-host::test::standalone_host": {
+    "ok": true,
+    "seconds": 2.829
+   },
+   "qcorec::test::plugin_packages": {
+    "ok": true,
+    "seconds": 0.08
+   }
+  },
+  "parallel_phase_end": 399.6,
+  "exclusive_overlaps": []
+ },
+ {
+  "run": "profile-cache-plain-1",
+  "kind": "option",
+  "configuration": "plain cargo test, line-tables-only + Clang resolution cache",
+  "exit": 0,
+  "wall_seconds": 552.94,
+  "peak_rss_kib": 1548100,
+  "target_bytes": 20981656088,
+  "load_before": "26.18, 38.94, 35.68",
+  "load_after": "8.83, 13.37, 23.69",
+  "free_disk_before": "136G",
+  "start": "2026-09-25T17:05:27+09:00",
+  "phases_seconds": {
+   "build": 46.8,
+   "run": 506.1
+  },
+  "totals": {
+   "passed": 5505,
+   "failed": 0,
+   "ignored": 11,
+   "measured": 0,
+   "filtered": 0,
+   "summaries": 292
+  }
+ },
+ {
+  "run": "final-cache-1",
+  "kind": "final",
+  "configuration": "runner (default --jobs 8) + line-tables-only + Clang cache",
+  "exit": 0,
+  "wall_seconds": 267.89,
+  "peak_rss_kib": 1409916,
+  "target_bytes": 20981656088,
+  "load_before": "8.26, 12.58, 21.04",
+  "load_after": "33.34, 25.90, 24.51",
+  "free_disk_before": "195G",
+  "start": "2026-09-25T16:51:19+09:00",
+  "phases_seconds": {
+   "build": 51.469,
+   "capture": 4.892,
+   "run": 211.308
+  },
+  "totals": {
+   "passed": 5505,
+   "failed": 0,
+   "ignored": 11,
+   "measured": 0,
+   "filtered": 0,
+   "summaries": 292
+  },
+  "runner_ok": true,
+  "jobs": 8,
+  "problems": [],
+  "units": 282,
+  "exclusive_units": {
+   "qcore-compiler::test::cycle20_verifier_plugins": {
+    "ok": true,
+    "seconds": 1.361
+   },
+   "qcore-compiler::test::w3_evidence_v2": {
+    "ok": true,
+    "seconds": 9.467
+   },
+   "qcore-verifier-host::test::confined_process_execution": {
+    "ok": true,
+    "seconds": 0.373
+   },
+   "qcore-verifier-host::test::enforced_process_limits": {
+    "ok": true,
+    "seconds": 1.802
+   },
+   "qcore-verifier-host::test::execution_quota": {
+    "ok": true,
+    "seconds": 6.046
+   },
+   "qcore-verifier-host::test::package_identity": {
+    "ok": true,
+    "seconds": 0.069
+   },
+   "qcore-verifier-host::test::standalone_host": {
+    "ok": true,
+    "seconds": 3.438
+   },
+   "qcorec::test::plugin_packages": {
+    "ok": true,
+    "seconds": 0.114
+   }
+  },
+  "parallel_phase_end": 188.6,
+  "exclusive_overlaps": []
+ },
+ {
+  "run": "final-cache-2",
+  "kind": "final",
+  "configuration": "runner (default --jobs 8) + line-tables-only + Clang cache",
+  "exit": 0,
+  "wall_seconds": 334.72,
+  "peak_rss_kib": 1576212,
+  "target_bytes": 20981656088,
+  "load_before": "32.84, 25.91, 24.52",
+  "load_after": "38.45, 49.30, 37.00",
+  "free_disk_before": "191G",
+  "start": "2026-09-25T16:55:51+09:00",
+  "phases_seconds": {
+   "build": 117.073,
+   "capture": 8.072,
+   "run": 209.285
+  },
+  "totals": {
+   "passed": 5505,
+   "failed": 0,
+   "ignored": 11,
+   "measured": 0,
+   "filtered": 0,
+   "summaries": 292
+  },
+  "runner_ok": true,
+  "jobs": 8,
+  "problems": [],
+  "units": 282,
+  "exclusive_units": {
+   "qcore-compiler::test::cycle20_verifier_plugins": {
+    "ok": true,
+    "seconds": 1.458
+   },
+   "qcore-compiler::test::w3_evidence_v2": {
+    "ok": true,
+    "seconds": 10.583
+   },
+   "qcore-verifier-host::test::confined_process_execution": {
+    "ok": true,
+    "seconds": 0.373
+   },
+   "qcore-verifier-host::test::enforced_process_limits": {
+    "ok": true,
+    "seconds": 1.809
+   },
+   "qcore-verifier-host::test::execution_quota": {
+    "ok": true,
+    "seconds": 6.082
+   },
+   "qcore-verifier-host::test::package_identity": {
+    "ok": true,
+    "seconds": 0.069
+   },
+   "qcore-verifier-host::test::standalone_host": {
+    "ok": true,
+    "seconds": 2.932
+   },
+   "qcorec::test::plugin_packages": {
+    "ok": true,
+    "seconds": 0.128
+   }
+  },
+  "parallel_phase_end": 185.8,
+  "exclusive_overlaps": []
+ },
+ {
+  "run": "final-cache-3",
+  "kind": "final",
+  "configuration": "runner (default --jobs 8) + line-tables-only + Clang cache",
+  "exit": 0,
+  "wall_seconds": 238.64,
+  "peak_rss_kib": 1558428,
+  "target_bytes": 20981656088,
+  "load_before": "38.45, 49.30, 37.00",
+  "load_after": "26.18, 38.94, 35.68",
+  "free_disk_before": "137G",
+  "start": "2026-09-25T17:01:27+09:00",
+  "phases_seconds": {
+   "build": 61.459,
+   "capture": 4.695,
+   "run": 172.251
+  },
+  "totals": {
+   "passed": 5505,
+   "failed": 0,
+   "ignored": 11,
+   "measured": 0,
+   "filtered": 0,
+   "summaries": 292
+  },
+  "runner_ok": true,
+  "jobs": 8,
+  "problems": [],
+  "units": 282,
+  "exclusive_units": {
+   "qcore-compiler::test::cycle20_verifier_plugins": {
+    "ok": true,
+    "seconds": 1.322
+   },
+   "qcore-compiler::test::w3_evidence_v2": {
+    "ok": true,
+    "seconds": 7.006
+   },
+   "qcore-verifier-host::test::confined_process_execution": {
+    "ok": true,
+    "seconds": 0.334
+   },
+   "qcore-verifier-host::test::enforced_process_limits": {
+    "ok": true,
+    "seconds": 1.803
+   },
+   "qcore-verifier-host::test::execution_quota": {
+    "ok": true,
+    "seconds": 6.037
+   },
+   "qcore-verifier-host::test::package_identity": {
+    "ok": true,
+    "seconds": 0.02
+   },
+   "qcore-verifier-host::test::standalone_host": {
+    "ok": true,
+    "seconds": 1.87
+   },
+   "qcorec::test::plugin_packages": {
+    "ok": true,
+    "seconds": 0.025
+   }
+  },
+  "parallel_phase_end": 153.8,
+  "exclusive_overlaps": []
+ },
+ {
+  "run": "jobs-4",
+  "kind": "jobs",
+  "configuration": "final configuration with --jobs 4",
+  "exit": 0,
+  "wall_seconds": 270.92,
+  "peak_rss_kib": 1450376,
+  "target_bytes": 20981656088,
+  "load_before": "6.79, 11.79, 22.38",
+  "load_after": "19.87, 17.59, 22.15",
+  "free_disk_before": "136G",
+  "start": "2026-09-25T17:15:49+09:00",
+  "phases_seconds": {
+   "build": 47.114,
+   "capture": 4.96,
+   "run": 218.648
+  },
+  "totals": {
+   "passed": 5505,
+   "failed": 0,
+   "ignored": 11,
+   "measured": 0,
+   "filtered": 0,
+   "summaries": 292
+  },
+  "runner_ok": true,
+  "jobs": 4,
+  "problems": [],
+  "units": 282,
+  "exclusive_units": {
+   "qcore-compiler::test::cycle20_verifier_plugins": {
+    "ok": true,
+    "seconds": 1.366
+   },
+   "qcore-compiler::test::w3_evidence_v2": {
+    "ok": true,
+    "seconds": 9.04
+   },
+   "qcore-verifier-host::test::confined_process_execution": {
+    "ok": true,
+    "seconds": 0.487
+   },
+   "qcore-verifier-host::test::enforced_process_limits": {
+    "ok": true,
+    "seconds": 1.813
+   },
+   "qcore-verifier-host::test::execution_quota": {
+    "ok": true,
+    "seconds": 6.052
+   },
+   "qcore-verifier-host::test::package_identity": {
+    "ok": true,
+    "seconds": 0.028
+   },
+   "qcore-verifier-host::test::standalone_host": {
+    "ok": true,
+    "seconds": 2.221
+   },
+   "qcorec::test::plugin_packages": {
+    "ok": true,
+    "seconds": 0.04
+   }
+  },
+  "parallel_phase_end": 197.6,
+  "exclusive_overlaps": []
+ },
+ {
+  "run": "jobs-16",
+  "kind": "jobs",
+  "configuration": "final configuration with --jobs 16",
+  "exit": 0,
+  "wall_seconds": 235.68,
+  "peak_rss_kib": 1475560,
+  "target_bytes": 20981656088,
+  "load_before": "19.24, 17.50, 22.10",
+  "load_after": "26.25, 33.22, 28.25",
+  "free_disk_before": "136G",
+  "start": "2026-09-25T17:20:22+09:00",
+  "phases_seconds": {
+   "build": 46.993,
+   "capture": 6.318,
+   "run": 182.241
+  },
+  "totals": {
+   "passed": 5505,
+   "failed": 0,
+   "ignored": 11,
+   "measured": 0,
+   "filtered": 0,
+   "summaries": 292
+  },
+  "runner_ok": true,
+  "jobs": 16,
+  "problems": [],
+  "units": 282,
+  "exclusive_units": {
+   "qcore-compiler::test::cycle20_verifier_plugins": {
+    "ok": true,
+    "seconds": 1.333
+   },
+   "qcore-compiler::test::w3_evidence_v2": {
+    "ok": true,
+    "seconds": 9.352
+   },
+   "qcore-verifier-host::test::confined_process_execution": {
+    "ok": true,
+    "seconds": 0.365
+   },
+   "qcore-verifier-host::test::enforced_process_limits": {
+    "ok": true,
+    "seconds": 1.803
+   },
+   "qcore-verifier-host::test::execution_quota": {
+    "ok": true,
+    "seconds": 6.041
+   },
+   "qcore-verifier-host::test::package_identity": {
+    "ok": true,
+    "seconds": 0.018
+   },
+   "qcore-verifier-host::test::standalone_host": {
+    "ok": true,
+    "seconds": 1.735
+   },
+   "qcorec::test::plugin_packages": {
+    "ok": true,
+    "seconds": 0.034
+   }
+  },
+  "parallel_phase_end": 161.6,
+  "exclusive_overlaps": []
+ },
+ {
+  "run": "attempt-1-relative-logdir",
+  "kind": "failed-attempt",
+  "configuration": "first runner attempt: relative --log-dir broke the capture runner; the run failed closed (exit 101)",
+  "exit": 101,
+  "wall_seconds": 253.47,
+  "peak_rss_kib": 2164468,
+  "target_bytes": 62378811903,
+  "load_before": "31.71, 26.04, 17.94",
+  "load_after": "47.25, 38.73, 25.10",
+  "free_disk_before": "203G",
+  "start": "2026-09-25T15:21:05+09:00",
+  "phases_seconds": {
+   "build": 143.752,
+   "capture": 98.844,
+   "run": 10.641
+  },
+  "totals": {
+   "passed": 32,
+   "failed": 0,
+   "ignored": 0,
+   "measured": 0,
+   "filtered": 0,
+   "summaries": 11
+  },
+  "runner_ok": false,
+  "jobs": 8,
+  "problems": [
+   "capture pass failed with exit 101",
+   "built test executable was never launched by cargo: qcore-audit::bin::quirin-audit",
+   "built test executable was never launched by cargo: qcore-audit::lib::qcore_audit",
+   "built test executable was never launched by cargo: qcore-audit::test::certificate_context",
+   "built test executable was never launched by cargo: qcore-audit::test::compile_options",
+   "built test executable was never launched by cargo: qcore-audit::test::compile_task_identity",
+   "built test executable was never launched by cargo: qcore-audit::test::configured_cli",
+   "built test executable was never launched by cargo: qcore-audit::test::contract_inherit_identity",
+   "built test executable was never launched by cargo: qcore-audit::test::observer_compile_flags",
+   "built test executable was never launched by cargo: qcore-audit::test::root_source_set",
+   "built test executable was never launched by cargo: qcore-audit::test::second_source_set",
+   "built test executable was never launched by cargo: qcore-audit::test::source_contract_config",
+   "built test executable was never launched by cargo: qcore-c-gateway::lib::qcore_c_gateway",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::address_of_member",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::alias_aggregate",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::assignment_destination_suffix",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::atomic_publication_source",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::boolean_frame_helpers",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::borrow_liveness_boundary",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::borrow_residuals_boundary",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::borrowed_field_actuals",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::branch_condition_calls",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::c03_neutral_frame_recursion_probe",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::certificate_scope",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::chained_tail",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::chunk_source_reason_codes",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::condition_call_desugar",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::constant_do_while",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::constructor_residuals",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::contextual_recursion",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::custody_summary_regression",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::derived_result",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::derived_result_returned",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::descriptor_custody",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::e01_denominator_coverage",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::e01_f1_raw_tokenizer",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::e01_raw_cond",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::e01_source_enumeration",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::e01_stdin_attribution",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::exposed_leak_mechanisms",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::fixture_text_support",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::gateway_c_location",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::hash_contracts",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::index_traversal",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::indexed_collection",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::indirect_chain_access",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::indirect_scalar_access",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::leak_pin_audit",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::loader_abi",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::loader_abi_modes",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::loop_switch_condition_calls",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::may_alias_boundary",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::neighbours",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::neutral_expression_positions",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::neutral_frame_recursion",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::neutral_reach_census",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::o04_arms",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::o04_b08",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::o04_b09b10",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::o04_constructor_caller",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::o04_read_bound",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::o04_trace",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::prepared_failure",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::prepared_translation_unit",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::prod_contracts",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::publication_custody",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::reach_gate_positions",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::return_position_modeled_call",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::return_position_pointer_leaf",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::return_refused_call_lowering",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::scalar_member_store",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::scalar_route_exit_edge",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::typed_body_comparison",
+   "built test executable was never launched by cargo: qcore-c-gateway::test::typed_field_access",
+   "built test executable was never launched by cargo: qcore-compiler::lib::qcore_compiler",
+   "built test executable was never launched by cargo: qcore-compiler::test::aggregate_owned_field",
+   "built test executable was never launched by cargo: qcore-compiler::test::bitfield_concurrency",
+   "built test executable was never launched by cargo: qcore-compiler::test::bitwise_conditions",
+   "built test executable was never launched by cargo: qcore-compiler::test::branch_arms",
+   "built test executable was never launched by cargo: qcore-compiler::test::branch_statement",
+   "built test executable was never launched by cargo: qcore-compiler::test::call_use_route_parity",
+   "built test executable was never launched by cargo: qcore-compiler::test::checked_mutex_guards",
+   "built test executable was never launched by cargo: qcore-compiler::test::chunk_lifecycle_coverage",
+   "built test executable was never launched by cargo: qcore-compiler::test::cleanup_replay_route_parity",
+   "built test executable was never launched by cargo: qcore-compiler::test::cleanup_task_composition",
+   "built test executable was never launched by cargo: qcore-compiler::test::compose_event_lines",
+   "built test executable was never launched by cargo: qcore-compiler::test::composed_five_providers",
+   "built test executable was never launched by cargo: qcore-compiler::test::composed_window_reach",
+   "built test executable was never launched by cargo: qcore-compiler::test::composition_route_parity",
+   "built test executable was never launched by cargo: qcore-compiler::test::contract_consumers",
+   "built test executable was never launched by cargo: qcore-compiler::test::contract_inherit_adoption",
+   "built test executable was never launched by cargo: qcore-compiler::test::contract_inherit_parity",
+   "built test executable was never launched by cargo: qcore-compiler::test::contract_inherit_qcore_provider",
+   "built test executable was never launched by cargo: qcore-compiler::test::contract_loader",
+   "built test executable was never launched by cargo: qcore-compiler::test::contract_view_census",
+   "built test executable was never launched by cargo: qcore-compiler::test::counter_route_parity",
+   "built test executable was never launched by cargo: qcore-compiler::test::ct01_proof_leg",
+   "built test executable was never launched by cargo: qcore-compiler::test::ct03_proof_leg",
+   "built test executable was never launched by cargo: qcore-compiler::test::ct07_proof_leg",
+   "built test executable was never launched by cargo: qcore-compiler::test::ct12_ct14_proof_reach",
+   "built test executable was never launched by cargo: qcore-compiler::test::ct37_proof_leg",
+   "built test executable was never launched by cargo: qcore-compiler::test::ct50_proof_leg",
+   "built test executable was never launched by cargo: qcore-compiler::test::ct_corpus",
+   "built test executable was never launched by cargo: qcore-compiler::test::cycle19_current_command",
+   "built test executable was never launched by cargo: qcore-compiler::test::cycle20_verifier_plugins",
+   "built test executable was never launched by cargo: qcore-compiler::test::epoch_credit_error_path",
+   "built test executable was never launched by cargo: qcore-compiler::test::epoch_source",
+   "built test executable was never launched by cargo: qcore-compiler::test::epoch_tasks_source",
+   "built test executable was never launched by cargo: qcore-compiler::test::error_payload_tasks",
+   "built test executable was never launched by cargo: qcore-compiler::test::examples_suite",
+   "built test executable was never launched by cargo: qcore-compiler::test::extern_calls",
+   "built test executable was never launched by cargo: qcore-compiler::test::f02_trace_relation",
+   "built test executable was never launched by cargo: qcore-compiler::test::f02_windows_pin_agreement",
+   "built test executable was never launched by cargo: qcore-compiler::test::file_close_route_parity",
+   "built test executable was never launched by cargo: qcore-compiler::test::filesystem_chunk_close_route_parity",
+   "built test executable was never launched by cargo: qcore-compiler::test::first_party_discovery",
+   "built test executable was never launched by cargo: qcore-compiler::test::http_computed_length",
+   "built test executable was never launched by cargo: qcore-compiler::test::libevent_submodule",
+   "built test executable was never launched by cargo: qcore-compiler::test::logical_connectives",
+   "built test executable was never launched by cargo: qcore-compiler::test::loop_unroll_budget",
+   "built test executable was never launched by cargo: qcore-compiler::test::loops_on_composed_routes",
+   "built test executable was never launched by cargo: qcore-compiler::test::memory_close_route_parity",
+   "built test executable was never launched by cargo: qcore-compiler::test::module_imports",
+   "built test executable was never launched by cargo: qcore-compiler::test::module_modes",
+   "built test executable was never launched by cargo: qcore-compiler::test::monkey_profile",
+   "built test executable was never launched by cargo: qcore-compiler::test::native_library",
+   "built test executable was never launched by cargo: qcore-compiler::test::native_library_contract",
+   "built test executable was never launched by cargo: qcore-compiler::test::native_library_header",
+   "built test executable was never launched by cargo: qcore-compiler::test::native_library_header_decoration",
+   "built test executable was never launched by cargo: qcore-compiler::test::native_library_source_binding",
+   "built test executable was never launched by cargo: qcore-compiler::test::nullable_removed",
+   "built test executable was never launched by cargo: qcore-compiler::test::obs_reordering",
+   "built test executable was never launched by cargo: qcore-compiler::test::owned_field_route_reach",
+   "built test executable was never launched by cargo: qcore-compiler::test::owned_source_tasks",
+   "built test executable was never launched by cargo: qcore-compiler::test::pipe_drop_stage",
+   "built test executable was never launched by cargo: qcore-compiler::test::pipe_intrinsic_stage",
+   "built test executable was never launched by cargo: qcore-compiler::test::pipe_operator",
+   "built test executable was never launched by cargo: qcore-compiler::test::profile_loader",
+   "built test executable was never launched by cargo: qcore-compiler::test::proof_leg_digests",
+   "built test executable was never launched by cargo: qcore-compiler::test::qcore_contract_corpus",
+   "built test executable was never launched by cargo: qcore-compiler::test::quant_index_contracts",
+   "built test executable was never launched by cargo: qcore-compiler::test::quant_region",
+   "built test executable was never launched by cargo: qcore-compiler::test::reactor_route_parity",
+   "built test executable was never launched by cargo: qcore-compiler::test::region_credit_joins",
+   "built test executable was never launched by cargo: qcore-compiler::test::region_joins_duties",
+   "built test executable was never launched by cargo: qcore-compiler::test::region_joins_loan",
+   "built test executable was never launched by cargo: qcore-compiler::test::resource_helper_functions",
+   "built test executable was never launched by cargo: qcore-compiler::test::scoped_read_loans",
+   "built test executable was never launched by cargo: qcore-compiler::test::scoped_read_shares",
+   "built test executable was never launched by cargo: qcore-compiler::test::slice_permissions",
+   "built test executable was never launched by cargo: qcore-compiler::test::socket_cell_route",
+   "built test executable was never launched by cargo: qcore-compiler::test::socket_event_compose",
+   "built test executable was never launched by cargo: qcore-compiler::test::source_loop",
+   "built test executable was never launched by cargo: qcore-compiler::test::source_record",
+   "built test executable was never launched by cargo: qcore-compiler::test::source_scalar_calls",
+   "built test executable was never launched by cargo: qcore-compiler::test::source_tasks",
+   "built test executable was never launched by cargo: qcore-compiler::test::std_buffer",
+   "built test executable was never launched by cargo: qcore-compiler::test::std_event",
+   "built test executable was never launched by cargo: qcore-compiler::test::std_http",
+   "built test executable was never launched by cargo: qcore-compiler::test::std_io_compose",
+   "built test executable was never launched by cargo: qcore-compiler::test::std_modules",
+   "built test executable was never launched by cargo: qcore-compiler::test::std_socket",
+   "built test executable was never launched by cargo: qcore-compiler::test::std_socket_inet",
+   "built test executable was never launched by cargo: qcore-compiler::test::std_string",
+   "built test executable was never launched by cargo: qcore-compiler::test::string_concat",
+   "built test executable was never launched by cargo: qcore-compiler::test::string_slice_io",
+   "built test executable was never launched by cargo: qcore-compiler::test::system_trace_examples_windows",
+   "built test executable was never launched by cargo: qcore-compiler::test::task_io_compose",
+   "built test executable was never launched by cargo: qcore-compiler::test::task_route_tsan",
+   "built test executable was never launched by cargo: qcore-compiler::test::teardown_route_parity",
+   "built test executable was never launched by cargo: qcore-compiler::test::thread_examples",
+   "built test executable was never launched by cargo: qcore-compiler::test::toolchain_compatibility",
+   "built test executable was never launched by cargo: qcore-compiler::test::trace_alphabet_lease_boundary",
+   "built test executable was never launched by cargo: qcore-compiler::test::unsafe_linkage",
+   "built test executable was never launched by cargo: qcore-compiler::test::unsupported_close_route_parity",
+   "built test executable was never launched by cargo: qcore-compiler::test::w3_evidence_v2",
+   "built test executable was never launched by cargo: qcore-compiler::test::windows_threads",
+   "built test executable was never launched by cargo: qcore-compiler::test::workspace_layering",
+   "built test executable was never launched by cargo: qcore-compiler::test::write_lend",
+   "built test executable was never launched by cargo: qcore-compiler::test::write_lend_tasks",
+   "built test executable was never launched by cargo: qcore-compiler::test::write_lend_tasks_exercise",
+   "built test executable was never launched by cargo: qcore-contract::lib::qcore_contract",
+   "built test executable was never launched by cargo: qcore-contract::test::boolean_frame_policy",
+   "built test executable was never launched by cargo: qcore-contract::test::chunk_policy_records",
+   "built test executable was never launched by cargo: qcore-contract::test::contract_bundle",
+   "built test executable was never launched by cargo: qcore-contract::test::contract_bundle_includes",
+   "built test executable was never launched by cargo: qcore-contract::test::contract_inherit",
+   "built test executable was never launched by cargo: qcore-contract::test::contract_views",
+   "built test executable was never launched by cargo: qcore-contract::test::resource_kinds",
+   "built test executable was never launched by cargo: qcore-contract::test::typed_contract_facts",
+   "built test executable was never launched by cargo: qcore-core::lib::qcore_core",
+   "built test executable was never launched by cargo: qcore-core::test::callback_task_handoff",
+   "built test executable was never launched by cargo: qcore-core::test::lifetime_correspondence",
+   "built test executable was never launched by cargo: qcore-core::test::os_endpoint_correspondence",
+   "built test executable was never launched by cargo: qcore-core::test::task_trace_relation",
+   "built test executable was never launched by cargo: qcore-frontend::lib::qcore_frontend",
+   "built test executable was never launched by cargo: qcore-frontend::test::cleanup_preempted",
+   "built test executable was never launched by cargo: qcore-frontend::test::error_payloads",
+   "built test executable was never launched by cargo: qcore-frontend::test::module_imports",
+   "built test executable was never launched by cargo: qcore-frontend::test::mutex_share_cross",
+   "built test executable was never launched by cargo: qcore-frontend::test::mutex_share_cross_arms",
+   "built test executable was never launched by cargo: qcore-frontend::test::owned_tasks",
+   "built test executable was never launched by cargo: qcore-frontend::test::read_loans",
+   "built test executable was never launched by cargo: qcore-frontend::test::read_shares",
+   "built test executable was never launched by cargo: qcore-frontend::test::result_match_syntax",
+   "built test executable was never launched by cargo: qcore-frontend::test::source_epoch",
+   "built test executable was never launched by cargo: qcore-frontend::test::source_epoch_tasks",
+   "built test executable was never launched by cargo: qcore-frontend::test::source_mutex",
+   "built test executable was never launched by cargo: qcore-frontend::test::source_tasks",
+   "built test executable was never launched by cargo: qcore-frontend::test::task_recovery",
+   "built test executable was never launched by cargo: qcore-frontend::test::task_syntax",
+   "built test executable was never launched by cargo: qcore-frontend::test::transferability",
+   "built test executable was never launched by cargo: qcore-schemas::lib::qcore_schemas",
+   "built test executable was never launched by cargo: qcore-schemas::test::boolean_result_abi",
+   "built test executable was never launched by cargo: qcore-schemas::test::call_use_request_wire",
+   "built test executable was never launched by cargo: qcore-schemas::test::cleanup_replay_request_wire",
+   "built test executable was never launched by cargo: qcore-schemas::test::composition_request_wire",
+   "built test executable was never launched by cargo: qcore-schemas::test::counter_request_wire",
+   "built test executable was never launched by cargo: qcore-schemas::test::plugin_limit_kinds",
+   "built test executable was never launched by cargo: qcore-schemas::test::reactor_records",
+   "built test executable was never launched by cargo: qcore-schemas::test::reactor_request_wire",
+   "built test executable was never launched by cargo: qcore-schemas::test::reason_codes",
+   "built test executable was never launched by cargo: qcore-schemas::test::schema_canonicalization",
+   "built test executable was never launched by cargo: qcore-schemas::test::teardown_request_wire",
+   "built test executable was never launched by cargo: qcore-verification::lib::qcore_verification",
+   "built test executable was never launched by cargo: qcore-verification::test::atomic_publication_source",
+   "built test executable was never launched by cargo: qcore-verification::test::call_use_dependents",
+   "built test executable was never launched by cargo: qcore-verification::test::call_use_source",
+   "built test executable was never launched by cargo: qcore-verification::test::callback_coverage",
+   "built test executable was never launched by cargo: qcore-verification::test::callback_task_handoff",
+   "built test executable was never launched by cargo: qcore-verification::test::chunk_lifecycle_coverage",
+   "built test executable was never launched by cargo: qcore-verification::test::cleanup_replay_mutations",
+   "built test executable was never launched by cargo: qcore-verification::test::cleanup_replay_source",
+   "built test executable was never launched by cargo: qcore-verification::test::cleanup_vocabulary",
+   "built test executable was never launched by cargo: qcore-verification::test::composition_bounds",
+   "built test executable was never launched by cargo: qcore-verification::test::composition_mutations",
+   "built test executable was never launched by cargo: qcore-verification::test::composition_relation",
+   "built test executable was never launched by cargo: qcore-verification::test::composition_source",
+   "built test executable was never launched by cargo: qcore-verification::test::counter_source",
+   "built test executable was never launched by cargo: qcore-verification::test::ctraces_capability_boundary",
+   "built test executable was never launched by cargo: qcore-verification::test::emit_cleanup_replay_fixtures",
+   "built test executable was never launched by cargo: qcore-verification::test::event_composition_context",
+   "built test executable was never launched by cargo: qcore-verification::test::event_payload",
+   "built test executable was never launched by cargo: qcore-verification::test::file_close_composition_mutations",
+   "built test executable was never launched by cargo: qcore-verification::test::file_close_composition_source",
+   "built test executable was never launched by cargo: qcore-verification::test::filesystem_chunk_close_composition_mutations",
+   "built test executable was never launched by cargo: qcore-verification::test::filesystem_chunk_close_composition_source",
+   "built test executable was never launched by cargo: qcore-verification::test::frame_source",
+   "built test executable was never launched by cargo: qcore-verification::test::frame_source_mutations",
+   "built test executable was never launched by cargo: qcore-verification::test::generic_driver",
+   "built test executable was never launched by cargo: qcore-verification::test::generic_source",
+   "built test executable was never launched by cargo: qcore-verification::test::memory_close_composition_mutations",
+   "built test executable was never launched by cargo: qcore-verification::test::memory_close_composition_source",
+   "built test executable was never launched by cargo: qcore-verification::test::monkey_wait_projection",
+   "built test executable was never launched by cargo: qcore-verification::test::observed_wait_composition",
+   "built test executable was never launched by cargo: qcore-verification::test::reactor_callback",
+   "built test executable was never launched by cargo: qcore-verification::test::reactor_source",
+   "built test executable was never launched by cargo: qcore-verification::test::source_annotations",
+   "built test executable was never launched by cargo: qcore-verification::test::source_effect",
+   "built test executable was never launched by cargo: qcore-verification::test::source_effect_helper_target",
+   "built test executable was never launched by cargo: qcore-verification::test::source_effect_mutations",
+   "built test executable was never launched by cargo: qcore-verification::test::source_effect_obligations",
+   "built test executable was never launched by cargo: qcore-verification::test::source_profile_boundary",
+   "built test executable was never launched by cargo: qcore-verification::test::teardown_prerequisites",
+   "built test executable was never launched by cargo: qcore-verification::test::teardown_source",
+   "built test executable was never launched by cargo: qcore-verification::test::timed_wait_observation_wire",
+   "built test executable was never launched by cargo: qcore-verification::test::timeout_teardown",
+   "built test executable was never launched by cargo: qcore-verification::test::unsupported_close_composition_mutations",
+   "built test executable was never launched by cargo: qcore-verification::test::unsupported_close_composition_source",
+   "built test executable was never launched by cargo: qcore-verification::test::wait_failure_paths",
+   "built test executable was never launched by cargo: qcore-verifier-host::lib::qcore_verifier_host",
+   "built test executable was never launched by cargo: qcore-verifier-host::test::composition_relation",
+   "built test executable was never launched by cargo: qcore-verifier-host::test::confined_process_execution",
+   "built test executable was never launched by cargo: qcore-verifier-host::test::diagnostic_attribution",
+   "built test executable was never launched by cargo: qcore-verifier-host::test::enforced_process_limits",
+   "built test executable was never launched by cargo: qcore-verifier-host::test::execution_quota",
+   "built test executable was never launched by cargo: qcore-verifier-host::test::package_identity",
+   "built test executable was never launched by cargo: qcore-verifier-host::test::standalone_host",
+   "built test executable was never launched by cargo: qcorec::bin::quirin",
+   "built test executable was never launched by cargo: qcorec::test::cli",
+   "built test executable was never launched by cargo: qcorec::test::examples_cli",
+   "built test executable was never launched by cargo: qcorec::test::plugin_packages",
+   "EXCLUSIVE entry matches no built binary (stale?): qcore-compiler::test::cycle20_verifier_plugins",
+   "EXCLUSIVE entry matches no built binary (stale?): qcore-verifier-host::test::confined_process_execution",
+   "EXCLUSIVE entry matches no built binary (stale?): qcore-verifier-host::test::enforced_process_limits",
+   "EXCLUSIVE entry matches no built binary (stale?): qcore-verifier-host::test::execution_quota",
+   "EXCLUSIVE entry matches no built binary (stale?): qcore-verifier-host::test::standalone_host"
+  ],
+  "units": 1,
+  "exclusive_units": {},
+  "parallel_phase_end": 10.6,
+  "exclusive_overlaps": []
+ }
+]

@@ -1,0 +1,26 @@
+{
+ "clang-share-ucrp": {
+  "total": 9603,
+  "by_arguments": {
+   "--driver-mode=gcc --version": 5411,
+   "--driver-mode=gcc -x c -std=c11 -E -P -": 768,
+   "--driver-mode=gcc -x c -std=c11 -fsyntax-only -": 768,
+   "--driver-mode=gcc -x c -std=c11 -fsyntax-only -Xclang -ast-dump=json -Xclang -ast-dump-filter -Xclang NAME -": 2048,
+   "--driver-mode=gcc -dumpmachine": 608
+  },
+  "report": "User time (seconds): 139.54\n\tSystem time (seconds): 149.02\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 3:21.67\nclang invocations: 9603\nclang seconds (summed): 191.117",
+  "load": "15:02:57 up 2 days,  3:52,  1 user,  load average: 9.39, 13.07, 14.29\n 15:06:19 up 2 days,  3:55,  1 user,  load average: 6.32, 9.62, 12.67"
+ },
+ "clang-share-ucrp-cached": {
+  "total": 4803,
+  "by_arguments": {
+   "--driver-mode=gcc --version": 611,
+   "--driver-mode=gcc -x c -std=c11 -E -P -": 768,
+   "--driver-mode=gcc -x c -std=c11 -fsyntax-only -": 768,
+   "--driver-mode=gcc -x c -std=c11 -fsyntax-only -Xclang -ast-dump=json -Xclang -ast-dump-filter -Xclang NAME -": 2048,
+   "--driver-mode=gcc -dumpmachine": 608
+  },
+  "report": "User time (seconds): 82.82\n\tSystem time (seconds): 77.73\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 1:47.46\nclang invocations: 4803\nclang seconds (summed): 102.884",
+  "load": "16:49:24 up 2 days,  5:38,  1 user,  load average: 11.42, 14.52, 22.68\n 16:51:11 up 2 days,  5:40,  1 user,  load average: 8.46, 12.69, 21.12"
+ }
+}

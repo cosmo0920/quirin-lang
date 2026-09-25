@@ -1,0 +1,13 @@
+{
+  "note": "W44-TEST-SUITE-WALL-TIME: the standing gate and the provider gate measured at 13d902a5 with CARGO_INCREMENTAL=0 and the committed profile (no CARGO_PROFILE_*, RUST_TEST_THREADS or CARGO_BUILD_JOBS override). The Rust suite ran twice on the same tree: through scripts/run_test_binaries.py (the gate's new form; runner step) and as plain `cargo test --workspace --no-fail-fast` (the reference; test step). Runner: 5505 passed / 0 failed / 11 ignored over 292 summaries, all eight exclusive binaries ok; plain: 5505 / 0 / 11 over 292 summaries; equal: True. The card adds two clang::tests unit tests (qcore-c-gateway) and no other test; every base test runs with its base outcome. 183 Lean audits (none added); census step: clippy -p qcore-c-gateway --features indirect-census clean and 505 feature-on library tests passed; 346 root Python tests after the final matrix regeneration; docs index check exit 0. Step exits: {'census': 0, 'clang': 0, 'clippy': 0, 'fmt': 0, 'followup': 0, 'lean': 0, 'probe': 0, 'runner': 0, 'submodules': 0, 'test': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; provider step exits: {'pclippy': 0, 'pcontracts': 0, 'pfmt': 0, 'pisolated': 0, 'ptest': 0}. Step wall seconds: {'census': 9.9, 'clang': 0.0, 'clippy': 17.5, 'fmt': 2.3, 'followup': 0.4, 'lean': 97.3, 'pclippy': 10.4, 'pcontracts': 0.1, 'pfmt': 2.3, 'pisolated': 48.6, 'probe': 0.1, 'ptest': 370.3, 'runner': 219.6, 'submodules': 0.0, 'test': 620.9}. Logs: worktree-private measure/gate. Clang recorded in this checkout. No corpus, contract, Lean or verdict change.",
+  "workspace_tests": 5505,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 346,
+  "lean_audits": 183,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

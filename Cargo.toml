@@ -14,3 +14,12 @@ members = [
 ]
 resolver = "2"
 
+# Card W44-TEST-SUITE-WALL-TIME: line tables only, so panics and backtraces keep
+# file:line while the dev/test build (which the standing gate cleans every time)
+# halves its build time and shrinks target/ from 59G to 20G. opt-level,
+# debug-assertions and overflow-checks keep their dev defaults, so no test
+# observes a different program. For full debugger info locally, set
+# CARGO_PROFILE_DEV_DEBUG=true.
+[profile.dev]
+debug = "line-tables-only"
+

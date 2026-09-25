@@ -1,0 +1,45 @@
+== pre measure/profile-plain-1/output.log
+base : 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292}
+other: 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292} (after removing 0 declared additions)
+IDENTICAL
+exit 0
+== pre measure/runner-j8-a/logs/summary.json
+base : 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292}
+other: 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292} (after removing 0 declared additions)
+IDENTICAL
+exit 0
+== pre measure/final-1/logs/summary.json
+base : 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292}
+other: 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292} (after removing 0 declared additions)
+IDENTICAL
+exit 0
+== post measure/profile-cache-plain-1/output.log
+base : 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292}
+other: 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292} (after removing 2 declared additions)
+IDENTICAL apart from 2 declared, passing additions
+exit 0
+== post measure/final-cache-1/logs/summary.json
+base : 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292}
+other: 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292} (after removing 2 declared additions)
+IDENTICAL apart from 2 declared, passing additions
+exit 0
+== post measure/final-cache-2/logs/summary.json
+base : 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292}
+other: 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292} (after removing 2 declared additions)
+IDENTICAL apart from 2 declared, passing additions
+exit 0
+== post measure/final-cache-3/logs/summary.json
+base : 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292}
+other: 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292} (after removing 2 declared additions)
+IDENTICAL apart from 2 declared, passing additions
+exit 0
+== post measure/jobs-4/logs/summary.json
+base : 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292}
+other: 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292} (after removing 2 declared additions)
+IDENTICAL apart from 2 declared, passing additions
+exit 0
+== post measure/jobs-16/logs/summary.json
+base : 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292}
+other: 276 keys, 5514 test lines, totals {'passed': 5503, 'failed': 0, 'ignored': 11, 'measured': 0, 'filtered': 0, 'summaries': 292} (after removing 2 declared additions)
+IDENTICAL apart from 2 declared, passing additions
+exit 0

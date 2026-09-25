@@ -7,6 +7,40 @@
 > [STATUS.md](../../STATUS.md); each report owns its evidence. The preceding
 > [record](wave-43.md) holds the wave-43 paragraphs and stays unchanged.
 
+**2026-09-25 — W44-TEST-SUITE-WALL-TIME: the gate's Rust suite, from 22 minutes to about 4½.**
+Plain `cargo test --workspace --no-fail-fast` took 22:13 from a clean dev
+profile: 125 s of build and 1,208 s of test binaries run one after another.
+Three changes, each measured on its own, bring it to 3:59–5:35 over three runs
+at 1-minute loads of 8–38, and the executed tests and outcomes stay identical
+to the base:
+
+* `[profile.dev] debug = "line-tables-only"` about halves the build and shrinks
+  `target/` from 62 to 21 GB. Opt-level and the debug assertions are unchanged.
+* The gateway now resolves and probes Clang once per `QCORE_CLANG`/`PATH`
+  environment. Discovery had launched `clang --version` before every Clang
+  run, 5,411 of the heaviest binary's 9,603 launches. The serial test phase
+  falls from 1,345 s to 506 s. A failure is never cached, and no verdict can
+  change.
+* `scripts/run_test_binaries.py` replaces the serial run. It is std-only. It
+  captures cargo's own launch of every test executable (argv, cwd and the
+  complete environment, the same 114 variables strace observes) and runs the
+  executables eight at a time, longest first. Constraint 16's load-sensitive
+  rows, and every binary that launches a process provider under a timeout, run
+  alone afterwards; none ever overlapped another unit. The runner fails closed
+  on a crash, a signal, a missing or unlaunched binary, or an unparsable
+  result.
+
+`docs/agents/validation.md` now names the runner as the gate's Rust step and
+keeps `cargo test --workspace --no-fail-fast` as the reference command. The
+only test additions are the cache's two unit tests. Three measured residuals
+are registered:
+
+* `W44-CLANG-IDENTITY-RECAPTURE`;
+* `W44-TEST-CRITICAL-PATH-ROUTE-PARITY`: the heaviest binary, 53 s alone, sets
+  the end of the parallel phase;
+* `W44-PROVIDER-SUITE-SERIAL`: the provider suite's 370 s is now the gate's
+  longest Rust step. See [the report](../../reports/w44-test-suite-wall-time/README.md).
+
 **`W44-C11-GENERIC-SELECTION` (2026-09-25).** The C gateway reads C11 generic selections (§6.5.1.1). A census of the 187 captured `-E -P` texts found **85** `_Generic` occurrences in 36 functions of 25 units, every one glibc 2.43's C23 const-preserving `__glibc_const_generic` expansion (`strchr` 51, `bsearch` 13, `strstr` 13, `strrchr` 6, `memchr` 2), none nested; 14 were the `call to uncontracted function _Generic` leaves and 71 sat in statements refused for other reasons, mostly conditions. Route 1 (selection invariance) is built in `legacy_generic_selection.rs`, called once from `build_function_cfg_with`: a selection whose associations are one expression up to enclosing parentheses and pointer casts is lowered to it and its control dropped, a removed cast requiring a direct call the unit declares with an object-pointer result (`declared_abi::declares_object_pointer_result`); anything else is left byte for byte. Route 2 (Clang's selection) was not built: it would read the typed AST that certificates must not depend on and admits nothing route 1 refuses here. Lean `QCore.GenericSelection` (`resolve_preserves_outcomes`, `the_lowered_effect_is_independent_of_the_selection`, `the_control_is_unevaluated`; `AuditGenericSelection.lean`). Arbiter on `70ce6b44`: BEFORE reproduces the W44-LIBC-RESIDUALS integration diagnostics byte for byte; 37 leaves removed and 34 added, all attributed; functions 300 / 9 / 4,525 → **301 / 9 / 4,524** (`mk_string_char_search`); units unchanged; `unsupported` 43,885 → 43,854, `unknown_alias` 3,357 → 3,370, **leak 19 → 34**: the 15 added are class (a) test-failure-path leaks of the already provisional-Unsafe `ut_sasl_oauthbearer_oidc_assertion_create`, whose `strchr` assertion conditions are now desugared; no violation candidate. Registered `W44-BSEARCH-UNDECLARED`; 377 → 378. [Report](../../reports/w44-c11-generic-selection/README.md).
 
 **`W44-AUDIT-PARALLEL-UNITS` (2026-09-25).** Parallelised the corpus audit's per-translation-unit work without changing a byte. A base profile (frozen with the prediction before any parallel run) put 99.3 % of the pinned arbiter's run in its 185-unit loop, 87 % of that in-process analysis, and the largest unit, `librdkafka/rdkafka_admin.c`, at 46.4 s. `qcore_audit::parallel::run_ordered` computes units on `--jobs N` / `QCORE_AUDIT_JOBS` threads (default: available parallelism, capped at 16; `--jobs 1` is the sequential loop) and folds report fragments, tallies, sidecar results and console buffers in unit order, stopping at the first error in that order; the pinned route runs library preludes, units, postludes and the Monkey gate as ordered steps, and the configured route splits `CurrentAudit::audit_entry` into `evaluate_entry` and `absorb_entry`. Any active census sink forces one job and process-provider verification stays serial. Measured on a shared 8-core/16-thread host: 424–590 s sequential, 129 s at 4 jobs, 96 s at 8, 77–87 s at 16 (the configured route 466–546 s to 79 s); every archived artifact is byte-identical at jobs 1, 4, 8 and 16 (16 four times), `audit.log` `cmp`-identical, census streams identical at 1 and 16, and the configured route identical except its wall-clock `preparation:` figures. The 8- and 16-job predictions missed on the slow side (per-unit slowdown 2.35× under SMT, not 1.3–1.5×); one measured residual is registered, `W44-AUDIT-CRITICAL-UNIT` (that unit spans 84 of 86 s at 16 jobs). No analyzer semantics changed; no Lean change. [Report](../../reports/w44-audit-parallel-units/README.md).
