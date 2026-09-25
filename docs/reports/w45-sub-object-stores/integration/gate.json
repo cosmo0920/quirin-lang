@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W45-SUB-OBJECT-STORES on merge 7de5edf6 (onto main 400063c5, after W45-RETURN-EXPRESSION-FAMILIES and W45-CALLEE-SUMMARY-CASCADE), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5720 core Rust passed / 0 failed / 11 ignored over 304 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 193 Lean audits; 351 root Python tests after regenerating this section (08-python exit 1 before regeneration); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w45-callee-summary-cascade/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+ "workspace_tests": 5720,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 351,
+ "lean_audits": 193,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

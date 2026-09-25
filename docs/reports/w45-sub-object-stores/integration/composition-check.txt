@@ -1,0 +1,8 @@
+card delta:     removed 230 added 0 functions 1 units 0
+overlap (already removed by earlier integrations): 0 []
+combined delta: removed 230 added 0
+transitive (callers of combined-only Safe functions): 0 []
+explained by the integrator: 0 []
+complementary Unknown->Safe (card cleared the last blocker): []
+functions moved (combined): [('destroy_id', ('Unknown', 'Safe'))]
+COMPOSES
