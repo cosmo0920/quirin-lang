@@ -7,6 +7,27 @@
 > [STATUS.md](../../STATUS.md); each report owns its evidence. The preceding
 > [record](wave-43.md) holds the wave-43 paragraphs and stays unchanged.
 
+**`W44-AGENT-GUIDANCE-OPUS55` (2026-09-25).** The agent-loop guides now follow
+Anthropic's Opus 5 and 5.5 prompting guidance. `AGENTS.md`, `CLAUDE.md`, the
+rule router, `operations.md`, `validation.md` and the topic-page headers lose
+nine kinds of scaffolding: repeated reading instructions (the "read every
+applicable rule" header was in 11 copies), bold emphasis stacking and duplicated
+tool mechanics. Ten embedded incident histories move verbatim to a new
+[checkpoint](structure-checkpoints/agent-cycle-guidance.md). Operations gains a
+scope statement, a verification boundary (the gates are the verification), a
+subagent delegation policy, report length calibration and a one-screen
+card-brief standard. The standard covers completion conditions, legitimate
+stops, continuation of unattended cards and time budgets. `task_context.py` lists rule history
+on demand for agent-guidance paths instead of reading it; `--topic rationale`,
+unknown paths and empty scope still read it. All 59 rule anchors and the
+hard-invariant block are byte-identical to the base, and every unnumbered
+requirement keeps its force. Injected startup falls 6,538 → 5,817 bytes and an
+agent-guidance packet 47,747 → 23,788. Gateway and provider packets move −0.3%,
+since the numbered bodies they read were out of scope. An integration packet
+grows 4.4% for the brief standard. Source bytes, not tokens. No pin, count or
+ledger entry moves; three task-context tests are added.
+[Report](../../reports/w44-agent-guidance-opus55/README.md).
+
 **2026-09-25 — W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: a destination is the whole left-hand side.**
 This is a soundness repair. `direct_assignment_destination` named the first
 place-spelling suffix of a left-hand side, so `recs[i].name = x_dup(s);

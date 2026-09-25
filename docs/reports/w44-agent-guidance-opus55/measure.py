@@ -98,9 +98,33 @@ def measure(rev):
         return out
 
 
+def rule_bodies(rev):
+    """Every numbered constraint body and the hard-invariant block, keyed by id."""
+    bodies = {}
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        export(rev, root)
+        for page in sorted((root/'docs/agents').glob('*.md')):
+            text = page.read_text(encoding='utf-8')
+            parts = re.split(r'<a id="(constraint-[^"]+)"></a>\n', text)
+            for rule, body in zip(parts[1::2], parts[2::2]):
+                body = re.split(r'\n(?=## )', body)[0]
+                bodies[rule] = (f'docs/agents/{page.name}', body)
+        agents = (root/'AGENTS.md').read_text(encoding='utf-8')
+        block = re.search(r'<!-- preserved:hard-invariants:start -->.*?<!-- preserved:hard-invariants:end -->', agents, re.S)
+        bodies['hard-invariants'] = ('AGENTS.md', block.group(0))
+    return bodies
+
+
 def main():
     before, after = measure(sys.argv[1]), measure(sys.argv[2])
-    checks = {}
+    rules_before, rules_after = rule_bodies(sys.argv[1]), rule_bodies(sys.argv[2])
+    constraints = {rule: {'before': where, 'after': rules_after.get(rule, (None,))[0],
+                          'byte_identical': rules_after.get(rule, (None, None))[1] == body}
+                   for rule, (where, body) in rules_before.items()}
+    checks = {'constraints': {'count': len(constraints),
+                              'byte_identical': sum(v['byte_identical'] for v in constraints.values()),
+                              'missing_after': sorted(r for r, v in constraints.items() if v['after'] is None)}}
     for name in TASKS:
         b, a = before['tasks'][name], after['tasks'][name]
         checks[name] = {
@@ -111,14 +135,15 @@ def main():
             'commands_identical': b['required_commands'] == a['required_commands'],
             'reading_bytes': [b['reading_bytes'], a['reading_bytes']],
         }
-    result = {'before': before, 'after': after, 'checks': checks,
+    result = {'before': before, 'after': after, 'checks': checks, 'constraints': constraints,
               'note': 'Source bytes of an explicit reading packet; not runtime telemetry or token billing.'}
     text = json.dumps(result, indent=2, sort_keys=True) + '\n'
     if len(sys.argv) > 3:
         Path(sys.argv[3]).write_text(text, encoding='utf-8')
     print(json.dumps(checks, indent=2, sort_keys=True))
     ok = all(c['rule_ids_kept'] and c['operations_sections_kept'] and c['commands_identical']
-             for c in checks.values())
+             for name, c in checks.items() if name != 'constraints')
+    ok = ok and checks['constraints']['count'] == checks['constraints']['byte_identical']
     sys.exit(0 if ok else 1)
 
 

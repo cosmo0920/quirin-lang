@@ -838,6 +838,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-return-expression](w43-return-expression/README.md) | W43-RETURN-EXPRESSION — the refused return expressions, measured and re-attributed |
 
+| [w44-agent-guidance-opus55](w44-agent-guidance-opus55/README.md) | W44-AGENT-GUIDANCE-OPUS55: the agent loop follows current prompting guidance |
+
 | [w44-assignment-destination-suffix-place](w44-assignment-destination-suffix-place/README.md) | W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: a destination is the whole left-hand side |
 
 | [w44-branch-condition-calls](w44-branch-condition-calls/README.md) | W44-BRANCH-CONDITION-CALLS: calls in controlling expressions |
