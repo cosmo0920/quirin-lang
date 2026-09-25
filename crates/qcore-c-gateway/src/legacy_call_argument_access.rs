@@ -528,13 +528,17 @@ pub(super) fn recognise(
 /// statement's destination.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) struct AdmittedArgument {
-    callee: String,
-    index: usize,
+    pub(super) callee: String,
+    pub(super) index: usize,
     texts: Vec<String>,
     read: ArgumentRead,
     /// Set by the classifier when the actual left the gate through this rule
     /// rather than through an existing route.
     used: bool,
+    /// Card W45-CALLEE-SUMMARY-CASCADE: admitted at a `Released { nullable:
+    /// true }` position by `member_release::admits_release`, not at a
+    /// `Borrowed` position or a data tail.
+    pub(super) release: bool,
 }
 
 impl AdmittedArgument {
@@ -637,7 +641,10 @@ impl Parser<'_> {
         tokens: &[Token],
         instruction: &LegacyInstruction,
     ) -> Option<Vec<LegacyInstruction>> {
-        let probe = self.probe_call_arguments(tokens, instruction)?;
+        let mut probe = self.probe_call_arguments(tokens, instruction)?;
+        // Card W45-CALLEE-SUMMARY-CASCADE: the object a rule-1 actual releases
+        // is outside the projection, so its position is read as `Borrowed`.
+        super::member_release::rewrite_released_positions(&mut probe.result, &probe.used);
         let mut bases = Vec::<String>::new();
         let mut record_bases = Vec::<String>::new();
         let mut names = Vec::<String>::new();
@@ -734,8 +741,14 @@ impl Parser<'_> {
                     &self.collection_types,
                 )
             });
+            // Card W45-CALLEE-SUMMARY-CASCADE: a pointer member handed to a
+            // nullable release is admitted too (`member_release`, rule 1).
+            let release = matches!(&answer, Some(Ok(read))
+                if !position.admits()
+                    && super::member_release::admits_release(contract, index, read)
+                    && self.member_releases.admits(argument));
             if let Some(Ok(read)) = &answer
-                && position.admits()
+                && (position.admits() || release)
             {
                 admitted.push(AdmittedArgument {
                     callee: callee.to_owned(),
@@ -743,6 +756,7 @@ impl Parser<'_> {
                     texts: argument.iter().map(|text| (*text).to_owned()).collect(),
                     read: read.clone(),
                     used: false,
+                    release,
                 });
             }
             facts.push(ArgumentFacts {
@@ -809,7 +823,10 @@ impl Parser<'_> {
                 }
                 LegacyInstruction::ElementStore { call, .. } => call.is_some(),
                 _ => false,
-            };
+            }
+            // Card W45-CALLEE-SUMMARY-CASCADE: a rule-1 actual only in a plain
+            // contracted call at its nullable release position.
+            && super::member_release::released_positions_rewritable(&result, &used);
         #[cfg(feature = "indirect-census")]
         self.census_call_arguments(
             tokens,

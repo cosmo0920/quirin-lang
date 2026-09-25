@@ -657,9 +657,15 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
     // remain; the rule was measured off and on in one tree, and off it
     // reproduces 31. The load-bearing half, below, is unchanged: the
     // before-state still names every uncontracted callee.
+    // **Deliberate pin update, card W45-CALLEE-SUMMARY-CASCADE** (the
+    // `AGGREGATE-NULL-TEST-AFTER-RELEASE` repair): 20 → 21. The aggregate null
+    // test `if (ic->routes_mask == NULL)` now carries the typed read of `ic`,
+    // which does not resolve in this before-state (its constructor's
+    // declaration is withdrawn), so one `UnknownAlias ic` is added. Measured
+    // with the repair off in the same tree: 20.
     assert_eq!(
         before.diagnostics.len(),
-        20,
+        21,
         "the before-state diagnostic count moved: {:?}",
         before.diagnostics
     );

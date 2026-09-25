@@ -346,6 +346,45 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     `QCore.ReturnExpressionFamilies`).
     [Report](../reports/w45-return-expression-families/README.md).
 
+<a id="constraint-5k"></a>
+
+5k. **A member release is custody: admit it only as the last use of its
+    place, and guard its summaries at callers.** W45-CALLEE-SUMMARY-CASCADE
+    (`legacy_member_release.rs`) admits `B->F` at a `Released { nullable:
+    true }` position, lowered `Borrowed` after the unchanged
+    W44-INDIRECT-CALL-ARGUMENT-ACCESS reads, **only** under four lexical
+    premises: P1 `B` is a formal never copied (every use is `B->G`, a null
+    test of `B`, or `R(B)` for a release `R`); P2 the place has one release and
+    before it only null tests; P3 no loop encloses the release (`do … while
+    (0)` excepted) and the body has no `goto`/`setjmp`; P4 a top-level `R(B);`
+    follows with no `return` between, so the formal is released on every path
+    and a summary says `Released` for it. A body that releases through a formal
+    without releasing the formal gets no rule 1 and no summary. **Do not relax
+    these to "untracked liveness is outside the property"**: the first version
+    did, and certified `free(n->buf); free(n->buf); free(n);` and a caller
+    releasing a member a callee had already released `Safe` (integration
+    review). Do not admit a non-null release, a member address, `B[I]` or `*B`.
+    A null test of one pointer member lowers to the typed read of its base.
+    Every `BranchOnNull` whose place dereferences a pointer, the O04-B08
+    aggregate test included, is preceded by the typed read of every pointer it
+    reads through; before this card the aggregate test carried no obligation
+    and a test through a released base was `Safe`
+    (`AGGREGATE-NULL-TEST-AFTER-RELEASE`). Before every call to a function the
+    unit defines, the environment does not declare, and whose body (or a body
+    it calls, to a fixed point) hands a pointer read to a call,
+    `ArgumentReads` refuses a plain-name actual whose target owns sub-custody:
+    a caller's linked child at `B->F` would otherwise outlive the release. Do
+    not widen the guard to declared callees (`flb_input_chunk_create` left
+    `Safe` over the declared `static inline` `flb_free`) or to every undeclared
+    one (callers of validated `Removed` wrappers own sub-custody by
+    construction). Premises stated, not proved: distinct members own distinct
+    objects; W44-INDIRECT-CALL-ARGUMENT-ACCESS premise 4 (a stored pointer is
+    tracked only through a bound place or sub-custody), so a card that stores a
+    tracked identity into a member without recording either must refuse this
+    read; a declaration's `Borrowed` covers what is reachable through the
+    argument (P-B08-SHALLOW). `QCore.MemberRelease`;
+    [report](../reports/w45-callee-summary-cascade/README.md).
+
 <a id="constraint-6"></a>
 
 <!-- preserved:constraint-6:start -->

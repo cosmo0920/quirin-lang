@@ -63,6 +63,12 @@ pub(crate) mod descriptor_custody;
 #[path = "legacy_call_argument_access.rs"]
 pub(crate) mod call_argument_access;
 
+// Card W45-CALLEE-SUMMARY-CASCADE: a pointer member handed to a nullable
+// release, a pointer member null test, and the call-site sub-custody guard
+// before every call to a function defined in this unit. Hooks name the card.
+#[path = "legacy_member_release.rs"]
+mod member_release;
+
 pub use descriptor_custody::ValidityFact;
 
 // Card W44-BRANCH-CONDITION-CALLS: the desugaring of a refused call-bearing
@@ -2661,6 +2667,9 @@ fn build_function_cfg_with(
     };
     // Card W45-RETURN-EXPRESSION-FAMILIES: read before the model moves.
     let return_facts = return_family::FunctionFacts::read(tokens, function, &typed_model);
+    // Card W45-CALLEE-SUMMARY-CASCADE: rule 1's lexical premises, read once.
+    let member_releases =
+        member_release::AdmissibleReleases::read(tokens, body_start, &formal_parameters, contracts);
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -2686,6 +2695,7 @@ fn build_function_cfg_with(
         census_bindings: census_body_bindings(tokens, body_start, contracts),
         admit_derived_returns,
         argument_probe: call_argument_access::ArgumentProbe::default(),
+        member_releases,
         desugar: condition_desugar::DesugarState::new(function),
         return_facts,
     };
@@ -2719,6 +2729,13 @@ fn build_function_cfg_with(
             .cloned()
             .collect();
     }
+    // Card W45-CALLEE-SUMMARY-CASCADE: the sub-custody guard before every call
+    // to a function this unit defines (`member_release`, rule 3).
+    member_release::guard_unit_callees(&mut cfg, tokens, contracts);
+    // Card W45-CALLEE-SUMMARY-CASCADE (`AGGREGATE-NULL-TEST-AFTER-RELEASE`):
+    // a null test of a member place keeps the dereference obligation of
+    // every pointer it reads through.
+    member_release::oblige_member_null_tests(&mut cfg);
     Ok(cfg)
 }
 
@@ -4022,6 +4039,9 @@ struct Parser<'a> {
     /// argument rule admitted while it classifies one statement again. Empty
     /// otherwise, which makes every hook reading it the identity.
     argument_probe: call_argument_access::ArgumentProbe,
+    /// Card W45-CALLEE-SUMMARY-CASCADE: the member places rule 1 of
+    /// `member_release` may admit in this body (its lexical premises).
+    member_releases: member_release::AdmissibleReleases,
     /// Card **W44-BRANCH-CONDITION-CALLS**: the enclosing function and the
     /// unit call graph the condition desugaring reads lazily.
     desugar: condition_desugar::DesugarState,
@@ -4662,12 +4682,24 @@ impl Parser<'_> {
         ) else {
             // Card W44-INDIRECT-CHAIN-ACCESS: the same typed read with
             // record-pointer member chains as accesses.
-            let chained = crate::indirect_chain_access::chain_condition(
+            let Some(chained) = crate::indirect_chain_access::chain_condition(
                 &texts,
                 &self.typed_model,
                 &self.typed_types,
                 &self.typed_bases,
-            )?;
+            ) else {
+                // Card W45-CALLEE-SUMMARY-CASCADE: a pointer member null test
+                // is the same custody-neutral typed read of its base.
+                let base =
+                    member_release::member_null_test(&texts, &self.typed_model, &self.typed_types)?;
+                return Some(Box::new(LegacyInstruction::IndirectScalarAccess {
+                    alias_reads: self.read_alias(Some(&base)).into_iter().collect(),
+                    bases: vec![base],
+                    destination: None,
+                    frame: None,
+                    chains: Vec::new(),
+                }));
+            };
             return Some(Box::new(self.chain_access_instruction(chained, false)));
         };
         Some(Box::new(LegacyInstruction::IndirectScalarAccess {

@@ -520,12 +520,24 @@ fn a_branch_on_an_unrelated_field_keeps_its_existing_refusal() {
          b = k_make(n); if (!b) { return; } p = k_pick(o); \
          if (o->box == 0) { k_drop(b); return; } k_drop(b); }",
     )];
+    // Deliberate pin update, card W45-CALLEE-SUMMARY-CASCADE (gateway
+    // constraint 5j): `o->box == 0` is a null test of one pointer member, now
+    // lowered to the typed read of `o` rather than refused. `o` is an unbound
+    // formal (`k_pick` is uncontracted and binds nothing), so the read's
+    // obligation is met and nothing is refined; the function stays Unknown on
+    // the uncontracted call alone. This aggregate rule still admits nothing
+    // here.
     for (reason, body) in cases {
         let measured = summary_of(body, "k_w");
         assert!(
-            unsupported(&measured).contains(&BRANCH) || unsupported(&measured).contains(&INDIRECT),
-            "{reason}: the existing branch refusal must be retained, got {:?}",
+            !unsupported(&measured).contains(&BRANCH),
+            "{reason}: the member null test is the typed read, got {:?}",
             measured.diagnostics
+        );
+        assert_eq!(
+            unsupported(&measured),
+            vec!["call to uncontracted function `k_pick`"],
+            "{reason}"
         );
         assert_ne!(measured.status, AnalysisStatus::Safe, "{reason}");
     }

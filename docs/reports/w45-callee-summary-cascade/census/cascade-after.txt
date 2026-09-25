@@ -1,0 +1,93 @@
+{
+ "unknown_functions": 4509,
+ "unknown_with_call_leaves": 2613,
+ "only_calls": 411,
+ "only_one_callee": 299,
+ "leaves": 9194,
+ "leaf_classes": {
+  "same-unit": 3731,
+  "other-unit": 3139,
+  "header-internal": 1281,
+  "no-body": 957,
+  "header-external": 86
+ },
+ "anomalies_clean_at_base": [],
+ "cross_unit_route_existing_safe_bodies": {
+  "unblocked": 2,
+  "lost_last_call": 17,
+  "functions": [
+   "chunkio/cio_file.c:cio_file_real_size",
+   "cmetrics/cmetrics.c:cmt_initialize"
+  ]
+ }
+}
+{'family': 'indirect memory access is outside the resource projection', 'leaves_on_unknown': 17682, 'leaves_in_callee_bodies': 9680, 'unblocked_removed_everywhere': 444, 'unblocked_removed_in_callee_bodies': 200}
+{'family': 'unmodeled call, aggregate or indirect access in return expression', 'leaves_on_unknown': 495, 'leaves_in_callee_bodies': 187, 'unblocked_removed_everywhere': 151, 'unblocked_removed_in_callee_bodies': 37}
+{'family': 'unmodeled call, aggregate or indirect access in branch condition', 'leaves_on_unknown': 8000, 'leaves_in_callee_bodies': 4267, 'unblocked_removed_everywhere': 49, 'unblocked_removed_in_callee_bodies': 11}
+{'family': 'unsupported assignment expression', 'leaves_on_unknown': 1579, 'leaves_in_callee_bodies': 691, 'unblocked_removed_everywhere': 12, 'unblocked_removed_in_callee_bodies': 5}
+{'family': 'braced initializer, expression, or declaration is not modeled', 'leaves_on_unknown': 2248, 'leaves_in_callee_bodies': 1216, 'unblocked_removed_everywhere': 13, 'unblocked_removed_in_callee_bodies': 4}
+{'family': 'unmodeled call, aggregate or indirect access in loop condition', 'leaves_on_unknown': 288, 'leaves_in_callee_bodies': 148, 'unblocked_removed_everywhere': 5, 'unblocked_removed_in_callee_bodies': 4}
+{'family': 'unrecognized assignment destination', 'leaves_on_unknown': 680, 'leaves_in_callee_bodies': 447, 'unblocked_removed_everywhere': 5, 'unblocked_removed_in_callee_bodies': 3}
+{'family': 'local declaration may shadow a formal resource identity', 'leaves_on_unknown': 35, 'leaves_in_callee_bodies': 24, 'unblocked_removed_everywhere': 2, 'unblocked_removed_in_callee_bodies': 2}
+{'family': 'call to `X` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)', 'leaves_on_unknown': 12, 'leaves_in_callee_bodies': 8, 'unblocked_removed_everywhere': 2, 'unblocked_removed_in_callee_bodies': 2}
+{'family': 'unmodeled increment or decrement expression', 'leaves_on_unknown': 551, 'leaves_in_callee_bodies': 360, 'unblocked_removed_everywhere': 1, 'unblocked_removed_in_callee_bodies': 1}
+{'family': 'C operator `X` requires type/operand analysis', 'leaves_on_unknown': 465, 'leaves_in_callee_bodies': 148, 'unblocked_removed_everywhere': 1, 'unblocked_removed_in_callee_bodies': 1}
+{'family': 'nested call `X` inside a modeled call is outside the resource projection', 'leaves_on_unknown': 140, 'leaves_in_callee_bodies': 68, 'unblocked_removed_everywhere': 5, 'unblocked_removed_in_callee_bodies': 1}
+{'family': 'unmodeled expression may mutate a formal resource identity', 'leaves_on_unknown': 108, 'leaves_in_callee_bodies': 64, 'unblocked_removed_everywhere': 1, 'unblocked_removed_in_callee_bodies': 1}
+{'family': 'arguments do not match resource contract for `X`', 'leaves_on_unknown': 3, 'leaves_in_callee_bodies': 1, 'unblocked_removed_everywhere': 3, 'unblocked_removed_in_callee_bodies': 1}
+{'family': 'unresolved resource identity `X`', 'leaves_on_unknown': 3462, 'leaves_in_callee_bodies': 1709, 'unblocked_removed_everywhere': 4, 'unblocked_removed_in_callee_bodies': 0}
+{'family': 'unmodeled call, aggregate or indirect access in for-loop condition', 'leaves_on_unknown': 863, 'leaves_in_callee_bodies': 460, 'unblocked_removed_everywhere': 0, 'unblocked_removed_in_callee_bodies': 0}
+{'family': 'store through `X` without an out-parameter contract', 'leaves_on_unknown': 244, 'leaves_in_callee_bodies': 134, 'unblocked_removed_everywhere': 0, 'unblocked_removed_in_callee_bodies': 0}
+{'family': 'arguments beyond the declared parameters of `X` are outside the resource projection', 'leaves_on_unknown': 218, 'leaves_in_callee_bodies': 88, 'unblocked_removed_everywhere': 1, 'unblocked_removed_in_callee_bodies': 0}
+{'family': 'nullable resource `X` used by a non-null contract', 'leaves_on_unknown': 186, 'leaves_in_callee_bodies': 113, 'unblocked_removed_everywhere': 0, 'unblocked_removed_in_callee_bodies': 0}
+{'family': 'unmodeled call, aggregate or indirect access in switch expression', 'leaves_on_unknown': 78, 'leaves_in_callee_bodies': 45, 'unblocked_removed_everywhere': 1, 'unblocked_removed_in_callee_bodies': 0}
+12 0 1 9 same-unit librdkafka/lz4.c LZ4_decompress_generic 121 [('unsupported assignment expression', 36), ('call to uncontracted function `X`', 33), ('unrecognized assignment destination', 27), ('unresolved resource identity `X`', 10)]
+0 5 3 12 other-unit cmetrics/cmt_mpack_utils.c cmt_mpack_unpack_array 8 [('call to uncontracted function `X`', 4), ('unmodeled call, aggregate or indirect access in branch condition', 3), ('unresolved resource identity `X`', 1)]
+0 5 0 5 other-unit ctraces/ctr_mpack_utils.c ctr_mpack_unpack_array 8 [('call to uncontracted function `X`', 4), ('unmodeled call, aggregate or indirect access in branch condition', 3), ('unresolved resource identity `X`', 1)]
+5 0 1 4 same-unit librdkafka/lz4.c LZ4_decompress_unsafe_generic 20 [('unsupported assignment expression', 8), ('call to uncontracted function `X`', 6), ('unresolved resource identity `X`', 4), ('unrecognized assignment destination', 2)]
+4 0 3 46 same-unit ctraces/ctr_encode_text.c sds_cat_safe 1 [('call to uncontracted function `X`', 1)]
+4 0 0 5 same-unit librdkafka/lz4hc.c LZ4_compress_HC_extStateHC 2 [('indirect memory access is outside the resource projection', 1), ('call to uncontracted function `X`', 1)]
+4 0 0 4 same-unit librdkafka/lz4hc.c LZ4_compress_HC 3 [('call to uncontracted function `X`', 2), ('unresolved resource identity `X`', 1)]
+4 0 0 4 same-unit librdkafka/rdkafka_admin.c rd_kafka_admin_result_ret_groups 4 [('indirect memory access is outside the resource projection', 2), ('braced initializer, expression, or declaration is not modeled', 1), ('unmodeled call, aggregate or indirect access in return expression', 1)]
+3 0 1 4 same-unit cmetrics/cmt_metric.c add 6 [('indirect memory access is outside the resource projection', 4), ('call to uncontracted function `X`', 2)]
+0 3 0 4 other-unit librdkafka/lz4.c LZ4_compress_fast_continue 28 [('indirect memory access is outside the resource projection', 11), ('call to uncontracted function `X`', 7), ('unmodeled call, aggregate or indirect access in branch condition', 7), ('unresolved resource identity `X`', 2)]
+3 0 0 3 same-unit librdkafka/cJSON.c add_item_to_object 9 [('indirect memory access is outside the resource projection', 5), ('call to uncontracted function `X`', 2), ('unresolved resource identity `X`', 1), ('unmodeled call, aggregate or indirect access in branch condition', 1)]
+3 0 0 3 same-unit librdkafka/rdkafka_admin.c rd_kafka_admin_result_ret_resources 4 [('indirect memory access is outside the resource projection', 2), ('braced initializer, expression, or declaration is not modeled', 1), ('unmodeled call, aggregate or indirect access in return expression', 1)]
+3 0 0 3 same-unit librdkafka/rdkafka_admin.c rd_kafka_admin_result_ret_topics 4 [('indirect memory access is outside the resource projection', 2), ('braced initializer, expression, or declaration is not modeled', 1), ('unmodeled call, aggregate or indirect access in return expression', 1)]
+0 3 0 3 other-unit librdkafka/rdkafka_assignor.c rd_kafka_assignor_add 14 [('indirect memory access is outside the resource projection', 12), ('unmodeled call, aggregate or indirect access in branch condition', 2)]
+3 0 0 2 same-unit librdkafka/cJSON.c cJSON_ParseWithLengthOpts 24 [('indirect memory access is outside the resource projection', 12), ('unresolved resource identity `X`', 5), ('unmodeled call, aggregate or indirect access in branch condition', 4), ('call to uncontracted function `X`', 2)]
+3 0 0 1 same-unit librdkafka/lz4.c LZ4_compress_fast 2 [('unsupported assignment expression', 1), ('call to uncontracted function `X`', 1)]
+0 2 9 132 other-unit librdkafka/rdkafka_op.c rd_kafka_op_destroy 123 [('indirect memory access is outside the resource projection', 59), ('unmodeled call, aggregate or indirect access in branch condition', 49), ('braced initializer, expression, or declaration is not modeled', 7), ('call to uncontracted function `X`', 4)]
+2 0 2 8 same-unit librdkafka/nanopb/pb_encode.c pb_write 6 [('unmodeled call, aggregate or indirect access in branch condition', 3), ('unmodeled call, aggregate or indirect access in return expression', 2), ('unrecognized assignment destination', 1)]
+2 0 0 4 same-unit librdkafka/cJSON.c add_item_to_array 8 [('indirect memory access is outside the resource projection', 6), ('unresolved resource identity `X`', 1), ('unmodeled call, aggregate or indirect access in branch condition', 1)]
+2 0 0 4 same-unit librdkafka/lz4hc.c LZ4_compress_HC_continue 3 [('call to uncontracted function `X`', 2), ('unmodeled call, aggregate or indirect access in branch condition', 1)]
+2 0 0 4 same-unit librdkafka/rdkafka_admin.c rd_kafka_AclBinding_new0 10 [('indirect memory access is outside the resource projection', 8), ('unresolved resource identity `X`', 1), ('nullable resource `X` used by a non-null contract', 1)]
+2 0 1 3 same-unit librdkafka/lz4.c LZ4_compress_fast_extState 7 [('call to uncontracted function `X`', 4), ('C operator `X` requires type/operand analysis', 2), ('indirect memory access is outside the resource projection', 1)]
+2 0 0 3 same-unit librdkafka/rdkafka_conf.c rd_kafka_anyconf_dump 11 [('unmodeled call, aggregate or indirect access in branch condition', 5), ('unmodeled increment or decrement expression', 2), ('indirect memory access is outside the resource projection', 1), ('unresolved resource identity `X`', 1)]
+2 0 1 3 same-unit librdkafka/rdkafka_partition.c rd_kafka_topic_partition_list_add0 16 [('indirect memory access is outside the resource projection', 8), ('call to uncontracted function `X`', 4), ('unmodeled call, aggregate or indirect access in branch condition', 3), ('unmodeled increment or decrement expression', 1)]
+2 0 0 3 same-unit librdkafka/rdkafka_partition.c rd_kafka_topic_partition_list_difference0 12 [('indirect memory access is outside the resource projection', 5), ('unmodeled call, aggregate or indirect access in for-loop condition', 2), ('unmodeled increment or decrement expression', 2), ('braced initializer, expression, or declaration is not modeled', 1)]
+2 0 0 3 same-unit fluent-bit-chunk/flb_input_chunk.c append_to_ring_buffer 24 [('indirect memory access is outside the resource projection', 8), ('unresolved resource identity `X`', 7), ('unmodeled call, aggregate or indirect access in branch condition', 4), ('braced initializer, expression, or declaration is not modeled', 3)]
+2 0 0 2 same-unit ctraces/ctr_mpack_utils.c ctr_mpack_consume_int_tag 6 [('call to uncontracted function `X`', 3), ('unmodeled call, aggregate or indirect access in branch condition', 3)]
+2 0 0 2 same-unit ctraces/ctr_mpack_utils.c ctr_mpack_consume_uint_tag 6 [('call to uncontracted function `X`', 3), ('unmodeled call, aggregate or indirect access in branch condition', 3)]
+2 0 0 2 same-unit librdkafka/cJSON.c get_object_item 7 [('indirect memory access is outside the resource projection', 3), ('unmodeled call, aggregate or indirect access in loop condition', 2), ('unmodeled call, aggregate or indirect access in branch condition', 1), ('unresolved resource identity `X`', 1)]
+2 0 0 2 same-unit librdkafka/cJSON.c replace_item_in_object 6 [('unmodeled call, aggregate or indirect access in branch condition', 2), ('indirect memory access is outside the resource projection', 2), ('unrecognized assignment destination', 1), ('call to uncontracted function `X`', 1)]
+2 0 0 2 same-unit librdkafka/lz4.c LZ4_compress_default 1 [('call to uncontracted function `X`', 1)]
+2 0 0 2 same-unit librdkafka/rdbuf.c rd_slice_reader0 11 [('indirect memory access is outside the resource projection', 6), ('unmodeled call, aggregate or indirect access in branch condition', 2), ('unmodeled call, aggregate or indirect access in for-loop condition', 1), ('braced initializer, expression, or declaration is not modeled', 1)]
+2 0 0 2 same-unit librdkafka/rdkafka.c rd_kafka_destroy_app 42 [('indirect memory access is outside the resource projection', 19), ('unmodeled call, aggregate or indirect access in branch condition', 15), ('call to uncontracted function `X`', 7), ('braced initializer, expression, or declaration is not modeled', 1)]
+2 0 0 2 same-unit librdkafka/rdkafka_metadata.c rd_kafka_metadata_copy_internal 38 [('indirect memory access is outside the resource projection', 22), ('call to uncontracted function `X`', 6), ('unmodeled call, aggregate or indirect access in branch condition', 5), ('unmodeled call, aggregate or indirect access in for-loop condition', 3)]
+2 0 0 2 same-unit librdkafka/rdkafka_msgset_reader.c rd_kafka_aborted_txns_next_offset 4 [('call to uncontracted function `X`', 1), ('unmodeled call, aggregate or indirect access in branch condition', 1), ('indirect memory access is outside the resource projection', 1), ('unmodeled increment or decrement expression', 1)]
+2 0 0 2 same-unit librdkafka/rdkafka_partition.c rd_kafka_topic_partition_destroy0 7 [('unmodeled call, aggregate or indirect access in branch condition', 3), ('indirect memory access is outside the resource projection', 3), ('unresolved resource identity `X`', 1)]
+2 0 0 2 same-unit librdkafka/rdkafka_partition.c rd_kafka_topic_partition_list_intersection0 12 [('indirect memory access is outside the resource projection', 5), ('unmodeled call, aggregate or indirect access in for-loop condition', 2), ('unmodeled increment or decrement expression', 2), ('braced initializer, expression, or declaration is not modeled', 1)]
+2 0 0 2 same-unit librdkafka/rdkafka_partition.c rd_kafka_topic_partition_list_union0 5 [('call to uncontracted function `X`', 4), ('indirect memory access is outside the resource projection', 1)]
+2 0 0 2 same-unit librdkafka/rdkafka_queue.c rd_kafka_q_pop_serve0 14 [('indirect memory access is outside the resource projection', 6), ('call to uncontracted function `X`', 5), ('unmodeled call, aggregate or indirect access in branch condition', 2), ('unmodeled call, aggregate or indirect access in loop condition', 1)]
+0 2 0 2 other-unit librdkafka/rdkafka_partition.c rd_kafka_toppars_pause_resume 15 [('call to uncontracted function `X`', 6), ('indirect memory access is outside the resource projection', 5), ('unmodeled call, aggregate or indirect access in branch condition', 2), ('unmodeled call, aggregate or indirect access in for-loop condition', 1)]
+2 0 0 2 same-unit chunkio/cio_file.c _cio_file_up 9 [('indirect memory access is outside the resource projection', 6), ('call to uncontracted function `X`', 3)]
+2 0 0 2 header-internal hdr:monkey-libevent/mk_core/mk_event.c _mk_event_wait_2 8 [('call to uncontracted function `X`', 5), ('indirect memory access is outside the resource projection', 2), ('braced initializer, expression, or declaration is not modeled', 1)]
+2 0 0 2 same-unit monkey-libevent/mk_core/mk_string.c _mk_string_search 9 [('unsupported assignment expression', 2), ('unresolved resource identity `X`', 2), ('unmodeled increment or decrement expression', 2), ('indirect memory access is outside the resource projection', 1)]
+0 2 0 1 other-unit librdkafka/rdkafka_sasl_oauthbearer.c rd_kafka_oauthbearer_set_token_failure0 11 [('indirect memory access is outside the resource projection', 8), ('unmodeled call, aggregate or indirect access in branch condition', 3)]
+2 0 0 1 same-unit librdkafka/rdrand.c rd_seed 4 [('call to uncontracted function `X`', 2), ('unsupported assignment expression', 1), ('unmodeled call, aggregate or indirect access in branch condition', 1)]
+0 1 0 129 other-unit librdkafka/rdlist.c rd_list_destroy 3 [('call to uncontracted function `X`', 1), ('unmodeled call, aggregate or indirect access in branch condition', 1), ('unresolved resource identity `X`', 1)]
+0 1 1 98 other-unit librdkafka/rdkafka_partition.c rd_kafka_topic_partition_list_destroy 5 [('indirect memory access is outside the resource projection', 2), ('unmodeled call, aggregate or indirect access in for-loop condition', 1), ('unmodeled call, aggregate or indirect access in branch condition', 1), ('unresolved resource identity `X`', 1)]
+0 1 1 18 other-unit librdkafka/rdkafka_partition.c rd_kafka_topic_partition_list_add 1 [('call to uncontracted function `X`', 1)]
+0 1 0 18 other-unit librdkafka/rdkafka_share_acknowledgement.c rd_kafka_share_ack_batches_new 6 [('indirect memory access is outside the resource projection', 4), ('unresolved resource identity `X`', 1), ('nullable resource `X` used by a non-null contract', 1)]
+1 0 1 13 same-unit librdkafka/rdkafka_request.c rd_kafka_err_action 24 [('unrecognized assignment destination', 12), ('call to uncontracted function `X`', 3), ('unresolved resource identity `X`', 3), ('unmodeled call, aggregate or indirect access in branch condition', 3)]

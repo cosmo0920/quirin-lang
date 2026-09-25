@@ -53,6 +53,7 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 5h | [gateway](gateway.md#constraint-5h) | A desugared condition applies a call exactly where C evaluates it. |
 | 5i | [gateway](gateway.md#constraint-5i) | An assignment's destination is its whole left-hand side. |
 | 5j | [gateway](gateway.md#constraint-5j) | A scalar-result return decides a read; a cast of a whole call is the call. |
+| 5k | [gateway](gateway.md#constraint-5k) | A member release is admitted only as the last use of its place; its summaries are guarded at callers. |
 | 6 | [gateway](gateway.md#constraint-6) | C02-P-ALIAS-LEAK-ORDER: report_leaks on intermediate iterates is… |
 | 7 | [gateway](gateway.md#constraint-7) | Leak diagnostics are 272 across the pinned 185-unit corpus. A change… |
 | 8 | [gateway](gateway.md#constraint-8) | A declared contract must agree with the C the unit declares — in types… |
