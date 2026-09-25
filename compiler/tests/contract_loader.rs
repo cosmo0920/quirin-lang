@@ -78,7 +78,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // moved from a path entry to a reference without changing the count.
     // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
     // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
-    assert_eq!(contracts.source_assumptions().len(), 47);
+    // 47 -> 48 by card W44-LIBC-RESIDUALS: `libc/byteswap.qcore`.
+    assert_eq!(contracts.source_assumptions().len(), 48);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -342,6 +343,19 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("fprintf", 2),
         ("snprintf", 3),
         ("sprintf", 2),
+        // Card W44-LIBC-RESIDUALS: six glibc header-inline scalar helpers
+        // (scalar in, scalar out), the two called `va_list` members (the
+        // `va_list` is borrowed data) and `strerror` (a scalar in, a message
+        // the caller must not free).
+        ("__bswap_16", 1),
+        ("__bswap_32", 1),
+        ("__bswap_64", 1),
+        ("__uint16_identity", 1),
+        ("__uint32_identity", 1),
+        ("__uint64_identity", 1),
+        ("vsnprintf", 4),
+        ("vprintf", 2),
+        ("strerror", 1),
     ] {
         old.insert_contract(
             name,
@@ -802,7 +816,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // moved from a path entry to a reference without changing the count.
     // 45 -> 46 by card W43-LIBC-RESTRICT-PROTOTYPES (`libc/regex.qcore`).
     // 46 -> 47 by card W43-DESCRIPTOR-RESOURCE-TRACKING: `libc/dirent.qcore`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 47);
+    // 47 -> 48 by card W44-LIBC-RESIDUALS: `libc/byteswap.qcore`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 48);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1017,7 +1032,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 110 -> 111: card W43-DESCRIPTOR-NATIVE-CHECK adds
     // `library/descriptor_native_observation.qcore`, a native observation
     // policy (ten parameterless rules), not resource-v1 and not selected.
-    assert_eq!(modules.len(), 111, "corpus module count");
+    // 111 -> 112: card W44-LIBC-RESIDUALS adds `libc/byteswap.qcore`,
+    // entirely v1 and manifest-selected.
+    assert_eq!(modules.len(), 112, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1155,9 +1172,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 206 -> 216 rejected by card W43-DESCRIPTOR-NATIVE-CHECK: the ten rules
     // of `library/descriptor_native_observation.qcore` belong to the native
     // descriptor replay and are deliberately rejected by resource-v1.
+    // 47 -> 48 and 152 -> 161 by card W44-LIBC-RESIDUALS: six neutral
+    // header-inline helpers in the new `libc/byteswap.qcore`, `vsnprintf` and
+    // `vprintf` appended to `libc/stdio.qcore` and `strerror` to
+    // `libc/errno.qcore`. Rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (47, 152, 216)
+        (48, 161, 216)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

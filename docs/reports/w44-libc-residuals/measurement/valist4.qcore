@@ -1,0 +1,25 @@
+module contract;
+
+// MEASUREMENT ONLY, never shipped. Card W44-LIBC-RESIDUALS' declared-ABI census
+// input for the four `va_list` printf members, spelled with the v1 projection
+// of the glibc prototypes the pinned units declare and the new `va_list`
+// spelling for `__gnuc_va_list __arg`. The census compares types only.
+
+extern fn vsnprintf(s: ptr<mut, u8>, maxlen: usize, format: ptr<const, u8>, arg: va_list) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(s);
+  ensures normal resource_borrowed(maxlen); ensures normal resource_borrowed(format);
+  ensures normal resource_borrowed(arg); ensures normal resource_return_none(); };
+
+extern fn vprintf(format: ptr<const, u8>, arg: va_list) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(format);
+  ensures normal resource_borrowed(arg); ensures normal resource_return_none(); };
+
+extern fn vfprintf(s: ptr<mut, u8>, format: ptr<const, u8>, arg: va_list) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(s);
+  ensures normal resource_borrowed(format); ensures normal resource_borrowed(arg);
+  ensures normal resource_return_none(); };
+
+extern fn vsprintf(s: ptr<mut, u8>, format: ptr<const, u8>, arg: va_list) -> i32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(s);
+  ensures normal resource_borrowed(format); ensures normal resource_borrowed(arg);
+  ensures normal resource_return_none(); };

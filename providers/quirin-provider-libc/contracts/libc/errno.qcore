@@ -72,3 +72,36 @@ contract {
     requires resource_contract_v1;
     ensures normal resource_return_none();
 };
+
+// ## `strerror` (card W44-LIBC-RESIDUALS, `LIBC-PRINTF-NESTED-TAIL-CALLEES`)
+//
+// TRUSTED ASSUMPTION (trust boundary 28). Declared in `<string.h>`, and placed
+// beside the `errno` accessor it serves rather than in `libc/string.qcore`,
+// which is a PUBLISHED module whose SHA-256 every inheriting contract's
+// identity carries (`providers/contract-load-path.json`): appending there would
+// move that identity for a declaration no inheriting contract uses. Read from
+// the prototype the analysed units declare (`/usr/include/string.h`):
+//
+//   extern char *strerror (int __errnum) __THROW;
+//
+//   * `__errnum` is an `int` by value: `resource_borrowed`.
+//   * The result points to a message the caller must NOT free: glibc returns a
+//     string in static read-only storage, or one in a thread-local buffer the
+//     next `strerror` call on that thread may overwrite. Nothing is allocated
+//     for the caller and the result points into no argument, so the caller
+//     acquires no obligation: `resource_return_none()`, the precedent
+//     `gai_strerror` (`libc/socket.qcore`), `dlerror` (`libc/dlfcn.qcore`) and
+//     `__errno_location` above set for a pointer result with no custody.
+//
+// Measured use: two printf-family tails pass `strerror(r)` whole, where the
+// nested-call admission (card O04-TRACE's premises N3, N6 and N7) needs exactly
+// this declaration. The census agrees in all 181 units that declare it.
+// Nothing about the message's lifetime past the next call, its text, locale or
+// `errno` is stated.
+
+extern fn strerror(errnum: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(errnum);
+    ensures normal resource_return_none();
+};
