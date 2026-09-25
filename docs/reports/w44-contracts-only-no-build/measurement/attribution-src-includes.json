@@ -1,0 +1,1670 @@
+{
+ "configured_report": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aa974c0228e7d5c45/private/measure/m2/configured/contracts-only.json",
+ "no_build_report": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aa974c0228e7d5c45/private/measure/m2/src-includes/report.json",
+ "configured_units": 157,
+ "configured_files": 156,
+ "no_build_units": 165,
+ "categories": {
+  "no-build-only:not-compiled": 9,
+  "not-prepared:missing-include:generated": 97,
+  "not-prepared:syntax-error": 7,
+  "prepared:different-text:same-verdict": 32,
+  "prepared:same-text:same-verdict": 20
+ },
+ "missing_headers": [
+  {
+   "header": "../config.h",
+   "location": "generated",
+   "units": 83
+  },
+  {
+   "header": "chunkio/cio_info.h",
+   "location": "generated",
+   "units": 13
+  },
+  {
+   "header": "mk_core/mk_core_info.h",
+   "location": "generated",
+   "units": 1
+  }
+ ],
+ "other_first_errors": {
+  "use of undeclared identifier '__CMT_FILENAME__'": 7
+ },
+ "function_pairs": {
+  "agree": 1202
+ },
+ "unit_statuses": {
+  "configured": {
+   "Unknown": 146,
+   "Safe": 2,
+   "Unsafe": 5,
+   "data_only": 4
+  },
+  "no_build": {
+   "Unknown": 158,
+   "Safe": 2,
+   "Unsafe": 1,
+   "data_only": 4
+  }
+ },
+ "function_statuses": {
+  "configured": {
+   "Unknown": 4277,
+   "Safe": 269,
+   "NotProjected": 76,
+   "Unsafe": 6
+  },
+  "no_build": {
+   "Unknown": 1096,
+   "Safe": 102,
+   "NotProjected": 3484,
+   "Unsafe": 1
+  }
+ },
+ "favourable": [],
+ "safe_without_configured_counterpart": [],
+ "units": [
+  {
+   "file": "lib/chunkio/src/chunkio.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/include/chunkio/chunkio.h:23:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/cio_chunk.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/include/chunkio/chunkio_compat.h:23:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/cio_error.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/include/chunkio/chunkio.h:23:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/cio_file.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/include/chunkio/chunkio.h:23:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/cio_file_unix.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/include/chunkio/chunkio.h:23:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/cio_file_win32.c",
+   "category": "no-build-only:not-compiled",
+   "no_build": "Unknown",
+   "no_build_reason": "missing-include"
+  },
+  {
+   "file": "lib/chunkio/src/cio_log.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/include/chunkio/chunkio_compat.h:23:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/cio_memfs.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/include/chunkio/chunkio.h:23:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/cio_meta.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/include/chunkio/chunkio_compat.h:23:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/cio_os.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/include/chunkio/chunkio_compat.h:23:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/cio_scan.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/include/chunkio/chunkio_compat.h:23:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/cio_sha1.c",
+   "category": "no-build-only:not-compiled",
+   "no_build": "Unknown",
+   "no_build_reason": "missing-include"
+  },
+  {
+   "file": "lib/chunkio/src/cio_stats.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/include/chunkio/chunkio_compat.h:23:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/cio_stream.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/chunkio/include/chunkio/chunkio_compat.h:23:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/cio_utils.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "cio_utils.c:32:10: fatal error: 'chunkio/cio_info.h' file not found",
+   "header": "chunkio/cio_info.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/chunkio/src/win32/dirent.c",
+   "category": "no-build-only:not-compiled",
+   "no_build": "Unknown",
+   "no_build_reason": "missing-include"
+  },
+  {
+   "file": "lib/cmetrics/src/cmetrics.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_atomic_clang.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_atomic_gcc.c",
+   "category": "no-build-only:not-compiled",
+   "no_build": "Unknown",
+   "no_build_reason": null
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_atomic_generic.c",
+   "category": "no-build-only:not-compiled",
+   "no_build": "Unknown",
+   "no_build_reason": null
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_atomic_msvc.c",
+   "category": "no-build-only:not-compiled",
+   "no_build": "Unknown",
+   "no_build_reason": "missing-include"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_cat.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_counter.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:syntax-error",
+   "first_diagnostic": "<stdin>:5451:31: error: use of undeclared identifier '__CMT_FILENAME__'"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_decode_prometheus.c",
+   "category": "no-build-only:not-compiled",
+   "no_build": "Unknown",
+   "no_build_reason": "missing-include"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_decode_statsd.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_influx.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_msgpack.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_prometheus.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_splunk_hec.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_text.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_exp_histogram.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:syntax-error",
+   "first_diagnostic": "<stdin>:5756:46: error: use of undeclared identifier '__CMT_FILENAME__'"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_filter.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:syntax-error",
+   "first_diagnostic": "<stdin>:5797:35: error: use of undeclared identifier '__CMT_FILENAME__'"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_gauge.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:syntax-error",
+   "first_diagnostic": "<stdin>:5449:31: error: use of undeclared identifier '__CMT_FILENAME__'"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_histogram.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:syntax-error",
+   "first_diagnostic": "<stdin>:5606:31: error: use of undeclared identifier '__CMT_FILENAME__'"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_label.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_log.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_metric.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_metric_histogram.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_mpack_utils.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_opts.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_summary.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:syntax-error",
+   "first_diagnostic": "<stdin>:5468:31: error: use of undeclared identifier '__CMT_FILENAME__'"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_time.c",
+   "configured": [
+    "Safe"
+   ],
+   "no_build": "Safe",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_untyped.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:syntax-error",
+   "first_diagnostic": "<stdin>:5444:31: error: use of undeclared identifier '__CMT_FILENAME__'"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_attributes.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_encode_msgpack.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_encode_text.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_id.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_link.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_log.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_mpack_utils.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_random.c",
+   "configured": [
+    "Unsafe"
+   ],
+   "no_build": "Unsafe",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_resource.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_scope.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_span.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_utils.c",
+   "configured": [
+    "data_only"
+   ],
+   "no_build": "data_only",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctr_version.c",
+   "configured": [
+    "Safe"
+   ],
+   "no_build": "Safe",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/ctraces/src/ctraces.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/crc32c.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/lz4.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/lz4hc.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/nanopb/pb_common.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/opentelemetry/common.pb.c",
+   "configured": [
+    "data_only"
+   ],
+   "no_build": "data_only",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/opentelemetry/metrics.pb.c",
+   "configured": [
+    "data_only"
+   ],
+   "no_build": "data_only",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/opentelemetry/resource.pb.c",
+   "configured": [
+    "data_only"
+   ],
+   "no_build": "data_only",
+   "category": "prepared:same-text:same-verdict"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdaddr.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdavl.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdbase64.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdbuf.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdcrc32.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rddl.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdfnv1a.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdgz.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdhdrhistogram.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdhttp.c",
+   "configured": [
+    "Unsafe"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_assignment.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_background.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_cert.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_coord.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_error.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_event.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_feature.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_header.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_idempotence.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_lz4.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_offset.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_op.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_pattern.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_plugin.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_roundrobin_assignor.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+   "configured": [
+    "Unsafe"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_plain.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+   "configured": [
+    "Unsafe"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_win32.c",
+   "category": "no-build-only:not-compiled",
+   "no_build": "Unknown",
+   "no_build_reason": "missing-include"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_telemetry.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_timer.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_zstd.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdlist.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdlog.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdmap.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdmurmur2.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdports.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdrand.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdregex.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdstring.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdunittest.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdunittest_fetcher.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdunittest_msgset_errors.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdvarint.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdxxhash.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "prepared:different-text:same-verdict"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/regexp.c",
+   "category": "no-build-only:not-compiled",
+   "no_build": "Unknown",
+   "no_build_reason": "missing-include"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/snappy.c",
+   "configured": [
+    "Unsafe"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/tinycthread.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/tinycthread_extra.c",
+   "configured": [
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "./tinycthread.h:32:10: error: '../config.h' file not found, did you mean 'config.h'?",
+   "header": "../config.h",
+   "header_location": "generated"
+  },
+  {
+   "file": "src/flb_input_chunk.c",
+   "configured": [
+    "Unknown",
+    "Unknown"
+   ],
+   "no_build": "Unknown",
+   "category": "not-prepared:missing-include:generated",
+   "first_diagnostic": "/home/cosmo/Documents/GitHub/fluent-bit/lib/monkey/include/monkey/mk_core.h:33:10: fatal error: 'mk_core/mk_core_info.h' file not found",
+   "header": "mk_core/mk_core_info.h",
+   "header_location": "generated"
+  }
+ ]
+}

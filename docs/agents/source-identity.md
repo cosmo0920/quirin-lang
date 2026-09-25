@@ -95,3 +95,31 @@ marked and plain preprocessing artifacts; they do not reprocess the input to
 manufacture certificate scope evidence. See the
 [context-binding card](../reports/certificate-context-binding/README.md) for
 the measured boundary and remaining assumptions.
+
+## Assumed build settings are a scope, never an equivalence
+
+`quirin-audit contracts` (W44-CONTRACTS-ONLY-NO-BUILD) analyses a unit under an
+**assumed** configuration: the user's `-I`/`-D`/`--std` plus the stated
+defaults (`gnu17`, the unit's own directory for quoted includes, the host
+Clang's system headers), never a compilation database's command. Every
+verdict it publishes, `Safe` included, is **relative to the recorded
+assumptions only**, and must never be presented as equivalent to, comparable
+with or a substitute for a build-configured verdict of the same file. A
+different configuration can select different code (`QCore.NoBuildScope`'s
+`favourable_direction_exists`). Keep the three carriers of that scope:
+
+- each report row's `assumptions` (with `verdict_scope`);
+- the report's `evidence` block (`evidence: "contracts-only-no-build"`,
+  `build: "none"`, `equivalence_to_build_configured: "none: …"`);
+- the assumption record as each compile task's `source_profile` dependency,
+  so a Safe certificate minted under assumed settings is never admitted for a
+  configured compile task.
+
+A unit that does not preprocess or parse under the assumptions is `Unknown`
+with its reason code and first diagnostic, never dropped. Nothing is guessed,
+so no include directory is searched for and no configuration header is
+generated. Headers are read as found on disk, tracked or not, and are bound
+only through the preprocessed text. A comparison with a configured run
+attributes each verdict difference to a preparation refusal or a text
+difference (`verdict_difference_needs_text_difference`). It must never pool
+the two runs' counts. [Report](../reports/w44-contracts-only-no-build/README.md).

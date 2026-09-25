@@ -850,6 +850,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w44-collection-allocation](w44-collection-allocation/README.md) | W44-COLLECTION-ALLOCATION: unevaluated `sizeof` dereference operands |
 
+| [w44-contracts-only-no-build](w44-contracts-only-no-build/README.md) | W44-CONTRACTS-ONLY-NO-BUILD: a contracts-only audit that needs no build settings |
+
 | [w44-corpus-callee-summaries](w44-corpus-callee-summaries/README.md) | W44-CORPUS-CALLEE-SUMMARIES: why corpus callees get no summary, and the one route gap closed |
 
 | [w44-indirect-call-argument-access](w44-indirect-call-argument-access/README.md) | W44-INDIRECT-CALL-ARGUMENT-ACCESS: typed indirect reads in call actuals |

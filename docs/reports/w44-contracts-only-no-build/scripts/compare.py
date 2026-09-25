@@ -115,6 +115,10 @@ def main() -> int:
     header_where = {}
     function_pairs = collections.Counter()
     favourable = []
+    # A no-build Safe with no configured verdict to compare against: not the
+    # favourable direction (there is nothing to be more favourable than), but
+    # published under the same assumption scope as every other verdict.
+    uncompared = []
     first_lines = collections.Counter()
     for file in sorted(set(configured) | set(no_build)):
         rows, row = configured.get(file, []), no_build.get(file)
@@ -129,7 +133,7 @@ def main() -> int:
             record["no_build"] = row["status"]
             record["no_build_reason"] = row["assumptions"]["reason"]
             if row["status"] == "Safe":
-                favourable.append({"file": file, "level": "unit", "cause": "not compiled by the configured build"})
+                uncompared.append({"file": file, "category": record["category"]})
         else:
             record["configured"] = [r["status"] for r in rows]
             record["no_build"] = row["status"]
@@ -197,12 +201,25 @@ def main() -> int:
         ],
         "other_first_errors": dict(first_lines.most_common()),
         "function_pairs": dict(function_pairs),
+        "unit_statuses": {
+            "configured": dict(collections.Counter(r["status"] for rows in configured.values() for r in rows)),
+            "no_build": dict(collections.Counter(row["status"] for row in no_build.values())),
+        },
+        "function_statuses": {
+            "configured": dict(collections.Counter(
+                status for rows in configured.values() for r in rows for status in functions(r).values())),
+            "no_build": dict(collections.Counter(
+                status for row in no_build.values() for status in functions(row).values())),
+        },
         "favourable": favourable,
+        "safe_without_configured_counterpart": uncompared,
         "units": units,
     }
     pathlib.Path(out).write_text(json.dumps(summary, indent=1) + "\n")
     print(json.dumps({k: summary[k] for k in ("configured_units", "configured_files", "no_build_units",
-                                               "categories", "function_pairs")}, indent=1))
+                                               "categories", "function_pairs", "unit_statuses",
+                                               "function_statuses")}, indent=1))
+    print("safe without a configured counterpart:", len(uncompared))
     print("favourable:", len(favourable))
     for item in favourable:
         print("  ", item)

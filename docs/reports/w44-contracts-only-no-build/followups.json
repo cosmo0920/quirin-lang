@@ -1,0 +1,16 @@
+[
+ {
+  "id": "W44-NO-BUILD-HEADER-PROVENANCE",
+  "title": "A no-build verdict can rest on untracked or stale headers, bound only through the preprocessed text",
+  "why": "Measured by card W44-CONTRACTS-ONLY-NO-BUILD (docs/reports/w44-contracts-only-no-build/README.md, section 4.3): `quirin-audit contracts` reads headers as found on disk. In the Fluent Bit checkout an earlier in-tree configure left the git-ignored include/fluent-bit/flb_info.h and lib/cmetrics/include/cmetrics/cmt_info.h (whose CMT_SOURCE_DIR differs from a clean clone's); with the source-tree include directories on the path the prepared cmetrics units and flb_input_chunk.c read those stale bytes. Verdicts agreed with the build-configured run, and the assumption record now states that headers are read tracked or not, but the report binds header bytes only through each unit's preprocessed-text digest and names no header file. DISCHARGE: record each unit's included files (from the line-marked preprocessing the gateway already runs) with their digests, and optionally refuse or flag headers outside a declared tracked set; or record a decision that the preprocessed-text digest is the intended header binding for no-build verdicts.",
+  "source": "docs/reports/w44-contracts-only-no-build/README.md",
+  "recorded_by": "W44-CONTRACTS-ONLY-NO-BUILD"
+ },
+ {
+  "id": "W44-NO-BUILD-GENERATED-CONFIGURATION",
+  "title": "Without a configure step, most Cycle 19 units stay Unknown on generated headers and build-only definitions",
+  "why": "Measured by card W44-CONTRACTS-ONLY-NO-BUILD on Fluent Bit 864c3d97 (section 4): with the source tree's own include directories, 97 of the 156 Cycle 19 files the build-configured run audits stay Unknown on headers only a configure step generates (librdkafka's ../config.h 83, chunkio/cio_info.h 13, mk_core/mk_core_info.h 1), and 7 cmetrics units fail to parse without the per-file -D__CMT_FILENAME__ that cmetrics' CMake supplies. Every unit both runs prepared agrees with the configured verdict (1,202 function pairs, 0 favourable-direction differences), so the residual is coverage, not soundness. The route deliberately guesses no configuration header. DISCHARGE: a declared, reviewable configuration input for no-build runs (for example an explicit generated-header directory or definitions file recorded as an assumption and bound into the source-profile digest), measured against the configured run with the same attribution; or record a decision that these units stay Unknown without a build.",
+  "source": "docs/reports/w44-contracts-only-no-build/README.md",
+  "recorded_by": "W44-CONTRACTS-ONLY-NO-BUILD"
+ }
+]
