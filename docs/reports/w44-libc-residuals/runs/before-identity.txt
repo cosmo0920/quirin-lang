@@ -1,11 +1,11 @@
 {
-  "run": "measure/before",
-  "baseline": "docs/reports/w43-indexed-resource-collections/integration/artifacts",
+  "run": "measure/v2/before",
+  "baseline": "docs/reports/w44-corpus-callee-summaries/integration/artifacts",
   "artifacts": {
     "diagnostics": {
       "file": "resource-diagnostics.json",
-      "run_sha256": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
-      "baseline_raw_sha256": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+      "run_sha256": "556edc00b7f2210b8ffb64719b38c808fdd5a609da0f7c74c3349d038c17ade4",
+      "baseline_raw_sha256": "556edc00b7f2210b8ffb64719b38c808fdd5a609da0f7c74c3349d038c17ade4",
       "archive_matches_manifest": true,
       "byte_identical": true
     },

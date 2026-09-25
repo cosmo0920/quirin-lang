@@ -1,5 +1,5 @@
 {
-  "note": "W43-INDEXED-RESOURCE-COLLECTIONS integration, 2026-09-25. The card (measured against docs/reports/w43-descriptor-resource-tracking/integration/artifacts) composed onto the combined tree docs/reports/w43-descriptor-resource-tracking/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 0 added 0 functions 0 units 0); functions moved (combined): []. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] Verdict-neutral on the corpus: the diagnostics artifact differs from the previous baseline only in the scope string (no bounds claim for collection ranges); every one of the 27 recognised element operations keeps its original refusal. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-indexed-resource-collections/integration/previous-corpus-row.json.",
+  "note": "W44-CORPUS-CALLEE-SUMMARIES integration, 2026-09-25. The card (measured against docs/reports/w43-indexed-resource-collections/integration/artifacts) composed onto the combined tree docs/reports/w44-indirect-chain-access/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 55 added 15 functions 2 units 0); functions moved (combined): [('mk_event_backend', ('Unknown', 'Safe')), ('mk_event_init', ('Unknown', 'Safe'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] mk_event_init and mk_event_backend are Safe relative to the validated W4 summaries of their reached static helpers. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-corpus-callee-summaries/integration/previous-corpus-row.json.",
   "units": 185,
   "safe": 3,
   "provisional_unsafe": 43,
@@ -8,15 +8,15 @@
   "projected_functions": 4834,
   "leak_diagnostics": 271,
   "process_sidecar": "3 checked function contracts / 93 Unknown",
-  "baseline": "docs/reports/w43-indexed-resource-collections/integration/artifacts/",
-  "source": "docs/reports/w43-indexed-resource-collections/integration/integration-confirmation.md; preceding baseline docs/reports/w43-descriptor-resource-tracking/integration/artifacts",
-  "unknown_alias_diagnostics": 4358,
-  "unsupported_diagnostics": 45848,
+  "baseline": "docs/reports/w44-corpus-callee-summaries/integration/artifacts/",
+  "source": "docs/reports/w44-corpus-callee-summaries/integration/integration-confirmation.md; preceding baseline docs/reports/w44-indirect-chain-access/integration/artifacts",
+  "unknown_alias_diagnostics": 4420,
+  "unsupported_diagnostics": 45721,
   "double_release_diagnostics": 0,
   "function_statuses": {
-    "safe": 294,
+    "safe": 296,
     "provisional_unsafe": 85,
-    "unknown": 4455
+    "unknown": 4453
   },
   "source_definitions": 4921,
   "unprojected_definitions": 87,

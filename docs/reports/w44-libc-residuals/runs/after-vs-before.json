@@ -1,10 +1,10 @@
 {
- "left": "measure/before",
- "right": "measure/stage4-after",
+ "left": "measure/v2/before",
+ "right": "measure/v2/stage4",
  "artifacts": {
   "resource-diagnostics.json": {
-   "left": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
-   "right": "89b7c401a7a4bd6f2768878ff89fc2c5f4acfeeef0a13b28805c633b97733ace",
+   "left": "556edc00b7f2210b8ffb64719b38c808fdd5a609da0f7c74c3349d038c17ade4",
+   "right": "4d5107824f7ecd6b195c0bf3609c0e777232d2cdd9d09701669fcfefb669fa85",
    "identical": false
   },
   "resource-diagnostics.chunk-contracts.json": {
@@ -14,7 +14,7 @@
   },
   "resource-diagnostics.contracts.json": {
    "left": "ee8b177a67df6be6ef8c14b06724f8a11bf983605773d0de76ce5adc90b901d4",
-   "right": "a9cf8a94b326505e0bcae85684c24068a32bae7e64ec3555c8f15b75048df55a",
+   "right": "5643ff6cbccd8416eb2682362cb9bd7676cd7cce2164198bd000f860c7facf33",
    "identical": false
   },
   "resource-diagnostics.source-effects.json": {

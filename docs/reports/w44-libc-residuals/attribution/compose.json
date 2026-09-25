@@ -5,7 +5,7 @@
  "every_stage_complete": true,
  "stages": [
   {
-   "attribution": "measure/attr/stage1b.json",
+   "attribution": "measure/attr2/stage1.json",
    "removed": 974,
    "added": 0,
    "by_class": {
@@ -17,14 +17,14 @@
    "attribution_complete": true
   },
   {
-   "attribution": "measure/attr/stage2.json",
+   "attribution": "measure/attr2/stage2.json",
    "removed": 627,
    "added": 5,
    "by_class": {
     "added same-line": 5,
-    "removed declared-callee": 599,
     "removed newly-safe-callee": 27,
-    "removed same-line": 1
+    "removed same-line": 1,
+    "removed summarised-callee": 599
    },
    "moved_functions": [
     [
@@ -52,7 +52,7 @@
    "attribution_complete": true
   },
   {
-   "attribution": "measure/attr/stage3.json",
+   "attribution": "measure/attr2/stage3.json",
    "removed": 26,
    "added": 1,
    "by_class": {
@@ -63,7 +63,7 @@
    "attribution_complete": true
   },
   {
-   "attribution": "measure/attr/stage4.json",
+   "attribution": "measure/attr2/stage4.json",
    "removed": 2,
    "added": 0,
    "by_class": {
@@ -98,13 +98,13 @@
  ],
  "functions": {
   "before": {
-   "Unknown": 4455,
-   "Safe": 294,
+   "Unknown": 4453,
+   "Safe": 296,
    "Unsafe": 85
   },
   "after": {
-   "Unknown": 4452,
-   "Safe": 297,
+   "Unknown": 4450,
+   "Safe": 299,
    "Unsafe": 85
   }
  },
@@ -126,14 +126,14 @@
   "before": {
    "leak": 271,
    "summary_conflict": 1,
-   "unknown_alias": 4358,
-   "unsupported": 45848
+   "unknown_alias": 4420,
+   "unsupported": 45721
   },
   "after": {
    "leak": 271,
    "summary_conflict": 1,
-   "unknown_alias": 4358,
-   "unsupported": 44225
+   "unknown_alias": 4420,
+   "unsupported": 44098
   }
  }
 }

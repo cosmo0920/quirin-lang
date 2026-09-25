@@ -42,26 +42,8 @@
     "LZ4_resetStream": {
      "agreed": 3
     },
-    "__bswap_16": {
-     "agreed": 174
-    },
-    "__bswap_32": {
-     "agreed": 174
-    },
-    "__bswap_64": {
-     "agreed": 174
-    },
     "__errno_location": {
      "agreed": 168
-    },
-    "__uint16_identity": {
-     "agreed": 174
-    },
-    "__uint32_identity": {
-     "agreed": 174
-    },
-    "__uint64_identity": {
-     "agreed": 174
     },
     "access": {
      "agreed": 137
@@ -546,10 +528,10 @@
      "undeclared": 40
     }
    },
-   "rows": 14662,
-   "source": "measure/census/manifest-after.txt",
+   "rows": 13618,
+   "source": "measure/census/v2-manifest-after.txt",
    "totals": {
-    "agreed": 13853,
+    "agreed": 12809,
     "undeclared": 539,
     "withdrawn:abi-return-type-disagreement": 113,
     "withdrawn:abi-unreadable-declaration": 157
@@ -1529,7 +1511,7 @@
     }
    },
    "rows": 13101,
-   "source": "measure/census/manifest-reader.txt",
+   "source": "measure/census/v2-manifest-reader.txt",
    "totals": {
     "agreed": 12292,
     "undeclared": 539,
@@ -1580,7 +1562,7 @@
      "agreed": 174
     },
     "__bswap_64": {
-     "agreed": 174
+     "withdrawn:abi-unreadable-declaration": 174
     },
     "__uint16_identity": {
      "agreed": 174
@@ -1599,9 +1581,10 @@
     }
    },
    "rows": 1362,
-   "source": "measure/census/residuals8-reader.txt",
+   "source": "measure/census/v2-residuals8.txt",
    "totals": {
-    "agreed": 1362
+    "agreed": 1188,
+    "withdrawn:abi-unreadable-declaration": 174
    }
   },
   "valist4-reader": {
@@ -1620,7 +1603,7 @@
     }
    },
    "rows": 672,
-   "source": "measure/census/valist4-reader.txt",
+   "source": "measure/census/v2-valist4.txt",
    "totals": {
     "agreed": 672
    }

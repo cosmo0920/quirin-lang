@@ -1,10 +1,10 @@
 {
- "left": "measure/before",
- "right": "measure/stage0-reader",
+ "left": "measure/v2/before",
+ "right": "measure/v2/stage0",
  "artifacts": {
   "resource-diagnostics.json": {
-   "left": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
-   "right": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+   "left": "556edc00b7f2210b8ffb64719b38c808fdd5a609da0f7c74c3349d038c17ade4",
+   "right": "556edc00b7f2210b8ffb64719b38c808fdd5a609da0f7c74c3349d038c17ade4",
    "identical": true
   },
   "resource-diagnostics.chunk-contracts.json": {

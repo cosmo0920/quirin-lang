@@ -1,0 +1,32 @@
+{
+ "left": "measure/before",
+ "right": "measure/stage0-reader",
+ "artifacts": {
+  "resource-diagnostics.json": {
+   "left": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+   "right": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "ee8b177a67df6be6ef8c14b06724f8a11bf983605773d0de76ce5adc90b901d4",
+   "right": "ee8b177a67df6be6ef8c14b06724f8a11bf983605773d0de76ce5adc90b901d4",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "ab28eff3b9102ebb546a3ed15f479da17f84a27f73288521c5c125cd48b40020",
+   "right": "ab28eff3b9102ebb546a3ed15f479da17f84a27f73288521c5c125cd48b40020",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ },
+ "all_identical": true
+}

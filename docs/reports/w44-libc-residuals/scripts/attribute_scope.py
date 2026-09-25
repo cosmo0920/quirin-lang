@@ -15,8 +15,9 @@ summaries are expected. The first class is renamed accordingly:
   same-function     any other changed leaf in a function with an anchored leaf
 
 Everything else, including the unit, top-level and status-move checks, is the
-original script's. A removed leaf of a reserved-name callee NOT in D is left
-unattributed, so an unexpected admission cannot hide in the totals.
+original script's. A removed callee leaf of a reserved name NOT in D never
+takes the first class: it is same-line, same-function or unattributed, and so
+visible as its own row rather than counted with the helpers.
 """
 
 import collections

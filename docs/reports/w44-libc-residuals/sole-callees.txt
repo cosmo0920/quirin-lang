@@ -1,5 +1,5 @@
-Unknown functions whose only blocker is one uncontracted callee: 299
-distinct callees: 228
+Unknown functions whose only blocker is one uncontracted callee: 297
+distinct callees: 226
 functions  callee
         9  LZ4_decompress_generic (defined in: lz4.c)
         5  cmt_mpack_unpack_array

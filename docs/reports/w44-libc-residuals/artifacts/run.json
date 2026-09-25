@@ -1,21 +1,21 @@
 {
   "command": [
-    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a12a2b7db791da414/target/release/examples/cycle19_fluent_bit_libraries_audit",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a12a2b7db791da414/measure/v2-bin/head/cycle19_fluent_bit_libraries_audit",
     "--pinned-evidence",
     "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
     "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
-    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a12a2b7db791da414/measure/stage4-after/monkey-source.json",
-    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a12a2b7db791da414/measure/stage4-after/resource-diagnostics.json"
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a12a2b7db791da414/measure/v2/stage4/monkey-source.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a12a2b7db791da414/measure/v2/stage4/resource-diagnostics.json"
   ],
-  "source_commit": "0a75d66e+byteswap+valist+strerror",
-  "binary_sha256": "e49b314d7a7af3d85360ee80b8d000d8444601ade499b800f10b91ea99521801",
+  "source_commit": "09e21484",
+  "binary_sha256": "5eda648dc9cd4328db48c459254feddd9a7fd12ea69dade168922c6e409a58f6",
   "environment": {
     "QCORE_CLANG": "/usr/bin/clang",
     "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
     "QCORE_SOURCE_CONTRACTS": "unset",
     "QCORE_RETURN_CENSUS": "unset"
   },
-  "start": "2026-09-25T01:32:17.796275+00:00",
+  "start": "2026-09-25T03:28:21.312681+00:00",
   "exit": 0,
-  "end": "2026-09-25T01:44:53.976672+00:00"
+  "end": "2026-09-25T03:37:26.297396+00:00"
 }

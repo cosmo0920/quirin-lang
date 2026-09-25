@@ -3,7 +3,7 @@
 
 Usage: update_ledger.py
 
-* retires the four entries this card discharged, each of which must be
+* retires the five entries this card discharged, each of which must be
   registered, recording every retired entry verbatim with its ground beside
   the report;
 * appends every entry of `followups.json` (refusing a duplicate id);
@@ -26,17 +26,25 @@ REPORT = ROOT / "docs/reports/w44-libc-residuals"
 README = "docs/reports/w44-libc-residuals/README.md"
 GROUNDS = {
     "W43-LIBC-HEADER-INLINE-BODIES": (
-        "Its discharge condition admits 'a recorded decision to contract header-inline libc bodies'. Card "
-        "W44-LIBC-RESIDUALS recorded that decision and declared all six helpers the analysed units call from "
-        "main source (__bswap_16/32/64, __uint16/32/64_identity) in the new "
-        "providers/quirin-provider-libc/contracts/libc/byteswap.qcore as the neutral element, stating them as "
-        "header-inline bodies; the census finds one (signature, body) pair per helper across all 174 defining "
-        "units, each pure arithmetic over its one scalar parameter. __bswap_64 was unreadable to the "
-        "declared-ABI reader because of `__extension__`, which the reader now discards (Lean: "
-        "QCore.GnuBuiltinReader); all six agree in 174/174 units. Arbiter stage 2: the 599 header-inline "
-        "callee leaves removed, 27 newly-safe-callee leaves and 1 nested leaf removed, 5 added (formal in an "
-        "unmodeled expression), all attributed; ut_put_be16/32/64 Unknown -> Safe relative to the declared "
-        "premises. The unchecked body is registered as W44-HEADER-INLINE-BODY-UNCHECKED. " + README + "."
+        "Its discharge condition is that W4 derives the header bodies (or a recorded decision to contract "
+        "them). W44-CORPUS-CALLEE-SUMMARIES measured that the bodies already validate without any "
+        "__builtin_bswap model; card W44-LIBC-RESIDUALS recorded the decision to check rather than declare "
+        "them and lifted that card's reserved-name filter in legacy_callee_scope.rs, so a reserved-name "
+        "static definition the unit carries enters W4's derivation scope on the linkage premise alone "
+        "(Lean: QCore.CalleeSummaryScope, reservation_is_not_read, an_undefined_name_is_never_in_scope). "
+        "Arbiter stage 2 on main 5355998d: the 599 __bswap_16/32/64 and __uint64_identity callee leaves "
+        "are decided by validated Borrowed -> None summaries, 27 newly-safe-callee leaves and 1 nested leaf "
+        "go, 5 are added, all attributed; ut_put_be16/32/64 Unknown -> Safe. No libc declaration of these "
+        "names is shipped. " + README + "."
+    ),
+    "W44-CALLEE-SCOPE-RESERVED-BODIES": (
+        "The hand-off's discharge condition is W44-LIBC-RESIDUALS' decision, recorded, and if the bodies "
+        "are checked, the reserved filter lifted with a re-arbiter. Card W44-LIBC-RESIDUALS decided to "
+        "check them and lifted the filter for every reserved-name static definition the unit carries (not "
+        "only system-header ones: the internal-linkage premise is what makes the analysed body the one "
+        "every call runs, and the token stream the certificate re-reads carries no header marks); the "
+        "re-arbiter decided exactly the predicted 599 leaves and moved ut_put_be16/32/64, and no other "
+        "reserved-name body decided a leaf. " + README + "."
     ),
     "LIBC-PRINTF-VA-LIST": (
         "Its discharge condition is a reader spelling for __builtin_va_list with matching audited Lean and a "
@@ -106,12 +114,12 @@ def main() -> int:
     row = dict(corpus["cycle19_raw_units"])
     row.update(
         {
-            "note": "W44-LIBC-RESIDUALS, 2026-09-25. Staged arbiter on base c1e69bb5: BEFORE reproduces the "
-            "W43-INDEXED-RESOURCE-COLLECTIONS integration diagnostics byte for byte; stage 0 (the reader reading "
-            "__extension__ and __builtin_va_list, and the va_list loader spelling) leaves all five artifacts "
-            "byte-identical; stage 1 (T6, literal tail actuals) removes 974 tail refusals; stage 2 "
-            "(libc/byteswap.qcore) removes 627 and adds 5; stage 3 (vsnprintf, vprintf) removes 26 and adds 1; "
-            "stage 4 (strerror) removes 2. 1,629 leaves removed and 6 added end to end, every one attributed "
+            "note": "W44-LIBC-RESIDUALS, 2026-09-25. Staged arbiter on main 5355998d: BEFORE reproduces the "
+            "W44-CORPUS-CALLEE-SUMMARIES integration diagnostics byte for byte; stage 0 (the reader reading "
+            "__builtin_va_list, and the va_list loader spelling) leaves all five artifacts byte-identical; "
+            "stage 1 (T6, literal tail actuals) removes 974 tail refusals; stage 2 (reserved-name static header "
+            "bodies admitted to W4's derivation scope) removes 627 and adds 5; stage 3 (vsnprintf, vprintf) "
+            "removes 26 and adds 1; stage 4 (strerror) removes 2. 1,629 leaves removed and 6 added end to end, every one attributed "
             "per stage. 3 functions Unknown -> Safe (ut_put_be16/32/64), each relative to the declared "
             "premises; 0 unit status moves; 0 double_release, invalid_release or use_after_release "
             "candidates. Leak 271 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream "
@@ -125,7 +133,7 @@ def main() -> int:
             "leak_diagnostics": counts["leak"],
             "baseline": "docs/reports/w44-libc-residuals/artifacts/",
             "source": README + "; preceding baseline "
-            "docs/reports/w43-indexed-resource-collections/integration/artifacts/",
+            "docs/reports/w44-corpus-callee-summaries/integration/artifacts/",
             "unknown_alias_diagnostics": counts["unknown_alias"],
             "unsupported_diagnostics": counts["unsupported"],
             "double_release_diagnostics": counts.get("double_release", 0),
