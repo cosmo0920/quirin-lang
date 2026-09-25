@@ -37,7 +37,7 @@ decides `return ( TYPE ) OPERAND ;` by the **carrier** the cast converts between
 * The exit report only withdraws: whatever the rule answers, it reports about
   the returned site at most what the pre-card place-less exit reported, given
   that the uncast return itself escapes, withdraws by refusal (the
-  refused-escape rule, `QCore.RefusedEscapeCustody`) or is place-less.
+  refused hand-on rule, `QCore.RefusedHandOnCustody`) or is place-less.
 * The corpus false leak is gone, and every answer is reached (non-vacuity).
 
 ## What is a premise
@@ -167,14 +167,14 @@ inductive Uncast where
   | escape
   /-- A place-less exit (the pointer-chain widening, or no place). -/
   | noop
-  /-- A refusal, which the refused-escape rule withdraws the operand on. -/
+  /-- A refusal, which the refused hand-on rule withdraws the operand on. -/
   | refuse
   deriving DecidableEq, Repr
 
 /-- What one exit reports about the returned site, given whether it is live
     before the return. A refusal reports nothing because the refused-escape
     rule withdraws the identity the refused return hands on
-    (`QCore.RefusedEscapeCustody.a_refused_escape_is_withdrawn`). -/
+    (`QCore.RefusedHandOnCustody.a_refused_hand_on_is_withdrawn`). -/
 def reportedUncast (u : Uncast) (live : Bool) : Bool :=
   match u with
   | .escape => false

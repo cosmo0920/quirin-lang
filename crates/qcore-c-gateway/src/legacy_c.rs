@@ -9492,9 +9492,9 @@ pub(crate) fn analyze_cfg_with_entry(
         let node = &cfg.nodes[node_id];
         let mut local = BTreeSet::new();
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
-        // Card W44-LEAK-PIN-AUDIT: the live identities this statement's value
-        // side hands on, read from the state it runs in (`refused_operands`).
-        let handed = refused_operands::read_sites(&state, &cfg.publications.line_reads, node.line);
+        // Card W44-LEAK-PIN-AUDIT: the live identities this statement hands
+        // on, read from the state it runs in (`refused_operands`).
+        let handed = refused_operands::read_sites(&state, &cfg.publications.line_reads, node);
         let mut output = transfer(
             &cfg.function,
             node,
@@ -9703,8 +9703,8 @@ pub(crate) fn analyze_cfg_with_entry(
         };
         let mut ignored = BTreeSet::new();
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
-        // Card W44-LEAK-PIN-AUDIT: the refused-escape rule, as in the work list.
-        let handed = refused_operands::read_sites(&state, &cfg.publications.line_reads, node.line);
+        // Card W44-LEAK-PIN-AUDIT: the refused hand-on rule, as in the work list.
+        let handed = refused_operands::read_sites(&state, &cfg.publications.line_reads, node);
         let mut output = transfer(
             &cfg.function,
             node,

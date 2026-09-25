@@ -1,21 +1,25 @@
 /-!
-# Refused escapes (card W44-LEAK-PIN-AUDIT)
+# Refused hand-ons (card W44-LEAK-PIN-AUDIT)
 
 The card audited every one of the 271 baseline `leak` leaves and repaired two
 class (b) mechanisms in the C gateway: the cast return (`QCore.CastReturnEscape`)
-and the refused escape (`crates/qcore-c-gateway/src/legacy_refused_operands.rs`),
+and the refused hand-on (`crates/qcore-c-gateway/src/legacy_refused_operands.rs`),
 which this module models.
 
-## The refused escape
+## The refused hand-on
 
 A statement the projection refuses reports `Unsupported` and never touched a
-resource status. When its **value side** — a `return` operand or the right-hand
-side of an assignment — is a tracked identity (`map->parent = (void *) counter;`,
-`*bufferp = buf;`, `return (const char **) arr;`), the identity has left the
-projection by the statement's own syntax, yet it stayed live and was accused at
-the next exit. The rule marks the identities a refused statement's value side
-hands on as carrying an **unresolved effect**, the projection's existing reading
-of "an unmodelled action may have discharged it".
+resource status. When it names a tracked identity — stores or returns it
+(`map->parent = (void *) counter;`, `return (const char **) arr;`), passes it
+or its interior address to a call (`destroy_metric(metric);`,
+`cfl_list_add(&sample->_head, …)`), or uses it as an operand — the refused
+statement may have stored, released or published it, yet it stayed live and was
+accused at the next exit. A leak claimed after the identity reached a
+statement of unknown effect is not a validated reachable violation. The rule
+marks the identities a refused statement hands on as carrying an **unresolved
+effect**, the projection's existing reading of "an unmodelled action may have
+discharged it" (the reading W43-LIBC-RESULT-ALIAS uses for a refused exact-alias
+release).
 
 ## What is proved
 
@@ -28,24 +32,21 @@ of "an unmodelled action may have discharged it".
 * **No `Safe`**: the rule fires only where the node reported `Unsupported`, so
   a function whose every accusation it withdraws is `Unknown`.
 * **Union collateral, stated rather than hidden**: the unresolved effect joins
-  by union, so a live obligation reaching one exit both along a refused escape
+  by union, so a live obligation reaching one exit both along a refused hand-on
   and along a clean path is withdrawn too (`the_union_join_withdraws_a_clean_path`);
   the card measures that collateral per leaf.
 
 ## What this is not
 
 A proof about the Rust (trust boundary 28), or about the reader that computes
-`handed` from a statement's tokens (the value side of a store or `return`,
-outside call arguments, excluding a store into a record object of the function
-itself); that the reader extracts what C hands on is an extraction premise. Nor
-is it about what an unmodelled callee does: an identity handed to an
-uncontracted **call** is deliberately not withdrawn, and the accusation there
-rests on a premise about that callee
-(`REFUSED-CALL-ARGUMENT-PREMISE`). Every remaining leak is a provisional
-candidate, never a validated upstream defect.
+`handed` from a statement's tokens (the value side, the call arguments and the
+operands the classifier's tokens show; a member read or written through the
+identity does not name it); that the reader extracts what C hands on is an
+extraction premise. Every remaining leak is a provisional candidate, never a
+validated upstream defect.
 -/
 
-namespace QCore.RefusedEscapeCustody
+namespace QCore.RefusedHandOnCustody
 
 abbrev Site := Nat
 
@@ -59,7 +60,7 @@ structure State where
 def reported (s : State) (x : Site) : Bool :=
   s.live x && !s.exempt x && !s.unresolved x
 
-/-- The refused-escape rule after one node's transfer. `refused` is whether the
+/-- The refused hand-on rule after one node's transfer. `refused` is whether the
     node's own transfer reported `Unsupported`; `handed x` whether its value
     side handed on a place bound to `x` before it ran. -/
 def apply (refused : Bool) (handed : Site → Bool) (s : State) : State :=
@@ -100,7 +101,7 @@ theorem an_unhanded_site_keeps_its_report (r : Bool) (h : Site → Bool) (s : St
 
 /-- The repair: a live identity a refused statement's value side handed on is
     no longer reported. -/
-theorem a_refused_escape_is_withdrawn (h : Site → Bool) (s : State) (x : Site)
+theorem a_refused_hand_on_is_withdrawn (h : Site → Bool) (s : State) (x : Site)
     (hx : h x = true) : reported (apply true h s) x = false := by
   simp [apply, reported, hx]
   cases s.live x <;> simp
@@ -142,7 +143,7 @@ theorem a_fully_withdrawn_function_is_unknown : classify false true = .unknown :
   rfl
 
 /-- The union join's collateral: a path where the site stays live and clean,
-    joined with a path where a refused escape marked it, reports nothing. The
+    joined with a path where a refused hand-on marked it, reports nothing. The
     card measures how many corpus leaves this costs; it never costs a `Safe`. -/
 theorem the_union_join_withdraws_a_clean_path :
     ∃ clean escaped : State, ∃ x : Site,
@@ -150,4 +151,4 @@ theorem the_union_join_withdraws_a_clean_path :
   refine ⟨⟨fun _ => true, fun _ => false, fun _ => false⟩,
     ⟨fun _ => false, fun _ => true, fun _ => false⟩, 0, ?_, ?_⟩ <;> rfl
 
-end QCore.RefusedEscapeCustody
+end QCore.RefusedHandOnCustody

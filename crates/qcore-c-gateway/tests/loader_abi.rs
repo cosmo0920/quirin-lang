@@ -966,11 +966,15 @@ contract {
         AnalysisStatus::Safe,
         "the withdrawal must never certify"
     );
+    // The measured direction was `Unsafe`: the release became invisible and
+    // the leak was alleged provisionally. Card W44-LEAK-PIN-AUDIT: the
+    // withdrawn call site is a refused statement that hands `h` to `k_close`,
+    // so the refused hand-on rule withdraws that allegation; the verdict is
+    // `Unknown`, never `Safe`.
     assert_eq!(
         withdrawn.status,
-        AnalysisStatus::Unsafe,
-        "the measured direction: the release becomes invisible and the leak is alleged \
-         provisionally"
+        AnalysisStatus::Unknown,
+        "a leak claimed through a refused hand-on is withdrawn, never certified"
     );
     assert!(
         unsupported(&withdrawn).contains(&withdrawal("k_close", AbiRefusal::ArityDisagreement)),

@@ -27,7 +27,10 @@
 //! address, to a call. A leak with no clean path is one every witness of which
 //! passes a refused store or return of the leaked identity; a leak with a
 //! clean path but no strict one rests on what an unmodelled callee does with
-//! it.
+//! it. A fourth, the **handed** path, is the refused hand-on rule's exact
+//! population under the union join: producer → a refused node whose hand-on
+//! marks the site (the `withdraw` cascade included) → the exit over feasible
+//! edges. A leak with a handed path is one the rule withdraws.
 //!
 //! It also records whether the leak is reproduced at the settled exit at all:
 //! `report_leaks` runs on intermediate iterates of the work list
@@ -105,6 +108,13 @@ pub struct Witness {
     /// A path avoiding every refused node that hands the site on at all, as a
     /// value, an address or a call argument.
     pub strict_path: Option<Vec<Step>>,
+    /// The refused hand-on rule's exact population under the union join: a
+    /// path from a producer of the site to a refused node whose hand-on marks
+    /// the site (directly or through the `withdraw` cascade over `contained`
+    /// and `field_links`), and on over feasible edges to the exit. With the
+    /// rule on, the unresolved effect this node adds reaches the exit along
+    /// that path and the leak is not claimed. `None` means no such node.
+    pub handed_path: Option<Vec<Step>>,
 }
 
 struct Settled {
@@ -112,6 +122,8 @@ struct Settled {
     refused: bool,
     read: BTreeSet<usize>,
     called: BTreeSet<usize>,
+    /// Every site the rule would mark at this node, cascade included.
+    marked: BTreeSet<usize>,
     edges: Vec<Option<AbstractState>>,
     edge_unknown: Vec<bool>,
     instruction: String,
@@ -230,6 +242,7 @@ pub(super) fn record(
                     search(cfg, &settled, incoming, &starts, exit, site, Avoid::Escapes);
                 let strict_path =
                     search(cfg, &settled, incoming, &starts, exit, site, Avoid::HandOns);
+                let handed_path = handed(cfg, &settled, incoming, &starts, exit, site);
                 let candidate = Witness {
                     unit_seq: crate::indirect_census::unit_seq(),
                     invocation,
@@ -249,6 +262,7 @@ pub(super) fn record(
                     path,
                     clean_path,
                     strict_path,
+                    handed_path,
                 };
                 let better = match &best {
                     None => true,
@@ -281,6 +295,7 @@ pub(super) fn record(
             path: None,
             clean_path: None,
             strict_path: None,
+            handed_path: None,
         });
         emit(&witness);
     }
@@ -307,19 +322,26 @@ fn settle(
                     refused: false,
                     read: BTreeSet::new(),
                     called: BTreeSet::new(),
+                    marked: BTreeSet::new(),
                     edges: Vec::new(),
                     edge_unknown: Vec::new(),
                     instruction,
                 };
             };
-            let read =
-                refused_operands::read_sites(&state, &cfg.publications.line_reads, node.line);
+            let read = refused_operands::handed_sites(
+                &state,
+                &cfg.publications.line_reads,
+                node,
+                refused_operands::HandOn::Escape,
+            );
             let called = refused_operands::handed_sites(
                 &state,
                 &cfg.publications.line_reads,
-                node.line,
-                refused_operands::HandOn::Call,
+                node,
+                refused_operands::HandOn::Operand,
             );
+            let withdrawn =
+                refused_operands::read_sites(&state, &cfg.publications.line_reads, node);
             let mut local = BTreeSet::new();
             let conditional = joined_provenance::release_site(node, &state, &joined[node_id]);
             let mut output = transfer(
@@ -332,8 +354,16 @@ fn settle(
                 &mut local,
             );
             joined_provenance::finish_release(conditional, &mut output, &local);
-            refused_operands::apply(&mut output, &read, &local);
+            refused_operands::apply(&mut output, &withdrawn, &local);
             let refused = refused_operands::refused(&local);
+            let marked = if refused && !withdrawn.is_empty() {
+                let mut probe = output.clone();
+                probe.unresolved_effect_sites.clear();
+                refused_operands::withdraw(&mut probe, &withdrawn);
+                probe.unresolved_effect_sites
+            } else {
+                BTreeSet::new()
+            };
             let mut edge_unknown = Vec::new();
             let edges = node
                 .successors
@@ -370,6 +400,7 @@ fn settle(
                 refused,
                 read,
                 called,
+                marked,
                 edges,
                 edge_unknown,
                 instruction,
@@ -474,6 +505,85 @@ fn search(
         }
     }
     None
+}
+
+/// Feasible-edge reachability from `from` to `to`, ignoring the site's status:
+/// the union join carries an unresolved effect along every feasible edge.
+fn reach(cfg: &LegacyCfg, settled: &[Settled], from: &[usize], to: usize) -> Option<Vec<usize>> {
+    let mut previous = BTreeMap::<usize, Option<usize>>::new();
+    let mut queue = VecDeque::new();
+    for &start in from {
+        if settled[start].output.is_some() && !previous.contains_key(&start) {
+            previous.insert(start, None);
+            queue.push_back(start);
+        }
+    }
+    while let Some(node) = queue.pop_front() {
+        if node == to {
+            let mut path = vec![node];
+            let mut cursor = previous.get(&node).copied().flatten();
+            while let Some(current) = cursor {
+                path.push(current);
+                cursor = previous.get(&current).copied().flatten();
+            }
+            path.reverse();
+            return Some(path);
+        }
+        for (edge, &successor) in cfg.nodes[node].successors.iter().enumerate() {
+            if matches!(settled[node].edges.get(edge), Some(Some(_)))
+                && settled[successor].output.is_some()
+                && !previous.contains_key(&successor)
+            {
+                previous.insert(successor, Some(node));
+                queue.push_back(successor);
+            }
+        }
+    }
+    None
+}
+
+/// The shortest producer → marking node → exit path over feasible edges.
+fn handed(
+    cfg: &LegacyCfg,
+    settled: &[Settled],
+    incoming: &[Option<AbstractState>],
+    starts: &[usize],
+    exit: usize,
+    site: usize,
+) -> Option<Vec<Step>> {
+    let best = (0..cfg.nodes.len())
+        .filter(|&node| settled[node].marked.contains(&site))
+        .filter_map(|node| {
+            let before = reach(cfg, settled, starts, node)?;
+            let after = reach(cfg, settled, &[node], exit)?;
+            Some(
+                before
+                    .into_iter()
+                    .chain(after.into_iter().skip(1))
+                    .collect::<Vec<_>>(),
+            )
+        })
+        .min_by_key(Vec::len)?;
+    Some(
+        best.iter()
+            .map(|&current| {
+                let entry = &settled[current];
+                Step {
+                    node: current,
+                    line: cfg.nodes[current].line,
+                    instruction: entry.instruction.clone(),
+                    refused: entry.refused,
+                    refused_read: entry.refused && entry.read.contains(&site),
+                    refused_call: entry.marked.contains(&site),
+                    edge_unknown: false,
+                    bound: incoming[current]
+                        .as_ref()
+                        .map(|state| bound(state, site))
+                        .unwrap_or_default(),
+                }
+            })
+            .collect(),
+    )
 }
 
 fn emit(witness: &Witness) {

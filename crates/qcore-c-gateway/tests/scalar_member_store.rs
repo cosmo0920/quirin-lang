@@ -303,9 +303,13 @@ fn a_local_helper_cannot_launder_the_store_into_a_w4_summary() {
          void subject(void) { struct record *p = w_fresh(); helper(p); }",
         "subject",
     );
+    // The caller was accused (`Unsafe`) until card W44-LEAK-PIN-AUDIT: the
+    // refused call hands `p` to `helper`, so the refused hand-on rule
+    // withdraws the accusation. The refused helper still hides nothing: the
+    // caller never certifies.
     assert_eq!(
         status(&result, "subject"),
-        AnalysisStatus::Unsafe,
+        AnalysisStatus::Unknown,
         "the refused helper must not hide the caller's residual: {result:?}"
     );
     assert!(

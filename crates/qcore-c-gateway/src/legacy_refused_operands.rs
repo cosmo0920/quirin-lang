@@ -1,18 +1,20 @@
-//! Card **W44-LEAK-PIN-AUDIT**: the refused-escape rule.
+//! Card **W44-LEAK-PIN-AUDIT**: the refused hand-on rule.
 //!
 //! # The mechanism this module repairs
 //!
 //! A statement the projection refuses reports `Unsupported` and poisons the
 //! pointer **bindings** it may write (card AOM-BINDING-POISON), but it never
-//! touches a resource **status**. When the refused statement is a store or a
-//! return whose *value* is a tracked identity — `map->parent = (void *) counter;`,
-//! `*bufferp = buf;`, `arr[cnt++] = val;`, `otel_span->links = otel_links;`,
-//! `conn = (struct mk_sched_conn *) data;`, `return (const char **) arr;` — the
-//! identity has left the names the projection follows, by the statement's own
-//! syntax, yet it stays `LIVE` and `report_leaks` accuses it at the next exit.
-//! The card's audit of the 271 baseline leak leaves measured that shape as a
-//! class (b) false-leak mechanism: an escape the analyzer mis-models
-//! (`docs/reports/w44-leak-pin-audit/README.md`).
+//! touches a resource **status**. So an identity the refused statement hands
+//! on stays `LIVE`, and `report_leaks` accuses it at the next exit although the
+//! refused statement may have stored it (`map->parent = (void *) counter;`,
+//! `*bufferp = buf;`, `return (const char **) arr;`), released it
+//! (`destroy_metric(metric);`), published it (`cfl_list_add(&sample->_head, …)`)
+//! or handed it to an owner (`rkbuf = rd_kafka_buf_new_shadow(buffer, …,
+//! rd_free);`). A leak claimed after the identity reached a statement of
+//! unknown effect is not a validated reachable violation. The card's audit of
+//! the 271 baseline leak leaves measured the mechanism, and card
+//! W44-COLLECTION-ALLOCATION measured it again as 107 of its 125 new leak
+//! claims (`W44-REFUSED-HANDOFF-LEAK-CLAIMS`).
 //!
 //! The projection already answers the modelled half of the situation. A
 //! contracted call whose actual it cannot resolve marks the actual's identities
@@ -20,20 +22,8 @@
 //! retained after a rejected effect; its residual is not a proven leak because
 //! the unmodeled action may have discharged it", and card CTWIN-RESIDUALS marks
 //! the value operands of a refused continued-access publication the same way.
-//! This module applies that reading to every refused statement whose value side
-//! hands on an identity.
-//!
-//! # What is deliberately not withdrawn
-//!
-//! An identity handed to an **uncontracted callee** — `destroy_metric(metric)`,
-//! `mk_list_init(listeners)`, `cfl_list_add(&sample->_head, …)` — is not
-//! withdrawn here. Whether that call releases, retains or merely reads its
-//! argument is a fact about the callee, which the projection does not have; the
-//! accusation there rests on a premise about that callee, named per callee in
-//! the card's report (`REFUSED-CALL-ARGUMENT-PREMISE`), and it is discharged by
-//! a contract or a validated summary for the callee, never by this rule. A
-//! statement's syntax says nothing about what a callee does; it does say that
-//! a stored or returned value has left the projection.
+//! This module applies that reading to every refused statement: the live
+//! identities it hands on carry an unresolved effect from there on.
 //!
 //! # Direction
 //!
@@ -49,89 +39,200 @@
 //! below therefore costs only precision: a hand-on it misses leaves the pre-card
 //! accusation in place.
 //!
-//! # The reader
+//! # The reader: what a statement hands on
 //!
-//! A place is handed on by a statement's **value side** — the operand of a
-//! `return`, or the right-hand side of a top-level simple assignment — outside
-//! every call's argument list, where the statement reads it as a value or takes
-//! the address of it or of storage reached through it:
+//! Only a mention the classifier's own tokens show counts; a name only inside a
+//! macro body the tokens do not show is not a mention. A place is handed on
+//! where the statement names it as a value or takes the address of it or of
+//! storage reached through it, tagged by position ([`HandOn`]):
 //!
-//! * `x = p`, `x->f = (void *) p`, `*out = p`, `return p` hand on `p`;
-//!   `x->h = &p->head` hands on `p` and `p->head`;
-//! * `x = p->buf` hands on the place `p->buf`, not `p`; `x = p->len + 1`
-//!   hands on nothing the projection binds; `x = p->items[i]` and
-//!   `x = p->fn(…)` read through `p` and hand on nothing of `p`'s;
-//! * `x = f(p)` passes `p` to a callee (the case above), and `sizeof (p)` does
-//!   not evaluate `p`;
-//! * `local.slot = p` and `local[0] = p`, into a record object of this very
-//!   function (a local or by-value formal `struct`, not reached through `->` or
-//!   `*`), keep `p` in storage that ends with the call: nothing is handed on,
-//!   and the accusation stays, as the publication rule leaves a local
-//!   destination alone.
+//! * **`Escape`**, the statement's value side — a `return` operand or the
+//!   right-hand side of a top-level simple assignment, outside every call:
+//!   `x = p`, `x->f = (void *) p`, `*out = p`, `local.slot = p`, `return p`;
+//! * **`Call`**, inside a call's argument list: `f(p)`, `f(&p->head)`,
+//!   `f(p + 1)`;
+//! * **`Operand`**, anywhere else it is evaluated: `if (!p || g(q))`, `p + n`.
+//!
+//! `&p->head` and `&p[0]` take an address inside `*p`, so they hand on `p` and
+//! every prefix of the chain. What is **not** a hand-on: a member value read
+//! through a base (`p->len`, `p->buf[i]`, `p->fn(…)` name the member, and
+//! `p->buf` hands on the place `p->buf`, not `p`); the destination of a simple
+//! assignment (`p = …`, `p->next = …`, `*out = …`), which is written; and the
+//! operand of `sizeof` and its kin, which is not evaluated. A statement that
+//! reads or writes only a member through the identity is thereby assumed not to
+//! hand the identity on (`REFUSED-OPERAND-MEMBER-VALUE-READ` in the card's
+//! report; a self-referencing member, such as an empty intrusive list head read
+//! as `p->head.next`, is the one C shape that breaks it).
 //!
 //! Places are spelled as `canonical_place` spells them (`p`, `p->f`, `p.f`,
 //! `p[0]`, `*p`), and a bound place is matched exactly; the marking then
 //! cascades through the containment and field links `mark_unresolved_effect`
-//! already follows. The reader also records, for the card's census only, the
-//! places a statement hands to a callee ([`HandOn::Call`]); the rule never reads
-//! them.
+//! already follows.
 //!
-//! The CFG node carries its statement's preprocessed line, not its tokens, so
-//! the table is keyed by line, as CTWIN-RESIDUALS' `publications.indirect` is.
-//! A macro that expands several statements onto one line unions them, which
-//! again can only withdraw more.
+//! # Which statement a refused node is
+//!
+//! A CFG node carries its statement's preprocessed line, not its tokens, so the
+//! table is keyed by line, as CTWIN-RESIDUALS' `publications.indirect` is. A
+//! macro expands several statements onto one line (`RD_UT_ASSERT(cond, …)` is
+//! `if (!(cond)) { fprintf(…); …; return 1; }`), so each line keeps two tables:
+//! the **condition** of an `if`, `while` or `switch` (and every clause of a
+//! `for` header), and the **statements**. A node refused as a condition reads
+//! the condition table, a node refused as a statement reads the statement
+//! table, and a node whose refusal came from a modelled instruction's transfer
+//! reads both. The statements of one line still union, which only withdraws
+//! more (`REFUSED-ESCAPE-LINE-GRANULARITY`).
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use super::{AbstractState, LIVE, LegacyDiagnostic, LegacyDiagnosticKind, is_identifier};
+use super::{
+    AbstractState, LIVE, LegacyCfgNode, LegacyDiagnostic, LegacyDiagnosticKind, LegacyInstruction,
+    is_identifier,
+};
 
-/// How a statement hands a place on. `Escape` dominates when two statements
-/// of one line hand the same place on differently.
+/// How a statement hands a place on, weakest first. The stronger tag wins when
+/// two statements of one line hand the same place on differently.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum HandOn {
+    /// Named as an operand outside the value side and outside every call.
+    Operand,
     /// Passed, or its address passed, to a call: the callee decides.
     Call,
     /// Stored or returned as the statement's value: it leaves the projection.
     Escape,
 }
 
+/// The weakest hand-on the rule withdraws on: every one.
+pub(crate) const WITHDRAWN_FROM: HandOn = HandOn::Operand;
+
+/// The places one line's statements hand on, split by position.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct LineHandOns {
+    /// Handed on by the condition of an `if`, `while` or `switch`, or by a
+    /// clause of a `for` header.
+    pub condition: BTreeMap<String, HandOn>,
+    /// Handed on by every other statement.
+    pub statement: BTreeMap<String, HandOn>,
+}
+
+impl LineHandOns {
+    /// Union another line table into this one, the stronger tag winning.
+    pub(crate) fn absorb(&mut self, other: Self) {
+        merge(&mut self.condition, &other.condition);
+        merge(&mut self.statement, &other.statement);
+    }
+}
+
+fn merge(into: &mut BTreeMap<String, HandOn>, from: &BTreeMap<String, HandOn>) {
+    for (place, how) in from {
+        let current = into.entry(place.clone()).or_insert(*how);
+        *current = (*current).max(*how);
+    }
+}
+
 /// The places each preprocessed line's statements hand on.
-pub(crate) type LineReads = BTreeMap<usize, BTreeMap<String, HandOn>>;
+pub(crate) type LineReads = BTreeMap<usize, LineHandOns>;
+
+/// The keywords whose parenthesised group is a controlling condition.
+const CONDITION_HEADS: &[&str] = &["if", "while", "switch"];
 
 /// Read one body's [`LineReads`] from its token texts and their lines.
 ///
 /// `body` excludes the braces; `lines[i]` is the preprocessed line of
-/// `body[i]`. A statement runs to the next `;`, `{` or `}`. `local_aggregates`
-/// are the names the declaration reader types as a record object of this
-/// function (a local or by-value formal `struct`), whose storage ends with the
-/// call: see [`handed_on`].
-pub(crate) fn line_reads(
-    body: &[&str],
-    lines: &[usize],
-    local_aggregates: &BTreeSet<String>,
-) -> LineReads {
+/// `body[i]`. A statement runs to the next `;`, `{` or `}`. A statement headed
+/// by `if`, `while` or `switch` splits at its condition's closing parenthesis
+/// (a brace-less body follows it on the same statement); a `for` header's
+/// clauses go to both tables.
+pub(crate) fn line_reads(body: &[&str], lines: &[usize]) -> LineReads {
     let mut reads = LineReads::new();
     let mut start = 0usize;
+    let mut for_clauses = 0usize;
     for index in 0..=body.len() {
         let boundary = index == body.len() || matches!(body[index], ";" | "{" | "}");
         if !boundary {
             continue;
         }
         if index > start {
-            let places = handed_on(&body[start..index], local_aggregates);
-            if !places.is_empty() {
-                for line in lines[start..index].iter().copied().collect::<BTreeSet<_>>() {
-                    let entry = reads.entry(line).or_default();
-                    for (place, how) in &places {
-                        let current = entry.entry(place.clone()).or_insert(*how);
-                        *current = (*current).max(*how);
-                    }
-                }
+            let segment = &body[start..index];
+            let segment_lines = &lines[start..index];
+            let mut head = 0usize;
+            if segment.first() == Some(&"else") {
+                head = 1;
+            }
+            if segment.get(head) == Some(&"for") {
+                for_clauses = 2;
+                record(&mut reads, segment, segment_lines, Table::Both);
+            } else if for_clauses > 0 {
+                for_clauses -= 1;
+                record(&mut reads, segment, segment_lines, Table::Both);
+            } else if segment
+                .get(head)
+                .is_some_and(|word| CONDITION_HEADS.contains(word))
+                && segment.get(head + 1) == Some(&"(")
+                && let Some(close) = matching_close(segment, head + 1)
+            {
+                record(
+                    &mut reads,
+                    &segment[..=close],
+                    &segment_lines[..=close],
+                    Table::Condition,
+                );
+                record(
+                    &mut reads,
+                    &segment[close + 1..],
+                    &segment_lines[close + 1..],
+                    Table::Statement,
+                );
+            } else {
+                record(&mut reads, segment, segment_lines, Table::Statement);
             }
         }
         start = index + 1;
     }
     reads
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Table {
+    Condition,
+    Statement,
+    Both,
+}
+
+fn record(reads: &mut LineReads, segment: &[&str], lines: &[usize], table: Table) {
+    if segment.is_empty() {
+        return;
+    }
+    let places = handed_on(segment);
+    if places.is_empty() {
+        return;
+    }
+    for line in lines.iter().copied().collect::<BTreeSet<_>>() {
+        let entry = reads.entry(line).or_default();
+        if table != Table::Statement {
+            merge(&mut entry.condition, &places);
+        }
+        if table != Table::Condition {
+            merge(&mut entry.statement, &places);
+        }
+    }
+}
+
+/// The index of the `)` matching the `(` at `open`.
+fn matching_close(tokens: &[&str], open: usize) -> Option<usize> {
+    let mut depth = 0usize;
+    for (index, text) in tokens.iter().enumerate().skip(open) {
+        match *text {
+            "(" => depth += 1,
+            ")" => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    return Some(index);
+                }
+            }
+            _ => {}
+        }
+    }
+    None
 }
 
 /// Whether the token before `index` ends an operand, so that a `*` or `&` at
@@ -168,23 +269,9 @@ enum Paren {
 }
 
 /// The places one statement hands on, and how (see the module header).
-///
-/// A store into a member or element of one of `local_aggregates`
-/// (`local.slot = h;`) moves the value into storage of this very call, which
-/// ends at its return: it hands nothing on, and the accusation stays, exactly
-/// as the publication rule leaves a local destination alone. Where the
-/// aggregate itself later leaves the function is not followed (the accusing
-/// direction).
-pub(crate) fn handed_on(
-    statement: &[&str],
-    local_aggregates: &BTreeSet<String>,
-) -> BTreeMap<String, HandOn> {
+pub(crate) fn handed_on(statement: &[&str]) -> BTreeMap<String, HandOn> {
     let mut places = BTreeMap::new();
     let returns = statement.first() == Some(&"return");
-    let mut local_store = statement
-        .first()
-        .is_some_and(|first| local_aggregates.contains(*first))
-        && matches!(statement.get(1), Some(&"." | &"["));
     // The index of the top-level simple assignment, if any.
     let assignment = {
         let mut depth = 0usize;
@@ -209,12 +296,6 @@ pub(crate) fn handed_on(
         }
         found
     };
-    // Only a destination inside the aggregate itself: a `->` or a `*` in it
-    // reaches another object.
-    local_store &= assignment.is_some_and(|equal| {
-        !statement[..equal].contains(&"*")
-            && !statement[..equal].windows(2).any(|pair| pair == ["-", ">"])
-    });
     let mut parens: Vec<Paren> = Vec::new();
     let mut index = 0usize;
     while index < statement.len() {
@@ -244,7 +325,11 @@ pub(crate) fn handed_on(
         let member = index >= 1
             && (statement[index - 1] == "."
                 || (statement[index - 1] == ">" && index >= 2 && statement[index - 2] == "-"));
-        if !is_identifier(text) || member || GROUPING_HEADS.contains(&text) {
+        if !is_identifier(text)
+            || member
+            || GROUPING_HEADS.contains(&text)
+            || matches!(text, "else" | "do")
+        {
             index += 1;
             continue;
         }
@@ -281,10 +366,10 @@ pub(crate) fn handed_on(
             None
         } else if parens.contains(&Paren::Call) {
             Some(HandOn::Call)
-        } else if returns || (!local_store && assignment.is_some_and(|equal| index > equal)) {
+        } else if returns || assignment.is_some_and(|equal| index > equal) {
             Some(HandOn::Escape)
         } else {
-            None
+            Some(HandOn::Operand)
         };
         // A unary `&` before the chain, possibly behind opening parentheses.
         let mut before = index;
@@ -320,31 +405,45 @@ pub(crate) fn handed_on(
     places
 }
 
-/// The identities a statement at `line` hands on as an `Escape` in `state`:
-/// the targets of every such bound place, restricted to those that may still
-/// be live there. An identity already released or escaped on every path owes
-/// nothing a refusal could discharge, and leaving it alone keeps every
-/// accusation about it exactly as it was.
-///
-/// Computed **before** the statement's transfer, from the state it reads.
-pub(super) fn read_sites(state: &AbstractState, reads: &LineReads, line: usize) -> BTreeSet<usize> {
-    handed_sites(state, reads, line, HandOn::Escape)
+/// Whether a refused `Unknown` instruction is a controlling expression's
+/// refusal rather than a statement's.
+fn refuses_a_condition(description: &str) -> bool {
+    description.contains(" condition")
+        || description.contains("switch expression")
+        || description.contains("case expression")
 }
 
-/// The live identities a statement at `line` hands on at least as `how`.
+/// The live identities the statement of `node` hands on at least as `how`:
+/// the targets of every bound place of the node's table, restricted to those
+/// that may still be live there. An identity already released or escaped on
+/// every path owes nothing a refusal could discharge, and leaving it alone
+/// keeps every accusation about it exactly as it was.
+///
+/// Computed **before** the statement's transfer, from the state it reads.
 pub(super) fn handed_sites(
     state: &AbstractState,
     reads: &LineReads,
-    line: usize,
+    node: &LegacyCfgNode,
     how: HandOn,
 ) -> BTreeSet<usize> {
-    let Some(places) = reads.get(&line) else {
+    let Some(line) = reads.get(&node.line) else {
         return BTreeSet::new();
+    };
+    let (condition, statement) = match &node.instruction {
+        LegacyInstruction::Unknown { description, .. } if refuses_a_condition(description) => {
+            (true, false)
+        }
+        LegacyInstruction::Unknown { .. } => (false, true),
+        _ => (true, true),
+    };
+    let handed = |place: &str| {
+        (condition && line.condition.get(place).is_some_and(|tag| *tag >= how))
+            || (statement && line.statement.get(place).is_some_and(|tag| *tag >= how))
     };
     state
         .pointers
         .iter()
-        .filter(|(place, _)| places.get(*place).is_some_and(|handed| *handed >= how))
+        .filter(|(place, _)| handed(place))
         .flat_map(|(_, pointer)| pointer.targets.iter().copied())
         .filter(|site| {
             state
@@ -353,6 +452,15 @@ pub(super) fn handed_sites(
                 .is_some_and(|status| status & LIVE != 0)
         })
         .collect()
+}
+
+/// The identities the rule withdraws if `node` refuses its statement.
+pub(super) fn read_sites(
+    state: &AbstractState,
+    reads: &LineReads,
+    node: &LegacyCfgNode,
+) -> BTreeSet<usize> {
+    handed_sites(state, reads, node, WITHDRAWN_FROM)
 }
 
 /// Whether one node's own transfer refused the statement.
@@ -382,8 +490,8 @@ pub(super) fn withdraw(state: &mut AbstractState, sites: &BTreeSet<usize>) {
 }
 
 /// The rule: after a node's transfer, if the node refused its statement, the
-/// identities the statement's value side handed on before it ran carry an
-/// unresolved effect.
+/// identities the statement handed on before it ran carry an unresolved
+/// effect.
 pub(super) fn apply(
     output: &mut AbstractState,
     read: &BTreeSet<usize>,

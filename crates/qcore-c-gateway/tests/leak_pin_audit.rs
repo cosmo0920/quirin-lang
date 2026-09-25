@@ -5,11 +5,14 @@
 //!   `return p;` is; a cast moving a possibly tracked value between an integer
 //!   and a pointer is refused, never escaped; `(int) fd` keeps a descriptor as
 //!   custody.
-//! * The refused escape: a refused store or return whose value side is a
-//!   tracked identity withdraws the accusation against it, leaving the function
-//!   `Unknown`, never `Safe`.
-//! * Deliberately left: an identity handed to an uncontracted call keeps its
-//!   accusation (`REFUSED-CALL-ARGUMENT-PREMISE`).
+//! * The refused hand-on (`W44-REFUSED-HANDOFF-LEAK-CLAIMS`): a tracked
+//!   identity the classifier sees named in a refused statement (store value,
+//!   return, call argument, operand, `&x`) gets an unresolved effect there, so
+//!   no leak is claimed through it. The function stays `Unknown`, never
+//!   `Safe`; nothing is discharged.
+//! * Deliberately left: a member value read (`p->len`) hands on the member,
+//!   not the identity, and a modelled condition beside a refused statement is
+//!   not read for it.
 //!
 //! Each body asserts the **complete** diagnostic vector and the status, so a
 //! rule that silently dropped an unrelated accusation would fail. The fixtures
@@ -297,16 +300,41 @@ fn an_unrelated_identity_keeps_its_accusation() {
     assert!(keys.iter().any(|key| key == "leak"), "{keys:?}");
 }
 
-/// An identity handed to an uncontracted callee is deliberately not
-/// withdrawn: what the callee does is a premise about the callee
-/// (`REFUSED-CALL-ARGUMENT-PREMISE`).
+/// An identity handed to an uncontracted callee is withdrawn too: the refused
+/// call may have released or retained it (`W44-REFUSED-HANDOFF-LEAK-CLAIMS`).
 #[test]
-fn a_call_argument_hand_on_keeps_the_accusation() {
+fn a_call_argument_hand_on_withdraws_the_accusation() {
     if !clang_available() {
         return;
     }
     let (status, keys) = outcome(
         "void k_touch(void *p); void w(void) { void *p = k_alloc(1); if (!p) return; k_touch(p); }",
+    );
+    assert_eq!(status, "Unknown", "{keys:?}");
+    assert!(!keys.iter().any(|key| key == "leak"), "{keys:?}");
+    // An interior address handed on counts as the identity.
+    let (status, keys) = outcome(
+        "void k_link(void *p); void w(void) { struct k_box *b = k_alloc(1); if (!b) return; \
+         k_link(&b->item); }",
+    );
+    assert_eq!(status, "Unknown", "{keys:?}");
+    assert!(!keys.iter().any(|key| key == "leak"), "{keys:?}");
+}
+
+/// The macro shape `RD_UT_ASSERT(cond(p), …)`: a refused statement on the line
+/// of a **modelled** condition that names the identity does not withdraw it;
+/// the refused statement reads only its line's statement table. (Hand-ons are
+/// read per source line, so the fixture spans lines.)
+#[test]
+fn a_refused_statement_beside_a_condition_keeps_the_accusation() {
+    if !clang_available() {
+        return;
+    }
+    let (status, keys) = outcome(
+        "void k_log(const char *m);\n\
+         int w(int n) { char *p = k_alloc(4); if (!p) return 0;\n\
+         if (p != 0 && n > 3) { k_log(\"empty\"); return 1; }\n\
+         k_free(p); return 0; }",
     );
     assert_eq!(status, "Unsafe", "{keys:?}");
     assert!(keys.iter().any(|key| key == "leak"), "{keys:?}");

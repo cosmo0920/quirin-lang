@@ -246,11 +246,14 @@ fn a_short_circuit_release_stays_refused_and_cannot_hide_the_live_resource() {
     let (status, diagnostics) = analyze("void *p = q_alloc(); if (flag && (q_free(p), 1)) { }");
     assert_ne!(status, AnalysisStatus::Safe);
     assert!(has_branch_refusal(&diagnostics), "{diagnostics:?}");
+    // Card W44-LEAK-PIN-AUDIT: the refused condition hands `p` to `q_free`, so
+    // the refused hand-on rule withdraws the leak it used to accuse; the
+    // release still never discharges `p` and the verdict stays non-`Safe`.
     assert!(
-        diagnostics
+        !diagnostics
             .iter()
             .any(|kind| matches!(kind, LegacyDiagnosticKind::Leak { .. })),
-        "the skipped-call path must retain the live resource: {diagnostics:?}"
+        "a refused condition that hands the resource on supports no leak claim: {diagnostics:?}"
     );
 }
 

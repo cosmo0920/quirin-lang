@@ -473,14 +473,16 @@ fn storing_a_named_pointer_keeps_the_refusal_it_had() {
     // leak of `p`'s site this card measured was the pre-card answer for a
     // release through a refused statement. Card W44-LEAK-PIN-AUDIT withdraws
     // it deliberately: the refused store hands `p` on as its value, so `p`
-    // carries an unresolved effect (the refused-escape rule) and the function
-    // is `Unknown`, never `Safe`.
+    // carries an unresolved effect (the refused hand-on rule) and the function
+    // is `Unknown`, never `Safe`. On this one-line body the rule's line key also
+    // reads `x_free(v)`, so `v` is withdrawn too and the element release no
+    // longer reaches the `v[0]` alias refusal.
     expect(
         "`v[0] = p` would leave `p` an alias of a collection element",
         "void w(const char *s) { char **v = x_alloc(16); char *p; if (!v) return; \
          p = x_dup(s); v[0] = p; x_free(v[0]); x_free(v); }",
         "Unknown",
-        &["unknown_alias:v[0]", INDIRECT],
+        &[INDIRECT],
     );
 }
 
@@ -538,14 +540,20 @@ fn a_stream_element_keeps_the_refusal_it_had() {
 #[test]
 fn a_stream_release_of_a_heap_element_keeps_the_refusal_it_had() {
     // The kind-mismatched release keeps its refusal, so the element is still
-    // owed when the array is freed: an element leak candidate, exactly as a
-    // refused release of a named heap pointer leaves its site owed.
+    // owed when the array is freed: it was an element leak candidate, exactly
+    // as a refused release of a named heap pointer leaves its site owed.
+    //
+    // Card W44-LEAK-PIN-AUDIT: the one-line body's refused store names `v`'s
+    // line, and on that line `x_free(v)` hands `v` to a call, so the refused
+    // hand-on rule (keyed by line) withdraws the array and its elements. The
+    // release still never discharges the element: the verdict is `Unknown`,
+    // never `Safe`.
     expect(
         "`x_sclose` releases a stream, so it never discharges a heap element",
         "void w(void) { char **v = x_alloc(16); if (!v) return; v[0] = x_fresh(1); \
          x_sclose(v[0]); x_free(v); }",
-        "Unsafe",
-        &["leak", INDIRECT],
+        "Unknown",
+        &[INDIRECT],
     );
 }
 

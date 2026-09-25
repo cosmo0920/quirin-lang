@@ -463,11 +463,7 @@ impl PublicationFacts {
         // winning, so a hand-on recognised in either context withdraws in the
         // combination.
         for (line, places) in other.line_reads {
-            let entry = self.line_reads.entry(line).or_default();
-            for (place, how) in places {
-                let current = entry.entry(place).or_insert(how);
-                *current = (*current).max(how);
-            }
+            self.line_reads.entry(line).or_default().absorb(places);
         }
     }
 }
@@ -514,21 +510,7 @@ pub(crate) fn facts(
         destinations,
         indirect,
         scalar_sources,
-        line_reads: crate::legacy_c::refused_operands::line_reads(
-            body,
-            lines,
-            &body
-                .iter()
-                .map(|text| (*text).to_owned())
-                .chain(formals.iter().cloned())
-                .filter(|text| {
-                    matches!(
-                        types.declared_type(text),
-                        Some(crate::typed_field_access::DeclaredType::Record(_))
-                    )
-                })
-                .collect(),
-        ),
+        line_reads: crate::legacy_c::refused_operands::line_reads(body, lines),
     }
 }
 
