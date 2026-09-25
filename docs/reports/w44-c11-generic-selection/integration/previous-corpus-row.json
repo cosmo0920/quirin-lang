@@ -1,0 +1,29 @@
+{
+ "note": "W44-C11-GENERIC-SELECTION, 2026-09-25. Arbiter on main 70ce6b44: BEFORE reproduces the W44-LIBC-RESIDUALS integration diagnostics, chunk-contracts and source byte for byte (contracts after the checkout-root alias). AFTER lowers the 85 selection-invariant glibc __glibc_const_generic selections (36 functions, 25 units) to their calls: 37 leaves removed and 34 added, every one attributed; the 14 `call to uncontracted function _Generic` leaves go (6 exchanged for `bsearch`), 22 condition refusals go, 15 class-(a) test-failure-path leaks of ut_sasl_oauthbearer_oidc_assertion_create (already provisional Unsafe) and 13 unknown_alias are added. 1 function Unknown -> Safe (mk_string_char_search), relative to the declared memchr premise; 0 unit status moves; 0 double_release, invalid_release or use_after_release candidates. Leak 19 -> 34. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-c11-generic-selection/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 3,
+ "provisional_unsafe": 8,
+ "unknown": 170,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 34,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w44-c11-generic-selection/artifacts/",
+ "source": "docs/reports/w44-c11-generic-selection/README.md; preceding baseline docs/reports/w44-libc-residuals/integration/artifacts/",
+ "unknown_alias_diagnostics": 3370,
+ "unsupported_diagnostics": 43854,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 301,
+  "provisional_unsafe": 9,
+  "unknown": 4524
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 169,
+  "none": 15,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}
