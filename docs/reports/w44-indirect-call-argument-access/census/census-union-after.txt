@@ -1,0 +1,89 @@
+run: private/runs/census-after
+units matched 176 / 177
+
+family (W43 class call-argument widened by the call stream, Unknown functions): 10848 leaves / 2650 functions / 286 sole-blocked
+
+statement split (leaves, functions):
+    7235  2157  uncontracted
+    2173   979  no-candidate
+    1156   254  mixed:no-candidate|uncontracted
+     118   107  not-a-simple-statement
+      78    69  no-actual
+      46    35  probe-refused:indirect memory access is outside the resource projection
+      18     3  mixed:no-candidate|probe-refused:indirect memory access is outside the resource projection
+       7     7  probe-refused:arguments beyond the declared parameters of `X` are outside the resource projection
+       6     6  probe-refused:nested call `X` inside a modeled call is outside the resource projection
+       5     5  mixed:admitted:contract-call|uncontracted
+       2     2  probe-refused:discarded owned result of resource API `X`
+       1     1  mixed:probe-refused:indirect memory access is outside the resource projection|uncontracted
+       1     1  mixed:no-candidate|probe-refused:indirect memory access is outside the resource projection|uncontracted
+       1     1  mixed:admitted:contract-call|probe-refused:arguments beyond the declared parameters of `X` are outside the resource projection
+       1     1  probe-refused:call has an unmodeled formal address or borrowed expression
+
+refusing actuals of simple statements: position x shape x base kind (actuals)
+    4518  uncontracted refused:address            -
+    4284  uncontracted refused:chain              -
+    3622  uncontracted refused:call               -
+    3232  uncontracted refused:unreadable         -
+    2791  uncontracted refused:cast               -
+    2407  borrowed     refused:address            -
+    1622  uncontracted refused:untyped-member     -
+    1298  uncontracted refused:untyped-base       -
+     605  borrowed     refused:unreadable         -
+     498  uncontracted refused:other              -
+     281  borrowed     refused:other              -
+     235  uncontracted pointer                    formal/may-bind
+     232  uncontracted scalar                     formal/never-bound
+     202  uncontracted scalar                     local/may-bind
+     197  tail         refused:chain              -
+     173  borrowed     refused:chain              -
+     165  uncontracted pointer                    formal/never-bound
+     153  uncontracted pointer                    local/may-bind
+     148  tail         refused:unreadable         -
+     148  tail         refused:call               -
+     146  uncontracted scalar                     formal/may-bind
+     109  borrowed     refused:untyped-base       -
+     101  tail         refused:untyped-base       -
+      96  tail         refused:untyped-member     -
+      95  released     refused:untyped-base       -
+      81  released     refused:chain              -
+      75  borrowed     refused:untyped-member     -
+      70  released     refused:unreadable         -
+      66  released     pointer                    formal/may-bind
+      63  tail         refused:cast               -
+      59  released     refused:untyped-member     -
+      48  uncontracted scalar                     no-base
+      48  borrowed     refused:cast               -
+      43  uncontracted pointer                    local/never-bound
+      31  released     pointer                    local/may-bind
+      27  borrowed     scalar                     local/may-bind
+      23  uncontracted scalar                     local/never-bound
+      19  released     pointer                    formal/never-bound
+      15  owned        pointer                    local/may-bind
+      12  tail         scalar                     no-base
+      10  borrowed     scalar                     formal/never-bound
+      10  uncontracted pointer                    no-base
+       9  tail         refused:other              -
+       8  borrowed     refused:call               -
+       7  borrowed     scalar                     no-base
+       7  borrowed     pointer                    formal/never-bound
+       7  borrowed     pointer                    formal/may-bind
+       7  tail         scalar                     formal/may-bind
+       6  borrowed     scalar                     formal/may-bind
+       5  released     pointer                    no-base
+       5  borrowed     pointer                    local/may-bind
+       5  tail         scalar                     local/may-bind
+       5  owned        pointer                    formal/never-bound
+       4  owned        refused:untyped-base       -
+       4  released     refused:cast               -
+       3  tail         pointer                    formal/never-bound
+       3  tail         pointer                    no-base
+       2  released     refused:other              -
+       2  owned        refused:unreadable         -
+       2  owned        refused:untyped-member     -
+
+forecast: 0 leaves removed (0 of them over a base that is not never-bound, exchange risk)
+functions decided: at most 0; 0 without any exchange-risk leaf
+
+functions left with one other family after the forecast:
+    286  indirect memory access is outside the resource projection

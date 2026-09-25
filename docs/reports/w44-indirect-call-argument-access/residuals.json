@@ -1,0 +1,105 @@
+{
+ "uncontracted": {
+  "leaves": 7907,
+  "unknown_functions": 2132,
+  "sole_blocked_functions": 178
+ },
+ "destination": {
+  "leaves": 701,
+  "unknown_functions": 436,
+  "sole_blocked_functions": 35
+ },
+ "untyped:address": {
+  "leaves": 503,
+  "unknown_functions": 200,
+  "sole_blocked_functions": 28
+ },
+ "custody-position:untyped": {
+  "leaves": 311,
+  "unknown_functions": 165,
+  "sole_blocked_functions": 3
+ },
+ "untyped:unreadable": {
+  "leaves": 290,
+  "unknown_functions": 108,
+  "sole_blocked_functions": 3
+ },
+ "untyped:other": {
+  "leaves": 244,
+  "unknown_functions": 214,
+  "sole_blocked_functions": 53
+ },
+ "untyped:chain": {
+  "leaves": 189,
+  "unknown_functions": 111,
+  "sole_blocked_functions": 3
+ },
+ "untyped:untyped-base": {
+  "leaves": 149,
+  "unknown_functions": 101,
+  "sole_blocked_functions": 2
+ },
+ "custody-position": {
+  "leaves": 144,
+  "unknown_functions": 73,
+  "sole_blocked_functions": 2
+ },
+ "non-statement": {
+  "leaves": 118,
+  "unknown_functions": 107,
+  "sole_blocked_functions": 38
+ },
+ "untyped:untyped-member": {
+  "leaves": 112,
+  "unknown_functions": 59,
+  "sole_blocked_functions": 4
+ },
+ "untyped:call": {
+  "leaves": 85,
+  "unknown_functions": 68,
+  "sole_blocked_functions": 1
+ },
+ "untyped:cast": {
+  "leaves": 51,
+  "unknown_functions": 40,
+  "sole_blocked_functions": 3
+ },
+ "probe-refused:indirect memory access is outside the resource projection": {
+  "leaves": 27,
+  "unknown_functions": 20,
+  "sole_blocked_functions": 1
+ },
+ "probe-refused:arguments beyond the declared parameters of `X` are outside the resource projection": {
+  "leaves": 7,
+  "unknown_functions": 7,
+  "sole_blocked_functions": 0
+ },
+ "probe-refused:nested call `X` inside a modeled call is outside the resource projection": {
+  "leaves": 6,
+  "unknown_functions": 6,
+  "sole_blocked_functions": 0
+ },
+ "probe-refused:discarded owned result of resource API `X`": {
+  "leaves": 2,
+  "unknown_functions": 2,
+  "sole_blocked_functions": 0
+ },
+ "admitted": {
+  "leaves": 1,
+  "unknown_functions": 1,
+  "sole_blocked_functions": 0
+ },
+ "probe-refused:call has an unmodeled formal address or borrowed expression": {
+  "leaves": 1,
+  "unknown_functions": 1,
+  "sole_blocked_functions": 0
+ },
+ "_total": {
+  "leaves": 10848,
+  "unknown_functions": 2650,
+  "sole_blocked_functions": 286
+ },
+ "_outside_w43_window": {
+  "leaves": 1520
+ }
+}

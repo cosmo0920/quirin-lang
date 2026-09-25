@@ -1,0 +1,23 @@
+family: W43 residuals.py class call-argument, widened by every leaf this card's call
+stream recorded (1547 leaves W43's shape classifier files elsewhere)
+class                                         leaves  funcs  sole
+uncontracted                                    7953   2139   179
+destination                                      704    437    35
+untyped:address                                  503    200    28
+custody-position:untyped                         311    165     3
+untyped:unreadable                               290    108     3
+untyped:other                                    244    214    53
+untyped:chain                                    189    111     3
+admitted                                         173    103     7
+untyped:untyped-base                             149    101     2
+custody-position                                 144     73     2
+non-statement                                    118    107    38
+untyped:untyped-member                           112     59     4
+untyped:call                                      85     68     1
+untyped:cast                                      51     40     3
+probe-refused:indirect memory access is outs      27     20     1
+probe-refused:arguments beyond the declared        7      7     0
+probe-refused:nested call `X` inside a model       6      6     0
+probe-refused:discarded owned result of reso       2      2     0
+probe-refused:call has an unmodeled formal a       1      1     0
+_total                                         11069   2675   288
