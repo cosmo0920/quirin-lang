@@ -1,0 +1,88 @@
+run: private/runs/census-after
+units matched 176 / 177
+
+family (W43 residuals.py class call-argument, Unknown functions): 9328 leaves / 2377 functions / 246 sole-blocked
+
+statement split (leaves, functions):
+    5945  1850  uncontracted
+    1963   875  no-candidate
+    1148   248  mixed:no-candidate|uncontracted
+     118   107  not-a-simple-statement
+      75    67  no-actual
+      40    30  probe-refused:indirect memory access is outside the resource projection
+      18     3  mixed:no-candidate|probe-refused:indirect memory access is outside the resource projection
+       7     7  probe-refused:arguments beyond the declared parameters of `X` are outside the resource projection
+       6     6  probe-refused:nested call `X` inside a modeled call is outside the resource projection
+       3     3  mixed:admitted:contract-call|uncontracted
+       2     2  probe-refused:discarded owned result of resource API `X`
+       1     1  mixed:probe-refused:indirect memory access is outside the resource projection|uncontracted
+       1     1  mixed:no-candidate|probe-refused:indirect memory access is outside the resource projection|uncontracted
+       1     1  mixed:admitted:contract-call|probe-refused:arguments beyond the declared parameters of `X` are outside the resource projection
+
+refusing actuals of simple statements: position x shape x base kind (actuals)
+    4334  uncontracted refused:address            -
+    4014  uncontracted refused:chain              -
+    3559  uncontracted refused:call               -
+    2942  uncontracted refused:unreadable         -
+    2729  uncontracted refused:cast               -
+    2406  borrowed     refused:address            -
+    1373  uncontracted refused:untyped-member     -
+    1095  uncontracted refused:untyped-base       -
+     581  borrowed     refused:unreadable         -
+     438  uncontracted refused:other              -
+     183  tail         refused:chain              -
+     181  uncontracted pointer                    formal/may-bind
+     159  uncontracted scalar                     local/may-bind
+     150  borrowed     refused:other              -
+     147  tail         refused:unreadable         -
+     146  tail         refused:call               -
+     145  uncontracted scalar                     formal/never-bound
+     142  borrowed     refused:chain              -
+     109  uncontracted scalar                     formal/may-bind
+     105  borrowed     refused:untyped-base       -
+     102  uncontracted pointer                    local/may-bind
+      95  released     refused:untyped-base       -
+      94  tail         refused:untyped-base       -
+      93  tail         refused:untyped-member     -
+      88  uncontracted pointer                    formal/never-bound
+      81  released     refused:chain              -
+      70  released     refused:unreadable         -
+      66  released     pointer                    formal/may-bind
+      63  tail         refused:cast               -
+      59  released     refused:untyped-member     -
+      55  borrowed     refused:untyped-member     -
+      46  borrowed     refused:cast               -
+      39  uncontracted scalar                     no-base
+      31  released     pointer                    local/may-bind
+      27  borrowed     scalar                     local/may-bind
+      21  uncontracted pointer                    local/never-bound
+      19  released     pointer                    formal/never-bound
+      15  owned        pointer                    local/may-bind
+      11  uncontracted scalar                     local/never-bound
+      10  tail         scalar                     no-base
+       9  tail         refused:other              -
+       9  uncontracted pointer                    no-base
+       8  borrowed     scalar                     formal/never-bound
+       7  borrowed     scalar                     no-base
+       7  borrowed     pointer                    formal/never-bound
+       7  tail         scalar                     formal/may-bind
+       6  borrowed     scalar                     formal/may-bind
+       6  borrowed     refused:call               -
+       5  borrowed     pointer                    formal/may-bind
+       5  released     pointer                    no-base
+       5  tail         scalar                     local/may-bind
+       5  owned        pointer                    formal/never-bound
+       4  owned        refused:untyped-base       -
+       4  released     refused:cast               -
+       3  borrowed     pointer                    local/may-bind
+       3  tail         pointer                    no-base
+       2  released     refused:other              -
+       2  owned        refused:unreadable         -
+       2  owned        refused:untyped-member     -
+       2  tail         pointer                    formal/never-bound
+
+forecast: 0 leaves removed (0 of them over a base that is not never-bound, exchange risk)
+functions decided: at most 0; 0 without any exchange-risk leaf
+
+functions left with one other family after the forecast:
+    246  indirect memory access is outside the resource projection

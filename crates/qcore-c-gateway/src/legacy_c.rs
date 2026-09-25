@@ -57,6 +57,12 @@ pub mod declared_modes;
 #[path = "legacy_descriptor_custody.rs"]
 pub(crate) mod descriptor_custody;
 
+// Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: typed indirect reads in the actuals
+// of a contracted call. Everything the card adds lives there; this file only
+// carries the hooks marked with the card's name.
+#[path = "legacy_call_argument_access.rs"]
+mod call_argument_access;
+
 pub use descriptor_custody::ValidityFact;
 
 // Card W44-BRANCH-CONDITION-CALLS: the desugaring of a refused call-bearing
@@ -388,6 +394,26 @@ pub enum LegacyInstruction {
         destination: String,
         source: String,
         offset: StepOffset,
+    },
+    /// Card **W44-INDIRECT-CALL-ARGUMENT-ACCESS**: the second half of the
+    /// obligation of the call actuals the call argument rule admitted, checked
+    /// before the call at the same line, after the typed read
+    /// ([`Self::IndirectScalarAccess`]) of every base they dereference.
+    ///
+    /// It is custody-neutral and changes no map. It records `UnknownAlias` for
+    /// every name in `names` bound to an identity carried by an integer (a
+    /// tracked descriptor is custody, never data), every base in
+    /// `pointer_bases` bound to a target that owns sub-custody (a field link, a
+    /// contained child or an indexed collection: the pointer read out of it may
+    /// be a tracked object the read does not name), and every place in
+    /// `pointer_places` (`p->f`, `s.f`) that is itself bound.
+    ArgumentReads {
+        /// Every name the admitted actuals read.
+        names: Vec<String>,
+        /// The bases a pointer-valued actual is read through.
+        pointer_bases: Vec<String>,
+        /// The places a pointer-valued actual spells, when it spells one.
+        pointer_places: Vec<String>,
     },
     /// A store into an admitted field of an aggregate this function tracks
     /// whose stored value carries no tracked identity (O00 blocker B08): a
@@ -2647,6 +2673,7 @@ fn build_function_cfg_with(
         #[cfg(feature = "indirect-census")]
         census_bindings: census_body_bindings(tokens, body_start, contracts),
         admit_derived_returns,
+        argument_probe: call_argument_access::ArgumentProbe::default(),
         desugar: condition_desugar::DesugarState::new(function),
     };
     #[cfg(feature = "indirect-census")]
@@ -3950,6 +3977,10 @@ struct Parser<'a> {
     /// (see [`return_call::NULL_RETURN_PLACE`]). `false` for every other CFG,
     /// which therefore keeps the W43-LIBC-RESULT-ALIAS refusal byte for byte.
     admit_derived_returns: bool,
+    /// Card **W44-INDIRECT-CALL-ARGUMENT-ACCESS**: the actuals the call
+    /// argument rule admitted while it classifies one statement again. Empty
+    /// otherwise, which makes every hook reading it the identity.
+    argument_probe: call_argument_access::ArgumentProbe,
     /// Card **W44-BRANCH-CONDITION-CALLS**: the enclosing function and the
     /// unit call graph the condition desugaring reads lazily.
     desugar: condition_desugar::DesugarState,
@@ -3988,8 +4019,10 @@ impl Parser<'_> {
         refusal: &crate::indirect_census::Refusal,
     ) {
         // A derived-result validation parse re-reads a body the ordinary parse
-        // already recorded; recording it again would double-count.
-        if self.admit_derived_returns {
+        // already recorded; recording it again would double-count. So would the
+        // call argument rule's second classification of a refused statement
+        // (card W44-INDIRECT-CALL-ARGUMENT-ACCESS).
+        if self.admit_derived_returns || self.argument_probe.rerun {
             return;
         }
         crate::indirect_census::record(
@@ -5292,6 +5325,16 @@ impl Parser<'_> {
                             .collect(),
                     ));
                 }
+                // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: a call whose actuals
+                // the gate refused, lowered to its actuals' reads and the call.
+                if let Some(sequence) = self.call_argument_access(&tokens, &instruction) {
+                    return Ok(Statement::Block(
+                        sequence
+                            .into_iter()
+                            .map(|instruction| Statement::Instruction(instruction, line))
+                            .collect(),
+                    ));
+                }
                 Ok(Statement::Instruction(instruction, line))
             }
             None => Err(line),
@@ -6318,6 +6361,11 @@ impl Parser<'_> {
             )
         });
         borrowed_actuals.extend(dereferenced);
+        // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: the whole actuals the call
+        // argument rule admitted for this statement, when no route above
+        // already exempted them. Empty outside that rule's probe.
+        let admitted_arguments = self.admitted_argument_spans(&texts, &borrowed_actuals);
+        borrowed_actuals.extend(admitted_arguments);
         if let Some(equal) = assignment
             && !contains_call(tokens)
             && let Some(destination) = direct_assignment_destination(&texts[..equal])
@@ -6651,7 +6699,9 @@ impl Parser<'_> {
                     && arguments.len() > contract.parameters.len()
                     && !(variadic_tail
                         && crate::variadic_nested::tail_arguments_are_data_with_nested(
-                            arguments,
+                            // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: an admitted
+                            // tail read is data; every other actual is unchanged.
+                            &self.tail_view(function, arguments),
                             contract.parameters.len(),
                             &nested,
                             &self.typed_model,
@@ -6687,6 +6737,9 @@ impl Parser<'_> {
                         |(index, (mode, argument))| {
                             !nested.iter().any(|nested| nested.argument == index)
                                 && !admitted_addresses.contains(argument)
+                                // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: an
+                                // admitted read keeps its base's obligation.
+                                && !self.argument_admitted(function, index, argument)
                                 && (((!matches!(mode, ResourceParameterMode::Out { .. })
                                     && argument.contains(&"&"))
                                     || (matches!(mode, ResourceParameterMode::Borrowed)
@@ -11429,6 +11482,29 @@ fn transfer_base(
         // incoming frame and keep later residual/double-release evidence.
         return state;
     }
+    // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: the second half of an admitted
+    // call actual's obligation. Custody-neutral: it only reports.
+    if let LegacyInstruction::ArgumentReads {
+        names,
+        pointer_bases,
+        pointer_places,
+    } = &node.instruction
+    {
+        for variable in call_argument_access::refused_reads(
+            &state,
+            &context.site_kinds,
+            names,
+            pointer_bases,
+            pointer_places,
+        ) {
+            diagnostics.insert(LegacyDiagnostic {
+                function: function.to_owned(),
+                line: node.line,
+                kind: LegacyDiagnosticKind::UnknownAlias { variable },
+            });
+        }
+        return state;
+    }
     // W43-INDIRECT-ACCESS-GENERAL: every base the typed scalar statement
     // dereferences must pass the dereference obligation here, after the
     // may-alias obligations above. A slot an out-parameter contract sanctions
@@ -11851,6 +11927,8 @@ fn transfer_base(
         LegacyInstruction::ScalarMemberStore { .. } => {}
         // Handled completely before this match: they return there.
         LegacyInstruction::IndirectScalarAccess { .. } | LegacyInstruction::PointerStep { .. } => {}
+        // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: handled before this match too.
+        LegacyInstruction::ArgumentReads { .. } => {}
         LegacyInstruction::AggregateStore { place } => {
             // The stored value carries no tracked identity, so the member binds
             // nothing. Whatever it previously linked is unlinked below, which

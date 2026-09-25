@@ -270,6 +270,11 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             source,
             offset,
         } => format!("PointerStep {destination} = {source} {offset:?}"),
+        LegacyInstruction::ArgumentReads {
+            names,
+            pointer_bases,
+            pointer_places,
+        } => format!("ArgumentReads {names:?} pointer {pointer_bases:?} {pointer_places:?}"),
         LegacyInstruction::AggregateStore { place } => format!("AggregateStore {place}"),
         LegacyInstruction::ElementStore {
             base, index, call, ..

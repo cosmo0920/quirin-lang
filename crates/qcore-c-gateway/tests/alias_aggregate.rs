@@ -257,14 +257,23 @@ fn publishing_the_aggregate_carries_the_child_linked_through_an_opaque_member() 
 /// it against the callee's declared parameter type. The statement keeps its
 /// existing `Unknown` and its existing diagnostic, at a borrowed position and
 /// at a releasing one.
+///
+/// Card **W44-INDIRECT-CALL-ARGUMENT-ACCESS** moves the borrowed row
+/// deliberately: its call argument rule reads `b->any` as a typed pointer
+/// actual, and its second obligation refuses it because `b` owns a field link
+/// and the place `b->any` is bound (`UnknownAlias` of both), in place of the
+/// lexical gate's diagnostic. The row never certifies. The admitted call no
+/// longer poisons `it`'s binding, so the shallow release of `b`
+/// (P-B08-SHALLOW) leaves `it` owed and reported: a leak the refusal masked.
+/// The releasing row keeps the gate's diagnostic.
 #[test]
 fn an_opaque_member_is_never_read_back() {
     if !clang_available() {
         return;
     }
-    for (reason, statement) in [
-        ("a borrowed position", "v_probe(b->any);"),
-        ("a releasing position", "v_release(b->any);"),
+    for (reason, statement, moved) in [
+        ("a borrowed position", "v_probe(b->any);", true),
+        ("a releasing position", "v_release(b->any);", false),
     ] {
         let body = format!(
             "int v_read(int n) \
@@ -288,6 +297,17 @@ fn an_opaque_member_is_never_read_back() {
             "{reason}: an opaque member read must stay refused, diagnostics {:?}",
             measured.diagnostics
         );
+        if moved {
+            assert!(
+                measured.diagnostics.iter().any(|diagnostic| matches!(
+                    &diagnostic.kind,
+                    LegacyDiagnosticKind::UnknownAlias { variable } if variable == "b->any"
+                )),
+                "{reason}: the second obligation must refuse the bound place, got {:?}",
+                measured.diagnostics
+            );
+            continue;
+        }
         assert!(
             unsupported(&measured).contains(&INDIRECT),
             "{reason}: the existing diagnostic must be retained, got {:?}",

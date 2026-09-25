@@ -639,12 +639,40 @@ fn every_refused_member_shape_keeps_its_unknown_and_its_diagnostic() {
 }}"
         );
         let measured = summary_of(&body, "r_w");
+        // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS moves these rows
+        // deliberately. Its call argument rule reads a pointer member at a
+        // `Borrowed` position as a typed pointer actual, and its second
+        // obligation refuses it because `b` owns the field link `b->item`
+        // (`UnknownAlias` of `b` in place of the gate's diagnostic). A scalar
+        // member of the live `b` is data, never an identity, and is admitted
+        // under `b`'s dereference obligation.
+        const OBLIGATED: &[&str] = &["a void pointer member", "a double pointer member"];
+        const ADMITTED: &[&str] = &["a scalar member"];
+        if ADMITTED.contains(&reason) {
+            assert!(
+                measured.diagnostics.is_empty(),
+                "{reason}: admitted under the base's obligation, got {:?}",
+                measured.diagnostics
+            );
+            continue;
+        }
         assert_ne!(
             measured.status,
             AnalysisStatus::Safe,
             "{reason}: must stay refused, diagnostics {:?}",
             measured.diagnostics
         );
+        if OBLIGATED.contains(&reason) {
+            assert!(
+                measured.diagnostics.iter().any(|diagnostic| matches!(
+                    &diagnostic.kind,
+                    LegacyDiagnosticKind::UnknownAlias { variable } if variable == "b"
+                )),
+                "{reason}: the second obligation must refuse `b`, got {:?}",
+                measured.diagnostics
+            );
+            continue;
+        }
         assert!(
             unsupported(&measured).contains(&INDIRECT),
             "{reason}: the existing diagnostic must be retained, got {:?}",

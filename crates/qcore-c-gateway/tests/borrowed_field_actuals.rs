@@ -154,6 +154,32 @@ fn refused(label: &str, body: &str) {
     );
 }
 
+/// Card **W44-INDIRECT-CALL-ARGUMENT-ACCESS** moves the rows that call this
+/// deliberately. Its call argument rule admits a typed read at a `Borrowed`
+/// position through a base this body may bind, under the flow-sensitive
+/// dereference obligation of W43-INDIRECT-ACCESS-GENERAL, where C02-P's
+/// syntactic premise refused it. The load-bearing half is unchanged: the body
+/// never certifies and stays `Unknown`. What moves is the reason: the base's
+/// obligation (`UnknownAlias` of `base`) replaces the lexical gate's
+/// `indirect memory access` diagnostic.
+fn refused_by_the_obligation(label: &str, body: &str, base: &str) {
+    let result = analyze(body, "w");
+    assert!(
+        !matches!(result, UnrestrictedLegacyResult::Safe(_)),
+        "{label}: a refused shape must never certify"
+    );
+    let w = function(program(&result), "w");
+    assert_eq!(w.status, AnalysisStatus::Unknown, "{label}");
+    assert!(
+        w.diagnostics.iter().any(|diagnostic| matches!(
+            &diagnostic.kind,
+            LegacyDiagnosticKind::UnknownAlias { variable } if variable == base
+        )),
+        "{label}: the base's obligation must refuse, got {:?}",
+        w.diagnostics
+    );
+}
+
 // --------------------------------------------------------------------------
 // Positive
 // --------------------------------------------------------------------------
@@ -262,12 +288,13 @@ fn a_released_base_is_never_admitted() {
     if !clang_available() {
         return;
     }
-    refused(
+    refused_by_the_obligation(
         "the base was released before the read",
         "struct b_handle *w(struct b_instance *in, int n) { struct b_storage *storage; \
          struct b_handle *chunk; storage = in->storage; b_release(storage); \
          chunk = b_open(storage->cio, storage->stream, n); if (!chunk) { return 0; } \
          b_close(chunk); return 0; }",
+        "storage",
     );
 }
 
@@ -277,13 +304,14 @@ fn an_alias_of_a_consumed_base_is_never_admitted() {
     if !clang_available() {
         return;
     }
-    refused(
+    refused_by_the_obligation(
         "the base is consumed through an alias",
         "struct b_handle *w(struct b_instance *in, int n) { struct b_storage *storage; \
          struct b_storage *alias; struct b_handle *chunk; storage = in->storage; \
          alias = storage; b_adopt(alias); \
          chunk = b_open(storage->cio, storage->stream, n); if (!chunk) { return 0; } \
          b_close(chunk); return 0; }",
+        "storage",
     );
 }
 
@@ -295,13 +323,14 @@ fn a_second_read_of_a_released_field_place_is_never_admitted() {
     if !clang_available() {
         return;
     }
-    refused(
+    refused_by_the_obligation(
         "the same field place was read into two locals and one was released",
         "struct b_handle *w(struct b_instance *in, int n) { struct b_storage *storage; \
          struct b_storage *other; struct b_handle *chunk; storage = in->storage; \
          other = in->storage; b_release(other); \
          chunk = b_open(storage->cio, storage->stream, n); if (!chunk) { return 0; } \
          b_close(chunk); return 0; }",
+        "storage",
     );
 }
 
@@ -408,8 +437,19 @@ fn every_other_refused_shape_keeps_its_unknown_and_its_diagnostic() {
              b_close(chunk); return 0; }",
         ),
     ];
+    // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: the rows whose actual is now a
+    // typed read at a `Borrowed` position refuse by `storage`'s obligation
+    // instead (see `refused_by_the_obligation`).
+    const MOVED: &[&str] = &[
+        "a partial argument is not a whole member read",
+        "a parenthesized actual is not a bare member read",
+    ];
     for (label, body) in cases {
-        refused(label, body);
+        if MOVED.contains(&label) {
+            refused_by_the_obligation(label, body, "storage");
+        } else {
+            refused(label, body);
+        }
     }
 }
 

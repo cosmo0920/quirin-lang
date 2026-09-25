@@ -645,9 +645,14 @@ fn a_tail_smuggling_a_tracked_identity_is_never_admitted() {
         // Its address, which is how a callee would be handed a handle it keeps.
         "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
            v_log(\"%p\", &b); v_drop(b); return 0; }",
-        // A dereference and a member access, neither of which this rule reads.
+        // A member access, which this rule does not read. Card
+        // W44-INDIRECT-CALL-ARGUMENT-ACCESS moved the live-base row
+        // (`v_log("%d", b->flag)` before `v_drop(b)`): a scalar member of a live
+        // identity is data, not the identity, and its call argument rule admits
+        // it under the base's obligation. The row now reads the member after
+        // the release, which that rule refuses and accuses.
         "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
-           v_log(\"%d\", b->flag); v_drop(b); return 0; }",
+           v_drop(b); v_log(\"%d\", b->flag); return 0; }",
     ] {
         let summary = generic_summary(body, "v_use");
         assert_ne!(

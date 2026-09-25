@@ -1,0 +1,18 @@
+[
+  {
+    "before": {
+      "id": "MK-LIST-ADD-BORROWED-PUBLICATION",
+      "title": "mk_list_add is declared borrowed on both positions, so a Monkey object linked into a caller-reachable list is still accused at the next exit (8 leaves)",
+      "why": "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore declares mk_list_add(entry, head) resource_borrowed on both parameters. Linking `&obj->_head` into a list reachable from the caller publishes `obj`, which a borrowed position does not state, so card W44-LEAK-PIN-AUDIT's audit found 8 class (c) leak leaves in 7 functions whose accusation rests on that silence (mk_rconf_meta_add, mk_rconf_read, mk_rconf_section_entry_add, mk_sched_worker_cb_add, mk_vhost_set_property, mk_vhost_set_single 2, mk_vhost_create 1); reading shows each object linked into its caller's configuration, server or host. Discharge condition: a vocabulary or contract that states an intrusive insertion's publication of the containing object (the v1 `resource_stored` relation over an interior address, or an equivalent), with gateway and Lean parity, and an arbiter attributing each withdrawn leaf. After the refused hand-on rule, 5 of the 8 are also withdrawn (the object is named in a refused statement on the path); 3 stay published (mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single).",
+      "source": "docs/reports/w44-leak-pin-audit/README.md",
+      "recorded_by": "W44-LEAK-PIN-AUDIT"
+    },
+    "after": {
+      "id": "MK-LIST-ADD-BORROWED-PUBLICATION",
+      "title": "mk_list_add is declared borrowed on both positions, so a Monkey object linked into a caller-reachable list is still accused at the next exit (8 leaves)",
+      "why": "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore declares mk_list_add(entry, head) resource_borrowed on both parameters. Linking `&obj->_head` into a list reachable from the caller publishes `obj`, which a borrowed position does not state, so card W44-LEAK-PIN-AUDIT's audit found 8 class (c) leak leaves in 7 functions whose accusation rests on that silence (mk_rconf_meta_add, mk_rconf_read, mk_rconf_section_entry_add, mk_sched_worker_cb_add, mk_vhost_set_property, mk_vhost_set_single 2, mk_vhost_create 1); reading shows each object linked into its caller's configuration, server or host. Discharge condition: a vocabulary or contract that states an intrusive insertion's publication of the containing object (the v1 `resource_stored` relation over an interior address, or an equivalent), with gateway and Lean parity, and an arbiter attributing each withdrawn leaf. After the refused hand-on rule, 5 of the 8 are also withdrawn (the object is named in a refused statement on the path); 3 stay published (mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single). Measured by W44-INDIRECT-CALL-ARGUMENT-ACCESS on the combined tree (merge of main 70ce6b44): that card admits `mk_list_add(&file->_head, &conf->includes)` in mk_rconf_read as a modeled call (two non-pointer sub-object addresses at Borrowed positions), so the refused hand-on rule no longer withdraws mk_rconf_read's leaf (mk_core/mk_rconf.c:465, acquired at :456): it is accused again, and 4 of the 8 now stay (mk_rconf_read, mk_vhost_create, mk_vhost_set_property, mk_vhost_set_single).",
+      "source": "docs/reports/w44-leak-pin-audit/README.md",
+      "recorded_by": "W44-LEAK-PIN-AUDIT"
+    }
+  }
+]

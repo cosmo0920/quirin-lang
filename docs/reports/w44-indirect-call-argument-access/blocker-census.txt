@@ -1,0 +1,48 @@
+baseline: docs/reports/w44-indirect-call-argument-access/artifacts
+corpus diagnostic counts: {'leak': 20, 'summary_conflict': 1, 'unknown_alias': 3379, 'unsupported': 43705}
+Unknown functions: 4523
+functions with exactly one distinct blocker: 1089
+functions with exactly two: 1067
+
+  leaves  functions   sole  reason
+  17,916      3,346    426  indirect memory access is outside the resource projection
+   9,206      2,617    411  call to uncontracted function `_`
+   8,274      2,308     50  unmodeled call, aggregate or indirect access in branch condition
+   3,289      1,277      4  unresolved resource identity `_`
+   2,268      1,015     13  braced initializer, expression, or declaration is not modeled
+   1,579        537     11  unsupported assignment expression
+     863        546      0  unmodeled call, aggregate or indirect access in for-loop condition
+     681        368      4  unrecognized assignment destination
+     551        311      1  unmodeled increment or decrement expression
+     495        417    147  unmodeled call, aggregate or indirect access in return expression
+     465        122      1  C operator `_` requires type/operand analysis
+     291        185      5  unmodeled call, aggregate or indirect access in loop condition
+     244        133      0  store through `_` without an out-parameter contract
+     220        128      1  arguments beyond the declared parameters of `_` are outside the resource projection
+     140         94      5  nested call `_` inside a modeled call is outside the resource projection
+     108         65      1  unmodeled expression may mutate a formal resource identity
+      78         73      0  nullable resource `_` used by a non-null contract
+      78         75      1  unmodeled call, aggregate or indirect access in switch expression
+      35         23      2  local declaration may shadow a formal resource identity
+      28         27      0  unmodeled call, aggregate or indirect access in do-while condition
+
+the unmodeled-call family, by position (the B series' subject)
+   8,274      2,308     50  branch condition
+     863        546      0  for-loop condition
+     495        417    147  return expression
+     291        185      5  loop condition
+     140         94      5  nested call `_` inside a modeled call is outside the resource projection
+      78         75      1  switch expression
+      28         27      0  do-while condition
+
+dominant two-blocker pairs (a card landing only one of a pair moves neither function)
+     237  call to uncontracted function `_`  +  indirect memory access is outside the resource
+     229  indirect memory access is outside the resource  +  branch condition
+     129  indirect memory access is outside the resource  +  unresolved resource identity `_`
+      67  call to uncontracted function `_`  +  branch condition
+      48  braced initializer, expression, or declaration  +  call to uncontracted function `_`
+      44  indirect memory access is outside the resource  +  unsupported assignment expression
+      43  call to uncontracted function `_`  +  unresolved resource identity `_`
+      39  braced initializer, expression, or declaration  +  indirect memory access is outside the resource
+      26  indirect memory access is outside the resource  +  return expression
+      23  branch condition  +  return expression

@@ -1,0 +1,84 @@
+{
+ "m-after:m-census": {
+  "resource-diagnostics.json": {
+   "left": "ffcf7e9ba2865289246f186d333ca6c87be7ff3bf4c7c5a11d150854e3f9967b",
+   "right": "ffcf7e9ba2865289246f186d333ca6c87be7ff3bf4c7c5a11d150854e3f9967b",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
+   "right": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "right": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ },
+ "m-after:m-noguard": {
+  "resource-diagnostics.json": {
+   "left": "ffcf7e9ba2865289246f186d333ca6c87be7ff3bf4c7c5a11d150854e3f9967b",
+   "right": "ffcf7e9ba2865289246f186d333ca6c87be7ff3bf4c7c5a11d150854e3f9967b",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
+   "right": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "right": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ },
+ "m-before:m-after": {
+  "resource-diagnostics.json": {
+   "left": "988ced1a57a81328f340d1ca84cae270097410f6860c9d46558b59f9e6983bad",
+   "right": "ffcf7e9ba2865289246f186d333ca6c87be7ff3bf4c7c5a11d150854e3f9967b",
+   "identical": false
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
+   "right": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "right": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ },
+ "_note": "m-before = main 70ce6b44 binary; m-after = merge 9c8b7809 (archived under artifacts/); m-census = the merge with the indirect-census feature; m-noguard = the merge with destination_is_exact disabled (a private build, never committed). m-before against the combined baseline is before-identity.txt."
+}

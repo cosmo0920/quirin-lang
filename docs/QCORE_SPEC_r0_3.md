@@ -1053,6 +1053,26 @@ does a statement that reads a tracked descriptor. The collection decides which
 indices owe a release, never that an index is inside the allocation. See
 [the implementation record](reports/w43-indexed-resource-collections/README.md).
 
+A typed read in the actual of a contracted call is admitted only for a simple
+statement the generic gateway refused for that access, only at a declared
+`Borrowed` position or in a declared variadic data tail, and only when the
+statement, classified again with those actuals admitted, is a contracted call
+whose destination is exactly its left-hand side (or an element store around
+one). The actual is a scalar value over typed scalar accesses, a pointer read
+`B[I]`/`*B` over a declared `T **B` or `B->F`/`S.F` over a pointer member, or
+the address of a non-pointer sub-object `&B->F`, `&S.F`, `&B[I]`; a `sizeof`
+of a type name is a constant. The call is preceded by the typed read of every
+base the actuals dereference (unbound, a non-null binding with no tracked
+target, or exactly one known, non-null, live identity, else an unknown alias; a
+released base is a `use_after_release` candidate) and by a second obligation
+refusing a name bound to an integer-carried identity, a pointer read through a
+base whose target owns a field link, contained child or indexed collection,
+and a bound pointer place. A custody-taking position, an uncontracted callee
+and a statement reading a tracked descriptor keep the refusal byte for byte.
+The read decides its base's custody only, never the liveness of an object a
+read pointer names, and the published scope string says so. See
+[the implementation record](reports/w44-indirect-call-argument-access/README.md).
+
 The bounded B-series lowering models one unconditional externally declared
 contracted call (no local definition) in an
 otherwise custody-neutral return or controlling expression, preserving its

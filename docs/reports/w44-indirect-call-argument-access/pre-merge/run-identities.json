@@ -1,0 +1,139 @@
+{
+ "before:census": {
+  "resource-diagnostics.json": {
+   "left": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+   "right": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "right": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "right": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ },
+ "before:census2": {
+  "resource-diagnostics.json": {
+   "left": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+   "right": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "right": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "right": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ },
+ "before:census3": {
+  "resource-diagnostics.json": {
+   "left": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+   "right": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "right": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "right": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ },
+ "after:census-after": {
+  "resource-diagnostics.json": {
+   "left": "0383bb8cc03f44991c4a2eef452351d28f91167140a649d217cb268809ae314b",
+   "right": "0383bb8cc03f44991c4a2eef452351d28f91167140a649d217cb268809ae314b",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "right": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "right": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  }
+ },
+ "after:final": {
+  "resource-diagnostics.json": {
+   "left": "0383bb8cc03f44991c4a2eef452351d28f91167140a649d217cb268809ae314b",
+   "right": "e10c8d377ffc877179472b8f46481f317c54de46ff55559da55acf2034aeea60",
+   "identical": false
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "left": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "right": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "left": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "right": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
+   "identical": true
+  },
+  "monkey-source.json": {
+   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  },
+  "diagnostics_equal_except_scope": true
+ },
+ "_note": "after = the 634bd6bd AFTER run (before the scope string); final = the 6e8a41b8 run archived under artifacts/. The census run of the base is census3 (commit ba3a22fa); census and census2 are the two earlier recogniser iterations."
+}

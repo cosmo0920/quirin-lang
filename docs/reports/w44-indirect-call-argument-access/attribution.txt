@@ -1,0 +1,129 @@
+before {'leak': 19, 'summary_conflict': 1, 'unknown_alias': 3357, 'unsupported': 43885}
+after  {'leak': 20, 'summary_conflict': 1, 'unknown_alias': 3379, 'unsupported': 43705}
+removed by category {'unsupported': 188, 'unknown_alias': 7}
+added by category {'unknown_alias': 29, 'unsupported': 8, 'leak': 1}
+
+classes:
+      11  added:downstream
+      21  added:exchange
+       5  added:exchange:call-refusal
+       1  added:violation
+      10  removed:downstream
+     143  removed:rule
+      41  removed:rule-unforecast
+       1  removed:rule:outside-unknown
+
+forecast set: 144 leaves, 143 removed, 1 kept:
+  librdkafka/rdkafka_sasl_oauthbearer.c/check_oauthbearer_extension_value L20297
+
+function moves {'Unknown -> Safe': 1, 'Unknown -> Unsafe': 1}
+  Unknown -> Safe  chunkio/cio_file.c/cio_file_hash_print
+  Unknown -> Unsafe  monkey-libevent/mk_core/mk_rconf.c/mk_rconf_read
+
+unit moves: [['monkey-libevent/mk_core/mk_rconf.c', 'Unknown', 'Unsafe']]
+
+added:downstream (11):
+  cmetrics/cmt_encode_opentelemetry.c/initialize_exemplars_from_metadata L7101 unknown_alias: unresolved resource identity `exemplars[dest_index]` x1
+  cmetrics/cmt_encode_opentelemetry.c/initialize_exemplars_from_metadata L7104 unknown_alias: unresolved resource identity `exemplars[dest_index]` x1
+  cmetrics/cmt_histogram.c/cmt_histogram_buckets_create_size L5482 unknown_alias: unresolved resource identity `upper_bounds` x1
+  cmetrics/cmt_histogram.c/cmt_histogram_buckets_exponential_create L5571 unknown_alias: unresolved resource identity `upper_bounds` x1
+  cmetrics/cmt_histogram.c/cmt_histogram_buckets_exponential_create L5573 unknown_alias: unresolved resource identity `upper_bounds` x1
+  cmetrics/cmt_histogram.c/cmt_histogram_buckets_linear_create L5536 unknown_alias: unresolved resource identity `upper_bounds` x1
+  cmetrics/cmt_histogram.c/cmt_histogram_buckets_linear_create L5538 unknown_alias: unresolved resource identity `upper_bounds` x1
+  librdkafka/rdkafka_admin.c/rd_kafka_AuthorizedOperations_parse L25164 unsupported: nullable resource `operations` used by a non-null contract x1
+  librdkafka/rdkafka_conf.c/rd_kafka_conf_kv_get L25661 unsupported: nullable resource `ret` used by a non-null contract x1
+  librdkafka/rdkafka_mock.c/rd_kafka_mock_get_requests L23538 unsupported: nullable resource `ret` used by a non-null contract x1
+  librdkafka/rdkafka_sasl_oauthbearer.c/rd_kafka_oauthbearer_set_token0 L20330 unknown_alias: unresolved resource identity `token_value` x1
+
+added:exchange (21):
+  chunkio/cio_chunk.c/cio_chunk_open L2060 unknown_alias: unresolved resource identity `ch` x1
+  chunkio/cio_chunk.c/cio_chunk_open L2063 unknown_alias: unresolved resource identity `ch` x1
+  chunkio/cio_memfs.c/cio_memfs_content_copy L2209 unknown_alias: unresolved resource identity `mf` x1
+  chunkio/cio_stream.c/cio_stream_create L2214 unknown_alias: unresolved resource identity `st` x1
+  cmetrics/cmt_histogram.c/histogram_get_metric L5683 unknown_alias: unresolved resource identity `buckets` x1
+  cmetrics/cmt_histogram.c/histogram_get_metric L5683 unknown_alias: unresolved resource identity `metric` x1
+  cmetrics/cmt_summary.c/cmt_summary_create L5504 unknown_alias: unresolved resource identity `s` x1
+  cmetrics/cmt_summary.c/cmt_summary_set_default L5656 unknown_alias: unresolved resource identity `metric` x1
+  fluent-bit-chunk/flb_input_chunk.c/append_to_ring_buffer L20283 unknown_alias: unresolved resource identity `cr` x1
+  fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_map L18893 unknown_alias: unresolved resource identity `ic` x1
+  fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_map L18952 unknown_alias: unresolved resource identity `ic` x1
+  fluent-bit-chunk/flb_input_chunk.c/input_chunk_get L19818 unknown_alias: unresolved resource identity `ic` x1
+  librdkafka/cJSON.c/print_string_ptr L2099 unknown_alias: unresolved resource identity `input_pointer` x1
+  librdkafka/rdkafka_cgrp.c/rd_kafka_consumer_group_metadata_dup L24621 unknown_alias: unresolved resource identity `ret` x1
+  librdkafka/rdkafka_cgrp.c/rd_kafka_consumer_group_metadata_dup L24623 unknown_alias: unresolved resource identity `ret` x1
+  librdkafka/rdkafka_cgrp.c/rd_kafka_consumer_group_metadata_dup L24625 unknown_alias: unresolved resource identity `ret` x1
+  monkey-libevent/mk_core/mk_rconf.c/mk_rconf_read L2099 unknown_alias: unresolved resource identity `file` x1
+  monkey-libevent/mk_server/mk_fifo.c/mk_fifo_worker_setup L5153 unknown_alias: unresolved resource identity `ctx` x1
+  monkey-libevent/mk_server/mk_fifo.c/mk_fifo_worker_setup L5157 unknown_alias: unresolved resource identity `ctx` x1
+  monkey-libevent/mk_server/mk_fifo.c/mk_fifo_worker_setup L5161 unknown_alias: unresolved resource identity `ctx` x1
+  monkey-libevent/mk_server/mk_net.c/mk_net_conn_create L6013 unknown_alias: unresolved resource identity `conn` x1
+
+added:exchange:call-refusal (5):
+  librdkafka/rdkafka_msgset_writer.c/rd_kafka_gzip_compress L20112 unsupported: discarded owned result of resource API `rd_malloc` x1
+  librdkafka/rdkafka_sasl_oauthbearer.c/parse_ujws_config_value_for_prefix L20397 unsupported: discarded owned result of resource API `rd_strdup` x1
+  librdkafka/rdkafka_sasl_oauthbearer_oidc.c/rd_kafka_oidc_client_credentials_build_post_fields L21356 unsupported: discarded owned result of resource API `rd_malloc` x1
+  librdkafka/rdkafka_sasl_oauthbearer_oidc.c/rd_kafka_oidc_token_try_validate L21697 unsupported: discarded owned result of resource API `rd_strdup` x1
+  librdkafka/rdkafka_telemetry_encode.c/resource_attributes L20795 unsupported: discarded owned result of resource API `rd_malloc` x1
+
+added:violation (1):
+  monkey-libevent/mk_core/mk_rconf.c/mk_rconf_read L2101 leak: live obligation acquired at mk_core/mk_rconf.c:456 x1
+
+removed:downstream (10):
+  chunkio/cio_utils.c/cio_utils_read_file L2287 unknown_alias: unresolved resource identity `data` x1
+  cmetrics/cmt_encode_opentelemetry.c/initialize_exemplars_from_metadata L7101 unsupported: unmodeled call, aggregate or indirect access in branch condition x1
+  cmetrics/cmt_encode_opentelemetry.c/initialize_exemplars_from_metadata L7104 unsupported: unmodeled call, aggregate or indirect access in branch condition x1
+  cmetrics/cmt_encode_opentelemetry.c/initialize_exemplars_from_metadata L7108 unknown_alias: unresolved resource identity `exemplars` x1
+  cmetrics/cmt_encode_opentelemetry.c/initialize_exemplars_from_metadata L7114 unknown_alias: unresolved resource identity `exemplars` x1
+  cmetrics/cmt_histogram.c/cmt_histogram_buckets_create_size L5475 unknown_alias: unresolved resource identity `upper_bounds` x1
+  cmetrics/cmt_histogram.c/cmt_histogram_buckets_exponential_create L5566 unknown_alias: unresolved resource identity `upper_bounds` x1
+  cmetrics/cmt_histogram.c/cmt_histogram_buckets_linear_create L5531 unknown_alias: unresolved resource identity `upper_bounds` x1
+  librdkafka/rdkafka_sasl_oauthbearer.c/rd_kafka_oauthbearer_set_token0 L20330 unsupported: unmodeled call, aggregate or indirect access in branch condition x1
+  monkey-libevent/mk_core/mk_file.c/mk_file_to_buffer L4250 unknown_alias: unresolved resource identity `buffer` x1
+
+removed:rule-unforecast (41):
+  chunkio/cio_file.c/_cio_file_up L3364 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_file.c/adjust_layout L2929 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_file.c/cio_file_format_check L3013 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_file.c/cio_file_write_metadata L3511 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_file.c/cio_file_write_metadata L3529 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_memfs.c/cio_memfs_content_copy L2209 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_meta.c/cio_meta_cmp L2467 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_meta.c/cio_meta_read L2434 unsupported: indirect memory access is outside the resource projection x1
+  chunkio/cio_utils.c/cio_utils_read_file L2279 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_encode_opentelemetry.c/initialize_exemplars_from_metadata L7090 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_encode_splunk_hec.c/format_context_common L5720 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_encode_text.c/append_bytes_value L5650 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_encode_text.c/append_exp_histogram_metric_value L5871 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_encode_text.c/append_exp_histogram_metric_value L5878 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_encode_text.c/append_exp_histogram_metric_value L5892 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_encode_text.c/append_exp_histogram_metric_value L5906 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_histogram.c/cmt_histogram_buckets_create_size L5467 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_histogram.c/cmt_histogram_buckets_exponential_create L5558 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_histogram.c/cmt_histogram_buckets_linear_create L5523 unsupported: indirect memory access is outside the resource projection x1
+  cmetrics/cmt_summary.c/cmt_summary_create L5504 unsupported: indirect memory access is outside the resource projection x1
+  fluent-bit-chunk/flb_input_chunk.c/append_to_ring_buffer L20283 unsupported: indirect memory access is outside the resource projection x1
+  fluent-bit-chunk/flb_input_chunk.c/input_chunk_append_raw L20105 unsupported: indirect memory access is outside the resource projection x1
+  fluent-bit-chunk/flb_input_chunk.c/input_chunk_append_raw L20172 unsupported: indirect memory access is outside the resource projection x1
+  fluent-bit-chunk/flb_input_chunk.c/input_chunk_append_raw L20207 unsupported: indirect memory access is outside the resource projection x1
+  fluent-bit-chunk/flb_input_chunk.c/input_chunk_get L19818 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_admin.c/rd_kafka_AuthorizedOperations_parse L25155 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_conf.c/rd_kafka_conf_kv_get L25655 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_error.c/rd_kafka_error_copy L19604 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_error.c/rd_kafka_error_new_v L19585 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_mock.c/rd_kafka_mock_get_requests L23530 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_config_all_explicit_values L20981 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_config_defaults L20930 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_sasl_oauthbearer.c/do_unittest_config_explicit_scope_and_life L20955 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_telemetry_encode.c/rd_kafka_telemetry_encode_metrics L21116 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_telemetry_encode.c/rd_kafka_telemetry_encode_metrics L21157 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_telemetry_encode.c/rd_kafka_telemetry_encode_metrics L21159 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_telemetry_encode.c/rd_kafka_telemetry_encode_metrics L21162 unsupported: indirect memory access is outside the resource projection x1
+  librdkafka/rdkafka_telemetry_encode.c/rd_kafka_telemetry_encode_metrics L21165 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_core/mk_file.c/mk_file_to_buffer L4243 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_core/mk_rconf.c/mk_rconf_read L2099 unsupported: indirect memory access is outside the resource projection x1
+  monkey-libevent/mk_server/mk_scheduler.c/mk_sched_init L6727 unsupported: indirect memory access is outside the resource projection x1
+
+removed:rule:outside-unknown (1):
+  monkey-libevent/mk_server/mk_net.c/mk_net_conn_create L6013 unsupported: indirect memory access is outside the resource projection x1
+
+attribution_complete: True

@@ -154,6 +154,7 @@ import QCore.ScalarMemberStore
 import QCore.IndirectScalarAccess
 import QCore.IndexTraversal
 import QCore.IndexedCollection
+import QCore.CallArgumentAccess
 import QCore.IndirectChainAccess
 import QCore.AssignmentDestinationSuffix
 import QCore.GenericSelection

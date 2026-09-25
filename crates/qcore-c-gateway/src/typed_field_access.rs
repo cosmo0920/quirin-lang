@@ -2447,6 +2447,30 @@ pub(crate) fn is_scalar_value_expression(
         && typed_scalar_expression(texts, model, types, &mut TypedScalarPlan::default()) == Some(0)
 }
 
+/// Card **W44-INDIRECT-CALL-ARGUMENT-ACCESS**: one whole call actual that is a
+/// scalar value carrying at least one typed scalar access — the value walker
+/// of [`typed_scalar_statement`], unchanged, over the actual alone. `None` for
+/// an unreadable function, an empty actual, a `{ } ; ,`, a call, a unary `&`,
+/// an increment, an assignment, a pointer-valued name or no access at all.
+/// The plan's bases carry exactly the typed route's dereference obligation.
+pub(crate) fn typed_scalar_value(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> Option<TypedScalarPlan> {
+    types.variables.as_ref()?;
+    if texts.is_empty()
+        || texts
+            .iter()
+            .any(|text| matches!(*text, "{" | "}" | ";" | ","))
+    {
+        return None;
+    }
+    let mut plan = TypedScalarPlan::default();
+    let accesses = typed_scalar_expression(texts, model, types, &mut plan)?;
+    (accesses > 0).then_some(plan)
+}
+
 /// The statement's own assignment: the index of its top-level `=` and the
 /// length of the compound operator before it (0 for `=`, 1 for `+=`, 2 for
 /// `<<=`). `None` when there is no assignment at depth 0 or the first `=` at

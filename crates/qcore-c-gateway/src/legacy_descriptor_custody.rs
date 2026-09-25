@@ -306,6 +306,10 @@ pub(crate) fn admits_descriptor_read(
         // descriptor read on the same line does, so it is refused
         // (integration of W43-DESCRIPTOR-RESOURCE-TRACKING).
         | LegacyInstruction::PointerStep { .. }
+        // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS's actual reads: the rule
+        // declines every statement that reads a descriptor name, so this node
+        // never meets one; refused anyway, since it reads its names as data.
+        | LegacyInstruction::ArgumentReads { .. }
         // Card W43-INDEXED-RESOURCE-COLLECTIONS's element operations and
         // counted-loop nodes (integration of W43-DESCRIPTOR-RESOURCE-TRACKING).
         // An element store or release is lowered only for a statement that

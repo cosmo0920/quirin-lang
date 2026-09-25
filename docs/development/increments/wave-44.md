@@ -7,6 +7,27 @@
 > [STATUS.md](../../STATUS.md); each report owns its evidence. The preceding
 > [record](wave-43.md) holds the wave-43 paragraphs and stays unchanged.
 
+**W44-INDIRECT-CALL-ARGUMENT-ACCESS** (2026-09-25, base `c1e69bb5`, merged
+with main `70ce6b44` as `9c8b7809`). A census first: the call-argument family
+is 11,069 leaves on 2,675 Unknown functions at the card's base, and 7,953 of
+them hand the read to a callee with no contract. A simple statement the lexical
+gate refused for an actual of a contracted call is classified again with every
+typed read at a declared `Borrowed` position or in a declared variadic data
+tail admitted (scalar values, pointer reads through `T **` bases and pointer
+members, non-pointer sub-object addresses, `sizeof` of a type name as a
+constant, no chain); when that is a contracted call whose named destination is
+its whole left-hand side, it lowers to W43's typed read of every base, a new
+`ArgumentReads` obligation and the call. Custody-taking positions and
+uncontracted callees keep the refusal. Lean `QCore.CallArgumentAccess` (26
+theorems). On the card's base it exposed eleven false leaks and found the
+suffix-destination hole main has since repaired; on the combined tree the
+refused hand-on rule withdraws all eleven. Combined-tree arbiter: 195 leaves
+removed and 38 added, all attributed; `cio_file_hash_print` Unknown → Safe;
+`mk_rconf_read` and its unit Unknown → provisional Unsafe on one class (c)
+leak (`MK-LIST-ADD-BORROWED-PUBLICATION`, now modeled rather than refused);
+leak 19 → 20; 0 use_after_release. Ledger 377 → 384.
+[Report](../../reports/w44-indirect-call-argument-access/README.md).
+
 **2026-09-25 — W44-TEST-SUITE-WALL-TIME: the gate's Rust suite, from 22 minutes to about 4½.**
 Plain `cargo test --workspace --no-fail-fast` took 22:13 from a clean dev
 profile: 125 s of build and 1,208 s of test binaries run one after another.
