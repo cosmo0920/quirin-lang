@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W44-PROVIDER-RESOURCE-VIEW on merge e0017e74 (onto main 20d00641, after W44-QUIRIN-AUDIT-PROVIDERS and W44-QUIRIN-AUDIT-PREPARE), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5644 core Rust passed / 0 failed / 11 ignored over 299 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 189 Lean audits; 351 root Python tests; 15 package Python tests (the card added provider tests). fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus arbiter ran in 70 s and baseline_identity.py against docs/reports/w44-collection-allocation/integration/artifacts exits 0 with verdict_bearing_identical true (identity-vs-collection-allocation-baseline.json), so the baseline does not move: this card is provider-selection tooling and the pinned arbiter is verdict-bearing identical.",
+ "workspace_tests": 5644,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 351,
+ "lean_audits": 189,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
