@@ -925,7 +925,7 @@ pub(super) struct ArgumentFacts {
 }
 
 #[cfg(feature = "indirect-census")]
-mod census {
+pub(crate) mod census {
     //! The call-argument census stream: one JSON line per simple statement the
     //! lexical gate refused whose first call is contracted, written after the
     //! classifier decided. Behind the off-by-default `indirect-census`

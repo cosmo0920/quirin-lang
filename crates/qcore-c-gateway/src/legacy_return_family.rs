@@ -535,6 +535,22 @@ impl Parser<'_> {
         texts: &[&str],
         line: usize,
     ) -> Option<(LegacyInstruction, bool)> {
+        let decided = self.return_family_decision(expression, texts, line);
+        #[cfg(feature = "indirect-census")]
+        if !self.admit_derived_returns
+            && let Some((instruction, escapes)) = &decided
+        {
+            census::record(&self.census_function, line, texts, instruction, *escapes);
+        }
+        decided
+    }
+
+    fn return_family_decision(
+        &mut self,
+        expression: &[Token],
+        texts: &[&str],
+        line: usize,
+    ) -> Option<(LegacyInstruction, bool)> {
         let shape = cast_call(texts, &ParserNames { parser: self });
         if let Some(shape) = shape {
             return self.cast_call_instruction(expression, texts, line, &shape);
@@ -630,6 +646,78 @@ impl Parser<'_> {
         } else {
             self.next_site = restore;
             None
+        }
+    }
+}
+
+/// Census only (card W45-RETURN-EXPRESSION-FAMILIES): one JSON line per
+/// `return` this module decided, written after the decision and read by
+/// nothing but the card's attribution scripts. Compiled out with the
+/// `indirect-census` feature off; with it on, the audit's artifacts are
+/// unchanged.
+#[cfg(feature = "indirect-census")]
+pub(crate) mod census {
+    use std::fs::File;
+    use std::io::{BufWriter, Write};
+    use std::sync::Mutex;
+
+    use super::LegacyInstruction;
+
+    /// The environment variable naming the stream.
+    pub const RETURN_FAMILY_CENSUS_PATH: &str = "QCORE_RETURN_FAMILY_CENSUS";
+
+    static SINK: Mutex<Option<Option<BufWriter<File>>>> = Mutex::new(None);
+
+    #[derive(serde::Serialize)]
+    struct Record<'a> {
+        unit_seq: u64,
+        function: &'a str,
+        line: usize,
+        /// `scalar-read`, `cast-call-lowered` or `cast-call-admitted`.
+        family: &'static str,
+        tokens: &'a [&'a str],
+        /// The read node's bases, or the admitted call's callee.
+        subjects: Vec<String>,
+    }
+
+    pub(crate) fn record(
+        function: &str,
+        line: usize,
+        tokens: &[&str],
+        instruction: &LegacyInstruction,
+        escapes: bool,
+    ) {
+        if std::env::var_os(RETURN_FAMILY_CENSUS_PATH).is_none() {
+            return;
+        }
+        let (family, subjects) = match instruction {
+            LegacyInstruction::IndirectScalarAccess { bases, .. } => ("scalar-read", bases.clone()),
+            LegacyInstruction::ContractCall { function, .. } if escapes => {
+                ("cast-call-admitted", vec![function.clone()])
+            }
+            _ => ("cast-call-lowered", Vec::new()),
+        };
+        let record = Record {
+            unit_seq: crate::indirect_census::unit_seq(),
+            function,
+            line,
+            family,
+            tokens,
+            subjects,
+        };
+        let Ok(mut guard) = SINK.lock() else {
+            return;
+        };
+        let opened = guard.get_or_insert_with(|| {
+            let path = std::env::var_os(RETURN_FAMILY_CENSUS_PATH)?;
+            File::create(path).ok().map(BufWriter::new)
+        });
+        let Some(writer) = opened.as_mut() else {
+            return;
+        };
+        if let Ok(line) = serde_json::to_string(&record) {
+            let _ = writeln!(writer, "{line}");
+            let _ = writer.flush();
         }
     }
 }
