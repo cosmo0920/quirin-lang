@@ -157,7 +157,12 @@ where
     let queue = Mutex::new(
         order
             .into_iter()
-            .map(|index| (index, pending[index].take().expect("each task dispatched once")))
+            .map(|index| {
+                (
+                    index,
+                    pending[index].take().expect("each task dispatched once"),
+                )
+            })
             .collect::<Vec<_>>()
             .into_iter(),
     );

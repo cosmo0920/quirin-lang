@@ -92,10 +92,26 @@ fn current_cycle19_route_accepts_a_new_revision_and_replaces_old_checked_sidecar
             Some(&report),
             Some(&bindings),
             None,
-            None
+            None,
+            1
         )
         .unwrap()
     );
+    // Card W44-AUDIT-PARALLEL-UNITS: the same audit on four threads writes the
+    // same report and assumptions bytes as the sequential run.
+    let parallel = root.join("reports-parallel/resources.json");
+    fs::create_dir_all(parallel.parent().unwrap()).unwrap();
+    assert!(
+        !compatibility::run_current(&root, None, None, Some(&parallel), None, None, None, 4)
+            .unwrap()
+    );
+    for extension in ["json", "contracts.json"] {
+        assert_eq!(
+            fs::read(parallel.with_extension(extension)).unwrap(),
+            fs::read(report.with_extension(extension)).unwrap(),
+            "{extension}"
+        );
+    }
     let result: Value = serde_json::from_slice(&fs::read(&report).unwrap()).unwrap();
     assert_ne!(
         result["fluent_bit_revision"],
@@ -114,7 +130,8 @@ fn current_cycle19_route_accepts_a_new_revision_and_replaces_old_checked_sidecar
     let alternate = root.join("clang-compile-commands.json");
     fs::rename(root.join("build/compile_commands.json"), &alternate).unwrap();
     assert!(
-        !compatibility::run_current(&root, None, None, None, None, None, Some(&alternate)).unwrap()
+        !compatibility::run_current(&root, None, None, None, None, None, Some(&alternate), 2)
+            .unwrap()
     );
     fs::rename(&alternate, root.join("build/compile_commands.json")).unwrap();
     for path in [
@@ -127,7 +144,7 @@ fn current_cycle19_route_accepts_a_new_revision_and_replaces_old_checked_sidecar
         assert_eq!(evidence["status"], "Unknown");
         assert_eq!(evidence["source_revision"], result["fluent_bit_revision"]);
     }
-    let error = compatibility::run(&root, None, None, None, None, None).unwrap_err();
+    let error = compatibility::run(&root, None, None, None, None, None, 1).unwrap_err();
     assert!(error.contains("Fluent Bit pin check failed"), "{error}");
     fs::remove_dir_all(root).unwrap();
 }

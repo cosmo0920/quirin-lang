@@ -71,6 +71,7 @@ struct ConfiguredTask<'a> {
 
 /// The user-facing command defaults to a current-revision inventory. Historical
 /// source/native evidence remains behind the explicit --pinned-evidence route.
+#[allow(clippy::too_many_arguments)]
 pub fn run_current(
     root: &Path,
     monkey_database: Option<&Path>,
@@ -204,12 +205,9 @@ pub fn run_current(
         |task| {
             let group = task.group;
             let outcome = match &task.expected_source {
-                Ok(expected_source) => audit.evaluate_entry(
-                    task.library,
-                    expected_source,
-                    task.entry,
-                    task.unresolved,
-                ),
+                Ok(expected_source) => {
+                    audit.evaluate_entry(task.library, expected_source, task.entry, task.unresolved)
+                }
                 Err(error) => qcore_audit::current::EntryOutcome {
                     output: String::new(),
                     result: Err(error.clone()),
@@ -992,7 +990,12 @@ fn audit_unit(
     // definitions are counted here too.
     let inventory = enumerate_source_definitions(&unit);
     if library == "chunkio" && matches!(file.as_ref(), "cio_file.c" | "cio_file_unix.c") {
-        let evidence = qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_attempt_sources(&unit, PINNED_FLUENT_BIT_COMMIT, file == "cio_file_unix.c")?;
+        let evidence =
+            qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_attempt_sources(
+                &unit,
+                PINNED_FLUENT_BIT_COMMIT,
+                file == "cio_file_unix.c",
+            )?;
         for function in &evidence {
             say!(
                 out,
@@ -1001,15 +1004,23 @@ fn audit_unit(
                 function.source().paths().len()
             );
         }
-        teardown_results.push(serde_json::json!({"kind":"filesystem_call_results", "file":file, "evidence":evidence}));
+        teardown_results.push(
+            serde_json::json!({"kind":"filesystem_call_results", "file":file, "evidence":evidence}),
+        );
     }
     if library == "chunkio" && file == "cio_file.c" {
         let (native, counter, close, delete) = filesystem_deps
             .as_ref()
             .ok_or("missing filesystem dependencies")?;
-        let certificate = qcore_compiler::verifier_plugins::chunkio::unmap_wrapper::check_unmap_wrapper_source(&unit,PINNED_FLUENT_BIT_COMMIT,native,counter)?;
+        let certificate =
+            qcore_compiler::verifier_plugins::chunkio::unmap_wrapper::check_unmap_wrapper_source(
+                &unit,
+                PINNED_FLUENT_BIT_COMMIT,
+                native,
+                counter,
+            )?;
         say!(
-                out,
+            out,
             "qcore-outcomes munmap_file: Checked ({} source cases; sync/log frames assumed, OS custody conditional)",
             certificate.cases().len()
         );
@@ -1021,7 +1032,7 @@ fn audit_unit(
                 close,
             )?;
         say!(
-                out,
+            out,
             "qcore-custody cio_file_close: {} conditional no-delete cases, {} unresolved nested cleanup cases; deletion paths uncovered",
             close_evidence.cases().len(),
             close_evidence
@@ -1033,14 +1044,13 @@ fn audit_unit(
         );
         let deleting = qcore_compiler::verifier_plugins::chunkio::file_close::check_file_close_deletion_source(&unit,PINNED_FLUENT_BIT_COMMIT,&certificate,close,delete)?;
         say!(
-                out,
+            out,
             "qcore-custody cio_file_close delete: {} conditional cases, {} uncovered source paths across both modes",
             deleting.deleting_cases().len(),
             deleting.uncovered_paths().len()
         );
-        teardown_results.push(
-            serde_json::json!({"kind":"filesystem_close_with_delete", "evidence":deleting}),
-        );
+        teardown_results
+            .push(serde_json::json!({"kind":"filesystem_close_with_delete", "evidence":deleting}));
         teardown_results.push(
             serde_json::json!({"kind":"filesystem_close_no_delete", "evidence":close_evidence}),
         );
@@ -1055,26 +1065,29 @@ fn audit_unit(
                 PINNED_FLUENT_BIT_COMMIT,
             )?;
         say!(
-                out,
+            out,
             "qcore-outcomes cio_file_native_delete: Checked ({} eligibility/outcome cases; unlink framing assumed)",
             deletion.cases().len()
         );
-        teardown_results.push(
-            serde_json::json!({"kind":"filesystem_delete_outcomes", "certificate":deletion}),
-        );
+        teardown_results
+            .push(serde_json::json!({"kind":"filesystem_delete_outcomes", "certificate":deletion}));
         let delete =
             qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_delete_source(
                 &unit,
                 PINNED_FLUENT_BIT_COMMIT,
             )?;
         say!(
-                out,
+            out,
             "qcore-result-use cio_file_native_delete: Checked ({} short-circuit source paths; deletion custody Unknown)",
             delete.source().paths().len()
         );
         teardown_results
             .push(serde_json::json!({"kind":"filesystem_delete_attempt", "evidence":delete}));
-        let certificates = qcore_compiler::verifier_plugins::chunkio::file_outcomes::check_file_outcome_sources(&unit, PINNED_FLUENT_BIT_COMMIT)?;
+        let certificates =
+            qcore_compiler::verifier_plugins::chunkio::file_outcomes::check_file_outcome_sources(
+                &unit,
+                PINNED_FLUENT_BIT_COMMIT,
+            )?;
         for certificate in &certificates {
             say!(
                 out,
@@ -1083,12 +1096,18 @@ fn audit_unit(
                 certificate.cases().len()
             );
         }
-        teardown_results.push(serde_json::json!({"kind":"filesystem_native_outcomes", "certificates":certificates}));
+        teardown_results.push(
+            serde_json::json!({"kind":"filesystem_native_outcomes", "certificates":certificates}),
+        );
     }
     if library == "chunkio" && file == "cio_chunk.c" {
-        let unlink = qcore_compiler::verifier_plugins::chunkio::teardown_source::check_list_unlink_source(&unit, PINNED_FLUENT_BIT_COMMIT)?;
+        let unlink =
+            qcore_compiler::verifier_plugins::chunkio::teardown_source::check_list_unlink_source(
+                &unit,
+                PINNED_FLUENT_BIT_COMMIT,
+            )?;
         say!(
-                out,
+            out,
             "qcore-contract mk_list_del + __mk_list_del: Checked ({} neighbor alias cases; live reciprocal/exclusive links assumed)",
             unlink.cases().len()
         );
@@ -1099,7 +1118,7 @@ fn audit_unit(
                 PINNED_FLUENT_BIT_COMMIT,
             )?;
         say!(
-                out,
+            out,
             "qcore-contract ChunkIO counters: Checked ({} complete unsigned unit updates; nonwrapping entry bounds and ABI binding assumed)",
             certificates.len()
         );
@@ -1127,7 +1146,7 @@ fn audit_unit(
                 &dependencies,
             )?;
         say!(
-                out,
+            out,
             "qcore-contract cio_chunk_close memory scope: Checked ({} null/memory paths; {} source paths uncovered; enclosing stream/context teardown open)",
             close.checked_paths().len(),
             close.uncovered_paths().len()
@@ -1138,7 +1157,7 @@ fn audit_unit(
             &unit, PINNED_FLUENT_BIT_COMMIT, &dependencies,
             filesystem_close.as_ref().ok_or("missing filesystem close dependency")?)?;
         say!(
-                out,
+            out,
             "qcore-custody cio_chunk_close filesystem: {} conditional cases, {} unresolved nested cases, {} combined uncovered paths (unsupported backend kinds)",
             file.cases().len(),
             (0..file.cases().len())
@@ -1152,13 +1171,12 @@ fn audit_unit(
             return Err("chunk close path partition has additional unclassified paths".into());
         }
         say!(
-                out,
+            out,
             "qcore-custody cio_chunk_close unsupported backend: Unknown (complete symbolic int domain excluding {:?}; outer release preserves unresolved backend custody)",
             unsupported.excluded_kinds()
         );
-        teardown_results.push(
-            serde_json::json!({"kind":"unsupported_chunk_close", "evidence":unsupported}),
-        );
+        teardown_results
+            .push(serde_json::json!({"kind":"unsupported_chunk_close", "evidence":unsupported}));
         teardown_results
             .push(serde_json::json!({"kind":"filesystem_chunk_close", "evidence":file}));
     }
@@ -1177,7 +1195,7 @@ fn audit_unit(
             TraversalKind::Streams => stream_traversal = Some(evidence.clone()),
         }
         say!(
-                out,
+            out,
             "qcore-traversal {}: complete typed reference body checked; ring provenance and child custody remain premises",
             evidence.source().function()
         );
@@ -1200,20 +1218,19 @@ fn audit_unit(
             ParentKind::Context => context_parent = Some(evidence.clone()),
         }
         say!(
-                out,
+            out,
             "qcore-parent {}: complete allocation-release body checked; child effects and allocation provenance remain premises",
             evidence.source().function()
         );
-        teardown_results.push(
-            serde_json::json!({"kind":"parent_teardown", "file":file, "evidence":evidence}),
-        );
+        teardown_results
+            .push(serde_json::json!({"kind":"parent_teardown", "file":file, "evidence":evidence}));
     }
     if library == "chunkio" && file == "cio_memfs.c" {
         let certificate = memory_backend
             .as_ref()
             .ok_or("missing memory backend certificate")?;
         say!(
-                out,
+            out,
             "qcore-contract cio_memfs_close: Checked ({} nullable custody states; borrowed root/provenance/libc premises assumed; enclosing chunk teardown open)",
             certificate.cases().len()
         );
@@ -1285,7 +1302,7 @@ fn finish_library(
                 nested_memory.as_ref().ok_or("missing memory close")?,
             )?;
         say!(
-                out,
+            out,
             "qcore-nested-memory: complete source dependency chain checked; native caller/ring provenance remains Unknown; filesystem children rejected"
         );
         teardown_results
@@ -1318,7 +1335,7 @@ fn finish_library(
             )?);
         }
         say!(
-                out,
+            out,
             "qcore-nested-cleanup: {} mixed-backend conditional cases, {} retain child OS/counter obligations after parent free; native entry/outcome binding remains Unknown",
             conditional_examples.len(),
             conditional_examples
@@ -1352,7 +1369,7 @@ fn finish_library(
             examples.push(case);
         }
         say!(
-                out,
+            out,
             "qcore-nested-unsupported: {} conditional examples retain exact opaque child identities after parent release; constructor reachability Unknown",
             examples.len()
         );
@@ -1425,6 +1442,7 @@ fn source_contract_configuration() -> Result<SourceContractConfiguration, String
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn audit_chunk_source(
     unit: &C11TranslationUnit<'_>,
     library: &str,
@@ -1476,7 +1494,7 @@ fn audit_chunk_source(
                             "import_identity": checked_source.input_identity(),
                         }));
                         say!(
-                    out,
+                            out,
                             "  qcore-provider-source {}: Checked (four Boolean-state combinations; explicit live/exclusive/domain assumptions)",
                             summary.function()
                         );
@@ -1525,12 +1543,15 @@ fn audit_chunk_source(
                         "function": function, "status": "unknown", "reason": reason, "reason_code": reason_code }));
                 }
                 native_results.push(serde_json::json!({ "library": library, "file": file, "function": function, "status": "unknown", "reason": reason, "reason_code": reason_code }));
-                say!(out, "  chunk-source {library}/{file}/{function}: Unknown: {reason}")
+                say!(
+                    out,
+                    "  chunk-source {library}/{file}/{function}: Unknown: {reason}"
+                )
             }
         }
     }
     say!(
-                    out,
+        out,
         "chunk-source {library}/{file}: {} function(s), {summaries} field summary(s), {checked_contracts} QCore contract(s) checked, {} Unknown; no whole-unit lifecycle certificate",
         results.len(),
         results.len() - summaries

@@ -924,7 +924,9 @@ mod tests {
         for index in 0..12 {
             record_unit(&mut sequential, index);
         }
-        sequential.write(&directory.join("sequential.json")).unwrap();
+        sequential
+            .write(&directory.join("sequential.json"))
+            .unwrap();
         for jobs in [1, 4, 12] {
             let mut folded = AuditReport::new("revision");
             let template = AuditReport::new("revision");
@@ -933,9 +935,7 @@ mod tests {
                 jobs,
                 Some((0..12).rev().collect()),
                 |index| {
-                    std::thread::sleep(std::time::Duration::from_millis(
-                        (12 - index as u64) * 3,
-                    ));
+                    std::thread::sleep(std::time::Duration::from_millis((12 - index as u64) * 3));
                     let mut fragment = template.fragment();
                     record_unit(&mut fragment, index);
                     fragment

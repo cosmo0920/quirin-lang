@@ -93,3 +93,28 @@ and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
 `docs/reports/lean-build-performance/README.md`.
 
 <!-- preserved:validation:end -->
+
+## Corpus arbiter and its job count
+
+The pinned corpus arbiter is the release example
+`cycle19_fluent_bit_libraries_audit --pinned-evidence`, run through
+`docs/reports/w43-return-expression/scripts/run_audit.py OUT_DIR COMMIT
+[--census] [--jobs N]`. It analyses translation units on `N` threads
+(`--jobs N` on the example, or `QCORE_AUDIT_JOBS=N`; the default is the
+host's available parallelism, capped at 16), and folds every unit's report
+rows, sidecar results, counts and console lines in unit order. Every archived
+artifact and `audit.log` are byte-identical at every job count, and
+`--jobs 1` is the sequential loop; the first error in unit order is the one
+reported (`W44-AUDIT-PARALLEL-UNITS`). The configured route (no
+`--pinned-evidence`) takes the same flag. Two limits:
+
+- A census run always analyses one unit at a time, whatever `N` says: any
+  census variable set in a census-feature build forces it, because census
+  streams record in analysis order.
+- Do not run a many-job arbiter at the same time as `cargo test --workspace`:
+  it saturates the host, which is what the load-sensitive rows of constraint
+  16 measure. Record `N` (`run.json` does, as `QCORE_AUDIT_JOBS`).
+
+The configured route's `preparation:` line sums per-unit wall-clock time; it
+is a measurement, differs between any two runs, and at `N > 1` exceeds the
+process's own wall time. [Evidence](../reports/w44-audit-parallel-units/README.md).

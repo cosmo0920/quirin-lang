@@ -20,6 +20,12 @@ tracked-source hashes, separate generated-header hashes, CMake arguments,
 database identity and paths; `configure.log` records
 configuration output. Source code in the upstream checkout is not edited.
 
+Both audit routes analyse translation units concurrently: `--jobs N` before
+the positional arguments (or `QCORE_AUDIT_JOBS=N`) selects the thread count,
+defaulting to the host's available parallelism capped at 16. Outputs are
+byte-identical at every job count and `--jobs 1` is the sequential loop; see
+[the validation gate](agents/validation.md#corpus-arbiter-and-its-job-count).
+
 The setup is repeatable with unchanged inputs. It refuses an unrecognized
 output directory or a changed source copy; use `--output` with a fresh persistent
 directory when intentionally changing build inputs. `--cmake` can select an

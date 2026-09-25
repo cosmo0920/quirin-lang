@@ -172,7 +172,9 @@ pub fn project_unit(
     counts: &mut AuditCounts,
 ) -> Result<(), String> {
     let mut out = String::new();
-    let result = project_unit_into(library, file, unit, inventory, contracts, report, counts, &mut out);
+    let result = project_unit_into(
+        library, file, unit, inventory, contracts, report, counts, &mut out,
+    );
     print!("{out}");
     result
 }
@@ -202,7 +204,10 @@ pub fn project_unit_into(
             Ok(_) => say!(out, "  {library}/{file}: data-only gateway pass"),
             Err(error) => {
                 counts.gateway_failures += 1;
-                say!(out, "  {library}/{file}: data-only gateway failure: {error}");
+                say!(
+                    out,
+                    "  {library}/{file}: data-only gateway failure: {error}"
+                );
             }
         }
         return Ok(());
@@ -300,7 +305,10 @@ pub fn project_prepared_unit_into(
         report.record_enumeration(inventory);
         if let Some(error) = prepared.validation_error() {
             counts.gateway_failures += 1;
-            say!(out, "  {library}/{file}: data-only gateway failure: {error}");
+            say!(
+                out,
+                "  {library}/{file}: data-only gateway failure: {error}"
+            );
         } else {
             say!(out, "  {library}/{file}: data-only gateway pass");
         }
