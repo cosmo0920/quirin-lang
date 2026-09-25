@@ -27,7 +27,7 @@ use super::*;
 /// particular not `legacy_c` — has to change to carry it. Off by default.
 #[cfg(feature = "provenance-rounds-census")]
 #[path = "provenance_rounds.rs"]
-mod provenance_rounds;
+pub(crate) mod provenance_rounds;
 
 type Bindings = BTreeMap<usize, BTreeSet<String>>;
 

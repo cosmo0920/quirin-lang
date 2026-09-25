@@ -15,7 +15,9 @@ use qcore_schemas::profile::{LibraryProfile, UnitSelection};
 use serde_json::{Value, json};
 
 use crate::compile_db::{CompileEntry, EffectiveInput, compile_task_identity, compiler_options};
-use crate::projection::{AuditCounts, PreparedAuditCertificateContext, project_prepared_unit};
+use crate::projection::{
+    AuditCounts, PreparedAuditCertificateContext, project_prepared_unit_into,
+};
 use crate::report::{AuditReport, UnitRefusal};
 
 /// Keep distinct commands, deduplicating only identical file/directory/command
@@ -86,6 +88,20 @@ pub struct CurrentAudit {
     counts: AuditCounts,
 }
 
+/// One configuration's console lines and, unless it failed, its products.
+pub struct EntryOutcome {
+    pub output: String,
+    pub result: Result<EntryProducts, String>,
+}
+
+/// What one configuration contributes to a [`CurrentAudit`]: its checkout
+/// source path, its report rows and its tally.
+pub struct EntryProducts {
+    source: Option<PathBuf>,
+    report: AuditReport,
+    counts: AuditCounts,
+}
+
 impl CurrentAudit {
     pub fn new(checkout: &Path, profile: &LoadedProfile, manifest: &Path) -> Result<Self, String> {
         let checkout = checkout.canonicalize().map_err(|error| error.to_string())?;
@@ -152,10 +168,72 @@ impl CurrentAudit {
         entry: &CompileEntry,
         unresolved: Option<&str>,
     ) -> Result<(), String> {
+        let EntryOutcome { output, result } =
+            self.evaluate_entry(library, expected_source, entry, unresolved);
+        print!("{output}");
+        self.absorb_entry(result?)
+    }
+
+    /// Analyse one selected configuration without touching the audit's
+    /// accumulated state (card **W44-AUDIT-PARALLEL-UNITS**): the unit's report
+    /// rows, tally, source path and console lines are returned for
+    /// [`Self::absorb_entry`], which a concurrent caller applies in selection
+    /// order. The console lines are returned on failure too, exactly as far as
+    /// a sequential run would have printed them.
+    pub fn evaluate_entry(
+        &self,
+        library: &str,
+        expected_source: &Path,
+        entry: &CompileEntry,
+        unresolved: Option<&str>,
+    ) -> EntryOutcome {
+        let mut output = String::new();
+        let mut products = EntryProducts {
+            source: None,
+            report: self.report.fragment(),
+            counts: AuditCounts::default(),
+        };
+        let result = self
+            .evaluate_entry_into(
+                library,
+                expected_source,
+                entry,
+                unresolved,
+                &mut products,
+                &mut output,
+            )
+            .map(|()| products);
+        EntryOutcome { output, result }
+    }
+
+    /// Fold one [`Self::evaluate_entry`] result into the audit.
+    pub fn absorb_entry(&mut self, products: EntryProducts) -> Result<(), String> {
+        let EntryProducts {
+            source,
+            report,
+            counts,
+        } = products;
+        if let Some(source) = source {
+            self.sources.insert(source);
+        }
+        self.report.absorb(report)?;
+        self.counts.absorb(counts);
+        Ok(())
+    }
+
+    fn evaluate_entry_into(
+        &self,
+        library: &str,
+        expected_source: &Path,
+        entry: &CompileEntry,
+        unresolved: Option<&str>,
+        products: &mut EntryProducts,
+        output: &mut String,
+    ) -> Result<(), String> {
         let expected_source = expected_source
             .canonicalize()
             .map_err(|error| error.to_string())?;
-        self.sources.insert(expected_source.clone());
+        products.source = Some(expected_source.clone());
         let relative = expected_source
             .strip_prefix(&self.checkout)
             .map_err(|_| "source outside current checkout")?;
@@ -215,7 +293,7 @@ impl CurrentAudit {
                 )?;
                 configuration["compile_task_identity"] =
                     serde_json::to_value(&identity).map_err(|error| error.to_string())?;
-                project_prepared_unit(
+                project_prepared_unit_into(
                     library,
                     &file,
                     &prepared,
@@ -224,19 +302,24 @@ impl CurrentAudit {
                         compile_task_identity: &identity,
                         source_profile_sha256: &self.source_profile_sha256,
                     },
-                    &mut self.report,
-                    &mut self.counts,
+                    &mut products.report,
+                    &mut products.counts,
+                    output,
                 )?;
             }
             Err(refusal) => {
-                self.counts.units += 1;
-                self.counts.unknown_units += 1;
-                self.counts.source_functions += functions.len();
-                self.report
+                products.counts.units += 1;
+                products.counts.unknown_units += 1;
+                products.counts.source_functions += functions.len();
+                products
+                    .report
                     .record_unknown(library, &file, &functions, &refusal);
                 let reason = refusal.reason();
                 configuration["unresolved"] = json!(reason);
-                println!("  {library}/{file}: Unknown: {reason}");
+                {
+                    use std::fmt::Write as _;
+                    let _ = writeln!(output, "  {library}/{file}: Unknown: {reason}");
+                }
             }
         }
         // This digest is inventory identity, not admission of a rejected build.
@@ -246,7 +329,7 @@ impl CurrentAudit {
                 .as_slice(),
         );
         configuration["inventory_sha256"] = json!(digest);
-        self.report.record_configuration(configuration);
+        products.report.record_configuration(configuration);
         Ok(())
     }
 

@@ -8,7 +8,7 @@
 //! remain unsupported; symbolic resource place spelling is not access proof.
 
 #[path = "legacy_joined_provenance.rs"]
-mod joined_provenance;
+pub(crate) mod joined_provenance;
 
 #[path = "legacy_out_alias.rs"]
 mod out_alias;

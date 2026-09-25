@@ -10,6 +10,7 @@ fn main() -> ExitCode {
     let mut arguments = env::args_os().skip(1).peekable();
     let mut pinned = false;
     let mut compile_database = None;
+    let mut jobs = None;
     while let Some(argument) = arguments.peek() {
         if argument == "--pinned-evidence" {
             pinned = true;
@@ -21,6 +22,13 @@ fn main() -> ExitCode {
                 return ExitCode::FAILURE;
             };
             compile_database = Some(PathBuf::from(path));
+        } else if argument == "--jobs" {
+            arguments.next();
+            let Some(count) = arguments.next() else {
+                eprintln!("--jobs requires a positive integer");
+                return ExitCode::FAILURE;
+            };
+            jobs = Some(count.to_string_lossy().into_owned());
         } else {
             break;
         }
@@ -29,6 +37,16 @@ fn main() -> ExitCode {
         eprintln!("--compile-database selects a current Clang build; omit --pinned-evidence");
         return ExitCode::FAILURE;
     }
+    // Card W44-AUDIT-PARALLEL-UNITS: translation units are analysed on up to
+    // this many threads; every output is folded in unit order, so the job
+    // count changes wall time only. `--jobs 1` is the sequential loop.
+    let jobs = match qcore_audit::parallel::resolve_jobs(jobs.as_deref()) {
+        Ok(jobs) => qcore_audit::parallel::effective_jobs(jobs),
+        Err(error) => {
+            eprintln!("{error}");
+            return ExitCode::FAILURE;
+        }
+    };
     let root = arguments
         .next()
         .map(PathBuf::from)
@@ -40,7 +58,7 @@ fn main() -> ExitCode {
     let contract_manifest = arguments.next().map(PathBuf::from);
     if arguments.next().is_some() {
         eprintln!(
-            "usage: cycle19_fluent_bit_libraries_audit [--pinned-evidence] [--compile-database PATH] [fluent-bit-root] \
+            "usage: cycle19_fluent_bit_libraries_audit [--pinned-evidence] [--compile-database PATH] [--jobs N] [fluent-bit-root] \
              [monkey-libevent-compile_commands.json] [monkey-callback-source-report.json] \
              [resource-diagnostics.json] [native-observation-directory] [resource-contract-manifest.json]"
         );
@@ -54,6 +72,7 @@ fn main() -> ExitCode {
             diagnostic_report.as_deref(),
             binding_directory.as_deref(),
             contract_manifest.as_deref(),
+            jobs,
         )
     } else {
         compatibility::run_current(
@@ -64,6 +83,7 @@ fn main() -> ExitCode {
             binding_directory.as_deref(),
             contract_manifest.as_deref(),
             compile_database.as_deref(),
+            jobs,
         )
     };
     match result {

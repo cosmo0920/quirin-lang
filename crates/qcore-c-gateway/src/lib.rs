@@ -53,6 +53,37 @@ pub use clang::ClangIdentity;
 /// Callers select arguments and remain responsible for subprocess execution.
 pub use clang::command as clang_command;
 
+/// The census streams compiled into this build whose environment variable is
+/// set, by variable name (card **W44-AUDIT-PARALLEL-UNITS**).
+///
+/// Every census sink is a process-global stream written at the moment the
+/// analyzer decides, and two of them number their records from process-global
+/// counters, so record order is analysis order. A caller that could analyse
+/// translation units concurrently must run them one at a time whenever this is
+/// non-empty; that is what keeps a census stream byte-identical to a
+/// sequential run's. Empty in a build without the census features, where no
+/// sink exists.
+pub fn active_census_sinks() -> Vec<&'static str> {
+    #[allow(unused_mut)]
+    let mut variables: Vec<&'static str> = Vec::new();
+    #[cfg(feature = "indirect-census")]
+    variables.extend([
+        indirect_census::CENSUS_PATH_VARIABLE,
+        indirect_census::RECORD_CENSUS_PATH_VARIABLE,
+        indirect_census::RETURN_CENSUS_PATH_VARIABLE,
+        indirect_census::STATEMENT_CENSUS_PATH_VARIABLE,
+        indirect_census::DERIVED_CENSUS_PATH_VARIABLE,
+        traversal_census::TRAVERSAL_CENSUS_PATH,
+        indirect_chain_census::CHAIN_CENSUS_PATH,
+        condition_call_census::CONDITION_CALL_CENSUS_PATH,
+        legacy_c::callee_scope::census::CALLEE_SCOPE_CENSUS_PATH_VARIABLE,
+    ]);
+    #[cfg(feature = "provenance-rounds-census")]
+    variables.push(legacy_c::joined_provenance::provenance_rounds::CENSUS_PATH_VARIABLE);
+    variables.retain(|variable| std::env::var_os(variable).is_some());
+    variables
+}
+
 #[cfg(test)]
 pub(crate) mod test_support {
     use std::io::Write;

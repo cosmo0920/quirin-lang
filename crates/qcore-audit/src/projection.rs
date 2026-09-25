@@ -13,6 +13,15 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_schemas::contract::ResourceContracts;
 
+/// One line of a unit's console account, written to that unit's buffer. A
+/// `String` sink cannot fail.
+macro_rules! say {
+    ($out:expr, $($argument:tt)*) => {{
+        use std::fmt::Write as _;
+        let _ = writeln!($out, $($argument)*);
+    }};
+}
+
 #[derive(Default)]
 pub struct AuditCounts {
     pub units: usize,
@@ -45,6 +54,59 @@ pub struct AuditCounts {
     pub plain_preprocessing_elapsed_us: u64,
     pub syntax_validation_elapsed_us: u64,
     pub line_marked_preprocessing_elapsed_us: u64,
+}
+
+impl AuditCounts {
+    /// Add another tally to this one (card **W44-AUDIT-PARALLEL-UNITS**).
+    ///
+    /// Every field is a sum, so absorbing per-unit tallies in unit order gives
+    /// the tally a single sequential pass would. The destructuring is
+    /// exhaustive on purpose: a new field cannot be added without deciding how
+    /// it folds.
+    pub fn absorb(&mut self, other: AuditCounts) {
+        let AuditCounts {
+            units,
+            data_only_units,
+            source_functions,
+            projected_functions,
+            safe_units,
+            unsafe_units,
+            unknown_units,
+            gateway_failures,
+            absent_from_raw_scan_definitions,
+            unanalyzable_definitions,
+            enumeration_refused_units,
+            withheld_safe_units,
+            prepared_units,
+            preparation_clang_invocations,
+            plain_preprocessing_elapsed_us,
+            syntax_validation_elapsed_us,
+            line_marked_preprocessing_elapsed_us,
+        } = other;
+        self.units += units;
+        self.data_only_units += data_only_units;
+        self.source_functions += source_functions;
+        self.projected_functions += projected_functions;
+        self.safe_units += safe_units;
+        self.unsafe_units += unsafe_units;
+        self.unknown_units += unknown_units;
+        self.gateway_failures += gateway_failures;
+        self.absent_from_raw_scan_definitions += absent_from_raw_scan_definitions;
+        self.unanalyzable_definitions += unanalyzable_definitions;
+        self.enumeration_refused_units += enumeration_refused_units;
+        self.withheld_safe_units += withheld_safe_units;
+        self.prepared_units += prepared_units;
+        self.preparation_clang_invocations += preparation_clang_invocations;
+        self.plain_preprocessing_elapsed_us = self
+            .plain_preprocessing_elapsed_us
+            .saturating_add(plain_preprocessing_elapsed_us);
+        self.syntax_validation_elapsed_us = self
+            .syntax_validation_elapsed_us
+            .saturating_add(syntax_validation_elapsed_us);
+        self.line_marked_preprocessing_elapsed_us = self
+            .line_marked_preprocessing_elapsed_us
+            .saturating_add(line_marked_preprocessing_elapsed_us);
+    }
 }
 
 /// Audit-owned context supplied beside one immutable prepared unit.
@@ -109,6 +171,26 @@ pub fn project_unit(
     report: &mut AuditReport,
     counts: &mut AuditCounts,
 ) -> Result<(), String> {
+    let mut out = String::new();
+    let result = project_unit_into(library, file, unit, inventory, contracts, report, counts, &mut out);
+    print!("{out}");
+    result
+}
+
+/// [`project_unit`], with the unit's console lines appended to `out` instead
+/// of printed, so a caller computing units concurrently can print each unit's
+/// account in unit order (card **W44-AUDIT-PARALLEL-UNITS**).
+#[allow(clippy::too_many_arguments)]
+pub fn project_unit_into(
+    library: &str,
+    file: &str,
+    unit: &C11TranslationUnit<'_>,
+    inventory: &SourceDefinitionInventory,
+    contracts: &ResourceContracts,
+    report: &mut AuditReport,
+    counts: &mut AuditCounts,
+    out: &mut String,
+) -> Result<(), String> {
     record_inventory(inventory, counts);
     let source_functions = inventory.definitions();
     if source_functions.is_empty() {
@@ -117,10 +199,10 @@ pub fn project_unit(
         report.record_data_only(library, file, result.as_ref().err());
         report.record_enumeration(inventory);
         match result {
-            Ok(_) => println!("  {library}/{file}: data-only gateway pass"),
+            Ok(_) => say!(out, "  {library}/{file}: data-only gateway pass"),
             Err(error) => {
                 counts.gateway_failures += 1;
-                println!("  {library}/{file}: data-only gateway failure: {error}");
+                say!(out, "  {library}/{file}: data-only gateway failure: {error}");
             }
         }
         return Ok(());
@@ -150,6 +232,7 @@ pub fn project_unit(
         locations.as_ref(),
         report,
         counts,
+        out,
     )
 }
 
@@ -163,6 +246,34 @@ pub fn project_prepared_unit(
     certificate_context: PreparedAuditCertificateContext<'_>,
     report: &mut AuditReport,
     counts: &mut AuditCounts,
+) -> Result<(), String> {
+    let mut out = String::new();
+    let result = project_prepared_unit_into(
+        library,
+        file,
+        prepared,
+        contracts,
+        certificate_context,
+        report,
+        counts,
+        &mut out,
+    );
+    print!("{out}");
+    result
+}
+
+/// [`project_prepared_unit`], with the unit's console lines appended to `out`
+/// instead of printed (card **W44-AUDIT-PARALLEL-UNITS**).
+#[allow(clippy::too_many_arguments)]
+pub fn project_prepared_unit_into(
+    library: &str,
+    file: &str,
+    prepared: &PreparedTranslationUnit,
+    contracts: &ResourceContracts,
+    certificate_context: PreparedAuditCertificateContext<'_>,
+    report: &mut AuditReport,
+    counts: &mut AuditCounts,
+    out: &mut String,
 ) -> Result<(), String> {
     let PreparedAuditCertificateContext {
         compile_task_identity,
@@ -189,9 +300,9 @@ pub fn project_prepared_unit(
         report.record_enumeration(inventory);
         if let Some(error) = prepared.validation_error() {
             counts.gateway_failures += 1;
-            println!("  {library}/{file}: data-only gateway failure: {error}");
+            say!(out, "  {library}/{file}: data-only gateway failure: {error}");
         } else {
-            println!("  {library}/{file}: data-only gateway pass");
+            say!(out, "  {library}/{file}: data-only gateway pass");
         }
         return Ok(());
     }
@@ -246,6 +357,7 @@ pub fn project_prepared_unit(
         Some(prepared.locations()),
         report,
         counts,
+        out,
     )
 }
 
@@ -271,6 +383,7 @@ fn record_projection(
     prepared_locations: Option<&SourceLineMap>,
     report: &mut AuditReport,
     counts: &mut AuditCounts,
+    out: &mut String,
 ) -> Result<(), String> {
     let ProjectionContext {
         library,
@@ -305,7 +418,8 @@ fn record_projection(
         Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
             counts.safe_units += 1;
             counts.projected_functions += certificate.checked_functions.len();
-            println!(
+            say!(
+                out,
                 "  {library}/{file}: Safe ({}/{})",
                 certificate.checked_functions.len(),
                 source_functions.len()
@@ -314,7 +428,8 @@ fn record_projection(
         Ok(UnrestrictedLegacyResult::Unsafe(summary)) => {
             counts.unsafe_units += 1;
             counts.projected_functions += summary.functions.len();
-            println!(
+            say!(
+                out,
                 "  {library}/{file}: Unsafe ({}/{})",
                 summary.functions.len(),
                 source_functions.len()
@@ -328,18 +443,19 @@ fn record_projection(
                 .as_ref()
                 .map_or(0, |summary| summary.functions.len());
             counts.projected_functions += projected;
-            println!(
+            say!(
+                out,
                 "  {library}/{file}: Unknown ({projected}/{}): {reason}",
                 source_functions.len()
             );
         }
         Err(error) => {
             counts.gateway_failures += 1;
-            println!("  {library}/{file}: gateway failure: {error}");
+            say!(out, "  {library}/{file}: gateway failure: {error}");
         }
     }
     for line in detail {
-        println!("    {line}");
+        say!(out, "    {line}");
     }
     Ok(())
 }

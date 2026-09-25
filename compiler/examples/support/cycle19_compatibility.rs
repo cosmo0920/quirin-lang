@@ -1,12 +1,24 @@
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::{Mutex, OnceLock, PoisonError};
 
 use qcore_audit::compile_db::{
     CompileEntry, CompilerOptions, compile_entries,
     compiler_options_compatibility as compiler_options,
 };
-use qcore_audit::projection::{AuditCounts, project_unit};
+use qcore_audit::parallel::run_ordered;
+use qcore_audit::projection::{AuditCounts, project_unit_into};
 use qcore_audit::report::AuditReport;
+use qcore_compiler::cleanup_outcome::{CleanupCertificate, GuardedDeleteCertificate};
+use qcore_compiler::counter_contract::CounterCertificate;
+use qcore_compiler::field_destructor::FieldDestructorCertificate;
+use qcore_compiler::verifier_plugins::chunkio::parent_teardown::ParentSource;
+use qcore_compiler::verifier_plugins::chunkio::traversal::TraversalSource;
+use qcore_verification::file_close_composition::FileCloseDeletionEvidence;
+use qcore_verification::filesystem_chunk_close_composition::FilesystemChunkCloseEvidence;
+use qcore_verification::memory_close_composition::MemoryCloseCertificate;
+use serde_json::Value;
+
 use qcore_audit::source_contract::{
     FrameHelperPolicy, SourceContractPolicies, SourceContractRegistry,
     import_configured_frame_helpers_compatibility,
@@ -37,6 +49,26 @@ use qcore_compiler::{
 /// and that constant agree.
 use qcore_compiler::PINNED_FLUENT_BIT_REVISION as PINNED_FLUENT_BIT_COMMIT;
 
+/// One console line of a unit, prelude or postlude, appended to that step's
+/// buffer. The buffers are printed in the sequential order (card
+/// W44-AUDIT-PARALLEL-UNITS), so a `String` sink, which cannot fail, replaces
+/// `println!` everywhere a step may run off the main thread.
+macro_rules! say {
+    ($out:expr, $($argument:tt)*) => {{
+        use std::fmt::Write as _;
+        let _ = writeln!($out, $($argument)*);
+    }};
+}
+
+/// One configured-route compilation configuration, in selection order.
+struct ConfiguredTask<'a> {
+    group: usize,
+    library: &'a str,
+    expected_source: Result<PathBuf, String>,
+    entry: &'a CompileEntry,
+    unresolved: Option<&'a str>,
+}
+
 /// The user-facing command defaults to a current-revision inventory. Historical
 /// source/native evidence remains behind the explicit --pinned-evidence route.
 pub fn run_current(
@@ -47,6 +79,7 @@ pub fn run_current(
     binding_directory: Option<&Path>,
     contract_manifest: Option<&Path>,
     compile_database: Option<&Path>,
+    jobs: usize,
 ) -> Result<bool, String> {
     use qcore_audit::current::{CurrentAudit, distinct_configurations, select_configurations};
     let root = root.canonicalize().map_err(|error| error.to_string())?;
@@ -114,32 +147,91 @@ pub fn run_current(
             Ok::<_, String>((source_root, selected, unresolved))
         })
         .transpose()?;
-    for (library, selected, unresolved) in groups {
-        println!(
+    // Card W44-AUDIT-PARALLEL-UNITS: every selected configuration is one task,
+    // in exactly the order the sequential loops visited them. Tasks may be
+    // analysed concurrently; their console lines, report rows and tallies are
+    // folded strictly in this order, and a group's header is printed just
+    // before its first configuration's lines, where the loops printed it.
+    let mut headers = Vec::new();
+    let mut tasks = Vec::new();
+    for (library, selected, unresolved) in &groups {
+        headers.push(format!(
             "{library}: {} selected compilation configuration(s)",
             selected.len()
-        );
+        ));
         for entry in selected {
-            audit.audit_entry(&library, &entry.file, &entry, unresolved)?;
+            tasks.push(ConfiguredTask {
+                group: headers.len() - 1,
+                library: library.as_str(),
+                expected_source: Ok(entry.file.clone()),
+                entry,
+                unresolved: *unresolved,
+            });
         }
     }
-    if let Some((source_root, entries, unresolved)) = monkey {
-        println!(
+    if let Some((source_root, entries, unresolved)) = &monkey {
+        headers.push(format!(
             "monkey-libevent: {} selected compilation configuration(s)",
             entries.len()
-        );
+        ));
         for entry in entries {
-            let relative = entry
+            let expected_source = entry
                 .file
-                .strip_prefix(&source_root)
-                .map_err(|_| "Monkey source outside compiled root")?;
-            audit.audit_entry(
-                "monkey-libevent",
-                &root.join("lib/monkey").join(relative),
-                &entry,
-                unresolved.as_deref(),
-            )?;
+                .strip_prefix(source_root)
+                .map(|relative| root.join("lib/monkey").join(relative))
+                .map_err(|_| "Monkey source outside compiled root".to_owned());
+            tasks.push(ConfiguredTask {
+                group: headers.len() - 1,
+                library: "monkey-libevent",
+                expected_source,
+                entry,
+                unresolved: unresolved.as_deref(),
+            });
         }
+    }
+    let mut printed_headers = 0;
+    let mut products = Vec::with_capacity(tasks.len());
+    let dispatch = qcore_audit::parallel::heaviest_first(
+        &tasks
+            .iter()
+            .map(|task| source_weight(task.entry))
+            .collect::<Vec<_>>(),
+    );
+    run_ordered(
+        tasks,
+        jobs,
+        Some(dispatch),
+        |task| {
+            let group = task.group;
+            let outcome = match &task.expected_source {
+                Ok(expected_source) => audit.evaluate_entry(
+                    task.library,
+                    expected_source,
+                    task.entry,
+                    task.unresolved,
+                ),
+                Err(error) => qcore_audit::current::EntryOutcome {
+                    output: String::new(),
+                    result: Err(error.clone()),
+                },
+            };
+            (group, outcome)
+        },
+        |(group, outcome)| {
+            for header in &headers[printed_headers..=group] {
+                println!("{header}");
+            }
+            printed_headers = printed_headers.max(group + 1);
+            print!("{}", outcome.output);
+            products.push(outcome.result?);
+            Ok::<(), String>(())
+        },
+    )?;
+    for header in &headers[printed_headers..] {
+        println!("{header}");
+    }
+    for entry in products {
+        audit.absorb_entry(entry)?;
     }
     let counts = audit.finish(diagnostic_report)?;
     // Replace old sidecars explicitly: success must not leave old Checked
@@ -180,6 +272,7 @@ pub fn run(
     diagnostic_report: Option<&Path>,
     binding_directory: Option<&Path>,
     contract_manifest: Option<&Path>,
+    jobs: usize,
 ) -> Result<bool, String> {
     // Explicit process selection is checked before any expensive source audit.
     let source_contracts = source_contract_configuration()?;
@@ -251,108 +344,185 @@ pub fn run(
     }
     let mut failed = false;
     let selection_path = profile.directory().join("audit.json");
+    // Card W44-AUDIT-PARALLEL-UNITS: plan every selected library first. The
+    // selection is pure, and a planning failure is published at its sequential
+    // position — after every library before it — by the fold below, which also
+    // stops planning there, as the sequential loop stopped.
+    let mut plans = Vec::new();
+    let mut planning_failure = None;
     for selected_library in qcore_audit::load_library_selections(&selection_path)? {
-        let declared = profile.library(&selected_library.library).ok_or_else(|| {
-            format!(
-                "profile declares no selected library `{}`",
-                selected_library.library
-            )
-        })?;
-        let [selection] = declared.source_roots.as_slice() else {
-            return Err(
-                "the compatibility adapter requires one source root per selected library".into(),
-            );
-        };
-        let source_root = qcore_contract::profile_loader::source_root_path(&root, &selection.root);
-        let selected = match &selection.selection {
-            qcore_schemas::profile::UnitSelection::TopLevel => {
-                let mut selected = entries
-                    .iter()
-                    .filter(|entry| {
-                        entry.file.parent() == Some(source_root.as_path())
-                            && entry
-                                .file
-                                .extension()
-                                .is_some_and(|extension| extension == "c")
-                    })
-                    .cloned()
-                    .collect::<Vec<_>>();
-                selected.sort_by(|left, right| left.file.cmp(&right.file));
-                selected
+        match plan_library(&selected_library, &profile, &root, &entries) {
+            Ok(plan) => plans.push(plan),
+            Err(error) => {
+                planning_failure = Some(error);
+                break;
             }
-            qcore_schemas::profile::UnitSelection::Recursive => {
-                select_recursive_units(&entries, &source_root)
-            }
-            qcore_schemas::profile::UnitSelection::Exact { file } => {
-                select_exact_unit(&entries, &root.join(file))
-            }
-        };
-        let library = selected_library
-            .label
-            .as_deref()
-            .unwrap_or(&selected_library.library);
-        if selected.is_empty() {
-            return Err(format!(
-                "compile database contains no selected {library} sources"
-            ));
         }
-        let counts = audit_library(
-            library,
-            &source_root,
-            &selected,
-            &contracts,
-            &mut report,
-            &mut native_results,
-            &mut teardown_results,
-            &source_contracts,
-        )?;
-        failed |= counts.gateway_failures != 0;
-        println!(
-            "{library}: {} unit(s), {} source function(s), {} projected; {} data-only, {} Safe, {} Unsafe, {} Unknown, {} gateway failure(s)",
-            counts.units,
-            counts.source_functions,
-            counts.projected_functions,
-            counts.data_only_units,
-            counts.safe_units,
-            counts.unsafe_units,
-            counts.unknown_units,
-            counts.gateway_failures
-        );
     }
-    audit_monkey_libevent_contract(&root)?;
-    if let Some((monkey_entries, source_root)) = monkey_input {
+    let monkey_plan = monkey_input.map(|(monkey_entries, source_root)| {
         let mut selected = monkey_entries
             .into_iter()
             .filter(|entry| is_monkey_unit(&source_root, &entry.file))
             .collect::<Vec<_>>();
         selected.sort_by(|left, right| left.file.cmp(&right.file));
         selected.dedup_by(|left, right| left.file == right.file);
-        verify_monkey_source_copy(&root.join("lib/monkey"), &source_root, &selected)?;
-        audit_monkey_callback_source(&selected, monkey_source_report, binding_directory)?;
-        let counts = audit_library(
-            "monkey-libevent",
-            &source_root,
-            &selected,
-            &contracts,
-            &mut report,
-            &mut native_results,
-            &mut teardown_results,
-            &source_contracts,
-        )?;
-        failed |= counts.gateway_failures != 0;
-        println!(
-            "monkey-libevent: {} unit(s), {} source function(s), {} projected; \
-             {} data-only, {} Safe, {} Unsafe, {} Unknown, {} gateway failure(s)",
-            counts.units,
-            counts.source_functions,
-            counts.projected_functions,
-            counts.data_only_units,
-            counts.safe_units,
-            counts.unsafe_units,
-            counts.unknown_units,
-            counts.gateway_failures
-        );
-    } else {
+        LibraryPlan {
+            library: "monkey-libevent".into(),
+            source_root,
+            selected,
+        }
+    });
+    let fluent_bit_libraries = plans.len();
+    if planning_failure.is_none() {
+        plans.extend(monkey_plan);
+    }
+    // The steps in exactly the sequential order. Only `Prelude` and `Unit`
+    // carry work that may run off this thread; the consumer below performs
+    // every other step itself, at its sequential position.
+    let mut steps = Vec::new();
+    for (index, plan) in plans.iter().enumerate() {
+        if index == fluent_bit_libraries {
+            steps.push(Step::MonkeyGate);
+        }
+        steps.push(Step::Prelude(index));
+        steps.extend(plan.selected.iter().map(|entry| Step::Unit(index, entry)));
+        steps.push(Step::Finish(index));
+    }
+    match planning_failure {
+        Some(error) => steps.push(Step::PlanningFailed(error)),
+        None if plans.len() == fluent_bit_libraries => steps.push(Step::MonkeyGate),
+        None => {}
+    }
+    // Start every library prelude first, so a unit's worker never waits long
+    // on its library's context, then the largest units first. Dispatch moves
+    // wall time only; consumption stays in step order.
+    let weights = steps
+        .iter()
+        .map(|step| match step {
+            Step::Prelude(_) => u64::MAX,
+            Step::Unit(_, entry) => source_weight(entry),
+            _ => 0,
+        })
+        .collect::<Vec<_>>();
+    let dispatch = qcore_audit::parallel::heaviest_first(&weights);
+    let contexts = (0..plans.len())
+        .map(|_| OnceLock::new())
+        .collect::<Vec<OnceLock<Option<LibraryContext>>>>();
+    let provider = Mutex::new(());
+    let mut library_counts = AuditCounts::default();
+    let mut captures = ChunkioCaptures::default();
+    run_ordered(
+        steps,
+        jobs,
+        Some(dispatch),
+        |step| match step {
+            Step::Prelude(index) => {
+                let plan = &plans[index];
+                let mut output = String::new();
+                // Publishes `None` if the prelude fails or panics, so a unit
+                // waiting on this library never blocks forever.
+                let publish = PublishOnDrop(&contexts[index]);
+                let result = prepare_library(plan, &source_contracts, &mut output)
+                    .map(|context| publish.publish(context));
+                StepOutcome::Prelude { output, result }
+            }
+            Step::Unit(index, entry) => {
+                let plan = &plans[index];
+                let mut output = String::new();
+                let result = match contexts[index].wait() {
+                    Some(context) => audit_unit(
+                        plan,
+                        context,
+                        entry,
+                        &revision,
+                        &contracts,
+                        &source_contracts,
+                        &provider,
+                        &mut output,
+                    ),
+                    // Unreachable in the fold: the prelude's own failure is
+                    // consumed first and stops it.
+                    None => Err(format!("{}: library prelude failed", plan.library)),
+                };
+                StepOutcome::Unit {
+                    output,
+                    result: Box::new(result),
+                }
+            }
+            Step::Finish(index) => StepOutcome::Finish(index),
+            Step::MonkeyGate => StepOutcome::MonkeyGate,
+            Step::PlanningFailed(error) => StepOutcome::PlanningFailed(error),
+        },
+        |outcome| {
+            match outcome {
+                StepOutcome::Prelude { output, result } => {
+                    print!("{output}");
+                    result?;
+                    library_counts = AuditCounts::default();
+                    captures = ChunkioCaptures::default();
+                }
+                StepOutcome::Unit { output, result } => {
+                    print!("{output}");
+                    let UnitProducts {
+                        report: rows,
+                        counts,
+                        native_results: native,
+                        teardown_results: teardown,
+                        captures: captured,
+                    } = (*result)?;
+                    report.absorb(rows)?;
+                    library_counts.absorb(counts);
+                    native_results.extend(native);
+                    teardown_results.extend(teardown);
+                    captures.absorb(captured);
+                }
+                StepOutcome::Finish(index) => {
+                    let plan = &plans[index];
+                    let mut output = String::new();
+                    let result = finish_library(
+                        &plan.library,
+                        std::mem::take(&mut captures),
+                        &mut teardown_results,
+                        &mut output,
+                    );
+                    print!("{output}");
+                    result?;
+                    let counts = std::mem::take(&mut library_counts);
+                    failed |= counts.gateway_failures != 0;
+                    println!(
+                        "{}: {} unit(s), {} source function(s), {} projected; {} data-only, {} Safe, {} Unsafe, {} Unknown, {} gateway failure(s)",
+                        plan.library,
+                        counts.units,
+                        counts.source_functions,
+                        counts.projected_functions,
+                        counts.data_only_units,
+                        counts.safe_units,
+                        counts.unsafe_units,
+                        counts.unknown_units,
+                        counts.gateway_failures
+                    );
+                }
+                StepOutcome::MonkeyGate => {
+                    audit_monkey_libevent_contract(&root)?;
+                    if let Some(plan) = plans.get(fluent_bit_libraries) {
+                        verify_monkey_source_copy(
+                            &root.join("lib/monkey"),
+                            &plan.source_root,
+                            &plan.selected,
+                        )?;
+                        audit_monkey_callback_source(
+                            &plan.selected,
+                            monkey_source_report,
+                            binding_directory,
+                        )?;
+                    }
+                }
+                StepOutcome::PlanningFailed(error) => return Err(error),
+            }
+            Ok(())
+        },
+    )?;
+    if plans.len() == fluent_bit_libraries {
         println!(
             "monkey-libevent: source contract checked; pass its forced-libevent \
              compile_commands.json to run the C gateway projection"
@@ -446,28 +616,195 @@ fn select_exact_unit(entries: &[CompileEntry], source: &Path) -> Vec<CompileEntr
         .collect()
 }
 
-#[allow(clippy::too_many_arguments)]
-fn audit_library(
-    library: &str,
-    source_root: &Path,
+/// A unit's scheduling weight: its source size in bytes, which ranks analysis
+/// time closely on the pinned corpus. An unreadable file weighs nothing here;
+/// reading it fails in its own unit, at its own position.
+fn source_weight(entry: &CompileEntry) -> u64 {
+    fs::metadata(&entry.file).map_or(0, |metadata| metadata.len())
+}
+
+/// One selected library, planned before any of its units is analysed.
+struct LibraryPlan {
+    library: String,
+    source_root: PathBuf,
+    selected: Vec<CompileEntry>,
+}
+
+/// Select one library's units exactly as the sequential loop did.
+fn plan_library(
+    selected_library: &qcore_audit::LibrarySelection,
+    profile: &LoadedProfile,
+    root: &Path,
     entries: &[CompileEntry],
-    contracts: &ResourceContracts,
-    report: &mut AuditReport,
-    native_results: &mut Vec<serde_json::Value>,
-    teardown_results: &mut Vec<serde_json::Value>,
+) -> Result<LibraryPlan, String> {
+    let declared = profile.library(&selected_library.library).ok_or_else(|| {
+        format!(
+            "profile declares no selected library `{}`",
+            selected_library.library
+        )
+    })?;
+    let [selection] = declared.source_roots.as_slice() else {
+        return Err(
+            "the compatibility adapter requires one source root per selected library".into(),
+        );
+    };
+    let source_root = qcore_contract::profile_loader::source_root_path(root, &selection.root);
+    let selected = match &selection.selection {
+        qcore_schemas::profile::UnitSelection::TopLevel => {
+            let mut selected = entries
+                .iter()
+                .filter(|entry| {
+                    entry.file.parent() == Some(source_root.as_path())
+                        && entry
+                            .file
+                            .extension()
+                            .is_some_and(|extension| extension == "c")
+                })
+                .cloned()
+                .collect::<Vec<_>>();
+            selected.sort_by(|left, right| left.file.cmp(&right.file));
+            selected
+        }
+        qcore_schemas::profile::UnitSelection::Recursive => {
+            select_recursive_units(entries, &source_root)
+        }
+        qcore_schemas::profile::UnitSelection::Exact { file } => {
+            select_exact_unit(entries, &root.join(file))
+        }
+    };
+    let library = selected_library
+        .label
+        .as_deref()
+        .unwrap_or(&selected_library.library);
+    if selected.is_empty() {
+        return Err(format!(
+            "compile database contains no selected {library} sources"
+        ));
+    }
+    Ok(LibraryPlan {
+        library: library.to_owned(),
+        source_root,
+        selected,
+    })
+}
+
+/// One step of the pinned audit, in sequential order.
+enum Step<'p> {
+    /// The library's own checks before its units (frame helpers; ChunkIO's
+    /// memory backend and filesystem dependencies).
+    Prelude(usize),
+    Unit(usize, &'p CompileEntry),
+    /// The library's checks after its units, and its summary line.
+    Finish(usize),
+    /// The Monkey/Libevent contract check, Monkey source-copy check and
+    /// callback source audit, between the Fluent Bit libraries and Monkey.
+    MonkeyGate,
+    PlanningFailed(String),
+}
+
+enum StepOutcome {
+    Prelude {
+        output: String,
+        result: Result<(), String>,
+    },
+    Unit {
+        output: String,
+        result: Box<Result<UnitProducts, String>>,
+    },
+    Finish(usize),
+    MonkeyGate,
+    PlanningFailed(String),
+}
+
+/// What a library prelude computes for its units.
+struct LibraryContext {
+    chunk_helpers: Vec<ChunkFrameSummary>,
+    memory_backend: Option<FieldDestructorCertificate>,
+    filesystem_deps: Option<(
+        CleanupCertificate,
+        CounterCertificate,
+        CleanupCertificate,
+        GuardedDeleteCertificate,
+    )>,
+    filesystem_close: Option<FileCloseDeletionEvidence>,
+}
+
+/// Publishes a library context to the units waiting on it; publishes `None`
+/// when dropped unpublished, so a failed or panicking prelude releases them.
+struct PublishOnDrop<'a>(&'a OnceLock<Option<LibraryContext>>);
+
+impl PublishOnDrop<'_> {
+    fn publish(self, context: LibraryContext) {
+        let _ = self.0.set(Some(context));
+    }
+}
+
+impl Drop for PublishOnDrop<'_> {
+    fn drop(&mut self) {
+        let _ = self.0.set(None);
+    }
+}
+
+/// ChunkIO unit evidence the library postlude composes. The sequential loop
+/// assigned each when its unit was audited, so a later unit's value replaced
+/// an earlier one's; [`Self::absorb`] keeps exactly that rule in unit order.
+#[derive(Default)]
+struct ChunkioCaptures {
+    nested_memory: Option<MemoryCloseCertificate>,
+    chunk_traversal: Option<TraversalSource>,
+    stream_traversal: Option<TraversalSource>,
+    stream_parent: Option<ParentSource>,
+    context_parent: Option<ParentSource>,
+    filesystem_chunk: Option<FilesystemChunkCloseEvidence>,
+}
+
+impl ChunkioCaptures {
+    fn absorb(&mut self, later: Self) {
+        let Self {
+            nested_memory,
+            chunk_traversal,
+            stream_traversal,
+            stream_parent,
+            context_parent,
+            filesystem_chunk,
+        } = later;
+        fn replace<T>(slot: &mut Option<T>, later: Option<T>) {
+            if later.is_some() {
+                *slot = later;
+            }
+        }
+        replace(&mut self.nested_memory, nested_memory);
+        replace(&mut self.chunk_traversal, chunk_traversal);
+        replace(&mut self.stream_traversal, stream_traversal);
+        replace(&mut self.stream_parent, stream_parent);
+        replace(&mut self.context_parent, context_parent);
+        replace(&mut self.filesystem_chunk, filesystem_chunk);
+    }
+}
+
+/// Everything one unit contributes, folded in unit order by the consumer.
+struct UnitProducts {
+    report: AuditReport,
+    counts: AuditCounts,
+    native_results: Vec<Value>,
+    teardown_results: Vec<Value>,
+    captures: ChunkioCaptures,
+}
+
+/// The library prelude: every check the sequential `audit_library` made
+/// before its unit loop.
+fn prepare_library(
+    plan: &LibraryPlan,
     source_contracts: &SourceContractConfiguration,
-) -> Result<AuditCounts, String> {
-    let mut counts = AuditCounts::default();
+    out: &mut String,
+) -> Result<LibraryContext, String> {
+    let library = plan.library.as_str();
+    let source_root = plan.source_root.as_path();
+    let entries = plan.selected.as_slice();
     let mut chunk_helpers = Vec::new();
     let mut memory_backend = None;
     let mut filesystem_deps = None;
     let mut filesystem_close = None;
-    let mut nested_memory = None;
-    let mut chunk_traversal = None;
-    let mut stream_traversal = None;
-    let mut stream_parent = None;
-    let mut context_parent = None;
-    let mut filesystem_chunk = None;
     let helper_policies = source_contracts.frame_helpers_for_library(library);
     if !helper_policies.is_empty() {
         let profile = load_profile(FLUENT_BIT_SOURCE_SET).map_err(|error| error.to_string())?;
@@ -484,10 +821,12 @@ fn audit_library(
         {
             let function = checked.summary.function();
             let postconditions = checked.checked_postconditions;
-            println!(
+            say!(
+                out,
                 "qcore-contract {function}: Checked ({postconditions} postconditions; complete constant-field helper body, live/exclusive premises assumed)"
             );
-            println!(
+            say!(
+                out,
                 "chunk-source dependency {function}: source-validated constant field writes; revision/build/ABI supplied by pinned audit"
             );
             chunk_helpers.push(checked.summary);
@@ -592,262 +931,348 @@ fn audit_library(
             &file_unit, PINNED_FLUENT_BIT_COMMIT, &unmap, &close, &delete)?);
         filesystem_deps = Some((native, counter, close, delete));
     }
-    for entry in entries {
-        let source = fs::read_to_string(&entry.file)
-            .map_err(|error| format!("could not read {}: {error}", entry.file.display()))?;
-        let file = entry
-            .file
-            .strip_prefix(source_root)
-            .map_err(|_| format!("source is outside audit root: {}", entry.file.display()))?
-            .to_string_lossy();
-        let options = compiler_options(entry)?;
-        let unit = C11TranslationUnit {
-            source: &source,
-            include_paths: options.include_paths,
-            definitions: options.definitions,
-            preprocessor_options: options.preprocessor_options,
-            dialect: options.dialect,
-            function_scope: LegacyFunctionScope::MainSourceDefinitions,
-            input: options.input,
-        };
-        // Unit E01-F1: the pinned route reports the same enumerated
-        // denominator the configured driver does, so macro-expanded and K&R
-        // definitions are counted here too.
-        let inventory = enumerate_source_definitions(&unit);
-        if library == "chunkio" && matches!(file.as_ref(), "cio_file.c" | "cio_file_unix.c") {
-            let evidence = qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_attempt_sources(&unit, PINNED_FLUENT_BIT_COMMIT, file == "cio_file_unix.c")?;
-            for function in &evidence {
-                println!(
-                    "qcore-result-use {}: Checked ({} source paths; OS cleanup success and custody Unknown)",
-                    function.source().function(),
-                    function.source().paths().len()
-                );
-            }
-            teardown_results.push(serde_json::json!({"kind":"filesystem_call_results", "file":file, "evidence":evidence}));
-        }
-        if library == "chunkio" && file == "cio_file.c" {
-            let (native, counter, close, delete) = filesystem_deps
-                .as_ref()
-                .ok_or("missing filesystem dependencies")?;
-            let certificate = qcore_compiler::verifier_plugins::chunkio::unmap_wrapper::check_unmap_wrapper_source(&unit,PINNED_FLUENT_BIT_COMMIT,native,counter)?;
-            println!(
-                "qcore-outcomes munmap_file: Checked ({} source cases; sync/log frames assumed, OS custody conditional)",
-                certificate.cases().len()
-            );
-            let close_evidence =
-                qcore_compiler::verifier_plugins::chunkio::file_close::check_file_close_source(
-                    &unit,
-                    PINNED_FLUENT_BIT_COMMIT,
-                    &certificate,
-                    close,
-                )?;
-            println!(
-                "qcore-custody cio_file_close: {} conditional no-delete cases, {} unresolved nested cleanup cases; deletion paths uncovered",
-                close_evidence.cases().len(),
-                close_evidence
-                    .cases()
-                    .iter()
-                    .enumerate()
-                    .filter(|(i, _)| close_evidence.require_nested_discharge(*i).is_err())
-                    .count()
-            );
-            let deleting = qcore_compiler::verifier_plugins::chunkio::file_close::check_file_close_deletion_source(&unit,PINNED_FLUENT_BIT_COMMIT,&certificate,close,delete)?;
-            println!(
-                "qcore-custody cio_file_close delete: {} conditional cases, {} uncovered source paths across both modes",
-                deleting.deleting_cases().len(),
-                deleting.uncovered_paths().len()
-            );
-            teardown_results.push(
-                serde_json::json!({"kind":"filesystem_close_with_delete", "evidence":deleting}),
-            );
-            teardown_results.push(
-                serde_json::json!({"kind":"filesystem_close_no_delete", "evidence":close_evidence}),
-            );
-            teardown_results.push(
-                serde_json::json!({"kind":"filesystem_unmap_wrapper", "certificate":certificate}),
+    Ok(LibraryContext {
+        chunk_helpers,
+        memory_backend,
+        filesystem_deps,
+        filesystem_close,
+    })
+}
+
+/// One unit: the body of the sequential `audit_library` loop, recording into
+/// its own report fragment, tally and result lists.
+#[allow(clippy::too_many_arguments)]
+fn audit_unit(
+    plan: &LibraryPlan,
+    context: &LibraryContext,
+    entry: &CompileEntry,
+    revision: &str,
+    contracts: &ResourceContracts,
+    source_contracts: &SourceContractConfiguration,
+    provider: &Mutex<()>,
+    out: &mut String,
+) -> Result<UnitProducts, String> {
+    let library = plan.library.as_str();
+    let source_root = plan.source_root.as_path();
+    let LibraryContext {
+        chunk_helpers,
+        memory_backend,
+        filesystem_deps,
+        filesystem_close,
+    } = context;
+    let mut report = AuditReport::new(revision);
+    let mut counts = AuditCounts::default();
+    let mut native_results = Vec::new();
+    let mut teardown_results = Vec::new();
+    let mut nested_memory = None;
+    let mut chunk_traversal = None;
+    let mut stream_traversal = None;
+    let mut stream_parent = None;
+    let mut context_parent = None;
+    let mut filesystem_chunk = None;
+    let source = fs::read_to_string(&entry.file)
+        .map_err(|error| format!("could not read {}: {error}", entry.file.display()))?;
+    let file = entry
+        .file
+        .strip_prefix(source_root)
+        .map_err(|_| format!("source is outside audit root: {}", entry.file.display()))?
+        .to_string_lossy();
+    let options = compiler_options(entry)?;
+    let unit = C11TranslationUnit {
+        source: &source,
+        include_paths: options.include_paths,
+        definitions: options.definitions,
+        preprocessor_options: options.preprocessor_options,
+        dialect: options.dialect,
+        function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        input: options.input,
+    };
+    // Unit E01-F1: the pinned route reports the same enumerated
+    // denominator the configured driver does, so macro-expanded and K&R
+    // definitions are counted here too.
+    let inventory = enumerate_source_definitions(&unit);
+    if library == "chunkio" && matches!(file.as_ref(), "cio_file.c" | "cio_file_unix.c") {
+        let evidence = qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_attempt_sources(&unit, PINNED_FLUENT_BIT_COMMIT, file == "cio_file_unix.c")?;
+        for function in &evidence {
+            say!(
+                out,
+                "qcore-result-use {}: Checked ({} source paths; OS cleanup success and custody Unknown)",
+                function.source().function(),
+                function.source().paths().len()
             );
         }
-        if library == "chunkio" && file == "cio_file_unix.c" {
-            let deletion =
-                qcore_compiler::verifier_plugins::chunkio::file_delete::check_native_delete_source(
-                    &unit,
-                    PINNED_FLUENT_BIT_COMMIT,
-                )?;
-            println!(
-                "qcore-outcomes cio_file_native_delete: Checked ({} eligibility/outcome cases; unlink framing assumed)",
-                deletion.cases().len()
-            );
-            teardown_results.push(
-                serde_json::json!({"kind":"filesystem_delete_outcomes", "certificate":deletion}),
-            );
-            let delete =
-                qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_delete_source(
-                    &unit,
-                    PINNED_FLUENT_BIT_COMMIT,
-                )?;
-            println!(
-                "qcore-result-use cio_file_native_delete: Checked ({} short-circuit source paths; deletion custody Unknown)",
-                delete.source().paths().len()
-            );
-            teardown_results
-                .push(serde_json::json!({"kind":"filesystem_delete_attempt", "evidence":delete}));
-            let certificates = qcore_compiler::verifier_plugins::chunkio::file_outcomes::check_file_outcome_sources(&unit, PINNED_FLUENT_BIT_COMMIT)?;
-            for certificate in &certificates {
-                println!(
-                    "qcore-outcomes {}: Checked ({} null/absent/failure/success cases; OS custody conditional)",
-                    certificate.source().function(),
-                    certificate.cases().len()
-                );
-            }
-            teardown_results.push(serde_json::json!({"kind":"filesystem_native_outcomes", "certificates":certificates}));
-        }
-        if library == "chunkio" && file == "cio_chunk.c" {
-            let unlink = qcore_compiler::verifier_plugins::chunkio::teardown_source::check_list_unlink_source(&unit, PINNED_FLUENT_BIT_COMMIT)?;
-            println!(
-                "qcore-contract mk_list_del + __mk_list_del: Checked ({} neighbor alias cases; live reciprocal/exclusive links assumed)",
-                unlink.cases().len()
-            );
-            teardown_results.push(serde_json::json!({"kind":"list_unlink", "status":"checked_source_links", "certificate":unlink}));
-            let certificates =
-                qcore_compiler::verifier_plugins::chunkio::teardown_source::check_counter_sources(
-                    &unit,
-                    PINNED_FLUENT_BIT_COMMIT,
-                )?;
-            println!(
-                "qcore-contract ChunkIO counters: Checked ({} complete unsigned unit updates; nonwrapping entry bounds and ABI binding assumed)",
-                certificates.len()
-            );
-            teardown_results.push(serde_json::json!({"kind": "unsigned_counters", "status": "checked_source_updates", "certificates": certificates}));
-            let dependencies =
-                qcore_compiler::verifier_plugins::chunkio::memory_close::MemoryCloseDependencies {
-                    reset: chunk_helpers[0].clone(),
-                    backend: memory_backend
-                        .as_ref()
-                        .ok_or("missing memory backend dependency")?
-                        .clone(),
-                    unlink: unlink.clone(),
-                    counter: certificates
-                        .iter()
-                        .find(|certificate| {
-                            certificate.field() == "total_chunks" && certificate.delta() == -1
-                        })
-                        .ok_or("missing total decrement dependency")?
-                        .clone(),
-                };
-            let close =
-                qcore_compiler::verifier_plugins::chunkio::memory_close::check_memory_close_source(
-                    &unit,
-                    PINNED_FLUENT_BIT_COMMIT,
-                    &dependencies,
-                )?;
-            println!(
-                "qcore-contract cio_chunk_close memory scope: Checked ({} null/memory paths; {} source paths uncovered; enclosing stream/context teardown open)",
-                close.checked_paths().len(),
-                close.uncovered_paths().len()
-            );
-            nested_memory = Some(close.clone());
-            teardown_results.push(serde_json::json!({"kind":"memory_chunk_close", "status":"checked_null_and_memory_paths", "certificate":close}));
-            let file = qcore_compiler::verifier_plugins::chunkio::filesystem_chunk_close::check_filesystem_chunk_close_source(
-                &unit, PINNED_FLUENT_BIT_COMMIT, &dependencies,
-                filesystem_close.as_ref().ok_or("missing filesystem close dependency")?)?;
-            println!(
-                "qcore-custody cio_chunk_close filesystem: {} conditional cases, {} unresolved nested cases, {} combined uncovered paths (unsupported backend kinds)",
-                file.cases().len(),
-                (0..file.cases().len())
-                    .filter(|i| file.require_nested_discharge(*i).is_err())
-                    .count(),
-                file.combined_uncovered_paths().len()
-            );
-            filesystem_chunk = Some(file.clone());
-            let unsupported = qcore_compiler::verifier_plugins::chunkio::unsupported_close::check_unsupported_close_source(&file)?;
-            if file.combined_uncovered_paths() != [unsupported.source_path()] {
-                return Err("chunk close path partition has additional unclassified paths".into());
-            }
-            println!(
-                "qcore-custody cio_chunk_close unsupported backend: Unknown (complete symbolic int domain excluding {:?}; outer release preserves unresolved backend custody)",
-                unsupported.excluded_kinds()
-            );
-            teardown_results.push(
-                serde_json::json!({"kind":"unsupported_chunk_close", "evidence":unsupported}),
-            );
-            teardown_results
-                .push(serde_json::json!({"kind":"filesystem_chunk_close", "evidence":file}));
-        }
-        if library == "chunkio" && matches!(file.as_ref(), "cio_chunk.c" | "cio_stream.c") {
-            use qcore_compiler::verifier_plugins::chunkio::traversal::{
-                TraversalKind, check_traversal_source,
-            };
-            let kind = if file == "cio_chunk.c" {
-                TraversalKind::Chunks
-            } else {
-                TraversalKind::Streams
-            };
-            let evidence = check_traversal_source(&unit, PINNED_FLUENT_BIT_COMMIT, kind)?;
-            match kind {
-                TraversalKind::Chunks => chunk_traversal = Some(evidence.clone()),
-                TraversalKind::Streams => stream_traversal = Some(evidence.clone()),
-            }
-            println!(
-                "qcore-traversal {}: complete typed reference body checked; ring provenance and child custody remain premises",
-                evidence.source().function()
-            );
-            teardown_results.push(
-                serde_json::json!({"kind":"teardown_traversal", "file":file, "evidence":evidence}),
-            );
-        }
-        if library == "chunkio" && matches!(file.as_ref(), "cio_stream.c" | "chunkio.c") {
-            use qcore_compiler::verifier_plugins::chunkio::parent_teardown::{
-                ParentKind, check_parent_source,
-            };
-            let kind = if file == "cio_stream.c" {
-                ParentKind::Stream
-            } else {
-                ParentKind::Context
-            };
-            let evidence = check_parent_source(&unit, PINNED_FLUENT_BIT_COMMIT, kind)?;
-            match kind {
-                ParentKind::Stream => stream_parent = Some(evidence.clone()),
-                ParentKind::Context => context_parent = Some(evidence.clone()),
-            }
-            println!(
-                "qcore-parent {}: complete allocation-release body checked; child effects and allocation provenance remain premises",
-                evidence.source().function()
-            );
-            teardown_results.push(
-                serde_json::json!({"kind":"parent_teardown", "file":file, "evidence":evidence}),
-            );
-        }
-        if library == "chunkio" && file == "cio_memfs.c" {
-            let certificate = memory_backend
-                .as_ref()
-                .ok_or("missing memory backend certificate")?;
-            println!(
-                "qcore-contract cio_memfs_close: Checked ({} nullable custody states; borrowed root/provenance/libc premises assumed; enclosing chunk teardown open)",
-                certificate.cases().len()
-            );
-            teardown_results.push(serde_json::json!({"function": "cio_memfs_close", "status": "checked_field_custody", "certificate": certificate}));
-        }
-        if library == "fluent-bit-chunk" || (library == "chunkio" && file == "cio_chunk.c") {
-            audit_chunk_source(
+        teardown_results.push(serde_json::json!({"kind":"filesystem_call_results", "file":file, "evidence":evidence}));
+    }
+    if library == "chunkio" && file == "cio_file.c" {
+        let (native, counter, close, delete) = filesystem_deps
+            .as_ref()
+            .ok_or("missing filesystem dependencies")?;
+        let certificate = qcore_compiler::verifier_plugins::chunkio::unmap_wrapper::check_unmap_wrapper_source(&unit,PINNED_FLUENT_BIT_COMMIT,native,counter)?;
+        say!(
+                out,
+            "qcore-outcomes munmap_file: Checked ({} source cases; sync/log frames assumed, OS custody conditional)",
+            certificate.cases().len()
+        );
+        let close_evidence =
+            qcore_compiler::verifier_plugins::chunkio::file_close::check_file_close_source(
                 &unit,
-                library,
-                &file,
-                &chunk_helpers,
-                native_results,
-                source_contracts,
+                PINNED_FLUENT_BIT_COMMIT,
+                &certificate,
+                close,
             )?;
+        say!(
+                out,
+            "qcore-custody cio_file_close: {} conditional no-delete cases, {} unresolved nested cleanup cases; deletion paths uncovered",
+            close_evidence.cases().len(),
+            close_evidence
+                .cases()
+                .iter()
+                .enumerate()
+                .filter(|(i, _)| close_evidence.require_nested_discharge(*i).is_err())
+                .count()
+        );
+        let deleting = qcore_compiler::verifier_plugins::chunkio::file_close::check_file_close_deletion_source(&unit,PINNED_FLUENT_BIT_COMMIT,&certificate,close,delete)?;
+        say!(
+                out,
+            "qcore-custody cio_file_close delete: {} conditional cases, {} uncovered source paths across both modes",
+            deleting.deleting_cases().len(),
+            deleting.uncovered_paths().len()
+        );
+        teardown_results.push(
+            serde_json::json!({"kind":"filesystem_close_with_delete", "evidence":deleting}),
+        );
+        teardown_results.push(
+            serde_json::json!({"kind":"filesystem_close_no_delete", "evidence":close_evidence}),
+        );
+        teardown_results.push(
+            serde_json::json!({"kind":"filesystem_unmap_wrapper", "certificate":certificate}),
+        );
+    }
+    if library == "chunkio" && file == "cio_file_unix.c" {
+        let deletion =
+            qcore_compiler::verifier_plugins::chunkio::file_delete::check_native_delete_source(
+                &unit,
+                PINNED_FLUENT_BIT_COMMIT,
+            )?;
+        say!(
+                out,
+            "qcore-outcomes cio_file_native_delete: Checked ({} eligibility/outcome cases; unlink framing assumed)",
+            deletion.cases().len()
+        );
+        teardown_results.push(
+            serde_json::json!({"kind":"filesystem_delete_outcomes", "certificate":deletion}),
+        );
+        let delete =
+            qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_delete_source(
+                &unit,
+                PINNED_FLUENT_BIT_COMMIT,
+            )?;
+        say!(
+                out,
+            "qcore-result-use cio_file_native_delete: Checked ({} short-circuit source paths; deletion custody Unknown)",
+            delete.source().paths().len()
+        );
+        teardown_results
+            .push(serde_json::json!({"kind":"filesystem_delete_attempt", "evidence":delete}));
+        let certificates = qcore_compiler::verifier_plugins::chunkio::file_outcomes::check_file_outcome_sources(&unit, PINNED_FLUENT_BIT_COMMIT)?;
+        for certificate in &certificates {
+            say!(
+                out,
+                "qcore-outcomes {}: Checked ({} null/absent/failure/success cases; OS custody conditional)",
+                certificate.source().function(),
+                certificate.cases().len()
+            );
         }
-        project_unit(
+        teardown_results.push(serde_json::json!({"kind":"filesystem_native_outcomes", "certificates":certificates}));
+    }
+    if library == "chunkio" && file == "cio_chunk.c" {
+        let unlink = qcore_compiler::verifier_plugins::chunkio::teardown_source::check_list_unlink_source(&unit, PINNED_FLUENT_BIT_COMMIT)?;
+        say!(
+                out,
+            "qcore-contract mk_list_del + __mk_list_del: Checked ({} neighbor alias cases; live reciprocal/exclusive links assumed)",
+            unlink.cases().len()
+        );
+        teardown_results.push(serde_json::json!({"kind":"list_unlink", "status":"checked_source_links", "certificate":unlink}));
+        let certificates =
+            qcore_compiler::verifier_plugins::chunkio::teardown_source::check_counter_sources(
+                &unit,
+                PINNED_FLUENT_BIT_COMMIT,
+            )?;
+        say!(
+                out,
+            "qcore-contract ChunkIO counters: Checked ({} complete unsigned unit updates; nonwrapping entry bounds and ABI binding assumed)",
+            certificates.len()
+        );
+        teardown_results.push(serde_json::json!({"kind": "unsigned_counters", "status": "checked_source_updates", "certificates": certificates}));
+        let dependencies =
+            qcore_compiler::verifier_plugins::chunkio::memory_close::MemoryCloseDependencies {
+                reset: chunk_helpers[0].clone(),
+                backend: memory_backend
+                    .as_ref()
+                    .ok_or("missing memory backend dependency")?
+                    .clone(),
+                unlink: unlink.clone(),
+                counter: certificates
+                    .iter()
+                    .find(|certificate| {
+                        certificate.field() == "total_chunks" && certificate.delta() == -1
+                    })
+                    .ok_or("missing total decrement dependency")?
+                    .clone(),
+            };
+        let close =
+            qcore_compiler::verifier_plugins::chunkio::memory_close::check_memory_close_source(
+                &unit,
+                PINNED_FLUENT_BIT_COMMIT,
+                &dependencies,
+            )?;
+        say!(
+                out,
+            "qcore-contract cio_chunk_close memory scope: Checked ({} null/memory paths; {} source paths uncovered; enclosing stream/context teardown open)",
+            close.checked_paths().len(),
+            close.uncovered_paths().len()
+        );
+        nested_memory = Some(close.clone());
+        teardown_results.push(serde_json::json!({"kind":"memory_chunk_close", "status":"checked_null_and_memory_paths", "certificate":close}));
+        let file = qcore_compiler::verifier_plugins::chunkio::filesystem_chunk_close::check_filesystem_chunk_close_source(
+            &unit, PINNED_FLUENT_BIT_COMMIT, &dependencies,
+            filesystem_close.as_ref().ok_or("missing filesystem close dependency")?)?;
+        say!(
+                out,
+            "qcore-custody cio_chunk_close filesystem: {} conditional cases, {} unresolved nested cases, {} combined uncovered paths (unsupported backend kinds)",
+            file.cases().len(),
+            (0..file.cases().len())
+                .filter(|i| file.require_nested_discharge(*i).is_err())
+                .count(),
+            file.combined_uncovered_paths().len()
+        );
+        filesystem_chunk = Some(file.clone());
+        let unsupported = qcore_compiler::verifier_plugins::chunkio::unsupported_close::check_unsupported_close_source(&file)?;
+        if file.combined_uncovered_paths() != [unsupported.source_path()] {
+            return Err("chunk close path partition has additional unclassified paths".into());
+        }
+        say!(
+                out,
+            "qcore-custody cio_chunk_close unsupported backend: Unknown (complete symbolic int domain excluding {:?}; outer release preserves unresolved backend custody)",
+            unsupported.excluded_kinds()
+        );
+        teardown_results.push(
+            serde_json::json!({"kind":"unsupported_chunk_close", "evidence":unsupported}),
+        );
+        teardown_results
+            .push(serde_json::json!({"kind":"filesystem_chunk_close", "evidence":file}));
+    }
+    if library == "chunkio" && matches!(file.as_ref(), "cio_chunk.c" | "cio_stream.c") {
+        use qcore_compiler::verifier_plugins::chunkio::traversal::{
+            TraversalKind, check_traversal_source,
+        };
+        let kind = if file == "cio_chunk.c" {
+            TraversalKind::Chunks
+        } else {
+            TraversalKind::Streams
+        };
+        let evidence = check_traversal_source(&unit, PINNED_FLUENT_BIT_COMMIT, kind)?;
+        match kind {
+            TraversalKind::Chunks => chunk_traversal = Some(evidence.clone()),
+            TraversalKind::Streams => stream_traversal = Some(evidence.clone()),
+        }
+        say!(
+                out,
+            "qcore-traversal {}: complete typed reference body checked; ring provenance and child custody remain premises",
+            evidence.source().function()
+        );
+        teardown_results.push(
+            serde_json::json!({"kind":"teardown_traversal", "file":file, "evidence":evidence}),
+        );
+    }
+    if library == "chunkio" && matches!(file.as_ref(), "cio_stream.c" | "chunkio.c") {
+        use qcore_compiler::verifier_plugins::chunkio::parent_teardown::{
+            ParentKind, check_parent_source,
+        };
+        let kind = if file == "cio_stream.c" {
+            ParentKind::Stream
+        } else {
+            ParentKind::Context
+        };
+        let evidence = check_parent_source(&unit, PINNED_FLUENT_BIT_COMMIT, kind)?;
+        match kind {
+            ParentKind::Stream => stream_parent = Some(evidence.clone()),
+            ParentKind::Context => context_parent = Some(evidence.clone()),
+        }
+        say!(
+                out,
+            "qcore-parent {}: complete allocation-release body checked; child effects and allocation provenance remain premises",
+            evidence.source().function()
+        );
+        teardown_results.push(
+            serde_json::json!({"kind":"parent_teardown", "file":file, "evidence":evidence}),
+        );
+    }
+    if library == "chunkio" && file == "cio_memfs.c" {
+        let certificate = memory_backend
+            .as_ref()
+            .ok_or("missing memory backend certificate")?;
+        say!(
+                out,
+            "qcore-contract cio_memfs_close: Checked ({} nullable custody states; borrowed root/provenance/libc premises assumed; enclosing chunk teardown open)",
+            certificate.cases().len()
+        );
+        teardown_results.push(serde_json::json!({"function": "cio_memfs_close", "status": "checked_field_custody", "certificate": certificate}));
+    }
+    if library == "fluent-bit-chunk" || (library == "chunkio" && file == "cio_chunk.c") {
+        audit_chunk_source(
+            &unit,
             library,
             &file,
-            &unit,
-            &inventory,
-            contracts,
-            report,
-            &mut counts,
+            chunk_helpers,
+            &mut native_results,
+            source_contracts,
+            provider,
+            out,
         )?;
     }
+    project_unit_into(
+        library,
+        &file,
+        &unit,
+        &inventory,
+        contracts,
+        &mut report,
+        &mut counts,
+        out,
+    )?;
+    Ok(UnitProducts {
+        report,
+        counts,
+        native_results,
+        teardown_results,
+        captures: ChunkioCaptures {
+            nested_memory,
+            chunk_traversal,
+            stream_traversal,
+            stream_parent,
+            context_parent,
+            filesystem_chunk,
+        },
+    })
+}
 
+/// The library postlude: every check the sequential `audit_library` made
+/// after its unit loop.
+fn finish_library(
+    library: &str,
+    captures: ChunkioCaptures,
+    teardown_results: &mut Vec<Value>,
+    out: &mut String,
+) -> Result<(), String> {
+    let ChunkioCaptures {
+        nested_memory,
+        chunk_traversal,
+        stream_traversal,
+        stream_parent,
+        context_parent,
+        filesystem_chunk,
+    } = captures;
     if library == "chunkio" {
         let certificate =
             qcore_compiler::verifier_plugins::chunkio::nested_memory::check_nested_memory_source(
@@ -859,7 +1284,8 @@ fn audit_library(
                 context_parent.as_ref().ok_or("missing context parent")?,
                 nested_memory.as_ref().ok_or("missing memory close")?,
             )?;
-        println!(
+        say!(
+                out,
             "qcore-nested-memory: complete source dependency chain checked; native caller/ring provenance remains Unknown; filesystem children rejected"
         );
         teardown_results
@@ -891,7 +1317,8 @@ fn audit_library(
                 c.up_counter_decrements,
             )?);
         }
-        println!(
+        say!(
+                out,
             "qcore-nested-cleanup: {} mixed-backend conditional cases, {} retain child OS/counter obligations after parent free; native entry/outcome binding remains Unknown",
             conditional_examples.len(),
             conditional_examples
@@ -924,13 +1351,14 @@ fn audit_library(
             }
             examples.push(case);
         }
-        println!(
+        say!(
+                out,
             "qcore-nested-unsupported: {} conditional examples retain exact opaque child identities after parent release; constructor reachability Unknown",
             examples.len()
         );
         teardown_results.push(serde_json::json!({"kind":"nested_unsupported_source", "source":extended, "conditional_examples":examples}));
     }
-    Ok(counts)
+    Ok(())
 }
 
 /// Both modes consume the same snapshotted policy configuration. Explicit
@@ -1004,6 +1432,8 @@ fn audit_chunk_source(
     helpers: &[ChunkFrameSummary],
     native_results: &mut Vec<serde_json::Value>,
     source_contracts: &SourceContractConfiguration,
+    provider: &Mutex<()>,
+    out: &mut String,
 ) -> Result<(), String> {
     let process_mode = matches!(source_contracts, SourceContractConfiguration::Process(_));
     let results = import_chunk_source_with_helpers(unit, PINNED_FLUENT_BIT_COMMIT, helpers)?;
@@ -1013,7 +1443,8 @@ fn audit_chunk_source(
         match result {
             ChunkSourceResult::Summary(summary) => {
                 summaries += 1;
-                println!(
+                say!(
+                    out,
                     "  chunk-source {library}/{file}/{}: field-summary {:?}; {:?}",
                     summary.function(),
                     summary.field(),
@@ -1022,6 +1453,11 @@ fn audit_chunk_source(
                 let checked_source = summary.source_checked();
                 let certificate = match source_contracts {
                     SourceContractConfiguration::Process(registry) => {
+                        // One provider execution at a time, as in the
+                        // sequential loop: the process provider records its
+                        // last execution in shared state and runs under a
+                        // wall-clock limit (card W44-AUDIT-PARALLEL-UNITS).
+                        let serial = provider.lock().unwrap_or_else(PoisonError::into_inner);
                         let verified = registry
                             .verify(checked_source, &format!("{library}/{file}"))
                             .map_err(|error| {
@@ -1030,6 +1466,7 @@ fn audit_chunk_source(
                                     summary.function()
                                 )
                             })?;
+                        drop(serial);
                         let checked = verified.certificate;
                         native_results.push(serde_json::json!({
                             "kind": "provider_source_effect", "library": library, "file": file,
@@ -1038,7 +1475,8 @@ fn audit_chunk_source(
                             "evidence": checked.evidence(), "bounds": checked.obligation_bounds(),
                             "import_identity": checked_source.input_identity(),
                         }));
-                        println!(
+                        say!(
+                    out,
                             "  qcore-provider-source {}: Checked (four Boolean-state combinations; explicit live/exclusive/domain assumptions)",
                             summary.function()
                         );
@@ -1062,7 +1500,8 @@ fn audit_chunk_source(
                     "contract_source": certificate.contract_source(),
                     "checked_states": certificate.checked_states(),
                 }));
-                println!(
+                say!(
+                    out,
                     "  qcore-contract {}: Checked ({} Boolean pre-states; live/exclusive/domain preconditions assumed)",
                     certificate.function(),
                     certificate.checked_states()
@@ -1086,11 +1525,12 @@ fn audit_chunk_source(
                         "function": function, "status": "unknown", "reason": reason, "reason_code": reason_code }));
                 }
                 native_results.push(serde_json::json!({ "library": library, "file": file, "function": function, "status": "unknown", "reason": reason, "reason_code": reason_code }));
-                println!("  chunk-source {library}/{file}/{function}: Unknown: {reason}")
+                say!(out, "  chunk-source {library}/{file}/{function}: Unknown: {reason}")
             }
         }
     }
-    println!(
+    say!(
+                    out,
         "chunk-source {library}/{file}: {} function(s), {summaries} field summary(s), {checked_contracts} QCore contract(s) checked, {} Unknown; no whole-unit lifecycle certificate",
         results.len(),
         results.len() - summaries
