@@ -62,8 +62,9 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
   `qcore-audit`, whose package and library names are unchanged — and
   `quirin-audit current`, the configured current-revision route, with resource
   contracts selected by provider crate (`--provider NAME[:MODULE]` or a JSON
-  `providers` array) or by manifest, and an opt-in contracts-only mode
-  (`crates/qcore-audit/README.md`). Inputs are prepared by
+  `providers` array; `NAME` selects the crate's checked resource view) or by
+  manifest, and an opt-in contracts-only mode that loads every crate's view
+  when nothing is selected (`crates/qcore-audit/README.md`). Inputs are prepared by
   `scripts/prepare_cmetrics_clang_audit.py` (the Clang CMake build),
   `scripts/prepare_cycle19_monkey.py` (the Monkey inputs) and
   `scripts/prepare_libevent_core_audit.py`.

@@ -140,23 +140,27 @@ source/native/provider evidence is written as explicit Unknown sidecars.
 
 ### Choosing the contracts: providers
 
-Resource contracts come from exactly one of three sources:
+Resource contracts come from exactly one of these sources:
 
 1. **A provider selection.** Pass `--provider NAME` once per entry. `NAME` is a
    `quirin-provider-*` or `qcore-provider-*` crate on the contract load path
-   (`--load-path providers/contract-load-path.json`). `NAME` alone selects every
-   module the crate owns, in load-path order. `NAME:MODULE` selects one module.
+   (`--load-path providers/contract-load-path.json`). `NAME` alone selects the
+   crate's resource view (below), in load-path order. `NAME:MODULE` selects
+   one owned module.
 2. **An explicit manifest** (`--contract-manifest PATH`).
-3. **The profile's declared manifest**, used when neither is given.
+3. **In contracts-only mode, all loaded contracts** when neither is given: the
+   resource view of every crate on the load path (see *Contracts only*).
+4. **In the full mode, the profile's declared manifest** when neither is given.
 
-Resolution never falls back to a default:
+Resolution never falls back to anything else:
 
 - An unknown provider, an unowned module or a module selected twice refuses.
 - So do a stale load path, a namespace collision, a dependency cycle and a
   listed module missing on disk.
 - A provider selection together with an explicit manifest refuses.
-- With no selection, no manifest and no profile manifest, the command refuses:
-  there is no default provider set.
+- A selection that resolves to no module refuses.
+- In the full mode, with no selection, no manifest and no profile manifest,
+  the command refuses: the full mode has no default provider set.
 
 A selection supersedes the profile's declared manifest. The sidecar records
 that manifest as not read.
@@ -170,11 +174,19 @@ dependency. For example, `quirin-provider-fluent-bit` resolves
 libc's own contracts. Add `--quirin-providers-only` to refuse any
 `qcore-provider-*` crate anywhere in the closure.
 
-**Whole crates.** Today only four crates can be selected whole:
-`quirin-provider-libc`, `quirin-provider-mpack`, `quirin-provider-msgpack` and
-`qcore-provider-ctraces`. The other seven also own modules written for other
-checkers, which the resource loader refuses. For those, select modules with
-`NAME:MODULE`. The report's follow-up `W44-PROVIDER-RESOURCE-VIEW` tracks this.
+**Whole crates: the resource view.** Every crate on the load path declares
+its `resource_view`: the owned modules the resource-contract loader accepts.
+Some crates also own modules written for other checkers (lifecycle,
+observation, policy and allocator-profile vocabularies), which the resource
+loader refuses; those are outside the view. `python3 providers/contracts.py
+sync` generates each view by loading every owned module through this crate's
+own selection and loader (`cargo run -p qcore-audit --example
+provider_resource_views`), and `check` refuses a view that names a refused
+module or omits an accepted one. So every one of the eleven crates can be
+selected whole. `quirin-provider-shared` has an empty view: named alone it
+refuses, and named with others it adds nothing. The eleven views together are
+exactly the 47 modules of `cycle19-resource-contracts.json`. A crate whose
+record declares no view refuses as a whole-crate entry.
 
 **The manifest the selection becomes.** A selection is lowered to the schema-2
 manifest you would write beside `providers/`. A module that uses no inclusion
@@ -182,13 +194,16 @@ is written as a file path. A module that uses inclusion is written as a
 `crate:module` reference. The unchanged manifest loader then loads that text.
 The sidecar records it as `contract_manifest`, and every compile-task identity
 digests it. A selection equal to `cycle19-resource-contracts.json` (its 47
-modules, in its order) therefore lowers to that file byte for byte. The
+modules, in its order) therefore lowers to that file byte for byte. Naming the
+eleven crates whole selects the same 47 modules, elaborated identically, but
+in load-path order, so its manifest digest differs from that file's. The
 sidecar's `provider_selection` records the following:
 
+- `selection`: `explicit`, or `all-loaded` for the contracts-only default;
 - the entries and which forms declared them;
 - the load path and its SHA-256;
 - the closure, with each crate's name, namespace, version, role, dependencies,
-  selected-module digests and published-module pins;
+  resource view, selected-module digests and published-module pins;
 - each module's digest and spelling.
 
 ### Command line and JSON configuration
@@ -268,14 +283,35 @@ configuration.
 
 The plain `quirin-audit [--jobs N] CONFIG.json` route takes the same
 `providers`, `load_path`, `quirin_providers_only`, `mode` and `jobs` fields, and
-writes the same kind of invocation record.
+writes the same kind of invocation record. In contracts-only mode with a
+`load_path` and no `providers` it loads all contracts too.
 
 ### Contracts only
 
 `--contracts-only`, or `"mode": "contracts-only"` in either configuration,
 audits using only Quirin contracts. It runs the resource projection from the
-`.qcore` modules elaborated from the selected providers (or the manifest), and
-nothing else. It admits none of the following:
+`.qcore` modules elaborated from the loaded contracts, and nothing else.
+
+**Contracts only loads all contracts.** With no `--provider` / `providers` and
+no `--contract-manifest`, a contracts-only run selects every crate on the load
+path whole: all eleven resource views, which are the Cycle 19 manifest's 47
+modules. This is the only default provider set, and it exists only in
+contracts-only mode. It needs the load path (`--load-path` or `load_path`); the
+profile's declared manifest is never a silent substitute. An explicit
+selection or manifest narrows it. The sidecar and `<report>.invocation.json`
+record `"selection": "all-loaded"`. The simplest contracts-only run:
+
+```sh
+QCORE_CLANG=$(command -v clang) cargo run --release -p qcore-audit -- current \
+  --checkout "$out/fluent-bit-clang-source" \
+  --profile-directory contract/profiles/fluent-bit \
+  --compile-database "$out/fluent-bit-clang-production/compile_commands.json" \
+  --load-path providers/contract-load-path.json \
+  --contracts-only \
+  --report "$out/reports/contracts-only.json"
+```
+
+A contracts-only run admits none of the following:
 
 - process packages or source-contract checks;
 - verifier-host execution;
@@ -295,8 +331,10 @@ The configured current route admits no process packages today. On the same
 inputs, a contracts-only run differs from a plain run only in that block and one
 console line. Provider selection is the same in both modes and admits
 `quirin-provider-*` and `qcore-provider-*` crates alike, since both carry
-`.qcore` contracts. If only `quirin-provider-*` crates should be admitted, add
-`--quirin-providers-only`.
+`.qcore` contracts. The opt-in `--quirin-providers-only` refuses any
+`qcore-provider-*` crate in the resolved closure; it refuses the all-loaded
+default rather than narrowing it, so combine it with a selection of Quirin
+crates, as the JSON below does:
 
 ```sh
 quirin-audit current --config current.json --contracts-only --quirin-providers-only

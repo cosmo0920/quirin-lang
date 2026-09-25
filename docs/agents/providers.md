@@ -194,3 +194,17 @@ the data-crate edge. Their packages carry include pins, `package.py build`
 installs the parents and `verify` accepts them; the real-package mutation test
 refuses a changed and a missing included parent.
 [Report](../reports/contract-inherit-qcore-provider-naming/README.md).
+
+**Resource view (W44-PROVIDER-RESOURCE-VIEW).** Each load-path crate record
+also carries `resource_view`: the owned modules the resource-contract loader
+accepts, which `quirin-audit --provider NAME` selects for a whole crate and a
+contracts-only run with no selection loads for every crate (`"selection":
+"all-loaded"`). It is never a hand list: `providers/contracts.py sync`
+computes it by loading each owned module through `quirin-audit`'s own
+selection and loader (`cargo run -p qcore-audit --example
+provider_resource_views`, then each view and all views together), and `check`
+recomputes it and refuses a view that names a refused module, omits an
+accepted one or is missing. The Rust load-path reader refuses an unsorted view
+or one naming an unowned module (`QI014`). Packages are unchanged: the view
+lives only in the load path. The eleven views total 47 modules, exactly
+`cycle19-resource-contracts.json`'s. [Report](../reports/w44-provider-resource-view/README.md).
