@@ -1,0 +1,14 @@
+W44-COLLECTION-ALLOCATION: the card's leaks under the refused hand-on rule (main 70ce6b44)
+
+rule_off_leaves: 391
+rule_off_leaves_not_this_card: 267
+this_card_rule_off_leaves: 124
+this_card_functions: 45
+by_overlay: {'withdrawn': 122, 'not-mentioned': 2}
+present_with_rule_on: 2
+leaves_after_adds_over_before: 2
+overlay_agrees_with_rule_on_run: True
+
+leaves the rule leaves standing:
+  [not-mentioned] rdhttp.c::unittest_http_get_params_append L21820 (rdhttp.c:802) present=True
+  [not-mentioned] rdkafka_sasl_oauthbearer_oidc.c::ut_sasl_oauthbearer_oidc_assertion_process_template_file L22221 (rdkafka_sasl_oauthbearer_oidc.c:1656) present=True

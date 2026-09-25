@@ -1,0 +1,3460 @@
+{
+ "removed": [
+  [
+   "librdkafka/lz4.c",
+   "LZ4_compress_destSize_extState",
+   1034,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/lz4hc.c",
+   "LZ4_loadDictHC",
+   1341,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/lz4hc.c",
+   "LZ4_resetStreamHC",
+   1300,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/lz4hc.c",
+   "LZ4_resetStreamHC_fast",
+   1307,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/nanopb/pb_common.c",
+   "pb_field_iter_begin",
+   437,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdavl.c",
+   "rd_avl_init",
+   19672,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdavl.c",
+   "rd_avl_init",
+   19675,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdbuf.c",
+   "rd_buf_init",
+   3530,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdbuf.c",
+   "rd_buf_new",
+   3542,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdbuf.c",
+   "rd_segment_init",
+   3405,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdhttp.c",
+   "rd_http_error_new_from_buf",
+   21274,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdhttp.c",
+   "rd_http_get_json",
+   21715,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdhttp.c",
+   "rd_http_get_json",
+   21719,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdhttp.c",
+   "rd_http_req_init",
+   21423,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdhttp.c",
+   "unittest_http_get",
+   21757,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdhttp.c",
+   "unittest_http_get",
+   21780,
+   "unknown_alias",
+   "unresolved resource identity `rk`"
+  ],
+  [
+   "librdkafka/rdhttp.c",
+   "unittest_http_get_params_append",
+   21817,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdhttp.c",
+   "unittest_http_get_params_append",
+   21824,
+   "unknown_alias",
+   "unresolved resource identity `rk`"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_ListGroups_resp_cb",
+   24923,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_ListGroups_resp_cb",
+   24952,
+   "unknown_alias",
+   "unresolved resource identity `grps`"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_ListGroups_resp_cb",
+   24957,
+   "unknown_alias",
+   "unresolved resource identity `grps`"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_ListGroups_resp_cb",
+   24958,
+   "unknown_alias",
+   "unresolved resource identity `grps`"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_Uuid_str",
+   25151,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_destroy_internal",
+   21847,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_new",
+   22336,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_share_consumer_new",
+   22697,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_AclBinding_new0",
+   23288,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_AdminOptions_new",
+   21159,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_AlterConsumerGroupOffsets_new",
+   24450,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_AlterUserScramCredentials_result_response_new",
+   23993,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ClusterDescription_new",
+   26324,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ConfigEntry_new0",
+   21708,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ConfigResource_new",
+   21828,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ConsumerGroupDescription_new",
+   25278,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ConsumerGroupListing_new",
+   24775,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteAcls_result_response_new",
+   24266,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteConsumerGroupOffsets_new",
+   23133,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteGroup_new",
+   22961,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteRecords_new",
+   22436,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteTopic_new",
+   21405,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ElectLeadersResult_new",
+   26452,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ElectLeaders_new",
+   26428,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ListConsumerGroupOffsets_new",
+   24611,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ListConsumerGroupsResult_new",
+   24820,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ListOffsetsResultInfo_new",
+   22524,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_MemberDescription_new",
+   25190,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_NewPartitions_new",
+   21532,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_NewTopic_new",
+   21192,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_TopicDescription_new",
+   26024,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_UserScramCredentialAlteration_copy",
+   23961,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_UserScramCredentialDeletion_new",
+   23928,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_UserScramCredentialUpsertion_new",
+   23902,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_UserScramCredentialsDescription_new",
+   23665,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_admin_DescribeConsumerGroupsRequest",
+   25407,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_admin_DescribeConsumerGroupsRequest",
+   25416,
+   "unknown_alias",
+   "unresolved resource identity `groups_arr`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_admin_ListConsumerGroupsRequest",
+   24868,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_admin_ListConsumerGroupsRequest",
+   24876,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_admin_ListConsumerGroupsRequest",
+   24885,
+   "unknown_alias",
+   "unresolved resource identity `states_str`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_admin_ListConsumerGroupsRequest",
+   24886,
+   "unknown_alias",
+   "unresolved resource identity `states_str`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_admin_ListConsumerGroupsRequest",
+   24888,
+   "unknown_alias",
+   "unresolved resource identity `types_str`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_admin_ListConsumerGroupsRequest",
+   24889,
+   "unknown_alias",
+   "unresolved resource identity `types_str`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_admin_add_config0",
+   21272,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_admin_incremental_add_config0",
+   21287,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_assignor.c",
+   "rd_kafka_group_member_clear",
+   20220,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_assignor.c",
+   "rd_kafka_member_subscriptions_map",
+   20361,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_assignor.c",
+   "ut_init_member_internal",
+   20745,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_assignor.c",
+   "ut_init_member_with_rack",
+   20779,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_aux.c",
+   "rd_kafka_acl_result_new",
+   19728,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_aux.c",
+   "rd_kafka_group_result_new",
+   19702,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_aux.c",
+   "rd_kafka_topic_partition_result_new",
+   19803,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_aux.c",
+   "rd_kafka_topic_result_new",
+   19654,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_broker.c",
+   "rd_kafka_broker_add",
+   23530,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_broker.c",
+   "rd_kafka_broker_decommission",
+   24222,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_broker.c",
+   "rd_kafka_broker_producer_serve",
+   23148,
+   "unsupported",
+   "call to uncontracted function `rd_interval_init`"
+  ],
+  [
+   "librdkafka/rdkafka_buf.c",
+   "rd_kafka_buf_new0",
+   19674,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cert.c",
+   "rd_kafka_cert_new",
+   20243,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "PartitionMemberInfo_new",
+   20427,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_cgrp_handle_JoinGroup",
+   21593,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_collect_partitions",
+   21138,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_consumer_group_metadata_dup",
+   24620,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_consumer_group_metadata_new_with_genid",
+   24570,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_member_partitions_intersect",
+   21160,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_member_partitions_subtract",
+   21182,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_toppar_list_to_toppar_member_info_map",
+   23121,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_toppar_list_to_toppar_member_info_map_by_id",
+   23133,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "unittest_member_metadata_serdes",
+   24899,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "unittest_member_metadata_serdes",
+   24925,
+   "unknown_alias",
+   "unresolved resource identity `rkgm`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "unittest_set_intersect",
+   24803,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "unittest_set_intersect",
+   24806,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "unittest_set_intersect",
+   24826,
+   "unknown_alias",
+   "unresolved resource identity `gm1`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "unittest_set_intersect",
+   24827,
+   "unknown_alias",
+   "unresolved resource identity `gm2`"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_anyconf_clear_all_is_modified",
+   22733,
+   "unknown_alias",
+   "unresolved resource identity `conf`"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_anyconf_clear_all_is_modified",
+   22734,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_conf_kv_split",
+   25621,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_conf_new",
+   24646,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_conf_new",
+   24649,
+   "unsupported",
+   "call to uncontracted function `rd_kafka_anyconf_clear_all_is_modified`"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_topic_conf_new",
+   24653,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_topic_conf_new",
+   24656,
+   "unsupported",
+   "call to uncontracted function `rd_kafka_anyconf_clear_all_is_modified`"
+  ],
+  [
+   "librdkafka/rdkafka_coord.c",
+   "rd_kafka_coord_cache_add",
+   20198,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_coord.c",
+   "rd_kafka_coord_req",
+   20247,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_error.c",
+   "rd_kafka_error_copy",
+   19597,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_error.c",
+   "rd_kafka_error_new_v",
+   19578,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_feature.c",
+   "rd_kafka_ApiVersion_check",
+   19800,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_feature.c",
+   "rd_kafka_ApiVersions_copy",
+   19831,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_fetcher.c",
+   "rd_kafka_share_acknowledge_reply_handle",
+   21479,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_fetcher.c",
+   "rd_kafka_share_fetch_reply_handle_partition",
+   21105,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_fetcher.c",
+   "rd_kafka_share_fetch_reply_handle_partition",
+   21107,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_fetcher.c",
+   "rd_kafka_share_fetch_reply_handle_partition",
+   21109,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_header.c",
+   "rd_kafka_headers_copy",
+   19585,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_header.c",
+   "rd_kafka_headers_new",
+   19570,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_interceptor.c",
+   "rd_kafka_interceptor_method_new",
+   19673,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_metadata.c",
+   "rd_kafka_metadata_new_topic_mockv_internal",
+   21312,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_metadata.c",
+   "rd_kafka_metadata_new_topic_with_partition_replicas_mock",
+   21350,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_metadata_cache.c",
+   "rd_kafka_metadata_cache_entry_new",
+   20254,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_broker_new",
+   22560,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_cluster_new",
+   23402,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_commit_offset",
+   21813,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_connection_new",
+   22345,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_coord_set",
+   22637,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_error_stack_get",
+   22680,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_partition_pidstate_get",
+   21572,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_partition_push_leader_response0",
+   21773,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_request_copy",
+   23492,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_request_new",
+   23483,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_topic_new",
+   21895,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_txn_get",
+   21455,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_txn_partition_add",
+   21483,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "ut_mock_txn_aborted_range_recorded",
+   24190,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "ut_mock_txn_offset_is_aborted",
+   24217,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_cgrp.c",
+   "rd_kafka_mock_cgrp_classic_get",
+   21130,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_cgrp.c",
+   "rd_kafka_mock_cgrp_classic_member_add",
+   21052,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_cgrp.c",
+   "rd_kafka_mock_cgrp_consumer_get",
+   21746,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_cgrp.c",
+   "rd_kafka_mock_cgrp_consumer_member_add",
+   21645,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_cgrp.c",
+   "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range",
+   21279,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_handle_EndTxn",
+   23673,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_handle_JoinGroup",
+   23101,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_handle_JoinGroup",
+   23146,
+   "unknown_alias",
+   "unresolved resource identity `protos`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_handle_ShareAcknowledge",
+   25251,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_handle_ShareFetch",
+   24734,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_handle_ShareFetch",
+   24834,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_pid_new",
+   23338,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_sgrp_ack_entry_new",
+   24525,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_sgrp_partmeta_get",
+   24297,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_sgrp_record_state_get",
+   24330,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_sharegrp.c",
+   "rd_kafka_mock_sharegroup_get",
+   21870,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_sharegrp.c",
+   "rd_kafka_mock_sharegroup_get_members_for_topic",
+   22098,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_sharegrp.c",
+   "rd_kafka_mock_sharegroup_member_get",
+   21995,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_mock_sharegrp.c",
+   "rd_kafka_mock_sharegroup_target_assignment_new",
+   22193,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "rd_kafka_Produce_result_copy",
+   20942,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "rd_kafka_Produce_result_new",
+   20924,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "rd_kafka_message_new",
+   20571,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "rd_kafka_msgbatch_init",
+   20800,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "ut_rd_kafka_msg_new",
+   20961,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_msgset_reader.c",
+   "rd_kafka_aborted_txns_add",
+   20569,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_msgset_reader.c",
+   "rd_kafka_aborted_txns_new",
+   20510,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_msgset_reader.c",
+   "rd_kafka_msgset_reader_init",
+   19723,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_msgset_writer.c",
+   "rd_kafka_msgset_writer_init",
+   19867,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_msgset_writer.c",
+   "rd_kafka_snappy_compress_slice",
+   20162,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_list_add0",
+   21810,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_list_init",
+   21605,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_list_new",
+   21611,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_new",
+   21628,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_new_from_rktp",
+   21685,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_new_with_topic_id",
+   21620,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_toppar_new0",
+   20326,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_pattern.c",
+   "rd_kafka_pattern_list_new",
+   19677,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_pattern.c",
+   "rd_kafka_pattern_list_new",
+   19680,
+   "unknown_alias",
+   "unresolved resource identity `plist`"
+  ],
+  [
+   "librdkafka/rdkafka_pattern.c",
+   "rd_kafka_pattern_new",
+   19578,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_pattern.c",
+   "rd_kafka_pattern_new",
+   19580,
+   "unknown_alias",
+   "unresolved resource identity `rkpat`"
+  ],
+  [
+   "librdkafka/rdkafka_plugin.c",
+   "rd_kafka_plugin_new",
+   19618,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_queue.c",
+   "rd_kafka_q_io_event_enable",
+   20370,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_queue.c",
+   "rd_kafka_q_new0",
+   19732,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_queue.c",
+   "rd_kafka_queue_new0",
+   20279,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_request.c",
+   "rd_kafka_ListOffsetRequest_parameters_new",
+   20768,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_request.c",
+   "rd_kafka_handle_ApiVersion",
+   22281,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_request.c",
+   "rd_kafkap_leader_discovery_set_CurrentLeader",
+   22544,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_request.c",
+   "rd_kafkap_leader_discovery_set_topic",
+   22518,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_request.c",
+   "rd_kafkap_leader_discovery_set_topic",
+   22526,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_roundrobin_assignor.c",
+   "rd_kafka_roundrobin_assignor_assign_cb",
+   19578,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_roundrobin_assignor.c",
+   "rd_kafka_roundrobin_assignor_assign_cb",
+   19580,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_cyrus.c",
+   "rd_kafka_sasl_cyrus_client_new",
+   20672,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_cyrus.c",
+   "rd_kafka_sasl_cyrus_init",
+   20738,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_oauthbearer.c",
+   "rd_kafka_sasl_oauthbearer_client_new",
+   20815,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_oauthbearer.c",
+   "rd_kafka_sasl_oauthbearer_token_free",
+   20229,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "ut_sasl_oauthbearer_oidc_assertion_create",
+   22264,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "ut_sasl_oauthbearer_oidc_assertion_create",
+   22322,
+   "unknown_alias",
+   "unresolved resource identity `rk`"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   22219,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   22250,
+   "unknown_alias",
+   "unresolved resource identity `rk`"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "ut_sasl_oauthbearer_oidc_should_succeed",
+   21990,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "ut_sasl_oauthbearer_oidc_should_succeed",
+   22009,
+   "unknown_alias",
+   "unresolved resource identity `rk`"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "ut_sasl_oauthbearer_oidc_with_empty_key",
+   22019,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "ut_sasl_oauthbearer_oidc_with_empty_key",
+   22034,
+   "unknown_alias",
+   "unresolved resource identity `rk`"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_scram.c",
+   "rd_kafka_sasl_scram_client_new",
+   20559,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_share_acknowledgement.c",
+   "rd_kafka_share_ack_batch_entry_new",
+   19570,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_share_acknowledgement.c",
+   "rd_kafka_share_ack_batches_new",
+   19646,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sticky_assignor.c",
+   "ConsumerGenerationPair_new",
+   21302,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sticky_assignor.c",
+   "ConsumerPair_new",
+   21267,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sticky_assignor.c",
+   "map_cpair_toppar_list_t_new",
+   21322,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_sticky_assignor.c",
+   "rd_kafka_sticky_assignor_on_assignment_cb",
+   22349,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_timer.c",
+   "rd_kafka_timers_init",
+   19781,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_lwtopic_new",
+   19972,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_topic_info_new",
+   20915,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_topic_info_new_with_rack",
+   20948,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_topic_new_with_id",
+   20179,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_topic_partition_cnt_update",
+   20406,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_toppar_idemp_msgid_save",
+   20368,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_ut_kafka_topic_set_topic_exists",
+   21026,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_transport.c",
+   "rd_kafka_transport_new",
+   20686,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdmap.c",
+   "rd_map_insert",
+   2993,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdregex.c",
+   "rd_regex_comp",
+   3025,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdstring.c",
+   "rd_string_split",
+   3195,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdstring.c",
+   "rd_strtup_new0",
+   3041,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdunittest.c",
+   "ut_tq_test",
+   20342,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdunittest.c",
+   "ut_tq_test",
+   20361,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdunittest_acknowledge.c",
+   "ut_ack_add_partition",
+   19612,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdunittest_acknowledge.c",
+   "ut_ack_add_partition",
+   19620,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdunittest_acknowledge.c",
+   "ut_ack_add_partition_multiple_entries",
+   19834,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdunittest_acknowledge.c",
+   "ut_ack_add_partition_multiple_entries",
+   19841,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdunittest_acknowledge.c",
+   "ut_ack_add_partition_multiple_entries",
+   19851,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdunittest_acknowledge.c",
+   "ut_ack_add_partition_multiple_entries",
+   19861,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdunittest_acknowledge.c",
+   "ut_ack_add_partition_multiple_entries",
+   19871,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdunittest_acknowledge.c",
+   "ut_ack_create_message",
+   19684,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdunittest_acknowledge.c",
+   "ut_case_bsearch_empty_entries",
+   19972,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdunittest_fetcher.c",
+   "ut_create_mock_queue",
+   19628,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdxxhash.c",
+   "XXH32_copyState",
+   910,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdxxhash.c",
+   "XXH64_copyState",
+   1188,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/snappy.c",
+   "clear_env",
+   20519,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/snappy.c",
+   "get_hash_table",
+   20012,
+   "unsupported",
+   "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/snappy.c",
+   "rd_kafka_snappy_free_env",
+   20554,
+   "unsupported",
+   "call to uncontracted function `clear_env`"
+  ],
+  [
+   "librdkafka/snappy.c",
+   "rd_kafka_snappy_init_env",
+   20542,
+   "unsupported",
+   "call to uncontracted function `clear_env`"
+  ]
+ ],
+ "added": [
+  [
+   "librdkafka/lz4.c",
+   "LZ4_compress_destSize_extState",
+   1034,
+   "unsupported",
+   "call to uncontracted function `LZ4_initStream`"
+  ],
+  [
+   "librdkafka/lz4hc.c",
+   "LZ4_loadDictHC",
+   1341,
+   "unsupported",
+   "call to uncontracted function `LZ4_initStreamHC`"
+  ],
+  [
+   "librdkafka/lz4hc.c",
+   "LZ4_resetStreamHC",
+   1300,
+   "unsupported",
+   "call to uncontracted function `LZ4_initStreamHC`"
+  ],
+  [
+   "librdkafka/lz4hc.c",
+   "LZ4_resetStreamHC_fast",
+   1307,
+   "unsupported",
+   "call to uncontracted function `LZ4_initStreamHC`"
+  ],
+  [
+   "librdkafka/rdavl.c",
+   "rd_avl_init",
+   19681,
+   "unknown_alias",
+   "unresolved resource identity `ravl`"
+  ],
+  [
+   "librdkafka/rdavl.c",
+   "rd_avl_init",
+   19681,
+   "unsupported",
+   "nullable resource `ravl` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdbuf.c",
+   "rd_buf_new",
+   3544,
+   "unknown_alias",
+   "unresolved resource identity `rbuf`"
+  ],
+  [
+   "librdkafka/rdbuf.c",
+   "rd_buf_new",
+   3544,
+   "unsupported",
+   "nullable resource `rbuf` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdhttp.c",
+   "rd_http_error_new_from_buf",
+   21280,
+   "unknown_alias",
+   "unresolved resource identity `herr`"
+  ],
+  [
+   "librdkafka/rdhttp.c",
+   "rd_http_error_new_from_buf",
+   21280,
+   "unsupported",
+   "nullable resource `herr` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdhttp.c",
+   "unittest_http_get_params_append",
+   21820,
+   "leak",
+   "live obligation acquired at rdhttp.c:802"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_Uuid_str",
+   25158,
+   "unknown_alias",
+   "unresolved resource identity `ret`"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_Uuid_str",
+   25158,
+   "unsupported",
+   "nullable resource `ret` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_new",
+   22662,
+   "unknown_alias",
+   "unresolved resource identity `rk`"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_new",
+   22662,
+   "unsupported",
+   "nullable resource `rk` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_share_consumer_new",
+   22710,
+   "unknown_alias",
+   "unresolved resource identity `rkshare`"
+  ],
+  [
+   "librdkafka/rdkafka.c",
+   "rd_kafka_share_consumer_new",
+   22710,
+   "unsupported",
+   "nullable resource `rkshare` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_AclBinding_new0",
+   23299,
+   "unknown_alias",
+   "unresolved resource identity `acl_binding`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_AclBinding_new0",
+   23299,
+   "unsupported",
+   "nullable resource `acl_binding` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_AdminOptions_new",
+   21162,
+   "unknown_alias",
+   "unresolved resource identity `options`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_AdminOptions_new",
+   21162,
+   "unsupported",
+   "nullable resource `options` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_AlterConsumerGroupOffsets_new",
+   24455,
+   "unknown_alias",
+   "unresolved resource identity `alter_grpoffsets`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_AlterConsumerGroupOffsets_new",
+   24455,
+   "unsupported",
+   "nullable resource `alter_grpoffsets` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_AlterUserScramCredentials_result_response_new",
+   23996,
+   "unknown_alias",
+   "unresolved resource identity `response`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_AlterUserScramCredentials_result_response_new",
+   23996,
+   "unsupported",
+   "nullable resource `response` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ClusterDescription_new",
+   26343,
+   "unknown_alias",
+   "unresolved resource identity `clusterdesc`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ClusterDescription_new",
+   26343,
+   "unsupported",
+   "nullable resource `clusterdesc` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ConfigEntry_new0",
+   21712,
+   "unknown_alias",
+   "unresolved resource identity `entry`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ConfigEntry_new0",
+   21712,
+   "unsupported",
+   "nullable resource `entry` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ConfigResource_new",
+   21833,
+   "unknown_alias",
+   "unresolved resource identity `config`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ConfigResource_new",
+   21833,
+   "unsupported",
+   "nullable resource `config` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ConsumerGroupDescription_new",
+   25303,
+   "unknown_alias",
+   "unresolved resource identity `grpdesc`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ConsumerGroupDescription_new",
+   25303,
+   "unsupported",
+   "nullable resource `grpdesc` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ConsumerGroupListing_new",
+   24780,
+   "unknown_alias",
+   "unresolved resource identity `grplist`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ConsumerGroupListing_new",
+   24780,
+   "unsupported",
+   "nullable resource `grplist` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteAcls_result_response_new",
+   24272,
+   "unknown_alias",
+   "unresolved resource identity `result_response`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteAcls_result_response_new",
+   24272,
+   "unsupported",
+   "nullable resource `result_response` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteConsumerGroupOffsets_new",
+   23138,
+   "unknown_alias",
+   "unresolved resource identity `del_grpoffsets`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteConsumerGroupOffsets_new",
+   23138,
+   "unsupported",
+   "nullable resource `del_grpoffsets` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteGroup_new",
+   22964,
+   "unknown_alias",
+   "unresolved resource identity `del_group`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteGroup_new",
+   22964,
+   "unsupported",
+   "nullable resource `del_group` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteRecords_new",
+   22439,
+   "unknown_alias",
+   "unresolved resource identity `del_records`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteRecords_new",
+   22439,
+   "unsupported",
+   "nullable resource `del_records` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteTopic_new",
+   21408,
+   "unknown_alias",
+   "unresolved resource identity `del_topic`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_DeleteTopic_new",
+   21408,
+   "unsupported",
+   "nullable resource `del_topic` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ElectLeadersResult_new",
+   26456,
+   "unknown_alias",
+   "unresolved resource identity `result`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ElectLeadersResult_new",
+   26456,
+   "unsupported",
+   "nullable resource `result` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ElectLeaders_new",
+   26433,
+   "unknown_alias",
+   "unresolved resource identity `elect_leaders`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ElectLeaders_new",
+   26433,
+   "unsupported",
+   "nullable resource `elect_leaders` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ListConsumerGroupOffsets_new",
+   24618,
+   "unknown_alias",
+   "unresolved resource identity `list_grpoffsets`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ListConsumerGroupOffsets_new",
+   24618,
+   "unsupported",
+   "nullable resource `list_grpoffsets` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ListConsumerGroupsResult_new",
+   24826,
+   "unknown_alias",
+   "unresolved resource identity `res`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ListConsumerGroupsResult_new",
+   24826,
+   "unsupported",
+   "nullable resource `res` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ListOffsetsResultInfo_new",
+   22527,
+   "unknown_alias",
+   "unresolved resource identity `result_info`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_ListOffsetsResultInfo_new",
+   22527,
+   "unsupported",
+   "nullable resource `result_info` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_MemberDescription_new",
+   25208,
+   "unknown_alias",
+   "unresolved resource identity `member`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_MemberDescription_new",
+   25208,
+   "unsupported",
+   "nullable resource `member` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_NewPartitions_new",
+   21539,
+   "unknown_alias",
+   "unresolved resource identity `newps`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_NewPartitions_new",
+   21539,
+   "unsupported",
+   "nullable resource `newps` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_NewTopic_new",
+   21201,
+   "unknown_alias",
+   "unresolved resource identity `new_topic`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_NewTopic_new",
+   21201,
+   "unsupported",
+   "nullable resource `new_topic` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_TopicDescription_new",
+   26043,
+   "unknown_alias",
+   "unresolved resource identity `topicdesc`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_TopicDescription_new",
+   26043,
+   "unsupported",
+   "nullable resource `topicdesc` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_UserScramCredentialAlteration_copy",
+   23984,
+   "unknown_alias",
+   "unresolved resource identity `copied_alteration`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_UserScramCredentialAlteration_copy",
+   23984,
+   "unsupported",
+   "nullable resource `copied_alteration` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_UserScramCredentialDeletion_new",
+   23933,
+   "unknown_alias",
+   "unresolved resource identity `alteration`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_UserScramCredentialDeletion_new",
+   23933,
+   "unsupported",
+   "nullable resource `alteration` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_UserScramCredentialUpsertion_new",
+   23922,
+   "unknown_alias",
+   "unresolved resource identity `alteration`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_UserScramCredentialUpsertion_new",
+   23922,
+   "unsupported",
+   "nullable resource `alteration` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_UserScramCredentialsDescription_new",
+   23675,
+   "unknown_alias",
+   "unresolved resource identity `description`"
+  ],
+  [
+   "librdkafka/rdkafka_admin.c",
+   "rd_kafka_UserScramCredentialsDescription_new",
+   23675,
+   "unsupported",
+   "nullable resource `description` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_aux.c",
+   "rd_kafka_acl_result_new",
+   19730,
+   "unknown_alias",
+   "unresolved resource identity `acl_res`"
+  ],
+  [
+   "librdkafka/rdkafka_aux.c",
+   "rd_kafka_acl_result_new",
+   19730,
+   "unsupported",
+   "nullable resource `acl_res` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_aux.c",
+   "rd_kafka_group_result_new",
+   19710,
+   "unknown_alias",
+   "unresolved resource identity `groupres`"
+  ],
+  [
+   "librdkafka/rdkafka_aux.c",
+   "rd_kafka_group_result_new",
+   19710,
+   "unsupported",
+   "nullable resource `groupres` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_aux.c",
+   "rd_kafka_topic_partition_result_new",
+   19808,
+   "unknown_alias",
+   "unresolved resource identity `new_result`"
+  ],
+  [
+   "librdkafka/rdkafka_aux.c",
+   "rd_kafka_topic_partition_result_new",
+   19808,
+   "unsupported",
+   "nullable resource `new_result` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_aux.c",
+   "rd_kafka_topic_result_new",
+   19665,
+   "unknown_alias",
+   "unresolved resource identity `terr`"
+  ],
+  [
+   "librdkafka/rdkafka_aux.c",
+   "rd_kafka_topic_result_new",
+   19665,
+   "unsupported",
+   "nullable resource `terr` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_broker.c",
+   "rd_kafka_broker_add",
+   23694,
+   "unknown_alias",
+   "unresolved resource identity `rkb`"
+  ],
+  [
+   "librdkafka/rdkafka_broker.c",
+   "rd_kafka_broker_add",
+   23694,
+   "unsupported",
+   "nullable resource `rkb` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_buf.c",
+   "rd_kafka_buf_new0",
+   19678,
+   "unknown_alias",
+   "unresolved resource identity `rkbuf`"
+  ],
+  [
+   "librdkafka/rdkafka_buf.c",
+   "rd_kafka_buf_new0",
+   19678,
+   "unsupported",
+   "nullable resource `rkbuf` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cert.c",
+   "rd_kafka_cert_new",
+   20422,
+   "unsupported",
+   "nullable resource `cert` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "PartitionMemberInfo_new",
+   20430,
+   "unknown_alias",
+   "unresolved resource identity `pmi`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "PartitionMemberInfo_new",
+   20430,
+   "unsupported",
+   "nullable resource `pmi` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_collect_partitions",
+   21153,
+   "unknown_alias",
+   "unresolved resource identity `collected`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_collect_partitions",
+   21153,
+   "unsupported",
+   "nullable resource `collected` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_consumer_group_metadata_dup",
+   24622,
+   "unknown_alias",
+   "unresolved resource identity `ret`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_consumer_group_metadata_dup",
+   24627,
+   "unknown_alias",
+   "unresolved resource identity `ret`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_consumer_group_metadata_dup",
+   24627,
+   "unsupported",
+   "nullable resource `ret` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_consumer_group_metadata_new_with_genid",
+   24576,
+   "unknown_alias",
+   "unresolved resource identity `cgmetadata`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_consumer_group_metadata_new_with_genid",
+   24576,
+   "unsupported",
+   "nullable resource `cgmetadata` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_member_partitions_intersect",
+   21164,
+   "unknown_alias",
+   "unresolved resource identity `intersection`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_member_partitions_intersect",
+   21164,
+   "unsupported",
+   "nullable resource `intersection` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_member_partitions_intersect",
+   21175,
+   "unknown_alias",
+   "unresolved resource identity `intersection`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_member_partitions_intersect",
+   21175,
+   "unsupported",
+   "nullable resource `intersection` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_member_partitions_subtract",
+   21186,
+   "unknown_alias",
+   "unresolved resource identity `difference`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_member_partitions_subtract",
+   21186,
+   "unsupported",
+   "nullable resource `difference` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_member_partitions_subtract",
+   21193,
+   "unknown_alias",
+   "unresolved resource identity `difference`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_member_partitions_subtract",
+   21193,
+   "unsupported",
+   "nullable resource `difference` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_toppar_list_to_toppar_member_info_map",
+   23125,
+   "unknown_alias",
+   "unresolved resource identity `map`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_toppar_list_to_toppar_member_info_map",
+   23125,
+   "unsupported",
+   "nullable resource `map` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_toppar_list_to_toppar_member_info_map",
+   23128,
+   "unknown_alias",
+   "unresolved resource identity `map`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_toppar_list_to_toppar_member_info_map",
+   23128,
+   "unsupported",
+   "nullable resource `map` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_toppar_list_to_toppar_member_info_map_by_id",
+   23137,
+   "unknown_alias",
+   "unresolved resource identity `map`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_toppar_list_to_toppar_member_info_map_by_id",
+   23137,
+   "unsupported",
+   "nullable resource `map` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_toppar_list_to_toppar_member_info_map_by_id",
+   23140,
+   "unknown_alias",
+   "unresolved resource identity `map`"
+  ],
+  [
+   "librdkafka/rdkafka_cgrp.c",
+   "rd_kafka_toppar_list_to_toppar_member_info_map_by_id",
+   23140,
+   "unsupported",
+   "nullable resource `map` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_conf_kv_split",
+   25621,
+   "unsupported",
+   "call has an unmodeled formal address or borrowed expression"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_conf_new",
+   24649,
+   "unknown_alias",
+   "unresolved resource identity `conf`"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_conf_new",
+   24650,
+   "unknown_alias",
+   "unresolved resource identity `conf`"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_conf_new",
+   24650,
+   "unsupported",
+   "nullable resource `conf` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_topic_conf_new",
+   24656,
+   "unknown_alias",
+   "unresolved resource identity `tconf`"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_topic_conf_new",
+   24657,
+   "unknown_alias",
+   "unresolved resource identity `tconf`"
+  ],
+  [
+   "librdkafka/rdkafka_conf.c",
+   "rd_kafka_topic_conf_new",
+   24657,
+   "unsupported",
+   "nullable resource `tconf` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_error.c",
+   "rd_kafka_error_copy",
+   19599,
+   "unknown_alias",
+   "unresolved resource identity `error`"
+  ],
+  [
+   "librdkafka/rdkafka_error.c",
+   "rd_kafka_error_copy",
+   19600,
+   "unknown_alias",
+   "unresolved resource identity `error`"
+  ],
+  [
+   "librdkafka/rdkafka_error.c",
+   "rd_kafka_error_copy",
+   19601,
+   "unknown_alias",
+   "unresolved resource identity `error`"
+  ],
+  [
+   "librdkafka/rdkafka_error.c",
+   "rd_kafka_error_copy",
+   19608,
+   "unknown_alias",
+   "unresolved resource identity `error`"
+  ],
+  [
+   "librdkafka/rdkafka_error.c",
+   "rd_kafka_error_copy",
+   19608,
+   "unsupported",
+   "nullable resource `error` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_error.c",
+   "rd_kafka_error_new_v",
+   19589,
+   "unknown_alias",
+   "unresolved resource identity `error`"
+  ],
+  [
+   "librdkafka/rdkafka_error.c",
+   "rd_kafka_error_new_v",
+   19589,
+   "unsupported",
+   "nullable resource `error` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_feature.c",
+   "rd_kafka_ApiVersion_check",
+   19800,
+   "unsupported",
+   "call to uncontracted function `_Generic`"
+  ],
+  [
+   "librdkafka/rdkafka_feature.c",
+   "rd_kafka_ApiVersions_copy",
+   19831,
+   "unsupported",
+   "call has an unmodeled formal address or borrowed expression"
+  ],
+  [
+   "librdkafka/rdkafka_header.c",
+   "rd_kafka_headers_copy",
+   19591,
+   "unknown_alias",
+   "unresolved resource identity `dst`"
+  ],
+  [
+   "librdkafka/rdkafka_header.c",
+   "rd_kafka_headers_copy",
+   19591,
+   "unsupported",
+   "nullable resource `dst` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_header.c",
+   "rd_kafka_headers_new",
+   19574,
+   "unknown_alias",
+   "unresolved resource identity `hdrs`"
+  ],
+  [
+   "librdkafka/rdkafka_header.c",
+   "rd_kafka_headers_new",
+   19574,
+   "unsupported",
+   "nullable resource `hdrs` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_interceptor.c",
+   "rd_kafka_interceptor_method_new",
+   19677,
+   "unknown_alias",
+   "unresolved resource identity `method`"
+  ],
+  [
+   "librdkafka/rdkafka_interceptor.c",
+   "rd_kafka_interceptor_method_new",
+   19677,
+   "unsupported",
+   "nullable resource `method` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_metadata.c",
+   "rd_kafka_metadata_new_topic_mockv_internal",
+   21312,
+   "unsupported",
+   "call to uncontracted function `__builtin_alloca`"
+  ],
+  [
+   "librdkafka/rdkafka_metadata.c",
+   "rd_kafka_metadata_new_topic_with_partition_replicas_mock",
+   21350,
+   "unsupported",
+   "call to uncontracted function `__builtin_alloca`"
+  ],
+  [
+   "librdkafka/rdkafka_metadata_cache.c",
+   "rd_kafka_metadata_cache_entry_new",
+   20254,
+   "unsupported",
+   "call to uncontracted function `rd_tmpabuf_alloc0`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_broker_new",
+   22579,
+   "unknown_alias",
+   "unresolved resource identity `mrkb`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_broker_new",
+   22579,
+   "unsupported",
+   "nullable resource `mrkb` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_cluster_new",
+   23462,
+   "unknown_alias",
+   "unresolved resource identity `mcluster`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_cluster_new",
+   23462,
+   "unsupported",
+   "nullable resource `mcluster` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_commit_offset",
+   21825,
+   "unknown_alias",
+   "unresolved resource identity `coff`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_commit_offset",
+   21825,
+   "unsupported",
+   "nullable resource `coff` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_connection_new",
+   22355,
+   "unknown_alias",
+   "unresolved resource identity `mconn`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_connection_new",
+   22355,
+   "unsupported",
+   "nullable resource `mconn` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_coord_set",
+   22642,
+   "unknown_alias",
+   "unresolved resource identity `mcoord`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_coord_set",
+   22642,
+   "unsupported",
+   "nullable resource `mcoord` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_error_stack_get",
+   22683,
+   "unknown_alias",
+   "unresolved resource identity `errstack`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_error_stack_get",
+   22683,
+   "unsupported",
+   "nullable resource `errstack` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_partition_pidstate_get",
+   21579,
+   "unknown_alias",
+   "unresolved resource identity `pidstate`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_partition_pidstate_get",
+   21579,
+   "unsupported",
+   "nullable resource `pidstate` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_request_copy",
+   23493,
+   "unknown_alias",
+   "unresolved resource identity `request`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_request_copy",
+   23494,
+   "unknown_alias",
+   "unresolved resource identity `request`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_request_copy",
+   23495,
+   "unknown_alias",
+   "unresolved resource identity `request`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_request_copy",
+   23496,
+   "unknown_alias",
+   "unresolved resource identity `request`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_request_copy",
+   23496,
+   "unsupported",
+   "nullable resource `request` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_request_new",
+   23487,
+   "unknown_alias",
+   "unresolved resource identity `request`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_request_new",
+   23487,
+   "unsupported",
+   "nullable resource `request` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_topic_new",
+   21908,
+   "unknown_alias",
+   "unresolved resource identity `mtopic`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_topic_new",
+   21908,
+   "unsupported",
+   "nullable resource `mtopic` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_txn_get",
+   21462,
+   "unknown_alias",
+   "unresolved resource identity `mtxn`"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "rd_kafka_mock_txn_get",
+   21462,
+   "unsupported",
+   "nullable resource `mtxn` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock.c",
+   "ut_mock_txn_aborted_range_recorded",
+   24196,
+   "unknown_alias",
+   "unresolved resource identity `mabort`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_cgrp.c",
+   "rd_kafka_mock_cgrp_classic_get",
+   21138,
+   "unknown_alias",
+   "unresolved resource identity `mcgrp`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_cgrp.c",
+   "rd_kafka_mock_cgrp_classic_get",
+   21138,
+   "unsupported",
+   "nullable resource `mcgrp` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock_cgrp.c",
+   "rd_kafka_mock_cgrp_consumer_get",
+   21753,
+   "unknown_alias",
+   "unresolved resource identity `mcgrp`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_cgrp.c",
+   "rd_kafka_mock_cgrp_consumer_get",
+   21753,
+   "unsupported",
+   "nullable resource `mcgrp` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock_cgrp.c",
+   "rd_kafka_mock_cgrp_consumer_member_add",
+   21669,
+   "unsupported",
+   "nullable resource `member` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock_cgrp.c",
+   "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range",
+   21280,
+   "unknown_alias",
+   "unresolved resource identity `i_pointer`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_handle_ShareAcknowledge",
+   25251,
+   "unsupported",
+   "call to uncontracted function `__builtin_alloca`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_handle_ShareFetch",
+   24734,
+   "unsupported",
+   "call to uncontracted function `__builtin_alloca`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_sgrp_ack_entry_new",
+   24532,
+   "unknown_alias",
+   "unresolved resource identity `entry`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_sgrp_ack_entry_new",
+   24532,
+   "unsupported",
+   "nullable resource `entry` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_sgrp_partmeta_get",
+   24311,
+   "unknown_alias",
+   "unresolved resource identity `pmeta`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_sgrp_partmeta_get",
+   24311,
+   "unsupported",
+   "nullable resource `pmeta` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_sgrp_record_state_get",
+   24335,
+   "unknown_alias",
+   "unresolved resource identity `state`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_handlers.c",
+   "rd_kafka_mock_sgrp_record_state_get",
+   24335,
+   "unsupported",
+   "nullable resource `state` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock_sharegrp.c",
+   "rd_kafka_mock_sharegroup_get",
+   21899,
+   "unknown_alias",
+   "unresolved resource identity `mshgrp`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_sharegrp.c",
+   "rd_kafka_mock_sharegroup_get",
+   21899,
+   "unsupported",
+   "nullable resource `mshgrp` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock_sharegrp.c",
+   "rd_kafka_mock_sharegroup_get_members_for_topic",
+   22099,
+   "unknown_alias",
+   "unresolved resource identity `idx`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_sharegrp.c",
+   "rd_kafka_mock_sharegroup_member_get",
+   22005,
+   "unknown_alias",
+   "unresolved resource identity `member`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_sharegrp.c",
+   "rd_kafka_mock_sharegroup_member_get",
+   22005,
+   "unsupported",
+   "nullable resource `member` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_mock_sharegrp.c",
+   "rd_kafka_mock_sharegroup_target_assignment_new",
+   22197,
+   "unknown_alias",
+   "unresolved resource identity `target_assignment`"
+  ],
+  [
+   "librdkafka/rdkafka_mock_sharegrp.c",
+   "rd_kafka_mock_sharegroup_target_assignment_new",
+   22197,
+   "unsupported",
+   "nullable resource `target_assignment` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "rd_kafka_Produce_result_copy",
+   20957,
+   "unknown_alias",
+   "unresolved resource identity `ret`"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "rd_kafka_Produce_result_copy",
+   20957,
+   "unsupported",
+   "nullable resource `ret` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "rd_kafka_Produce_result_new",
+   20927,
+   "unknown_alias",
+   "unresolved resource identity `ret`"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "rd_kafka_Produce_result_new",
+   20927,
+   "unsupported",
+   "nullable resource `ret` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "rd_kafka_message_new",
+   20574,
+   "unknown_alias",
+   "unresolved resource identity `rkm`"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "rd_kafka_message_new",
+   20574,
+   "unsupported",
+   "nullable resource `rkm` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "ut_rd_kafka_msg_new",
+   20970,
+   "unknown_alias",
+   "unresolved resource identity `rkm`"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "ut_rd_kafka_msg_new",
+   20970,
+   "unsupported",
+   "nullable resource `rkm` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_msgset_reader.c",
+   "rd_kafka_aborted_txns_new",
+   20515,
+   "unknown_alias",
+   "unresolved resource identity `aborted_txns`"
+  ],
+  [
+   "librdkafka/rdkafka_msgset_reader.c",
+   "rd_kafka_aborted_txns_new",
+   20515,
+   "unsupported",
+   "nullable resource `aborted_txns` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_msgset_writer.c",
+   "rd_kafka_snappy_compress_slice",
+   20162,
+   "unsupported",
+   "call to uncontracted function `__builtin_alloca`"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_list_new",
+   21614,
+   "unknown_alias",
+   "unresolved resource identity `rktparlist`"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_list_new",
+   21614,
+   "unsupported",
+   "nullable resource `rktparlist` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_new",
+   21631,
+   "unknown_alias",
+   "unresolved resource identity `rktpar`"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_new",
+   21631,
+   "unsupported",
+   "nullable resource `rktpar` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_new_from_rktp",
+   21688,
+   "unknown_alias",
+   "unresolved resource identity `rktpar`"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_new_from_rktp",
+   21688,
+   "unsupported",
+   "nullable resource `rktpar` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_new_with_topic_id",
+   21624,
+   "unknown_alias",
+   "unresolved resource identity `rktpar`"
+  ],
+  [
+   "librdkafka/rdkafka_partition.c",
+   "rd_kafka_topic_partition_new_with_topic_id",
+   21624,
+   "unsupported",
+   "nullable resource `rktpar` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_pattern.c",
+   "rd_kafka_pattern_list_new",
+   19683,
+   "unknown_alias",
+   "unresolved resource identity `plist`"
+  ],
+  [
+   "librdkafka/rdkafka_pattern.c",
+   "rd_kafka_pattern_list_new",
+   19683,
+   "unsupported",
+   "nullable resource `plist` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_pattern.c",
+   "rd_kafka_pattern_new",
+   19584,
+   "unknown_alias",
+   "unresolved resource identity `rkpat`"
+  ],
+  [
+   "librdkafka/rdkafka_pattern.c",
+   "rd_kafka_pattern_new",
+   19584,
+   "unsupported",
+   "nullable resource `rkpat` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_queue.c",
+   "rd_kafka_q_new0",
+   19737,
+   "unknown_alias",
+   "unresolved resource identity `rkq`"
+  ],
+  [
+   "librdkafka/rdkafka_queue.c",
+   "rd_kafka_q_new0",
+   19739,
+   "unknown_alias",
+   "unresolved resource identity `rkq`"
+  ],
+  [
+   "librdkafka/rdkafka_queue.c",
+   "rd_kafka_q_new0",
+   19739,
+   "unsupported",
+   "nullable resource `rkq` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_queue.c",
+   "rd_kafka_queue_new0",
+   20283,
+   "unknown_alias",
+   "unresolved resource identity `rkqu`"
+  ],
+  [
+   "librdkafka/rdkafka_queue.c",
+   "rd_kafka_queue_new0",
+   20283,
+   "unsupported",
+   "nullable resource `rkqu` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_request.c",
+   "rd_kafka_ListOffsetRequest_parameters_new",
+   20772,
+   "unknown_alias",
+   "unresolved resource identity `params`"
+  ],
+  [
+   "librdkafka/rdkafka_request.c",
+   "rd_kafka_ListOffsetRequest_parameters_new",
+   20772,
+   "unsupported",
+   "nullable resource `params` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_request.c",
+   "rd_kafka_handle_ApiVersion",
+   22281,
+   "unsupported",
+   "discarded owned result of resource API `rd_malloc`"
+  ],
+  [
+   "librdkafka/rdkafka_roundrobin_assignor.c",
+   "rd_kafka_roundrobin_assignor_assign_cb",
+   19578,
+   "unsupported",
+   "call to uncontracted function `qsort`"
+  ],
+  [
+   "librdkafka/rdkafka_roundrobin_assignor.c",
+   "rd_kafka_roundrobin_assignor_assign_cb",
+   19580,
+   "unsupported",
+   "call to uncontracted function `qsort`"
+  ],
+  [
+   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   22221,
+   "leak",
+   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
+  ],
+  [
+   "librdkafka/rdkafka_share_acknowledgement.c",
+   "rd_kafka_share_ack_batch_entry_new",
+   19579,
+   "unknown_alias",
+   "unresolved resource identity `entry`"
+  ],
+  [
+   "librdkafka/rdkafka_share_acknowledgement.c",
+   "rd_kafka_share_ack_batch_entry_new",
+   19579,
+   "unsupported",
+   "nullable resource `entry` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_share_acknowledgement.c",
+   "rd_kafka_share_ack_batches_new",
+   19653,
+   "unknown_alias",
+   "unresolved resource identity `batches`"
+  ],
+  [
+   "librdkafka/rdkafka_share_acknowledgement.c",
+   "rd_kafka_share_ack_batches_new",
+   19653,
+   "unsupported",
+   "nullable resource `batches` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_sticky_assignor.c",
+   "ConsumerGenerationPair_new",
+   21305,
+   "unknown_alias",
+   "unresolved resource identity `cgpair`"
+  ],
+  [
+   "librdkafka/rdkafka_sticky_assignor.c",
+   "ConsumerGenerationPair_new",
+   21305,
+   "unsupported",
+   "nullable resource `cgpair` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_sticky_assignor.c",
+   "ConsumerPair_new",
+   21270,
+   "unknown_alias",
+   "unresolved resource identity `cpair`"
+  ],
+  [
+   "librdkafka/rdkafka_sticky_assignor.c",
+   "ConsumerPair_new",
+   21270,
+   "unsupported",
+   "nullable resource `cpair` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_sticky_assignor.c",
+   "map_cpair_toppar_list_t_new",
+   21324,
+   "unknown_alias",
+   "unresolved resource identity `map`"
+  ],
+  [
+   "librdkafka/rdkafka_sticky_assignor.c",
+   "map_cpair_toppar_list_t_new",
+   21324,
+   "unsupported",
+   "nullable resource `map` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_lwtopic_new",
+   19978,
+   "unknown_alias",
+   "unresolved resource identity `lrkt`"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_lwtopic_new",
+   19978,
+   "unsupported",
+   "nullable resource `lrkt` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_topic_info_new",
+   20920,
+   "unknown_alias",
+   "unresolved resource identity `ti`"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_topic_info_new",
+   20920,
+   "unsupported",
+   "nullable resource `ti` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_topic_info_new_with_rack",
+   20948,
+   "unsupported",
+   "call to uncontracted function `rd_tmpabuf_alloc0`"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_topic_new_with_id",
+   20213,
+   "unknown_alias",
+   "unresolved resource identity `rkt`"
+  ],
+  [
+   "librdkafka/rdkafka_topic.c",
+   "rd_kafka_topic_new_with_id",
+   20213,
+   "unsupported",
+   "nullable resource `rkt` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdkafka_transport.c",
+   "rd_kafka_transport_new",
+   20689,
+   "unknown_alias",
+   "unresolved resource identity `rktrans`"
+  ],
+  [
+   "librdkafka/rdkafka_transport.c",
+   "rd_kafka_transport_new",
+   20689,
+   "unsupported",
+   "nullable resource `rktrans` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdmap.c",
+   "rd_map_insert",
+   2999,
+   "unknown_alias",
+   "unresolved resource identity `elem`"
+  ],
+  [
+   "librdkafka/rdmap.c",
+   "rd_map_insert",
+   2999,
+   "unsupported",
+   "nullable resource `elem` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdregex.c",
+   "rd_regex_comp",
+   3034,
+   "unknown_alias",
+   "unresolved resource identity `re`"
+  ],
+  [
+   "librdkafka/rdregex.c",
+   "rd_regex_comp",
+   3034,
+   "unsupported",
+   "nullable resource `re` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdstring.c",
+   "rd_string_split",
+   3248,
+   "unknown_alias",
+   "unresolved resource identity `arr`"
+  ],
+  [
+   "librdkafka/rdstring.c",
+   "rd_string_split",
+   3248,
+   "unsupported",
+   "nullable resource `arr` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdstring.c",
+   "rd_strtup_new0",
+   3052,
+   "unknown_alias",
+   "unresolved resource identity `strtup`"
+  ],
+  [
+   "librdkafka/rdstring.c",
+   "rd_strtup_new0",
+   3052,
+   "unsupported",
+   "nullable resource `strtup` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdunittest.c",
+   "ut_tq_test",
+   20366,
+   "unknown_alias",
+   "unresolved resource identity `e`"
+  ],
+  [
+   "librdkafka/rdunittest.c",
+   "ut_tq_test",
+   20381,
+   "unknown_alias",
+   "unresolved resource identity `e`"
+  ],
+  [
+   "librdkafka/rdunittest_acknowledge.c",
+   "ut_ack_create_message",
+   19688,
+   "unknown_alias",
+   "unresolved resource identity `rkmessage`"
+  ],
+  [
+   "librdkafka/rdunittest_acknowledge.c",
+   "ut_ack_create_message",
+   19688,
+   "unsupported",
+   "nullable resource `rkmessage` used by a non-null contract"
+  ],
+  [
+   "librdkafka/rdunittest_fetcher.c",
+   "ut_create_mock_queue",
+   19630,
+   "unknown_alias",
+   "unresolved resource identity `rkq`"
+  ],
+  [
+   "librdkafka/rdunittest_fetcher.c",
+   "ut_create_mock_queue",
+   19631,
+   "unknown_alias",
+   "unresolved resource identity `rkq`"
+  ],
+  [
+   "librdkafka/rdunittest_fetcher.c",
+   "ut_create_mock_queue",
+   19631,
+   "unsupported",
+   "nullable resource `rkq` used by a non-null contract"
+  ]
+ ],
+ "function_moves": [
+  [
+   [
+    "librdkafka/rdhttp.c",
+    "unittest_http_get_params_append"
+   ],
+   "Unknown",
+   "Unsafe"
+  ],
+  [
+   [
+    "librdkafka/rdkafka_conf.c",
+    "rd_kafka_anyconf_clear_all_is_modified"
+   ],
+   "Unknown",
+   "Safe"
+  ],
+  [
+   [
+    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+    "ut_sasl_oauthbearer_oidc_assertion_process_template_file"
+   ],
+   "Unknown",
+   "Unsafe"
+  ],
+  [
+   [
+    "librdkafka/rdxxhash.c",
+    "XXH32_copyState"
+   ],
+   "Unknown",
+   "Safe"
+  ],
+  [
+   [
+    "librdkafka/rdxxhash.c",
+    "XXH64_copyState"
+   ],
+   "Unknown",
+   "Safe"
+  ],
+  [
+   [
+    "librdkafka/snappy.c",
+    "clear_env"
+   ],
+   "Unknown",
+   "Safe"
+  ]
+ ],
+ "unit_moves": [
+  [
+   "librdkafka/rdhttp.c",
+   "Unknown",
+   "Unsafe"
+  ]
+ ],
+ "diagnostic_counts": {
+  "before": {
+   "leak": 19,
+   "summary_conflict": 1,
+   "unknown_alias": 3357,
+   "unsupported": 43885
+  },
+  "after": {
+   "leak": 21,
+   "summary_conflict": 1,
+   "unknown_alias": 3458,
+   "unsupported": 43801
+  }
+ },
+ "function_statuses": {
+  "before": {
+   "Unknown": 4525,
+   "Safe": 300,
+   "Unsafe": 9
+  },
+  "after": {
+   "Unknown": 4519,
+   "Safe": 304,
+   "Unsafe": 11
+  }
+ },
+ "unit_statuses": {
+  "before": {
+   "Unknown": 170,
+   "Safe": 3,
+   "Unsafe": 8,
+   "data_only": 4
+  },
+  "after": {
+   "Unknown": 169,
+   "Safe": 3,
+   "Unsafe": 9,
+   "data_only": 4
+  }
+ },
+ "scope_changed": false,
+ "other_top_level_fields_differing": [
+  "diagnostic_counts"
+ ]
+}

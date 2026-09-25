@@ -1,0 +1,1133 @@
+{
+ "summary": {
+  "rule_off_leaves": 391,
+  "rule_off_leaves_not_this_card": 267,
+  "this_card_rule_off_leaves": 124,
+  "this_card_functions": 45,
+  "by_overlay": {
+   "withdrawn": 122,
+   "not-mentioned": 2
+  },
+  "present_with_rule_on": 2,
+  "leaves_after_adds_over_before": 2,
+  "overlay_agrees_with_rule_on_run": true
+ },
+ "leaves": [
+  {
+   "unit": "rdhttp.c",
+   "function": "unittest_http_get",
+   "line": 21763,
+   "acquisition": "rdhttp.c:712",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdhttp.c",
+   "function": "unittest_http_get",
+   "line": 21769,
+   "acquisition": "rdhttp.c:712",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdhttp.c",
+   "function": "unittest_http_get_params_append",
+   "line": 21820,
+   "acquisition": "rdhttp.c:802",
+   "overlay": "not-mentioned",
+   "present_with_rule_on": true,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_destroy_internal",
+   "line": 0,
+   "acquisition": "rdkafka.c:1455",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_add_config0",
+   "line": 21275,
+   "acquisition": "rdkafka_admin.c:2031",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_incremental_add_config0",
+   "line": 21291,
+   "acquisition": "rdkafka_admin.c:2056",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_decommission",
+   "line": 0,
+   "acquisition": "rdkafka_broker.c:6588",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cert.c",
+   "function": "rd_kafka_cert_new",
+   "line": 20436,
+   "acquisition": "rdkafka_cert.c:196",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_handle_JoinGroup",
+   "line": 21667,
+   "acquisition": "rdkafka_cgrp.c:2396",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_handle_JoinGroup",
+   "line": 21699,
+   "acquisition": "rdkafka_cgrp.c:2396",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "line": 24910,
+   "acquisition": "rdkafka_cgrp.c:8240",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "line": 24911,
+   "acquisition": "rdkafka_cgrp.c:8240",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "line": 24912,
+   "acquisition": "rdkafka_cgrp.c:8240",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "line": 24914,
+   "acquisition": "rdkafka_cgrp.c:8240",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "line": 24916,
+   "acquisition": "rdkafka_cgrp.c:8240",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "line": 24918,
+   "acquisition": "rdkafka_cgrp.c:8240",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "line": 24815,
+   "acquisition": "rdkafka_cgrp.c:8076",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "line": 24815,
+   "acquisition": "rdkafka_cgrp.c:8079",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "line": 24816,
+   "acquisition": "rdkafka_cgrp.c:8076",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "line": 24816,
+   "acquisition": "rdkafka_cgrp.c:8079",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "line": 24817,
+   "acquisition": "rdkafka_cgrp.c:8076",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "line": 24817,
+   "acquisition": "rdkafka_cgrp.c:8079",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "line": 24819,
+   "acquisition": "rdkafka_cgrp.c:8076",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "line": 24819,
+   "acquisition": "rdkafka_cgrp.c:8079",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "line": 24820,
+   "acquisition": "rdkafka_cgrp.c:8076",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "line": 24820,
+   "acquisition": "rdkafka_cgrp.c:8079",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_coord.c",
+   "function": "rd_kafka_coord_cache_add",
+   "line": 0,
+   "acquisition": "rdkafka_coord.c:127",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_coord.c",
+   "function": "rd_kafka_coord_req",
+   "line": 0,
+   "acquisition": "rdkafka_coord.c:239",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafka_share_acknowledge_reply_handle",
+   "line": 21496,
+   "acquisition": "rdkafka_fetcher.c:2164",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafka_share_acknowledge_reply_handle",
+   "line": 21501,
+   "acquisition": "rdkafka_fetcher.c:2164",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_broker_new",
+   "line": 22577,
+   "acquisition": "rdkafka_mock.c:2069",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_new",
+   "line": 23412,
+   "acquisition": "rdkafka_mock.c:3303",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_new",
+   "line": 23450,
+   "acquisition": "rdkafka_mock.c:3303",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_partition_push_leader_response0",
+   "line": 0,
+   "acquisition": "rdkafka_mock.c:776",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_txn_partition_add",
+   "line": 0,
+   "acquisition": "rdkafka_mock.c:246",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "ut_mock_txn_aborted_range_recorded",
+   "line": 24196,
+   "acquisition": "rdkafka_mock.c:4389",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "ut_mock_txn_aborted_range_recorded",
+   "line": 24197,
+   "acquisition": "rdkafka_mock.c:4389",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "ut_mock_txn_aborted_range_recorded",
+   "line": 24198,
+   "acquisition": "rdkafka_mock.c:4389",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "ut_mock_txn_aborted_range_recorded",
+   "line": 24199,
+   "acquisition": "rdkafka_mock.c:4389",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "ut_mock_txn_aborted_range_recorded",
+   "line": 24200,
+   "acquisition": "rdkafka_mock.c:4389",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "ut_mock_txn_aborted_range_recorded",
+   "line": 24203,
+   "acquisition": "rdkafka_mock.c:4389",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "ut_mock_txn_offset_is_aborted",
+   "line": 24233,
+   "acquisition": "rdkafka_mock.c:4436",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "ut_mock_txn_offset_is_aborted",
+   "line": 24242,
+   "acquisition": "rdkafka_mock.c:4436",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "ut_mock_txn_offset_is_aborted",
+   "line": 24251,
+   "acquisition": "rdkafka_mock.c:4436",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "ut_mock_txn_offset_is_aborted",
+   "line": 24260,
+   "acquisition": "rdkafka_mock.c:4436",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "ut_mock_txn_offset_is_aborted",
+   "line": 24264,
+   "acquisition": "rdkafka_mock.c:4436",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_add",
+   "line": 21077,
+   "acquisition": "rdkafka_mock_cgrp.c:574",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range",
+   "line": 21320,
+   "acquisition": "rdkafka_mock_cgrp.c:910",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_EndTxn",
+   "line": 23701,
+   "acquisition": "rdkafka_mock_handlers.c:2525",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_JoinGroup",
+   "line": 23132,
+   "acquisition": "rdkafka_mock_handlers.c:1613",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_JoinGroup",
+   "line": 23143,
+   "acquisition": "rdkafka_mock_handlers.c:1613",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_JoinGroup",
+   "line": 23148,
+   "acquisition": "rdkafka_mock_handlers.c:1613",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "line": 25177,
+   "acquisition": "rdkafka_mock_handlers.c:4194",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_pid_new",
+   "line": 23349,
+   "acquisition": "rdkafka_mock_handlers.c:1957",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_get_members_for_topic",
+   "line": 22107,
+   "acquisition": "rdkafka_mock_sharegrp.c:443",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "function": "rd_kafka_aborted_txns_add",
+   "line": 0,
+   "acquisition": "rdkafka_msgset_reader.c:1952",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_new0",
+   "line": 20382,
+   "acquisition": "rdkafka_partition.c:225",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_plugin.c",
+   "function": "rd_kafka_plugin_new",
+   "line": 19624,
+   "acquisition": "rdkafka_plugin.c:106",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "function": "rd_kafka_q_io_event_enable",
+   "line": 0,
+   "acquisition": "rdkafka_queue.c:1121",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "line": 20694,
+   "acquisition": "rdkafka_sasl_cyrus.c:526",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "line": 20713,
+   "acquisition": "rdkafka_sasl_cyrus.c:526",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "line": 20717,
+   "acquisition": "rdkafka_sasl_cyrus.c:526",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "line": 20720,
+   "acquisition": "rdkafka_sasl_cyrus.c:526",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "line": 20722,
+   "acquisition": "rdkafka_sasl_cyrus.c:526",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_init",
+   "line": 20743,
+   "acquisition": "rdkafka_sasl_cyrus.c:625",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_sasl_oauthbearer_client_new",
+   "line": 20822,
+   "acquisition": "rdkafka_sasl_oauthbearer.c:1233",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_sasl_oauthbearer_client_new",
+   "line": 20833,
+   "acquisition": "rdkafka_sasl_oauthbearer.c:1233",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22298,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22300,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22302,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22306,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22307,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22308,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22309,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22310,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22311,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22312,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22313,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22314,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22315,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22316,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "line": 22317,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22221,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "not-mentioned",
+   "present_with_rule_on": true,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22224,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22225,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22226,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22228,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22229,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22230,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22232,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22233,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22234,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22236,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22237,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "line": 22238,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "line": 21993,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1190",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "line": 21999,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1190",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "line": 22000,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1190",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "line": 22002,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1190",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "line": 22004,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1190",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+   "line": 22022,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1247",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+   "line": 22026,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1247",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+   "line": 22027,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1247",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+   "line": 22029,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1247",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_scram_client_new",
+   "line": 20562,
+   "acquisition": "rdkafka_sasl_scram.c:721",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "function": "rd_kafka_sticky_assignor_on_assignment_cb",
+   "line": 0,
+   "acquisition": "rdkafka_sticky_assignor.c:2081",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_partition_cnt_update",
+   "line": 20471,
+   "acquisition": "rdkafka_topic.c:1135",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "function": "rd_kafka_toppar_idemp_msgid_save",
+   "line": 0,
+   "acquisition": "rdkafka_topic.c:1050",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest.c",
+   "function": "ut_tq_test",
+   "line": 20355,
+   "acquisition": "rdunittest.c:179",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest.c",
+   "function": "ut_tq_test",
+   "line": 20356,
+   "acquisition": "rdunittest.c:179",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest.c",
+   "function": "ut_tq_test",
+   "line": 20360,
+   "acquisition": "rdunittest.c:179",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest.c",
+   "function": "ut_tq_test",
+   "line": 20395,
+   "acquisition": "rdunittest.c:179",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest.c",
+   "function": "ut_tq_test",
+   "line": 20395,
+   "acquisition": "rdunittest.c:212",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest.c",
+   "function": "ut_tq_test",
+   "line": 20401,
+   "acquisition": "rdunittest.c:179",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest.c",
+   "function": "ut_tq_test",
+   "line": 20401,
+   "acquisition": "rdunittest.c:212",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition",
+   "line": 0,
+   "acquisition": "rdunittest_acknowledge.c:124",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition",
+   "line": 0,
+   "acquisition": "rdunittest_acknowledge.c:137",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition_multiple_entries",
+   "line": 0,
+   "acquisition": "rdunittest_acknowledge.c:592",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition_multiple_entries",
+   "line": 0,
+   "acquisition": "rdunittest_acknowledge.c:604",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition_multiple_entries",
+   "line": 0,
+   "acquisition": "rdunittest_acknowledge.c:616",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition_multiple_entries",
+   "line": 0,
+   "acquisition": "rdunittest_acknowledge.c:628",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition_multiple_entries",
+   "line": 0,
+   "acquisition": "rdunittest_acknowledge.c:640",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest_acknowledge.c",
+   "function": "ut_case_bsearch_empty_entries",
+   "line": 19985,
+   "acquisition": "rdunittest_acknowledge.c:865",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  },
+  {
+   "unit": "rdunittest_acknowledge.c",
+   "function": "ut_case_bsearch_empty_entries",
+   "line": 19987,
+   "acquisition": "rdunittest_acknowledge.c:865",
+   "overlay": "withdrawn",
+   "present_with_rule_on": false,
+   "exit_unmodeled": true
+  }
+ ]
+}

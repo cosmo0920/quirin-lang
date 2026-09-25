@@ -1,0 +1,45 @@
+{
+  "run": "private/runs/after3",
+  "baseline": "docs/reports/w44-libc-residuals/integration/artifacts",
+  "artifacts": {
+    "diagnostics": {
+      "file": "resource-diagnostics.json",
+      "run_sha256": "c88a2bfedd262a898b8f7675018a8952c2d1c23adbbbf7a27f724cf1971fa6be",
+      "baseline_raw_sha256": "988ced1a57a81328f340d1ca84cae270097410f6860c9d46558b59f9e6983bad",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false
+    },
+    "chunk-contracts": {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "run_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "baseline_raw_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    },
+    "contracts": {
+      "file": "resource-diagnostics.contracts.json",
+      "run_sha256": "10e48f297b449b4d9cbd05687f7f8de544027b9e9b58696139e45beaf7f86a1b",
+      "baseline_raw_sha256": "2b40651e21d2891eb64c890bc5fd4915f47d526332f963ee9a75f82f291e03b1",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": true
+    },
+    "source-effects": {
+      "file": "resource-diagnostics.source-effects.json",
+      "run_sha256": "49f2fa25ed2145eb55292a6164e813c2e51916d413b69d44bccbea5cf466f3df",
+      "baseline_raw_sha256": "f43b5a9c860457a03bc1b88ac64380460b4abecc4da239460804f9750eebcf35",
+      "archive_matches_manifest": true,
+      "byte_identical": false,
+      "identical_after_root_alias": false
+    },
+    "source": {
+      "file": "monkey-source.json",
+      "run_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "baseline_raw_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "archive_matches_manifest": true,
+      "byte_identical": true
+    }
+  },
+  "verdict_bearing_identical": false
+}

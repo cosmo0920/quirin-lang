@@ -1,0 +1,95 @@
+W44-COLLECTION-ALLOCATION: leaf-by-leaf attribution of AFTER against BEFORE
+
+removed: 234
+added: 370
+functions_reached: 188
+by_class:
+  added/downstream-in-a-reached-function: 353
+  added/same-line-substitution: 17
+  removed/downstream-in-a-reached-function: 28
+  removed/summary-propagation: 3
+  removed/withdrawn-operand-leaf: 203
+by_class_and_category:
+  added/downstream-in-a-reached-function/leak: 125
+  added/downstream-in-a-reached-function/unknown_alias: 121
+  added/downstream-in-a-reached-function/unsupported: 107
+  added/same-line-substitution/unsupported: 17
+  removed/downstream-in-a-reached-function/unknown_alias: 26
+  removed/downstream-in-a-reached-function/unsupported: 2
+  removed/summary-propagation/unsupported: 3
+  removed/withdrawn-operand-leaf/unsupported: 203
+function_moves:
+  Unknown->Safe/reached: 4
+  Unknown->Unsafe/reached: 44
+
+function moves:
+  Unknown -> Unsafe [reached] librdkafka/rdhttp.c::unittest_http_get
+  Unknown -> Unsafe [reached] librdkafka/rdhttp.c::unittest_http_get_params_append
+  Unknown -> Unsafe [reached] librdkafka/rdkafka.c::rd_kafka_destroy_internal
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_admin.c::rd_kafka_admin_add_config0
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_admin.c::rd_kafka_admin_incremental_add_config0
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_broker.c::rd_kafka_broker_decommission
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_cert.c::rd_kafka_cert_new
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_cgrp.c::rd_kafka_cgrp_handle_JoinGroup
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_cgrp.c::unittest_member_metadata_serdes
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_cgrp.c::unittest_set_intersect
+  Unknown -> Safe [reached] librdkafka/rdkafka_conf.c::rd_kafka_anyconf_clear_all_is_modified
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_coord.c::rd_kafka_coord_cache_add
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_coord.c::rd_kafka_coord_req
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_fetcher.c::rd_kafka_share_acknowledge_reply_handle
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock.c::rd_kafka_mock_broker_new
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock.c::rd_kafka_mock_cluster_new
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock.c::rd_kafka_mock_partition_push_leader_response0
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock.c::rd_kafka_mock_txn_partition_add
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock.c::ut_mock_txn_aborted_range_recorded
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock.c::ut_mock_txn_offset_is_aborted
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_classic_member_add
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock_handlers.c::rd_kafka_mock_handle_EndTxn
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock_handlers.c::rd_kafka_mock_handle_JoinGroup
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock_handlers.c::rd_kafka_mock_handle_ShareFetch
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock_handlers.c::rd_kafka_mock_pid_new
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegroup_get_members_for_topic
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_msg.c::rd_kafka_message_new
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_msgset_reader.c::rd_kafka_aborted_txns_add
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_partition.c::rd_kafka_toppar_new0
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_plugin.c::rd_kafka_plugin_new
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_queue.c::rd_kafka_q_io_event_enable
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_client_new
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_init
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_sasl_oauthbearer.c::rd_kafka_sasl_oauthbearer_client_new
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_sasl_oauthbearer_oidc.c::ut_sasl_oauthbearer_oidc_assertion_process_template_file
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_sasl_oauthbearer_oidc.c::ut_sasl_oauthbearer_oidc_with_empty_key
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_sasl_scram.c::rd_kafka_sasl_scram_client_new
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_sticky_assignor.c::rd_kafka_sticky_assignor_on_assignment_cb
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_topic.c::rd_kafka_topic_partition_cnt_update
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_topic.c::rd_kafka_toppar_idemp_msgid_save
+  Unknown -> Unsafe [reached] librdkafka/rdunittest.c::ut_tq_test
+  Unknown -> Unsafe [reached] librdkafka/rdunittest_acknowledge.c::ut_ack_add_partition
+  Unknown -> Unsafe [reached] librdkafka/rdunittest_acknowledge.c::ut_ack_add_partition_multiple_entries
+  Unknown -> Unsafe [reached] librdkafka/rdunittest_acknowledge.c::ut_case_bsearch_empty_entries
+  Unknown -> Safe [reached] librdkafka/rdxxhash.c::XXH32_copyState
+  Unknown -> Safe [reached] librdkafka/rdxxhash.c::XXH64_copyState
+  Unknown -> Safe [reached] librdkafka/snappy.c::clear_env
+
+leaves (summary-propagation and substitutions in full; downstream by function):
+  removed [summary-propagation] librdkafka/nanopb/pb_common.c::pb_field_iter_begin L437 unsupported: indirect memory access is outside the resource projection x1
+  removed [summary-propagation] librdkafka/snappy.c::rd_kafka_snappy_free_env L20554 unsupported: call to uncontracted function `clear_env` x1
+  removed [summary-propagation] librdkafka/snappy.c::rd_kafka_snappy_init_env L20542 unsupported: call to uncontracted function `clear_env` x1
+  added [same-line-substitution] librdkafka/lz4.c::LZ4_compress_destSize_extState L1034 unsupported: call to uncontracted function `LZ4_initStream` x1
+  added [same-line-substitution] librdkafka/lz4hc.c::LZ4_loadDictHC L1341 unsupported: call to uncontracted function `LZ4_initStreamHC` x1
+  added [same-line-substitution] librdkafka/lz4hc.c::LZ4_resetStreamHC L1300 unsupported: call to uncontracted function `LZ4_initStreamHC` x1
+  added [same-line-substitution] librdkafka/lz4hc.c::LZ4_resetStreamHC_fast L1307 unsupported: call to uncontracted function `LZ4_initStreamHC` x1
+  added [same-line-substitution] librdkafka/rdkafka_conf.c::rd_kafka_conf_kv_split L25621 unsupported: call has an unmodeled formal address or borrowed expression x1
+  added [same-line-substitution] librdkafka/rdkafka_feature.c::rd_kafka_ApiVersion_check L19800 unsupported: call to uncontracted function `_Generic` x1
+  added [same-line-substitution] librdkafka/rdkafka_feature.c::rd_kafka_ApiVersions_copy L19831 unsupported: call to uncontracted function `rd_memdup` x1
+  added [same-line-substitution] librdkafka/rdkafka_metadata.c::rd_kafka_metadata_new_topic_mockv_internal L21312 unsupported: call to uncontracted function `__builtin_alloca` x1
+  added [same-line-substitution] librdkafka/rdkafka_metadata.c::rd_kafka_metadata_new_topic_with_partition_replicas_mock L21350 unsupported: call to uncontracted function `__builtin_alloca` x1
+  added [same-line-substitution] librdkafka/rdkafka_metadata_cache.c::rd_kafka_metadata_cache_entry_new L20254 unsupported: call to uncontracted function `rd_tmpabuf_alloc0` x1
+  added [same-line-substitution] librdkafka/rdkafka_mock_handlers.c::rd_kafka_mock_handle_ShareAcknowledge L25251 unsupported: call to uncontracted function `__builtin_alloca` x1
+  added [same-line-substitution] librdkafka/rdkafka_mock_handlers.c::rd_kafka_mock_handle_ShareFetch L24734 unsupported: call to uncontracted function `__builtin_alloca` x1
+  added [same-line-substitution] librdkafka/rdkafka_msgset_writer.c::rd_kafka_snappy_compress_slice L20162 unsupported: call to uncontracted function `__builtin_alloca` x1
+  added [same-line-substitution] librdkafka/rdkafka_request.c::rd_kafka_handle_ApiVersion L22281 unsupported: discarded owned result of resource API `rd_malloc` x1
+  added [same-line-substitution] librdkafka/rdkafka_roundrobin_assignor.c::rd_kafka_roundrobin_assignor_assign_cb L19578 unsupported: call to uncontracted function `qsort` x1
+  added [same-line-substitution] librdkafka/rdkafka_roundrobin_assignor.c::rd_kafka_roundrobin_assignor_assign_cb L19580 unsupported: call to uncontracted function `qsort` x1
+  added [same-line-substitution] librdkafka/rdkafka_topic.c::rd_kafka_topic_info_new_with_rack L20948 unsupported: call to uncontracted function `rd_tmpabuf_alloc0` x1

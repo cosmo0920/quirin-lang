@@ -1,0 +1,123 @@
+W44-COLLECTION-ALLOCATION sizeof census
+
+paired_units:
+  180
+sizeof_occurrences_by_shape:
+  (NAME): 4513
+  other: 2262
+  (typedef): 313
+  (*NAME): 288
+  (struct T): 186
+  (scalar type): 123
+  (member access): 122
+  (*member access): 100
+  (scalar type *): 62
+  (typedef *): 43
+  (string literal): 31
+  (**NAME): 4
+  (struct T *): 3
+  NAME: 3
+sizeof_occurrences_by_status_and_shape:
+  Safe/(NAME): 13
+  Safe/(scalar type): 1
+  Safe/(struct T): 3
+  Safe/(typedef): 6
+  Unknown/(**NAME): 4
+  Unknown/(*NAME): 286
+  Unknown/(*member access): 100
+  Unknown/(NAME): 4404
+  Unknown/(member access): 121
+  Unknown/(scalar type *): 61
+  Unknown/(scalar type): 117
+  Unknown/(string literal): 31
+  Unknown/(struct T *): 2
+  Unknown/(struct T): 116
+  Unknown/(typedef *): 36
+  Unknown/(typedef): 268
+  Unknown/NAME: 3
+  Unknown/other: 2115
+  Unsafe/(*NAME): 2
+  Unsafe/(NAME): 96
+  Unsafe/(member access): 1
+  Unsafe/(scalar type *): 1
+  Unsafe/(scalar type): 5
+  Unsafe/(struct T *): 1
+  Unsafe/(struct T): 67
+  Unsafe/(typedef *): 7
+  Unsafe/(typedef): 39
+  Unsafe/other: 147
+owned_result_allocations_with_sizeof_by_shape:
+  (*NAME)/self: 190
+  (struct T)/other: 120
+  (typedef)/other: 107
+  (NAME *)/other: 32
+  (*member access)/self: 17
+  (scalar type)/other: 15
+  (scalar type *)/other: 14
+  (*member access)/other: 4
+  (*NAME)/other: 3
+  other/other: 3
+  (struct T *)/other: 2
+  (struct T)/self: 1
+  (member access)/other: 1
+  (**NAME)/self: 1
+allocation_self_dereference_by_destination_stars:
+  (*NAME)/stars=[1]: 175
+  (*NAME)/stars=[2]: 12
+  (*NAME)/stars=[]: 2
+  (**NAME)/stars=[2]: 1
+  (*NAME)/stars=[0, 2]: 1
+access_leaves_blocked_only_by_a_dereference_operand:
+  Unknown/(*NAME): 223
+  Unsafe/(*NAME): 2
+  Unknown/(*NAME),(typedef): 1
+access_leaves_total:
+  226
+access_leaves_on_unknown:
+  224
+access_unknown_functions:
+  211
+operator_leaves_by_line_shapes:
+  Unknown/(NAME): 410
+  Unknown/(typedef): 13
+  Unsafe/(NAME): 12
+  Unknown/(string literal): 10
+  Unknown/(struct T): 7
+  Unknown/(scalar type *): 6
+  Unsafe/(typedef): 6
+  Unknown/(NAME),(typedef): 1
+operator_leaves_total:
+  465
+operator_leaves_on_unknown:
+  447
+operator_unknown_functions:
+  117
+unknown_functions_blocked_only_by_access_operand_leaves:
+  4
+unknown_functions_blocked_only_by_operator_leaves:
+  1
+unknown_functions_blocked_only_by_either:
+  5
+
+Unknown functions blocked only by reachable sizeof leaves:
+  librdkafka__lz4hc.c.i::LZ4HC_rotatePattern L622 operator
+  librdkafka__rdkafka_mock.c.i::rd_kafka_mock_request_copy L23492 access
+  librdkafka__rdxxhash.c.i::XXH32_copyState L910 access
+  librdkafka__rdxxhash.c.i::XXH64_copyState L1188 access
+  librdkafka__snappy.c.i::clear_env L20519 access
+
+self-referential dereference allocations into a `T **` destination:
+  Unknown  librdkafka__rdhttp.c.i::rd_http_get_json L21716 headers_array_new = rd_calloc(... sizeof (*NAME) ...)
+  Unknown  librdkafka__rdkafka.c.i::rd_kafka_ListGroups_resp_cb L24923 grps = rd_malloc(... sizeof (*NAME) ...)
+  Unknown  librdkafka__rdkafka_admin.c.i::rd_kafka_admin_DescribeConsumerGroupsRequest L25407 groups_arr = rd_calloc(... sizeof (*NAME) ...)
+  Unknown  librdkafka__rdkafka_admin.c.i::rd_kafka_admin_ListConsumerGroupsRequest L24868 states_str = rd_calloc(... sizeof (*NAME) ...)
+  Unknown  librdkafka__rdkafka_admin.c.i::rd_kafka_admin_ListConsumerGroupsRequest L24876 types_str = rd_calloc(... sizeof (*NAME) ...)
+  Unknown  librdkafka__rdkafka_conf.c.i::rd_kafka_conf_kv_split L25621 out = rd_malloc(... sizeof (*NAME) ...)
+  Unknown  librdkafka__rdkafka_mock_handlers.c.i::rd_kafka_mock_handle_Fetch L22307 changed_leaders = rd_calloc(... sizeof (*NAME) ...)
+  Unknown  librdkafka__rdkafka_mock_handlers.c.i::rd_kafka_mock_handle_Produce L22132 changed_leaders = rd_calloc(... sizeof (*NAME) ...)
+  Unknown  librdkafka__rdkafka_mock_sharegrp.c.i::rd_kafka_mock_sharegroup_get_member_ids L22561 member_ids = rd_malloc(... sizeof (*NAME) ...)
+  Unknown  librdkafka__rdkafka_request.c.i::rd_kafka_handle_ApiVersion L22281 apis = rd_malloc(... sizeof (**NAME) ...)
+  Unknown  librdkafka__rdkafka_sasl_oauthbearer.c.i::rd_kafka_oauthbearer_unsecured_token0 L20656 extensionv = rd_malloc(... sizeof (*NAME) ...)
+  Unknown  librdkafka__rdkafka_topic.c.i::rd_kafka_topic_metadata_update L20608 partbrokers = rd_malloc(... sizeof (*NAME) ...)
+  Unknown  librdkafka__rdkafka_topic.c.i::rd_kafka_topic_partition_cnt_update L20406 rktps = rd_calloc(... sizeof (*NAME) ...)
+  Unknown  librdkafka__rdstring.c.i::rd_string_split L3195 arr = rd_malloc(... sizeof (*NAME) ...)

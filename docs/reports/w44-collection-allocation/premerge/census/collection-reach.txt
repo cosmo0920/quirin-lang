@@ -1,0 +1,23 @@
+W44-COLLECTION-ALLOCATION: collection-array candidates after the admission
+
+pointer_to_pointer_allocations: 14
+allocation_refusal_withdrawn: 9
+functions_with_lowered_element_operations: 1
+element_operations_decided_under_collection_rules: 0
+status_moves: {'Unknown->Unknown': 13, 'Unknown->Unsafe': 1}
+
+  Unknown->Unknown librdkafka/rdhttp.c::rd_http_get_json L21716 `headers_array_new` = rd_calloc(...): withdrawn
+  Unknown->Unknown librdkafka/rdkafka.c::rd_kafka_ListGroups_resp_cb L24923 `grps` = rd_malloc(...): withdrawn
+      L24950 element operation over `grps`; fallback: indirect memory access is outside the resource projection (fallback leaf after: True)
+  Unknown->Unknown librdkafka/rdkafka_admin.c::rd_kafka_admin_DescribeConsumerGroupsRequest L25407 `groups_arr` = rd_calloc(...): withdrawn
+  Unknown->Unknown librdkafka/rdkafka_admin.c::rd_kafka_admin_ListConsumerGroupsRequest L24868 `states_str` = rd_calloc(...): withdrawn
+  Unknown->Unknown librdkafka/rdkafka_admin.c::rd_kafka_admin_ListConsumerGroupsRequest L24876 `types_str` = rd_calloc(...): withdrawn
+  Unknown->Unknown librdkafka/rdkafka_conf.c::rd_kafka_conf_kv_split L25621 `out` = rd_malloc(...): withdrawn; replaced by ['call has an unmodeled formal address or borrowed expression']
+  Unknown->Unknown librdkafka/rdkafka_mock_handlers.c::rd_kafka_mock_handle_Fetch L22307 `changed_leaders` = rd_calloc(...): kept
+  Unknown->Unknown librdkafka/rdkafka_mock_handlers.c::rd_kafka_mock_handle_Produce L22132 `changed_leaders` = rd_calloc(...): kept
+  Unknown->Unknown librdkafka/rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegroup_get_member_ids L22561 `member_ids` = rd_malloc(...): kept
+  Unknown->Unknown librdkafka/rdkafka_request.c::rd_kafka_handle_ApiVersion L22281 `apis` = rd_malloc(...): withdrawn; replaced by ['discarded owned result of resource API `rd_malloc`']
+  Unknown->Unknown librdkafka/rdkafka_sasl_oauthbearer.c::rd_kafka_oauthbearer_unsecured_token0 L20656 `extensionv` = rd_malloc(...): kept
+  Unknown->Unknown librdkafka/rdkafka_topic.c::rd_kafka_topic_metadata_update L20608 `partbrokers` = rd_malloc(...): kept
+  Unknown->Unsafe librdkafka/rdkafka_topic.c::rd_kafka_topic_partition_cnt_update L20406 `rktps` = rd_calloc(...): withdrawn
+  Unknown->Unknown librdkafka/rdstring.c::rd_string_split L3195 `arr` = rd_malloc(...): withdrawn

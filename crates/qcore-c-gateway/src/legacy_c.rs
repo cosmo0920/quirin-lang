@@ -2630,6 +2630,9 @@ fn build_function_cfg_with(
         );
     let alias_classes = crate::may_alias::MayAliasClasses::read(&typed_types);
     let collection_types = collection_types(tokens, function, body_start, &typed_model);
+    // Card W44-COLLECTION-ALLOCATION: names whose `sizeof` dereference operand
+    // is unevaluated, from the same declarator reader.
+    let sizeof_operands = sizeof_operand_types(tokens, function, body_start, &typed_model);
     let descriptor_names = matching(tokens, body_start, "{", "}").map_or_else(
         descriptor_custody::DescriptorNames::default,
         |body_end| {
@@ -2665,6 +2668,7 @@ fn build_function_cfg_with(
         variadic_tails,
         frame_protected,
         collection_types,
+        sizeof_operands,
         element_lowerings: 0,
         descriptor_names,
         declared_callees,
@@ -2856,6 +2860,31 @@ fn collection_types(
         .map(|token| token.text.as_str())
         .collect::<Vec<_>>();
     crate::indexed_collection::CollectionTypes::read(
+        model,
+        &texts[open + 1..close],
+        &texts[body_start + 1..body_end],
+    )
+}
+
+/// Card **W44-COLLECTION-ALLOCATION**: the `sizeof` operand facts, read from
+/// the same token stream and ranges as [`collection_types`].
+fn sizeof_operand_types(
+    tokens: &[Token],
+    function: &str,
+    body_start: usize,
+    model: &TypedAccessModel,
+) -> crate::sizeof_operand::OperandTypes {
+    let (Some((open, close)), Some(body_end)) = (
+        function_parameter_range(tokens, function, body_start),
+        matching(tokens, body_start, "{", "}"),
+    ) else {
+        return crate::sizeof_operand::OperandTypes::default();
+    };
+    let texts = tokens
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
+    crate::sizeof_operand::OperandTypes::read(
         model,
         &texts[open + 1..close],
         &texts[body_start + 1..body_end],
@@ -3946,6 +3975,9 @@ struct Parser<'a> {
     /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: pointer-to-pointer bases and
     /// integer scalars of this function, from the same declaration reader.
     collection_types: crate::indexed_collection::CollectionTypes,
+    /// Card **W44-COLLECTION-ALLOCATION**: the names whose `sizeof`
+    /// dereference operand is never evaluated (see [`crate::sizeof_operand`]).
+    sizeof_operands: crate::sizeof_operand::OperandTypes,
     /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: how many element operations
     /// the classifier has lowered so far. A counted loop is recognised only
     /// around a body that lowered at least one, so no other loop's CFG changes.
@@ -6402,6 +6434,24 @@ impl Parser<'_> {
             (direct_assignment_destination(&texts[..equal]).as_deref() == Some(&store.place))
                 .then_some(store)
         });
+        // Card W44-COLLECTION-ALLOCATION: a `sizeof` dereference operand whose
+        // type cannot be variably modified is never evaluated (C11 6.5.3.4p2),
+        // so the gate below sees it as the scalar marker. Only for a statement
+        // whose first call is an ordinary callee; everything after the gate
+        // reads the original tokens. Empty (the gate unchanged) otherwise.
+        let unevaluated =
+            if find_call(&texts).is_some_and(|(_, callee)| !TYPE_OPERATORS.contains(&callee)) {
+                crate::sizeof_operand::unevaluated_spans(&texts, &self.sizeof_operands)
+            } else {
+                Vec::new()
+            };
+        let gate_view = |from: usize| {
+            if unevaluated.is_empty() {
+                outside_spans(&texts, &borrowed_actuals, from)
+            } else {
+                crate::sizeof_operand::gate_view(&texts, &borrowed_actuals, &unevaluated, from)
+            }
+        };
         // Explicit Out stores remain a separate modeled instruction. Reading
         // through a pointer, member or subscript has no heap/liveness model and
         // must never disappear into scalar NoOp or borrowed-call argument erasure.
@@ -6413,7 +6463,7 @@ impl Parser<'_> {
                 && (destination.as_deref().is_some_and(|place| {
                     place.contains('.') || place.contains('[') || place.contains("->")
                 }) || names_a_sub_object(&texts[..equal])))
-                || contains_unmodeled_access(&outside_spans(&texts, &borrowed_actuals, equal + 1))
+                || contains_unmodeled_access(&gate_view(equal + 1))
         } else if declaration_like
             && texts
                 .first()
@@ -6426,7 +6476,7 @@ impl Parser<'_> {
             // importer we do not have.
             (texts.contains(&"[") && !constant_array_declaration(&texts)) || texts.contains(&".")
         } else {
-            contains_unmodeled_access(&outside_spans(&texts, &borrowed_actuals, 0))
+            contains_unmodeled_access(&gate_view(0))
         };
         // Card HASH-CONTRACTS. A call the premise rewrite withdrew is refused
         // *before* the lexical access gate, so the statement reports why the
@@ -6744,9 +6794,19 @@ impl Parser<'_> {
                                     && argument.contains(&"&"))
                                     || (matches!(mode, ResourceParameterMode::Borrowed)
                                         && canonical_place(argument).is_none()))
-                                    && argument
-                                        .iter()
-                                        .any(|name| self.protected_formals.contains(*name)))
+                                    // Card W44-COLLECTION-ALLOCATION: a name in
+                                    // an unevaluated `sizeof` operand is passed
+                                    // nowhere; with no operand this is every
+                                    // token of the argument, as before.
+                                    && crate::sizeof_operand::evaluated(
+                                        argument,
+                                        argument_spans
+                                            .as_ref()
+                                            .and_then(|spans| spans.get(index))
+                                            .map_or(0, |span| span.0),
+                                        &unevaluated,
+                                    )
+                                    .any(|name| self.protected_formals.contains(name)))
                         },
                     )
                 }) {

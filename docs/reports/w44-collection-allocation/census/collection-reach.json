@@ -1,0 +1,191 @@
+{
+ "summary": {
+  "pointer_to_pointer_allocations": 14,
+  "allocation_refusal_withdrawn": 9,
+  "functions_with_lowered_element_operations": 1,
+  "element_operations_decided_under_collection_rules": 0,
+  "status_moves": {
+   "Unknown->Unknown": 14
+  }
+ },
+ "allocations": [
+  {
+   "unit": "librdkafka/rdhttp.c",
+   "function": "rd_http_get_json",
+   "line": 21716,
+   "destination": "headers_array_new",
+   "callee": "rd_calloc",
+   "withdrawn": true,
+   "replaced_by": [],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  },
+  {
+   "unit": "librdkafka/rdkafka.c",
+   "function": "rd_kafka_ListGroups_resp_cb",
+   "line": 24923,
+   "destination": "grps",
+   "callee": "rd_malloc",
+   "withdrawn": true,
+   "replaced_by": [],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": [
+    {
+     "line": 24950,
+     "outcome": "element operation over `grps`; fallback: indirect memory access is outside the resource projection",
+     "fallback_leaf_after": true
+    }
+   ]
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "function": "rd_kafka_admin_DescribeConsumerGroupsRequest",
+   "line": 25407,
+   "destination": "groups_arr",
+   "callee": "rd_calloc",
+   "withdrawn": true,
+   "replaced_by": [],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "function": "rd_kafka_admin_ListConsumerGroupsRequest",
+   "line": 24868,
+   "destination": "states_str",
+   "callee": "rd_calloc",
+   "withdrawn": true,
+   "replaced_by": [],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "function": "rd_kafka_admin_ListConsumerGroupsRequest",
+   "line": 24876,
+   "destination": "types_str",
+   "callee": "rd_calloc",
+   "withdrawn": true,
+   "replaced_by": [],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_conf.c",
+   "function": "rd_kafka_conf_kv_split",
+   "line": 25621,
+   "destination": "out",
+   "callee": "rd_malloc",
+   "withdrawn": true,
+   "replaced_by": [
+    "call has an unmodeled formal address or borrowed expression"
+   ],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Fetch",
+   "line": 22307,
+   "destination": "changed_leaders",
+   "callee": "rd_calloc",
+   "withdrawn": false,
+   "replaced_by": [],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Produce",
+   "line": 22132,
+   "destination": "changed_leaders",
+   "callee": "rd_calloc",
+   "withdrawn": false,
+   "replaced_by": [],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_get_member_ids",
+   "line": 22561,
+   "destination": "member_ids",
+   "callee": "rd_malloc",
+   "withdrawn": false,
+   "replaced_by": [],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_handle_ApiVersion",
+   "line": 22281,
+   "destination": "apis",
+   "callee": "rd_malloc",
+   "withdrawn": true,
+   "replaced_by": [
+    "discarded owned result of resource API `rd_malloc`"
+   ],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_oauthbearer_unsecured_token0",
+   "line": 20656,
+   "destination": "extensionv",
+   "callee": "rd_malloc",
+   "withdrawn": false,
+   "replaced_by": [],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_topic.c",
+   "function": "rd_kafka_topic_metadata_update",
+   "line": 20608,
+   "destination": "partbrokers",
+   "callee": "rd_malloc",
+   "withdrawn": false,
+   "replaced_by": [],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  },
+  {
+   "unit": "librdkafka/rdkafka_topic.c",
+   "function": "rd_kafka_topic_partition_cnt_update",
+   "line": 20406,
+   "destination": "rktps",
+   "callee": "rd_calloc",
+   "withdrawn": true,
+   "replaced_by": [],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  },
+  {
+   "unit": "librdkafka/rdstring.c",
+   "function": "rd_string_split",
+   "line": 3195,
+   "destination": "arr",
+   "callee": "rd_malloc",
+   "withdrawn": true,
+   "replaced_by": [],
+   "status_before": "Unknown",
+   "status_after": "Unknown",
+   "element_operations": []
+  }
+ ]
+}

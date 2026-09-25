@@ -1,0 +1,54 @@
+W44-COLLECTION-ALLOCATION: leaf-by-leaf attribution of AFTER against BEFORE
+
+removed: 230
+added: 249
+functions_reached: 188
+by_class:
+  added/downstream-in-a-reached-function: 232
+  added/same-line-substitution: 17
+  removed/downstream-in-a-reached-function: 23
+  removed/summary-propagation: 4
+  removed/withdrawn-operand-leaf: 203
+by_class_and_category:
+  added/downstream-in-a-reached-function/leak: 2
+  added/downstream-in-a-reached-function/unknown_alias: 122
+  added/downstream-in-a-reached-function/unsupported: 108
+  added/same-line-substitution/unsupported: 17
+  removed/downstream-in-a-reached-function/unknown_alias: 21
+  removed/downstream-in-a-reached-function/unsupported: 2
+  removed/summary-propagation/unsupported: 4
+  removed/withdrawn-operand-leaf/unsupported: 203
+function_moves:
+  Unknown->Safe/reached: 4
+  Unknown->Unsafe/reached: 2
+
+function moves:
+  Unknown -> Unsafe [reached] librdkafka/rdhttp.c::unittest_http_get_params_append
+  Unknown -> Safe [reached] librdkafka/rdkafka_conf.c::rd_kafka_anyconf_clear_all_is_modified
+  Unknown -> Unsafe [reached] librdkafka/rdkafka_sasl_oauthbearer_oidc.c::ut_sasl_oauthbearer_oidc_assertion_process_template_file
+  Unknown -> Safe [reached] librdkafka/rdxxhash.c::XXH32_copyState
+  Unknown -> Safe [reached] librdkafka/rdxxhash.c::XXH64_copyState
+  Unknown -> Safe [reached] librdkafka/snappy.c::clear_env
+
+leaves (summary-propagation and substitutions in full; downstream by function):
+  removed [summary-propagation] librdkafka/nanopb/pb_common.c::pb_field_iter_begin L437 unsupported: indirect memory access is outside the resource projection x1
+  removed [summary-propagation] librdkafka/rdkafka_broker.c::rd_kafka_broker_producer_serve L23148 unsupported: call to uncontracted function `rd_interval_init` x1
+  removed [summary-propagation] librdkafka/snappy.c::rd_kafka_snappy_free_env L20554 unsupported: call to uncontracted function `clear_env` x1
+  removed [summary-propagation] librdkafka/snappy.c::rd_kafka_snappy_init_env L20542 unsupported: call to uncontracted function `clear_env` x1
+  added [same-line-substitution] librdkafka/lz4.c::LZ4_compress_destSize_extState L1034 unsupported: call to uncontracted function `LZ4_initStream` x1
+  added [same-line-substitution] librdkafka/lz4hc.c::LZ4_loadDictHC L1341 unsupported: call to uncontracted function `LZ4_initStreamHC` x1
+  added [same-line-substitution] librdkafka/lz4hc.c::LZ4_resetStreamHC L1300 unsupported: call to uncontracted function `LZ4_initStreamHC` x1
+  added [same-line-substitution] librdkafka/lz4hc.c::LZ4_resetStreamHC_fast L1307 unsupported: call to uncontracted function `LZ4_initStreamHC` x1
+  added [same-line-substitution] librdkafka/rdkafka_conf.c::rd_kafka_conf_kv_split L25621 unsupported: call has an unmodeled formal address or borrowed expression x1
+  added [same-line-substitution] librdkafka/rdkafka_feature.c::rd_kafka_ApiVersion_check L19800 unsupported: call to uncontracted function `_Generic` x1
+  added [same-line-substitution] librdkafka/rdkafka_feature.c::rd_kafka_ApiVersions_copy L19831 unsupported: call has an unmodeled formal address or borrowed expression x1
+  added [same-line-substitution] librdkafka/rdkafka_metadata.c::rd_kafka_metadata_new_topic_mockv_internal L21312 unsupported: call to uncontracted function `__builtin_alloca` x1
+  added [same-line-substitution] librdkafka/rdkafka_metadata.c::rd_kafka_metadata_new_topic_with_partition_replicas_mock L21350 unsupported: call to uncontracted function `__builtin_alloca` x1
+  added [same-line-substitution] librdkafka/rdkafka_metadata_cache.c::rd_kafka_metadata_cache_entry_new L20254 unsupported: call to uncontracted function `rd_tmpabuf_alloc0` x1
+  added [same-line-substitution] librdkafka/rdkafka_mock_handlers.c::rd_kafka_mock_handle_ShareAcknowledge L25251 unsupported: call to uncontracted function `__builtin_alloca` x1
+  added [same-line-substitution] librdkafka/rdkafka_mock_handlers.c::rd_kafka_mock_handle_ShareFetch L24734 unsupported: call to uncontracted function `__builtin_alloca` x1
+  added [same-line-substitution] librdkafka/rdkafka_msgset_writer.c::rd_kafka_snappy_compress_slice L20162 unsupported: call to uncontracted function `__builtin_alloca` x1
+  added [same-line-substitution] librdkafka/rdkafka_request.c::rd_kafka_handle_ApiVersion L22281 unsupported: discarded owned result of resource API `rd_malloc` x1
+  added [same-line-substitution] librdkafka/rdkafka_roundrobin_assignor.c::rd_kafka_roundrobin_assignor_assign_cb L19578 unsupported: call to uncontracted function `qsort` x1
+  added [same-line-substitution] librdkafka/rdkafka_roundrobin_assignor.c::rd_kafka_roundrobin_assignor_assign_cb L19580 unsupported: call to uncontracted function `qsort` x1
+  added [same-line-substitution] librdkafka/rdkafka_topic.c::rd_kafka_topic_info_new_with_rack L20948 unsupported: call to uncontracted function `rd_tmpabuf_alloc0` x1
