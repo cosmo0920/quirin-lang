@@ -1,0 +1,9 @@
+[
+ {
+  "id": "DESTINATION-SUFFIX-PLACE-SPELLING",
+  "title": "direct_assignment_destination spells `(*map)->opts = …` as the place `opts`, conflating a caller-reachable member with a local-looking name",
+  "why": "legacy_c::direct_assignment_destination returns the first suffix of the destination tokens that canonical_place spells, so `(*map)->opts = calloc(...)` binds the acquisition to the place `opts`. Card W44-LEAK-PIN-AUDIT found it behind 2 class (c) leak leaves of unpack_basic_type (cmt_decode_msgpack.c:1759 and :1814), where the object is stored into the caller's `*map`. The same reading is a hazard in the discharging direction: a body with a real local `opts` would have the member's identity bound to it, so a release of the local could be credited to the member's acquisition. Discharge condition: refuse (or spell faithfully) a destination whose leading tokens are not a declaration's specifiers, measured by an arbiter, with any verdict movement attributed. The repair belongs to W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE (registered by W44-INDIRECT-CALL-ARGUMENT-ACCESS, which pins the discharging-direction hole `recs[i].name = x_dup(s); x_free(name);` certifying Safe); this entry records the two corpus leak leaves of unpack_basic_type as its evidence and should be merged into that entry on integration. The refused hand-on rule does not withdraw them: no refused statement names the object.",
+  "source": "docs/reports/w44-leak-pin-audit/README.md",
+  "recorded_by": "W44-LEAK-PIN-AUDIT"
+ }
+]

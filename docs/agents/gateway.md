@@ -315,6 +315,22 @@ including cross-topic rules, before editing; the index is not a substitute.
     desugaring now null-tests reports `unknown_alias` where the refusal stood;
     that exchange is expected. [Report](../reports/w44-branch-condition-calls/README.md).
 
+<a id="constraint-5i"></a>
+
+5i. **An assignment's destination is its whole left-hand side.**
+    `direct_assignment_destination` names a place only when it is the whole
+    left-hand side or follows a declarator prefix (identifiers, `*`, `,`). A
+    left-hand side ending in a place-spelling suffix it does not name is a
+    store into a sub-object, and the lexical gate refuses it
+    (`names_a_sub_object`; `QCore.AssignmentDestinationSuffix`). Do not
+    reintroduce suffix naming: it bound `recs[i].name`'s value to a local
+    `name` and certified a body that leaks one object and frees another, and
+    it certified `LZ4_write16`/`LZ4_write32` Safe. A reader that only
+    over-approximates a refusing inventory (the protected-formal closure) may
+    keep the suffix reader. A static-helper summary whose body validated only
+    through a misnamed store is withdrawn with it (`mk_iov_init`).
+    [Report](../reports/w44-assignment-destination-suffix-place/README.md).
+
 <a id="constraint-6"></a>
 
 <!-- preserved:constraint-6:start -->
