@@ -183,6 +183,15 @@ impl Facts {
             LegacyInstruction::BranchOnElementNull { fallback, .. } => {
                 self.step(fallback, preserved);
             }
+            // Card W45-SUB-OBJECT-STORES: as for an element store, forget what
+            // either reading could have written: the fallback refusal's frame
+            // and the call frame of a stored call.
+            LegacyInstruction::SubObjectStore { fallback, .. } => {
+                self.step(fallback, preserved);
+                for names in self.bindings.values_mut() {
+                    names.retain(|name| preserved.contains(name));
+                }
+            }
             _ => {}
         }
     }

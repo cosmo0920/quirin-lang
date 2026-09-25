@@ -80,6 +80,12 @@ pub(crate) mod refused_operands;
 #[path = "legacy_cast_return.rs"]
 pub(crate) mod cast_return;
 
+// Card W45-SUB-OBJECT-STORES: a store into a sub-object through a resolved,
+// typed base. Everything the card adds lives there; this file only carries the
+// hooks marked with the card's name.
+#[path = "legacy_sub_object_store.rs"]
+pub(crate) mod sub_object_store;
+
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
 // a body is parsed; every other selection is left as it was.
@@ -427,6 +433,20 @@ pub enum LegacyInstruction {
     /// overwritten resource is never silently discharged.
     AggregateStore {
         place: String,
+    },
+    /// Card **W45-SUB-OBJECT-STORES**: a store into one member through a
+    /// resolved, typed base that the lexical gate refused and no older route
+    /// admits; see [`sub_object_store`]. Every flow premise that fails makes
+    /// the node exactly `fallback`, the gate's refusal, so a store that stays
+    /// refused still hands on (card W44-LEAK-PIN-AUDIT).
+    SubObjectStore {
+        destination: sub_object_store::Destination,
+        value: sub_object_store::StoredValue,
+        /// The bases a scalar value's typed accesses dereference.
+        value_bases: Vec<String>,
+        /// The C02-P-ALIAS obligation of the dereferenced base.
+        alias_read: Option<AliasPeers>,
+        fallback: Box<LegacyInstruction>,
     },
     NoOp,
     Unknown {
@@ -2653,6 +2673,17 @@ fn build_function_cfg_with(
     } else {
         descriptor_custody::declared_callees(contracts)
     };
+    // Card W45-SUB-OBJECT-STORES: the formals whose record the caller reaches.
+    let sub_object_caller_bases = matching(tokens, body_start, "{", "}").map_or_else(
+        BTreeSet::new,
+        |body_end| {
+            let body = tokens[body_start + 1..body_end]
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            sub_object_store::caller_bases(&body, &formal_parameters, &frame_protected)
+        },
+    );
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -2679,6 +2710,7 @@ fn build_function_cfg_with(
         admit_derived_returns,
         argument_probe: call_argument_access::ArgumentProbe::default(),
         desugar: condition_desugar::DesugarState::new(function),
+        sub_object_caller_bases,
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -4016,6 +4048,9 @@ struct Parser<'a> {
     /// Card **W44-BRANCH-CONDITION-CALLS**: the enclosing function and the
     /// unit call graph the condition desugaring reads lazily.
     desugar: condition_desugar::DesugarState,
+    /// Card **W45-SUB-OBJECT-STORES**: the formals whose record the caller
+    /// reaches ([`sub_object_store::caller_bases`]).
+    sub_object_caller_bases: BTreeSet<String>,
 }
 
 impl Parser<'_> {
@@ -4185,11 +4220,6 @@ impl Parser<'_> {
         );
     }
 
-    /// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: record one clause
-    /// whose left-hand side's first place-spelling suffix starts after index
-    /// 0. Compiled out with the feature off; it reads the instruction after it
-    /// was produced and cannot change it.
-    #[cfg(feature = "indirect-census")]
     /// Card **W45-SUB-OBJECT-STORES**: hand one already-classified statement
     /// whose left-hand side the lexical gate reads as a sub-object store to the
     /// sub-object store census. Compiled out with the feature off; it reads the
@@ -4245,9 +4275,42 @@ impl Parser<'_> {
                     callee: pair[0].to_owned(),
                     result: contract.map(|contract| format!("{:?}", contract.result)),
                     result_kind: contract.map(|contract| format!("{:?}", contract.result_kind)),
+                    parameters_borrowed: contract.map(|contract| {
+                        contract
+                            .parameters
+                            .iter()
+                            .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
+                    }),
                 }
             })
             .collect();
+        let reader = match sub_object_store::read_destination(
+            left,
+            &self.typed_model,
+            &self.typed_types,
+            &self.sub_object_caller_bases,
+        ) {
+            Err(refusal) => format!("destination:{refusal}"),
+            Ok(destination) => match sub_object_store::read_value(
+                right,
+                destination.member,
+                &self.typed_model,
+                &self.typed_types,
+            ) {
+                Err(refusal) => format!("value:{refusal}"),
+                Ok(value) => format!(
+                    "read:{:?}:{}:{}",
+                    destination.member,
+                    match value {
+                        sub_object_store::ValueSyntax::Scalar(_) => "scalar",
+                        sub_object_store::ValueSyntax::Untracked => "untracked",
+                        sub_object_store::ValueSyntax::Name(_) => "name",
+                        sub_object_store::ValueSyntax::Call(_) => "call",
+                    },
+                    destination.caller_visible
+                ),
+            },
+        };
         census::record(&census::StoreRecord {
             unit_seq: crate::indirect_census::unit_seq(),
             function: self.census_function.clone(),
@@ -4282,9 +4345,15 @@ impl Parser<'_> {
                 &(0..equal).collect::<Vec<_>>(),
             ),
             callees,
+            reader,
         });
     }
 
+    /// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: record one clause
+    /// whose left-hand side's first place-spelling suffix starts after index
+    /// 0. Compiled out with the feature off; it reads the instruction after it
+    /// was produced and cannot change it.
+    #[cfg(feature = "indirect-census")]
     fn census_destination_suffix(
         &self,
         line: usize,
@@ -5803,6 +5872,13 @@ impl Parser<'_> {
             | LegacyInstruction::Clear { destination } => is_indirect_place(destination),
             _ => false,
         };
+        // Card W45-SUB-OBJECT-STORES: a sub-object store whose value is one
+        // whole call; the typed routes below never read a call.
+        if contains_call(tokens)
+            && let Some(store) = self.sub_object_store_statement(tokens, &instruction)
+        {
+            return store;
+        }
         if !consulted || contains_call(tokens) || contains_braces(tokens) {
             return instruction;
         }
@@ -5825,6 +5901,11 @@ impl Parser<'_> {
                 &self.typed_bases,
             ) {
                 return self.chain_access_instruction(chained, true);
+            }
+            // Card W45-SUB-OBJECT-STORES: a sub-object store through a
+            // resolved, typed base, after both typed access routes declined.
+            if let Some(store) = self.sub_object_store_statement(tokens, &instruction) {
+                return store;
             }
             // Card W43-INDEX-TRAVERSAL: a statement that moves a declared
             // pointer (`p++`, `p += k`, `p = q + k`) is consulted in the same
@@ -5866,6 +5947,130 @@ impl Parser<'_> {
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
             chains: Vec::new(),
         }
+    }
+
+    /// Card **W45-SUB-OBJECT-STORES**: a statement the lexical gate refused as
+    /// a store into a sub-object, read through a resolved, typed base; see
+    /// [`sub_object_store`]. Consulted only for exactly the gate's refusal,
+    /// only after every older route declined, and never for a statement that
+    /// reads a tracked descriptor (a descriptor is custody, never data: the
+    /// store keeps its refusal byte for byte). `None` keeps the refusal.
+    fn sub_object_store_statement(
+        &mut self,
+        tokens: &[Token],
+        instruction: &LegacyInstruction,
+    ) -> Option<LegacyInstruction> {
+        // Census commit: the reader exists, no route calls it yet.
+        if !sub_object_store::WIRED {
+            return None;
+        }
+        let LegacyInstruction::Unknown { description, .. } = instruction else {
+            return None;
+        };
+        if description != "indirect memory access is outside the resource projection"
+            || contains_braces(tokens)
+        {
+            return None;
+        }
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        if !self.descriptor_names.is_empty()
+            && descriptor_custody::statement_reads_descriptor(&texts, &self.descriptor_names)
+                .is_some()
+        {
+            return None;
+        }
+        let equal = texts.iter().position(|text| *text == "=")?;
+        if texts.get(equal + 1) == Some(&"=") {
+            return None;
+        }
+        let destination = sub_object_store::read_destination(
+            &texts[..equal],
+            &self.typed_model,
+            &self.typed_types,
+            &self.sub_object_caller_bases,
+        )
+        .ok()?;
+        let right = &texts[equal + 1..];
+        let syntax = sub_object_store::read_value(
+            right,
+            destination.member,
+            &self.typed_model,
+            &self.typed_types,
+        )
+        .ok()?;
+        let (value, value_bases) = match syntax {
+            sub_object_store::ValueSyntax::Scalar(bases) => (
+                sub_object_store::StoredValue::Scalar {
+                    bases: bases.clone(),
+                },
+                bases,
+            ),
+            sub_object_store::ValueSyntax::Untracked => {
+                (sub_object_store::StoredValue::Untracked, Vec::new())
+            }
+            sub_object_store::ValueSyntax::Name(name) => {
+                (sub_object_store::StoredValue::Name(name), Vec::new())
+            }
+            sub_object_store::ValueSyntax::Call(length) => {
+                let line = tokens.first().map_or(0, |token| token.line);
+                let mut rewritten = vec![
+                    Token {
+                        text: sub_object_store::STORE_TEMPORARY.to_owned(),
+                        line,
+                    },
+                    Token {
+                        text: "=".to_owned(),
+                        line,
+                    },
+                ];
+                rewritten.extend(tokens[tokens.len() - length..].iter().cloned());
+                let saved = self.next_site;
+                let call = self.classify_simple_base(&rewritten);
+                // A call whose every parameter is borrowed, with no result
+                // custody, or with an owned heap result stored where the
+                // caller reaches it. Every other call keeps the refusal.
+                let admitted = matches!(
+                    &call,
+                    LegacyInstruction::ContractCall {
+                        destination: Some(temporary),
+                        contract,
+                        nested,
+                        aggregate_reads,
+                        aggregate_addresses,
+                        ..
+                    } if temporary == sub_object_store::STORE_TEMPORARY
+                        && nested.is_empty()
+                        && aggregate_reads.is_empty()
+                        && aggregate_addresses.is_empty()
+                        && contract
+                            .parameters
+                            .iter()
+                            .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
+                        && match contract.result {
+                            ResourceReturnMode::None => true,
+                            ResourceReturnMode::Owned { .. } => {
+                                contract.result_kind.is_heap() && destination.caller_visible
+                            }
+                            _ => false,
+                        }
+                );
+                if !admitted {
+                    self.next_site = saved;
+                    return None;
+                }
+                (sub_object_store::StoredValue::Call(Box::new(call)), Vec::new())
+            }
+        };
+        Some(LegacyInstruction::SubObjectStore {
+            alias_read: self.read_alias(destination.base.as_deref()),
+            destination,
+            value,
+            value_bases,
+            fallback: Box::new(instruction.clone()),
+        })
     }
 
     /// Card **W44-INDIRECT-CHAIN-ACCESS**: the typed access an admitted chain
@@ -9950,6 +10155,11 @@ fn element_call_view<'a>(
             call: Some(call),
             ..
         } if owners.owner(state, base).is_some() => call,
+        // Card W45-SUB-OBJECT-STORES: a stored call runs once its bases pass.
+        LegacyInstruction::SubObjectStore {
+            value: sub_object_store::StoredValue::Call(call),
+            ..
+        } if sub_object_store::call_runs(&node.instruction, state) => call,
         other => other,
     }
 }
@@ -10854,6 +11064,17 @@ fn transfer(
         )
     };
     match &node.instruction {
+        // Card W45-SUB-OBJECT-STORES.
+        LegacyInstruction::SubObjectStore { .. } => sub_object_store::transfer(
+            function,
+            node,
+            state,
+            acquisition_lines,
+            context,
+            alias,
+            diagnostics,
+            &base,
+        ),
         LegacyInstruction::ElementStore {
             base: array,
             index,
@@ -11012,6 +11233,11 @@ pub(crate) fn instruction_produced_sites(instruction: &LegacyInstruction) -> Vec
         LegacyInstruction::ElementStore {
             call: Some(call), ..
         } => instruction_produced_sites(call),
+        // Card W45-SUB-OBJECT-STORES: a stored call's sites.
+        LegacyInstruction::SubObjectStore {
+            value: sub_object_store::StoredValue::Call(call),
+            ..
+        } => instruction_produced_sites(call),
         _ => Vec::new(),
     }
 }
@@ -11028,6 +11254,11 @@ pub(crate) fn offset_produced_sites(instruction: &mut LegacyInstruction, offset:
         }
         LegacyInstruction::ElementStore {
             call: Some(call), ..
+        } => offset_produced_sites(call, offset),
+        // Card W45-SUB-OBJECT-STORES: a stored call's sites.
+        LegacyInstruction::SubObjectStore {
+            value: sub_object_store::StoredValue::Call(call),
+            ..
         } => offset_produced_sites(call, offset),
         _ => {}
     }
@@ -12178,6 +12409,10 @@ fn transfer_base(
         | LegacyInstruction::ElementRelease { .. }
         | LegacyInstruction::BranchOnElementNull { .. } => {
             unreachable!("element operations are transferred by `transfer`")
+        }
+        // Card W45-SUB-OBJECT-STORES: decided by [`transfer`].
+        LegacyInstruction::SubObjectStore { .. } => {
+            unreachable!("sub-object stores are transferred by `transfer`")
         }
     }
     // O04-B09B10: a custody-taking member read handed the linked child to the

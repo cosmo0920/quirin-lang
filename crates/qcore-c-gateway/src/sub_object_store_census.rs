@@ -42,6 +42,8 @@ pub struct CalleeFact {
     /// The contract's declared result kind (`Heap` unless a descriptor or
     /// other non-heap kind is declared).
     pub result_kind: Option<String>,
+    /// Whether every declared parameter is `Borrowed`.
+    pub parameters_borrowed: Option<bool>,
 }
 
 #[derive(Clone, Debug, serde::Serialize)]
@@ -78,6 +80,11 @@ pub struct StoreRecord {
     pub destination_chains: Vec<Chain>,
     /// Every call on the value side, in order.
     pub callees: Vec<CalleeFact>,
+    /// The rule's own reader over this statement: `destination:<refusal>`,
+    /// `value:<refusal>`, or `read:<member>:<value>:<caller-visible>` when
+    /// both sides resolve (a call value is decided by the classifier, not
+    /// here).
+    pub reader: String,
 }
 
 /// Whether the stream is being collected.

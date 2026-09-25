@@ -325,6 +325,12 @@ pub(crate) fn admits_descriptor_read(
         | LegacyInstruction::CountedLoopHeader { .. }
         | LegacyInstruction::CountedLoopStep { .. }
         | LegacyInstruction::AggregateStore { .. }
+        // Card W45-SUB-OBJECT-STORES: a store into a member. A descriptor is
+        // custody, never data, so a store whose statement reads one is never
+        // this rule's (`Parser::sub_object_store_statement` declines it and
+        // the gate's refusal stands); refused here anyway, since a scalar or
+        // untracked store states nothing about a descriptor on its line.
+        | LegacyInstruction::SubObjectStore { .. }
         | LegacyInstruction::NoOp => false,
     }
 }
