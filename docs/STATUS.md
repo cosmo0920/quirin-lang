@@ -62,8 +62,8 @@ and the chunk **lifecycle** result are separate dimensions: no selected chunk
 function's lifecycle post-state is established, `flb_input_chunk_create`
 included, and a checked field contract is not a lifecycle result. Provisional Unsafe
 findings are not validated upstream defects. Unknowns stay in the denominator.
-The baseline is `docs/reports/w43-indexed-resource-collections/integration/artifacts/`, the
-combined-tree run of that integration (its predecessor `docs/reports/w43-descriptor-resource-tracking/integration/artifacts` is frozen); an arbiter must
+The baseline is `docs/reports/w44-indirect-chain-access/integration/artifacts/`, the
+combined-tree run of that integration (its predecessor `docs/reports/w43-indexed-resource-collections/integration/artifacts` is frozen); an arbiter must
 reproduce its predecessor's verdict-bearing artifacts byte-for-byte and
 attribute every delta. The chain and leaf identities are preserved in the
 individual reports, [wave history](development/increments/README.md), and

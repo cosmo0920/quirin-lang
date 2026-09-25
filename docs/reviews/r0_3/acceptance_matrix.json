@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W44-INDIRECT-CHAIN-ACCESS, 2026-09-25. BEFORE (base c1e69bb5) reproduces the W43-INDEXED-RESOURCE-COLLECTIONS integration diagnostics byte for byte, and the census-instrumented base run reproduces all five BEFORE artifacts. Typed record-pointer member chains in statements and conditions remove 74 unsupported leaves (24 admitted, 50 refused by the chain obligation) and add 49 unknown_alias exchanges, all attributed; 0 downstream, 0 violation candidates. 0 function and 0 unit moves, leak pin 271 unchanged. No bounds claim. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-indirect-chain-access/previous-corpus-row.json.",
+   "note": "W44-INDIRECT-CHAIN-ACCESS integration, 2026-09-25. The card (measured against docs/reports/w43-indexed-resource-collections/integration/artifacts) composed onto the combined tree docs/reports/w43-indexed-resource-collections/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 74 added 49 functions 0 units 0); functions moved (combined): []. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] 74 chain leaves leave their families (24 removed at never-bound roots, 50 exchanged for unknown_alias at roots the body may bind); no verdict moves. Non-null evidence is required at the root and at the first member place under a tracked object; a link inside an untracked object gets no nullness check, matching W43-INDIRECT-ACCESS-GENERAL's unbound base (a null dereference is outside the custody property). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-indirect-chain-access/integration/previous-corpus-row.json.",
    "units": 185,
    "safe": 3,
    "provisional_unsafe": 43,
@@ -6642,8 +6642,8 @@
    "projected_functions": 4834,
    "leak_diagnostics": 271,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w44-indirect-chain-access/artifacts/",
-   "source": "docs/reports/w44-indirect-chain-access/README.md; preceding baseline docs/reports/w43-indexed-resource-collections/integration/artifacts/",
+   "baseline": "docs/reports/w44-indirect-chain-access/integration/artifacts/",
+   "source": "docs/reports/w44-indirect-chain-access/integration/integration-confirmation.md; preceding baseline docs/reports/w43-indexed-resource-collections/integration/artifacts",
    "unknown_alias_diagnostics": 4407,
    "unsupported_diagnostics": 45774,
    "double_release_diagnostics": 0,
@@ -6731,7 +6731,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W44-INDIRECT-CHAIN-ACCESS: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured at 6e0bced6 with CARGO_INCREMENTAL=0; later commits change documents, the ledger, report scripts and evidence only (no Rust, Lean or test source), and the Python suite ran after the final matrix regeneration. 5420 core Rust passed / 0 failed / 11 ignored over 288 summaries (the card adds 12 module tests and the 14-test indirect_chain_access binary, and four new tests where six existing pins moved deliberately); 178 Lean audits (1 added: AuditIndirectChainAccess); census step: clippy -p qcore-c-gateway --features indirect-census clean and 462 feature-on library tests passed; 330 root Python tests after the final matrix regeneration; docs index check exit 0. Step exits: {'census': 0, 'clang': 0, 'clippy': 0, 'fmt': 0, 'followup': 0, 'lean': 0, 'probe': 0, 'submodules': 0, 'test': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; provider step exits: {'pbuild': 0, 'pclippy': 0, 'pcontracts': 0, 'pfmt': 0, 'pisolated': 0, 'ppython': 0, 'ptest': 0, 'pverify': 0}. A first core gate run (private/gate) failed to compile alias_aggregate_probe and is not evidence. Logs: worktree-private private/gate2 and private/provider-gate. Clang recorded in this checkout. Corpus: 0 function and 0 unit moves, leak 271 unchanged, 0 violation candidates.",
+  "note": "Integration gate for W44-INDIRECT-CHAIN-ACCESS on merge 06dff404 (onto main c1e69bb5, after the wave-43 close), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5420 core Rust passed / 0 failed / 11 ignored over 290 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 178 Lean audits; 330 root Python tests after regenerating this section (08-python exit 0 before regeneration); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w43-indexed-resource-collections/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
   "workspace_tests": 5420,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
@@ -6922,7 +6922,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w44-indirect-chain-access/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-indirect-chain-access/integration/gate.json)"
  },
  "named_followups": [
   {
