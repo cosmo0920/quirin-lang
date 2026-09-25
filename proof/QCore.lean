@@ -155,6 +155,7 @@ import QCore.IndirectScalarAccess
 import QCore.IndexTraversal
 import QCore.IndexedCollection
 import QCore.CallArgumentAccess
+import QCore.MemberRelease
 import QCore.SizeofOperand
 import QCore.IndirectChainAccess
 import QCore.AssignmentDestinationSuffix

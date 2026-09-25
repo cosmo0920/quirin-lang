@@ -2718,7 +2718,7 @@ fn build_function_cfg_with(
     }
     // Card W45-CALLEE-SUMMARY-CASCADE: the sub-custody guard before every call
     // to a function this unit defines (`member_release`, rule 3).
-    member_release::guard_unit_callees(&mut cfg, tokens);
+    member_release::guard_unit_callees(&mut cfg, tokens, contracts);
     Ok(cfg)
 }
 

@@ -149,9 +149,11 @@ fn the_guard_refuses_a_caller_whose_actual_owns_sub_custody() {
 #[test]
 fn the_guard_precedes_only_calls_to_functions_this_unit_defines() {
     let source = format!(
-        "{RECORD}{DESTROY}void subject(void) {{ struct node *n = q_alloc(); \
+        "{RECORD}{DESTROY}void q_free(void *p) {{ }}\n\
+         void subject(void) {{ struct node *n = q_alloc(); \
          node_destroy(n); void *p = q_alloc(); q_free(p); }}\n"
     );
+    // `q_free` is defined here too, but declared: its declaration governs.
     let (tokens, _) = tokenize_with_conditionals(&source);
     // The environment the caller is analysed in once the destructor's summary
     // is installed.

@@ -74,21 +74,24 @@
 //! which no summary mode states. A caller whose actual owns sub-custody could
 //! therefore hold that very object as a tracked child and release it again
 //! after the call. [`guard_unit_callees`] closes that channel on the caller's
-//! side, for every callee whose summary this translation unit could have
-//! derived: before each call to a function **defined in this translation
-//! unit** it inserts `ArgumentReads` over the call's plain-name actuals, which
-//! records `UnknownAlias` for any actual whose target owns sub-custody. The
-//! guard is applied to every such callee, whether or not its body used rule 1
-//! and whether its contract is derived or declared, so it is a superset of
-//! the calls that need it; it only ever refuses. A callee with no body here
-//! has no derived summary (W4 summaries never cross a unit), so its contract
-//! is a declaration, and declarations keep their stated premise
-//! (P-B08-SHALLOW). The inserted node is appended and every edge into the
-//! call is redirected to it, so no existing node's identity moves.
+//! side, for every callee whose contract in force may be an inference: before
+//! each call to a function **defined in this translation unit and not
+//! declared** by the environment's trusted texts, it inserts `ArgumentReads`
+//! over the call's plain-name actuals, which records `UnknownAlias` for any
+//! actual whose target owns sub-custody. It is applied whether or not the
+//! callee's body used rule 1, so it is a superset of the calls that need it,
+//! and it only ever refuses. A callee with no body here has no derived summary
+//! (W4 summaries never cross a unit), and a declared callee is governed by its
+//! declaration, never by an inference (constraint 8); both keep the
+//! declaration's stated premise (P-B08-SHALLOW) and carry no guard. The first
+//! AFTER run also guarded declared header bodies, and `flb_input_chunk_create`
+//! left `Safe` for a guard its `flb_free` call did not need. The inserted node
+//! is appended and every edge into the call is redirected to it, so no
+//! existing node's identity moves.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
-use qcore_schemas::contract::{ResourceFunctionContract, ResourceParameterMode};
+use qcore_schemas::contract::{ResourceContracts, ResourceFunctionContract, ResourceParameterMode};
 
 use super::call_argument_access::{AdmittedArgument, ArgumentRead};
 use super::{
@@ -226,14 +229,24 @@ fn pointer_member_base(
         .then(|| (*base).to_owned())
 }
 
-/// Rule 3: before every call to a function defined in this translation unit,
+/// Rule 3: before every call to a function defined in this translation unit
+/// and not declared by the environment,
 /// the sub-custody guard over the call's plain-name actuals.
-pub(super) fn guard_unit_callees(cfg: &mut LegacyCfg, tokens: &[Token]) {
+pub(super) fn guard_unit_callees(
+    cfg: &mut LegacyCfg,
+    tokens: &[Token],
+    contracts: &ResourceContracts,
+) {
     let mut defined = BTreeMap::<String, bool>::new();
+    // Read lazily: most CFGs call no function this unit defines.
+    let mut declared = None::<BTreeSet<String>>;
     let mut is_defined = |name: &str| {
-        *defined
-            .entry(name.to_owned())
-            .or_insert_with(|| find_function_body(tokens, name).is_some())
+        *defined.entry(name.to_owned()).or_insert_with(|| {
+            find_function_body(tokens, name).is_some()
+                && !declared
+                    .get_or_insert_with(|| super::descriptor_custody::declared_callees(contracts))
+                    .contains(name)
+        })
     };
     let count = cfg.nodes.len();
     for id in 0..count {
@@ -307,7 +320,7 @@ fn guarded_calls(instruction: &LegacyInstruction) -> Vec<(&str, &[Option<String>
 
 /// The distinct callees a set of guarded calls names (tests only).
 #[cfg(test)]
-pub(super) fn guarded_callees(cfg: &LegacyCfg) -> std::collections::BTreeSet<String> {
+pub(super) fn guarded_callees(cfg: &LegacyCfg) -> BTreeSet<String> {
     cfg.nodes
         .iter()
         .filter_map(|node| match &node.instruction {
