@@ -1,0 +1,50 @@
+census_records: 1230
+census_unit_ordinals: 82
+unjoined_unit_ordinals: 23
+records_joined_to_no_published_leaf: 298
+published_leaves: 305
+published_leaves_uncovered: 0
+published_leaves_whose_passes_disagree: 0
+
+unknown_population: 305 leaves / 249 functions
+ leaves  funcs  family / detail
+    144    130  F. access expression, no call
+    100     90      access through a base this body may bind
+     18     17      base type the declaration reader will not commit to
+     17     15      member typed Unresolved
+      3      3      writes inside the expression
+      2      2      access through a call or cast result
+      2      2      subscript
+      2      2      address-of or dereference of a name
+     79     73  C. compound expression with a call
+     43     39      an uncontracted call
+     18     16      conditional ?:
+      9      9      every call contracted
+      9      9      short-circuit && / ||
+     69     34  G. other
+     67     32      comma operator
+      2      2      statement expression or compound literal
+     13     13  E. conditional or short-circuit, no call
+      8      8      conditional ?:
+      5      5      short-circuit && / ||
+  status of the defined-in-unit callee: {}
+
+sole_population: 71 leaves / 69 functions
+ leaves  funcs  family / detail
+     37     35  C. compound expression with a call
+     15     15      an uncontracted call
+     11      9      conditional ?:
+      8      8      short-circuit && / ||
+      3      3      every call contracted
+     27     27  F. access expression, no call
+     11     11      member typed Unresolved
+      8      8      access through a base this body may bind
+      5      5      base type the declaration reader will not commit to
+      2      2      subscript
+      1      1      access through a call or cast result
+      6      6  E. conditional or short-circuit, no call
+      5      5      conditional ?:
+      1      1      short-circuit && / ||
+      1      1  G. other
+      1      1      comma operator
+  status of the defined-in-unit callee: {}

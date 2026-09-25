@@ -1,0 +1,31 @@
+{
+ "unknown_leaves": 305,
+ "forecast_leaves": {
+  "R": 291,
+  "S": 14
+ },
+ "forecast_by_family": {
+  "C. compound expression with a call -> R": 79,
+  "E. conditional or short-circuit, no call -> R": 12,
+  "E. conditional or short-circuit, no call -> S": 1,
+  "F. access expression, no call -> R": 131,
+  "F. access expression, no call -> S": 13,
+  "G. other -> R": 69
+ },
+ "carrier": {
+  "scalar": 165,
+  "pointer": 140
+ },
+ "sole_functions": 69,
+ "sole_functions_freed": 0,
+ "kept_reasons": {
+  "address-of": 1,
+  "may-bind root in a conditional position": 8,
+  "result pointer": 140,
+  "call": 65,
+  "assignment": 68,
+  "may-bind root with a chain": 7,
+  "increment": 1,
+  "brace or comma": 1
+ }
+}

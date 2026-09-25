@@ -1,0 +1,24 @@
+[
+  {
+    "entry": {
+      "id": "W43-RETURN-CALL-UNDER-CAST",
+      "title": "A whole call under a cast or in parentheses keeps the return-position refusal (26 leaves)",
+      "why": "Card W43-RETURN-EXPRESSION lowers a whole-call return whose synthetic assignment the statement classifier refuses to that refusal, but only when the call's name is the expression's first token and its `)` the last. The census (docs/reports/w43-return-expression/census/) measures 25 Unknown-function leaves over 20 functions where the call sits under one or more `( TYPE-NAME )` casts: 23 uncontracted or builtin callees and 2 contracted `Owned{nullable}` callees (`(T *) rd_kafka_mem_calloc(...)`); 11 leaves are sole blockers. One more leaf is a whole call wrapped in redundant parentheses (`return (LZ4F_decodeHeader(...));`), which the Rust rule reads literally and does not strip. The uncontracted half would be a pure re-attribution; the contracted `Owned` half would be an ADMISSION that escapes a fresh site through a cast, which needs its own argument that a pointer or integer conversion preserves (or does not) the escaped identity. Discharge: a card that recognises a leading cast positively (type-name tokens only, never a parenthesised expression or function designator), lowers the refused half as W43 does, and either admits the Owned half with a Lean statement about conversions or refuses it by name, with a measured arbiter.",
+      "source": "docs/reports/w43-return-expression/README.md",
+      "recorded_by": "W43-RETURN-EXPRESSION"
+    },
+    "discharged_by": "W45-RETURN-EXPRESSION-FAMILIES",
+    "ground": "W45-RETURN-EXPRESSION-FAMILIES recognises a leading cast positively (identifiers the unit's declaration reader resolves as a never variably modified type, then `*`s; a parenthesised function designator is never read as a cast), lowers a refused call under casts to the classifier's own refusal (22 leaves) and admits an `Owned` result only under pointer casts of a declared object pointer, refusing an integer cast by name (QCore.ReturnExpressionFamilies.an_owned_result_under_casts_is_a_pointer_conversion, an_integer_cast_of_an_owned_result_is_refused); parentheses alone give W4's answer. Measured: the AFTER census has 0 whole-call leaves under a cast or in parentheses (census/census-after.txt), 4 admitted (XXH32_createState and XXH64_createState escape their fresh site)."
+  },
+  {
+    "entry": {
+      "id": "W43-RETURN-TYPE-OPERATOR",
+      "title": "`sizeof` of a non-scalar type in a return stays refused (6 leaves)",
+      "why": "Card W43-RETURN-EXPRESSION measured 6 refused return leaves over 6 Unknown functions that are translation-time type-operator constants such as `return sizeof(LZ4_stream_t);`; 4 are sole blockers and would plausibly reach Safe. The fixed scalar type-query rule (type_query.rs) deliberately admits only a readable scalar type name or a declared scalar local, so a record or union typedef stays outside it; widening that rule is a type-query change affecting every expression position, not a return-position one, and W43's lowering explicitly refuses call-shaped type operators rather than misattributing them to an uncontracted `sizeof`. Discharge: a card widening the type-query rule to complete record/union types with its own VLA argument and arbiter.",
+      "source": "docs/reports/w43-return-expression/README.md",
+      "recorded_by": "W43-RETURN-EXPRESSION"
+    },
+    "discharged_by": "W45-RETURN-EXPRESSION-FAMILIES",
+    "ground": "In a function whose definition declares a scalar value result, W45-RETURN-EXPRESSION-FAMILIES admits `sizeof`/`_Alignof` over identifiers the reader resolves as a never variably modified type (TypedAccessModel::never_variably_modified, W44-COLLECTION-ALLOCATION's VLA argument) as a constant that carries nothing. Measured: 0 type-operator return leaves after (6 before, 4 sole-blocked, all four now Safe). The fixed type-query rule in other positions is unchanged; this entry sized only the return leaves."
+  }
+]

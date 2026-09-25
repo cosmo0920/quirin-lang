@@ -1,0 +1,13 @@
+{
+  "note": "W45-RETURN-EXPRESSION-FAMILIES card gate, measured in the card's own worktree on e3d6fdb0 (Rust, Lean and tests final; later commits change the report, the ledger, STATUS and the increment record only) with CARGO_INCREMENTAL=0; the dev profile was reclaimed (cargo clean --profile dev) after the test step and after the core steps. Every exit captured to a file, never piped (docs/reports/w45-return-expression-families/scripts/run_gate.py). 5665 core Rust passed / 0 failed / 11 ignored over 300 summaries in 290 units (scripts/run_test_binaries.py): main's 5644 over 299 plus this card's 11-test tests/return_expression_families.rs binary and 10 unit tests of legacy_return_family.rs; four existing rows deliberately re-pinned in place. 190 Lean audits (main's 189 plus AuditReturnExpressionFamilies, 23 theorems); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 543 feature-on library tests passed (the sink guard included). Root Python tests counted after the final matrix regeneration (see the report). Step exits (private/gate): {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0, 'docsindex': 0}. No provider file changed, so the provider gate is not run and its 124 tests are carried. Clang recorded in this checkout. Corpus against docs/reports/w44-collection-allocation/integration/artifacts: BEFORE byte-identical verdict-bearing artifacts; AFTER 405 leaves removed, 40 added, all attributed; functions 306/12/4516 -> 382/12/4440, units 3/10/168/4 unchanged, leak 37 unchanged.",
+  "workspace_tests": 5665,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 351,
+  "lean_audits": 190,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

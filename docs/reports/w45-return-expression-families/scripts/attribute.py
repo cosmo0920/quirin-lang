@@ -185,7 +185,10 @@ class CallGraph:
 def main():
     before = index(load(sys.argv[1]))
     after = index(load(sys.argv[2]))
-    records = [json.loads(line) for line in pathlib.Path(sys.argv[3]).read_text().splitlines() if line]
+    stream = pathlib.Path(sys.argv[3]).read_bytes()
+    if sys.argv[3].endswith(".gz"):
+        stream = gzip.decompress(stream)
+    records = [json.loads(line) for line in stream.decode().splitlines() if line]
     roots = list(sys.argv[4:])
     if "--json" in roots:
         at = roots.index("--json")

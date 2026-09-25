@@ -1,0 +1,16 @@
+[
+  {
+    "id": "W45-RETURN-POINTER-RESULT-READS",
+    "title": "Pointer-valued return reads: a load or an interior address",
+    "why": "Card W45-RETURN-EXPRESSION-FAMILIES admits a call-free read in `return` position only when the enclosing function's definition declares a scalar value result, so the returned value carries nothing whatever the operand's member typing. After it, 140 refused return leaves over 129 Unknown functions (37 sole-blocked) sit in functions returning a pointer (sized from the pinned source's definition line, docs/reports/w45-return-expression-families/census/residual-sizing.txt): 119 call-free accesses (`node->host`, `rk->rk_name`, `&rk->rk_conf`, `messages->elems[index]`), 14 compound expressions with a call, 6 conditionals, 1 comma. A pointer-valued `B->F` is a load when F is a pointer member but an interior address when F is an array (its decay), and `&B->F` always is one; an interior address is a result derived from B that must keep its derivation (`Derived` with `nullable`/`stepped`), and publishing it as a result that carries nothing would let a caller free B and keep using the result unaccused. Discharge: a card that tells loads from interior addresses by member typing, lowers a load through an untracked base to an exit that escapes nothing (constraint 5b's pointer-leaf answer) and an interior address to a derived binding the derived-result summary route (W43-RESULT-ALIAS-RETURNED) can validate, with Lean parity and a measured arbiter.",
+    "source": "docs/reports/w45-return-expression-families/README.md",
+    "recorded_by": "W45-RETURN-EXPRESSION-FAMILIES"
+  },
+  {
+    "id": "W45-RETURN-BOUND-BASE-POSITIONS",
+    "title": "Scalar-result return reads refused for a bound name's position",
+    "why": "Card W45-RETURN-EXPRESSION-FAMILIES admits a name the body may bind (not `UntrackedBases::never_bound`) in a scalar-result return only as the root of exactly one dereference C always evaluates, so the base check accuses only a dereference C performs. After it, 15 scalar-result leaves over 14 Unknown functions (1 sole-blocked) fail only that premise: 8 dereference a bound name after a `?`, `&&` or `||` (`is_incremental`'s `*str == '+' || *str == '-'`, where `str` is a protected formal because the body dereferences it), 7 read through a second dereference of a bound name (`rkb->rkb_rsal->rsal_cnt`). A further 14 leaves over 13 functions (none sole) are refused for a record-object member of a bound name (`state.err`), an aggregate result (`rd_kafka_Uuid_t`, `rd_kafka_fetch_pos_t`) or a result typedef the reader does not resolve (docs/reports/w45-return-expression-families/census/residual-sizing.txt). Discharge: a card that desugars the skipped positions through the condition route (constraint 5h) so each dereference is checked on the edge C takes it, gives chained reads through a bound base W44-INDIRECT-CHAIN-ACCESS's link obligations, and admits a record object's member read (no dereference) under a scalar result, measured.",
+    "source": "docs/reports/w45-return-expression-families/README.md",
+    "recorded_by": "W45-RETURN-EXPRESSION-FAMILIES"
+  }
+]
