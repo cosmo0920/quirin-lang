@@ -2891,7 +2891,18 @@ fn protected_resource_formals(
         let Some(equal) = statement.iter().position(|token| *token == "=") else {
             continue;
         };
-        let Some(destination) = direct_assignment_destination(&statement[..equal]) else {
+        // Card W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: this closure is a
+        // flow-insensitive candidate inventory in which a larger set only
+        // protects more, so it keeps the pre-card suffix reader: a sub-object
+        // store `recs [ i ] . name = src` still relates `name` and `src`,
+        // over-approximating as it always did, and no name loses protection.
+        let left = &statement[..equal];
+        let destination = if left.first() == Some(&"*") {
+            direct_assignment_destination(left)
+        } else {
+            first_suffix_place(left).map(|(_, place)| place)
+        };
+        let Some(destination) = destination else {
             continue;
         };
         let Some(source) = canonical_place(&statement[equal + 1..]) else {
@@ -4091,13 +4102,13 @@ impl Parser<'_> {
                         .collect::<Vec<_>>()
                 })
                 .unwrap_or_default();
-            let plain = body_texts
-                .iter()
-                .map(|(text, _)| *text)
-                .collect::<Vec<_>>();
+            let plain = body_texts.iter().map(|(text, _)| *text).collect::<Vec<_>>();
             let kind = if self.formal_parameters.contains(&root) {
                 "formal"
-            } else if crate::publication::body_declarations(&plain).0.contains(&root) {
+            } else if crate::publication::body_declarations(&plain)
+                .0
+                .contains(&root)
+            {
                 "local"
             } else {
                 let unit = self
@@ -4148,8 +4159,7 @@ impl Parser<'_> {
                         &self.typed_bases,
                     )
                     .is_some(),
-                stepped: clause == "statement"
-                    && self.stepped_access(tokens, &refusal).is_some(),
+                stepped: clause == "statement" && self.stepped_access(tokens, &refusal).is_some(),
             };
             (
                 Some(census::NamedRoot {
@@ -6198,10 +6208,12 @@ impl Parser<'_> {
         // must never disappear into scalar NoOp or borrowed-call argument erasure.
         let unsupported_access = if let Some(equal) = assignment {
             let destination = direct_assignment_destination(&texts[..equal]);
+            // Card W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: a store into a
+            // sub-object the reader no longer names is refused here too.
             (admitted_store.is_none()
-                && destination.as_deref().is_some_and(|place| {
+                && (destination.as_deref().is_some_and(|place| {
                     place.contains('.') || place.contains('[') || place.contains("->")
-                }))
+                }) || names_a_sub_object(&texts[..equal])))
                 || contains_unmodeled_access(&outside_spans(&texts, &borrowed_actuals, equal + 1))
         } else if declaration_like
             && texts
@@ -6269,11 +6281,12 @@ impl Parser<'_> {
                 // same locals it was computed from. Measurement only.
                 let position = if let Some(equal) = assignment {
                     if admitted_store.is_none()
-                        && direct_assignment_destination(&texts[..equal])
+                        && (direct_assignment_destination(&texts[..equal])
                             .as_deref()
                             .is_some_and(|place| {
                                 place.contains('.') || place.contains('[') || place.contains("->")
                             })
+                            || names_a_sub_object(&texts[..equal]))
                     {
                         crate::indirect_census::Position::AssignmentDestination
                     } else {
@@ -7324,6 +7337,21 @@ fn interior_extent(mut contract: ResourceFunctionContract) -> ResourceFunctionCo
     contract
 }
 
+/// The place an assignment's left-hand side `tokens` writes, when this
+/// importer can name it.
+///
+/// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: a left-hand side not
+/// headed by `*` is named only when its first place-spelling suffix
+/// ([`first_suffix_place`]) **is** the whole left-hand side, or when the tokens
+/// before that suffix are a declaration's specifiers and declarator stars
+/// ([`is_declarator_prefix`]). Before the card the suffix was named wherever it
+/// started, so `recs [ i ] . name` was named `name`: the analyzer bound the
+/// stored identity to the local `name`, a different object, and certified a
+/// body that leaks one object and frees another. Such a left-hand side is a
+/// store into a sub-object; [`names_a_sub_object`] recognises it and the
+/// lexical indirect-access gate refuses it. Every left-hand side named before
+/// and still named is named identically
+/// (`QCore.AssignmentDestinationSuffix.the_repair_names_nothing_new`).
 fn direct_assignment_destination(tokens: &[&str]) -> Option<String> {
     if tokens.first() == Some(&"*") {
         // A single dereference of a plain identifier is the only indirect
@@ -7339,7 +7367,20 @@ fn direct_assignment_destination(tokens: &[&str]) -> Option<String> {
             _ => None,
         };
     }
-    first_suffix_place(tokens).map(|(_, place)| place)
+    let (start, place) = first_suffix_place(tokens)?;
+    (start == 0 || is_declarator_prefix(&tokens[..start])).then_some(place)
+}
+
+/// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: whether a left-hand side
+/// ends with a place-spelling suffix that [`direct_assignment_destination`]
+/// does not name — a store into a sub-object (`recs [ i ] . name`,
+/// `( * p ) - > name`, `f ( ) - > name`) whose last member name the reader
+/// used to name. Such a store is refused by the lexical indirect-access gate
+/// exactly as a named `a.b`, `a[0]` or `p->f` destination is.
+fn names_a_sub_object(tokens: &[&str]) -> bool {
+    tokens.first() != Some(&"*")
+        && first_suffix_place(tokens).is_some()
+        && direct_assignment_destination(tokens).is_none()
 }
 
 /// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: the first suffix of a
@@ -7365,7 +7406,6 @@ pub(crate) fn first_suffix_place(tokens: &[&str]) -> Option<(usize, String)> {
 /// Every token that could select, subscript, call or dereference into another
 /// object (`.`, `-` `>`, `[` `]`, `(` `)`) is outside the set, so a prefix
 /// carrying one names a sub-object and never the suffix it ends with.
-#[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
 pub(crate) fn is_declarator_prefix(prefix: &[&str]) -> bool {
     !prefix.is_empty()
         && prefix
