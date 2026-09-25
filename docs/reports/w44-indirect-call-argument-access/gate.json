@@ -1,0 +1,13 @@
+{
+  "note": "W44-INDIRECT-CALL-ARGUMENT-ACCESS: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured on dbef7720 (base c1e69bb5; the analysis code is 6e8a41b8's, later commits add tests, scripts, documents, evidence and the ledger), with CARGO_INCREMENTAL=0; the dev profile was reclaimed (cargo clean --profile dev) after the test step. 5425 core Rust passed / 0 failed / 11 ignored over 288 summaries (the card adds the 25-test call_argument_access.rs binary and 9 unit tests of legacy_call_argument_access.rs, and moves nine pins deliberately, each explained where it stands); 178 Lean audits (AuditCallArgumentAccess, 26 theorems); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 459 feature-on library tests passed; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0}; docsindex exit 1 before the index regeneration (the new report), 0 after it. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed (1 test); provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. Logs: worktree-private private/gate and private/provider-gate of agent-a833cb615fbcb8088 (an earlier test run on a pre-tip tree was stopped and kept as private/aborted-gate-pre-tip; not evidence). Clang recorded in this checkout. Corpus against the W43-INDEXED-RESOURCE-COLLECTIONS integration baseline: 186 leaves removed and 47 added, all attributed; functions 1 Unknown -> Safe and 7 Unknown -> provisional Unsafe; units 3 Unknown -> provisional Unsafe; leak 271 -> 282 (eleven exposures, false by source reading); 0 use_after_release.",
+  "workspace_tests": 5425,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 178,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

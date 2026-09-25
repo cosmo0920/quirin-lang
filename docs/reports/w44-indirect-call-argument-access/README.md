@@ -387,8 +387,41 @@ The frozen file is not edited; these corrections live here.
 
 ## 5. Validation
 
-See [gate.json](gate.json) and §5.1; logs are worktree-private under
-`private/gate/` and `private/provider-gate/`.
+Measured in this worktree (`agent-a833cb615fbcb8088`) by
+[`scripts/run_gate.py`](scripts/run_gate.py) (the collections card's runner,
+`CARGO_INCREMENTAL=0`) on `dbef7720`; the analysis code is `6e8a41b8`'s, and
+later commits change tests, scripts, documents, evidence and the ledger only.
+Every exit is captured to a file, never through a pipe. Logs are
+worktree-private under `private/gate/` and `private/provider-gate/`; the
+generator input is [gate.json](gate.json), with the
+[Clang recording](clang-version.txt) taken in this checkout. A first test run
+on a pre-tip tree was stopped by its task handle and kept as
+`private/aborted-gate-pre-tip`; it is not evidence.
+
+| Command | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | libevent `d82464a2…` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,425 passed / 0 failed / 11 ignored**, 288 summaries |
+| `cargo clean --profile dev` | 0 | reclaimed after the test step |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean |
+| `cargo run -p qcore-compiler --example reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **178** audits |
+| census feature: clippy `-D warnings`, `cargo test -p qcore-c-gateway --features indirect-census --lib` | 0 | clean; 459 passed |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate …/gate.json` | 0 | 354 follow-ups, 111 contract modules, 178 Lean audits |
+| `python3 -m unittest discover -s scripts/tests` (after the regeneration) | 0 | **330** tests |
+| `python3 scripts/build_docs_index.py --check` | 1, then 0 | stale before the regeneration (the new report), matching after |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **124 passed / 0 failed / 0 ignored**, 39 summaries |
+| isolated package mutation control (`--exact --test-threads=1`) | 0 | 1 passed |
+| provider fmt / clippy `-D warnings` | 0 / 0 | clean |
+| `python3 providers/contracts.py check` | 0 | |
+| `python3 providers/package.py build`, then `verify` ×5 | 0, 0 ×5 | chunkio, cmetrics, ctraces, libevent, librdkafka |
+| `python3 -m unittest discover -s providers/tests` | 0 | 13 tests |
+
+**Counts.** The card adds the 25-test `call_argument_access.rs` binary, 9 unit
+tests of its module and one Lean audit, and moves nine pins (§2.4). The base's
+own figures were not remeasured here, so the delta is stated by test.
 
 ## 6. Ledger
 
