@@ -63,6 +63,12 @@ pub(crate) mod descriptor_custody;
 #[path = "legacy_call_argument_access.rs"]
 mod call_argument_access;
 
+// Card W45-CALLEE-SUMMARY-CASCADE: a pointer member handed to a nullable
+// release, a pointer member null test, and the call-site sub-custody guard
+// before every call to a function defined in this unit. Hooks name the card.
+#[path = "legacy_member_release.rs"]
+mod member_release;
+
 pub use descriptor_custody::ValidityFact;
 
 // Card W44-BRANCH-CONDITION-CALLS: the desugaring of a refused call-bearing
@@ -2710,6 +2716,9 @@ fn build_function_cfg_with(
             .cloned()
             .collect();
     }
+    // Card W45-CALLEE-SUMMARY-CASCADE: the sub-custody guard before every call
+    // to a function this unit defines (`member_release`, rule 3).
+    member_release::guard_unit_callees(&mut cfg, tokens);
     Ok(cfg)
 }
 
@@ -4650,12 +4659,24 @@ impl Parser<'_> {
         ) else {
             // Card W44-INDIRECT-CHAIN-ACCESS: the same typed read with
             // record-pointer member chains as accesses.
-            let chained = crate::indirect_chain_access::chain_condition(
+            let Some(chained) = crate::indirect_chain_access::chain_condition(
                 &texts,
                 &self.typed_model,
                 &self.typed_types,
                 &self.typed_bases,
-            )?;
+            ) else {
+                // Card W45-CALLEE-SUMMARY-CASCADE: a pointer member null test
+                // is the same custody-neutral typed read of its base.
+                let base =
+                    member_release::member_null_test(&texts, &self.typed_model, &self.typed_types)?;
+                return Some(Box::new(LegacyInstruction::IndirectScalarAccess {
+                    alias_reads: self.read_alias(Some(&base)).into_iter().collect(),
+                    bases: vec![base],
+                    destination: None,
+                    frame: None,
+                    chains: Vec::new(),
+                }));
+            };
             return Some(Box::new(self.chain_access_instruction(chained, false)));
         };
         Some(Box::new(LegacyInstruction::IndirectScalarAccess {
