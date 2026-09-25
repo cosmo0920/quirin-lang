@@ -2269,10 +2269,14 @@ pub(crate) fn recursive_component_census(
     let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
     let tokens = withdrawn_tokens.unwrap_or(tokens);
     let mut names = function_names(&tokens, &conditionals).definitions;
+    // Card W44-CORPUS-CALLEE-SUMMARIES: the same derivation scope as the analysis.
+    let definitions = names.clone();
     if let Some(selected) = selected_functions {
         let selected = selected.iter().collect::<BTreeSet<_>>();
         names.retain(|name| selected.contains(name));
     }
+    let names =
+        callee_scope::derivation_scope(&tokens, &names, &definitions, selected_functions.is_some());
     // Card LOADER-ABI-MODES, for the same reason the type gate runs here: the
     // census must read the components the analysis reads, over the stream the
     // analysis reads.
@@ -2353,9 +2357,12 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     if selected_functions.is_some() {
         callee_scope::census::record(&tokens, &names, &definitions, contracts);
     }
-    #[cfg(not(feature = "indirect-census"))]
-    let _ = &definitions;
-    let gate = declared_modes::ModeGate::apply(&tokens, &names, contracts);
+    // Card W44-CORPUS-CALLEE-SUMMARIES: W4 derives over the selection plus the
+    // unselected internal-linkage definitions it reaches (`callee_scope`); the
+    // rows analysed and reported below stay `names` alone.
+    let scope =
+        callee_scope::derivation_scope(&tokens, &names, &definitions, selected_functions.is_some());
+    let gate = declared_modes::ModeGate::apply(&tokens, &scope, contracts);
     let tokens = gate.tokens.unwrap_or(tokens);
     let derivation = gate.derivation;
     let mut functions = BTreeMap::new();
