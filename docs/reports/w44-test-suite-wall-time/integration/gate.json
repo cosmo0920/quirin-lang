@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W44-TEST-SUITE-WALL-TIME on merge fd15eb86 (onto main 04bba519, after W44-AUDIT-PARALLEL-UNITS and W44-C11-GENERIC-SELECTION), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. The core suite ran through the card's new scripts/run_test_binaries.py runner, with `cargo test --workspace --no-fail-fast` as the reference command: 5537 core Rust passed / 0 failed / 11 ignored over 293 summaries (283 test binaries), the runner's own totals line agreeing exactly with the sum of the 293 individual `test result` lines it appended. 124 provider Rust passed / 0 / 0 over 39 summaries; 186 Lean audits; 349 root Python tests; 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus arbiter ran at the default job count (QCORE_AUDIT_JOBS unset) in 71 s and baseline_identity.py against docs/reports/w44-c11-generic-selection/integration/artifacts exits 0 with verdict_bearing_identical true (identity-vs-c11-generic-selection-baseline.json), so the baseline does not move: the card changes test infrastructure, the dev build profile and Clang-discovery caching only, none of it analyzer, contract or proof source.",
+ "workspace_tests": 5537,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 349,
+ "lean_audits": 186,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
