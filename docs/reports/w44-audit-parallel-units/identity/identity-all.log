@@ -1,0 +1,46 @@
+=== j4
+exit 0 verdict_bearing_identical True
+  diagnostics: raw_identical=True after_root_alias=None
+  chunk-contracts: raw_identical=True after_root_alias=None
+  contracts: raw_identical=False after_root_alias=True
+  source-effects: raw_identical=False after_root_alias=False
+  source: raw_identical=True after_root_alias=None
+compare_runs j1 vs j4 exit=0
+cmp audit.log j1 vs j4 exit=0
+=== j8
+exit 0 verdict_bearing_identical True
+  diagnostics: raw_identical=True after_root_alias=None
+  chunk-contracts: raw_identical=True after_root_alias=None
+  contracts: raw_identical=False after_root_alias=True
+  source-effects: raw_identical=False after_root_alias=False
+  source: raw_identical=True after_root_alias=None
+compare_runs j1 vs j8 exit=0
+cmp audit.log j1 vs j8 exit=0
+=== j16b
+exit 0 verdict_bearing_identical True
+  diagnostics: raw_identical=True after_root_alias=None
+  chunk-contracts: raw_identical=True after_root_alias=None
+  contracts: raw_identical=False after_root_alias=True
+  source-effects: raw_identical=False after_root_alias=False
+  source: raw_identical=True after_root_alias=None
+compare_runs j1 vs j16b exit=0
+cmp audit.log j1 vs j16b exit=0
+=== j16c
+exit 0 verdict_bearing_identical True
+  diagnostics: raw_identical=True after_root_alias=None
+  chunk-contracts: raw_identical=True after_root_alias=None
+  contracts: raw_identical=False after_root_alias=True
+  source-effects: raw_identical=False after_root_alias=False
+  source: raw_identical=True after_root_alias=None
+compare_runs j1 vs j16c exit=0
+cmp audit.log j1 vs j16c exit=0
+=== j16d
+exit 0 verdict_bearing_identical True
+  diagnostics: raw_identical=True after_root_alias=None
+  chunk-contracts: raw_identical=True after_root_alias=None
+  contracts: raw_identical=False after_root_alias=True
+  source-effects: raw_identical=False after_root_alias=False
+  source: raw_identical=True after_root_alias=None
+compare_runs j1 vs j16d exit=0
+cmp audit.log j1 vs j16d exit=0
+overall=0

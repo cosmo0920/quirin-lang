@@ -1,0 +1,110 @@
+{
+ "differing_leaves": 41,
+ "differing_key_names": [
+  "build_digest",
+  "configuration_digest",
+  "coverage",
+  "kind",
+  "obligation_id",
+  "observed_runs_only",
+  "paths",
+  "qcore:boolean-field-import:v1",
+  "task_digest"
+ ],
+ "only_in_left": 9,
+ "only_in_right": 9,
+ "first": [
+  {
+   "path": [
+    "results",
+    "16",
+    "bounds",
+    "resource_contracts:685cbcf86628412b2587fe35",
+    "observed_runs_only"
+   ],
+   "left": false,
+   "right": null
+  },
+  {
+   "path": [
+    "results",
+    "16",
+    "bounds",
+    "resource_contracts:685cbcf86628412b2587fe35",
+    "path_exploration",
+    "kind"
+   ],
+   "left": "bounded_paths",
+   "right": null
+  },
+  {
+   "path": [
+    "results",
+    "16",
+    "bounds",
+    "resource_contracts:685cbcf86628412b2587fe35",
+    "path_exploration",
+    "paths"
+   ],
+   "left": 4,
+   "right": null
+  },
+  {
+   "path": [
+    "results",
+    "16",
+    "bounds",
+    "resource_contracts:71407c19c90b3d1a9a93207d",
+    "observed_runs_only"
+   ],
+   "left": null,
+   "right": false
+  },
+  {
+   "path": [
+    "results",
+    "16",
+    "bounds",
+    "resource_contracts:71407c19c90b3d1a9a93207d",
+    "path_exploration",
+    "kind"
+   ],
+   "left": null,
+   "right": "bounded_paths"
+  },
+  {
+   "path": [
+    "results",
+    "16",
+    "bounds",
+    "resource_contracts:71407c19c90b3d1a9a93207d",
+    "path_exploration",
+    "paths"
+   ],
+   "left": null,
+   "right": 4
+  },
+  {
+   "path": [
+    "results",
+    "16",
+    "evidence",
+    "coverage",
+    "0"
+   ],
+   "left": "resource_contracts:685cbcf86628412b2587fe35",
+   "right": "resource_contracts:71407c19c90b3d1a9a93207d"
+  },
+  {
+   "path": [
+    "results",
+    "16",
+    "evidence",
+    "unit",
+    "build_digest"
+   ],
+   "left": "cde96e4e92180e326fb823481d1209be32f40d68260126ee6db447107593f099",
+   "right": "be716942ee5e98c34f9771028135a10e2ed1628968bd1e499fffeaadf32c9c16"
+  }
+ ]
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "run": "configured-base-binary-j1",
+    "wall_s": 466.28,
+    "user_s": 439.4,
+    "system_s": 15.55,
+    "cpu_percent": "97%",
+    "peak_rss_kib": 179928,
+    "exit_status": 0,
+    "load_1min_before": 16.58
+  },
+  {
+    "run": "configured-branch-j1",
+    "wall_s": 545.8,
+    "user_s": 506.58,
+    "system_s": 14.66,
+    "cpu_percent": "95%",
+    "peak_rss_kib": 181440,
+    "exit_status": 0,
+    "load_1min_before": 17.18
+  },
+  {
+    "run": "configured-branch-j4",
+    "wall_s": 163.04,
+    "user_s": 600.29,
+    "system_s": 19.74,
+    "cpu_percent": "380%",
+    "peak_rss_kib": 375204,
+    "exit_status": 0,
+    "load_1min_before": 20.31
+  },
+  {
+    "run": "configured-branch-j8",
+    "wall_s": 106.76,
+    "user_s": 760.72,
+    "system_s": 22.93,
+    "cpu_percent": "733%",
+    "peak_rss_kib": 546764,
+    "exit_status": 0,
+    "load_1min_before": 10.16
+  },
+  {
+    "run": "configured-branch-j16",
+    "wall_s": 79.11,
+    "user_s": 832.01,
+    "system_s": 27.7,
+    "cpu_percent": "1086%",
+    "peak_rss_kib": 850420,
+    "exit_status": 0,
+    "load_1min_before": 5.12
+  },
+  {
+    "run": "configured-branch-j16-probe",
+    "wall_s": 79.47,
+    "user_s": 833.72,
+    "system_s": 28.32,
+    "cpu_percent": "1084%",
+    "peak_rss_kib": 828668,
+    "exit_status": 0,
+    "load_1min_before": 2.62
+  },
+  {
+    "run": "configured-final-binary-j16-confirmation",
+    "wall_s": 165.48,
+    "user_s": 812.83,
+    "system_s": 24.56,
+    "cpu_percent": "506%",
+    "peak_rss_kib": 837164,
+    "exit_status": 0,
+    "load_1min_before": 67.02
+  }
+]
