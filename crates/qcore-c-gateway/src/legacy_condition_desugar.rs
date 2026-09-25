@@ -269,14 +269,14 @@ fn parse(texts: &[&str], start: usize, end: usize) -> Result<Tree, Refusal> {
     {
         let mut depth = 0usize;
         let mut comma = None;
-        for index in start + 2..end - 1 {
-            match texts[index] {
+        for (index, text) in texts.iter().enumerate().take(end - 1).skip(start + 2) {
+            match *text {
                 "(" | "[" => depth += 1,
                 ")" | "]" => depth = depth.saturating_sub(1),
-                "," if depth == 0 => {
-                    if comma.replace(index).is_some() {
-                        return Err(Refusal::Unparsed);
-                    }
+                // The guard records the first top-level comma and refuses a
+                // second: `replace` answers the comma it displaced.
+                "," if depth == 0 && comma.replace(index).is_some() => {
+                    return Err(Refusal::Unparsed);
                 }
                 _ => {}
             }
