@@ -1,7 +1,7 @@
 #!/bin/sh
 # usage: series.sh SUFFIX -- the identity series on the binaries in private/bin.
 #   manifest     the Cycle 19 manifest (full mode), branch binary
-#   base         the same, on the base commit's binary (full mode unchanged)
+#   (the base binary's run is base-and-arbiter.sh's: it needs the base load path)
 #   whole        all eleven crates named whole (full mode)
 #   canonical    a hand-written manifest: the Cycle 19 manifest's 47 entries in
 #                the order a whole-crate selection lowers them, beside it
@@ -24,10 +24,6 @@ done
 bin="$root/private/bin/quirin-audit"
 "$h/run-current.sh" "manifest$s" 16 "$bin" \
   --contract-manifest "$profile/../../../cycle19-resource-contracts.json"; echo "manifest$s exit=$?"
-if [ -x "$root/private/bin/quirin-audit-base" ]; then
-  "$h/run-current.sh" "base$s" 16 "$root/private/bin/quirin-audit-base" \
-    --contract-manifest "$profile/../../../cycle19-resource-contracts.json"; echo "base$s exit=$?"
-fi
 # shellcheck disable=SC2086
 "$h/run-current.sh" "whole$s" 16 "$bin" --load-path "$load_path" $crates; echo "whole$s exit=$?"
 "$h/run-current.sh" "canonical$s" 16 "$bin" \
