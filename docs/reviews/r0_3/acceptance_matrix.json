@@ -6633,24 +6633,24 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W44-C11-GENERIC-SELECTION integration, 2026-09-25. The card (measured against docs/reports/w44-libc-residuals/integration/artifacts) composed onto the combined tree docs/reports/w44-libc-residuals/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 37 added 34 functions 1 units 0); functions moved (combined): [('mk_string_char_search', ('Unknown', 'Safe'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] The card moves mk_string_char_search from Unknown to Safe by resolving glibc's const-generic _Generic selection, and raises leak diagnostics from 19 to 34, all 15 new leaks confined to ut_sasl_oauthbearer_oidc_assertion_create. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-c11-generic-selection/integration/previous-corpus-row.json.",
+   "note": "W44-INDIRECT-CALL-ARGUMENT-ACCESS integration, 2026-09-25. The card (measured against docs/reports/w44-libc-residuals/integration/artifacts) composed onto the combined tree docs/reports/w44-c11-generic-selection/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 195 added 38 functions 2 units 1); functions moved (combined): [('cio_file_hash_print', ('Unknown', 'Safe')), ('mk_rconf_read', ('Unknown', 'Unsafe'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] Two verdicts moved on the card's base: cio_file_hash_print Unknown -> Safe, and mk_rconf_read (unit mk_core/mk_rconf.c) Unknown -> provisional Unsafe from one class-(c) premise-gap leak (Borrowed mk_list_add declaration, registered as MK-LIST-ADD-BORROWED-PUBLICATION), not an upstream defect claim. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-indirect-call-argument-access/integration/previous-corpus-row.json.",
    "units": 185,
    "safe": 3,
    "provisional_unsafe": 9,
    "unknown": 169,
    "data_only": 4,
    "projected_functions": 4834,
-   "leak_diagnostics": 34,
+   "leak_diagnostics": 35,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w44-c11-generic-selection/integration/artifacts/",
-   "source": "docs/reports/w44-c11-generic-selection/integration/integration-confirmation.md; preceding baseline docs/reports/w44-libc-residuals/integration/artifacts",
-   "unknown_alias_diagnostics": 3370,
-   "unsupported_diagnostics": 43854,
+   "baseline": "docs/reports/w44-indirect-call-argument-access/integration/artifacts/",
+   "source": "docs/reports/w44-indirect-call-argument-access/integration/integration-confirmation.md; preceding baseline docs/reports/w44-c11-generic-selection/integration/artifacts",
+   "unknown_alias_diagnostics": 3392,
+   "unsupported_diagnostics": 43674,
    "double_release_diagnostics": 0,
    "function_statuses": {
-    "safe": 301,
+    "safe": 302,
     "provisional_unsafe": 10,
-    "unknown": 4524
+    "unknown": 4522
    },
    "source_definitions": 4921,
    "unprojected_definitions": 87,
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W44-TEST-SUITE-WALL-TIME on merge fd15eb86 (onto main 04bba519, after W44-AUDIT-PARALLEL-UNITS and W44-C11-GENERIC-SELECTION), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. The core suite ran through the card's new scripts/run_test_binaries.py runner, with `cargo test --workspace --no-fail-fast` as the reference command: 5537 core Rust passed / 0 failed / 11 ignored over 293 summaries (283 test binaries), the runner's own totals line agreeing exactly with the sum of the 293 individual `test result` lines it appended. 124 provider Rust passed / 0 / 0 over 39 summaries; 186 Lean audits; 349 root Python tests; 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus arbiter ran at the default job count (QCORE_AUDIT_JOBS unset) in 71 s and baseline_identity.py against docs/reports/w44-c11-generic-selection/integration/artifacts exits 0 with verdict_bearing_identical true (identity-vs-c11-generic-selection-baseline.json), so the baseline does not move: the card changes test infrastructure, the dev build profile and Clang-discovery caching only, none of it analyzer, contract or proof source.",
-  "workspace_tests": 5537,
+  "note": "Integration gate for W44-INDIRECT-CALL-ARGUMENT-ACCESS on merge 66ce7c7f (onto main 64e71955, after W44-C11-GENERIC-SELECTION and W44-TEST-SUITE-WALL-TIME), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5572 core Rust passed / 0 failed / 11 ignored over 296 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 187 Lean audits; 349 root Python tests after regenerating this section (08-python exit 1 before regeneration); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w44-c11-generic-selection/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+  "workspace_tests": 5572,
   "provider_tests": 124,
   "python_evidence_validator_tests": 349,
-  "lean_audits": 186,
+  "lean_audits": 187,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6752,6 +6752,7 @@
    "AuditBucketTally.lean",
    "AuditCGatewayRefinements.lean",
    "AuditCProgram.lean",
+   "AuditCallArgumentAccess.lean",
    "AuditCallUseAdmission.lean",
    "AuditCallbackTaskHandoff.lean",
    "AuditCalleeSummaryScope.lean",
@@ -6930,9 +6931,8 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w44-test-suite-wall-time/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-indirect-call-argument-access/integration/gate.json)"
  },
- "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)",
  "named_followups": [
   {
    "id": "P02-FLAKE",
@@ -9597,5 +9597,6 @@
    "source": "docs/reports/w44-indirect-call-argument-access/README.md",
    "recorded_by": "W44-INDIRECT-CALL-ARGUMENT-ACCESS"
   }
- ]
+ ],
+ "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"
 }

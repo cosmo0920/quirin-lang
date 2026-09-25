@@ -1,0 +1,8 @@
+card delta:     removed 195 added 38 functions 2 units 1
+overlap (already removed by earlier integrations): 0 []
+combined delta: removed 195 added 38
+transitive (callers of combined-only Safe functions): 0 []
+explained by the integrator: 0 []
+complementary Unknown->Safe (card cleared the last blocker): []
+functions moved (combined): [('cio_file_hash_print', ('Unknown', 'Safe')), ('mk_rconf_read', ('Unknown', 'Unsafe'))]
+COMPOSES
