@@ -439,6 +439,119 @@ The record also names the configuration file and its digest, and the contract
 source with the digest of the manifest that was loaded. It is provenance of the
 run, not an input to any verdict, so it is not part of any identity comparison.
 
+## `quirin-audit contracts`: contracts only, without build settings
+
+`quirin-audit contracts` audits C sources with the loaded contracts alone. It
+reads no compilation database, prepared build, checkout pin or source
+profile. Point it at a source tree:
+
+```sh
+cargo run --release -p qcore-audit -- contracts --source-root ../fluent-bit
+```
+
+Run it from the repository root: with no `--load-path` and no
+`--contract-manifest`, it reads `providers/contract-load-path.json` from the
+working directory and loads every crate's resource view (`"selection":
+"all-loaded"`, recorded with `load_path_source: "default"`). A missing file
+refuses. It is a separate subcommand, not a `current` flag, because it shares
+none of `current`'s inputs: no checkout `HEAD`, no profile library groups and
+no database commands.
+
+**Selection.** Name files and directories after the flags, relative to the
+source root (`--source-root`, default the working directory), or name nothing
+to walk the whole root. A directory contributes its regular `*.c` files in
+sorted order. The walk does not enter directories whose name starts with `.`
+and does not follow symbolic links. The first selection of a file wins. A
+directory with no unit, a path outside the root and an empty selection refuse.
+A unit's report `library` is the argument that selected it (its parent
+directory for a named file), and its `file` is relative to the root.
+
+**Assumed configuration.** Each unit is preprocessed with only what you
+supply, `-I DIR`, `-D NAME[=VALUE]` and `--std c11|gnu99|gnu11|gnu17`, plus
+three stated defaults:
+
+- the `gnu17` dialect;
+- the unit's own directory for quoted includes;
+- the host Clang's system headers.
+
+Nothing is searched for or guessed: no include directory discovery, no
+configuration header, no build-system reading. An include directory must exist.
+A definition must be a C identifier with an optional value, and no `$`. Headers
+are read as found on disk, tracked or not. So a header that an earlier in-tree
+configure left in the checkout is read like any other.
+
+**Units that cannot be analysed.** A unit that fails to preprocess or parse
+under these settings is `Unknown`. It is never dropped. Its row keeps its raw
+function denominator, `reason_code: "environment-unavailable"`, and under
+`assumptions` a reason code with the first Clang diagnostic. The reason codes
+are:
+
+| Code | Meaning |
+|---|---|
+| `missing-include` | an included file was not found |
+| `unresolved-configuration` | an `#error` directive fired |
+| `preprocessing-error` | any other preprocessing error |
+| `syntax-error` | the preprocessed text does not parse |
+| `unsupported-input-identity` | the input identity is refused |
+| `clang-unavailable` | Clang could not run |
+| `unreadable-source`, `not-utf8` | the source file could not be read as text |
+
+The console tallies them (`not prepared: missing-include=…`). Such units are
+not gateway failures, so they do not fail the command.
+
+**The publication rule.** Every verdict of this route is relative to the
+recorded assumptions and to nothing else. `Safe` means Safe for the unit as
+preprocessed under this dialect, these include directories and definitions,
+its own directory and the host system headers. A no-build verdict is **never
+presented as equivalent to a build-configured one**: a different configuration
+can select different code. The route enforces this in three ways:
+
+- Every report row carries `assumptions`, holding the effective settings,
+  `outcome`, `reason` and `verdict_scope`.
+- The report's `evidence` block states `evidence: "contracts-only-no-build"`,
+  `build: "none"` and `equivalence_to_build_configured: "none: …"`.
+- The assumption record, together with the selection, is each compile task's
+  `source_profile` dependency. Every Safe certificate's trust context digests
+  it, so a certificate minted under assumed settings cannot be admitted for a
+  configured compile task.
+
+Lean model: `QCore.NoBuildScope`. It includes the witness that a Safe under
+assumptions and an Unsafe under a build can coexist for one source.
+
+**JSON and precedence.** `--config FILE` takes the same settings. Its
+`mode: "contracts-only"` and `build: "none"` are required. Paths are relative to
+the file, except `sources`, which are relative to the source root.
+`compile_database`, `checkout`, `profile_directory`, `source_contracts` and
+`packages` refuse. The rule is `current`'s: when both forms give a setting, the
+two must agree, and nothing is merged. The job count is the exception: flag,
+then `jobs`, then `QCORE_AUDIT_JOBS`, then the capped host default.
+
+```json
+{
+  "schema_version": 1,
+  "mode": "contracts-only",
+  "build": "none",
+  "source_root": "../fluent-bit",
+  "sources": ["lib/ctraces/src", "lib/chunkio/src"],
+  "include_dirs": ["../fluent-bit/lib/ctraces/include"],
+  "defines": [],
+  "std": "gnu17",
+  "load_path": "providers/contract-load-path.json",
+  "report": "private/no-build/report.json",
+  "jobs": 16
+}
+```
+
+`--jobs N` analyses units with the same ordered fold as `current`. The report
+and the `.contracts.json` sidecar are byte-identical at any count. The
+sidecar records the selection, the assumed configuration, the contracts, the
+outcome tallies, and every file with its settings and raw SHA-256.
+`<report>.invocation.json` records the jobs, the form that declared the
+dialect, and the load path and its source. On Fluent Bit, every unit that both
+this route and the build-configured run analyse gets the same verdict; the
+[measurement](../../docs/reports/w44-contracts-only-no-build/README.md)
+attributes every difference.
+
 ## Configured source-contract processes
 
 Add an explicit `source_contracts` object to the audit configuration:

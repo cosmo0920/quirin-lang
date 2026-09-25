@@ -1,0 +1,101 @@
+{
+ "configured": {
+  "exit": 0,
+  "wall_seconds": 71,
+  "artifacts": {
+   "contracts-only.chunk-contracts.json": "b48a9d4947cc1fe87fced6e116e87d3f4696b050391a08240912d7a9f0f13dd3",
+   "contracts-only.contracts.json": "93cdbc355f2164535a9eb813638ed939b67e35999911b6160214fc5021699feb",
+   "contracts-only.invocation.json": "5fc332de53266844cd86d2603434ca712569a11908375e5651d1402e0c042181",
+   "contracts-only.json": "f66f6c47fbb1824b31de25de93166cffacc6e93e989e71ba1617ca841e45a3b9",
+   "contracts-only.source-effects.json": "b48a9d4947cc1fe87fced6e116e87d3f4696b050391a08240912d7a9f0f13dd3"
+  },
+  "summary": [
+   "current revision: 156 source file(s), 157 configuration(s): 2 Safe / 5 provisional Unsafe / 146 Unknown / 4 data-only / 0 gateway failures"
+  ]
+ },
+ "bare": {
+  "exit": 0,
+  "wall_seconds": 4,
+  "artifacts": {
+   "report.contracts.json": "973390f4215e394fd9ac27d5800bdfacfc5c360f2c59e2d4986204a183089093",
+   "report.invocation.json": "9e60d12767383fd6817e8b54dc9ddf74e7e2041b6df7c6f905dd3575b88c256c",
+   "report.json": "c2a0d2f6a1218e5145692db0397770f3439bd99fd3b3a9baa69b92963af8fd77"
+  },
+  "summary": [
+   "no-build: 165 unit(s), 6 prepared under the assumptions, 159 not prepared: 0 Safe / 0 provisional Unsafe / 164 Unknown / 1 data-only / 0 gateway failures (every verdict relative to the recorded assumptions)",
+   "not prepared: missing-include=159"
+  ],
+  "outcomes": {
+   "data_only": 1,
+   "gateway_failures": 0,
+   "not_prepared": {
+    "missing-include": 159
+   },
+   "prepared": 6,
+   "provisional_unsafe": 0,
+   "safe": 0,
+   "units": 165,
+   "unknown": 164
+  }
+ },
+ "src-includes": {
+  "exit": 0,
+  "wall_seconds": 9,
+  "artifacts": {
+   "report.contracts.json": "14a3438b3c53814ad5c884320d15e7b1b05acd1c421a7c9b9aa6ad5f6547144e",
+   "report.invocation.json": "86c311a869bb0dac32b25be23dec564ef390c694082d87d8273e5c6a85a60aba",
+   "report.json": "e244aca9a096b1511c0b0bcaae18af887383ddf3172027cdc54b45589af318ae"
+  },
+  "summary": [
+   "no-build: 165 unit(s), 54 prepared under the assumptions, 111 not prepared: 2 Safe / 1 provisional Unsafe / 158 Unknown / 4 data-only / 0 gateway failures (every verdict relative to the recorded assumptions)",
+   "not prepared: missing-include=104, syntax-error=7"
+  ],
+  "outcomes": {
+   "data_only": 4,
+   "gateway_failures": 0,
+   "not_prepared": {
+    "missing-include": 104,
+    "syntax-error": 7
+   },
+   "prepared": 54,
+   "provisional_unsafe": 1,
+   "safe": 2,
+   "units": 165,
+   "unknown": 158
+  }
+ },
+ "root": {
+  "exit": 0,
+  "wall_seconds": 355,
+  "artifacts": {
+   "report.contracts.json": "5e2a757706fa64a872af671fde3ee102a7a14717b755a4ebd88c5d7923355221",
+   "report.invocation.json": "09b8cf5b31613fa5ffb73ce3a69b2f951ec7bb274be3a549a237db8fb5de5a19",
+   "report.json": "ddaf9c71d1b88618404951f990c7d69282831dc1a35595f7d14ed2750d7459ff"
+  },
+  "summary": [
+   "no-build: 2944 unit(s), 356 prepared under the assumptions, 2588 not prepared: 14 Safe / 17 provisional Unsafe / 2903 Unknown / 10 data-only / 0 gateway failures (every verdict relative to the recorded assumptions)",
+   "not prepared: missing-include=2545, not-utf8=2, syntax-error=21, unresolved-configuration=20"
+  ],
+  "outcomes": {
+   "data_only": 10,
+   "gateway_failures": 0,
+   "not_prepared": {
+    "missing-include": 2545,
+    "not-utf8": 2,
+    "syntax-error": 21,
+    "unresolved-configuration": 20
+   },
+   "prepared": 356,
+   "provisional_unsafe": 17,
+   "safe": 14,
+   "units": 2944,
+   "unknown": 2903
+  }
+ },
+ "jobs-1-vs-16": {
+  "run": "src-includes at --jobs 1 against the 16-job run",
+  "exit": 0,
+  "report_cmp_exit": 0,
+  "sidecar_cmp_exit": 0
+ }
+}

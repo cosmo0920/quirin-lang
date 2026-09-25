@@ -7,6 +7,7 @@ fn main() -> ExitCode {
         eprintln!("usage: quirin-audit CONFIG.json");
         eprintln!("       {}", qcore_audit::current_cli::USAGE);
         eprintln!("       {}", qcore_audit::prepare::USAGE);
+        eprintln!("       {}", qcore_audit::no_build::USAGE);
         return ExitCode::FAILURE;
     };
     if path == "prepare" {
@@ -38,6 +39,21 @@ fn main() -> ExitCode {
             }
         }
         return qcore_audit::current_cli::main(rest);
+    }
+    if path == "contracts" {
+        // Card W44-CONTRACTS-ONLY-NO-BUILD: contracts-only with no compilation
+        // database or prepared build; verdicts relative to the assumptions.
+        let mut rest = Vec::new();
+        for argument in arguments {
+            match argument.into_string() {
+                Ok(argument) => rest.push(argument),
+                Err(argument) => {
+                    eprintln!("non-UTF-8 argument {argument:?}");
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
+        return qcore_audit::no_build::main(rest);
     }
     if path == "callback-task-handoff" {
         let Some(config) = arguments.next() else {

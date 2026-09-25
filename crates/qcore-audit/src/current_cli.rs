@@ -106,7 +106,7 @@ struct Settings {
     jobs: Option<usize>,
 }
 
-fn anchor(base: &Path, path: PathBuf) -> PathBuf {
+pub(crate) fn anchor(base: &Path, path: PathBuf) -> PathBuf {
     if path.is_absolute() {
         path
     } else {
@@ -223,7 +223,7 @@ fn read_config(path: &Path) -> Result<(Settings, Vec<u8>), String> {
 }
 
 /// A setting given by both forms must be equal.
-fn one<T: PartialEq + std::fmt::Debug>(
+pub(crate) fn one<T: PartialEq + std::fmt::Debug>(
     name: &str,
     command_line: Option<T>,
     configuration: Option<T>,
@@ -236,6 +236,96 @@ fn one<T: PartialEq + std::fmt::Debug>(
         (Some(value), _) | (None, Some(value)) => Ok(Some(value)),
         (None, None) => Ok(None),
     }
+}
+
+/// Every declaration of a run's resource contracts, from both forms.
+pub(crate) struct ContractDeclarations<'a> {
+    pub command_line: Option<&'a Vec<String>>,
+    pub configuration: Option<&'a Vec<String>>,
+    pub load_path: Option<&'a Path>,
+    pub contract_manifest: Option<&'a Path>,
+    pub mode: EvidenceMode,
+    pub quirin_providers_only: bool,
+    /// The source profile's declared manifest, when the route has a profile.
+    pub profile_manifest: Option<&'a Path>,
+}
+
+/// Choose the one contract source of a run, with the refusals this module's
+/// header states. `quirin-audit current` and the no-build `quirin-audit
+/// contracts` route (card W44-CONTRACTS-ONLY-NO-BUILD) share it, so both
+/// resolve a selection, a manifest and the all-loaded default identically.
+pub(crate) fn choose_contracts(
+    declared: &ContractDeclarations<'_>,
+) -> Result<(ContractInput, &'static str), String> {
+    let has_providers = declared.command_line.is_some() || declared.configuration.is_some();
+    let all_loaded =
+        !has_providers && declared.mode.is_contracts_only() && declared.contract_manifest.is_none();
+    if !has_providers && !all_loaded && declared.load_path.is_some() {
+        return Err("a contract load path is given but no provider is selected".into());
+    }
+    if !has_providers && !all_loaded && declared.quirin_providers_only {
+        return Err(
+            "--quirin-providers-only guards a provider selection; select providers with \
+             --provider"
+                .into(),
+        );
+    }
+    Ok(if has_providers {
+        if declared.contract_manifest.is_some() {
+            return Err(
+                "a provider selection and an explicit contract manifest are two declarations of \
+                 one input; give one"
+                    .into(),
+            );
+        }
+        let load_path = declared.load_path.ok_or(
+            "a provider selection needs the contract load path (--load-path \
+             providers/contract-load-path.json)",
+        )?;
+        let resolve = |entries: Option<&Vec<String>>, source| {
+            entries
+                .map(|entries| {
+                    resolve_providers(load_path, entries, declared.quirin_providers_only, source)
+                })
+                .transpose()
+        };
+        let resolved = match (
+            resolve(declared.command_line, SelectionSource::CommandLine)?,
+            resolve(declared.configuration, SelectionSource::Configuration)?,
+        ) {
+            (Some(left), Some(right)) => agree(left, right)?,
+            (Some(only), None) | (None, Some(only)) => only,
+            (None, None) => unreachable!("a provider selection was given"),
+        };
+        (
+            ContractInput::providers(&resolved, declared.profile_manifest),
+            "providers",
+        )
+    } else if all_loaded {
+        let load_path = declared.load_path.ok_or(
+            "a contracts-only run with no provider selection loads every crate's resource view on \
+             the contract load path: give it (--load-path providers/contract-load-path.json), or \
+             narrow the run with --provider or --contract-manifest",
+        )?;
+        (
+            ContractInput::providers(
+                &resolve_all_loaded(load_path, declared.quirin_providers_only)?,
+                declared.profile_manifest,
+            ),
+            "providers",
+        )
+    } else if let Some(manifest) = declared.contract_manifest {
+        (ContractInput::manifest(manifest)?, "manifest")
+    } else if let Some(manifest) = declared.profile_manifest {
+        (ContractInput::manifest(manifest)?, "profile_manifest")
+    } else {
+        return Err(
+            "no resource contracts selected: name providers (--provider NAME / \"providers\") or \
+             a manifest (--contract-manifest PATH); there is no default provider set, and the \
+             source profile declares no manifest"
+                .into(),
+        );
+    })
 }
 
 /// Parse, resolve and run. Returns the process exit code.
@@ -316,73 +406,15 @@ fn run(arguments: &[String]) -> Result<bool, String> {
     let effective_jobs = crate::parallel::effective_jobs(jobs);
     let profile = load_profile_directory(&profile_directory).map_err(|error| error.to_string())?;
     let profile_manifest = profile.resource_contract_manifest_path();
-    let has_providers = command_line.providers.is_some() || configuration.providers.is_some();
-    let all_loaded = !has_providers && mode.is_contracts_only() && contract_manifest.is_none();
-    if !has_providers && !all_loaded && load_path.is_some() {
-        return Err("a contract load path is given but no provider is selected".into());
-    }
-    if !has_providers && !all_loaded && quirin_providers_only {
-        return Err(
-            "--quirin-providers-only guards a provider selection; select providers with \
-             --provider"
-                .into(),
-        );
-    }
-    let (contracts, contract_source) = if has_providers {
-        if contract_manifest.is_some() {
-            return Err(
-                "a provider selection and an explicit contract manifest are two declarations of \
-                 one input; give one"
-                    .into(),
-            );
-        }
-        let load_path = load_path.as_deref().ok_or(
-            "a provider selection needs the contract load path (--load-path \
-             providers/contract-load-path.json)",
-        )?;
-        let resolve = |entries: &Option<Vec<String>>, source| {
-            entries
-                .as_ref()
-                .map(|entries| resolve_providers(load_path, entries, quirin_providers_only, source))
-                .transpose()
-        };
-        let resolved = match (
-            resolve(&command_line.providers, SelectionSource::CommandLine)?,
-            resolve(&configuration.providers, SelectionSource::Configuration)?,
-        ) {
-            (Some(left), Some(right)) => agree(left, right)?,
-            (Some(only), None) | (None, Some(only)) => only,
-            (None, None) => unreachable!("a provider selection was given"),
-        };
-        (
-            ContractInput::providers(&resolved, profile_manifest.as_deref()),
-            "providers",
-        )
-    } else if all_loaded {
-        let load_path = load_path.as_deref().ok_or(
-            "a contracts-only run with no provider selection loads every crate's resource view on \
-             the contract load path: give it (--load-path providers/contract-load-path.json), or \
-             narrow the run with --provider or --contract-manifest",
-        )?;
-        (
-            ContractInput::providers(
-                &resolve_all_loaded(load_path, quirin_providers_only)?,
-                profile_manifest.as_deref(),
-            ),
-            "providers",
-        )
-    } else if let Some(manifest) = &contract_manifest {
-        (ContractInput::manifest(manifest)?, "manifest")
-    } else if let Some(manifest) = &profile_manifest {
-        (ContractInput::manifest(manifest)?, "profile_manifest")
-    } else {
-        return Err(
-            "no resource contracts selected: name providers (--provider NAME / \"providers\") or \
-             a manifest (--contract-manifest PATH); there is no default provider set, and the \
-             source profile declares no manifest"
-                .into(),
-        );
-    };
+    let (contracts, contract_source) = choose_contracts(&ContractDeclarations {
+        command_line: command_line.providers.as_ref(),
+        configuration: configuration.providers.as_ref(),
+        load_path: load_path.as_deref(),
+        contract_manifest: contract_manifest.as_deref(),
+        mode,
+        quirin_providers_only,
+        profile_manifest: profile_manifest.as_deref(),
+    })?;
     let historical = historical_reference_revision(&profile)?;
     let source_set = profile_directory
         .file_name()

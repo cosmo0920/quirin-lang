@@ -233,6 +233,7 @@ import QCore.Cycle18CallbackObligations
 import QCore.ContractInherit
 import QCore.ContractViewProjection
 import QCore.ProviderSelection
+import QCore.NoBuildScope
 import QCore.NativePlatformMatrix
 import QCore.CallbackTaskHandoff
 
