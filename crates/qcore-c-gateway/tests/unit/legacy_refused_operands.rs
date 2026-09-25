@@ -4,7 +4,9 @@ use super::*;
 
 fn places(statement: &str) -> Vec<(String, HandOn)> {
     let tokens = statement.split_whitespace().collect::<Vec<_>>();
-    handed_on(&tokens).into_iter().collect()
+    handed_on(&tokens, &BTreeSet::from(["local".to_owned()]))
+        .into_iter()
+        .collect()
 }
 
 fn escapes(statement: &str) -> Vec<String> {
@@ -108,9 +110,20 @@ fn line_reads_key_every_line_a_statement_spans() {
         "x", "=", "f", "(", "a", ",", "b", ")", "+", "c", ";", "y", "=", "d", ";",
     ];
     let lines = [10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 12, 12, 12, 12];
-    let reads = line_reads(&texts, &lines);
+    let reads = line_reads(&texts, &lines, &BTreeSet::new());
     assert_eq!(reads[&10].get("c"), Some(&HandOn::Escape));
     assert_eq!(reads[&11].get("a"), Some(&HandOn::Call));
     assert!(!reads[&12].contains_key("a"));
     assert_eq!(reads[&12].get("d"), Some(&HandOn::Escape));
+}
+
+#[test]
+fn a_store_into_a_local_aggregate_hands_nothing_on() {
+    // The value moves into storage of this call; the accusation stays.
+    assert!(escapes("local . slot = h").is_empty());
+    assert!(escapes("local [ 0 ] = h").is_empty());
+    // A store through a pointer member of it, or into another object, escapes.
+    assert_eq!(escapes("local . owner - > slot = h"), ["h"]);
+    assert_eq!(escapes("other . slot = h"), ["h"]);
+    assert_eq!(escapes("* p = h"), ["h"]);
 }

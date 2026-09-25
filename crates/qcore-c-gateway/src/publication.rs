@@ -514,7 +514,21 @@ pub(crate) fn facts(
         destinations,
         indirect,
         scalar_sources,
-        line_reads: crate::legacy_c::refused_operands::line_reads(body, lines),
+        line_reads: crate::legacy_c::refused_operands::line_reads(
+            body,
+            lines,
+            &body
+                .iter()
+                .map(|text| (*text).to_owned())
+                .chain(formals.iter().cloned())
+                .filter(|text| {
+                    matches!(
+                        types.declared_type(text),
+                        Some(crate::typed_field_access::DeclaredType::Record(_))
+                    )
+                })
+                .collect(),
+        ),
     }
 }
 

@@ -470,14 +470,17 @@ fn an_index_expression_keeps_the_refusal_it_had() {
 fn storing_a_named_pointer_keeps_the_refusal_it_had() {
     // The store keeps its refusal, so the collection never holds `p`'s
     // object: releasing `v[0]` releases an unfilled element and refuses. The
-    // leak of `p`'s site is the pre-card answer for a release through a
-    // refused statement, unchanged by this card.
+    // leak of `p`'s site this card measured was the pre-card answer for a
+    // release through a refused statement. Card W44-LEAK-PIN-AUDIT withdraws
+    // it deliberately: the refused store hands `p` on as its value, so `p`
+    // carries an unresolved effect (the refused-escape rule) and the function
+    // is `Unknown`, never `Safe`.
     expect(
         "`v[0] = p` would leave `p` an alias of a collection element",
         "void w(const char *s) { char **v = x_alloc(16); char *p; if (!v) return; \
          p = x_dup(s); v[0] = p; x_free(v[0]); x_free(v); }",
-        "Unsafe",
-        &["leak", "unknown_alias:v[0]", INDIRECT],
+        "Unknown",
+        &["unknown_alias:v[0]", INDIRECT],
     );
 }
 

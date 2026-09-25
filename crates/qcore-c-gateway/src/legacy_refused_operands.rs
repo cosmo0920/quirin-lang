@@ -62,7 +62,12 @@
 //!   hands on nothing the projection binds; `x = p->items[i]` and
 //!   `x = p->fn(…)` read through `p` and hand on nothing of `p`'s;
 //! * `x = f(p)` passes `p` to a callee (the case above), and `sizeof (p)` does
-//!   not evaluate `p`.
+//!   not evaluate `p`;
+//! * `local.slot = p` and `local[0] = p`, into a record object of this very
+//!   function (a local or by-value formal `struct`, not reached through `->` or
+//!   `*`), keep `p` in storage that ends with the call: nothing is handed on,
+//!   and the accusation stays, as the publication rule leaves a local
+//!   destination alone.
 //!
 //! Places are spelled as `canonical_place` spells them (`p`, `p->f`, `p.f`,
 //! `p[0]`, `*p`), and a bound place is matched exactly; the marking then
@@ -96,8 +101,15 @@ pub(crate) type LineReads = BTreeMap<usize, BTreeMap<String, HandOn>>;
 /// Read one body's [`LineReads`] from its token texts and their lines.
 ///
 /// `body` excludes the braces; `lines[i]` is the preprocessed line of
-/// `body[i]`. A statement runs to the next `;`, `{` or `}`.
-pub(crate) fn line_reads(body: &[&str], lines: &[usize]) -> LineReads {
+/// `body[i]`. A statement runs to the next `;`, `{` or `}`. `local_aggregates`
+/// are the names the declaration reader types as a record object of this
+/// function (a local or by-value formal `struct`), whose storage ends with the
+/// call: see [`handed_on`].
+pub(crate) fn line_reads(
+    body: &[&str],
+    lines: &[usize],
+    local_aggregates: &BTreeSet<String>,
+) -> LineReads {
     let mut reads = LineReads::new();
     let mut start = 0usize;
     for index in 0..=body.len() {
@@ -106,7 +118,7 @@ pub(crate) fn line_reads(body: &[&str], lines: &[usize]) -> LineReads {
             continue;
         }
         if index > start {
-            let places = handed_on(&body[start..index]);
+            let places = handed_on(&body[start..index], local_aggregates);
             if !places.is_empty() {
                 for line in lines[start..index].iter().copied().collect::<BTreeSet<_>>() {
                     let entry = reads.entry(line).or_default();
@@ -156,9 +168,23 @@ enum Paren {
 }
 
 /// The places one statement hands on, and how (see the module header).
-pub(crate) fn handed_on(statement: &[&str]) -> BTreeMap<String, HandOn> {
+///
+/// A store into a member or element of one of `local_aggregates`
+/// (`local.slot = h;`) moves the value into storage of this very call, which
+/// ends at its return: it hands nothing on, and the accusation stays, exactly
+/// as the publication rule leaves a local destination alone. Where the
+/// aggregate itself later leaves the function is not followed (the accusing
+/// direction).
+pub(crate) fn handed_on(
+    statement: &[&str],
+    local_aggregates: &BTreeSet<String>,
+) -> BTreeMap<String, HandOn> {
     let mut places = BTreeMap::new();
     let returns = statement.first() == Some(&"return");
+    let mut local_store = statement
+        .first()
+        .is_some_and(|first| local_aggregates.contains(*first))
+        && matches!(statement.get(1), Some(&"." | &"["));
     // The index of the top-level simple assignment, if any.
     let assignment = {
         let mut depth = 0usize;
@@ -183,6 +209,12 @@ pub(crate) fn handed_on(statement: &[&str]) -> BTreeMap<String, HandOn> {
         }
         found
     };
+    // Only a destination inside the aggregate itself: a `->` or a `*` in it
+    // reaches another object.
+    local_store &= assignment.is_some_and(|equal| {
+        !statement[..equal].contains(&"*")
+            && !statement[..equal].windows(2).any(|pair| pair == ["-", ">"])
+    });
     let mut parens: Vec<Paren> = Vec::new();
     let mut index = 0usize;
     while index < statement.len() {
@@ -249,7 +281,7 @@ pub(crate) fn handed_on(statement: &[&str]) -> BTreeMap<String, HandOn> {
             None
         } else if parens.contains(&Paren::Call) {
             Some(HandOn::Call)
-        } else if returns || assignment.is_some_and(|equal| index > equal) {
+        } else if returns || (!local_store && assignment.is_some_and(|equal| index > equal)) {
             Some(HandOn::Escape)
         } else {
             None
