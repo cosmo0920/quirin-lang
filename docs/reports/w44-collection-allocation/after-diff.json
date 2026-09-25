@@ -506,17 +506,17 @@
   ],
   [
    "librdkafka/rdkafka_broker.c",
-   "rd_kafka_broker_add",
-   23677,
-   "unknown_alias",
-   "unresolved resource identity `rkb`"
-  ],
-  [
-   "librdkafka/rdkafka_broker.c",
    "rd_kafka_broker_decommission",
    24222,
    "unsupported",
    "indirect memory access is outside the resource projection"
+  ],
+  [
+   "librdkafka/rdkafka_broker.c",
+   "rd_kafka_broker_producer_serve",
+   23148,
+   "unsupported",
+   "call to uncontracted function `rd_interval_init`"
   ],
   [
    "librdkafka/rdkafka_buf.c",
@@ -695,13 +695,6 @@
   ],
   [
    "librdkafka/rdkafka_coord.c",
-   "rd_kafka_coord_cache_add",
-   20202,
-   "unknown_alias",
-   "unresolved resource identity `cce`"
-  ],
-  [
-   "librdkafka/rdkafka_coord.c",
    "rd_kafka_coord_req",
    20247,
    "unsupported",
@@ -825,13 +818,6 @@
    21813,
    "unsupported",
    "indirect memory access is outside the resource projection"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "rd_kafka_mock_commit_offset",
-   21818,
-   "unknown_alias",
-   "unresolved resource identity `coff`"
   ],
   [
    "librdkafka/rdkafka_mock.c",
@@ -1478,20 +1464,6 @@
    "indirect memory access is outside the resource projection"
   ],
   [
-   "librdkafka/rdmap.c",
-   "rd_map_insert",
-   2996,
-   "unknown_alias",
-   "unresolved resource identity `elem`"
-  ],
-  [
-   "librdkafka/rdmap.c",
-   "rd_map_insert",
-   2997,
-   "unknown_alias",
-   "unresolved resource identity `elem`"
-  ],
-  [
    "librdkafka/rdregex.c",
    "rd_regex_comp",
    3025,
@@ -1712,20 +1684,6 @@
   ],
   [
    "librdkafka/rdhttp.c",
-   "unittest_http_get",
-   21763,
-   "leak",
-   "live obligation acquired at rdhttp.c:712"
-  ],
-  [
-   "librdkafka/rdhttp.c",
-   "unittest_http_get",
-   21769,
-   "leak",
-   "live obligation acquired at rdhttp.c:712"
-  ],
-  [
-   "librdkafka/rdhttp.c",
    "unittest_http_get_params_append",
    21820,
    "leak",
@@ -1744,13 +1702,6 @@
    25158,
    "unsupported",
    "nullable resource `ret` used by a non-null contract"
-  ],
-  [
-   "librdkafka/rdkafka.c",
-   "rd_kafka_destroy_internal",
-   0,
-   "leak",
-   "live obligation acquired at rdkafka.c:1455"
   ],
   [
    "librdkafka/rdkafka.c",
@@ -2159,20 +2110,6 @@
    "nullable resource `description` used by a non-null contract"
   ],
   [
-   "librdkafka/rdkafka_admin.c",
-   "rd_kafka_admin_add_config0",
-   21275,
-   "leak",
-   "live obligation acquired at rdkafka_admin.c:2031"
-  ],
-  [
-   "librdkafka/rdkafka_admin.c",
-   "rd_kafka_admin_incremental_add_config0",
-   21291,
-   "leak",
-   "live obligation acquired at rdkafka_admin.c:2056"
-  ],
-  [
    "librdkafka/rdkafka_aux.c",
    "rd_kafka_acl_result_new",
    19730,
@@ -2243,13 +2180,6 @@
    "nullable resource `rkb` used by a non-null contract"
   ],
   [
-   "librdkafka/rdkafka_broker.c",
-   "rd_kafka_broker_decommission",
-   0,
-   "leak",
-   "live obligation acquired at rdkafka_broker.c:6588"
-  ],
-  [
    "librdkafka/rdkafka_buf.c",
    "rd_kafka_buf_new0",
    19678,
@@ -2271,13 +2201,6 @@
    "nullable resource `cert` used by a non-null contract"
   ],
   [
-   "librdkafka/rdkafka_cert.c",
-   "rd_kafka_cert_new",
-   20436,
-   "leak",
-   "live obligation acquired at rdkafka_cert.c:196"
-  ],
-  [
    "librdkafka/rdkafka_cgrp.c",
    "PartitionMemberInfo_new",
    20430,
@@ -2290,20 +2213,6 @@
    20430,
    "unsupported",
    "nullable resource `pmi` used by a non-null contract"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "rd_kafka_cgrp_handle_JoinGroup",
-   21667,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:2396"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "rd_kafka_cgrp_handle_JoinGroup",
-   21699,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:2396"
   ],
   [
    "librdkafka/rdkafka_cgrp.c",
@@ -2467,118 +2376,6 @@
    "nullable resource `map` used by a non-null contract"
   ],
   [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_member_metadata_serdes",
-   24910,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8240"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_member_metadata_serdes",
-   24911,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8240"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_member_metadata_serdes",
-   24912,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8240"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_member_metadata_serdes",
-   24914,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8240"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_member_metadata_serdes",
-   24916,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8240"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_member_metadata_serdes",
-   24918,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8240"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_set_intersect",
-   24815,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8076"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_set_intersect",
-   24815,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8079"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_set_intersect",
-   24816,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8076"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_set_intersect",
-   24816,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8079"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_set_intersect",
-   24817,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8076"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_set_intersect",
-   24817,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8079"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_set_intersect",
-   24819,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8076"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_set_intersect",
-   24819,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8079"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_set_intersect",
-   24820,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8076"
-  ],
-  [
-   "librdkafka/rdkafka_cgrp.c",
-   "unittest_set_intersect",
-   24820,
-   "leak",
-   "live obligation acquired at rdkafka_cgrp.c:8079"
-  ],
-  [
    "librdkafka/rdkafka_conf.c",
    "rd_kafka_conf_kv_split",
    25621,
@@ -2626,20 +2423,6 @@
    24657,
    "unsupported",
    "nullable resource `tconf` used by a non-null contract"
-  ],
-  [
-   "librdkafka/rdkafka_coord.c",
-   "rd_kafka_coord_cache_add",
-   0,
-   "leak",
-   "live obligation acquired at rdkafka_coord.c:127"
-  ],
-  [
-   "librdkafka/rdkafka_coord.c",
-   "rd_kafka_coord_req",
-   0,
-   "leak",
-   "live obligation acquired at rdkafka_coord.c:239"
   ],
   [
    "librdkafka/rdkafka_error.c",
@@ -2702,21 +2485,7 @@
    "rd_kafka_ApiVersions_copy",
    19831,
    "unsupported",
-   "call to uncontracted function `rd_memdup`"
-  ],
-  [
-   "librdkafka/rdkafka_fetcher.c",
-   "rd_kafka_share_acknowledge_reply_handle",
-   21496,
-   "leak",
-   "live obligation acquired at rdkafka_fetcher.c:2164"
-  ],
-  [
-   "librdkafka/rdkafka_fetcher.c",
-   "rd_kafka_share_acknowledge_reply_handle",
-   21501,
-   "leak",
-   "live obligation acquired at rdkafka_fetcher.c:2164"
+   "call has an unmodeled formal address or borrowed expression"
   ],
   [
    "librdkafka/rdkafka_header.c",
@@ -2784,13 +2553,6 @@
   [
    "librdkafka/rdkafka_mock.c",
    "rd_kafka_mock_broker_new",
-   22577,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:2069"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "rd_kafka_mock_broker_new",
    22579,
    "unknown_alias",
    "unresolved resource identity `mrkb`"
@@ -2801,20 +2563,6 @@
    22579,
    "unsupported",
    "nullable resource `mrkb` used by a non-null contract"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "rd_kafka_mock_cluster_new",
-   23412,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:3303"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "rd_kafka_mock_cluster_new",
-   23450,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:3303"
   ],
   [
    "librdkafka/rdkafka_mock.c",
@@ -2902,13 +2650,6 @@
   ],
   [
    "librdkafka/rdkafka_mock.c",
-   "rd_kafka_mock_partition_push_leader_response0",
-   0,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:776"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
    "rd_kafka_mock_request_copy",
    23493,
    "unknown_alias",
@@ -2986,94 +2727,10 @@
   ],
   [
    "librdkafka/rdkafka_mock.c",
-   "rd_kafka_mock_txn_partition_add",
-   0,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:246"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "ut_mock_txn_aborted_range_recorded",
-   24196,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:4389"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
    "ut_mock_txn_aborted_range_recorded",
    24196,
    "unknown_alias",
    "unresolved resource identity `mabort`"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "ut_mock_txn_aborted_range_recorded",
-   24197,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:4389"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "ut_mock_txn_aborted_range_recorded",
-   24198,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:4389"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "ut_mock_txn_aborted_range_recorded",
-   24199,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:4389"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "ut_mock_txn_aborted_range_recorded",
-   24200,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:4389"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "ut_mock_txn_aborted_range_recorded",
-   24203,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:4389"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "ut_mock_txn_offset_is_aborted",
-   24233,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:4436"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "ut_mock_txn_offset_is_aborted",
-   24242,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:4436"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "ut_mock_txn_offset_is_aborted",
-   24251,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:4436"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "ut_mock_txn_offset_is_aborted",
-   24260,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:4436"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "ut_mock_txn_offset_is_aborted",
-   24264,
-   "leak",
-   "live obligation acquired at rdkafka_mock.c:4436"
   ],
   [
    "librdkafka/rdkafka_mock_cgrp.c",
@@ -3088,13 +2745,6 @@
    21138,
    "unsupported",
    "nullable resource `mcgrp` used by a non-null contract"
-  ],
-  [
-   "librdkafka/rdkafka_mock_cgrp.c",
-   "rd_kafka_mock_cgrp_classic_member_add",
-   21077,
-   "leak",
-   "live obligation acquired at rdkafka_mock_cgrp.c:574"
   ],
   [
    "librdkafka/rdkafka_mock_cgrp.c",
@@ -3125,41 +2775,6 @@
    "unresolved resource identity `i_pointer`"
   ],
   [
-   "librdkafka/rdkafka_mock_cgrp.c",
-   "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range",
-   21320,
-   "leak",
-   "live obligation acquired at rdkafka_mock_cgrp.c:910"
-  ],
-  [
-   "librdkafka/rdkafka_mock_handlers.c",
-   "rd_kafka_mock_handle_EndTxn",
-   23701,
-   "leak",
-   "live obligation acquired at rdkafka_mock_handlers.c:2525"
-  ],
-  [
-   "librdkafka/rdkafka_mock_handlers.c",
-   "rd_kafka_mock_handle_JoinGroup",
-   23132,
-   "leak",
-   "live obligation acquired at rdkafka_mock_handlers.c:1613"
-  ],
-  [
-   "librdkafka/rdkafka_mock_handlers.c",
-   "rd_kafka_mock_handle_JoinGroup",
-   23143,
-   "leak",
-   "live obligation acquired at rdkafka_mock_handlers.c:1613"
-  ],
-  [
-   "librdkafka/rdkafka_mock_handlers.c",
-   "rd_kafka_mock_handle_JoinGroup",
-   23148,
-   "leak",
-   "live obligation acquired at rdkafka_mock_handlers.c:1613"
-  ],
-  [
    "librdkafka/rdkafka_mock_handlers.c",
    "rd_kafka_mock_handle_ShareAcknowledge",
    25251,
@@ -3172,20 +2787,6 @@
    24734,
    "unsupported",
    "call to uncontracted function `__builtin_alloca`"
-  ],
-  [
-   "librdkafka/rdkafka_mock_handlers.c",
-   "rd_kafka_mock_handle_ShareFetch",
-   25177,
-   "leak",
-   "live obligation acquired at rdkafka_mock_handlers.c:4194"
-  ],
-  [
-   "librdkafka/rdkafka_mock_handlers.c",
-   "rd_kafka_mock_pid_new",
-   23349,
-   "leak",
-   "live obligation acquired at rdkafka_mock_handlers.c:1957"
   ],
   [
    "librdkafka/rdkafka_mock_handlers.c",
@@ -3252,13 +2853,6 @@
   ],
   [
    "librdkafka/rdkafka_mock_sharegrp.c",
-   "rd_kafka_mock_sharegroup_get_members_for_topic",
-   22107,
-   "leak",
-   "live obligation acquired at rdkafka_mock_sharegrp.c:443"
-  ],
-  [
-   "librdkafka/rdkafka_mock_sharegrp.c",
    "rd_kafka_mock_sharegroup_member_get",
    22005,
    "unknown_alias",
@@ -3317,8 +2911,15 @@
    "librdkafka/rdkafka_msg.c",
    "rd_kafka_message_new",
    20574,
-   "leak",
-   "live obligation acquired at rdkafka_msg.c:1299"
+   "unknown_alias",
+   "unresolved resource identity `rkm`"
+  ],
+  [
+   "librdkafka/rdkafka_msg.c",
+   "rd_kafka_message_new",
+   20574,
+   "unsupported",
+   "nullable resource `rkm` used by a non-null contract"
   ],
   [
    "librdkafka/rdkafka_msg.c",
@@ -3333,13 +2934,6 @@
    20970,
    "unsupported",
    "nullable resource `rkm` used by a non-null contract"
-  ],
-  [
-   "librdkafka/rdkafka_msgset_reader.c",
-   "rd_kafka_aborted_txns_add",
-   0,
-   "leak",
-   "live obligation acquired at rdkafka_msgset_reader.c:1952"
   ],
   [
    "librdkafka/rdkafka_msgset_reader.c",
@@ -3419,13 +3013,6 @@
    "nullable resource `rktpar` used by a non-null contract"
   ],
   [
-   "librdkafka/rdkafka_partition.c",
-   "rd_kafka_toppar_new0",
-   20382,
-   "leak",
-   "live obligation acquired at rdkafka_partition.c:225"
-  ],
-  [
    "librdkafka/rdkafka_pattern.c",
    "rd_kafka_pattern_list_new",
    19683,
@@ -3452,20 +3039,6 @@
    19584,
    "unsupported",
    "nullable resource `rkpat` used by a non-null contract"
-  ],
-  [
-   "librdkafka/rdkafka_plugin.c",
-   "rd_kafka_plugin_new",
-   19624,
-   "leak",
-   "live obligation acquired at rdkafka_plugin.c:106"
-  ],
-  [
-   "librdkafka/rdkafka_queue.c",
-   "rd_kafka_q_io_event_enable",
-   0,
-   "leak",
-   "live obligation acquired at rdkafka_queue.c:1121"
   ],
   [
    "librdkafka/rdkafka_queue.c",
@@ -3538,326 +3111,11 @@
    "call to uncontracted function `qsort`"
   ],
   [
-   "librdkafka/rdkafka_sasl_cyrus.c",
-   "rd_kafka_sasl_cyrus_client_new",
-   20694,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_cyrus.c:526"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_cyrus.c",
-   "rd_kafka_sasl_cyrus_client_new",
-   20713,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_cyrus.c:526"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_cyrus.c",
-   "rd_kafka_sasl_cyrus_client_new",
-   20717,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_cyrus.c:526"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_cyrus.c",
-   "rd_kafka_sasl_cyrus_client_new",
-   20720,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_cyrus.c:526"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_cyrus.c",
-   "rd_kafka_sasl_cyrus_client_new",
-   20722,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_cyrus.c:526"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_cyrus.c",
-   "rd_kafka_sasl_cyrus_init",
-   20743,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_cyrus.c:625"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer.c",
-   "rd_kafka_sasl_oauthbearer_client_new",
-   20822,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer.c:1233"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer.c",
-   "rd_kafka_sasl_oauthbearer_client_new",
-   20833,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer.c:1233"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22298,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22300,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22302,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22306,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22307,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22308,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22309,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22310,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22311,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22312,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22313,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22314,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22315,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22316,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_create",
-   22317,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1727"
-  ],
-  [
    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
    "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
    22221,
    "leak",
    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
-   22224,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
-   22225,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
-   22226,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
-   22228,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
-   22229,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
-   22230,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
-   22232,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
-   22233,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
-   22234,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
-   22236,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
-   22237,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
-   22238,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_should_succeed",
-   21993,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1190"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_should_succeed",
-   21999,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1190"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_should_succeed",
-   22000,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1190"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_should_succeed",
-   22002,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1190"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_should_succeed",
-   22004,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1190"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_with_empty_key",
-   22022,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1247"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_with_empty_key",
-   22026,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1247"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_with_empty_key",
-   22027,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1247"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-   "ut_sasl_oauthbearer_oidc_with_empty_key",
-   22029,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1247"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_scram.c",
-   "rd_kafka_sasl_scram_client_new",
-   20562,
-   "leak",
-   "live obligation acquired at rdkafka_sasl_scram.c:721"
   ],
   [
    "librdkafka/rdkafka_share_acknowledgement.c",
@@ -3930,13 +3188,6 @@
    "nullable resource `map` used by a non-null contract"
   ],
   [
-   "librdkafka/rdkafka_sticky_assignor.c",
-   "rd_kafka_sticky_assignor_on_assignment_cb",
-   0,
-   "leak",
-   "live obligation acquired at rdkafka_sticky_assignor.c:2081"
-  ],
-  [
    "librdkafka/rdkafka_topic.c",
    "rd_kafka_lwtopic_new",
    19978,
@@ -3984,20 +3235,6 @@
    20213,
    "unsupported",
    "nullable resource `rkt` used by a non-null contract"
-  ],
-  [
-   "librdkafka/rdkafka_topic.c",
-   "rd_kafka_topic_partition_cnt_update",
-   20471,
-   "leak",
-   "live obligation acquired at rdkafka_topic.c:1135"
-  ],
-  [
-   "librdkafka/rdkafka_topic.c",
-   "rd_kafka_toppar_idemp_msgid_save",
-   0,
-   "leak",
-   "live obligation acquired at rdkafka_topic.c:1050"
   ],
   [
    "librdkafka/rdkafka_transport.c",
@@ -4072,27 +3309,6 @@
   [
    "librdkafka/rdunittest.c",
    "ut_tq_test",
-   20355,
-   "leak",
-   "live obligation acquired at rdunittest.c:179"
-  ],
-  [
-   "librdkafka/rdunittest.c",
-   "ut_tq_test",
-   20356,
-   "leak",
-   "live obligation acquired at rdunittest.c:179"
-  ],
-  [
-   "librdkafka/rdunittest.c",
-   "ut_tq_test",
-   20360,
-   "leak",
-   "live obligation acquired at rdunittest.c:179"
-  ],
-  [
-   "librdkafka/rdunittest.c",
-   "ut_tq_test",
    20366,
    "unknown_alias",
    "unresolved resource identity `e`"
@@ -4103,83 +3319,6 @@
    20381,
    "unknown_alias",
    "unresolved resource identity `e`"
-  ],
-  [
-   "librdkafka/rdunittest.c",
-   "ut_tq_test",
-   20395,
-   "leak",
-   "live obligation acquired at rdunittest.c:179"
-  ],
-  [
-   "librdkafka/rdunittest.c",
-   "ut_tq_test",
-   20395,
-   "leak",
-   "live obligation acquired at rdunittest.c:212"
-  ],
-  [
-   "librdkafka/rdunittest.c",
-   "ut_tq_test",
-   20401,
-   "leak",
-   "live obligation acquired at rdunittest.c:179"
-  ],
-  [
-   "librdkafka/rdunittest.c",
-   "ut_tq_test",
-   20401,
-   "leak",
-   "live obligation acquired at rdunittest.c:212"
-  ],
-  [
-   "librdkafka/rdunittest_acknowledge.c",
-   "ut_ack_add_partition",
-   0,
-   "leak",
-   "live obligation acquired at rdunittest_acknowledge.c:124"
-  ],
-  [
-   "librdkafka/rdunittest_acknowledge.c",
-   "ut_ack_add_partition",
-   0,
-   "leak",
-   "live obligation acquired at rdunittest_acknowledge.c:137"
-  ],
-  [
-   "librdkafka/rdunittest_acknowledge.c",
-   "ut_ack_add_partition_multiple_entries",
-   0,
-   "leak",
-   "live obligation acquired at rdunittest_acknowledge.c:592"
-  ],
-  [
-   "librdkafka/rdunittest_acknowledge.c",
-   "ut_ack_add_partition_multiple_entries",
-   0,
-   "leak",
-   "live obligation acquired at rdunittest_acknowledge.c:604"
-  ],
-  [
-   "librdkafka/rdunittest_acknowledge.c",
-   "ut_ack_add_partition_multiple_entries",
-   0,
-   "leak",
-   "live obligation acquired at rdunittest_acknowledge.c:616"
-  ],
-  [
-   "librdkafka/rdunittest_acknowledge.c",
-   "ut_ack_add_partition_multiple_entries",
-   0,
-   "leak",
-   "live obligation acquired at rdunittest_acknowledge.c:628"
-  ],
-  [
-   "librdkafka/rdunittest_acknowledge.c",
-   "ut_ack_add_partition_multiple_entries",
-   0,
-   "leak",
-   "live obligation acquired at rdunittest_acknowledge.c:640"
   ],
   [
    "librdkafka/rdunittest_acknowledge.c",
@@ -4194,20 +3333,6 @@
    19688,
    "unsupported",
    "nullable resource `rkmessage` used by a non-null contract"
-  ],
-  [
-   "librdkafka/rdunittest_acknowledge.c",
-   "ut_case_bsearch_empty_entries",
-   19985,
-   "leak",
-   "live obligation acquired at rdunittest_acknowledge.c:865"
-  ],
-  [
-   "librdkafka/rdunittest_acknowledge.c",
-   "ut_case_bsearch_empty_entries",
-   19987,
-   "leak",
-   "live obligation acquired at rdunittest_acknowledge.c:865"
   ],
   [
    "librdkafka/rdunittest_fetcher.c",
@@ -4235,79 +3360,7 @@
   [
    [
     "librdkafka/rdhttp.c",
-    "unittest_http_get"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdhttp.c",
     "unittest_http_get_params_append"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka.c",
-    "rd_kafka_destroy_internal"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_admin.c",
-    "rd_kafka_admin_add_config0"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_admin.c",
-    "rd_kafka_admin_incremental_add_config0"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_broker.c",
-    "rd_kafka_broker_decommission"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_cert.c",
-    "rd_kafka_cert_new"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_cgrp.c",
-    "rd_kafka_cgrp_handle_JoinGroup"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_cgrp.c",
-    "unittest_member_metadata_serdes"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_cgrp.c",
-    "unittest_set_intersect"
    ],
    "Unknown",
    "Unsafe"
@@ -4322,272 +3375,8 @@
   ],
   [
    [
-    "librdkafka/rdkafka_coord.c",
-    "rd_kafka_coord_cache_add"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_coord.c",
-    "rd_kafka_coord_req"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_fetcher.c",
-    "rd_kafka_share_acknowledge_reply_handle"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock.c",
-    "rd_kafka_mock_broker_new"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock.c",
-    "rd_kafka_mock_cluster_new"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock.c",
-    "rd_kafka_mock_partition_push_leader_response0"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock.c",
-    "rd_kafka_mock_txn_partition_add"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock.c",
-    "ut_mock_txn_aborted_range_recorded"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock.c",
-    "ut_mock_txn_offset_is_aborted"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock_cgrp.c",
-    "rd_kafka_mock_cgrp_classic_member_add"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock_cgrp.c",
-    "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock_handlers.c",
-    "rd_kafka_mock_handle_EndTxn"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock_handlers.c",
-    "rd_kafka_mock_handle_JoinGroup"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock_handlers.c",
-    "rd_kafka_mock_handle_ShareFetch"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock_handlers.c",
-    "rd_kafka_mock_pid_new"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_mock_sharegrp.c",
-    "rd_kafka_mock_sharegroup_get_members_for_topic"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_msg.c",
-    "rd_kafka_message_new"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_msgset_reader.c",
-    "rd_kafka_aborted_txns_add"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_partition.c",
-    "rd_kafka_toppar_new0"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_plugin.c",
-    "rd_kafka_plugin_new"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_queue.c",
-    "rd_kafka_q_io_event_enable"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_sasl_cyrus.c",
-    "rd_kafka_sasl_cyrus_client_new"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_sasl_cyrus.c",
-    "rd_kafka_sasl_cyrus_init"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_sasl_oauthbearer.c",
-    "rd_kafka_sasl_oauthbearer_client_new"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
     "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
     "ut_sasl_oauthbearer_oidc_assertion_process_template_file"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
-    "ut_sasl_oauthbearer_oidc_with_empty_key"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_sasl_scram.c",
-    "rd_kafka_sasl_scram_client_new"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_sticky_assignor.c",
-    "rd_kafka_sticky_assignor_on_assignment_cb"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_topic.c",
-    "rd_kafka_topic_partition_cnt_update"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdkafka_topic.c",
-    "rd_kafka_toppar_idemp_msgid_save"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdunittest.c",
-    "ut_tq_test"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdunittest_acknowledge.c",
-    "ut_ack_add_partition"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdunittest_acknowledge.c",
-    "ut_ack_add_partition_multiple_entries"
-   ],
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   [
-    "librdkafka/rdunittest_acknowledge.c",
-    "ut_case_bsearch_empty_entries"
    ],
    "Unknown",
    "Unsafe"
@@ -4622,150 +3411,45 @@
    "librdkafka/rdhttp.c",
    "Unknown",
    "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_admin.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_broker.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_cert.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_coord.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_fetcher.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_mock.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_mock_cgrp.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_mock_handlers.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_mock_sharegrp.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_msg.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_msgset_reader.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_partition.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_plugin.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_queue.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_cyrus.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_sasl_oauthbearer.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_sticky_assignor.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdkafka_topic.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdunittest.c",
-   "Unknown",
-   "Unsafe"
-  ],
-  [
-   "librdkafka/rdunittest_acknowledge.c",
-   "Unknown",
-   "Unsafe"
   ]
  ],
  "diagnostic_counts": {
   "before": {
-   "leak": 271,
+   "leak": 19,
    "summary_conflict": 1,
-   "unknown_alias": 4358,
-   "unsupported": 45848
+   "unknown_alias": 3357,
+   "unsupported": 43885
   },
   "after": {
-   "leak": 396,
+   "leak": 21,
    "summary_conflict": 1,
-   "unknown_alias": 4453,
-   "unsupported": 45764
+   "unknown_alias": 3458,
+   "unsupported": 43801
   }
  },
  "function_statuses": {
   "before": {
-   "Unknown": 4455,
-   "Safe": 294,
-   "Unsafe": 85
+   "Unknown": 4525,
+   "Safe": 300,
+   "Unsafe": 9
   },
   "after": {
-   "Unknown": 4407,
-   "Safe": 298,
-   "Unsafe": 129
+   "Unknown": 4519,
+   "Safe": 304,
+   "Unsafe": 11
   }
  },
  "unit_statuses": {
   "before": {
-   "Unknown": 135,
-   "Unsafe": 43,
+   "Unknown": 170,
    "Safe": 3,
+   "Unsafe": 8,
    "data_only": 4
   },
   "after": {
-   "Unknown": 113,
-   "Unsafe": 65,
+   "Unknown": 169,
    "Safe": 3,
+   "Unsafe": 9,
    "data_only": 4
   }
  },

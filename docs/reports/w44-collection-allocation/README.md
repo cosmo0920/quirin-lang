@@ -24,61 +24,63 @@ were frozen before any rule existed ([PREDICTION.md](PREDICTION.md), commit
 * **Lean.** `QCore.SizeofOperand` has 23 theorems, audited by
   `AuditSizeofOperand.lean`, with no placeholders and no project axioms
   ([§3](#3-lean-parity)).
-* **Arbiter** ([§5](#5-arbiter)). BEFORE reproduces the
-  W43-INDEXED-RESOURCE-COLLECTIONS integration diagnostics byte for byte.
-  AFTER removes **234** leaves (204 of them the withdrawn operand refusals) and
-  adds **370**:
+* **Arbiter on main `70ce6b44`** ([§9](#9-merged-with-main-70ce6b44)). This is
+  the current result. The card was held after its first arbiter (§5), then
+  merged with main (merge `aa86cc39`), which brought W44-LEAK-PIN-AUDIT's
+  refused hand-on rule. BEFORE, main's own binary, reproduces the
+  W44-LIBC-RESIDUALS integration diagnostics byte for byte. AFTER removes
+  **230** leaves (204 of them withdrawn operand refusals) and adds **249**:
 
-| Measure | BEFORE | AFTER | Delta |
+| Measure | BEFORE (main `70ce6b44`) | AFTER (`aa86cc39`) | Delta |
 |---|---:|---:|---:|
-| Functions Safe / provisional Unsafe / Unknown | 294 / 85 / 4,455 | 298 / 129 / 4,407 | +4 / +44 / −48 |
-| Units Safe / provisional Unsafe / Unknown / data-only | 3 / 43 / 135 / 4 | 3 / 65 / 113 / 4 | 0 / +22 / −22 / 0 |
-| `leak` | 271 | **396** | **+125** |
-| `unknown_alias` | 4,358 | 4,453 | +95 |
-| `unsupported` | 45,848 | 45,764 | −84 |
+| Functions Safe / provisional Unsafe / Unknown | 300 / 9 / 4,525 | 304 / 11 / 4,519 | +4 / +2 / −6 |
+| Units Safe / provisional Unsafe / Unknown / data-only | 3 / 8 / 170 / 4 | 3 / 9 / 169 / 4 | 0 / +1 / −1 / 0 |
+| `leak` | 19 | **21** | **+2** |
+| `unknown_alias` | 3,357 | 3,458 | +101 |
+| `unsupported` | 43,885 | 43,801 | −84 |
 | `double_release` / `invalid_release` / `use_after_release` | 0 / 0 / 0 | 0 / 0 / 0 | 0 |
 | Functions Safe through a collection element node | — | **0** | 0 |
 
-* **The main finding is in the accusing direction.** 44 functions and 22
-  units moved Unknown → provisional Unsafe. Every one of the 125 added leak
-  leaves names an allocation this card admitted
-  ([census/leak-attribution.txt](census/leak-attribution.txt)).
-  * 109 are **unwitnessed**. The identity is handed to a statement the
-    classifier refuses, such as a `TAILQ_INSERT_TAIL` expansion or
-    `rd_list_add(&conf->plugins, rkplug)` (107), or it is returned under a cast
-    (2).
-    * A refused statement withdraws the residual claim only for a publication
-      the publication reader recognises (constraint 10).
-    * It spares every binding it cannot write (constraint 10a).
-    * A cast return escapes nothing (constraint 5b).
-  * The functions read by hand publish or return the object.
-  * **43 of the 44 function moves and 21 of the 22 unit moves rest on these
-    claims only.** This is `W44-REFUSED-HANDOFF-LEAK-CLAIMS`
-    ([§5.3](#53-leak-attribution)).
-  * The other 16 leaves are witnessed: unit-test assertion-failure returns
-    that do not free a fake `rk`.
-  * None of these is an upstream defect claim.
-* **Collections** ([§5.4](#54-collections)). The refusal of 9 of the 14
-  `T **` array allocations is withdrawn, and 7 of them now bind their
-  destination. Still, **0** of the 27 recognised element operations
-  decides under the collection rules, **0** arrays become collections, and
-  **0** functions are Safe through a collection element node. So the
-  unreached-element question (`W43-COLLECTION-UNREACHED-ELEMENT-NODE`) is not
-  engaged by any corpus verdict.
+* **Leaks, re-measured under the refused hand-on rule**
+  ([§9.3](#93-the-cards-leaks-under-the-refused-hand-on-rule)).
+  * A rule-off leak-witness census of the merged tree finds **124** leaves on
+    allocations this card admitted.
+  * The rule withdraws **122**, because each names its object in a refused
+    statement on every analysis.
+  * The **2** left have no refused hand-on at all. Both are unit-test
+    `RD_UT_ASSERT` failure returns that leak a `rd_calloc`'d fake `rk`:
+    `unittest_http_get_params_append` and
+    `ut_sasl_oauthbearer_oidc_assertion_process_template_file`. Reading
+    classifies both as **real** (test-failure path, the leak audit's class
+    (a)).
+  * **0** analyzer artifacts and **0** premise gaps remain among this card's
+    accusations.
+  * The 2 functions and the unit `rdhttp.c` move Unknown → provisional Unsafe.
+    Provisional Unsafe is not an upstream-defect claim.
+* **Collections** ([§9.4](#94-collections-and-the-held-decision)). 9 of the 14
+  `T **` array allocations are no longer refused, and 7 bind their
+  destination. Still, **0** of the 27 recognised element operations decides
+  under the collection rules. So **no Safe move is held** for the
+  unreached-element decision (`W43-COLLECTION-UNREACHED-ELEMENT-NODE`): there
+  are no candidates.
 * **The 4 Safe moves** are all non-collection:
   * `XXH32_copyState` and `XXH64_copyState` (`memcpy(dst, src, sizeof(*dst))`);
   * `clear_env` (`memset(env, 0, sizeof(*env))`);
   * `rd_kafka_anyconf_clear_all_is_modified`, whose callee's validated
     summary now exists.
-* **Prediction.** Most bands missed ([§5.5](#55-prediction-against-outcome)).
-  The frozen forecast put the leak pin at 271–290 and Unknown → Unsafe at
-  0–6. It underestimated how many newly bound allocations reach a refused
-  handoff.
-* **Ledger: 345 → 348.**
+* **On its own base** ([§5](#5-arbiter-on-the-pre-merge-base-c1e69bb5)) the card
+  raised the leak pin 271 → 396. 109 of those 125 leaves rested on identities
+  handed to refused statements, which is why it was held. That evidence is
+  kept under [premerge/](premerge/).
+* **Prediction.** Most bands missed on the pre-merge base
+  ([§5.5](#55-prediction-against-outcome)). The frozen forecast is not edited.
+* **Ledger: 377 → 379** on main.
   * Retired: `W43-COLLECTION-SIZEOF-DEREFERENCE-ALLOCATION`.
-  * Registered: `W44-REFUSED-HANDOFF-LEAK-CLAIMS`,
-    `W44-SIZEOF-OPERAND-RESIDUALS`, `W44-SIZEOF-CAST-SCALAR-QUERY` and
+  * Registered: `W44-SIZEOF-OPERAND-RESIDUALS`,
+    `W44-SIZEOF-CAST-SCALAR-QUERY` and
     `W44-COLLECTION-ARRAYS-STILL-UNRESOLVED` ([§7](#7-ledger)).
+  * The pre-merge `W44-REFUSED-HANDOFF-LEAK-CLAIMS` was never registered on
+    main. W44-LEAK-PIN-AUDIT's rule answers it, so it is dropped.
 
 ## 1. Census
 
@@ -222,7 +224,10 @@ rechecks every `Safe` certificate.
   * a statement with no call;
   * a statement whose first call is `sizeof`.
 
-## 5. Arbiter
+## 5. Arbiter on the pre-merge base `c1e69bb5`
+
+This section is the card's first arbiter, before the merge. Its evidence is
+under [premerge/](premerge/). The current result is [§9](#9-merged-with-main-70ce6b44).
 
 ### 5.1 Runs
 
@@ -233,11 +238,11 @@ package.
 
 | Run | Binary | Tree | Exit | Record |
 |---|---|---|---:|---|
-| BEFORE | `6379af44…` | `c1e69bb5` | 0 | [before-run.json](before-run.json), [before-identity.json](before-identity.json) |
+| BEFORE | `6379af44…` | `c1e69bb5` | 0 | [premerge/before-run.json](premerge/before-run.json), [premerge/before-identity.json](premerge/before-identity.json) |
 | capture | `6379af44…` | the same, through the tee wrapper | 0 | private; §1 |
-| AFTER | `5e174728…` | `791fc5fd` | 0 | [after-run.json](after-run.json), [after-diff.json](after-diff.json), [artifacts/](artifacts/) |
-| CENSUS | `735a43cb…` | `791fc5fd` + `indirect-census` | 0 | [census-run.json](census-run.json); its five artifacts are byte-identical to AFTER |
-| AFTER (confirmation) | `583faba8…` | `c4338703` (the clippy `matches!` rewrite) | 0 | [after-confirmation-run.json](after-confirmation-run.json); all five artifacts byte-identical to AFTER |
+| AFTER | `5e174728…` | `791fc5fd` | 0 | [premerge/after-run.json](premerge/after-run.json), [premerge/after-diff.json](premerge/after-diff.json), [premerge/artifacts/](premerge/artifacts/) |
+| CENSUS | `735a43cb…` | `791fc5fd` + `indirect-census` | 0 | [premerge/census-run.json](premerge/census-run.json); its five artifacts are byte-identical to AFTER |
+| AFTER (confirmation) | `583faba8…` | `c4338703` (the clippy `matches!` rewrite) | 0 | [premerge/after-confirmation-run.json](premerge/after-confirmation-run.json); all five artifacts byte-identical to AFTER |
 
 The only Rust change after `791fc5fd` is `c4338703`, which rewrites one
 `match` as `matches!` for clippy. The confirmation run on it is byte-identical
@@ -254,10 +259,10 @@ the ledger and evidence.
   * chunk-contracts, contracts, source-effects and source are byte-identical.
   * The diagnostics differ in leaves and `diagnostic_counts` only.
 * **AFTER against the baseline**
-  ([after-vs-baseline-identity.json](after-vs-baseline-identity.json)):
+  ([premerge/after-vs-baseline-identity.json](premerge/after-vs-baseline-identity.json)):
   * contracts are identical after the alias;
   * source-effects differ in 29 leaves, all in the fields the brief lists
-    ([after-vs-baseline-source-effects.txt](after-vs-baseline-source-effects.txt)):
+    ([premerge/after-vs-baseline-source-effects.txt](premerge/after-vs-baseline-source-effects.txt)):
     `resource_contracts:<digest>` bounds keys and `coverage[0]`,
     `build_digest`, `configuration_digest`, `obligation_id`, `task_digest` and
     a `contract_sources` digest.
@@ -265,7 +270,7 @@ the ledger and evidence.
 ### 5.2 Leaf-by-leaf attribution
 
 [`scripts/delta_attribution.py`](scripts/delta_attribution.py)
-([census/delta-attribution.txt](census/delta-attribution.txt)) puts every
+([premerge/census/delta-attribution.txt](premerge/census/delta-attribution.txt)) puts every
 leaf in one class.
 
 | Class | Removed | Added |
@@ -310,7 +315,7 @@ All 48 function moves are in reached functions:
 ### 5.3 Leak attribution
 
 [`scripts/leak_attribution.py`](scripts/leak_attribution.py)
-([census/leak-attribution.txt](census/leak-attribution.txt)) takes each added
+([premerge/census/leak-attribution.txt](premerge/census/leak-attribution.txt)) takes each added
 leak leaf. It finds the allocation the leaf names: the leaf's origin
 coordinate is matched against the refusal this card withdrew. It then reads
 what the allocated name meets afterwards. All **125** allocations were
@@ -345,17 +350,19 @@ Units: 21 of the 22 moves rest on unwitnessed claims only.
 
 Every added leak is a provisional `Unsafe` under the existing policy.
 **None is presented as an upstream defect**, and the 109 unwitnessed ones are
-most likely false. They are registered as `W44-REFUSED-HANDOFF-LEAK-CLAIMS`
-for a decision on that accusing arm. W44-LEAK-PIN-AUDIT, running
-concurrently, is the natural owner.
+most likely false. The card proposed them as `W44-REFUSED-HANDOFF-LEAK-CLAIMS`,
+a decision on that accusing arm, and was held. W44-LEAK-PIN-AUDIT's refused
+hand-on rule answered it on main, and the entry was never registered.
+[§9.3](#93-the-cards-leaks-under-the-refused-hand-on-rule) re-measures these
+leaves on the merged tree.
 
-**Constraint 7:** the pin moves **271 → 396**. The whole move is these 125
-leaves, and no baseline leak leaf is withdrawn.
+On this base the pin moved **271 → 396**. The whole move was these 125 leaves,
+and no baseline leak leaf was withdrawn. It is superseded by §9.
 
 ### 5.4 Collections
 
 [`scripts/collection_reach.py`](scripts/collection_reach.py)
-([census/collection-reach.txt](census/collection-reach.txt)) looks at the 14
+([premerge/census/collection-reach.txt](premerge/census/collection-reach.txt)) looks at the 14
 self-referential dereference allocations into a `T **` destination.
 
 * **9 withdrawn, 7 bind, 5 kept.** The allocation refusal of 9 is withdrawn.
@@ -368,7 +375,7 @@ self-referential dereference allocations into a `T **` destination.
   another access on the statement or a reader quirk.
 * **Element operations.** The census run lowers the same **27** element
   operations in 19 functions as W43
-  ([census/element-reach.txt](census/element-reach.txt)). **All 27 keep their
+  ([premerge/census/element-reach.txt](premerge/census/element-reach.txt)). **All 27 keep their
   fallback leaf in AFTER.**
 * **The only overlap is `rd_kafka_ListGroups_resp_cb`.** Its
   `grps = rd_malloc(sizeof(*grps) * grpcnt)` now binds. `rd_malloc`'s result
@@ -405,10 +412,14 @@ withdraws a residual. The frozen file is not edited.
 
 ## 6. Validation
 
+VALIDATION-MERGED
+
+### 6.1 The pre-merge gate (`c4338703`), superseded
+
 Measured in this worktree by [`scripts/run_gate.py`](scripts/run_gate.py),
 W43-INDEXED-RESOURCE-COLLECTIONS' runner, with `CARGO_INCREMENTAL=0`. Every
 exit is captured to a file. Logs are in `private/gate/` and
-`private/provider-gate/`, and the generator input is [gate.json](gate.json).
+`private/provider-gate/`, and the generator input is [premerge/gate.json](premerge/gate.json).
 
 The core gate was measured on `c4338703`, the final Rust source, in
 `private/gate2`. The Lean step was measured on `bcdc9c06` in `private/gate`;
@@ -464,7 +475,7 @@ argument, Lean parity and a measured re-pin". This card delivers:
 * the VLA argument (§2, `a_variably_modified_operand_is_evaluated` and the
   refusals);
 * Lean parity;
-* the re-pin, with 204 of the 226 withdrawn.
+* the re-pin on main, with 204 refusals withdrawn and every leaf attributed.
 
 What stays refused is registered.
 
@@ -472,10 +483,13 @@ What stays refused is registered.
 
 | Id | What stays open |
 |---|---|
-| `W44-REFUSED-HANDOFF-LEAK-CLAIMS` | 109 unwitnessed added leak leaves, behind 43 function and 21 unit moves; a decision on the accusing arm |
-| `W44-SIZEOF-OPERAND-RESIDUALS` | the operand outside an ordinary call statement (type-query, condition and return positions); member operands (100 + 122 occurrences, 21 allocations); the declarator reader reading `( n * sizeof …` as a declaration; protected-formal discovery reading `sizeof(*p) * n` as `*n`; 134 access leaves still within two lines of an operand |
-| `W44-SIZEOF-CAST-SCALAR-QUERY` | the `C operator sizeof` family: 465 leaves, 398 `(T)(sizeof(NAME))` casts around a scalar query |
+| `W44-SIZEOF-OPERAND-RESIDUALS` | the operand outside an ordinary call statement (type-query, condition and return positions); member operands (100 + 122 occurrences, 21 allocations); the declarator reader reading `( n * sizeof …` as a declaration; protected-formal discovery reading `sizeof(*p) * n` as `*n`. On main, 234 unsupported leaves remain within two lines of a census operand, 134 of them `indirect memory access` ([census/residual-operands.txt](census/residual-operands.txt)) |
+| `W44-SIZEOF-CAST-SCALAR-QUERY` | the `C operator sizeof` family: 465 leaves on main, 398 of them `(T)(sizeof(NAME))` casts around a scalar query, on 122 Unknown functions |
 | `W44-COLLECTION-ARRAYS-STILL-UNRESOLVED` | 9 of 14 `T **` allocation refusals withdrawn (7 bind), 0 element operations resolve |
+
+**Not registered:** `W44-REFUSED-HANDOFF-LEAK-CLAIMS`. It was proposed on the
+pre-merge base and answered by W44-LEAK-PIN-AUDIT's rule before landing
+(§9.3).
 
 **Not discharged, noted:**
 * `W43-COLLECTION-NAME-STORE` (`a[i] = q`). A sound rule needs a
@@ -484,28 +498,33 @@ What stays refused is registered.
   `T **` allocation's function has a lowered name store.
 * `W43-COLLECTION-ACCUSING-UNEXERCISED-IN-CORPUS` stays: still no element
   operation's array resolves.
-* `W43-COLLECTION-UNREACHED-ELEMENT-NODE` stays the user's decision, and no
-  corpus verdict depends on it.
+* `W43-COLLECTION-UNREACHED-ELEMENT-NODE` stays the user's decision, with no
+  corpus verdict depending on it.
 * `W43-RETURN-TYPE-OPERATOR` is untouched.
 
-Follow-ups go **345 → 348**. `corpus.cycle19_raw_units` points at
-[artifacts/](artifacts/), and its previous contents are in
+Follow-ups go **377 → 379** on main. `corpus.cycle19_raw_units` points at
+[artifacts/](artifacts/), the merged-tree AFTER. Main's previous row is in
 [previous-corpus-row.json](previous-corpus-row.json)
-([`scripts/update_ledger.py`](scripts/update_ledger.py)).
+([`scripts/update_ledger.py`](scripts/update_ledger.py)). The pre-merge row
+and baseline are under [premerge/](premerge/).
 
 ## 8. For the integrator
 
-* **Decide the leak move before merging.** The card is correct on its own
-  premise, but it publishes 44 new provisional-Unsafe functions and 22
-  provisional-Unsafe units. 43 and 21 of them rest on claims the attribution
-  marks as most likely false. Merging moves STATUS's unit headline from
-  3 / 43 / 135 / 4 to 3 / 65 / 113 / 4 and the leak pin to 396. You could:
-  * merge and let `W44-REFUSED-HANDOFF-LEAK-CLAIMS` (with W44-LEAK-PIN-AUDIT)
-    decide the arm;
-  * or hold this card until that arm is decided.
+* **Merged, not rebased.** The branch is at merge `aa86cc39` of main
+  `70ce6b44`, and then records only. There were two code conflicts, both kept
+  on both sides:
+  * `legacy_c.rs`: the assignment arm of the lexical gate. It keeps
+    W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE's `names_a_sub_object` refusal
+    and reads the value side through this card's `gate_view`.
+  * `proof/QCore.lean`: all three imports kept.
 
-  Either way the user should see it.
-* **Proposed gateway amendment**, a new constraint 5j, in these words:
+  The shared records took main's text and were then re-derived:
+  `STATUS.md`, `wave-44.md`, `INDEX.md` and the matrix.
+* **Mergeable on the leak question.** The card's only accusations on main are
+  2 real test-failure leaks. No accusation rests on an analyzer artifact or a
+  premise gap.
+* **Proposed gateway amendment**, a new constraint 5j beside main's 5i, in
+  these words:
 
   > W44-COLLECTION-ALLOCATION: a `sizeof` operand `*NAME`, `**NAME` or
   > `NAME[LITERAL]` is unevaluated (C11 6.5.3.4p2) when every declaration of
@@ -518,12 +537,12 @@ Follow-ups go **345 → 348**. `corpus.cycle19_raw_units` points at
   > argument skips it; the marker is never a value, and everything after the
   > gate reads the original tokens. Every other position, a variably modified
   > or unresolved operand and an array declarator keep their refusal byte for
-  > byte. Admitting an allocation exposes its later handoffs to the accusing
-  > arm of constraints 10 and 10a (`W44-REFUSED-HANDOFF-LEAK-CLAIMS`).
+  > byte. An allocation this admits is subject to the refused hand-on rule
+  > like any other identity.
 
 * **Constraint 7:** record W44-COLLECTION-ALLOCATION as moving the pin
-  271 → 396, with 125 added leaves (109 unwitnessed, 16 witnessed) and no
-  withdrawal.
+  19 → 21, with 2 added leaves, both real unit-test assertion-failure leaks
+  (§9.3), and no withdrawal.
 * **Files likely to conflict:**
   * `crates/qcore-c-gateway/src/legacy_c.rs`: the `Parser` field and its
     initialisation; `sizeof_operand_types` beside `collection_types`; the gate
@@ -536,10 +555,166 @@ Follow-ups go **345 → 348**. `corpus.cycle19_raw_units` points at
   * `proof/QCore.lean`: one import.
   * `docs/QCORE_SPEC_r0_3.md` §L18: one paragraph.
   * The shared records: `docs/reviews/r0_3/acceptance_matrix.json` (the
-    corpus row and 4 entries), `docs/STATUS.md`,
+    corpus row, the validation section and 3 entries), `docs/STATUS.md`,
     `docs/development/increments/wave-44.md` and `docs/reports/INDEX.md`.
 * **Artifacts.** The `contracts` and `source-effects` artifacts embed this
   worktree's path, as earlier isolated cards' do.
+
+## 9. Merged with main `70ce6b44`
+
+Main moved from `c1e69bb5` to `70ce6b44`. It gained the indirect-chain,
+corpus-callee-summary and branch-condition cards, W44-LEAK-PIN-AUDIT (the
+refused hand-on rule and the cast return), W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE
+(constraint 5i) and W44-LIBC-RESIDUALS. The merge commit is `aa86cc39`.
+
+### 9.1 Runs
+
+| Run | Binary | Tree | Exit | Record |
+|---|---|---|---:|---|
+| BEFORE | `c8c68aba…` | main `70ce6b44` | 0 | [before-run.json](before-run.json), [before-identity.json](before-identity.json) |
+| AFTER | `7e4e8281…` | merge `aa86cc39` | 0 | [after-run.json](after-run.json), [after-diff.json](after-diff.json), [artifacts/](artifacts/) |
+| CENSUS | `f7018753…` | `aa86cc39` + `indirect-census` | 0 | [census-run.json](census-run.json); its five artifacts are byte-identical to AFTER |
+| RULE-OFF CENSUS | `ruleoff` build | `aa86cc39` + `indirect-census`, hand-on `apply` disabled | 0 | [rule-off-census-run.json](rule-off-census-run.json) |
+
+* **The rule-off edit.** The rule-off census uses W44-LEAK-PIN-AUDIT's
+  measurement-only edit
+  ([evidence/census-rule-off.patch](../w44-leak-pin-audit/evidence/census-rule-off.patch)),
+  applied and reverted by [`scripts/rule_off.py`](scripts/rule_off.py).
+  * The script rewrites the saved bytes and asserts the SHA-256 round trip,
+    `94daeb6b…`.
+  * The edit was never committed, and `git status` was clean afterwards.
+* **BEFORE against the combined baseline**
+  (`w44-libc-residuals/integration/artifacts/`):
+  * diagnostics, chunk-contracts and source are byte-identical;
+  * contracts are identical after the root alias;
+  * source-effects carry only checkout-path digests.
+* **AFTER against BEFORE.** chunk-contracts, contracts, source-effects and
+  source are byte-identical, so only the diagnostics move.
+* **AFTER against the baseline**
+  ([after-vs-baseline-identity.json](after-vs-baseline-identity.json),
+  [after-vs-baseline-source-effects.txt](after-vs-baseline-source-effects.txt)):
+  * contracts are identical after the alias;
+  * source-effects differ in the same 29 checkout-path digest leaves as
+    BEFORE.
+
+### 9.2 Leaf-by-leaf attribution
+
+[`scripts/delta_attribution.py`](scripts/delta_attribution.py)
+([census/delta-attribution.txt](census/delta-attribution.txt)) puts every
+leaf in one class.
+
+| Class | Removed | Added |
+|---|---:|---:|
+| Withdrawn operand refusal | 203 | — |
+| Same-line substitution (the statement now reaches a later refusal) | — | 17 unsupported |
+| Downstream in one of the 188 functions reached | 23 (21 unknown_alias, 2 unsupported) | 232 (2 leak, 122 unknown_alias, 108 unsupported) |
+| Outside a reached function | 4 | 0 |
+| Unattributed | 0 | 0 |
+
+The 4 "outside" rows:
+
+| Leaf | What it is |
+|---|---|
+| `pb_field_iter_begin`'s `memset(iter, 0, sizeof(*iter))` | a withdrawn operand refusal the census's function reader missed, making **204** withdrawals |
+| `call to uncontracted function \`clear_env\`` in `rd_kafka_snappy_init_env` and `rd_kafka_snappy_free_env` (two leaves) | `clear_env`'s body now validates a W4 summary |
+| `call to uncontracted function \`rd_interval_init\`` in `rd_kafka_broker_producer_serve` | the same: that header inline is `memset(ri, 0, sizeof(*ri))` |
+
+The downstream `unknown_alias` and `nullable resource … used by a non-null
+contract` leaves are allocations that now bind but reach a non-null use
+unchecked. The removed `unresolved resource identity` leaves are names that
+now bind.
+
+Function moves, all in reached functions:
+
+| Move | Count |
+|---|---:|
+| Unknown → Safe | 4 |
+| Unknown → provisional Unsafe | 2 |
+
+Unit move: `rdhttp.c`, Unknown → provisional Unsafe.
+
+### 9.3 The card's leaks under the refused hand-on rule
+
+[`scripts/handoff_overlay.py`](scripts/handoff_overlay.py)
+([census/handoff-overlay.txt](census/handoff-overlay.txt)) works as follows.
+
+* **Method.** It reads the rule-off census joined by W44-LEAK-PIN-AUDIT's
+  `join_witnesses.py`.
+  * A rule-off leaf is this card's when BEFORE holds, in the same function,
+    the access refusal whose origin is the leaf's acquisition coordinate.
+  * Each leaf takes the audit's overlay class: `withdrawn` when a handed path
+    exists in every joined invocation, `mentioned` when it exists in some,
+    `not-mentioned` when in none.
+* **The join.** It reports one failure, `ctr_random_get` ("settled fields
+  disagree"). That is the audit's own recorded exception, and it is not this
+  card's function.
+
+| Measure | Value |
+|---|---:|
+| Rule-off leak leaves | 391 |
+| main's own (not this card's) | 267 |
+| this card's | **124** in 45 functions |
+| `withdrawn` by the rule | **122** |
+| `mentioned` | 0 |
+| `not-mentioned` | **2** |
+| present with the rule on (AFTER) | 2, exactly the `not-mentioned` ones |
+| overlay agrees with the rule-on run | yes |
+
+The rule-off count is 124, not the pre-merge 125, because the two identical
+L21820 leaves of `unittest_http_get_params_append` are one leaf on main.
+
+**The two leaves that stand, read and classified:**
+
+1. `unittest_http_get_params_append` (`rdhttp.c`), leak at L21820,
+   acquisition `rdhttp.c:802`.
+   * `rk = rd_calloc(1, sizeof(*rk));` precedes
+     `while (test[0]) { res = rd_http_get_params_append(…); RD_UT_ASSERT(!strcmp(res, test[2]), …); rd_free(res); test += 3; }`,
+     and `rd_free(rk)` follows the loop.
+   * On an assertion failure, `RD_UT_ASSERT` prints and returns 1 unless
+     `rd_unittest_assert_on_failure` aborts. That return skips `rd_free(rk)`.
+   * `rk` is named in no statement before it.
+   * **Real: test-failure path**, the audit's class (a).
+   * The witness's `settled` flag is false. In the settled state the site
+     carries an unresolved effect: a later iteration's `rd_free(res)` over an
+     unknown `res` marks every site. So the leaf is published from an
+     intermediate iterate (constraint 6, `C02-P-ALIAS-LEAK-ORDER`).
+   * Its strict witness path (the first iteration, no refused hand-on) is a
+     feasible execution. The claim is true of the C, and only its publication
+     mechanism is the recorded scheduling-sensitive one.
+2. `ut_sasl_oauthbearer_oidc_assertion_process_template_file`
+   (`rdkafka_sasl_oauthbearer_oidc.c`), leak at L22221, acquisition
+   `rdkafka_sasl_oauthbearer_oidc.c:1656`.
+   * `rk = rd_calloc(1, sizeof(*rk));` precedes
+     `template_path = ut_create_mock_jwt_template_file();` and then
+     `RD_UT_ASSERT(template_path != NULL, …)`.
+   * The failure return precedes any use or release of `rk`.
+   * The settled witness has a strict path.
+   * **Real: test-failure path**, class (a).
+   * Later assertions name `rk` only after it is handed to the uncontracted
+     `rd_kafka_oidc_assertion_parse_template_file`, so the rule withdraws
+     them.
+
+**Result:** 2 real, 0 analyzer artifacts, 0 premise gaps. The card adds no
+provisional Unsafe through an artifact. Both functions are unit tests, and
+neither is an upstream-defect claim.
+
+### 9.4 Collections and the held decision
+
+The census run of the merged tree lowers the same **27** element operations
+in 19 functions ([census/element-reach.txt](census/element-reach.txt)), and
+all 27 keep their fallback leaf in AFTER.
+
+[census/collection-reach.txt](census/collection-reach.txt):
+* 9 of the 14 `T **` allocations have their refusal withdrawn.
+* 7 bind. `rd_kafka_conf_kv_split` and `rd_kafka_handle_ApiVersion` reach
+  another refusal.
+* The one overlap with a lowered element operation,
+  `rd_kafka_ListGroups_resp_cb`, keeps its fallback: the `rd_malloc` result
+  is nullable and never tested.
+* All 14 functions stay Unknown.
+
+**Collection-derived Safe candidates held for the user's decision: none.** No
+function's verdict passes through an element node.
 
 ## Reproduction
 

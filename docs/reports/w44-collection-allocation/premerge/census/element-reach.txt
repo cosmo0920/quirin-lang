@@ -1,0 +1,35 @@
+W43-INDEXED-RESOURCE-COLLECTIONS: element operations lowered on the corpus
+
+distinct_lowered_operations: 27
+null_tests: 6
+stores_or_releases: 21
+functions: 19
+fallback_leaf_kept_in_both_runs: 27
+
+  append_data_point_to_metric L8920 null test over `data_point_list`: fallback `unmodeled call, aggregate or indirect access in branch condition` before=True after=True
+  destroy_exponential_histogram_data_point_list L8391 store or release over `data_point_list`: fallback `unrecognized assignment destination` before=True after=True
+  destroy_histogram_data_point_list L8377 store or release over `data_point_list`: fallback `unrecognized assignment destination` before=True after=True
+  destroy_metric_list L8936 store or release over `metric_list`: fallback `unrecognized assignment destination` before=True after=True
+  destroy_numerical_data_point_list L8349 store or release over `data_point_list`: fallback `unrecognized assignment destination` before=True after=True
+  destroy_prometheus_label_list L6714 null test over `label_list`: fallback `unmodeled call, aggregate or indirect access in branch condition` before=True after=True
+  destroy_prometheus_label_list L6723 store or release over `label_list`: fallback `indirect memory access is outside the resource projection` before=True after=True
+  destroy_prometheus_label_list L6724 store or release over `label_list`: fallback `unrecognized assignment destination` before=True after=True
+  destroy_prometheus_sample_list L6700 null test over `sample_list`: fallback `unmodeled call, aggregate or indirect access in branch condition` before=True after=True
+  destroy_prometheus_sample_list L6701 store or release over `sample_list`: fallback `indirect memory access is outside the resource projection` before=True after=True
+  destroy_prometheus_sample_list L6702 store or release over `sample_list`: fallback `unrecognized assignment destination` before=True after=True
+  destroy_resource_metrics_list L8061 store or release over `metric_list`: fallback `unrecognized assignment destination` before=True after=True
+  destroy_scope_metric_list L8207 store or release over `metric_list`: fallback `unrecognized assignment destination` before=True after=True
+  destroy_summary_data_point_list L8363 store or release over `data_point_list`: fallback `unrecognized assignment destination` before=True after=True
+  free_metrics L20892 store or release over `data_points`: fallback `indirect memory access is outside the resource projection` before=True after=True
+  free_metrics L20893 store or release over `metric_names`: fallback `indirect memory access is outside the resource projection` before=True after=True
+  free_metrics L20894 store or release over `metrics`: fallback `indirect memory access is outside the resource projection` before=True after=True
+  free_resource_attributes L20909 store or release over `resource_attributes_key_values`: fallback `indirect memory access is outside the resource projection` before=True after=True
+  initialize_exemplars_from_metadata L7101 null test over `exemplars`: fallback `unmodeled call, aggregate or indirect access in branch condition` before=True after=True
+  initialize_exemplars_from_metadata L7104 null test over `exemplars`: fallback `unmodeled call, aggregate or indirect access in branch condition` before=True after=True
+  rd_kafka_DeleteGroup_destroy_array L22976 store or release over `del_groups`: fallback `indirect memory access is outside the resource projection` before=True after=True
+  rd_kafka_DeleteTopic_destroy_array L21420 store or release over `del_topics`: fallback `indirect memory access is outside the resource projection` before=True after=True
+  rd_kafka_ListGroups_resp_cb L24950 store or release over `grps`: fallback `indirect memory access is outside the resource projection` before=True after=True
+  rd_kafka_conf_dump_free L25320 null test over `_arr`: fallback `unmodeled call, aggregate or indirect access in branch condition` before=True after=True
+  rd_kafka_conf_dump_free L25321 store or release over `_arr`: fallback `indirect memory access is outside the resource projection` before=True after=True
+  rd_kafka_mock_request_destroy_array L23505 store or release over `mrequests`: fallback `indirect memory access is outside the resource projection` before=True after=True
+  rd_kafka_telemetry_encode_metrics L21121 store or release over `resource_attributes_key_values`: fallback `discarded owned result of resource API `rd_calloc`` before=True after=True

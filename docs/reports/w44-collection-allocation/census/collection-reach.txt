@@ -4,7 +4,7 @@ pointer_to_pointer_allocations: 14
 allocation_refusal_withdrawn: 9
 functions_with_lowered_element_operations: 1
 element_operations_decided_under_collection_rules: 0
-status_moves: {'Unknown->Unknown': 13, 'Unknown->Unsafe': 1}
+status_moves: {'Unknown->Unknown': 14}
 
   Unknown->Unknown librdkafka/rdhttp.c::rd_http_get_json L21716 `headers_array_new` = rd_calloc(...): withdrawn
   Unknown->Unknown librdkafka/rdkafka.c::rd_kafka_ListGroups_resp_cb L24923 `grps` = rd_malloc(...): withdrawn
@@ -19,5 +19,5 @@ status_moves: {'Unknown->Unknown': 13, 'Unknown->Unsafe': 1}
   Unknown->Unknown librdkafka/rdkafka_request.c::rd_kafka_handle_ApiVersion L22281 `apis` = rd_malloc(...): withdrawn; replaced by ['discarded owned result of resource API `rd_malloc`']
   Unknown->Unknown librdkafka/rdkafka_sasl_oauthbearer.c::rd_kafka_oauthbearer_unsecured_token0 L20656 `extensionv` = rd_malloc(...): kept
   Unknown->Unknown librdkafka/rdkafka_topic.c::rd_kafka_topic_metadata_update L20608 `partbrokers` = rd_malloc(...): kept
-  Unknown->Unsafe librdkafka/rdkafka_topic.c::rd_kafka_topic_partition_cnt_update L20406 `rktps` = rd_calloc(...): withdrawn
+  Unknown->Unknown librdkafka/rdkafka_topic.c::rd_kafka_topic_partition_cnt_update L20406 `rktps` = rd_calloc(...): withdrawn
   Unknown->Unknown librdkafka/rdstring.c::rd_string_split L3195 `arr` = rd_malloc(...): withdrawn

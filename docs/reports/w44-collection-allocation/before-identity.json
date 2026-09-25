@@ -1,11 +1,11 @@
 {
-  "run": "private/runs/before",
-  "baseline": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af2117137953e0c79/docs/reports/w43-indexed-resource-collections/integration/artifacts",
+  "run": "private/runs/before2",
+  "baseline": "docs/reports/w44-libc-residuals/integration/artifacts",
   "artifacts": {
     "diagnostics": {
       "file": "resource-diagnostics.json",
-      "run_sha256": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
-      "baseline_raw_sha256": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+      "run_sha256": "988ced1a57a81328f340d1ca84cae270097410f6860c9d46558b59f9e6983bad",
+      "baseline_raw_sha256": "988ced1a57a81328f340d1ca84cae270097410f6860c9d46558b59f9e6983bad",
       "archive_matches_manifest": true,
       "byte_identical": true
     },
@@ -18,8 +18,8 @@
     },
     "contracts": {
       "file": "resource-diagnostics.contracts.json",
-      "run_sha256": "86a8bc36b1efeb8c8375896b1689b49ef353219356705cdbaf8939531e381e9a",
-      "baseline_raw_sha256": "aedfc98507c93429235fd013d38abe4afd9b8d323d7b9a1236805b8bed40917d",
+      "run_sha256": "10e48f297b449b4d9cbd05687f7f8de544027b9e9b58696139e45beaf7f86a1b",
+      "baseline_raw_sha256": "2b40651e21d2891eb64c890bc5fd4915f47d526332f963ee9a75f82f291e03b1",
       "archive_matches_manifest": true,
       "byte_identical": false,
       "identical_after_root_alias": true

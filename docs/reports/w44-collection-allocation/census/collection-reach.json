@@ -5,8 +5,7 @@
   "functions_with_lowered_element_operations": 1,
   "element_operations_decided_under_collection_rules": 0,
   "status_moves": {
-   "Unknown->Unknown": 13,
-   "Unknown->Unsafe": 1
+   "Unknown->Unknown": 14
   }
  },
  "allocations": [
@@ -173,7 +172,7 @@
    "withdrawn": true,
    "replaced_by": [],
    "status_before": "Unknown",
-   "status_after": "Unsafe",
+   "status_after": "Unknown",
    "element_operations": []
   },
   {

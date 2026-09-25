@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af2117137953e0c79/private/bin/ruleoff-audit",
+    "--pinned-evidence",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af2117137953e0c79/private/runs/ruleoff/monkey-source.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af2117137953e0c79/private/runs/ruleoff/resource-diagnostics.json"
+  ],
+  "source": "aa86cc39+rule-off",
+  "binary_sha256": "892496ec7d1d5fadc7815cc059c6d5f360f1d1c6583aaf296f8912529f15eabc",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_LEAK_WITNESS": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af2117137953e0c79/private/runs/ruleoff/leak-witness.jsonl"
+  },
+  "start": "2026-09-25T06:39:40.586596+00:00",
+  "exit": 0,
+  "end": "2026-09-25T07:03:56.289184+00:00"
+}

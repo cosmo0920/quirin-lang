@@ -1,6 +1,6 @@
 W44-COLLECTION-ALLOCATION: unsupported leaves AFTER keeps on dereference-operand lines
 
-leaves: 239; on Unknown functions: 196; Unknown functions: 100
+leaves: 234; on Unknown functions: 232; Unknown functions: 119
 
 134  indirect memory access is outside the resource projection
       Unknown librdkafka__lz4.c.i::LZ4_compress_fast_continue L1186: __builtin_memcpy(streamPtr, streamPtr->dictCtx, sizeof(*streamPtr));
@@ -20,8 +20,8 @@ leaves: 239; on Unknown functions: 196; Unknown functions: 100
       Unsafe librdkafka__rdhttp.c.i::unittest_http_get_params_append L21815: do { if (!(!res)) { fprintf(stderr, "\033[31mRDUT: FAIL: %s:%d: %s: " "assert failed: " "!res" ": ", "<stdin>", 799, __FUNCTION__); fprintf(
       Unknown librdkafka__rdkafka_admin.c.i::rd_kafka_DeleteConsumerGroupOffsets_new L23132: ((void) sizeof (__assert_single_arg (partitions)), __extension__ ({ if (partitions) ; else __assert_fail ("partitions", "<stdin>", 4987, __e
       Unknown librdkafka__rdkafka_admin.c.i::rd_kafka_ListConsumerGroupOffsets_new L24610: ((void) sizeof (__assert_single_arg (group_id)), __extension__ ({ if (group_id) ; else __assert_fail ("group_id", "<stdin>", 7033, __extensi
-      Unsafe librdkafka__rdkafka_cgrp.c.i::unittest_set_intersect L24801: map_toppar_member_info_t a = { .rmap = { .rmap_buckets = rd_map_alloc_buckets(par_cnt), .rmap_cmp = rd_kafka_topic_partition_cmp, .rmap_hash
-      Unsafe librdkafka__rdkafka_cgrp.c.i::unittest_set_intersect L24802: map_toppar_member_info_t b = { .rmap = { .rmap_buckets = rd_map_alloc_buckets(par_cnt), .rmap_cmp = rd_kafka_topic_partition_cmp, .rmap_hash
+      Unknown librdkafka__rdkafka_cgrp.c.i::unittest_set_intersect L24801: map_toppar_member_info_t a = { .rmap = { .rmap_buckets = rd_map_alloc_buckets(par_cnt), .rmap_cmp = rd_kafka_topic_partition_cmp, .rmap_hash
+      Unknown librdkafka__rdkafka_cgrp.c.i::unittest_set_intersect L24802: map_toppar_member_info_t b = { .rmap = { .rmap_buckets = rd_map_alloc_buckets(par_cnt), .rmap_cmp = rd_kafka_topic_partition_cmp, .rmap_hash
       Unknown librdkafka__rdkafka_conf.c.i::rd_kafka_conf_new L24647: ((void) sizeof (__assert_single_arg ((64 * 36) > sizeof(*conf) && *"Increase RD_KAFKA_CONF_PROPS_IDX_MAX")), __extension__ ({ if ((64 * 36) 
 7  call to uncontracted function `rd_tmpabuf_new`
       Unknown librdkafka__rdkafka_fetcher.c.i::rd_kafka_handle_Fetch_metadata_update L20479: rd_tmpabuf_new(&tbuf, 0, 1 );
@@ -30,18 +30,11 @@ leaves: 239; on Unknown functions: 196; Unknown functions: 100
       Unknown librdkafka__rdkafka_metadata_cache.c.i::rd_kafka_metadata_cache_entry_new L20239: rd_tmpabuf_new(&tbuf, 0, 1 );
       Unknown librdkafka__rdkafka_request.c.i::rd_kafka_handle_Produce_metadata_update L22672: rd_tmpabuf_new(&tbuf, 0, 1 );
       Unknown librdkafka__rdkafka_request.c.i::rd_kafkap_share_leader_changes_apply L22584: rd_tmpabuf_new(&tbuf, 0, 1 );
-6  arguments beyond the declared parameters of `fprintf` are outside the resource projection
-      Unsafe librdkafka__rdhttp.c.i::unittest_http_get L21755: do { fprintf(stderr, "\033[33mRDUT: SKIP: %s:%d: %s: ", "<stdin>", 708, __FUNCTION__); fprintf(stderr, "RD_UT_HTTP_URL environment variable 
-      Unsafe librdkafka__rdhttp.c.i::unittest_http_get L21756: fprintf(stderr, "\033[34mRDUT: INFO: %s:%d: %s: BEGIN: \033[0m\n", "<stdin>", 710, __FUNCTION__);
-      Unsafe librdkafka__rdhttp.c.i::unittest_http_get_params_append L21815: do { if (!(!res)) { fprintf(stderr, "\033[31mRDUT: FAIL: %s:%d: %s: " "assert failed: " "!res" ": ", "<stdin>", 799, __FUNCTION__); fprintf(
-      Unsafe librdkafka__rdkafka_sasl_oauthbearer_oidc.c.i::ut_sasl_oauthbearer_oidc_assertion_create L22263: fprintf(stderr, "\033[34mRDUT: INFO: %s:%d: %s: BEGIN: \033[0m\n", "<stdin>", 1725, __FUNCTION__);
-      Unsafe librdkafka__rdkafka_sasl_oauthbearer_oidc.c.i::ut_sasl_oauthbearer_oidc_assertion_process_template_file L22218: fprintf(stderr, "\033[34mRDUT: INFO: %s:%d: %s: BEGIN: \033[0m\n", "<stdin>", 1654, __FUNCTION__);
-      Unsafe librdkafka__rdunittest.c.i::ut_tq_test L20360: do { if (!((*(((struct ut_tq_head *)((tqh[0])->tqh_last))->tqh_last))->v == args->exp[totcnt - 1])) { fprintf(stderr, "\033[31mRDUT: FAIL: %
 5  call to uncontracted function `__builtin_alloca`
       Unknown librdkafka__rdkafka_metadata.c.i::rd_kafka_metadata_new_topic_mockv_internal L21312: topics = __builtin_alloca (sizeof(*topics) * topic_cnt);
       Unknown librdkafka__rdkafka_metadata.c.i::rd_kafka_metadata_new_topic_with_partition_replicas_mock L21350: topics = __builtin_alloca (sizeof(*topics) * topic_cnt);
       Unknown librdkafka__rdkafka_mock_handlers.c.i::rd_kafka_mock_handle_ShareAcknowledge L25251: ack_types =
-      Unsafe librdkafka__rdkafka_mock_handlers.c.i::rd_kafka_mock_handle_ShareFetch L24734: ack_types =
+      Unknown librdkafka__rdkafka_mock_handlers.c.i::rd_kafka_mock_handle_ShareFetch L24734: ack_types =
       Unknown librdkafka__rdkafka_msgset_writer.c.i::rd_kafka_snappy_compress_slice L20162: iov = __builtin_alloca (sizeof(*iov) * iov_max);
 4  unsupported assignment expression
       Unknown librdkafka__lz4frame.c.i::LZ4F_createCDict_advanced L1305: const char* dictStart = (const char*)dictBuffer;
@@ -64,8 +57,11 @@ leaves: 239; on Unknown functions: 196; Unknown functions: 100
       Unknown librdkafka__rdhttp.c.i::rd_http_error_new L21254: __builtin_va_end(ap2);
       Unknown librdkafka__rdkafka_error.c.i::rd_kafka_error_new_v L19576: __builtin_va_end(ap2);
 2  call to uncontracted function `rd_list_add`
-      Unsafe librdkafka__rdkafka_cgrp.c.i::unittest_member_metadata_serdes L24897: rd_list_add(topics, rd_kafka_topic_info_new(topic_name, 3));
-      Unsafe librdkafka__rdkafka_mock_cgrp.c.i::rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range L21277: rd_list_add(members, member);
+      Unknown librdkafka__rdkafka_cgrp.c.i::unittest_member_metadata_serdes L24897: rd_list_add(topics, rd_kafka_topic_info_new(topic_name, 3));
+      Unknown librdkafka__rdkafka_mock_cgrp.c.i::rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range L21277: rd_list_add(members, member);
+2  call has an unmodeled formal address or borrowed expression
+      Unknown librdkafka__rdkafka_conf.c.i::rd_kafka_conf_kv_split L25621: out = rd_malloc((sizeof(*out) * incnt * 2) + lens);
+      Unknown librdkafka__rdkafka_feature.c.i::rd_kafka_ApiVersions_copy L19831: *dstp = rd_memdup(src, sizeof(*src) * src_cnt);
 2  local declaration may shadow a formal resource identity
       Unknown librdkafka__rdkafka_feature.c.i::rd_kafka_ApiVersions_copy L19833: qsort(*dstp, *dst_cntp, sizeof(**dstp), rd_kafka_ApiVersion_key_cmp);
       Unknown librdkafka__rdkafka_request.c.i::rd_kafka_handle_ApiVersion L22294: qsort(*apis, *api_cnt, sizeof(**apis), rd_kafka_ApiVersion_key_cmp);
@@ -73,8 +69,8 @@ leaves: 239; on Unknown functions: 196; Unknown functions: 100
       Unknown librdkafka__rdkafka_metadata_cache.c.i::rd_kafka_metadata_cache_entry_new L20254: rkmce = rd_tmpabuf_alloc0(__FUNCTION__, 306, &tbuf, sizeof(*rkmce));
       Unknown librdkafka__rdkafka_topic.c.i::rd_kafka_topic_info_new_with_rack L20948: ti = rd_tmpabuf_alloc0(__FUNCTION__, 2200, &tbuf, sizeof(*ti));
 2  unmodeled call, aggregate or indirect access in for-loop condition
-      Unsafe librdkafka__rdkafka_mock_sharegrp.c.i::rd_kafka_mock_sharegroup_get_members_for_topic L22096: for (i = 0; (topic = rd_list_elem(member->subscribed_topic_names, i)); i++) {
-      Unsafe librdkafka__rdunittest.c.i::ut_tq_test L20341: for (i = 0; i < args->q[qi].cnt; i++) {
+      Unknown librdkafka__rdkafka_mock_sharegrp.c.i::rd_kafka_mock_sharegroup_get_members_for_topic L22096: for (i = 0; (topic = rd_list_elem(member->subscribed_topic_names, i)); i++) {
+      Unknown librdkafka__rdunittest.c.i::ut_tq_test L20341: for (i = 0; i < args->q[qi].cnt; i++) {
 2  call to uncontracted function `qsort`
       Unknown librdkafka__rdkafka_roundrobin_assignor.c.i::rd_kafka_roundrobin_assignor_assign_cb L19578: qsort(eligible_topics, eligible_topic_cnt, sizeof(*eligible_topics),
       Unknown librdkafka__rdkafka_roundrobin_assignor.c.i::rd_kafka_roundrobin_assignor_assign_cb L19580: qsort(members, member_cnt, sizeof(*members), rd_kafka_group_member_cmp);
@@ -86,32 +82,30 @@ leaves: 239; on Unknown functions: 196; Unknown functions: 100
       Unknown librdkafka__rdhttp.c.i::rd_http_error_new_from_buf L21272: return rd_http_error_new(
 1  store through `*jsonp` without an out-parameter contract
       Unknown librdkafka__rdhttp.c.i::rd_http_get_json L21718: *jsonp = ((void*)0);
+1  arguments beyond the declared parameters of `fprintf` are outside the resource projection
+      Unsafe librdkafka__rdhttp.c.i::unittest_http_get_params_append L21815: do { if (!(!res)) { fprintf(stderr, "\033[31mRDUT: FAIL: %s:%d: %s: " "assert failed: " "!res" ": ", "<stdin>", 799, __FUNCTION__); fprintf(
 1  call to uncontracted function `rd_kafka_global_cnt_incr`
       Unknown librdkafka__rdkafka.c.i::rd_kafka_new L22335: rd_kafka_global_cnt_incr();
 1  call to uncontracted function `rd_list_init`
-      Unsafe librdkafka__rdkafka_cgrp.c.i::rd_kafka_cgrp_handle_JoinGroup L21592: rd_list_init(&topics, member_cnt, rd_free);
+      Unknown librdkafka__rdkafka_cgrp.c.i::rd_kafka_cgrp_handle_JoinGroup L21592: rd_list_init(&topics, member_cnt, rd_free);
 1  call to uncontracted function `rd_kafka_topic_partition_list_add`
-      Unsafe librdkafka__rdkafka_cgrp.c.i::unittest_member_metadata_serdes L24898: rd_kafka_topic_partition_list_add(owned_partitions, topic_name, 0);
-1  call has an unmodeled formal address or borrowed expression
-      Unknown librdkafka__rdkafka_conf.c.i::rd_kafka_conf_kv_split L25621: out = rd_malloc((sizeof(*out) * incnt * 2) + lens);
+      Unknown librdkafka__rdkafka_cgrp.c.i::unittest_member_metadata_serdes L24898: rd_kafka_topic_partition_list_add(owned_partitions, topic_name, 0);
 1  call to uncontracted function `rd_kafka_coord_cache_entry_destroy`
-      Unsafe librdkafka__rdkafka_coord.c.i::rd_kafka_coord_cache_add L20196: rd_kafka_coord_cache_entry_destroy(cc, rem);
+      Unknown librdkafka__rdkafka_coord.c.i::rd_kafka_coord_cache_add L20196: rd_kafka_coord_cache_entry_destroy(cc, rem);
 1  call to uncontracted function `_Generic`
       Unknown librdkafka__rdkafka_feature.c.i::rd_kafka_ApiVersion_check L19800: api = _Generic (0 ? (apis) : (void *) 1, const void *: (const void *) (bsearch (match, apis, api_cnt, sizeof(*apis), rd_kafka_ApiVersion_key
-1  call to uncontracted function `rd_memdup`
-      Unknown librdkafka__rdkafka_feature.c.i::rd_kafka_ApiVersions_copy L19831: *dstp = rd_memdup(src, sizeof(*src) * src_cnt);
 1  call to uncontracted function `rd_list_new`
-      Unsafe librdkafka__rdkafka_fetcher.c.i::rd_kafka_share_acknowledge_reply_handle L21477: leader_changes =
+      Unknown librdkafka__rdkafka_fetcher.c.i::rd_kafka_share_acknowledge_reply_handle L21477: leader_changes =
 1  call to uncontracted function `rd_kafka_transport_post_connect_setup`
       Unknown librdkafka__rdkafka_mock.c.i::rd_kafka_mock_connection_new L22344: rd_kafka_transport_post_connect_setup(rktrans);
 1  call to uncontracted function `rd_kafka_mock_coord_destroy`
       Unknown librdkafka__rdkafka_mock.c.i::rd_kafka_mock_coord_set L22636: rd_kafka_mock_coord_destroy(mcluster, mcoord);
 1  call to uncontracted function `rd_kafka_mock_partition_write_control_batch`
-      Unsafe librdkafka__rdkafka_mock.c.i::ut_mock_txn_aborted_range_recorded L24189: rd_kafka_mock_partition_write_control_batch(mpart, pid, 0);
+      Unknown librdkafka__rdkafka_mock.c.i::ut_mock_txn_aborted_range_recorded L24189: rd_kafka_mock_partition_write_control_batch(mpart, pid, 0);
 1  call to uncontracted function `rd_kafka_mock_topic_new`
-      Unsafe librdkafka__rdkafka_mock.c.i::ut_mock_txn_offset_is_aborted L24215: mtopic = rd_kafka_mock_topic_new(mcluster, "isabort-test", 1, 1);
+      Unknown librdkafka__rdkafka_mock.c.i::ut_mock_txn_offset_is_aborted L24215: mtopic = rd_kafka_mock_topic_new(mcluster, "isabort-test", 1, 1);
 1  call to uncontracted function `rd_kafka_mock_cgrp_classic_member_find`
-      Unsafe librdkafka__rdkafka_mock_cgrp.c.i::rd_kafka_mock_cgrp_classic_member_add L21050: member = rd_kafka_mock_cgrp_classic_member_find(mcgrp, MemberId);
+      Unknown librdkafka__rdkafka_mock_cgrp.c.i::rd_kafka_mock_cgrp_classic_member_add L21050: member = rd_kafka_mock_cgrp_classic_member_find(mcgrp, MemberId);
 1  call to uncontracted function `rd_kafka_crash`
       Unknown librdkafka__rdkafka_partition.c.i::rd_kafka_topic_partition_list_add0 L21808: do { if (__builtin_expect((!(rktparlist->cnt < rktparlist->size)), 0)) rd_kafka_crash("<stdin>", 3160, __FUNCTION__, (((void*)0)), "assert: 
 1  discarded owned result of resource API `rd_malloc`
@@ -123,4 +117,4 @@ leaves: 239; on Unknown functions: 196; Unknown functions: 100
 1  call to uncontracted function `rd_kafka_topic_conf_new`
       Unknown librdkafka__rdkafka_topic.c.i::rd_kafka_topic_new_with_id L20178: conf = rd_kafka_topic_conf_new();
 1  call to uncontracted function `rd_kafka_topic_name`
-      Unsafe librdkafka__rdunittest_acknowledge.c.i::ut_case_bsearch_empty_entries L19970: const char *topic = rd_kafka_topic_name(rkt);
+      Unknown librdkafka__rdunittest_acknowledge.c.i::ut_case_bsearch_empty_entries L19970: const char *topic = rd_kafka_topic_name(rkt);
