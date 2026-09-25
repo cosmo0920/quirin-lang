@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W44-AGENT-GUIDANCE-OPUS55 on merge 082d8641 (onto main 70ce6b44, after W44-LIBC-RESIDUALS), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5505 core Rust passed / 0 failed / 11 ignored over 294 summaries; 185 Lean audits; 333 root Python tests (330 + the card's 3 task_context tests) after regenerating this section; fmt/clippy, both reevaluation examples and the docs index exit 0. The card changes only docs/, scripts/, AGENTS.md and CLAUDE.md: no analyzer, contract, provider or proof source, so the corpus arbiter was not rerun (the baseline stays docs/reports/w44-libc-residuals/integration/artifacts/) and the provider figure (124) is carried from the W44-LIBC-RESIDUALS integration gate, not remeasured.",
+ "workspace_tests": 5505,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 333,
+ "lean_audits": 185,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
