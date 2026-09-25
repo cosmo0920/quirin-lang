@@ -231,6 +231,9 @@
 //! - [`FUNCTION_POINTER_ABI_TYPE`] (`fnptr`) — the projection of a pointer to
 //!   function. Borrowed only, by the same two gates that hold every scalar
 //!   borrowed-only: both key on the leading word `ptr`, which `fnptr` is not.
+//! - [`VA_LIST_ABI_TYPE`] (`va_list`) — the projection of the compiler's
+//!   `__builtin_va_list` at a parameter. Borrowed only, by the same two gates,
+//!   and a parameter type only (card W44-LIBC-RESIDUALS).
 //! - `unit` is a result type only, never a parameter type.
 //!
 //! Acquire/Release/Escape/Neutral compatibility kinds map respectively to Owned
@@ -314,6 +317,31 @@ pub const POINTER_ABI_TYPES: &[&str] =
 /// char *, size_t)` and which the production `flb_input_chunk_create` calls.
 pub const FUNCTION_POINTER_ABI_TYPE: &str = "fnptr";
 
+/// The opaque C ABI projection of the compiler's variable-argument list type,
+/// `__builtin_va_list` (card **W44-LIBC-RESIDUALS**, `LIBC-PRINTF-VA-LIST`).
+///
+/// glibc spells the last parameter of `vsnprintf`, `vprintf`, `vfprintf` and
+/// `vsprintf` `__gnuc_va_list __arg`, a typedef of the builtin. What the
+/// builtin *is* depends on the target — `__va_list_tag[1]`, adjusted to an
+/// object pointer at a parameter, on x86-64; a structure passed by value on
+/// AArch64 — so no existing spelling reads it without binding the reader to a
+/// target. This spelling names the type, not its representation, and so it is
+/// target-independent.
+///
+/// It is deliberately **not** spelled `ptr<…>`: the two custody gates key on
+/// the leading word `ptr`, exactly as they do for [`FUNCTION_POINTER_ABI_TYPE`],
+/// so `resource_borrowed` is the only mode a declaration can write on it. A
+/// variable-argument list is read as data by the callee; it is never a resource
+/// identity. It is a **parameter** type only: a function cannot return the
+/// array type the builtin is on x86-64, and no declaration in scope needs a
+/// result of it, so it is left out of the result vocabulary.
+///
+/// Like [`SCALAR_ABI_TYPES`], widening the vocabulary changes which signatures
+/// can be *written*, never what a loaded contract means. The condition card
+/// NEIGHBOURS stated is met: a resource API in scope passes one — glibc's
+/// `vsnprintf`, called in 25 functions of the pinned corpus.
+pub const VA_LIST_ABI_TYPE: &str = "va_list";
+
 /// The introducer of the retired `qcore-premise` comment directive (card
 /// HASH-CONTRACTS, superseded by HASH-CLAUSE's `resource_literal_argument`
 /// clause).
@@ -365,7 +393,8 @@ pub struct DeclaredLiteralArgument {
 /// reproduce it from the bytes they already hold.
 ///
 /// Every spelling here is an entry of [`SCALAR_ABI_TYPES`],
-/// [`POINTER_ABI_TYPES`] or, for `result` only, `unit`: the loader admits no
+/// [`POINTER_ABI_TYPES`], [`FUNCTION_POINTER_ABI_TYPE`], for a parameter only
+/// [`VA_LIST_ABI_TYPE`], or, for `result` only, `unit`: the loader admits no
 /// other spelling, so a consumer compares against a closed table.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct DeclaredAbiSignature {
@@ -385,18 +414,21 @@ struct LoadedDeclaration {
     abi: DeclaredAbiSignature,
 }
 
-/// The parameter vocabulary: every scalar, every pointer, and `fnptr`.
+/// The parameter vocabulary: every scalar, every pointer, `fnptr` and
+/// `va_list`.
 fn parameter_abi_types() -> impl Iterator<Item = &'static str> {
     SCALAR_ABI_TYPES
         .iter()
         .copied()
         .chain(POINTER_ABI_TYPES.iter().copied())
         .chain(std::iter::once(FUNCTION_POINTER_ABI_TYPE))
+        .chain(std::iter::once(VA_LIST_ABI_TYPE))
 }
 
-/// The result vocabulary: `unit` plus every parameter type.
+/// The result vocabulary: `unit` plus every parameter type except `va_list`,
+/// which is a parameter type only.
 fn result_abi_types() -> impl Iterator<Item = &'static str> {
-    std::iter::once("unit").chain(parameter_abi_types())
+    std::iter::once("unit").chain(parameter_abi_types().filter(|ty| *ty != VA_LIST_ABI_TYPE))
 }
 
 /// Load all selected modules atomically. No partial environment escapes on error.

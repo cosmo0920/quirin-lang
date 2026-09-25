@@ -1,0 +1,449 @@
+{
+ "groups": [
+  {
+   "followup": "W44-CONDITION-CALL-INDIRECT-ARGUMENT",
+   "classes": [
+    "call-indirect-argument"
+   ],
+   "leaves": 1686,
+   "functions": 630,
+   "sole": 8
+  },
+  {
+   "followup": "W44-CONDITION-CALL-UNCONTRACTED",
+   "classes": [
+    "call-uncontracted"
+   ],
+   "leaves": 1000,
+   "functions": 575,
+   "sole": 11
+  },
+  {
+   "followup": "W44-CONDITION-CALL-FREE-OPERAND",
+   "classes": [
+    "call-free-leaf-refused"
+   ],
+   "leaves": 1211,
+   "functions": 622,
+   "sole": 0
+  },
+  {
+   "followup": "W44-CONDITION-CALL-TYPE-OPERATOR",
+   "classes": [
+    "type-operator"
+   ],
+   "leaves": 259,
+   "functions": 113,
+   "sole": 1
+  },
+  {
+   "followup": "W44-CONDITION-CALL-ASSIGNMENT",
+   "classes": [
+    "assignment-destination",
+    "assignment-shape"
+   ],
+   "leaves": 196,
+   "functions": 160,
+   "sole": 0
+  },
+  {
+   "followup": "W44-CONDITION-CALL-RECURSIVE-LOCAL",
+   "classes": [
+    "recursive-local-callee"
+   ],
+   "leaves": 31,
+   "functions": 18,
+   "sole": 0
+  },
+  {
+   "followup": "W44-CONDITION-CALL-ERRNO-RESIDUAL",
+   "classes": [
+    "residual-refused"
+   ],
+   "leaves": 22,
+   "functions": 19,
+   "sole": 2
+  },
+  {
+   "followup": "W44-CONDITION-CALL-REFUSED-SHAPES",
+   "classes": [
+    "braces",
+    "call-other",
+    "custody-result",
+    "descriptor-read",
+    "elvis",
+    "increment-or-decrement",
+    "indirect-callee",
+    "nested-connective",
+    "switch-shape",
+    "unparsed",
+    "unsequenced-effects"
+   ],
+   "leaves": 74,
+   "functions": 62,
+   "sole": 3
+  }
+ ],
+ "rows": [
+  {
+   "class": "no-call",
+   "leaves": 4766,
+   "functions": 1758,
+   "sole": 29,
+   "examples": [
+    "cmt_create: ! cmt - > static_labels",
+    "cmt_create: cmt - > internal_metadata = = ( ( void * ) 0 )",
+    "cmt_create: cmt - > external_metadata = = ( ( void * ) 0 )"
+   ]
+  },
+  {
+   "class": "call-indirect-argument",
+   "leaves": 1686,
+   "functions": 630,
+   "sole": 8,
+   "examples": [
+    "cat_exp_histogram_values: cmt_atomic_load ( & metric_dst - > exp_hist_sum_set ) & & cmt_atomic_load ( & metric_src - > exp_hist_sum_set )",
+    "cat_exp_histogram_values: cmt_atomic_load ( & metric_src - > exp_hist_sum_set )",
+    "cmt_cat_summary: ! summary_label_keys_match ( sum - > map , map )"
+   ]
+  },
+  {
+   "class": "call-free-leaf-refused",
+   "leaves": 1211,
+   "functions": 622,
+   "sole": 0,
+   "examples": [
+    "cat_exp_histogram_values: metric_dst - > exp_hist_positive_buckets = = ( ( void * ) 0 ) & & metric_dst - > exp_hist_negative_buckets = = ( ( void * ) 0 ) & & metric_dst - > exp_hist_posi",
+    "summary_label_keys_match: left_label - > name = = ( ( void * ) 0 ) | | right_label - > name = = ( ( void * ) 0 ) | | strcmp ( left_label - > name , right_label - > name ) ! = 0",
+    "decode_data_point_labels: current_label - > name ! = ( ( void * ) 0 ) & & strcmp ( current_label - > name , attribute - > key ) = = 0"
+   ]
+  },
+  {
+   "class": "call-uncontracted",
+   "leaves": 1000,
+   "functions": 575,
+   "sole": 11,
+   "examples": [
+    "cat_scalar_value: cmt_metric_get_value_type ( metric_src ) = = CMT_METRIC_VALUE_INT64",
+    "cat_scalar_value: cmt_metric_get_value_type ( metric_src ) = = CMT_METRIC_VALUE_UINT64",
+    "cat_scalar_value: cmt_metric_has_start_timestamp ( metric_src )"
+   ]
+  },
+  {
+   "class": "type-operator",
+   "leaves": 259,
+   "functions": 113,
+   "sole": 1,
+   "examples": [
+    "batch_add_metric: metric_count > = ( 18446744073709551615UL ) / sizeof ( Opentelemetry__Proto__Metrics__V1__Metric * )",
+    "batches_append: count > = ( 18446744073709551615UL ) / sizeof ( struct cmt_opentelemetry_batch )",
+    "print_number: ( length < 0 ) | | ( length > ( int ) ( sizeof ( number_buffer ) - 1 ) )"
+   ]
+  },
+  {
+   "class": "assignment-destination",
+   "leaves": 168,
+   "functions": 142,
+   "sole": 0,
+   "examples": [
+    "rd_kafka_fatal_error: __builtin_expect ( ( ( err = rd_atomic32_get ( & rk - > rk_fatal . err ) ) ) , 0 )",
+    "rd_kafka_get_fatal_error: ! ( err = rd_atomic32_get ( & rk - > rk_fatal . err ) )",
+    "rd_kafka_share_fetch_reply_op: ( batch = rd_list_elem ( ack_details , k ) )"
+   ]
+  },
+  {
+   "class": "recursive-local-callee",
+   "leaves": 31,
+   "functions": 18,
+   "sole": 0,
+   "examples": [
+    "cJSON_Compare: ! cJSON_Compare ( a_element , b_element , case_sensitive )",
+    "cJSON_Compare: ! cJSON_Compare ( a_element , b_element , case_sensitive )",
+    "cJSON_Compare: ! cJSON_Compare ( b_element , a_element , case_sensitive )"
+   ]
+  },
+  {
+   "class": "indirect-callee",
+   "leaves": 29,
+   "functions": 23,
+   "sole": 2,
+   "examples": [
+    "line_protocol_escape: quote ? ( ch = = __qcore_literal__ | | ch = = __qcore_literal__ ) : ( ( ( * __ctype_b_loc ( ) ) [ ( int ) ( ( ch ) ) ] & ( unsigned short int ) _ISspace ) | | c",
+    "decode_callback_field: ! field - > descriptor - > field_callback ( & substream , ( ( void * ) 0 ) , field )",
+    "pb_read: ! stream - > callback ( stream , buf , count )"
+   ]
+  },
+  {
+   "class": "assignment-shape",
+   "leaves": 28,
+   "functions": 22,
+   "sole": 0,
+   "examples": [
+    "rd_getaddrinfo: ( * errstr = rd_addrinfo_prepare ( nodesvc , & node , & svc ) )",
+    "rd_kafka_IncrementalAlterConfigs: ( ( & configs_map ) - > key = ( key ) , ( & configs_map ) - > value = rd_map_get ( & ( & configs_map ) - > rmap , ( & configs_map ) - > key ) , ( & configs_map ",
+    "rd_kafka_IncrementalAlterConfigs: ( ( & entries_map ) - > key = ( key ) , ( & entries_map ) - > value = rd_map_get ( & ( & entries_map ) - > rmap , ( & entries_map ) - > key ) , ( & entries_map "
+   ]
+  },
+  {
+   "class": "braces",
+   "leaves": 22,
+   "functions": 21,
+   "sole": 0,
+   "examples": [
+    "rd_http_req_get_content_type: __extension__ ( { if ( __builtin_constant_p ( CURLINFO_CONTENT_TYPE ) ) { if ( ( 0x100000 < ( CURLINFO_CONTENT_TYPE ) & & ( CURLINFO_CONTENT_TYPE ) < 0x200000 &",
+    "rd_kafka_seek: ( err = rd_kafka_toppar_op_seek ( rktp , ( { rd_kafka_fetch_pos_t _fetchpos = { offset , - 1 , 0 } ; _fetchpos ; } ) , replyq ) )",
+    "can_use_topic_ids: ( ! rd_kafka_Uuid_cmp ( rktp - > rktp_rkt - > rkt_topic_id , ( rd_kafka_Uuid_t ) { 0 , 0 , __qcore_literal__ } ) )"
+   ]
+  },
+  {
+   "class": "residual-refused",
+   "leaves": 22,
+   "functions": 19,
+   "sole": 2,
+   "examples": [
+    "rd_kafka_sasl_cyrus_kinit_refresh: ( * __errno_location ( ) ) = = 10",
+    "rd_kafka_sasl_scram_handle_server_first_message: strlen ( server_nonce ) < = state - > cnonce . size | | strncmp ( state - > cnonce . ptr , server_nonce , state - > cnonce . size )",
+    "rd_kafka_sasl_scram_handle_server_first_message: itcntstr = = endptr | | * endptr ! = __qcore_literal__ | | ( * __errno_location ( ) ) ! = 0 | | itcnt > 1000000"
+   ]
+  },
+  {
+   "class": "call-other",
+   "leaves": 9,
+   "functions": 6,
+   "sole": 0,
+   "examples": [
+    "case_insensitive_strcmp: tolower ( * string1 ) = = tolower ( * string2 )",
+    "LZ4_compress_destSize_extState: targetDstSize > = LZ4_compressBound ( * srcSizePtr )",
+    "LZ4_initStream: ! LZ4_isAligned ( buffer , LZ4_stream_t_alignment ( ) )"
+   ]
+  },
+  {
+   "class": "increment-or-decrement",
+   "leaves": 8,
+   "functions": 7,
+   "sole": 1,
+   "examples": [
+    "rd_addrinfo_prepare: ( svct = _Generic ( 0 ? ( svct ? svct : nodesvc ) : ( void * ) 1 , const void * : ( const char * ) ( strrchr ( svct ? svct : nodesvc , __qcore_literal__ ) ) , d",
+    "rd_kafka_broker_ops_serve: ( rko = rd_kafka_q_pop ( rkb - > rkb_ops , timeout_us , 0 ) ) & & ( cnt + + , ! rd_kafka_broker_op_serve ( rkb , rko ) )",
+    "rd_kafka_header_get: hdr - > rkhdr_name_size = = name_size & & ! strcmp ( hdr - > rkhdr_name , name ) & & mi + + = = idx"
+   ]
+  },
+  {
+   "class": "unexplained",
+   "leaves": 6,
+   "functions": 5,
+   "sole": 0,
+   "examples": []
+  },
+  {
+   "class": "nested-connective",
+   "leaves": 3,
+   "functions": 3,
+   "sole": 0,
+   "examples": [
+    "rd_kafka_broker_produce_toppars: ( rktp = ( ( ( rktp ) - > rktp_activelink . cqe_next = = ( __launder_type ( & rkb - > rkb_active_toppars ) ) ) ? ( ( & rkb - > rkb_active_toppars ) - > cqh_firs",
+    "can_use_topic_ids: ( rktp = ( ( ( rktp ) - > rktp_activelink . cqe_next = = ( __launder_type ( & rkb - > rkb_active_toppars ) ) ) ? ( ( & rkb - > rkb_active_toppars ) - > cqh_firs",
+    "rd_kafka_broker_fetch_toppars: ( rktp = ( ( ( rktp ) - > rktp_activelink . cqe_next = = ( __launder_type ( & rkb - > rkb_active_toppars ) ) ) ? ( ( & rkb - > rkb_active_toppars ) - > cqh_firs"
+   ]
+  },
+  {
+   "class": "custody-result",
+   "leaves": 3,
+   "functions": 3,
+   "sole": 0,
+   "examples": [
+    "rd_kafka_lz4_decompress: ! ( tmp = rd_realloc ( out , outlen + extra ) )",
+    "mk_file_to_buffer: ! ( fp = fopen ( path , __qcore_literal__ ) )",
+    "mk_vhost_init: ! ( dir = opendir ( sites ) )"
+   ]
+  }
+ ],
+ "per_family": [
+  {
+   "family": "branch condition",
+   "class": "no-call",
+   "leaves": 3900
+  },
+  {
+   "family": "branch condition",
+   "class": "call-indirect-argument",
+   "leaves": 1614
+  },
+  {
+   "family": "branch condition",
+   "class": "call-free-leaf-refused",
+   "leaves": 1202
+  },
+  {
+   "family": "branch condition",
+   "class": "call-uncontracted",
+   "leaves": 893
+  },
+  {
+   "family": "for-loop condition",
+   "class": "no-call",
+   "leaves": 587
+  },
+  {
+   "family": "branch condition",
+   "class": "type-operator",
+   "leaves": 198
+  },
+  {
+   "family": "loop condition",
+   "class": "no-call",
+   "leaves": 191
+  },
+  {
+   "family": "for-loop condition",
+   "class": "assignment-destination",
+   "leaves": 87
+  },
+  {
+   "family": "switch expression",
+   "class": "no-call",
+   "leaves": 78
+  },
+  {
+   "family": "branch condition",
+   "class": "assignment-destination",
+   "leaves": 67
+  },
+  {
+   "family": "for-loop condition",
+   "class": "type-operator",
+   "leaves": 55
+  },
+  {
+   "family": "for-loop condition",
+   "class": "call-indirect-argument",
+   "leaves": 54
+  },
+  {
+   "family": "for-loop condition",
+   "class": "call-uncontracted",
+   "leaves": 54
+  },
+  {
+   "family": "loop condition",
+   "class": "call-uncontracted",
+   "leaves": 44
+  },
+  {
+   "family": "branch condition",
+   "class": "recursive-local-callee",
+   "leaves": 31
+  },
+  {
+   "family": "branch condition",
+   "class": "assignment-shape",
+   "leaves": 27
+  },
+  {
+   "family": "branch condition",
+   "class": "indirect-callee",
+   "leaves": 23
+  },
+  {
+   "family": "branch condition",
+   "class": "braces",
+   "leaves": 22
+  },
+  {
+   "family": "branch condition",
+   "class": "residual-refused",
+   "leaves": 22
+  },
+  {
+   "family": "loop condition",
+   "class": "assignment-destination",
+   "leaves": 14
+  },
+  {
+   "family": "loop condition",
+   "class": "call-indirect-argument",
+   "leaves": 13
+  },
+  {
+   "family": "do-while condition",
+   "class": "no-call",
+   "leaves": 10
+  },
+  {
+   "family": "do-while condition",
+   "class": "call-uncontracted",
+   "leaves": 9
+  },
+  {
+   "family": "loop condition",
+   "class": "call-free-leaf-refused",
+   "leaves": 8
+  },
+  {
+   "family": "branch condition",
+   "class": "call-other",
+   "leaves": 8
+  },
+  {
+   "family": "branch condition",
+   "class": "unexplained",
+   "leaves": 6
+  },
+  {
+   "family": "loop condition",
+   "class": "type-operator",
+   "leaves": 6
+  },
+  {
+   "family": "loop condition",
+   "class": "increment-or-decrement",
+   "leaves": 6
+  },
+  {
+   "family": "loop condition",
+   "class": "indirect-callee",
+   "leaves": 5
+  },
+  {
+   "family": "do-while condition",
+   "class": "call-indirect-argument",
+   "leaves": 5
+  },
+  {
+   "family": "do-while condition",
+   "class": "nested-connective",
+   "leaves": 3
+  },
+  {
+   "family": "branch condition",
+   "class": "custody-result",
+   "leaves": 3
+  },
+  {
+   "family": "branch condition",
+   "class": "increment-or-decrement",
+   "leaves": 2
+  },
+  {
+   "family": "for-loop condition",
+   "class": "call-other",
+   "leaves": 1
+  },
+  {
+   "family": "for-loop condition",
+   "class": "call-free-leaf-refused",
+   "leaves": 1
+  },
+  {
+   "family": "loop condition",
+   "class": "assignment-shape",
+   "leaves": 1
+  },
+  {
+   "family": "do-while condition",
+   "class": "indirect-callee",
+   "leaves": 1
+  }
+ ],
+ "unexplained": 6
+}

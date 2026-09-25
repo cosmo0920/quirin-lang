@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/audit-census-handed.bin",
+    "--pinned-evidence",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/census-handed/monkey-source.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/census-handed/resource-diagnostics.json"
+  ],
+  "source": "3eebf2e3+reader-v3+handed-path+rule-off",
+  "binary_sha256": "282f5976c9db54ac2e6f50506fd3b964ade6a43607371f5666cdad446f5fe98b",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_LEAK_WITNESS": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c7bec6dee781632/measure/census-handed/leak-witness.jsonl"
+  },
+  "start": "2026-09-25T02:27:18.899942+00:00",
+  "exit": 0,
+  "end": "2026-09-25T02:34:25.686409+00:00"
+}

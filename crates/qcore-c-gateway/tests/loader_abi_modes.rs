@@ -195,13 +195,17 @@ void caller(void) {{ void *h = m_alloc(8); m_retire(h); }}
     );
     let summary = analyse(&source, &contracts);
     let caller = function(&summary, "caller");
-    assert_eq!(caller.status, AnalysisStatus::Unsafe);
+    // The declaration's hidden leak used to be reported here (`Unsafe`). Card
+    // W44-LEAK-PIN-AUDIT: the withdrawn call site is a refused statement that
+    // hands `h` to `m_retire`, so the refused hand-on rule withdraws the leak;
+    // the caller is `Unknown`, never `Safe`, and the withdrawal is reported.
+    assert_eq!(caller.status, AnalysisStatus::Unknown);
     assert!(
-        caller
+        !caller
             .diagnostics
             .iter()
             .any(|diagnostic| matches!(diagnostic.kind, LegacyDiagnosticKind::Leak { .. })),
-        "the leak the declaration was hiding is now reported: {:?}",
+        "a leak through a refused hand-on is not claimed: {:?}",
         caller.diagnostics
     );
     assert!(
@@ -1134,13 +1138,17 @@ void caller(void) {{ void *h = m_alloc(8); if (h) {{ m_sink(h); }} }}
     )
     .expect("Clang accepts the fixture")
     {
-        // Measured: the withdrawal exposes the acquisition the declared
-        // `Borrowed` was accounting for, so the production route reports a
-        // **provisional** `Unsafe` rather than `Unknown`. That is card
-        // LOADER-ABI's recorded `LOADER-ABI-WITHDRAWAL-UNSAFE` direction on
-        // this axis; it is a projection allegation about this synthetic
-        // fixture, never an upstream defect claim.
-        UnrestrictedLegacyResult::Unsafe(summary) => {
+        // Measured: the withdrawal exposed the acquisition the declared
+        // `Borrowed` was accounting for, so the production route reported a
+        // **provisional** `Unsafe` (card LOADER-ABI's recorded
+        // `LOADER-ABI-WITHDRAWAL-UNSAFE` direction). Card W44-LEAK-PIN-AUDIT:
+        // the withdrawn call site is a refused statement handing `h` to
+        // `m_sink`, so the refused hand-on rule withdraws that allegation and
+        // the route answers `Unknown`; either way it never certifies.
+        UnrestrictedLegacyResult::Unknown {
+            partial: Some(summary),
+            ..
+        } => {
             assert!(
                 unsupported(function(&summary, "caller")).contains(&withdrawal(
                     "m_sink",

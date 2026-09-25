@@ -911,11 +911,12 @@ fn an_indirect_publication_withdraws_its_leak_claim() {
     );
 }
 
-/// The control: the identical store into a **local** aggregate keeps its
-/// pre-existing answer, `Leak` included. The destination half of the indirect
-/// rule is load-bearing.
+/// The control: the identical store into a **local** aggregate publishes
+/// nothing. The destination half of the indirect rule is load-bearing. Its
+/// pre-existing `Leak` is withdrawn since card W44-LEAK-PIN-AUDIT's refused
+/// hand-on rule, because the refused store hands `h` on.
 #[test]
-fn an_indirect_store_into_a_local_aggregate_keeps_its_leak_claim() {
+fn an_indirect_store_into_a_local_aggregate_publishes_nothing() {
     if !clang_available() {
         return;
     }
@@ -924,10 +925,14 @@ fn an_indirect_store_into_a_local_aggregate_keeps_its_leak_claim() {
          void w(int n) { struct b_reg local; struct b_handle *h; h = b_open(0,0,n); \
          if (!h) { return; } local.slot = h; }",
     );
-    assert_eq!(head, "unsafe");
+    // It kept its `Leak` until card W44-LEAK-PIN-AUDIT: the refused store
+    // hands `h` on as its value, so the refused hand-on rule withdraws the
+    // accusation (`Unknown`, never `Safe`). The destination half is still
+    // load-bearing for the publication rule: nothing is published.
+    assert!(head.starts_with("unknown"), "{head}");
     assert!(
-        keys.contains(&"leak".to_owned()),
-        "a local destination publishes nothing: {keys:?}"
+        !keys.contains(&"leak".to_owned()),
+        "a leak through a refused hand-on is not claimed: {keys:?}"
     );
     assert!(
         !keys.iter().any(|key| key.starts_with("publication:")),
@@ -937,9 +942,12 @@ fn an_indirect_store_into_a_local_aggregate_keeps_its_leak_claim() {
 
 /// The recorded residual, pinned as measured rather than left unstated: a store
 /// through a **local pointer** that was assigned the address of a publication
-/// destination keeps its pre-existing answer, `Leak` included, because the base
-/// this scan reads is the local `p`. Deciding it needs a pointer relation the
-/// projection does not have. Named `CTWIN-PUBLISH-INDIRECT-POINTER`.
+/// destination is not a recognised publication, because the base this scan
+/// reads is the local `p`. Deciding it needs a pointer relation the projection
+/// does not have. Named `CTWIN-PUBLISH-INDIRECT-POINTER`. It kept its `Leak`
+/// until card W44-LEAK-PIN-AUDIT: the refused store `*p = h` hands `h` on as
+/// its value, so the refused-escape rule withdraws the accusation and the
+/// function is `Unknown` — still never `Safe`, and still no publication.
 #[test]
 fn a_store_through_a_local_pointer_to_the_object_keeps_its_pre_existing_answer() {
     if !clang_available() {
@@ -950,7 +958,8 @@ fn a_store_through_a_local_pointer_to_the_object_keeps_its_pre_existing_answer()
          void w(int n) { struct b_handle **p = &g_published; struct b_handle *h; \
          h = b_open(0,0,n); if (!h) { return; } *p = h; }",
     );
-    assert_eq!(head, "unsafe");
+    assert!(head.starts_with("unknown"), "{head}");
+    assert!(!keys.contains(&"leak".to_owned()), "{keys:?}");
     assert!(
         !keys.iter().any(|key| key.starts_with("publication:")),
         "this scan reads the base `p`, which is not a destination: {keys:?}"

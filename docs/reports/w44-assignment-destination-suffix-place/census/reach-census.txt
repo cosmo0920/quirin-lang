@@ -1,0 +1,21 @@
+raw records 38183, distinct 10979, unjoined raw 6
+classes: {'declarator': 7853, 'sub-object': 3126}
+declarator prefix shapes: {'no-comma+star': 3218, 'no-comma': 4596, 'comma': 22, 'comma+star': 17}
+sub-object: 3126 distinct; first '=' is '==': 683
+  last prefix token: {'>': 2389, '(': 427, '.': 204, ',': 58, '{': 11, 'rd_kafka_fetch_pos_t': 10, 'rd_list_cnt': 9, '}': 8, ')': 5, '+': 2, '&': 2, '-': 1}
+  admitted BEFORE: 1450; outcomes {'Clear': 295, 'ContractCall': 1, 'Alias': 1148, 'ForgetScalar': 6}
+  admitted named-root kinds: {'undeclared': 1416, 'formal': 10, 'local': 24}
+  admitted (kind, later mention, later call argument): formal/False/False: 9, formal/True/True: 1, local/False/False: 14, local/True/False: 8, local/True/True: 2, undeclared/False/False: 1416
+  forecast per record: {'refused': 1450, 'exchange': 428, 'unchanged-pre-gate': 506, 'unchanged-gate': 742}
+functions with sub-object records, by BEFORE status: {'Unsafe': 17, 'Unknown': 615, 'Safe': 2}
+functions gaining a refusal, by BEFORE status: {'Unsafe': 3, 'Unknown': 168, 'Safe': 2}
+Safe functions whose certification relied on a misnamed destination: 2
+  lz4.c LZ4_write16:
+    L357 Alias named `u16` (undeclared, later 0): ( ( LZ4_unalign * ) memPtr ) - > u16 = value
+  lz4.c LZ4_write32:
+    L358 Alias named `u32` (undeclared, later 0): ( ( LZ4_unalign * ) memPtr ) - > u32 = value
+provisional-Unsafe functions gaining a refusal: 3
+  cmt_decode_msgpack.c unpack_basic_type leaks at [8378, 8418]
+  rdkafka_request.c rd_kafka_handle_OffsetFetch leaks at [21228]
+  flb_input_chunk.c flb_input_chunk_get_direct_routes leaks at [19544]
+leaf forecast: gate leaves added <= 188; exchanged descriptions <= 428; unknown_alias leaves reported by a refused Alias: 1101

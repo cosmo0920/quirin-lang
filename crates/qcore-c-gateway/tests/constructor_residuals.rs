@@ -199,14 +199,20 @@ fn a_write_through_a_dereferenced_call_result_never_discharges_a_resource() {
     // MEASURED: it moves in the **fail-closed** direction. The store is
     // dropped, not applied: the destination is not a place the projection
     // names, so nothing is bound to it and — the load-bearing half — the stored
-    // identity is NOT discharged. `h` stays live and leaks at the exit.
+    // identity is NOT discharged. `h` stayed live and leaked at the exit.
+    //
+    // Card W44-LEAK-PIN-AUDIT: the store is refused and its value side is
+    // `h`, so the refused-escape rule withdraws the accusation (`h` carries an
+    // unresolved effect). It is still never a discharge: the function stays
+    // non-`Safe`, now `Unknown` with the refusal as its reason.
     let published = summary_of(
         "void d_run(int n) { struct d_rec *h; h = d_open(n); if (!h) { return; } \
          (*d_handle ()) = h; }",
         "d_run",
     );
     assert_ne!(published.status, AnalysisStatus::Safe);
-    assert_eq!(leaks(&published).len(), 1);
+    assert_eq!(published.status, AnalysisStatus::Unknown);
+    assert_eq!(leaks(&published).len(), 0);
 
     // The control: a scalar write through the same shape is admitted, and the
     // resource beside it is still accounted for on every path.

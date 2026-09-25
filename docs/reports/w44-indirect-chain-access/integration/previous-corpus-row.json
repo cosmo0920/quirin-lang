@@ -1,0 +1,29 @@
+{
+ "note": "W44-INDIRECT-CHAIN-ACCESS, 2026-09-25. BEFORE (base c1e69bb5) reproduces the W43-INDEXED-RESOURCE-COLLECTIONS integration diagnostics byte for byte, and the census-instrumented base run reproduces all five BEFORE artifacts. Typed record-pointer member chains in statements and conditions remove 74 unsupported leaves (24 admitted, 50 refused by the chain obligation) and add 49 unknown_alias exchanges, all attributed; 0 downstream, 0 violation candidates. 0 function and 0 unit moves, leak pin 271 unchanged. No bounds claim. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-indirect-chain-access/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 3,
+ "provisional_unsafe": 43,
+ "unknown": 135,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 271,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w44-indirect-chain-access/artifacts/",
+ "source": "docs/reports/w44-indirect-chain-access/README.md; preceding baseline docs/reports/w43-indexed-resource-collections/integration/artifacts/",
+ "unknown_alias_diagnostics": 4407,
+ "unsupported_diagnostics": 45774,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 294,
+  "provisional_unsafe": 85,
+  "unknown": 4455
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 134,
+  "none": 50,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

@@ -2128,7 +2128,22 @@ fn typed_scalar_expression(
     types: &FunctionTypes,
     plan: &mut TypedScalarPlan,
 ) -> Option<usize> {
-    typed_operand_expression(texts, model, types, plan, false)
+    typed_operand_expression(texts, model, types, plan, false, &no_extension)
+}
+
+/// Card **W44-INDIRECT-CHAIN-ACCESS**: an opt-in reader for one access the
+/// single-selection reader [`typed_access`] refuses, consulted by the walker
+/// at every operand position and by the destination reader. Given the whole
+/// run and a position it returns the index just past an access it admits, or
+/// `None`. It records nothing here: the caller that supplied it rereads the
+/// admitted run for the obligations its accesses carry
+/// ([`crate::indirect_chain_access`]). Every pre-existing entry point passes
+/// [`no_extension`], so each of their answers is unchanged.
+pub(crate) type AccessExtension<'e> = dyn Fn(&[&str], usize) -> Option<usize> + 'e;
+
+/// The extension every pre-existing entry point passes: it admits nothing.
+fn no_extension(_: &[&str], _: usize) -> Option<usize> {
+    None
 }
 
 /// The walker behind [`typed_scalar_expression`] and
@@ -2145,6 +2160,7 @@ fn typed_operand_expression(
     types: &FunctionTypes,
     plan: &mut TypedScalarPlan,
     pointer_operands: bool,
+    extension: &AccessExtension<'_>,
 ) -> Option<usize> {
     let mut accesses = 0usize;
     let mut expect_operand = true;
@@ -2156,6 +2172,15 @@ fn typed_operand_expression(
             if pointer_operands && texts[index..].starts_with(&["(", "void", "*", ")"]) {
                 // The null constant's cast; its operand `0` follows.
                 index += 4;
+                continue;
+            }
+            // Card W44-INDIRECT-CHAIN-ACCESS: an access the opt-in extension
+            // admits (tried first, so `( * p ) . f -> g` is not read as a
+            // parenthesised operand). With `no_extension` this never fires.
+            if let Some(end) = extension(texts, index) {
+                accesses += 1;
+                index = end;
+                expect_operand = false;
                 continue;
             }
             if text == "(" {
@@ -2257,9 +2282,19 @@ fn single_typed_access(
     types: &FunctionTypes,
     plan: &mut TypedScalarPlan,
     dereferencing: bool,
+    extension: &AccessExtension<'_>,
 ) -> Option<()> {
     let texts = strip_enclosing(texts);
-    let access = typed_access(texts, 0, model, types)?;
+    let Some(access) = typed_access(texts, 0, model, types) else {
+        // Card W44-INDIRECT-CHAIN-ACCESS: a whole-run access the opt-in
+        // extension admits. It selects a scalar member, so it writes one
+        // scalar and never through `*B`/`B[I]`.
+        if extension(texts, 0) != Some(texts.len()) {
+            return None;
+        }
+        plan.writes_through_pointer = false;
+        return Some(());
+    };
     if access.end != texts.len() || (dereferencing && access.base.is_none()) {
         return None;
     }
@@ -2297,6 +2332,18 @@ pub(crate) fn typed_scalar_statement(
     model: &TypedAccessModel,
     types: &FunctionTypes,
 ) -> Option<TypedScalarPlan> {
+    typed_scalar_statement_with(texts, model, types, &no_extension)
+}
+
+/// Card **W44-INDIRECT-CHAIN-ACCESS**: [`typed_scalar_statement`] with an
+/// opt-in reader for accesses the single-selection reader refuses, admitted
+/// wherever a typed access is (destination, increment operand, value).
+pub(crate) fn typed_scalar_statement_with(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    extension: &AccessExtension<'_>,
+) -> Option<TypedScalarPlan> {
     types.variables.as_ref()?;
     if texts.is_empty()
         || texts
@@ -2318,12 +2365,12 @@ pub(crate) fn typed_scalar_statement(
             }
             _ => return None,
         };
-        single_typed_access(body, model, types, &mut plan, true)?;
+        single_typed_access(body, model, types, &mut plan, true, extension)?;
         return Some(plan);
     };
     let left = &texts[..equal - operator];
     let right = &texts[equal + 1..];
-    let lhs_access = single_typed_access(left, model, types, &mut plan, false).is_some();
+    let lhs_access = single_typed_access(left, model, types, &mut plan, false, extension).is_some();
     if !lhs_access {
         plan = TypedScalarPlan::default();
         let (&name, specifiers) = left.split_last()?;
@@ -2335,7 +2382,7 @@ pub(crate) fn typed_scalar_statement(
         }
         plan.destination = Some(name.to_owned());
     }
-    let accesses = typed_scalar_expression(right, model, types, &mut plan)?;
+    let accesses = typed_operand_expression(right, model, types, &mut plan, false, extension)?;
     (lhs_access || accesses > 0).then_some(plan)
 }
 
@@ -2359,6 +2406,17 @@ pub(crate) fn typed_scalar_condition(
     model: &TypedAccessModel,
     types: &FunctionTypes,
 ) -> Option<TypedScalarPlan> {
+    typed_scalar_condition_with(texts, model, types, &no_extension)
+}
+
+/// Card **W44-INDIRECT-CHAIN-ACCESS**: [`typed_scalar_condition`] with the
+/// same opt-in reader as [`typed_scalar_statement_with`].
+pub(crate) fn typed_scalar_condition_with(
+    texts: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    extension: &AccessExtension<'_>,
+) -> Option<TypedScalarPlan> {
     types.variables.as_ref()?;
     if texts.is_empty()
         || texts
@@ -2368,7 +2426,7 @@ pub(crate) fn typed_scalar_condition(
         return None;
     }
     let mut plan = TypedScalarPlan::default();
-    let accesses = typed_operand_expression(texts, model, types, &mut plan, true)?;
+    let accesses = typed_operand_expression(texts, model, types, &mut plan, true, extension)?;
     (accesses > 0).then_some(plan)
 }
 

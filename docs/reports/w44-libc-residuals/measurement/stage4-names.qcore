@@ -1,0 +1,3 @@
+module contract;
+// Attribution input only: the declaration stage 4 adds.
+extern fn strerror(errnum: i32) -> ptr<mut, u8>

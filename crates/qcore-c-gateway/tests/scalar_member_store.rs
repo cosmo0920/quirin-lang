@@ -201,6 +201,28 @@ fn a_distinct_body_acquisition_discharges_the_peer_obligation() {
     );
 }
 
+/// Card W44-INDIRECT-CHAIN-ACCESS: `p->state = p->next->state` over a live
+/// identity `p` is read by the chain route. Its root resolves to one live
+/// identity, so the link `p->next` is a member this body could have bound. No
+/// admitted store bound it, so there is no evidence for it, and it refuses with
+/// its own reason. The function stays Unknown and never reaches `Safe`.
+#[test]
+fn a_chained_rhs_through_an_unstored_member_refuses_on_its_link() {
+    if !clang_available() {
+        return;
+    }
+    let program = "void subject(int n) { struct record *p = w_fresh(); \
+                   p->state = p->next->state; w_release(p); }";
+    let result = analyze(program, "subject");
+    assert_eq!(status(&result, "subject"), AnalysisStatus::Unknown);
+    assert_eq!(
+        diagnostics(&result, "subject"),
+        vec![LegacyDiagnosticKind::UnknownAlias {
+            variable: "p->next".to_owned()
+        }]
+    );
+}
+
 #[test]
 fn rhs_mutation_and_indirect_rhs_shapes_keep_the_lexical_refusal() {
     if !clang_available() {
@@ -209,8 +231,12 @@ fn rhs_mutation_and_indirect_rhs_shapes_keep_the_lexical_refusal() {
     // Card W43-INDIRECT-ACCESS-GENERAL deliberately admits `p->state` — a
     // scalar member read of the same live identity — through its typed scalar
     // access route; `a_live_member_read_on_the_rhs_is_admitted_by_the_general_route`
-    // pins that. The other three keep the lexical refusal.
-    for rhs in ["n++", "p->next->state", "*(&n)"] {
+    // pins that. The other two keep the lexical refusal.
+    //
+    // Deliberate pin update, card W44-INDIRECT-CHAIN-ACCESS: `p->next->state`
+    // moved to `a_chained_rhs_through_an_unstored_member_refuses_on_its_link`
+    // below. The chain route now reads it, and refuses it on its own link.
+    for rhs in ["n++", "*(&n)"] {
         let program = format!(
             "void subject(int n) {{ struct record *p = w_fresh(); p->state = {rhs}; w_release(p); }}"
         );
@@ -303,9 +329,13 @@ fn a_local_helper_cannot_launder_the_store_into_a_w4_summary() {
          void subject(void) { struct record *p = w_fresh(); helper(p); }",
         "subject",
     );
+    // The caller was accused (`Unsafe`) until card W44-LEAK-PIN-AUDIT: the
+    // refused call hands `p` to `helper`, so the refused hand-on rule
+    // withdraws the accusation. The refused helper still hides nothing: the
+    // caller never certifies.
     assert_eq!(
         status(&result, "subject"),
-        AnalysisStatus::Unsafe,
+        AnalysisStatus::Unknown,
         "the refused helper must not hide the caller's residual: {result:?}"
     );
     assert!(

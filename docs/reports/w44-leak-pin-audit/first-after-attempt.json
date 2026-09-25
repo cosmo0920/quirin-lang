@@ -1,0 +1,240 @@
+{
+ "binary_commit": "11915d99",
+ "run": "measure/after-first (discarded as the arbiter; kept as the finding)",
+ "leaf_totals": {
+  "before": {
+   "leak": 271,
+   "summary_conflict": 1,
+   "unknown_alias": 4358,
+   "unsupported": 45848
+  },
+  "after": {
+   "leak": 240,
+   "summary_conflict": 1,
+   "unknown_alias": 4359,
+   "unsupported": 45821
+  }
+ },
+ "functions": {
+  "before": {
+   "Safe": 294,
+   "Unknown": 4455,
+   "Unsafe": 85
+  },
+  "after": {
+   "Safe": 299,
+   "Unknown": 4475,
+   "Unsafe": 60
+  }
+ },
+ "units": {
+  "before": {
+   "Safe": 3,
+   "Unknown": 135,
+   "Unsafe": 43,
+   "data_only": 4
+  },
+  "after": {
+   "Safe": 3,
+   "Unknown": 144,
+   "Unsafe": 34,
+   "data_only": 4
+  }
+ },
+ "unforecast": [
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicDescription_partitions",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_isr",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_replicas",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_handle_mock_cluster",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_handle",
+   "before": "Unknown",
+   "after": "Safe"
+  }
+ ],
+ "removed_unsupported": [
+  {
+   "unit": "cJSON.c",
+   "function": "cJSON_PrintBuffered",
+   "origin": "cJSON.c:1340",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_AlterUserScramCredentials_result_responses",
+   "origin": "rdkafka_admin.c:6178",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ConfigEntry_synonyms",
+   "origin": "rdkafka_admin.c:2857",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ConfigResource_configs",
+   "origin": "rdkafka_admin.c:3076",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteAcls_result_response_matching_acls",
+   "origin": "rdkafka_admin.c:6578",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_DescribeCluster_result_nodes",
+   "origin": "rdkafka_admin.c:9403",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_DescribeConsumerGroups_result_groups",
+   "origin": "rdkafka_admin.c:8891",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_DescribeTopics_result_topics",
+   "origin": "rdkafka_admin.c:9152",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_DescribeUserScramCredentials_result_descriptions",
+   "origin": "rdkafka_admin.c:5797",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeadersResult_partitions",
+   "origin": "rdkafka_admin.c:9637",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroups_result_errors",
+   "origin": "rdkafka_admin.c:7748",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroups_result_valid",
+   "origin": "rdkafka_admin.c:7725",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsets_result_infos",
+   "origin": "rdkafka_admin.c:4206",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicDescription_partitions",
+   "origin": "rdkafka_admin.c:9112",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_isr",
+   "origin": "rdkafka_admin.c:9098",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_TopicPartitionInfo_replicas",
+   "origin": "rdkafka_admin.c:9105",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_acl_bindings",
+   "origin": "rdkafka_admin.c:570",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_acl_results",
+   "origin": "rdkafka_admin.c:556",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_delete_acl_result_responses",
+   "origin": "rdkafka_admin.c:602",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_groups",
+   "origin": "rdkafka_admin.c:587",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_resources",
+   "origin": "rdkafka_admin.c:542",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_topics",
+   "origin": "rdkafka_admin.c:526",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_dump",
+   "origin": "rdkafka_conf.c:3488",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_handle_mock_cluster",
+   "origin": "rdkafka_mock.c:3410",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_handle",
+   "origin": "rdkafka_mock.c:3406",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "function": "rd_kafka_message_errstr",
+   "origin": "rdkafka_msg.c:56",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  },
+  {
+   "unit": "rdmap.c",
+   "function": "rd_map_get",
+   "origin": "rdmap.c:120",
+   "description": "unmodeled call, aggregate or indirect access in return expression"
+  }
+ ]
+}

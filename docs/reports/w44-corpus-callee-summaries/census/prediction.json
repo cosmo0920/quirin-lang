@@ -1,0 +1,404 @@
+{
+ "validated_rows": 165,
+ "validated_callees": [
+  "ERR_GET_LIB",
+  "ERR_GET_REASON",
+  "LZ4_isAligned",
+  "LZ4_write16",
+  "XXH_swap32",
+  "XXH_swap64",
+  "_mk_event_backend",
+  "_mk_event_init",
+  "_mm_add_epi64",
+  "_mm_xor_si128",
+  "cio_file_st_get_hash",
+  "cio_file_st_get_meta",
+  "cio_file_st_set_meta_len",
+  "cmt_platform_gmtime_r",
+  "crc_finalize",
+  "crc_init",
+  "flb_input_buf_paused",
+  "flb_input_is_threaded",
+  "flb_log_check_level",
+  "flb_task_acquire_lock",
+  "flb_task_release_lock",
+  "mk_http_parser_more",
+  "mk_iov_init",
+  "mk_sched_conn_timeout_add",
+  "mk_static_plugins",
+  "ossl_check_X509_NAME_sk_type",
+  "ossl_check_X509_NAME_type",
+  "ossl_check_X509_freefunc_type",
+  "ossl_check_X509_sk_type",
+  "ossl_check_X509_type",
+  "ossl_check_const_X509_NAME_sk_type",
+  "ossl_check_const_X509_OBJECT_sk_type",
+  "ossl_check_const_X509_sk_type",
+  "pack_cfl_variant_double",
+  "pack_cfl_variant_string",
+  "rd_crc32_finalize",
+  "rd_dbl_eq0",
+  "rd_family2str",
+  "rd_kafka_headers_serialized_size",
+  "rd_kafka_message2msg",
+  "rd_kafka_msg_max_wire_size",
+  "rd_kafka_q_can_contain_fetched_msgs",
+  "rd_kafka_q_disable0",
+  "rd_kafka_q_keep",
+  "rd_kafka_q_name",
+  "rd_kafka_rebalance_protocol2str",
+  "rd_kafka_seq_wrap",
+  "rd_kafka_topic_name_str_safe",
+  "rd_kafkap_bytes_destroy",
+  "rd_kafkap_str_destroy",
+  "rd_memdup",
+  "rd_timeout_expired",
+  "rd_timeout_init0",
+  "rd_timeout_init_us0",
+  "rd_timeout_ms",
+  "rd_timeout_remains_limit0",
+  "rd_timeout_us"
+ ],
+ "removed_leaves": 42,
+ "removed_in_unknown_functions": 41,
+ "removed_by_status": {
+  "Unknown": 41,
+  "Unsafe": 1
+ },
+ "removed_by_callee": {
+  "rd_kafka_message2msg": 10,
+  "rd_kafkap_str_destroy": 8,
+  "rd_kafkap_bytes_destroy": 4,
+  "rd_kafka_q_keep": 3,
+  "rd_crc32_finalize": 2,
+  "rd_kafka_q_disable0": 2,
+  "rd_kafka_q_can_contain_fetched_msgs": 2,
+  "crc_finalize": 2,
+  "rd_timeout_init0": 1,
+  "rd_kafka_headers_serialized_size": 1,
+  "crc_init": 1,
+  "flb_task_acquire_lock": 1,
+  "flb_task_release_lock": 1,
+  "_mk_event_backend": 1,
+  "_mk_event_init": 1,
+  "mk_iov_init": 1,
+  "mk_sched_conn_timeout_add": 1
+ },
+ "movers": [
+  {
+   "unit": "monkey-libevent/mk_core/mk_event.c",
+   "function": "mk_event_backend",
+   "leaves": 1,
+   "callees": [
+    "_mk_event_backend"
+   ],
+   "kind": "neutral"
+  },
+  {
+   "unit": "monkey-libevent/mk_core/mk_event.c",
+   "function": "mk_event_init",
+   "leaves": 1,
+   "callees": [
+    "_mk_event_init"
+   ],
+   "kind": "neutral"
+  }
+ ],
+ "transitive_candidates": [],
+ "removed": [
+  {
+   "unit": "librdkafka/rdbuf.c",
+   "function": "do_unittest_write_read_payload_correctness",
+   "status": "Unknown",
+   "line": 4139,
+   "callee": "rd_crc32_finalize"
+  },
+  {
+   "unit": "librdkafka/rdbuf.c",
+   "function": "do_unittest_write_read_payload_correctness",
+   "status": "Unknown",
+   "line": 4161,
+   "callee": "rd_crc32_finalize"
+  },
+  {
+   "unit": "librdkafka/rdkafka.c",
+   "function": "rd_kafka_consume0",
+   "status": "Unknown",
+   "line": 23726,
+   "callee": "rd_timeout_init0"
+  },
+  {
+   "unit": "librdkafka/rdkafka.c",
+   "function": "rd_kafka_consumer_close0",
+   "status": "Unknown",
+   "line": 23856,
+   "callee": "rd_kafka_q_disable0"
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "function": "rd_kafka_AlterUserScramCredentialsRequest",
+   "status": "Unknown",
+   "line": 24123,
+   "callee": "rd_kafkap_bytes_destroy"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "status": "Unknown",
+   "line": 24920,
+   "callee": "rd_kafkap_bytes_destroy"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "status": "Unknown",
+   "line": 24924,
+   "callee": "rd_kafkap_str_destroy"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment",
+   "status": "Unknown",
+   "line": 21769,
+   "callee": "rd_kafkap_str_destroy"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_set",
+   "status": "Unknown",
+   "line": 21243,
+   "callee": "rd_kafkap_str_destroy"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_get_member_ids",
+   "status": "Unknown",
+   "line": 22548,
+   "callee": "rd_kafkap_str_destroy"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_target_assignment",
+   "status": "Unknown",
+   "line": 22267,
+   "callee": "rd_kafkap_str_destroy"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_target_assignment_set",
+   "status": "Unknown",
+   "line": 22219,
+   "callee": "rd_kafkap_str_destroy"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_broker_id",
+   "status": "Unknown",
+   "line": 20662,
+   "callee": "rd_kafka_message2msg"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_delivery_count",
+   "status": "Unknown",
+   "line": 20769,
+   "callee": "rd_kafka_message2msg"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_destroy",
+   "status": "Unknown",
+   "line": 20566,
+   "callee": "rd_kafka_message2msg"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_detach_headers",
+   "status": "Unknown",
+   "line": 20738,
+   "callee": "rd_kafka_message2msg"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_headers",
+   "status": "Unknown",
+   "line": 20715,
+   "callee": "rd_kafka_message2msg"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_latency",
+   "status": "Unknown",
+   "line": 20655,
+   "callee": "rd_kafka_message2msg"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_leader_epoch",
+   "status": "Unknown",
+   "line": 20762,
+   "callee": "rd_kafka_message2msg"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_set_headers",
+   "status": "Unknown",
+   "line": 20745,
+   "callee": "rd_kafka_message2msg"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_status",
+   "status": "Unknown",
+   "line": 20755,
+   "callee": "rd_kafka_message2msg"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_timestamp",
+   "status": "Unknown",
+   "line": 20648,
+   "callee": "rd_kafka_message2msg"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_msg_new0",
+   "status": "Unknown",
+   "line": 19870,
+   "callee": "rd_kafka_headers_serialized_size"
+  },
+  {
+   "unit": "librdkafka/rdkafka_partition.c",
+   "function": "rd_kafka_toppar_enq_msg",
+   "status": "Unknown",
+   "line": 20611,
+   "callee": "rd_kafka_q_keep"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_q_destroy_final",
+   "status": "Unknown",
+   "line": 19697,
+   "callee": "rd_kafka_q_disable0"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_q_fwd_set0",
+   "status": "Unknown",
+   "line": 19766,
+   "callee": "rd_kafka_q_keep"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_q_pop_serve0",
+   "status": "Unknown",
+   "line": 19903,
+   "callee": "rd_kafka_q_can_contain_fetched_msgs"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_q_serve0",
+   "status": "Unknown",
+   "line": 20005,
+   "callee": "rd_kafka_q_can_contain_fetched_msgs"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_queue_new0",
+   "status": "Unknown",
+   "line": 20281,
+   "callee": "rd_kafka_q_keep"
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_ConsumerGroupHeartbeatRequest",
+   "status": "Unknown",
+   "line": 21858,
+   "callee": "rd_kafkap_str_destroy"
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_JoinGroupRequest",
+   "status": "Unknown",
+   "line": 21643,
+   "callee": "rd_kafkap_bytes_destroy"
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_OffsetFetchRequest",
+   "status": "Unknown",
+   "line": 21307,
+   "callee": "rd_kafkap_str_destroy"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sticky_assignor.c",
+   "function": "rd_kafka_sticky_assignor_get_metadata",
+   "status": "Unknown",
+   "line": 22391,
+   "callee": "rd_kafkap_bytes_destroy"
+  },
+  {
+   "unit": "chunkio/cio_file.c",
+   "function": "cio_file_format_check",
+   "status": "Unknown",
+   "line": 3015,
+   "callee": "crc_finalize"
+  },
+  {
+   "unit": "chunkio/cio_file.c",
+   "function": "cio_file_scan_dump",
+   "status": "Unknown",
+   "line": 3663,
+   "callee": "crc_finalize"
+  },
+  {
+   "unit": "chunkio/cio_memfs.c",
+   "function": "cio_memfs_open",
+   "status": "Unknown",
+   "line": 2149,
+   "callee": "crc_init"
+  },
+  {
+   "unit": "fluent-bit-chunk/flb_input_chunk.c",
+   "function": "flb_input_chunk_drop_task_route",
+   "status": "Unknown",
+   "line": 18263,
+   "callee": "flb_task_acquire_lock"
+  },
+  {
+   "unit": "fluent-bit-chunk/flb_input_chunk.c",
+   "function": "flb_input_chunk_drop_task_route",
+   "status": "Unknown",
+   "line": 18277,
+   "callee": "flb_task_release_lock"
+  },
+  {
+   "unit": "monkey-libevent/mk_core/mk_event.c",
+   "function": "mk_event_backend",
+   "status": "Unknown",
+   "line": 3699,
+   "callee": "_mk_event_backend"
+  },
+  {
+   "unit": "monkey-libevent/mk_core/mk_event.c",
+   "function": "mk_event_init",
+   "status": "Unknown",
+   "line": 3587,
+   "callee": "_mk_event_init"
+  },
+  {
+   "unit": "monkey-libevent/mk_core/mk_iov.c",
+   "function": "mk_iov_create",
+   "status": "Unknown",
+   "line": 2113,
+   "callee": "mk_iov_init"
+  },
+  {
+   "unit": "monkey-libevent/mk_server/mk_scheduler.c",
+   "function": "mk_sched_add_connection",
+   "status": "Unsafe",
+   "line": 6593,
+   "callee": "mk_sched_conn_timeout_add"
+  }
+ ]
+}

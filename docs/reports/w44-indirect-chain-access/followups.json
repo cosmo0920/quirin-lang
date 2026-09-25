@@ -1,0 +1,65 @@
+[
+  {
+    "id": "W44-CHAIN-NESTED-AGGREGATE",
+    "title": "A member chain through a nested aggregate sub-object stays refused: 1,287 leaves on 517 Unknown functions, 35 sole-blocked",
+    "why": "Card W44-INDIRECT-CHAIN-ACCESS admits a chain only through links declared exactly `struct POINTEE *`. A `.` after the first selection selects an embedded record sub-object (`a->b.c`, `s.a.b`, `a->b.c->d`). The declaration reader records no tag for a record-valued member, so the chain reader refuses it (`dot-link`). Measured at the AFTER census (residuals.txt, chain-census-after.txt): 1,287 leaves (776 statement, 511 condition) in 517 Unknown functions, 35 sole-blocked. This is the largest real residual of the family. DISCHARGE: a card that types record-valued members (a complete, unambiguous, non-union `struct T m;`) in the declaration reader and admits a `.` selection of one as a same-object step between links (no dereference, so no new obligation). It needs Lean parity with QCore.IndirectChainAccess and a measured re-pin.",
+    "source": "docs/reports/w44-indirect-chain-access/README.md",
+    "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+    "id": "W44-CHAIN-TYPEDEF-ROOT",
+    "title": "A member chain whose root is declared through a typedef stays refused: 580 leaves on 300 Unknown functions, 17 sole-blocked",
+    "why": "The declaration reader answers `Opaque` for a pointer declared through a typedef of a record (`rd_kafka_buf_t *rkbuf`, `rd_kafka_msgset_writer_t *msetw`), so the chain reader refuses the root (`root-untyped`). Measured at the AFTER census: 580 leaves (482 statement, 98 condition) in 300 Unknown functions, 17 sole-blocked. The reader is shared by every typed rule, so widening it moves more than this family. DISCHARGE: a card that resolves `typedef struct T T_t` / `T_t *` to `RecordPointer(T)` in `TypedAccessModel::classify_specifiers` (fail-closed on every other typedef), measured across every typed route, with Lean parity for the reader facts it adds.",
+    "source": "docs/reports/w44-indirect-chain-access/README.md",
+    "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+    "id": "W44-CHAIN-UNDECLARED-ROOT",
+    "title": "A member chain whose root the function does not declare stays refused: 396 leaves on 122 Unknown functions, 4 sole-blocked",
+    "why": "The chain reader types the root from the function's own declaration reader. A root that is a file-scope object, or any name in a function whose declarations the reader refused, has no declared type (`root-undeclared`). Measured at the AFTER census: 396 leaves (272 statement, 124 condition) in 122 Unknown functions, 4 sole-blocked. DISCHARGE: a card that types file-scope record pointers and objects the body does not shadow (with the publication premise of CTWIN-PUBLISH, since such an object outlives the call), or that narrows the unreadable-declaration refusal, measured.",
+    "source": "docs/reports/w44-indirect-chain-access/README.md",
+    "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+    "id": "W44-CHAIN-SUBSCRIPT",
+    "title": "A member path carrying a subscript stays refused: 296 leaves on 136 Unknown functions, 6 sole-blocked",
+    "why": "`a[i].f`, `a->b[i]` and `a->b[i].c` read through an element whose index this route does not type as a link. Measured at the AFTER census: 296 leaves (163 statement, 133 condition) in 136 Unknown functions, 6 sole-blocked. DISCHARGE: a card that admits an array-of-record element (`struct T a[N]` or `struct T *a` indexed by a scalar-only index) as a link, with the dereference obligation of its base and no bounds claim, measured.",
+    "source": "docs/reports/w44-indirect-chain-access/README.md",
+    "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+    "id": "W44-CHAIN-INCOMPLETE-RECORD",
+    "title": "A member chain through an incomplete, ambiguous or union record stays refused: 195 leaves on 151 Unknown functions, 10 sole-blocked",
+    "why": "A record on the chain has no single complete definition the reader read (a bitfield, function-pointer member, nested anonymous aggregate, two definitions, a union), so no link or final member of it can be typed. Measured at the AFTER census: 195 leaves (111 statement, 84 condition) in 151 Unknown functions, 10 sole-blocked. DISCHARGE: a card that narrows the reader's whole-record refusals (for example reading past a bitfield or function-pointer member without typing it), measured across every typed route.",
+    "source": "docs/reports/w44-indirect-chain-access/README.md",
+    "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+    "id": "W44-CHAIN-CALL",
+    "title": "A member chain in a statement carrying a call stays refused: 383 leaves on 253 Unknown functions, 13 sole-blocked",
+    "why": "The chain route is consulted only for a statement or condition with no call, exactly as W43's typed route. These leaves are in W43's chain class, but their statements carry a call: the chain sits in the call's arguments (`x = f(a->b.c)`, `r = cmp(&a->elems[i], ...)`) or is itself a call through a member (`p->cb(...)`). Many also carry a second chain refusal. Measured at the AFTER census: 383 leaves (380 statement, 3 condition) in 253 Unknown functions, 13 sole-blocked. DISCHARGE: the card that admits typed accesses in a modeled call's arguments (W44-INDIRECT-CALL-ARGUMENT-ACCESS or its successor) composes with this chain reader and carries the chains' per-link obligations, with Lean parity and a measured re-pin.",
+    "source": "docs/reports/w44-indirect-chain-access/README.md",
+    "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+    "id": "W44-CHAIN-NON-SCALAR-MEMBER",
+    "title": "A member chain ending in a pointer, array or aggregate member stays refused: 48 leaves on 33 Unknown functions, 1 sole-blocked",
+    "why": "A pointer-valued final member stored from or into a tracked identity is a member-link or escape question. The chain route admits only a scalar final member. A pointer read into a local keeps whatever older route admits it (O04-ARMS opaque read, REACH-GATE F4). Measured at the AFTER census: 48 leaves (29 pointer, 14 array or aggregate, 5 `->` after a non-pointer) in 33 Unknown functions, 1 sole-blocked. DISCHARGE: a card that extends the member-link machinery (O04-B08's field links) past the first selection, or a measured decision that the class does not justify it.",
+    "source": "docs/reports/w44-indirect-chain-access/README.md",
+    "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+    "id": "W44-CHAIN-BOUND-ROOT",
+    "title": "An admitted chain whose root the body may bind is refused by its obligation: 49 unknown_alias leaves on 35 functions (32 Unknown, 3 provisional Unsafe)",
+    "why": "The chain route requires its root to be a name the body never binds (C02-P premise 4, `UntrackedBases::never_bound`) or one known live identity with a bound member place. 50 admitted corpus leaves have a root that premise 4 marks bound (`ch` in chunkio's `cio_chunk_*` and `cio_meta_*`, `decode_context`, `server`, `in`), because the body passes the name at a non-`Borrowed` position or to an uncontracted callee, takes its address, or assigns it (premise 4's syntactic reading). The flow leaves it unbound, so the obligation refuses. These are exchanged for 49 `unresolved resource identity` leaves (two leaves share one line) in 35 functions: 44 leaves in 32 Unknown functions and 5 in 3 provisional-Unsafe ones, whose status they do not change. DISCHARGE: a flow-sensitive replacement for premise 4 (containment facts for `Stored`/`Out` positions, and the refusal of an uncontracted callee's statement standing in for the syntactic mark), with Lean parity and a measured re-pin; or the contracts that make those callees' positions `Borrowed`.",
+    "source": "docs/reports/w44-indirect-chain-access/README.md",
+    "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  },
+  {
+    "id": "W44-CHAIN-CLASS-NOT-A-CHAIN",
+    "title": "W43's chain classes counted 3,564 leaves that carry no member chain: 1,534 Unknown functions, 156 sole-blocked",
+    "why": "W43-INDIRECT-ACCESS-GENERAL's place reader classes every multi-token place that starts with a name as `chain`, so a typed declarator (`T * x = e`, `size_t n = e`) lands there. W43-INDEX-TRAVERSAL's condition class counts two separate arrows (`a->b && c->d`) as a chain. At the AFTER census, 3,564 leaves of the two classes have no access path of two or more selections in any statement recorded at their key (1,522 declarators, 1,899 single accesses or separate arrows, 143 with no chain-census record). They are other shapes (typed declarations with an initializer, untyped single accesses, conditions with calls), not member chains, and no chain rule can move them. DISCHARGE: a census that re-sizes the indirect-access and condition families under corrected classifiers (a declarator is not a place; a condition chain is one access path), re-homing each leaf to the residual its true shape belongs to, and retiring this entry as a measurement correction.",
+    "source": "docs/reports/w44-indirect-chain-access/README.md",
+    "recorded_by": "W44-INDIRECT-CHAIN-ACCESS"
+  }
+]

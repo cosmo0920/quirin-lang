@@ -1,0 +1,29 @@
+{
+ "note": "W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE integration, 2026-09-25. The card (measured against docs/reports/w44-indirect-chain-access/integration/artifacts) composed onto the combined tree docs/reports/w44-leak-pin-audit/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 1380 added 191 functions 3 units 0); functions moved (combined): [('LZ4_write16', ('Safe', 'Unknown')), ('LZ4_write32', ('Safe', 'Unknown')), ('unpack_basic_type', ('Unsafe', 'Unknown'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] Soundness repair: LZ4_write16 and LZ4_write32 Safe -> Unknown and unpack_basic_type provisional Unsafe -> Unknown; cmt_decode_msgpack.c moves provisional Unsafe -> Unknown only on the combined tree, and mk_iov_init's reached-static-helper summary, which rested on the misreading, is withdrawn (explained-leaves.json). The provider suite's first run was overlapped with the corpus arbiter by the integrator and one configured-process test exceeded its 5 s plugin quota (fail-closed 0 checked); the full provider suite rerun alone passed 124/0/0, and that rerun is the recorded step (the overlapped log is kept privately). Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-assignment-destination-suffix-place/integration/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 3,
+ "provisional_unsafe": 8,
+ "unknown": 170,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 19,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w44-assignment-destination-suffix-place/integration/artifacts/",
+ "source": "docs/reports/w44-assignment-destination-suffix-place/integration/integration-confirmation.md; preceding baseline docs/reports/w44-leak-pin-audit/integration/artifacts",
+ "unknown_alias_diagnostics": 3357,
+ "unsupported_diagnostics": 45343,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 297,
+  "provisional_unsafe": 9,
+  "unknown": 4528
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 169,
+  "none": 15,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}

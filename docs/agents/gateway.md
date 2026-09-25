@@ -48,6 +48,29 @@ including cross-topic rules, before editing; the index is not a substitute.
    `w4-recursive-summaries`, `c-gateway-return-call-w4` §3.3.
 <!-- preserved:constraint-4:end -->
 
+<a id="constraint-4a"></a>
+
+4a. **The W4 derivation scope is not the reported scope, and linkage decides
+    what it may add.** Card W44-CORPUS-CALLEE-SUMMARIES widens, under
+    main-source selection, only the set W4 *derives* summaries for: the
+    selection plus every unselected definition it reaches through direct calls
+    that is `static` and not `extern` on its own definition (internal linkage,
+    C11 6.2.2p3) and whose name is not reserved in every context (`__x`, `_X`;
+    C11 7.1.3). The reported rows, the effective entry and the whole-unit
+    `Safe` scope stay the selection alone, and a newly admitted helper publishes
+    a summary only through the unchanged `observations_match_contract` gate.
+    **Do not admit an external-linkage definition**: a C99 `inline` definition
+    may be bypassed for the external one at any call (C11 6.7.4p7) and an
+    external definition may be interposed, so its body need not be the body the
+    call runs (`mpack_*`, 86 leaves, stay refused). **Do not drop the reserved
+    filter here**: it keeps glibc header bodies (`__bswap_*`) with the libc
+    provider's decision; the card measured that they would validate
+    `Borrowed -> None` and decide 599 leaves if admitted. Widening the scope
+    also widens the declared-mode gate's reach (constraint 8): a reached
+    `static` definition that contradicts a declaration now withdraws it in that
+    unit, the refusing direction. `QCore.CalleeSummaryScope`;
+    [the card report](../reports/w44-corpus-callee-summaries/README.md).
+
 <a id="constraint-5"></a>
 
 <!-- preserved:constraint-5:start -->
@@ -273,6 +296,40 @@ including cross-topic rules, before editing; the index is not a substitute.
     Pointer fields remain refused by this route; shapes outside this
     conjunction retain their prior handling, including the separate unbound
     scalar-field no-op. See [the card report](../reports/w42-indirect-access/README.md).
+
+<a id="constraint-5h"></a>
+
+5h. **A desugared condition applies a call exactly where C evaluates it.**
+    W44-BRANCH-CONDITION-CALLS lowers a refused call-bearing controlling
+    expression to its calls, each the ordinary classifier's `ContractCall`, and
+    one branch per operand, with `&&`, `||` and `?:` as edges
+    (`legacy_condition_desugar.rs`; `QCore.ConditionCallDesugar.the_desugaring_is_c_evaluation`).
+    It is consulted only where the position's lowering would be its refusal,
+    and a declined plan restores `next_site` and the element counter. Keep four
+    premises: a custody result refuses (so `if ((p = malloc(n)) == NULL)` keeps
+    its refusal); a local callee in the enclosing function's own recursive
+    component refuses, because its contract may be constraint 4's provisional
+    `N(m)`; two calls of one operand are admitted only when each is the
+    identity on the abstract state; and in a loop every edge to the exit is a
+    `loop_exit_edge` (constraint 5c's retained exit). An unresolved name the
+    desugaring now null-tests reports `unknown_alias` where the refusal stood;
+    that exchange is expected. [Report](../reports/w44-branch-condition-calls/README.md).
+
+<a id="constraint-5i"></a>
+
+5i. **An assignment's destination is its whole left-hand side.**
+    `direct_assignment_destination` names a place only when it is the whole
+    left-hand side or follows a declarator prefix (identifiers, `*`, `,`). A
+    left-hand side ending in a place-spelling suffix it does not name is a
+    store into a sub-object, and the lexical gate refuses it
+    (`names_a_sub_object`; `QCore.AssignmentDestinationSuffix`). Do not
+    reintroduce suffix naming: it bound `recs[i].name`'s value to a local
+    `name` and certified a body that leaks one object and frees another, and
+    it certified `LZ4_write16`/`LZ4_write32` Safe. A reader that only
+    over-approximates a refusing inventory (the protected-formal closure) may
+    keep the suffix reader. A static-helper summary whose body validated only
+    through a misnamed store is withdrawn with it (`mk_iov_init`).
+    [Report](../reports/w44-assignment-destination-suffix-place/README.md).
 
 <a id="constraint-6"></a>
 

@@ -1,0 +1,11 @@
+{
+ "exit": 0,
+ "files": {
+  "cycle19-resource-contracts.json": "0c31747e3998e46f946418dbbe73b6caa6f7516b1b0ee625ad58d8914e4d2075",
+  "providers/contract-load-path.json": "558d7cd9323561f15ebb88cc1070e8a9d125770ab5f70d3335aa0b3c9800b24f",
+  "providers/quirin-provider-libc/contracts/libc/byteswap.qcore": "3d2adc56876d9ab099eef4794995c268e62add982b83e599542d66f5cc531301",
+  "providers/quirin-provider-libc/contracts/libc/errno.qcore": "a62bdc4cfbfa84d76580ec0f95776aa677a702bef91f4d9002454571e2abe233",
+  "providers/quirin-provider-libc/contracts/libc/stdio.qcore": "4d2b9b46374f9f48cf792e3d30d3cfd48a30e78f3face7e3994da2a50916b327"
+ },
+ "unchanged_during_run": true
+}

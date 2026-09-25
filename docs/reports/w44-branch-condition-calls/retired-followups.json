@@ -1,0 +1,13 @@
+[
+  {
+    "entry": {
+      "id": "W43-INDEX-TRAVERSAL-CONDITION-CALL",
+      "title": "A controlling expression carrying a call the condition-call route does not isolate stays refused: 4,419 leaves on 1,603 Unknown functions, 28 sole-blocked",
+      "why": "Card W43-INDEX-TRAVERSAL lowers a refused controlling expression to the typed read only when it carries no call. Measured at its AFTER census (docs/reports/w43-index-traversal/residuals.txt, conditions class call): 4,419 condition leaves in 1,603 Unknown functions, 28 of them blocked by that family alone. They are `while (i < rd_list_cnt(l))`, `if (strcmp(a, b) == 0 && *p)`, list and queue macros that call, and conditions the B-series route declines (a short-circuited call, a locally defined callee). Admitting one needs the call's own contract and its short-circuit reading, not a typed read. DISCHARGE: a card that composes the B-series isolated call with the typed read for the residual (both obligations kept), with Lean parity and a measured re-pin; or a recorded decision that the class belongs to the call routes.",
+      "source": "docs/reports/w43-index-traversal/README.md",
+      "recorded_by": "W43-INDEX-TRAVERSAL"
+    },
+    "discharged_by": "W44-BRANCH-CONDITION-CALLS",
+    "ground": "Its discharge condition: \"a card that composes the B-series isolated call with the typed read for the residual (both obligations kept), with Lean parity and a measured re-pin; or a recorded decision that the class belongs to the call routes\". Card W44-BRANCH-CONDITION-CALLS desugars a refused call-bearing controlling expression into each call as its own ContractCall (the ordinary statement classifier's instruction, every obligation kept) and one branch per operand, whose call-free operands decide through the existing null, validity, distinct, neutral or typed-read route; `&&`, `||` and `?:` become edges. Lean parity is QCore.ConditionCallDesugar (AuditConditionCallDesugar), and the re-pin is measured and attributed leaf by leaf (docs/reports/w44-branch-condition-calls/README.md): 292 condition leaves removed. What stays refused is refused by the call routes themselves and is re-registered by blocker with its size: W44-CONDITION-CALL-INDIRECT-ARGUMENT, -UNCONTRACTED, -FREE-OPERAND, -TYPE-OPERATOR, -ASSIGNMENT, -RECURSIVE-LOCAL, -ERRNO-RESIDUAL and -REFUSED-SHAPES (4,479 leaves in total over the five condition positions at the AFTER run)."
+  }
+]

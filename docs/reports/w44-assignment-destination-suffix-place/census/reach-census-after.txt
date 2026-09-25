@@ -1,0 +1,14 @@
+raw records 38185, distinct 10979, unjoined raw 6
+classes: {'declarator': 7853, 'sub-object': 3126}
+declarator prefix shapes: {'no-comma+star': 3218, 'no-comma': 4596, 'comma': 22, 'comma+star': 17}
+sub-object: 3126 distinct; first '=' is '==': 683
+  last prefix token: {'>': 2389, '(': 427, '.': 204, ',': 58, '{': 11, 'rd_kafka_fetch_pos_t': 10, 'rd_list_cnt': 9, '}': 8, ')': 5, '+': 2, '&': 2, '-': 1}
+  admitted BEFORE: 0; outcomes {}
+  admitted named-root kinds: {}
+  admitted (kind, later mention, later call argument): 
+  forecast per record: {'unchanged-gate': 2620, 'unchanged-pre-gate': 506}
+functions with sub-object records, by BEFORE status: {'Unknown': 618, 'Unsafe': 16}
+functions gaining a refusal, by BEFORE status: {}
+Safe functions whose certification relied on a misnamed destination: 0
+provisional-Unsafe functions gaining a refusal: 0
+leaf forecast: gate leaves added <= 0; exchanged descriptions <= 0; unknown_alias leaves reported by a refused Alias: 0

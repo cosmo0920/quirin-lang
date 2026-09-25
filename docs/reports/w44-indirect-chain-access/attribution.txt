@@ -1,0 +1,67 @@
+W44-INDIRECT-CHAIN-ACCESS attribution (BEFORE -> AFTER)
+
+removed 74 {'unsupported': 74}
+added   49 {'unknown_alias': 49}
+attribution_complete: True
+
+classes:
+  added:exchange:flow         49
+  removed:rule:clear          24
+  removed:rule:flow           50
+
+function moves: {}
+unit moves: {}
+forecast leaves not removed: 0
+
+added:exchange:flow:
+  chunkio/cio_chunk.c/cio_chunk_close:2076:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_down:2396:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_get_content:2163:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_get_content_copy:2187:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_get_content_end_pos:2203:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_get_content_size:2220:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_get_real_size:2237:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_is_up:2357:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_sync:2150:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_tx_begin:2306:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_tx_rollback:2339:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_up:2409:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_up_force:2422:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_write:2136:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_chunk.c/cio_chunk_write_at:2119:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_meta.c/cio_meta_cmp:2447:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_meta.c/cio_meta_read:2416:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_meta.c/cio_meta_read:2425:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_meta.c/cio_meta_size:2397:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_meta.c/cio_meta_size:2401:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_meta.c/cio_meta_write:2377:unknown_alias:unresolved resource identity `ch`
+  chunkio/cio_meta.c/cio_meta_write:2391:unknown_alias:unresolved resource identity `ch`
+  cmetrics/cmt_decode_msgpack.c/unpack_basic_type_meta:8311:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_basic_type_meta:8326:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_basic_type_meta:8330:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_basic_type_meta:8337:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_exp_histogram_negative_buckets:7844:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_exp_histogram_negative_buckets:7851:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_exp_histogram_positive_buckets:7820:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_exp_histogram_positive_buckets:7827:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_histogram_buckets:7678:unknown_alias:unresolved resource identity `histogram`
+  cmetrics/cmt_decode_msgpack.c/unpack_metric:7968:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_metric:7982:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_metric_array_entry:8035:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_metric_array_entry:8036:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_metric_array_entry:8043:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_metric_array_entry:8053:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_msgpack.c/unpack_summary_quantiles:7540:unknown_alias:unresolved resource identity `decode_context`
+  cmetrics/cmt_decode_prometheus_remote_write.c/decode_histogram_points:6834:unknown_alias:unresolved resource identity `histogram`
+  cmetrics/cmt_encode_opentelemetry_batch.c/batch_add_metric:6822:unknown_alias:unresolved resource identity `batch`
+  cmetrics/cmt_encode_opentelemetry_batch.c/batch_add_metric:6836:unknown_alias:unresolved resource identity `batch`
+  fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_get_projected_write_size:18368:unknown_alias:unresolved resource identity `chunk`
+  fluent-bit-chunk/flb_input_chunk.c/flb_input_chunk_set_limits:19909:unknown_alias:unresolved resource identity `in`
+  fluent-bit-chunk/flb_input_chunk.c/input_chunk_get:19820:unknown_alias:unresolved resource identity `in`
+  librdkafka/rdkafka.c/rd_kafka_list_groups:25026:unknown_alias:unresolved resource identity `state`
+  monkey-libevent/mk_server/mk_lib.c/mk_lib_worker:6520:unknown_alias:unresolved resource identity `server`
+  monkey-libevent/mk_server/mk_lib.c/mk_start:6552:unknown_alias:unresolved resource identity `server`
+  monkey-libevent/mk_server/mk_scheduler.c/mk_sched_add_connection:6583:unknown_alias:unresolved resource identity `conn`
+  monkey-libevent/mk_server/mk_scheduler.c/mk_sched_add_connection:6583:unknown_alias:unresolved resource identity `server`
+added:unattributed:
+removed:unattributed:

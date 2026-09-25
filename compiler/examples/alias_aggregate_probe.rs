@@ -250,12 +250,20 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             alias_reads,
             destination,
             frame,
+            // Card W44-INDIRECT-CHAIN-ACCESS: printed only when present, so
+            // every single-selection line reads exactly as before.
+            chains,
         } => format!(
-            "IndirectScalarAccess bases={} alias_reads={} destination={} frame={}",
+            "IndirectScalarAccess bases={} alias_reads={} destination={} frame={}{}",
             bases.join(","),
             alias_reads.len(),
             destination.as_deref().unwrap_or("-"),
-            frame.is_some()
+            frame.is_some(),
+            if chains.is_empty() {
+                String::new()
+            } else {
+                format!(" chains={}", chains.len())
+            }
         ),
         LegacyInstruction::PointerStep {
             destination,

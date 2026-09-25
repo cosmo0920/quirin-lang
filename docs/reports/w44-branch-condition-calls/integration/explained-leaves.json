@@ -1,0 +1,59 @@
+[
+ {
+  "function": "rd_kafka_header_add",
+  "description_prefix": "call to uncontracted function `rd_uvarint_enc_",
+  "why": "rdvarint.h's static helper rd_uvarint_enc_u64 is blocked only by `if (unlikely(of >= dstsize))`; this card admits the unlikely() wrapper, so on the combined tree its body validates and W44-CORPUS-CALLEE-SUMMARIES' reached-static-helper route publishes summaries for rd_uvarint_enc_u64, _i64 and _i32 (each forwards to the previous). Neither card alone produces those summaries, so the callers' uncontracted-call leaves are removed only on the combined tree."
+ },
+ {
+  "function": "rd_kafka_msgset_writer_write_msg_v2",
+  "description_prefix": "call to uncontracted function `rd_uvarint_enc_",
+  "why": "Same mechanism as rd_kafka_header_add (rd_uvarint_enc_* summaries exist only on the combined tree)."
+ },
+ {
+  "function": "do_test_rd_uvarint_enc_i64",
+  "description_prefix": "call to uncontracted function `rd_uvarint_enc_",
+  "why": "Same mechanism as rd_kafka_header_add."
+ },
+ {
+  "function": "ut_mean",
+  "description_prefix": "unmodeled call, aggregate or indirect access in branch condition",
+  "why": "The condition's callee is covered only by a W44-CORPUS-CALLEE-SUMMARIES reached-static-helper summary, which this card's desugaring consumes through the normal contract lookup; the card alone left the condition refused."
+ },
+ {
+  "function": "rd_kafka_ssl_read_cert_chain_from_BIO",
+  "description_prefix": "unmodeled call, aggregate or indirect access in branch condition",
+  "why": "Same mechanism as ut_mean."
+ },
+ {
+  "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+  "description_prefix": "unmodeled call, aggregate or indirect access in branch condition",
+  "why": "Same mechanism as ut_mean; the desugared condition then reads `err`, whose identity is unresolved, so the refusal is exchanged for unknown_alias `err` on the same line (combined-only).",
+  "added_prefixes": [
+   "unresolved resource identity `err`"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_append_raw",
+  "description_prefix": "unmodeled call, aggregate or indirect access in branch condition",
+  "why": "The condition calls flb_input_is_threaded (flb_input_chunk.c:3741), a static inline helper from flb_input.h that only W44-CORPUS-CALLEE-SUMMARIES' reached-static-helper route summarizes; same mechanism as ut_mean."
+ },
+ {
+  "function": "flb_input_chunk_set_limits",
+  "description_prefix": "",
+  "why": "On the combined tree a condition at flb_input_chunk.c:2989 whose callee now has a reached-static-helper summary is desugared and then reads `in`, whose identity is unresolved: one added unknown_alias (a refusal, never an admission).",
+  "added_prefixes": [
+   "unresolved resource identity `in`"
+  ],
+  "removal_optional": true
+ },
+ {
+  "function": "flb_input_chunk_ring_buffer_collector",
+  "description_prefix": "unmodeled call, aggregate or indirect access in branch condition",
+  "why": "The condition calls flb_input_paused / flb_input_is_threaded, static inline helpers from flb_input.h that only W44-CORPUS-CALLEE-SUMMARIES' reached-static-helper route summarizes; same mechanism as ut_mean."
+ },
+ {
+  "function": "input_chunk_append_raw",
+  "description_prefix": "unmodeled call, aggregate or indirect access in branch condition",
+  "why": "The condition calls flb_input_paused / flb_input_is_threaded, static inline helpers from flb_input.h that only W44-CORPUS-CALLEE-SUMMARIES' reached-static-helper route summarizes; same mechanism as ut_mean."
+ }
+]

@@ -1,0 +1,970 @@
+{
+ "changed_leaves": 70,
+ "classes": {
+  "decided-callee:removed": 42,
+  "decided-function:added": 2,
+  "decided-function:removed": 2,
+  "decided-statement:removed": 11,
+  "same-line:added": 13
+ },
+ "function_moves": [
+  {
+   "unit": "monkey-libevent/mk_core/mk_event.c",
+   "function": "mk_event_backend",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "monkey-libevent/mk_core/mk_event.c",
+   "function": "mk_event_init",
+   "before": "Unknown",
+   "after": "Safe"
+  }
+ ],
+ "function_totals": {
+  "before": {
+   "Unknown": 4455,
+   "Safe": 294,
+   "Unsafe": 85
+  },
+  "after": {
+   "Unknown": 4453,
+   "Safe": 296,
+   "Unsafe": 85
+  }
+ },
+ "unit_moves": [],
+ "unit_totals": {
+  "before": {
+   "Unknown": 135,
+   "Unsafe": 43,
+   "Safe": 3,
+   "data_only": 4
+  },
+  "after": {
+   "Unknown": 135,
+   "Unsafe": 43,
+   "Safe": 3,
+   "data_only": 4
+  }
+ },
+ "diagnostic_counts": {
+  "leak": {
+   "before": 271,
+   "after": 271
+  },
+  "summary_conflict": {
+   "before": 1,
+   "after": 1
+  },
+  "unknown_alias": {
+   "before": 4358,
+   "after": 4371
+  },
+  "unsupported": {
+   "before": 45848,
+   "after": 45795
+  }
+ },
+ "violation_leaves": [],
+ "changes": [
+  {
+   "unit": "chunkio/cio_file.c",
+   "function": "cio_file_format_check",
+   "change": "removed",
+   "line": 3015,
+   "category": "unsupported",
+   "description": "call to uncontracted function `crc_finalize`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "crc_finalize"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "chunkio/cio_file.c",
+   "function": "cio_file_scan_dump",
+   "change": "removed",
+   "line": 3663,
+   "category": "unsupported",
+   "description": "call to uncontracted function `crc_finalize`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "crc_finalize"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "chunkio/cio_file.c",
+   "function": "finalize_checksum",
+   "change": "removed",
+   "line": 2922,
+   "category": "unsupported",
+   "description": "indirect memory access is outside the resource projection",
+   "class": "decided-statement",
+   "statement_callees": [
+    "crc_finalize"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "chunkio/cio_memfs.c",
+   "function": "cio_memfs_open",
+   "change": "removed",
+   "line": 2149,
+   "category": "unsupported",
+   "description": "call to uncontracted function `crc_init`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "crc_init"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [], result: None }"
+  },
+  {
+   "unit": "fluent-bit-chunk/flb_input_chunk.c",
+   "function": "flb_input_chunk_drop_task_route",
+   "change": "removed",
+   "line": 18263,
+   "category": "unsupported",
+   "description": "call to uncontracted function `flb_task_acquire_lock`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "flb_task_acquire_lock"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "fluent-bit-chunk/flb_input_chunk.c",
+   "function": "flb_input_chunk_drop_task_route",
+   "change": "removed",
+   "line": 18277,
+   "category": "unsupported",
+   "description": "call to uncontracted function `flb_task_release_lock`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "flb_task_release_lock"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdbuf.c",
+   "function": "do_unittest_write_read_payload_correctness",
+   "change": "removed",
+   "line": 4139,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_crc32_finalize`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_crc32_finalize"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdbuf.c",
+   "function": "do_unittest_write_read_payload_correctness",
+   "change": "removed",
+   "line": 4161,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_crc32_finalize`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_crc32_finalize"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdhdrhistogram.c",
+   "function": "ut_stddev",
+   "change": "removed",
+   "line": 4338,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "class": "decided-statement",
+   "statement_callees": [
+    "rd_dbl_eq0"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka.c",
+   "function": "rd_kafka_clusterid",
+   "change": "removed",
+   "line": 24608,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "class": "decided-statement",
+   "statement_callees": [
+    "rd_timeout_expired"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka.c",
+   "function": "rd_kafka_consume0",
+   "change": "removed",
+   "line": 23726,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_timeout_init0`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_timeout_init0"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka.c",
+   "function": "rd_kafka_consumer_close0",
+   "change": "removed",
+   "line": 23856,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_q_disable0`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_q_disable0"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka.c",
+   "function": "rd_kafka_controllerid",
+   "change": "removed",
+   "line": 24630,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "class": "decided-statement",
+   "statement_callees": [
+    "rd_timeout_expired"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka.c",
+   "function": "rd_kafka_query_watermark_offsets",
+   "change": "removed",
+   "line": 24103,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "class": "decided-statement",
+   "statement_callees": [
+    "rd_timeout_expired"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "function": "rd_kafka_AlterUserScramCredentialsRequest",
+   "change": "removed",
+   "line": 24123,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafkap_bytes_destroy`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafkap_bytes_destroy"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "function": "rd_kafka_AlterUserScramCredentialsRequest",
+   "change": "added",
+   "line": 24123,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `password_bytes`",
+   "class": "same-line",
+   "statement_callees": [
+    "rd_kafkap_bytes_destroy"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_broker.c",
+   "function": "rd_kafka_broker_any_usable",
+   "change": "removed",
+   "line": 21770,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "class": "decided-statement",
+   "statement_callees": [
+    "rd_timeout_expired"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_broker.c",
+   "function": "rd_kafka_broker_controller",
+   "change": "removed",
+   "line": 21872,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "class": "decided-statement",
+   "statement_callees": [
+    "rd_timeout_expired"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "change": "removed",
+   "line": 24902,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_consumer_protocol_member_metadata_new`",
+   "class": "decided-function",
+   "statement_callees": [],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "change": "removed",
+   "line": 24920,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafkap_bytes_destroy`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafkap_bytes_destroy"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "change": "removed",
+   "line": 24924,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafkap_str_destroy`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "change": "added",
+   "line": 24902,
+   "category": "unsupported",
+   "description": "unmodeled expression may mutate a formal resource identity",
+   "class": "decided-function",
+   "statement_callees": [],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "change": "added",
+   "line": 24920,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `member_metadata`",
+   "class": "same-line",
+   "statement_callees": [
+    "rd_kafkap_bytes_destroy"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "change": "added",
+   "line": 24924,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `rack_id`",
+   "class": "same-line",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment",
+   "change": "removed",
+   "line": 21769,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafkap_str_destroy`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment",
+   "change": "added",
+   "line": 21769,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `group_id_str`",
+   "class": "same-line",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_set",
+   "change": "removed",
+   "line": 21243,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafkap_str_destroy`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_set",
+   "change": "added",
+   "line": 21243,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `member_id_str`",
+   "class": "same-line",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_get_member_ids",
+   "change": "removed",
+   "line": 22548,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafkap_str_destroy`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_get_member_ids",
+   "change": "added",
+   "line": 22548,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `group_id_str`",
+   "class": "same-line",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_target_assignment",
+   "change": "removed",
+   "line": 22267,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafkap_str_destroy`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_target_assignment",
+   "change": "added",
+   "line": 22267,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `group_id_str`",
+   "class": "same-line",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_target_assignment_set",
+   "change": "removed",
+   "line": 22219,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafkap_str_destroy`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_target_assignment_set",
+   "change": "added",
+   "line": 22219,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `member_id_str`",
+   "class": "same-line",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_broker_id",
+   "change": "removed",
+   "line": 20662,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_message2msg`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_message2msg"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_delivery_count",
+   "change": "removed",
+   "line": 20769,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_message2msg`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_message2msg"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_destroy",
+   "change": "removed",
+   "line": 20566,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_message2msg`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_message2msg"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_detach_headers",
+   "change": "removed",
+   "line": 20738,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_message2msg`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_message2msg"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_headers",
+   "change": "removed",
+   "line": 20715,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_message2msg`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_message2msg"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_latency",
+   "change": "removed",
+   "line": 20655,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_message2msg`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_message2msg"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_leader_epoch",
+   "change": "removed",
+   "line": 20762,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_message2msg`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_message2msg"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_set_headers",
+   "change": "removed",
+   "line": 20745,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_message2msg`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_message2msg"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_status",
+   "change": "removed",
+   "line": 20755,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_message2msg`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_message2msg"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_timestamp",
+   "change": "removed",
+   "line": 20648,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_message2msg`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_message2msg"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_msg_new0",
+   "change": "removed",
+   "line": 19870,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_headers_serialized_size`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_headers_serialized_size"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_partition.c",
+   "function": "rd_kafka_toppar_enq_msg",
+   "change": "removed",
+   "line": 20611,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_q_keep`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_q_keep"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_q_destroy_final",
+   "change": "removed",
+   "line": 19697,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_q_disable0`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_q_disable0"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_q_fwd_set0",
+   "change": "removed",
+   "line": 19766,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_q_keep`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_q_keep"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_q_pop_serve0",
+   "change": "removed",
+   "line": 19903,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_q_can_contain_fetched_msgs`",
+   "class": "decided-callee",
+   "statement_callees": [],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_q_serve0",
+   "change": "removed",
+   "line": 20005,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_q_can_contain_fetched_msgs`",
+   "class": "decided-callee",
+   "statement_callees": [],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_queue_new0",
+   "change": "removed",
+   "line": 20281,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafka_q_keep`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafka_q_keep"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_ConsumerGroupHeartbeatRequest",
+   "change": "removed",
+   "line": 21799,
+   "category": "unsupported",
+   "description": "indirect memory access is outside the resource projection",
+   "class": "decided-function",
+   "statement_callees": [],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_ConsumerGroupHeartbeatRequest",
+   "change": "removed",
+   "line": 21858,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafkap_str_destroy`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_ConsumerGroupHeartbeatRequest",
+   "change": "added",
+   "line": 21799,
+   "category": "unsupported",
+   "description": "unmodeled expression may mutate a formal resource identity",
+   "class": "decided-function",
+   "statement_callees": [],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_ConsumerGroupHeartbeatRequest",
+   "change": "added",
+   "line": 21858,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `subscribed_topic_regex_to_send`",
+   "class": "same-line",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_JoinGroupRequest",
+   "change": "removed",
+   "line": 21643,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafkap_bytes_destroy`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafkap_bytes_destroy"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_JoinGroupRequest",
+   "change": "added",
+   "line": 21643,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `member_metadata`",
+   "class": "same-line",
+   "statement_callees": [
+    "rd_kafkap_bytes_destroy"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_OffsetFetchRequest",
+   "change": "removed",
+   "line": 21307,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafkap_str_destroy`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_request.c",
+   "function": "rd_kafka_OffsetFetchRequest",
+   "change": "added",
+   "line": 21307,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `null_member_id`",
+   "class": "same-line",
+   "statement_callees": [
+    "rd_kafkap_str_destroy"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_sticky_assignor.c",
+   "function": "rd_kafka_sticky_assignor_get_metadata",
+   "change": "removed",
+   "line": 22391,
+   "category": "unsupported",
+   "description": "call to uncontracted function `rd_kafkap_bytes_destroy`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "rd_kafkap_bytes_destroy"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Released { nullable: false }], result: None }"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sticky_assignor.c",
+   "function": "rd_kafka_sticky_assignor_get_metadata",
+   "change": "added",
+   "line": 22391,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `kbytes`",
+   "class": "same-line",
+   "statement_callees": [
+    "rd_kafkap_bytes_destroy"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_handle_TxnOffsetCommit",
+   "change": "removed",
+   "line": 21055,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "class": "decided-statement",
+   "statement_callees": [
+    "rd_timeout_expired"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "librdkafka/tinycthread_extra.c",
+   "function": "cnd_timedwait_ms",
+   "change": "removed",
+   "line": 3010,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "class": "decided-statement",
+   "statement_callees": [
+    "rd_timeout_expired"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "monkey-libevent/mk_core/mk_event.c",
+   "function": "mk_event_backend",
+   "change": "removed",
+   "line": 3699,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_mk_event_backend`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "_mk_event_backend"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [], result: None }"
+  },
+  {
+   "unit": "monkey-libevent/mk_core/mk_event.c",
+   "function": "mk_event_init",
+   "change": "removed",
+   "line": 3587,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_mk_event_init`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "_mk_event_init"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [], result: None }"
+  },
+  {
+   "unit": "monkey-libevent/mk_core/mk_iov.c",
+   "function": "mk_iov_create",
+   "change": "removed",
+   "line": 2113,
+   "category": "unsupported",
+   "description": "call to uncontracted function `mk_iov_init`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "mk_iov_init"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Borrowed, Borrowed, Borrowed], result: None }"
+  },
+  {
+   "unit": "monkey-libevent/mk_server/mk_header.c",
+   "function": "mk_header_response_reset",
+   "change": "removed",
+   "line": 6123,
+   "category": "unsupported",
+   "description": "indirect memory access is outside the resource projection",
+   "class": "decided-statement",
+   "statement_callees": [
+    "mk_iov_init"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "monkey-libevent/mk_server/mk_plugin.c",
+   "function": "mk_plugin_load_static",
+   "change": "removed",
+   "line": 6290,
+   "category": "unsupported",
+   "description": "indirect memory access is outside the resource projection",
+   "class": "decided-statement",
+   "statement_callees": [
+    "mk_static_plugins"
+   ],
+   "callee_summary": null
+  },
+  {
+   "unit": "monkey-libevent/mk_server/mk_scheduler.c",
+   "function": "mk_sched_add_connection",
+   "change": "removed",
+   "line": 6593,
+   "category": "unsupported",
+   "description": "call to uncontracted function `mk_sched_conn_timeout_add`",
+   "class": "decided-callee",
+   "statement_callees": [
+    "mk_sched_conn_timeout_add"
+   ],
+   "callee_summary": "ResourceFunctionContract { parameters: [Owned { nullable: false }, Borrowed], result: None }"
+  },
+  {
+   "unit": "monkey-libevent/mk_server/mk_scheduler.c",
+   "function": "mk_sched_add_connection",
+   "change": "added",
+   "line": 6593,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `conn`",
+   "class": "same-line",
+   "statement_callees": [
+    "mk_sched_conn_timeout_add"
+   ],
+   "callee_summary": null
+  }
+ ]
+}

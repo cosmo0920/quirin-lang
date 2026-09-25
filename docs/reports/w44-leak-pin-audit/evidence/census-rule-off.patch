@@ -1,0 +1,18 @@
+Measurement-only source edit for the hand-on census (never committed as code):
+the census binary of the handoff prediction is built from the tree with this
+one change, so the refused hand-on rule withdraws nothing and every leak the
+cast-return tree still reports is recorded with its witness. The cast-return
+rule stays on. The edit is reverted before any other build.
+
+--- a/crates/qcore-c-gateway/src/legacy_refused_operands.rs
++++ b/crates/qcore-c-gateway/src/legacy_refused_operands.rs
+@@ pub(super) fn apply(
+     read: &BTreeSet<usize>,
+     diagnostics: &BTreeSet<LegacyDiagnostic>,
+ ) {
++    let _ = (&output, read, diagnostics);
++    return;
+     if !read.is_empty() && refused(diagnostics) {
+         withdraw(output, read);
+     }
+ }
