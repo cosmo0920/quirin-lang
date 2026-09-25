@@ -325,9 +325,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         let resolve = |entries: &Option<Vec<String>>, source| {
             entries
                 .as_ref()
-                .map(|entries| {
-                    resolve_providers(load_path, entries, quirin_providers_only, source)
-                })
+                .map(|entries| resolve_providers(load_path, entries, quirin_providers_only, source))
                 .transpose()
         };
         let resolved = match (

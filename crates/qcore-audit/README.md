@@ -110,34 +110,15 @@ the historical revision retains its configured source-contract evidence route.
 Supply the original commit with `--revision` to reproduce that route even after
 the upstream checkout advances. Existing audit configurations default to
 `"source_revision_policy": "profile_pin"`, preserving historical evidence gates.
-The existing Cycle19 command defaults to the current checkout and now requires
-both selected compilation databases to use the configured Clang C driver. A GCC
-database is rejected once with preparation instructions, before per-unit work.
-It is never silently rewritten to name Clang. Prepare explicit Clang CMake inputs
-and run the complete current resource audit with:
-
-```sh
-python3 -B scripts/prepare_cycle19_clang_audit.py --clang clang --clangxx clang++ --run
-```
-
-This orchestrates the independent Fluent Bit clone/build and the forced-Libevent
-Monkey input preparation. CMake receives explicit C/C++ compilers, a C standard,
-and `CMAKE_C_FLAGS=-std=gnu17` so repeat configuration cannot omit the dialect;
-the analysis uses the final dialect in each generated command. The helper records
-`audit-command.json`, sets `QCORE_CLANG` to the selected compiler, and writes
-reports under `build/cycle19/clang/<commit>/reports`. Without `--run`, it prints
-the exact audit command to execute. `--fluent-bit`, `--revision`, and `--output`
-select another source or build location. `--jobs N` sets how many translation
-units the audit analyses concurrently (default: available parallelism, capped at
-16, or `QCORE_AUDIT_JOBS`; reports are byte-identical at any count), and
-`--release` runs an optimised build of the audit example; both are recorded in
-`audit-command.json`. The developer's existing GCC build is
-left intact. The native build step builds `cmetrics-static`; this is not a full
-native Fluent Bit executable build or a GCC/Clang equivalence claim.
-
-The example accepts `--compile-database PATH` before positional arguments, so it
-can consume that independently generated main database. Pass `--pinned-evidence`
-instead for historical replay. Distinct compile configurations stay visible.
+The configured current-revision route is `quirin-audit current` (see
+below). It requires every selected compilation database to use the configured
+Clang C driver: a GCC database (`/usr/bin/cc`) is rejected once, with
+preparation instructions, before any per-unit work, and is never silently
+rewritten to name Clang. The compiler example
+`cycle19_fluent_bit_libraries_audit` keeps its configured route as a thin
+wrapper over the same code, with the Fluent Bit profile and its declared
+manifest; its `--pinned-evidence` route (historical replay, the corpus arbiter)
+is unchanged.
 
 `-Wextra` is transported to Clang preprocessing, syntax checking, and AST import.
 Dollar signs in a quoted C string macro are preserved literally; the adapter does
@@ -146,6 +127,225 @@ shell expansions and unquoted unresolved macro expressions still reject. Results
 refer to the generated compilation database's literal arguments; equivalence to
 additional Make expansion steps or general filename-builtin semantics is not
 established.
+
+## `quirin-audit current`: the configured current-revision route
+
+`quirin-audit current` audits the committed `HEAD` of a checkout: every
+compilation configuration that the profile's `audit.json` library groups select from
+`--compile-database`, then every unit of an optional Monkey (forced-Libevent)
+database. Each configuration is analysed or explicitly Unknown, `--jobs N`
+units run concurrently (default: available parallelism capped at 16, or
+`QCORE_AUDIT_JOBS`; outputs are byte-identical at any count), and historical
+source/native/provider evidence is written as explicit Unknown sidecars.
+
+### Choosing the contracts: providers
+
+Resource contracts come from exactly one of three sources:
+
+1. **A provider selection.** Pass `--provider NAME` once per entry. `NAME` is a
+   `quirin-provider-*` or `qcore-provider-*` crate on the contract load path
+   (`--load-path providers/contract-load-path.json`). `NAME` alone selects every
+   module the crate owns, in load-path order. `NAME:MODULE` selects one module.
+2. **An explicit manifest** (`--contract-manifest PATH`).
+3. **The profile's declared manifest**, used when neither is given.
+
+Resolution never falls back to a default:
+
+- An unknown provider, an unowned module or a module selected twice refuses.
+- So do a stale load path, a namespace collision, a dependency cycle and a
+  listed module missing on disk.
+- A provider selection together with an explicit manifest refuses.
+- With no selection, no manifest and no profile manifest, the command refuses:
+  there is no default provider set.
+
+A selection supersedes the profile's declared manifest. The sidecar records
+that manifest as not read.
+
+**Dependencies.** The selected crates' dependency closure is resolved and
+recorded. It is also where the selected modules' `#include` directives
+resolve. A dependency's own modules are not selected just because it is a
+dependency. For example, `quirin-provider-fluent-bit` resolves
+`quirin-provider-libc`, and its `resource_memory.qcore` inherits
+`libc::malloc` from there. Name `quirin-provider-libc` as well to audit with
+libc's own contracts. Add `--quirin-providers-only` to refuse any
+`qcore-provider-*` crate anywhere in the closure.
+
+**Whole crates.** Today only four crates can be selected whole:
+`quirin-provider-libc`, `quirin-provider-mpack`, `quirin-provider-msgpack` and
+`qcore-provider-ctraces`. The other seven also own modules written for other
+checkers, which the resource loader refuses. For those, select modules with
+`NAME:MODULE`. The report's follow-up `W44-PROVIDER-RESOURCE-VIEW` tracks this.
+
+**The manifest the selection becomes.** A selection is lowered to the schema-2
+manifest you would write beside `providers/`. A module that uses no inclusion
+is written as a file path. A module that uses inclusion is written as a
+`crate:module` reference. The unchanged manifest loader then loads that text.
+The sidecar records it as `contract_manifest`, and every compile-task identity
+digests it. A selection equal to `cycle19-resource-contracts.json` (its 47
+modules, in its order) therefore lowers to that file byte for byte. The
+sidecar's `provider_selection` records the following:
+
+- the entries and which forms declared them;
+- the load path and its SHA-256;
+- the closure, with each crate's name, namespace, version, role, dependencies,
+  selected-module digests and published-module pins;
+- each module's digest and spelling.
+
+### Command line and JSON configuration
+
+Every setting can be given as a flag, in a JSON configuration (`--config FILE`,
+with paths relative to the file), or both. When both give a setting, the two
+must agree. For providers, agreeing means resolving to the same modules in the
+same order. If they disagree, the command refuses; nothing is merged or
+overridden.
+
+A worked command line: the Fluent Bit libraries with libc, the
+Fluent Bit wrappers and ChunkIO's residency contract, over a prepared build
+(`$out` as below):
+
+```sh
+QCORE_CLANG=$(command -v clang) cargo run --release -p qcore-audit -- current \
+  --checkout "$out/fluent-bit-clang-source" \
+  --profile-directory contract/profiles/fluent-bit \
+  --compile-database "$out/fluent-bit-clang-production/compile_commands.json" \
+  --monkey-database "$out/monkey/monkey-build/compile_commands.json" \
+  --load-path providers/contract-load-path.json \
+  --provider quirin-provider-libc \
+  --provider quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore \
+  --provider qcore-provider-chunkio:chunkio/chunk_residency.qcore \
+  --monkey-source-report "$out/reports/monkey-source.json" \
+  --report "$out/reports/resource-diagnostics.json" \
+  --jobs 16
+```
+
+The same run as JSON (`quirin-audit current --config current.json`, the file at
+the repository root):
+
+```json
+{
+  "schema_version": 1,
+  "checkout": "build/cycle19/clang/REV/fluent-bit-clang-source",
+  "profile_directory": "contract/profiles/fluent-bit",
+  "compile_database": "build/cycle19/clang/REV/fluent-bit-clang-production/compile_commands.json",
+  "monkey_database": "build/cycle19/clang/REV/monkey/monkey-build/compile_commands.json",
+  "load_path": "providers/contract-load-path.json",
+  "providers": [
+    "quirin-provider-libc",
+    "quirin-provider-fluent-bit:fluent_bit/resource_memory.qcore",
+    "qcore-provider-chunkio:chunkio/chunk_residency.qcore"
+  ],
+  "monkey_source_report": "build/cycle19/clang/REV/reports/monkey-source.json",
+  "report": "build/cycle19/clang/REV/reports/resource-diagnostics.json",
+  "jobs": 16
+}
+```
+
+`python3 docs/reports/w44-quirin-audit-providers/scripts/manifest_to_providers.py
+cycle19-resource-contracts.json` prints the 47 entries equal to the Cycle 19
+manifest. Its `--config OUT.json KEY=VALUE...` form writes them into such a
+configuration.
+
+The plain `quirin-audit CONFIG.json` route takes the same `providers`,
+`load_path` and `quirin_providers_only` fields.
+
+### Contracts only
+
+`--contracts-only`, or `"mode": "contracts-only"` in either configuration,
+audits using only Quirin contracts. It runs the resource projection from the
+`.qcore` modules elaborated from the selected providers (or the manifest), and
+nothing else. It admits none of the following:
+
+- process packages or source-contract checks;
+- verifier-host execution;
+- compiler-crate verifier-plugin evidence;
+- native or observed evidence;
+- pinned historical evidence.
+
+Anything that needs that evidence stays Unknown. A configuration that also
+names `source_contracts` or `packages` refuses; nothing is silently ignored.
+The report and the sidecar carry an `evidence` block. It gives the mode, the
+excluded evidence and every contract module, with the SHA-256 of its elaborated
+text, that the verdicts rest on. Included parents are listed under
+`contract_inclusion`. A contracts-only verdict is therefore distinguishable
+from a full audit's.
+
+The configured current route admits no process packages today. On the same
+inputs, a contracts-only run differs from a plain run only in that block and one
+console line. Provider selection is the same in both modes and admits
+`quirin-provider-*` and `qcore-provider-*` crates alike, since both carry
+`.qcore` contracts. If only `quirin-provider-*` crates should be admitted, add
+`--quirin-providers-only`.
+
+```sh
+quirin-audit current --config current.json --contracts-only --quirin-providers-only
+```
+
+```json
+{
+  "schema_version": 1,
+  "checkout": "build/cycle19/clang/REV/fluent-bit-clang-source",
+  "profile_directory": "contract/profiles/fluent-bit",
+  "compile_database": "build/cycle19/clang/REV/fluent-bit-clang-production/compile_commands.json",
+  "load_path": "providers/contract-load-path.json",
+  "providers": ["quirin-provider-libc", "quirin-provider-mpack", "quirin-provider-msgpack"],
+  "mode": "contracts-only",
+  "quirin_providers_only": true,
+  "report": "build/cycle19/clang/REV/reports/contracts-only.json"
+}
+```
+
+### Preparing the Fluent Bit build
+
+Preparation is two scripts, then the audit. Each script leaves the
+developer's GCC build intact and works in an independent clone:
+
+```sh
+rev=$(git -C ../fluent-bit rev-parse HEAD)
+out=build/cycle19/clang/$rev
+python3 -B scripts/prepare_cmetrics_clang_audit.py --fluent-bit ../fluent-bit \
+  --revision "$rev" --output "$out" --clang clang --clangxx clang++
+python3 -B scripts/prepare_cycle19_monkey.py \
+  --fluent-bit "$out/fluent-bit-clang-source" --output "$out/monkey" \
+  --clang clang --clangxx clang++
+QCORE_CLANG=$(command -v clang) cargo run --release -p qcore-audit -- current \
+  --checkout "$out/fluent-bit-clang-source" \
+  --profile-directory contract/profiles/fluent-bit \
+  --compile-database "$out/fluent-bit-clang-production/compile_commands.json" \
+  --monkey-database "$out/monkey/monkey-build/compile_commands.json" \
+  --contract-manifest cycle19-resource-contracts.json \
+  --monkey-source-report "$out/reports/monkey-source.json" \
+  --report "$out/reports/resource-diagnostics.json"
+```
+
+The first script builds the Clang CMake tree (`cmetrics-static`, not a full
+native Fluent Bit executable, and not a GCC/Clang equivalence claim). It
+records the configure command, including the C++ compiler, in
+`build-provenance.json`. The second prepares the forced-Libevent Monkey inputs
+and records its CMake command in its own marker. `QCORE_CLANG` must name the
+compiler the database names. Add `--jobs N` for the job count, and keep
+`--release` for an optimised build. Neither changes a result.
+
+**Provenance.** Beside `--report`, the command writes
+`<report>.invocation.json`. This replaces the `audit-command.json` that the
+retired wrapper wrote. Each old field now lives here:
+
+- `source_revision` → `source_revision` (the checkout's audited `HEAD`, also in
+  the sidecar);
+- `clang` → `clang` (the executable, version and target that ran, captured
+  from the configured `QCORE_CLANG`);
+- `clangxx` → preparation's `build-provenance.json` and Monkey marker, where it
+  is used; the audit never runs the C++ compiler;
+- `compile_database` and `monkey_database` → the same keys, each with its
+  SHA-256;
+- `cwd` and `command` → `cwd` and `argv`;
+- `profile` → `build_profile` (`dev` or `release`);
+- `jobs` → `jobs` (`requested` and `effective`);
+- `environment` → `environment` (`QCORE_CLANG`, `QCORE_AUDIT_JOBS`);
+- `scope` → `scope`.
+
+The record also names the configuration file and its digest, and the contract
+source with the digest of the manifest that was loaded. It is provenance of the
+run, not an input to any verdict, so it is not part of any identity comparison.
 
 ## Configured source-contract processes
 
@@ -167,7 +367,11 @@ Add an explicit `source_contracts` object to the audit configuration:
 }
 ```
 
-`configuration` selects the existing source-contract package/policy format:
+`configuration` selects the existing source-contract package/policy format.
+Instead of `packages`, a configuration may give `"package_root": "DIR"`, a
+`providers/package.py build` output directory. Each binding's provider id then
+names its package, `DIR/<provider id>`, and that package is verified exactly as
+a listed one is. Exactly one of `packages` and `package_root` is required.
 
 ```json
 {

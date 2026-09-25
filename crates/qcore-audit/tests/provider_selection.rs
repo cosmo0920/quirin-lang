@@ -142,7 +142,10 @@ impl Fixture {
         self.0.join("providers/contract-load-path.json")
     }
 
-    fn resolve(&self, entries: &[&str]) -> Result<qcore_audit::providers::ResolvedProviders, String> {
+    fn resolve(
+        &self,
+        entries: &[&str],
+    ) -> Result<qcore_audit::providers::ResolvedProviders, String> {
         resolve_providers(
             &self.load_path(),
             &entries.iter().map(|e| (*e).to_owned()).collect::<Vec<_>>(),
@@ -178,7 +181,10 @@ fn a_whole_crate_selects_its_modules_in_load_path_order_and_lowers_to_a_manifest
         })
     );
     assert!(resolved.manifest_text().ends_with("}\n"));
-    assert_eq!(resolved.manifest_path(), fixture.0.join("provider-selection.json"));
+    assert_eq!(
+        resolved.manifest_path(),
+        fixture.0.join("provider-selection.json")
+    );
     // The lowered text loads through the unchanged manifest loader, with the
     // inherited contract elaborated from its dependency's published parent.
     let contracts = ContractInput::providers(&resolved, None).load().unwrap();
@@ -194,7 +200,11 @@ fn the_dependency_closure_is_resolved_and_recorded_but_not_selected() {
     let resolved = fixture.resolve(&["quirin-provider-delta"]).unwrap();
     assert_eq!(
         resolved.closure_names().collect::<Vec<_>>(),
-        ["qcore-provider-beta", "quirin-provider-alpha", "quirin-provider-delta"]
+        [
+            "qcore-provider-beta",
+            "quirin-provider-alpha",
+            "quirin-provider-delta"
+        ]
     );
     // Only delta's own module is selected; beta and alpha are resolution scope.
     assert_eq!(resolved.modules().len(), 1);
@@ -238,14 +248,20 @@ fn unknown_providers_missing_modules_duplicates_and_empty_selections_refuse() {
         let error = fixture.resolve(entries).unwrap_err();
         assert!(error.contains(expected), "{entries:?}: {error}");
     };
-    refused(&["quirin-provider-zeta"], "unknown provider `quirin-provider-zeta`");
+    refused(
+        &["quirin-provider-zeta"],
+        "unknown provider `quirin-provider-zeta`",
+    );
     refused(&["serde"], "is not a provider");
     refused(
         &["quirin-provider-alpha:alpha/absent.qcore"],
         "owns no contract module `alpha/absent.qcore`",
     );
     refused(
-        &["quirin-provider-alpha", "quirin-provider-alpha:alpha/heap.qcore"],
+        &[
+            "quirin-provider-alpha",
+            "quirin-provider-alpha:alpha/heap.qcore",
+        ],
         "selected twice",
     );
     refused(&[], "provider selection is empty");
@@ -268,7 +284,10 @@ fn a_namespace_conflict_refuses_the_whole_load_path() {
         },
     ]);
     let error = fixture.resolve(&["quirin-provider-alpha"]).unwrap_err();
-    assert!(error.contains("QI017") && error.contains("namespace"), "{error}");
+    assert!(
+        error.contains("QI017") && error.contains("namespace"),
+        "{error}"
+    );
 }
 
 #[test]
@@ -394,9 +413,10 @@ fn a_selection_loads_exactly_what_the_equal_hand_written_manifest_loads() {
 /// The repository's Cycle 19 manifest as a provider selection: one
 /// `crate:module` entry per manifest entry, in manifest order.
 fn cycle19_selection(repository: &Path) -> Vec<String> {
-    let manifest: Value =
-        serde_json::from_slice(&fs::read(repository.join("cycle19-resource-contracts.json")).unwrap())
-            .unwrap();
+    let manifest: Value = serde_json::from_slice(
+        &fs::read(repository.join("cycle19-resource-contracts.json")).unwrap(),
+    )
+    .unwrap();
     let load_path: Value = serde_json::from_slice(
         &fs::read(repository.join("providers/contract-load-path.json")).unwrap(),
     )

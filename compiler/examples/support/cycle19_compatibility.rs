@@ -457,7 +457,6 @@ fn select_exact_unit(entries: &[CompileEntry], source: &Path) -> Vec<CompileEntr
         .collect()
 }
 
-
 /// One selected library, planned before any of its units is analysed.
 struct LibraryPlan {
     library: String,

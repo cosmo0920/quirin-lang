@@ -116,7 +116,11 @@ impl Fixture {
             ("quirin-provider-alpha", "alpha/heap.qcore", HEAP),
             ("qcore-provider-beta", "beta/other.qcore", OTHER),
         ] {
-            let path = root.join("providers").join(krate).join("contracts").join(module);
+            let path = root
+                .join("providers")
+                .join(krate)
+                .join("contracts")
+                .join(module);
             fs::create_dir_all(path.parent().unwrap()).unwrap();
             fs::write(path, text).unwrap();
         }
@@ -193,7 +197,11 @@ impl Fixture {
     }
 
     fn config(&self, name: &str, value: &Value) -> String {
-        fs::write(self.0.join(name), serde_json::to_string_pretty(value).unwrap()).unwrap();
+        fs::write(
+            self.0.join(name),
+            serde_json::to_string_pretty(value).unwrap(),
+        )
+        .unwrap();
         name.to_owned()
     }
 
@@ -231,9 +239,16 @@ fn succeeded(output: &Output) {
 }
 
 fn refused(output: &Output, expected: &str) {
-    assert!(!output.status.success(), "{}", String::from_utf8_lossy(&output.stdout));
+    assert!(
+        !output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stdout)
+    );
     let stderr = String::from_utf8_lossy(&output.stderr);
-    assert!(stderr.contains(expected), "expected `{expected}` in:\n{stderr}");
+    assert!(
+        stderr.contains(expected),
+        "expected `{expected}` in:\n{stderr}"
+    );
 }
 
 #[test]
@@ -275,8 +290,14 @@ fn command_line_configuration_and_both_forms_produce_the_same_run() {
     succeeded(&fixture.run(&args));
 
     let report = fs::read(fixture.0.join("cli/report.json")).unwrap();
-    assert_eq!(fs::read(fixture.0.join("config/report.json")).unwrap(), report);
-    assert_eq!(fs::read(fixture.0.join("both/report.json")).unwrap(), report);
+    assert_eq!(
+        fs::read(fixture.0.join("config/report.json")).unwrap(),
+        report
+    );
+    assert_eq!(
+        fs::read(fixture.0.join("both/report.json")).unwrap(),
+        report
+    );
     let mut sidecars = Vec::new();
     for (out, sources) in [
         ("cli", json!(["command_line"])),
@@ -337,7 +358,10 @@ fn an_unknown_provider_refuses_before_any_report() {
         "--provider",
         "quirin-provider-omega",
     ]));
-    refused(&fixture.run(&args), "unknown provider `quirin-provider-omega`");
+    refused(
+        &fixture.run(&args),
+        "unknown provider `quirin-provider-omega`",
+    );
     assert!(!fixture.0.join("out").exists());
 }
 
@@ -364,20 +388,27 @@ fn contract_sources_are_one_declaration_and_there_is_no_default_provider_set() {
     refused(&fixture.run(&args), "two declarations of one input");
     // A load path or a guard without a selection has nothing to act on.
     let mut args = fixture.base_args("out");
-    args.extend(strings(&["--load-path", "providers/contract-load-path.json"]));
+    args.extend(strings(&[
+        "--load-path",
+        "providers/contract-load-path.json",
+    ]));
     refused(&fixture.run(&args), "no provider is selected");
     // An explicit manifest alone, and the profile's default alone, both run.
     let mut args = fixture.base_args("manifest");
     args.extend(strings(&["--contract-manifest", "contracts.json"]));
     succeeded(&fixture.run(&args));
     succeeded(&fixture.run(&fixture.base_args("default")));
+    // One manifest file reached by two spellings: the same verdicts; the
+    // file-path contract keys (and so the digests) name the spelling used.
     assert_eq!(
-        fs::read(fixture.0.join("manifest/report.json")).unwrap(),
-        fs::read(fixture.0.join("default/report.json")).unwrap()
+        fixture.read("manifest/report.json")["units"][0]["status"],
+        fixture.read("default/report.json")["units"][0]["status"]
     );
-    assert!(
-        fixture.read("default/report.contracts.json")["provider_selection"].is_null()
+    assert_eq!(
+        fixture.read("default/report.contracts.json")["contract_manifest"],
+        fs::read_to_string(fixture.0.join("contracts.json")).unwrap()
     );
+    assert!(fixture.read("default/report.contracts.json")["provider_selection"].is_null());
 }
 
 #[test]
@@ -398,7 +429,10 @@ fn the_sidecar_reproduces_the_provider_selection() {
     let selection = &sidecar["provider_selection"];
     assert_eq!(
         selection["entries"],
-        json!(["qcore-provider-beta", "quirin-provider-alpha:alpha/heap.qcore"])
+        json!([
+            "qcore-provider-beta",
+            "quirin-provider-alpha:alpha/heap.qcore"
+        ])
     );
     assert_eq!(
         selection["profile_contract_manifest"]["path"],
@@ -527,7 +561,10 @@ fn the_quirin_providers_only_guard_refuses_a_qcore_provider_closure() {
         "qcore-provider-beta",
         "--quirin-providers-only",
     ]));
-    refused(&fixture.run(&args), "--quirin-providers-only refuses `qcore-provider-beta`");
+    refused(
+        &fixture.run(&args),
+        "--quirin-providers-only refuses `qcore-provider-beta`",
+    );
     let mut args = fixture.base_args("quirin");
     args.extend(strings(&[
         "--load-path",
@@ -538,8 +575,7 @@ fn the_quirin_providers_only_guard_refuses_a_qcore_provider_closure() {
     ]));
     succeeded(&fixture.run(&args));
     assert_eq!(
-        fixture.read("quirin/report.contracts.json")["provider_selection"]
-            ["quirin_providers_only"],
+        fixture.read("quirin/report.contracts.json")["provider_selection"]["quirin_providers_only"],
         true
     );
     // Without a selection the guard has nothing to guard.
@@ -566,7 +602,10 @@ fn a_current_configuration_naming_process_evidence_refuses() {
         NEXT.fetch_add(1, Ordering::Relaxed)
     )));
     fs::create_dir_all(&fixture.0).unwrap();
-    for (name, key) in [("packages.json", "packages"), ("source.json", "source_contracts")] {
+    for (name, key) in [
+        ("packages.json", "packages"),
+        ("source.json", "source_contracts"),
+    ] {
         let config = fixture.config(
             name,
             &json!({"schema_version": 1, "mode": "contracts-only", key: ["x"]}),
@@ -601,7 +640,10 @@ fn the_plain_route_takes_providers_and_refuses_contracts_only_source_contracts()
         .arg(fixture.0.join(config))
         .output()
         .unwrap();
-    refused(&output, "a contracts-only audit admits no source-contract checks");
+    refused(
+        &output,
+        "a contracts-only audit admits no source-contract checks",
+    );
 
     let Some(clang) = clang() else { return };
     let fixture = Fixture::new(&clang, true);
@@ -623,13 +665,15 @@ fn the_plain_route_takes_providers_and_refuses_contracts_only_source_contracts()
     let report = fixture.read("out/report.json");
     assert_eq!(report["evidence"]["mode"], "contracts-only");
     let sidecar = fixture.read("out/report.assumptions.json");
-    assert_eq!(sidecar["provider_selection"]["sources"], json!(["configuration"]));
     assert_eq!(
+        sidecar["provider_selection"]["sources"],
+        json!(["configuration"])
+    );
+    assert!(
         sidecar["provider_selection"]["profile_contract_manifest"]["role"]
             .as_str()
             .unwrap()
-            .contains("supersedes"),
-        true
+            .contains("supersedes")
     );
     assert_eq!(sidecar["evidence"], report["evidence"]);
 }

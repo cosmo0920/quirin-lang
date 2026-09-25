@@ -15,8 +15,8 @@ use serde_json::{Value, json};
 
 use crate::compile_db::{CompileEntry, EffectiveInput, compile_task_identity, compiler_options};
 use crate::evidence::EvidenceMode;
-use crate::providers::ContractInput;
 use crate::projection::{AuditCounts, PreparedAuditCertificateContext, project_prepared_unit_into};
+use crate::providers::ContractInput;
 use crate::report::{AuditReport, UnitRefusal};
 
 /// Keep distinct commands, deduplicating only identical file/directory/command

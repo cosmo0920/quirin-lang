@@ -351,7 +351,11 @@ impl SourceContractPolicies {
             .to_path_buf();
         let config: Configuration = serde_json::from_slice(&read_bounded(&path, 1_048_576)?)
             .map_err(|e| SourceContractError::Configuration(e.to_string()))?;
-        let packages = package_inventory(config.packages, config.package_root.as_deref(), &config.bindings)?;
+        let packages = package_inventory(
+            config.packages,
+            config.package_root.as_deref(),
+            &config.bindings,
+        )?;
         validate_package_paths(&packages)?;
         if !matches!(config.schema_version, 1 | 2)
             || config.bindings.is_empty()
