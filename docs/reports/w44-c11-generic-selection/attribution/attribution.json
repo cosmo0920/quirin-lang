@@ -1,0 +1,756 @@
+{
+ "totals_before": {
+  "unsupported": 43885,
+  "unknown_alias": 3357,
+  "leak": 19,
+  "summary_conflict": 1
+ },
+ "totals_after": {
+  "unsupported": 43854,
+  "unknown_alias": 3370,
+  "leak": 34,
+  "summary_conflict": 1
+ },
+ "function_status_before": {
+  "Unknown": 4525,
+  "Safe": 300,
+  "Unsafe": 9
+ },
+ "function_status_after": {
+  "Unknown": 4524,
+  "Safe": 301,
+  "Unsafe": 9
+ },
+ "classes": {
+  "at_selection_statement/added/leak": 15,
+  "at_selection_statement/added/unknown_alias": 3,
+  "at_selection_statement/added/unsupported": 6,
+  "at_selection_statement/removed/unsupported": 22,
+  "elsewhere_in_selection_function/added/unknown_alias": 10,
+  "generic_leaf_removed/removed/unsupported": 14,
+  "newly_safe_callee/removed/unsupported": 1
+ },
+ "status_moves": [
+  {
+   "unit": "mk_core/mk_string.c",
+   "function": "mk_string_char_search",
+   "before": "Unknown",
+   "after": "Safe",
+   "holds_admitted_selection": true
+  }
+ ],
+ "unit_moves": [],
+ "functions_with_admitted_selection": 36,
+ "rows": [
+  {
+   "unit": "mk_core/mk_string.c",
+   "function": "_mk_string_search",
+   "direction": "removed",
+   "line": 2098,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "mk_core/mk_string.c",
+   "function": "mk_string_char_search",
+   "direction": "removed",
+   "line": 2141,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "mk_core/mk_string.c",
+   "function": "mk_string_split_line",
+   "direction": "removed",
+   "line": 2207,
+   "category": "unsupported",
+   "description": "call to uncontracted function `mk_string_char_search`",
+   "count": 1,
+   "class": "newly_safe_callee"
+  },
+  {
+   "unit": "rdaddr.c",
+   "function": "rd_addrinfo_prepare",
+   "direction": "removed",
+   "line": 4005,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rddl.c",
+   "function": "rd_dl_error",
+   "direction": "removed",
+   "line": 2955,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in loop condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rddl.c",
+   "function": "rd_dl_error",
+   "direction": "added",
+   "line": 2956,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `s`",
+   "count": 1,
+   "class": "elsewhere_in_selection_function"
+  },
+  {
+   "unit": "rddl.c",
+   "function": "rd_dl_open",
+   "direction": "removed",
+   "line": 2981,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "rddl.c",
+   "function": "rd_dl_open",
+   "direction": "removed",
+   "line": 2984,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "rddl.c",
+   "function": "rd_dl_open",
+   "direction": "added",
+   "line": 2985,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `td`",
+   "count": 1,
+   "class": "elsewhere_in_selection_function"
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignors_init",
+   "direction": "removed",
+   "line": 20547,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignors_init",
+   "direction": "added",
+   "line": 20542,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `s`",
+   "count": 1,
+   "class": "elsewhere_in_selection_function"
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignors_init",
+   "direction": "added",
+   "line": 20545,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `s`",
+   "count": 1,
+   "class": "elsewhere_in_selection_function"
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignors_init",
+   "direction": "added",
+   "line": 20547,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `t`",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignors_init",
+   "direction": "added",
+   "line": 20548,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `t`",
+   "count": 1,
+   "class": "elsewhere_in_selection_function"
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "ut_populate_internal_topic_metadata",
+   "direction": "removed",
+   "line": 20698,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "ut_populate_internal_topic_metadata",
+   "direction": "added",
+   "line": 20698,
+   "category": "unsupported",
+   "description": "call to uncontracted function `bsearch`",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "function": "rd_kafka_Node_new_from_brokers",
+   "direction": "removed",
+   "line": 19760,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "function": "rd_kafka_Node_new_from_brokers",
+   "direction": "removed",
+   "line": 19762,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "function": "rd_kafka_Node_new_from_brokers",
+   "direction": "added",
+   "line": 19760,
+   "category": "unsupported",
+   "description": "call to uncontracted function `bsearch`",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "function": "rd_kafka_Node_new_from_brokers",
+   "direction": "added",
+   "line": 19762,
+   "category": "unsupported",
+   "description": "call to uncontracted function `bsearch`",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_name_parse",
+   "direction": "removed",
+   "line": 23804,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_name_parse",
+   "direction": "removed",
+   "line": 23808,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_name_parse",
+   "direction": "removed",
+   "line": 23830,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_name_parse",
+   "direction": "added",
+   "line": 23837,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `t`",
+   "count": 1,
+   "class": "elsewhere_in_selection_function"
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_name_parse",
+   "direction": "added",
+   "line": 23840,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `s`",
+   "count": 1,
+   "class": "elsewhere_in_selection_function"
+  },
+  {
+   "unit": "rdkafka_cert.c",
+   "function": "rd_kafka_cert_new",
+   "direction": "removed",
+   "line": 20425,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "function": "rd_kafka_populate_metadata_topic_racks",
+   "direction": "removed",
+   "line": 20403,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "function": "rd_kafka_populate_metadata_topic_racks",
+   "direction": "added",
+   "line": 20403,
+   "category": "unsupported",
+   "description": "call to uncontracted function `bsearch`",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_pattern.c",
+   "function": "rd_kafka_pattern_list_parse",
+   "direction": "removed",
+   "line": 19626,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in loop condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_pattern.c",
+   "function": "rd_kafka_pattern_list_parse",
+   "direction": "added",
+   "line": 19623,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `s`",
+   "count": 1,
+   "class": "elsewhere_in_selection_function"
+  },
+  {
+   "unit": "rdkafka_pattern.c",
+   "function": "rd_kafka_pattern_list_parse",
+   "direction": "added",
+   "line": 19626,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `t`",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_pattern.c",
+   "function": "rd_kafka_pattern_list_parse",
+   "direction": "added",
+   "line": 19631,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `t`",
+   "count": 1,
+   "class": "elsewhere_in_selection_function"
+  },
+  {
+   "unit": "rdkafka_plugin.c",
+   "function": "rd_kafka_plugins_conf_set0",
+   "direction": "removed",
+   "line": 19646,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_plugin.c",
+   "function": "rd_kafka_plugins_conf_set0",
+   "direction": "added",
+   "line": 19646,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `t`",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_plugin.c",
+   "function": "rd_kafka_plugins_conf_set0",
+   "direction": "added",
+   "line": 19647,
+   "category": "unknown_alias",
+   "description": "unresolved resource identity `t`",
+   "count": 1,
+   "class": "elsewhere_in_selection_function"
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "function": "rd_kafka_topic_assignment_state_rack_search",
+   "direction": "removed",
+   "line": 19706,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "function": "rd_kafka_topic_assignment_state_rack_search",
+   "direction": "added",
+   "line": 19706,
+   "category": "unsupported",
+   "description": "call to uncontracted function `bsearch`",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "function": "rd_kafka_sasl_client_new",
+   "direction": "removed",
+   "line": 20856,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "removed",
+   "line": 22299,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "removed",
+   "line": 22301,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "removed",
+   "line": 22309,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "removed",
+   "line": 22310,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "removed",
+   "line": 22311,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "removed",
+   "line": 22312,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "removed",
+   "line": 22313,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "removed",
+   "line": 22314,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "removed",
+   "line": 22315,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "removed",
+   "line": 22316,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "removed",
+   "line": 22317,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22310,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22311,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22311,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22312,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22312,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22313,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22313,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22314,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22314,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22315,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22315,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22316,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22316,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22317,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "direction": "added",
+   "line": 22317,
+   "category": "leak",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_ssl.c",
+   "function": "rd_kafka_transport_ssl_handshake",
+   "direction": "removed",
+   "line": 20569,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_ssl.c",
+   "function": "rd_kafka_transport_ssl_handshake",
+   "direction": "removed",
+   "line": 20575,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_ssl.c",
+   "function": "rd_kafka_transport_ssl_set_endpoint_id",
+   "direction": "removed",
+   "line": 20462,
+   "category": "unsupported",
+   "description": "unmodeled call, aggregate or indirect access in branch condition",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "function": "rd_kafka_partition_internal_find_rack",
+   "direction": "removed",
+   "line": 21374,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "function": "rd_kafka_partition_internal_find_rack",
+   "direction": "added",
+   "line": 21374,
+   "category": "unsupported",
+   "description": "call to uncontracted function `bsearch`",
+   "count": 1,
+   "class": "at_selection_statement"
+  },
+  {
+   "unit": "rdstring.c",
+   "function": "rd_string_render",
+   "direction": "removed",
+   "line": 2984,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  },
+  {
+   "unit": "rdstring.c",
+   "function": "rd_string_render",
+   "direction": "removed",
+   "line": 2994,
+   "category": "unsupported",
+   "description": "call to uncontracted function `_Generic`",
+   "count": 1,
+   "class": "generic_leaf_removed"
+  }
+ ]
+}

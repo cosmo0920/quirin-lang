@@ -1,0 +1,17 @@
+{
+ "uncontracted_call": {
+  "leaves": 9221,
+  "functions": 2618,
+  "sole": 409
+ },
+ "indirect_access": {
+  "leaves": 18101,
+  "functions": 3357,
+  "sole": 428
+ },
+ "return_expression": {
+  "leaves": 495,
+  "functions": 417,
+  "sole": 147
+ }
+}

@@ -1,0 +1,212 @@
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad24d9b095421e4fb/crates/qcore-c-gateway)
+warning: function `declares_object_pointer_result` is never used
+   --> crates/qcore-c-gateway/src/legacy_declared_abi.rs:671:15
+    |
+671 | pub(crate) fn declares_object_pointer_result(texts: &[&str], name: &str) -> bool {
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `GENERIC_KEYWORD` is never used
+  --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:97:18
+   |
+97 | pub(crate) const GENERIC_KEYWORD: &str = "_Generic";
+   |                  ^^^^^^^^^^^^^^^
+
+warning: constant `POINTER_QUALIFIERS` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:100:7
+    |
+100 | const POINTER_QUALIFIERS: &[&str] = &["const", "volatile", "restrict", "__restrict", "__restrict__"];
+    |       ^^^^^^^^^^^^^^^^^^
+
+warning: enum `Refusal` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:104:17
+    |
+104 | pub(crate) enum Refusal {
+    |                 ^^^^^^^
+
+warning: function `resolve_in_body` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:122:15
+    |
+122 | pub(crate) fn resolve_in_body(tokens: &[Token], function: &str) -> Option<Vec<Token>> {
+    |               ^^^^^^^^^^^^^^^
+
+warning: struct `PointerResults` is never constructed
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:152:8
+    |
+152 | struct PointerResults<'a> {
+    |        ^^^^^^^^^^^^^^
+
+warning: method `declared` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:158:8
+    |
+157 | impl PointerResults<'_> {
+    | ----------------------- method in this implementation
+158 |     fn declared(&mut self, callee: &str) -> bool {
+    |        ^^^^^^^^
+
+warning: function `resolve_span` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:178:4
+    |
+178 | fn resolve_span(span: &[Token], declarations: &mut PointerResults<'_>) -> (Vec<Token>, bool) {
+    |    ^^^^^^^^^^^^
+
+warning: function `selection_close` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:203:4
+    |
+203 | fn selection_close(span: &[Token], at: usize) -> Option<usize> {
+    |    ^^^^^^^^^^^^^^^
+
+warning: function `read_selection` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:211:4
+    |
+211 | fn read_selection(
+    |    ^^^^^^^^^^^^^^
+
+warning: function `strip` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:282:4
+    |
+282 | fn strip(tokens: &[Token]) -> (usize, usize, bool) {
+    |    ^^^^^
+
+warning: function `wraps` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:306:4
+    |
+306 | fn wraps(texts: &[&str]) -> bool {
+    |    ^^^^^
+
+warning: function `close_of` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:311:4
+    |
+311 | fn close_of(texts: &[&str], open: usize) -> Option<usize> {
+    |    ^^^^^^^^
+
+warning: function `is_direct_call` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:329:4
+    |
+329 | fn is_direct_call(texts: &[&str]) -> bool {
+    |    ^^^^^^^^^^^^^^
+
+warning: function `is_closed_operand` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:338:4
+    |
+338 | fn is_closed_operand(texts: &[&str]) -> bool {
+    |    ^^^^^^^^^^^^^^^^^
+
+warning: function `is_pointer_type_name` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:347:4
+    |
+347 | fn is_pointer_type_name(texts: &[&str]) -> bool {
+    |    ^^^^^^^^^^^^^^^^^^^^
+
+warning: function `split_top_level` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:361:4
+    |
+361 | fn split_top_level<'a>(tokens: &'a [Token], separator: &str) -> Vec<&'a [Token]> {
+    |    ^^^^^^^^^^^^^^^
+
+warning: function `first_top_level` is never used
+   --> crates/qcore-c-gateway/src/legacy_generic_selection.rs:381:4
+    |
+381 | fn first_top_level(tokens: &[Token], separator: &str) -> Option<usize> {
+    |    ^^^^^^^^^^^^^^^
+
+warning: `qcore-c-gateway` (lib) generated 18 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.98s
+     Running tests/generic_selection.rs (target/debug/deps/generic_selection-905dae5e5e6b3076)
+
+running 11 tests
+test a_cast_that_does_not_cover_the_association_refuses ... ok
+test a_cast_of_an_integer_result_refuses ... ok
+test a_controlling_expression_with_a_side_effect_contributes_nothing ... FAILED
+test associations_that_differ_refuse ... ok
+test a_mutable_argument_selects_the_call_and_keeps_its_derivation ... FAILED
+test a_declaration_initializer_is_analysed_as_the_call ... FAILED
+test a_const_argument_selects_the_cast_and_is_analysed_as_the_call ... FAILED
+test a_condition_is_analysed_as_the_call ... FAILED
+test a_call_argument_is_analysed_as_the_call ... FAILED
+test a_nested_selection_is_analysed_as_the_call ... FAILED
+test a_return_is_analysed_as_the_call ... FAILED
+
+failures:
+
+---- a_controlling_expression_with_a_side_effect_contributes_nothing stdout ----
+
+thread 'a_controlling_expression_with_a_side_effect_contributes_nothing' (1282983) panicked at crates/qcore-c-gateway/tests/generic_selection.rs:315:5:
+assertion `left == right` failed
+  left: ("Unknown", ["unsupported:call to uncontracted function `_Generic`"])
+ right: ("Safe", [])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- a_mutable_argument_selects_the_call_and_keeps_its_derivation stdout ----
+
+thread 'a_mutable_argument_selects_the_call_and_keeps_its_derivation' (1282985) panicked at crates/qcore-c-gateway/tests/generic_selection.rs:145:5:
+assertion `left == right` failed: strchr, free(base), strlen(p): the selection is not analysed as its call
+void w(void) { char *b; char *p; b = d_alloc(8); p = d_chr(b, 58); d_free(b); d_len(p); }
+  left: ("Unknown", ["unsupported:call to uncontracted function `_Generic`"])
+ right: ("Unsafe", ["use_after_release"])
+
+---- a_declaration_initializer_is_analysed_as_the_call stdout ----
+
+thread 'a_declaration_initializer_is_analysed_as_the_call' (1282984) panicked at crates/qcore-c-gateway/tests/generic_selection.rs:145:5:
+assertion `left == right` failed: const char *p = strchr(s, c);: the selection is not analysed as its call
+void w(const char *s) { const char *p = d_chr(s, 58); if (p) { d_len(p); } }
+  left: ("Unknown", ["unsupported:call to uncontracted function `_Generic`"])
+ right: ("Safe", [])
+
+---- a_const_argument_selects_the_cast_and_is_analysed_as_the_call stdout ----
+
+thread 'a_const_argument_selects_the_cast_and_is_analysed_as_the_call' (1282982) panicked at crates/qcore-c-gateway/tests/generic_selection.rs:145:5:
+assertion `left == right` failed: strchr over a caller's const string, null-tested, then read: the selection is not analysed as its call
+void w(const char *s) { const char *p; p = d_chr(s, 58); if (p) { d_len(p); } }
+  left: ("Unknown", ["unsupported:call to uncontracted function `_Generic`"])
+ right: ("Safe", [])
+
+---- a_condition_is_analysed_as_the_call stdout ----
+
+thread 'a_condition_is_analysed_as_the_call' (1282981) panicked at crates/qcore-c-gateway/tests/generic_selection.rs:145:5:
+assertion `left == right` failed: if (strchr(s, c)): the selection is not analysed as its call
+void w(const char *s) { if (d_chr(s, 58)) { return; } }
+  left: ("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in branch condition"])
+ right: ("Safe", [])
+
+---- a_call_argument_is_analysed_as_the_call stdout ----
+
+thread 'a_call_argument_is_analysed_as_the_call' (1282978) panicked at crates/qcore-c-gateway/tests/generic_selection.rs:145:5:
+assertion `left == right` failed: strlen(strchr(s, c)): the selection is not analysed as its call
+void w(const char *s) { d_len(d_chr(s, 58)); }
+  left: ("Unknown", ["unsupported:nested call `_Generic` inside a modeled call is outside the resource projection"])
+ right: ("Unknown", ["unsupported:nested call `d_chr` inside a modeled call is outside the resource projection"])
+
+---- a_nested_selection_is_analysed_as_the_call stdout ----
+
+thread 'a_nested_selection_is_analysed_as_the_call' (1282986) panicked at crates/qcore-c-gateway/tests/generic_selection.rs:145:5:
+assertion `left == right` failed: strchr(strchr(s, c), d): the selection is not analysed as its call
+void w(const char *s) { const char *p; p = d_chr(s, 58); if (p) { const char *q; q = d_chr(d_chr(p, 59), 60); if (q) { d_len(q); } } }
+  left: ("Unknown", ["unsupported:call to uncontracted function `_Generic`"])
+ right: ("Unknown", ["unsupported:nested call `d_chr` inside a modeled call is outside the resource projection"])
+
+---- a_return_is_analysed_as_the_call stdout ----
+
+thread 'a_return_is_analysed_as_the_call' (1282987) panicked at crates/qcore-c-gateway/tests/generic_selection.rs:145:5:
+assertion `left == right` failed: return strchr(s, c);: the selection is not analysed as its call
+const char *w(const char *s) { return d_chr(s, 58); }
+  left: ("Unknown", ["unsupported:unmodeled call, aggregate or indirect access in return expression"])
+ right: ("Safe", [])
+
+
+failures:
+    a_call_argument_is_analysed_as_the_call
+    a_condition_is_analysed_as_the_call
+    a_const_argument_selects_the_cast_and_is_analysed_as_the_call
+    a_controlling_expression_with_a_side_effect_contributes_nothing
+    a_declaration_initializer_is_analysed_as_the_call
+    a_mutable_argument_selects_the_call_and_keeps_its_derivation
+    a_nested_selection_is_analysed_as_the_call
+    a_return_is_analysed_as_the_call
+
+test result: FAILED. 3 passed; 8 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+error: test failed, to rerun pass `-p qcore-c-gateway --test generic_selection`
+error: 1 target failed:
+    `-p qcore-c-gateway --test generic_selection`
