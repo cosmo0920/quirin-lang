@@ -38,6 +38,9 @@ mod neutral_position;
 mod publication;
 // Card W44-COLLECTION-ALLOCATION: unevaluated `sizeof` dereference operands.
 mod sizeof_operand;
+// Card W45-SUB-OBJECT-STORES: the sub-object store census.
+#[cfg(feature = "indirect-census")]
+pub mod sub_object_store_census;
 pub mod source_call_use;
 pub mod teardown_source;
 #[cfg(feature = "indirect-census")]
@@ -97,6 +100,8 @@ pub fn census_sink_variables() -> Vec<&'static str> {
         // either forces one job like the others.
         legacy_c::leak_witness::LEAK_WITNESS_PATH_VARIABLE,
         destination_suffix_census::DESTINATION_SUFFIX_CENSUS_PATH,
+        // Card W45-SUB-OBJECT-STORES.
+        sub_object_store_census::SUB_OBJECT_STORE_CENSUS_PATH,
     ]);
     #[cfg(feature = "provenance-rounds-census")]
     variables.push(legacy_c::joined_provenance::provenance_rounds::CENSUS_PATH_VARIABLE);

@@ -4190,6 +4190,101 @@ impl Parser<'_> {
     /// 0. Compiled out with the feature off; it reads the instruction after it
     /// was produced and cannot change it.
     #[cfg(feature = "indirect-census")]
+    /// Card **W45-SUB-OBJECT-STORES**: hand one already-classified statement
+    /// whose left-hand side the lexical gate reads as a sub-object store to the
+    /// sub-object store census. Compiled out with the feature off; it reads the
+    /// instruction after it was produced and cannot change it.
+    #[cfg(feature = "indirect-census")]
+    fn census_sub_object_store(&self, line: usize, tokens: &[Token], instruction: &LegacyInstruction) {
+        use crate::sub_object_store_census as census;
+        if !census::collecting() || self.admit_derived_returns || self.argument_probe.rerun {
+            return;
+        }
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let Some(equal) = texts.iter().position(|text| *text == "=") else {
+            return;
+        };
+        let left = &texts[..equal];
+        let sub_object = direct_assignment_destination(left).is_some_and(|place| {
+            place.contains('.') || place.contains('[') || place.contains("->")
+        }) || names_a_sub_object(left);
+        if !sub_object {
+            return;
+        }
+        let (outcome, description) = match instruction {
+            LegacyInstruction::Unknown { description, .. } => {
+                ("Unknown".to_owned(), Some(description.clone()))
+            }
+            other => {
+                let debug = format!("{other:?}");
+                let name = debug
+                    .split(|character: char| !character.is_ascii_alphanumeric())
+                    .next()
+                    .unwrap_or_default()
+                    .to_owned();
+                (name, None)
+            }
+        };
+        let context = crate::indirect_census::Context {
+            function: &self.census_function,
+            formal_parameters: &self.formal_parameters,
+            typed_model: &self.typed_model,
+            typed_types: &self.typed_types,
+            typed_bases: &self.typed_bases,
+        };
+        let right = &texts[equal + 1..];
+        let callees = right
+            .windows(2)
+            .filter(|pair| is_identifier(pair[0]) && pair[1] == "(")
+            .map(|pair| {
+                let contract = self.contracts.contract(pair[0]);
+                census::CalleeFact {
+                    callee: pair[0].to_owned(),
+                    result: contract.map(|contract| format!("{:?}", contract.result)),
+                    result_kind: contract.map(|contract| format!("{:?}", contract.result_kind)),
+                }
+            })
+            .collect();
+        census::record(&census::StoreRecord {
+            unit_seq: crate::indirect_census::unit_seq(),
+            function: self.census_function.clone(),
+            line,
+            texts: texts.iter().map(|text| (*text).to_owned()).collect(),
+            equal,
+            comparison: texts.get(equal + 1) == Some(&"="),
+            outcome,
+            description,
+            admitted: !matches!(instruction, LegacyInstruction::Unknown { .. }),
+            formals: census::names_where(&texts, |name| self.formal_parameters.contains(name)),
+            declared: texts
+                .iter()
+                .filter(|text| crate::typed_field_access::is_name(text))
+                .filter_map(|name| {
+                    crate::indirect_census::declared_label(&context, name)
+                        .map(|label| ((*name).to_owned(), label))
+                })
+                .collect(),
+            may_bind: census::names_where(&texts, |name| self.typed_types.may_bind(name)),
+            never_bound: census::names_where(&texts, |name| self.typed_bases.never_bound(name)),
+            owned_names: census::names_where(&texts, |name| {
+                self.census_bindings.owned.contains(name)
+            }),
+            derived_names: census::names_where(&texts, |name| {
+                self.census_bindings.derived.contains(name)
+            }),
+            descriptors: census::names_where(&texts, |name| self.descriptor_names.contains(name)),
+            destination_chains: crate::indirect_census::chains(
+                &context,
+                &texts,
+                &(0..equal).collect::<Vec<_>>(),
+            ),
+            callees,
+        });
+    }
+
     fn census_destination_suffix(
         &self,
         line: usize,
@@ -5349,6 +5444,9 @@ impl Parser<'_> {
                 self.census_statement(line, &tokens, &instruction);
                 #[cfg(feature = "indirect-census")]
                 self.census_traversal_statement(line, "statement", &tokens, &instruction);
+                // Card W45-SUB-OBJECT-STORES: the sub-object store census.
+                #[cfg(feature = "indirect-census")]
+                self.census_sub_object_store(line, &tokens, &instruction);
                 if let Some(sequence) = self.stepped_access(&tokens, &instruction) {
                     return Ok(Statement::Block(
                         sequence
