@@ -529,7 +529,10 @@ impl ResolvedProviders {
         if let Some(path) = profile_manifest {
             record["profile_contract_manifest"] = json!({
                 "path": path,
-                "role": "declared by the source profile as its default; not read: an explicit provider selection supersedes a profile default",
+                "role": match self.kind {
+                    SelectionKind::Explicit => "declared by the source profile as its default; not read: an explicit provider selection supersedes a profile default",
+                    SelectionKind::AllLoaded => "declared by the source profile as its default; not read: a contracts-only run with no selection loads all contracts, which supersedes a profile default",
+                },
             });
         }
         record

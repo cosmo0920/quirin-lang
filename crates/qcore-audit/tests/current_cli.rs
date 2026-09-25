@@ -592,6 +592,12 @@ fn contracts_only_without_a_selection_loads_all_contracts() {
     let selection = &sidecar["provider_selection"];
     assert_eq!(selection["selection"], "all-loaded");
     assert_eq!(selection["sources"], json!(["default"]));
+    assert!(
+        selection["profile_contract_manifest"]["role"]
+            .as_str()
+            .unwrap()
+            .contains("loads all contracts")
+    );
     assert_eq!(
         selection["entries"],
         json!(["qcore-provider-beta", "quirin-provider-alpha"])
