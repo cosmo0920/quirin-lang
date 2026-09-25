@@ -326,7 +326,13 @@ fn strip_pointer_cast<'a, 'b>(mut right: &'b [&'a str]) -> &'b [&'a str] {
             && let Some(close) = close_of(right, 0, "(", ")")
             && close + 1 < right.len()
             && right[close - 1] == "*"
-            && right[1..close].iter().all(|text| is_name(text) || *text == "*")
+            && right[1..close].iter().all(|text| {
+                *text == "*"
+                    || (!text.is_empty()
+                        && text
+                            .chars()
+                            .all(|character| character.is_ascii_alphanumeric() || character == '_'))
+            })
         {
             right = &right[close + 1..];
             continue;

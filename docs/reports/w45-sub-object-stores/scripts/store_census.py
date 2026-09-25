@@ -260,6 +260,63 @@ def member_class(record):
     return chains[0]["member_class"]
 
 
+def forecast_class(record):
+    """The rule's forecast for one gate-refused store, from its own reader.
+
+    * `clear` — both sides resolve and the flow premises hold on every path
+      whatever the state: the base (if any) and a named value are never bound,
+      so the base resolves unbound and the value is custody-neutral;
+    * `flow` — both sides resolve; the flow decides (a base the function may
+      bind, a named value it may bind, an owned call result that escapes);
+    * `refused:<reason>` — the reader or the call's contract refuses: the
+      store keeps its refusal.
+
+    A call value is forecast admitted when its contract in force has every
+    parameter `Borrowed` and a `None` result, or an owned heap result stored
+    through a caller-reachable base; the classifier's reclassification of the
+    call can still refuse it (an argument access, a nested call).
+    """
+    reader = record.get("reader", "")
+    if not reader.startswith("read:"):
+        return "refused"
+    _, member, value, visible = reader.split(":")
+    texts = record["texts"]
+    left = texts[: record["equal"]]
+    prefix, root, selectors = parse_lhs(left)
+    through_pointer = "->" in selectors and prefix != "addr" or "[]" in selectors
+    base_clear = (not through_pointer) or root in record["never_bound"]
+    if value == "call":
+        right = texts[record["equal"] + 1 :]
+        calls = [
+            right[index]
+            for index in range(len(right) - 1)
+            if IDENT.match(right[index]) and right[index + 1] == "(" and right[index] not in TYPE_OPERATORS
+        ]
+        fact = next((fact for fact in record["callees"] if calls and fact["callee"] == calls[0]), None)
+        if fact is None or fact["result"] is None or not fact.get("parameters_borrowed"):
+            return "refused"
+        if fact["result"] == "None":
+            return "clear" if base_clear else "flow"
+        if fact["result"].startswith("Owned") and fact.get("result_kind") == "Heap" and visible == "true":
+            return "flow"
+        return "refused"
+    if value == "name":
+        names = [t for t in texts[record["equal"] + 1 :] if IDENT.match(t)]
+        name = names[-1] if names else None
+        if base_clear and name in record["never_bound"]:
+            return "clear"
+        return "flow"
+    return "clear" if base_clear else "flow"
+
+
+def reader_class(record):
+    reader = record.get("reader", "")
+    if reader.startswith("read:"):
+        member, value = reader.split(":")[1:3]
+        return f"read:{member}:{value}"
+    return reader
+
+
 def dedupe(records, mapping):
     seen = {}
     for record in records:
@@ -301,7 +358,7 @@ def main():
     classified = {}
     for key, record in stores.items():
         if record["comparison"]:
-            cls = ("comparison", "-", "-", "-")
+            cls = ("comparison", "-", "-", "-", "comparison", "refused")
         else:
             prefix, root, selectors = parse_lhs(record["texts"][: record["equal"]])
             cls = (
@@ -309,6 +366,8 @@ def main():
                 base_class(record, root),
                 member_class(record),
                 value_class(record),
+                reader_class(record),
+                forecast_class(record),
             )
         classified[key] = (record, cls)
 
@@ -361,18 +420,29 @@ def main():
         "member": collections.Counter(),
         "value": collections.Counter(),
         "shape_value": collections.Counter(),
+        "reader": collections.Counter(),
+        "forecast": collections.Counter(),
         "shape_base_member_value": collections.Counter(),
     }
     functions_by = collections.defaultdict(set)
     for key in unknown_population:
-        _, (shape, base, member, value) = classified[key]
+        _, (shape, base, member, value, reader, forecast) = classified[key]
         counters["shape"][shape] += 1
         counters["base"][base] += 1
         counters["member"][member] += 1
         counters["value"][value] += 1
         counters["shape_value"][(shape, value)] += 1
         counters["shape_base_member_value"][(shape, base, member, value)] += 1
-        for axis, name in (("shape", shape), ("base", base), ("member", member), ("value", value)):
+        counters["reader"][reader] += 1
+        counters["forecast"][forecast] += 1
+        for axis, name in (
+            ("shape", shape),
+            ("base", base),
+            ("member", member),
+            ("value", value),
+            ("reader", reader),
+            ("forecast", forecast),
+        ):
             functions_by[(axis, name)].add(key[:2])
 
     freed_sets = {}
@@ -384,7 +454,12 @@ def main():
         freed_sets[f"member={member}"] = freed(lambda cls, member=member: cls[2] == member)
     for shape in sorted(counters["shape"]):
         freed_sets[f"shape={shape}"] = freed(lambda cls, shape=shape: cls[0] == shape)
+    for reader in sorted(counters["reader"]):
+        freed_sets[f"reader={reader}"] = freed(lambda cls, reader=reader: cls[4] == reader)
     freed_sets["all-stores"] = freed(lambda cls: True)
+    freed_sets["forecast=clear"] = freed(lambda cls: cls[5] == "clear")
+    freed_sets["forecast=flow"] = freed(lambda cls: cls[5] in ("clear", "flow"))
+    freed_sets["forecast=refused"] = []
 
     lines_out = []
     lines_out.append(f"store records (deduplicated): {len(classified)}")
@@ -392,7 +467,9 @@ def main():
     lines_out.append(f"  of which in Unknown functions: {len(unknown_population)}")
     lines_out.append(f"sole-blocked (gate-only) Unknown functions: {len(sole)}")
     lines_out.append(f"  freed if every gate-refused store were admitted: {len(freed_sets['all-stores'])}")
-    for axis in ("shape", "base", "member", "value"):
+    lines_out.append(f"  freed if the rule admits every store its reader reads (clear+flow): {len(freed_sets['forecast=flow'])}")
+    lines_out.append(f"  freed on clear stores alone: {len(freed_sets['forecast=clear'])}")
+    for axis in ("forecast", "reader", "shape", "base", "member", "value"):
         lines_out.append("")
         lines_out.append(f"by {axis} (records in Unknown functions / functions / freed alone):")
         for name, count in counters[axis].most_common():
@@ -427,6 +504,8 @@ def main():
                     "base": cls[1],
                     "member": cls[2],
                     "value": cls[3],
+                    "reader": cls[4],
+                    "forecast": cls[5],
                 }
                 for key, (record, cls) in sorted(classified.items(), key=lambda item: item[0][:3])
             ],
