@@ -468,6 +468,18 @@ def main():
             for (fkey, line, description), leaf in sorted(leaves.items(), key=str)
             if leaf["forecast"] != "refused"
         },
+        # Every family leaf with its axes and whether W43's reading counts its
+        # function as sole-blocked, for `residuals.py`.
+        "family_leaves": [
+            {
+                "function": "/".join(str(p) for p in fkey),
+                "line": line,
+                "description": description,
+                "sole": sole(fkey, description),
+                **leaf,
+            }
+            for (fkey, line, description), leaf in sorted(leaves.items(), key=str)
+        ],
     }
     out_json.write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
     lines = [

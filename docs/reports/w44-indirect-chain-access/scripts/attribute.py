@@ -20,8 +20,9 @@ Removed:
 Added:
 
 * `violation` - `invalid_release` / `use_after_release`;
-* `exchange` - an `unknown_alias` at the (function, line) of a removed rule
-  leaf: the flow half refusing a root or a link;
+* `exchange:<arm>` - an `unknown_alias` at the (function, line) of a removed
+  rule leaf, by that leaf's forecast arm: the flow half refusing a root or a
+  link (a `clear` leaf's exchange is its never-bound root found possibly null);
 * `downstream` - any other addition in a function that also lost a rule leaf;
 * `unattributed` - anything else.
 
@@ -80,12 +81,18 @@ def main():
             continue
         cls = "removed:downstream" if fkey in rule_functions else "removed:unattributed"
         classes[cls].extend([leaf] * count)
+    arm_at = {}
+    for arm in ("clear", "flow"):
+        for leaf in classes[f"removed:rule:{arm}"]:
+            arm_at.setdefault(leaf[:3] + (leaf[3],), set()).add(arm)
     for leaf, count in sorted(added.items(), key=str):
         fkey, line, category = leaf[:3], leaf[3], leaf[4]
         if category in VIOLATIONS:
             cls = "added:violation"
         elif category == "unknown_alias" and fkey + (line,) in rule_coordinates:
-            cls = "added:exchange"
+            # The arm of the rule leaf at the coordinate: a `clear` leaf's
+            # exchange is its never-bound root found possibly null.
+            cls = "added:exchange:" + "+".join(sorted(arm_at[fkey + (line,)]))
         elif fkey in rule_functions:
             cls = "added:downstream"
         else:
