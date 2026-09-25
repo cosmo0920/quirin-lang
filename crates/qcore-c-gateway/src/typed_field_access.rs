@@ -2723,6 +2723,65 @@ pub(crate) fn declarator_facts(parameters: &[&str], body: &[&str]) -> Option<Vec
     Some(facts)
 }
 
+/// Card **W44-COLLECTION-ALLOCATION**: whether a specifier list names a type
+/// that cannot be variably modified, read through this unit's typedefs.
+///
+/// Only an ordinary identifier with block or prototype scope may have a
+/// variably modified type (C11 6.7.6.2p2), and a member may not (6.7.2.1p9).
+/// So an arithmetic type, `void`, a tagged `struct`/`union`/`enum`, and a
+/// typedef resolving to one of these — including a typedef that defines an
+/// aggregate — never is. [`TypedAccessModel::read_typedefs`] reads every
+/// typedef of the unit, block-scope ones included, and records an array,
+/// pointer, function or disagreeing typedef unresolved, so a block-scope VLA
+/// typedef (and anything defined through one) answers `false` here, as does
+/// every name the reader does not resolve. `volatile`, `_Atomic` and a
+/// `typedef` storage class are refused to stay inside the reader's own
+/// committed forms. Consulted only by [`crate::sizeof_operand`].
+impl TypedAccessModel {
+    pub(crate) fn never_variably_modified(&self, specifiers: &[&str]) -> bool {
+        self.never_variably_modified_at(specifiers, 0)
+    }
+
+    fn never_variably_modified_at(&self, specifiers: &[&str], depth: usize) -> bool {
+        if specifiers
+            .iter()
+            .any(|text| REJECTING_QUALIFIERS.contains(text) || *text == "typedef")
+        {
+            return false;
+        }
+        let core = specifiers
+            .iter()
+            .copied()
+            .filter(|text| !IGNORED_SPECIFIERS.contains(text))
+            .collect::<Vec<_>>();
+        match core.as_slice() {
+            ["struct" | "union" | "enum", tag] => is_name(tag),
+            [name] if is_name(name) => {
+                if depth >= TYPEDEF_DEPTH_LIMIT {
+                    return false;
+                }
+                match self.typedefs.get(*name) {
+                    Some(Some(TypedefTarget::Specifiers(target))) => {
+                        let target = target.iter().map(String::as_str).collect::<Vec<_>>();
+                        self.never_variably_modified_at(&target, depth + 1)
+                    }
+                    Some(Some(TypedefTarget::Aggregate(head))) => matches!(
+                        head.split(' ').next(),
+                        Some("struct") | Some("union") | Some("enum")
+                    ),
+                    _ => false,
+                }
+            }
+            rest => {
+                !rest.is_empty()
+                    && rest
+                        .iter()
+                        .all(|text| ARITHMETIC_KEYWORDS.contains(text) || *text == "void")
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

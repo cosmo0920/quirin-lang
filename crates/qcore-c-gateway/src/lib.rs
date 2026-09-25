@@ -29,6 +29,8 @@ mod legacy_summary;
 mod may_alias;
 mod neutral_position;
 mod publication;
+// Card W44-COLLECTION-ALLOCATION: unevaluated `sizeof` dereference operands.
+mod sizeof_operand;
 pub mod source_call_use;
 pub mod teardown_source;
 #[cfg(feature = "indirect-census")]
