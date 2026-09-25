@@ -534,7 +534,9 @@ pub(crate) fn chain_resolves(view: &impl ChainView, chain: &AccessChain) -> Resu
                     }
                 } else {
                     match single_identity(&binding) {
-                        Some(child) if link == Some(binding.targets) && view.exactly_live(child) => {
+                        Some(child)
+                            if link == Some(binding.targets) && view.exactly_live(child) =>
+                        {
                             Owner::Tracked(child)
                         }
                         _ => return Err(place),
@@ -687,7 +689,12 @@ mod tests {
         assert!(statement(PARAMETERS, BODY, "p -> m = 1").is_none());
         assert!(statement(PARAMETERS, BODY, "local . k = 1").is_none());
         assert_eq!(
-            parse_chain(&texts("p -> m"), 0, &facts(PARAMETERS, BODY).0, &facts(PARAMETERS, BODY).1),
+            parse_chain(
+                &texts("p -> m"),
+                0,
+                &facts(PARAMETERS, BODY).0,
+                &facts(PARAMETERS, BODY).1
+            ),
             Err(ChainRefusal::NotAChain)
         );
     }
@@ -769,17 +776,27 @@ mod tests {
     fn an_unbound_never_bound_root_resolves_at_every_depth() {
         let view = View::default();
         assert_eq!(chain_resolves(&view, &chain(true, &["b"])), Ok(()));
-        assert_eq!(chain_resolves(&view, &chain(true, &["b", "c", "d"])), Ok(()));
+        assert_eq!(
+            chain_resolves(&view, &chain(true, &["b", "c", "d"])),
+            Ok(())
+        );
     }
 
     #[test]
     fn a_root_the_body_may_bind_needs_one_live_identity() {
         let mut view = View::default();
-        assert_eq!(chain_resolves(&view, &chain(false, &["b"])), Err("r".to_owned()));
+        assert_eq!(
+            chain_resolves(&view, &chain(false, &["b"])),
+            Err("r".to_owned())
+        );
         view.bindings
             .insert("r".to_owned(), (BTreeSet::new(), true, false, true));
-        assert_eq!(chain_resolves(&view, &chain(false, &["b"])), Err("r".to_owned()));
-        view.bindings.insert("r".to_owned(), (one(1), false, false, true));
+        assert_eq!(
+            chain_resolves(&view, &chain(false, &["b"])),
+            Err("r".to_owned())
+        );
+        view.bindings
+            .insert("r".to_owned(), (one(1), false, false, true));
         // Live owner, but the member place is not bound: no evidence.
         assert_eq!(
             chain_resolves(&view, &chain(false, &["b"])),
@@ -797,15 +814,23 @@ mod tests {
         let mut view = View::default();
         view.bindings
             .insert("r".to_owned(), (BTreeSet::new(), true, true, true));
-        assert_eq!(chain_resolves(&view, &chain(true, &["b"])), Err("r".to_owned()));
-        view.bindings.insert("r".to_owned(), (one(1), false, false, true));
-        assert_eq!(chain_resolves(&view, &chain(false, &["b"])), Err("r".to_owned()));
+        assert_eq!(
+            chain_resolves(&view, &chain(true, &["b"])),
+            Err("r".to_owned())
+        );
+        view.bindings
+            .insert("r".to_owned(), (one(1), false, false, true));
+        assert_eq!(
+            chain_resolves(&view, &chain(false, &["b"])),
+            Err("r".to_owned())
+        );
     }
 
     #[test]
     fn a_tracked_owner_needs_the_stored_link_and_a_live_child() {
         let mut view = View::default();
-        view.bindings.insert("r".to_owned(), (one(1), false, false, true));
+        view.bindings
+            .insert("r".to_owned(), (one(1), false, false, true));
         view.live.insert(1);
         view.bindings
             .insert("r->b".to_owned(), (one(2), false, false, true));
@@ -839,11 +864,15 @@ mod tests {
     #[test]
     fn an_untracked_non_null_member_of_a_tracked_owner_is_untracked() {
         let mut view = View::default();
-        view.bindings.insert("r".to_owned(), (one(1), false, false, true));
+        view.bindings
+            .insert("r".to_owned(), (one(1), false, false, true));
         view.live.insert(1);
         view.bindings
             .insert("r->b".to_owned(), (BTreeSet::new(), true, false, true));
-        assert_eq!(chain_resolves(&view, &chain(false, &["b", "c", "d"])), Ok(()));
+        assert_eq!(
+            chain_resolves(&view, &chain(false, &["b", "c", "d"])),
+            Ok(())
+        );
         view.links.insert((1, "b".to_owned()), one(3));
         assert_eq!(
             chain_resolves(&view, &chain(false, &["b", "c"])),

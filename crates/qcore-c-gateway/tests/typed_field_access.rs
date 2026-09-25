@@ -379,7 +379,9 @@ fn a_typed_member_chain_store_is_admitted_by_the_chain_route() {
     if !clang_available() {
         return;
     }
-    certified("void subject(struct pane *n) { void *p = q_alloc(); n->doc->cursor = 1; q_free(p); }");
+    certified(
+        "void subject(struct pane *n) { void *p = q_alloc(); n->doc->cursor = 1; q_free(p); }",
+    );
 }
 
 #[test]

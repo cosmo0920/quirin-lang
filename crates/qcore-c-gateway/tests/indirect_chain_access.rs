@@ -215,9 +215,8 @@ fn a_record_object_root_certifies_and_an_addressed_one_refuses() {
     );
     // Taking the object's address makes it a name the body may bind
     // (premise 4), so its chain refuses.
-    let (status, keys) = outcome(
-        "void w(struct c_box s, struct c_box **o) { *o = &s; s.item->count = 1; }",
-    );
+    let (status, keys) =
+        outcome("void w(struct c_box s, struct c_box **o) { *o = &s; s.item->count = 1; }");
     assert_eq!(status, "Unknown");
     assert!(keys.contains(&"unknown_alias:s".to_owned()), "{keys:?}");
 }

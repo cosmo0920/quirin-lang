@@ -499,7 +499,12 @@ fn a_borrowed_base_is_admitted_by_the_chain_route_with_its_obligations() {
         "void subject(struct z_view *view) { void *p; p = q_alloc(); \
          q_free(view); if (view->head->flag) { q_free(p); return; } q_free(p); }",
     );
-    assert_ne!(released.status, AnalysisStatus::Safe, "{:?}", released.diagnostics);
+    assert_ne!(
+        released.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        released.diagnostics
+    );
 }
 
 /// The admission must never manufacture a discharge: a body that acquires and
