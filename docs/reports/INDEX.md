@@ -848,6 +848,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w44-leak-pin-audit](w44-leak-pin-audit/README.md) | W44-LEAK-PIN-AUDIT: every leak leaf classified; no leak claimed through a refused hand-on |
 
+| [w44-libc-residuals](w44-libc-residuals/README.md) | W44-LIBC-RESIDUALS: header-inline helpers, `va_list`, literal tails and nested tail callees |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |

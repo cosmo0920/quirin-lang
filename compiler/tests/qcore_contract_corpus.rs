@@ -451,6 +451,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // result mode. It takes no parameter, so it has no parameter clause — the
     // same shape as `fluent_bit/time.qcore`'s `flb_time_now`.
     ("libc/errno.qcore", "__errno_location", 2),
+    // Card W44-LIBC-RESIDUALS: `strerror`, appended beside the `errno`
+    // accessor (the marker, one borrowed scalar, `none`: 3).
+    ("libc/errno.qcore", "strerror", 3),
     ("libc/math.qcore", "ceil", 3),
     ("libc/math.qcore", "floor", 3),
     ("libc/math.qcore", "fabs", 3),
@@ -503,6 +506,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/stdio.qcore", "fopen", 5),
     ("libc/stdio.qcore", "fclose", 4),
     ("libc/stdio.qcore", "fileno", 3),
+    // Card W44-LIBC-RESIDUALS: the two called `va_list` members, appended.
+    // The marker, one borrowed clause per parameter (the `va_list` included)
+    // and `none`: `vsnprintf` 6, `vprintf` 4.
+    ("libc/stdio.qcore", "vsnprintf", 6),
+    ("libc/stdio.qcore", "vprintf", 4),
     ("libc/stdlib.qcore", "atoi", 3),
     ("libc/stdlib.qcore", "srand", 3),
     ("libc/stdlib.qcore", "rand_r", 3),
@@ -1158,6 +1166,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `library/descriptor_native_observation.qcore` in
     // `providers/quirin-provider-shared`: an observation policy (ten
     // parameterless rules), not a libc API contract.
+    // Card W44-LIBC-RESIDUALS adds no module: its `strerror`, `vsnprintf` and
+    // `vprintf` are appended to existing libc modules.
     assert_eq!(sources.len(), 111, "unexpected contract corpus size");
 
     for (logical, path) in &sources {

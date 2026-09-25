@@ -1,0 +1,30 @@
+module contract;
+
+// MEASUREMENT ONLY, never shipped. Card W44-LIBC-RESIDUALS' declared-ABI census
+// input for the six glibc header-inline scalar helpers and the two libc inner
+// callees of printf-family tails. Types are the v1 projections of the
+// definitions/prototypes the pinned units carry; the census compares types only.
+
+extern fn __bswap_16(bsx: u16) -> u16
+contract { requires resource_contract_v1; ensures normal resource_borrowed(bsx); ensures normal resource_return_none(); };
+
+extern fn __bswap_32(bsx: u32) -> u32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(bsx); ensures normal resource_return_none(); };
+
+extern fn __bswap_64(bsx: u64) -> u64
+contract { requires resource_contract_v1; ensures normal resource_borrowed(bsx); ensures normal resource_return_none(); };
+
+extern fn __uint16_identity(x: u16) -> u16
+contract { requires resource_contract_v1; ensures normal resource_borrowed(x); ensures normal resource_return_none(); };
+
+extern fn __uint32_identity(x: u32) -> u32
+contract { requires resource_contract_v1; ensures normal resource_borrowed(x); ensures normal resource_return_none(); };
+
+extern fn __uint64_identity(x: u64) -> u64
+contract { requires resource_contract_v1; ensures normal resource_borrowed(x); ensures normal resource_return_none(); };
+
+extern fn getpid() -> i32
+contract { requires resource_contract_v1; ensures normal resource_return_none(); };
+
+extern fn strerror(errnum: i32) -> ptr<mut, u8>
+contract { requires resource_contract_v1; ensures normal resource_borrowed(errnum); ensures normal resource_return_none(); };

@@ -15,13 +15,18 @@ reaches through direct calls.
 
 ## What is proved
 
-* **Every scope member is selected, or unreserved and of internal linkage**
-  (`every_scope_member_is_selected_or_internal`), so **an unselected definition
-  of external linkage is never in scope**
-  (`an_unselected_external_definition_is_never_in_scope`), nor is an
-  unselected implementation-reserved one such as `__bswap_32`
-  (`an_unselected_reserved_definition_is_never_in_scope`), and the selection
-  is always in scope (`the_selection_is_in_scope`).
+* **Every scope member is selected, or a definition of the unit of internal
+  linkage** (`every_scope_member_is_selected_or_internal`), so **an unselected
+  definition of external linkage is never in scope**
+  (`an_unselected_external_definition_is_never_in_scope`), **a name the unit
+  does not define is never in scope** (`an_undefined_name_is_never_in_scope`),
+  and the selection is always in scope (`the_selection_is_in_scope`).
+* **Card W44-LIBC-RESIDUALS lifted the reserved-name filter** the card first
+  had. Reservation is no longer read (`reservation_is_not_read`): a reserved
+  definition such as glibc's `static __inline` `__bswap_32` is admitted exactly
+  when an unreserved one with the same linkage and calls would be, and never
+  when the unit does not carry it. The linkage premise, not the name, is what
+  makes the admitted body the one every call runs.
 * **A newly admitted callee's calls run its analysed body**
   (`an_admitted_callee_runs_only_its_analysed_body`): for an unselected scope
   member, every body a call in this unit may run is the unit's own definition.
@@ -38,14 +43,14 @@ reaches through direct calls.
   callee contracted and reads only its callees' contracts, a summary derived
   under a smaller environment is derived unchanged under any environment that
   extends it. Widening therefore only *adds* summaries.
-* Witnesses: a reached static helper is admitted; an unreached one, an
-  external `inline` one and a reserved one are not (`the_witness_scope`).
+* Witnesses: a reached static helper and a reached static reserved one are
+  admitted; an unreached one, an external `inline` one and a reserved name
+  the unit only calls are not (`the_witness_scope`).
 
 ## What is not proved
 
 The linkage reader (`has_internal_linkage`: `static` present and `extern`
-absent on the definition's own specifiers), the reserved-name reader
-(`is_reserved_identifier`: a leading `__`, or `_` and an uppercase letter) and the reachability reader
+absent on the definition's own specifiers) and the reachability reader
 (`direct_calls`) are Rust transcriptions of `candidate` and `step`; the
 correspondence is maintained by review (trust boundary 28). The *selected*
 definitions' own call-resolution premise — that a call in the unit to a
@@ -72,16 +77,17 @@ structure Definition where
   selected : Bool
   /-- The name begins `__` or `_` and an uppercase letter: reserved for the
   implementation in every context (C11 7.1.3), so the body is a library or
-  compiler header body. -/
+  compiler header body. Recorded, and since card W44-LIBC-RESIDUALS not read
+  by `candidate`. -/
   reserved : Bool
   /-- The names its body calls directly. -/
   calls : List Name
   deriving DecidableEq, Repr
 
-/-- An unselected, unreserved definition of internal linkage: the only kind the
-widening admits. -/
+/-- An unselected definition of internal linkage: the only kind the widening
+admits. Card W44-LIBC-RESIDUALS dropped the conjunct `!d.reserved`. -/
 def candidate (d : Definition) : Bool :=
-  !d.selected && d.linkage == .internal && !d.reserved
+  !d.selected && d.linkage == .internal
 
 def callsOf (unit : List Definition) (n : Name) : List Name :=
   match unit.find? (fun d => d.name == n) with
@@ -108,8 +114,7 @@ def scope (unit : List Definition) : List Name :=
 
 /-- A name the widened derivation may consider. -/
 def Admissible (unit : List Definition) (n : Name) : Prop :=
-  ∃ d ∈ unit, d.name = n ∧
-    (d.selected = true ∨ (d.linkage = .internal ∧ d.reserved = false))
+  ∃ d ∈ unit, d.name = n ∧ (d.selected = true ∨ d.linkage = .internal)
 
 /-- Definitions of one unit carry distinct names (C11 6.9p3/p5). -/
 def UniqueNames (unit : List Definition) : Prop :=
@@ -120,10 +125,10 @@ theorem candidate_is_internal {d : Definition} (h : candidate d = true) :
   unfold candidate at h
   cases hl : d.linkage <;> simp_all
 
-theorem candidate_is_unreserved {d : Definition} (h : candidate d = true) :
-    d.reserved = false := by
-  unfold candidate at h
-  cases hr : d.reserved <;> simp_all
+/-- Reservation is not read: a definition's candidacy is the same whatever its
+`reserved` field says. -/
+theorem reservation_is_not_read (d : Definition) (r : Bool) :
+    candidate { d with reserved := r } = candidate d := rfl
 
 theorem step_preserves_admissible {unit : List Definition} {s : List Name}
     (hs : ∀ m ∈ s, Admissible unit m) : ∀ m ∈ step unit s, Admissible unit m := by
@@ -137,7 +142,7 @@ theorem step_preserves_admissible {unit : List Definition} {s : List Name}
       have := hd'.2
       simp only [Bool.and_eq_true] at this
       exact this.1
-    exact ⟨d, hd'.1, rfl, Or.inr ⟨candidate_is_internal hc, candidate_is_unreserved hc⟩⟩
+    exact ⟨d, hd'.1, rfl, Or.inr (candidate_is_internal hc)⟩
 
 theorem iterate_preserves_admissible (unit : List Definition) :
     ∀ (k : Nat) (s : List Name), (∀ m ∈ s, Admissible unit m) →
@@ -172,25 +177,18 @@ theorem an_unselected_external_definition_is_never_in_scope
     ⟨d', hd', hname, hadm⟩
   have := unique d' hd' d hd hname
   subst this
-  rcases hadm with h | ⟨h, _⟩
+  rcases hadm with h | h
   · rw [unselected] at h; exact Bool.false_ne_true h
   · rw [external] at h; exact Linkage.noConfusion h
 
-/-- An unselected implementation-reserved definition (`__bswap_32`) is never in
-scope: whether a library header body is checked or declared stays the libc
-provider's decision. -/
-theorem an_unselected_reserved_definition_is_never_in_scope
-    {unit : List Definition} (unique : UniqueNames unit) {d : Definition}
-    (hd : d ∈ unit) (unselected : d.selected = false) (reserved : d.reserved = true) :
-    d.name ∉ scope unit := by
+/-- A name the unit does not define is never in scope, reserved or not: the
+reserved-name widening is lifted only where the unit carries the body
+(card W44-LIBC-RESIDUALS). -/
+theorem an_undefined_name_is_never_in_scope {unit : List Definition} {n : Name}
+    (undefined : ∀ d ∈ unit, d.name ≠ n) : n ∉ scope unit := by
   intro hm
-  rcases every_scope_member_is_selected_or_internal unit d.name hm with
-    ⟨d', hd', hname, hadm⟩
-  have := unique d' hd' d hd hname
-  subst this
-  rcases hadm with h | ⟨_, h⟩
-  · rw [unselected] at h; exact Bool.false_ne_true h
-  · rw [reserved] at h; exact Bool.noConfusion h
+  rcases every_scope_member_is_selected_or_internal unit n hm with ⟨d, hd, hname, _⟩
+  exact undefined d hd hname
 
 theorem step_superset (unit : List Definition) (s : List Name) :
     ∀ m ∈ s, m ∈ step unit s := fun _ hm => List.mem_append_left _ hm
@@ -230,7 +228,7 @@ theorem an_admitted_callee_runs_only_its_analysed_body
   have hsame := unique d' hd' d hd hname
   subst hsame
   have internal : d'.linkage = .internal := by
-    rcases hadm with h | ⟨h, _⟩
+    rcases hadm with h | h
     · rw [unselected] at h; exact absurd h Bool.false_ne_true
     · exact h
   rcases run with ⟨hb, hbn⟩ | ⟨⟨e, he, hen, hext⟩, _⟩
@@ -310,20 +308,23 @@ theorem an_existing_summary_survives_the_widening {σ : Type}
 /-! ## Witnesses -/
 
 def witnessUnit : List Definition :=
-  [ ⟨"selected", .external, true, false, ["helper", "external_inline", "__bswap_32"]⟩
+  [ ⟨"selected", .external, true, false,
+      ["helper", "external_inline", "__bswap_32", "__declared_only"]⟩
   , ⟨"helper", .internal, false, false, ["inner"]⟩
   , ⟨"inner", .internal, false, false, []⟩
   , ⟨"unreached", .internal, false, false, []⟩
   , ⟨"external_inline", .external, false, false, []⟩
   , ⟨"__bswap_32", .internal, false, true, []⟩ ]
 
-/-- A reached static helper and its static callee are admitted; an unreached
-static definition, a reached external `inline` definition and a reached
-reserved (library header) definition are not. -/
+/-- A reached static helper, its static callee and a reached static reserved
+(library header) definition are admitted; an unreached static definition, a
+reached external `inline` definition and a reserved name the unit calls but
+does not define are not. -/
 theorem the_witness_scope :
     "helper" ∈ scope witnessUnit ∧ "inner" ∈ scope witnessUnit ∧
+      "__bswap_32" ∈ scope witnessUnit ∧
       "unreached" ∉ scope witnessUnit ∧ "external_inline" ∉ scope witnessUnit ∧
-      "__bswap_32" ∉ scope witnessUnit := by
+      "__declared_only" ∉ scope witnessUnit := by
   decide
 
 end QCore.CalleeSummaryScope

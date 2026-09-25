@@ -1,0 +1,139 @@
+{
+ "end_to_end_removed": 1629,
+ "end_to_end_added": 6,
+ "stages_compose_exactly": true,
+ "every_stage_complete": true,
+ "stages": [
+  {
+   "attribution": "measure/attr2/stage1.json",
+   "removed": 974,
+   "added": 0,
+   "by_class": {
+    "removed t6-literal-tail": 967,
+    "removed t6-mixed-tail": 6,
+    "removed t6-tail-statement-spans-lines": 1
+   },
+   "moved_functions": [],
+   "attribution_complete": true
+  },
+  {
+   "attribution": "measure/attr2/stage2.json",
+   "removed": 627,
+   "added": 5,
+   "by_class": {
+    "added same-line": 5,
+    "removed newly-safe-callee": 27,
+    "removed same-line": 1,
+    "removed summarised-callee": 599
+   },
+   "moved_functions": [
+    [
+     "librdkafka",
+     "rdunittest_msgset_errors.c",
+     "ut_put_be16",
+     "Unknown",
+     "Safe"
+    ],
+    [
+     "librdkafka",
+     "rdunittest_msgset_errors.c",
+     "ut_put_be32",
+     "Unknown",
+     "Safe"
+    ],
+    [
+     "librdkafka",
+     "rdunittest_msgset_errors.c",
+     "ut_put_be64",
+     "Unknown",
+     "Safe"
+    ]
+   ],
+   "attribution_complete": true
+  },
+  {
+   "attribution": "measure/attr2/stage3.json",
+   "removed": 26,
+   "added": 1,
+   "by_class": {
+    "added same-line": 1,
+    "removed declared-callee": 26
+   },
+   "moved_functions": [],
+   "attribution_complete": true
+  },
+  {
+   "attribution": "measure/attr2/stage4.json",
+   "removed": 2,
+   "added": 0,
+   "by_class": {
+    "removed same-line": 2
+   },
+   "moved_functions": [],
+   "attribution_complete": true
+  }
+ ],
+ "moved_functions": [
+  [
+   "librdkafka",
+   "rdunittest_msgset_errors.c",
+   "ut_put_be16",
+   "Unknown",
+   "Safe"
+  ],
+  [
+   "librdkafka",
+   "rdunittest_msgset_errors.c",
+   "ut_put_be32",
+   "Unknown",
+   "Safe"
+  ],
+  [
+   "librdkafka",
+   "rdunittest_msgset_errors.c",
+   "ut_put_be64",
+   "Unknown",
+   "Safe"
+  ]
+ ],
+ "functions": {
+  "before": {
+   "Unknown": 4453,
+   "Safe": 296,
+   "Unsafe": 85
+  },
+  "after": {
+   "Unknown": 4450,
+   "Safe": 299,
+   "Unsafe": 85
+  }
+ },
+ "units": {
+  "before": {
+   "Unknown": 135,
+   "Unsafe": 43,
+   "Safe": 3,
+   "data_only": 4
+  },
+  "after": {
+   "Unknown": 135,
+   "Unsafe": 43,
+   "Safe": 3,
+   "data_only": 4
+  }
+ },
+ "diagnostic_counts": {
+  "before": {
+   "leak": 271,
+   "summary_conflict": 1,
+   "unknown_alias": 4420,
+   "unsupported": 45721
+  },
+  "after": {
+   "leak": 271,
+   "summary_conflict": 1,
+   "unknown_alias": 4420,
+   "unsupported": 44098
+  }
+ }
+}

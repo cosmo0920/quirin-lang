@@ -116,7 +116,24 @@ other spelling for one that is. `fnptr` does not distinguish two function
 pointers of different signatures, exactly as `ptr<mut, u8>` does not distinguish
 two object pointers of different pointee types.
 
-The result vocabulary adds `unit` to the parameter vocabulary. `unit` is not a parameter type. Arbitrary named types, general pointer nesting, `own<T>`, `borrow<...>`, and language-level `result<T,E>` are not accepted by this loader. The two real-valued scalars are admitted for readings a resource API in scope passes by value; they carry no custody, exactly as every other scalar does; `fnptr` was admitted on the same condition, for msgpack's `msgpack_packer_init` in the pinned Cycle 19 corpus.
+The variable-argument-list vocabulary is exactly:
+
+```text
+va_list
+```
+
+`va_list` is the projection of the compiler's `__builtin_va_list` at a
+parameter (card W44-LIBC-RESIDUALS), the type glibc's `__gnuc_va_list` and
+`va_list` name. It names the type, not its target-dependent representation (an
+object pointer after array adjustment on x86-64, a structure on AArch64), so it
+MUST NOT be folded onto a pointer or integer spelling. Like `fnptr` it is not
+spelled `ptr<…>` and MUST carry no custody. It is a **parameter** type only: it
+is not in the result vocabulary. A consumer comparing projections MUST refuse
+`va_list` for a C type that is not the builtin, MUST refuse every other
+spelling for one that is, and MUST keep refusing a pointer to it and a result
+of it. The Lean model is `QCore.GnuBuiltinReader`.
+
+The result vocabulary adds `unit` to the parameter vocabulary, less `va_list`. `unit` is not a parameter type. Arbitrary named types, general pointer nesting, `own<T>`, `borrow<...>`, and language-level `result<T,E>` are not accepted by this loader. The two real-valued scalars are admitted for readings a resource API in scope passes by value; they carry no custody, exactly as every other scalar does; `fnptr` was admitted on the same condition, for msgpack's `msgpack_packer_init` in the pinned Cycle 19 corpus.
 
 **Agreement with the analysed source (card LOADER-ABI).** A consumer analysing a translation unit MUST compare a declaration's projections against that unit's own C declaration of the same function wherever it can read one, and MUST withdraw the declaration for that unit — at every call site, and as the interface any body defined there is checked against — when the two disagree in the result type, a parameter type, the parameter count, or a claimed variadic tail. Withdrawal makes the callee uncontracted, which is the refusing direction; a consumer may never repair a disagreement by preferring either side. The projections are not decoration: the mode admissibility rules of this section are keyed on them, so an unfaithful projection is what would buy a mode the C type could not carry.
 
@@ -124,7 +141,7 @@ The result vocabulary adds `unit` to the parameter vocabulary. `unit` is not a p
 
 **Qualifiers after a parameter's last `*` (card W43-LIBC-RESULT-ALIAS).** A qualifier that follows a parameter declarator's last `*` — `const char *__restrict __format`, `void *const p` — qualifies the parameter object, and C drops it for type compatibility (C11 6.7.6.3p15). A consumer reading the C side MUST read such a parameter as its unqualified type and MUST keep refusing a qualifier *between* two `*`, which qualifies an inner pointer this vocabulary cannot spell. A result declarator is not a parameter and is not widened. The Lean model is `QCore.PointerQualifierReader`.
 
-These are opaque interface projections. They do not check actual C layouts, ABI compatibility, pointee validity, allocation size, alignment, aliasing, or thread-safety. A scalar carries a descriptor number as data unless its position declares the `descriptor` kind (§C04.6), which is the one way a scalar carries custody. Otherwise only `resource_borrowed` may apply to a scalar or to `fnptr`. Every other parameter mode requires an admitted pointer type or an `i32` of the `descriptor` kind; `resource_out` specifically requires `ptr<mut, ptr<mut, u8>>`. An owned result requires an admitted pointer result or an `i32` of the `descriptor` kind, and a reallocated result an admitted pointer result.
+These are opaque interface projections. They do not check actual C layouts, ABI compatibility, pointee validity, allocation size, alignment, aliasing, or thread-safety. A scalar carries a descriptor number as data unless its position declares the `descriptor` kind (§C04.6), which is the one way a scalar carries custody. Otherwise only `resource_borrowed` may apply to a scalar, to `fnptr` or to `va_list`. Every other parameter mode requires an admitted pointer type or an `i32` of the `descriptor` kind; `resource_out` specifically requires `ptr<mut, ptr<mut, u8>>`. An owned result requires an admitted pointer result or an `i32` of the `descriptor` kind, and a reallocated result an admitted pointer result.
 
 ### C04.2. Parameter modes
 

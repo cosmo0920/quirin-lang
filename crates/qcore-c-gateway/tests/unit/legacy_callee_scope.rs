@@ -79,14 +79,22 @@ fn a_selected_static_definition_is_not_duplicated() {
     );
 }
 
+/// Re-pinned by card W44-LIBC-RESIDUALS, which lifted the reserved-name
+/// filter: a reserved static definition the unit carries is admitted like any
+/// other, and a reserved name the unit only declares is not.
 #[test]
-fn a_reserved_static_definition_is_not_admitted() {
+fn a_reserved_static_definition_is_admitted_only_where_the_unit_carries_it() {
     let source = "static __inline unsigned int __bswap_32(unsigned int x) { return x; }\n\
                   static inline int _Upper(int x) { return x; }\n\
                   static inline int _lower(int x) { return x; }\n\
-                  void selected(unsigned int x) { __bswap_32(x); _Upper(1); _lower(2); }\n";
-    // `_lower` is reserved at file scope only, which corpus code uses.
-    assert_eq!(scope(source, &["selected"]), vec!["_lower", "selected"]);
+                  static int __declared_only(int x);\n\
+                  extern inline int __external_inline(int x) { return x; }\n\
+                  void selected(unsigned int x) { __bswap_32(x); _Upper(1); _lower(2); \
+                  __declared_only(3); __external_inline(4); }\n";
+    assert_eq!(
+        scope(source, &["selected"]),
+        vec!["_Upper", "__bswap_32", "_lower", "selected"]
+    );
 }
 
 // --- End to end, through the selected-unit analysis -------------------------
@@ -199,10 +207,19 @@ fn an_external_inline_helper_is_refused_on_linkage() {
     assert!(uncontracted(&summary, "release"));
 }
 
+/// Re-pinned by card W44-LIBC-RESIDUALS: a reserved-name static helper the
+/// unit carries is checked like any other, so its validated `Released` summary
+/// discharges the acquisition; with no body, the call stays uncontracted.
 #[test]
-fn a_reserved_helper_is_left_to_the_libc_provider() {
+fn a_reserved_helper_is_checked_where_the_unit_carries_it() {
     let summary = selected(
         "static void __release(void *p) { q_free(p); }\n\
+         void subject(void) { void *p = q_alloc(); __release(p); }\n",
+    );
+    assert_eq!(summary.functions["subject"].status, AnalysisStatus::Safe);
+    assert!(!uncontracted(&summary, "__release"));
+    let summary = selected(
+        "static void __release(void *p);\n\
          void subject(void) { void *p = q_alloc(); __release(p); }\n",
     );
     assert_ne!(summary.functions["subject"].status, AnalysisStatus::Safe);
