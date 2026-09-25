@@ -127,7 +127,11 @@ the analysis uses the final dialect in each generated command. The helper record
 `audit-command.json`, sets `QCORE_CLANG` to the selected compiler, and writes
 reports under `build/cycle19/clang/<commit>/reports`. Without `--run`, it prints
 the exact audit command to execute. `--fluent-bit`, `--revision`, and `--output`
-select another source or build location. The developer's existing GCC build is
+select another source or build location. `--jobs N` sets how many translation
+units the audit analyses concurrently (default: available parallelism, capped at
+16, or `QCORE_AUDIT_JOBS`; reports are byte-identical at any count), and
+`--release` runs an optimised build of the audit example; both are recorded in
+`audit-command.json`. The developer's existing GCC build is
 left intact. The native build step builds `cmetrics-static`; this is not a full
 native Fluent Bit executable build or a GCC/Clang equivalence claim.
 

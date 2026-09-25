@@ -3,6 +3,12 @@
 
 The developer's GCC build is left intact. Source and generated headers live in
 an independent revision-selected clone. No compiler command is rewritten.
+
+`--jobs N` sets the audit's translation-unit job count (W44-AUDIT-PARALLEL-UNITS;
+the default is the audit's own: available parallelism capped at 16, or
+QCORE_AUDIT_JOBS). Every report is byte-identical at any job count. `--release`
+builds the audit example optimised; the analysis is the same code, so results do
+not depend on the profile, only the time does.
 """
 import argparse
 import json
@@ -31,7 +37,11 @@ def main():
     parser.add_argument('--clang', default='clang')
     parser.add_argument('--clangxx', default='clang++')
     parser.add_argument('--run', action='store_true')
+    parser.add_argument('--jobs', type=int, help='translation units analysed concurrently (default: the audit\'s own)')
+    parser.add_argument('--release', action='store_true', help='build and run the audit example with the release profile')
     args = parser.parse_args()
+    if args.jobs is not None and args.jobs < 1:
+        parser.error('--jobs must be a positive integer')
     clang, clangxx = shutil.which(args.clang), shutil.which(args.clangxx)
     if not clang or not clangxx:
         parser.error('Clang C and C++ compilers are required')
@@ -49,13 +59,18 @@ def main():
                       '--clang', clang, '--clangxx', clangxx])
     reports = output / 'reports'
     reports.mkdir(parents=True, exist_ok=True)
-    command = ['cargo', 'run', '--quiet', '-p', 'qcore-compiler',
-               '--example', 'cycle19_fluent_bit_libraries_audit', '--',
-               '--compile-database', config['compile_database'], str(source), monkey,
+    command = ['cargo', 'run', '--quiet'] + (['--release'] if args.release else []) + [
+               '-p', 'qcore-compiler', '--example', 'cycle19_fluent_bit_libraries_audit', '--',
+               '--compile-database', config['compile_database']]
+    if args.jobs is not None:
+        command += ['--jobs', str(args.jobs)]
+    command += [str(source), monkey,
                str(reports / 'monkey-source.json'), str(reports / 'resource-diagnostics.json')]
     metadata = dict(source_revision=revision, clang=clang, clangxx=clangxx,
                     compile_database=config['compile_database'], monkey_database=monkey,
-                    cwd=str(ROOT), command=command, environment={'QCORE_CLANG': clang},
+                    cwd=str(ROOT), command=command, profile='release' if args.release else 'dev',
+                    jobs=args.jobs if args.jobs is not None else os.environ.get('QCORE_AUDIT_JOBS', 'default'),
+                    environment={'QCORE_CLANG': clang},
                     scope='Explicit Clang build; cmetrics-static built, full native Fluent Bit binary not built; resource analysis does not establish GCC equivalence or whole-library safety.')
     (output / 'audit-command.json').write_text(json.dumps(metadata, indent=2) + '\n')
     print(shlex.join(['env', f'QCORE_CLANG={clang}'] + command), flush=True)
