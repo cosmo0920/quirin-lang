@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 393
+  "named_followups": 395
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W44-PROVIDER-RESOURCE-VIEW on merge e0017e74 (onto main 20d00641, after W44-QUIRIN-AUDIT-PROVIDERS and W44-QUIRIN-AUDIT-PREPARE), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5644 core Rust passed / 0 failed / 11 ignored over 299 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 189 Lean audits; 351 root Python tests; 15 package Python tests (the card added provider tests). fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus arbiter ran in 70 s and baseline_identity.py against docs/reports/w44-collection-allocation/integration/artifacts exits 0 with verdict_bearing_identical true (identity-vs-collection-allocation-baseline.json), so the baseline does not move: this card is provider-selection tooling and the pinned arbiter is verdict-bearing identical.",
-  "workspace_tests": 5644,
+  "note": "W44-CONTRACTS-ONLY-NO-BUILD: standing gate plus provider gate and the pinned arbiter measured on b0e43943 with CARGO_INCREMENTAL=0, every exit captured to a file and no step piped (harness scripts/harness/gate.sh, logs in the worktree-private private/measure/gate). Rust suite through scripts/run_test_binaries.py: 5655 passed / 0 failed / 11 ignored over 300 summaries (290 units; +11: no_build_cli 7, no_build unit tests 4); load average 0.92 at the step's start; no audit ran beside it; cargo clean --profile dev after the test step. fmt clean; clippy --all-targets and clippy --workspace --all-targets -D warnings clean; reevaluation_probe exit 0; reevaluation_followup exit 0; 190 Lean audits passed (new AuditNoBuildScope.lean, 14 theorems); cargo build --offline --workspace exit 0 (no dependency added). Root Python tests: 351 ran, exit 1 before the matrix regeneration (2 failures, both the expected stale derived counts: lean_audits 189 vs 190 and dimensions.named_followups 393 vs 395 after this card's ledger edit), then exit 0 after build_matrix.py --gate (see the report's gate table). Provider gate: providers/contracts.py check exit 0; provider Python 15 tests passed; providers/package.py build and verify of all five packages exit 0; provider workspace 124 passed / 0 failed / 0 ignored over 39 summaries; the real-package mutation test real_packages_preserve_unknown_and_reject_mutations run alone passed; provider fmt and clippy clean. build_docs_index.py --check exit 0. Pinned arbiter (run_audit.py --jobs 16 on the release example) exit 0; baseline_identity.py against docs/reports/w44-collection-allocation/integration/artifacts exit 0 with verdict_bearing_identical true (diagnostics, chunk-contracts and monkey-source byte-identical; contracts identical after the root alias; source-effects differ only in checkout-path-bound digests, as every run in another worktree does). Clang recorded in this checkout. Corpus: nothing moves.",
+  "workspace_tests": 5655,
   "provider_tests": 124,
   "python_evidence_validator_tests": 351,
-  "lean_audits": 189,
+  "lean_audits": 190,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6853,6 +6853,7 @@
    "AuditNeutralExpressionPosition.lean",
    "AuditNeutralFrameRecursion.lean",
    "AuditNeutralPrefixPreservation.lean",
+   "AuditNoBuildScope.lean",
    "AuditO05.lean",
    "AuditObsReordering.lean",
    "AuditObservedWaitComposition.lean",
@@ -6933,7 +6934,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w44-provider-resource-view/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-contracts-only-no-build/gate.json)"
  },
  "named_followups": [
   {

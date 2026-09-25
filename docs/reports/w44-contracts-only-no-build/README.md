@@ -367,7 +367,35 @@ classification, and quoting round-tripping through `shell_words`.
 See [gate.json](gate.json), harness [`gate.sh`](scripts/harness/gate.sh),
 logs in the worktree-private `private/measure/gate/`.
 
-GATE-TABLE
+All steps were measured on `b0e43943` with `CARGO_INCREMENTAL=0`. Every exit
+was captured to a file, and no step was piped. No audit ran during the test
+step.
+
+| Step | Command | Exit | Count |
+|---|---|---:|---|
+| submodules | `git submodule update --init --recursive` | 0 | |
+| clang | `clang --version` | 0 | Ubuntu clang 21.1.8 ([recording](clang-version.txt)) |
+| test | `python3 scripts/run_test_binaries.py` | 0 | **5,655 passed / 0 failed / 11 ignored**, 300 summaries over 290 units (+11: `no_build_cli` 7, `no_build` unit tests 4); load 0.92 at the start |
+| clean | `cargo clean --profile dev` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --all-targets -- -D warnings`; `--workspace` | 0, 0 | |
+| probe / followup | `reevaluation_probe` / `reevaluation_followup` | 0, 0 | |
+| lean | `python3 scripts/check_lean_audits.py --jobs 4` | 0 | 190 audits (`AuditNoBuildScope.lean`: 14 theorems, new) |
+| python | `python3 -m unittest discover -s scripts/tests` | 1, then 0 | 351 tests. The first run failed only on the two derived counts this card moves: Lean audits 189 → 190 and `named_followups` 393 → 395 after the ledger edit. After `build_matrix.py . --gate gate.json` (exit 0): OK |
+| offline build | `cargo build --offline --workspace` | 0 | no dependency added |
+| contracts | `python3 providers/contracts.py check` | 0 | |
+| provider Python | `python3 -m unittest discover -s providers/tests` | 0 | 15 tests |
+| packages | `providers/package.py build`; `verify` × 5 | 0; 0 × 5 | |
+| provider test | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | 124 passed / 0 failed / 0 ignored, 39 summaries |
+| isolated mutation test | `real_packages_preserve_unknown_and_reject_mutations`, alone | 0 | 1 passed |
+| provider fmt / clippy | | 0, 0 | |
+| docs index | `python3 scripts/build_docs_index.py --check` | 0 | before and after the regeneration |
+| arbiter | `run_audit.py private/measure/gate/arbiter b0e43943 --jobs 16` | 0 | |
+| identity | `baseline_identity.py` against `w44-collection-allocation/integration/artifacts`, root-aliased | 0 | **`verdict_bearing_identical: true`**: diagnostics, chunk-contracts and monkey-source byte-identical; contracts identical after the alias; source-effects differ only in the checkout-path-bound digests ([result](identity/baseline-identity-arbiter.json)) |
+
+The pinned route, the gateway and the projection are untouched, so the
+arbiter's identity is expected. `current`'s tests (`current_cli`, 12)
+pass unchanged over the factored `choose_contracts`.
 
 ## 7. Files
 
