@@ -842,6 +842,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w44-branch-condition-calls](w44-branch-condition-calls/README.md) | W44-BRANCH-CONDITION-CALLS: calls in controlling expressions |
 
+| [w44-collection-allocation](w44-collection-allocation/README.md) | W44-COLLECTION-ALLOCATION: unevaluated `sizeof` dereference operands |
+
 | [w44-corpus-callee-summaries](w44-corpus-callee-summaries/README.md) | W44-CORPUS-CALLEE-SUMMARIES: why corpus callees get no summary, and the one route gap closed |
 
 | [w44-indirect-chain-access](w44-indirect-chain-access/README.md) | W44-INDIRECT-CHAIN-ACCESS: typed record-pointer member chains |

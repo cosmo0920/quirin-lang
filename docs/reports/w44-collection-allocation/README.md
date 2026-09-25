@@ -412,7 +412,45 @@ withdraws a residual. The frozen file is not edited.
 
 ## 6. Validation
 
-VALIDATION-MERGED
+Measured on the merged tree by [`scripts/run_gate.py`](scripts/run_gate.py),
+W43-INDEXED-RESOURCE-COLLECTIONS' runner, with `CARGO_INCREMENTAL=0`. The
+tree is `6ff7ba11`: merge `aa86cc39` plus records only, with no Rust, Lean,
+contract or test source changed after the merge. Every exit is captured to a
+file. Logs are in `private/gate3/` and `private/provider-gate3/`, and the
+generator input is [gate.json](gate.json).
+
+The dev profile was reclaimed after the test step and again after the core
+steps. At least 60G stayed free on `/home` before every build, per the
+coordinator's disk rule.
+
+| Command | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | libevent `d82464a2…` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 ([recording](clang-version.txt)) |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,528 passed / 0 failed / 11 ignored**, 293 summaries |
+| `cargo clean --profile dev` | 0 | reclaimed after the test step |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **186** audits |
+| `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings` and `cargo test -p qcore-c-gateway --features indirect-census --lib` | 0 | clean; 511 passed |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w44-collection-allocation/gate.json` | 0 | 379 follow-ups, 111 contract modules, 186 Lean audits |
+| `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **330** tests |
+| `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | regenerated and matching |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **124 passed / 0 failed / 0 ignored**, 39 summaries |
+| `… -p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations … -- --exact --test-threads=1` | 0 | 1 passed (isolated) |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean |
+| `python3 providers/contracts.py check` | 0 | inventories unchanged |
+| `python3 providers/package.py build --output private/provider-gate3/packages` | 0 | 5 packages |
+| `python3 providers/package.py verify …/<id>` (×5) | 0 ×5 | chunkio, cmetrics, ctraces, libevent, librdkafka |
+| `python3 -m unittest discover -s providers/tests` | 0 | 13 tests |
+
+**Counts.** The matrix's validation section held main's figures from the
+W44-LIBC-RESIDUALS integration gate: 5,505 tests and 185 audits. This card
+adds exactly its 23 tests (the 16-test `sizeof_operand.rs` binary and 7 unit
+tests) and one audit, which gives 5,528 and 186. No existing pin moved.
 
 ### 6.1 The pre-merge gate (`c4338703`), superseded
 
@@ -735,4 +773,11 @@ python3 docs/reports/w44-collection-allocation/scripts/residual_operands.py cens
 python3 docs/reports/w43-libc-contracts/scripts/archive.py <after> docs/reports/w44-collection-allocation/artifacts
 python3 docs/reports/w44-collection-allocation/scripts/update_ledger.py
 python3 docs/reports/w44-collection-allocation/scripts/run_gate.py <gate-dir> submodules clang test fmt clippy probe followup lean census
+# On the merged tree (§9): BEFORE with main's binary, AFTER, CENSUS as above, then the rule-off census
+python3 docs/reports/w44-collection-allocation/scripts/rule_off.py apply
+cargo build --release -p qcore-compiler --example cycle19_fluent_bit_libraries_audit --features qcore-c-gateway/indirect-census
+python3 docs/reports/w44-collection-allocation/scripts/rule_off.py revert
+python3 docs/reports/w44-leak-pin-audit/scripts/run_census.py <rule-off binary> <rule-off> aa86cc39+rule-off
+python3 docs/reports/w44-leak-pin-audit/scripts/join_witnesses.py <rule-off>/resource-diagnostics.json <rule-off>/leak-witness.jsonl joined.json
+python3 docs/reports/w44-collection-allocation/scripts/handoff_overlay.py <before> <after> joined.json handoff-overlay.json handoff-overlay.txt
 ```

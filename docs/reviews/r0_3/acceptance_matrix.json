@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 377
+  "named_followups": 379
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W44-LIBC-RESIDUALS on merge ed36b895 (onto main 94502987, after W44-BRANCH-CONDITION-CALLS, W44-LEAK-PIN-AUDIT and W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5505 core Rust passed / 0 failed / 11 ignored over 294 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 185 Lean audits; 330 root Python tests after regenerating this section (08-python exit 1 before regeneration); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w44-assignment-destination-suffix-place/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
-  "workspace_tests": 5505,
+  "note": "W44-COLLECTION-ALLOCATION merged with main 70ce6b44 (merge aa86cc39): the full standing gate measured on 6ff7ba11 (the merge plus records only; no Rust, Lean, contract or test source changed after aa86cc39), with CARGO_INCREMENTAL=0; the dev profile was reclaimed (cargo clean --profile dev) after the test step and again after the core steps. 5528 core Rust passed / 0 failed / 11 ignored over 293 summaries (main's 5505 plus this card's 16-test sizeof_operand.rs binary and 7 unit tests of sizeof_operand.rs; no existing pin moved); 186 Lean audits (main's 185 plus AuditSizeofOperand, 23 theorems); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 511 feature-on library tests passed. Root Python tests counted after the final matrix regeneration (see the report). Step exits (private/gate3): {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0}. Provider workspace (private/provider-gate3): 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed (1 test); provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. Logs: worktree-private private/gate3 and private/provider-gate3 of agent-af2117137953e0c79 (the superseded pre-merge gates are private/gate, private/gate2 and private/provider-gate; their record is premerge/gate.json). Clang recorded in this checkout. Corpus against the W44-LIBC-RESIDUALS integration baseline: BEFORE byte-identical diagnostics; AFTER 230 leaves removed, 249 added, functions 300/9/4525 -> 304/11/4519, units 3/8/170/4 -> 3/9/169/4, leak 19 -> 21 (both added leaks real unit-test assertion-failure leaks; the refused hand-on rule withdraws the card's other 122 rule-off leaks), 0 functions Safe through a collection element node.",
+  "workspace_tests": 5528,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 185,
+  "lean_audits": 186,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6885,6 +6885,7 @@
    "AuditScalarMemberStore.lean",
    "AuditScalarRouteExitEdge.lean",
    "AuditSingleEmissionRoute.lean",
+   "AuditSizeofOperand.lean",
    "AuditSlicePermissions.lean",
    "AuditSocketCellRoute.lean",
    "AuditSocketEventCompose.lean",
@@ -6929,7 +6930,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w44-libc-residuals/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-collection-allocation/gate.json)"
  },
  "named_followups": [
   {
