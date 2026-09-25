@@ -130,6 +130,7 @@ class Result:
     tests: list[str]
     stdout_log: str
     stderr_log: str
+    executable: str = ""
 
     @property
     def duration(self) -> float:
@@ -245,6 +246,7 @@ class Runner:
             tests=tests,
             stdout_log=str(stdout_path),
             stderr_log=str(stderr_path),
+            executable=unit.argv[0] if unit.argv else "",
         )
         with self._lock:
             self.intervals.append((unit.uid, unit.exclusive, started, finished))
@@ -376,17 +378,36 @@ def build(cargo: str, extra: Sequence[str], log_dir: Path) -> tuple[int, dict[st
     return code, executables
 
 
+# The `target.<host>.runner` cargo launches instead of each test executable. It
+# records the launch -- argv, cwd and the complete environment cargo built --
+# and exits 0 without running the test. Kept inline and import-light (`-I -S`)
+# because cargo starts it once per test executable.
+CAPTURE_SOURCE = """\
+import json, os, sys, time
+record = {"sequence": time.time_ns(), "argv": sys.argv[2:], "cwd": os.getcwd(),
+          "env": dict(os.environ)}
+path = os.path.join(sys.argv[1], "%d-%d.json" % (record["sequence"], os.getpid()))
+with open(path, "w", encoding="utf-8") as handle:
+    json.dump(record, handle)
+"""
+
+
+def capture_command(capture_dir: Path) -> list[str]:
+    """The runner argv; cargo appends `<executable> <args...>` to it."""
+    return [sys.executable, "-I", "-S", "-c", CAPTURE_SOURCE, str(capture_dir.resolve())]
+
+
 def capture(cargo: str, extra: Sequence[str], log_dir: Path) -> tuple[int, list[dict]]:
     """Record cargo's own launch of every test executable without running it."""
     capture_dir = log_dir / "capture"
     capture_dir.mkdir()
-    runner = [sys.executable, "-I", str(Path(__file__).resolve()),
-              "--capture-into", str(capture_dir), "--"]
+    runner = capture_command(capture_dir)
     triple = host_triple(dict(os.environ))
     config = f"target.{triple}.runner=[{', '.join(json.dumps(part) for part in runner)}]"
     argv = [cargo, "test", "--workspace", "--no-fail-fast", "--tests",
             "--config", config, *extra]
-    print(f"$ {shlex.join(argv)}", flush=True)
+    print(f"$ cargo test --workspace --no-fail-fast --tests "
+          f"--config target.{triple}.runner=<capture> {shlex.join(extra)}", flush=True)
     with open(log_dir / "capture.stdout.log", "wb") as out, \
             open(log_dir / "capture.stderr.log", "wb") as err:
         code = subprocess.run(argv, stdout=out, stderr=err).returncode
@@ -395,19 +416,6 @@ def capture(cargo: str, extra: Sequence[str], log_dir: Path) -> tuple[int, list[
         records.append(json.loads(path.read_text(encoding="utf-8")))
     records.sort(key=lambda record: record["sequence"])
     return code, records
-
-
-def capture_into(directory: str, argv: list[str]) -> int:
-    """`target.<host>.runner` mode: record the launch and do not run the test."""
-    record = {
-        "sequence": time.time_ns(),
-        "argv": argv,
-        "cwd": os.getcwd(),
-        "env": dict(os.environ),
-    }
-    path = Path(directory) / f"{time.time_ns()}-{os.getpid()}.json"
-    path.write_text(json.dumps(record, indent=1, sort_keys=True), encoding="utf-8")
-    return 0
 
 
 def load_weights(path: Path) -> dict[str, float]:
@@ -492,6 +500,7 @@ def write_summary(
         "units": [
             {
                 "uid": r.uid,
+                "executable": r.executable,
                 "exclusive": r.exclusive,
                 "ok": r.ok,
                 "returncode": r.returncode,
@@ -541,7 +550,6 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
                         help="after a successful run, write measured seconds here")
     parser.add_argument("--no-doc", action="store_true",
                         help="skip the doc-test unit (NOT gate-equivalent)")
-    parser.add_argument("--capture-into", help=argparse.SUPPRESS)
     parser.add_argument("cargo_args", nargs="*",
                         help="extra cargo arguments after `--`, e.g. "
                              "--manifest-path providers/Cargo.toml --locked --offline")
@@ -549,18 +557,13 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
-    argv = list(sys.argv[1:] if argv is None else argv)
-    if argv[:1] == ["--capture-into"]:
-        # Runner mode: `--capture-into DIR -- <executable> <args...>`.
-        if len(argv) < 3 or argv[2] != "--":
-            print("malformed --capture-into invocation", file=sys.stderr)
-            return 2
-        return capture_into(argv[1], argv[3:])
-    args = parse_args(argv)
+    args = parse_args(list(sys.argv[1:] if argv is None else argv))
     extra = list(args.cargo_args)
     cargo = os.environ.get("CARGO", "cargo")
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    log_dir = args.log_dir or REPO_ROOT / "private" / "test-binaries" / f"{stamp}-{os.getpid()}"
+    log_dir = (args.log_dir or REPO_ROOT / "private" / "test-binaries" / f"{stamp}-{os.getpid()}")
+    # Absolute: the capture runner is launched by cargo from each package root.
+    log_dir = log_dir.resolve()
     log_dir.mkdir(parents=True, exist_ok=False)
     print(f"logs: {log_dir}", flush=True)
     phases: dict[str, float] = {}
@@ -597,6 +600,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     problems += plan_problems
     for problem in problems:
         print(f"error: {problem}", file=sys.stderr)
+    if problems:
+        # Fail closed before running anything: the plan is not the suite.
+        write_summary(log_dir, [], problems, phases, args.jobs, None)
+        print("error: the test plan is not trustworthy; nothing was run", file=sys.stderr)
+        return 101
     exclusive_count = sum(1 for unit in units if unit.exclusive)
     print(
         f"running {len(units)} units ({len(units) - exclusive_count} parallel with "

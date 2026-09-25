@@ -1,10 +1,8 @@
 """Regression checks for the fail-closed parallel test-binary runner."""
-import contextlib
-import io
 import json
 import os
 from pathlib import Path
-import signal
+import subprocess
 import sys
 import tempfile
 import textwrap
@@ -265,20 +263,34 @@ class PlanTests(unittest.TestCase):
 
 
 class CaptureTests(unittest.TestCase):
-    def test_capture_mode_records_argv_cwd_and_environment(self):
+    def test_capture_runner_records_argv_cwd_and_environment_without_running(self):
         with tempfile.TemporaryDirectory() as directory:
-            with contextlib.redirect_stdout(io.StringIO()):
-                code = runner_mod.main(["--capture-into", directory, "--", "/bin/test-exe", "--x"])
-            self.assertEqual(code, 0)
-            [path] = list(Path(directory).glob("*.json"))
+            capture_dir = Path(directory) / "capture"
+            capture_dir.mkdir()
+            package_root = Path(directory) / "package"
+            package_root.mkdir()
+            marker = Path(directory) / "ran"
+            env = {"CARGO_MANIFEST_DIR": str(package_root), "ONLY": "this",
+                   "LD_LIBRARY_PATH": "/deps"}
+            # cargo appends the executable and its arguments to the runner argv.
+            argv = runner_mod.capture_command(capture_dir) + [
+                "/usr/bin/touch", str(marker)]
+            completed = subprocess.run(argv, cwd=package_root, env=env)
+            self.assertEqual(completed.returncode, 0)
+            self.assertFalse(marker.exists(), "the captured executable is not run")
+            [path] = list(capture_dir.glob("*.json"))
             record = json.loads(path.read_text())
-            self.assertEqual(record["argv"], ["/bin/test-exe", "--x"])
-            self.assertEqual(record["cwd"], os.getcwd())
-            self.assertEqual(record["env"], dict(os.environ))
+            self.assertEqual(record["argv"], ["/usr/bin/touch", str(marker)])
+            self.assertEqual(Path(record["cwd"]), package_root.resolve())
+            extra = set(record["env"]) - set(env)
+            self.assertLessEqual(extra, {"LC_CTYPE"}, extra)
+            for key, value in env.items():
+                self.assertEqual(record["env"][key], value)
 
-    def test_malformed_capture_invocation_is_refused(self):
-        with contextlib.redirect_stderr(io.StringIO()):
-            self.assertEqual(runner_mod.main(["--capture-into", "/tmp"]), 2)
+    def test_capture_runner_fails_when_it_cannot_record(self):
+        argv = runner_mod.capture_command(Path("/nonexistent-capture-dir")) + ["/bin/true"]
+        completed = subprocess.run(argv, capture_output=True)
+        self.assertNotEqual(completed.returncode, 0, "an unrecorded launch is not a pass")
 
 
 if __name__ == "__main__":
