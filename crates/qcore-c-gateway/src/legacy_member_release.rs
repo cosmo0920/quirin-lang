@@ -74,29 +74,37 @@
 //! which no summary mode states. A caller whose actual owns sub-custody could
 //! therefore hold that very object as a tracked child and release it again
 //! after the call. [`guard_unit_callees`] closes that channel on the caller's
-//! side, for every callee whose contract in force may be an inference: before
-//! each call to a function **defined in this translation unit and not
-//! declared** by the environment's trusted texts, it inserts `ArgumentReads`
-//! over the call's plain-name actuals, which records `UnknownAlias` for any
-//! actual whose target owns sub-custody. It is applied whether or not the
-//! callee's body used rule 1, so it is a superset of the calls that need it,
-//! and it only ever refuses. A callee with no body here has no derived summary
-//! (W4 summaries never cross a unit), and a declared callee is governed by its
-//! declaration, never by an inference (constraint 8); both keep the
-//! declaration's stated premise (P-B08-SHALLOW) and carry no guard. The first
-//! AFTER run also guarded declared header bodies, and `flb_input_chunk_create`
-//! left `Safe` for a guard its `flb_free` call did not need. The inserted node
-//! is appended and every edge into the call is redirected to it, so no
-//! existing node's identity moves.
+//! side. Before each call to a function this translation unit defines, that
+//! the environment's trusted texts do not declare, and whose body **may
+//! release through a formal** ([`member_releasing_functions`]: a body with a
+//! call whose whole actual is a pointer read, or that calls such a body, to a
+//! fixed point), it inserts `ArgumentReads` over the call's plain-name
+//! actuals, which records `UnknownAlias` for any actual whose target owns
+//! sub-custody. The selection is lexical and ignores contracts, so it is a
+//! superset of the bodies that used rule 1, and the guard only ever refuses.
+//! A callee with no body here has no derived summary (W4 summaries never cross
+//! a unit), and a declared callee is governed by its declaration, never by an
+//! inference (constraint 8); both keep the declaration's stated premise
+//! (P-B08-SHALLOW) and carry no guard. Two coarser selections were measured
+//! and rejected: every unit-defined callee guarded declared header bodies
+//! (`flb_input_chunk_create` left `Safe` over the declared `static inline`
+//! `flb_free`), and every undeclared one refused the callers of validated
+//! `Removed` wrappers, whose owner actual owns sub-custody by construction.
+//! The inserted node is appended and every edge into the call is redirected
+//! to it, so no existing node's identity moves.
 
+use std::cell::RefCell;
+use std::collections::hash_map::DefaultHasher;
 use std::collections::{BTreeMap, BTreeSet};
+use std::hash::{Hash, Hasher};
+use std::rc::Rc;
 
 use qcore_schemas::contract::{ResourceContracts, ResourceFunctionContract, ResourceParameterMode};
 
 use super::call_argument_access::{AdmittedArgument, ArgumentRead};
 use super::{
-    LegacyCfg, LegacyCfgNode, LegacyInstruction, Token, find_function_body, is_null_constant,
-    strip_parentheses,
+    LegacyCfg, LegacyCfgNode, LegacyInstruction, Token, call_argument_spans, is_null_constant,
+    matching, strip_parentheses,
 };
 use crate::typed_field_access::{DeclaredType, FunctionTypes, TypedAccessModel, is_name};
 
@@ -229,20 +237,24 @@ fn pointer_member_base(
         .then(|| (*base).to_owned())
 }
 
-/// Rule 3: before every call to a function defined in this translation unit
-/// and not declared by the environment,
-/// the sub-custody guard over the call's plain-name actuals.
+/// Rule 3: before every call to a function this unit defines whose body may
+/// release through a formal ([`member_releasing_functions`]) and that the
+/// environment does not declare, the sub-custody guard over the call's
+/// plain-name actuals.
 pub(super) fn guard_unit_callees(
     cfg: &mut LegacyCfg,
     tokens: &[Token],
     contracts: &ResourceContracts,
 ) {
-    let mut defined = BTreeMap::<String, bool>::new();
-    // Read lazily: most CFGs call no function this unit defines.
+    // Both read lazily: most CFGs call no such function.
+    let mut releasing = None::<Rc<BTreeSet<String>>>;
     let mut declared = None::<BTreeSet<String>>;
-    let mut is_defined = |name: &str| {
-        *defined.entry(name.to_owned()).or_insert_with(|| {
-            find_function_body(tokens, name).is_some()
+    let mut guarded = BTreeMap::<String, bool>::new();
+    let mut is_guarded = |name: &str| {
+        *guarded.entry(name.to_owned()).or_insert_with(|| {
+            releasing
+                .get_or_insert_with(|| member_releasing_functions(tokens))
+                .contains(name)
                 && !declared
                     .get_or_insert_with(|| super::descriptor_custody::declared_callees(contracts))
                     .contains(name)
@@ -252,7 +264,7 @@ pub(super) fn guard_unit_callees(
     for id in 0..count {
         let mut actuals = Vec::<String>::new();
         for (function, arguments) in guarded_calls(&cfg.nodes[id].instruction) {
-            if !is_defined(function) {
+            if !is_guarded(function) {
                 continue;
             }
             for argument in arguments.iter().flatten() {
@@ -290,6 +302,136 @@ pub(super) fn guard_unit_callees(
         if cfg.entry == id {
             cfg.entry = guard;
         }
+    }
+}
+
+thread_local! {
+    /// The last token stream's answer, keyed by a hash of every token text:
+    /// W4 builds many CFGs from one unit's tokens.
+    static RELEASING: RefCell<Option<(u64, Rc<BTreeSet<String>>)>> = const { RefCell::new(None) };
+}
+
+/// The functions this token stream defines whose body may release an object
+/// through a formal, so whose validated summary may hide that release: a body
+/// with a call whose whole actual is a pointer read (`B->F`, `B[I]`, `*B`,
+/// parenthesised or not), which rule 1 may admit, and, to a fixed point, a
+/// body that calls one of them. It is purely lexical and ignores contracts,
+/// so it is a superset of the bodies that used rule 1 under any environment.
+pub(super) fn member_releasing_functions(tokens: &[Token]) -> Rc<BTreeSet<String>> {
+    let mut hasher = DefaultHasher::new();
+    tokens.len().hash(&mut hasher);
+    for token in tokens {
+        token.text.hash(&mut hasher);
+    }
+    let key = hasher.finish();
+    if let Some(found) = RELEASING.with(|cache| {
+        cache
+            .borrow()
+            .as_ref()
+            .filter(|(cached, _)| *cached == key)
+            .map(|(_, set)| Rc::clone(set))
+    }) {
+        return found;
+    }
+    let set = Rc::new(compute_member_releasing_functions(tokens));
+    RELEASING.with(|cache| *cache.borrow_mut() = Some((key, Rc::clone(&set))));
+    set
+}
+
+const NOT_CALLS: &[&str] = &[
+    "if", "while", "for", "switch", "return", "sizeof", "_Alignof",
+];
+
+fn compute_member_releasing_functions(tokens: &[Token]) -> BTreeSet<String> {
+    // Every file-scope `NAME ( ... ) { ... }`, with its body.
+    let mut bodies = BTreeMap::<String, (usize, usize)>::new();
+    let mut index = 0usize;
+    while index < tokens.len() {
+        if tokens[index].text != "{" {
+            index += 1;
+            continue;
+        }
+        let Some(close) = matching(tokens, index, "{", "}") else {
+            break;
+        };
+        if let Some(name) = definition_name(tokens, index) {
+            bodies.entry(name).or_insert((index, close));
+        }
+        index = close + 1;
+    }
+    let mut calls = BTreeMap::<&str, BTreeSet<String>>::new();
+    let mut releasing = BTreeSet::<String>::new();
+    for (name, (open, close)) in &bodies {
+        let texts = tokens[open + 1..*close]
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let callees = calls.entry(name.as_str()).or_default();
+        for at in 0..texts.len() {
+            if !is_name(texts[at])
+                || texts.get(at + 1) != Some(&"(")
+                || NOT_CALLS.contains(&texts[at])
+            {
+                continue;
+            }
+            callees.insert(texts[at].to_owned());
+            let Some(spans) = call_argument_spans(&texts, at) else {
+                continue;
+            };
+            if spans
+                .iter()
+                .any(|(start, end)| pointer_read_shape(&texts[*start..*end]))
+            {
+                releasing.insert(name.clone());
+            }
+        }
+    }
+    loop {
+        let before = releasing.len();
+        for (name, callees) in &calls {
+            if !releasing.contains(*name) && callees.iter().any(|callee| releasing.contains(callee))
+            {
+                releasing.insert((*name).to_owned());
+            }
+        }
+        if releasing.len() == before {
+            return releasing;
+        }
+    }
+}
+
+/// The name a `{` at file scope opens the body of: `NAME ( ... ) {`.
+fn definition_name(tokens: &[Token], open: usize) -> Option<String> {
+    if open == 0 || tokens[open - 1].text != ")" {
+        return None;
+    }
+    let mut depth = 0usize;
+    let mut at = open - 1;
+    loop {
+        match tokens[at].text.as_str() {
+            ")" => depth += 1,
+            "(" => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    break;
+                }
+            }
+            _ => {}
+        }
+        at = at.checked_sub(1)?;
+    }
+    let name = &tokens[at.checked_sub(1)?].text;
+    is_name(name).then(|| name.clone())
+}
+
+/// `B -> F`, `B [ ... ]` or `* B`, parenthesised or not: the actuals rule 1
+/// may admit.
+fn pointer_read_shape(argument: &[&str]) -> bool {
+    match strip_parentheses(argument) {
+        [base, "-", ">", field] => is_name(base) && is_name(field),
+        ["*", base] => is_name(base),
+        [base, "[", .., "]"] => is_name(base),
+        _ => false,
     }
 }
 

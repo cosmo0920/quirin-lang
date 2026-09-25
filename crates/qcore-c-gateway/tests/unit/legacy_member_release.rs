@@ -147,19 +147,23 @@ fn the_guard_refuses_a_caller_whose_actual_owns_sub_custody() {
 }
 
 #[test]
-fn the_guard_precedes_only_calls_to_functions_this_unit_defines() {
+fn the_guard_precedes_only_undeclared_unit_callees_that_may_release_through_a_formal() {
     let source = format!(
         "{RECORD}{DESTROY}void q_free(void *p) {{ }}\n\
+         static void plain_destroy(struct node *n) {{ q_nullable_free(n); }}\n\
          void subject(void) {{ struct node *n = q_alloc(); \
-         node_destroy(n); void *p = q_alloc(); q_free(p); }}\n"
+         node_destroy(n); struct node *m = q_alloc(); plain_destroy(m); \
+         void *p = q_alloc(); q_free(p); }}\n"
     );
+    // `plain_destroy` reads no member, so its summary hides nothing.
     // `q_free` is defined here too, but declared: its declaration governs.
     let (tokens, _) = tokenize_with_conditionals(&source);
     // The environment the caller is analysed in once the destructor's summary
     // is installed.
     let mut environment = contracts();
     let released = environment.contract("q_nullable_free").unwrap().clone();
-    environment.insert_contract("node_destroy", released);
+    environment.insert_contract("node_destroy", released.clone());
+    environment.insert_contract("plain_destroy", released);
     let cfg = build_function_cfg(&tokens, "subject", &environment).unwrap();
     assert_eq!(
         guarded_callees(&cfg).into_iter().collect::<Vec<_>>(),
@@ -203,4 +207,23 @@ fn a_member_null_test_over_a_released_base_is_refused() {
         analyze("void subject(struct node *n) { q_nullable_free(n); if (n->buf) return; }\n");
     assert_ne!(status(&summary, "subject"), AnalysisStatus::Safe);
     assert!(has(&summary, "subject", "UnknownAlias"));
+}
+
+#[test]
+fn the_releasing_set_is_closed_under_calls() {
+    let source = format!(
+        "{RECORD}{DESTROY}static void outer(struct node *n) {{ node_destroy(n); }}\n\
+         static void plain(struct node *n) {{ q_nullable_free(n); }}\n\
+         static void element(void **v) {{ q_nullable_free(v[0]); }}\n"
+    );
+    let (tokens, _) = tokenize_with_conditionals(&source);
+    let set = super::member_releasing_functions(&tokens);
+    assert_eq!(
+        set.iter().cloned().collect::<Vec<_>>(),
+        vec![
+            "element".to_owned(),
+            "node_destroy".to_owned(),
+            "outer".to_owned()
+        ]
+    );
 }

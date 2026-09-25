@@ -12,8 +12,9 @@ obligation passes denotes no tracked identity, and reading its position as
 owner or a bound place refuses. **A member null test is a read**: it changes
 no binding, and a declined one keeps the refusal. **The guard**: a passing
 guard leaves no caller-tracked site reachable through an actual, it refuses
-every owner of sub-custody, and inserting it keeps every node's identity and
-routes every edge into the call through it. Witnesses complete it.
+every owner of sub-custody, every body whose summary chain reaches a rule-1
+call is guarded, and inserting it keeps every node's identity and routes every
+edge into the call through it. Witnesses complete it.
 
 What this is not: a proof about the Rust readers (trust boundary 28), or of
 the two construction premises it names, which are stated as hypotheses. -/
@@ -44,6 +45,7 @@ the two construction premises it names, which are stated as hypotheses. -/
 #print axioms QCore.MemberRelease.the_guard_leads_to_the_call
 #print axioms QCore.MemberRelease.every_existing_node_keeps_its_id
 #print axioms QCore.MemberRelease.every_edge_into_the_call_passes_the_guard
+#print axioms QCore.MemberRelease.every_summary_chain_to_a_member_release_is_guarded
 
 -- Witnesses.
 #print axioms QCore.MemberRelease.the_witness_admissions

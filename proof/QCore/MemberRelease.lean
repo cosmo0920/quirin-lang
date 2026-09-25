@@ -270,6 +270,33 @@ theorem every_edge_into_the_call_passes_the_guard (g : Graph) (target u next : N
       rw [← hprev]
       exact hp
 
+/-! ## Rule 3: which callees are guarded
+
+`member_releasing_functions` selects, lexically, every body with a call whose
+whole actual is a pointer read (`candidate`), closed under "calls a selected
+body". A summary can hide a rule-1 release only if its body, or a body its
+summary chain reaches, used rule 1, which needs such a call. -/
+
+/-- `f` reaches a candidate body through calls (a summary chain). -/
+inductive ReachesCandidate (calls : Nat → List Nat) (candidate : Nat → Bool) : Nat → Prop where
+  | self (f : Nat) : candidate f = true → ReachesCandidate calls candidate f
+  | step (f g : Nat) : g ∈ calls f → ReachesCandidate calls candidate g →
+      ReachesCandidate calls candidate f
+
+/-- The selection's two closure facts, as the Rust fixed point establishes them. -/
+structure Selection (calls : Nat → List Nat) (candidate selected : Nat → Bool) : Prop where
+  candidates : ∀ f, candidate f = true → selected f = true
+  closed : ∀ f g, g ∈ calls f → selected g = true → selected f = true
+
+/-- Every body whose summary chain reaches a rule-1 candidate is selected, so
+every call to it is guarded (unless a declaration governs it). -/
+theorem every_summary_chain_to_a_member_release_is_guarded (calls : Nat → List Nat)
+    (candidate selected : Nat → Bool) (h : Selection calls candidate selected) (f : Nat)
+    (hr : ReachesCandidate calls candidate f) : selected f = true := by
+  induction hr with
+  | self f hc => exact h.candidates f hc
+  | step f g hg _ ih => exact h.closed f g hg ih
+
 /-! ## Witnesses -/
 
 /-- `rd_kafka_error_destroy(acl_res->error)` at `Released { nullable }`:
