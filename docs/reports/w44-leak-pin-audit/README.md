@@ -1,18 +1,21 @@
-# W44-LEAK-PIN-AUDIT: every leak leaf classified, two false-leak mechanisms repaired
+# W44-LEAK-PIN-AUDIT: every leak leaf classified; no leak claimed through a refused hand-on
 
 Card W44-LEAK-PIN-AUDIT, 2026-09-25, on base `c1e69bb5` ("Open the wave-44
 increment record"). Every one of the corpus's **271** `leak` leaves sat on one
 of the **85** provisional-Unsafe functions. Provisional Unsafe is never an
 upstream-defect claim, but it must be a validated reachable violation of the
-stated property under the stated premises. This card audits that claim leaf by
-leaf, repairs the two class (b) mechanisms it found, and publishes the
-remaining class (a) leaves as the project's provisional-Unsafe evidence base.
+stated property under the stated premises (hard invariant 2). This card audits
+that claim leaf by leaf. It repairs the cast return, and it implements the
+coordinator's refused hand-on rule (`W44-REFUSED-HANDOFF-LEAK-CLAIMS`): no leak
+is claimed through an identity named in a refused statement. It publishes the
+leaves that remain as the provisional-Unsafe evidence base.
 
 ## Headline
 
-* **Classification of all 271 leaves** ([classification.json](classification.json),
-  [classification.md](classification.md)), from a leak-witness census of the
-  analyzer's own settled states plus source reading ([reading.json](reading.json)):
+* **Classification of all 271 leaves**, frozen before any rule
+  ([classification.json](classification.json), [classification.md](classification.md)),
+  from a leak-witness census of the analyzer's own settled states plus source
+  reading ([reading.json](reading.json)):
 
   | Class | Leaves | Functions | Mechanisms |
   |---|---:|---:|---|
@@ -21,25 +24,38 @@ remaining class (a) leaves as the project's provisional-Unsafe evidence base.
   | (c) premise or approximation gap | **101** | 53 | uncontracted callee releases it 44, uncontracted callee retains it 37, borrowed `mk_list_add` publishes it 8, scalar branch correlation 7, undecided null test 2, destination suffix spelling 2, chained assignment 1 |
   | (d) unclassifiable | **0** | | |
 
-  The class (a) leaves are tabulated in [class-a.md](class-a.md). They are
-  provisional `Unsafe` candidates, **not** upstream defects; 127 of them are
-  reachable only when a unit test fails.
+* **The refused hand-on overlay**, frozen before the rule was committed
+  ([PREDICTION-HANDOFF.md](PREDICTION-HANDOFF.md),
+  [handoff-classification.json](handoff-classification.json),
+  [handoff-classification.md](handoff-classification.md)): **252** of the 270
+  non-cast leaves name their object in a refused statement on some path before
+  the exit. By frozen class that is (a) 128, (b) 30 and (c) 94. With the cast
+  return, **253** are withdrawn and **18** stay: 11 (a) and 7 (c).
 * **`RETURN-CAST-PLACE-NOT-ESCAPED` fixed** (`legacy_cast_return.rs`,
-  `QCore.CastReturnEscape`): a carrier-preserving cast return is decided as the
-  uncast return; a crossing between an integer and a pointer, or a descriptor
-  cast to another integer type, is refused; `(int) fd` stays custody.
-* **The refused escape repaired** (`legacy_refused_operands.rs`,
-  `QCore.RefusedEscapeCustody`): a refused store or `return` whose value side
-  hands a live identity on marks it with an unresolved effect, the
-  projection's existing "an unmodelled action may have discharged it" reading.
-  Identities handed to an uncontracted **call** are deliberately not withdrawn
-  (`REFUSED-CALL-ARGUMENT-PREMISE`).
-* **Arbiter** (constraint 7): leak **271 → 240**, exactly the 31 class (b)
-  leaves, 0 collateral. Functions **294 / 85 / 4,455 → 297 / 60 / 4,477**; units
-  **3 / 43 / 135 / 4 → 3 / 34 / 144 / 4**; unknown_alias 4,358 → 4,359;
-  unsupported 45,848 → 45,844. 0 violation candidates added.
-* **Ledger 345 → 353**: `RETURN-CAST-PLACE-NOT-ESCAPED` retired (its dlopen half
-  rehomed), nine residuals registered, two entries amended.
+  `QCore.CastReturnEscape`):
+  * a carrier-preserving cast return is decided as the uncast return;
+  * a crossing between an integer and a pointer, or a descriptor cast to
+    another integer type, is refused;
+  * `(int) fd` stays custody.
+* **The refused hand-on rule** (`legacy_refused_operands.rs`,
+  `QCore.RefusedHandOnCustody`): a live identity that a refused statement names
+  as a store value, `return` operand, call argument, operand, `&x` or interior
+  address carries an unresolved effect after that node. It never discharges an
+  obligation and never makes anything `Safe`.
+* **Arbiter** (constraint 7): leak **271 → 18**, exactly the 253 predicted
+  leaves, with 0 collateral and 0 missed.
+  * Functions **294 / 85 / 4,455 → 297 / 9 / 4,528**.
+  * Units **3 / 43 / 135 / 4 → 3 / 8 / 170 / 4**.
+  * unknown_alias 4,358 → 4,374; unsupported 45,848 → 45,844.
+  * 0 violation candidates added.
+* **The cost, stated plainly**: 128 of the 139 leaves the reading validated
+  are withdrawn. The analyzer cannot validate an accusation that rests on what
+  a refused statement does. They are registered as
+  `REFUSED-HANDOFF-WITHDRAWN-ACCUSATIONS`, with their reading kept.
+  [class-a.md](class-a.md) now tabulates the **11** class (a) leaves in 3
+  functions that remain.
+* **Ledger 345 → 355**: `RETURN-CAST-PLACE-NOT-ESCAPED` retired, 11 residuals
+  registered, two entries amended.
 
 ## 1. How each leaf was classified
 
@@ -48,103 +64,107 @@ remaining class (a) leaves as the project's provisional-Unsafe evidence base.
 `report_leaks` publishes a site and an exit line, never a path. The census
 ([`legacy_leak_witness.rs`](../../../crates/qcore-c-gateway/src/legacy_leak_witness.rs),
 off-by-default `indirect-census` feature, `QCORE_LEAK_WITNESS`) runs after each
-CFG's custody fixed point, re-runs every reachable node's transfer and edge
-refinement from its settled incoming state exactly as the work list does, and
-for every reported leak searches three CFG paths from the node that produced
-the site to the reporting exit along edges whose settled output keeps the site
-`LIVE`:
+CFG's custody fixed point. It re-runs every reachable node's transfer and edge
+refinement from its settled incoming state, exactly as the work list does. For
+every reported leak it searches four CFG paths from the node that produced the
+site to the reporting exit:
 
-* the **shortest** path;
-* the shortest **clean** path, avoiding every node that refused its statement
-  while that statement's value side (a store's right-hand side or a `return`
-  operand) handed on a place bound to the site;
-* the shortest **strict** path, also avoiding every refused node that passes
-  such a place, or its address, to a call.
+* the **shortest** path whose edges keep the site `LIVE`;
+* the shortest **clean** one, avoiding every refused node whose value side
+  (a store's right-hand side or a `return` operand) hands the site on;
+* the shortest **strict** one, avoiding every refused node that hands it on at
+  all;
+* the **handed** path, which is the refused hand-on rule's exact population
+  under the union join. It runs from a producer of the site to a refused node
+  whose hand-on marks the site (the `withdraw` cascade over `contained` and
+  `field_links` included), then on over feasible edges to the exit.
 
-It records whether the settled exit still reports the leaf, the site's status,
-unresolved and exempt bits, and per step the instruction, whether the node was
-refused, the hand-on tags, and whether the edge taken was an undecided pointer
-test. Joined states make a path the projection's may-evidence, not an execution;
-the reading decides.
+Joined states make a path the projection's may-evidence, not an execution; the
+reading decides.
 
-The census binary's diagnostics are byte-identical to the baseline
-([evidence/before-census-identity.json](evidence/before-census-identity.json)),
-so it perturbs nothing. [scripts/join_witnesses.py](scripts/join_witnesses.py)
-joins all 271 published leaves to their records (invocations of one body under
-different entry custody may differ in path; the class uses paths present in
-every invocation, and only `ctr_random_get`'s settled fields differ between its
-invocations): [evidence/before-joined.json.gz](evidence/before-joined.json.gz).
+The BEFORE census binary's diagnostics are byte-identical to the baseline
+([evidence/before-census-identity.json](evidence/before-census-identity.json)).
+[scripts/join_witnesses.py](scripts/join_witnesses.py) joins all 271 published
+leaves ([evidence/before-joined.json.gz](evidence/before-joined.json.gz)).
 
-Measured: **30** leaves have no clean path; **241** have one, of which **17**
-also have a strict path and **224** pass an identity to a refused call. The
-settled exit no longer reports **12** leaves (published on an intermediate
-iterate before a later join added an unresolved effect, `C02-P-ALIAS-LEAK-ORDER`).
-That is recorded, not a class: four of the twelve (`mk_vhost_read`) are true path
-witnesses the union join merely stops supporting.
+* Whether each path kind exists is the same in every joined invocation.
+* Only `ctr_random_get`'s `exit_unmodeled` differs between its invocations.
+* The settled exit no longer reports **12** leaves. They were published on an
+  intermediate iterate (`C02-P-ALIAS-LEAK-ORDER`). This is recorded, not used
+  as a class: four of the twelve (`mk_vhost_read`) are true path witnesses.
 
-Two earlier census runs are not evidence: the first used a hand-on reader that
-matched a place's root name anywhere in a refused statement (it would have
-withdrawn `mk_net_conn_create`'s real leak because `mk_net_fd_connect(conn->fd,
-…)` reads a member through `conn`), the second was stopped to add the
-unresolved/exempt fields.
+The handoff census ([evidence/handoff-census-run.json](evidence/handoff-census-run.json))
+is the cast-return tree built with the rule's `apply` disabled
+([evidence/census-rule-off.patch](evidence/census-rule-off.patch)), with
+reader v3 and the handed path. Its diagnostics differ from the baseline only by
+the cast-return deltas ([evidence/handoff-census-vs-before.json](evidence/handoff-census-vs-before.json)).
+All 270 of its leaves join ([evidence/handoff-joined.json.gz](evidence/handoff-joined.json.gz)).
 
-### 1.2 The classes
+### 1.2 The frozen classes
 
-* **(b) refused escape, 30 leaves / 26 functions.** Every witness passes a
-  refused statement that stores or returns the identity: `map->parent = (void
-  *) counter;` (the six `create_*_instance`), `*bufferp = buf;`, `*out_buf =
-  tmp_buf;`, `*routes = result;`, `*out_matches = matches;`, `*outbuf =
-  decompressed;`, `arr[cnt++] = val;`, `rktpar->metadata = metadata_bytes;`,
-  `otel_span->links = otel_links;`, `server->api = api;`, `conn = (struct
-  mk_sched_conn *) data;`, `event = &listener->event;`, and so on. The identity
-  left the projection by the statement's own syntax, which the analyzer can see.
-  Most are false by reading (the object is published to the caller or an
-  aggregate); `mk_server_listen_init`'s two `listener` leaves are also leaked in
-  C transitively through the abandoned `listeners`, and are still class (b):
-  the accusation about *this* site is unsupported once its interior address
-  escaped into `event`.
-* **(b) cast return, 1 leaf.** `mk_string_copy_substr`'s `return (char *)
-  buffer;`. The W43 entry counted three leaves "at a cast return"; the other two
-  (`rd_kafka_anyconf_dump`) sit at `return (const char **)arr;` but are the
-  refused stores `arr[cnt++] = val;` of refused-escape class.
+* **(b) refused escape, 30 leaves in 26 functions.** Every witness passes a
+  refused statement that stores or returns the identity. Examples:
+  * `map->parent = (void *) counter;` (the six `create_*_instance`);
+  * `*bufferp = buf;`, `*out_buf = tmp_buf;`, `*routes = result;`,
+    `*outbuf = decompressed;`;
+  * `arr[cnt++] = val;`, `rktpar->metadata = metadata_bytes;`,
+    `server->api = api;`, `event = &listener->event;`.
+* **(b) cast return, 1 leaf.** `mk_string_copy_substr`'s `return (char *) buffer;`.
+  The W43 entry counted three "at a cast return". The other two
+  (`rd_kafka_anyconf_dump`) are refused-escape stores.
 * **(c)**, each with its premise named in [reading.json](reading.json):
-  * `REFUSED-CALL-ARGUMENT-PREMISE` (81): the witness passes the identity to a
-    refused call. Reading finds the premise false every time: 44 follow an
-    uncontracted destructor (`destroy_metric` ×15, the `cmt_*_destroy` family,
-    `cio_destroy`, `mk_rconf_free`, …), 37 a retaining call (`cfl_list_add` ×14,
-    `rd_kafka_buf_new_shadow` at the nine `RD_UT_PASS` exits, `MK_TLS_SET` ×8,
-    `rd_kafka_OffsetFetchRequest`'s opaque, `rb_tree_insert`, `mk_iov_add`,
-    `flb_ring_buffer_write`, `pthread_create`).
-  * `MK-LIST-ADD-BORROWED-PUBLICATION` (8): `mk_list_add` is declared borrowed
-    on both positions, so linking `&obj->_head` into a caller's list publishes
-    nothing the projection can see.
-  * `LEAK-PATH-SCALAR-CORRELATION` (7): `decode_histogram_points` (a flag the
-    acquisition implies) and `rd_kafka_snappy_java_uncompress` (pass-2 checks of
-    bytes pass 1 accepted; a pass counter).
-  * `LEAK-UNDECIDED-NULL-TEST` (2), `DESTINATION-SUFFIX-PLACE-SPELLING` (2:
-    `(*map)->opts = calloc(…)` bound to `opts`), `CHAINED-ASSIGNMENT-INNER-DESTINATION`
-    (1: `d = safe = rd_malloc(…)` binds `d` only).
-* **(a)**: the strict or clean witness is reachable under the premises and
-  the resource is unreleased on it: the `RD_UT_ASSERT` failure exits of the
-  `rdunittest_msgset_errors.c` and `rdkafka_sasl_oauthbearer_oidc.c` tests and
-  `do_unittest_erase` (127), and five library error paths
-  (`pack_metric_metadata` ×4, `mk_vhost_read` ×4, `mk_net_conn_create`,
-  `mk_sched_launch_thread`, `mk_server_listen_init`) plus `ctr_random_get`'s
-  descriptor 0, natively observed by W43-DESCRIPTOR-NATIVE-CHECK.
+  * an uncontracted callee that releases the object (44) or retains it (37);
+  * `MK-LIST-ADD-BORROWED-PUBLICATION` (8);
+  * `LEAK-PATH-SCALAR-CORRELATION` (7);
+  * `LEAK-UNDECIDED-NULL-TEST` (2);
+  * `DESTINATION-SUFFIX-PLACE-SPELLING` (2);
+  * `CHAINED-ASSIGNMENT-INNER-DESTINATION` (1).
+* **(a)**: the witness is reachable under the premises, and the resource is
+  unreleased on it.
+  * 127 are the `RD_UT_ASSERT` failure exits of the `rdunittest_msgset_errors.c`
+    and `rdkafka_sasl_oauthbearer_oidc.c` tests and of `do_unittest_erase`.
+  * 11 are library error paths.
+  * 1 is `ctr_random_get`'s descriptor 0, natively observed by
+    W43-DESCRIPTOR-NATIVE-CHECK.
 
-One mechanism label changed after the prediction froze:
-`append_to_ring_buffer`'s exit at `flb_input_chunk.c:3656` was labelled
-callee-release with its function and is callee-retention
-(`flb_ring_buffer_write`). Its class, (c), is unchanged; so are all counts but
-the release/retention split (45/36 → 44/37).
+One mechanism label changed after the first prediction froze:
+`append_to_ring_buffer`'s exit at `flb_input_chunk.c:3656` is callee-retention.
+Its class is unchanged.
+
+### 1.3 The refused hand-on overlay
+
+[scripts/classify_handoff.py](scripts/classify_handoff.py) adds three fields to
+each frozen row: `mentioned` (a handed path exists), `withdrawn` (predicted
+withdrawn) and an attribution. The frozen classes are not rewritten.
+
+| Attribution | Leaves | Frozen reading |
+|---|---:|---|
+| `b:cast-return` | 1 | (b) |
+| `b:refused-escape` | 30 | (b) |
+| `h:refused-handoff` | **222** | (a) test-failure path 118, (a) error path 10, (c) callee release 44, (c) callee retention 37, (c) branch correlation 7, (c) borrowed list insertion 5, (c) undecided null test 1 |
+| stays (no refused mention) | **18** | (a) `ut_sasl_oauthbearer_oidc_assertion_create` 9, `mk_net_conn_create` 1, `ctr_random_get` 1; (c) borrowed `mk_list_add` 3, destination suffix 2, chained assignment 1, undecided null test 1 |
+
+The refused statements behind the 222 are mostly uncontracted calls taking the
+identity:
+* the msgset unit-test writers `ut_write_msgset_v2_header`,
+  `ut_build_valid_msgset_v2`, `rd_kafka_buf_new_shadow`, `ut_put_be32` and
+  `rd_crc32c`;
+* the `cmt_*`/`destroy_*` destructors;
+* refused indirect accesses and branch conditions that name the identity.
+
+The nine `ut_sasl_oauthbearer_oidc_assertion_create` leaves stay:
+`RD_UT_ASSERT(strlen(payload_part) > 0, …)` names the buffer only in a
+modelled condition, and the refused `fprintf` beside it on the macro line does
+not name it.
 
 ## 2. The repairs
 
 ### 2.1 The cast return (`RETURN-CAST-PLACE-NOT-ESCAPED`)
 
-[`legacy_cast_return.rs`](../../../crates/qcore-c-gateway/src/legacy_cast_return.rs),
-one hook in the `return` arm of `legacy_c.rs`. `return ( TYPE ) OPERAND ;` with
-`TYPE` a run of identifiers and `*`s (a chain of casts allowed):
+[`legacy_cast_return.rs`](../../../crates/qcore-c-gateway/src/legacy_cast_return.rs)
+adds one hook in the `return` arm of `legacy_c.rs`. It reads
+`return ( TYPE ) OPERAND ;` with `TYPE` a run of identifiers and `*`s; a chain
+of casts is allowed.
 
 | Target | Operand | Answer |
 |---|---|---|
@@ -154,197 +174,280 @@ one hook in the `return` arm of `legacy_c.rs`. `return ( TYPE ) OPERAND ;` with
 | non-pointer | a name the reader commits to as a pointer | **refused** |
 | anything | untracked scalar data, an uncommitted operand, not one cast | pre-card parse |
 
-The refusal is an `Unsupported` node before a place-less exit, so the
-refused-escape rule withdraws the returned identity. No new
-`LegacyInstruction`, so `admits_descriptor_read` is untouched.
+There is no new `LegacyInstruction`, so `admits_descriptor_read` is untouched.
+The first AFTER run was withdrawn ([first-after-attempt.json](first-after-attempt.json)):
+it escaped the operand's place directly, which admitted 22 member-chain casts
+the uncast return refuses and moved 5 functions Unknown → Safe on that
+admission alone. The rule now delegates to the uncast return.
 
-**The first AFTER run was withdrawn as the arbiter** ([first-after-attempt.json](first-after-attempt.json)):
-its rule escaped the operand's place directly, which admitted 22 member-chain
-casts the uncast return refuses (`return (const rd_kafka_Node_t **)
-partition->isr;`) and moved 5 functions Unknown → Safe on that admission alone.
-The cast then added an admission of its own. The rule now delegates to the
-uncast return, so every existing check (the strict place escape, the
-return-position pointer-chain widening that escapes nothing, the return call,
-their refusals) decides the operand.
+Lean: `QCore.CastReturnEscape`, 12 audited theorems. They cover:
+* delegation only on a carrier-preserving conversion of a place;
+* every integer↔pointer crossing of a possibly tracked value refused;
+* scalar data unchanged;
+* the cast decided as the uncast return;
+* only withdrawal;
+* non-vacuity.
 
-Lean: `QCore.CastReturnEscape`, 12 audited theorems: delegation only on a
-carrier-preserving conversion of a place; every integer↔pointer crossing of a
-possibly tracked value refused; scalar data unchanged; the cast is the uncast
-return; the rule only withdraws; the corpus leak withdrawn; non-vacuity.
+### 2.2 The refused hand-on rule (`W44-REFUSED-HANDOFF-LEAK-CLAIMS`)
 
-### 2.2 The refused escape
+[`legacy_refused_operands.rs`](../../../crates/qcore-c-gateway/src/legacy_refused_operands.rs)
+adds one hook each in the work list and in the settled exit pass of
+`legacy_c.rs`. `PublicationFacts` gains `line_reads`: per preprocessed line, a
+**condition** table (an `if`/`while`/`switch` controlling expression and every
+`for` clause) and a **statement** table. Each table maps the places the line
+hands on to the strongest tag:
+* `Escape`: a store's value side or a `return` operand;
+* `Call`: a call argument;
+* `Operand`: any other evaluated position, including `&x` and an interior
+  address `&p->f`.
 
-[`legacy_refused_operands.rs`](../../../crates/qcore-c-gateway/src/legacy_refused_operands.rs),
-one hook each in the work list and the settled exit pass of `legacy_c.rs`.
-`PublicationFacts` gains `line_reads`: per preprocessed line, the places a
-statement hands on, tagged `Escape` (a store's right-hand side or a `return`
-operand, outside every call's argument list, as a value or an address inside
-the object) or `Call`. A store into a record object of the function itself
-(`local.slot = h;`, not through `->` or `*`) hands nothing on: the value stays
-in storage that ends with the call, and the accusation stays, as the
-publication rule leaves a local destination alone (the first gate run caught
-this: `publication_custody.rs`'s local-aggregate control). After a node whose
-own transfer reported `Unsupported`,
-the live sites bound to its `Escape` places, and what they contain or link,
-join `unresolved_effect_sites`.
+A node refused as a controlling expression reads the condition table; any
+other refused node reads the statement table.
 
-The rule only adds unresolved effects: it never accuses, never discharges, and
-fires only where the function keeps a refusal, so it cannot make a function
-`Safe`. The line key unions a macro line's statements and the unresolved effect
-joins by union; both only withdraw (`REFUSED-ESCAPE-LINE-GRANULARITY`), and the
-arbiter measured no collateral.
+After a node whose own transfer reported `Unsupported`, every site that is live
+before it and bound to a handed place joins `unresolved_effect_sites`, together
+with everything it contains or links to. The state join is the existing union,
+and `report_leaks` already skips such a site.
 
-Lean: `QCore.RefusedEscapeCustody`, 10 audited theorems: unresolved effects
-only grow, statuses untouched, an admitted node untouched; only withdrawal, an
-unhanded site keeps its report, a handed-on live site is withdrawn;
-distribution over the union join; never `Safe`; the union-join collateral
-stated by a witness.
+What is **not** a mention (`REFUSED-OPERAND-MEMBER-VALUE-READ`):
+* a member value read through the identity (`p->len`, `p->buf[i]`);
+* an assignment's destination (`p->f = …`, `*out = …`, `p[i] = …`);
+* the base of a subscript;
+* the operand of `sizeof`.
 
-### 2.3 What was examined and not repaired
+Only a mention the classifier's tokens show counts, so a name inside an
+unexpanded macro body is not one. The first reader matched a root name
+anywhere, and would have withdrawn `mk_net_conn_create`'s true leak through
+`mk_net_fd_connect(conn->fd, …)`.
+
+The rule only adds unresolved effects. It never accuses and never discharges,
+and it fires only at a node that reported `Unsupported`, so every function it
+touches keeps that refusal and cannot become `Safe`. It withdraws more than the
+statement strictly warrants in two ways, both only withdrawing
+(`REFUSED-HANDON-LINE-GRANULARITY`):
+* the line key unions the statements a macro puts on one line;
+* the union join carries the effect onto every path through the node.
+
+Lean: `QCore.RefusedHandOnCustody`, renamed from `RefusedEscapeCustody` with
+its docstrings rewritten for any hand-on; 10 audited theorems. They cover:
+* unresolved effects only grow; statuses are untouched; an admitted node is
+  untouched;
+* only withdrawal: an unhanded site keeps its report, and a handed-on live site
+  is withdrawn;
+* distribution over the union join;
+* never `Safe`;
+* the union-join collateral stated by a witness.
+
+### 2.3 The three exposed mechanisms (`W44-CALL-ARGUMENT-EXPOSED-LEAKS`)
+
+W44-INDIRECT-CALL-ARGUMENT-ACCESS exposed 11 corpus leaves, false by reading,
+from three base semantics. None is a baseline leaf here: each needs that card's
+admission to be tracked. [`tests/exposed_leak_mechanisms.rs`](../../../crates/qcore-c-gateway/tests/exposed_leak_mechanisms.rs)
+pins each on a body with no call-argument access and one statement per line.
+
+With the rule disabled, each fixture is `Unsafe` with a `leak`, reproducing the
+base. With it on, each is `Unknown` with no `leak`:
+
+| Mechanism | Refused statement that withdraws it |
+|---|---|
+| 1. unsanctioned out-slot store `*out = p` | the store itself (`store through *out without an out-parameter contract`), value side `p` |
+| 2. object linked into a returned owner (`cmt_histogram_buckets_create_*`; the pinned shape and the corpus shape) | the link store `b->upper = upper`, itself refused as indirect access, value side `upper`; the typed fill `upper[i] = …` is not a mention |
+| 3. release through an uncontracted helper (`free_metrics`, `free_resource_attributes`) | the refused call, argument `p` |
+
+So all three fall under the one hand-on rule. Neither escape is modelled; the
+projection states only that it cannot tell. The integrator re-checks the 11
+corpus leaves on the combined tree.
+
+### 2.4 What was examined and not repaired
 
 * **Settled reporting.** Reporting leaks only from settled exits would remove
-  the 12 intermediate-iterate leaves, but four are true (`mk_vhost_read`). The
-  measurement is appended to `C02-P-ALIAS-O`.
-* **Call arguments.** Withdrawing on every refused call handed an identity
-  would also withdraw the class (a) test-failure leaves (`strlen(payload_part)`
-  shares a line with the refused `fprintf` of `RD_UT_ASSERT`). What a callee
-  does is a callee fact: `REFUSED-CALL-ARGUMENT-PREMISE`, per callee.
+  the 12 intermediate-iterate leaves, but four are true (`mk_vhost_read`). After
+  the rule, 11 of the 12 are withdrawn anyway; `rd_kafka_sasl_safe_string`'s
+  stays. The measurement is appended to `C02-P-ALIAS-O`.
+* **The strict-suffix destination.** `unpack_basic_type`'s two leaves bind
+  `(*map)->opts = calloc(…)` to `opts`. They belong to
+  **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**, which has started; they are
+  recorded here as its corpus evidence, not repaired.
+* **`rd_string_render`'s three removed `unknown_alias`** (§3) are not
+  localised, and are registered as `REFUSED-HANDON-UNKNOWN-ALIAS-SHIFT`.
 
-### 2.4 Tests and pins
+### 2.5 Tests and pins
 
-* New [`tests/leak_pin_audit.rs`](../../../crates/qcore-c-gateway/tests/leak_pin_audit.rs)
-  (11 tests): the pointer casts and the cast chain escape for heap and stream;
-  a released identity under a cast reports what the plain return reports;
-  member chains are decided as the uncast return (the corpus
-  `rd_kafka_TopicPartitionInfo_isr` shape certifies); integer casts of a
-  declared pointer and non-`int` casts of a descriptor refuse; `(int) fd` equals
-  `return fd;`; scalar casts unchanged; a refused store or return withdraws only
-  the identity it hands on; a call argument and a member-value store keep their
-  accusation.
-* Unit tests: 12 for the hand-on reader, 4 for the cast shape reader.
-* **Pins flipped deliberately**, each a leak that rested on the repaired
-  mechanism; every one still asserts non-`Safe`, and none weakens a refusal:
-  * `descriptor_custody.rs::a_cast_return_is_not_an_escape_for_any_kind` (the
-    W43 boundary, `Unsafe`/`leak`) is now `a_cast_return_escapes_for_every_pointer_kind`
-    (`Safe`, no diagnostic), the discharged `RETURN-CAST-PLACE-NOT-ESCAPED`;
-  * `legacy_summary` unit `an_overwritten_out_slot_leaks_the_first_resource`:
-    `fill`'s leak rested on two refused `*out = …` stores; now `Unknown`, still
-    no summary for `fill`;
-  * `constructor_residuals.rs::a_write_through_a_dereferenced_call_result_never_discharges_a_resource`:
-    `(*d_handle ()) = h;` is still never a discharge; now `Unknown`, 0 leaks;
-  * `indexed_collection.rs::storing_a_named_pointer_keeps_the_refusal_it_had`:
-    `v[0] = p` keeps its refusal; the leak of `p`, false by reading (`x_free(v[0])`
-    frees it), is withdrawn; now `Unknown`;
-  * `publication_custody.rs::a_store_through_a_local_pointer_to_the_object_keeps_its_pre_existing_answer`
-    (`CTWIN-PUBLISH-INDIRECT-POINTER`): `*p = h` with `p = &g_published` is still
-    no recognised publication; its false leak is withdrawn; now `Unknown`.
+* [`tests/leak_pin_audit.rs`](../../../crates/qcore-c-gateway/tests/leak_pin_audit.rs),
+  12 tests, each asserting the complete diagnostic vector and status:
+  * cast returns for heap and stream, with a cast chain and member chains
+    decided as the uncast return, and the integer and descriptor refusals;
+  * a refused store or return, or a call argument including `&b->item`,
+    withdraws only the identity it names;
+  * a member-value store and a modelled condition beside a refused statement
+    keep the accusation.
+* [`tests/exposed_leak_mechanisms.rs`](../../../crates/qcore-c-gateway/tests/exposed_leak_mechanisms.rs),
+  4 tests (§2.3).
+* Unit tests: 15 for the hand-on reader and 4 for the cast shape reader.
+* **Pins flipped deliberately.** Every one still asserts non-`Safe`, none
+  weakens a refusal, and each was a leak that rested on a repaired mechanism.
+  * Cast return:
+    * `descriptor_custody.rs::a_cast_return_is_not_an_escape_for_any_kind` is
+      now `a_cast_return_escapes_for_every_pointer_kind` (`Safe`), the
+      discharged `RETURN-CAST-PLACE-NOT-ESCAPED`.
+  * A refused store or return:
+    * the `legacy_summary` unit test `an_overwritten_out_slot_leaks_the_first_resource`;
+    * `constructor_residuals.rs::a_write_through_a_dereferenced_call_result_never_discharges_a_resource`;
+    * `indexed_collection.rs::storing_a_named_pointer_keeps_the_refusal_it_had`;
+    * `publication_custody.rs::a_store_through_a_local_pointer_to_the_object_keeps_its_pre_existing_answer`;
+    * `publication_custody.rs::an_indirect_store_into_a_local_aggregate_publishes_nothing`
+      (the local-aggregate control);
+    * `derived_result_returned.rs::a_result_derived_from_a_non_formal_base_is_refused`.
+  * A refused call or condition:
+    * `branch_condition_calls.rs::a_short_circuit_release_stays_refused_and_cannot_hide_the_live_resource`;
+    * `return_refused_call_lowering.rs` (`z_take(p)`: 1 leak → 0, still not
+      certified);
+    * `scalar_member_store.rs::a_local_helper_cannot_launder_the_store_into_a_w4_summary`
+      (`Unsafe` → `Unknown`);
+    * `indexed_collection.rs::a_stream_element_keeps_the_refusal_it_had`, on a
+      one-line body where the line key also reads `x_free(v)`;
+    * `loader_abi.rs` (the withdrawn call site) and `loader_abi_modes.rs` (two
+      arms): `LOADER-ABI-WITHDRAWAL-UNSAFE`'s direction is now `Unknown`.
 
 ## 3. Arbiter (constraint 7)
 
-One command shape, [`../w43-return-expression/scripts/run_audit.py`](../w43-return-expression/scripts/run_audit.py),
-`QCORE_CLANG=/usr/bin/clang`, the wave-20 ChunkIO package; identities by
-`baseline_identity.py --root-alias <this worktree>=…/hungry-thompson-1740da`.
+All runs use one command shape,
+[`../w43-return-expression/scripts/run_audit.py`](../w43-return-expression/scripts/run_audit.py),
+with `QCORE_CLANG=/usr/bin/clang` and the wave-20 ChunkIO package. Identities
+are checked by `baseline_identity.py --root-alias <this worktree>=…/hungry-thompson-1740da`.
 
 | Run | Tree | Binary | Exit | Record |
 |---|---|---|---:|---|
 | BEFORE | `c1e69bb5` | `80bc4122…` | 0 | [before-run.json](before-run.json) |
-| census | `c1e69bb5` + census (feature on) | `5ee87031…` | 0 | [evidence/before-census-run.json](evidence/before-census-run.json) |
+| census | `c1e69bb5` + census | `5ee87031…` | 0 | [evidence/before-census-run.json](evidence/before-census-run.json) |
 | AFTER (withdrawn) | `11915d99` | `03ce265e…` | 0 | [first-after-attempt-run.json](first-after-attempt-run.json) |
-| AFTER 2 | `8cc59a8b` | `d9eec38e…` | 0 | [after2-run.json](after2-run.json) |
-| **AFTER** | `3eebf2e3` | `0415f39a…` | 0 | [after-run.json](after-run.json), [artifacts/](artifacts/) |
+| AFTER v2 (superseded) | `3eebf2e3`, refused escape only | `0415f39a…` | 0 | [after-run.json](after-run.json), [attribution-v2.json](attribution-v2.json), [manifest](after-v2-artifacts-manifest.json) |
+| handoff census | `3eebf2e3` + reader v3 + handed path, rule off | `282f5976…` | 0 | [evidence/handoff-census-run.json](evidence/handoff-census-run.json) |
+| **AFTER** | `1e5a9bb5` | `eecc6f98…` | 0 | [after4-run.json](after4-run.json), [artifacts/](artifacts/) |
 
-AFTER 2 and AFTER are byte-identical on all five artifacts: the
-local-aggregate narrowing of §2.2, added after the first gate run, moved no
-corpus leaf.
+**BEFORE** ([before-identity.json](before-identity.json)) is byte-identical to
+`w43-indexed-resource-collections/integration/artifacts/` in diagnostics,
+chunk-contracts and source. Contracts are identical after the root alias.
+Source-effects differ only in the path-derived digests.
 
-**BEFORE** ([before-identity.json](before-identity.json)): diagnostics,
-chunk-contracts and source byte-identical to
-`w43-indexed-resource-collections/integration/artifacts/`; contracts identical
-after the root alias; source-effects differ only in `build_digest`,
-`configuration_digest`, `task_digest`, `obligation_id`, `coverage[0]` and the
-`resource_contracts:<digest>` key.
-
-**AFTER vs BEFORE** ([attribution.json](attribution.json),
-[scripts/attribute.py](scripts/attribute.py)): contracts and source-effects
-byte-identical to BEFORE (same checkout); chunk-contracts and source
-byte-identical to the baseline. Every diagnostics delta:
+**AFTER** ([after-vs-baseline-identity.json](after-vs-baseline-identity.json))
+has chunk-contracts and source byte-identical to the baseline, and contracts
+identical after the alias. Its contracts and source-effects are byte-identical
+to BEFORE's (same checkout). Every diagnostics delta
+([attribution.json](attribution.json), [scripts/attribute.py](scripts/attribute.py)
+over the overlay):
 
 | Delta | Leaves | Attribution |
 |---|---:|---|
-| leak removed | 31 | exactly the class (b) leaves: 30 refused escape, 1 cast return; 0 class (a)/(c) |
-| unsupported removed | 4 | `unmodeled … in return expression` at a pointer cast now decided as the uncast return: `rd_kafka_anyconf_dump` (`(const char **)arr` → `return arr;`), and `rd_kafka_TopicDescription_partitions`, `rd_kafka_TopicPartitionInfo_isr`, `rd_kafka_TopicPartitionInfo_replicas` (`(const T **) p->field` → the admitted chain return) |
-| unknown_alias added | 1 | `rd_buf_get_segment_at_offset` (`rdbuf.c:230`): `return (rd_segment_t *)seg;` decided as `return seg;`, which reports the unresolved identity `seg` exactly as the uncast return does |
+| leak removed | 253 | exactly the leaves the overlay marks withdrawn: `b:cast-return` 1, `b:refused-escape` 30, `h:refused-handoff` 222; 0 collateral, 0 predicted withdrawal missed |
+| unsupported removed | 4 | cast return: `rd_kafka_anyconf_dump` and the three `rdkafka_admin.c` accessors, decided as their uncast return |
+| unknown_alias added | 1 | cast return: `rd_buf_get_segment_at_offset` (`return (rd_segment_t *)seg;` reports `seg` as `return seg;` does) |
+| unknown_alias added | 18 | the rule: a later Owned or aggregate use of an identity it marked unresolved reports an unresolved identity (`initialize_metrics_data` 1, `initialize_resource_metrics` 3, `otlp_array_value_initialize`/`otlp_kvlist_value_initialize` in cmetrics and ctraces 4, `append_metric_to_timeseries` 1, `flb_input_chunk_write_header_v2` 9) |
+| unknown_alias removed | 3 | the rule: `rd_string_render`'s `rd_free(buf)` error exits (`rdstring.c:109, :121, :134`), in a loop whose refused `callback(tmpkey, buf + of, …)` hands `buf` on; not localised, and no status moves (21 refusals kept) |
 
-Movement: 25 functions provisional Unsafe → Unknown (the 25 predicted, each
-keeping a refusal); **3 functions Unknown → Safe** (the three `rdkafka_admin.c`
-accessors above, whose only refusal was the cast return: Safe relative to the
-declared premises and the existing return-position chain rule, as the uncast
-source would be); 9 units Unsafe → Unknown. Violation candidates: the 240
-remaining leaks are the 139 class (a) and 101 class (c) leaves, each with the
-witness status in [classification.json](classification.json); none added. The
-AFTER artifacts are the new baseline ([artifacts/manifest.json](artifacts/manifest.json));
+Movement:
+* 76 functions provisional Unsafe → Unknown: every leak of each was withdrawn,
+  and each keeps a refusal.
+* **3 functions Unknown → Safe**: the `rdkafka_admin.c` accessors whose only
+  refusal was the cast return. They are `Safe` relative to the declared
+  premises and the existing return-position chain rule, as the uncast source
+  would be.
+* 35 units Unsafe → Unknown.
+* Violation candidates: the 18 remaining leaks are 11 class (a) and 7 class (c)
+  leaves, each with its witness in the overlay. No
+  `use_after_release`/`invalid_release`/`double_release` leaf was added or
+  removed.
+
+The AFTER artifacts are the new baseline ([artifacts/manifest.json](artifacts/manifest.json));
 `w43-indexed-resource-collections/integration/artifacts/` is its frozen
 predecessor.
 
 ## 4. Prediction and outcome
 
-[PREDICTION.md](PREDICTION.md) was committed (`50f4d5f1`) before any rule was
-wired.
+[PREDICTION.md](PREDICTION.md) (`50f4d5f1`) predicted the first design. Its
+outcome at AFTER v2:
+* leak 271 → 240, as predicted;
+* the 25 predicted functions moved;
+* 3 accessors moved Unknown → Safe that it missed.
+
+The coordinator's rule then superseded that design. [PREDICTION-HANDOFF.md](PREDICTION-HANDOFF.md)
+was committed (`c49c053b`) before the rule (`1e5a9bb5`):
 
 | Predicted | Measured |
 |---|---|
-| leak 271 → 240, exactly the 31 class (b) leaves, no collateral | **yes** |
-| functions 294 / 60 / 4,480 (25 Unsafe → Unknown, 0 → Safe) | 297 / 60 / 4,477: the 25, and **3 Unknown → Safe** the prediction missed (cast returns of admitted chains) |
-| units 3 / 34 / 144 / 4 | **yes** |
-| unknown_alias and unsupported ±5 | +1 and −4 |
-| no new accusation | **yes** |
-
-The missed three are the cast rule working as designed (a pointer cast is the
-uncast return), not a new admission; the first attempt's five were a new
-admission, and were withdrawn.
+| leak 271 → 18, exactly the 253 withdrawn leaves | **yes**, 0 collateral, 0 missed |
+| functions 297 / 9 / 4,528 (76 Unsafe → Unknown, 3 cast-return Unknown → Safe, no other Safe) | **yes** |
+| units 3 / 8 / 170 / 4 | **yes** |
+| unsupported −4; unknown_alias +1 and non-decreasing otherwise | −4; **+16 net**: +19 and −3. The three removals in `rd_string_render` break the "non-decreasing" part (§3) |
+| no violation candidate moves | **yes** |
+| the three exposed mechanisms `Unknown`, no `leak` | **yes** |
 
 ## 5. Ledger
 
-* **Retired**: `RETURN-CAST-PLACE-NOT-ESCAPED` ([retired-followups.json](retired-followups.json));
-  its re-declaration half is rehomed to `W44-DLOPEN-DECLARATION-REMEASURE`.
-* **Registered** ([followups.json](followups.json)): `REFUSED-CALL-ARGUMENT-PREMISE`,
-  `MK-LIST-ADD-BORROWED-PUBLICATION`, `LEAK-PATH-SCALAR-CORRELATION`,
-  `LEAK-UNDECIDED-NULL-TEST`, `DESTINATION-SUFFIX-PLACE-SPELLING` (it is also a
-  discharging-direction hazard, stated in the entry), `CHAINED-ASSIGNMENT-INNER-DESTINATION`,
-  `W44-DLOPEN-DECLARATION-REMEASURE`, `CAST-RETURN-UNCOMMITTED-OPERAND`,
-  `REFUSED-ESCAPE-LINE-GRANULARITY`. No (d) group exists.
-* **Amended** ([amended-followups.json](amended-followups.json)): `C02-P-ALIAS-O`
-  (the -LEAK-ORDER measurement) and `RETURN-REFUSAL-LEAK-REPORT-PREMISE`
-  (narrowed, not discharged).
-* `corpus.cycle19_raw_units` points at [artifacts/](artifacts/); previous row in
-  [previous-corpus-row.json](previous-corpus-row.json).
+* **Retired**: `RETURN-CAST-PLACE-NOT-ESCAPED` ([retired-followups.json](retired-followups.json)).
+  Its re-declaration half is rehomed to `W44-DLOPEN-DECLARATION-REMEASURE`.
+* **Registered** ([followups.json](followups.json)):
+  * `REFUSED-HANDOFF-WITHDRAWN-ACCUSATIONS`: 222 withdrawn, 128 of them
+    validated by reading;
+  * `MK-LIST-ADD-BORROWED-PUBLICATION` (3 still published);
+  * `LEAK-PATH-SCALAR-CORRELATION` (0 still published);
+  * `LEAK-UNDECIDED-NULL-TEST` (1);
+  * `DESTINATION-SUFFIX-PLACE-SPELLING`, to merge into
+    W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE;
+  * `CHAINED-ASSIGNMENT-INNER-DESTINATION`;
+  * `W44-DLOPEN-DECLARATION-REMEASURE`;
+  * `CAST-RETURN-UNCOMMITTED-OPERAND`;
+  * `REFUSED-HANDON-LINE-GRANULARITY`;
+  * `REFUSED-OPERAND-MEMBER-VALUE-READ`;
+  * `REFUSED-HANDON-UNKNOWN-ALIAS-SHIFT`.
+
+  No (d) group exists.
+* **Amended** ([amended-followups.json](amended-followups.json)):
+  * `C02-P-ALIAS-O`: the -LEAK-ORDER measurement, 11 of 12 now withdrawn;
+  * `RETURN-REFUSAL-LEAK-REPORT-PREMISE`: narrowed, not discharged.
+* `corpus.cycle19_raw_units` points at [artifacts/](artifacts/); the previous
+  row is in [previous-corpus-row.json](previous-corpus-row.json).
+* `W44-REFUSED-HANDOFF-LEAK-CLAIMS` and `W44-CALL-ARGUMENT-EXPOSED-LEAKS` are
+  registered on their own cards' branches, not on this base. This card
+  implements the first and pins the second's mechanisms (§2.3). Their
+  retirement is the integrator's call on the combined tree.
 
 ## 6. Validation
 
-See [gate.json](gate.json) and the table below; exits captured to files,
-never piped, logs in this worktree's `measure/gate/`.
+See [gate.json](gate.json) and the table below. Exits are captured to files,
+never piped; logs are in this worktree's `measure/gate/`.
 
 GATE_TABLE
 
 ## 7. For the integrator
 
-* **Constraint 7** still reads 272 in its first sentence; the pin is now 240.
-  The chain: 271 → 240, exactly the 31 class (b) leaves (§3).
-* **Composition with the concurrent wave-44 cards.** The refused-escape rule
-  and the call-argument residual meet W44-CORPUS-CALLEE-SUMMARIES and
-  W44-LIBC-RESIDUALS: a new summary or declaration turns a refused call into a
-  modelled one, which can only move a (c) leaf toward discharge or keep it. A
-  new refusal elsewhere (W44-INDIRECT-*) can make a statement refused whose
-  value side hands an identity on, and then withdraws it; re-run the census
-  (`scripts/run_census.py`) on the combined tree to re-attribute.
-* **Files likely to conflict**: `crates/qcore-c-gateway/src/legacy_c.rs` (module
-  declarations after `descriptor_custody`, the `return` arm, the two transfer
-  call sites in `analyze_cfg_with_entry`, the census call after
-  `report_collection_violations`), `src/publication.rs` (`PublicationFacts`
-  gains `line_reads`), `tests/descriptor_custody.rs` (the flipped pin),
-  `proof/QCore.lean` (two imports after `KindedCustody`),
-  `docs/reviews/r0_3/acceptance_matrix.json`, `docs/STATUS.md`,
-  `docs/development/increments/wave-44.md`, `docs/reports/INDEX.md`.
+* **Constraint 7** still reads 272 in its first sentence; the pin is now **18**.
+  The chain: 271 → 18, exactly the 253 withdrawn leaves (§3).
+* **Constraint-8 direction**: `LOADER-ABI-WITHDRAWAL-UNSAFE`'s withdrawn call
+  site is a refused statement handing the identity on, so it now yields
+  `Unknown` rather than a provisional `Unsafe`. The loader pins are flipped.
+* **Composition.**
+  * W44-COLLECTION-ALLOCATION: its 107 of 125 new claims attributed to a
+    refused hand-off should be withdrawn by this rule on the combined tree.
+    Re-run the handoff census (`scripts/run_census.py` on a rule-off build,
+    `scripts/classify_handoff.py`) to attribute them.
+  * W44-INDIRECT-CALL-ARGUMENT-ACCESS: its 11 exposed leaves are pinned here by
+    mechanism (§2.3).
+  * W44-CORPUS-CALLEE-SUMMARIES and W44-LIBC-RESIDUALS turn refused calls into
+    modelled ones, which re-decides a withdrawn leaf rather than withdrawing
+    it; that is how `REFUSED-HANDOFF-WITHDRAWN-ACCUSATIONS` is discharged.
+  * The rule composes with descriptor custody, `Derivation::Derived` and the
+    `B[X++]` forget rule, because it acts only on a refused node's output.
+* **Files likely to conflict**:
+  * `crates/qcore-c-gateway/src/legacy_c.rs`: module declarations after
+    `descriptor_custody`, the `return` arm, the two transfer call sites in
+    `analyze_cfg_with_entry`, and the census call after
+    `report_collection_violations`;
+  * `src/publication.rs`: `PublicationFacts` gains `line_reads`;
+  * the flipped test files listed in §2.5;
+  * `proof/QCore.lean`: two imports after `KindedCustody`;
+  * `docs/reviews/r0_3/acceptance_matrix.json`, `docs/STATUS.md`,
+    `docs/development/increments/wave-44.md` and `docs/reports/INDEX.md`.
 
 ## Reproduction
 
@@ -355,9 +458,13 @@ cargo build --release -p qcore-compiler --example cycle19_fluent_bit_libraries_a
 python3 docs/reports/w44-leak-pin-audit/scripts/run_census.py <census binary> measure/census c1e69bb5+census
 python3 docs/reports/w44-leak-pin-audit/scripts/join_witnesses.py <baseline diagnostics.json.gz> measure/census/leak-witness.jsonl joined.json
 python3 docs/reports/w44-leak-pin-audit/scripts/classify.py joined.json docs/reports/w44-leak-pin-audit/reading.json classification.json classification.md
-python3 docs/reports/w44-leak-pin-audit/scripts/predict.py <baseline diagnostics.json.gz> classification.json prediction-movement.json
+# rule-off census (apply evidence/census-rule-off.patch, build with the feature, revert)
+python3 docs/reports/w44-leak-pin-audit/scripts/run_census.py <rule-off binary> measure/census-handed <label>
+python3 docs/reports/w44-leak-pin-audit/scripts/join_witnesses.py measure/census-handed/resource-diagnostics.json measure/census-handed/leak-witness.jsonl handed-joined.json
+python3 docs/reports/w44-leak-pin-audit/scripts/classify_handoff.py classification.json handed-joined.json handoff-classification.json handoff-classification.md
+python3 docs/reports/w44-leak-pin-audit/scripts/predict.py <baseline diagnostics.json.gz> handoff-classification.json prediction-handoff-movement.json
 python3 docs/reports/w43-return-expression/scripts/run_audit.py measure/after <commit>
-python3 docs/reports/w44-leak-pin-audit/scripts/attribute.py measure/before/resource-diagnostics.json measure/after/resource-diagnostics.json classification.json attribution.json
-python3 docs/reports/w44-leak-pin-audit/scripts/class_a_table.py classification.json class-a.md
+python3 docs/reports/w44-leak-pin-audit/scripts/attribute.py measure/before/resource-diagnostics.json measure/after/resource-diagnostics.json handoff-classification.json attribution.json
+python3 docs/reports/w44-leak-pin-audit/scripts/class_a_table.py classification.json class-a.md handoff-classification.json
 python3 docs/reports/w44-leak-pin-audit/scripts/update_ledger.py
 ```

@@ -40,7 +40,7 @@ GROUNDS = {
         "audited theorems; crates/qcore-c-gateway/tests/leak_pin_audit.rs). The arbiter withdrew the one leak "
         "its audit attributes to the shape (mk_string_copy_substr, mk_string.c:665); the two "
         "rd_kafka_anyconf_dump leaves the entry counted at a cast return are refused stores of `val` into "
-        "`arr`, withdrawn by the card's refused-escape rule. The re-declaration half is rehomed to "
+        "`arr`, withdrawn by the card's refused hand-on rule. The re-declaration half is rehomed to "
         "W44-DLOPEN-DECLARATION-REMEASURE, because it needs the library-handle kind W43 withdrew. "
         "docs/reports/w44-leak-pin-audit/README.md."
     ),
@@ -53,14 +53,17 @@ AMENDMENTS = {
         "unpack_static_label, decode_histogram_points (4), cmt_map_create, rd_kafka_sasl_safe_string and "
         "mk_vhost_read (4). The card did not repair it: reporting from settled states would withdraw "
         "mk_vhost_read's four leaves, which source reading shows to be true path witnesses, only because "
-        "the unresolved effect joins by union (docs/reports/w44-leak-pin-audit/README.md)."
+        "the unresolved effect joins by union. After the card's refused hand-on rule, 11 of the 12 are "
+        "withdrawn (their identity is named in a refused statement on the path) and only "
+        "rd_kafka_sasl_safe_string's stays published (docs/reports/w44-leak-pin-audit/README.md)."
     ),
     "RETURN-REFUSAL-LEAK-REPORT-PREMISE": (
-        " W44-LEAK-PIN-AUDIT narrowed it without discharging it: a refused `return` (or store) whose value "
-        "side hands a live identity on now marks that identity with an unresolved effect, so the exit no "
-        "longer accuses the identity the return hands back (legacy_refused_operands.rs, "
-        "QCore.RefusedEscapeCustody); a refused exit that does not hand the identity on still reports it, "
-        "and the constraint-7 sentence and the two module notes are unchanged."
+        " W44-LEAK-PIN-AUDIT narrowed it without discharging it: a refused statement that names a live "
+        "identity (a `return` operand or store value, a call argument, an operand or an address) now marks "
+        "that identity with an unresolved effect, so the exit no longer accuses the identity a refused return "
+        "hands back (legacy_refused_operands.rs, QCore.RefusedHandOnCustody); a refused exit that does not "
+        "name the identity still reports it, and the constraint-7 sentence and the two module notes are "
+        "unchanged."
     ),
 }
 
@@ -111,13 +114,17 @@ def main() -> int:
             "note": "W44-LEAK-PIN-AUDIT, 2026-09-25, on base c1e69bb5. BEFORE reproduces the "
             "W43-INDEXED-RESOURCE-COLLECTIONS integration diagnostics byte for byte. Every one of the 271 "
             "leak leaves is classified from a leak-witness census and source reading: (a) validated 139, "
-            "(b) projection artifact 31, (c) premise or approximation gap 101, (d) 0. Two class (b) "
-            "mechanisms repaired with Lean parity (the cast return, RETURN-CAST-PLACE-NOT-ESCAPED; the "
-            "refused escape): exactly the 31 class (b) leaves withdrawn, 0 collateral; 25 functions and 9 "
-            "units provisional Unsafe -> Unknown; 3 functions Unknown -> Safe because a pointer cast of a "
-            "never-bound member chain is now decided as the uncast return the existing return-position rule "
-            "admits. Leak 271 -> 240. Raw units remain unpromoted; provisional Unsafe is not an upstream "
-            "defect claim. Previous row preserved in docs/reports/w44-leak-pin-audit/previous-corpus-row.json.",
+            "(b) projection artifact 31, (c) premise or approximation gap 101, (d) 0. The cast return "
+            "(RETURN-CAST-PLACE-NOT-ESCAPED) is repaired, and the refused hand-on rule "
+            "(W44-REFUSED-HANDOFF-LEAK-CLAIMS: no leak is claimed through an identity named in a refused "
+            "statement) withdraws the 30 refused-escape leaves and 222 more, each with Lean parity; exactly the "
+            "253 predicted leaves withdrawn, 0 collateral, 0 missed; 76 functions and 35 units provisional "
+            "Unsafe -> Unknown; 3 functions Unknown -> Safe because a pointer cast of a never-bound member "
+            "chain is now decided as the uncast return the existing return-position rule admits. Leak 271 -> "
+            "18 (11 class (a), 7 class (c)); 128 withdrawn leaves the reading validated are registered as "
+            "REFUSED-HANDOFF-WITHDRAWN-ACCUSATIONS. Raw units remain unpromoted; provisional Unsafe is not an "
+            "upstream defect claim. Previous row preserved in "
+            "docs/reports/w44-leak-pin-audit/previous-corpus-row.json.",
             "units": sum(units.values()),
             "safe": units["Safe"],
             "provisional_unsafe": units["Unsafe"],

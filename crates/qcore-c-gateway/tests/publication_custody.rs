@@ -916,7 +916,7 @@ fn an_indirect_publication_withdraws_its_leak_claim() {
 /// pre-existing `Leak` is withdrawn since card W44-LEAK-PIN-AUDIT's refused
 /// hand-on rule, because the refused store hands `h` on.
 #[test]
-fn an_indirect_store_into_a_local_aggregate_keeps_its_leak_claim() {
+fn an_indirect_store_into_a_local_aggregate_publishes_nothing() {
     if !clang_available() {
         return;
     }

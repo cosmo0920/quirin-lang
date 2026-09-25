@@ -7,24 +7,27 @@
    "unsupported": 45848
   },
   "after": {
-   "leak": 240,
+   "leak": 18,
    "summary_conflict": 1,
-   "unknown_alias": 4359,
+   "unknown_alias": 4374,
    "unsupported": 45844
   }
  },
  "removed_by_category": {
-  "leak": 31,
+  "leak": 253,
+  "unknown_alias": 3,
   "unsupported": 4
  },
  "added_by_category": {
-  "unknown_alias": 1
+  "unknown_alias": 19
  },
  "removed_leaks_by_mechanism": {
   "b:cast-return": 1,
-  "b:refused-escape": 30
+  "b:refused-escape": 30,
+  "h:refused-handoff": 222
  },
  "collateral_leak_removals": [],
+ "predicted_withdrawals_missed": [],
  "functions": {
   "before": {
    "Safe": 294,
@@ -33,8 +36,8 @@
   },
   "after": {
    "Safe": 297,
-   "Unknown": 4477,
-   "Unsafe": 60
+   "Unknown": 4528,
+   "Unsafe": 9
   }
  },
  "units": {
@@ -46,15 +49,27 @@
   },
   "after": {
    "Safe": 3,
-   "Unknown": 144,
-   "Unsafe": 34,
+   "Unknown": 170,
+   "Unsafe": 8,
    "data_only": 4
   }
  },
  "function_moves": [
   {
+   "unit": "chunkio.c",
+   "function": "cio_create",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
    "unit": "cio_file.c",
    "function": "cio_file_content_copy",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_counter.c",
+   "function": "cmt_counter_create",
    "before": "Unsafe",
    "after": "Unknown"
   },
@@ -96,7 +111,61 @@
   },
   {
    "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_label",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
    "function": "unpack_metric",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_static_label",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_exponential_histogram_data_point",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_histogram_data_point",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_summary_data_point",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "function": "decode_histogram_points",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metrics_data",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_resource_metrics",
    "before": "Unsafe",
    "after": "Unknown"
   },
@@ -113,8 +182,38 @@
    "after": "Unknown"
   },
   {
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "function": "cmt_encode_opentelemetry_split_payload",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "function": "initialize_temporary_metric",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
    "unit": "cmt_encode_prometheus_remote_write.c",
    "function": "append_metric_to_timeseries",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "function": "pack_metric_metadata",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "function": "initialize_temporary_metric",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_create",
    "before": "Unsafe",
    "after": "Unknown"
   },
@@ -125,8 +224,44 @@
    "after": "Unknown"
   },
   {
+   "unit": "cmt_gauge.c",
+   "function": "cmt_gauge_create",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_histogram.c",
+   "function": "cmt_histogram_create",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_label.c",
+   "function": "cmt_labels_add_kv",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_map.c",
+   "function": "cmt_map_create",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
    "unit": "cmt_map.c",
    "function": "metric_index_resize",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_summary.c",
+   "function": "cmt_summary_create",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_untyped.c",
+   "function": "cmt_untyped_create",
    "before": "Unsafe",
    "after": "Unknown"
   },
@@ -143,6 +278,18 @@
    "after": "Unknown"
   },
   {
+   "unit": "ctr_resource.c",
+   "function": "ctr_resource_create",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "function": "append_to_ring_buffer",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
    "unit": "flb_input_chunk.c",
    "function": "flb_input_chunk_get_direct_routes",
    "before": "Unsafe",
@@ -155,14 +302,56 @@
    "after": "Unknown"
   },
   {
+   "unit": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_meta_add",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_open",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_read",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_section_entry_add",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
    "unit": "mk_core/mk_string.c",
    "function": "mk_string_copy_substr",
    "before": "Unsafe",
    "after": "Unknown"
   },
   {
+   "unit": "mk_server/mk_cache.c",
+   "function": "mk_cache_worker_init",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
    "unit": "mk_server/mk_http_parser.c",
    "function": "mk_http_parser_chunked_decode",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_http_header",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_mimetype.c",
+   "function": "mk_mimetype_add",
    "before": "Unsafe",
    "after": "Unknown"
   },
@@ -175,6 +364,54 @@
   {
    "unit": "mk_server/mk_scheduler.c",
    "function": "mk_sched_init",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_launch_thread",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_thread_lists_init",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_worker_cb_add",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_server.c",
+   "function": "mk_server_listen_init",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_fdt_worker_init",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdbuf.c",
+   "function": "do_unittest_erase",
    "before": "Unsafe",
    "after": "Unknown"
   },
@@ -197,6 +434,12 @@
    "after": "Safe"
   },
   {
+   "unit": "rdkafka_assignment.c",
+   "function": "rd_kafka_assignment_serve_pending",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
    "unit": "rdkafka_cgrp.c",
    "function": "rd_kafka_consumer_group_metadata_write",
    "before": "Unsafe",
@@ -215,15 +458,161 @@
    "after": "Unknown"
   },
   {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
    "unit": "rdkafka_zstd.c",
    "function": "rd_kafka_zstd_decompress",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_success",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "snappy.c",
+   "function": "rd_kafka_snappy_java_uncompress",
    "before": "Unsafe",
    "after": "Unknown"
   }
  ],
  "unit_moves": [
   {
+   "unit": "chunkio.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
    "unit": "cio_file.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_counter.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_exp_histogram.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_gauge.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_histogram.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_label.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_map.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_summary.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "cmt_untyped.c",
    "before": "Unsafe",
    "after": "Unknown"
   },
@@ -233,7 +622,27 @@
    "after": "Unknown"
   },
   {
+   "unit": "ctr_resource.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_core/mk_rconf.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
    "unit": "mk_core/mk_string.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_cache.c",
    "before": "Unsafe",
    "after": "Unknown"
   },
@@ -243,7 +652,27 @@
    "after": "Unknown"
   },
   {
+   "unit": "mk_server/mk_mimetype.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
    "unit": "mk_server/mk_plugin.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "mk_server/mk_server.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdbuf.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "rdkafka_assignment.c",
    "before": "Unsafe",
    "after": "Unknown"
   },
@@ -266,9 +695,58 @@
    "unit": "rdkafka_zstd.c",
    "before": "Unsafe",
    "after": "Unknown"
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "before": "Unsafe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "snappy.c",
+   "before": "Unsafe",
+   "after": "Unknown"
   }
  ],
  "rows": [
+  {
+   "direction": "removed",
+   "unit": "chunkio.c",
+   "function": "cio_create",
+   "category": "leak",
+   "line": 2333,
+   "origin": "chunkio.c:174",
+   "description": "live obligation acquired at chunkio.c:120",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "chunkio.c",
+   "function": "cio_create",
+   "category": "leak",
+   "line": 2343,
+   "origin": "chunkio.c:187",
+   "description": "live obligation acquired at chunkio.c:120",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "chunkio.c",
+   "function": "cio_create",
+   "category": "leak",
+   "line": 2354,
+   "origin": "chunkio.c:202",
+   "description": "live obligation acquired at chunkio.c:120",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
   {
    "direction": "removed",
    "unit": "cio_file.c",
@@ -279,7 +757,34 @@
    "description": "live obligation acquired at cio_file.c:539",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_counter.c",
+   "function": "cmt_counter_create",
+   "category": "leak",
+   "line": 5476,
+   "origin": "cmt_counter.c:65",
+   "description": "live obligation acquired at cmt_counter.c:54",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_counter.c",
+   "function": "cmt_counter_create",
+   "category": "leak",
+   "line": 5483,
+   "origin": "cmt_counter.c:74",
+   "description": "live obligation acquired at cmt_counter.c:54",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
   },
   {
    "direction": "removed",
@@ -291,7 +796,8 @@
    "description": "live obligation acquired at cmt_decode_msgpack.c:46",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -303,7 +809,8 @@
    "description": "live obligation acquired at cmt_decode_msgpack.c:151",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -315,7 +822,8 @@
    "description": "live obligation acquired at cmt_decode_msgpack.c:67",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -327,7 +835,8 @@
    "description": "live obligation acquired at cmt_decode_msgpack.c:130",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -339,7 +848,8 @@
    "description": "live obligation acquired at cmt_decode_msgpack.c:109",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -351,7 +861,21 @@
    "description": "live obligation acquired at cmt_decode_msgpack.c:88",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_label",
+   "category": "leak",
+   "line": 7306,
+   "origin": "cmt_decode_msgpack.c:379",
+   "description": "live obligation acquired at cmt_decode_msgpack.c:343",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
   },
   {
    "direction": "removed",
@@ -363,7 +887,411 @@
    "description": "live obligation acquired at cmt_decode_msgpack.c:1230",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_static_label",
+   "category": "leak",
+   "line": 7361,
+   "origin": "cmt_decode_msgpack.c:451",
+   "description": "live obligation acquired at cmt_decode_msgpack.c:426",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_exponential_histogram_data_point",
+   "category": "leak",
+   "line": 8085,
+   "origin": "cmt_decode_opentelemetry.c:1345",
+   "description": "live obligation acquired at cmt_decode_opentelemetry.c:1314",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_exponential_histogram_data_point",
+   "category": "leak",
+   "line": 8095,
+   "origin": "cmt_decode_opentelemetry.c:1356",
+   "description": "live obligation acquired at cmt_decode_opentelemetry.c:1314",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_histogram_data_point",
+   "category": "leak",
+   "line": 7874,
+   "origin": "cmt_decode_opentelemetry.c:1084",
+   "description": "live obligation acquired at cmt_decode_opentelemetry.c:1048",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_histogram_data_point",
+   "category": "leak",
+   "line": 7879,
+   "origin": "cmt_decode_opentelemetry.c:1091",
+   "description": "live obligation acquired at cmt_decode_opentelemetry.c:1048",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_histogram_data_point",
+   "category": "leak",
+   "line": 7914,
+   "origin": "cmt_decode_opentelemetry.c:1131",
+   "description": "live obligation acquired at cmt_decode_opentelemetry.c:1048",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_summary_data_point",
+   "category": "leak",
+   "line": 7761,
+   "origin": "cmt_decode_opentelemetry.c:938",
+   "description": "live obligation acquired at cmt_decode_opentelemetry.c:899",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_summary_data_point",
+   "category": "leak",
+   "line": 7787,
+   "origin": "cmt_decode_opentelemetry.c:970",
+   "description": "live obligation acquired at cmt_decode_opentelemetry.c:899",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "function": "decode_histogram_points",
+   "category": "leak",
+   "line": 6840,
+   "origin": "cmt_decode_prometheus_remote_write.c:554",
+   "description": "live obligation acquired at cmt_decode_prometheus_remote_write.c:513",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:branch-correlation"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "function": "decode_histogram_points",
+   "category": "leak",
+   "line": 6853,
+   "origin": "cmt_decode_prometheus_remote_write.c:572",
+   "description": "live obligation acquired at cmt_decode_prometheus_remote_write.c:513",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:branch-correlation"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "function": "decode_histogram_points",
+   "category": "leak",
+   "line": 6880,
+   "origin": "cmt_decode_prometheus_remote_write.c:604",
+   "description": "live obligation acquired at cmt_decode_prometheus_remote_write.c:513",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:branch-correlation"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "function": "decode_histogram_points",
+   "category": "leak",
+   "line": 6901,
+   "origin": "cmt_decode_prometheus_remote_write.c:630",
+   "description": "live obligation acquired at cmt_decode_prometheus_remote_write.c:513",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:branch-correlation"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "function": "decode_histogram_points",
+   "category": "leak",
+   "line": 6903,
+   "origin": "cmt_decode_prometheus_remote_write.c:633",
+   "description": "live obligation acquired at cmt_decode_prometheus_remote_write.c:513",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8773,
+   "origin": "cmt_encode_opentelemetry.c:2646",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8779,
+   "origin": "cmt_encode_opentelemetry.c:2655",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8786,
+   "origin": "cmt_encode_opentelemetry.c:2665",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8793,
+   "origin": "cmt_encode_opentelemetry.c:2675",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8800,
+   "origin": "cmt_encode_opentelemetry.c:2686",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8810,
+   "origin": "cmt_encode_opentelemetry.c:2700",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8817,
+   "origin": "cmt_encode_opentelemetry.c:2711",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8825,
+   "origin": "cmt_encode_opentelemetry.c:2722",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8832,
+   "origin": "cmt_encode_opentelemetry.c:2733",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8840,
+   "origin": "cmt_encode_opentelemetry.c:2744",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8847,
+   "origin": "cmt_encode_opentelemetry.c:2755",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8855,
+   "origin": "cmt_encode_opentelemetry.c:2766",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8862,
+   "origin": "cmt_encode_opentelemetry.c:2777",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8871,
+   "origin": "cmt_encode_opentelemetry.c:2789",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metric",
+   "category": "leak",
+   "line": 8878,
+   "origin": "cmt_encode_opentelemetry.c:2800",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:2632",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metrics_data",
+   "category": "leak",
+   "line": 7985,
+   "origin": "cmt_encode_opentelemetry.c:1629",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:1616",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_resource_metrics",
+   "category": "leak",
+   "line": 8040,
+   "origin": "cmt_encode_opentelemetry.c:1701",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:1681",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_resource_metrics",
+   "category": "leak",
+   "line": 8046,
+   "origin": "cmt_encode_opentelemetry.c:1711",
+   "description": "live obligation acquired at cmt_encode_opentelemetry.c:1681",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
   },
   {
    "direction": "removed",
@@ -375,7 +1303,8 @@
    "description": "live obligation acquired at cmt_encode_opentelemetry_batch.c:170",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -387,7 +1316,47 @@
    "description": "live obligation acquired at cmt_encode_opentelemetry_batch.c:224",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "function": "cmt_encode_opentelemetry_split_payload",
+   "category": "leak",
+   "line": 6972,
+   "origin": "cmt_encode_opentelemetry_batch.c:627",
+   "description": "live obligation acquired at cmt_encode_opentelemetry_batch.c:611",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "function": "cmt_encode_opentelemetry_split_payload",
+   "category": "leak",
+   "line": 7082,
+   "origin": "cmt_encode_opentelemetry_batch.c:754",
+   "description": "live obligation acquired at cmt_encode_opentelemetry_batch.c:611",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_prometheus.c",
+   "function": "initialize_temporary_metric",
+   "category": "leak",
+   "line": 6068,
+   "origin": "cmt_encode_prometheus.c:294",
+   "description": "live obligation acquired at cmt_encode_prometheus.c:271",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
   },
   {
    "direction": "removed",
@@ -399,7 +1368,112 @@
    "description": "live obligation acquired at cmt_encode_prometheus_remote_write.c:687",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "function": "pack_metric_metadata",
+   "category": "leak",
+   "line": 6913,
+   "origin": "cmt_encode_prometheus_remote_write.c:619",
+   "description": "live obligation acquired at cmt_encode_prometheus_remote_write.c:593",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:error-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "function": "pack_metric_metadata",
+   "category": "leak",
+   "line": 6922,
+   "origin": "cmt_encode_prometheus_remote_write.c:630",
+   "description": "live obligation acquired at cmt_encode_prometheus_remote_write.c:593",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:error-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "function": "pack_metric_metadata",
+   "category": "leak",
+   "line": 6931,
+   "origin": "cmt_encode_prometheus_remote_write.c:641",
+   "description": "live obligation acquired at cmt_encode_prometheus_remote_write.c:593",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:error-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "function": "pack_metric_metadata",
+   "category": "leak",
+   "line": 6940,
+   "origin": "cmt_encode_prometheus_remote_write.c:652",
+   "description": "live obligation acquired at cmt_encode_prometheus_remote_write.c:593",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:error-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "function": "pack_metric_metadata",
+   "category": "leak",
+   "line": 6943,
+   "origin": "cmt_encode_prometheus_remote_write.c:657",
+   "description": "live obligation acquired at cmt_encode_prometheus_remote_write.c:593",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_encode_splunk_hec.c",
+   "function": "initialize_temporary_metric",
+   "category": "leak",
+   "line": 5650,
+   "origin": "cmt_encode_splunk_hec.c:109",
+   "description": "live obligation acquired at cmt_encode_splunk_hec.c:86",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_create",
+   "category": "leak",
+   "line": 5794,
+   "origin": "cmt_exp_histogram.c:87",
+   "description": "live obligation acquired at cmt_exp_histogram.c:75",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_create",
+   "category": "leak",
+   "line": 5800,
+   "origin": "cmt_exp_histogram.c:94",
+   "description": "live obligation acquired at cmt_exp_histogram.c:75",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
   },
   {
    "direction": "removed",
@@ -411,7 +1485,8 @@
    "description": "live obligation acquired at cmt_exp_histogram.c:265",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -423,7 +1498,125 @@
    "description": "live obligation acquired at cmt_exp_histogram.c:271",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_gauge.c",
+   "function": "cmt_gauge_create",
+   "category": "leak",
+   "line": 5474,
+   "origin": "cmt_gauge.c:66",
+   "description": "live obligation acquired at cmt_gauge.c:54",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_gauge.c",
+   "function": "cmt_gauge_create",
+   "category": "leak",
+   "line": 5481,
+   "origin": "cmt_gauge.c:75",
+   "description": "live obligation acquired at cmt_gauge.c:54",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_histogram.c",
+   "function": "cmt_histogram_create",
+   "category": "leak",
+   "line": 5634,
+   "origin": "cmt_histogram.c:254",
+   "description": "live obligation acquired at cmt_histogram.c:238",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_histogram.c",
+   "function": "cmt_histogram_create",
+   "category": "leak",
+   "line": 5640,
+   "origin": "cmt_histogram.c:262",
+   "description": "live obligation acquired at cmt_histogram.c:238",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_histogram.c",
+   "function": "cmt_histogram_create",
+   "category": "leak",
+   "line": 5646,
+   "origin": "cmt_histogram.c:270",
+   "description": "live obligation acquired at cmt_histogram.c:238",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_histogram.c",
+   "function": "cmt_histogram_create",
+   "category": "leak",
+   "line": 5653,
+   "origin": "cmt_histogram.c:279",
+   "description": "live obligation acquired at cmt_histogram.c:238",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_label.c",
+   "function": "cmt_labels_add_kv",
+   "category": "leak",
+   "line": 5323,
+   "origin": "cmt_label.c:87",
+   "description": "live obligation acquired at cmt_label.c:67",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_map.c",
+   "function": "cmt_map_create",
+   "category": "leak",
+   "line": 5579,
+   "origin": "cmt_map.c:138",
+   "description": "live obligation acquired at cmt_map.c:121",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_map.c",
+   "function": "cmt_map_create",
+   "category": "leak",
+   "line": 5602,
+   "origin": "cmt_map.c:166",
+   "description": "live obligation acquired at cmt_map.c:121",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
   },
   {
    "direction": "removed",
@@ -435,7 +1628,73 @@
    "description": "live obligation acquired at cmt_map.c:63",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_summary.c",
+   "function": "cmt_summary_create",
+   "category": "leak",
+   "line": 5493,
+   "origin": "cmt_summary.c:81",
+   "description": "live obligation acquired at cmt_summary.c:69",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_summary.c",
+   "function": "cmt_summary_create",
+   "category": "leak",
+   "line": 5500,
+   "origin": "cmt_summary.c:90",
+   "description": "live obligation acquired at cmt_summary.c:69",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_summary.c",
+   "function": "cmt_summary_create",
+   "category": "leak",
+   "line": 5508,
+   "origin": "cmt_summary.c:100",
+   "description": "live obligation acquired at cmt_summary.c:69",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_untyped.c",
+   "function": "cmt_untyped_create",
+   "category": "leak",
+   "line": 5473,
+   "origin": "cmt_untyped.c:70",
+   "description": "live obligation acquired at cmt_untyped.c:59",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "cmt_untyped.c",
+   "function": "cmt_untyped_create",
+   "category": "leak",
+   "line": 5480,
+   "origin": "cmt_untyped.c:79",
+   "description": "live obligation acquired at cmt_untyped.c:59",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
   },
   {
    "direction": "removed",
@@ -447,7 +1706,8 @@
    "description": "live obligation acquired at ctr_encode_opentelemetry.c:778",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -459,7 +1719,8 @@
    "description": "live obligation acquired at ctr_encode_opentelemetry.c:785",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -471,7 +1732,60 @@
    "description": "live obligation acquired at ctr_encode_opentelemetry.c:752",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "ctr_resource.c",
+   "function": "ctr_resource_create",
+   "category": "leak",
+   "line": 6772,
+   "origin": "ctr_resource.c:37",
+   "description": "live obligation acquired at ctr_resource.c:28",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "flb_input_chunk.c",
+   "function": "append_to_ring_buffer",
+   "category": "leak",
+   "line": 20281,
+   "origin": "flb_input_chunk.c:3604",
+   "description": "live obligation acquired at flb_input_chunk.c:3579",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "flb_input_chunk.c",
+   "function": "append_to_ring_buffer",
+   "category": "leak",
+   "line": 20291,
+   "origin": "flb_input_chunk.c:3631",
+   "description": "live obligation acquired at flb_input_chunk.c:3579",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "flb_input_chunk.c",
+   "function": "append_to_ring_buffer",
+   "category": "leak",
+   "line": 20304,
+   "origin": "flb_input_chunk.c:3656",
+   "description": "live obligation acquired at flb_input_chunk.c:3579",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
   },
   {
    "direction": "removed",
@@ -483,7 +1797,8 @@
    "description": "live obligation acquired at flb_input_chunk.c:2267",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -495,7 +1810,60 @@
    "description": "live obligation acquired at flb_input_chunk.c:1401",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_meta_add",
+   "category": "leak",
+   "line": 1890,
+   "origin": "mk_core/mk_rconf.c:172",
+   "description": "live obligation acquired at mk_core/mk_rconf.c:157",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:borrowed-list-insertion"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_open",
+   "category": "leak",
+   "line": 2185,
+   "origin": "mk_core/mk_rconf.c:659",
+   "description": "live obligation acquired at mk_core/mk_rconf.c:640",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-release"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_read",
+   "category": "leak",
+   "line": 2101,
+   "origin": "mk_core/mk_rconf.c:465",
+   "description": "live obligation acquired at mk_core/mk_rconf.c:456",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:borrowed-list-insertion"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_section_entry_add",
+   "category": "leak",
+   "line": 0,
+   "origin": null,
+   "description": "live obligation acquired at mk_core/mk_rconf.c:91",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:borrowed-list-insertion"
   },
   {
    "direction": "removed",
@@ -507,7 +1875,47 @@
    "description": "live obligation acquired at mk_core/mk_string.c:655",
    "count": 1,
    "class": "b",
-   "mechanism": "cast-return"
+   "mechanism": "cast-return",
+   "prior": "b:cast-return"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_cache.c",
+   "function": "mk_cache_worker_init",
+   "category": "leak",
+   "line": 0,
+   "origin": null,
+   "description": "live obligation acquired at mk_server/mk_cache.c:37",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_cache.c",
+   "function": "mk_cache_worker_init",
+   "category": "leak",
+   "line": 0,
+   "origin": null,
+   "description": "live obligation acquired at mk_server/mk_cache.c:43",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_cache.c",
+   "function": "mk_cache_worker_init",
+   "category": "leak",
+   "line": 0,
+   "origin": null,
+   "description": "live obligation acquired at mk_server/mk_cache.c:56",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
   },
   {
    "direction": "removed",
@@ -519,7 +1927,47 @@
    "description": "live obligation acquired at mk_server/mk_http_parser.c:745",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_http_header",
+   "category": "leak",
+   "line": 6867,
+   "origin": "mk_server/mk_lib.c:620",
+   "description": "live obligation acquired at mk_server/mk_lib.c:601",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_vhost_create",
+   "category": "leak",
+   "line": 6762,
+   "origin": "mk_server/mk_lib.c:485",
+   "description": "live obligation acquired at mk_server/mk_lib.c:456",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_mimetype.c",
+   "function": "mk_mimetype_add",
+   "category": "leak",
+   "line": 5853,
+   "origin": "mk_server/mk_mimetype.c:112",
+   "description": "live obligation acquired at mk_server/mk_mimetype.c:74",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
   },
   {
    "direction": "removed",
@@ -531,7 +1979,8 @@
    "description": "live obligation acquired at mk_server/mk_plugin.c:281",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -543,7 +1992,8 @@
    "description": "live obligation acquired at mk_server/mk_scheduler.c:201",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -555,7 +2005,73 @@
    "description": "live obligation acquired at mk_server/mk_scheduler.c:474",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_launch_thread",
+   "category": "leak",
+   "line": 6702,
+   "origin": "mk_server/mk_scheduler.c:449",
+   "description": "live obligation acquired at mk_server/mk_scheduler.c:440",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:error-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_launch_thread",
+   "category": "leak",
+   "line": 6709,
+   "origin": "mk_server/mk_scheduler.c:461",
+   "description": "live obligation acquired at mk_server/mk_scheduler.c:440",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_thread_lists_init",
+   "category": "leak",
+   "line": 0,
+   "origin": null,
+   "description": "live obligation acquired at mk_server/mk_scheduler.c:255",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_worker_cb_add",
+   "category": "leak",
+   "line": 6970,
+   "origin": "mk_server/mk_scheduler.c:846",
+   "description": "live obligation acquired at mk_server/mk_scheduler.c:838",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:borrowed-list-insertion"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_server.c",
+   "function": "mk_server_listen_init",
+   "category": "leak",
+   "line": 6318,
+   "origin": "mk_server/mk_server.c:253",
+   "description": "live obligation acquired at mk_server/mk_server.c:184",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:error-path"
   },
   {
    "direction": "removed",
@@ -567,7 +2083,8 @@
    "description": "live obligation acquired at mk_server/mk_server.c:205",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -579,7 +2096,151 @@
    "description": "live obligation acquired at mk_server/mk_server.c:205",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "category": "leak",
+   "line": 0,
+   "origin": null,
+   "description": "live obligation acquired at mk_server/mk_server.c:500",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "category": "leak",
+   "line": 6531,
+   "origin": "mk_server/mk_server.c:596",
+   "description": "live obligation acquired at mk_server/mk_server.c:500",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_fdt_worker_init",
+   "category": "leak",
+   "line": 6000,
+   "origin": "mk_server/mk_vhost.c:117",
+   "description": "live obligation acquired at mk_server/mk_vhost.c:89",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_fdt_worker_init",
+   "category": "leak",
+   "line": 6000,
+   "origin": "mk_server/mk_vhost.c:117",
+   "description": "live obligation acquired at mk_server/mk_vhost.c:95",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "category": "leak",
+   "line": 6316,
+   "origin": "mk_server/mk_vhost.c:531",
+   "description": "live obligation acquired at mk_server/mk_vhost.c:377",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:error-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "category": "leak",
+   "line": 6316,
+   "origin": "mk_server/mk_vhost.c:531",
+   "description": "live obligation acquired at mk_server/mk_vhost.c:481",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:error-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "category": "leak",
+   "line": 6316,
+   "origin": "mk_server/mk_vhost.c:531",
+   "description": "live obligation acquired at mk_server/mk_vhost.c:511",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:error-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "category": "leak",
+   "line": 6316,
+   "origin": "mk_server/mk_vhost.c:531",
+   "description": "live obligation acquired at mk_server/mk_vhost.c:539",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:error-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_set_single",
+   "category": "leak",
+   "line": 0,
+   "origin": null,
+   "description": "live obligation acquired at mk_server/mk_vhost.c:604",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:borrowed-list-insertion"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdbuf.c",
+   "function": "do_unittest_erase",
+   "category": "leak",
+   "line": 4304,
+   "origin": "rdbuf.c:1850",
+   "description": "live obligation acquired at rdbuf.c:1847",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdbuf.c",
+   "function": "do_unittest_erase",
+   "category": "leak",
+   "line": 4305,
+   "origin": "rdbuf.c:1855",
+   "description": "live obligation acquired at rdbuf.c:1847",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
   },
   {
    "direction": "removed",
@@ -613,6 +2274,19 @@
   },
   {
    "direction": "removed",
+   "unit": "rdkafka_assignment.c",
+   "function": "rd_kafka_assignment_serve_pending",
+   "category": "leak",
+   "line": 20464,
+   "origin": "rdkafka_assignment.c:664",
+   "description": "live obligation acquired at rdkafka_assignment.c:639",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
    "unit": "rdkafka_cgrp.c",
    "function": "rd_kafka_consumer_group_metadata_write",
    "category": "leak",
@@ -621,7 +2295,8 @@
    "description": "live obligation acquired at rdkafka_cgrp.c:7862",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -633,7 +2308,8 @@
    "description": "live obligation acquired at rdkafka_conf.c:3469",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -645,7 +2321,8 @@
    "description": "live obligation acquired at rdkafka_conf.c:3478",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
   },
   {
    "direction": "removed",
@@ -667,7 +2344,255 @@
    "description": "live obligation acquired at rdkafka_request.c:1335",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22310,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1783",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22311,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1785",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22311,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1785",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22312,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1788",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22312,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1788",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22313,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1790",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22313,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1790",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22314,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1792",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22314,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1792",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22315,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1794",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22315,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1794",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22316,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1796",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22316,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1796",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22317,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1798",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "category": "leak",
+   "line": 22317,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1798",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "category": "leak",
+   "line": 21999,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1209",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1203",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "category": "leak",
+   "line": 22000,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1214",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1203",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "category": "leak",
+   "line": 22002,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1218",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1203",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "category": "leak",
+   "line": 22004,
+   "origin": "rdkafka_sasl_oauthbearer_oidc.c:1221",
+   "description": "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1203",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
   },
   {
    "direction": "removed",
@@ -679,7 +2604,1648 @@
    "description": "live obligation acquired at rdkafka_zstd.c:70",
    "count": 1,
    "class": "b",
-   "mechanism": "refused-escape"
+   "mechanism": "refused-escape",
+   "prior": "b:refused-escape"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdstring.c",
+   "function": "rd_string_render",
+   "category": "unknown_alias",
+   "line": 2997,
+   "origin": "rdstring.c:109",
+   "description": "unresolved resource identity `buf`",
+   "count": 1
+  },
+  {
+   "direction": "removed",
+   "unit": "rdstring.c",
+   "function": "rd_string_render",
+   "category": "unknown_alias",
+   "line": 3004,
+   "origin": "rdstring.c:121",
+   "description": "unresolved resource identity `buf`",
+   "count": 1
+  },
+  {
+   "direction": "removed",
+   "unit": "rdstring.c",
+   "function": "rd_string_render",
+   "category": "unknown_alias",
+   "line": 3011,
+   "origin": "rdstring.c:134",
+   "description": "unresolved resource identity `buf`",
+   "count": 1
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20387,
+   "origin": "rdunittest_msgset_errors.c:1369",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20388,
+   "origin": "rdunittest_msgset_errors.c:1371",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20389,
+   "origin": "rdunittest_msgset_errors.c:1373",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20390,
+   "origin": "rdunittest_msgset_errors.c:1376",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20391,
+   "origin": "rdunittest_msgset_errors.c:1379",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20397,
+   "origin": "rdunittest_msgset_errors.c:1389",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20398,
+   "origin": "rdunittest_msgset_errors.c:1390",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20399,
+   "origin": "rdunittest_msgset_errors.c:1392",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20405,
+   "origin": "rdunittest_msgset_errors.c:1402",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20406,
+   "origin": "rdunittest_msgset_errors.c:1404",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20407,
+   "origin": "rdunittest_msgset_errors.c:1406",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20408,
+   "origin": "rdunittest_msgset_errors.c:1409",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20409,
+   "origin": "rdunittest_msgset_errors.c:1412",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20415,
+   "origin": "rdunittest_msgset_errors.c:1423",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20416,
+   "origin": "rdunittest_msgset_errors.c:1428",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20417,
+   "origin": "rdunittest_msgset_errors.c:1430",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20423,
+   "origin": "rdunittest_msgset_errors.c:1441",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20424,
+   "origin": "rdunittest_msgset_errors.c:1443",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20425,
+   "origin": "rdunittest_msgset_errors.c:1445",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20426,
+   "origin": "rdunittest_msgset_errors.c:1448",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20427,
+   "origin": "rdunittest_msgset_errors.c:1451",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20433,
+   "origin": "rdunittest_msgset_errors.c:1461",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20434,
+   "origin": "rdunittest_msgset_errors.c:1466",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20435,
+   "origin": "rdunittest_msgset_errors.c:1468",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20440,
+   "origin": "rdunittest_msgset_errors.c:1477",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "category": "leak",
+   "line": 20447,
+   "origin": "rdunittest_msgset_errors.c:1488",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1315",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "category": "leak",
+   "line": 20304,
+   "origin": "rdunittest_msgset_errors.c:1231",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1200",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "category": "leak",
+   "line": 20305,
+   "origin": "rdunittest_msgset_errors.c:1232",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1200",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "category": "leak",
+   "line": 20306,
+   "origin": "rdunittest_msgset_errors.c:1234",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1200",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "category": "leak",
+   "line": 20311,
+   "origin": "rdunittest_msgset_errors.c:1242",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1200",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "category": "leak",
+   "line": 20312,
+   "origin": "rdunittest_msgset_errors.c:1243",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1200",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "category": "leak",
+   "line": 20313,
+   "origin": "rdunittest_msgset_errors.c:1245",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1200",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "category": "leak",
+   "line": 20318,
+   "origin": "rdunittest_msgset_errors.c:1253",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1200",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "category": "leak",
+   "line": 20319,
+   "origin": "rdunittest_msgset_errors.c:1254",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1200",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "category": "leak",
+   "line": 20320,
+   "origin": "rdunittest_msgset_errors.c:1256",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1200",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "category": "leak",
+   "line": 20325,
+   "origin": "rdunittest_msgset_errors.c:1264",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1200",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_errors",
+   "category": "leak",
+   "line": 20331,
+   "origin": "rdunittest_msgset_errors.c:1272",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1200",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_success",
+   "category": "leak",
+   "line": 20254,
+   "origin": "rdunittest_msgset_errors.c:1146",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1125",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_success",
+   "category": "leak",
+   "line": 20255,
+   "origin": "rdunittest_msgset_errors.c:1148",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1125",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_success",
+   "category": "leak",
+   "line": 20256,
+   "origin": "rdunittest_msgset_errors.c:1150",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1125",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_success",
+   "category": "leak",
+   "line": 20261,
+   "origin": "rdunittest_msgset_errors.c:1159",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1125",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_all_success",
+   "category": "leak",
+   "line": 20267,
+   "origin": "rdunittest_msgset_errors.c:1167",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:1125",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "category": "leak",
+   "line": 19853,
+   "origin": "rdunittest_msgset_errors.c:469",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:445",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "category": "leak",
+   "line": 19856,
+   "origin": "rdunittest_msgset_errors.c:476",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:445",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "category": "leak",
+   "line": 19857,
+   "origin": "rdunittest_msgset_errors.c:479",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:445",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "category": "leak",
+   "line": 19858,
+   "origin": "rdunittest_msgset_errors.c:481",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:445",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "category": "leak",
+   "line": 19859,
+   "origin": "rdunittest_msgset_errors.c:484",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:445",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "category": "leak",
+   "line": 19860,
+   "origin": "rdunittest_msgset_errors.c:487",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:445",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "category": "leak",
+   "line": 19866,
+   "origin": "rdunittest_msgset_errors.c:498",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:445",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "category": "leak",
+   "line": 19872,
+   "origin": "rdunittest_msgset_errors.c:506",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:445",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "category": "leak",
+   "line": 19922,
+   "origin": "rdunittest_msgset_errors.c:586",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:551",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "category": "leak",
+   "line": 19923,
+   "origin": "rdunittest_msgset_errors.c:589",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:551",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "category": "leak",
+   "line": 19924,
+   "origin": "rdunittest_msgset_errors.c:591",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:551",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "category": "leak",
+   "line": 19925,
+   "origin": "rdunittest_msgset_errors.c:594",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:551",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "category": "leak",
+   "line": 19926,
+   "origin": "rdunittest_msgset_errors.c:597",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:551",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "category": "leak",
+   "line": 19931,
+   "origin": "rdunittest_msgset_errors.c:608",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:551",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "category": "leak",
+   "line": 19937,
+   "origin": "rdunittest_msgset_errors.c:616",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:551",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20108,
+   "origin": "rdunittest_msgset_errors.c:906",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20109,
+   "origin": "rdunittest_msgset_errors.c:907",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20110,
+   "origin": "rdunittest_msgset_errors.c:909",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20111,
+   "origin": "rdunittest_msgset_errors.c:911",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20116,
+   "origin": "rdunittest_msgset_errors.c:920",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20117,
+   "origin": "rdunittest_msgset_errors.c:921",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20118,
+   "origin": "rdunittest_msgset_errors.c:923",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20123,
+   "origin": "rdunittest_msgset_errors.c:931",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20124,
+   "origin": "rdunittest_msgset_errors.c:932",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20125,
+   "origin": "rdunittest_msgset_errors.c:934",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20126,
+   "origin": "rdunittest_msgset_errors.c:936",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20131,
+   "origin": "rdunittest_msgset_errors.c:945",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "category": "leak",
+   "line": 20137,
+   "origin": "rdunittest_msgset_errors.c:953",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:870",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20177,
+   "origin": "rdunittest_msgset_errors.c:1024",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20178,
+   "origin": "rdunittest_msgset_errors.c:1025",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20179,
+   "origin": "rdunittest_msgset_errors.c:1027",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20180,
+   "origin": "rdunittest_msgset_errors.c:1029",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20185,
+   "origin": "rdunittest_msgset_errors.c:1038",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20186,
+   "origin": "rdunittest_msgset_errors.c:1039",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20187,
+   "origin": "rdunittest_msgset_errors.c:1041",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20192,
+   "origin": "rdunittest_msgset_errors.c:1049",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20193,
+   "origin": "rdunittest_msgset_errors.c:1050",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20194,
+   "origin": "rdunittest_msgset_errors.c:1052",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20195,
+   "origin": "rdunittest_msgset_errors.c:1054",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20200,
+   "origin": "rdunittest_msgset_errors.c:1063",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20201,
+   "origin": "rdunittest_msgset_errors.c:1064",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20202,
+   "origin": "rdunittest_msgset_errors.c:1066",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20207,
+   "origin": "rdunittest_msgset_errors.c:1074",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "category": "leak",
+   "line": 20213,
+   "origin": "rdunittest_msgset_errors.c:1082",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:992",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20035,
+   "origin": "rdunittest_msgset_errors.c:781",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20036,
+   "origin": "rdunittest_msgset_errors.c:783",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20037,
+   "origin": "rdunittest_msgset_errors.c:785",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20042,
+   "origin": "rdunittest_msgset_errors.c:794",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20043,
+   "origin": "rdunittest_msgset_errors.c:796",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20044,
+   "origin": "rdunittest_msgset_errors.c:798",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20045,
+   "origin": "rdunittest_msgset_errors.c:801",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20046,
+   "origin": "rdunittest_msgset_errors.c:804",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20051,
+   "origin": "rdunittest_msgset_errors.c:813",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20052,
+   "origin": "rdunittest_msgset_errors.c:815",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20053,
+   "origin": "rdunittest_msgset_errors.c:817",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20058,
+   "origin": "rdunittest_msgset_errors.c:826",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "category": "leak",
+   "line": 20064,
+   "origin": "rdunittest_msgset_errors.c:834",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:751",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "category": "leak",
+   "line": 19980,
+   "origin": "rdunittest_msgset_errors.c:685",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:657",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "category": "leak",
+   "line": 19981,
+   "origin": "rdunittest_msgset_errors.c:688",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:657",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "category": "leak",
+   "line": 19982,
+   "origin": "rdunittest_msgset_errors.c:690",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:657",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "category": "leak",
+   "line": 19983,
+   "origin": "rdunittest_msgset_errors.c:693",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:657",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "category": "leak",
+   "line": 19984,
+   "origin": "rdunittest_msgset_errors.c:696",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:657",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "category": "leak",
+   "line": 19989,
+   "origin": "rdunittest_msgset_errors.c:708",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:657",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "a:test-failure-path"
+  },
+  {
+   "direction": "removed",
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "category": "leak",
+   "line": 19995,
+   "origin": "rdunittest_msgset_errors.c:716",
+   "description": "live obligation acquired at rdunittest_msgset_errors.c:657",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:callee-retention"
+  },
+  {
+   "direction": "removed",
+   "unit": "snappy.c",
+   "function": "rd_kafka_snappy_java_uncompress",
+   "category": "leak",
+   "line": 20476,
+   "origin": "snappy.c:1648",
+   "description": "live obligation acquired at snappy.c:1705",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:branch-correlation"
+  },
+  {
+   "direction": "removed",
+   "unit": "snappy.c",
+   "function": "rd_kafka_snappy_java_uncompress",
+   "category": "leak",
+   "line": 20480,
+   "origin": "snappy.c:1660",
+   "description": "live obligation acquired at snappy.c:1705",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:branch-correlation"
+  },
+  {
+   "direction": "removed",
+   "unit": "snappy.c",
+   "function": "rd_kafka_snappy_java_uncompress",
+   "category": "leak",
+   "line": 20504,
+   "origin": "snappy.c:1701",
+   "description": "live obligation acquired at snappy.c:1705",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:branch-correlation"
+  },
+  {
+   "direction": "removed",
+   "unit": "snappy.c",
+   "function": "rd_kafka_snappy_java_uncompress",
+   "category": "leak",
+   "line": 20509,
+   "origin": "snappy.c:1712",
+   "description": "live obligation acquired at snappy.c:1705",
+   "count": 1,
+   "class": "h",
+   "mechanism": "refused-handoff",
+   "prior": "c:undecided-null-test"
+  },
+  {
+   "direction": "added",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_metrics_data",
+   "category": "unknown_alias",
+   "line": 7987,
+   "origin": "cmt_encode_opentelemetry.c:1632",
+   "description": "unresolved resource identity `metrics_data`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_resource_metrics",
+   "category": "unknown_alias",
+   "line": 8048,
+   "origin": "cmt_encode_opentelemetry.c:1714",
+   "description": "unresolved resource identity `resource_metrics`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_resource_metrics",
+   "category": "unknown_alias",
+   "line": 8049,
+   "origin": "cmt_encode_opentelemetry.c:1717",
+   "description": "unresolved resource identity `resource_metrics`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "initialize_resource_metrics",
+   "category": "unknown_alias",
+   "line": 8050,
+   "origin": "cmt_encode_opentelemetry.c:1719",
+   "description": "unresolved resource identity `resource_metrics`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "otlp_array_value_initialize",
+   "category": "unknown_alias",
+   "line": 7608,
+   "origin": "cmt_encode_opentelemetry.c:1108",
+   "description": "unresolved resource identity `value`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "cmt_encode_opentelemetry.c",
+   "function": "otlp_kvlist_value_initialize",
+   "category": "unknown_alias",
+   "line": 7637,
+   "origin": "cmt_encode_opentelemetry.c:1149",
+   "description": "unresolved resource identity `value`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "function": "append_metric_to_timeseries",
+   "category": "unknown_alias",
+   "line": 6974,
+   "origin": "cmt_encode_prometheus_remote_write.c:700",
+   "description": "unresolved resource identity `sample`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otlp_array_value_initialize",
+   "category": "unknown_alias",
+   "line": 8605,
+   "origin": "ctr_encode_opentelemetry.c:154",
+   "description": "unresolved resource identity `value`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otlp_kvlist_value_initialize",
+   "category": "unknown_alias",
+   "line": 8634,
+   "origin": "ctr_encode_opentelemetry.c:195",
+   "description": "unresolved resource identity `value`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_write_header_v2",
+   "category": "unknown_alias",
+   "line": 19184,
+   "origin": "flb_input_chunk.c:2063",
+   "description": "unresolved resource identity `meta`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_write_header_v2",
+   "category": "unknown_alias",
+   "line": 19186,
+   "origin": "flb_input_chunk.c:2066",
+   "description": "unresolved resource identity `meta`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_write_header_v2",
+   "category": "unknown_alias",
+   "line": 19187,
+   "origin": "flb_input_chunk.c:2067",
+   "description": "unresolved resource identity `meta`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_write_header_v2",
+   "category": "unknown_alias",
+   "line": 19189,
+   "origin": "flb_input_chunk.c:2070",
+   "description": "unresolved resource identity `meta`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_write_header_v2",
+   "category": "unknown_alias",
+   "line": 19190,
+   "origin": "flb_input_chunk.c:2071",
+   "description": "unresolved resource identity `meta`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_write_header_v2",
+   "category": "unknown_alias",
+   "line": 19215,
+   "origin": "flb_input_chunk.c:2099",
+   "description": "unresolved resource identity `meta`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_write_header_v2",
+   "category": "unknown_alias",
+   "line": 19216,
+   "origin": "flb_input_chunk.c:2100",
+   "description": "unresolved resource identity `meta`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_write_header_v2",
+   "category": "unknown_alias",
+   "line": 19231,
+   "origin": "flb_input_chunk.c:2118",
+   "description": "unresolved resource identity `meta`",
+   "count": 1
+  },
+  {
+   "direction": "added",
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_write_header_v2",
+   "category": "unknown_alias",
+   "line": 19232,
+   "origin": "flb_input_chunk.c:2119",
+   "description": "unresolved resource identity `meta`",
+   "count": 1
   },
   {
    "direction": "added",

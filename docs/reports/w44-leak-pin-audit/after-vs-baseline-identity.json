@@ -1,10 +1,10 @@
 {
-  "run": "measure/after2",
+  "run": "measure/after4",
   "baseline": "docs/reports/w43-indexed-resource-collections/integration/artifacts",
   "artifacts": {
     "diagnostics": {
       "file": "resource-diagnostics.json",
-      "run_sha256": "320f95b6afc97803d137cb76898ae851c984f85e488de97fe9b7564100701640",
+      "run_sha256": "649c45284375aa8788b0505ec31eaec905dfaa9059ecaf5a7880858759b22203",
       "baseline_raw_sha256": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
       "archive_matches_manifest": true,
       "byte_identical": false,

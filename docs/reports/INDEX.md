@@ -838,7 +838,7 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w43-return-expression](w43-return-expression/README.md) | W43-RETURN-EXPRESSION — the refused return expressions, measured and re-attributed |
 
-| [w44-leak-pin-audit](w44-leak-pin-audit/README.md) | W44-LEAK-PIN-AUDIT: every leak leaf classified, two false-leak mechanisms repaired |
+| [w44-leak-pin-audit](w44-leak-pin-audit/README.md) | W44-LEAK-PIN-AUDIT: every leak leaf classified; no leak claimed through a refused hand-on |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 

@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """Write the class (a) leaves — the provisional-Unsafe evidence base — as a table.
 
-Usage: class_a_table.py CLASSIFICATION.json OUT.md
+Usage: class_a_table.py CLASSIFICATION.json OUT.md [HANDOFF.json]
+
+With the refused hand-on overlay, only the class (a) leaves it does not mark
+`withdrawn` are the evidence base; the withdrawn ones are listed separately,
+since the analyzer can no longer validate them.
 
 One row per class (a) leaf: function, exit, acquisition, the witness's refused
 steps (each tagged E for a refused store/return of the site, C for a refused
@@ -19,6 +23,16 @@ import sys
 def main() -> int:
     classification = json.loads(pathlib.Path(sys.argv[1]).read_text())["classification"]
     rows = [entry for entry in classification if entry["class"] == "a"]
+    withdrawn_rows = []
+    if len(sys.argv) > 3:
+        overlay = json.loads(pathlib.Path(sys.argv[3]).read_text())["classification"]
+        gone = {
+            (e["unit"], e["function"], e["line"], e["acquired"]) for e in overlay if e["withdrawn"]
+        }
+        withdrawn_rows = [
+            e for e in rows if (e["unit"], e["function"], e["line"], e["acquired"]) in gone
+        ]
+        rows = [e for e in rows if e not in withdrawn_rows]
     by_function = collections.OrderedDict()
     for entry in rows:
         by_function.setdefault((entry["unit"], entry["function"]), []).append(entry)
@@ -30,6 +44,10 @@ def main() -> int:
         "stated premises and reading confirms the resource unreleased on it. These are provisional",
         "`Unsafe` candidates of the resource projection, **not** upstream defect claims; the",
         "test-failure-path leaves are reachable only when a unit test fails.",
+        "",
+        f"The refused hand-on rule withdrew {len(withdrawn_rows)} further leaves the reading had validated:",
+        "each is named in a refused statement on a path to its exit, so the analyzer itself cannot",
+        "validate it (see [handoff-classification.md](handoff-classification.md)).",
         "",
         "## By function",
         "",
