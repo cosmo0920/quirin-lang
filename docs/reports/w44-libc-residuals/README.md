@@ -16,6 +16,15 @@ A [prediction](PREDICTION.md) was frozen and committed (`dca6f959`) before any
 reader, tail-rule or contract edit and before any staged run.
 [§7](#7-prediction-against-outcome) compares it with the outcome.
 
+> **Paused for a route change on item 1 (2026-09-25).** W44-CORPUS-CALLEE-SUMMARIES
+> measured that glibc's `__bswap_*` header bodies already validate under W4 as
+> `Borrowed -> None` and are held back only by its callee-scope route's
+> reserved-name filter (`W44-CALLEE-SCOPE-RESERVED-BODIES`). This card will take
+> that route (a validated body is stronger than a trusted declaration), drop
+> `libc/byteswap.qcore`, and re-run the arbiter on main once that card is
+> integrated. Everything below describes the declared route as measured, and
+> §8 (validation) has not been run on it: the gate was stopped.
+
 ## Headline
 
 * **Item 1, declared, and said to be header-inline.** Six helpers
@@ -209,9 +218,9 @@ The reader change is one arm in `project_scalar`
 name `__builtin_va_list`, reached directly or through any typedef chain, reads
 as `va_list` at a parameter of pointer depth zero, **unless the unit itself
 `typedef`s that name**, in which case its own typedef is followed. A pointer to
-it, an array of it and a result of it still refuse. Twelve new rows in
-`crates/qcore-c-gateway/tests/loader_abi.rs` pin all of this, with the
-`__extension__` row and a result-position test. `compiler/tests/contract_loader.rs`
+it, an array of it and a result of it still refuse. Ten new rows in
+`crates/qcore-c-gateway/tests/loader_abi.rs` (one for `__extension__`, nine
+for `va_list`) and a result-position test pin all of this. `compiler/tests/contract_loader.rs`
 pins the spelling: borrowed loads, every custody mode and a `va_list` result
 are rejected.
 
