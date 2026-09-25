@@ -1,0 +1,16 @@
+[
+ {
+  "id": "W44-CONTRACT-MANIFEST-ORDER-DIGEST",
+  "title": "A contract selection's manifest digest depends on module order, and the Cycle 19 manifest's order is not a whole-crate order",
+  "why": "Measured by card W44-PROVIDER-RESOURCE-VIEW (docs/reports/w44-provider-resource-view/README.md, section 3): naming all eleven provider crates whole (or the contracts-only all-loaded default) selects exactly the 47 modules of cycle19-resource-contracts.json, elaborated byte for byte, and every verdict, row and count of `quirin-audit current` on the prepared Clang build is equal; but the report's `resource_contract_manifest` digest (and every compile-task identity derived from it) differs, because the lowered manifest lists the modules in load-path crate order and the committed manifest interleaves them (qcore-provider-libevent's intrusive_list.qcore precedes msgpack and mpack, its memory.qcore and logging.qcore follow them), so no crate-granular selection can reproduce its text. Against a hand-written manifest holding the same 47 entries in load-path order the run is byte-identical apart from the provider_selection sidecar key. The loaded environment does not depend on the order. DISCHARGE: reorder cycle19-resource-contracts.json to load-path order (moving the pinned arbiter's manifest digest deliberately, with the arbiter's before/after archived), or record a decision that the manifest digest is order-sensitive by design and that whole-crate identity is shown against the canonical-order manifest.",
+  "source": "docs/reports/w44-provider-resource-view/README.md",
+  "recorded_by": "W44-PROVIDER-RESOURCE-VIEW"
+ },
+ {
+  "id": "W44-RESOURCE-VIEW-REFUSAL-UNCLASSIFIED",
+  "title": "A resource view excludes every module the loader refuses, whatever the reason",
+  "why": "Measured by card W44-PROVIDER-RESOURCE-VIEW: `providers/contracts.py sync` puts a module in its crate's resource view exactly when the resource-contract loader accepts it alone, and records the loader's refusal text for the rest. The 64 refused modules today are all written for other checkers (lifecycle, observation, policy, allocator-profile vocabularies). A new module intended as a resource contract but refused for a defect (a typo in a clause) would equally be left out of the view at `sync` time; `check` then keeps the committed view honest, and the Cycle 19 identity tests pin the 47, but nothing distinguishes 'written for another checker' from 'broken resource module'. DISCHARGE: classify refusals (for example a module-level vocabulary marker, or the loader reporting 'not a resource module' separately from a malformed one) and have `contracts.py` refuse a malformed resource module instead of excluding it; or record a decision that the committed-view diff and the pinned corpus tests are the intended guard.",
+  "source": "docs/reports/w44-provider-resource-view/README.md",
+  "recorded_by": "W44-PROVIDER-RESOURCE-VIEW"
+ }
+]

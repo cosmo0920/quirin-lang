@@ -1,0 +1,8 @@
+manifest1 exit=0
+base1 exit=1
+whole1 exit=0
+canonical1 exit=0
+all-loaded1 exit=0
+canonical-co1 exit=0
+manifest-co1 exit=0
+series1 done

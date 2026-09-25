@@ -57,8 +57,15 @@ python3 providers/contracts.py check
 cargo test -p qcore-compiler --test qcore_contract_corpus
 ```
 
-`sync` updates only each provider's `contracts.json`; `check` compares its exact
-path and SHA-256 inventory with the canonical `contracts/` tree. Both actions
+`sync` updates each provider's `contracts.json` and `contract-load-path.json`;
+`check` compares its exact path and SHA-256 inventory with the canonical
+`contracts/` tree, and the load path with its sources. Each load-path crate
+record carries a `resource_view`: the owned modules the resource-contract
+loader accepts, which `quirin-audit --provider NAME` selects. `sync` computes it
+by running the loader (`cargo run -p qcore-audit --example
+provider_resource_views`, so it needs the repository workspace), and `check`
+refuses a view that names a module the loader refuses or omits one it accepts
+(card W44-PROVIDER-RESOURCE-VIEW). Both actions
 refuse symbolic links, invalid or unowned paths, and any reintroduced
 `contract/qcore/` legacy tree. Intentional declaration/clause changes still
 require the corpus pin updates.

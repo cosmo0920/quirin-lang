@@ -21,7 +21,8 @@
 //!       "contracts": "quirin-provider-libc/contracts",
 //!       "dependencies": [],
 //!       "modules": ["libc/errno.qcore", "libc/memory.qcore"],
-//!       "published": { "libc/memory.qcore": "<sha256>" }
+//!       "published": { "libc/memory.qcore": "<sha256>" },
+//!       "resource_view": ["libc/errno.qcore", "libc/memory.qcore"]
 //!     }
 //!   ]
 //! }
@@ -36,6 +37,15 @@
 //! the manifest being regenerated cannot be inherited from. The validated
 //! records then go through [`ContractLoadPath::new`], which applies the
 //! namespace derivation (`QI017`) and the dependency rules (`QI014`).
+//!
+//! **Resource view (card W44-PROVIDER-RESOURCE-VIEW).** A crate record may
+//! carry `resource_view`: the owned modules the resource-contract loader
+//! accepts, which is what `quirin-audit --provider NAME` selects for a whole
+//! crate. `providers/contracts.py sync` generates it by loading each owned
+//! module through `quirin-audit`'s own selection and loader, and `check`
+//! refuses a view that declares a module the loader refuses or omits one it
+//! accepts. This reader checks its shape only (sorted, unique, owned); an
+//! absent view is not a default, and a whole-crate selection refuses it.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -69,6 +79,8 @@ struct CrateRecord {
     dependencies: Vec<String>,
     modules: Vec<String>,
     published: BTreeMap<String, String>,
+    #[serde(default)]
+    resource_view: Option<Vec<String>>,
 }
 
 /// A load path read from its manifest, with the directory each crate's
@@ -79,6 +91,10 @@ pub struct LoadPathManifest {
     pub load_path: ContractLoadPath,
     /// Crate name to the directory its logical module paths are relative to.
     pub contract_roots: BTreeMap<String, PathBuf>,
+    /// Crate name to its declared resource view (card
+    /// W44-PROVIDER-RESOURCE-VIEW), sorted owned modules. A crate that
+    /// declares none is absent.
+    pub resource_views: BTreeMap<String, Vec<String>>,
 }
 
 impl LoadPathManifest {
@@ -192,6 +208,7 @@ pub fn load_contract_load_path_manifest(
     let base = path.parent().unwrap_or_else(|| Path::new("."));
     let mut crates = Vec::with_capacity(manifest.crates.len());
     let mut contract_roots = BTreeMap::new();
+    let mut resource_views = BTreeMap::new();
     for record in manifest.crates {
         let name = record.name.clone();
         if !relative_directory(&record.contracts) {
@@ -247,6 +264,21 @@ pub fn load_contract_load_path_manifest(
                 ),
             ));
         }
+        if let Some(view) = &record.resource_view {
+            if view.windows(2).any(|pair| pair[0] >= pair[1]) {
+                return Err(refuse(
+                    &name,
+                    "resource view modules are not sorted and unique".into(),
+                ));
+            }
+            if let Some(module) = view.iter().find(|module| !listed.contains(*module)) {
+                return Err(refuse(
+                    &name,
+                    format!("resource view names `{module}`, which the crate does not own"),
+                ));
+            }
+            resource_views.insert(name.clone(), view.clone());
+        }
         let mut modules = BTreeMap::new();
         for module in &record.modules {
             let file = root.join(module);
@@ -283,5 +315,6 @@ pub fn load_contract_load_path_manifest(
     Ok(LoadPathManifest {
         load_path: ContractLoadPath::new(crates)?,
         contract_roots,
+        resource_views,
     })
 }

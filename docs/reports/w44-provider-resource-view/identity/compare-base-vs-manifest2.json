@@ -1,0 +1,25 @@
+{
+  "base": "private/runs/base2",
+  "run": "private/runs/manifest2",
+  "results": {
+    "resource-diagnostics.json": "identical",
+    "resource-diagnostics.contracts.json": "identical",
+    "resource-diagnostics.chunk-contracts.json": "identical",
+    "resource-diagnostics.source-effects.json": "identical",
+    "monkey-source.json": "identical",
+    "audit.log": {
+      "identical_after_masking": true,
+      "lines": 1075,
+      "inserted_lines": [],
+      "differing_lines": [
+        {
+          "line": 1075,
+          "base": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 25348451 us / syntax 45354580 us / line markers 27091840 us",
+          "run": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 36437846 us / syntax 65487683 us / line markers 35148315 us"
+        }
+      ]
+    },
+    "only_in_run": []
+  },
+  "ok": true
+}

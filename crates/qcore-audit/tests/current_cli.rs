@@ -148,10 +148,11 @@ impl Fixture {
                 {"name": "qcore-provider-beta", "namespace": "beta", "version": "0.2.0",
                  "contracts": "qcore-provider-beta/contracts",
                  "dependencies": ["quirin-provider-alpha"], "modules": ["beta/other.qcore"],
-                 "published": {}},
+                 "published": {}, "resource_view": ["beta/other.qcore"]},
                 {"name": "quirin-provider-alpha", "namespace": "alpha", "version": "0.1.0",
                  "contracts": "quirin-provider-alpha/contracts", "dependencies": [],
-                 "modules": ["alpha/heap.qcore"], "published": {}},
+                 "modules": ["alpha/heap.qcore"], "published": {},
+                 "resource_view": ["alpha/heap.qcore"]},
             ]}))
             .unwrap(),
         )
@@ -569,6 +570,166 @@ fn contracts_only_records_its_mode_and_changes_nothing_else() {
     assert_eq!(
         fs::read(fixture.0.join("flag/report.json")).unwrap(),
         fs::read(fixture.0.join("only/report.json")).unwrap()
+    );
+}
+
+/// Card W44-PROVIDER-RESOURCE-VIEW, the user's definition: contracts only
+/// loads all contracts. With no selection and no explicit manifest a
+/// contracts-only run selects every load-path crate whole (its resource
+/// view), recorded as `"selection": "all-loaded"`; an explicit selection or
+/// manifest narrows it; the full mode is unchanged.
+#[test]
+fn contracts_only_without_a_selection_loads_all_contracts() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang, true);
+    let load_path = strings(&["--load-path", "providers/contract-load-path.json"]);
+    // The command line.
+    let mut args = fixture.base_args("all");
+    args.extend(load_path.clone());
+    args.push("--contracts-only".into());
+    succeeded(&fixture.run(&args));
+    let sidecar = fixture.read("all/report.contracts.json");
+    let selection = &sidecar["provider_selection"];
+    assert_eq!(selection["selection"], "all-loaded");
+    assert_eq!(selection["sources"], json!(["default"]));
+    assert!(
+        selection["profile_contract_manifest"]["role"]
+            .as_str()
+            .unwrap()
+            .contains("loads all contracts")
+    );
+    assert_eq!(
+        selection["entries"],
+        json!(["qcore-provider-beta", "quirin-provider-alpha"])
+    );
+    assert_eq!(
+        selection["modules"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|module| module["module"].as_str().unwrap())
+            .collect::<Vec<_>>(),
+        ["beta/other.qcore", "alpha/heap.qcore"]
+    );
+    let invocation = fixture.read("all/report.invocation.json");
+    assert_eq!(invocation["contracts"]["selection"], "all-loaded");
+    assert_eq!(invocation["contracts"]["source"], "providers");
+    assert_eq!(invocation["mode"], "contracts-only");
+    // The same crates named explicitly: the same report, byte for byte.
+    let mut args = fixture.base_args("named");
+    args.extend(load_path.clone());
+    args.extend(strings(&[
+        "--provider",
+        "qcore-provider-beta",
+        "--provider",
+        "quirin-provider-alpha",
+        "--contracts-only",
+    ]));
+    succeeded(&fixture.run(&args));
+    assert_eq!(
+        fs::read(fixture.0.join("all/report.json")).unwrap(),
+        fs::read(fixture.0.join("named/report.json")).unwrap()
+    );
+    let named = fixture.read("named/report.contracts.json");
+    assert_eq!(named["provider_selection"]["selection"], "explicit");
+    assert_eq!(
+        fixture.read("named/report.invocation.json")["contracts"]["selection"],
+        "explicit"
+    );
+    assert_eq!(named["contract_manifest"], sidecar["contract_manifest"]);
+    assert_eq!(named["contracts"], sidecar["contracts"]);
+    // The configuration form is the same run.
+    let config = fixture.config(
+        "all.json",
+        &json!({"schema_version": 1, "mode": "contracts-only",
+                "load_path": "providers/contract-load-path.json"}),
+    );
+    let mut args = fixture.base_args("json");
+    args.extend(strings(&["--config", &config]));
+    succeeded(&fixture.run(&args));
+    assert_eq!(
+        fs::read(fixture.0.join("json/report.json")).unwrap(),
+        fs::read(fixture.0.join("all/report.json")).unwrap()
+    );
+    assert_eq!(
+        fixture.read("json/report.contracts.json")["provider_selection"]["selection"],
+        "all-loaded"
+    );
+    // An explicit selection narrows it.
+    let mut args = fixture.base_args("narrow");
+    args.extend(load_path.clone());
+    args.extend(strings(&[
+        "--provider",
+        "quirin-provider-alpha",
+        "--contracts-only",
+    ]));
+    succeeded(&fixture.run(&args));
+    let narrow = fixture.read("narrow/report.contracts.json");
+    assert_eq!(narrow["provider_selection"]["selection"], "explicit");
+    assert_eq!(narrow["contracts"].as_object().unwrap().len(), 1);
+    // So does an explicit manifest.
+    let mut args = fixture.base_args("manifest");
+    args.extend(strings(&[
+        "--contract-manifest",
+        "contracts.json",
+        "--contracts-only",
+    ]));
+    succeeded(&fixture.run(&args));
+    assert!(fixture.read("manifest/report.contracts.json")["provider_selection"].is_null());
+    assert!(fixture.read("manifest/report.invocation.json")["contracts"]["selection"].is_null());
+    // Without the load path there is nothing to load all of; the profile's
+    // default manifest is not a silent substitute.
+    let mut args = fixture.base_args("bare");
+    args.push("--contracts-only".into());
+    refused(
+        &fixture.run(&args),
+        "loads every crate's resource view on the contract load path",
+    );
+    // The guard refuses the all-loaded set rather than narrowing it.
+    let mut args = fixture.base_args("guarded");
+    args.extend(load_path.clone());
+    args.extend(strings(&["--contracts-only", "--quirin-providers-only"]));
+    refused(
+        &fixture.run(&args),
+        "--quirin-providers-only refuses `qcore-provider-beta`",
+    );
+    // The full mode is unchanged: a load path without a selection refuses,
+    // and with none the profile's manifest is read, with no selection.
+    let mut args = fixture.base_args("full");
+    args.extend(load_path);
+    refused(&fixture.run(&args), "no provider is selected");
+    succeeded(&fixture.run(&fixture.base_args("default")));
+    assert!(fixture.read("default/report.contracts.json")["provider_selection"].is_null());
+    assert!(fixture.read("default/report.invocation.json")["contracts"]["selection"].is_null());
+    // The plain route: the same default, the same refusal without a load path.
+    let plain = |name: &str, load_path: bool| {
+        let mut config = json!({
+            "schema_version": 1, "profile_directory": "profiles/sample", "checkout": "checkout",
+            "compile_database": "compile_commands.json", "libraries": ["sample"],
+            "report": format!("{name}/report.json"), "source_revision_policy": "checkout_head",
+            "mode": "contracts-only",
+        });
+        if load_path {
+            config["load_path"] = json!("providers/contract-load-path.json");
+        }
+        let config = fixture.config(&format!("{name}.json"), &config);
+        Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
+            .arg(fixture.0.join(config))
+            .output()
+            .unwrap()
+    };
+    succeeded(&plain("plain", true));
+    assert_eq!(
+        fixture.read("plain/report.assumptions.json")["provider_selection"]["selection"],
+        "all-loaded"
+    );
+    assert_eq!(
+        fixture.read("plain/report.invocation.json")["contracts"]["selection"],
+        "all-loaded"
+    );
+    refused(
+        &plain("plain-bare", false),
+        "loads every crate's resource view on the contract load path",
     );
 }
 

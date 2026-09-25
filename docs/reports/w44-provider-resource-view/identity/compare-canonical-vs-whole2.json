@@ -1,0 +1,25 @@
+{
+  "base": "private/runs/canonical2",
+  "run": "private/runs/whole2",
+  "results": {
+    "resource-diagnostics.json": "identical",
+    "resource-diagnostics.contracts.json": "identical-after-removing ['provider_selection']",
+    "resource-diagnostics.chunk-contracts.json": "identical",
+    "resource-diagnostics.source-effects.json": "identical",
+    "monkey-source.json": "identical",
+    "audit.log": {
+      "identical_after_masking": true,
+      "lines": 1075,
+      "inserted_lines": [],
+      "differing_lines": [
+        {
+          "line": 1075,
+          "base": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 18954404 us / syntax 36684561 us / line markers 20420368 us",
+          "run": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 20180115 us / syntax 38495318 us / line markers 21825684 us"
+        }
+      ]
+    },
+    "only_in_run": []
+  },
+  "ok": true
+}

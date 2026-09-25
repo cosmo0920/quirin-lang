@@ -1,0 +1,54 @@
+{
+  "base": "private/runs/manifest2",
+  "run": "private/runs/whole2",
+  "results": {
+    "resource-diagnostics.json": {
+      "different": 558,
+      "first": [
+        "/units[0]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest",
+        "/units[0]/compile_configuration/dependencies/resource_contract_manifest",
+        "/units[0]/compile_configuration/inventory_sha256",
+        "/units[100]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest",
+        "/units[100]/compile_configuration/dependencies/resource_contract_manifest",
+        "/units[100]/compile_configuration/inventory_sha256",
+        "/units[101]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest",
+        "/units[101]/compile_configuration/dependencies/resource_contract_manifest",
+        "/units[101]/compile_configuration/inventory_sha256",
+        "/units[102]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest",
+        "/units[102]/compile_configuration/dependencies/resource_contract_manifest",
+        "/units[102]/compile_configuration/inventory_sha256",
+        "/units[103]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest",
+        "/units[103]/compile_configuration/dependencies/resource_contract_manifest",
+        "/units[103]/compile_configuration/inventory_sha256",
+        "/units[104]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest",
+        "/units[104]/compile_configuration/dependencies/resource_contract_manifest",
+        "/units[104]/compile_configuration/inventory_sha256",
+        "/units[105]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest",
+        "/units[105]/compile_configuration/dependencies/resource_contract_manifest"
+      ]
+    },
+    "resource-diagnostics.contracts.json": {
+      "different": 1,
+      "first": [
+        "/contract_manifest"
+      ]
+    },
+    "resource-diagnostics.chunk-contracts.json": "identical",
+    "resource-diagnostics.source-effects.json": "identical",
+    "monkey-source.json": "identical",
+    "audit.log": {
+      "identical_after_masking": true,
+      "lines": 1075,
+      "inserted_lines": [],
+      "differing_lines": [
+        {
+          "line": 1075,
+          "base": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 36437846 us / syntax 65487683 us / line markers 35148315 us",
+          "run": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 20180115 us / syntax 38495318 us / line markers 21825684 us"
+        }
+      ]
+    },
+    "only_in_run": []
+  },
+  "ok": false
+}

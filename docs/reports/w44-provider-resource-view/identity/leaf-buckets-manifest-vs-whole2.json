@@ -1,0 +1,13 @@
+{
+  "differing_leaves": 558,
+  "buckets": {
+    "resource_contract_manifest": {
+      "count": 372,
+      "example": "/units[0]/compile_configuration/compile_task_identity/dependencies/resource_contract_manifest"
+    },
+    "inventory_sha256": {
+      "count": 186,
+      "example": "/units[0]/compile_configuration/inventory_sha256"
+    }
+  }
+}

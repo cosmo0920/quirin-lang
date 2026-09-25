@@ -316,6 +316,21 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                 profile.resource_contract_manifest_path().as_deref(),
             )
         }
+        // Card W44-PROVIDER-RESOURCE-VIEW: contracts only loads all contracts,
+        // every load-path crate's resource view (`"selection": "all-loaded"`).
+        None if config.mode.is_contracts_only() => {
+            let load_path = config.load_path.as_ref().ok_or(
+                "a contracts-only audit with no `providers` loads every crate's resource view on \
+                 the contract load path: give `load_path`, or narrow it with `providers`",
+            )?;
+            providers::ContractInput::providers(
+                &providers::resolve_all_loaded(
+                    &resolve(base, load_path),
+                    config.quirin_providers_only,
+                )?,
+                profile.resource_contract_manifest_path().as_deref(),
+            )
+        }
         None => {
             if config.load_path.is_some() || config.quirin_providers_only {
                 return Err(
@@ -580,6 +595,11 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
             "configuration_sha256": qcore_contract::profile_loader::sha256_hex(
                 &fs::read(&path).map_err(|error| error.to_string())?,
             ),
+            "contracts": {
+                "selection": contract_input
+                    .provider_record()
+                    .map(|record| record["selection"].clone()),
+            },
             "jobs": {
                 "requested": jobs,
                 "effective": parallel::effective_jobs(jobs),

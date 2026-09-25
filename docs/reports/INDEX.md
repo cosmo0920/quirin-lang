@@ -860,6 +860,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w44-libc-residuals](w44-libc-residuals/README.md) | W44-LIBC-RESIDUALS: header-inline helpers, `va_list`, literal tails and nested tail callees |
 
+| [w44-provider-resource-view](w44-provider-resource-view/README.md) | W44-PROVIDER-RESOURCE-VIEW: whole-crate provider selection, and contracts only loads all contracts |
+
 | [w44-quirin-audit-prepare](w44-quirin-audit-prepare/README.md) | W44-QUIRIN-AUDIT-PREPARE: `quirin-audit prepare` replaces the Python preparation scripts |
 
 | [w44-quirin-audit-providers](w44-quirin-audit-providers/README.md) | W44-QUIRIN-AUDIT-PROVIDERS: providers for `quirin-audit`, `quirin-audit current`, contracts only |
