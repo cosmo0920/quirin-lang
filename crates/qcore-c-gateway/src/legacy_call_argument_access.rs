@@ -401,6 +401,36 @@ fn member_address(
     }
 }
 
+/// Replace every `( NAME )` whose `NAME` this function declares as a variable
+/// by `NAME` alone.
+///
+/// Macro expansion writes `mtx_lock(&(rkb)->rkb_lock)`. A parenthesised
+/// primary expression designates exactly what the name does (C11 6.5.1p5);
+/// requiring a declared variable keeps a cast to a typedef name, `( T ) x`,
+/// out of the rewrite.
+fn unparenthesise_names<'a>(argument: &[&'a str], types: &FunctionTypes) -> Vec<&'a str> {
+    let mut rewritten = Vec::with_capacity(argument.len());
+    let mut index = 0usize;
+    while index < argument.len() {
+        if argument[index] == "("
+            && argument.get(index + 2) == Some(&")")
+            && let Some(name) = argument.get(index + 1).copied()
+            && is_name(name)
+            && types.declared_type(name).is_some()
+            && !index
+                .checked_sub(1)
+                .is_some_and(|before| is_name(argument[before]) || argument[before] == "sizeof")
+        {
+            rewritten.push(name);
+            index += 3;
+            continue;
+        }
+        rewritten.push(argument[index]);
+        index += 1;
+    }
+    rewritten
+}
+
 /// Recognise one whole actual, or say why not.
 pub(super) fn recognise(
     argument: &[&str],
@@ -411,6 +441,8 @@ pub(super) fn recognise(
     if !types.is_readable() {
         return Err(Refusal::Unreadable);
     }
+    let unparenthesised = unparenthesise_names(argument, types);
+    let argument = unparenthesised.as_slice();
     if argument
         .iter()
         .enumerate()
@@ -1013,6 +1045,19 @@ mod tests {
         assert!(answer(&facts, "sizeof ( * p ) * i").is_err());
         assert!(answer(&facts, "sizeof ( i ) * p -> len").is_err());
         assert!(answer(&facts, "sizeof ( int [ 4 ] ) * p -> len").is_err());
+    }
+
+    #[test]
+    fn a_parenthesised_variable_is_the_variable() {
+        let facts = facts(PARAMETERS, BODY);
+        let read = answer(&facts, "& ( p ) - > len").expect("macro-expanded member address");
+        assert_eq!(read.record_bases, vec!["p"]);
+        assert_eq!(
+            answer(&facts, "( p ) - > len + ( i )").expect("sum").bases,
+            vec!["p"]
+        );
+        // A parenthesised chain is still a chain.
+        assert!(answer(&facts, "& ( p - > next ) - > len").is_err());
     }
 
     #[test]
