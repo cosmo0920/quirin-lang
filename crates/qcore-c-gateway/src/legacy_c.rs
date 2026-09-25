@@ -4352,11 +4352,21 @@ impl Parser<'_> {
             .iter()
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
-        let plan = crate::typed_field_access::typed_scalar_condition(
+        let Some(plan) = crate::typed_field_access::typed_scalar_condition(
             &texts,
             &self.typed_model,
             &self.typed_types,
-        )?;
+        ) else {
+            // Card W44-INDIRECT-CHAIN-ACCESS: the same typed read with
+            // record-pointer member chains as accesses.
+            let chained = crate::indirect_chain_access::chain_condition(
+                &texts,
+                &self.typed_model,
+                &self.typed_types,
+                &self.typed_bases,
+            )?;
+            return Some(Box::new(self.chain_access_instruction(chained, false)));
+        };
         Some(Box::new(LegacyInstruction::IndirectScalarAccess {
             alias_reads: plan
                 .record_bases
@@ -5326,6 +5336,17 @@ impl Parser<'_> {
             &self.typed_model,
             &self.typed_types,
         ) else {
+            // Card W44-INDIRECT-CHAIN-ACCESS: the same typed route with
+            // record-pointer member chains as accesses, in the same position
+            // and for the same refusals. See `crate::indirect_chain_access`.
+            if let Some(chained) = crate::indirect_chain_access::chain_statement(
+                &texts,
+                &self.typed_model,
+                &self.typed_types,
+                &self.typed_bases,
+            ) {
+                return self.chain_access_instruction(chained, true);
+            }
             // Card W43-INDEX-TRAVERSAL: a statement that moves a declared
             // pointer (`p++`, `p += k`, `p = q + k`) is consulted in the same
             // position and for the same refusals, after the typed access route.

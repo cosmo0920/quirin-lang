@@ -1008,6 +1008,23 @@ made**: an index or offset is never evaluated beyond whether a step is a
 positive literal, and the published scope string says so. See
 [the implementation record](reports/w43-index-traversal/README.md).
 
+Both typed routes also admit a **member chain** of two to four selections,
+`r->l1->…->f`, `(*r).l1->…->f` or `s.l1->…->f`, as an access, where every
+member selected and then dereferenced is declared exactly `struct T *` over a
+complete, unambiguous, non-union record and the final member is scalar. A
+pointer-valued final member, a nested aggregate sub-object, a subscript and a
+`void *` or other pointer link are not admitted by this route. Every pointer
+the chain reads through keeps an obligation. The root MUST be a name the body
+never binds whose binding is absent or non-null with no tracked target, or
+exactly one known, non-null, live identity. A link of an object no reaching
+path bound is itself untracked. A link of a tracked object MUST be the member
+place an admitted aggregate store bound either to one live identity equal to
+the field link it recorded, or to no target with no field link; a tracked
+object deeper than the first link, and every other link, refuses. The chain
+changes no binding, and its property is the typed access's: custody only, with
+the nullness and liveness of an untracked object outside it. See
+[the implementation record](reports/w44-indirect-chain-access/README.md).
+
 An indexed resource collection is a heap array a body acquired, declared
 `T **v`, whose elements hold owned resources. Its element obligations are a
 partition of the index line into half-open segments `[lo, hi)` over symbolic
