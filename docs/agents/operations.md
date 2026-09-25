@@ -77,38 +77,38 @@ Read this section when writing a delegated card's brief or running cards in
 parallel. A card runs unattended, so its brief is its whole specification. State
 up front:
 
-1. **Task and success criteria:** what changes and why, and the measurable
+1. Task and success criteria: what changes and why, and the measurable
    acceptance (verdict movements, pins, counts, files), with the open residuals
    the card could touch.
-2. **Base and setup:** the base revision, the submodule step, and the files that
+2. Base and setup: the base revision, the submodule step, and the files that
    other running cards will also touch.
-3. **Evidence:** the [standing gate](validation.md) by reference, plus what the
+3. Evidence: the [standing gate](validation.md) by reference, plus what the
    rules add for this card: the card-closing requirement in Working rules, the
    provider gate when `providers/` changes, and, for a card that can move corpus
    figures, a prediction committed in its report before implementation and the
    arbiter comparison. Do not restate the gate or add "verify your work" steps
    beyond it.
-4. **Scope limits:** what is in and out of scope; the card never merges or
+4. Scope limits: what is in and out of scope; the card never merges or
    pushes main; findings outside scope become follow-ups.
-5. **Completion condition and report:** the checklist that makes the card done,
+5. Completion condition and report: the checklist that makes the card done,
    the report path, the increment paragraph and ledger entries, and the reply's
    shape: branch tip and base, changes, gate commands with exits and counts,
    files likely to conflict, and follow-ups.
-6. **Legitimate stops:** stop and report only when nothing can advance without
+6. Legitimate stops: stop and report only when nothing can advance without
    the integrator or user, or when the next step needs something deliberately
    protected (main, a frozen archive, another card's worktree, a destructive
    action). A stop to summarise progress, to offer the next step, or because a
    milestone was reached is not one.
-7. **Time budget** when cards run in parallel: an advisory wall-clock budget
+7. Time budget, when cards run in parallel: an advisory wall-clock budget
    the card paces itself against, not a stop rule.
 
-Split work into cards only where the tracks are large and genuinely
-independent, one card per track, and never spawn a card or subagent to recheck
-another's work: the gate and the integration measurement are the checks. A
-card's text-only end of turn with open checklist items and no stated blocker is
-a progress report, not completion. Send it the open items and ask it to
-continue, and review the run after two or three such continuations. A card
-with a background job still running is not complete.
+Split work into cards by the Working rules' delegation test, one card per
+large, independent track. The gate and the integration measurement are the
+checks, so no card or subagent is spawned to recheck another's work. A card's
+text-only end of turn with open checklist items and no stated blocker is a
+progress report, not completion: send it the open items and ask it to continue,
+and review the run after two or three such continuations. A card with a
+background job still running is not complete.
 
 ## Integration and reconciliation
 
@@ -161,9 +161,8 @@ Read this section for documentation compaction, stability review and wave close.
   Name every finding and its discharge condition (proof, exercised behavior, or
   a stated measured boundary). Record postponement explicitly. Never relabel an
   observation as proof or infer stability from green tests.
-- Due and not yet recorded as run: the ninth compaction (`DOCS-COMPACT-9`, due
-  around wave 42–43; the eighth was wave 40) and stability review firing five
-  (due after wave 41). A wave close records each firing or its postponement;
+- Due and not yet recorded as run: the ninth compaction (due around wave 42–43;
+  the eighth was wave 40) and stability review firing five (due after wave 41). A wave close records each firing or its postponement;
   neither is discharged silently.
 
 ## Task reading protocol
