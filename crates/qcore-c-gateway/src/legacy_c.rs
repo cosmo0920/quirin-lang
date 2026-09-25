@@ -2684,6 +2684,24 @@ fn build_function_cfg_with(
             sub_object_store::caller_bases(&body, &formal_parameters, &frame_protected)
         },
     );
+    let sub_object_roots = match (
+        function_parameter_range(tokens, function, body_start),
+        matching(tokens, body_start, "{", "}"),
+    ) {
+        (Some((open, close)), Some(body_end)) => {
+            let texts = tokens
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            sub_object_store::RecordRoots::read(
+                &typed_model,
+                &texts[open + 1..close],
+                &texts[body_start + 1..body_end],
+                &formal_parameters,
+            )
+        }
+        _ => sub_object_store::RecordRoots::default(),
+    };
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -2711,6 +2729,7 @@ fn build_function_cfg_with(
         argument_probe: call_argument_access::ArgumentProbe::default(),
         desugar: condition_desugar::DesugarState::new(function),
         sub_object_caller_bases,
+        sub_object_roots,
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -4051,6 +4070,9 @@ struct Parser<'a> {
     /// Card **W45-SUB-OBJECT-STORES**: the formals whose record the caller
     /// reaches ([`sub_object_store::caller_bases`]).
     sub_object_caller_bases: BTreeSet<String>,
+    /// Card **W45-SUB-OBJECT-STORES**: the record-typed roots
+    /// ([`sub_object_store::RecordRoots`]).
+    sub_object_roots: sub_object_store::RecordRoots,
 }
 
 impl Parser<'_> {
@@ -4288,6 +4310,7 @@ impl Parser<'_> {
             left,
             &self.typed_model,
             &self.typed_types,
+            &self.sub_object_roots,
             &self.sub_object_caller_bases,
         ) {
             Err(refusal) => format!("destination:{refusal}"),
@@ -5990,6 +6013,7 @@ impl Parser<'_> {
             &texts[..equal],
             &self.typed_model,
             &self.typed_types,
+            &self.sub_object_roots,
             &self.sub_object_caller_bases,
         )
         .ok()?;

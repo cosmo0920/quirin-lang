@@ -29,7 +29,9 @@ fn texts(source: &str) -> Vec<&str> {
 }
 
 const RECORDS: &str = "struct q { int x; }; struct r { int count; char *name; \
-                       struct r *next; void *data; int a[4]; struct q inner; };";
+                       struct r *next; void *data; int a[4]; struct q inner; }; \
+                       typedef struct t_s { int n; char *s; } t_t; typedef struct { int n; } anon; \
+                       typedef t_t t_alias;";
 
 fn fixture(parameters: &str, body: &str) -> (TypedAccessModel, FunctionTypes) {
     let model = TypedAccessModel::read(&texts(RECORDS));
@@ -44,15 +46,19 @@ fn read(parameters: &str, body: &str, left: &str) -> Result<Destination, Refusal
         .map(str::to_owned)
         .collect::<BTreeSet<_>>();
     let bases = caller_bases(&texts(body), &formals, &formals);
-    read_destination(&texts(left), &model, &types, &bases)
+    let roots = RecordRoots::read(&model, &texts(parameters), &texts(body), &formals);
+    read_destination(&texts(left), &model, &types, &roots, &bases)
 }
 
 const PARAMETERS: &str = "struct r *p, struct r *recs, int i, char *s";
 
 #[test]
 fn each_admitted_destination_shape_names_its_member_place() {
-    let body = "struct r l;";
+    let body = "struct r l; struct r arr [ 2 ]; t_t * tp; t_alias ta;";
     let cases = [
+        ("arr [ i ] . count", None, "arr[].count", MemberKind::Scalar, false),
+        ("tp -> s", Some("tp"), "tp->s", MemberKind::Pointer, false),
+        ("ta . n", None, "ta.n", MemberKind::Scalar, false),
         ("p -> count", Some("p"), "p->count", MemberKind::Scalar, true),
         ("( p ) -> name", Some("p"), "p->name", MemberKind::Pointer, true),
         ("recs [ i ] . next", Some("recs"), "recs[].next", MemberKind::Pointer, true),
@@ -80,7 +86,7 @@ fn each_admitted_destination_shape_names_its_member_place() {
 
 #[test]
 fn every_other_destination_keeps_its_refusal() {
-    let body = "struct r l; void *v; struct r **pp;";
+    let body = "struct r l; void *v; struct r **pp; struct r arr[2]; anon *td;";
     let refused = [
         ("( * pp ) -> count", "prefix"),
         ("( ( struct r * ) v ) -> count", "prefix"),
@@ -95,6 +101,9 @@ fn every_other_destination_keeps_its_refusal() {
         ("l -> count", "selector-mismatch"),
         ("( & p ) -> count", "address-of-pointer"),
         ("l [ i ] . count", "subscript-of-object"),
+        ("( & arr ) -> count", "address-of-pointer"),
+        ("arr . count", "selector-mismatch"),
+        ("td -> count", "root-untyped"),
         ("recs [ i ++ ] . count", "subscript-index"),
         ("recs [ i ] -> count", "selector-mismatch"),
         ("p -> count +", "chain"),

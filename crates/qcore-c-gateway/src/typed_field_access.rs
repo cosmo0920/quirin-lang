@@ -1159,6 +1159,47 @@ impl TypedAccessModel {
         })
     }
 
+    /// Card **W45-SUB-OBJECT-STORES**: the `struct` tag a specifier list
+    /// names, read through this unit's typedefs, including a typedef that
+    /// itself defines `struct TAG { … }` (which [`Self::classify_specifiers`]
+    /// deliberately answers `Opaque`). A side reading consulted only by
+    /// `legacy_c::sub_object_store`: no [`DeclaredType`] answer changes.
+    /// `volatile`/`_Atomic`, `union`, an untagged aggregate and every typedef
+    /// this reader does not resolve answer `None`.
+    pub(crate) fn record_tag(&self, specifiers: &[&str]) -> Option<String> {
+        self.record_tag_at(specifiers, 0)
+    }
+
+    fn record_tag_at(&self, specifiers: &[&str], depth: usize) -> Option<String> {
+        if depth >= TYPEDEF_DEPTH_LIMIT
+            || specifiers
+                .iter()
+                .any(|text| REJECTING_QUALIFIERS.contains(text) || *text == "typedef")
+        {
+            return None;
+        }
+        let core = specifiers
+            .iter()
+            .copied()
+            .filter(|text| !IGNORED_SPECIFIERS.contains(text))
+            .collect::<Vec<_>>();
+        match core.as_slice() {
+            ["struct", tag] if is_name(tag) => Some((*tag).to_owned()),
+            [name] if is_name(name) => match self.typedefs.get(*name)? {
+                Some(TypedefTarget::Specifiers(target)) => {
+                    let target = target.iter().map(String::as_str).collect::<Vec<_>>();
+                    self.record_tag_at(&target, depth + 1)
+                }
+                Some(TypedefTarget::Aggregate(head)) => match head.split(' ').collect::<Vec<_>>()[..] {
+                    ["struct", tag] if is_name(tag) => Some(tag.to_owned()),
+                    _ => None,
+                },
+                None => None,
+            },
+            _ => None,
+        }
+    }
+
     pub(crate) fn record_pointer_field(&self, tag: &str, field: &str) -> Option<&str> {
         self.records
             .get(tag)

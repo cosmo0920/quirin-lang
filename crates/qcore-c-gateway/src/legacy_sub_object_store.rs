@@ -89,7 +89,7 @@
 //!   the function, so it never resolves here; CTWIN-PUBLISH's refusal stands.
 
 use crate::typed_field_access::{
-    DeclaredType, FunctionTypes, TypedAccessModel, is_name, is_scalar_value_expression,
+    FunctionTypes, TypedAccessModel, is_name, is_scalar_value_expression,
     typed_scalar_value,
 };
 
@@ -155,12 +155,71 @@ fn close_of(texts: &[&str], open: usize, left: &str, right: &str) -> Option<usiz
     None
 }
 
-/// The record tag a declared name has, and whether it is a pointer to it.
-fn record_of(types: &FunctionTypes, name: &str) -> Option<(String, bool)> {
-    match types.declared_type(name)? {
-        DeclaredType::RecordPointer(tag) => Some((tag.clone(), true)),
-        DeclaredType::Record(tag) => Some((tag.clone(), false)),
-        DeclaredType::Scalar | DeclaredType::Opaque => None,
+/// How a record-typed root is declared.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum RootKind {
+    /// `T * name`, or a formal spelled `T name [ N ]` (C11 6.7.6.3p7): a
+    /// pointer the store dereferences.
+    Pointer,
+    /// `T name`: this function's own record object.
+    Object,
+    /// A local `T name [ N ]`: this function's own array of records.
+    Array,
+}
+
+/// Card **W45-SUB-OBJECT-STORES**: the record-typed roots of one function —
+/// every name each of whose declarations (formals and locals, read by the
+/// same total-or-reject declarator reader as [`FunctionTypes::read`]) is
+/// `T name`, `T * name` or `T name [ N ]` with `T` resolving to one `struct`
+/// tag ([`TypedAccessModel::record_tag`], which also reads a typedef that
+/// defines its own `struct TAG { … }`). Two disagreeing declarations of one
+/// name make it unusable. Empty when the reader refuses the function.
+#[derive(Clone, Debug, Default)]
+pub struct RecordRoots {
+    roots: std::collections::BTreeMap<String, Option<(String, RootKind)>>,
+}
+
+impl RecordRoots {
+    pub fn read(
+        model: &TypedAccessModel,
+        parameters: &[&str],
+        body: &[&str],
+        formals: &std::collections::BTreeSet<String>,
+    ) -> Self {
+        let Some(facts) = crate::typed_field_access::declarator_facts(parameters, body) else {
+            return Self::default();
+        };
+        let mut roots = std::collections::BTreeMap::new();
+        for fact in facts {
+            let specifiers = fact
+                .specifiers
+                .iter()
+                .map(String::as_str)
+                .collect::<Vec<_>>();
+            let formal = formals.contains(&fact.name);
+            let kind = match (fact.stars, fact.dimensions) {
+                (1, 0) => Some(RootKind::Pointer),
+                (0, 0) => Some(RootKind::Object),
+                (0, 1) if formal => Some(RootKind::Pointer),
+                (0, 1) => Some(RootKind::Array),
+                _ => None,
+            };
+            let reading = kind.and_then(|kind| Some((model.record_tag(&specifiers)?, kind)));
+            match roots.get(&fact.name) {
+                Some(existing) if *existing != reading => {
+                    roots.insert(fact.name, None);
+                }
+                Some(_) => {}
+                None => {
+                    roots.insert(fact.name, reading);
+                }
+            }
+        }
+        Self { roots }
+    }
+
+    fn root(&self, name: &str) -> Option<&(String, RootKind)> {
+        self.roots.get(name)?.as_ref()
     }
 }
 
@@ -220,11 +279,13 @@ pub fn caller_bases(
 }
 
 /// Read one left-hand side as a store into one member through a resolved,
-/// typed base. `caller_bases` is [`caller_bases`]' answer for the function.
+/// typed base. `roots` is [`RecordRoots::read`]'s and `caller_bases`
+/// [`caller_bases`]' answer for the function.
 pub fn read_destination(
     left: &[&str],
     model: &TypedAccessModel,
     types: &FunctionTypes,
+    roots: &RecordRoots,
     caller_bases: &std::collections::BTreeSet<String>,
 ) -> Result<Destination, Refusal> {
     if !types.is_readable() {
@@ -235,19 +296,20 @@ pub fn read_destination(
         [name, ..] if is_name(name) => (*name, false, 1),
         ["(", name, ")", ..] if is_name(name) => (*name, false, 3),
         ["(", "&", name, ")", ..] if is_name(name) => (*name, true, 4),
-        ["(", ..] => return Err("prefix"),
         _ => return Err("prefix"),
     };
-    let Some((tag, pointer)) = record_of(types, root) else {
+    let Some((tag, kind)) = roots.root(root) else {
         return Err("root-untyped");
     };
-    if address && pointer {
+    let pointer = *kind == RootKind::Pointer;
+    let array = *kind == RootKind::Array;
+    if address && !matches!(kind, RootKind::Object) {
         return Err("address-of-pointer");
     }
-    // An optional subscript through a record pointer.
+    // An optional subscript through a record pointer, or into a local array.
     let mut subscripted = false;
     if left.get(at) == Some(&"[") {
-        if !pointer || address {
+        if !(pointer || array) || address {
             return Err("subscript-of-object");
         }
         let close = close_of(left, at, "[", "]").ok_or("subscript")?;
@@ -272,22 +334,20 @@ pub fn read_destination(
     if at + selector_len != left.len() {
         return Err("chain");
     }
-    let through_pointer = match (pointer, address, subscripted, arrow) {
-        // `R -> F`
-        (true, false, false, true) => true,
-        // `R [ I ] . F`
-        (true, false, true, false) => true,
-        // `S . F`, `( & S ) -> F`
-        (false, false, false, false) | (false, true, false, true) => false,
+    let through_pointer = match (kind, address, subscripted, arrow) {
+        // `R -> F`, `R [ I ] . F`
+        (RootKind::Pointer, false, false, true) | (RootKind::Pointer, false, true, false) => true,
+        // `S . F`, `( & S ) -> F`, a local `A [ I ] . F`
+        (RootKind::Object, false, false, false)
+        | (RootKind::Object, true, false, true)
+        | (RootKind::Array, false, true, false) => false,
         _ => return Err("selector-mismatch"),
     };
-    let member = member_kind(model, &tag, field).ok_or("member")?;
-    let place = if through_pointer {
-        if subscripted {
-            format!("{root}[].{field}")
-        } else {
-            format!("{root}->{field}")
-        }
+    let member = member_kind(model, tag, field).ok_or("member")?;
+    let place = if subscripted {
+        format!("{root}[].{field}")
+    } else if through_pointer {
+        format!("{root}->{field}")
     } else {
         format!("{root}.{field}")
     };
