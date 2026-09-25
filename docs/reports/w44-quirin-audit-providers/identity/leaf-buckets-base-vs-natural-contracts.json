@@ -1,0 +1,245 @@
+{
+  "differing_leaves": 447,
+  "buckets": {
+    "entries": {
+      "count": 47,
+      "example": "/provider_selection/entries[0]"
+    },
+    "crate": {
+      "count": 47,
+      "example": "/provider_selection/modules[0]/crate"
+    },
+    "loaded_as": {
+      "count": 47,
+      "example": "/provider_selection/modules[0]/loaded_as"
+    },
+    "module": {
+      "count": 47,
+      "example": "/provider_selection/modules[0]/module"
+    },
+    "sha256": {
+      "count": 47,
+      "example": "/provider_selection/modules[0]/sha256"
+    },
+    "dependencies": {
+      "count": 13,
+      "example": "/provider_selection/crates[0]/dependencies[0]"
+    },
+    "role": {
+      "count": 12,
+      "example": "/provider_selection/crates[0]/role"
+    },
+    "contracts": {
+      "count": 11,
+      "example": "/provider_selection/crates[0]/contracts"
+    },
+    "name": {
+      "count": 11,
+      "example": "/provider_selection/crates[0]/name"
+    },
+    "namespace": {
+      "count": 11,
+      "example": "/provider_selection/crates[0]/namespace"
+    },
+    "version": {
+      "count": 11,
+      "example": "/provider_selection/crates[0]/version"
+    },
+    "time.qcore": {
+      "count": 9,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qcore"
+    },
+    "context_lifetime.qcore": {
+      "count": 6,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qcore"
+    },
+    "logging.qcore": {
+      "count": 6,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/logging.qcore"
+    },
+    "memory.qcore": {
+      "count": 6,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/memory.qcore"
+    },
+    "string.qcore": {
+      "count": 4,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qcore"
+    },
+    "chunk_residency.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qcore"
+    },
+    "chunk_sizes.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qcore"
+    },
+    "resource_open_close.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qcore"
+    },
+    "metric_values.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qcore"
+    },
+    "mpack_utils.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qcore"
+    },
+    "intrusive_list.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore"
+    },
+    "cjson.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qcore"
+    },
+    "kafka_mem.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qcore"
+    },
+    "lz4_stream.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qcore"
+    },
+    "topic_partition.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qcore"
+    },
+    "sds_lifetime.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qcore"
+    },
+    "hash_table_publication.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qcore"
+    },
+    "input_chunk_destroy.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qcore"
+    },
+    "input_chunk_destroy_direct_routes.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qcore"
+    },
+    "input_chunk_helpers.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qcore"
+    },
+    "input_chunk_name.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qcore"
+    },
+    "input_chunk_sizes.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qcore"
+    },
+    "input_chunk_total_size.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qcore"
+    },
+    "routes_mask.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qcore"
+    },
+    "dirent.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dirent.qcore"
+    },
+    "dlfcn.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dlfcn.qcore"
+    },
+    "errno.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qcore"
+    },
+    "math.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qcore"
+    },
+    "process.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/process.qcore"
+    },
+    "pthread_mutex.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qcore"
+    },
+    "regex.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/regex.qcore"
+    },
+    "socket.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qcore"
+    },
+    "stdio.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qcore"
+    },
+    "stdlib.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qcore"
+    },
+    "sys_stat.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/sys_stat.qcore"
+    },
+    "threads.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qcore"
+    },
+    "unistd.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qcore"
+    },
+    "writer.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-mpack/contracts/mpack/writer.qcore"
+    },
+    "packer.qcore": {
+      "count": 3,
+      "example": "/contracts//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qcore"
+    },
+    "resource_memory.qcore": {
+      "count": 1,
+      "example": "/provider_selection/crates[6]/selected_modules/fluent_bit/resource_memory.qcore"
+    },
+    "resource_string.qcore": {
+      "count": 1,
+      "example": "/provider_selection/crates[6]/selected_modules/fluent_bit/resource_string.qcore"
+    },
+    "load_path": {
+      "count": 1,
+      "example": "/provider_selection/load_path"
+    },
+    "load_path_sha256": {
+      "count": 1,
+      "example": "/provider_selection/load_path_sha256"
+    },
+    "lowered_manifest_sha256": {
+      "count": 1,
+      "example": "/provider_selection/lowered_manifest_sha256"
+    },
+    "path": {
+      "count": 1,
+      "example": "/provider_selection/profile_contract_manifest/path"
+    },
+    "quirin_providers_only": {
+      "count": 1,
+      "example": "/provider_selection/quirin_providers_only"
+    },
+    "rule": {
+      "count": 1,
+      "example": "/provider_selection/rule"
+    },
+    "selection_version": {
+      "count": 1,
+      "example": "/provider_selection/selection_version"
+    },
+    "sources": {
+      "count": 1,
+      "example": "/provider_selection/sources[0]"
+    }
+  }
+}

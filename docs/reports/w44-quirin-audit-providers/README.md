@@ -2,9 +2,13 @@
 
 Card W44-QUIRIN-AUDIT-PROVIDERS, 2026-09-25, on base `a2a63ced` ("Record the
 w44-collection-allocation integration and archive the combined baseline").
-Mid-card, the user widened the scope twice: first to retire
-`scripts/prepare_cycle19_clang_audit.py`, then to add a contracts-only route.
-Both are part of this report.
+Mid-card, the user widened the scope three times:
+
+1. retire `scripts/prepare_cycle19_clang_audit.py`;
+2. add a contracts-only route;
+3. give every unit-analysing `quirin-audit` route parallel execution.
+
+All three are part of this report.
 
 ## Headline
 
@@ -38,6 +42,12 @@ Both are part of this report.
   for module, and the selection lowers to `cycle19-resource-contracts.json`
   byte for byte. The pinned arbiter's verdict-bearing artifact is
   byte-identical to the W44-COLLECTION-ALLOCATION integration baseline.
+* **Jobs.** Both `quirin-audit current` and `quirin-audit CONFIG.json` take
+  `--jobs N`, a JSON `"jobs"` field and `QCORE_AUDIT_JOBS`, in that order of
+  precedence. The plain route now folds units in parallel too. On the corpus,
+  the outputs are byte-identical at 1 and 16 jobs for `current` (full and
+  contracts-only) and for the plain route (325 s → 67 s). The plain route at
+  16 jobs is also byte-identical to the base binary's sequential run.
 * **Measured residual.** Only 4 of the 11 provider crates can be selected
   whole. Exactly 47 of 111 owned modules are resource-v1 modules, and they are
   exactly the Cycle 19 manifest's modules (`W44-PROVIDER-RESOURCE-VIEW`).
@@ -60,7 +70,7 @@ QCORE_CLANG=$(command -v clang) cargo run --release -p qcore-audit -- current \
   --report "$out/reports/resource-diagnostics.json" --jobs 16
 ```
 
-The same selection as JSON, run with `quirin-audit current --config FILE`.
+A JSON configuration (the contracts-only example), run with `quirin-audit current --config FILE`.
 Paths are relative to the file:
 
 ```json
@@ -407,7 +417,40 @@ Late in the card, the user required `--jobs` on every unit-analysing route.
 Both routes now fold with `qcore_audit::parallel` (§2.8). Identity at 1 and 16
 jobs on the real corpus:
 
-TODO-JOBS
+| Route | Jobs compared | Artifacts | `audit.log` | Wall time |
+|---|---|---|---|---|
+| `current`, 47 providers (JSON) | 1 vs 16 | all five byte-identical | identical but `preparation:` | 482 s vs 71 s |
+| `current`, 47 providers, contracts-only | 1 vs 16 | all five byte-identical | identical but `preparation:` | 353 s vs 70 s |
+| plain `CONFIG.json`, 47 providers | 1 vs 16 | report and `.assumptions.json` byte-identical | identical but `preparation:` | 325 s vs 67 s |
+| plain `CONFIG.json`, profile manifest | base binary (sequential) vs branch at 16 | report and `.assumptions.json` byte-identical | identical but `preparation:` | — |
+
+Plain-route inputs: a checkout-head configuration over the same prepared
+build. The configuration selects four of the profile's five library groups
+(155 units: 2 Safe / 5 provisional Unsafe / 144 Unknown / 4 data-only). The
+`fluent_bit` group is left out because the production database compiles
+`src/flb_input_chunk.c` twice, once into `fluent-bit-static` and once into
+`fluent-bit-shared`. The plain route refuses that ambiguity ("conflicting
+compilation commands"), and `compile_target` cannot narrow it: its object
+prefix would also drop every library record.
+
+The last row compares the base commit's own `quirin-audit`, built from an
+archive of `a2a63ced`, with the branch binary at 16 jobs. It shows that
+rewriting `run_config`'s loop into the fold changed no byte. The `current` j1
+runs used quirin-audit `57759861…`, which is the final code, and the j16 runs
+used `1c8ba761…`. `run_config`'s change does not touch the `current` route.
+
+The job count's resolution is tested in
+`parallel::tests::a_configured_route_prefers_flag_then_configuration_then_environment`
+(pure precedence, including zeros and a malformed environment value). It is
+also tested in `current_cli.rs::jobs_resolve_by_precedence_and_never_change_an_output`.
+That test runs both routes on a six-unit fixture; the invocation record names
+the source of the count (`command_line`, `configuration`, `environment`), and
+the reports and sidecars are byte-identical at 1, 2, 3, 4 and 6 jobs.
+
+[Digests of every run's artifacts](identity/run-digests.txt). Ten runs share
+the base report's SHA-256 `1c2076fc…`: the base, both examples, both manifest
+runs, both CLI and both JSON provider runs, and the JSON provider run at one
+job. The three contracts-only runs share `7e5206da…`.
 
 ### 3.6 The pinned arbiter
 
@@ -495,7 +538,7 @@ keys and in the new `provider_selection` key.
     same set in another order, conflicts;
   * a selection loads exactly what the equal hand-written manifest loads;
   * the real Cycle 19 selection is the manifest, module for module.
-* `tests/current_cli.rs`, 10 tests, which run the binary against a Clang
+* `tests/current_cli.rs`, 11 tests, which run the binary against a Clang
   fixture:
   * the command-line, configuration and both-form runs are identical;
   * conflicting forms refuse;
@@ -509,16 +552,18 @@ keys and in the new `provider_selection` key.
   * `/usr/bin/cc` refuses with the new instructions;
   * a current configuration naming packages or source contracts refuses;
   * the plain route: contracts-only with `source_contracts` refuses, and
-    `providers` with contracts-only is recorded.
+    `providers` with contracts-only is recorded;
+  * job precedence (flag, configuration, environment) on both routes, with
+    byte-identical outputs across job counts on a six-unit fixture.
 * `tests/dependency_graph.rs`, 2 tests: the resolved normal closure, and every
   manifest table.
 * `tests/source_contract_config.rs`, +2 tests: `package_root` selects and
   verifies by id; a missing package, both inventories, neither inventory and
   an empty root all refuse.
-* `current_cli` unit tests, 3.
+* `current_cli` unit tests, 3; `parallel` unit test for the job precedence, 1.
 * `scripts/tests/test_retired_scripts.py`, 2 tests.
 
-**Lean.** `proof/QCore/ProviderSelection.lean`, with 24 theorems audited in
+**Lean.** `proof/QCore/ProviderSelection.lean`, with 31 theorems audited in
 `proof/AuditProviderSelection.lean`, models what the Rust implements:
 
 - expansion soundness;
@@ -532,6 +577,8 @@ keys and in the new `provider_selection` key.
   inclusion;
 - the both-forms rule (`agree_ok_iff`);
 - the contract-source choice, including `no_default_provider_set`;
+- the job count: flag first, then configuration, then environment, then
+  the capped default; zeros refuse, and an admitted count is positive;
 - contracts-only, which admits only contract evidence, refuses a mixed
   request, and never narrows.
 
@@ -539,14 +586,41 @@ Rust–Lean correspondence is by review (constraint 28).
 
 ## 6. Gates
 
-TODO-GATES
+Measured on `04fee19a` in this worktree with `CARGO_INCREMENTAL=0`. Every exit
+was captured to a file and no step was piped ([gate.json](gate.json); logs are
+in the worktree-private `measure/gate/`, and the harness is
+[`scripts/harness/gate.sh`](scripts/harness/gate.sh)). No many-job audit ran
+during a test step.
+
+| Step | Command | Exit | Count |
+|---|---|---:|---|
+| submodules | `git submodule update --init --recursive` | 0 | |
+| clang | `clang --version` | 0 | Ubuntu clang 21.1.8 ([recording](clang-version.txt)) |
+| test | `python3 scripts/run_test_binaries.py` | **101** | 5,624 passed / **1 failed** / 11 ignored. The failure was `std_socket_inet::this_card_reserves_no_word_and_its_address_rule_collides_with_nothing`, which walks the worktree for `.qcore` examples and found this card's own measurement copy of the base tree under `private/base-src`. Attempt kept at `measure/gate/test.log`. |
+| test (rerun, copy removed) | `python3 scripts/run_test_binaries.py` | 0 | **5,625 passed / 0 failed / 11 ignored**, 298 summaries over 288 units; one single-job audit ran beside it (load 3.0) |
+| clean | `cargo clean --profile dev`, after each test step | 0, 0 | 21.5 GiB the second time |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --all-targets -- -D warnings`; `cargo clippy --workspace --all-targets -- -D warnings` | 0, 0 | |
+| probe / followup | `cargo run -p qcore-compiler --example reevaluation_probe` / `reevaluation_followup` | 0, 0 | |
+| lean | `python3 scripts/check_lean_audits.py --jobs 4` | 0 | 189 audits (+1: `AuditProviderSelection.lean`, 31 theorems) |
+| offline build | `cargo build --offline --workspace` | 0 | no dependency added |
+| python | `python3 -m unittest discover -s scripts/tests` | 1, then 0 | 351 tests. Before the matrix regeneration the two matrix self-consistency tests failed, as they must (`named_followups` 391 → 392, `lean_audits` 188 → 189). After `build_matrix.py . --gate …/gate.json` (exit 0), all 351 pass. |
+| docs index | `python3 scripts/build_docs_index.py`; `--check` | 0, 0 | |
+| packages | `python3 providers/package.py build --output measure/packages`; `verify` × 5 | 0; 0 × 5 | |
+| provider test | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | 124 passed / 0 failed / 0 ignored, 39 summaries |
+| provider fmt / clippy | `cargo fmt --manifest-path providers/Cargo.toml --all -- --check`; `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0, 0 | |
+| contracts | `python3 providers/contracts.py check` | 0 | provider data unchanged |
+
+Constraint 16's load-sensitive rows all passed in both test runs.
 
 ## 7. Files
 
 * Code:
   * new in `crates/qcore-audit/src/`: `providers.rs`, `evidence.rs`,
     `current_route.rs`, `current_cli.rs`;
-  * changed in `crates/qcore-audit/src/`: `current.rs`, `lib.rs`,
+  * changed in `crates/qcore-audit/src/`: `current.rs`, `lib.rs` (the
+    plain route's parallel fold, providers, mode, jobs), `parallel.rs`
+    (`jobs_with_precedence`),
     `main.rs`, `report.rs`, `source_contract.rs`, `compile_db.rs`;
   * `crates/qcore-contract/src/{contract_loader.rs, contract_inclusion.rs}`;
   * `compiler/examples/support/cycle19_compatibility.rs`.

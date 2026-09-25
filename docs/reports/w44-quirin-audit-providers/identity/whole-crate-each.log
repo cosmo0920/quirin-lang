@@ -1,0 +1,11 @@
+qcore-provider-chunkio exit=1 refused: current audit rejected (Unknown): /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qcore: Chunk at byte 144: resource modules accept only extern functions
+qcore-provider-cmetrics exit=1 refused: current audit rejected (Unknown): /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qcore: cmt_counter_allow_reset at byte 254: unsupported parameter type or usage annotation
+qcore-provider-ctraces exit=1 loads
+qcore-provider-libevent exit=1 refused: current audit rejected (Unknown): /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/providers/qcore-provider-libevent/contracts/monkey/callback_binding.qcore: binding_scope at byte 400: unsupported predicate `created < enter`
+qcore-provider-librdkafka exit=1 refused: current audit rejected (Unknown): /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qcore: KafkaQueueOwner at byte 130: resource modules accept only extern functions
+quirin-provider-cfl exit=1 refused: current audit rejected (Unknown): /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qcore: ArenaCreateError at byte 119: resource modules accept only extern functions
+quirin-provider-fluent-bit exit=1 refused: current audit rejected (Unknown): /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qcore: flb_malloc at byte 400: unsupported or duplicate requirement `ordinary_allocator_profile == 1`
+quirin-provider-libc exit=1 loads
+quirin-provider-mpack exit=1 loads
+quirin-provider-msgpack exit=1 loads
+quirin-provider-shared exit=1 refused: current audit rejected (Unknown): /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/providers/quirin-provider-shared/contracts/language/quantified_indices.qcore: chunks at byte 172: resource modules accept only extern functions

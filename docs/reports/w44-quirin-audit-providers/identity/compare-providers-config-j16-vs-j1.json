@@ -1,0 +1,25 @@
+{
+  "base": "private/runs/providers-config2",
+  "run": "private/runs/providers-config-j1",
+  "results": {
+    "resource-diagnostics.json": "identical",
+    "resource-diagnostics.contracts.json": "identical",
+    "resource-diagnostics.chunk-contracts.json": "identical",
+    "resource-diagnostics.source-effects.json": "identical",
+    "monkey-source.json": "identical",
+    "audit.log": {
+      "identical_after_masking": true,
+      "lines": 1075,
+      "inserted_lines": [],
+      "differing_lines": [
+        {
+          "line": 1075,
+          "base": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 17900589 us / syntax 34119145 us / line markers 18784872 us",
+          "run": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 7580105 us / syntax 12946601 us / line markers 7393566 us"
+        }
+      ]
+    },
+    "only_in_run": []
+  },
+  "ok": true
+}
