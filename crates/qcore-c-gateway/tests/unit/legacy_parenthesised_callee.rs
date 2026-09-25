@@ -1,5 +1,5 @@
 use super::super::{Token, tokenize, tokenize_with_conditionals};
-use super::{TypeNames, normalise_owned, normalise_tokens, opaque_call};
+use super::{TypeNames, normalise_owned, normalise_tokens, opaque_call, typedef_declarators};
 use crate::typed_field_access::TypedAccessModel;
 
 fn texts(tokens: &[Token]) -> Vec<String> {
@@ -22,8 +22,37 @@ fn opaque(unit: &str, statement: &str) -> bool {
     let model = TypedAccessModel::read(&all);
     let statement = texts(&tokenize(statement));
     let statement = statement.iter().map(String::as_str).collect::<Vec<_>>();
-    let types = TypeNames::read(&model, &statement, 0..statement.len());
+    let declared = typedef_declarators(&all);
+    let types = TypeNames::read_with(&declared, &model, &statement, 0..statement.len());
     opaque_call(&statement, &types)
+}
+
+#[test]
+fn typedef_declarators_are_read_by_position() {
+    let source = "typedef void (*rel_t)(void *a, void *b); \
+                  typedef long long v2 __attribute__ ((__vector_size__ (16))); \
+                  typedef int T, *U, V[3]; typedef int fn_t(int x); \
+                  typedef struct s { int member; } s_t; typedef struct tag tag_t; \
+                  typedef int __attribute__((mode(DI))) wide_t;";
+    let tokens = tokenize(source);
+    let all = texts(&tokens);
+    let all = all.iter().map(String::as_str).collect::<Vec<_>>();
+    let names = typedef_declarators(&all);
+    let expected = [
+        "T", "U", "V", "fn_t", "rel_t", "s_t", "tag_t", "v2", "wide_t",
+    ];
+    assert_eq!(
+        names.iter().map(String::as_str).collect::<Vec<_>>(),
+        expected
+    );
+}
+
+#[test]
+fn a_vector_typedef_cast_is_not_a_call() {
+    let source = "typedef long long __v2di __attribute__ ((__vector_size__ (16))); \
+                  __v2di f(__v2di a) { return (__v2di)(a); }";
+    let tokens = tokenize(source);
+    assert!(normalise_tokens(&tokens).is_none());
 }
 
 #[test]

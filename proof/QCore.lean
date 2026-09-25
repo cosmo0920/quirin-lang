@@ -240,5 +240,6 @@ import QCore.NoBuildScope
 import QCore.NativePlatformMatrix
 import QCore.CallbackTaskHandoff
 import QCore.ContractDeferredReview
+import QCore.ParenthesisedCallee
 
 /-! The executable formal core of QCore-C revision 0.1. -/

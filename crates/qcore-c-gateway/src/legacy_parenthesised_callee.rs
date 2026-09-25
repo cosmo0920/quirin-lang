@@ -193,8 +193,19 @@ pub(crate) struct TypeNames {
 
 impl TypeNames {
     /// Read the trusted type names over `texts[range]`, one function's
-    /// parameter list and body.
+    /// parameter list and body, with the whole unit's typedef declarators
+    /// read afresh ([`typedef_declarators`]).
     pub(crate) fn read(
+        model: &TypedAccessModel,
+        texts: &[&str],
+        range: std::ops::Range<usize>,
+    ) -> Self {
+        Self::read_with(&typedef_declarators(texts), model, texts, range)
+    }
+
+    /// [`Self::read`] with the unit's typedef declarators already read.
+    pub(crate) fn read_with(
+        declared: &BTreeSet<String>,
         model: &TypedAccessModel,
         texts: &[&str],
         range: std::ops::Range<usize>,
@@ -204,7 +215,10 @@ impl TypeNames {
         let mut shadowed = BTreeSet::new();
         for index in range {
             let text = texts[index];
-            if !is_name(text) || is_keyword(text) || !model.declares_typedef(text) {
+            if !is_name(text)
+                || is_keyword(text)
+                || !(model.declares_typedef(text) || declared.contains(text))
+            {
                 continue;
             }
             candidates.insert(text);
@@ -223,6 +237,80 @@ impl TypeNames {
     fn is_type(&self, name: &str) -> bool {
         self.names.contains(name)
     }
+}
+
+/// The names typedef declarations of the unit declare, read by declarator
+/// position. [`TypedAccessModel::declares_typedef`] reads only a name that is
+/// a typedef's last token, so it misses a function-pointer typedef
+/// (`typedef void (*rel_t)(void *);`) and a typedef with a trailing attribute
+/// (`typedef long long __v2di __attribute__ ((__vector_size__ (16)));`, the
+/// vector types of the compiler's intrinsic headers, whose bodies cast with
+/// `(__m128i)(x)`). A name counts only in a declarator position of a
+/// `typedef` declaration, outside every brace and bracket:
+///
+/// * followed by `;`, `,`, `[`, `(` or an attribute, not in any group;
+/// * or alone after `*`s in a declarator group, `( * NAME )`, where the group
+///   is not a parameter list (its `(` follows no name, `)` or `]`).
+///
+/// A tag (`struct T`) and a parameter name never count. Reading a name that is
+/// not a type as one would read `(f)(x)` as a cast, so every position here is
+/// a declarator position C gives the typedef name to; a declarator this
+/// reader does not recognise is simply absent, which reads its casts as calls,
+/// the refusing direction.
+pub(crate) fn typedef_declarators(texts: &[&str]) -> BTreeSet<String> {
+    let mut names = BTreeSet::new();
+    for start in 0..texts.len() {
+        if texts[start] != "typedef" {
+            continue;
+        }
+        let Some(end) = crate::typed_field_access::statement_end(texts, start) else {
+            continue;
+        };
+        let mut groups: Vec<usize> = Vec::new();
+        let mut braces = 0usize;
+        let mut brackets = 0usize;
+        for index in start + 1..end {
+            let text = texts[index];
+            match text {
+                "(" => groups.push(index),
+                ")" => {
+                    groups.pop();
+                }
+                "{" => braces += 1,
+                "}" => braces = braces.saturating_sub(1),
+                "[" => brackets += 1,
+                "]" => brackets = brackets.saturating_sub(1),
+                _ => {}
+            }
+            if braces > 0 || brackets > 0 || !is_name(text) || is_keyword(text) {
+                continue;
+            }
+            let previous = texts[index - 1];
+            if matches!(previous, "struct" | "union" | "enum") {
+                continue;
+            }
+            let next = texts.get(index + 1).copied().unwrap_or(";");
+            let declarator = match groups.last() {
+                None => matches!(
+                    next,
+                    ";" | "," | "[" | "(" | "__attribute__" | "__attribute"
+                ),
+                Some(&open) => {
+                    let before = texts[open - 1];
+                    let parameter_list =
+                        before == ")" || before == "]" || (is_name(before) && !is_keyword(before));
+                    !parameter_list
+                        && next == ")"
+                        && texts[open + 1..index].iter().all(|text| *text == "*")
+                        && open + 1 < index
+                }
+            };
+            if declarator {
+                names.insert(text.to_owned());
+            }
+        }
+    }
+    names
 }
 
 /// Whether the name at `index` may be an ordinary identifier denoting an
@@ -503,6 +591,7 @@ pub(crate) fn normalise_unit(
         return None;
     }
     let model = TypedAccessModel::read(&texts);
+    let declared = typedef_declarators(&texts);
     let mut removed = vec![false; tokens.len()];
     let mut rewrites = Vec::new();
     let mut seen = BTreeSet::new();
@@ -518,7 +607,7 @@ pub(crate) fn normalise_unit(
         }
         let start = super::function_parameter_range(tokens, &function, body_start)
             .map_or(body_start, |(open, _)| open);
-        let types = TypeNames::read(&model, &texts, start..body_end + 1);
+        let types = TypeNames::read_with(&declared, &model, &texts, start..body_end + 1);
         for (at, depth) in callee_sites(&texts, body_start + 1..body_end, &types) {
             for offset in 1..=depth {
                 removed[at - offset] = true;
