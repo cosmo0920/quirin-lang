@@ -49,6 +49,7 @@ was read. Backticked code paths throughout these pages are repository-relative.
 | 2 | [diagnostics](diagnostics.md#constraint-2) | Q020 (task route) and Q021 (sequential route) both refuse an unenforced… |
 | 3 | [diagnostics](diagnostics.md#constraint-3) | §L21.1's reason vocabulary is implemented as qcore_schemas::reason, but… |
 | 4 | [gateway](gateway.md#constraint-4) | A call into an internal C function is modeled only through a declared… |
+| 4a | [gateway](gateway.md#constraint-4a) | The W4 derivation scope is not the reported scope, and linkage decides what it may add. |
 | 5 | [gateway](gateway.md#constraint-5) | The typed scalar-field whitelist's last premise — the base is a name this… |
 | 5a | [gateway](gateway.md#constraint-5a) | A fixed C sizeof/_Alignof query's operand-class marker is never a… |
 | 5b | [gateway](gateway.md#constraint-5b) | A return admits what a condition admits, and the difference escapes… |

@@ -1,0 +1,42 @@
+== other-unit
+   (callees)                            callees   540 leaves   1751
+   uncontracted-call                    callees   309 leaves   1136
+   indirect-access                      callees   378 leaves   1058
+   condition                            callees   301 leaves   1039
+   unknown-alias                        callees   150 leaves    432
+   assignment                           callees    79 leaves    344
+   (destructor-shaped)                  callees    63 leaves    290
+   (cascade-only)                       callees    50 leaves    276
+   other                                callees    98 leaves    224
+   braced-or-declaration                callees    81 leaves    194
+   return-expression                    callees    35 leaves    162
+   call-argument                        callees    13 leaves     51
+   (destructor-shaped, cascade-only)    callees     3 leaves     15
+== other-unit/same-unit-selected
+   (callees)                            callees   209 leaves   1708
+   indirect-access                      callees   170 leaves   1341
+   uncontracted-call                    callees   138 leaves   1122
+   condition                            callees   132 leaves   1096
+   unknown-alias                        callees    56 leaves    660
+   (destructor-shaped)                  callees    29 leaves    558
+   braced-or-declaration                callees    47 leaves    439
+   other                                callees    41 leaves    220
+   assignment                           callees    30 leaves    183
+   (cascade-only)                       callees    19 leaves    146
+   return-expression                    callees     8 leaves     88
+   call-argument                        callees     4 leaves     11
+   (destructor-shaped, cascade-only)    callees     1 leaves     10
+== same-unit-selected
+   (callees)                            callees  1395 leaves   3168
+   indirect-access                      callees  1146 leaves   2469
+   condition                            callees   884 leaves   1971
+   uncontracted-call                    callees   826 leaves   1856
+   unknown-alias                        callees   444 leaves    923
+   braced-or-declaration                callees   371 leaves    765
+   assignment                           callees   297 leaves    660
+   other                                callees   315 leaves    616
+   (destructor-shaped)                  callees   138 leaves    327
+   (cascade-only)                       callees    56 leaves    205
+   return-expression                    callees    90 leaves    189
+   call-argument                        callees   108 leaves    185
+   (destructor-shaped, cascade-only)    callees     4 leaves     28

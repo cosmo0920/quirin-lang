@@ -82,6 +82,7 @@ import QCore.GnuBuiltinReader
 import QCore.LiteralTailActual
 import QCore.DerivedResult
 import QCore.DerivedResultInference
+import QCore.CalleeSummaryScope
 import QCore.KindedCustody
 import QCore.DeclaredModeAgreement
 import QCore.FrameHelperTask
@@ -151,6 +152,7 @@ import QCore.ScalarMemberStore
 import QCore.IndirectScalarAccess
 import QCore.IndexTraversal
 import QCore.IndexedCollection
+import QCore.IndirectChainAccess
 import QCore.AtomicPublication
 import QCore.BoundFieldRead
 import QCore.MemberAddress

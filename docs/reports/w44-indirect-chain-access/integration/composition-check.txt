@@ -1,0 +1,8 @@
+card delta:     removed 74 added 49 functions 0 units 0
+overlap (already removed by earlier integrations): 0 []
+combined delta: removed 74 added 49
+transitive (callers of combined-only Safe functions): 0 []
+explained by the integrator: 0 []
+complementary Unknown->Safe (card cleared the last blocker): []
+functions moved (combined): []
+COMPOSES

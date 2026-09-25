@@ -285,6 +285,13 @@ pub enum LegacyInstruction {
         /// and field-link maps are untouched. `None` for a read or a member
         /// store, which writes one scalar and nothing else.
         frame: Option<RefusedWrites>,
+        /// Card **W44-INDIRECT-CHAIN-ACCESS**: the record-pointer member
+        /// chains the statement or condition reads or writes through, each
+        /// with its per-link obligation
+        /// ([`crate::indirect_chain_access::chain_resolves`]). A dereferenced
+        /// chain root is also in `bases`. Empty for every access the
+        /// single-selection route admits.
+        chains: Vec<crate::indirect_chain_access::AccessChain>,
     },
     /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: `BASE[INDEX] = CALL(...)`
     /// or `BASE[INDEX] = NULL`, where `BASE` is declared `T **BASE` and the
@@ -2269,10 +2276,14 @@ pub(crate) fn recursive_component_census(
     let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
     let tokens = withdrawn_tokens.unwrap_or(tokens);
     let mut names = function_names(&tokens, &conditionals).definitions;
+    // Card W44-CORPUS-CALLEE-SUMMARIES: the same derivation scope as the analysis.
+    let definitions = names.clone();
     if let Some(selected) = selected_functions {
         let selected = selected.iter().collect::<BTreeSet<_>>();
         names.retain(|name| selected.contains(name));
     }
+    let names =
+        callee_scope::derivation_scope(&tokens, &names, &definitions, selected_functions.is_some());
     // Card LOADER-ABI-MODES, for the same reason the type gate runs here: the
     // census must read the components the analysis reads, over the stream the
     // analysis reads.
@@ -2287,6 +2298,10 @@ pub(crate) struct PartialTranslationUnitAnalysis {
     /// Validated interprocedural custody summaries used at call sites.
     pub(crate) summaries: Vec<ResourceSummaryRecord>,
 }
+
+// Card W44-CORPUS-CALLEE-SUMMARIES: which definitions W4 derives summaries for.
+#[path = "legacy_callee_scope.rs"]
+pub(crate) mod callee_scope;
 
 fn analyze_legacy_c_translation_unit_selected_partial(
     source: &str,
@@ -2309,6 +2324,9 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
     let tokens = withdrawn_tokens.unwrap_or(tokens);
     let mut names = function_names(&tokens, &conditionals).definitions;
+    // Card W44-CORPUS-CALLEE-SUMMARIES: every definition, kept before the
+    // selection narrows `names`, for the derivation scope below.
+    let definitions = names.clone();
     let requested_was_selected =
         selected_functions.is_some_and(|selected| selected.iter().any(|name| name == entry));
     if let Some(selected) = selected_functions {
@@ -2341,7 +2359,17 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     // defining function `Unknown`, so keeping it is strictly more refusing.
     // The gate hands back the derivation it settled on, so a unit with no
     // contradiction derives exactly once, as before this card.
-    let gate = declared_modes::ModeGate::apply(&tokens, &names, contracts);
+    // Card W44-CORPUS-CALLEE-SUMMARIES census (feature-gated, verdict-neutral).
+    #[cfg(feature = "indirect-census")]
+    if selected_functions.is_some() {
+        callee_scope::census::record(&tokens, &names, &definitions, contracts);
+    }
+    // Card W44-CORPUS-CALLEE-SUMMARIES: W4 derives over the selection plus the
+    // unselected internal-linkage definitions it reaches (`callee_scope`); the
+    // rows analysed and reported below stay `names` alone.
+    let scope =
+        callee_scope::derivation_scope(&tokens, &names, &definitions, selected_functions.is_some());
+    let gate = declared_modes::ModeGate::apply(&tokens, &scope, contracts);
     let tokens = gate.tokens.unwrap_or(tokens);
     let derivation = gate.derivation;
     let mut functions = BTreeMap::new();
@@ -4021,6 +4049,27 @@ impl Parser<'_> {
             &self.typed_model,
             &self.typed_types,
         );
+        // Card W44-INDIRECT-CHAIN-ACCESS: the member-chain census.
+        crate::indirect_chain_census::record_condition(
+            &self.chain_census_context(),
+            line,
+            position,
+            contains_call(condition) || contains_braces(condition),
+            &texts,
+        );
+    }
+
+    /// Card **W44-INDIRECT-CHAIN-ACCESS**: the declaration facts the
+    /// member-chain census reads. Compiled out with the feature off.
+    #[cfg(feature = "indirect-census")]
+    fn chain_census_context(&self) -> crate::indirect_chain_census::ChainContext<'_> {
+        crate::indirect_chain_census::ChainContext {
+            function: &self.census_function,
+            formal_parameters: &self.formal_parameters,
+            model: &self.typed_model,
+            types: &self.typed_types,
+            bases: &self.typed_bases,
+        }
     }
 
     /// Card **W43-INDEX-TRAVERSAL**: hand one already-classified statement or
@@ -4048,6 +4097,21 @@ impl Parser<'_> {
             }
             _ => None,
         };
+        // Card W44-INDIRECT-CHAIN-ACCESS: the member-chain census, for the
+        // refusals the typed route is consulted for and every other one.
+        if let Some(outcome) = &outcome {
+            let consulted = !matches!(instruction, LegacyInstruction::Unknown { .. })
+                || TYPED_SCALAR_CONSULTED.contains(&outcome.as_str());
+            crate::indirect_chain_census::record_statement(
+                &self.chain_census_context(),
+                line,
+                clause,
+                outcome.clone(),
+                consulted,
+                contains_call(tokens) || contains_braces(tokens),
+                &texts,
+            );
+        }
         let copy = match instruction {
             LegacyInstruction::Alias {
                 destination,
@@ -4309,11 +4373,21 @@ impl Parser<'_> {
             .iter()
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
-        let plan = crate::typed_field_access::typed_scalar_condition(
+        let Some(plan) = crate::typed_field_access::typed_scalar_condition(
             &texts,
             &self.typed_model,
             &self.typed_types,
-        )?;
+        ) else {
+            // Card W44-INDIRECT-CHAIN-ACCESS: the same typed read with
+            // record-pointer member chains as accesses.
+            let chained = crate::indirect_chain_access::chain_condition(
+                &texts,
+                &self.typed_model,
+                &self.typed_types,
+                &self.typed_bases,
+            )?;
+            return Some(Box::new(self.chain_access_instruction(chained, false)));
+        };
         Some(Box::new(LegacyInstruction::IndirectScalarAccess {
             alias_reads: plan
                 .record_bases
@@ -4323,6 +4397,7 @@ impl Parser<'_> {
             bases: plan.bases,
             destination: None,
             frame: None,
+            chains: Vec::new(),
         }))
     }
 
@@ -5282,6 +5357,17 @@ impl Parser<'_> {
             &self.typed_model,
             &self.typed_types,
         ) else {
+            // Card W44-INDIRECT-CHAIN-ACCESS: the same typed route with
+            // record-pointer member chains as accesses, in the same position
+            // and for the same refusals. See `crate::indirect_chain_access`.
+            if let Some(chained) = crate::indirect_chain_access::chain_statement(
+                &texts,
+                &self.typed_model,
+                &self.typed_types,
+                &self.typed_bases,
+            ) {
+                return self.chain_access_instruction(chained, true);
+            }
             // Card W43-INDEX-TRAVERSAL: a statement that moves a declared
             // pointer (`p++`, `p += k`, `p = q + k`) is consulted in the same
             // position and for the same refusals, after the typed access route.
@@ -5320,6 +5406,32 @@ impl Parser<'_> {
             frame: plan
                 .writes_through_pointer
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
+            chains: Vec::new(),
+        }
+    }
+
+    /// Card **W44-INDIRECT-CHAIN-ACCESS**: the typed access an admitted chain
+    /// statement or condition lowers to — card W43-INDIRECT-ACCESS-GENERAL's
+    /// instruction, built exactly as `classify_simple_unguarded` builds it,
+    /// with the chains' link obligations attached. `statement` selects the
+    /// write frame, which a condition never has.
+    fn chain_access_instruction(
+        &self,
+        chained: crate::indirect_chain_access::ChainPlan,
+        statement: bool,
+    ) -> LegacyInstruction {
+        let plan = chained.plan;
+        LegacyInstruction::IndirectScalarAccess {
+            alias_reads: plan
+                .record_bases
+                .iter()
+                .filter_map(|base| self.read_alias(Some(base)))
+                .collect(),
+            bases: plan.bases,
+            destination: plan.destination,
+            frame: (statement && plan.writes_through_pointer)
+                .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
+            chains: chained.chains,
         }
     }
 
@@ -5384,6 +5496,7 @@ impl Parser<'_> {
             frame: plan
                 .writes_through_pointer
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
+            chains: Vec::new(),
         }];
         sequence.extend(effects.into_iter().map(|effect| match effect {
             crate::index_traversal::TraversalEffect::Step(step) => LegacyInstruction::PointerStep {
@@ -10927,6 +11040,7 @@ fn transfer_base(
         bases,
         destination,
         frame,
+        chains,
         ..
     } = &node.instruction
     {
@@ -10939,6 +11053,18 @@ fn transfer_base(
                     kind: LegacyDiagnosticKind::UnknownAlias {
                         variable: base.clone(),
                     },
+                });
+            }
+        }
+        // Card W44-INDIRECT-CHAIN-ACCESS: every pointer a member chain reads
+        // through keeps its own obligation; the decision is
+        // `indirect_chain_access::chain_resolves`, over this state read-only.
+        for chain in chains {
+            if let Err(variable) = crate::indirect_chain_access::chain_resolves(&state, chain) {
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line: node.line,
+                    kind: LegacyDiagnosticKind::UnknownAlias { variable },
                 });
             }
         }
@@ -11647,6 +11773,32 @@ fn indirect_scalar_base_resolves(state: &AbstractState, base: &str) -> bool {
     !state.nullable_sites.contains(site)
         && !state.unresolved_effect_sites.contains(site)
         && state.resources.get(site) == Some(&LIVE)
+}
+
+/// Card **W44-INDIRECT-CHAIN-ACCESS**: the read-only view of one state the
+/// chain obligation decides on. It reads bindings, statuses, markers and field
+/// links and changes nothing.
+impl crate::indirect_chain_access::ChainView for AbstractState {
+    fn binding(&self, place: &str) -> Option<crate::indirect_chain_access::LinkBinding<'_>> {
+        self.pointers
+            .get(place)
+            .map(|pointer| crate::indirect_chain_access::LinkBinding {
+                targets: &pointer.targets,
+                unknown: pointer.unknown,
+                may_be_null: pointer.may_be_null,
+                identity: pointer.derivation.is_identity(),
+            })
+    }
+
+    fn exactly_live(&self, site: usize) -> bool {
+        !self.nullable_sites.contains(&site)
+            && !self.unresolved_effect_sites.contains(&site)
+            && self.resources.get(&site) == Some(&LIVE)
+    }
+
+    fn field_link(&self, owner: usize, field: &str) -> Option<&BTreeSet<usize>> {
+        self.field_links.get(&owner)?.get(field)
+    }
 }
 
 #[allow(clippy::too_many_arguments)]

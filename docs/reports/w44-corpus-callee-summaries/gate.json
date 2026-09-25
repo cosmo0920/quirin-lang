@@ -1,0 +1,13 @@
+{
+  "note": "W44-CORPUS-CALLEE-SUMMARIES: core Rust, fmt, clippy (--workspace), both reevaluation examples, the indirect-census clippy and tests, and Lean measured on 4006c7b6 (the implementation commit; later commits change documents, the ledger, report scripts and evidence files only, no Rust, Lean, contract or test source). 5403 core Rust passed / 0 failed / 11 ignored over 289 summaries (13 tests added by this card in the legacy_c::callee_scope unit module); indirect-census gateway tests 1279 passed / 0 failed / 7 ignored over 58 summaries; 178 Lean audits (1 added: AuditCalleeSummaryScope); root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'census_clippy': 0, 'census_test': 0, 'lean': 0, 'docs_index': 0}. Provider workspace: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. Logs: worktree-private measure/gate and measure/provider-gate of agent-a7747ca3e20762462. Clang recorded in this checkout. Corpus: 2 functions Unknown -> Safe on validated summaries of reached static header bodies, 0 unit moves, leak 271, 0 violation leaves added or removed, 70 changed leaves all attributed.",
+  "workspace_tests": 5403,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 178,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

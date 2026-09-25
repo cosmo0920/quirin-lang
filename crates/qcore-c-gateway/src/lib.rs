@@ -22,6 +22,9 @@ mod index_traversal;
 pub mod indexed_collection;
 #[cfg(feature = "indirect-census")]
 pub mod indirect_census;
+mod indirect_chain_access;
+#[cfg(feature = "indirect-census")]
+pub mod indirect_chain_census;
 pub mod legacy_c;
 pub mod legacy_census;
 mod legacy_condition_call;

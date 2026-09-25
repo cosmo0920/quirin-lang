@@ -443,17 +443,19 @@ fn every_refused_member_keeps_its_unknown_and_its_diagnostic() {
     // — and asserted still unreadable — in
     // `crates/qcore-c-gateway/tests/alias_aggregate.rs`. Every other row of
     // this table is unchanged and is the load-bearing half.
-    let cases: [(&str, &str); 5] = [
+    // **Deliberate pin update, card W44-INDIRECT-CHAIN-ACCESS.** The row
+    // `("a chained destination is not one selection", "b->item->weight = 1;")`
+    // moved to `a_chained_member_of_an_acquired_base_refuses_on_its_link`. It
+    // still refuses, but now by the chain route's own obligation: `b` is one
+    // live identity, and the link `b->item` has no admitted store in that
+    // body.
+    let cases: [(&str, &str); 4] = [
         (
             "a double-star member is not a single pointer",
             "b->deep = 0;",
         ),
         ("an array member is never admitted", "b->fixed[0] = it;"),
         ("a `volatile` member is never admitted", "b->hot = it;"),
-        (
-            "a chained destination is not one selection",
-            "b->item->weight = 1;",
-        ),
         // `b->flag = it;` — a pointer into a scalar member — is not
         // expressible: Clang rejects the fixture before the analyzer sees it,
         // so that direction is covered by the module's own unit tests
@@ -504,23 +506,20 @@ fn a_branch_on_an_unrelated_field_keeps_its_existing_refusal() {
         "{:?}",
         measured.diagnostics
     );
-    let cases: [(&str, &str); 2] = [
-        (
-            // Card REACH-GATE's F4 admits a member read on a base this body
-            // never binds, so the base here is bound — by `k_drop(o)` — which
-            // is the load-bearing half of this row: an aggregate branch on a
-            // base whose custody this body may change keeps its refusal.
-            "a member of a base this rule never admitted, on a bound base",
-            "void k_w(struct k_outer *o, int n) { struct k_box *b; struct k_box *p; \
-             b = k_make(n); if (!b) { return; } p = k_pick(o); \
-             if (o->box == 0) { k_drop(b); return; } k_drop(b); }",
-        ),
-        (
-            "a chained member is not one selection",
-            "void k_w(int n) { struct k_box *b; b = k_make(n); if (!b) { return; } \
-             if (b->item->weight == 0) { k_drop(b); return; } k_drop(b); }",
-        ),
-    ];
+    // Deliberate pin update, card W44-INDIRECT-CHAIN-ACCESS: the row
+    // `b->item->weight == 0` moved to
+    // `a_chained_member_of_an_acquired_base_refuses_on_its_link`, which
+    // refuses it by the chain route's own obligation.
+    let cases: [(&str, &str); 1] = [(
+        // Card REACH-GATE's F4 admits a member read on a base this body
+        // never binds, so the base here is bound — by `k_drop(o)` — which
+        // is the load-bearing half of this row: an aggregate branch on a
+        // base whose custody this body may change keeps its refusal.
+        "a member of a base this rule never admitted, on a bound base",
+        "void k_w(struct k_outer *o, int n) { struct k_box *b; struct k_box *p; \
+         b = k_make(n); if (!b) { return; } p = k_pick(o); \
+         if (o->box == 0) { k_drop(b); return; } k_drop(b); }",
+    )];
     for (reason, body) in cases {
         let measured = summary_of(body, "k_w");
         assert!(
@@ -529,6 +528,38 @@ fn a_branch_on_an_unrelated_field_keeps_its_existing_refusal() {
             measured.diagnostics
         );
         assert_ne!(measured.status, AnalysisStatus::Safe, "{reason}");
+    }
+}
+
+/// Deliberate pin update, card W44-INDIRECT-CHAIN-ACCESS. Two rows moved here
+/// from the tables above: a chained store and a chained branch through an
+/// aggregate this body acquired. The chain route now reads both. `b` is one
+/// live identity (tracked), so its link `b->item` is a member place this body
+/// could bind. No admitted store bound it, so there is no evidence, and each
+/// refuses with `UnknownAlias` on the link. Neither reaches `Safe`.
+#[test]
+fn a_chained_member_of_an_acquired_base_refuses_on_its_link() {
+    if !clang_available() {
+        return;
+    }
+    let prologue = "struct k_item *it; struct k_box *b; b = k_make(n); if (!b) { return; } \
+                    it = k_take(n); if (!it) { k_drop(b); return; }";
+    for body in [
+        format!("void k_w(int n) {{ {prologue} b->item->weight = 1; k_release(it); k_drop(b); }}"),
+        "void k_w(int n) { struct k_box *b; b = k_make(n); if (!b) { return; } \
+         if (b->item->weight == 0) { k_drop(b); return; } k_drop(b); }"
+            .to_owned(),
+    ] {
+        let measured = summary_of(&body, "k_w");
+        assert_ne!(measured.status, AnalysisStatus::Safe, "{body}");
+        assert!(
+            measured.diagnostics.iter().any(|diagnostic| matches!(
+                &diagnostic.kind,
+                LegacyDiagnosticKind::UnknownAlias { variable } if variable == "b->item"
+            )),
+            "{body}: {:?}",
+            measured.diagnostics
+        );
     }
 }
 

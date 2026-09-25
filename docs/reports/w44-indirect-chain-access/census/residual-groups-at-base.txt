@@ -1,0 +1,12 @@
+residual                          leaves  funcs  sole   stmt   cond
+W44-CHAIN-NESTED-AGGREGATE          1287    517    35    776    511
+W44-CHAIN-TYPEDEF-ROOT               580    300    17    482     98
+W44-CHAIN-UNDECLARED-ROOT            396    122     4    272    124
+W44-CHAIN-SUBSCRIPT                  296    136     6    163    133
+W44-CHAIN-INCOMPLETE-RECORD          195    151    10    111     84
+W44-CHAIN-CALL                       383    253    13    380      3
+W44-CHAIN-NON-SCALAR-MEMBER           48     33     1     23     25
+W44-CHAIN-CLASS-NOT-A-CHAIN         3564   1534   155   3315    249
+W44-CHAIN-BOUND-ROOT                  49     35     -      -      -
+family at this census: {'chain_only_functions': 123, 'functions': 2207, 'leaves': 6813, 'sole': 213, 'unexplained_leaves': {'declarator-not-a-chain': 1522, 'unexplained': 143}}
+readers no residual covers: {'admitted': 64}
