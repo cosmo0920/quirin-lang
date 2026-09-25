@@ -76,10 +76,11 @@ use super::{
 };
 use crate::neutral_position::ExpressionRole;
 
-/// Whether the desugaring is consulted by the lowering. The census commit
-/// ships the recogniser with this `false`, so the census answers are the rule's
-/// own while nothing is admitted.
-pub(super) const ADMIT: bool = false;
+/// Whether the desugaring is consulted by the lowering. The census commits
+/// (`2a4fe098`, `45d4c5ce`, `df5edb61`) shipped the recogniser with this
+/// `false`, so the census answers are the rule's own while nothing was
+/// admitted; the admission commit sets it.
+pub(super) const ADMIT: bool = true;
 
 /// The controlling-expression position a plan is built for.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
