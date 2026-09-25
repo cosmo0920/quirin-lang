@@ -55,8 +55,12 @@ fn contracts() -> ResourceContracts {
 }
 
 fn unit(source: &str) -> LegacyProgramSummary {
-    analyze_legacy_c_translation_unit(&format!("{DECLARATIONS}\n{source}\n"), "subject", &contracts())
-        .expect("the fixture tokenizes")
+    analyze_legacy_c_translation_unit(
+        &format!("{DECLARATIONS}\n{source}\n"),
+        "subject",
+        &contracts(),
+    )
+    .expect("the fixture tokenizes")
 }
 
 fn subject(summary: &LegacyProgramSummary) -> &LegacyFunctionSummary {
@@ -87,7 +91,9 @@ fn count(summary: &LegacyFunctionSummary, kind: fn(&LegacyDiagnosticKind) -> boo
 }
 
 fn leaks(summary: &LegacyFunctionSummary) -> usize {
-    count(summary, |kind| matches!(kind, LegacyDiagnosticKind::Leak { .. }))
+    count(summary, |kind| {
+        matches!(kind, LegacyDiagnosticKind::Leak { .. })
+    })
 }
 
 fn double_releases(summary: &LegacyFunctionSummary) -> usize {
@@ -210,7 +216,11 @@ fn nested_parentheses_and_a_cast_to_void_are_normalised() {
                 ["resource call with a formal embedded in an unmodeled expression"]
             );
         } else {
-            assert_eq!(subject(&run).status, AnalysisStatus::Safe, "{parenthesised}");
+            assert_eq!(
+                subject(&run).status,
+                AnalysisStatus::Safe,
+                "{parenthesised}"
+            );
         }
     }
 }
@@ -329,10 +339,13 @@ fn a_member_release_is_normalised() {
     );
     assert_eq!(
         calls(subject(&run), "q_free"),
-        calls(subject(&unit(&format!(
-            "{records} void subject(struct n *b) {{ if (b == 0) return; \
+        calls(
+            subject(&unit(&format!(
+                "{records} void subject(struct n *b) {{ if (b == 0) return; \
              q_free(b->buf); q_free(b); }}"
-        ))), "q_free")
+            ))),
+            "q_free"
+        )
     );
 }
 
@@ -394,14 +407,22 @@ fn every_other_callee_expression_refuses() {
             "void *p = q_alloc(); if (p == 0) return; {statement} q_free(p);"
         ));
         let result = subject(&run);
-        assert_eq!(result.status, AnalysisStatus::Unknown, "{statement}: {result:#?}");
+        assert_eq!(
+            result.status,
+            AnalysisStatus::Unknown,
+            "{statement}: {result:#?}"
+        );
         assert!(!unsupported(result).is_empty(), "{statement}");
     }
 }
 
 #[test]
 fn a_callee_expression_refuses_with_its_own_reason_where_nothing_else_did() {
-    for statement in ["(c ? q_free : zz)(p);", "((rel_t) q_free)(p);", "(&q_free)(p);"] {
+    for statement in [
+        "(c ? q_free : zz)(p);",
+        "((rel_t) q_free)(p);",
+        "(&q_free)(p);",
+    ] {
         let run = body(&format!(
             "void *p = q_alloc(); if (p == 0) return; {statement} q_free(p);"
         ));
@@ -455,7 +476,12 @@ fn a_for_clause_call_is_never_a_no_op() {
     let run = body("int i; for (i = 0; i < 3; i++) { }");
     assert_eq!(subject(&run).status, AnalysisStatus::Safe);
     let run = body("int i; int j = 1; for ((i) = 0; i < 3; (i) = (j)) { }");
-    assert_eq!(subject(&run).status, AnalysisStatus::Safe, "{:?}", unsupported(subject(&run)));
+    assert_eq!(
+        subject(&run).status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        unsupported(subject(&run))
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -465,14 +491,23 @@ fn a_for_clause_call_is_never_a_no_op() {
 #[test]
 fn a_cast_of_a_parenthesised_operand_is_not_a_call() {
     let run = body("int n = 1; (void)(n); (long)(n);");
-    assert_eq!(subject(&run).status, AnalysisStatus::Safe, "{:#?}", subject(&run));
+    assert_eq!(
+        subject(&run).status,
+        AnalysisStatus::Safe,
+        "{:#?}",
+        subject(&run)
+    );
     // A typedef name is a type, so `(T)(x)` is a cast.
     let run = unit("typedef long word_t; void subject(void) { int n = 1; (word_t)(n); }");
-    assert_eq!(subject(&run).status, AnalysisStatus::Safe, "{:#?}", subject(&run));
-    // An assignment of a cast keeps the refusal it had, which names no call.
-    let run = unit(
-        "typedef long word_t; void subject(void) { int n = 1; word_t m; m = (word_t)(n); }",
+    assert_eq!(
+        subject(&run).status,
+        AnalysisStatus::Safe,
+        "{:#?}",
+        subject(&run)
     );
+    // An assignment of a cast keeps the refusal it had, which names no call.
+    let run =
+        unit("typedef long word_t; void subject(void) { int n = 1; word_t m; m = (word_t)(n); }");
     assert_eq!(
         unsupported(subject(&run)),
         ["unsupported assignment expression"]

@@ -1,0 +1,5 @@
+rdkafka_sticky_assignor.c	balance	rdkafka_sticky_assignor.c:1331	RD_MAP_FOREACH_ELEM(elem, &fixedAssignments.rmap) {
+rdkafka_sticky_assignor.c	rd_kafka_sticky_assignor_assign_cb	rdkafka_sticky_assignor.c:2032	RD_MAP_FOREACH_ELEM(elem, &currentAssignment.rmap)
+rdmap.c	rd_map_copy	rdmap.c:143	RD_MAP_FOREACH_ELEM(elem, src) {
+rdmap.c	unittest_untyped_map	rdmap.c:481	RD_MAP_FOREACH_ELEM(elem, &rmap) {
+rdunittest.c	ut_tq_find_prev_pos	rdunittest.c:144	TAILQ_FOREACH(e, head, link) {

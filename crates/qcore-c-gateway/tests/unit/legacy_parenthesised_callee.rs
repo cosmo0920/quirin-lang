@@ -61,7 +61,13 @@ fn a_for_clause_strips_faithfully_only_around_single_names() {
         let types = TypeNames::read_with(&declared, &clause, 0..clause.len());
         stripping_is_faithful(&clause, &types)
     };
-    for clause in ["i ++", "(elm) = (tmpelm)", "((e)) = (f)", "i = *(p)", "n = 0"] {
+    for clause in [
+        "i ++",
+        "(elm) = (tmpelm)",
+        "((e)) = (f)",
+        "i = *(p)",
+        "n = 0",
+    ] {
         assert!(faithful(clause), "{clause}");
     }
     for clause in [
@@ -187,7 +193,10 @@ fn conditional_marks_move_with_their_tokens() {
         .collect::<Vec<_>>();
     // A mark before a removed `(` now precedes the callee it opened.
     assert_eq!(before.len(), after.len());
-    assert!(after.iter().all(|text| text == "q_free" || text == "}"), "{after:?}");
+    assert!(
+        after.iter().all(|text| text == "q_free" || text == "}"),
+        "{after:?}"
+    );
 }
 
 #[test]

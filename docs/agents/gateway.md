@@ -691,10 +691,13 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     otherwise be admitted, with `call through a callee expression that is not
     a name`; a position already refused keeps its refusal byte for byte. A
     declaration's own declarators are exempt outside initialisers and array
-    bounds. (3) A `for` init or increment clause whose original spelling
-    carried grouping tokens (`split_for_clauses` strips them,
-    `W4-EXPR-POS-FOR-CLAUSES`) is refused unless its stripped classification
-    already was. Only (1) admits, and exactly what the plain spelling admits;
+    bounds. (3) A `for` init or increment clause reaches the classifier with
+    its grouping tokens stripped (`split_for_clauses`,
+    `W45-FOR-CLAUSE-ORIGINAL-SPELLING`), so `q_free(p)` there was the names
+    `q_free p`; a clause whose stripping is not faithful (a bracket, or a group
+    that is an argument list, a callee, a cast or wraps more than one name) is
+    refused unless its stripped classification already was. Only (1) admits,
+    and exactly what the plain spelling admits;
     (2) and (3) only replace an admission by a refusal. **Do not** add a call
     reader that keys on `NAME (` without the rewrite ahead of it, and do not
     let a new admission route bypass the rule-2 hook in `classify_simple`.

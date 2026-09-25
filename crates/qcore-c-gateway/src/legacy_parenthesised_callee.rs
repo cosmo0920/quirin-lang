@@ -35,11 +35,13 @@
 //!    control header — refuses its position with [`REFUSAL`], wherever the
 //!    position would otherwise have been admitted. A position already refused
 //!    keeps its own refusal byte for byte.
-//! 3. **`for` clauses** ([`for_clauses`]). A clause whose original spelling
-//!    carries grouping tokens is refused with [`FOR_CLAUSE_REFUSAL`] unless
-//!    its stripped classification was already a refusal. Classifying the
-//!    clause from its original spelling, as the condition already is, stays
-//!    the follow-on `W4-EXPR-POS-FOR-CLAUSES`.
+//! 3. **`for` clauses** ([`for_clauses`], [`stripping_is_faithful`]). A
+//!    clause whose stripped spelling is not faithful to its original — a
+//!    bracket, or a group that is an argument list, a callee, a cast or wraps
+//!    more than one name — is refused with [`FOR_CLAUSE_REFUSAL`] unless its
+//!    stripped classification was already a refusal. Classifying the clause
+//!    from its original spelling, as the condition already is, is the
+//!    follow-on `W45-FOR-CLAUSE-ORIGINAL-SPELLING`.
 //!
 //! Only rule 1 can admit, and it admits exactly what the plain spelling
 //! admits. Rules 2 and 3 only replace an admission by a refusal.
@@ -331,7 +333,9 @@ fn object_use(texts: &[&str], index: usize) -> bool {
         Some("(") => texts.get(index + 2) != Some(&"*"),
         Some("-") => matches!(texts.get(index + 2).copied(), Some(">" | "-")),
         Some("+") => texts.get(index + 2) == Some(&"+"),
-        Some(")") => !matches!(previous, Some("(")) && !previous.is_some_and(|p| QUALIFIERS.contains(&p)),
+        Some(")") => {
+            !matches!(previous, Some("(")) && !previous.is_some_and(|p| QUALIFIERS.contains(&p))
+        }
         _ => false,
     }
 }
@@ -401,13 +405,15 @@ fn group(texts: &[&str], open: usize, close: usize, types: &TypeNames) -> Group 
         Some(before) if OPERAND_KEYWORDS.contains(&before) => Group::Operand,
         Some(before) if is_name(before) && !is_keyword(before) => Group::Arguments,
         Some("]") => Group::Arguments,
-        Some(")") => match open_of(texts, open - 1)
-            .map(|previous| group(texts, previous, open - 1, types))
-        {
-            Some(Group::Header | Group::Cast | Group::Operand) => primary(texts, open, close, types),
-            // An unmatched `)` is read as a call's: the refusing reading.
-            _ => Group::Arguments,
-        },
+        Some(")") => {
+            match open_of(texts, open - 1).map(|previous| group(texts, previous, open - 1, types)) {
+                Some(Group::Header | Group::Cast | Group::Operand) => {
+                    primary(texts, open, close, types)
+                }
+                // An unmatched `)` is read as a call's: the refusing reading.
+                _ => Group::Arguments,
+            }
+        }
         _ => primary(texts, open, close, types),
     }
 }
@@ -468,13 +474,16 @@ pub(crate) fn opaque_call(texts: &[&str], types: &TypeNames) -> bool {
 }
 
 fn is_declaration(texts: &[&str], types: &TypeNames) -> bool {
-    texts.iter().find(|text| **text != "__extension__").is_some_and(|first| {
-        TYPE_SPECIFIERS.contains(first)
-            || QUALIFIERS.contains(first)
-            || DECLARATION_PREFIXES.contains(first)
-            || matches!(*first, "struct" | "union" | "enum")
-            || types.is_type(first)
-    })
+    texts
+        .iter()
+        .find(|text| **text != "__extension__")
+        .is_some_and(|first| {
+            TYPE_SPECIFIERS.contains(first)
+                || QUALIFIERS.contains(first)
+                || DECLARATION_PREFIXES.contains(first)
+                || matches!(*first, "struct" | "union" | "enum")
+                || types.is_type(first)
+        })
 }
 
 impl super::Parser<'_> {
@@ -497,8 +506,7 @@ impl super::Parser<'_> {
         instruction: LegacyInstruction,
         saved: (usize, usize),
     ) -> LegacyInstruction {
-        if matches!(instruction, LegacyInstruction::Unknown { .. }) || !self.opaque_callee(tokens)
-        {
+        if matches!(instruction, LegacyInstruction::Unknown { .. }) || !self.opaque_callee(tokens) {
             return instruction;
         }
         (self.next_site, self.element_lowerings) = saved;
@@ -566,9 +574,9 @@ pub(crate) fn stripping_is_faithful(texts: &[&str], types: &TypeNames) -> bool {
                     .collect::<Vec<_>>();
                 let single_name = matches!(inner.as_slice(),
                     [name] if is_name(name) && !is_keyword(name) && !types.is_type(name));
-                let arguments = index
-                    .checked_sub(1)
-                    .is_some_and(|before| matches!(texts[before], ")" | "]") || is_name(texts[before]));
+                let arguments = index.checked_sub(1).is_some_and(|before| {
+                    matches!(texts[before], ")" | "]") || is_name(texts[before])
+                });
                 let callee = texts.get(close + 1) == Some(&"(");
                 if !single_name || arguments || callee {
                     return false;

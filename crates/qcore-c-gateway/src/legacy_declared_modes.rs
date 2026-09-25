@@ -247,8 +247,7 @@ pub fn declared_mode_census(
 ) -> Vec<ModeAgreementRow> {
     let (tokens, conditionals) = super::tokenize_with_conditionals(preprocessed);
     // Card W45-PARENTHESISED-CALLEE: the stream the analysis reads.
-    let (tokens, conditionals) =
-        super::parenthesised_callee::normalise_owned(tokens, conditionals);
+    let (tokens, conditionals) = super::parenthesised_callee::normalise_owned(tokens, conditionals);
     let names = super::function_names(&tokens, &conditionals).definitions;
     let defined = names.iter().collect::<BTreeSet<_>>();
     if !contracts

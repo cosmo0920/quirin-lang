@@ -217,8 +217,11 @@ theorem guard_is_the_identity_without_an_opaque_call (base : Lowering) :
   unfold guard
   simp
 
-/-- Rule 3: a `for` clause whose original spelling carried grouping tokens
-is refused unless its stripped classification already was. -/
+/-- Rule 3: a `for` clause whose stripped spelling is not faithful to its
+original (a bracket, or a group that wraps more than one name, or is an
+argument list, a callee or a cast) is refused unless its stripped
+classification already was. `grouped` is that unfaithfulness, decided
+lexically (`stripping_is_faithful`). -/
 def forClause (grouped : Bool) (stripped : Lowering) : Lowering :=
   guard grouped stripped
 
