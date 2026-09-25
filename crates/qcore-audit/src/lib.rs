@@ -18,6 +18,7 @@ mod cycle18_inputs;
 pub mod event_payload;
 pub mod evidence;
 pub mod native_platform_matrix;
+pub mod no_build;
 pub mod observed_wait;
 mod observed_wait_inputs;
 pub mod parallel;

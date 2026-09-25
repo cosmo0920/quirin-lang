@@ -265,6 +265,15 @@ impl AuditReport {
         }
     }
 
+    /// Attach a no-build unit's assumed configuration to the immediately
+    /// preceding unit (card **W44-CONTRACTS-ONLY-NO-BUILD**). Its verdict is
+    /// relative to exactly these assumptions.
+    pub fn record_assumptions(&mut self, assumptions: Value) {
+        if let Some(unit) = self.units.last_mut() {
+            unit["assumptions"] = assumptions;
+        }
+    }
+
     pub fn record_data_only(&mut self, library: &str, file: &str, error: Option<&LegacyCError>) {
         let reason = error.map(ToString::to_string);
         self.units.push(json!({
