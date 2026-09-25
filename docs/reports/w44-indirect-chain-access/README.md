@@ -426,7 +426,40 @@ fixed in `6e0bced6` (§2.5), and the gate was rerun from that commit.
 
 ### 5.1 Results
 
-GATE-TABLE
+| Command | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | libevent `d82464a2…` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,420 passed / 0 failed / 11 ignored**, 288 summaries |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **178** audits |
+| `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings` and `cargo test -p qcore-c-gateway --features indirect-census --lib` | 0 / 0 | clean; 462 passed |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w44-indirect-chain-access/gate.json` | 0 | 352 follow-ups, 111 contract modules, 178 Lean audits |
+| `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **330** tests |
+| `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | regenerated and matching |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **124 passed / 0 failed / 0 ignored**, 39 summaries |
+| `… -p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations … -- --exact --test-threads=1` | 0 | 1 passed (isolated, constraint 16) |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean |
+| `python3 providers/contracts.py check` | 0 | |
+| `python3 providers/package.py build --output private/provider-gate/packages` | 0 | 5 packages |
+| `python3 providers/package.py verify …/<id>` (×5) | 0 ×5 | chunkio, cmetrics, ctraces, libevent, librdkafka |
+| `python3 -m unittest discover -s providers/tests` | 0 | 13 tests |
+
+**Counts.** The integrator measured 5,390 core tests at the base's merge. This
+run has 5,420, which is +30: exactly the tests this card adds.
+
+* 12 module tests;
+* the 14-test `indirect_chain_access.rs` binary;
+* four new tests beside the six moved pins.
+
+The base was not remeasured here. So the summary count (288, against the
+integrator's 289) is not compared, and the delta is stated by test, not by
+subtraction. After the test step was recorded, `cargo clean --profile dev`
+removed 16.4 GiB.
 
 ## 6. Ledger
 

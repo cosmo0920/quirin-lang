@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 345
+  "named_followups": 352
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W43-DESCRIPTOR-NATIVE-CHECK on merge e94f1607 (onto main 08e9a76c, after W43-INDEXED-RESOURCE-COLLECTIONS), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5390 core Rust passed / 0 failed / 11 ignored over 289 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 177 Lean audits; 330 root Python tests after regenerating this section (the first run failed only the derived-facts check because the merged validation section predated this card's audit); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run is byte-identical in all five artifacts to docs/reports/w43-indexed-resource-collections/integration/artifacts/ (baseline_identity exit 0); the card is verdict-neutral and that baseline stays current.",
-  "workspace_tests": 5390,
+  "note": "W44-INDIRECT-CHAIN-ACCESS: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured at 6e0bced6 with CARGO_INCREMENTAL=0; later commits change documents, the ledger, report scripts and evidence only (no Rust, Lean or test source), and the Python suite ran after the final matrix regeneration. 5420 core Rust passed / 0 failed / 11 ignored over 288 summaries (the card adds 12 module tests and the 14-test indirect_chain_access binary, and four new tests where six existing pins moved deliberately); 178 Lean audits (1 added: AuditIndirectChainAccess); census step: clippy -p qcore-c-gateway --features indirect-census clean and 462 feature-on library tests passed; 330 root Python tests after the final matrix regeneration; docs index check exit 0. Step exits: {'census': 0, 'clang': 0, 'clippy': 0, 'fmt': 0, 'followup': 0, 'lean': 0, 'probe': 0, 'submodules': 0, 'test': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; provider step exits: {'pbuild': 0, 'pclippy': 0, 'pcontracts': 0, 'pfmt': 0, 'pisolated': 0, 'ppython': 0, 'ptest': 0, 'pverify': 0}. A first core gate run (private/gate) failed to compile alias_aggregate_probe and is not evidence. Logs: worktree-private private/gate2 and private/provider-gate. Clang recorded in this checkout. Corpus: 0 function and 0 unit moves, leak 271 unchanged, 0 violation candidates.",
+  "workspace_tests": 5420,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 177,
+  "lean_audits": 178,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6816,6 +6816,7 @@
    "AuditHttpComputedLength.lean",
    "AuditIndexTraversal.lean",
    "AuditIndexedCollection.lean",
+   "AuditIndirectChainAccess.lean",
    "AuditIndirectScalarAccess.lean",
    "AuditJoinedProvenanceCallFrames.lean",
    "AuditJoinedProvenanceCycles.lean",
@@ -6921,7 +6922,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-descriptor-native-check/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-indirect-chain-access/gate.json)"
  },
  "named_followups": [
   {
