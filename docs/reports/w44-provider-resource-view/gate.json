@@ -1,0 +1,13 @@
+{
+  "note": "W44-PROVIDER-RESOURCE-VIEW: standing gate plus provider gate measured on d9c2de54 (the working tree also held this card's uncommitted increment paragraph, report index and report edits; later commits change the report, ledger, matrix and index only) with CARGO_INCREMENTAL=0, every exit captured to a file and no step piped (harness scripts/harness/gate.sh, logs in the worktree-private measure/gate). Rust suite through scripts/run_test_binaries.py: 5633 passed / 0 failed / 11 ignored over 298 summaries (288 units); load average 16.8 at the step's start; no audit ran beside it; cargo clean --profile dev after the test step. fmt clean; clippy --all-targets and clippy --workspace --all-targets -D warnings clean; reevaluation_probe exit 0; reevaluation_followup exit 0; 189 Lean audits passed (AuditProviderSelection.lean now 45 theorems, +14; no new audit file); cargo build --offline --workspace exit 0 (no dependency added). Root Python tests 351 passed before the matrix regeneration and again after it. Provider gate: providers/contracts.py check exit 0 (the load path now carries each crate's resource view, recomputed by the loader); provider Python 15 tests passed; providers/package.py build and verify of all five packages exit 0 (inventories unchanged); provider workspace 124 passed / 0 failed / 0 ignored over 39 summaries; the real-package mutation test real_packages_preserve_unknown_and_reject_mutations run alone (--exact, one thread) passed; provider fmt and clippy clean. Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'clean': 0, 'fmt': 0, 'clippy': 0, 'clippy-workspace': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'python': 0, 'build-offline': 0, 'contracts-check': 0, 'provider-python': 0, 'package-build': 0, 'package-verify x5': 0, 'provider-test': 0, 'provider-mutation-isolated': 0, 'provider-fmt': 0, 'provider-clippy': 0}. Clang recorded in this checkout. Corpus: nothing moves; the pinned arbiter's diagnostics are byte-identical to the w44-collection-allocation integration baseline.",
+  "workspace_tests": 5633,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 351,
+  "lean_audits": 189,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

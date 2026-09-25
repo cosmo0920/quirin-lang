@@ -132,8 +132,8 @@ not arise.
 `NAME` expands to the crate's view, in view order, which is sorted. A crate
 with an empty view contributes nothing and is still recorded in the closure
 with role `selected`. A selection that resolves to no module refuses. That
-replaces the old refusal of a crate that owns no module, which the load path
-cannot express anyway. `NAME:MODULE` still accepts any owned module, and the
+replaces the old refusal of a crate that owns no module; `contracts.py`
+never generates one, because it refuses an empty contract directory. `NAME:MODULE` still accepts any owned module, and the
 loader then refuses one outside the view. The closure record gains each
 crate's `resource_view`.
 
@@ -207,15 +207,51 @@ digest W44-QUIRIN-AUDIT-PROVIDERS reported for its final code. Results are in
 
 ### 3.1 Byte identity
 
-SERIES2_TABLE
+Every run gives 3 Safe / 10 provisional Unsafe / 169 Unknown / 4 data-only /
+0 gateway failures over 186 configurations. That is the manifest run's result.
+
+| Run | Against | Report | `.contracts.json` | Other three artifacts | `audit.log` |
+|---|---|---|---|---|---|
+| all eleven crates whole (`whole2`) | canonical-order manifest (`canonical2`) | identical | identical after removing `provider_selection` | identical | identical but `preparation:` |
+| contracts-only, no selection (`all-loaded2`) | canonical-order manifest, contracts-only (`canonical-co2`) | identical | identical after removing `provider_selection` | identical | identical but `preparation:` |
+
+The canonical-order manifest was written by `canonical_manifest.py` beside
+`cycle19-resource-contracts.json`, at the worktree root, for the series only.
+It is archived as [identity/cycle19-canonical-order.json](identity/cycle19-canonical-order.json).
+Both the whole-crate run and the all-loaded run record it as
+`contract_manifest`, byte for byte
+([lowered-is-canonical2.json](identity/lowered-is-canonical2.json)). The
+all-loaded sidecar records `selection: "all-loaded"` over 47 modules.
+Series 1 gave the same whole-against-canonical result on the first branch
+binaries.
 
 ### 3.2 Against the committed Cycle 19 manifest
 
-MANIFEST_DIFF
+| Run | Against | Report | `.contracts.json` | Other three | `audit.log` |
+|---|---|---|---|---|---|
+| `whole2` | `manifest2` | 558 leaves | `contract_manifest` only (after removing `provider_selection`) | identical | identical but `preparation:` |
+| `all-loaded2` | `manifest-co2` | 558 leaves | `contract_manifest` only (after removing `provider_selection`) | identical | identical but `preparation:` |
+| `canonical2` (a plain manifest, no provider code) | `manifest2` | 558 leaves | `contract_manifest` only | identical | identical but `preparation:` |
+
+The 558 leaves fall into two buckets
+([leaf buckets](identity/leaf-buckets-manifest-vs-whole2.json)):
+
+- 372 `resource_contract_manifest` digests, two per configuration: the
+  dependency map and the compile-task identity;
+- 186 `inventory_sha256` digests.
+
+No verdict, row, count or console line differs. The third row shows that
+reordering a hand-written manifest alone produces exactly this difference:
+the difference is the order, not the provider route.
 
 ### 3.3 Full mode unchanged
 
-BASE_DIFF
+`base2` is the base commit's `quirin-audit` (`57759861…`). It ran with
+`--contract-manifest cycle19-resource-contracts.json`. `manifest2` is the
+branch binary on the same inputs. All five artifacts are byte-identical, and
+`audit.log` differs only in the masked `preparation:` line
+([comparison](identity/compare-base-vs-manifest2.json)). The Rust tests
+cover the other full-mode rules (§4).
 
 The base binary refuses the new load path. Its reader denies unknown fields
 and reports `unknown field resource_view`. Series 1's base run shows this, and
@@ -228,7 +264,20 @@ refuses only whole-crate entries.
 
 ### 3.4 The pinned arbiter
 
-ARBITER
+`run_audit.py private/arbiter2 <tip> --jobs 16` ran on the final example
+binary (`c88622fc…`) and exited 0 ([run](identity/arbiter-run2.json)).
+`baseline_identity.py` compared it with
+`docs/reports/w44-collection-allocation/integration/artifacts`, with this
+worktree aliased to the baseline's
+([result](identity/baseline-identity-arbiter2.json)):
+
+- diagnostics, chunk-contracts and monkey-source are **byte-identical**;
+- contracts are identical after the root alias;
+- source-effects differ only in the checkout-path-bound digests, as every run
+  in another worktree does (W44-AUDIT-PARALLEL-UNITS §4.1);
+- `verdict_bearing_identical: true`.
+
+No analyzer, gateway, projection or contract text changed.
 
 ## 4. Tests and Lean
 
@@ -297,7 +346,34 @@ by review (constraint 28).
 
 ## 5. Gates
 
-GATES
+Measured on `d9c2de54` in this worktree with `CARGO_INCREMENTAL=0`. Every
+exit was captured to a file and no step was piped ([gate.json](gate.json);
+harness [`scripts/harness/gate.sh`](scripts/harness/gate.sh); logs in the
+worktree-private `measure/gate/`). No audit ran during the test step.
+
+| Step | Command | Exit | Count |
+|---|---|---:|---|
+| submodules | `git submodule update --init --recursive` | 0 | |
+| clang | `clang --version` | 0 | Ubuntu clang 21.1.8 ([recording](clang-version.txt)) |
+| test | `python3 scripts/run_test_binaries.py` | 0 | **5,633 passed / 0 failed / 11 ignored**, 298 summaries over 288 units (+8: provider selection +7, current CLI +1); load 16.8 at the start |
+| clean | `cargo clean --profile dev` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --all-targets -- -D warnings`; `cargo clippy --workspace --all-targets -- -D warnings` | 0, 0 | |
+| probe / followup | `cargo run -p qcore-compiler --example reevaluation_probe` / `reevaluation_followup` | 0, 0 | |
+| lean | `python3 scripts/check_lean_audits.py --jobs 4` | 0 | 189 audits (`AuditProviderSelection.lean`: 45 theorems, +14) |
+| python | `python3 -m unittest discover -s scripts/tests` | 0, then 0 | 351 tests, before and after the matrix regeneration (`build_matrix.py . --gate …/gate.json`, exit 0; `named_followups` 392 → 393) |
+| offline build | `cargo build --offline --workspace` | 0 | no dependency added |
+| contracts | `python3 providers/contracts.py check` | 0 | views recomputed by the loader and equal |
+| provider Python | `python3 -m unittest discover -s providers/tests` | 0 | 15 tests (+2) |
+| packages | `python3 providers/package.py build --output measure/gate/packages`; `verify` × 5 | 0; 0 × 5 | inventories unchanged |
+| provider test | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | 124 passed / 0 failed / 0 ignored, 39 summaries |
+| isolated mutation test | `cargo test --manifest-path providers/Cargo.toml -p qcore-provider-conformance --test packages --locked --offline -- --exact real_packages_preserve_unknown_and_reject_mutations --test-threads=1` | 0 | 1 passed |
+| provider fmt / clippy | `cargo fmt --manifest-path providers/Cargo.toml --all -- --check`; `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0, 0 | |
+| docs index | `python3 scripts/build_docs_index.py`; `--check` | 0, 0 | |
+
+Constraint 16's load-sensitive rows all passed. The mutation check that
+`contracts.py check` refuses a wrong view is the Python suite's (§4). The
+real file was never mutated for it.
 
 ## 6. Files
 
