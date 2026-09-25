@@ -328,6 +328,7 @@ fn settle(
                 &mut local,
             );
             joined_provenance::finish_release(conditional, &mut output, &local);
+            refused_operands::apply(&mut output, &read, &local);
             let refused = refused_operands::refused(&local);
             let mut edge_unknown = Vec::new();
             let edges = node
