@@ -59,6 +59,14 @@ pub(crate) mod descriptor_custody;
 
 pub use descriptor_custody::ValidityFact;
 
+// Card W44-LEAK-PIN-AUDIT: the refused-operand rule and its census.
+#[path = "legacy_refused_operands.rs"]
+pub(crate) mod refused_operands;
+
+#[cfg(feature = "indirect-census")]
+#[path = "legacy_leak_witness.rs"]
+mod leak_witness;
+
 pub use declared_modes::{
     ModeAgreementRow, ModeOutcome, ModeRefusal, declared_mode_census, mode_contradiction,
 };
@@ -9636,6 +9644,18 @@ pub(crate) fn analyze_cfg_with_entry(
         &acquisition_lines,
         &context.collection_owners(),
         &mut diagnostics,
+    );
+    // Card W44-LEAK-PIN-AUDIT: the leak-witness census (a measurement only).
+    #[cfg(feature = "indirect-census")]
+    leak_witness::record(
+        &cfg,
+        &incoming,
+        &acquisition_lines,
+        &context,
+        &alias,
+        &joined,
+        entry_custody,
+        &diagnostics,
     );
 
     // Read the settled exit states once the work list is stable, so that a

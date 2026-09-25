@@ -442,6 +442,11 @@ pub struct PublicationFacts {
     /// function whose declarations the type reader could not read contributes
     /// no name here, so nothing is excluded there.
     pub scalar_sources: BTreeSet<String>,
+    /// Card **W44-LEAK-PIN-AUDIT**: the places each preprocessed line's
+    /// statements hand on, and how, for the refused-escape rule
+    /// (`legacy_c::refused_operands`). Read from the same token stream at the
+    /// same moment as the three facts above, for the same reason.
+    pub line_reads: crate::legacy_c::refused_operands::LineReads,
 }
 
 impl PublicationFacts {
@@ -454,6 +459,16 @@ impl PublicationFacts {
         self.destinations.append(&mut other.destinations);
         self.scalar_sources.append(&mut other.scalar_sources);
         self.indirect.extend(other.indirect);
+        // Card W44-LEAK-PIN-AUDIT: a union per line, the stronger hand-on
+        // winning, so a hand-on recognised in either context withdraws in the
+        // combination.
+        for (line, places) in other.line_reads {
+            let entry = self.line_reads.entry(line).or_default();
+            for (place, how) in places {
+                let current = entry.entry(place).or_insert(how);
+                *current = (*current).max(how);
+            }
+        }
     }
 }
 
@@ -499,6 +514,7 @@ pub(crate) fn facts(
         destinations,
         indirect,
         scalar_sources,
+        line_reads: crate::legacy_c::refused_operands::line_reads(body, lines),
     }
 }
 
