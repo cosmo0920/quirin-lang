@@ -523,9 +523,11 @@ impl super::Parser<'_> {
         let saved = (self.next_site, self.element_lowerings);
         let instruction = self.classify_simple(stripped);
         let grouped = original.is_none_or(|original| {
-            original
+            let texts = original
                 .iter()
-                .any(|token| matches!(token.text.as_str(), "(" | ")" | "[" | "]"))
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            !stripping_is_faithful(&texts, &self.callee_types)
         });
         if !grouped || matches!(instruction, LegacyInstruction::Unknown { .. }) {
             return instruction;
@@ -541,6 +543,58 @@ impl super::Parser<'_> {
             writes: self.refused_writes(&texts),
         }
     }
+}
+
+/// Whether stripping every grouping token from `texts` (one `for` clause)
+/// leaves an expression C gives the same meaning: no bracket, and every
+/// parenthesised group only wraps one name (`(elm) = (tmpelm)`, the
+/// increment of `TAILQ_FOREACH_SAFE`), which designates what the name does
+/// (C11 6.5.1p5). A group after a name, `)` or `]` is an argument list, a
+/// group before `(` a callee, and a group around a type name a cast; each
+/// makes the stripped spelling unfaithful.
+pub(crate) fn stripping_is_faithful(texts: &[&str], types: &TypeNames) -> bool {
+    for (index, text) in texts.iter().enumerate() {
+        match *text {
+            "[" | "]" => return false,
+            "(" => {
+                let Some(close) = close_of(texts, index) else {
+                    return false;
+                };
+                let inner = texts[index + 1..close]
+                    .iter()
+                    .filter(|text| !matches!(**text, "(" | ")"))
+                    .collect::<Vec<_>>();
+                let single_name = matches!(inner.as_slice(),
+                    [name] if is_name(name) && !is_keyword(name) && !types.is_type(name));
+                let arguments = index
+                    .checked_sub(1)
+                    .is_some_and(|before| matches!(texts[before], ")" | "]") || is_name(texts[before]));
+                let callee = texts.get(close + 1) == Some(&"(");
+                if !single_name || arguments || callee {
+                    return false;
+                }
+            }
+            _ => {}
+        }
+    }
+    true
+}
+
+fn close_of(texts: &[&str], open: usize) -> Option<usize> {
+    let mut depth = 0usize;
+    for (index, text) in texts.iter().enumerate().skip(open) {
+        match *text {
+            "(" => depth += 1,
+            ")" => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    return Some(index);
+                }
+            }
+            _ => {}
+        }
+    }
+    None
 }
 
 /// A `for` header's three clauses **with their grouping tokens intact**, in

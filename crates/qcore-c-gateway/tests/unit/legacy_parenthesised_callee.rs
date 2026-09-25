@@ -1,5 +1,8 @@
 use super::super::{Token, tokenize, tokenize_with_conditionals};
-use super::{TypeNames, normalise_owned, normalise_tokens, opaque_call, typedef_declarators};
+use super::{
+    TypeNames, normalise_owned, normalise_tokens, opaque_call, stripping_is_faithful,
+    typedef_declarators,
+};
 
 fn texts(tokens: &[Token]) -> Vec<String> {
     tokens.iter().map(|token| token.text.clone()).collect()
@@ -43,6 +46,36 @@ fn typedef_declarators_are_read_by_position() {
         names.iter().map(String::as_str).collect::<Vec<_>>(),
         expected
     );
+}
+
+#[test]
+fn a_for_clause_strips_faithfully_only_around_single_names() {
+    let unit = "typedef long word_t;";
+    let tokens = tokenize(unit);
+    let all = texts(&tokens);
+    let all = all.iter().map(String::as_str).collect::<Vec<_>>();
+    let declared = typedef_declarators(&all);
+    let faithful = |clause: &str| {
+        let clause = texts(&tokenize(clause));
+        let clause = clause.iter().map(String::as_str).collect::<Vec<_>>();
+        let types = TypeNames::read_with(&declared, &clause, 0..clause.len());
+        stripping_is_faithful(&clause, &types)
+    };
+    for clause in ["i ++", "(elm) = (tmpelm)", "((e)) = (f)", "i = *(p)", "n = 0"] {
+        assert!(faithful(clause), "{clause}");
+    }
+    for clause in [
+        "q_free(p)",
+        "p = q_alloc()",
+        "rd_map_iter_next(&(elem))",
+        "(e) = ((e)->next)",
+        "a[i] = 0",
+        "(f)(p)",
+        "n = (word_t) m",
+        "x = (a + b)",
+    ] {
+        assert!(!faithful(clause), "{clause}");
+    }
 }
 
 #[test]

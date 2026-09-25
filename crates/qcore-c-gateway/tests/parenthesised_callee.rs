@@ -449,9 +449,13 @@ fn a_for_clause_call_is_never_a_no_op() {
     assert_ne!(subject(&run).status, AnalysisStatus::Safe);
     let run = body("void *p; int i; for (p = q_alloc(); p != 0; ) { q_free(p); p = 0; }");
     assert_eq!(subject(&run).status, AnalysisStatus::Unknown);
-    // Clauses without grouping keep their exact classification.
+    // Clauses without grouping keep their exact classification, and so do
+    // clauses whose only groups wrap one name (`TAILQ_FOREACH_SAFE`'s
+    // `(elm) = (tmpelm)`): stripping those changes no meaning.
     let run = body("int i; for (i = 0; i < 3; i++) { }");
     assert_eq!(subject(&run).status, AnalysisStatus::Safe);
+    let run = body("int i; int j = 1; for ((i) = 0; i < 3; (i) = (j)) { }");
+    assert_eq!(subject(&run).status, AnalysisStatus::Safe, "{:?}", unsupported(subject(&run)));
 }
 
 // ---------------------------------------------------------------------------
