@@ -61,7 +61,7 @@ pub(crate) mod descriptor_custody;
 // of a contracted call. Everything the card adds lives there; this file only
 // carries the hooks marked with the card's name.
 #[path = "legacy_call_argument_access.rs"]
-mod call_argument_access;
+pub(crate) mod call_argument_access;
 
 // Card W45-CALLEE-SUMMARY-CASCADE: a pointer member handed to a nullable
 // release, a pointer member null test, and the call-site sub-custody guard
