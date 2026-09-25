@@ -57,6 +57,12 @@ pub mod declared_modes;
 #[path = "legacy_descriptor_custody.rs"]
 pub(crate) mod descriptor_custody;
 
+// Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: typed indirect reads in the actuals
+// of a contracted call. Everything the card adds lives there; this file only
+// carries the hooks marked with the card's name.
+#[path = "legacy_call_argument_access.rs"]
+mod call_argument_access;
+
 pub use descriptor_custody::ValidityFact;
 
 pub use declared_modes::{
@@ -2588,6 +2594,7 @@ fn build_function_cfg_with(
         #[cfg(feature = "indirect-census")]
         census_bindings: census_body_bindings(tokens, body_start, contracts),
         admit_derived_returns,
+        argument_probe: call_argument_access::ArgumentProbe::default(),
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -3864,6 +3871,10 @@ struct Parser<'a> {
     /// (see [`return_call::NULL_RETURN_PLACE`]). `false` for every other CFG,
     /// which therefore keeps the W43-LIBC-RESULT-ALIAS refusal byte for byte.
     admit_derived_returns: bool,
+    /// Card **W44-INDIRECT-CALL-ARGUMENT-ACCESS**: the actuals the call
+    /// argument rule admitted while it classifies one statement again. Empty
+    /// otherwise, which makes every hook reading it the identity.
+    argument_probe: call_argument_access::ArgumentProbe,
 }
 
 impl Parser<'_> {
@@ -3899,8 +3910,10 @@ impl Parser<'_> {
         refusal: &crate::indirect_census::Refusal,
     ) {
         // A derived-result validation parse re-reads a body the ordinary parse
-        // already recorded; recording it again would double-count.
-        if self.admit_derived_returns {
+        // already recorded; recording it again would double-count. So would the
+        // call argument rule's second classification of a refused statement
+        // (card W44-INDIRECT-CALL-ARGUMENT-ACCESS).
+        if self.admit_derived_returns || self.argument_probe.rerun {
             return;
         }
         crate::indirect_census::record(
@@ -4932,6 +4945,16 @@ impl Parser<'_> {
                             .collect(),
                     ));
                 }
+                // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: a call whose actuals
+                // the gate refused, lowered to its actuals' reads and the call.
+                if let Some(sequence) = self.call_argument_access(&tokens, &instruction) {
+                    return Ok(Statement::Block(
+                        sequence
+                            .into_iter()
+                            .map(|instruction| Statement::Instruction(instruction, line))
+                            .collect(),
+                    ));
+                }
                 Ok(Statement::Instruction(instruction, line))
             }
             None => Err(line),
@@ -5920,6 +5943,11 @@ impl Parser<'_> {
             )
         });
         borrowed_actuals.extend(dereferenced);
+        // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: the whole actuals the call
+        // argument rule admitted for this statement, when no route above
+        // already exempted them. Empty outside that rule's probe.
+        let admitted_arguments = self.admitted_argument_spans(&texts, &borrowed_actuals);
+        borrowed_actuals.extend(admitted_arguments);
         if let Some(equal) = assignment
             && !contains_call(tokens)
             && let Some(destination) = direct_assignment_destination(&texts[..equal])
@@ -6250,7 +6278,9 @@ impl Parser<'_> {
                     && arguments.len() > contract.parameters.len()
                     && !(variadic_tail
                         && crate::variadic_nested::tail_arguments_are_data_with_nested(
-                            arguments,
+                            // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: an admitted
+                            // tail read is data; every other actual is unchanged.
+                            &self.tail_view(function, arguments),
                             contract.parameters.len(),
                             &nested,
                             &self.typed_model,
@@ -6286,6 +6316,9 @@ impl Parser<'_> {
                         |(index, (mode, argument))| {
                             !nested.iter().any(|nested| nested.argument == index)
                                 && !admitted_addresses.contains(argument)
+                                // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: an
+                                // admitted read keeps its base's obligation.
+                                && !self.argument_admitted(function, index, argument)
                                 && (((!matches!(mode, ResourceParameterMode::Out { .. })
                                     && argument.contains(&"&"))
                                     || (matches!(mode, ResourceParameterMode::Borrowed)
