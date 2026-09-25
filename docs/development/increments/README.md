@@ -101,4 +101,5 @@ with relative links rebased where necessary. They are not current rules.
 - [remaining work and delegated increments](legacy/remaining-work.md)
 - [pointers and operational notes](legacy/operational-notes.md)
 
+- [Agent-cycle guidance checkpoint](structure-checkpoints/agent-cycle-guidance.md): paragraphs of the agent-loop guides removed or reworded by W44-AGENT-GUIDANCE-OPUS55; current requirements remain in `docs/agents/`.
 - [Task-context operations checkpoint](../../reports/task-context-contract-bundle/operations-before.txt): byte-preserved operations rationale before the task-reading pilot; current requirements remain in `docs/agents/operations.md`.

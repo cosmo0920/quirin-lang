@@ -1,18 +1,17 @@
 # QCore-C agent briefing
 
-This file is the startup router and authority for which rules to read. Detailed
-rules live in the linked topic files; their existing numbers and force are
-unchanged. This structure deliberately replaces the former monolithic briefing.
+This file is the startup router: it says which rules to read. Detailed rules
+live in the linked topic files; their existing numbers and force are unchanged.
 
 ## Start here
 
 1. Read [operations](docs/agents/operations.md)'s Working rules, Worktree and
-   measurement hygiene, and Task reading protocol. Read its integration and
-   maintenance sections when that work is in scope.
+   measurement hygiene, and Task reading protocol. Read its card-brief,
+   integration and maintenance sections when that work is in scope.
 2. Generate the reading union with `python3 scripts/task_context.py --base
    <revision> --topic <topic> --path <planned-path>`; `--render` emits exact
-   current text. It includes committed, staged, unstaged, renamed, deleted and
-   untracked paths. Rerun as scope changes; add topics for semantic implications.
+   current text. The [task reading protocol](docs/agents/operations.md#task-reading-protocol)
+   says what the union covers and when to widen it.
 3. Read the returned sections. The [rule router](docs/agents/README.md) remains
    the manual fallback and stable rule index. Unknown relevance requires broader
    reading, never omission. A generated list is not evidence that it was read.
@@ -36,15 +35,8 @@ contributors. [DEVELOPMENT.md](DEVELOPMENT.md) retains legacy heading links.
 [Fluent Bit queue](docs/plans/fluent-bit-system-coverage/README.md) holds
 prospective production cards. Open work is the acceptance matrix's
 `named_followups` plus each report's follow-ons; a rule mention is not tracking.
-
-One current authority per rule. Edit the relevant topic page, not a duplicate
-in a root guide. Add exactly one increment paragraph, newest first, to the
-current record named by [the increment index](docs/development/increments/README.md).
-Update [status](docs/STATUS.md) from primary evidence when figures change; do
-not turn it into history. Keep new history pages below 32 KiB where a complete
-record boundary permits. Preserve frozen evidence. Add a topic to the router
-when necessary; do not grow root chronicles. Compaction cadence and preservation
-requirements remain in [operations](docs/agents/operations.md).
+Record keeping (one authority per rule, increment paragraphs, status, history
+pages, compaction) is in [operations](docs/agents/operations.md#working-rules).
 
 Measure startup guidance, cumulative retrieval and unique source bytes separately;
 byte counts are not token billing. A smaller index alone proves no task-cost gain.

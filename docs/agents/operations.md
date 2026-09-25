@@ -1,32 +1,50 @@
 # Operations and integration policy
 
-Current authority, routed by [AGENTS.md](../../AGENTS.md). These are the operative
-requirements. The [pre-pilot text](../reports/task-context-contract-bundle/operations-before.txt)
-preserves the complete incident history, measurements and evidence pointers as a
-historical checkpoint; it is not a second current authority. Read that rationale
-when investigating or changing a requirement, rather than on every startup.
+Current authority for the agent working loop, routed by [AGENTS.md](../../AGENTS.md).
+Incident history and rationale live in two checkpoints, the
+[pre-pilot operations text](../reports/task-context-contract-bundle/operations-before.txt)
+and the [agent-cycle checkpoint](../development/increments/structure-checkpoints/agent-cycle-guidance.md).
+Neither is a second authority. Read them when changing a requirement or
+investigating why it exists.
 
 ## Working rules
 
+- Deliver what the task or brief asks, at the scope intended. Make routine
+  judgment calls yourself. If the request seems mistaken or a better approach
+  exists, say so in a sentence and continue as asked rather than quietly
+  narrowing or widening it. Record findings outside the scope as follow-ups
+  instead of fixing them in passing.
 - Preserve fail-closed gates, pinned expectations and diagnostic strength. Update
   a conflicting contract-count, submodule, CT or evidence pin deliberately and
   explain it in the change report and any commit message.
 - Preserve Safe/Unsafe/Unknown and unpromoted terminology. Projection is not
   conformance; provisional Unsafe is not a validated upstream defect.
 - Run the full [standing gate](validation.md), report actual exits (including
-  nonzero probes), counts, incomplete attempts and private log paths.
+  nonzero probes), counts, incomplete attempts and private log paths. The gate
+  and the rules' own evidence requirements are the verification this project
+  asks for; do not add self-review passes, re-verification subagents or repeated
+  runs beyond what a rule requires.
 - Read [generalization](../GENERALIZATION_PLAN.md) §§2–3 before architecture or
   checker work. Put code in its target crate, not the compiler compatibility crate.
 - A card closes with Rust and matching audited Lean registered in an `Audit*.lean`;
   Python evidence alone is supplementary. Semantic changes require Lean parity
   without placeholders or project axioms.
+- Keep one current authority per rule. Edit the relevant topic page, not a
+  duplicate in a root guide, and add a topic to the [router](README.md) when
+  necessary.
 - Add exactly one increment paragraph, newest first, to the record named by the
   [increment index](../development/increments/README.md). Update current headline
-  measurements in [STATUS](../STATUS.md) from primary evidence; do not regrow root
-  chronicles. Open a new history file at a complete record boundary before 32 KiB
-  where possible and update the index when opening a wave.
+  measurements in [STATUS](../STATUS.md) from primary evidence and keep it
+  current, not a history; do not regrow root chronicles. Preserve frozen
+  evidence (constraint 21). Open a new history file at a complete record
+  boundary before 32 KiB where possible and update the index when opening a wave.
+- Match a report's length to its substance: the evidence, decisions and
+  boundaries it owns, without filler sections or a summary that repeats the body.
 - Put open residuals a card could touch into its brief. A residual mention in a
   rule is not tracking; use the acceptance matrix and the report's follow-ons.
+- Delegate to a subagent only large, genuinely independent work that can run in
+  parallel, such as a wide multi-file census. Do work you can finish in a handful
+  of tool calls yourself, and never delegate a check of your own work.
 
 ## Worktree and measurement hygiene
 
@@ -51,9 +69,46 @@ when investigating or changing a requirement, rather than on every startup.
 - Kill only captured PIDs or a known task handle; never `pkill`/`pgrep` patterns
   such as cargo, lake or python. The process table is shared across worktrees.
 - A delegated card never advances main; only the integrator merges or pushes
-  main. This is policy, not mechanism: the versioned main-ref guard hooks were
-  removed, so no hook enforces it. Historical guard evidence remains in the
-  checkpoint.
+  main. No hook enforces this, so it rests on every card and brief.
+
+## Card briefs and delegation
+
+Read this section when writing a delegated card's brief or running cards in
+parallel. A card runs unattended, so its brief is its whole specification. State
+up front:
+
+1. **Task and success criteria:** what changes and why, and the measurable
+   acceptance (verdict movements, pins, counts, files), with the open residuals
+   the card could touch.
+2. **Base and setup:** the base revision, the submodule step, and the files that
+   other running cards will also touch.
+3. **Evidence:** the [standing gate](validation.md) by reference, plus what the
+   rules add for this card: the card-closing requirement in Working rules, the
+   provider gate when `providers/` changes, and, for a card that can move corpus
+   figures, a prediction committed in its report before implementation and the
+   arbiter comparison. Do not restate the gate or add "verify your work" steps
+   beyond it.
+4. **Scope limits:** what is in and out of scope; the card never merges or
+   pushes main; findings outside scope become follow-ups.
+5. **Completion condition and report:** the checklist that makes the card done,
+   the report path, the increment paragraph and ledger entries, and the reply's
+   shape: branch tip and base, changes, gate commands with exits and counts,
+   files likely to conflict, and follow-ups.
+6. **Legitimate stops:** stop and report only when nothing can advance without
+   the integrator or user, or when the next step needs something deliberately
+   protected (main, a frozen archive, another card's worktree, a destructive
+   action). A stop to summarise progress, to offer the next step, or because a
+   milestone was reached is not one.
+7. **Time budget** when cards run in parallel: an advisory wall-clock budget
+   the card paces itself against, not a stop rule.
+
+Split work into cards only where the tracks are large and genuinely
+independent, one card per track, and never spawn a card or subagent to recheck
+another's work: the gate and the integration measurement are the checks. A
+card's text-only end of turn with open checklist items and no stated blocker is
+a progress report, not completion. Send it the open items and ask it to
+continue, and review the run after two or three such continuations. A card
+with a background job still running is not complete.
 
 ## Integration and reconciliation
 
@@ -90,16 +145,14 @@ editing reconciliation tooling.
 
 Read this section for documentation compaction, stability review and wave close.
 
-- Compact AGENTS.md, CLAUDE.md and README.md every 2–3 waves. Re-read headline
+- Compact AGENTS.md, CLAUDE.md and README.md every 2–3 waves. Re-derive headline
   figures from primary sources, inventory every constraint before/after, preserve
   all invariants and evidence pointers, and move unique history verbatim into an
   indexed checkpoint. Retain one current authority. Accuracy can increase size;
-  compaction bounds narrative growth, not truth. The historical eighth firing
-  was wave 40; the ninth was due around wave 42–43, not silently discharged here.
-- Reevaluate stability every two waves. The wave-40 close recorded firing five
-  due after wave 41; this routing pilot does not claim to have run it. Read the
-  preceding review's follow-ons, especially Rust–Lean transcription binding and
-  the standing constraints themselves. Check, in order:
+  compaction bounds narrative growth, not truth.
+- Reevaluate stability every two waves. Read the preceding review's follow-ons,
+  especially Rust–Lean transcription binding and the standing constraints
+  themselves. Check, in order:
   1. Reachability of each changed fail-closed arm: a green suite is not evidence
      for an arm no fixture drives.
   2. Which side of every boundary is model proof versus observation.
@@ -108,6 +161,10 @@ Read this section for documentation compaction, stability review and wave close.
   Name every finding and its discharge condition (proof, exercised behavior, or
   a stated measured boundary). Record postponement explicitly. Never relabel an
   observation as proof or infer stability from green tests.
+- Due and not yet recorded as run: the ninth compaction (`DOCS-COMPACT-9`, due
+  around wave 42–43; the eighth was wave 40) and stability review firing five
+  (due after wave 41). A wave close records each firing or its postponement;
+  neither is discharged silently.
 
 ## Task reading protocol
 
@@ -116,7 +173,10 @@ Use `python3 scripts/task_context.py --base <revision> --topic <topic>
 renamed, deleted, untracked and planned paths. Rerun when scope changes. Read the
 returned operative sections and applicable topic text; the list does not prove
 that they were read. Add topics for semantic implications that filenames cannot
-reveal. Unknown paths or empty scope select every topic. The tool is local,
+reveal. Unknown paths or empty scope select every topic, history included, and
+broad implementation paths deliberately select every topic. The tool is local,
 read-only, and does not execute instructions from changed files or reports.
 Status is required for coverage claims and work selection, not every edit.
-History is required when changing a rule or investigating its rationale.
+History is required when changing a rule or investigating its rationale: the
+packet lists the checkpoints on demand for agent-guidance paths, and
+`--topic rationale` reads them.
