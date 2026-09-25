@@ -1,0 +1,83 @@
+{
+ "totals": {
+  "leaves": 9505,
+  "unknown_functions": 2579,
+  "blocked_only_by_uncontracted_calls": 406,
+  "sole_one_callee": 300,
+  "callees": 2533
+ },
+ "classes": [
+  {
+   "class": "same-unit-selected:Unknown",
+   "leaves": 3594,
+   "callees": 1566,
+   "unknown_functions": 1633,
+   "sole": 219,
+   "class_only": 266
+  },
+  {
+   "class": "other-unit:Unknown",
+   "leaves": 2839,
+   "callees": 694,
+   "unknown_functions": 1005,
+   "sole": 36,
+   "class_only": 41
+  },
+  {
+   "class": "in-unit-header-internal",
+   "leaves": 1257,
+   "callees": 155,
+   "unknown_functions": 457,
+   "sole": 12,
+   "class_only": 12
+  },
+  {
+   "class": "no-corpus-body",
+   "leaves": 950,
+   "callees": 217,
+   "unknown_functions": 361,
+   "sole": 23,
+   "class_only": 31
+  },
+  {
+   "class": "in-unit-system-header",
+   "leaves": 586,
+   "callees": 4,
+   "unknown_functions": 97,
+   "sole": 3,
+   "class_only": 3
+  },
+  {
+   "class": "other-unit:Safe",
+   "leaves": 105,
+   "callees": 36,
+   "unknown_functions": 88,
+   "sole": 2,
+   "class_only": 2
+  },
+  {
+   "class": "in-unit-header-external",
+   "leaves": 86,
+   "callees": 16,
+   "unknown_functions": 39,
+   "sole": 0,
+   "class_only": 1
+  },
+  {
+   "class": "same-unit-selected:Unsafe",
+   "leaves": 58,
+   "callees": 38,
+   "unknown_functions": 30,
+   "sole": 4,
+   "class_only": 6
+  },
+  {
+   "class": "other-unit:Unsafe",
+   "leaves": 30,
+   "callees": 19,
+   "unknown_functions": 17,
+   "sole": 1,
+   "class_only": 1
+  }
+ ]
+}

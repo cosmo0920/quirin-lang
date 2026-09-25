@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 345
+  "named_followups": 351
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6633,7 +6633,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W43-INDEXED-RESOURCE-COLLECTIONS integration, 2026-09-25. The card (measured against docs/reports/w43-descriptor-resource-tracking/integration/artifacts) composed onto the combined tree docs/reports/w43-descriptor-resource-tracking/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 0 added 0 functions 0 units 0); functions moved (combined): []. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] Verdict-neutral on the corpus: the diagnostics artifact differs from the previous baseline only in the scope string (no bounds claim for collection ranges); every one of the 27 recognised element operations keeps its original refusal. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w43-indexed-resource-collections/integration/previous-corpus-row.json.",
+   "note": "W44-CORPUS-CALLEE-SUMMARIES, 2026-09-25. BEFORE (base binary c1e69bb5) reproduces the W43-INDEXED-RESOURCE-COLLECTIONS integration diagnostics, chunk-contracts and source byte for byte. AFTER widens the W4 derivation scope to reached static (internal-linkage), non-reserved header definitions: 70 changed leaves, all attributed (42 uncontracted-call leaves decided at 16 newly validated callees, 13 same-line unknown_alias replacements at effectful Released/Owned call sites, 11 condition/indirect refusals whose statement calls a decided callee, 4 same-function re-attributions); mk_core/mk_event.c mk_event_init and mk_event_backend move Unknown -> Safe; 0 unit status moves; 0 violation leaves added or removed. Leak 271 preserved. Raw units remain unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-corpus-callee-summaries/previous-corpus-row.json.",
    "units": 185,
    "safe": 3,
    "provisional_unsafe": 43,
@@ -6642,15 +6642,15 @@
    "projected_functions": 4834,
    "leak_diagnostics": 271,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w43-indexed-resource-collections/integration/artifacts/",
-   "source": "docs/reports/w43-indexed-resource-collections/integration/integration-confirmation.md; preceding baseline docs/reports/w43-descriptor-resource-tracking/integration/artifacts",
-   "unknown_alias_diagnostics": 4358,
-   "unsupported_diagnostics": 45848,
+   "baseline": "docs/reports/w44-corpus-callee-summaries/artifacts/",
+   "source": "docs/reports/w44-corpus-callee-summaries/README.md; preceding baseline docs/reports/w43-indexed-resource-collections/integration/artifacts/",
+   "unknown_alias_diagnostics": 4371,
+   "unsupported_diagnostics": 45795,
    "double_release_diagnostics": 0,
    "function_statuses": {
-    "safe": 294,
+    "safe": 296,
     "provisional_unsafe": 85,
-    "unknown": 4455
+    "unknown": 4453
    },
    "source_definitions": 4921,
    "unprojected_definitions": 87,
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W43-DESCRIPTOR-NATIVE-CHECK on merge e94f1607 (onto main 08e9a76c, after W43-INDEXED-RESOURCE-COLLECTIONS), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5390 core Rust passed / 0 failed / 11 ignored over 289 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 177 Lean audits; 330 root Python tests after regenerating this section (the first run failed only the derived-facts check because the merged validation section predated this card's audit); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. A fresh release corpus run is byte-identical in all five artifacts to docs/reports/w43-indexed-resource-collections/integration/artifacts/ (baseline_identity exit 0); the card is verdict-neutral and that baseline stays current.",
-  "workspace_tests": 5390,
+  "note": "W44-CORPUS-CALLEE-SUMMARIES: core Rust, fmt, clippy (--workspace), both reevaluation examples, the indirect-census clippy and tests, and Lean measured on 4006c7b6 (the implementation commit; later commits change documents, the ledger, report scripts and evidence files only, no Rust, Lean, contract or test source). 5403 core Rust passed / 0 failed / 11 ignored over 289 summaries (13 tests added by this card in the legacy_c::callee_scope unit module); indirect-census gateway tests 1279 passed / 0 failed / 7 ignored over 58 summaries; 178 Lean audits (1 added: AuditCalleeSummaryScope); root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'census_clippy': 0, 'census_test': 0, 'lean': 0, 'docs_index': 0}. Provider workspace: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. Logs: worktree-private measure/gate and measure/provider-gate of agent-a7747ca3e20762462. Clang recorded in this checkout. Corpus: 2 functions Unknown -> Safe on validated summaries of reached static header bodies, 0 unit moves, leak 271, 0 violation leaves added or removed, 70 changed leaves all attributed.",
+  "workspace_tests": 5403,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 177,
+  "lean_audits": 178,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6753,6 +6753,7 @@
    "AuditCProgram.lean",
    "AuditCallUseAdmission.lean",
    "AuditCallbackTaskHandoff.lean",
+   "AuditCalleeSummaryScope.lean",
    "AuditCapacityBoundary.lean",
    "AuditCertificateScope.lean",
    "AuditChainedAccess.lean",
@@ -6921,7 +6922,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w43-descriptor-native-check/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-corpus-callee-summaries/gate.json)"
  },
  "named_followups": [
   {
@@ -9278,6 +9279,48 @@
    "why": "Observed by W43-DESCRIPTOR-NATIVE-CHECK Phase B (pinned run engine.event_type_traces_stdin_closed): with descriptor 0 closed at spawn, flb_create's flb_pipe_create(config->ch_data) (src/flb_lib.c:181) returns the pair [0, 3], and flb_config_exit guards its destroy with `if (config->ch_data[0])` (src/flb_config.c:611), so neither end is closed and both are live at exit. Same guard class as ctr_random_get's `fd > 0` and the `ch_event.fd` nonzero guard (W43-DESC-FLB-CONFIG-CHANNEL-DOUBLE-CLOSE). A process launched without standard input is the precondition; the CLI then exits, so the leak outlives nothing there, while an embedding calling flb_destroy and continuing would keep both descriptors (inferred). Native observation, source-confirmed; not a static verdict. Discharge: an upstream `>= 0` guard with the pinned scenario showing no live pipe at exit, or a recorded decision.",
    "source": "docs/reports/w43-descriptor-native-check/README.md",
    "recorded_by": "W43-DESCRIPTOR-NATIVE-CHECK"
+  },
+  {
+   "id": "W44-CALLEE-BODY-DOES-NOT-VALIDATE",
+   "title": "A corpus callee whose own body does not validate yields no summary: 4,909 uncontracted-call leaves on the callee's own unit",
+   "why": "Card W44-CORPUS-CALLEE-SUMMARIES classified every `call to uncontracted function` leaf of an Unknown function at base c1e69bb5 (9,547 leaves / 2,591 functions / 407 blocked only by uncontracted calls) by where the callee's body is. The callee's body is in the calling unit, inside W4's derivation scope, and does not validate for 4,909 leaves: 3,594 leaves / 1,566 callees / 219 sole-blocked where it is a selected main-source definition whose own body is Unknown, 58 / 38 / 4 where that body is provisional Unsafe, and 1,257 / 155 / 12 where it is a header `static` definition the card newly admitted to the scope whose body does not validate (378 leaves over 20 callees blocked only by further uncontracted calls, 879 over 135 by some other refusal). Among the 1,395 callees called only from their own unit, the dominant families of their own bodies are indirect access (1,146 callees), branch/loop conditions (884), further uncontracted calls (826) and unresolved identities (444); 56 of them (205 leaves) are blocked only by uncontracted calls. This is constraint 4's premise, measured on the call family: a summary requires the callee's own body to be fully modeled and defect-free, and no summary route can publish one without it. Discharge condition: none by a summary route; the leaves move as other cards model the callee bodies, and a card that does so re-measures this census (`docs/reports/w44-corpus-callee-summaries/scripts/callee_census.py`, `body_reasons.py`, `header_reasons.py`).",
+   "source": "docs/reports/w44-corpus-callee-summaries/README.md",
+   "recorded_by": "W44-CORPUS-CALLEE-SUMMARIES"
+  },
+  {
+   "id": "W44-CALLEE-CROSS-UNIT-SUMMARY",
+   "title": "A callee defined in another pinned unit gets no summary: no cross-unit summary route (2,975 leaves; 104 with a Safe home body)",
+   "why": "Card W44-CORPUS-CALLEE-SUMMARIES measured 2,975 uncontracted-call leaves of Unknown functions whose callee has no body in the calling unit but a main-source definition in another pinned unit: 2,841 leaves / 695 callees / 36 sole-blocked where that home body is Unknown, 104 / 35 / 2 where it is Safe, 30 / 19 / 1 where it is provisional Unsafe. Only the 104 are reachable by a cross-unit route today (largest: rd_kafka_error_destroy 27, cio_error_reset 18, rd_kafka_topic_result_destroy 6, mk_string_dup 6). The top blockers of the whole family are here (rd_list_destroy 128, rd_kafka_op_destroy 103, rd_kafka_topic_partition_list_destroy 88, rd_kafka_op_new0 79, ut_destroy_metadata 77), and every one of them has an Unknown home body. A cross-unit route needs a summary validated in its home unit's environment to be applied in another unit with its identity pinned (home unit source digest and environment), a stated external-linkage resolution premise (the call binds the one external definition in the linked program), certificate re-derivation of both halves, Lean parity and a measured arbiter. Discharge condition: that route, or declared contracts for the reachable callees; the census is `docs/reports/w44-corpus-callee-summaries/census/`.",
+   "source": "docs/reports/w44-corpus-callee-summaries/README.md",
+   "recorded_by": "W44-CORPUS-CALLEE-SUMMARIES"
+  },
+  {
+   "id": "W44-CALLEE-EXTERNAL-INLINE-DEFINITION",
+   "title": "A header definition of external linkage is refused on linkage (86 leaves, all mpack C99 inline)",
+   "why": "Card W44-CORPUS-CALLEE-SUMMARIES admits to the W4 derivation scope only unselected definitions whose own specifiers carry `static` and not `extern`. A header definition of external linkage stays out: under C11 6.7.4p7 a call to a function with an inline definition may use the external definition instead, and an ordinary external definition may be interposed, so the body the unit analyses need not be the body the call runs. Measured: 86 leaves / 16 callees / 39 Unknown functions / 0 sole-blocked, every one an `mpack_*` function (`mpack_finish_map` 27, `mpack_finish_array` 23, `mpack_write_uint` 8, ...). The reader also answers `not established` for a definition whose `static` is spelled only on an earlier declaration (internal by C11 6.2.2p5); the census's own classifier reads the same specifiers, so any such definition is counted inside these 86 and was not separated. Discharge condition: an identity check that the external definition the link resolves to is the same text as the analysed inline definition (for example mpack.c compiled from the same header under MPACK_EMIT_INLINE_DEFS), with Lean parity; or declared contracts in the owning provider crate.",
+   "source": "docs/reports/w44-corpus-callee-summaries/README.md",
+   "recorded_by": "W44-CORPUS-CALLEE-SUMMARIES"
+  },
+  {
+   "id": "W44-CALLEE-NO-CORPUS-BODY",
+   "title": "A callee with no body in any pinned unit can be decided only by a declaration (950 leaves; cfl_sds_cat_safe alone 170)",
+   "why": "Card W44-CORPUS-CALLEE-SUMMARIES measured 950 uncontracted-call leaves / 217 callees / 361 Unknown functions / 23 sole-blocked whose callee has no definition in the calling unit and none in any pinned unit. The largest are the cfl library, which is not a pinned unit (cfl_sds_cat_safe 170, 2 sole; cfl_sds_create_size 19; cfl_kvlist_fetch 16), compiler builtins (__builtin_va_end 55, __builtin_va_start 50, __builtin_memcpy 27, __builtin_va_arg 20), libc (vsnprintf 25), OpenSSL (X509_free 17) and mpack functions with no inline definition in the unit (mpack_start_map 27, mpack_write_nil 21, mpack_start_array 15). No summary route can reach them. Discharge condition: declared contracts in the owning provider crate (libc names only in quirin-provider-libc), builtin modeling, or adding the defining library to the pinned corpus; each re-measured with this census.",
+   "source": "docs/reports/w44-corpus-callee-summaries/README.md",
+   "recorded_by": "W44-CORPUS-CALLEE-SUMMARIES"
+  },
+  {
+   "id": "W44-CALLEE-DESTRUCTOR-SUMMARY",
+   "title": "No releases-its-formal destructor summary is admitted for a body that is not fully modeled (230 callees, 1,175 leaves)",
+   "why": "Card W44-CORPUS-CALLEE-SUMMARIES sized the destructor-shaped callees (names reading destroy/free/release/unref/clear/term/fini/cleanup) among the same-unit and other-unit callees whose own body does not validate: 230 callees own 1,175 uncontracted-call leaves, including rd_list_destroy (128), rd_kafka_op_destroy (103) and rd_kafka_topic_partition_list_destroy (88). Only 8 of them (53 leaves) have a body blocked by uncontracted calls alone; every other one carries indirect access, a loop or branch condition, or an unresolved identity. A summary saying the body releases its formal and touches nothing else the caller tracks cannot be proved of a body with an unmodeled statement, since that statement may release, publish or retain anything, so the card declined it rather than approximate. The existing vocabulary already states a released formal (`Released`) and cascades a release through containment; what is missing is a modeled body. Discharge condition: modeling the list-walk and member-release shapes these bodies use so ordinary W4 validates `Released`, or a new summary form with a Lean proof that the unmodeled remainder cannot affect caller-tracked state, and a measured arbiter.",
+   "source": "docs/reports/w44-corpus-callee-summaries/README.md",
+   "recorded_by": "W44-CORPUS-CALLEE-SUMMARIES"
+  },
+  {
+   "id": "W44-CALLEE-SCOPE-RESERVED-BODIES",
+   "title": "Reserved-name header bodies (__bswap_16/32/64, __uint64_identity) are held out of the widened W4 scope although they validate",
+   "why": "Card W44-CORPUS-CALLEE-SUMMARIES excludes from the widened derivation scope every name reserved in all contexts (`__x`, `_X`, C11 7.1.3), so that glibc header bodies stay with the libc provider's decision (card W44-LIBC-RESIDUALS owns __bswap_*). A census run without that filter measured that all four bodies validate `Borrowed -> None` and would decide 599 uncontracted-call leaves (586 in Unknown functions, 97 functions, 3 sole) and move ut_put_be16/32/64 (rdunittest_msgset_errors.c) Unknown -> Safe. This refines W43-LIBC-HEADER-INLINE-BODIES: its discharge condition asks for `__builtin_bswap*` modeling so W4 can derive the bodies, but the bodies already validate; only the derivation scope excluded them. Discharge condition: W44-LIBC-RESIDUALS' decision, recorded; if the bodies are to be checked rather than declared, lift the reserved filter for system-header bodies (docs/reports/w44-corpus-callee-summaries/census/prediction-unreserved.json gives the predicted delta) with a re-arbiter.",
+   "source": "docs/reports/w44-corpus-callee-summaries/README.md",
+   "recorded_by": "W44-CORPUS-CALLEE-SUMMARIES"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

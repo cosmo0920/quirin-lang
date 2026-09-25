@@ -1,0 +1,148 @@
+{
+ "validated_rows": 223,
+ "validated_callees": [
+  "ERR_GET_LIB",
+  "ERR_GET_REASON",
+  "LZ4_isAligned",
+  "LZ4_write16",
+  "XXH_swap32",
+  "XXH_swap64",
+  "__bswap_16",
+  "__bswap_32",
+  "__bswap_64",
+  "__uint16_identity",
+  "__uint32_identity",
+  "__uint64_identity",
+  "_mk_event_backend",
+  "_mk_event_init",
+  "_mm_add_epi64",
+  "_mm_xor_si128",
+  "cio_file_st_get_hash",
+  "cio_file_st_get_meta",
+  "cio_file_st_set_meta_len",
+  "cmt_platform_gmtime_r",
+  "crc_finalize",
+  "crc_init",
+  "flb_input_buf_paused",
+  "flb_input_is_threaded",
+  "flb_log_check_level",
+  "flb_task_acquire_lock",
+  "flb_task_release_lock",
+  "mk_http_parser_more",
+  "mk_iov_init",
+  "mk_sched_conn_timeout_add",
+  "mk_static_plugins",
+  "ossl_check_X509_NAME_sk_type",
+  "ossl_check_X509_NAME_type",
+  "ossl_check_X509_freefunc_type",
+  "ossl_check_X509_sk_type",
+  "ossl_check_X509_type",
+  "ossl_check_const_X509_NAME_sk_type",
+  "ossl_check_const_X509_OBJECT_sk_type",
+  "ossl_check_const_X509_sk_type",
+  "pack_cfl_variant_double",
+  "pack_cfl_variant_string",
+  "rd_crc32_finalize",
+  "rd_dbl_eq0",
+  "rd_family2str",
+  "rd_kafka_headers_serialized_size",
+  "rd_kafka_message2msg",
+  "rd_kafka_msg_max_wire_size",
+  "rd_kafka_q_can_contain_fetched_msgs",
+  "rd_kafka_q_disable0",
+  "rd_kafka_q_keep",
+  "rd_kafka_q_name",
+  "rd_kafka_rebalance_protocol2str",
+  "rd_kafka_seq_wrap",
+  "rd_kafka_topic_name_str_safe",
+  "rd_kafkap_bytes_destroy",
+  "rd_kafkap_str_destroy",
+  "rd_memdup",
+  "rd_timeout_expired",
+  "rd_timeout_init0",
+  "rd_timeout_init_us0",
+  "rd_timeout_ms",
+  "rd_timeout_remains_limit0",
+  "rd_timeout_us"
+ ],
+ "removed_leaves": 653,
+ "removed_in_unknown_functions": 639,
+ "removed_by_status": {
+  "Unknown": 639,
+  "Unsafe": 14
+ },
+ "removed_by_callee": {
+  "__bswap_32": 286,
+  "__bswap_16": 252,
+  "__bswap_64": 60,
+  "rd_kafka_message2msg": 10,
+  "rd_kafkap_str_destroy": 8,
+  "ut_put_be32": 6,
+  "rd_kafkap_bytes_destroy": 4,
+  "ut_put_be64": 4,
+  "rd_kafka_q_keep": 3,
+  "rd_crc32_finalize": 2,
+  "rd_kafka_q_disable0": 2,
+  "rd_kafka_q_can_contain_fetched_msgs": 2,
+  "ut_put_be16": 2,
+  "crc_finalize": 2,
+  "__uint64_identity": 1,
+  "rd_timeout_init0": 1,
+  "rd_kafka_headers_serialized_size": 1,
+  "crc_init": 1,
+  "flb_task_acquire_lock": 1,
+  "flb_task_release_lock": 1,
+  "_mk_event_backend": 1,
+  "_mk_event_init": 1,
+  "mk_iov_init": 1,
+  "mk_sched_conn_timeout_add": 1
+ },
+ "movers": [
+  {
+   "unit": "librdkafka/rdunittest_msgset_errors.c",
+   "function": "ut_put_be16",
+   "leaves": 1,
+   "callees": [
+    "__bswap_16"
+   ],
+   "kind": "neutral"
+  },
+  {
+   "unit": "librdkafka/rdunittest_msgset_errors.c",
+   "function": "ut_put_be32",
+   "leaves": 1,
+   "callees": [
+    "__bswap_32"
+   ],
+   "kind": "neutral"
+  },
+  {
+   "unit": "librdkafka/rdunittest_msgset_errors.c",
+   "function": "ut_put_be64",
+   "leaves": 1,
+   "callees": [
+    "__bswap_64"
+   ],
+   "kind": "neutral"
+  },
+  {
+   "unit": "monkey-libevent/mk_core/mk_event.c",
+   "function": "mk_event_backend",
+   "leaves": 1,
+   "callees": [
+    "_mk_event_backend"
+   ],
+   "kind": "neutral"
+  },
+  {
+   "unit": "monkey-libevent/mk_core/mk_event.c",
+   "function": "mk_event_init",
+   "leaves": 1,
+   "callees": [
+    "_mk_event_init"
+   ],
+   "kind": "neutral"
+  }
+ ],
+ "transitive_candidates": []
+}
