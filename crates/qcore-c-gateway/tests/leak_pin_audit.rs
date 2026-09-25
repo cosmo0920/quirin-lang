@@ -175,6 +175,27 @@ fn a_cast_return_is_decided_as_the_plain_return_is() {
     assert_eq!(plain, cast);
 }
 
+/// The cast adds no admission of its own: a pointer cast of a member chain is
+/// decided exactly as the uncast return of that chain, by the same rules.
+#[test]
+fn a_cast_of_a_member_chain_is_decided_as_the_uncast_return() {
+    if !clang_available() {
+        return;
+    }
+    for (plain, cast) in [
+        (
+            "void *w(struct k_box *b) { return b->item; }",
+            "void *w(struct k_box *b) { return (char *)b->item; }",
+        ),
+        (
+            "void *w(struct k_box *b) { b = k_alloc(1); if (!b) return 0; return b->item; }",
+            "void *w(struct k_box *b) { b = k_alloc(1); if (!b) return 0; return (const char **)b->item; }",
+        ),
+    ] {
+        assert_eq!(outcome(plain), outcome(cast), "{cast}");
+    }
+}
+
 /// Pointer to integer: an operand the reader commits to as a pointer, cast to
 /// an integer type, is refused — never escaped, and never accused either.
 #[test]

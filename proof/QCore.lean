@@ -81,6 +81,8 @@ import QCore.PointerQualifierReader
 import QCore.DerivedResult
 import QCore.DerivedResultInference
 import QCore.KindedCustody
+import QCore.CastReturnEscape
+import QCore.RefusedEscapeCustody
 import QCore.DeclaredModeAgreement
 import QCore.FrameHelperTask
 import QCore.ControlFlow

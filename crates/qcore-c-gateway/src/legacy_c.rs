@@ -4875,15 +4875,27 @@ impl Parser<'_> {
                     .map(|token| token.text.as_str())
                     .collect::<Vec<_>>();
                 // Card W44-LEAK-PIN-AUDIT (`RETURN-CAST-PLACE-NOT-ESCAPED`): a
-                // cast of one place is decided by the carrier it converts
-                // between before any rule below; see `cast_return`.
-                if let Some(statement) = cast_return::statement(
-                    cast_return::classify(&texts, &self.descriptor_names, &self.typed_types),
-                    line,
-                    self.expression_writes(&expression),
+                // carrier-preserving cast of one place is decided below as the
+                // return of that place, and a carrier-crossing one is refused;
+                // see `cast_return`.
+                let expression = match cast_return::classify(
+                    &texts,
+                    &self.descriptor_names,
+                    &self.typed_types,
                 ) {
-                    return Ok(statement);
-                }
+                    cast_return::CastReturn::Operand(start) => expression[start..].to_vec(),
+                    cast_return::CastReturn::Refuse => {
+                        return Ok(cast_return::refusal(
+                            line,
+                            self.expression_writes(&expression),
+                        ));
+                    }
+                    cast_return::CastReturn::PreCard => expression,
+                };
+                let texts = expression
+                    .iter()
+                    .map(|token| token.text.as_str())
+                    .collect::<Vec<_>>();
                 // Card C-GATEWAY-RETURN-POSITION. The strict `Returned` rule is
                 // asked first and its answer is never weakened; only when it
                 // refuses does the pointer-leaf widening get a say, and an
