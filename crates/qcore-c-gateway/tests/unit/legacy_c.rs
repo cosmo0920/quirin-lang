@@ -1968,3 +1968,64 @@ fn a_declined_return_call_probe_restores_the_site_counter() {
         "a declined return-call probe must not consume a site: {sites:?}"
     );
 }
+
+/// Card W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: the destination reader names
+/// a suffix only when it is the whole left-hand side or follows a declarator
+/// prefix; every other left-hand side with a place-spelling suffix names a
+/// sub-object and is recognised as one.
+#[test]
+fn a_destination_is_the_whole_left_hand_side_or_a_declared_object() {
+    let named = |source: &str| {
+        let texts = source.split_whitespace().collect::<Vec<_>>();
+        (
+            direct_assignment_destination(&texts),
+            names_a_sub_object(&texts),
+        )
+    };
+    for (source, expected) in [
+        ("name", "name"),
+        ("( name )", "name"),
+        ("p - > f", "p->f"),
+        ("s . a . b", "s.a.b"),
+        ("a [ 0 ]", "a[0]"),
+        ("* out", "*out"),
+        ("char * name", "name"),
+        ("struct x_rec * const r", "r"),
+        ("char * a , * name", "name"),
+        ("int a [ 3 ]", "a[3]"),
+    ] {
+        assert_eq!(named(source), (Some(expected.to_owned()), false), "{source}");
+    }
+    for source in [
+        "recs [ i ] . name",
+        "( * pp ) - > name",
+        "( ( T * ) p ) - > u16",
+        "f ( x ) - > name",
+        "( & s ) - > str",
+        "a - > b [ i ] . c",
+        "x_note ( p , i",
+    ] {
+        assert_eq!(named(source), (None, true), "{source}");
+    }
+    // Neither named nor a sub-object: no suffix spells a place at all.
+    for source in ["a [ i ]", "* p - > f", "* * p"] {
+        assert_eq!(named(source), (None, false), "{source}");
+    }
+}
+
+/// Card W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: the protected-formal alias
+/// closure is a candidate inventory in which a larger set only protects more,
+/// so it keeps the pre-card suffix reader. `recs[i].q = p` still relates `q`
+/// and `p`, and the formal `q` stays protected once `p` is released.
+#[test]
+fn the_protected_alias_closure_keeps_the_suffix_reader() {
+    let source = "void subject(char *p, char *q, int i) { struct r { char *q; } recs[2]; \
+                  recs[i].q = p; q_free(p); }";
+    let tokens = tokenize(source);
+    let (body_start, _) = find_function_body(&tokens, "subject").expect("the body");
+    let parameters = function_parameters(&tokens, "subject").expect("the parameters");
+    let protected =
+        protected_resource_formals(&tokens, body_start, "subject", &parameters, &contracts());
+    assert!(protected.contains("p"), "{protected:?}");
+    assert!(protected.contains("q"), "{protected:?}");
+}
