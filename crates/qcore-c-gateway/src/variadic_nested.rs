@@ -37,6 +37,13 @@
 //! is read from the callee, never from the actual. See
 //! [`is_admitted_tail_access`] for the argument and for what stays refused.
 //!
+//! Card **W44-LIBC-RESIDUALS** adds **T6**, the one admission made when the
+//! enclosing function's typed declarations are unreadable: a tail whose every
+//! actual is only literals and C11 6.4.2.2 predefined identifiers is data,
+//! because no declaration can bind either. See
+//! [`is_literal_or_predefined_actual`]; `QCore.LiteralTailActual` is the Lean
+//! model.
+//!
 //! Without a declared tail, an actual beyond the declared parameter vector is
 //! now **refused**. That is a fail-closed repair: the modeling zips the
 //! contract's parameter vector against the actuals, so before this card an
@@ -385,7 +392,13 @@ pub(crate) fn tail_arguments_are_data_with_nested(
     bases: &UntrackedBases,
 ) -> bool {
     if !types.is_readable() {
-        return false;
+        // T6, card W44-LIBC-RESIDUALS: the one readability-independent
+        // admission. See [`is_literal_or_predefined_actual`].
+        return nested.is_empty()
+            && arguments
+                .iter()
+                .skip(named)
+                .all(|argument| is_literal_or_predefined_actual(argument));
     }
     arguments
         .iter()
@@ -395,6 +408,56 @@ pub(crate) fn tail_arguments_are_data_with_nested(
             nested.iter().any(|nested| nested.argument == index)
                 || is_data_only_actual(argument, model, types, bases)
                 || is_admitted_tail_access(argument, model, types, bases)
+        })
+}
+
+/// The token the importer's tokenizer emits for every string and character
+/// literal (`legacy_c::tokenize`).
+const LITERAL_TOKEN: &str = "__qcore_literal__";
+
+/// C11 6.4.2.2's predefined identifier and the two GNU spellings of it. Clang
+/// lexes all three as keywords, so no declaration can give one another meaning.
+const PREDEFINED_IDENTIFIERS: &[&str] = &["__func__", "__FUNCTION__", "__PRETTY_FUNCTION__"];
+
+/// **T6, card W44-LIBC-RESIDUALS** (`LIBC-PRINTF-TAIL-ACTUALS`). A tail actual
+/// every token of which is a literal — a string or character literal, which
+/// the tokenizer delivers as one [`LITERAL_TOKEN`], or a numeric literal — or a
+/// predefined identifier ([`PREDEFINED_IDENTIFIERS`]) is data **whatever the
+/// function's declarations say**.
+///
+/// T1-T5 read the enclosing function's typed declaration facts, and the
+/// readability premise refuses every tail when those facts are unreadable
+/// (`FunctionTypes::is_readable`, the total-or-reject local reader), a literal
+/// included. That premise protects the *names* a tail may carry: without the
+/// declarations nothing says whether a name is a scalar, an enumeration
+/// constant or a pointer the body may bind. A literal and a predefined
+/// identifier are not names any declaration can bind: a literal denotes a value
+/// or a static array, and `__func__` a static array (C11 6.4.2.2p1), neither
+/// of which is a resource identity this projection tracks. So this admission
+/// is the only one made without readable declarations, and it is exactly as
+/// wide as that argument.
+///
+/// Measured before it was built (the card's `tail_nested_lines.py`): up to
+/// 1,091 of the 1,200 tail refusals at the base are literal-only, 1,081 on
+/// librdkafka `RDUT:` macro lines (`fprintf(stderr, "…", __FILE__, __LINE__,
+/// __FUNCTION__)`), and **no** function has only such refusals, so it moves
+/// leaves, not functions.
+///
+/// # What stays refused
+///
+/// Every tail carrying any name other than the three predefined identifiers
+/// (a name is exactly what the declarations must decide), a negated or cast
+/// literal, a floating literal (it carries `.`), a prefixed string literal
+/// (`L"…"`: the prefix is a name here), an empty actual, and any statement
+/// carrying a nested call. Readable functions are unchanged: T1-T5 decide
+/// them exactly as before.
+fn is_literal_or_predefined_actual(argument: &[&str]) -> bool {
+    !argument.is_empty()
+        && argument.iter().all(|text| {
+            *text == LITERAL_TOKEN
+                || PREDEFINED_IDENTIFIERS.contains(text)
+                || (text.as_bytes().first().is_some_and(u8::is_ascii_digit)
+                    && text.bytes().all(|byte| byte.is_ascii_alphanumeric()))
         })
 }
 
@@ -757,30 +820,54 @@ mod tests {
         assert!(!tail_ok(BODY, "log ( __qcore_literal__ , size ( b ) )", 1));
     }
 
+    /// Re-pinned by card W44-LIBC-RESIDUALS. This test asserted that an
+    /// unreadable function admits no tail at all, a literal `1` included. T6
+    /// now admits exactly the literal-or-predefined tails there, and every
+    /// other tail an unreadable function carries keeps the refusal, which is
+    /// what the second half pins.
     #[test]
-    fn an_unreadable_function_admits_no_tail() {
-        // A declaration this reader refuses makes `FunctionTypes` unreadable,
-        // and then nothing in the function is admitted.
+    fn an_unreadable_function_admits_only_a_literal_tail() {
+        // A declaration this reader refuses makes `FunctionTypes` unreadable.
         let contracts = ResourceContracts::default();
         let f = facts("struct { int a ; } anon ;", &contracts);
         assert!(
             !f.types.is_readable(),
             "the fixture must produce an unreadable function"
         );
-        let tokens = texts("log ( __qcore_literal__ , 1 )");
-        let spans = crate::legacy_c::call_argument_spans(&tokens, 0).expect("balanced");
-        let arguments = spans
-            .iter()
-            .map(|&(start, end)| &tokens[start..end])
-            .collect::<Vec<_>>();
-        assert!(!tail_arguments_are_data_with_nested(
-            &arguments,
-            1,
-            &[],
-            &f.model,
-            &f.types,
-            &f.bases
-        ));
+        let decide = |statement: &str, nested: &[NestedCallActual]| {
+            let tokens = texts(statement);
+            let spans = crate::legacy_c::call_argument_spans(&tokens, 0).expect("balanced");
+            let arguments = spans
+                .iter()
+                .map(|&(start, end)| &tokens[start..end])
+                .collect::<Vec<_>>();
+            tail_arguments_are_data_with_nested(&arguments, 1, nested, &f.model, &f.types, &f.bases)
+        };
+        for admitted in [
+            "log ( __qcore_literal__ , 1 )",
+            "log ( __qcore_literal__ , 0x1fu )",
+            // The `RDUT:` shape: `__FILE__`, `__LINE__`, `__FUNCTION__`.
+            "log ( __qcore_literal__ , __qcore_literal__ , 42 , __FUNCTION__ )",
+            "log ( __qcore_literal__ , __func__ , __PRETTY_FUNCTION__ )",
+            "log ( __qcore_literal__ , __qcore_literal__ __qcore_literal__ )",
+            // No tail at all is not this rule's business, and stays admitted.
+            "log ( __qcore_literal__ )",
+        ] {
+            assert!(decide(admitted, &[]), "admitted: {admitted}");
+        }
+        for refused in [
+            "log ( __qcore_literal__ , count )",
+            "log ( __qcore_literal__ , 1 , count )",
+            "log ( __qcore_literal__ , - 1 )",
+            "log ( __qcore_literal__ , ( int ) 1 )",
+            "log ( __qcore_literal__ , 1 . 5 )",
+            "log ( __qcore_literal__ , L __qcore_literal__ )",
+            "log ( __qcore_literal__ , & anon )",
+            "log ( __qcore_literal__ , size ( 1 ) )",
+            "log ( __qcore_literal__ , __FILE__ )",
+        ] {
+            assert!(!decide(refused, &[]), "refused: {refused}");
+        }
     }
 
     fn with_accessor(result: ResourceReturnMode, modes: usize) -> ResourceContracts {

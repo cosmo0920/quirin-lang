@@ -79,6 +79,7 @@ import QCore.DeclaredAbiAgreement
 import QCore.TypedefProjection
 import QCore.PointerQualifierReader
 import QCore.GnuBuiltinReader
+import QCore.LiteralTailActual
 import QCore.DerivedResult
 import QCore.DerivedResultInference
 import QCore.KindedCustody
