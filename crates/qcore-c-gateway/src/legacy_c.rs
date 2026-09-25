@@ -91,6 +91,11 @@ pub(crate) mod cast_return;
 // this file only carries the hooks marked with the card's name.
 #[path = "legacy_return_family.rs"]
 pub(crate) mod return_family;
+// Card W45-SUB-OBJECT-STORES: a store into a sub-object through a resolved,
+// typed base. Everything the card adds lives there; this file only carries the
+// hooks marked with the card's name.
+#[path = "legacy_sub_object_store.rs"]
+pub(crate) mod sub_object_store;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
@@ -439,6 +444,20 @@ pub enum LegacyInstruction {
     /// overwritten resource is never silently discharged.
     AggregateStore {
         place: String,
+    },
+    /// Card **W45-SUB-OBJECT-STORES**: a store into one member through a
+    /// resolved, typed base that the lexical gate refused and no older route
+    /// admits; see [`sub_object_store`]. Every flow premise that fails makes
+    /// the node exactly `fallback`, the gate's refusal, so a store that stays
+    /// refused still hands on (card W44-LEAK-PIN-AUDIT).
+    SubObjectStore {
+        destination: sub_object_store::Destination,
+        value: sub_object_store::StoredValue,
+        /// The bases a scalar value's typed accesses dereference.
+        value_bases: Vec<String>,
+        /// The C02-P-ALIAS obligation of the dereferenced base.
+        alias_read: Option<AliasPeers>,
+        fallback: Box<LegacyInstruction>,
     },
     NoOp,
     Unknown {
@@ -2670,6 +2689,25 @@ fn build_function_cfg_with(
     // Card W45-CALLEE-SUMMARY-CASCADE: rule 1's lexical premises, read once.
     let member_releases =
         member_release::AdmissibleReleases::read(tokens, body_start, &formal_parameters, contracts);
+    // Card W45-SUB-OBJECT-STORES: the record-typed roots.
+    let sub_object_roots = match (
+        function_parameter_range(tokens, function, body_start),
+        matching(tokens, body_start, "{", "}"),
+    ) {
+        (Some((open, close)), Some(body_end)) => {
+            let texts = tokens
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            sub_object_store::RecordRoots::read(
+                &typed_model,
+                &texts[open + 1..close],
+                &texts[body_start + 1..body_end],
+                &formal_parameters,
+            )
+        }
+        _ => sub_object_store::RecordRoots::default(),
+    };
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -2698,6 +2736,7 @@ fn build_function_cfg_with(
         member_releases,
         desugar: condition_desugar::DesugarState::new(function),
         return_facts,
+        sub_object_roots,
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -4048,6 +4087,9 @@ struct Parser<'a> {
     /// Card **W45-RETURN-EXPRESSION-FAMILIES**: the enclosing function's
     /// declared result carrier, read once from its definition.
     return_facts: return_family::FunctionFacts,
+    /// Card **W45-SUB-OBJECT-STORES**: the record-typed roots
+    /// ([`sub_object_store::RecordRoots`]).
+    sub_object_roots: sub_object_store::RecordRoots,
 }
 
 impl Parser<'_> {
@@ -4215,6 +4257,139 @@ impl Parser<'_> {
             contains_call(condition) || contains_braces(condition),
             &texts,
         );
+    }
+
+    /// Card **W45-SUB-OBJECT-STORES**: hand one already-classified statement
+    /// whose left-hand side the lexical gate reads as a sub-object store to the
+    /// sub-object store census. Compiled out with the feature off; it reads the
+    /// instruction after it was produced and cannot change it.
+    #[cfg(feature = "indirect-census")]
+    fn census_sub_object_store(
+        &self,
+        line: usize,
+        tokens: &[Token],
+        instruction: &LegacyInstruction,
+    ) {
+        use crate::sub_object_store_census as census;
+        if !census::collecting() || self.admit_derived_returns || self.argument_probe.rerun {
+            return;
+        }
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let Some(equal) = texts.iter().position(|text| *text == "=") else {
+            return;
+        };
+        let left = &texts[..equal];
+        let sub_object = direct_assignment_destination(left).is_some_and(|place| {
+            place.contains('.') || place.contains('[') || place.contains("->")
+        }) || names_a_sub_object(left);
+        if !sub_object {
+            return;
+        }
+        let (outcome, description) = match instruction {
+            LegacyInstruction::Unknown { description, .. } => {
+                ("Unknown".to_owned(), Some(description.clone()))
+            }
+            other => {
+                let debug = format!("{other:?}");
+                let name = debug
+                    .split(|character: char| !character.is_ascii_alphanumeric())
+                    .next()
+                    .unwrap_or_default()
+                    .to_owned();
+                (name, None)
+            }
+        };
+        let context = crate::indirect_census::Context {
+            function: &self.census_function,
+            formal_parameters: &self.formal_parameters,
+            typed_model: &self.typed_model,
+            typed_types: &self.typed_types,
+            typed_bases: &self.typed_bases,
+        };
+        let right = &texts[equal + 1..];
+        let callees = right
+            .windows(2)
+            .filter(|pair| is_identifier(pair[0]) && pair[1] == "(")
+            .map(|pair| {
+                let contract = self.contracts.contract(pair[0]);
+                census::CalleeFact {
+                    callee: pair[0].to_owned(),
+                    result: contract.map(|contract| format!("{:?}", contract.result)),
+                    result_kind: contract.map(|contract| format!("{:?}", contract.result_kind)),
+                    parameters_borrowed: contract.map(|contract| {
+                        contract
+                            .parameters
+                            .iter()
+                            .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
+                    }),
+                }
+            })
+            .collect();
+        let reader = match sub_object_store::read_destination(
+            left,
+            &self.typed_model,
+            &self.typed_types,
+            &self.sub_object_roots,
+        ) {
+            Err(refusal) => format!("destination:{refusal}"),
+            Ok(destination) => match sub_object_store::read_value(
+                right,
+                destination.member,
+                &self.typed_model,
+                &self.typed_types,
+            ) {
+                Err(refusal) => format!("value:{refusal}"),
+                Ok(value) => format!(
+                    "read:{:?}:{}",
+                    destination.member,
+                    match value {
+                        sub_object_store::ValueSyntax::Scalar(_) => "scalar",
+                        sub_object_store::ValueSyntax::Untracked => "untracked",
+                        sub_object_store::ValueSyntax::Name(_) => "name",
+                        sub_object_store::ValueSyntax::Call(_) => "call",
+                    },
+                ),
+            },
+        };
+        census::record(&census::StoreRecord {
+            unit_seq: crate::indirect_census::unit_seq(),
+            function: self.census_function.clone(),
+            line,
+            texts: texts.iter().map(|text| (*text).to_owned()).collect(),
+            equal,
+            comparison: texts.get(equal + 1) == Some(&"="),
+            outcome,
+            description,
+            admitted: !matches!(instruction, LegacyInstruction::Unknown { .. }),
+            formals: census::names_where(&texts, |name| self.formal_parameters.contains(name)),
+            declared: texts
+                .iter()
+                .filter(|text| crate::typed_field_access::is_name(text))
+                .filter_map(|name| {
+                    crate::indirect_census::declared_label(&context, name)
+                        .map(|label| ((*name).to_owned(), label))
+                })
+                .collect(),
+            may_bind: census::names_where(&texts, |name| self.typed_types.may_bind(name)),
+            never_bound: census::names_where(&texts, |name| self.typed_bases.never_bound(name)),
+            owned_names: census::names_where(&texts, |name| {
+                self.census_bindings.owned.contains(name)
+            }),
+            derived_names: census::names_where(&texts, |name| {
+                self.census_bindings.derived.contains(name)
+            }),
+            descriptors: census::names_where(&texts, |name| self.descriptor_names.contains(name)),
+            destination_chains: crate::indirect_census::chains(
+                &context,
+                &texts,
+                &(0..equal).collect::<Vec<_>>(),
+            ),
+            callees,
+            reader,
+        });
     }
 
     /// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: record one clause
@@ -5393,6 +5568,9 @@ impl Parser<'_> {
                 self.census_statement(line, &tokens, &instruction);
                 #[cfg(feature = "indirect-census")]
                 self.census_traversal_statement(line, "statement", &tokens, &instruction);
+                // Card W45-SUB-OBJECT-STORES: the sub-object store census.
+                #[cfg(feature = "indirect-census")]
+                self.census_sub_object_store(line, &tokens, &instruction);
                 if let Some(sequence) = self.stepped_access(&tokens, &instruction) {
                     return Ok(Statement::Block(
                         sequence
@@ -5751,6 +5929,13 @@ impl Parser<'_> {
             | LegacyInstruction::Clear { destination } => is_indirect_place(destination),
             _ => false,
         };
+        // Card W45-SUB-OBJECT-STORES: a sub-object store whose value is one
+        // whole call; the typed routes below never read a call.
+        if contains_call(tokens)
+            && let Some(store) = self.sub_object_store_statement(tokens, &instruction)
+        {
+            return store;
+        }
         if !consulted || contains_call(tokens) || contains_braces(tokens) {
             return instruction;
         }
@@ -5773,6 +5958,11 @@ impl Parser<'_> {
                 &self.typed_bases,
             ) {
                 return self.chain_access_instruction(chained, true);
+            }
+            // Card W45-SUB-OBJECT-STORES: a sub-object store through a
+            // resolved, typed base, after both typed access routes declined.
+            if let Some(store) = self.sub_object_store_statement(tokens, &instruction) {
+                return store;
             }
             // Card W43-INDEX-TRAVERSAL: a statement that moves a declared
             // pointer (`p++`, `p += k`, `p = q + k`) is consulted in the same
@@ -5814,6 +6004,131 @@ impl Parser<'_> {
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
             chains: Vec::new(),
         }
+    }
+
+    /// Card **W45-SUB-OBJECT-STORES**: a statement the lexical gate refused as
+    /// a store into a sub-object, read through a resolved, typed base; see
+    /// [`sub_object_store`]. Consulted only for exactly the gate's refusal,
+    /// only after every older route declined, and never for a statement that
+    /// reads a tracked descriptor (a descriptor is custody, never data: the
+    /// store keeps its refusal byte for byte). `None` keeps the refusal.
+    fn sub_object_store_statement(
+        &mut self,
+        tokens: &[Token],
+        instruction: &LegacyInstruction,
+    ) -> Option<LegacyInstruction> {
+        let LegacyInstruction::Unknown { description, .. } = instruction else {
+            return None;
+        };
+        if description != "indirect memory access is outside the resource projection"
+            || contains_braces(tokens)
+        {
+            return None;
+        }
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        if !self.descriptor_names.is_empty()
+            && descriptor_custody::statement_reads_descriptor(&texts, &self.descriptor_names)
+                .is_some()
+        {
+            return None;
+        }
+        let equal = texts.iter().position(|text| *text == "=")?;
+        if texts.get(equal + 1) == Some(&"=") {
+            return None;
+        }
+        let destination = sub_object_store::read_destination(
+            &texts[..equal],
+            &self.typed_model,
+            &self.typed_types,
+            &self.sub_object_roots,
+        )
+        .ok()?;
+        let right = &texts[equal + 1..];
+        let syntax = sub_object_store::read_value(
+            right,
+            destination.member,
+            &self.typed_model,
+            &self.typed_types,
+        )
+        .ok()?;
+        let (value, value_bases) = match syntax {
+            sub_object_store::ValueSyntax::Scalar(bases) => (
+                sub_object_store::StoredValue::Scalar {
+                    bases: bases.clone(),
+                },
+                bases,
+            ),
+            sub_object_store::ValueSyntax::Untracked => {
+                (sub_object_store::StoredValue::Untracked, Vec::new())
+            }
+            // A formal's pointer is the caller's object: storing it into a
+            // record hands that object on in a way no summary mode states
+            // (the derived summary would call the formal borrowed), so the
+            // store keeps its refusal.
+            sub_object_store::ValueSyntax::Name(name) if self.formal_parameters.contains(&name) => {
+                return None;
+            }
+            sub_object_store::ValueSyntax::Name(name) => {
+                (sub_object_store::StoredValue::Name(name), Vec::new())
+            }
+            sub_object_store::ValueSyntax::Call(length) => {
+                let line = tokens.first().map_or(0, |token| token.line);
+                let mut rewritten = vec![
+                    Token {
+                        text: sub_object_store::STORE_TEMPORARY.to_owned(),
+                        line,
+                    },
+                    Token {
+                        text: "=".to_owned(),
+                        line,
+                    },
+                ];
+                rewritten.extend(tokens[tokens.len() - length..].iter().cloned());
+                let saved = self.next_site;
+                let call = self.classify_simple_base(&rewritten);
+                // A call whose every parameter is borrowed and whose result
+                // carries no custody. Every other call keeps the refusal.
+                let admitted = matches!(
+                    &call,
+                    LegacyInstruction::ContractCall {
+                        destination: Some(temporary),
+                        contract,
+                        nested,
+                        aggregate_reads,
+                        aggregate_addresses,
+                        ..
+                    } if temporary == sub_object_store::STORE_TEMPORARY
+                        && nested.is_empty()
+                        && aggregate_reads.is_empty()
+                        && aggregate_addresses.is_empty()
+                        && contract
+                            .parameters
+                            .iter()
+                            .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
+                        // An owned result would be a tracked identity stored
+                        // into a record: it keeps the refusal.
+                        && matches!(contract.result, ResourceReturnMode::None)
+                );
+                if !admitted {
+                    self.next_site = saved;
+                    return None;
+                }
+                (
+                    sub_object_store::StoredValue::Call(Box::new(call)),
+                    Vec::new(),
+                )
+            }
+        };
+        Some(LegacyInstruction::SubObjectStore {
+            alias_read: self.read_alias(destination.base.as_deref()),
+            destination,
+            value,
+            value_bases,
+            fallback: Box::new(instruction.clone()),
+        })
     }
 
     /// Card **W44-INDIRECT-CHAIN-ACCESS**: the typed access an admitted chain
@@ -9898,6 +10213,11 @@ fn element_call_view<'a>(
             call: Some(call),
             ..
         } if owners.owner(state, base).is_some() => call,
+        // Card W45-SUB-OBJECT-STORES: a stored call runs once its bases pass.
+        LegacyInstruction::SubObjectStore {
+            value: sub_object_store::StoredValue::Call(call),
+            ..
+        } if sub_object_store::call_runs(&node.instruction, state) => call,
         other => other,
     }
 }
@@ -10802,6 +11122,10 @@ fn transfer(
         )
     };
     match &node.instruction {
+        // Card W45-SUB-OBJECT-STORES.
+        LegacyInstruction::SubObjectStore { .. } => {
+            sub_object_store::transfer(function, node, state, context, alias, diagnostics, &base)
+        }
         LegacyInstruction::ElementStore {
             base: array,
             index,
@@ -10960,6 +11284,11 @@ pub(crate) fn instruction_produced_sites(instruction: &LegacyInstruction) -> Vec
         LegacyInstruction::ElementStore {
             call: Some(call), ..
         } => instruction_produced_sites(call),
+        // Card W45-SUB-OBJECT-STORES: a stored call's sites.
+        LegacyInstruction::SubObjectStore {
+            value: sub_object_store::StoredValue::Call(call),
+            ..
+        } => instruction_produced_sites(call),
         _ => Vec::new(),
     }
 }
@@ -10976,6 +11305,11 @@ pub(crate) fn offset_produced_sites(instruction: &mut LegacyInstruction, offset:
         }
         LegacyInstruction::ElementStore {
             call: Some(call), ..
+        } => offset_produced_sites(call, offset),
+        // Card W45-SUB-OBJECT-STORES: a stored call's sites.
+        LegacyInstruction::SubObjectStore {
+            value: sub_object_store::StoredValue::Call(call),
+            ..
         } => offset_produced_sites(call, offset),
         _ => {}
     }
@@ -12126,6 +12460,10 @@ fn transfer_base(
         | LegacyInstruction::ElementRelease { .. }
         | LegacyInstruction::BranchOnElementNull { .. } => {
             unreachable!("element operations are transferred by `transfer`")
+        }
+        // Card W45-SUB-OBJECT-STORES: decided by [`transfer`].
+        LegacyInstruction::SubObjectStore { .. } => {
+            unreachable!("sub-object stores are transferred by `transfer`")
         }
     }
     // O04-B09B10: a custody-taking member read handed the linked child to the

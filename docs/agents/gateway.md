@@ -330,6 +330,23 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     through a misnamed store is withdrawn with it (`mk_iov_init`).
     [Report](../reports/w44-assignment-destination-suffix-place/README.md).
 
+    A refused sub-object store is re-admitted only as the sub-object it is
+    (`LegacyInstruction::SubObjectStore`, W45-SUB-OBJECT-STORES): one member
+    of a complete `struct` reached from a root the declarator reader resolved,
+    writing that member's place and no name. Its flow premises fall back to
+    the gate's refusal byte for byte, so a store that stays refused still
+    hands on. It admits only stores that move no custody: a scalar, null,
+    literal or never-bound value. Three premises are load-bearing and must not
+    be relaxed without a new measurement: a value bound to any tracked
+    identity keeps the refusal, including an owned one stored into a record
+    the caller reaches (no summary mode states that transfer, so a caller's
+    `Safe` would rest on it unseen; the pins of O04-B08 and W44-LEAK-PIN-AUDIT
+    hold it, and an escape model produced `release_after_escape` artifacts in
+    `cio_file_open`); a formal's pointer is never a stored value (a derived
+    summary would call it borrowed while the callee linked it into a record:
+    `cfl_list_add`, `mk_list_init`); a statement reading a tracked descriptor
+    never reaches the rule. [Report](../reports/w45-sub-object-stores/README.md).
+
 <a id="constraint-5j"></a>
 
 5j. **A scalar-result return decides a read; a cast of a whole call is the

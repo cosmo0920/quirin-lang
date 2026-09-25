@@ -276,6 +276,10 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             pointer_places,
         } => format!("ArgumentReads {names:?} pointer {pointer_bases:?} {pointer_places:?}"),
         LegacyInstruction::AggregateStore { place } => format!("AggregateStore {place}"),
+        // Card W45-SUB-OBJECT-STORES.
+        LegacyInstruction::SubObjectStore {
+            destination, value, ..
+        } => format!("SubObjectStore {} = {value:?}", destination.place),
         LegacyInstruction::ElementStore {
             base, index, call, ..
         } => format!("ElementStore {base}[{index:?}] call={}", call.is_some()),

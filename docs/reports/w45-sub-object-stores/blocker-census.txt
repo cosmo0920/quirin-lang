@@ -1,0 +1,22 @@
+Unknown functions: 4515
+  leaves  functions   sole  reason
+  17,487      3,307    387  indirect memory access is outside the resource projection
+   9,193      2,614    422  call to uncontracted function `_`
+   8,256      2,306     51  unmodeled call, aggregate or indirect access in branch condition
+   3,411      1,355      4  unresolved resource identity `_`
+   2,248      1,013     13  braced initializer, expression, or declaration is not modeled
+   1,579        537     11  unsupported assignment expression
+     863        546      0  unmodeled call, aggregate or indirect access in for-loop condition
+     680        367      4  unrecognized assignment destination
+     551        311      1  unmodeled increment or decrement expression
+     495        417    148  unmodeled call, aggregate or indirect access in return expression
+     465        122      1  C operator `_` requires type/operand analysis
+     288        182      5  unmodeled call, aggregate or indirect access in loop condition
+     244        133      0  store through `_` without an out-parameter contract
+     218        127      1  arguments beyond the declared parameters of `_` are outside the resource projection
+     186        177      0  nullable resource `_` used by a non-null contract
+     140         94      5  nested call `_` inside a modeled call is outside the resource projection
+     108         65      1  unmodeled expression may mutate a formal resource identity
+      78         75      1  unmodeled call, aggregate or indirect access in switch expression
+      35         23      2  local declaration may shadow a formal resource identity
+      28         27      0  unmodeled call, aggregate or indirect access in do-while condition

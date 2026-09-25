@@ -435,7 +435,7 @@ fn names_in(texts: &[&str], names: &BTreeSet<String>) -> Vec<String> {
 }
 
 /// The declaration reader's own answer for one name, as a census label.
-fn declared_label(context: &Context<'_>, name: &str) -> Option<String> {
+pub(crate) fn declared_label(context: &Context<'_>, name: &str) -> Option<String> {
     let Some(label) = declared_type_label(context, name) else {
         if context.typed_model.is_enum_constant(name) {
             return Some("enum_constant".to_owned());
@@ -469,7 +469,7 @@ fn declared_type_label(context: &Context<'_>, name: &str) -> Option<String> {
 /// follows *that* order, so a chain the gate could not see is not reported and
 /// an adjacency the gate's own span filtering created is reported as the gate
 /// saw it.
-fn chains(context: &Context<'_>, texts: &[&str], window: &[usize]) -> Vec<Chain> {
+pub(crate) fn chains(context: &Context<'_>, texts: &[&str], window: &[usize]) -> Vec<Chain> {
     let mut out = Vec::new();
     let mut cursor = 0usize;
     while cursor < window.len() {

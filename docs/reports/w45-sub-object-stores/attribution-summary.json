@@ -1,0 +1,43 @@
+{
+ "attribution_complete": true,
+ "unattributed": 0,
+ "diagnostic_counts": {
+  "before": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3507,
+   "unsupported": 43590
+  },
+  "after": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3507,
+   "unsupported": 43360
+  }
+ },
+ "classes": [
+  {
+   "sign": "-",
+   "class": "callee-summary",
+   "category": "unsupported",
+   "leaves": 7
+  },
+  {
+   "sign": "-",
+   "class": "store-admitted",
+   "category": "unsupported",
+   "leaves": 223
+  }
+ ],
+ "moves": [
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "destroy_id",
+   "before": "Unknown",
+   "after": "Safe",
+   "reason": "store-admitted"
+  }
+ ],
+ "admitted_store_statements": 1054,
+ "functions_with_an_admitted_store": 381
+}
