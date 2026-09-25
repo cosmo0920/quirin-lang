@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 377
+  "named_followups": 378
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W44-LIBC-RESIDUALS on merge ed36b895 (onto main 94502987, after W44-BRANCH-CONDITION-CALLS, W44-LEAK-PIN-AUDIT and W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5505 core Rust passed / 0 failed / 11 ignored over 294 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 185 Lean audits; 330 root Python tests after regenerating this section (08-python exit 1 before regeneration); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w44-assignment-destination-suffix-place/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
-  "workspace_tests": 5505,
+  "note": "W44-C11-GENERIC-SELECTION (on main 70ce6b44): fmt, clippy, core Rust test and both probes measured on 3e5a93a0 (the reader, fixtures and Lean; the records commit 9c08c2c8 changes documents, the ledger, report scripts and evidence only), then cargo clean --profile dev; Lean and the provider gate ran on the same code after 9c08c2c8. 5525 core Rust passed / 0 failed / 11 ignored over 293 summaries (main's W44-LIBC-RESIDUALS integration recorded 5505; this card adds 11 fixture tests and 9 reader unit tests); 186 Lean audits (185 on main plus AuditGenericSelection); root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. CARGO_INCREMENTAL=0. Logs: worktree-private measure/gate of agent-ad24d9b095421e4fb. Clang recorded in this checkout. Corpus: 1 function Unknown -> Safe (mk_string_char_search), 0 unit moves, leak 19 -> 34 (15 class (a) in an already provisional-Unsafe unit test), 0 violation candidates.",
+  "workspace_tests": 5525,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 185,
+  "lean_audits": 186,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6817,6 +6817,7 @@
    "AuditFixedScalarQuery.lean",
    "AuditFrameHelperTask.lean",
    "AuditGenericNames.lean",
+   "AuditGenericSelection.lean",
    "AuditGnuBuiltinReader.lean",
    "AuditHttpComputedLength.lean",
    "AuditIndexTraversal.lean",
@@ -6929,7 +6930,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w44-libc-residuals/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-c11-generic-selection/gate.json)"
  },
  "named_followups": [
   {

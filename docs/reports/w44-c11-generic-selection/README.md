@@ -348,9 +348,34 @@ leaks, in a function that was already provisional `Unsafe`.
 
 ## 7. Validation
 
-<!-- gate:start -->
-Gate results are recorded in [gate.json](gate.json) and below.
-<!-- gate:end -->
+Run with [`run_gate.py`](scripts/run_gate.py) (copied from W44-LIBC-RESIDUALS:
+`CARGO_INCREMENTAL=0`, each exit captured from the process, never through a
+pipe) into the worktree-private `measure/gate/`; summary in
+[gate.json](gate.json), Clang recorded in this checkout
+([clang-version.txt](clang-version.txt), exit 0). Code measured: `3e5a93a0`.
+`cargo clean --profile dev` ran after the test and probe steps.
+
+| Step | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,525 passed / 0 failed / 11 ignored**, 293 summaries (main 5,505; +11 fixtures, +9 unit tests) |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | **186** audits (185 on main + `AuditGenericSelection`) |
+| `python3 -m unittest discover -s scripts/tests` | 0 | **330** tests, after the final matrix regeneration |
+| `python3 scripts/build_docs_index.py --check` | 0 | |
+| provider `cargo test --workspace --locked --offline --no-fail-fast` | 0 | **124 passed / 0 failed**, 39 summaries |
+| provider isolated package mutation control | 0 | 1 passed |
+| provider fmt / clippy | 0 / 0 | clean |
+| `python3 providers/contracts.py check` | 0 | |
+| `providers/package.py build`, `verify` ×5 | 0 | five packages |
+| provider Python | 0 | 13 tests |
+| `docs/reports/remaining-d02/build_matrix.py . --gate gate.json` | 0 | 378 follow-ups, 111 contract modules, 186 Lean audits |
+
+The load-sensitive `vp04_vp07_vp08_process_lifecycle_and_payload_budgets` did
+not flake. The `indirect-census` feature build was not run: the card touches no
+census code. The three mutation controls of §4 ran before this gate.
 
 ## 8. Follow-ups
 
