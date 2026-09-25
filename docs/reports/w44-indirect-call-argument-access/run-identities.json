@@ -1,8 +1,8 @@
 {
- "before:census": {
+ "m-after:m-census": {
   "resource-diagnostics.json": {
-   "left": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
-   "right": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+   "left": "ffcf7e9ba2865289246f186d333ca6c87be7ff3bf4c7c5a11d150854e3f9967b",
+   "right": "ffcf7e9ba2865289246f186d333ca6c87be7ff3bf4c7c5a11d150854e3f9967b",
    "identical": true
   },
   "resource-diagnostics.chunk-contracts.json": {
@@ -11,8 +11,8 @@
    "identical": true
   },
   "resource-diagnostics.contracts.json": {
-   "left": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
-   "right": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "left": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
+   "right": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
    "identical": true
   },
   "resource-diagnostics.source-effects.json": {
@@ -26,10 +26,10 @@
    "identical": true
   }
  },
- "before:census2": {
+ "m-after:m-noguard": {
   "resource-diagnostics.json": {
-   "left": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
-   "right": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+   "left": "ffcf7e9ba2865289246f186d333ca6c87be7ff3bf4c7c5a11d150854e3f9967b",
+   "right": "ffcf7e9ba2865289246f186d333ca6c87be7ff3bf4c7c5a11d150854e3f9967b",
    "identical": true
   },
   "resource-diagnostics.chunk-contracts.json": {
@@ -38,8 +38,8 @@
    "identical": true
   },
   "resource-diagnostics.contracts.json": {
-   "left": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
-   "right": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "left": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
+   "right": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
    "identical": true
   },
   "resource-diagnostics.source-effects.json": {
@@ -53,64 +53,10 @@
    "identical": true
   }
  },
- "before:census3": {
+ "m-before:m-after": {
   "resource-diagnostics.json": {
-   "left": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
-   "right": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
-   "identical": true
-  },
-  "resource-diagnostics.chunk-contracts.json": {
-   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
-   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
-   "identical": true
-  },
-  "resource-diagnostics.contracts.json": {
-   "left": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
-   "right": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
-   "identical": true
-  },
-  "resource-diagnostics.source-effects.json": {
-   "left": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
-   "right": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
-   "identical": true
-  },
-  "monkey-source.json": {
-   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
-   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
-   "identical": true
-  }
- },
- "after:census-after": {
-  "resource-diagnostics.json": {
-   "left": "0383bb8cc03f44991c4a2eef452351d28f91167140a649d217cb268809ae314b",
-   "right": "0383bb8cc03f44991c4a2eef452351d28f91167140a649d217cb268809ae314b",
-   "identical": true
-  },
-  "resource-diagnostics.chunk-contracts.json": {
-   "left": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
-   "right": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
-   "identical": true
-  },
-  "resource-diagnostics.contracts.json": {
-   "left": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
-   "right": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
-   "identical": true
-  },
-  "resource-diagnostics.source-effects.json": {
-   "left": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
-   "right": "785435974e863961902eb4a253af6533ea027005f5aaffbcc66e726e6e35d138",
-   "identical": true
-  },
-  "monkey-source.json": {
-   "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
-   "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
-   "identical": true
-  }
- },
- "after:final": {
-  "resource-diagnostics.json": {
-   "left": "0383bb8cc03f44991c4a2eef452351d28f91167140a649d217cb268809ae314b",
-   "right": "e10c8d377ffc877179472b8f46481f317c54de46ff55559da55acf2034aeea60",
+   "left": "988ced1a57a81328f340d1ca84cae270097410f6860c9d46558b59f9e6983bad",
+   "right": "ffcf7e9ba2865289246f186d333ca6c87be7ff3bf4c7c5a11d150854e3f9967b",
    "identical": false
   },
   "resource-diagnostics.chunk-contracts.json": {
@@ -119,8 +65,8 @@
    "identical": true
   },
   "resource-diagnostics.contracts.json": {
-   "left": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
-   "right": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
+   "left": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
+   "right": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
    "identical": true
   },
   "resource-diagnostics.source-effects.json": {
@@ -132,8 +78,7 @@
    "left": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
    "right": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
    "identical": true
-  },
-  "diagnostics_equal_except_scope": true
+  }
  },
- "_note": "after = the 634bd6bd AFTER run (before the scope string); final = the 6e8a41b8 run archived under artifacts/. The census run of the base is census3 (commit ba3a22fa); census and census2 are the two earlier recogniser iterations."
+ "_note": "m-before = main 70ce6b44 binary; m-after = merge 9c8b7809 (archived under artifacts/); m-census = the merge with the indirect-census feature; m-noguard = the merge with destination_is_exact disabled (a private build, never committed). m-before against the combined baseline is before-identity.txt."
 }

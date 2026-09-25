@@ -1,0 +1,16 @@
+{
+  "W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE": {
+    "id": "W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE",
+    "title": "The classifier names an assignment's destination by the first suffix of its left-hand side that spells a place, so `recs[i].name = x_dup(s); x_free(name);` certifies Safe",
+    "why": "`direct_assignment_destination` in crates/qcore-c-gateway/src/legacy_c.rs tries `canonical_place` on every suffix of the left-hand side, so `result [ index ] . label = CALL ( … )` is named `label` and `recs [ i ] . name` is named `name`; the lexical gate checks the destination only through that name's spelling, so a call whose actuals read no memory is modeled as binding the unrelated local. Found by W44-INDIRECT-CALL-ARGUMENT-ACCESS when its first AFTER run admitted `result[index].label = flb_malloc(...)` in flb_input_chunk_get_direct_routes (11 false leaks); that card's probe now declines unless the named destination is the whole left-hand side, so it adds no such statement. The pre-existing hole is pinned by crates/qcore-c-gateway/tests/call_argument_access.rs `the_pre_existing_suffix_destination_hole_is_pinned` (a fixture that certifies Safe while releasing the wrong object: a fail-closed violation, hard invariant 1). Corpus reach at the base: unmeasured. DISCHARGE: a card that names a destination only from the whole left-hand side (refusing every other), measures the corpus leaves and verdicts that move, and re-pins the fixture to Unknown.",
+    "source": "docs/reports/w44-indirect-call-argument-access/README.md",
+    "recorded_by": "W44-INDIRECT-CALL-ARGUMENT-ACCESS"
+  },
+  "W44-CALL-ARGUMENT-EXPOSED-LEAKS": {
+    "id": "W44-CALL-ARGUMENT-EXPOSED-LEAKS",
+    "title": "Eleven provisional leak leaves the call argument rule exposed are false by source reading (leak pin 271 -> 282)",
+    "why": "Admitting an acquiring call's actuals makes its result tracked; three pre-existing leak semantics then report objects that escape. (1) An unsanctioned out-slot store (`*out_buf = buf`) keeps the site owed: cio_memfs_content_copy, cio_utils_read_file, initialize_exemplars_from_metadata. (2) An object linked into a member whose owner is returned is reported leaked: cmt_histogram_buckets_create_size, _exponential_create, _linear_create. (3) Releases through uncontracted helpers (free_metrics, free_resource_attributes) do not discharge: rd_kafka_telemetry_encode_metrics (5 sites). Each mechanism is reproduced on a fixture with no call-argument access at the base tree (docs/reports/w44-indirect-call-argument-access/README.md section 5.4). Seven functions and three units move Unknown -> provisional Unsafe. Provisional Unsafe is not an upstream defect claim. DISCHARGE: W44-LEAK-PIN-AUDIT or a card modelling these escapes, withdrawing the leaves measurably; or a recorded decision.",
+    "source": "docs/reports/w44-indirect-call-argument-access/README.md",
+    "recorded_by": "W44-INDIRECT-CALL-ARGUMENT-ACCESS"
+  }
+}

@@ -1,11 +1,11 @@
 {
-  "run": "private/runs/before",
-  "baseline": "docs/reports/w43-indexed-resource-collections/integration/artifacts",
+  "run": "private/runs/m-before",
+  "baseline": "docs/reports/w44-libc-residuals/integration/artifacts",
   "artifacts": {
     "diagnostics": {
       "file": "resource-diagnostics.json",
-      "run_sha256": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
-      "baseline_raw_sha256": "0d57541818a0397103099a903b3686654a4b3027a29fcd11964749d292c87b90",
+      "run_sha256": "988ced1a57a81328f340d1ca84cae270097410f6860c9d46558b59f9e6983bad",
+      "baseline_raw_sha256": "988ced1a57a81328f340d1ca84cae270097410f6860c9d46558b59f9e6983bad",
       "archive_matches_manifest": true,
       "byte_identical": true
     },
@@ -18,8 +18,8 @@
     },
     "contracts": {
       "file": "resource-diagnostics.contracts.json",
-      "run_sha256": "d651b467e44ec958020ee6c81ace3ab9316292f077747412d6962c605e33c542",
-      "baseline_raw_sha256": "aedfc98507c93429235fd013d38abe4afd9b8d323d7b9a1236805b8bed40917d",
+      "run_sha256": "d9b36c3e2f56cc177a3d63a161385944001b77136a0e10561937a7a91aa17fbd",
+      "baseline_raw_sha256": "2b40651e21d2891eb64c890bc5fd4915f47d526332f963ee9a75f82f291e03b1",
       "archive_matches_manifest": true,
       "byte_identical": false,
       "identical_after_root_alias": true
