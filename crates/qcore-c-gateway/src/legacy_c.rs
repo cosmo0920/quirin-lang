@@ -4038,6 +4038,135 @@ impl Parser<'_> {
         );
     }
 
+    /// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: record one clause
+    /// whose left-hand side's first place-spelling suffix starts after index
+    /// 0. Compiled out with the feature off; it reads the instruction after it
+    /// was produced and cannot change it.
+    #[cfg(feature = "indirect-census")]
+    fn census_destination_suffix(
+        &self,
+        line: usize,
+        clause: &'static str,
+        tokens: &[Token],
+        texts: &[&str],
+        instruction: &LegacyInstruction,
+    ) {
+        use crate::destination_suffix_census as census;
+        if !census::collecting() {
+            return;
+        }
+        let Some((equal, start, place)) = census::strict_suffix(texts) else {
+            return;
+        };
+        let prefix = &texts[..start];
+        let declarator_prefix = is_declarator_prefix(prefix);
+        let (outcome, description) = match instruction {
+            LegacyInstruction::Unknown { description, .. } => {
+                ("Unknown".to_owned(), Some(description.clone()))
+            }
+            other => {
+                let debug = format!("{other:?}");
+                let name = debug
+                    .split(|character: char| !character.is_ascii_alphanumeric())
+                    .next()
+                    .unwrap_or_default()
+                    .to_owned();
+                (name, None)
+            }
+        };
+        let (named_root, forecast) = if declarator_prefix {
+            (None, None)
+        } else {
+            let root = census::place_root(&place).to_owned();
+            let body = find_function_body(self.tokens, &self.census_function).and_then(
+                |(body_start, _)| {
+                    matching(self.tokens, body_start, "{", "}")
+                        .map(|body_end| &self.tokens[body_start + 1..body_end])
+                },
+            );
+            let body_texts = body
+                .map(|body| {
+                    body.iter()
+                        .map(|token| (token.text.as_str(), token.line))
+                        .collect::<Vec<_>>()
+                })
+                .unwrap_or_default();
+            let plain = body_texts
+                .iter()
+                .map(|(text, _)| *text)
+                .collect::<Vec<_>>();
+            let kind = if self.formal_parameters.contains(&root) {
+                "formal"
+            } else if crate::publication::body_declarations(&plain).0.contains(&root) {
+                "local"
+            } else {
+                let unit = self
+                    .tokens
+                    .iter()
+                    .map(|token| token.text.as_str())
+                    .collect::<Vec<_>>();
+                if crate::publication::file_scope_objects(&unit).contains(&root) {
+                    "file-scope"
+                } else {
+                    "undeclared"
+                }
+            };
+            let (later_mentions, later_call_argument) =
+                census::later_mentions(&body_texts, &root, line);
+            let contains_call = contains_call(tokens) || contains_braces(tokens);
+            let refusal = LegacyInstruction::Unknown {
+                description: "indirect memory access is outside the resource projection".into(),
+                writes: self.refused_writes(texts),
+            };
+            let forecast = census::Forecast {
+                contains_call,
+                typed_scalar: !contains_call
+                    && crate::typed_field_access::typed_scalar_statement(
+                        texts,
+                        &self.typed_model,
+                        &self.typed_types,
+                    )
+                    .is_some(),
+                chain: !contains_call
+                    && crate::indirect_chain_access::chain_statement(
+                        texts,
+                        &self.typed_model,
+                        &self.typed_types,
+                        &self.typed_bases,
+                    )
+                    .is_some(),
+                stepped: clause == "statement"
+                    && self.stepped_access(tokens, &refusal).is_some(),
+            };
+            (
+                Some(census::NamedRoot {
+                    root,
+                    kind,
+                    later_mentions,
+                    later_call_argument,
+                }),
+                Some(forecast),
+            )
+        };
+        census::record(census::SuffixRecord {
+            unit_seq: crate::indirect_census::unit_seq(),
+            function: self.census_function.clone(),
+            line,
+            clause,
+            texts: texts.iter().map(|text| (*text).to_owned()).collect(),
+            equal,
+            start,
+            place,
+            prefix: prefix.iter().map(|text| (*text).to_owned()).collect(),
+            declarator_prefix,
+            admitted: !matches!(instruction, LegacyInstruction::Unknown { .. }),
+            outcome,
+            description,
+            named_root,
+            forecast,
+        });
+    }
+
     /// Card **W44-INDIRECT-CHAIN-ACCESS**: the declaration facts the
     /// member-chain census reads. Compiled out with the feature off.
     #[cfg(feature = "indirect-census")]
@@ -4076,6 +4205,9 @@ impl Parser<'_> {
             }
             _ => None,
         };
+        // Card W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: the destination-suffix
+        // census, for every clause whatever its outcome.
+        self.census_destination_suffix(line, clause, tokens, &texts, instruction);
         // Card W44-INDIRECT-CHAIN-ACCESS: the member-chain census, for the
         // refusals the typed route is consulted for and every other one.
         if let Some(outcome) = &outcome {
@@ -7194,7 +7326,38 @@ fn direct_assignment_destination(tokens: &[&str]) -> Option<String> {
             _ => None,
         };
     }
-    (0..tokens.len()).find_map(|start| canonical_place(&tokens[start..]))
+    first_suffix_place(tokens).map(|(_, place)| place)
+}
+
+/// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: the first suffix of a
+/// left-hand side that spells a place, with the index it starts at.
+///
+/// This is the reader [`direct_assignment_destination`] has always used for a
+/// left-hand side not headed by `*`. A suffix that starts after index 0 is the
+/// declared object of a declaration (`struct T * p`) **or** the last member
+/// name of a store into a sub-object (`recs [ i ] . name`), and only
+/// [`is_declarator_prefix`] tells the two apart.
+pub(crate) fn first_suffix_place(tokens: &[&str]) -> Option<(usize, String)> {
+    (0..tokens.len())
+        .find_map(|start| canonical_place(&tokens[start..]).map(|place| (start, place)))
+}
+
+/// Card **W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE**: whether `prefix`, the
+/// tokens of a left-hand side before the place it ends with, is a
+/// declaration's specifiers and declarator stars — so that the place is the
+/// object the statement declares and initializes.
+///
+/// Positive and fail-closed: a nonempty run of identifiers (type names,
+/// keywords, qualifiers, storage classes, a comma operand), `*` and `,` only.
+/// Every token that could select, subscript, call or dereference into another
+/// object (`.`, `-` `>`, `[` `]`, `(` `)`) is outside the set, so a prefix
+/// carrying one names a sub-object and never the suffix it ends with.
+#[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
+pub(crate) fn is_declarator_prefix(prefix: &[&str]) -> bool {
+    !prefix.is_empty()
+        && prefix
+            .iter()
+            .all(|text| is_identifier(text) || matches!(*text, "*" | ","))
 }
 
 /// Whether `place` denotes a store through a pointer rather than a variable.

@@ -15,6 +15,8 @@ mod borrow_liveness;
 mod borrowed_actual;
 pub mod call_use_source;
 mod clang;
+#[cfg(feature = "indirect-census")]
+pub mod destination_suffix_census;
 pub mod cleanup_replay_source;
 pub mod composition_source;
 pub mod counter_source;
