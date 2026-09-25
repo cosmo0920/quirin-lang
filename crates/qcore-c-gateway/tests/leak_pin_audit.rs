@@ -36,6 +36,7 @@ void *k_alloc(unsigned long size); \
 void k_free(void *p); \
 void k_keep(void *p); \
 struct k_box { void *item; long n; }; \
+struct k_list { struct k_box **items; long n; }; \
 typedef struct k_opaque *k_handle;";
 
 const CAST_REFUSAL: &str =
@@ -191,9 +192,22 @@ fn a_cast_of_a_member_chain_is_decided_as_the_uncast_return() {
             "void *w(struct k_box *b) { b = k_alloc(1); if (!b) return 0; return b->item; }",
             "void *w(struct k_box *b) { b = k_alloc(1); if (!b) return 0; return (const char **)b->item; }",
         ),
+        // The corpus's `rd_kafka_TopicPartitionInfo_isr` shape: the uncast
+        // return of a never-bound chain is admitted and escapes nothing, so
+        // the cast one is too.
+        (
+            "struct k_box **w(struct k_list *l, long *n) { *n = l->n; return l->items; }",
+            "struct k_box **w(struct k_list *l, long *n) { *n = l->n; return (struct k_box **)l->items; }",
+        ),
     ] {
         assert_eq!(outcome(plain), outcome(cast), "{cast}");
     }
+    expect(
+        "an admitted chain under a cast",
+        "struct k_box **w(struct k_list *l, long *n) { *n = l->n; return (struct k_box **)l->items; }",
+        "Safe",
+        &[],
+    );
 }
 
 /// Pointer to integer: an operand the reader commits to as a pointer, cast to

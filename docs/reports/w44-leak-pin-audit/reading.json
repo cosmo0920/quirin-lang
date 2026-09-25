@@ -82,7 +82,7 @@
   "append_to_ring_buffer": {
    "class": "c",
    "mechanism": "callee-release",
-   "reason": "the exit follows destroy_chunk_raw(cr), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for destroy_chunk_raw"
+   "reason": "the exits at lines 3604 and 3631 follow destroy_chunk_raw(cr), which frees it; REFUSED-CALL-ARGUMENT-PREMISE is false for destroy_chunk_raw"
   },
   "unpack_label": {
    "class": "c",
@@ -405,6 +405,11 @@
    "class": "c",
    "mechanism": "callee-retention",
    "reason": "RD_UT_PASS exit: the buffer was handed to rd_kafka_buf_new_shadow(..., rd_free) and rd_kafka_buf_destroy(rkbuf) has freed it through that destructor; REFUSED-CALL-ARGUMENT-PREMISE is false for rd_kafka_buf_new_shadow"
+  },
+  "append_to_ring_buffer@flb_input_chunk.c:3656@flb_input_chunk.c:3579": {
+   "class": "c",
+   "mechanism": "callee-retention",
+   "reason": "flb_ring_buffer_write(ins->rb, (void *) &cr, sizeof(cr)) copies the pointer into the input ring buffer, whose consumer takes it over; REFUSED-CALL-ARGUMENT-PREMISE is false for flb_ring_buffer_write"
   }
  }
 }
