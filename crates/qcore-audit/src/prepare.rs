@@ -1,7 +1,7 @@
 //! `quirin-audit prepare` (card **W44-QUIRIN-AUDIT-PREPARE**): the Fluent Bit
 //! audit inputs, prepared by the same git, CMake and build invocations that
-//! the retired `scripts/prepare_cmetrics_clang_audit.py` and
-//! `scripts/prepare_cycle19_monkey.py` ran.
+//! the two retired Python preparation scripts (the CMetrics Clang build and
+//! the Cycle 19 Monkey inputs) ran.
 //!
 //! Two steps, each a line-by-line port of one script, with the script's flags,
 //! defaults, refusals and output files:
@@ -278,7 +278,7 @@ struct ClangBuildPrepared {
     configure: Vec<String>,
 }
 
-/// Port of `scripts/prepare_cmetrics_clang_audit.py`.
+/// Port of the retired CMetrics Clang-build preparation script.
 fn prepare_clang_build(request: &ClangBuildRequest) -> Result<ClangBuildPrepared, String> {
     let upstream = strict_resolve(request.fluent_bit)?;
     let profile_dir = request
@@ -522,7 +522,7 @@ struct MonkeyPrepared {
     command: Vec<String>,
 }
 
-/// Port of `scripts/prepare_cycle19_monkey.py`.
+/// Port of the retired Cycle 19 Monkey preparation script.
 fn prepare_monkey(request: &MonkeyRequest) -> Result<MonkeyPrepared, String> {
     let upstream = strict_resolve(request.fluent_bit)?;
     let out = resolve(

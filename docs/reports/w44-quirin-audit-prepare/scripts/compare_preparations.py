@@ -60,6 +60,12 @@ def explain(name, a, b, left_root, right_root):
     progress = lambda data: sorted(re.sub(rb'^\[ *\d+%\] ', b'', line) for line in data.splitlines())
     if progress(x) == progress(y):
         return 'same lines in another order, progress percentages aside (-j2 parallel make)'
+    bare = lambda data: sorted(re.sub(rb'\[ *\d+%\] ', b'', data))
+    if name.endswith('native-build.log') and bare(x) == bare(y):
+        # Two -j2 jobs (bison and flex) wrote into the one shared pipe
+        # mid-line: the same bytes, interleaved at another point.
+        return ('same bytes, progress percentages aside, interleaved differently by -j2 jobs '
+                'writing to one pipe')
     if name.endswith('CMakeRuleHashes.txt'):
         strip = lambda data: [line.split(b' ', 1)[1] for line in data.splitlines() if b' ' in line]
         if strip(a) == strip(b):
@@ -126,7 +132,45 @@ def main():
     result['counts']['different_unexplained'] = sum(1 for entry in result['different']
                                                    if entry['explained_by'] is None)
     Path(out).write_text(json.dumps(result, indent=2) + '\n')
+    # The summary the report keeps: counts, every differing file and the
+    # brief's named files, without the full identical-file lists.
+    key_files = {}
+    for name in KEY_FILES:
+        state = ('identical' if name in result['identical'] else
+                 'identical_after_normalisation' if name in result['identical_after_normalisation'] else
+                 next((f"different: {entry['explained_by']}" for entry in result['different']
+                       if entry['file'] == name), 'absent'))
+        key_files[name] = {'state': state,
+                           'left_sha256': sha(left_files[name].read_bytes()) if name in left_files else None,
+                           'right_sha256': sha(right_files[name].read_bytes()) if name in right_files else None}
+    summary = {key: result[key] for key in ('left', 'right', 'normalisation', 'only_left', 'only_right',
+                                            'different', 'counts')}
+    summary['key_files'] = key_files
+    summary['clones'] = result.get('clones')
+    Path(str(out).removesuffix('.json') + '.summary.json').write_text(json.dumps(summary, indent=2) + '\n')
     print(json.dumps(result['counts']))
+
+
+KEY_FILES = [
+    'fluent-bit-clang-production/compile_commands.json',
+    'fluent-bit-clang-production/cmetrics-audit.json.config',
+    'fluent-bit-clang-production/CMakeCache.txt',
+    'fluent-bit-clang-production/build-provenance.json',
+    'fluent-bit-clang-production/configure.log',
+    'fluent-bit-clang-production/native-build.log',
+    'fluent-bit-clang-production/library/libcmetrics.a',
+    'monkey/monkey-build/compile_commands.json',
+    'monkey/monkey-build/CMakeCache.txt',
+    'monkey/qcore-monkey-inputs.json',
+    'monkey/configure.log',
+    'monkey/monkey-source/include/monkey/mk_static_plugins.h',
+    'reports/resource-diagnostics.json',
+    'reports/resource-diagnostics.invocation.json',
+    'reports/resource-diagnostics.contracts.json',
+    'reports/resource-diagnostics.chunk-contracts.json',
+    'reports/resource-diagnostics.source-effects.json',
+    'reports/monkey-source.json',
+]
 
 
 if __name__ == '__main__':

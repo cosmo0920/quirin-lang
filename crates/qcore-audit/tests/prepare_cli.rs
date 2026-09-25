@@ -232,7 +232,11 @@ fn the_monkey_step_refuses_local_changes_and_unmanaged_outputs() {
         stderr(&refused)
     );
 
-    fs::write(fixture.upstream.join("lib/monkey/CMakeLists.txt"), "edited\n").unwrap();
+    fs::write(
+        fixture.upstream.join("lib/monkey/CMakeLists.txt"),
+        "edited\n",
+    )
+    .unwrap();
     let dirty = fixture.monkey(&fixture.root.join("fresh"));
     assert!(!dirty.status.success());
     assert!(
