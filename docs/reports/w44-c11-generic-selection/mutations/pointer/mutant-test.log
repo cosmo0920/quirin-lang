@@ -1,0 +1,37 @@
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad24d9b095421e4fb/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17.62s
+     Running tests/generic_selection.rs (target/debug/deps/generic_selection-905dae5e5e6b3076)
+
+running 11 tests
+test a_cast_of_an_integer_result_refuses ... FAILED
+test a_cast_that_does_not_cover_the_association_refuses ... ok
+test associations_that_differ_refuse ... ok
+test a_declaration_initializer_is_analysed_as_the_call ... ok
+test a_const_argument_selects_the_cast_and_is_analysed_as_the_call ... ok
+test a_controlling_expression_with_a_side_effect_contributes_nothing ... ok
+test a_call_argument_is_analysed_as_the_call ... ok
+test a_mutable_argument_selects_the_call_and_keeps_its_derivation ... ok
+test a_nested_selection_is_analysed_as_the_call ... ok
+test a_return_is_analysed_as_the_call ... ok
+test a_condition_is_analysed_as_the_call ... ok
+
+failures:
+
+---- a_cast_of_an_integer_result_refuses stdout ----
+
+thread 'a_cast_of_an_integer_result_refuses' (1289799) panicked at crates/qcore-c-gateway/tests/generic_selection.rs:167:5:
+assertion `left != right` failed: a pointer cast of an integer call
+void w(const char *s) { _Generic(s, const void *: (const char *) (d_len(s)), default: d_len(s)); }
+  left: "Safe"
+ right: "Safe"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_cast_of_an_integer_result_refuses
+
+test result: FAILED. 10 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.35s
+
+error: test failed, to rerun pass `-p qcore-c-gateway --test generic_selection`
+error: 1 target failed:
+    `-p qcore-c-gateway --test generic_selection`

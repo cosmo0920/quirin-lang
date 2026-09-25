@@ -1,0 +1,9 @@
+[
+  {
+    "id": "W44-BSEARCH-UNDECLARED",
+    "title": "bsearch is not declared: 13 of the 85 glibc generic selections lower to it, 6 surface as `call to uncontracted function bsearch` leaves in 5 functions (none blocked by it alone)",
+    "why": "Card W44-C11-GENERIC-SELECTION lowers glibc 2.43's __glibc_const_generic selections to their call. Of the 85 in the corpus, 13 are bsearch (librdkafka's rack and ApiVersion lookups). At the card's AFTER baseline the 6 that were `call to uncontracted function _Generic` leaves (ut_populate_internal_topic_metadata, rd_kafka_Node_new_from_brokers x2, rd_kafka_populate_metadata_topic_racks, rd_kafka_topic_assignment_state_rack_search, rd_kafka_partition_internal_find_rack) are exchanged one for one for `call to uncontracted function bsearch`; the other 7 sit in statements refused for other reasons (indirect access, braced initializers). No function is blocked by bsearch alone. bsearch returns a pointer into its `base` argument (parameter 1) or NULL, which resource_return_interior(base, nullable) could state, but it also calls the caller's comparator, a function pointer whose effects a v1 declaration cannot state. Discharge condition: a declaration of bsearch with a stated premise for the comparator (custody-neutral callback, or a callback-effect clause) and matching gateway handling of the function-pointer actual, measured by an arbiter; or acceptance as a measured boundary.",
+    "source": "docs/reports/w44-c11-generic-selection/README.md",
+    "recorded_by": "W44-C11-GENERIC-SELECTION"
+  }
+]

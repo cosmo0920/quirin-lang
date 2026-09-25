@@ -1,0 +1,1785 @@
+{
+ "summary": {
+  "captures_read": 187,
+  "captures_with_generic": 25,
+  "occurrences": 85,
+  "by_shape": {
+   "glibc-const-generic:strchr": 51,
+   "glibc-const-generic:strrchr": 6,
+   "glibc-const-generic:bsearch": 13,
+   "glibc-const-generic:strstr": 13,
+   "glibc-const-generic:memchr": 2
+  },
+  "by_position": {
+   "assignment": 31,
+   "initializer": 9,
+   "condition": 9,
+   "condition-operand": 35,
+   "parenthesised": 1
+  },
+  "by_reader": {
+   "admitted": 85
+  },
+  "by_nesting": {
+   "top-level": 85
+  },
+  "top_level_by_position": {
+   "assignment": 31,
+   "initializer": 9,
+   "condition": 9,
+   "condition-operand": 35,
+   "parenthesised": 1
+  },
+  "top_level_by_shape": {
+   "glibc-const-generic:strchr": 51,
+   "glibc-const-generic:strrchr": 6,
+   "glibc-const-generic:bsearch": 13,
+   "glibc-const-generic:strstr": 13,
+   "glibc-const-generic:memchr": 2
+  },
+  "in_function_bodies": 85,
+  "unmatched_captures": []
+ },
+ "rows": [
+  {
+   "capture": "1790317466295387431-1185576.i",
+   "units": [
+    "rdaddr.c"
+   ],
+   "line": 4005,
+   "leaf_line": 4005,
+   "function": "rd_addrinfo_prepare",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( nodesvc , ']' )",
+   "refusals_at_line": {
+    "rdaddr.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317466295387431-1185576.i",
+   "units": [
+    "rdaddr.c"
+   ],
+   "line": 4014,
+   "leaf_line": 4014,
+   "function": "rd_addrinfo_prepare",
+   "shape": "glibc-const-generic:strrchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strrchr ( svct ? svct : nodesvc , ':' )",
+   "refusals_at_line": {
+    "rdaddr.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317491795489501-1188464.i",
+   "units": [
+    "rddl.c"
+   ],
+   "line": 2955,
+   "leaf_line": 2955,
+   "function": "rd_dl_error",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( errstr , '\\n' )",
+   "refusals_at_line": {
+    "rddl.c": [
+     "unmodeled call, aggregate or indirect access in loop condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317491795489501-1188464.i",
+   "units": [
+    "rddl.c"
+   ],
+   "line": 2981,
+   "leaf_line": 2981,
+   "function": "rd_dl_open",
+   "shape": "glibc-const-generic:strrchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strrchr ( path , '/' )",
+   "refusals_at_line": {
+    "rddl.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317491795489501-1188464.i",
+   "units": [
+    "rddl.c"
+   ],
+   "line": 2984,
+   "leaf_line": 2984,
+   "function": "rd_dl_open",
+   "shape": "glibc-const-generic:strrchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strrchr ( fname , '.' )",
+   "refusals_at_line": {
+    "rddl.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317653422658087-1200849.i",
+   "units": [
+    "rdkafka_assignor.c"
+   ],
+   "line": 20547,
+   "leaf_line": 20547,
+   "function": "rd_kafka_assignors_init",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( s , ',' )",
+   "refusals_at_line": {
+    "rdkafka_assignor.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317653422658087-1200849.i",
+   "units": [
+    "rdkafka_assignor.c"
+   ],
+   "line": 20699,
+   "leaf_line": 20698,
+   "function": "ut_populate_internal_topic_metadata",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "initializer",
+   "reader": "admitted",
+   "resolved": "bsearch ( & key , brokers_internal , broker_cnt , sizeof ( rd_kafka_metadata_broker_internal_t ) , rd_kafka_metadata_broker_internal_cmp )",
+   "refusals_at_line": {
+    "rdkafka_assignor.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317653422658087-1200849.i",
+   "units": [
+    "rdkafka_assignor.c"
+   ],
+   "line": 20879,
+   "leaf_line": 20879,
+   "function": "verifyNumPartitionsWithRackMismatch0",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "bsearch ( & __key , metadata_internal -> brokers , metadata_internal -> metadata . broker_cnt , sizeof ( rd_kafka_metadata_broker_internal_t ) , rd_kafka_metadata_broker_internal_cmp )",
+   "refusals_at_line": {
+    "rdkafka_assignor.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "indirect memory access is outside the resource projection",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     "unmodeled call, aggregate or indirect access in for-loop condition",
+     "unsupported assignment expression"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317662518399399-1202227.i",
+   "units": [
+    "rdkafka_aux.c"
+   ],
+   "line": 19761,
+   "leaf_line": 19760,
+   "function": "rd_kafka_Node_new_from_brokers",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "initializer",
+   "reader": "admitted",
+   "resolved": "bsearch ( & key_sorted , brokers_sorted , broker_cnt , sizeof ( struct rd_kafka_metadata_broker ) , rd_kafka_metadata_broker_cmp )",
+   "refusals_at_line": {
+    "rdkafka_aux.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317662518399399-1202227.i",
+   "units": [
+    "rdkafka_aux.c"
+   ],
+   "line": 19763,
+   "leaf_line": 19762,
+   "function": "rd_kafka_Node_new_from_brokers",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "initializer",
+   "reader": "admitted",
+   "resolved": "bsearch ( & key_internal , brokers_internal , broker_cnt , sizeof ( rd_kafka_metadata_broker_internal_t ) , rd_kafka_metadata_broker_internal_cmp )",
+   "refusals_at_line": {
+    "rdkafka_aux.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317672366499530-1202572.i",
+   "units": [
+    "rdkafka_broker.c"
+   ],
+   "line": 21036,
+   "leaf_line": 21035,
+   "function": "rd_kafka_broker_ApiVersion_supported0",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "bsearch ( & skel , rkb -> rkb_ApiVersions , rkb -> rkb_ApiVersions_cnt , sizeof ( * rkb -> rkb_ApiVersions ) , rd_kafka_ApiVersion_key_cmp )",
+   "refusals_at_line": {
+    "rdkafka_broker.c": [
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317672366499530-1202572.i",
+   "units": [
+    "rdkafka_broker.c"
+   ],
+   "line": 22323,
+   "leaf_line": 22322,
+   "function": "rd_kafka_broker_request_supported",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "bsearch ( & skel , rkb -> rkb_ApiVersions , rkb -> rkb_ApiVersions_cnt , sizeof ( * rkb -> rkb_ApiVersions ) , rd_kafka_ApiVersion_key_cmp )",
+   "refusals_at_line": {
+    "rdkafka_broker.c": [
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317672366499530-1202572.i",
+   "units": [
+    "rdkafka_broker.c"
+   ],
+   "line": 23804,
+   "leaf_line": 23804,
+   "function": "rd_kafka_broker_name_parse",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( s , ',' )",
+   "refusals_at_line": {
+    "rdkafka_broker.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317672366499530-1202572.i",
+   "units": [
+    "rdkafka_broker.c"
+   ],
+   "line": 23808,
+   "leaf_line": 23808,
+   "function": "rd_kafka_broker_name_parse",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strstr ( s , \"://\" )",
+   "refusals_at_line": {
+    "rdkafka_broker.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317672366499530-1202572.i",
+   "units": [
+    "rdkafka_broker.c"
+   ],
+   "line": 23830,
+   "leaf_line": 23830,
+   "function": "rd_kafka_broker_name_parse",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( s , '/' )",
+   "refusals_at_line": {
+    "rdkafka_broker.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317672366499530-1202572.i",
+   "units": [
+    "rdkafka_broker.c"
+   ],
+   "line": 23835,
+   "leaf_line": 23835,
+   "function": "rd_kafka_broker_name_parse",
+   "shape": "glibc-const-generic:strrchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strrchr ( s , ':' )",
+   "refusals_at_line": {
+    "rdkafka_broker.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317672366499530-1202572.i",
+   "units": [
+    "rdkafka_broker.c"
+   ],
+   "line": 23836,
+   "leaf_line": 23835,
+   "function": "rd_kafka_broker_name_parse",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "initializer",
+   "reader": "admitted",
+   "resolved": "strchr ( s , ':' )",
+   "refusals_at_line": {
+    "rdkafka_broker.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317710836660910-1206194.i",
+   "units": [
+    "rdkafka_cert.c"
+   ],
+   "line": 20425,
+   "leaf_line": 20425,
+   "function": "rd_kafka_cert_new",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "condition",
+   "reader": "admitted",
+   "resolved": "strstr ( action , \"parse\" )",
+   "refusals_at_line": {
+    "rdkafka_cert.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317710836660910-1206194.i",
+   "units": [
+    "rdkafka_cert.c"
+   ],
+   "line": 20425,
+   "leaf_line": 20425,
+   "function": "rd_kafka_cert_new",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strstr ( ssl_errstr , \"Algorithm\" )",
+   "refusals_at_line": {
+    "rdkafka_cert.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317746766515725-1209185.i",
+   "units": [
+    "rdkafka_conf.c"
+   ],
+   "line": 22765,
+   "leaf_line": 22765,
+   "function": "rd_kafka_conf_validate_single",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( val , ',' )",
+   "refusals_at_line": {
+    "rdkafka_conf.c": [
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317746766515725-1209185.i",
+   "units": [
+    "rdkafka_conf.c"
+   ],
+   "line": 22765,
+   "leaf_line": 22765,
+   "function": "rd_kafka_conf_validate_single",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( val , ' ' )",
+   "refusals_at_line": {
+    "rdkafka_conf.c": [
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317746766515725-1209185.i",
+   "units": [
+    "rdkafka_conf.c"
+   ],
+   "line": 24566,
+   "leaf_line": 24566,
+   "function": "rd_kafka_anyconf_set_prop",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( s , ',' )",
+   "refusals_at_line": {
+    "rdkafka_conf.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317746766515725-1209185.i",
+   "units": [
+    "rdkafka_conf.c"
+   ],
+   "line": 25616,
+   "leaf_line": 25616,
+   "function": "rd_kafka_conf_kv_split",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "initializer",
+   "reader": "admitted",
+   "resolved": "strchr ( input [ i ] , '=' )",
+   "refusals_at_line": {
+    "rdkafka_conf.c": [
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317746766515725-1209185.i",
+   "units": [
+    "rdkafka_conf.c"
+   ],
+   "line": 25624,
+   "leaf_line": 25624,
+   "function": "rd_kafka_conf_kv_split",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "initializer",
+   "reader": "admitted",
+   "resolved": "strchr ( input [ i ] , '=' )",
+   "refusals_at_line": {
+    "rdkafka_conf.c": [
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317778617702923-1214313.i",
+   "units": [
+    "rdkafka_feature.c"
+   ],
+   "line": 19800,
+   "leaf_line": 19800,
+   "function": "rd_kafka_ApiVersion_check",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "bsearch ( match , apis , api_cnt , sizeof ( * apis ) , rd_kafka_ApiVersion_key_cmp )",
+   "refusals_at_line": {
+    "rdkafka_feature.c": [
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317825359204569-1226050.i",
+   "units": [
+    "rdkafka_metadata.c"
+   ],
+   "line": 20326,
+   "leaf_line": 20325,
+   "function": "rd_kafka_metadata_copy_internal",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "initializer",
+   "reader": "admitted",
+   "resolved": "bsearch ( & key , mdi -> brokers , md -> broker_cnt , sizeof ( rd_kafka_metadata_broker_internal_t ) , rd_kafka_metadata_broker_internal_cmp )",
+   "refusals_at_line": {
+    "rdkafka_metadata.c": [
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317825359204569-1226050.i",
+   "units": [
+    "rdkafka_metadata.c"
+   ],
+   "line": 20404,
+   "leaf_line": 20403,
+   "function": "rd_kafka_populate_metadata_topic_racks",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "initializer",
+   "reader": "admitted",
+   "resolved": "bsearch ( & key , brokers_internal , broker_cnt , sizeof ( rd_kafka_metadata_broker_internal_t ) , rd_kafka_metadata_broker_internal_cmp )",
+   "refusals_at_line": {
+    "rdkafka_metadata.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790317837028068886-1228343.i",
+   "units": [
+    "rdkafka_metadata_cache.c"
+   ],
+   "line": 20669,
+   "leaf_line": 20669,
+   "function": "rd_kafka_metadata_cache_topic_partition_get",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "bsearch ( & skel , mtopic -> partitions , mtopic -> partition_cnt , sizeof ( * mtopic -> partitions ) , rd_kafka_metadata_partition_id_cmp )",
+   "refusals_at_line": {
+    "rdkafka_metadata_cache.c": [
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318007379636911-1268685.i",
+   "units": [
+    "rdkafka_pattern.c"
+   ],
+   "line": 19626,
+   "leaf_line": 19626,
+   "function": "rd_kafka_pattern_list_parse",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( t , ',' )",
+   "refusals_at_line": {
+    "rdkafka_pattern.c": [
+     "unmodeled call, aggregate or indirect access in loop condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318010061888985-1269053.i",
+   "units": [
+    "rdkafka_plugin.c"
+   ],
+   "line": 19646,
+   "leaf_line": 19646,
+   "function": "rd_kafka_plugins_conf_set0",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( s , ';' )",
+   "refusals_at_line": {
+    "rdkafka_plugin.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318020752048634-1270693.i",
+   "units": [
+    "rdkafka_range_assignor.c"
+   ],
+   "line": 19706,
+   "leaf_line": 19706,
+   "function": "rd_kafka_topic_assignment_state_rack_search",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "bsearch ( & rack , partition_racks , cnt , sizeof ( char * ) , rd_strcmp3 )",
+   "refusals_at_line": {
+    "rdkafka_range_assignor.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318053674136837-1274055.i",
+   "units": [
+    "rdkafka_sasl.c"
+   ],
+   "line": 20856,
+   "leaf_line": 20856,
+   "function": "rd_kafka_sasl_client_new",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( hostname , ':' )",
+   "refusals_at_line": {
+    "rdkafka_sasl.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318057598842394-1274378.i",
+   "units": [
+    "rdkafka_sasl_cyrus.c"
+   ],
+   "line": 20549,
+   "leaf_line": 20549,
+   "function": "rd_kafka_sasl_cyrus_cb_log",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "condition",
+   "reader": "admitted",
+   "resolved": "strstr ( message , \"No worthy mechs found\" )",
+   "refusals_at_line": {
+    "rdkafka_sasl_cyrus.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318057598842394-1274378.i",
+   "units": [
+    "rdkafka_sasl_cyrus.c"
+   ],
+   "line": 20550,
+   "leaf_line": 20549,
+   "function": "rd_kafka_sasl_cyrus_cb_log",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strstr ( rktrans -> rktrans_rkb -> rkb_rk -> rk_conf . sasl . mechanisms , \"GSSAPI\" )",
+   "refusals_at_line": {
+    "rdkafka_sasl_cyrus.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318057598842394-1274378.i",
+   "units": [
+    "rdkafka_sasl_cyrus.c"
+   ],
+   "line": 20630,
+   "leaf_line": 20630,
+   "function": "rd_kafka_sasl_cyrus_cb_canon",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "condition",
+   "reader": "admitted",
+   "resolved": "strstr ( rktrans -> rktrans_rkb -> rkb_rk -> rk_conf . sasl . mechanisms , \"GSSAPI\" )",
+   "refusals_at_line": {
+    "rdkafka_sasl_cyrus.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318061428287704-1274755.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer.c"
+   ],
+   "line": 20637,
+   "leaf_line": 20637,
+   "function": "rd_kafka_oauthbearer_unsecured_token0",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition",
+   "reader": "admitted",
+   "resolved": "strchr ( parsed . principal , '\"' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318061428287704-1274755.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer.c"
+   ],
+   "line": 20640,
+   "leaf_line": 20640,
+   "function": "rd_kafka_oauthbearer_unsecured_token0",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition",
+   "reader": "admitted",
+   "resolved": "strchr ( parsed . principal_claim_name , '\"' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318061428287704-1274755.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer.c"
+   ],
+   "line": 20643,
+   "leaf_line": 20643,
+   "function": "rd_kafka_oauthbearer_unsecured_token0",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition",
+   "reader": "admitted",
+   "resolved": "strchr ( parsed . scope_claim_name , '\"' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318061428287704-1274755.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer.c"
+   ],
+   "line": 20647,
+   "leaf_line": 20646,
+   "function": "rd_kafka_oauthbearer_unsecured_token0",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( parsed . scope_csv_text , '\"' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22299,
+   "leaf_line": 22299,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( jwt , '.' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22301,
+   "leaf_line": 22301,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( dot1 + 1 , '.' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22309,
+   "leaf_line": 22309,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( header_part , '=' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+     "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22309,
+   "leaf_line": 22309,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( header_part , '=' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+     "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22309,
+   "leaf_line": 22309,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( header_part , '=' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774",
+     "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22310,
+   "leaf_line": 22310,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( payload_part , '=' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22310,
+   "leaf_line": 22310,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( payload_part , '=' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22310,
+   "leaf_line": 22310,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( payload_part , '=' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775",
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22311,
+   "leaf_line": 22311,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( signature_part , '=' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22311,
+   "leaf_line": 22311,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( signature_part , '=' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22311,
+   "leaf_line": 22311,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( signature_part , '=' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22312,
+   "leaf_line": 22312,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( header_part , '+' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22312,
+   "leaf_line": 22312,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( header_part , '+' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22312,
+   "leaf_line": 22312,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( header_part , '+' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22313,
+   "leaf_line": 22313,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( header_part , '/' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22313,
+   "leaf_line": 22313,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( header_part , '/' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22313,
+   "leaf_line": 22313,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( header_part , '/' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22314,
+   "leaf_line": 22314,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( payload_part , '+' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22314,
+   "leaf_line": 22314,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( payload_part , '+' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22314,
+   "leaf_line": 22314,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( payload_part , '+' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22315,
+   "leaf_line": 22315,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( payload_part , '/' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22315,
+   "leaf_line": 22315,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( payload_part , '/' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22315,
+   "leaf_line": 22315,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( payload_part , '/' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22316,
+   "leaf_line": 22316,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( signature_part , '+' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22316,
+   "leaf_line": 22316,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( signature_part , '+' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22316,
+   "leaf_line": 22316,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( signature_part , '+' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22317,
+   "leaf_line": 22317,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( signature_part , '/' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22317,
+   "leaf_line": 22317,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( signature_part , '/' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318068181370228-1275232.i",
+   "units": [
+    "rdkafka_sasl_oauthbearer_oidc.c"
+   ],
+   "line": 22317,
+   "leaf_line": 22317,
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strchr ( signature_part , '/' )",
+   "refusals_at_line": {
+    "rdkafka_sasl_oauthbearer_oidc.c": [
+     "braced initializer, expression, or declaration is not modeled",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318074878205470-1275520.i",
+   "units": [
+    "rdkafka_sasl_scram.c"
+   ],
+   "line": 20205,
+   "leaf_line": 20205,
+   "function": "rd_kafka_sasl_scram_get_attr",
+   "shape": "glibc-const-generic:memchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "memchr ( & inbuf -> ptr [ of ] , ',' , inbuf -> size - of )",
+   "refusals_at_line": {
+    "rdkafka_sasl_scram.c": [
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318087613104076-1276125.i",
+   "units": [
+    "rdkafka_ssl.c"
+   ],
+   "line": 20462,
+   "leaf_line": 20462,
+   "function": "rd_kafka_transport_ssl_set_endpoint_id",
+   "shape": "glibc-const-generic:strrchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strrchr ( name , ':' )",
+   "refusals_at_line": {
+    "rdkafka_ssl.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318087613104076-1276125.i",
+   "units": [
+    "rdkafka_ssl.c"
+   ],
+   "line": 20467,
+   "leaf_line": 20466,
+   "function": "rd_kafka_transport_ssl_set_endpoint_id",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "parenthesised",
+   "reader": "admitted",
+   "resolved": "strchr ( name_for_verify , ':' )",
+   "refusals_at_line": {
+    "rdkafka_ssl.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318087613104076-1276125.i",
+   "units": [
+    "rdkafka_ssl.c"
+   ],
+   "line": 20569,
+   "leaf_line": 20569,
+   "function": "rd_kafka_transport_ssl_handshake",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "condition",
+   "reader": "admitted",
+   "resolved": "strstr ( errstr , \"unexpected message\" )",
+   "refusals_at_line": {
+    "rdkafka_ssl.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318087613104076-1276125.i",
+   "units": [
+    "rdkafka_ssl.c"
+   ],
+   "line": 20575,
+   "leaf_line": 20575,
+   "function": "rd_kafka_transport_ssl_handshake",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "condition",
+   "reader": "admitted",
+   "resolved": "strstr ( errstr , \"tls_process_server_certificate:\" \"certificate verify failed\" )",
+   "refusals_at_line": {
+    "rdkafka_ssl.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318087613104076-1276125.i",
+   "units": [
+    "rdkafka_ssl.c"
+   ],
+   "line": 20576,
+   "leaf_line": 20575,
+   "function": "rd_kafka_transport_ssl_handshake",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strstr ( errstr , \"error:0A000086\" )",
+   "refusals_at_line": {
+    "rdkafka_ssl.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318087613104076-1276125.i",
+   "units": [
+    "rdkafka_ssl.c"
+   ],
+   "line": 20577,
+   "leaf_line": 20575,
+   "function": "rd_kafka_transport_ssl_handshake",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strstr ( errstr , \"get_server_certificate:\" \"certificate verify failed\" )",
+   "refusals_at_line": {
+    "rdkafka_ssl.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318093294292718-1276983.i",
+   "units": [
+    "rdkafka_sticky_assignor.c"
+   ],
+   "line": 21375,
+   "leaf_line": 21374,
+   "function": "rd_kafka_partition_internal_find_rack",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "initializer",
+   "reader": "admitted",
+   "resolved": "bsearch ( & rack , partition_racks , cnt , sizeof ( char * ) , rd_strcmp3 )",
+   "refusals_at_line": {
+    "rdkafka_sticky_assignor.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318156813075902-1286777.i",
+   "units": [
+    "rdlist.c"
+   ],
+   "line": 3172,
+   "leaf_line": 3172,
+   "function": "rd_list_find",
+   "shape": "glibc-const-generic:bsearch",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "bsearch ( & match , rl -> rl_elems , rl -> rl_cnt , sizeof ( * rl -> rl_elems ) , rd_list_cmp_trampoline )",
+   "refusals_at_line": {
+    "rdlist.c": [
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318176534784831-1289741.i",
+   "units": [
+    "rdstring.c"
+   ],
+   "line": 2984,
+   "leaf_line": 2984,
+   "function": "rd_string_render",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strstr ( s , \"%{\" )",
+   "refusals_at_line": {
+    "rdstring.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318176534784831-1289741.i",
+   "units": [
+    "rdstring.c"
+   ],
+   "line": 2994,
+   "leaf_line": 2994,
+   "function": "rd_string_render",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( t + 2 , '}' )",
+   "refusals_at_line": {
+    "rdstring.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318180795299042-1290266.i",
+   "units": [
+    "rdunittest.c"
+   ],
+   "line": 20549,
+   "leaf_line": 20549,
+   "function": "rd_unittest",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "condition-operand",
+   "reader": "admitted",
+   "resolved": "strstr ( unittests [ i ] . name , match )",
+   "refusals_at_line": {
+    "rdunittest.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318379249578225-1321593.i",
+   "units": [
+    "mk_core/mk_string.c"
+   ],
+   "line": 2098,
+   "leaf_line": 2098,
+   "function": "_mk_string_search",
+   "shape": "glibc-const-generic:strstr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strstr ( string , search )",
+   "refusals_at_line": {
+    "mk_core/mk_string.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318379249578225-1321593.i",
+   "units": [
+    "mk_core/mk_string.c"
+   ],
+   "line": 2141,
+   "leaf_line": 2141,
+   "function": "mk_string_char_search",
+   "shape": "glibc-const-generic:memchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "memchr ( string , c , len )",
+   "refusals_at_line": {
+    "mk_core/mk_string.c": [
+     "call to uncontracted function `_Generic`"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318398811380642-1328352.i",
+   "units": [
+    "mk_server/mk_config.c"
+   ],
+   "line": 6062,
+   "leaf_line": 6062,
+   "function": "mk_config_listen_parse",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strchr ( listener -> val , ']' )",
+   "refusals_at_line": {
+    "mk_server/mk_config.c": [
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318398811380642-1328352.i",
+   "units": [
+    "mk_server/mk_config.c"
+   ],
+   "line": 6075,
+   "leaf_line": 6075,
+   "function": "mk_config_listen_parse",
+   "shape": "glibc-const-generic:strchr",
+   "nesting": "top-level",
+   "position": "condition",
+   "reader": "admitted",
+   "resolved": "strchr ( listener -> val , ':' )",
+   "refusals_at_line": {
+    "mk_server/mk_config.c": [
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   },
+   "spelling": null
+  },
+  {
+   "capture": "1790318398811380642-1328352.i",
+   "units": [
+    "mk_server/mk_config.c"
+   ],
+   "line": 6076,
+   "leaf_line": 6076,
+   "function": "mk_config_listen_parse",
+   "shape": "glibc-const-generic:strrchr",
+   "nesting": "top-level",
+   "position": "assignment",
+   "reader": "admitted",
+   "resolved": "strrchr ( listener -> val , ':' )",
+   "refusals_at_line": {
+    "mk_server/mk_config.c": [
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   "spelling": null
+  }
+ ]
+}

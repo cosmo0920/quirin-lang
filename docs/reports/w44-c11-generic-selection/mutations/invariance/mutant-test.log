@@ -1,0 +1,46 @@
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad24d9b095421e4fb/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 24.10s
+     Running tests/generic_selection.rs (target/debug/deps/generic_selection-905dae5e5e6b3076)
+
+running 11 tests
+test a_cast_of_an_integer_result_refuses ... ok
+test a_cast_that_does_not_cover_the_association_refuses ... FAILED
+test associations_that_differ_refuse ... FAILED
+test a_const_argument_selects_the_cast_and_is_analysed_as_the_call ... ok
+test a_controlling_expression_with_a_side_effect_contributes_nothing ... ok
+test a_declaration_initializer_is_analysed_as_the_call ... ok
+test a_mutable_argument_selects_the_call_and_keeps_its_derivation ... ok
+test a_call_argument_is_analysed_as_the_call ... ok
+test a_return_is_analysed_as_the_call ... ok
+test a_condition_is_analysed_as_the_call ... ok
+test a_nested_selection_is_analysed_as_the_call ... ok
+
+failures:
+
+---- a_cast_that_does_not_cover_the_association_refuses stdout ----
+
+thread 'a_cast_that_does_not_cover_the_association_refuses' (1293448) panicked at crates/qcore-c-gateway/tests/generic_selection.rs:167:5:
+assertion `left != right` failed: a cast of a prefix
+void w(const char *s) { const char *p; p = _Generic(s, const void *: (const char *) d_chr(s, 58) + 1, default: d_chr(s, 58) + 1); if (p) { d_len(p); } }
+  left: "Safe"
+ right: "Safe"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- associations_that_differ_refuse stdout ----
+
+thread 'associations_that_differ_refuse' (1293456) panicked at crates/qcore-c-gateway/tests/generic_selection.rs:167:5:
+assertion `left != right` failed: two different calls
+void w(const char *s) { const char *p; p = _Generic(s, const char *: d_chr(s, 58), default: d_chr(s, 59)); if (p) { d_len(p); } }
+  left: "Safe"
+ right: "Safe"
+
+
+failures:
+    a_cast_that_does_not_cover_the_association_refuses
+    associations_that_differ_refuse
+
+test result: FAILED. 9 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.72s
+
+error: test failed, to rerun pass `-p qcore-c-gateway --test generic_selection`
+error: 1 target failed:
+    `-p qcore-c-gateway --test generic_selection`

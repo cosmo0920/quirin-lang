@@ -3184,3 +3184,41 @@ truth remains a declared ABI premise. Admission establishes only pairwise
 field independence in a **successful spawn/join window**; it does not establish
 task failure recovery or lifetime safety. No C or reference execution is
 published. See [the bounded profile and controls](reports/ct10-source-layout/README.md).
+
+## G10. Existing C: generic selections
+
+The existing-C resource gateway reads preprocessed C. A C11 generic selection
+(§6.5.1.1) inside a function body is admitted by one route, *selection
+invariance*, over the gateway's token view (string and character literals are
+one token):
+
+```ebnf
+selection   = "_Generic", "(", control, ",", association, { ",", association }, ")" ;
+association = ( type_name | "default" ), ":", expression ;
+expression  = { "(" }, { pointer_cast }, core, { ")" } ;
+pointer_cast = "(", IDENT, { IDENT }, "*", { "*" | qualifier }, ")" ;
+qualifier   = "const" | "volatile" | "restrict" | "__restrict" | "__restrict__" ;
+core        = IDENT, "(", arguments, ")" | IDENT | other_expression ;
+```
+
+A selection is admitted only when every association's `expression` has the
+same `core` token for token after its enclosing parentheses and pointer casts
+are removed; at most one association is `default`. A cast is removed only
+when its operand is a whole parenthesised group, a direct call or a single
+name. If any cast was removed, `core` must be a direct call `IDENT ( … )`
+whose C declaration in the same unit returns an object pointer. An admitted
+selection is lowered to `core` (parenthesised unless it is a call or a
+name); its `control` is dropped, since C does not evaluate it. Selections
+nested in an association are lowered first. Every other selection is left as
+written and refuses where it did before, normally as a call to an
+uncontracted function `_Generic`.
+
+The admitted forms include glibc 2.43's C23 const-preserving macros
+(`__glibc_const_generic`: `memchr`, `strchr`, `strrchr`, `strpbrk`, `strstr`,
+`bsearch` and the wide-character searches), in any position: a statement, a
+declaration initializer, a condition, a return or a call argument. The
+lowered call then meets the ordinary classifier and its declared contract
+exactly as the same call spelled without a selection. The Clang-resolved route
+(reading the compiler's selected association) is not implemented.
+See [the card report](reports/w44-c11-generic-selection/README.md) and
+`QCore.GenericSelection`.

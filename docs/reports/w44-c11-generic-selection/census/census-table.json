@@ -1,0 +1,700 @@
+{
+ "summary": {
+  "functions_with_selections": 36,
+  "projected_functions_with_selections": 36,
+  "units_with_selections": 25,
+  "status_before": {
+   "Unknown": 35,
+   "Unsafe": 1
+  },
+  "generic_leaves_before": 14,
+  "generic_leaf_functions_before": 10,
+  "generic_leaf_functions_missing_from_census": [],
+  "refusal_kinds_at_selection_statements": {
+   "call to uncontracted function `_Generic`": 14,
+   "indirect memory access is outside the resource projection": 12,
+   "unmodeled call, aggregate or indirect access in branch condition": 56,
+   "unmodeled call, aggregate or indirect access in loop condition": 2,
+   "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+   "braced initializer, expression, or declaration is not modeled": 28,
+   "unsupported assignment expression": 1,
+   "unmodeled call, aggregate or indirect access in return expression": 2,
+   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775": 6,
+   "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774": 3
+  },
+  "selections_with_no_leaf_at_statement": 0
+ },
+ "functions": [
+  {
+   "unit": "mk_core/mk_string.c",
+   "function": "_mk_string_search",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 10,
+   "generic_leaves_before": 1,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "strstr": 1
+   },
+   "refusals_at_selection_statements": {
+    "call to uncontracted function `_Generic`": 1
+   }
+  },
+  {
+   "unit": "mk_core/mk_string.c",
+   "function": "mk_string_char_search",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 1,
+   "generic_leaves_before": 1,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "memchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "call to uncontracted function `_Generic`": 1
+   }
+  },
+  {
+   "unit": "mk_server/mk_config.c",
+   "function": "mk_config_listen_parse",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 33,
+   "generic_leaves_before": 0,
+   "selections": 3,
+   "positions": {
+    "assignment": 2,
+    "condition": 1
+   },
+   "callees": {
+    "strchr": 2,
+    "strrchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "unit": "rdaddr.c",
+   "function": "rd_addrinfo_prepare",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 16,
+   "generic_leaves_before": 0,
+   "selections": 2,
+   "positions": {
+    "assignment": 2
+   },
+   "callees": {
+    "strchr": 1,
+    "strrchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 2
+   }
+  },
+  {
+   "unit": "rddl.c",
+   "function": "rd_dl_error",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 5,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "strchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in loop condition": 1
+   }
+  },
+  {
+   "unit": "rddl.c",
+   "function": "rd_dl_open",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 8,
+   "generic_leaves_before": 2,
+   "selections": 2,
+   "positions": {
+    "assignment": 2
+   },
+   "callees": {
+    "strrchr": 2
+   },
+   "refusals_at_selection_statements": {
+    "call to uncontracted function `_Generic`": 2
+   }
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignors_init",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 18,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "strchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "ut_populate_internal_topic_metadata",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 22,
+   "generic_leaves_before": 1,
+   "selections": 1,
+   "positions": {
+    "initializer": 1
+   },
+   "callees": {
+    "bsearch": 1
+   },
+   "refusals_at_selection_statements": {
+    "call to uncontracted function `_Generic`": 1
+   }
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "verifyNumPartitionsWithRackMismatch0",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 11,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "bsearch": 1
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported assignment expression": 1
+   }
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "function": "rd_kafka_Node_new_from_brokers",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 10,
+   "generic_leaves_before": 2,
+   "selections": 2,
+   "positions": {
+    "initializer": 2
+   },
+   "callees": {
+    "bsearch": 2
+   },
+   "refusals_at_selection_statements": {
+    "call to uncontracted function `_Generic`": 2
+   }
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_ApiVersion_supported0",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 10,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "bsearch": 1
+   },
+   "refusals_at_selection_statements": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_name_parse",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 17,
+   "generic_leaves_before": 0,
+   "selections": 5,
+   "positions": {
+    "assignment": 4,
+    "initializer": 1
+   },
+   "callees": {
+    "strchr": 3,
+    "strstr": 1,
+    "strrchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 5
+   }
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_request_supported",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 6,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "bsearch": 1
+   },
+   "refusals_at_selection_statements": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "unit": "rdkafka_cert.c",
+   "function": "rd_kafka_cert_new",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 92,
+   "generic_leaves_before": 0,
+   "selections": 2,
+   "positions": {
+    "condition": 1,
+    "condition-operand": 1
+   },
+   "callees": {
+    "strstr": 2
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 2
+   }
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_set_prop",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 63,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "strchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_conf_kv_split",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 10,
+   "generic_leaves_before": 0,
+   "selections": 2,
+   "positions": {
+    "initializer": 2
+   },
+   "callees": {
+    "strchr": 2
+   },
+   "refusals_at_selection_statements": {
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_conf_validate_single",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 1,
+   "generic_leaves_before": 0,
+   "selections": 2,
+   "positions": {
+    "condition-operand": 2
+   },
+   "callees": {
+    "strchr": 2
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in return expression": 2
+   }
+  },
+  {
+   "unit": "rdkafka_feature.c",
+   "function": "rd_kafka_ApiVersion_check",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 2,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "bsearch": 1
+   },
+   "refusals_at_selection_statements": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_copy_internal",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 38,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "initializer": 1
+   },
+   "callees": {
+    "bsearch": 1
+   },
+   "refusals_at_selection_statements": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "function": "rd_kafka_populate_metadata_topic_racks",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 20,
+   "generic_leaves_before": 1,
+   "selections": 1,
+   "positions": {
+    "initializer": 1
+   },
+   "callees": {
+    "bsearch": 1
+   },
+   "refusals_at_selection_statements": {
+    "call to uncontracted function `_Generic`": 1
+   }
+  },
+  {
+   "unit": "rdkafka_metadata_cache.c",
+   "function": "rd_kafka_metadata_cache_topic_partition_get",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 10,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "bsearch": 1
+   },
+   "refusals_at_selection_statements": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "unit": "rdkafka_pattern.c",
+   "function": "rd_kafka_pattern_list_parse",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 7,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "strchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in loop condition": 1
+   }
+  },
+  {
+   "unit": "rdkafka_plugin.c",
+   "function": "rd_kafka_plugins_conf_set0",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 10,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "strchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "function": "rd_kafka_topic_assignment_state_rack_search",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 5,
+   "generic_leaves_before": 1,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "bsearch": 1
+   },
+   "refusals_at_selection_statements": {
+    "call to uncontracted function `_Generic`": 1
+   }
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "function": "rd_kafka_sasl_client_new",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 15,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "strchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_cb_canon",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 7,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "condition": 1
+   },
+   "callees": {
+    "strstr": 1
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_cb_log",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 7,
+   "generic_leaves_before": 0,
+   "selections": 2,
+   "positions": {
+    "condition": 1,
+    "condition-operand": 1
+   },
+   "callees": {
+    "strstr": 2
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 2
+   }
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_oauthbearer_unsecured_token0",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 47,
+   "generic_leaves_before": 0,
+   "selections": 4,
+   "positions": {
+    "condition": 3,
+    "condition-operand": 1
+   },
+   "callees": {
+    "strchr": 4
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 4
+   }
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "projected": true,
+   "status_before": "Unsafe",
+   "leaves_before": 42,
+   "generic_leaves_before": 2,
+   "selections": 29,
+   "positions": {
+    "assignment": 2,
+    "condition-operand": 27
+   },
+   "callees": {
+    "strchr": 29
+   },
+   "refusals_at_selection_statements": {
+    "call to uncontracted function `_Generic`": 2,
+    "braced initializer, expression, or declaration is not modeled": 27,
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775": 6,
+    "unmodeled call, aggregate or indirect access in branch condition": 27,
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774": 3
+   }
+  },
+  {
+   "unit": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_scram_get_attr",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 9,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "memchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "unit": "rdkafka_ssl.c",
+   "function": "rd_kafka_transport_ssl_handshake",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 15,
+   "generic_leaves_before": 0,
+   "selections": 4,
+   "positions": {
+    "condition": 2,
+    "condition-operand": 2
+   },
+   "callees": {
+    "strstr": 4
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 4
+   }
+  },
+  {
+   "unit": "rdkafka_ssl.c",
+   "function": "rd_kafka_transport_ssl_set_endpoint_id",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 12,
+   "generic_leaves_before": 0,
+   "selections": 2,
+   "positions": {
+    "assignment": 1,
+    "parenthesised": 1
+   },
+   "callees": {
+    "strrchr": 1,
+    "strchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 2
+   }
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "function": "rd_kafka_partition_internal_find_rack",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 4,
+   "generic_leaves_before": 1,
+   "selections": 1,
+   "positions": {
+    "initializer": 1
+   },
+   "callees": {
+    "bsearch": 1
+   },
+   "refusals_at_selection_statements": {
+    "call to uncontracted function `_Generic`": 1
+   }
+  },
+  {
+   "unit": "rdlist.c",
+   "function": "rd_list_find",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 7,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "assignment": 1
+   },
+   "callees": {
+    "bsearch": 1
+   },
+   "refusals_at_selection_statements": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "unit": "rdstring.c",
+   "function": "rd_string_render",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 26,
+   "generic_leaves_before": 2,
+   "selections": 2,
+   "positions": {
+    "assignment": 2
+   },
+   "callees": {
+    "strstr": 1,
+    "strchr": 1
+   },
+   "refusals_at_selection_statements": {
+    "call to uncontracted function `_Generic`": 2
+   }
+  },
+  {
+   "unit": "rdunittest.c",
+   "function": "rd_unittest",
+   "projected": true,
+   "status_before": "Unknown",
+   "leaves_before": 19,
+   "generic_leaves_before": 0,
+   "selections": 1,
+   "positions": {
+    "condition-operand": 1
+   },
+   "callees": {
+    "strstr": 1
+   },
+   "refusals_at_selection_statements": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  }
+ ]
+}
