@@ -1,0 +1,9 @@
+[
+ {
+  "id": "W44-PROVIDER-RESOURCE-VIEW",
+  "title": "Seven of eleven provider crates cannot be selected whole: 64 of their 111 owned modules are not resource-v1 modules",
+  "why": "Measured by card W44-QUIRIN-AUDIT-PROVIDERS (docs/reports/w44-quirin-audit-providers/README.md, section 4.1): `quirin-audit current --provider NAME` selects every module the crate owns, and the resource loader refuses a module written for another checker (lifecycle, observation, policy or allocator-profile vocabularies). Selected whole, only quirin-provider-libc, quirin-provider-mpack, quirin-provider-msgpack and qcore-provider-ctraces load; qcore-provider-chunkio (41 of 44 modules refused), qcore-provider-libevent (12 of 15), qcore-provider-librdkafka (3 of 8), quirin-provider-cfl (2 of 4), qcore-provider-cmetrics (1 of 4), quirin-provider-fluent-bit (1 of 13) and quirin-provider-shared (4 of 4) refuse, fail-closed. Probed one module at a time, exactly 47 of the 111 modules load as resource-v1, and they are exactly the 47 modules of cycle19-resource-contracts.json. Today a user must therefore name those modules as NAME:MODULE. DISCHARGE: each crate declares its resource view (a list generated into providers/contract-load-path.json by `providers/contracts.py sync` and checked by `check`, rather than inferred by trial loading), `NAME` selects that view, and a test shows the ten Cycle 19 crates selected by name load exactly the manifest's environment; or record a decision that module-level selection is the intended interface.",
+  "source": "docs/reports/w44-quirin-audit-providers/README.md",
+  "recorded_by": "W44-QUIRIN-AUDIT-PROVIDERS"
+ }
+]

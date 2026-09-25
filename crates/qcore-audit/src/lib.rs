@@ -81,6 +81,10 @@ pub struct AuditConfig {
     /// and refuses `source_contracts` (process packages, verifier host).
     #[serde(default)]
     pub mode: evidence::EvidenceMode,
+    /// Translation units analysed concurrently; a `--jobs` flag takes
+    /// precedence, and `QCORE_AUDIT_JOBS` applies only when both are absent.
+    #[serde(default)]
+    pub jobs: Option<usize>,
 }
 
 /// An explicit, declared narrowing of a multi-target compilation database.
@@ -245,6 +249,15 @@ fn verify_pinned_bytes(
 }
 
 pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
+    run_config_with_jobs(path, None)
+}
+
+/// [`run_config`] with a command-line job count (card
+/// W44-QUIRIN-AUDIT-PROVIDERS). The count is the flag, else the
+/// configuration's `jobs`, else `QCORE_AUDIT_JOBS`, else the host's available
+/// parallelism capped at 16 ([`parallel::jobs_with_precedence`]); one job is
+/// the sequential loop, and every output is the same at any count.
+pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<AuditCounts, String> {
     let path = path.canonicalize().map_err(|error| error.to_string())?;
     let base = path
         .parent()
@@ -258,6 +271,7 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
             config.schema_version
         ));
     }
+    let jobs = parallel::jobs_with_precedence(flag_jobs, config.jobs)?;
     if config.mode.is_contracts_only() && config.source_contracts.is_some() {
         return Err("a contracts-only audit admits no source-contract checks: remove `source_contracts` (process packages and verifier-host execution) or drop `mode: contracts-only`".into());
     }
@@ -423,90 +437,77 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
     let mut counts = AuditCounts::default();
     let mut source_identities = BTreeMap::new();
     let mut compile_tasks = Vec::new();
-    for (library, entries) in work {
-        for entry in entries {
-            let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
-            let canonical_file = entry
-                .file
-                .canonicalize()
-                .map_err(|error| error.to_string())?;
-            let file = canonical_file
-                .strip_prefix(&checkout)
-                .map_err(|_| "source outside selected checkout")?;
-            let file = repository_path(file);
-            let pin = profile
-                .pin_for(library)
-                .ok_or("selected source has no pin")?;
-            // This route returns a whole-run `Err(String)` rather than a report
-            // row, so it narrows the refusal to its text (REASON-CODES-B1
-            // residual: the category has nowhere to travel on a String channel).
-            verify_pinned_bytes(
-                &checkout,
-                selected_head.as_deref().unwrap_or(&pin.git_commit),
-                &entry.file,
-                source.as_bytes(),
-            )
-            .map_err(UnitRefusal::into_reason)?;
-            source_identities.insert(
-                format!("{library}/{file}"),
-                qcore_contract::profile_loader::sha256_hex(source.as_bytes()),
-            );
-            let options = compiler_options(&entry)?;
-            let unit = C11TranslationUnit {
-                source: &source,
-                include_paths: options.include_paths,
-                definitions: options.definitions,
-                preprocessor_options: options.preprocessor_options,
-                dialect: options.dialect,
-                function_scope: LegacyFunctionScope::MainSourceDefinitions,
-                input: options.input,
-            };
-            // Bind the effective preprocessing input, not just the main source
-            // bytes: a used header, a generated configuration header or an
-            // admitted macro option changes the analyzed code with the selected
-            // `.c` file untouched.
-            let prepared = qcore_c_gateway::legacy_c::prepare_translation_unit(&unit);
-            let preparation_error = prepared.validation_error().map(ToString::to_string);
-            let identity = compile_db::compile_task_identity(
-                &entry,
-                &unit,
-                match prepared.preprocessed_source() {
-                    Ok(source) => compile_db::EffectiveInput::Accepted(source),
-                    Err(_) => compile_db::EffectiveInput::Rejected(
-                        preparation_error
-                            .as_deref()
-                            .expect("rejected preparation has an error"),
-                    ),
-                },
-                &compiler,
-                task_dependencies.clone(),
-            )?;
-            compile_tasks.push(serde_json::json!({
-                "library": library, "file": file,
-                "identity_sha256": identity.digest()?, "identity": &identity,
-            }));
-            // Unit E01-F1: enumerate once, here, and hand the *same* inventory
-            // to the resource projection, the report and the source-contract
-            // route. Two independent computations of the denominator could
-            // disagree; one cannot.
-            let inventory = prepared.inventory();
-            projection::project_prepared_unit(
+    // Card W44-QUIRIN-AUDIT-PROVIDERS: every selected unit is one task, in the
+    // order the sequential loops visited them, analysed on up to `jobs`
+    // threads with W44-AUDIT-PARALLEL-UNITS's ordered fold. Console lines,
+    // report rows, tallies, source identities and compile tasks are folded in
+    // unit order, and the first error in unit order is the one returned. The
+    // source-contract route, which may dispatch a process provider, runs in
+    // the fold, one unit at a time, exactly where the loop ran it.
+    let tasks: Vec<(&String, CompileEntry)> = work
+        .into_iter()
+        .flat_map(|(library, entries)| entries.into_iter().map(move |entry| (library, entry)))
+        .collect();
+    let dispatch = parallel::heaviest_first(
+        &tasks
+            .iter()
+            .map(|(_, entry)| current_route::source_weight(entry))
+            .collect::<Vec<_>>(),
+    );
+    let retain_units = source_contracts.is_some();
+    parallel::run_ordered(
+        tasks,
+        parallel::effective_jobs(jobs),
+        Some(dispatch),
+        |(library, entry)| {
+            let mut out = String::new();
+            let result = configured_unit(ConfiguredUnit {
                 library,
-                &file,
-                &prepared,
-                &contracts,
-                PreparedAuditCertificateContext {
-                    compile_task_identity: &identity,
-                    source_profile_sha256: &source_profile_sha256,
-                },
-                &mut report,
-                &mut counts,
-            )?;
-            if let Some(audit) = &mut source_contracts {
-                audit.analyze_unit(library, &file, &unit, inventory, &profile);
+                entry: &entry,
+                checkout: &checkout,
+                profile: &profile,
+                selected_head: selected_head.as_deref(),
+                compiler: &compiler,
+                task_dependencies: &task_dependencies,
+                contracts: &contracts,
+                source_profile_sha256: &source_profile_sha256,
+                fragment: AuditReport::new(&revision),
+                retain_unit: retain_units,
+                out: &mut out,
+            });
+            (out, result.map(|products| (library, entry, products)))
+        },
+        |(out, result)| {
+            print!("{out}");
+            let (library, entry, products) = result?;
+            let UnitProducts {
+                file,
+                source_sha256,
+                compile_task,
+                report: fragment,
+                counts: tally,
+                retained,
+            } = products;
+            source_identities.insert(format!("{library}/{file}"), source_sha256);
+            compile_tasks.push(compile_task);
+            report.absorb(fragment)?;
+            counts.absorb(tally);
+            if let (Some(audit), Some((source, prepared))) = (&mut source_contracts, retained) {
+                let options = compiler_options(&entry)?;
+                let unit = C11TranslationUnit {
+                    source: &source,
+                    include_paths: options.include_paths,
+                    definitions: options.definitions,
+                    preprocessor_options: options.preprocessor_options,
+                    dialect: options.dialect,
+                    function_scope: LegacyFunctionScope::MainSourceDefinitions,
+                    input: options.input,
+                };
+                audit.analyze_unit(library, &file, &unit, prepared.inventory(), &profile);
             }
-        }
-    }
+            Ok::<(), String>(())
+        },
+    )?;
     if let Some(audit) = source_contracts {
         report.set_source_contracts(audit.finish());
     }
@@ -564,7 +565,166 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
         serde_json::to_vec_pretty(&assumptions).map_err(|error| error.to_string())?,
     )
     .map_err(|error| error.to_string())?;
+    // Card W44-QUIRIN-AUDIT-PROVIDERS: run provenance, kept out of the
+    // assumption sidecar so that sidecar stays the same at every job count.
+    current_route::write_invocation(
+        &report_path,
+        &serde_json::json!({
+            "schema_version": 1,
+            "tool": "quirin-audit",
+            "tool_version": env!("CARGO_PKG_VERSION"),
+            "build_profile": if cfg!(debug_assertions) { "dev" } else { "release" },
+            "configuration": path,
+            "configuration_sha256": qcore_contract::profile_loader::sha256_hex(
+                &fs::read(&path).map_err(|error| error.to_string())?,
+            ),
+            "jobs": {
+                "requested": jobs,
+                "effective": parallel::effective_jobs(jobs),
+                "source": if flag_jobs.is_some() { "command_line" }
+                    else if config.jobs.is_some() { "configuration" }
+                    else if std::env::var_os(parallel::JOBS_VARIABLE).is_some() { "environment" }
+                    else { "default" },
+            },
+            "environment": {
+                "QCORE_CLANG": std::env::var("QCORE_CLANG").ok(),
+                "QCORE_AUDIT_JOBS": std::env::var(parallel::JOBS_VARIABLE).ok(),
+            },
+            "clang": compiler,
+            "scope": "invocation provenance of this run; not an input to any verdict",
+        }),
+    )?;
     Ok(counts)
+}
+
+/// One configured unit's inputs (card W44-QUIRIN-AUDIT-PROVIDERS).
+struct ConfiguredUnit<'a> {
+    library: &'a str,
+    entry: &'a CompileEntry,
+    checkout: &'a Path,
+    profile: &'a LoadedProfile,
+    selected_head: Option<&'a str>,
+    compiler: &'a qcore_c_gateway::ClangIdentity,
+    task_dependencies: &'a BTreeMap<String, String>,
+    contracts: &'a qcore_schemas::contract::ResourceContracts,
+    source_profile_sha256: &'a str,
+    fragment: AuditReport,
+    retain_unit: bool,
+    out: &'a mut String,
+}
+
+/// What one configured unit contributes, folded in unit order.
+struct UnitProducts {
+    file: String,
+    source_sha256: String,
+    compile_task: serde_json::Value,
+    report: AuditReport,
+    counts: AuditCounts,
+    /// The source and its preparation, kept for the source-contract route.
+    retained: Option<(String, qcore_c_gateway::legacy_c::PreparedTranslationUnit)>,
+}
+
+/// The body of the configured route's unit loop, unchanged, recording into
+/// its own report fragment, tally and console buffer.
+fn configured_unit(unit_input: ConfiguredUnit<'_>) -> Result<UnitProducts, String> {
+    let ConfiguredUnit {
+        library,
+        entry,
+        checkout,
+        profile,
+        selected_head,
+        compiler,
+        task_dependencies,
+        contracts,
+        source_profile_sha256,
+        fragment,
+        retain_unit,
+        out,
+    } = unit_input;
+    let mut report = fragment;
+    let mut counts = AuditCounts::default();
+    let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
+    let canonical_file = entry
+        .file
+        .canonicalize()
+        .map_err(|error| error.to_string())?;
+    let file = canonical_file
+        .strip_prefix(checkout)
+        .map_err(|_| "source outside selected checkout")?;
+    let file = repository_path(file);
+    let pin = profile
+        .pin_for(library)
+        .ok_or("selected source has no pin")?;
+    // This route returns a whole-run `Err(String)` rather than a report
+    // row, so it narrows the refusal to its text (REASON-CODES-B1
+    // residual: the category has nowhere to travel on a String channel).
+    verify_pinned_bytes(
+        checkout,
+        selected_head.unwrap_or(&pin.git_commit),
+        &entry.file,
+        source.as_bytes(),
+    )
+    .map_err(UnitRefusal::into_reason)?;
+    let source_sha256 = qcore_contract::profile_loader::sha256_hex(source.as_bytes());
+    let options = compiler_options(entry)?;
+    let unit = C11TranslationUnit {
+        source: &source,
+        include_paths: options.include_paths,
+        definitions: options.definitions,
+        preprocessor_options: options.preprocessor_options,
+        dialect: options.dialect,
+        function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        input: options.input,
+    };
+    // Bind the effective preprocessing input, not just the main source
+    // bytes: a used header, a generated configuration header or an
+    // admitted macro option changes the analyzed code with the selected
+    // `.c` file untouched.
+    let prepared = qcore_c_gateway::legacy_c::prepare_translation_unit(&unit);
+    let preparation_error = prepared.validation_error().map(ToString::to_string);
+    let identity = compile_db::compile_task_identity(
+        entry,
+        &unit,
+        match prepared.preprocessed_source() {
+            Ok(source) => compile_db::EffectiveInput::Accepted(source),
+            Err(_) => compile_db::EffectiveInput::Rejected(
+                preparation_error
+                    .as_deref()
+                    .expect("rejected preparation has an error"),
+            ),
+        },
+        compiler,
+        task_dependencies.clone(),
+    )?;
+    let compile_task = serde_json::json!({
+        "library": library, "file": file,
+        "identity_sha256": identity.digest()?, "identity": &identity,
+    });
+    // Unit E01-F1: enumerate once, here, and hand the *same* inventory
+    // to the resource projection, the report and the source-contract
+    // route. Two independent computations of the denominator could
+    // disagree; one cannot.
+    projection::project_prepared_unit_into(
+        library,
+        &file,
+        &prepared,
+        contracts,
+        PreparedAuditCertificateContext {
+            compile_task_identity: &identity,
+            source_profile_sha256,
+        },
+        &mut report,
+        &mut counts,
+        out,
+    )?;
+    Ok(UnitProducts {
+        file,
+        source_sha256,
+        compile_task,
+        report,
+        counts,
+        retained: retain_unit.then(|| (source.clone(), prepared)),
+    })
 }
 
 /// Compatibility adapters can select named profile libraries and preserve

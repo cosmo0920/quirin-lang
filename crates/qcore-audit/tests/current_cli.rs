@@ -58,6 +58,22 @@ const SOURCE: &str = "unsigned char *alloc(void);\n\
 void dispose(unsigned char *p);\n\
 void subject(void) { unsigned char *p = alloc(); dispose(p); }\n";
 
+/// The fixture's translation units: `unit.c` and five more, some of which
+/// release on one path only, so a parallel fold has distinct rows to order.
+fn units() -> Vec<(String, String)> {
+    let mut units = vec![("src/unit.c".to_owned(), SOURCE.to_owned())];
+    for index in 0..5 {
+        units.push((
+            format!("src/extra_{index}.c"),
+            format!(
+                "unsigned char *alloc(void);\nvoid dispose(unsigned char *p);\n\
+                 void extra_{index}(int c) {{ unsigned char *p = alloc(); if (c > {index}) dispose(p); }}\n"
+            ),
+        ));
+    }
+    units
+}
+
 struct Fixture(PathBuf);
 
 fn git(directory: &Path, args: &[&str]) {
@@ -85,9 +101,11 @@ impl Fixture {
         ));
         let checkout = root.join("checkout");
         fs::create_dir_all(checkout.join("src")).unwrap();
-        fs::write(checkout.join("src/unit.c"), SOURCE).unwrap();
+        for (path, text) in units() {
+            fs::write(checkout.join(path), text).unwrap();
+        }
         git(&checkout, &["init", "--quiet"]);
-        git(&checkout, &["add", "src/unit.c"]);
+        git(&checkout, &["add", "src"]);
         git(
             &checkout,
             &[
@@ -148,7 +166,7 @@ impl Fixture {
         fs::create_dir_all(&profile).unwrap();
         let library = json!({
             "pin":"sample", "source_roots":[{"root":"src","selection":"top_level"}],
-            "audited_files":[{"path":"src/unit.c","sha256":sha256_hex(SOURCE.as_bytes())}],
+            "audited_files": units().iter().map(|(path, text)| json!({"path": path, "sha256": sha256_hex(text.as_bytes())})).collect::<Vec<_>>(),
             "source_witnesses":[], "permitted_mechanisms":[], "operation_summaries":{},
             "api_dispositions":{}, "accepted_builds":[], "required_evidence":[], "typed_import":null,
             "callback_summaries":{}, "boolean_field_models":[], "provider":null,
@@ -167,10 +185,15 @@ impl Fixture {
         .unwrap();
         fs::write(
             root.join("compile_commands.json"),
-            json!([{
-                "directory": checkout, "file": "src/unit.c",
-                "arguments": [driver, "-std=c11", "-c", "src/unit.c", "-o", "unit.o"],
-            }])
+            json!(
+                units()
+                    .iter()
+                    .map(|(path, _)| json!({
+                        "directory": checkout, "file": path,
+                        "arguments": [driver, "-std=c11", "-c", path, "-o", path.replace(".c", ".o")],
+                    }))
+                    .collect::<Vec<_>>()
+            )
             .to_string(),
         )
         .unwrap();
@@ -312,7 +335,7 @@ fn command_line_configuration_and_both_forms_produce_the_same_run() {
     assert_eq!(sidecars[0], sidecars[1]);
     assert_eq!(sidecars[0], sidecars[2]);
     let units = fixture.read("cli/report.json")["units"].clone();
-    assert_eq!(units.as_array().unwrap().len(), 1);
+    assert_eq!(units.as_array().unwrap().len(), 6);
 }
 
 #[test]
@@ -676,4 +699,149 @@ fn the_plain_route_takes_providers_and_refuses_contracts_only_source_contracts()
             .contains("supersedes")
     );
     assert_eq!(sidecar["evidence"], report["evidence"]);
+}
+
+/// The job count: `--jobs` over the configuration's `jobs` over
+/// QCORE_AUDIT_JOBS; one job is the sequential loop, and every output but the
+/// invocation record is byte-identical at any count, on both routes.
+#[test]
+fn jobs_resolve_by_precedence_and_never_change_an_output() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang, true);
+    let selection = strings(&[
+        "--load-path",
+        "providers/contract-load-path.json",
+        "--provider",
+        "quirin-provider-alpha",
+    ]);
+    let config = fixture.config(
+        "jobs.json",
+        &json!({"schema_version": 1, "jobs": 3, "mode": "contracts-only"}),
+    );
+    let run = |out: &str, flag: Option<&str>, environment: Option<&str>| {
+        let mut args: Vec<String> = fixture
+            .base_args(out)
+            .into_iter()
+            .filter(|argument| argument != "--jobs" && argument != "1")
+            .collect();
+        args.extend(selection.clone());
+        args.extend(strings(&["--config", &config]));
+        if let Some(flag) = flag {
+            args.extend(strings(&["--jobs", flag]));
+        }
+        let mut command = Command::new(env!("CARGO_BIN_EXE_quirin-audit"));
+        command.current_dir(&fixture.0).arg("current").args(&args);
+        command.env_remove("QCORE_AUDIT_JOBS");
+        if let Some(value) = environment {
+            command.env("QCORE_AUDIT_JOBS", value);
+        }
+        succeeded(&command.output().unwrap());
+        fixture.read(&format!("{out}/report.invocation.json"))["jobs"].clone()
+    };
+    assert_eq!(
+        run("flag", Some("1"), Some("5")),
+        json!({"requested": 1, "effective": 1, "source": "command_line"})
+    );
+    assert_eq!(
+        run("config", None, Some("5")),
+        json!({"requested": 3, "effective": 3, "source": "configuration"})
+    );
+    assert_eq!(
+        run("wide", Some("6"), None),
+        json!({"requested": 6, "effective": 6, "source": "command_line"})
+    );
+    for name in ["report.json", "report.contracts.json"] {
+        let sequential = fs::read(fixture.0.join("flag").join(name)).unwrap();
+        assert_eq!(
+            fs::read(fixture.0.join("config").join(name)).unwrap(),
+            sequential,
+            "{name}"
+        );
+        assert_eq!(
+            fs::read(fixture.0.join("wide").join(name)).unwrap(),
+            sequential,
+            "{name}"
+        );
+    }
+    assert_eq!(
+        fixture.read("wide/report.json")["units"]
+            .as_array()
+            .unwrap()
+            .len(),
+        6
+    );
+    // The environment applies when neither the flag nor the configuration does.
+    let bare = fixture.config("bare.json", &json!({"schema_version": 1}));
+    let mut args: Vec<String> = fixture
+        .base_args("environment")
+        .into_iter()
+        .filter(|argument| argument != "--jobs" && argument != "1")
+        .collect();
+    args.extend(selection.clone());
+    args.extend(strings(&["--config", &bare]));
+    let output = Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
+        .current_dir(&fixture.0)
+        .arg("current")
+        .args(&args)
+        .env("QCORE_AUDIT_JOBS", "2")
+        .output()
+        .unwrap();
+    succeeded(&output);
+    assert_eq!(
+        fixture.read("environment/report.invocation.json")["jobs"],
+        json!({"requested": 2, "effective": 2, "source": "environment"})
+    );
+    // A zero in the configuration is an error, not a fallback.
+    let zero = fixture.config("zero.json", &json!({"schema_version": 1, "jobs": 0}));
+    let mut args = fixture.base_args("zero");
+    args.retain(|argument| argument != "--jobs" && argument != "1");
+    args.extend(selection.clone());
+    args.extend(strings(&["--config", &zero]));
+    refused(&fixture.run(&args), "positive integer");
+
+    // The plain route: the same fold, the same precedence.
+    let plain = |out: &str, jobs_field: Option<usize>, flag: Option<&str>| {
+        let mut value = json!({
+            "schema_version": 1, "profile_directory": "profiles/sample", "checkout": "checkout",
+            "compile_database": "compile_commands.json", "libraries": ["sample"],
+            "report": format!("{out}/report.json"), "source_revision_policy": "checkout_head",
+            "load_path": "providers/contract-load-path.json",
+            "providers": ["quirin-provider-alpha"],
+        });
+        if let Some(jobs) = jobs_field {
+            value["jobs"] = json!(jobs);
+        }
+        let config = fixture.config(&format!("{out}.json"), &value);
+        let mut command = Command::new(env!("CARGO_BIN_EXE_quirin-audit"));
+        command
+            .current_dir(&fixture.0)
+            .env_remove("QCORE_AUDIT_JOBS");
+        if let Some(flag) = flag {
+            command.args(["--jobs", flag]);
+        }
+        succeeded(&command.arg(fixture.0.join(config)).output().unwrap());
+        fixture.read(&format!("{out}/report.invocation.json"))["jobs"].clone()
+    };
+    assert_eq!(
+        plain("plain1", Some(4), Some("1")),
+        json!({"requested": 1, "effective": 1, "source": "command_line"})
+    );
+    assert_eq!(
+        plain("plain4", Some(4), None),
+        json!({"requested": 4, "effective": 4, "source": "configuration"})
+    );
+    for name in ["report.json", "report.assumptions.json"] {
+        assert_eq!(
+            fs::read(fixture.0.join("plain1").join(name)).unwrap(),
+            fs::read(fixture.0.join("plain4").join(name)).unwrap(),
+            "{name}"
+        );
+    }
+    assert_eq!(
+        fixture.read("plain4/report.json")["units"]
+            .as_array()
+            .unwrap()
+            .len(),
+        6
+    );
 }

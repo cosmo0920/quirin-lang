@@ -7,7 +7,10 @@
 //! declare the same value — for providers, the same resolved module selection
 //! — or the command refuses. Nothing is merged or overridden, so a run is
 //! described completely by either form, and the record names which forms
-//! declared the provider selection.
+//! declared the provider selection. The one exception is the job count, which
+//! changes wall time only: `--jobs` over the configuration's `jobs` over
+//! `QCORE_AUDIT_JOBS` over the capped host default
+//! ([`crate::parallel::jobs_with_precedence`]).
 //!
 //! **Contracts.** Exactly one source: a provider selection (`--provider` /
 //! `providers`, resolved on `--load-path` / `load_path`), an explicit manifest
@@ -291,11 +294,16 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         configuration.quirin_providers_only,
     )?
     .unwrap_or(false);
-    let jobs = match one("jobs", command_line.jobs, configuration.jobs)? {
-        Some(0) => return Err("jobs must be a positive integer".into()),
-        Some(jobs) => jobs,
-        None => crate::parallel::resolve_jobs(None)?,
+    let jobs_source = if command_line.jobs.is_some() {
+        "command_line"
+    } else if configuration.jobs.is_some() {
+        "configuration"
+    } else if std::env::var_os(crate::parallel::JOBS_VARIABLE).is_some() {
+        "environment"
+    } else {
+        "default"
     };
+    let jobs = crate::parallel::jobs_with_precedence(command_line.jobs, configuration.jobs)?;
     let effective_jobs = crate::parallel::effective_jobs(jobs);
     let profile = load_profile_directory(&profile_directory).map_err(|error| error.to_string())?;
     let profile_manifest = profile.resource_contract_manifest_path();
@@ -411,7 +419,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
                 "manifest_sha256": sha256_hex(contracts.manifest_text().as_bytes()),
             },
             "mode": mode,
-            "jobs": {"requested": jobs, "effective": effective_jobs},
+            "jobs": {"requested": jobs, "effective": effective_jobs, "source": jobs_source},
             "environment": {
                 "QCORE_CLANG": std::env::var("QCORE_CLANG").ok(),
                 "QCORE_AUDIT_JOBS": std::env::var(crate::parallel::JOBS_VARIABLE).ok(),
