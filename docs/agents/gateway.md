@@ -335,14 +335,17 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     of a complete `struct` reached from a root the declarator reader resolved,
     writing that member's place and no name. Its flow premises fall back to
     the gate's refusal byte for byte, so a store that stays refused still
-    hands on. Three premises are load-bearing and must not be relaxed without
-    a new measurement: a formal's pointer is never a stored value (a derived
+    hands on. It admits only stores that move no custody: a scalar, null,
+    literal or never-bound value. Three premises are load-bearing and must not
+    be relaxed without a new measurement: a value bound to any tracked
+    identity keeps the refusal, including an owned one stored into a record
+    the caller reaches (no summary mode states that transfer, so a caller's
+    `Safe` would rest on it unseen; the pins of O04-B08 and W44-LEAK-PIN-AUDIT
+    hold it, and an escape model produced `release_after_escape` artifacts in
+    `cio_file_open`); a formal's pointer is never a stored value (a derived
     summary would call it borrowed while the callee linked it into a record:
-    `cfl_list_add`, `mk_list_init`); an owned identity escapes only through a
-    formal the body never writes or address-takes, and every name of it is
-    then unknown (a later release is unresolved, never `release_after_escape`:
-    `cio_file_open`); a statement reading a tracked descriptor never reaches
-    the rule. [Report](../reports/w45-sub-object-stores/README.md).
+    `cfl_list_add`, `mk_list_init`); a statement reading a tracked descriptor
+    never reaches the rule. [Report](../reports/w45-sub-object-stores/README.md).
 
 <a id="constraint-6"></a>
 
