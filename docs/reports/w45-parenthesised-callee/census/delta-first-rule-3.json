@@ -1,0 +1,730 @@
+{
+ "added_leaves": 44,
+ "categories": {
+  "after": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3537,
+   "unsupported": 42738
+  },
+  "before": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3568,
+   "unsupported": 42694
+  }
+ },
+ "function_moves": [],
+ "functions": {
+  "after": {
+   "Safe": 390,
+   "Unknown": 4432,
+   "Unsafe": 12
+  },
+  "before": {
+   "Safe": 390,
+   "Unknown": 4432,
+   "Unsafe": 12
+  }
+ },
+ "leaves_by_function": [
+  {
+   "added": [
+    [
+     3518,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_buf_destroy",
+   "removed": [
+    [
+     3518,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdbuf.c"
+  },
+  {
+   "added": [
+    [
+     21810,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_destroy_internal",
+   "removed": [],
+   "unit": "rdkafka.c"
+  },
+  {
+   "added": [
+    [
+     21329,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_broker_bufq_purge_by_toppar",
+   "removed": [],
+   "unit": "rdkafka_broker.c"
+  },
+  {
+   "added": [
+    [
+     21355,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_broker_bufq_timeout_scan",
+   "removed": [],
+   "unit": "rdkafka_broker.c"
+  },
+  {
+   "added": [
+    [
+     22880,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_broker_consumer_toppars_serve",
+   "removed": [],
+   "unit": "rdkafka_broker.c"
+  },
+  {
+   "added": [
+    [
+     19772,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_bufq_connection_reset",
+   "removed": [],
+   "unit": "rdkafka_buf.c"
+  },
+  {
+   "added": [
+    [
+     19762,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_bufq_purge",
+   "removed": [],
+   "unit": "rdkafka_buf.c"
+  },
+  {
+   "added": [
+    [
+     20215,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_coord_cache_evict",
+   "removed": [
+    [
+     20215,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_coord.c"
+  },
+  {
+   "added": [
+    [
+     20461,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_coord_rkb_monitor_cb",
+   "removed": [
+    [
+     20461,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_coord.c"
+  },
+  {
+   "added": [
+    [
+     20200,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_metadata_cache_purge_all_hints",
+   "removed": [],
+   "unit": "rdkafka_metadata_cache.c"
+  },
+  {
+   "added": [
+    [
+     22271,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_broker_connections_write_out",
+   "removed": [
+    [
+     22271,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock.c"
+  },
+  {
+   "added": [
+    [
+     23161,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_cluster_cmd",
+   "removed": [
+    [
+     23161,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock.c"
+  },
+  {
+   "added": [
+    [
+     22647,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_coord_remove",
+   "removed": [
+    [
+     22647,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock.c"
+  },
+  {
+   "added": [
+    [
+     21833,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ],
+    [
+     21835,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ],
+    [
+     21837,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ],
+    [
+     21840,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ],
+    [
+     21844,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_partition_destroy",
+   "removed": [
+    [
+     21833,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ],
+    [
+     21835,
+     "unknown_alias",
+     "unresolved resource identity `tmpcoff`"
+    ],
+    [
+     21837,
+     "unknown_alias",
+     "unresolved resource identity `tmp_mpart_leader`"
+    ],
+    [
+     21840,
+     "unknown_alias",
+     "unresolved resource identity `tmp_mabort`"
+    ],
+    [
+     21844,
+     "unknown_alias",
+     "unresolved resource identity `tmp_errstack`"
+    ]
+   ],
+   "unit": "rdkafka_mock.c"
+  },
+  {
+   "added": [
+    [
+     21492,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_txn_partitions_clear",
+   "removed": [
+    [
+     21492,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock.c"
+  },
+  {
+   "added": [
+    [
+     21085,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_cgrp_classic_session_tmr_cb",
+   "removed": [
+    [
+     21085,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock_cgrp.c"
+  },
+  {
+   "added": [
+    [
+     21729,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_cgrp_consumer_session_tmr_cb",
+   "removed": [
+    [
+     21729,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock_cgrp.c"
+  },
+  {
+   "added": [
+    [
+     21146,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_cgrps_classic_connection_closed",
+   "removed": [
+    [
+     21146,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock_cgrp.c"
+  },
+  {
+   "added": [
+    [
+     21794,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_cgrps_consumer_connection_closed",
+   "removed": [
+    [
+     21794,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock_cgrp.c"
+  },
+  {
+   "added": [
+    [
+     24928,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "removed": [
+    [
+     24928,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock_handlers.c"
+  },
+  {
+   "added": [
+    [
+     24276,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_sgrp_partmeta_get",
+   "removed": [
+    [
+     24276,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock_handlers.c"
+  },
+  {
+   "added": [
+    [
+     24455,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_sgrp_partmeta_prune_archived",
+   "removed": [
+    [
+     24455,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock_handlers.c"
+  },
+  {
+   "added": [
+    [
+     22475,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_sgrp_expire_locks",
+   "removed": [
+    [
+     22475,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock_sharegrp.c"
+  },
+  {
+   "added": [
+    [
+     22493,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_sgrp_fetch_session_tmr_cb",
+   "removed": [
+    [
+     22493,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock_sharegrp.c"
+  },
+  {
+   "added": [
+    [
+     22458,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_sgrp_release_session_locks",
+   "removed": [
+    [
+     22458,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock_sharegrp.c"
+  },
+  {
+   "added": [
+    [
+     21971,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_sharegroup_session_tmr_cb",
+   "removed": [
+    [
+     21971,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock_sharegrp.c"
+  },
+  {
+   "added": [
+    [
+     22524,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_mock_sharegrps_node_connection_closed",
+   "removed": [
+    [
+     22524,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_mock_sharegrp.c"
+  },
+  {
+   "added": [
+    [
+     20289,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_msgq_age_scan",
+   "removed": [
+    [
+     20289,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_msg.c"
+  },
+  {
+   "added": [
+    [
+     20974,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "ut_rd_kafka_msgq_purge",
+   "removed": [
+    [
+     20974,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_msg.c"
+  },
+  {
+   "added": [
+    [
+     20710,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_retry_msgq",
+   "removed": [
+    [
+     20710,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_partition.c"
+  },
+  {
+   "added": [
+    [
+     19609,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_pattern_list_remove",
+   "removed": [
+    [
+     19609,
+     "unknown_alias",
+     "unresolved resource identity `rkpat_tmp`"
+    ]
+   ],
+   "unit": "rdkafka_pattern.c"
+  },
+  {
+   "added": [
+    [
+     21960,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "balance",
+   "removed": [],
+   "unit": "rdkafka_sticky_assignor.c"
+  },
+  {
+   "added": [
+    [
+     22317,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_sticky_assignor_assign_cb",
+   "removed": [],
+   "unit": "rdkafka_sticky_assignor.c"
+  },
+  {
+   "added": [
+    [
+     20511,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_topic_assign_uas",
+   "removed": [
+    [
+     20511,
+     "unknown_alias",
+     "unresolved resource identity `tmp`"
+    ]
+   ],
+   "unit": "rdkafka_topic.c"
+  },
+  {
+   "added": [
+    [
+     19890,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_topic_destroy_final",
+   "removed": [
+    [
+     19890,
+     "unknown_alias",
+     "unresolved resource identity `partmsgid_tmp`"
+    ]
+   ],
+   "unit": "rdkafka_topic.c"
+  },
+  {
+   "added": [
+    [
+     20843,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_txn_clear_partitions_flag",
+   "removed": [],
+   "unit": "rdkafka_txnmgr.c"
+  },
+  {
+   "added": [
+    [
+     20761,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_kafka_txn_handle_AddPartitionsToTxn",
+   "removed": [],
+   "unit": "rdkafka_txnmgr.c"
+  },
+  {
+   "added": [
+    [
+     3038,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "rd_map_copy",
+   "removed": [],
+   "unit": "rdmap.c"
+  },
+  {
+   "added": [
+    [
+     3569,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "unittest_untyped_map",
+   "removed": [],
+   "unit": "rdmap.c"
+  },
+  {
+   "added": [
+    [
+     20324,
+     "unsupported",
+     "for-loop clause with a call or grouping is not classified from its stripped spelling"
+    ]
+   ],
+   "function": "ut_tq_find_prev_pos",
+   "removed": [
+    [
+     20324,
+     "unknown_alias",
+     "unresolved resource identity `e`"
+    ]
+   ],
+   "unit": "rdunittest.c"
+  }
+ ],
+ "removed_leaves": 31,
+ "unit_moves": [],
+ "units": {
+  "after": {
+   "Safe": 4,
+   "Unknown": 167,
+   "Unsafe": 10,
+   "data_only": 4
+  },
+  "before": {
+   "Safe": 4,
+   "Unknown": 167,
+   "Unsafe": 10,
+   "data_only": 4
+  }
+ }
+}
