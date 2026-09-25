@@ -8,6 +8,12 @@ Both also maintain `contract-load-path.json`: one record per
 metadata` and the crate's `NAMESPACE` and `PUBLISHED` constants, with every
 published module's SHA-256 pinned; and a provider inventory's `includes`
 pins, resolved on that load path.
+Each load-path crate record also carries its `resource_view` (card
+W44-PROVIDER-RESOURCE-VIEW): the owned modules the resource-contract loader
+accepts, which `quirin-audit --provider NAME` selects. `sync` generates it by
+running the loader (`cargo run -p qcore-audit --example
+provider_resource_views`); `check` recomputes it and refuses a view that
+declares a module the loader refuses or omits one it accepts.
 The retired ``contract/qcore`` compatibility tree is refused so it cannot
 silently become a second source of provider contracts again.
 """
@@ -223,17 +229,101 @@ def include_pins(contracts, load_path, root=ROOT):
     return dict(sorted(pins.items()))
 
 
-def maintain_load_path(root=ROOT, sync=False, metadata=None):
-    """Write (`sync`) or compare (`check`) the load-path manifest. Returns it."""
+# Card W44-PROVIDER-RESOURCE-VIEW: each crate's resource view is what the
+# resource-contract loader itself accepts, so it is computed by the loader and
+# never listed by hand. The probe is `quirin-audit`'s own selection and
+# loader (`qcore_audit::providers::probe_resource_views`), built from the
+# repository workspace that contains this providers workspace.
+RESOURCE_VIEW = "resource_view"
+
+
+def loader_resource_views(root, load_path_file):
+    """The loader's resource view of every crate on `load_path_file`:
+    `{crate: [module, ...]}`, sorted owned modules. Runs the probe example in
+    the repository workspace; any failure of the probe is an error, never an
+    empty view."""
+    workspace = Path(root).resolve().parent / "Cargo.toml"
+    command = ["cargo", "run", "--quiet", "--offline", "--locked", "--manifest-path",
+               str(workspace), "-p", "qcore-audit", "--example", "provider_resource_views",
+               "--", str(Path(load_path_file).resolve())]
+    completed = subprocess.run(command, capture_output=True, text=True)
+    if completed.returncode != 0:
+        raise ValueError(f"resource view probe failed (exit {completed.returncode}): "
+                         f"{completed.stderr.strip()}")
+    probe = json.loads(completed.stdout)
+    return {name: record[RESOURCE_VIEW] for name, record in probe["crates"].items()}
+
+
+def with_resource_views(load_path, views):
+    """`load_path` with each crate's `resource_view` from `views`, validated:
+    one view per crate, sorted, unique and owned."""
+    crates = {record["name"]: record for record in load_path["crates"]}
+    if set(views) != set(crates):
+        raise ValueError(f"resource view probe names crates {sorted(views)}, "
+                         f"not the load path's {sorted(crates)}")
+    result = {"schema_version": load_path["schema_version"], "crates": []}
+    for record in load_path["crates"]:
+        view = list(views[record["name"]])
+        if view != sorted(set(view)) or not set(view) <= set(record["modules"]):
+            raise ValueError(f"{record['name']}: resource view {view} is not sorted, unique and owned")
+        result["crates"].append({**record, RESOURCE_VIEW: view})
+    return result
+
+
+def view_difference(declared, computed):
+    """Why a declared view differs from the loader's: per crate, the declared
+    modules the loader refuses and the accepted modules the view omits."""
+    reasons = []
+    computed_views = {record["name"]: record.get(RESOURCE_VIEW) for record in computed["crates"]}
+    for record in declared.get("crates", []):
+        expected = computed_views.get(record["name"])
+        if expected is None:
+            continue
+        view = record.get(RESOURCE_VIEW)
+        if view is None:
+            reasons.append(f"{record['name']} declares no resource view")
+            continue
+        refused = sorted(set(view) - set(expected))
+        omitted = sorted(set(expected) - set(view))
+        if refused:
+            reasons.append(f"{record['name']} declares modules the resource loader refuses: {refused}")
+        if omitted:
+            reasons.append(f"{record['name']} omits modules the resource loader accepts: {omitted}")
+        if not refused and not omitted and view != expected:
+            reasons.append(f"{record['name']}'s resource view is not sorted and unique")
+    return reasons
+
+
+def maintain_load_path(root=ROOT, sync=False, metadata=None, views=None):
+    """Write (`sync`) or compare (`check`) the load-path manifest, resource
+    views included. Returns it. `views(root, load_path_file)` computes the
+    views; the default runs the resource loader (`loader_resource_views`)."""
     root = Path(root)
+    views = loader_resource_views if views is None else views
     load_path = load_path_manifest(root, metadata)
     load_path_file = root / LOAD_PATH
     if load_path_file.is_symlink():
         raise ValueError(f"symbolic-link load-path manifest: {load_path_file}")
     if sync:
+        # The probe reads the regenerated load path; the views it computes do
+        # not depend on views already declared.
         load_path_file.write_text(json.dumps(load_path, indent=2) + "\n")
-    elif not load_path_file.is_file() or json.loads(load_path_file.read_text()) != load_path:
+        load_path = with_resource_views(load_path, views(root, load_path_file))
+        load_path_file.write_text(json.dumps(load_path, indent=2) + "\n")
+        return load_path
+    if not load_path_file.is_file():
         raise ValueError(f"stale contract load-path manifest: {load_path_file}")
+    declared = json.loads(load_path_file.read_text())
+    stripped = {**declared, "crates": [
+        {key: value for key, value in record.items() if key != RESOURCE_VIEW}
+        for record in declared.get("crates", [])]}
+    if stripped != load_path:
+        raise ValueError(f"stale contract load-path manifest: {load_path_file}")
+    load_path = with_resource_views(load_path, views(root, load_path_file))
+    if declared != load_path:
+        reasons = "; ".join(view_difference(declared, load_path)) or "resource views differ"
+        raise ValueError(f"stale resource view in {load_path_file}: {reasons}; "
+                         "run `python3 providers/contracts.py sync`")
     return load_path
 
 
@@ -298,7 +388,8 @@ def main():
         "total_contracts": sum(r["contracts"] for r in rows),
         "load_path": [{"crate": c["name"], "namespace": c["namespace"], "version": c["version"],
                        "dependencies": c["dependencies"], "modules": len(c["modules"]),
-                       "published": sorted(c["published"])} for c in load_path["crates"]],
+                       "published": sorted(c["published"]),
+                       "resource_view": len(c[RESOURCE_VIEW])} for c in load_path["crates"]],
     }, indent=2))
 
 

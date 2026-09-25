@@ -3,9 +3,21 @@
 //! A provider is a `quirin-provider-*` or `qcore-provider-*` crate on the
 //! published contract load path (`providers/contract-load-path.json`), read
 //! as **data**: this crate links no provider. A selection entry is either
-//! `NAME` — every module the crate owns, in the load path's order — or
+//! `NAME` — the crate's declared **resource view** (card
+//! **W44-PROVIDER-RESOURCE-VIEW**): the owned modules the resource-contract
+//! loader accepts, generated into the load path by `providers/contracts.py
+//! sync` and checked by `check` against [`probe_resource_views`] — or
 //! `NAME:MODULE`, one owned module, spelled exactly like an `#include`
-//! target. Entries keep their order; a module selected twice refuses.
+//! target. Entries keep their order; a module selected twice refuses. A crate
+//! whose load-path record declares no view refuses as a whole-crate entry; a
+//! crate whose view is empty contributes no module, and a selection that
+//! resolves to no module refuses.
+//!
+//! **All loaded** ([`resolve_all_loaded`]): in contracts-only mode, with no
+//! selection and no explicit manifest, every crate on the load path is
+//! selected whole, in load-path order. This is the one default provider set,
+//! recorded as `"selection": "all-loaded"`; it exists only in contracts-only
+//! mode, and an explicit selection narrows it.
 //!
 //! Resolution is total-or-refuse. The load path itself is validated first
 //! (namespace derivation and collisions, dependency cycles, missing
@@ -50,6 +62,8 @@ use serde_json::{Value, json};
 pub enum SelectionSource {
     CommandLine,
     Configuration,
+    /// The contracts-only all-loaded default: no form declared a selection.
+    Default,
 }
 
 impl SelectionSource {
@@ -57,6 +71,7 @@ impl SelectionSource {
         match self {
             Self::CommandLine => "command_line",
             Self::Configuration => "configuration",
+            Self::Default => "default",
         }
     }
 }
@@ -72,9 +87,30 @@ pub struct SelectedModule {
     pub uses_inclusion: bool,
 }
 
+/// How a selection was made: named entries, or every crate on the load path
+/// (the contracts-only default).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SelectionKind {
+    Explicit,
+    AllLoaded,
+}
+
+impl SelectionKind {
+    /// The recorded spelling (`selection` in the sidecar and the invocation
+    /// record).
+    #[must_use]
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Explicit => "explicit",
+            Self::AllLoaded => "all-loaded",
+        }
+    }
+}
+
 /// A resolved provider selection: its lowered manifest and its record.
 #[derive(Clone, Debug)]
 pub struct ResolvedProviders {
+    kind: SelectionKind,
     load_path: PathBuf,
     entries: Vec<String>,
     modules: Vec<SelectedModule>,
@@ -94,6 +130,7 @@ struct ClosureCrate {
     role: &'static str,
     dependencies: Vec<String>,
     contracts: String,
+    resource_view: Option<Vec<String>>,
     selected_modules: BTreeMap<String, String>,
     published: BTreeMap<String, String>,
 }
@@ -175,7 +212,20 @@ pub fn resolve_providers(
             )
         })?;
         let wanted: Vec<&String> = match module {
-            None => krate.modules.keys().collect(),
+            None => manifest
+                .resource_views
+                .get(crate_name)
+                .ok_or_else(|| {
+                    format!(
+                        "provider `{crate_name}` declares no resource view on the contract load \
+                         path {}, so it cannot be selected whole; regenerate the load path \
+                         (`python3 providers/contracts.py sync`) or name modules as \
+                         `{crate_name}:MODULE`",
+                        load_path.display()
+                    )
+                })?
+                .iter()
+                .collect(),
             Some(module) => vec![
                 krate
                     .modules
@@ -186,9 +236,6 @@ pub fn resolve_providers(
                     })?,
             ],
         };
-        if wanted.is_empty() {
-            return Err(format!("provider `{crate_name}` owns no contract module"));
-        }
         selected_crates.insert(crate_name.to_owned());
         for module in wanted {
             if !seen.insert((crate_name.to_owned(), module.clone())) {
@@ -204,6 +251,12 @@ pub fn resolve_providers(
                 uses_inclusion: uses_contract_inclusion(text),
             });
         }
+    }
+    if modules.is_empty() {
+        return Err(format!(
+            "provider selection {entries:?} resolves to no resource contract module: the \
+             resource view of every crate it names whole is empty"
+        ));
     }
     // The dependency closure, breadth-first over declared edges. The load path
     // has already refused a missing dependency and a cycle.
@@ -237,6 +290,7 @@ pub fn resolve_providers(
                 },
                 dependencies: krate.dependencies.iter().cloned().collect(),
                 contracts: root,
+                resource_view: manifest.resource_views.get(&name).cloned(),
                 selected_modules: modules
                     .iter()
                     .filter(|module| module.crate_name == name)
@@ -281,6 +335,7 @@ pub fn resolve_providers(
         serde_json::to_string_pretty(&lowered).map_err(|error| error.to_string())?;
     manifest_text.push('\n');
     Ok(ResolvedProviders {
+        kind: SelectionKind::Explicit,
         load_path: load_path.to_path_buf(),
         entries: entries.to_vec(),
         modules,
@@ -291,6 +346,95 @@ pub fn resolve_providers(
         load_path_sha256: sha256_hex(&load_path_bytes),
         sources: BTreeSet::from([source]),
     })
+}
+
+/// The contracts-only default (card **W44-PROVIDER-RESOURCE-VIEW**): every
+/// crate on the load path, selected whole (its resource view), in load-path
+/// order, recorded as `"selection": "all-loaded"`. Nothing else is a default
+/// provider set; a full-mode run with no selection still refuses.
+pub fn resolve_all_loaded(
+    load_path: &Path,
+    quirin_providers_only: bool,
+) -> Result<ResolvedProviders, String> {
+    let manifest = load_contract_load_path_manifest(load_path).map_err(|error| error.to_string())?;
+    let entries: Vec<String> = manifest.contract_roots.keys().cloned().collect();
+    let mut resolved = resolve_providers(
+        load_path,
+        &entries,
+        quirin_providers_only,
+        SelectionSource::Default,
+    )?;
+    resolved.kind = SelectionKind::AllLoaded;
+    Ok(resolved)
+}
+
+/// The resource view the resource-contract loader admits for every crate on
+/// a load path (card **W44-PROVIDER-RESOURCE-VIEW**), computed by loading:
+/// each owned module alone, as `quirin-audit` would select it
+/// (`NAME:MODULE`, lowered and loaded by the unchanged manifest loader); then
+/// each crate's accepted modules together; then every crate's together, which
+/// is the all-loaded environment. A module is in its crate's view exactly
+/// when it loads alone; a view or the union that does not load together
+/// refuses the probe. Declared views are not read: this computes them, and
+/// `providers/contracts.py` writes (`sync`) or compares (`check`) the result.
+pub fn probe_resource_views(load_path: &Path) -> Result<Value, String> {
+    let load_path = &std::path::absolute(load_path).map_err(|error| error.to_string())?;
+    let manifest = load_contract_load_path_manifest(load_path).map_err(|error| error.to_string())?;
+    // Resolution must succeed (a failure is the probe's, never a module's);
+    // only the loader's verdict on the resolved selection is recorded.
+    let resolve = |entries: &[String]| {
+        resolve_providers(load_path, entries, false, SelectionSource::Default)
+    };
+    let load = |entries: &[String]| -> Result<Result<(), String>, String> {
+        Ok(ContractInput::providers(&resolve(entries)?, None)
+            .load()
+            .map(|_| ()))
+    };
+    let mut crates = serde_json::Map::new();
+    let mut union = Vec::new();
+    for name in manifest.contract_roots.keys() {
+        let krate = manifest
+            .load_path
+            .crate_named(name)
+            .ok_or_else(|| format!("provider `{name}` is not on the contract load path"))?;
+        let mut view = Vec::new();
+        let mut refused = serde_json::Map::new();
+        for module in krate.modules.keys() {
+            let entry = format!("{name}:{module}");
+            match load(std::slice::from_ref(&entry))? {
+                Ok(()) => view.push(entry),
+                Err(error) => {
+                    refused.insert(module.clone(), json!(error));
+                }
+            }
+        }
+        if !view.is_empty() {
+            load(&view)?.map_err(|error| {
+                format!("the resource view of `{name}` does not load together: {error}")
+            })?;
+        }
+        let modules: Vec<String> = view
+            .iter()
+            .map(|entry| entry[name.len() + 1..].to_owned())
+            .collect();
+        union.extend(view);
+        crates.insert(
+            name.clone(),
+            json!({"resource_view": modules, "refused": refused}),
+        );
+    }
+    if !union.is_empty() {
+        load(&union)?.map_err(|error| {
+            format!("the resource views of the load path do not load together: {error}")
+        })?;
+    }
+    Ok(json!({
+        "schema_version": 1,
+        "load_path": load_path,
+        "load_path_sha256": sha256_hex(&fs::read(load_path).map_err(|error| error.to_string())?),
+        "crates": crates,
+        "rule": "a module is in its crate's resource view exactly when quirin-audit's NAME:MODULE selection of it, lowered and loaded by the unchanged resource-contract manifest loader, is accepted; each view, and all views together, must also load",
+    }))
 }
 
 /// The both-forms rule: a selection declared on the command line **and** in a
@@ -349,6 +493,12 @@ impl ResolvedProviders {
         &self.modules
     }
 
+    /// Named entries, or the contracts-only all-loaded default.
+    #[must_use]
+    pub fn kind(&self) -> SelectionKind {
+        self.kind
+    }
+
     /// Crate names of the dependency closure, sorted.
     pub fn closure_names(&self) -> impl Iterator<Item = &str> {
         self.closure.iter().map(|krate| krate.name.as_str())
@@ -360,6 +510,7 @@ impl ResolvedProviders {
     pub fn record(&self, profile_manifest: Option<&Path>) -> Value {
         let mut record = json!({
             "selection_version": 1,
+            "selection": self.kind.as_str(),
             "sources": self.sources.iter().map(|source| source.as_str()).collect::<Vec<_>>(),
             "entries": self.entries,
             "load_path": self.load_path,
@@ -372,7 +523,7 @@ impl ResolvedProviders {
                 "loaded_as": if module.uses_inclusion { "reference" } else { "path" },
             })).collect::<Vec<_>>(),
             "lowered_manifest_sha256": sha256_hex(self.manifest_text.as_bytes()),
-            "rule": "each entry is NAME (every module the crate owns, in load-path order) or NAME:MODULE; the dependency closure is resolved, recorded and is the include resolution scope, and a dependency's own modules are not selected by being a dependency; the selection is lowered to the schema-2 manifest recorded as `contract_manifest` and loaded by the unchanged manifest loader",
+            "rule": "each entry is NAME (the crate's declared resource view: the owned modules the resource-contract loader accepts, generated and checked by providers/contracts.py, in load-path order) or NAME:MODULE; with no selection, a contracts-only run selects every load-path crate whole (selection all-loaded); the dependency closure is resolved, recorded and is the include resolution scope, and a dependency's own modules are not selected by being a dependency; the selection is lowered to the schema-2 manifest recorded as `contract_manifest` and loaded by the unchanged manifest loader",
         });
         if let Some(path) = profile_manifest {
             record["profile_contract_manifest"] = json!({
