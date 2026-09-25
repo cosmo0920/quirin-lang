@@ -970,6 +970,17 @@ Variable-length arrays, opaque types and compound operands are outside this
 admission. The same token-derived decision governs summary validation and
 certificate rechecking. See [the bounded implementation record](reports/wave23-c-operations/README.md).
 
+A `sizeof` operand `*NAME`, `**NAME` or `NAME[LITERAL]` is unevaluated
+(C11 6.5.3.4p2) when every declaration of `NAME` in the function is a pointer
+declarator with at least that many `*`, no array dimension, and a specifier
+list that resolves to a type that cannot be variably modified. In a statement
+whose first call is an ordinary callee, such an operand is read by the lexical
+access gate as a scalar marker and names nothing the call hands to its callee;
+everything else about the statement, including its contract and the custody of
+its result, is decided as before. A variably modified or unresolved operand,
+an array declarator and every other position keep their refusal. The marker
+MUST NOT become a numerical size. See [the card report](reports/w44-collection-allocation/README.md).
+
 The typed scalar-access rule is consulted only for a statement the generic
 gateway already refused for its access, destination or increment, or named as
 an unsanctioned `*p` store. It admits a statement whose every memory access is

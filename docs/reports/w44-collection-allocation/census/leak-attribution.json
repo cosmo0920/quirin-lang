@@ -1,0 +1,2268 @@
+{
+ "summary": {
+  "added_leak_leaves": 125,
+  "functions": 46,
+  "allocation_withdrawn_by_this_card": 125,
+  "by_class": {
+   "handed-to-a-refused-statement": 107,
+   "other": 16,
+   "returned-under-cast": 2
+  },
+  "functions_by_class": {
+   "handed-to-a-refused-statement": 42,
+   "other": 2,
+   "returned-under-cast": 2
+  },
+  "status_moves_of_these_functions": {
+   "Unknown->Unsafe": 44,
+   "Unsafe->Unsafe": 2
+  }
+ },
+ "leaves": [
+  {
+   "unit": "librdkafka/rdhttp.c",
+   "function": "unittest_http_get",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 21763,
+   "acquisition": "rdhttp.c:712",
+   "allocation_line": 21757,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21762,
+    21773
+   ],
+   "leak_text": "do { if (!(!herr)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!herr\" \": \", \"<stdin>\", 721, __FUNCTION__); fprintf(stderr, \"Expected "
+  },
+  {
+   "unit": "librdkafka/rdhttp.c",
+   "function": "unittest_http_get",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 21769,
+   "acquisition": "rdhttp.c:712",
+   "allocation_line": 21757,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21762,
+    21773
+   ],
+   "leak_text": "do { if (!(!empty)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!empty\" \": \", \"<stdin>\", 729, __FUNCTION__); fprintf(stderr, \"Expecte"
+  },
+  {
+   "unit": "librdkafka/rdhttp.c",
+   "function": "unittest_http_get_params_append",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 21820,
+   "acquisition": "rdhttp.c:802",
+   "allocation_line": 21817,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(!strcmp(res, test[2]))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!strcmp(res, test[2])\" \": \", \"<stdin>\", 806, __FUNCTIO"
+  },
+  {
+   "unit": "librdkafka/rdkafka.c",
+   "function": "rd_kafka_destroy_internal",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdkafka.c:1455",
+   "allocation_line": 21847,
+   "allocated": "thrd",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21848,
+    21852,
+    21856,
+    21858,
+    21863
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "function": "rd_kafka_admin_add_config0",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 21275,
+   "acquisition": "rdkafka_admin.c:2031",
+   "allocation_line": 21272,
+   "allocated": "entry",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21273,
+    21274
+   ],
+   "leak_text": "return RD_KAFKA_RESP_ERR_NO_ERROR;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "function": "rd_kafka_admin_incremental_add_config0",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 21291,
+   "acquisition": "rdkafka_admin.c:2056",
+   "allocation_line": 21287,
+   "allocated": "entry",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21288,
+    21289,
+    21290
+   ],
+   "leak_text": "return ((void*)0);"
+  },
+  {
+   "unit": "librdkafka/rdkafka_broker.c",
+   "function": "rd_kafka_broker_decommission",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdkafka_broker.c:6588",
+   "allocation_line": 24222,
+   "allocated": "thrd",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24223,
+    24224
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdkafka_cert.c",
+   "function": "rd_kafka_cert_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20436,
+   "acquisition": "rdkafka_cert.c:196",
+   "allocation_line": 20243,
+   "allocated": "cert",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20244,
+    20245,
+    20246,
+    20249,
+    20287
+   ],
+   "leak_text": "return ((void*)0);"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_handle_JoinGroup",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 21667,
+   "acquisition": "rdkafka_cgrp.c:2396",
+   "allocation_line": 21593,
+   "allocated": "members",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21604,
+    21627,
+    21628
+   ],
+   "leak_text": "return;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_handle_JoinGroup",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 21699,
+   "acquisition": "rdkafka_cgrp.c:2396",
+   "allocation_line": 21593,
+   "allocated": "members",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21604,
+    21627,
+    21628
+   ],
+   "leak_text": "return;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24910,
+   "acquisition": "rdkafka_cgrp.c:8240",
+   "allocation_line": 24899,
+   "allocated": "rkgm",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24908,
+    24910,
+    24911,
+    24912,
+    24914
+   ],
+   "leak_text": "do { if (!(rkgm->rkgm_subscription->cnt == rd_list_cnt(topics))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"rkgm->rkgm_subscription-"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24911,
+   "acquisition": "rdkafka_cgrp.c:8240",
+   "allocation_line": 24899,
+   "allocated": "rkgm",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24908,
+    24910,
+    24911,
+    24912,
+    24914
+   ],
+   "leak_text": "do { if (!(!strcmp(topic_name, rkgm->rkgm_subscription->elems[0].topic))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!strcmp(topic_n"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24912,
+   "acquisition": "rdkafka_cgrp.c:8240",
+   "allocation_line": 24899,
+   "allocated": "rkgm",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24908,
+    24910,
+    24911,
+    24912,
+    24914
+   ],
+   "leak_text": "do { if (!(rkgm->rkgm_userdata->len == userdata_size)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"rkgm->rkgm_userdata->len == userda"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24914,
+   "acquisition": "rdkafka_cgrp.c:8240",
+   "allocation_line": 24899,
+   "allocated": "rkgm",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24908,
+    24910,
+    24911,
+    24912,
+    24914
+   ],
+   "leak_text": "do { if (!(!rd_kafka_topic_partition_list_cmp( rkgm->rkgm_owned, owned_partitions, rd_kafka_topic_partition_cmp))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d:"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24916,
+   "acquisition": "rdkafka_cgrp.c:8240",
+   "allocation_line": 24899,
+   "allocated": "rkgm",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24908,
+    24910,
+    24911,
+    24912,
+    24914
+   ],
+   "leak_text": "do { if (!(generation == rkgm->rkgm_generation)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"generation == rkgm->rkgm_generation\" \": "
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24918,
+   "acquisition": "rdkafka_cgrp.c:8240",
+   "allocation_line": 24899,
+   "allocated": "rkgm",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24908,
+    24910,
+    24911,
+    24912,
+    24914
+   ],
+   "leak_text": "do { if (!(!rd_kafkap_str_cmp(rack_id, rkgm->rkgm_rack_id))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!rd_kafkap_str_cmp(rack_id, "
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24815,
+   "acquisition": "rdkafka_cgrp.c:8076",
+   "allocation_line": 24803,
+   "allocated": "gm1",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24804,
+    24805,
+    24809,
+    24810,
+    24811
+   ],
+   "leak_text": "do { if (!(rd_map_cnt(&(&a)->rmap) == 3)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"RD_MAP_CNT(&a) == 3\" \": \", \"<stdin>\", 8098, __F"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24815,
+   "acquisition": "rdkafka_cgrp.c:8079",
+   "allocation_line": 24806,
+   "allocated": "gm2",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24807,
+    24808,
+    24813
+   ],
+   "leak_text": "do { if (!(rd_map_cnt(&(&a)->rmap) == 3)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"RD_MAP_CNT(&a) == 3\" \": \", \"<stdin>\", 8098, __F"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24816,
+   "acquisition": "rdkafka_cgrp.c:8076",
+   "allocation_line": 24803,
+   "allocated": "gm1",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24804,
+    24805,
+    24809,
+    24810,
+    24811
+   ],
+   "leak_text": "do { if (!(rd_map_cnt(&(&b)->rmap) == 2)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"RD_MAP_CNT(&b) == 2\" \": \", \"<stdin>\", 8100, __F"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24816,
+   "acquisition": "rdkafka_cgrp.c:8079",
+   "allocation_line": 24806,
+   "allocated": "gm2",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24807,
+    24808,
+    24813
+   ],
+   "leak_text": "do { if (!(rd_map_cnt(&(&b)->rmap) == 2)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"RD_MAP_CNT(&b) == 2\" \": \", \"<stdin>\", 8100, __F"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24817,
+   "acquisition": "rdkafka_cgrp.c:8076",
+   "allocation_line": 24803,
+   "allocated": "gm1",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24804,
+    24805,
+    24809,
+    24810,
+    24811
+   ],
+   "leak_text": "do { if (!(rd_map_cnt(&(dst)->rmap) == 1)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"RD_MAP_CNT(dst) == 1\" \": \", \"<stdin>\", 8102, _"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24817,
+   "acquisition": "rdkafka_cgrp.c:8079",
+   "allocation_line": 24806,
+   "allocated": "gm2",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24807,
+    24808,
+    24813
+   ],
+   "leak_text": "do { if (!(rd_map_cnt(&(dst)->rmap) == 1)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"RD_MAP_CNT(dst) == 1\" \": \", \"<stdin>\", 8102, _"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24819,
+   "acquisition": "rdkafka_cgrp.c:8076",
+   "allocation_line": 24803,
+   "allocated": "gm1",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24804,
+    24805,
+    24809,
+    24810,
+    24811
+   ],
+   "leak_text": "do { if (!((v = ((dst)->key = (toppar), (dst)->value = rd_map_get(&(dst)->rmap, (dst)->key), (dst)->value)))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: "
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24819,
+   "acquisition": "rdkafka_cgrp.c:8079",
+   "allocation_line": 24806,
+   "allocated": "gm2",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24807,
+    24808,
+    24813
+   ],
+   "leak_text": "do { if (!((v = ((dst)->key = (toppar), (dst)->value = rd_map_get(&(dst)->rmap, (dst)->key), (dst)->value)))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: "
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24820,
+   "acquisition": "rdkafka_cgrp.c:8076",
+   "allocation_line": 24803,
+   "allocated": "gm1",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24804,
+    24805,
+    24809,
+    24810,
+    24811
+   ],
+   "leak_text": "do { if (!(v->members_match)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"v->members_match\" \": \", \"<stdin>\", 8106, __FUNCTION__); fpr"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24820,
+   "acquisition": "rdkafka_cgrp.c:8079",
+   "allocation_line": 24806,
+   "allocated": "gm2",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24807,
+    24808,
+    24813
+   ],
+   "leak_text": "do { if (!(v->members_match)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"v->members_match\" \": \", \"<stdin>\", 8106, __FUNCTION__); fpr"
+  },
+  {
+   "unit": "librdkafka/rdkafka_coord.c",
+   "function": "rd_kafka_coord_cache_add",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdkafka_coord.c:127",
+   "allocation_line": 20198,
+   "allocated": "cce",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20199,
+    20200,
+    20201,
+    20202,
+    20205
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdkafka_coord.c",
+   "function": "rd_kafka_coord_req",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdkafka_coord.c:239",
+   "allocation_line": 20247,
+   "allocated": "creq",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20248,
+    20249,
+    20250,
+    20251,
+    20252
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdkafka_fetcher.c",
+   "function": "rd_kafka_share_acknowledge_reply_handle",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 21496,
+   "acquisition": "rdkafka_fetcher.c:2164",
+   "allocation_line": 21479,
+   "allocated": "lc",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21480,
+    21481,
+    21482,
+    21483
+   ],
+   "leak_text": "return RD_KAFKA_RESP_ERR_NO_ERROR;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_fetcher.c",
+   "function": "rd_kafka_share_acknowledge_reply_handle",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 21501,
+   "acquisition": "rdkafka_fetcher.c:2164",
+   "allocation_line": 21479,
+   "allocated": "lc",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21480,
+    21481,
+    21482,
+    21483
+   ],
+   "leak_text": "return rkbuf->rkbuf_err;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "rd_kafka_mock_broker_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22577,
+   "acquisition": "rdkafka_mock.c:2069",
+   "allocation_line": 22560,
+   "allocated": "mrkb",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22561,
+    22562,
+    22563,
+    22564,
+    22565
+   ],
+   "leak_text": "return ((void*)0);"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 23412,
+   "acquisition": "rdkafka_mock.c:3303",
+   "allocation_line": 23402,
+   "allocated": "mcluster",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    23403,
+    23404,
+    23407,
+    23408,
+    23410
+   ],
+   "leak_text": "return ((void*)0);"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 23450,
+   "acquisition": "rdkafka_mock.c:3303",
+   "allocation_line": 23402,
+   "allocated": "mcluster",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    23403,
+    23404,
+    23407,
+    23408,
+    23410
+   ],
+   "leak_text": "return ((void*)0);"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "rd_kafka_mock_partition_push_leader_response0",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdkafka_mock.c:776",
+   "allocation_line": 21773,
+   "allocated": "leader_response",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21774,
+    21775,
+    21776
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "rd_kafka_mock_txn_partition_add",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdkafka_mock.c:246",
+   "allocation_line": 21483,
+   "allocated": "mtxnp",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21484,
+    21485,
+    21486,
+    21487
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "ut_mock_txn_aborted_range_recorded",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24196,
+   "acquisition": "rdkafka_mock.c:4389",
+   "allocation_line": 24190,
+   "allocated": "mabort",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24191,
+    24192,
+    24193,
+    24194,
+    24195
+   ],
+   "leak_text": "do { if (!(mabort != ((void*)0))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"mabort != NULL\" \": \", \"<stdin>\", 4397, __FUNCTION__); f"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "ut_mock_txn_aborted_range_recorded",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24197,
+   "acquisition": "rdkafka_mock.c:4389",
+   "allocation_line": 24190,
+   "allocated": "mabort",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24191,
+    24192,
+    24193,
+    24194,
+    24195
+   ],
+   "leak_text": "do { if (!(mabort->pid_id == 2000)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"mabort->pid_id == 2000\" \": \", \"<stdin>\", 4399, __FUNC"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "ut_mock_txn_aborted_range_recorded",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24198,
+   "acquisition": "rdkafka_mock.c:4389",
+   "allocation_line": 24190,
+   "allocated": "mabort",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24191,
+    24192,
+    24193,
+    24194,
+    24195
+   ],
+   "leak_text": "do { if (!(mabort->first_offset == 0)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"mabort->first_offset == 0\" \": \", \"<stdin>\", 4402, "
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "ut_mock_txn_aborted_range_recorded",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24199,
+   "acquisition": "rdkafka_mock.c:4389",
+   "allocation_line": 24190,
+   "allocated": "mabort",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24191,
+    24192,
+    24193,
+    24194,
+    24195
+   ],
+   "leak_text": "do { if (!(mabort->last_offset == 2)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"mabort->last_offset == 2\" \": \", \"<stdin>\", 4405, __"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "ut_mock_txn_aborted_range_recorded",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24200,
+   "acquisition": "rdkafka_mock.c:4389",
+   "allocation_line": 24190,
+   "allocated": "mabort",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24191,
+    24192,
+    24193,
+    24194,
+    24195
+   ],
+   "leak_text": "do { if (!(mpart->end_offset == 4)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"mpart->end_offset == 4\" \": \", \"<stdin>\", 4409, __FUNC"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "ut_mock_txn_aborted_range_recorded",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24203,
+   "acquisition": "rdkafka_mock.c:4389",
+   "allocation_line": 24190,
+   "allocated": "mabort",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24191,
+    24192,
+    24193,
+    24194,
+    24195
+   ],
+   "leak_text": "do { fprintf(stderr, \"\\033[32mRDUT: PASS: %s:%d: %s\\033[0m\\n\", \"<stdin>\", 4414, __FUNCTION__); return 0; } while (0);"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "ut_mock_txn_offset_is_aborted",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24233,
+   "acquisition": "rdkafka_mock.c:4436",
+   "allocation_line": 24217,
+   "allocated": "mabort",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24218,
+    24219,
+    24220,
+    24221
+   ],
+   "leak_text": "do { if (!(found)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"found\" \": \", \"<stdin>\", 4456, __FUNCTION__); fprintf(stderr, \"offset 5"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "ut_mock_txn_offset_is_aborted",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24242,
+   "acquisition": "rdkafka_mock.c:4436",
+   "allocation_line": 24217,
+   "allocated": "mabort",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24218,
+    24219,
+    24220,
+    24221
+   ],
+   "leak_text": "do { if (!(found)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"found\" \": \", \"<stdin>\", 4467, __FUNCTION__); fprintf(stderr, \"offset 7"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "ut_mock_txn_offset_is_aborted",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24251,
+   "acquisition": "rdkafka_mock.c:4436",
+   "allocation_line": 24217,
+   "allocated": "mabort",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24218,
+    24219,
+    24220,
+    24221
+   ],
+   "leak_text": "do { if (!(!found)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!found\" \": \", \"<stdin>\", 4479, __FUNCTION__); fprintf(stderr, \"offset"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "ut_mock_txn_offset_is_aborted",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24260,
+   "acquisition": "rdkafka_mock.c:4436",
+   "allocation_line": 24217,
+   "allocated": "mabort",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24218,
+    24219,
+    24220,
+    24221
+   ],
+   "leak_text": "do { if (!(!found)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!found\" \": \", \"<stdin>\", 4490, __FUNCTION__); fprintf(stderr, \"offset"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock.c",
+   "function": "ut_mock_txn_offset_is_aborted",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 24264,
+   "acquisition": "rdkafka_mock.c:4436",
+   "allocation_line": 24217,
+   "allocated": "mabort",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24218,
+    24219,
+    24220,
+    24221
+   ],
+   "leak_text": "do { fprintf(stderr, \"\\033[32mRDUT: PASS: %s:%d: %s\\033[0m\\n\", \"<stdin>\", 4496, __FUNCTION__); return 0; } while (0);"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_add",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 21077,
+   "acquisition": "rdkafka_mock_cgrp.c:574",
+   "allocation_line": 21052,
+   "allocated": "member",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21055,
+    21056,
+    21058,
+    21060,
+    21062
+   ],
+   "leak_text": "return RD_KAFKA_RESP_ERR_NO_ERROR;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 21320,
+   "acquisition": "rdkafka_mock_cgrp.c:910",
+   "allocation_line": 21279,
+   "allocated": "i_pointer",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21281
+   ],
+   "leak_text": "return ret;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_EndTxn",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 23701,
+   "acquisition": "rdkafka_mock_handlers.c:2525",
+   "allocation_line": 23673,
+   "allocated": "mabort",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    23675,
+    23676,
+    23677,
+    23678
+   ],
+   "leak_text": "return 0;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_JoinGroup",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 23132,
+   "acquisition": "rdkafka_mock_handlers.c:1613",
+   "allocation_line": 23101,
+   "allocated": "protos",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    23107,
+    23108,
+    23135,
+    23147
+   ],
+   "leak_text": "return 0;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_JoinGroup",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 23143,
+   "acquisition": "rdkafka_mock_handlers.c:1613",
+   "allocation_line": 23101,
+   "allocated": "protos",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    23107,
+    23108,
+    23135,
+    23147
+   ],
+   "leak_text": "return 0;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_JoinGroup",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 23148,
+   "acquisition": "rdkafka_mock_handlers.c:1613",
+   "allocation_line": 23101,
+   "allocated": "protos",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    23107,
+    23108,
+    23135,
+    23147
+   ],
+   "leak_text": "return -1;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 25177,
+   "acquisition": "rdkafka_mock_handlers.c:4194",
+   "allocation_line": 24834,
+   "allocated": "session",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    24835,
+    24837,
+    24838,
+    24839,
+    24842
+   ],
+   "leak_text": "return 0;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_pid_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 23349,
+   "acquisition": "rdkafka_mock_handlers.c:1957",
+   "allocation_line": 23338,
+   "allocated": "mpid",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    23340,
+    23341,
+    23343,
+    23344,
+    23346
+   ],
+   "leak_text": "return ret;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_get_members_for_topic",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22107,
+   "acquisition": "rdkafka_mock_sharegrp.c:443",
+   "allocation_line": 22098,
+   "allocated": "idx",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22100
+   ],
+   "leak_text": "return subscribed_members;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msg.c",
+   "function": "rd_kafka_message_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20574,
+   "acquisition": "rdkafka_msg.c:1299",
+   "allocation_line": 20571,
+   "allocated": "rkm",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "returned-under-cast",
+   "handed_lines": [],
+   "leak_text": "return (rd_kafka_message_t *)rkm;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_msgset_reader.c",
+   "function": "rd_kafka_aborted_txns_add",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdkafka_msgset_reader.c:1952",
+   "allocation_line": 20569,
+   "allocated": "node_ptr",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20570,
+    20571,
+    20572,
+    20573,
+    20575
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdkafka_partition.c",
+   "function": "rd_kafka_toppar_new0",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20382,
+   "acquisition": "rdkafka_partition.c:225",
+   "allocation_line": 20326,
+   "allocated": "rktp",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "returned-under-cast",
+   "handed_lines": [],
+   "leak_text": "return rd_kafka_toppar_keep0(__FUNCTION__, 304, rktp);"
+  },
+  {
+   "unit": "librdkafka/rdkafka_plugin.c",
+   "function": "rd_kafka_plugin_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 19624,
+   "acquisition": "rdkafka_plugin.c:106",
+   "allocation_line": 19618,
+   "allocated": "rkplug",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    19619,
+    19620,
+    19621,
+    19622
+   ],
+   "leak_text": "return RD_KAFKA_RESP_ERR_NO_ERROR;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_q_io_event_enable",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdkafka_queue.c:1121",
+   "allocation_line": 20370,
+   "allocated": "qio",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20371,
+    20372,
+    20373,
+    20374,
+    20375
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20694,
+   "acquisition": "rdkafka_sasl_cyrus.c:526",
+   "allocation_line": 20672,
+   "allocated": "state",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20673,
+    20686,
+    20698,
+    20707,
+    20719
+   ],
+   "leak_text": "return -1;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20713,
+   "acquisition": "rdkafka_sasl_cyrus.c:526",
+   "allocation_line": 20672,
+   "allocated": "state",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20673,
+    20686,
+    20698,
+    20707,
+    20719
+   ],
+   "leak_text": "return -1;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20717,
+   "acquisition": "rdkafka_sasl_cyrus.c:526",
+   "allocation_line": 20672,
+   "allocated": "state",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20673,
+    20686,
+    20698,
+    20707,
+    20719
+   ],
+   "leak_text": "return 0;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20720,
+   "acquisition": "rdkafka_sasl_cyrus.c:526",
+   "allocation_line": 20672,
+   "allocated": "state",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20673,
+    20686,
+    20698,
+    20707,
+    20719
+   ],
+   "leak_text": "return -1;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20722,
+   "acquisition": "rdkafka_sasl_cyrus.c:526",
+   "allocation_line": 20672,
+   "allocated": "state",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20673,
+    20686,
+    20698,
+    20707,
+    20719
+   ],
+   "leak_text": "return 0;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_init",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20743,
+   "acquisition": "rdkafka_sasl_cyrus.c:625",
+   "allocation_line": 20738,
+   "allocated": "handle",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20739,
+    20740,
+    20741
+   ],
+   "leak_text": "return 0;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_sasl_oauthbearer_client_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20822,
+   "acquisition": "rdkafka_sasl_oauthbearer.c:1233",
+   "allocation_line": 20815,
+   "allocated": "state",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20816,
+    20817,
+    20824,
+    20826,
+    20828
+   ],
+   "leak_text": "return -1;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_sasl_oauthbearer_client_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20833,
+   "acquisition": "rdkafka_sasl_oauthbearer.c:1233",
+   "allocation_line": 20815,
+   "allocated": "state",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20816,
+    20817,
+    20824,
+    20826,
+    20828
+   ],
+   "leak_text": "return rd_kafka_sasl_oauthbearer_fsm(rktrans, ((void*)0), errstr,"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22298,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(jwt != ((void*)0))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"jwt != NULL\" \": \", \"<stdin>\", 1765, __FUNCTION__); fprintf"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22300,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(dot1 != ((void*)0))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"dot1 != NULL\" \": \", \"<stdin>\", 1768, __FUNCTION__); fprin"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22302,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(dot2 != ((void*)0))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"dot2 != NULL\" \": \", \"<stdin>\", 1771, __FUNCTION__); fprin"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22306,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(strlen(header_part) > 0)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"strlen(header_part) > 0\" \": \", \"<stdin>\", 1777, __FU"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22307,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(strlen(payload_part) > 0)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"strlen(payload_part) > 0\" \": \", \"<stdin>\", 1778, __"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22308,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(strlen(signature_part) > 0)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"strlen(signature_part) > 0\" \": \", \"<stdin>\", 1779"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22309,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(!_Generic (0 ? (header_part) : (void *) 1, const void *: (const char *) (strchr (header_part, '=')), default: strchr (header_part, '=')))) { fprintf("
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22310,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(!_Generic (0 ? (payload_part) : (void *) 1, const void *: (const char *) (strchr (payload_part, '=')), default: strchr (payload_part, '=')))) { fprin"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22311,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(!_Generic (0 ? (signature_part) : (void *) 1, const void *: (const char *) (strchr (signature_part, '=')), default: strchr (signature_part, '=')))) {"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22312,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(!_Generic (0 ? (header_part) : (void *) 1, const void *: (const char *) (strchr (header_part, '+')), default: strchr (header_part, '+')))) { fprintf("
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22313,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(!_Generic (0 ? (header_part) : (void *) 1, const void *: (const char *) (strchr (header_part, '/')), default: strchr (header_part, '/')))) { fprintf("
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22314,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(!_Generic (0 ? (payload_part) : (void *) 1, const void *: (const char *) (strchr (payload_part, '+')), default: strchr (payload_part, '+')))) { fprin"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22315,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(!_Generic (0 ? (payload_part) : (void *) 1, const void *: (const char *) (strchr (payload_part, '/')), default: strchr (payload_part, '/')))) { fprin"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22316,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(!_Generic (0 ? (signature_part) : (void *) 1, const void *: (const char *) (strchr (signature_part, '+')), default: strchr (signature_part, '+')))) {"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22317,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1727",
+   "allocation_line": 22264,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "other",
+   "handed_lines": [],
+   "leak_text": "do { if (!(!_Generic (0 ? (signature_part) : (void *) 1, const void *: (const char *) (strchr (signature_part, '/')), default: strchr (signature_part, '/')))) {"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22221,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(template_path != ((void*)0))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"template_path != NULL\" \": \", \"<stdin>\", 1659, __"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22224,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(result == 0)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"result == 0\" \": \", \"<stdin>\", 1664, __FUNCTION__); fprintf(stder"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22225,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(header != ((void*)0))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"header != NULL\" \": \", \"<stdin>\", 1665, __FUNCTION__); f"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22226,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(payload != ((void*)0))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"payload != NULL\" \": \", \"<stdin>\", 1666, __FUNCTION__);"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22228,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(kid != ((void*)0))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"kid != NULL\" \": \", \"<stdin>\", 1670, __FUNCTION__); fprintf"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22229,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(cJSON_IsString(kid))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"cJSON_IsString(kid)\" \": \", \"<stdin>\", 1671, __FUNCTION__"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22230,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(!strcmp(cJSON_GetStringValue(kid), \"test-key-id\"))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!strcmp(cJSON_GetStringVal"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22232,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(sub != ((void*)0))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"sub != NULL\" \": \", \"<stdin>\", 1677, __FUNCTION__); fprintf"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22233,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(cJSON_IsString(sub))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"cJSON_IsString(sub)\" \": \", \"<stdin>\", 1678, __FUNCTION__"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22234,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(!strcmp(cJSON_GetStringValue(sub), \"test-subject\"))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!strcmp(cJSON_GetStringVa"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22236,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(aud != ((void*)0))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"aud != NULL\" \": \", \"<stdin>\", 1683, __FUNCTION__); fprintf"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22237,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(cJSON_IsString(aud))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"cJSON_IsString(aud)\" \": \", \"<stdin>\", 1684, __FUNCTION__"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22238,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1656",
+   "allocation_line": 22219,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22222
+   ],
+   "leak_text": "do { if (!(!strcmp(cJSON_GetStringValue(aud), \"test-audience\"))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!strcmp(cJSON_GetStringV"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 21993,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1190",
+   "allocation_line": 21990,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21992
+   ],
+   "leak_text": "do { if (!(!herr)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!herr\" \": \", \"<stdin>\", 1199, __FUNCTION__); fprintf(stderr, \"Expected"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 21999,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1190",
+   "allocation_line": 21990,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21992
+   ],
+   "leak_text": "do { if (!(!herr)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!herr\" \": \", \"<stdin>\", 1212, __FUNCTION__); fprintf(stderr, \"Failed t"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22000,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1190",
+   "allocation_line": 21990,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21992
+   ],
+   "leak_text": "do { if (!(json)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"json\" \": \", \"<stdin>\", 1214, __FUNCTION__); fprintf(stderr, \"Expected n"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22002,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1190",
+   "allocation_line": 21990,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21992
+   ],
+   "leak_text": "do { if (!(parsed_token)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"parsed_token\" \": \", \"<stdin>\", 1218, __FUNCTION__); fprintf(std"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "status_before": "Unsafe",
+   "status_after": "Unsafe",
+   "leak_line": 22004,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1190",
+   "allocation_line": 21990,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    21992
+   ],
+   "leak_text": "do { if (!(!strcmp(expected_jwt_token, token))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!strcmp(expected_jwt_token, token)\" \": \","
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22022,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1247",
+   "allocation_line": 22019,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22021
+   ],
+   "leak_text": "do { if (!(!herr)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!herr\" \": \", \"<stdin>\", 1255, __FUNCTION__); fprintf(stderr, \"Expected"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22026,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1247",
+   "allocation_line": 22019,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22021
+   ],
+   "leak_text": "do { if (!(!herr)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!herr\" \": \", \"<stdin>\", 1266, __FUNCTION__); fprintf(stderr, \"Expected"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22027,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1247",
+   "allocation_line": 22019,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22021
+   ],
+   "leak_text": "do { if (!(json)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"json\" \": \", \"<stdin>\", 1268, __FUNCTION__); fprintf(stderr, \"Expected n"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 22029,
+   "acquisition": "rdkafka_sasl_oauthbearer_oidc.c:1247",
+   "allocation_line": 22019,
+   "allocated": "rk",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22021
+   ],
+   "leak_text": "do { if (!(!parsed_token)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!parsed_token\" \": \", \"<stdin>\", 1273, __FUNCTION__); fprintf(s"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_scram_client_new",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20562,
+   "acquisition": "rdkafka_sasl_scram.c:721",
+   "allocation_line": 20559,
+   "allocated": "state",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20560,
+    20561
+   ],
+   "leak_text": "return rd_kafka_sasl_scram_fsm(rktrans, ((void*)0), errstr, errstr_size);"
+  },
+  {
+   "unit": "librdkafka/rdkafka_sticky_assignor.c",
+   "function": "rd_kafka_sticky_assignor_on_assignment_cb",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdkafka_sticky_assignor.c:2081",
+   "allocation_line": 22349,
+   "allocated": "state",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    22351,
+    22352,
+    22353,
+    22354
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdkafka_topic.c",
+   "function": "rd_kafka_topic_partition_cnt_update",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20471,
+   "acquisition": "rdkafka_topic.c:1135",
+   "allocation_line": 20406,
+   "allocated": "rktps",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20425,
+    20430,
+    20469
+   ],
+   "leak_text": "return 1;"
+  },
+  {
+   "unit": "librdkafka/rdkafka_topic.c",
+   "function": "rd_kafka_toppar_idemp_msgid_save",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdkafka_topic.c:1050",
+   "allocation_line": 20368,
+   "allocated": "partmsgid",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20369,
+    20370,
+    20371,
+    20372,
+    20373
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdunittest.c",
+   "function": "ut_tq_test",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20355,
+   "acquisition": "rdunittest.c:179",
+   "allocation_line": 20342,
+   "allocated": "e",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20343,
+    20344,
+    20362,
+    20363,
+    20366
+   ],
+   "leak_text": "do { if (!((((tqh[qi])->tqh_first) == (((void*)0))))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"TAILQ_EMPTY(tqh[qi])\" \": \", \"<stdin"
+  },
+  {
+   "unit": "librdkafka/rdunittest.c",
+   "function": "ut_tq_test",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20356,
+   "acquisition": "rdunittest.c:179",
+   "allocation_line": 20342,
+   "allocated": "e",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20343,
+    20344,
+    20362,
+    20363,
+    20366
+   ],
+   "leak_text": "do { if (!(!(((tqh[0])->tqh_first) == (((void*)0))))) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"!TAILQ_EMPTY(tqh[0])\" \": \", \"<stdin"
+  },
+  {
+   "unit": "librdkafka/rdunittest.c",
+   "function": "ut_tq_test",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20360,
+   "acquisition": "rdunittest.c:179",
+   "allocation_line": 20342,
+   "allocated": "e",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20343,
+    20344,
+    20362,
+    20363,
+    20366
+   ],
+   "leak_text": "do { if (!((*(((struct ut_tq_head *)((tqh[0])->tqh_last))->tqh_last))->v == args->exp[totcnt - 1])) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert "
+  },
+  {
+   "unit": "librdkafka/rdunittest.c",
+   "function": "ut_tq_test",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20395,
+   "acquisition": "rdunittest.c:179",
+   "allocation_line": 20342,
+   "allocated": "e",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20343,
+    20344,
+    20362,
+    20363,
+    20366
+   ],
+   "leak_text": "do { if (!((*(((struct ut_tq_head *)((tqh[0])->tqh_last))->tqh_last))->v == args->exp[totcnt - 1])) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert "
+  },
+  {
+   "unit": "librdkafka/rdunittest.c",
+   "function": "ut_tq_test",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20395,
+   "acquisition": "rdunittest.c:212",
+   "allocation_line": 20361,
+   "allocated": "e",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20362,
+    20363,
+    20366,
+    20368,
+    20370
+   ],
+   "leak_text": "do { if (!((*(((struct ut_tq_head *)((tqh[0])->tqh_last))->tqh_last))->v == args->exp[totcnt - 1])) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert "
+  },
+  {
+   "unit": "librdkafka/rdunittest.c",
+   "function": "ut_tq_test",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20401,
+   "acquisition": "rdunittest.c:179",
+   "allocation_line": 20342,
+   "allocated": "e",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20343,
+    20344,
+    20362,
+    20363,
+    20366
+   ],
+   "leak_text": "return fails;"
+  },
+  {
+   "unit": "librdkafka/rdunittest.c",
+   "function": "ut_tq_test",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 20401,
+   "acquisition": "rdunittest.c:212",
+   "allocation_line": 20361,
+   "allocated": "e",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    20362,
+    20363,
+    20366,
+    20368,
+    20370
+   ],
+   "leak_text": "return fails;"
+  },
+  {
+   "unit": "librdkafka/rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdunittest_acknowledge.c:124",
+   "allocation_line": 19612,
+   "allocated": "batches",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    19613,
+    19615,
+    19616,
+    19618,
+    19619
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdunittest_acknowledge.c:137",
+   "allocation_line": 19620,
+   "allocated": "entry",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    19621,
+    19622,
+    19623,
+    19624,
+    19625
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition_multiple_entries",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdunittest_acknowledge.c:592",
+   "allocation_line": 19834,
+   "allocated": "batches",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    19835,
+    19837,
+    19838,
+    19839,
+    19840
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition_multiple_entries",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdunittest_acknowledge.c:604",
+   "allocation_line": 19841,
+   "allocated": "entry1",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    19843,
+    19844,
+    19845,
+    19846,
+    19847
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition_multiple_entries",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdunittest_acknowledge.c:616",
+   "allocation_line": 19851,
+   "allocated": "entry2",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    19853,
+    19854,
+    19855,
+    19856,
+    19857
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition_multiple_entries",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdunittest_acknowledge.c:628",
+   "allocation_line": 19861,
+   "allocated": "entry3",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    19863,
+    19864,
+    19865,
+    19866,
+    19867
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdunittest_acknowledge.c",
+   "function": "ut_ack_add_partition_multiple_entries",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 0,
+   "acquisition": "rdunittest_acknowledge.c:640",
+   "allocation_line": 19871,
+   "allocated": "entry4",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    19873,
+    19874,
+    19875,
+    19876,
+    19877
+   ],
+   "leak_text": ""
+  },
+  {
+   "unit": "librdkafka/rdunittest_acknowledge.c",
+   "function": "ut_case_bsearch_empty_entries",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 19985,
+   "acquisition": "rdunittest_acknowledge.c:865",
+   "allocation_line": 19972,
+   "allocated": "batches",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    19973,
+    19975,
+    19976,
+    19977,
+    19978
+   ],
+   "leak_text": "do { if (!(err == RD_KAFKA_RESP_ERR__STATE)) { fprintf(stderr, \"\\033[31mRDUT: FAIL: %s:%d: %s: \" \"assert failed: \" \"err == RD_KAFKA_RESP_ERR__STATE\" \": \", \"<std"
+  },
+  {
+   "unit": "librdkafka/rdunittest_acknowledge.c",
+   "function": "ut_case_bsearch_empty_entries",
+   "status_before": "Unknown",
+   "status_after": "Unsafe",
+   "leak_line": 19987,
+   "acquisition": "rdunittest_acknowledge.c:865",
+   "allocation_line": 19972,
+   "allocated": "batches",
+   "allocation_withdrawn_by_this_card": true,
+   "class": "handed-to-a-refused-statement",
+   "handed_lines": [
+    19973,
+    19975,
+    19976,
+    19977,
+    19978
+   ],
+   "leak_text": "do { fprintf(stderr, \"\\033[32mRDUT: PASS: %s:%d: %s\\033[0m\\n\", \"<stdin>\", 888, __FUNCTION__); return 0; } while (0);"
+  }
+ ]
+}
