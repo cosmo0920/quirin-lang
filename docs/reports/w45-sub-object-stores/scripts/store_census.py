@@ -87,6 +87,17 @@ def join_units(records, document):
         if len(candidates) == 1:
             mapping[seq] = candidates[0]
             continue
+        if not candidates:
+            # A header function published by another unit empties the
+            # intersection: take the unit publishing the most distinct
+            # functions of the sequence, when it is unique.
+            names = {record["function"] for record in members}
+            counts = collections.Counter(
+                index for name in names for index in by_function.get(name, ())
+            ).most_common(2)
+            if counts and (len(counts) == 1 or counts[0][1] > counts[1][1]):
+                mapping[seq] = counts[0][0]
+            continue
         scores = []
         for candidate in candidates:
             score = sum(
