@@ -258,9 +258,8 @@ pub(crate) fn choose_contracts(
     declared: &ContractDeclarations<'_>,
 ) -> Result<(ContractInput, &'static str), String> {
     let has_providers = declared.command_line.is_some() || declared.configuration.is_some();
-    let all_loaded = !has_providers
-        && declared.mode.is_contracts_only()
-        && declared.contract_manifest.is_none();
+    let all_loaded =
+        !has_providers && declared.mode.is_contracts_only() && declared.contract_manifest.is_none();
     if !has_providers && !all_loaded && declared.load_path.is_some() {
         return Err("a contract load path is given but no provider is selected".into());
     }

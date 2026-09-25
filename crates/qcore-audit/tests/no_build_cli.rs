@@ -3,7 +3,7 @@
 //! end to end on the command line, in JSON and both.
 
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::process::{Command, Output};
 use std::sync::OnceLock;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -193,7 +193,10 @@ fn units_preprocess_with_no_settings_and_missing_includes_are_unknown_with_a_rea
         "--jobs",
         "1",
     ]));
-    assert!(stdout.contains("not prepared: missing-include=1"), "{stdout}");
+    assert!(
+        stdout.contains("not prepared: missing-include=1"),
+        "{stdout}"
+    );
     let report = fixture.read("out/report.json");
     // Every walked unit has a row: none is dropped, and the hidden one is not walked.
     let files = report["units"]
@@ -228,7 +231,12 @@ fn units_preprocess_with_no_settings_and_missing_includes_are_unknown_with_a_rea
     assert_eq!(missing["assumptions"]["reason"], "missing-include");
     let first = missing["assumptions"]["first_diagnostic"].as_str().unwrap();
     assert!(first.contains("'heap_api.h' file not found"), "{first}");
-    assert!(missing["reason"].as_str().unwrap().contains("(missing-include)"));
+    assert!(
+        missing["reason"]
+            .as_str()
+            .unwrap()
+            .contains("(missing-include)")
+    );
     assert_eq!(missing["source_functions"], json!(["included"]));
     assert!(
         missing["compile_configuration"]["compile_task_identity"]["preprocessing_error"]
@@ -239,7 +247,10 @@ fn units_preprocess_with_no_settings_and_missing_includes_are_unknown_with_a_rea
     // Without RELEASE_IT the release is not compiled: a provisional leak.
     assert_eq!(unit(&report, "configured.c")["status"], "Unsafe");
     let sidecar = fixture.read("out/report.contracts.json");
-    assert_eq!(sidecar["outcomes"]["not_prepared"], json!({"missing-include": 1}));
+    assert_eq!(
+        sidecar["outcomes"]["not_prepared"],
+        json!({"missing-include": 1})
+    );
     assert_eq!(sidecar["outcomes"]["units"], 8);
     assert_eq!(sidecar["selection"]["hidden_directories_skipped"], 1);
 }
@@ -296,10 +307,7 @@ fn a_definition_changes_the_analysed_code_and_the_bound_assumptions() {
     }
     let plain = fixture.read("plain/report.json");
     let defined = fixture.read("defined/report.json");
-    let (plain, defined) = (
-        unit(&plain, "configured.c"),
-        unit(&defined, "configured.c"),
-    );
+    let (plain, defined) = (unit(&plain, "configured.c"), unit(&defined, "configured.c"));
     assert_eq!(plain["status"], "Unsafe");
     assert_eq!(defined["status"], "Safe");
     assert_eq!(defined["assumptions"]["defines"], json!(["RELEASE_IT"]));
@@ -385,11 +393,23 @@ fn command_line_configuration_and_both_forms_agree_and_conflicts_refuse() {
     assert_eq!(fixture.bytes("config/report.contracts.json"), sidecar);
     assert_eq!(fixture.bytes("both/report.contracts.json"), sidecar);
     let read = |out: &str| fixture.read(&format!("{out}/report.invocation.json"));
-    assert_eq!(read("cli")["jobs"], json!({"requested": 1, "effective": 1, "source": "command_line"}));
-    assert_eq!(read("config")["jobs"], json!({"requested": 2, "effective": 2, "source": "configuration"}));
-    assert_eq!(read("both")["jobs"], json!({"requested": 1, "effective": 1, "source": "command_line"}));
+    assert_eq!(
+        read("cli")["jobs"],
+        json!({"requested": 1, "effective": 1, "source": "command_line"})
+    );
+    assert_eq!(
+        read("config")["jobs"],
+        json!({"requested": 2, "effective": 2, "source": "configuration"})
+    );
+    assert_eq!(
+        read("both")["jobs"],
+        json!({"requested": 1, "effective": 1, "source": "command_line"})
+    );
     assert_eq!(read("both")["std_form"], "command_line+configuration");
-    assert_eq!(read("both")["assumed_configuration"]["std_source"], "declared");
+    assert_eq!(
+        read("both")["assumed_configuration"]["std_source"],
+        "declared"
+    );
     assert_eq!(read("cli")["build"], "none");
     assert_eq!(read("cli")["evidence"], "contracts-only-no-build");
 
@@ -399,36 +419,89 @@ fn command_line_configuration_and_both_forms_agree_and_conflicts_refuse() {
         "`include_dirs` conflicts",
     );
     refused(
-        &fixture.run(&["--config", &both, "--source-root", "tree", "-Iinc", "-DOTHER"]),
+        &fixture.run(&[
+            "--config",
+            &both,
+            "--source-root",
+            "tree",
+            "-Iinc",
+            "-DOTHER",
+        ]),
         "`defines` conflicts",
     );
     refused(
-        &fixture.run(&["--config", &both, "--source-root", "tree", "-Iinc", "-DRELEASE_IT", "--std", "c11"]),
+        &fixture.run(&[
+            "--config",
+            &both,
+            "--source-root",
+            "tree",
+            "-Iinc",
+            "-DRELEASE_IT",
+            "--std",
+            "c11",
+        ]),
         "`std` conflicts",
     );
     // The configuration names its route and refuses build inputs.
     for (name, value, expected) in [
-        ("m.json", json!({"schema_version": 1, "mode": "configured", "build": "none"}), "`mode` must be `contracts-only`"),
-        ("b.json", json!({"schema_version": 1, "mode": "contracts-only", "build": "cmake"}), "`build` must be `none`"),
-        ("d.json", json!({"schema_version": 1, "mode": "contracts-only", "build": "none", "compile_database": "c.json"}), "reads no compilation database"),
-        ("p.json", json!({"schema_version": 1, "mode": "contracts-only", "build": "none", "packages": []}), "no process packages"),
+        (
+            "m.json",
+            json!({"schema_version": 1, "mode": "configured", "build": "none"}),
+            "`mode` must be `contracts-only`",
+        ),
+        (
+            "b.json",
+            json!({"schema_version": 1, "mode": "contracts-only", "build": "cmake"}),
+            "`build` must be `none`",
+        ),
+        (
+            "d.json",
+            json!({"schema_version": 1, "mode": "contracts-only", "build": "none", "compile_database": "c.json"}),
+            "reads no compilation database",
+        ),
+        (
+            "p.json",
+            json!({"schema_version": 1, "mode": "contracts-only", "build": "none", "packages": []}),
+            "no process packages",
+        ),
     ] {
         let config = fixture.config(name, &value);
-        refused(&fixture.run(&["--config", &config, "--source-root", "tree"]), expected);
+        refused(
+            &fixture.run(&["--config", &config, "--source-root", "tree"]),
+            expected,
+        );
     }
-    refused(&fixture.run(&["--compile-database", "x.json"]), "unknown argument");
+    refused(
+        &fixture.run(&["--compile-database", "x.json"]),
+        "unknown argument",
+    );
 }
 
 #[test]
 fn selections_that_name_nothing_or_leave_the_root_refuse() {
     let Some(_) = clang() else { return };
     let fixture = Fixture::new();
-    refused(&fixture.run(&["--source-root", ".", "empty"]), "selects no `*.c` unit");
-    refused(&fixture.run(&["--source-root", "tree", "../inc/heap_api.h"]), "outside the source root");
-    refused(&fixture.run(&["--source-root", "tree", "-I", "missing"]), "include directory `");
+    refused(
+        &fixture.run(&["--source-root", ".", "empty"]),
+        "selects no `*.c` unit",
+    );
+    refused(
+        &fixture.run(&["--source-root", "tree", "../inc/heap_api.h"]),
+        "outside the source root",
+    );
+    refused(
+        &fixture.run(&["--source-root", "tree", "-I", "missing"]),
+        "include directory `",
+    );
     // With no load path and no manifest, the working directory's default
     // load path is read, and every crate's resource view is loaded.
-    succeeded(&fixture.run(&["--source-root", "tree", "plain.c", "--report", "default/report.json"]));
+    succeeded(&fixture.run(&[
+        "--source-root",
+        "tree",
+        "plain.c",
+        "--report",
+        "default/report.json",
+    ]));
     let invocation = fixture.read("default/report.invocation.json");
     assert_eq!(invocation["contracts"]["load_path_source"], "default");
     assert_eq!(invocation["contracts"]["selection"], "all-loaded");
@@ -501,7 +574,10 @@ fn the_assumption_record_travels_with_every_verdict() {
     );
     assert_eq!(evidence["assumed_configuration"]["std"], "gnu17");
     assert_eq!(evidence["assumed_configuration"]["std_source"], "default");
-    assert_eq!(evidence["assumed_configuration"]["defines"], json!(["LEVEL=2"]));
+    assert_eq!(
+        evidence["assumed_configuration"]["defines"],
+        json!(["LEVEL=2"])
+    );
     // Every row carries its own effective settings and the verdict scope.
     for row in report["units"].as_array().unwrap() {
         let assumptions = &row["assumptions"];

@@ -382,6 +382,7 @@ impl AssumedConfiguration {
             "quote_include": "each unit's own directory (Clang's includer-directory rule for the unit's declared input)",
             "system_headers": "the host Clang's default system include directories (the recorded Clang identity)",
             "discovery": "none: no include directory is searched for, no configuration header is guessed or generated, and no build system is read",
+            "header_files": "read as found on disk in the include directories and each unit's own directory, whether tracked by version control or not (a header an earlier in-tree configure left behind is read like any other); header bytes are bound only through each unit's preprocessed-text digest",
         })
     }
 
@@ -465,7 +466,10 @@ pub fn select_units(root: &Path, sources: &[PathBuf]) -> Result<(Vec<Unit>, Valu
     let named = if sources.is_empty() {
         vec![root.clone()]
     } else {
-        sources.iter().map(|source| anchor(&root, source.clone())).collect()
+        sources
+            .iter()
+            .map(|source| anchor(&root, source.clone()))
+            .collect()
     };
     let mut units = Vec::new();
     let mut seen = std::collections::BTreeSet::new();
@@ -497,7 +501,10 @@ pub fn select_units(root: &Path, sources: &[PathBuf]) -> Result<(Vec<Unit>, Valu
             let parent = path.parent().unwrap_or(&root);
             (relative_spelling(&root, parent), vec![path.clone()])
         } else {
-            return Err(format!("source {} is not a file or directory", path.display()));
+            return Err(format!(
+                "source {} is not a file or directory",
+                path.display()
+            ));
         };
         spelled.push(relative_spelling(&root, &path));
         for file in files {
@@ -581,8 +588,12 @@ pub fn classify_preparation(prepared: &PreparedTranslationUnit) -> Option<(&'sta
             };
             (code, first)
         }
-        LegacyCError::ProductionParserRejected(stderr) => ("syntax-error", first_diagnostic(stderr)),
-        LegacyCError::UnsupportedInputIdentity(text) => ("unsupported-input-identity", text.clone()),
+        LegacyCError::ProductionParserRejected(stderr) => {
+            ("syntax-error", first_diagnostic(stderr))
+        }
+        LegacyCError::UnsupportedInputIdentity(text) => {
+            ("unsupported-input-identity", text.clone())
+        }
         other => ("preprocessing-refused", other.to_string()),
     })
 }
@@ -662,7 +673,9 @@ impl NoBuildAudit {
         evidence["build"] = json!("none");
         evidence["assumed_configuration"] = assumed.record();
         evidence["verdict_scope"] = json!(VERDICT_SCOPE);
-        evidence["equivalence_to_build_configured"] = json!("none: no verdict of this run is equivalent to, comparable with or a substitute for a build-configured verdict; certificates bind the assumption record as their source profile");
+        evidence["equivalence_to_build_configured"] = json!(
+            "none: no verdict of this run is equivalent to, comparable with or a substitute for a build-configured verdict; certificates bind the assumption record as their source profile"
+        );
         let mut sidecar = json!({
             "schema_version": 1,
             "evidence": EVIDENCE,
@@ -772,29 +785,30 @@ impl NoBuildAudit {
             .ok()
             .and_then(|bytes| std::str::from_utf8(bytes).ok());
         let functions = source.map(legacy_c_source_functions).unwrap_or_default();
-        let translation_unit = (|| -> Result<C11TranslationUnit<'_>, (UnitRefusal, &'static str)> {
-            bytes
-                .as_ref()
-                .map_err(|refusal| (refusal.clone(), "unreadable-source"))?;
-            let source = source
-                .ok_or_else(|| (UnitRefusal::classified("source is not UTF-8"), "not-utf8"))?;
-            let options = compiler_options(&entry)
-                .map_err(|error| (UnitRefusal::classified(error), "unsupported-setting"))?;
-            Ok(C11TranslationUnit {
-                source,
-                include_paths: options.include_paths,
-                definitions: options.definitions,
-                preprocessor_options: options.preprocessor_options,
-                dialect: options.dialect,
-                function_scope: LegacyFunctionScope::MainSourceDefinitions,
-                input: options.input,
-            })
-        })();
+        let translation_unit =
+            (|| -> Result<C11TranslationUnit<'_>, (UnitRefusal, &'static str)> {
+                bytes
+                    .as_ref()
+                    .map_err(|refusal| (refusal.clone(), "unreadable-source"))?;
+                let source = source
+                    .ok_or_else(|| (UnitRefusal::classified("source is not UTF-8"), "not-utf8"))?;
+                let options = compiler_options(&entry)
+                    .map_err(|error| (UnitRefusal::classified(error), "unsupported-setting"))?;
+                Ok(C11TranslationUnit {
+                    source,
+                    include_paths: options.include_paths,
+                    definitions: options.definitions,
+                    preprocessor_options: options.preprocessor_options,
+                    dialect: options.dialect,
+                    function_scope: LegacyFunctionScope::MainSourceDefinitions,
+                    input: options.input,
+                })
+            })();
         let refused = |refusal: UnitRefusal,
-                           code: &'static str,
-                           counts: &mut AuditCounts,
-                           report: &mut AuditReport,
-                           output: &mut String| {
+                       code: &'static str,
+                       counts: &mut AuditCounts,
+                       report: &mut AuditReport,
+                       output: &mut String| {
             counts.units += 1;
             counts.unknown_units += 1;
             counts.source_functions += functions.len();
@@ -823,7 +837,8 @@ impl NoBuildAudit {
                 if let Some((code, diagnostic)) = refusal {
                     let metrics = prepared.metrics();
                     counts.prepared_units += 1;
-                    counts.preparation_clang_invocations += usize::from(metrics.clang_invocations());
+                    counts.preparation_clang_invocations +=
+                        usize::from(metrics.clang_invocations());
                     counts.plain_preprocessing_elapsed_us += metrics.plain_preprocessing.elapsed_us;
                     counts.syntax_validation_elapsed_us += metrics.syntax_validation.elapsed_us;
                     counts.line_marked_preprocessing_elapsed_us +=
@@ -1088,7 +1103,15 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         profile_manifest: None,
     })?;
     let (units, selection) = select_units(&root, &sources)?;
-    let failures = run_units(&root, &units, &selection, &contracts, assumed.clone(), effective_jobs, report.as_deref())?;
+    let failures = run_units(
+        &root,
+        &units,
+        &selection,
+        &contracts,
+        assumed.clone(),
+        effective_jobs,
+        report.as_deref(),
+    )?;
     if let Some(report) = &report {
         let argv = ["quirin-audit".to_owned(), "contracts".to_owned()]
             .into_iter()
@@ -1176,7 +1199,8 @@ pub fn run_units(
             if printed.as_deref() != Some(unit.library.as_str()) {
                 println!(
                     "{}: {} selected unit(s)",
-                    unit.library, counts_per_library[unit.library.as_str()]
+                    unit.library,
+                    counts_per_library[unit.library.as_str()]
                 );
                 printed = Some(unit.library.clone());
             }
@@ -1226,7 +1250,10 @@ mod tests {
         assert_eq!(settings.source_root, Some(PathBuf::from("/work/tree")));
         assert_eq!(
             settings.include_dirs,
-            Some(vec![PathBuf::from("/work/inc"), PathBuf::from("/work/other")])
+            Some(vec![
+                PathBuf::from("/work/inc"),
+                PathBuf::from("/work/other")
+            ])
         );
         assert_eq!(settings.defines, Some(args(&["A=1", "B"])));
         assert_eq!(settings.std.as_deref(), Some("gnu11"));
@@ -1244,8 +1271,13 @@ mod tests {
         assert!(parse_command_line(&args(&["--compile-database", "x"]), cwd).is_err());
         assert!(parse_command_line(&args(&["--std", "c11", "--std", "gnu17"]), cwd).is_err());
         assert!(parse_command_line(&args(&["-I"]), cwd).is_err());
-        assert!(AssumedConfiguration::new(Some(("c99".into(), "command_line")), vec![], vec![]).is_err());
-        assert!(AssumedConfiguration::new(None, vec![PathBuf::from("/no/such/dir")], vec![]).is_err());
+        assert!(
+            AssumedConfiguration::new(Some(("c99".into(), "command_line")), vec![], vec![])
+                .is_err()
+        );
+        assert!(
+            AssumedConfiguration::new(None, vec![PathBuf::from("/no/such/dir")], vec![]).is_err()
+        );
         assert!(AssumedConfiguration::new(None, vec![], vec!["1X".into()]).is_err());
         assert!(AssumedConfiguration::new(None, vec![], vec!["X=$(Y)".into()]).is_err());
         let default = AssumedConfiguration::new(None, vec![], vec!["X=1".into()]).unwrap();
@@ -1256,18 +1288,26 @@ mod tests {
     #[test]
     fn preparation_failures_are_classified_from_the_first_error() {
         let missing = "In file included from a.c:1:\nb.h:2:10: fatal error: 'cfg.h' file not found\n    2 | #include \"cfg.h\"\n      |          ^~~~~~~\n1 error generated.";
-        assert_eq!(first_diagnostic(missing), "b.h:2:10: fatal error: 'cfg.h' file not found");
+        assert_eq!(
+            first_diagnostic(missing),
+            "b.h:2:10: fatal error: 'cfg.h' file not found"
+        );
         assert!(!first_error_is_directive(missing));
         let directive = "a.c:3:2: error: \"configure first\"\n    3 | #  error \"configure first\"\n      |    ^\n1 error generated.";
         assert!(first_error_is_directive(directive));
-        let other = "a.c:3:2: error: unterminated conditional directive\n    3 | #if X\n      |  ^\n";
+        let other =
+            "a.c:3:2: error: unterminated conditional directive\n    3 | #if X\n      |  ^\n";
         assert!(!first_error_is_directive(other));
     }
 
     #[test]
     fn quoting_round_trips_through_the_compile_record_reader() {
         let words = ["clang", "-DNAME=\"a b\"", "-I/x/it's", "-c", "u.c"];
-        let command = words.iter().map(|word| shell_quote(word)).collect::<Vec<_>>().join(" ");
+        let command = words
+            .iter()
+            .map(|word| shell_quote(word))
+            .collect::<Vec<_>>()
+            .join(" ");
         assert_eq!(crate::compile_db::shell_words(&command).unwrap(), words);
     }
 }
