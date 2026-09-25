@@ -290,6 +290,64 @@ pub enum ContractTrust {
     /// Proposed by a verifier plugin. Unchecked until the core validates it;
     /// never sufficient on its own for a `Safe` verdict.
     Proposed,
+    /// Card W45-CONTRACT-DEFERRED-REVIEW: a declared contract whose text marks
+    /// it, or one of its clauses, as **awaiting human review**
+    /// (`resource_review_pending`, contract spec §C06).
+    ///
+    /// It is loaded and validated total-or-reject exactly like a declared
+    /// contract, but it is neither an assumption nor evidence: it justifies
+    /// neither `Safe` nor `Unsafe`, and no validation can promote it. It
+    /// differs from [`Self::Proposed`] on both counts — a proposal awaits the
+    /// *core's* validation and is only barred from justifying `Safe`. A person
+    /// resolves it by editing the text, which changes its digest.
+    PendingHumanReview,
+}
+
+/// Which part of a declaration a review marker defers (card
+/// W45-CONTRACT-DEFERRED-REVIEW).
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case", tag = "scope")]
+pub enum ReviewScope {
+    /// `requires resource_review_pending("REASON");` — the whole contract.
+    Contract,
+    /// `ensures normal resource_review_pending(CLAUSE, "REASON");` — one
+    /// clause, recorded as its canonical text (`ensures normal CLAUSE`).
+    Clause { clause: String },
+}
+
+/// One review marker as written: what it defers, why, and who owns it.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct ReviewDeferral {
+    #[serde(flatten)]
+    pub scope: ReviewScope,
+    /// The mandatory free-text reason, exactly as the string literal spells it.
+    pub reason: String,
+    /// The optional reviewer or owner, exactly as its string literal spells it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub owner: Option<String>,
+}
+
+/// A declared contract that is withheld because it awaits human review (card
+/// W45-CONTRACT-DEFERRED-REVIEW, contract spec §C06).
+///
+/// The loader validates the declaration in full — every mode, kind and ABI
+/// rule — and records the contract it *would* apply, so the text is checked,
+/// digested and visible. It is deliberately **not** an entry of
+/// [`ResourceContracts::functions`], so a consumer that knows nothing of
+/// review markers sees an uncontracted callee: the fail-closed default.
+/// Consumers that know of it attribute the refusal to the pending review.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PendingHumanReview {
+    /// Always [`ContractTrust::PendingHumanReview`]; carried so that the
+    /// serialized record states its own status.
+    pub trust: ContractTrust,
+    /// The retained source-assumption key of the module that declares it.
+    pub module: String,
+    /// The contract the declaration states, withheld from every consumer.
+    pub contract: ResourceFunctionContract,
+    /// Every marker the declaration carries, in clause order: either one
+    /// contract-level marker or one or more clause-level markers.
+    pub deferrals: Vec<ReviewDeferral>,
 }
 
 /// One custody summary with its provenance. Inferred summaries, loaded
@@ -383,6 +441,12 @@ pub struct ResourceContracts {
     /// serializes byte-for-byte as it did before the card.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     inclusion_evidence: BTreeMap<String, ContractInclusionEvidence>,
+    /// Card W45-CONTRACT-DEFERRED-REVIEW: declarations awaiting human review,
+    /// keyed by function name and disjoint from `functions`. Omitted when
+    /// empty, so every environment without a marker serializes byte for byte
+    /// as it did before the card.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pending_review: BTreeMap<String, PendingHumanReview>,
 }
 
 impl ResourceContracts {
@@ -395,6 +459,7 @@ impl ResourceContracts {
                 .collect(),
             source_assumptions: BTreeMap::new(),
             inclusion_evidence: BTreeMap::new(),
+            pending_review: BTreeMap::new(),
         }
     }
 
@@ -435,6 +500,20 @@ impl ResourceContracts {
         evidence: BTreeMap<String, ContractInclusionEvidence>,
     ) {
         self.inclusion_evidence = evidence;
+    }
+
+    /// Declarations awaiting human review (card W45-CONTRACT-DEFERRED-REVIEW),
+    /// keyed by function name. None of them is in [`Self::functions`].
+    #[must_use]
+    pub fn pending_review(&self) -> &BTreeMap<String, PendingHumanReview> {
+        &self.pending_review
+    }
+
+    /// Declares the environment's pending reviews. The contract loader
+    /// rechecks them against the retained source text, exactly as it rechecks
+    /// the function map.
+    pub fn set_pending_review(&mut self, pending: BTreeMap<String, PendingHumanReview>) {
+        self.pending_review = pending;
     }
 
     #[must_use]

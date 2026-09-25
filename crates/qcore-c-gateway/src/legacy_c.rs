@@ -54,6 +54,14 @@ pub use declared_abi::{AbiAgreementRow, AbiOutcome, AbiRefusal, declared_abi_cen
 #[path = "legacy_declared_modes.rs"]
 pub mod declared_modes;
 
+// Card W45-CONTRACT-DEFERRED-REVIEW: a declared contract awaiting human review
+// is withheld and its call sites are held. Everything the card adds lives
+// there; this file only carries the hooks marked with the card's name.
+#[path = "legacy_review_hold.rs"]
+pub mod review_hold;
+
+pub use review_hold::{AWAITING_HUMAN_REVIEW, held_call, hold_description};
+
 #[path = "legacy_descriptor_custody.rs"]
 pub(crate) mod descriptor_custody;
 
@@ -1834,6 +1842,9 @@ fn analyze_legacy_c_tokens(
     // the environment that pass already withdrew from — which is also why the
     // gate is not repeated per function, where re-reading every declared
     // module would cost one parse per body.
+    // Card W45-CONTRACT-DEFERRED-REVIEW: held before anything reads a call.
+    let held_tokens = review_hold::hold_call_sites(tokens, contracts);
+    let tokens = held_tokens.as_deref().unwrap_or(tokens);
     let agreement = declared_abi::AbiAgreement::read(tokens, contracts);
     let withdrawn_environment = agreement.withdraw_environment(contracts);
     let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
@@ -2129,22 +2140,35 @@ fn unresolved_projection_reason(summary: &LegacyProgramSummary) -> String {
     let mut unsupported = 0;
     let mut aliases = 0;
     let mut conflicts = 0;
+    // Card W45-CONTRACT-DEFERRED-REVIEW: a held call is not an unsupported
+    // operation of the source, so it is counted apart and named only when
+    // present; every summary without one is spelled exactly as before.
+    let mut held = 0;
     for diagnostic in summary
         .functions
         .values()
         .flat_map(|function| &function.diagnostics)
     {
-        match diagnostic.kind {
+        match &diagnostic.kind {
+            LegacyDiagnosticKind::Unsupported { description }
+                if review_hold::held_call(description).is_some() =>
+            {
+                held += 1;
+            }
             LegacyDiagnosticKind::Unsupported { .. } => unsupported += 1,
             LegacyDiagnosticKind::UnknownAlias { .. } => aliases += 1,
             LegacyDiagnosticKind::SummaryConflict { .. } => conflicts += 1,
             _ => {}
         }
     }
-    format!(
+    let mut reason = format!(
         "resource projection unresolved: {unsupported} unsupported operation(s), \
          {aliases} unresolved alias(es), {conflicts} custody summary conflict(s)"
-    )
+    );
+    if held > 0 {
+        reason.push_str(&format!(", {held} call(s) held awaiting human review"));
+    }
+    reason
 }
 
 /// Preprocess and syntax-check an unrestricted C translation unit without
@@ -2352,6 +2376,8 @@ pub(crate) fn recursive_component_census(
     selected_functions: Option<&[String]>,
 ) -> Vec<crate::legacy_census::NeutralComponentCensus> {
     let (tokens, conditionals) = tokenize_with_conditionals(source);
+    // Card W45-CONTRACT-DEFERRED-REVIEW: held before anything reads a call.
+    let tokens = review_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
     let agreement = declared_abi::AbiAgreement::read(&tokens, contracts);
     let withdrawn_environment = agreement.withdraw_environment(contracts);
     let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
@@ -2392,6 +2418,11 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     selected_functions: Option<&[String]>,
 ) -> Result<PartialTranslationUnitAnalysis, LegacyCError> {
     let (tokens, conditionals) = tokenize_with_conditionals(source);
+    // Card W45-CONTRACT-DEFERRED-REVIEW: a declaration awaiting human review
+    // is already absent from the environment (the loader withholds it); its
+    // call sites are rewritten here, before the ABI gate and everything else
+    // reads a call, so every consumer of the stream sees the hold.
+    let tokens = review_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
     // Card LOADER-ABI. A declared contract whose parameter/result ABI
     // projections this unit's own C declaration contradicts is withdrawn here,
     // before anything reads either: the call sites are rewritten to a marked
@@ -6839,6 +6870,17 @@ impl Parser<'_> {
         } else {
             contains_unmodeled_access(&gate_view(0))
         };
+        // Card W45-CONTRACT-DEFERRED-REVIEW: a held call is refused before the
+        // lexical access gate too, and ahead of every withdrawal, so the
+        // statement names the pending review rather than an access.
+        if let Some(callee) =
+            find_call(&texts).and_then(|(_, function)| review_hold::held_callee(function))
+        {
+            return LegacyInstruction::Unknown {
+                description: review_hold::hold_description(callee),
+                writes: self.refused_writes(&texts),
+            };
+        }
         // Card HASH-CONTRACTS. A call the premise rewrite withdrew is refused
         // *before* the lexical access gate, so the statement reports why the
         // declaration did not cover it rather than the access the withdrawn
@@ -7284,6 +7326,15 @@ impl Parser<'_> {
                             arguments: nested.arguments,
                         })
                         .collect(),
+                };
+            }
+            // Card W45-CONTRACT-DEFERRED-REVIEW: a callee whose declared
+            // contract awaits human review arrives here rewritten, exactly as
+            // uncontracted as a callee with no declaration at all.
+            if let Some(callee) = review_hold::held_callee(function) {
+                return LegacyInstruction::Unknown {
+                    description: review_hold::hold_description(callee),
+                    writes: self.refused_writes(&texts),
                 };
             }
             // Card HASH-CONTRACTS: a callee whose declared literal-argument

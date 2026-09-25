@@ -22,6 +22,8 @@ pub mod no_build;
 pub mod observed_wait;
 mod observed_wait_inputs;
 pub mod parallel;
+// Card W45-CONTRACT-DEFERRED-REVIEW: the pending-review report section.
+pub mod pending_review;
 pub mod prepare;
 mod prepare_json;
 pub mod projection;

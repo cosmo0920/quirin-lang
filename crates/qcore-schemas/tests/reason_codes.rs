@@ -37,9 +37,10 @@ use qcore_schemas::reason::{ReasonCategory, ReasonSubject, UnclassifiedReason};
 /// * `compiler/examples/support/cycle19_compatibility.rs` — the two overrides.
 fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
     use ReasonCategory::{
-        EnvironmentUnavailable as Env, IncompleteObligationCoverage as Coverage,
-        MissingPremise as Premise, ProviderFailure as Provider, ResidualCustody as Custody,
-        StaleEvidence as Stale, UnsupportedSyntax as Syntax,
+        AwaitingHumanReview as Review, EnvironmentUnavailable as Env,
+        IncompleteObligationCoverage as Coverage, MissingPremise as Premise,
+        ProviderFailure as Provider, ResidualCustody as Custody, StaleEvidence as Stale,
+        UnsupportedSyntax as Syntax,
     };
     vec![
         // -- qcore-verification: obligation derivation ------------------------
@@ -146,6 +147,31 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
             "resource projection unresolved: 0 unsupported operation(s), \
              0 unresolved alias(es), 1 custody summary conflict(s)",
             Custody,
+        ),
+        // Card W45-CONTRACT-DEFERRED-REVIEW: the held-call component is named
+        // only when present, and a held call is named before every source
+        // category, whatever else the unit leaves open.
+        (
+            "resource projection unresolved: 0 unsupported operation(s), \
+             0 unresolved alias(es), 0 custody summary conflict(s), \
+             1 call(s) held awaiting human review",
+            Review,
+        ),
+        (
+            "resource projection unresolved: 4 unsupported operation(s), \
+             2 unresolved alias(es), 0 custody summary conflict(s), \
+             3 call(s) held awaiting human review",
+            Review,
+        ),
+        (
+            "call to `k_close` whose declared contract awaits human review \
+             (awaiting-human-review)",
+            Review,
+        ),
+        (
+            "`k_close`'s declared contract in k.qcore awaits human review \
+             (awaiting-human-review), so it admits no call: the size is unverified",
+            Review,
         ),
         ("C function `_cnd_timedwait_win32` was not found", Coverage),
         (
@@ -429,6 +455,14 @@ fn an_unrecognised_reason_is_refused_and_never_defaulted() {
         "something nobody in this workspace writes",
         "No such file or directory (os error 2)",
         "resource projection unresolved: many unsupported operation(s)",
+        // Card W45-CONTRACT-DEFERRED-REVIEW: a malformed or zero held count is
+        // refused rather than read as either category.
+        "resource projection unresolved: 0 unsupported operation(s), \
+         0 unresolved alias(es), 0 custody summary conflict(s), \
+         many call(s) held awaiting human review",
+        "resource projection unresolved: 0 unsupported operation(s), \
+         0 unresolved alias(es), 0 custody summary conflict(s), \
+         0 call(s) held awaiting human review",
     ] {
         assert_eq!(
             ReasonCategory::classify(reason),

@@ -1275,6 +1275,7 @@ Every `Unknown` row carries a free-text `reason` today: `DerivationIncomplete.re
 | `provider-failure` | The selected provider was absent, failed to respond, returned a malformed or rejected response, or failed attribution at the firewall. | the `QP***` rejection paths |
 | `residual-custody` | Analysis completed within its model but left an unresolved custody, containment or leak obligation. | ambiguous effects retaining unresolved custody; residual leaks depending on unresolved effects |
 | `environment-unavailable` | The analysis could not run because a required tool, build tree or configuration input was missing or mismatched. | `audit requires the configured Clang executable …; compilation database selects /usr/bin/cc` |
+| `awaiting-human-review` | A declared contract the row depends on is marked as awaiting human review (contract specification C06.1), so it was withheld: it discharges nothing and accuses nothing. Subject: the analyser; it never contributes to a provisional `Unsafe`. Added by card W45-CONTRACT-DEFERRED-REVIEW; a projection summary naming a held call takes this category ahead of every other. | ``call to `k_close` whose declared contract awaits human review (awaiting-human-review)``; `resource projection unresolved: …, 1 call(s) held awaiting human review` |
 
 Two rules bind any implementation of this vocabulary:
 

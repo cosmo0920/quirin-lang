@@ -1,4 +1,4 @@
-# qcore-schemas 9.0.0
+# qcore-schemas 15.0.0
 
 The published, versioned schema surface of the QCore verifier ecosystem
 (layer L0 of `docs/GENERALIZATION_PLAN.md` §3.1). This crate holds the data
@@ -424,3 +424,24 @@ unless the transported record is exactly that. A producer therefore cannot
 choose the record shape it answers over. The policy name is deliberately not a
 member of the record, because which declaration the core reads is the core's own
 selection.
+
+## Contracts awaiting human review (15.0.0)
+
+Card W45-CONTRACT-DEFERRED-REVIEW (contract specification C06.1). A declared
+resource-v1 contract, or one clause of it, may be marked
+`resource_review_pending`; the loader validates it and withholds it.
+
+| Addition | Kind |
+|---|---|
+| `ContractTrust::PendingHumanReview` | new variant on an exhaustively matched enum |
+| `ReasonCategory::AwaitingHumanReview` (`awaiting-human-review`, subject: analyser) | new variant on an exhaustively matched enum; the closed vocabulary grows from seven to eight |
+| `PendingHumanReview`, `ReviewDeferral`, `ReviewScope` | new types |
+| `ResourceContracts::pending_review` | new private field with accessors, skipped when empty |
+
+The two new variants are source-incompatible for exhaustive matches, so this
+is a major bump by the exhaustive-variant precedent of 2.0.0 through 9.0.0.
+**Existing wire bytes are unchanged**: an environment with no marker
+serializes without `pending_review`, no existing reason text classifies
+differently, and no `DerivationIncomplete` or task digest moves (no producer
+names the new category). Plugin protocol 1 and evidence versions 1 and 2 are
+unchanged.

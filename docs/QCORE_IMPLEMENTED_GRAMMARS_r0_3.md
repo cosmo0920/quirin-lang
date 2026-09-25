@@ -2470,7 +2470,14 @@ pointer_abi = "ptr", "<", "mut", ",", "u8", ">"
             | "ptr", "<", "mut", ",", "ptr", "<", "mut", ",", "u8", ">", ">" ;
 resource_clause = "requires", "resource_contract_v1", ";"
                 | "requires", literal_argument_premise, ";"
-                | "ensures", "normal", resource_predicate, ";" ;
+                | "requires", contract_review_marker, ";"
+                | "ensures", "normal", resource_predicate, ";"
+                | "ensures", "normal", clause_review_marker, ";" ;
+contract_review_marker =
+    "resource_review_pending", "(", review_note, ")" ;
+clause_review_marker =
+    "resource_review_pending", "(", resource_predicate, ",", review_note, ")" ;
+review_note = STRING, [",", STRING] ;  (* reason, then optional owner *)
 literal_argument_premise =
     "resource_literal_argument", "(", IDENT, ",", integer_literal, ")" ;
 integer_literal = ["-"], DIGITS ;
@@ -2489,7 +2496,9 @@ Additional static conditions are mandatory: exactly one marker, exactly one mode
 
 `literal_argument_premise` (card HASH-CLAUSE) states where the declaration is applied, not what it means: a consumer treats the callee as undeclared at every call site whose actual at the named parameter is not exactly that integer constant. It never widens a declaration and never changes a mode. Which call-site *spellings* are that constant is fixed by contract specification C04.5.1 (card HASH-REFINE): matched enclosing parentheses and an integer suffix are erased structurally, and every spelling needing arithmetic, a base, a cast or symbol resolution is refused.
 
-The grammar describes tokens, not required whitespace. It provides no general predicate-call nesting. It also does not turn an admitted trusted declaration into proof that a C function obeys it.
+The review markers (card W45-CONTRACT-DEFERRED-REVIEW, contract specification C06) carry their own static conditions. The first `STRING` is the mandatory reason and the second the optional reviewer or owner; each is one lexer string literal, not blank, with no backslash escape and no control character, so each has one spelling. A declaration carries either one `contract_review_marker` or any number of `clause_review_marker`s, never both and never two contract-level markers. A `clause_review_marker` wraps exactly one `resource_predicate` (the kind clauses and `resource_variadic_data_tail()` included), which is then subject to every condition above as if written bare; it cannot wrap a marker, the `resource_contract_v1` selector or a `literal_argument_premise`, and it is admitted only under `ensures normal`, as the contract-level form is only under `requires`. Every violation rejects the whole module. A marked declaration is loaded and validated in full and then withheld (C06); inheritance (G05a, C15) copies its markers with its clauses.
+
+The grammar describes tokens, not required whitespace. Apart from the one `clause_review_marker` wrapping, it provides no general predicate-call nesting. It also does not turn an admitted trusted declaration into proof that a C function obeys it.
 
 ## G05a. Contract inclusion and inheritance
 

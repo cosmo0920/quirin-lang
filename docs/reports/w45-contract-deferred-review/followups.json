@@ -1,0 +1,37 @@
+[
+  {
+    "id": "W45-REVIEW-POSITION-PRECISE-HOLD",
+    "title": "A clause-level review marker holds every call site of its declaration, not only those where the deferred clause decides the call",
+    "why": "Card W45-CONTRACT-DEFERRED-REVIEW withholds the whole contract for a clause-level marker (contract spec C06.1): a v1 contract is applied as one conjunction and no consumer applies part of one, so dropping only the deferred clause would let the remaining, possibly weaker, clauses decide. The consequence is that deferring a clause that does not decide a given call (a `resource_borrowed` scalar, say) still holds that call Unknown; the gateway test `a_deferred_clause_is_never_silently_dropped` pins this. DISCHARGE: a partial-application semantics that applies the undeferred clauses at a call site only when the deferred position provably carries no tracked identity there, with a Lean proof that the deferred clause cannot then decide the call, and a measured corpus re-pin showing no verdict moves towards Safe or Unsafe because of a deferred clause.",
+    "source": "docs/reports/w45-contract-deferred-review/README.md",
+    "recorded_by": "W45-CONTRACT-DEFERRED-REVIEW"
+  },
+  {
+    "id": "W45-REVIEW-HELD-CALL-SITE-COUNT",
+    "title": "The pending-review section counts recorded held-call refusals, a lower bound on textual call sites",
+    "why": "The `pending_human_review` section's `held_call_sites` counts the held-call refusals the analysis recorded. The analysis of a path stops at its first refused statement, so a second call to the same pending callee later on that path records no refusal of its own (measured in `qcore-audit`'s `every_marker_is_listed_with_its_digest_and_what_it_holds`: three textual call sites, two recorded). The section's `meaning` says so. DISCHARGE: count the call sites the gateway's hold rewrite (`review_hold::hold_call_sites`) rewrites per unit, publish them beside the recorded refusals, and pin the two counts on a fixture with a repeated call.",
+    "source": "docs/reports/w45-contract-deferred-review/README.md",
+    "recorded_by": "W45-CONTRACT-DEFERRED-REVIEW"
+  },
+  {
+    "id": "W45-REVIEW-CONFIG-ROUTE-SECTION",
+    "title": "The configured `quirin-audit CONFIG.json` route does not yet publish the pending-review section",
+    "why": "Card W45-CONTRACT-DEFERRED-REVIEW publishes `pending_human_review` and its console tally on `quirin-audit current`, `quirin-audit contracts` and the corpus arbiter, as its brief named; the configured route (`crates/qcore-audit/src/lib.rs`, the `.assumptions.json` sidecar) was left alone because a concurrent card was editing that file. Its unit rows already carry the `awaiting-human-review` reason code, since the gateway's unit reason carries it. DISCHARGE: add `qcore_audit::pending_review::section` to that route's assumptions sidecar and its tally to its console, with a configured-route test.",
+    "source": "docs/reports/w45-contract-deferred-review/README.md",
+    "recorded_by": "W45-CONTRACT-DEFERRED-REVIEW"
+  },
+  {
+    "id": "W45-REVIEW-HELD-DIAGNOSTIC-CATEGORY",
+    "title": "A held call is published under the diagnostic category `unsupported`",
+    "why": "The gateway refuses a held call through the existing unmodelled-statement channel, so `diagnostics.json` lists it under `category: unsupported` and counts it in `diagnostic_counts.unsupported`, exactly as it lists a withdrawn declaration (LOADER-ABI, LOADER-ABI-MODES). The unit reason counts held calls apart and the unit `reason_code` is `awaiting-human-review`, but the per-diagnostic category does not say so. No corpus unit carries one today. DISCHARGE: a dedicated `LegacyDiagnosticKind` for a held call with its own report category, which moves the verdict-bearing artifact's schema and so needs a deliberate re-pin of the archived baseline; the withdrawn-declaration refusals could move with it.",
+    "source": "docs/reports/w45-contract-deferred-review/README.md",
+    "recorded_by": "W45-CONTRACT-DEFERRED-REVIEW"
+  },
+  {
+    "id": "W45-REVIEW-INHERIT-OWN-MARKER",
+    "title": "An inheriting declaration cannot be deferred on its own",
+    "why": "Contract inheritance (C15) admits no clause after `contract inherit PARENT;`, so a child inherits exactly its parent's markers: a deferred parent defers every child, but a child of an undeferred parent can be deferred only by writing its contract out by hand with a marker. DISCHARGE: admit exactly one contract-level review marker after `inherit PARENT` (e.g. `contract inherit PARENT requires resource_review_pending(\"REASON\");`), elaborated as a marker on the inherited contract, with the inherited-declaration agreement check comparing everything but that marker, the C15 and G05a grammar updated, and Lean parity for the propagation rule.",
+    "source": "docs/reports/w45-contract-deferred-review/README.md",
+    "recorded_by": "W45-CONTRACT-DEFERRED-REVIEW"
+  }
+]

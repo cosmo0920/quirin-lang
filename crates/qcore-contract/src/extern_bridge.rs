@@ -96,6 +96,30 @@ pub fn declared_signatures(
     Ok(signatures)
 }
 
+/// Card W45-CONTRACT-DEFERRED-REVIEW: the refusal for a callee whose declared
+/// contract awaits human review, or `None` if it does not.
+///
+/// The loader withholds such a declaration from the function map, so
+/// `contracts.contract(name)` is already `None` and the route already refuses
+/// the callee as uncontracted; this only names the reason. A pending contract
+/// is never joined into a [`DeclaredContract`], so it can neither admit a call
+/// nor contribute a custody effect.
+#[must_use]
+pub fn pending_review_refusal(name: &str, contracts: &ResourceContracts) -> Option<String> {
+    let pending = contracts.pending_review().get(name)?;
+    let reasons = pending
+        .deferrals
+        .iter()
+        .map(|deferral| deferral.reason.as_str())
+        .collect::<Vec<_>>()
+        .join("; ");
+    Some(format!(
+        "`{name}`'s declared contract in {} awaits human review (awaiting-human-review), so it \
+         admits no call: {reasons}",
+        pending.module
+    ))
+}
+
 /// Join one loaded contract with its declared signature into the model's typed
 /// view. Every failure names the exact spelling that is not in the C04 ABI
 /// projection; nothing is approximated.
