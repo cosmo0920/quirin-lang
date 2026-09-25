@@ -868,6 +868,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w44-test-suite-wall-time](w44-test-suite-wall-time/README.md) | W44-TEST-SUITE-WALL-TIME: the standing gate's Rust suite, from 22 minutes to about 4½ |
 
+| [w45-sub-object-stores](w45-sub-object-stores/README.md) | W45-SUB-OBJECT-STORES: stores into a sub-object through a resolved base |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |

@@ -296,7 +296,27 @@ In this worktree (`agent-ad637c4665a18b9ca`) with `CARGO_INCREMENTAL=0` and
 `QCORE_CLANG=/usr/bin/clang`; logs in the private `measure/gate/`. Figures in
 [gate.json](gate.json).
 
-GATE_TABLE
+| Step | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | **5,669 passed / 0 failed / 11 ignored**, 290 units, 300 summaries (`private/test-binaries/20260925T162153Z-3854141`) |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --all-targets -- -D warnings` | 0 | clean |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **190** audits (adds `AuditSubObjectStore`) |
+| census feature: `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -D warnings`, `cargo test … --features indirect-census --lib` | 0, 0 | 537 passed |
+| `build_matrix.py . --gate gate.json`, then `python3 -m unittest discover -s scripts/tests` | 0, 0 | **351** tests |
+| `python3 scripts/build_docs_index.py --check` | 0 | after regenerating `INDEX.md` |
+
+Kept, not validation evidence: two earlier runner attempts, both exit 101 —
+`20260925T154711Z-3311261` (a build failure: `alias_aggregate_probe`'s
+exhaustive match lacked the variant) and `20260925T155544Z-3446957` (5,668
+passed / 2 failed: the two pins of §3). The census feature's guard test
+`every_declared_sink_forces_one_job` fails on the base itself
+(`QCORE_CALL_ARGUMENT_CENSUS` unlisted); the card lists the sink. `providers/`
+is untouched, so the provider gate was not run; `provider_tests` in
+[gate.json](gate.json) is carried. Clang is recorded in this checkout
+([clang-version.txt](clang-version.txt)).
 
 ## 6. Ledger
 

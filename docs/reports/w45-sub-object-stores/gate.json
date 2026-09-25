@@ -1,0 +1,13 @@
+{
+  "note": "W45-SUB-OBJECT-STORES: the standing gate measured at 0d85200e (code as a175403b; later commits change documents, ledger, report scripts and evidence only) with CARGO_INCREMENTAL=0 and QCORE_CLANG=/usr/bin/clang. Step exits: submodules 0; scripts/run_test_binaries.py 0 (290 units, 300 summaries; 5669 passed, 0 failed, 11 ignored; private/test-binaries/20260925T162153Z-3854141); cargo fmt --check 0; cargo clippy --all-targets -D warnings 0; reevaluation_probe 0; reevaluation_followup 0; check_lean_audits.py --jobs 4 0 (190 audits; 1 added: AuditSubObjectStore); census step: clippy -p qcore-c-gateway --features indirect-census 0 and 537 feature-on library tests passed (exit 0). Two earlier runner attempts failed and are kept: 20260925T154711Z-3311261 (exit 101, build failure: alias_aggregate_probe's exhaustive match lacked the new variant) and 20260925T155544Z-3446957 (exit 101, 5668 passed / 2 failed: the O04-B08 and W44-LEAK-PIN-AUDIT pins that a store of an owned identity into a caller's record keeps the refusal, which led to the card's final custody decision). The census feature's guard test failed on the base (QCORE_CALL_ARGUMENT_CENSUS unlisted) and is fixed by the card. providers/ is untouched, so the provider gate was not run and provider_tests is carried from the preceding gate. Python suite after the final matrix regeneration. Clang recorded in this checkout. Corpus: destroy_id Unknown -> Safe, 0 unit moves, leak 37 unchanged, 0 violation candidates, every delta attributed.",
+  "workspace_tests": 5669,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 351,
+  "lean_audits": 190,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
