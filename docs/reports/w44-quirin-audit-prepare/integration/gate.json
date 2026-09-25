@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for W44-QUIRIN-AUDIT-PREPARE on merge 0d070023 (onto main fc6a0f14, after W44-QUIRIN-AUDIT-PROVIDERS), measured by the integrator in its own worktree; every exit captured to a file, not piped. 5636 core Rust passed / 0 failed / 11 ignored over 299 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 189 Lean audits; 351 root Python tests; 13 package Python tests; fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The corpus arbiter ran at the default job count (QCORE_AUDIT_JOBS unset; 16 on this host) in 74 s and baseline_identity.py against docs/reports/w44-collection-allocation/integration/artifacts exits 0 with verdict_bearing_identical true (identity-vs-collection-allocation-baseline.json), so the baseline does not move. The card is tooling only: it adds a `quirin-audit prepare` subcommand and deletes the two Python preparation scripts it replaces; the pinned arbiter is verdict-bearing identical to the pre-merge baseline.",
+ "workspace_tests": 5636,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 351,
+ "lean_audits": 189,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
