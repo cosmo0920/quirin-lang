@@ -47,9 +47,10 @@
 //!
 //! * **P1, the base is a formal that is never copied.** `B` is a formal
 //!   parameter, and every occurrence of the name `B` in the body is a member
-//!   access `B->G` or the whole single actual of a call whose contract releases
-//!   its only parameter. No assignment, declaration, address, cast or other
-//!   actual of `B` exists, so no alias of the base does.
+//!   access `B->G`, a null test of `B` in an `if` condition, or the whole
+//!   single actual of a call whose contract releases its only parameter. No
+//!   assignment, declaration, address, cast or other actual of `B` exists, so
+//!   no alias of the base does.
 //! * **P2, one release and nothing after it.** Exactly one occurrence of
 //!   `B->F` is a whole actual at a `Released { nullable: true }` position (the
 //!   release). Every other occurrence is a null test in an `if` condition that
@@ -440,6 +441,11 @@ fn admissible_places(
                 members.entry(field).or_default().push(at);
                 continue;
             }
+            // A null test of the base itself reads its value and copies
+            // nothing (`if (!buckets) return;`).
+            if is_null_test(texts, at, 1) {
+                continue;
+            }
             // `R ( B )` with `R` releasing its only parameter.
             if previous == Some("(")
                 && texts.get(at + 1) == Some(&")")
@@ -472,7 +478,7 @@ fn admissible_places(
             };
             if !occurrences
                 .iter()
-                .all(|at| *at == release || (*at < release && is_null_test(texts, *at)))
+                .all(|at| *at == release || (*at < release && is_null_test(texts, *at, 4)))
             {
                 continue; // P2: another use of the place
             }
@@ -592,16 +598,16 @@ fn loop_spans(texts: &[&str], depth: &[usize]) -> Vec<(usize, usize)> {
     spans
 }
 
-/// Whether the place `B -> F` at `at` (the index of `B`) is a null test of it
-/// inside an `if` condition: its only neighbours up to that condition's
-/// parentheses are `(`, `)`, `!`, `&&`, `||`, a comparison with a null pointer
-/// constant, or `__builtin_expect ( … , constant )`.
-fn is_null_test(texts: &[&str], at: usize) -> bool {
+/// Whether the place of `length` tokens at `at` (`B` alone, or `B -> F`) is a
+/// null test of it inside an `if` condition: its only neighbours up to that
+/// condition's parentheses are `(`, `)`, `!`, `&&`, `||`, a comparison with a
+/// null pointer constant, or `__builtin_expect ( … , constant )`.
+fn is_null_test(texts: &[&str], at: usize, length: usize) -> bool {
     let Some((condition_open, condition_close)) = (0..at).rev().find_map(|keyword| {
         (texts[keyword] == "if" && texts.get(keyword + 1) == Some(&"("))
             .then(|| close_of(texts, keyword + 1, "(", ")").map(|close| (keyword + 1, close)))
             .flatten()
-            .filter(|(_, close)| *close > at + 3)
+            .filter(|(_, close)| *close >= at + length)
     }) else {
         return false;
     };
@@ -628,7 +634,7 @@ fn is_null_test(texts: &[&str], at: usize) -> bool {
         }
     }
     // Right of the place.
-    let mut cursor = at + 4;
+    let mut cursor = at + length;
     loop {
         match texts.get(cursor).copied() {
             Some(")") if cursor == condition_close => return true,

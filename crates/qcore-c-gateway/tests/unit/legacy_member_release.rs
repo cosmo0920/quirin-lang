@@ -160,6 +160,16 @@ fn no_second_use_of_a_released_member_is_safe() {
              q_nullable_free(n->next); q_nullable_free(n); }\n",
         ),
         (
+            "the base passed to another call",
+            "void subject(struct node *n) { q_nullable_free(n->buf); q_peek(n); \
+             q_nullable_free(n); }\n",
+        ),
+        (
+            "the base tested in a condition that is not a null test",
+            "void subject(struct node *n) { if (n == n->next) return; q_nullable_free(n->buf); \
+             q_peek(n->buf); q_nullable_free(n); }\n",
+        ),
+        (
             "a goto in the body",
             "void subject(struct node *n) { again: q_nullable_free(n->buf); \
              if (n->next) goto again; q_nullable_free(n); }\n",
@@ -268,6 +278,11 @@ fn destructor_shapes_still_certify() {
             "a __builtin_expect null test",
             "static void d(struct node *n) { if (__builtin_expect((n->buf != ((void *)0)), 1)) \
              q_nullable_free(n->buf); q_nullable_free(n); }\n",
+        ),
+        (
+            "a null test of the base first (cmt_histogram_buckets_destroy)",
+            "static void d(struct node *n) { if (!n) { return; } if (n->buf) { \
+             q_nullable_free(n->buf); } q_nullable_free(n); }\n",
         ),
         (
             "a scalar member written before the releases",
