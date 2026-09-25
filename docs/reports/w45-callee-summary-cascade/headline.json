@@ -25,8 +25,8 @@
  },
  "after": {
   "functions": {
-   "Unknown": 4507,
-   "Safe": 315,
+   "Unknown": 4509,
+   "Safe": 313,
    "Unsafe": 12
   },
   "units": {
@@ -39,11 +39,11 @@
   "diagnostic_counts": {
    "leak": 37,
    "summary_conflict": 1,
-   "unknown_alias": 3560,
-   "unsupported": 43197
+   "unknown_alias": 3558,
+   "unsupported": 43299
   },
-  "uncontracted_call_leaves": 9193,
-  "unknown_with_call_leaves": 2612,
+  "uncontracted_call_leaves": 9194,
+  "unknown_with_call_leaves": 2613,
   "only_calls": 411,
   "only_one_callee": 299
  },
@@ -79,20 +79,8 @@
    "after": "Safe"
   },
   {
-   "unit": "librdkafka/rdkafka_metadata.c",
-   "function": "rd_kafka_metadata_partition_clear",
-   "before": "Unknown",
-   "after": "Safe"
-  },
-  {
    "unit": "librdkafka/rdkafka_queue.c",
    "function": "rd_kafka_q_consumer_propagate",
-   "before": "Unknown",
-   "after": "Safe"
-  },
-  {
-   "unit": "librdkafka/snappy.c",
-   "function": "rd_kafka_snappy_free_env",
    "before": "Unknown",
    "after": "Safe"
   },

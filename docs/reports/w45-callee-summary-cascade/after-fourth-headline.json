@@ -1,0 +1,95 @@
+{
+ "before": {
+  "functions": {
+   "Unknown": 4516,
+   "Safe": 306,
+   "Unsafe": 12
+  },
+  "units": {
+   "Unknown": 168,
+   "Safe": 3,
+   "Unsafe": 10,
+   "data_only": 4
+  },
+  "data_only_units": 5,
+  "diagnostic_counts": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3507,
+   "unsupported": 43590
+  },
+  "uncontracted_call_leaves": 9200,
+  "unknown_with_call_leaves": 2614,
+  "only_calls": 412,
+  "only_one_callee": 300
+ },
+ "after": {
+  "functions": {
+   "Unknown": 4510,
+   "Safe": 312,
+   "Unsafe": 12
+  },
+  "units": {
+   "Unknown": 167,
+   "Safe": 4,
+   "Unsafe": 10,
+   "data_only": 4
+  },
+  "data_only_units": 5,
+  "diagnostic_counts": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3559,
+   "unsupported": 43302
+  },
+  "uncontracted_call_leaves": 9194,
+  "unknown_with_call_leaves": 2613,
+  "only_calls": 411,
+  "only_one_callee": 299
+ },
+ "function_moves": [
+  {
+   "unit": "chunkio/cio_error.c",
+   "function": "cio_error_set",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupListing_destroy",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupListing_free",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "rd_kafka_consumer_group_metadata_destroy",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_q_consumer_propagate",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "monkey-libevent/mk_server/mk_config.c",
+   "function": "mk_config_sanity_check",
+   "before": "Unknown",
+   "after": "Safe"
+  }
+ ],
+ "unit_moves": [
+  {
+   "unit": "chunkio/cio_error.c",
+   "before": "Unknown",
+   "after": "Safe"
+  }
+ ]
+}

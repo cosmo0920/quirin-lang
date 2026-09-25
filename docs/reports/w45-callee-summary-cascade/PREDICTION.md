@@ -75,3 +75,31 @@ diagnostics, the BEFORE capture and the census in [census/](census/).
   call to a unit-defined function: 0 to 5 functions may leave `Safe`
   (refusing direction), each attributed.
 * Units: no move expected.
+
+## Revision after the integration review (appended 2026-09-26; the text above is unchanged)
+
+The integration review returned the card: rule 1 as frozen above certified a
+double release `Safe` (`free(n->buf); free(n->buf); free(n);`, and a caller
+releasing a member again after a callee that released it), and the
+pre-existing O04-B08 aggregate null test certified a test through a released
+base. The repair restricts rule 1 to the last use of its place (premises
+P1–P4, gateway constraint 5k) and obliges every dereferencing null test's
+bases. **This revision is not blind:** it was written after the repaired
+corpus runs (`5275d58f`, then `1dedce71`). It records what the first AFTER and
+the repair's shape imply, for comparison, and the measured figures follow it:
+
+* **Movers:** of the first AFTER's 9, the two clear-style bodies that release
+  members without releasing the base (`rd_kafka_metadata_partition_clear`,
+  `rd_kafka_snappy_free_env`) leave; the destructors that release their base
+  stay: **7**. The run at `5275d58f` measured 6, because P1 also refused
+  `cmt_histogram_buckets_destroy`'s null test of the base itself; `1dedce71`
+  admits that test.
+* **Aggregate repair:** adds `unresolved resource identity` leaves where a
+  tested base does not resolve. Any function that was `Safe` only through the
+  hole leaves `Safe`: expected 0–5, each named as a correction.
+* **Leak and violations:** unchanged; a released base now refuses, it does not
+  accuse.
+* **Sole blocker:** 412 → 411 as before.
+
+Measured (AFTER at `1dedce71`, see the report): 7 movers, 0 functions leave
+`Safe`, 17 aggregate-base obligations added, leak 37, sole blocker 411.

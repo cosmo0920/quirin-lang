@@ -39,6 +39,12 @@ added
                         `decided-callee`: the now-modeled call checks the
                         actual it releases (W44-CORPUS-CALLEE-SUMMARIES'
                         `same-line` class);
+* `aggregate-base-obligation` -- `unresolved resource identity B` on a
+                        condition that null-tests `B->F`, which BEFORE lowered
+                        to a bare branch: the O04-B08 aggregate null test now
+                        carries the typed read of `B` (the
+                        AGGREGATE-NULL-TEST-AFTER-RELEASE repair), and `B` does
+                        not resolve there;
 * `unmasked`         -- `unresolved resource identity X` elsewhere in a
                         function that lost a rule-1/rule-2 refusal, on a line
                         that names X: the lifted refusal had poisoned every
@@ -141,6 +147,10 @@ def main():
                     cls = "exchange"
                 elif unresolved and line in decided_lines:
                     cls = "decided-same-line"
+                elif unresolved and re.search(
+                    r"\b(if|while)\s*\(.*\b" + re.escape(unresolved.group(1)) + r"\s*->\s*[A-Za-z_]\w*", t
+                ):
+                    cls = "aggregate-base-obligation"
                 elif unresolved and rule_lines and re.search(r"\b" + re.escape(unresolved.group(1)) + r"\b", t):
                     cls = "unmasked"
                 rows.append(["added", line, category, description, cls, t])

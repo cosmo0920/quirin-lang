@@ -19,15 +19,19 @@ would unblock through summary chains: one callee unblocks at most 12, a
 cross-unit route over existing `Safe` bodies 2, and the indirect-access family
 186, most of it sub-object stores and return expressions owned by sibling
 cards. The card models the destructor body the census surfaced (gateway
-constraint 5j, `legacy_member_release.rs`, `QCore.MemberRelease`): a typed
-pointer read handed to a `Released { nullable }` position is an object outside
-the projection, lowered `Borrowed` after the unchanged W44 read obligations; a
-pointer member null test is the typed read of its base; and every call to an
-undeclared unit-defined callee whose body may hand a pointer read to a call
-refuses an actual owning sub-custody, because such a summary may release
-through a formal. The arbiter reproduces the
-baseline byte for byte, then moves 9 functions and `cio_error.c` Unknown →
-Safe with all 454 changed leaves attributed and no leak or violation leaf
-moved; the sole-blocker population goes 412 → 411. The typed reader's
-typedef limits (254 release actuals) are the next family.
+constraint 5k, `legacy_member_release.rs`, `QCore.MemberRelease`). Its first
+version read a released member as untracked and certified a double release
+`Safe`; the integration review returned it. A member release is now admitted
+only as the last use of its place: the base is a formal never copied, the
+place is released once and only null-tested before, no loop or `goto` can
+repeat it, and the base is released afterwards on every path, so a summary
+releases its formal. A pointer member null test is the typed read of its base,
+every dereferencing null test now obliges its bases (closing the pre-existing
+O04-B08 hole `AGGREGATE-NULL-TEST-AFTER-RELEASE`), and calls to undeclared
+unit callees that may release through a formal refuse an actual owning
+sub-custody. The arbiter reproduces the baseline byte for byte, then moves 7
+functions and `cio_error.c` Unknown → Safe with all 350 changed leaves
+attributed; no function leaves `Safe` and no leak or violation leaf moves; the
+sole-blocker population goes 412 → 411. The 110 releases the premises refuse
+and the typed reader's typedef limits (254 actuals) are registered.
 [Report](../../reports/w45-callee-summary-cascade/README.md).

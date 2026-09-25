@@ -5,7 +5,8 @@ Usage: update_ledger.py
 
 * retires nothing: no registered entry's discharge condition is met by this card
   (see the report's ledger section);
-* appends every entry of `followups.json` (refusing a duplicate id);
+* replaces this card's own entries with `followups.json` (refusing any other card's
+  duplicate id), so a rerun after a repair is idempotent;
 * rewrites the hand-maintained `corpus.cycle19_raw_units` row from this card's
   archived AFTER artifacts, first preserving the exact previous row.
 
@@ -23,11 +24,14 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[4]
 MATRIX = ROOT / "docs/reviews/r0_3/acceptance_matrix.json"
 REPORT = ROOT / "docs/reports/w45-callee-summary-cascade"
+CARD = "W45-CALLEE-SUMMARY-CASCADE"
 
 
 def main() -> int:
     matrix = json.loads(MATRIX.read_text())
-    entries = matrix["named_followups"]
+    # Idempotent (review repair): this card's own earlier entries are replaced,
+    # never duplicated; every other card's entry is refused as a duplicate.
+    entries = [entry for entry in matrix["named_followups"] if entry.get("recorded_by") != CARD]
     ids = [entry["id"] for entry in entries]
     new = json.loads((REPORT / "followups.json").read_text())
     for entry in new:
@@ -36,7 +40,9 @@ def main() -> int:
     matrix["named_followups"] = entries + new
 
     corpus = matrix["corpus"]
-    (REPORT / "previous-corpus-row.json").write_text(json.dumps(corpus["cycle19_raw_units"], indent=2) + "\n")
+    previous = REPORT / "previous-corpus-row.json"
+    if not previous.exists():  # the row before this card, kept from the first run
+        previous.write_text(json.dumps(corpus["cycle19_raw_units"], indent=2) + "\n")
     diagnostics = json.loads(gzip.decompress((REPORT / "artifacts/diagnostics.json.gz").read_bytes()))
     functions = collections.Counter()
     units = collections.Counter()
@@ -50,16 +56,18 @@ def main() -> int:
     row = dict(corpus["cycle19_raw_units"])
     row.update(
         {
-            "note": "W45-CALLEE-SUMMARY-CASCADE, 2026-09-26. BEFORE (base binary b160d765) reproduces the "
-            "W44-COLLECTION-ALLOCATION integration diagnostics, chunk-contracts and source byte for byte. "
-            "AFTER admits a typed pointer read at a Released { nullable } position (lowered Borrowed), lowers "
-            "a pointer member null test to the typed read of its base, and guards every call to an undeclared "
-            "unit-defined callee against actuals owning sub-custody (gateway constraint 5j): 454 changed "
-            "leaves, all attributed (128 member releases, 247 member null tests, 10 desugared operands, 1 "
-            "decided statement, 7 decided callees, 4 lifted poisonings removed; 53 base exchanges and 4 "
-            "decided same-line identities added); 9 functions and the unit chunkio/cio_error.c move Unknown -> "
-            "Safe; 0 leak or violation leaves added or removed. Leak 37 preserved. Raw units remain "
-            "unpromoted; provisional Unsafe is not an upstream defect claim. Previous row preserved in "
+            "note": "W45-CALLEE-SUMMARY-CASCADE, 2026-09-26, after its integration review. BEFORE (base binary "
+            "b160d765) reproduces the W44-COLLECTION-ALLOCATION integration diagnostics, chunk-contracts and source "
+            "byte for byte. AFTER admits `B->F` at a Released { nullable } position only as the last use of its "
+            "place (gateway constraint 5k premises P1-P4), lowers a pointer member null test to the typed read of "
+            "its base, obliges every dereferencing null test's bases (the AGGREGATE-NULL-TEST-AFTER-RELEASE "
+            "repair), and guards calls to undeclared unit-defined callees that may release through a formal: 350 "
+            "changed leaves, all attributed (27 member releases, 247 member null tests, 10 desugared operands, 1 "
+            "decided statement, 6 decided callees, 4 lifted poisonings removed; 34 base exchanges, 4 decided "
+            "same-line identities and 17 aggregate-base obligations added); 7 functions and the unit "
+            "chunkio/cio_error.c move Unknown -> Safe; no function leaves Safe or Unsafe; 0 leak or violation "
+            "leaves added or removed. Leak 37 preserved. Raw units remain unpromoted; provisional Unsafe is not "
+            "an upstream defect claim. Previous row preserved in "
             "docs/reports/w45-callee-summary-cascade/previous-corpus-row.json.",
             "units": sum(units.values()),
             "safe": units["Safe"],

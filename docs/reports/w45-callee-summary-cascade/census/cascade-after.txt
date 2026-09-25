@@ -1,11 +1,11 @@
 {
- "unknown_functions": 4507,
- "unknown_with_call_leaves": 2612,
+ "unknown_functions": 4509,
+ "unknown_with_call_leaves": 2613,
  "only_calls": 411,
  "only_one_callee": 299,
- "leaves": 9193,
+ "leaves": 9194,
  "leaf_classes": {
-  "same-unit": 3730,
+  "same-unit": 3731,
   "other-unit": 3139,
   "header-internal": 1281,
   "no-body": 957,
@@ -21,7 +21,7 @@
   ]
  }
 }
-{'family': 'indirect memory access is outside the resource projection', 'leaves_on_unknown': 17581, 'leaves_in_callee_bodies': 9620, 'unblocked_removed_everywhere': 442, 'unblocked_removed_in_callee_bodies': 199}
+{'family': 'indirect memory access is outside the resource projection', 'leaves_on_unknown': 17682, 'leaves_in_callee_bodies': 9680, 'unblocked_removed_everywhere': 444, 'unblocked_removed_in_callee_bodies': 200}
 {'family': 'unmodeled call, aggregate or indirect access in return expression', 'leaves_on_unknown': 495, 'leaves_in_callee_bodies': 187, 'unblocked_removed_everywhere': 151, 'unblocked_removed_in_callee_bodies': 37}
 {'family': 'unmodeled call, aggregate or indirect access in branch condition', 'leaves_on_unknown': 8000, 'leaves_in_callee_bodies': 4267, 'unblocked_removed_everywhere': 49, 'unblocked_removed_in_callee_bodies': 11}
 {'family': 'unsupported assignment expression', 'leaves_on_unknown': 1579, 'leaves_in_callee_bodies': 691, 'unblocked_removed_everywhere': 12, 'unblocked_removed_in_callee_bodies': 5}
@@ -30,12 +30,12 @@
 {'family': 'unrecognized assignment destination', 'leaves_on_unknown': 680, 'leaves_in_callee_bodies': 447, 'unblocked_removed_everywhere': 5, 'unblocked_removed_in_callee_bodies': 3}
 {'family': 'local declaration may shadow a formal resource identity', 'leaves_on_unknown': 35, 'leaves_in_callee_bodies': 24, 'unblocked_removed_everywhere': 2, 'unblocked_removed_in_callee_bodies': 2}
 {'family': 'call to `X` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)', 'leaves_on_unknown': 12, 'leaves_in_callee_bodies': 8, 'unblocked_removed_everywhere': 2, 'unblocked_removed_in_callee_bodies': 2}
-{'family': 'unresolved resource identity `X`', 'leaves_on_unknown': 3464, 'leaves_in_callee_bodies': 1702, 'unblocked_removed_everywhere': 5, 'unblocked_removed_in_callee_bodies': 1}
 {'family': 'unmodeled increment or decrement expression', 'leaves_on_unknown': 551, 'leaves_in_callee_bodies': 360, 'unblocked_removed_everywhere': 1, 'unblocked_removed_in_callee_bodies': 1}
 {'family': 'C operator `X` requires type/operand analysis', 'leaves_on_unknown': 465, 'leaves_in_callee_bodies': 148, 'unblocked_removed_everywhere': 1, 'unblocked_removed_in_callee_bodies': 1}
 {'family': 'nested call `X` inside a modeled call is outside the resource projection', 'leaves_on_unknown': 140, 'leaves_in_callee_bodies': 68, 'unblocked_removed_everywhere': 5, 'unblocked_removed_in_callee_bodies': 1}
 {'family': 'unmodeled expression may mutate a formal resource identity', 'leaves_on_unknown': 108, 'leaves_in_callee_bodies': 64, 'unblocked_removed_everywhere': 1, 'unblocked_removed_in_callee_bodies': 1}
 {'family': 'arguments do not match resource contract for `X`', 'leaves_on_unknown': 3, 'leaves_in_callee_bodies': 1, 'unblocked_removed_everywhere': 3, 'unblocked_removed_in_callee_bodies': 1}
+{'family': 'unresolved resource identity `X`', 'leaves_on_unknown': 3462, 'leaves_in_callee_bodies': 1709, 'unblocked_removed_everywhere': 4, 'unblocked_removed_in_callee_bodies': 0}
 {'family': 'unmodeled call, aggregate or indirect access in for-loop condition', 'leaves_on_unknown': 863, 'leaves_in_callee_bodies': 460, 'unblocked_removed_everywhere': 0, 'unblocked_removed_in_callee_bodies': 0}
 {'family': 'store through `X` without an out-parameter contract', 'leaves_on_unknown': 244, 'leaves_in_callee_bodies': 134, 'unblocked_removed_everywhere': 0, 'unblocked_removed_in_callee_bodies': 0}
 {'family': 'arguments beyond the declared parameters of `X` are outside the resource projection', 'leaves_on_unknown': 218, 'leaves_in_callee_bodies': 88, 'unblocked_removed_everywhere': 1, 'unblocked_removed_in_callee_bodies': 0}

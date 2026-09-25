@@ -330,32 +330,44 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     through a misnamed store is withdrawn with it (`mk_iov_init`).
     [Report](../reports/w44-assignment-destination-suffix-place/README.md).
 
-<a id="constraint-5j"></a>
+<a id="constraint-5k"></a>
 
-5j. **A released member is outside the projection, and a summary that
-    releases one is guarded at its callers.** W45-CALLEE-SUMMARY-CASCADE
-    (`legacy_member_release.rs`) admits a typed pointer read (`B->F`, `B[I]`,
-    `*B`, never `S.F` or an address) at a `Released { nullable: true }`
-    position only, lowered with that position `Borrowed` after the unchanged
-    W44-INDIRECT-CALL-ARGUMENT-ACCESS reads; and a controlling expression that
-    null-tests one pointer member lowers to the typed read of its base, with
-    no refinement. A W4 summary of such a body releases objects reachable
-    through its formals that no mode states, so before every call to a
-    function the unit defines, the environment does not declare, and whose
-    body (or a body it calls, to a fixed point) hands a pointer read to a
-    call, `ArgumentReads` refuses a plain-name actual whose target owns
-    sub-custody. **Keep all three premises.** Do not admit a non-null
-    release (nothing establishes an untracked member non-null) or a member
-    address (an interior pointer). Do not drop the guard or narrow its lexical
-    selection below the bodies that may use rule 1. Do not widen it to declared
-    callees (the first arbiter run did, and `flb_input_chunk_create` left
+5k. **A member release is custody: admit it only as the last use of its
+    place, and guard its summaries at callers.** W45-CALLEE-SUMMARY-CASCADE
+    (`legacy_member_release.rs`) admits `B->F` at a `Released { nullable:
+    true }` position, lowered `Borrowed` after the unchanged
+    W44-INDIRECT-CALL-ARGUMENT-ACCESS reads, **only** under four lexical
+    premises: P1 `B` is a formal never copied (every use is `B->G`, a null
+    test of `B`, or `R(B)` for a release `R`); P2 the place has one release and
+    before it only null tests; P3 no loop encloses the release (`do … while
+    (0)` excepted) and the body has no `goto`/`setjmp`; P4 a top-level `R(B);`
+    follows with no `return` between, so the formal is released on every path
+    and a summary says `Released` for it. A body that releases through a formal
+    without releasing the formal gets no rule 1 and no summary. **Do not relax
+    these to "untracked liveness is outside the property"**: the first version
+    did, and certified `free(n->buf); free(n->buf); free(n);` and a caller
+    releasing a member a callee had already released `Safe` (integration
+    review). Do not admit a non-null release, a member address, `B[I]` or `*B`.
+    A null test of one pointer member lowers to the typed read of its base.
+    Every `BranchOnNull` whose place dereferences a pointer, the O04-B08
+    aggregate test included, is preceded by the typed read of every pointer it
+    reads through; before this card the aggregate test carried no obligation
+    and a test through a released base was `Safe`
+    (`AGGREGATE-NULL-TEST-AFTER-RELEASE`). Before every call to a function the
+    unit defines, the environment does not declare, and whose body (or a body
+    it calls, to a fixed point) hands a pointer read to a call,
+    `ArgumentReads` refuses a plain-name actual whose target owns sub-custody:
+    a caller's linked child at `B->F` would otherwise outlive the release. Do
+    not widen the guard to declared callees (`flb_input_chunk_create` left
     `Safe` over the declared `static inline` `flb_free`) or to every undeclared
-    one (the callers of validated `Removed` wrappers own sub-custody by
-    construction and refused). The route rests on
-    premise 4 of W44-INDIRECT-CALL-ARGUMENT-ACCESS (a stored pointer is tracked
-    only through a bound place or sub-custody); a card that stores a tracked
-    identity into a member without recording either must refuse this read.
-    `QCore.MemberRelease`; [report](../reports/w45-callee-summary-cascade/README.md).
+    one (callers of validated `Removed` wrappers own sub-custody by
+    construction). Premises stated, not proved: distinct members own distinct
+    objects; W44-INDIRECT-CALL-ARGUMENT-ACCESS premise 4 (a stored pointer is
+    tracked only through a bound place or sub-custody), so a card that stores a
+    tracked identity into a member without recording either must refuse this
+    read; a declaration's `Borrowed` covers what is reachable through the
+    argument (P-B08-SHALLOW). `QCore.MemberRelease`;
+    [report](../reports/w45-callee-summary-cascade/README.md).
 
 <a id="constraint-6"></a>
 
