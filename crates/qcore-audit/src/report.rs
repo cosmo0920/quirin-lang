@@ -811,9 +811,9 @@ mod tests {
     fn a_missing_clang_is_recorded_as_an_environment_failure_not_a_source_defect() {
         let reason = "audit requires the configured Clang executable (/usr/bin/clang); \
                       compilation database selects /usr/bin/cc. Prepare an explicit \
-                      Clang build (scripts/prepare_cmetrics_clang_audit.py, \
-                      scripts/prepare_cycle19_monkey.py) and run quirin-audit current \
-                      over it; GCC compiler equivalence is unproven";
+                      Clang build with quirin-audit prepare and run quirin-audit \
+                      current over it (prepare --run chains both); GCC compiler \
+                      equivalence is unproven";
         let mut report = AuditReport::new("revision");
         report.record_unknown(
             "test",

@@ -1,12 +1,14 @@
-"""Retired scripts stay retired (card W44-QUIRIN-AUDIT-PROVIDERS).
+"""Retired scripts stay retired (cards W44-QUIRIN-AUDIT-PROVIDERS and
+W44-QUIRIN-AUDIT-PREPARE).
 
 `scripts/prepare_cycle19_clang_audit.py` was removed when `quirin-audit
-current` took over the configured current-revision route; preparation stays
-with `scripts/prepare_cmetrics_clang_audit.py` and
-`scripts/prepare_cycle19_monkey.py`. No live file may point a reader at the
-removed script. Frozen evidence keeps its text: reports under `docs/reports/`
-and the increment history under `docs/development/increments/` record what was
-true when they were written.
+current` took over the configured current-revision route.
+`scripts/prepare_cmetrics_clang_audit.py` and `scripts/prepare_cycle19_monkey.py`
+were removed when `quirin-audit prepare` (steps `clang-build` and `monkey`)
+took over preparation with the same commands and output files. No live file
+may point a reader at a removed script. Frozen evidence keeps its text:
+reports under `docs/reports/` and the increment history under
+`docs/development/increments/` record what was true when they were written.
 """
 
 import os
@@ -15,7 +17,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 
-RETIRED = ['prepare_cycle19_clang_audit.py']
+RETIRED = [
+    'prepare_cycle19_clang_audit.py',
+    'prepare_cmetrics_clang_audit.py',
+    'prepare_cycle19_monkey.py',
+]
 
 # Frozen history and generated or external trees.
 EXCLUDED_PREFIXES = (

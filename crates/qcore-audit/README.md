@@ -98,12 +98,14 @@ arguments; the revision policy does not erase those arguments to obtain a result
 For an executable current-revision CMetrics counter audit:
 
 ```sh
-python3 -B scripts/prepare_cmetrics_clang_audit.py
+cargo run -p qcore-audit -- prepare clang-build
 # Run quirin-audit with the absolute cmetrics-audit.json.config path printed above.
 ```
 
-Preparation defaults to local `HEAD`, accepts `--revision COMMIT_OR_TAG`, and
-uses an independent build under `build/cycle19/revisions/<resolved commit>`.
+Preparation (`quirin-audit prepare clang-build`, see
+[below](#preparing-the-fluent-bit-build)) defaults to local `HEAD`, accepts
+`--revision COMMIT_OR_TAG`, and uses an independent build under
+`build/cycle19/revisions/<resolved commit>`.
 `--output DIRECTORY` overrides that location. It does not fetch upstream or
 modify the developer's checkout. Newer revisions get fresh resource projections;
 the historical revision retains its configured source-contract evidence route.
@@ -318,17 +320,28 @@ quirin-audit current --config current.json --contracts-only --quirin-providers-o
 
 ### Preparing the Fluent Bit build
 
-Preparation is two scripts, then the audit. Each script leaves the
-developer's GCC build intact and works in an independent clone:
+`quirin-audit prepare` prepares the inputs, and `--run` chains the audit.
+Run it from the repository root (or pass `--repository DIR`). It leaves the
+developer's GCC build intact, works in an independent clone of the local
+checkout and reads no network:
 
 ```sh
-rev=$(git -C ../fluent-bit rev-parse HEAD)
-out=build/cycle19/clang/$rev
-python3 -B scripts/prepare_cmetrics_clang_audit.py --fluent-bit ../fluent-bit \
-  --revision "$rev" --output "$out" --clang clang --clangxx clang++
-python3 -B scripts/prepare_cycle19_monkey.py \
-  --fluent-bit "$out/fluent-bit-clang-source" --output "$out/monkey" \
-  --clang clang --clangxx clang++
+cargo run --release -p qcore-audit -- prepare --fluent-bit ../fluent-bit \
+  --clang clang --clangxx clang++ --run --jobs 16
+```
+
+This prepares `build/cycle19/clang/<commit>/` (commit of `--revision`,
+default `HEAD`; `--output DIR` overrides it) and then runs
+`quirin-audit current` with `QCORE_CLANG` set to the prepared C compiler.
+Arguments after `--` are passed to that run, for example
+`-- --load-path providers/contract-load-path.json --provider quirin-provider-libc`
+or `-- --contracts-only`. Without them, the profile's declared manifest
+(`cycle19-resource-contracts.json`) selects the contracts. An explicit
+`QCORE_CLANG` naming another compiler refuses before the build. Without
+`--run`, an equivalent audit, naming the same manifest explicitly, is:
+
+```sh
+out=build/cycle19/clang/$(git -C ../fluent-bit rev-parse HEAD)
 QCORE_CLANG=$(command -v clang) cargo run --release -p qcore-audit -- current \
   --checkout "$out/fluent-bit-clang-source" \
   --profile-directory contract/profiles/fluent-bit \
@@ -339,13 +352,32 @@ QCORE_CLANG=$(command -v clang) cargo run --release -p qcore-audit -- current \
   --report "$out/reports/resource-diagnostics.json"
 ```
 
-The first script builds the Clang CMake tree (`cmetrics-static`, not a full
-native Fluent Bit executable, and not a GCC/Clang equivalence claim). It
-records the configure command, including the C++ compiler, in
-`build-provenance.json`. The second prepares the forced-Libevent Monkey inputs
-and records its CMake command in its own marker. `QCORE_CLANG` must name the
-compiler the database names. Add `--jobs N` for the job count, and keep
-`--release` for an optimised build. Neither changes a result.
+Preparation has two steps, each also a subcommand of its own. They run the
+same git, CMake and build commands, with the same arguments, as the retired
+Python preparation scripts, and write the same files
+([parity evidence](../../docs/reports/w44-quirin-audit-prepare/README.md)):
+
+- `prepare clang-build` clones the checkout (`git clone --no-hardlinks
+  --no-checkout`, detached at the revision) into `fluent-bit-clang-source`,
+  configures `fluent-bit-clang-production` with explicit `--clang` and
+  `--clangxx`, `-DCMAKE_C_FLAGS:STRING=-std=gnu17`, `FLB_DEV` and
+  `FLB_EXAMPLES`, and builds `cmetrics-static` (not a full native Fluent Bit
+  executable, and not a GCC/Clang equivalence claim). It writes
+  `cmetrics-audit.json.config` and `build-provenance.json`, which records the
+  configure command, the C++ compiler included. Its default output is
+  `build/cycle19/revisions/<commit>`.
+- `prepare monkey --fluent-bit DIR` copies the checkout's tracked `lib/monkey`
+  files into `monkey-source` and configures the forced-Libevent Monkey build in
+  `monkey-build`. It writes the `qcore-monkey-inputs.json` marker, with source
+  hashes and the CMake command, and `configure.log`. Its default output is
+  `build/cycle19`. `prepare` runs it on the clone, into `<out>/monkey`.
+
+`prepare` also writes `<out>/prepare.json`: the argv, both compilers (path,
+resolved path and `--version`), CMake, the revision and the digests of every
+step record. Each step refuses a reused output whose identity changed; choose
+a fresh `--output`. `--cmake PATH` selects a CMake executable. `QCORE_CLANG`
+must name the compiler the database names. Add `--jobs N` for the job count,
+and keep `--release` for an optimised build. Neither changes a result.
 
 **Provenance.** Beside `--report`, the command writes
 `<report>.invocation.json`. This replaces the `audit-command.json` that the
@@ -355,8 +387,8 @@ retired wrapper wrote. Each old field now lives here:
   the sidecar);
 - `clang` → `clang` (the executable, version and target that ran, captured
   from the configured `QCORE_CLANG`);
-- `clangxx` → preparation's `build-provenance.json` and Monkey marker, where it
-  is used; the audit never runs the C++ compiler;
+- `clangxx` → preparation's `build-provenance.json`, Monkey marker and
+  `prepare.json`, where it is used; the audit never runs the C++ compiler;
 - `compile_database` and `monkey_database` → the same keys, each with its
   SHA-256;
 - `cwd` and `command` → `cwd` and `argv`;
@@ -457,11 +489,11 @@ for pinned parity; it does not establish arbitrary build equivalence. Evidence:
 The CMetrics example consumes an unmodified Clang GNU17 CMake database:
 
 ```sh
-python3 -B scripts/prepare_cmetrics_clang_audit.py
+cargo run -p qcore-audit -- prepare clang-build
 # Run quirin-audit with the generated configuration path printed by preparation.
 ```
 
-The script creates an independent source clone and a persistent build under
+The step creates an independent source clone and a persistent build under
 `build/cycle19/revisions/<resolved commit>`, configures CMake and builds `cmetrics-static`. Upstream
 configure-time writes stay in that isolated clone. It records the original
 compile entry, full database hash, source/cache identities and library hash.

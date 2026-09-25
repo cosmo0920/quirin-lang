@@ -263,9 +263,8 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
         (
             "audit requires the configured Clang executable (/usr/bin/clang); \
              compilation database selects /usr/bin/cc. Prepare an explicit Clang \
-             build (scripts/prepare_cmetrics_clang_audit.py, \
-             scripts/prepare_cycle19_monkey.py) and run quirin-audit current over it; \
-             GCC compiler equivalence is unproven",
+             build with quirin-audit prepare and run quirin-audit current over it \
+             (prepare --run chains both); GCC compiler equivalence is unproven",
             Env,
         ),
         ("compile directory and source must be absolute", Env),

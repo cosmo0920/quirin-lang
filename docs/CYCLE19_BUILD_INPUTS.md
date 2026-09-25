@@ -8,12 +8,14 @@ From the QCore-C repository root, prepare the pinned source copy and configure
 its headers and commands in the ignored, persistent `build/cycle19` directory:
 
 ```sh
-python3 -B scripts/prepare_cycle19_monkey.py --fluent-bit ../fluent-bit
+cargo run -p qcore-audit -- prepare monkey --fluent-bit ../fluent-bit
 cargo run --quiet -p qcore-compiler --example cycle19_fluent_bit_libraries_audit -- \
   ../fluent-bit build/cycle19/monkey-build/compile_commands.json
 ```
 
-The setup uses the declared Fluent Bit profile pin, checks a clean Monkey source
+`quirin-audit prepare monkey` (formerly a Python script; same commands and
+files, [parity evidence](reports/w44-quirin-audit-prepare/README.md)) checks
+the checkout's `HEAD`, a clean Monkey source
 subtree, and retains a byte-identified copy. CMake explicitly selects Libevent
 and disables the other event loops. `qcore-monkey-inputs.json` records source
 tracked-source hashes, separate generated-header hashes, CMake arguments,
@@ -71,7 +73,7 @@ The default audit without either selector remains the direct comparison route.
 The canonical CMetrics configuration now uses CMake's unmodified compile database:
 
 ```sh
-python3 -B scripts/prepare_cmetrics_clang_audit.py
+cargo run -p qcore-audit -- prepare clang-build
 cargo run --quiet -p qcore-audit -- contract/profiles/cmetrics-counter/audit.json
 ```
 
