@@ -1,0 +1,22 @@
+{
+ "leaves": {
+  "cascade-only": 378,
+  "unmodeled": 879
+ },
+ "callees": {
+  "cascade-only": 20,
+  "unmodeled": 135
+ },
+ "dominant_blocker_leaves": {
+  "call to uncontracted function": 624,
+  "indirect memory access is outside the resource projection": 345,
+  "braced initializer, expression, or declaration is not modeled": 103,
+  "unmodeled call, aggregate or indirect access in return expression": 56,
+  "unmodeled call, aggregate or indirect access in branch condition": 39,
+  "unresolved resource identity `err`": 30,
+  "nested call `rd_clock` inside a modeled call is outside the resource projection": 20,
+  "C operator `sizeof` requires type/operand analysis": 11,
+  "nested call `rd_timeout_remains_us` inside a modeled call is outside the resource projection": 7,
+  "unmodeled increment or decrement expression": 6
+ }
+}

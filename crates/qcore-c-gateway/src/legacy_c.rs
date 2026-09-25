@@ -2276,10 +2276,14 @@ pub(crate) fn recursive_component_census(
     let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
     let tokens = withdrawn_tokens.unwrap_or(tokens);
     let mut names = function_names(&tokens, &conditionals).definitions;
+    // Card W44-CORPUS-CALLEE-SUMMARIES: the same derivation scope as the analysis.
+    let definitions = names.clone();
     if let Some(selected) = selected_functions {
         let selected = selected.iter().collect::<BTreeSet<_>>();
         names.retain(|name| selected.contains(name));
     }
+    let names =
+        callee_scope::derivation_scope(&tokens, &names, &definitions, selected_functions.is_some());
     // Card LOADER-ABI-MODES, for the same reason the type gate runs here: the
     // census must read the components the analysis reads, over the stream the
     // analysis reads.
@@ -2294,6 +2298,10 @@ pub(crate) struct PartialTranslationUnitAnalysis {
     /// Validated interprocedural custody summaries used at call sites.
     pub(crate) summaries: Vec<ResourceSummaryRecord>,
 }
+
+// Card W44-CORPUS-CALLEE-SUMMARIES: which definitions W4 derives summaries for.
+#[path = "legacy_callee_scope.rs"]
+pub(crate) mod callee_scope;
 
 fn analyze_legacy_c_translation_unit_selected_partial(
     source: &str,
@@ -2316,6 +2324,9 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
     let tokens = withdrawn_tokens.unwrap_or(tokens);
     let mut names = function_names(&tokens, &conditionals).definitions;
+    // Card W44-CORPUS-CALLEE-SUMMARIES: every definition, kept before the
+    // selection narrows `names`, for the derivation scope below.
+    let definitions = names.clone();
     let requested_was_selected =
         selected_functions.is_some_and(|selected| selected.iter().any(|name| name == entry));
     if let Some(selected) = selected_functions {
@@ -2348,7 +2359,17 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     // defining function `Unknown`, so keeping it is strictly more refusing.
     // The gate hands back the derivation it settled on, so a unit with no
     // contradiction derives exactly once, as before this card.
-    let gate = declared_modes::ModeGate::apply(&tokens, &names, contracts);
+    // Card W44-CORPUS-CALLEE-SUMMARIES census (feature-gated, verdict-neutral).
+    #[cfg(feature = "indirect-census")]
+    if selected_functions.is_some() {
+        callee_scope::census::record(&tokens, &names, &definitions, contracts);
+    }
+    // Card W44-CORPUS-CALLEE-SUMMARIES: W4 derives over the selection plus the
+    // unselected internal-linkage definitions it reaches (`callee_scope`); the
+    // rows analysed and reported below stay `names` alone.
+    let scope =
+        callee_scope::derivation_scope(&tokens, &names, &definitions, selected_functions.is_some());
+    let gate = declared_modes::ModeGate::apply(&tokens, &scope, contracts);
     let tokens = gate.tokens.unwrap_or(tokens);
     let derivation = gate.derivation;
     let mut functions = BTreeMap::new();
