@@ -55,7 +55,8 @@ leaves that remain as the provisional-Unsafe evidence base.
   [class-a.md](class-a.md) now tabulates the **11** class (a) leaves in 3
   functions that remain.
 * **Ledger 345 → 355**: `RETURN-CAST-PLACE-NOT-ESCAPED` retired, 11 residuals
-  registered, two entries amended.
+  registered, three entries amended. `CT-CTWIN-O`'s `CT-CTWIN-UNRESOLVED-LEAK`
+  arm is discharged, and CT43's `owned_local.c` control is re-pinned to `Unknown`.
 
 ## 1. How each leaf was classified
 
@@ -307,7 +308,13 @@ corpus leaves on the combined tree.
     * `indexed_collection.rs::a_stream_element_keeps_the_refusal_it_had`, on a
       one-line body where the line key also reads `x_free(v)`;
     * `loader_abi.rs` (the withdrawn call site) and `loader_abi_modes.rs` (two
-      arms): `LOADER-ABI-WITHDRAWAL-UNSAFE`'s direction is now `Unknown`.
+      arms): `LOADER-ABI-WITHDRAWAL-UNSAFE`'s direction is now `Unknown`;
+    * CT43's `owned_local.c` control (`compiler/tests/fixtures/ct/CT43/expected.json`),
+      found by the gate's workspace tests: an owned local handed to the
+      uncontracted `q_register`. It was a provisional `Unsafe` with a `leak`
+      (`CT-CTWIN-UNRESOLVED-LEAK`) and is now `Unknown` with only the call's
+      refusal. The registration still discharges nothing. The wave-9
+      stage-evidence record keeps its checkpoint claim.
 
 ## 3. Arbiter (constraint 7)
 
@@ -404,7 +411,10 @@ was committed (`c49c053b`) before the rule (`1e5a9bb5`):
   No (d) group exists.
 * **Amended** ([amended-followups.json](amended-followups.json)):
   * `C02-P-ALIAS-O`: the -LEAK-ORDER measurement, 11 of 12 now withdrawn;
-  * `RETURN-REFUSAL-LEAK-REPORT-PREMISE`: narrowed, not discharged.
+  * `RETURN-REFUSAL-LEAK-REPORT-PREMISE`: narrowed, not discharged;
+  * `CT-CTWIN-O`: its `CT-CTWIN-UNRESOLVED-LEAK` arm discharged (CT43's
+    control re-pinned); `CT-CTWIN-ENTRY` and the `CTWIN-PUBLISH` residuals
+    unchanged.
 * `corpus.cycle19_raw_units` points at [artifacts/](artifacts/); the previous
   row is in [previous-corpus-row.json](previous-corpus-row.json).
 * `W44-REFUSED-HANDOFF-LEAK-CLAIMS` and `W44-CALL-ARGUMENT-EXPOSED-LEAKS` are
@@ -444,7 +454,8 @@ GATE_TABLE
     `analyze_cfg_with_entry`, and the census call after
     `report_collection_violations`;
   * `src/publication.rs`: `PublicationFacts` gains `line_reads`;
-  * the flipped test files listed in §2.5;
+  * the flipped test files listed in §2.5, including
+    `compiler/tests/fixtures/ct/CT43/expected.json` and `owned_local.c`;
   * `proof/QCore.lean`: two imports after `KindedCustody`;
   * `docs/reviews/r0_3/acceptance_matrix.json`, `docs/STATUS.md`,
     `docs/development/increments/wave-44.md` and `docs/reports/INDEX.md`.

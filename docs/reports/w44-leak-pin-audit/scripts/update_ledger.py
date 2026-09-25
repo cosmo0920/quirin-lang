@@ -8,8 +8,9 @@ Usage: update_ledger.py
   (re-declaring dlopen/dlclose) is rehomed to `W44-DLOPEN-DECLARATION-REMEASURE`
   in `followups.json`;
 * appends one sentence to `C02-P-ALIAS-O` (a measurement of its -LEAK-ORDER
-  residual) and to `RETURN-REFUSAL-LEAK-REPORT-PREMISE` (the refused return of
-  an identity now withdraws it), recording both previous texts;
+  residual), to `RETURN-REFUSAL-LEAK-REPORT-PREMISE` (the refused return of
+  an identity now withdraws it) and to `CT-CTWIN-O` (its
+  CT-CTWIN-UNRESOLVED-LEAK arm discharged), recording the previous texts;
 * appends every entry of `followups.json` (refusing a duplicate id);
 * rewrites the hand-maintained `corpus.cycle19_raw_units` row from this card's
   archived AFTER artifacts, first preserving the exact previous row.
@@ -46,6 +47,15 @@ GROUNDS = {
     ),
 }
 AMENDMENTS = {
+    "CT-CTWIN-O": (
+        " W44-LEAK-PIN-AUDIT discharges the CT-CTWIN-UNRESOLVED-LEAK arm: its refused hand-on rule gives an "
+        "identity named in a refused statement an unresolved effect, and no leak is claimed through one, so "
+        "CT43's owned_local control (an owned local handed to the uncontracted q_register) is re-pinned from "
+        "a provisional Unsafe with a leak to Unknown with only the call's refusal "
+        "(compiler/tests/fixtures/ct/CT43/expected.json); the registration still discharges nothing and "
+        "nothing becomes Safe. The wave-9 stage-evidence record keeps its checkpoint claim. CT-CTWIN-ENTRY "
+        "and the CTWIN-PUBLISH residuals are unchanged (docs/reports/w44-leak-pin-audit/README.md)."
+    ),
     "C02-P-ALIAS-O": (
         " W44-LEAK-PIN-AUDIT measured the -LEAK-ORDER residual on the whole corpus: 12 of the 271 "
         "baseline leak leaves are published on an intermediate iterate that the settled exit state no "

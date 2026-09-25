@@ -1,12 +1,13 @@
 /* CT43 second control — the registration is not read as a hand-off.
  *
  * Here `subject` owns what it registers. The gateway does not treat the
- * uncontracted registration as consuming `arg`, so it reports the acquisition
- * as a leak *beside* the unsupported call. That is a provisional `Unsafe` over
- * an unresolved effect, not a validated violation: if `q_register` takes
- * custody, no leak exists. This control exists so that reading is pinned and
- * visible rather than discovered later; card CT-CTWIN records it as
- * `CT-CTWIN-UNRESOLVED-LEAK`.
+ * uncontracted registration as consuming `arg`, so the acquisition is never
+ * discharged. Card CT-CTWIN pinned the leak the gateway then reported *beside*
+ * the unsupported call: a provisional `Unsafe` over an unresolved effect, not a
+ * validated violation (if `q_register` takes custody, no leak exists), recorded
+ * as `CT-CTWIN-UNRESOLVED-LEAK`. Card W44-LEAK-PIN-AUDIT's refused hand-on rule
+ * withdraws that claim: the refused call names `p`, so the unit is `Unknown`,
+ * never `Safe`.
  */
 
 void *q_alloc(void);
