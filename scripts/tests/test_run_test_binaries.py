@@ -248,18 +248,37 @@ class PlanTests(unittest.TestCase):
         self.assertEqual(problems, [])
 
     def test_exclusive_entries_are_marked_and_weights_applied(self):
-        entry = next(iter(runner_mod.EXCLUSIVE))
+        executables = {f"/t/x{i}": uid for i, uid in enumerate(runner_mod.EXCLUSIVE)}
+        executables["/t/a"] = "p::test::a"
+        records = [self.record(exe, i) for i, exe in enumerate(executables)]
+        packages = {uid.split("::", 1)[0] for uid in runner_mod.EXCLUSIVE} | {"p"}
         units, problems = runner_mod.plan_units(
-            {"/t/x": entry, "/t/a": "p::test::a"},
-            [self.record("/t/x", 1), self.record("/t/a", 2)],
-            [entry.split("::", 1)[0], "p"], {"p::test::a": 42.0}, None)
+            executables, records, packages, {"p::test::a": 42.0}, None)
         self.assertEqual(problems, [])
         by_id = {unit.uid: unit for unit in units}
-        self.assertTrue(by_id[entry].exclusive)
+        for uid in runner_mod.EXCLUSIVE:
+            self.assertTrue(by_id[uid].exclusive)
         self.assertFalse(by_id["p::test::a"].exclusive)
         self.assertEqual(by_id["p::test::a"].weight, 42.0)
         self.assertEqual(by_id["p::test::a"].env, {"A": "1"})
         self.assertEqual(by_id["p::test::a"].cwd, "/pkg")
+
+
+class WorkspaceTests(unittest.TestCase):
+    def test_a_workspace_other_than_the_root_is_refused_before_building(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log_dir = Path(directory) / "logs"
+            with open(os.devnull, "w") as sink:
+                stderr = sys.stderr
+                sys.stderr = sink
+                try:
+                    code = runner_mod.main(["--log-dir", str(log_dir), "--",
+                                            "--manifest-path",
+                                            str(runner_mod.REPO_ROOT / "providers/Cargo.toml")])
+                finally:
+                    sys.stderr = stderr
+            self.assertEqual(code, 2)
+            self.assertFalse(log_dir.exists(), "nothing was built or run")
 
 
 class CaptureTests(unittest.TestCase):

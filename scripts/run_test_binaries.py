@@ -64,6 +64,10 @@ DEFAULT_WEIGHTS = Path(__file__).resolve().with_name("test_binary_weights.json")
 # (`<package>::<target kind>::<target name>`); an entry whose package belongs to
 # the workspace being run but which matches no built binary fails the run, so
 # a rename cannot silently drop a load-sensitive row into the parallel phase.
+#
+# The rule for membership is conservative: constraint 16's load-sensitive rows,
+# plus every other binary that launches a process provider under a declared
+# wall-clock timeout, because such a timeout is a wall-clock budget.
 EXCLUSIVE: dict[str, str] = {
     "qcore-compiler::test::cycle20_verifier_plugins": (
         "constraint 16: vp04_vp07_vp08_process_lifecycle_and_payload_budgets "
@@ -81,17 +85,17 @@ EXCLUSIVE: dict[str, str] = {
         "constraint 16: the confined-fixture write test (Io(Broken pipe) under load)"
     ),
     "qcore-verifier-host::test::execution_quota": (
-        "constraint 16's RLIMIT_NPROC rows count every process of the real UID; "
-        "process quotas and timeouts"
+        "RLIMIT_NPROC rows count every process of the real UID; process "
+        "providers under declared timeouts"
     ),
-    "qcore-provider-conformance::test::packages": (
-        "constraint 16: real_packages_preserve_unknown_and_reject_mutations; "
-        "process providers under declared timeouts"
+    "qcore-verifier-host::test::package_identity": (
+        "process providers under a declared 5 s timeout"
     ),
-    "qcore-provider-conformance::test::configured_audit": (
-        "pinned_second_codebase_runs_configured_process_checks_without_a_rust_"
-        "import_adapter has a 5 s plugin process quota and failed closed under "
-        "concurrent load"
+    "qcore-compiler::test::w3_evidence_v2": (
+        "an out-of-process provider under a declared timeout"
+    ),
+    "qcorec::test::plugin_packages": (
+        "process providers launched through the CLI under declared timeouts"
     ),
 }
 
@@ -321,8 +325,7 @@ def host_triple(cargo_env: dict[str, str]) -> str:
     raise RuntimeError("rustc -vV reported no host triple")
 
 
-def package_names(cargo: str, extra: Sequence[str]) -> dict[str, str]:
-    """Map package id -> package name for the workspace members."""
+def metadata(cargo: str, extra: Sequence[str]) -> dict:
     metadata_args = [a for a in extra if a in ("--locked", "--offline", "--frozen")]
     manifest = manifest_args(extra)
     output = subprocess.run(
@@ -331,8 +334,12 @@ def package_names(cargo: str, extra: Sequence[str]) -> dict[str, str]:
         text=True,
         check=True,
     ).stdout
-    data = json.loads(output)
-    return {package["id"]: package["name"] for package in data["packages"]}
+    return json.loads(output)
+
+
+def package_names(cargo: str, extra: Sequence[str]) -> dict[str, str]:
+    """Map package id -> package name for the workspace members."""
+    return {package["id"]: package["name"] for package in metadata(cargo, extra)["packages"]}
 
 
 def manifest_args(extra: Sequence[str]) -> list[str]:
@@ -551,8 +558,7 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser.add_argument("--no-doc", action="store_true",
                         help="skip the doc-test unit (NOT gate-equivalent)")
     parser.add_argument("cargo_args", nargs="*",
-                        help="extra cargo arguments after `--`, e.g. "
-                             "--manifest-path providers/Cargo.toml --locked --offline")
+                        help="extra cargo arguments after `--`, e.g. --locked --offline")
     return parser.parse_args(argv)
 
 
@@ -560,6 +566,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(list(sys.argv[1:] if argv is None else argv))
     extra = list(args.cargo_args)
     cargo = os.environ.get("CARGO", "cargo")
+    root = Path(metadata(cargo, extra)["workspace_root"]).resolve()
+    if root != REPO_ROOT:
+        # EXCLUSIVE is audited for the root workspace only. The provider
+        # workspace's conformance binaries launch process providers under
+        # declared timeouts throughout, so it keeps plain `cargo test`.
+        print(f"error: only the root workspace ({REPO_ROOT}) is supported, not {root}",
+              file=sys.stderr)
+        return 2
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     log_dir = (args.log_dir or REPO_ROOT / "private" / "test-binaries" / f"{stamp}-{os.getpid()}")
     # Absolute: the capture runner is launched by cargo from each package root.
