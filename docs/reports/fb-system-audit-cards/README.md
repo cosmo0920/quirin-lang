@@ -42,8 +42,10 @@ no success, timeout or native result is inferred from that attempt.
 
 ## Validation
 
-The combined standing gate is running; `validation.json` and `VALIDATION.md`
-will record every exit, count, failure and private log path. The three
+The combined standing gate passed: **5,676 Rust tests, 191 Lean audits and
+351 Python tests**; formatting, Clippy and both probes pass.
+[Validation](VALIDATION.md) and `validation.json` record commands, exits and
+private log paths. The three
 investigations change no analyzer semantics, contracts or published verdicts.
 There is no Rust/Lean implementation-card closure or new safety proof.
 
