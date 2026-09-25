@@ -131,6 +131,9 @@ pub(super) struct ConditionPlan {
 /// Why a call-bearing condition keeps its refusal. Census vocabulary.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) enum Refusal {
+    /// The expression carries no call; recorded by the census only.
+    #[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
+    NoCall,
     Braces,
     TypeOperator,
     IncrementOrDecrement,
@@ -154,6 +157,7 @@ impl Refusal {
     #[cfg(feature = "indirect-census")]
     fn code(&self) -> (&'static str, Option<String>, Option<String>) {
         match self {
+            Self::NoCall => ("no-call", None, None),
             Self::Braces => ("braces", None, None),
             Self::TypeOperator => ("type-operator", None, None),
             Self::IncrementOrDecrement => ("increment-or-decrement", None, None),
@@ -466,7 +470,16 @@ impl Parser<'_> {
         position: Position,
         refused: bool,
     ) -> Option<Box<ConditionPlan>> {
-        if !refused || !contains_call(condition) {
+        if !refused {
+            return None;
+        }
+        if !contains_call(condition) {
+            // Census only: a refused call-free expression shares its leaf
+            // with any call-bearing one on the same line and position.
+            #[cfg(feature = "indirect-census")]
+            if !self.admit_derived_returns {
+                census(self, _line, position, condition, &Err(Refusal::NoCall));
+            }
             return None;
         }
         let saved = (self.next_site, self.element_lowerings);
