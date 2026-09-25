@@ -490,6 +490,14 @@ impl TypedAccessModel {
         model
     }
 
+    /// Whether this unit's declaration reader read `name` as a typedef name,
+    /// resolved or not (integration of W44-COLLECTION-ALLOCATION onto
+    /// W44-INDIRECT-CALL-ARGUMENT-ACCESS: a `sizeof` operand name is a type
+    /// only when it is one of these or a tag).
+    pub(crate) fn declares_typedef(&self, name: &str) -> bool {
+        self.typedefs.contains_key(name)
+    }
+
     /// Whether this unit declares `name` at file scope, as far as the same
     /// declaration reader will read it. Card **BASE-TYPE-READER-CENSUS**;
     /// census-only.

@@ -320,14 +320,22 @@ const TYPE_KEYWORDS: &[&str] = &[
 
 /// Replace every `sizeof ( TYPE-NAME )` of `argument` by the literal `1`.
 ///
-/// The operand is a type name only when every token is a type keyword, `*`, or
-/// a name this function does not declare as a variable (a typedef or a tag):
+/// The operand is a type name only when every token is a type keyword, `*`, a
+/// tag after `struct`/`union`/`enum`, or a typedef name the unit's declaration
+/// reader read and this function does not redeclare as a variable. A name
+/// neither (a file-scope object, or anything the reader did not read) keeps
+/// the refusal: the W44-COLLECTION-ALLOCATION integration found
+/// `sizeof(*g)` over a file-scope `g` folded as a type name. Also:
 /// no `[` (so never a variable-length array type, the one operand C evaluates,
 /// C11 6.5.3.4p2), no `(`, no member access. Its size is an integer constant,
 /// which is all the scalar walker needs to know. Every other `sizeof` is left
 /// in place and refuses there; `sizeof (*v)` and `sizeof (x)` over a declared
 /// variable are never folded.
-fn fold_type_sizes<'a>(argument: &[&'a str], types: &FunctionTypes) -> Vec<&'a str> {
+fn fold_type_sizes<'a>(
+    argument: &[&'a str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+) -> Vec<&'a str> {
     let mut folded = Vec::with_capacity(argument.len());
     let mut index = 0usize;
     while index < argument.len() {
@@ -340,10 +348,15 @@ fn fold_type_sizes<'a>(argument: &[&'a str], types: &FunctionTypes) -> Vec<&'a s
         {
             let operand = &argument[index + 2..close];
             let type_name = !operand.is_empty()
-                && operand.iter().all(|text| {
+                && operand.iter().enumerate().all(|(position, text)| {
                     *text == "*"
                         || TYPE_KEYWORDS.contains(text)
-                        || (is_name(text) && types.declared_type(text).is_none())
+                        || (is_name(text)
+                            && types.declared_type(text).is_none()
+                            && (model.declares_typedef(text)
+                                || position.checked_sub(1).is_some_and(|before| {
+                                    matches!(operand[before], "struct" | "union" | "enum")
+                                })))
                 });
             if type_name {
                 folded.push("1");
@@ -459,7 +472,7 @@ pub(super) fn recognise(
     {
         return Err(Refusal::Call);
     }
-    let folded = fold_type_sizes(argument, types);
+    let folded = fold_type_sizes(argument, model, types);
     if let Some(plan) = crate::typed_field_access::typed_scalar_value(&folded, model, types) {
         return Ok(ArgumentRead {
             bases: plan.bases,
@@ -1173,6 +1186,33 @@ mod tests {
             answer(&facts, "& buf [ i ]").expect("element").bases,
             vec!["buf"]
         );
+    }
+
+    /// Integration of W44-COLLECTION-ALLOCATION: a bare name in a `sizeof`
+    /// operand is a type only as a typedef the reader read or a tag. A
+    /// file-scope object `g` is neither, so `sizeof ( * g )` keeps its refusal.
+    #[test]
+    fn a_type_size_needs_a_typedef_or_a_tag_not_a_file_scope_object() {
+        let unit: &'static str =
+            "struct rec { int len ; } ; typedef struct rec rec_t ; struct rec * g ; int i ;";
+        let model = TypedAccessModel::read(&texts(unit));
+        let types = FunctionTypes::read(&model, &texts("int i"), &texts("{ }"), &BTreeSet::new());
+        let collections = CollectionTypes::read(&model, &texts("int i"), &texts("{ }"));
+        let facts = Facts {
+            model,
+            types,
+            collections,
+        };
+        assert_eq!(
+            answer(&facts, "sizeof ( rec_t ) * i"),
+            Ok(ArgumentRead::default())
+        );
+        assert_eq!(
+            answer(&facts, "sizeof ( struct rec ) * i"),
+            Ok(ArgumentRead::default())
+        );
+        assert!(answer(&facts, "sizeof ( * g ) * i").is_err());
+        assert!(answer(&facts, "sizeof ( g ) * i").is_err());
     }
 
     #[test]
