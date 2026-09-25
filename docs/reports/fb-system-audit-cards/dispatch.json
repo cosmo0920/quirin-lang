@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "base": "9a38004529180498c3d28532c2feb718ca198e7a",
+  "branch": "codex/fb-system-audit-cards",
+  "model": "gpt-6-sol",
+  "reasoning_effort": "medium",
+  "escalation_model": "gpt-6-astra",
+  "cards": [
+    {
+      "id": "FB-AUDIT-01-COVERAGE",
+      "path": "census",
+      "state": "running"
+    },
+    {
+      "id": "FB-AUDIT-02-RETRY-LIFETIME",
+      "path": "retry",
+      "state": "running"
+    },
+    {
+      "id": "FB-AUDIT-03-BACKPRESSURE-ACCOUNTING",
+      "path": "accounting",
+      "state": "running"
+    }
+  ],
+  "scope": "source investigation and measurements; semantic cards remain open"
+}
