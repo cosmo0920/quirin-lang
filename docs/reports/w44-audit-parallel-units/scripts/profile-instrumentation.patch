@@ -1,0 +1,179 @@
+diff --git a/compiler/examples/support/cycle19_compatibility.rs b/compiler/examples/support/cycle19_compatibility.rs
+index 45bb2118..8032cee4 100644
+--- a/compiler/examples/support/cycle19_compatibility.rs
++++ b/compiler/examples/support/cycle19_compatibility.rs
+@@ -37,6 +37,24 @@ use qcore_compiler::{
+ /// and that constant agree.
+ use qcore_compiler::PINNED_FLUENT_BIT_REVISION as PINNED_FLUENT_BIT_COMMIT;
+ 
++// TEMPORARY PROFILE INSTRUMENTATION (W44-AUDIT-PARALLEL-UNITS measure-first; not committed)
++mod prof {
++    use std::io::Write;
++    use std::sync::Mutex;
++    static LOG: Mutex<Option<std::fs::File>> = Mutex::new(None);
++    pub fn now() -> f64 {
++        std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_secs_f64()
++    }
++    pub fn record(label: &str, start: f64) {
++        let end = now();
++        if let Some(path) = std::env::var_os("QCORE_PROFILE_LOG") {
++            let mut guard = LOG.lock().unwrap();
++            let file = guard.get_or_insert_with(|| std::fs::OpenOptions::new().create(true).append(true).open(path).unwrap());
++            writeln!(file, "{start:.6}\t{end:.6}\t{label}").unwrap();
++        }
++    }
++}
++
+ /// The user-facing command defaults to a current-revision inventory. Historical
+ /// source/native evidence remains behind the explicit --pinned-evidence route.
+ pub fn run_current(
+@@ -181,6 +199,7 @@ pub fn run(
+     binding_directory: Option<&Path>,
+     contract_manifest: Option<&Path>,
+ ) -> Result<bool, String> {
++    let t_run = prof::now();
+     // Explicit process selection is checked before any expensive source audit.
+     let source_contracts = source_contract_configuration()?;
+     // Validate the external build input before running any expensive audit.
+@@ -221,7 +240,11 @@ pub fn run(
+     let mut report = AuditReport::new(&revision);
+     let mut native_results = Vec::new();
+     let mut teardown_results = Vec::new();
++    prof::record("prelude:inputs", t_run);
++    let t = prof::now();
+     audit_library_summary_profiles(&root, &revision, &profile)?;
++    prof::record("prelude:summary_profiles", t);
++    let t_contracts = prof::now();
+ 
+     let default_manifest = profile.resource_contract_manifest_path();
+     let contract_manifest = contract_manifest
+@@ -249,6 +272,7 @@ pub fn run(
+         let bytes = serde_json::to_vec_pretty(&inputs).map_err(|e| e.to_string())?;
+         fs::write(&sidecar, bytes).map_err(|e| format!("{}: {e}", sidecar.display()))?;
+     }
++    prof::record("prelude:contracts_sidecar", t_contracts);
+     let mut failed = false;
+     let selection_path = profile.directory().join("audit.json");
+     for selected_library in qcore_audit::load_library_selections(&selection_path)? {
+@@ -296,6 +320,7 @@ pub fn run(
+                 "compile database contains no selected {library} sources"
+             ));
+         }
++        let t = prof::now();
+         let counts = audit_library(
+             library,
+             &source_root,
+@@ -306,6 +331,7 @@ pub fn run(
+             &mut teardown_results,
+             &source_contracts,
+         )?;
++        prof::record(&format!("library_total:{library}"), t);
+         failed |= counts.gateway_failures != 0;
+         println!(
+             "{library}: {} unit(s), {} source function(s), {} projected; {} data-only, {} Safe, {} Unsafe, {} Unknown, {} gateway failure(s)",
+@@ -319,7 +345,9 @@ pub fn run(
+             counts.gateway_failures
+         );
+     }
++    let t = prof::now();
+     audit_monkey_libevent_contract(&root)?;
++    prof::record("monkey:libevent_contract", t);
+     if let Some((monkey_entries, source_root)) = monkey_input {
+         let mut selected = monkey_entries
+             .into_iter()
+@@ -327,8 +355,13 @@ pub fn run(
+             .collect::<Vec<_>>();
+         selected.sort_by(|left, right| left.file.cmp(&right.file));
+         selected.dedup_by(|left, right| left.file == right.file);
++        let t = prof::now();
+         verify_monkey_source_copy(&root.join("lib/monkey"), &source_root, &selected)?;
++        prof::record("monkey:verify_copy", t);
++        let t = prof::now();
+         audit_monkey_callback_source(&selected, monkey_source_report, binding_directory)?;
++        prof::record("monkey:callback_source", t);
++        let t = prof::now();
+         let counts = audit_library(
+             "monkey-libevent",
+             &source_root,
+@@ -339,6 +372,7 @@ pub fn run(
+             &mut teardown_results,
+             &source_contracts,
+         )?;
++        prof::record("library_total:monkey-libevent", t);
+         failed |= counts.gateway_failures != 0;
+         println!(
+             "monkey-libevent: {} unit(s), {} source function(s), {} projected; \
+@@ -358,6 +392,7 @@ pub fn run(
+              compile_commands.json to run the C gateway projection"
+         );
+     }
++    let t_post = prof::now();
+     if let Some(path) = diagnostic_report {
+         report.write_with_revision_key(path, "fluent_bit_revision")?;
+         let (provider_results, native_results): (Vec<_>, Vec<_>) = native_results
+@@ -387,6 +422,8 @@ pub fn run(
+         .map_err(|e| e.to_string())?;
+         println!("Resource diagnostics: {}", path.display());
+     }
++    prof::record("postlude:serialization", t_post);
++    prof::record("run_total", t_run);
+     Ok(failed)
+ }
+ 
+@@ -457,6 +494,7 @@ fn audit_library(
+     teardown_results: &mut Vec<serde_json::Value>,
+     source_contracts: &SourceContractConfiguration,
+ ) -> Result<AuditCounts, String> {
++    let t_prelude = prof::now();
+     let mut counts = AuditCounts::default();
+     let mut chunk_helpers = Vec::new();
+     let mut memory_backend = None;
+@@ -592,7 +630,9 @@ fn audit_library(
+             &file_unit, PINNED_FLUENT_BIT_COMMIT, &unmap, &close, &delete)?);
+         filesystem_deps = Some((native, counter, close, delete));
+     }
++    prof::record(&format!("library_prelude:{library}"), t_prelude);
+     for entry in entries {
++        let t_unit = prof::now();
+         let source = fs::read_to_string(&entry.file)
+             .map_err(|error| format!("could not read {}: {error}", entry.file.display()))?;
+         let file = entry
+@@ -613,7 +653,10 @@ fn audit_library(
+         // Unit E01-F1: the pinned route reports the same enumerated
+         // denominator the configured driver does, so macro-expanded and K&R
+         // definitions are counted here too.
++        let t = prof::now();
+         let inventory = enumerate_source_definitions(&unit);
++        prof::record(&format!("unit_enumerate:{library}/{file}"), t);
++        let t_extra = prof::now();
+         if library == "chunkio" && matches!(file.as_ref(), "cio_file.c" | "cio_file_unix.c") {
+             let evidence = qcore_compiler::verifier_plugins::chunkio::file_attempts::check_file_attempt_sources(&unit, PINNED_FLUENT_BIT_COMMIT, file == "cio_file_unix.c")?;
+             for function in &evidence {
+@@ -837,6 +880,8 @@ fn audit_library(
+                 source_contracts,
+             )?;
+         }
++        prof::record(&format!("unit_extras:{library}/{file}"), t_extra);
++        let t = prof::now();
+         project_unit(
+             library,
+             &file,
+@@ -846,7 +891,10 @@ fn audit_library(
+             report,
+             &mut counts,
+         )?;
++        prof::record(&format!("unit_project:{library}/{file}"), t);
++        prof::record(&format!("unit_total:{library}/{file}"), t_unit);
+     }
++    let t_postlude = prof::now();
+ 
+     if library == "chunkio" {
+         let certificate =
+@@ -930,6 +978,7 @@ fn audit_library(
+         );
+         teardown_results.push(serde_json::json!({"kind":"nested_unsupported_source", "source":extended, "conditional_examples":examples}));
+     }
++    prof::record(&format!("library_postlude:{library}"), t_postlude);
+     Ok(counts)
+ }
+ 

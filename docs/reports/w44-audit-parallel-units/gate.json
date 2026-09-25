@@ -1,0 +1,13 @@
+{
+  "note": "W44-AUDIT-PARALLEL-UNITS: standing gate measured on d7eb514a (implementation 56ed4995 plus rustfmt, two clippy too_many_arguments allowances, the configured-route determinism test and documentation; later commits change the report, ledger and evidence only), with CARGO_INCREMENTAL=0, CARGO_BUILD_JOBS=4, RUST_TEST_THREADS=2, on a host other agents kept at load average 14-50. 5464 core Rust passed / 0 failed / 11 ignored over 289 summaries (the card adds 7 qcore_audit::parallel tests and 2 report fragment tests, and extends cycle19_current_command with a 4-thread identity assertion; the load-sensitive vp04_vp07_vp08_process_lifecycle_and_payload_budgets row passed in the gate run); fmt clean; clippy --all-targets and clippy --workspace --all-targets -D warnings clean; reevaluation_probe exit 0; reevaluation_followup exit 0; 180 Lean audits passed (no Lean change: no analyzer semantics changed); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 1330 feature-on gateway tests passed / 0 failed / 7 ignored; cargo build --offline --workspace exit 0 (no dependency added); root Python tests 330 before the matrix regeneration and counted again after it (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'clippy-workspace': 0, 'census-clippy': 0, 'census-test': 0, 'build-offline': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; provider fmt and clippy clean; providers/contracts.py check exit 0 (providers unchanged). Logs: worktree-private measure/gate and measure/provider-gate of agent-af93c329e85457c34. Clang recorded in this checkout. Corpus: nothing moves; every archived artifact byte-identical at jobs 1, 4, 8 and 16.",
+  "workspace_tests": 5464,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 180,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

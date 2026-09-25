@@ -131,6 +131,47 @@ impl AuditReport {
         }
     }
 
+    /// An empty report over the same revision, into which one unit's rows are
+    /// recorded apart from every other unit's (card
+    /// **W44-AUDIT-PARALLEL-UNITS**). Fold it back with [`Self::absorb`].
+    pub fn fragment(&self) -> Self {
+        Self::new(&self.revision)
+    }
+
+    /// Append a [`Self::fragment`]'s rows after this report's rows and add its
+    /// diagnostic counts.
+    ///
+    /// Recording units into fragments and absorbing the fragments in unit order
+    /// yields exactly the report that recording every unit here in that order
+    /// would: rows are appended in order, the only cross-unit aggregate is a
+    /// per-category sum, and every attachment (`record_enumeration`,
+    /// `record_configuration`) targets the row its own unit just recorded,
+    /// which lives in the same fragment. A fragment of another revision, or one
+    /// carrying source-contract evidence (which is whole-report data, never
+    /// per-unit), is refused rather than merged.
+    pub fn absorb(&mut self, fragment: Self) -> Result<(), String> {
+        let Self {
+            revision,
+            units,
+            diagnostic_counts,
+            source_contracts,
+        } = fragment;
+        if revision != self.revision {
+            return Err(format!(
+                "report fragment for revision {revision} cannot join a report for {}",
+                self.revision
+            ));
+        }
+        if source_contracts.is_some() {
+            return Err("a per-unit report fragment carries no source-contract evidence".into());
+        }
+        self.units.extend(units);
+        for (category, count) in diagnostic_counts {
+            *self.diagnostic_counts.entry(category).or_default() += count;
+        }
+        Ok(())
+    }
+
     pub(crate) fn set_source_contracts(&mut self, evidence: Value) {
         self.source_contracts = Some(evidence);
     }
@@ -840,6 +881,89 @@ mod tests {
                 "status",
             ]
         );
+    }
+
+    /// Card W44-AUDIT-PARALLEL-UNITS: units recorded into fragments that are
+    /// computed on several threads and completed in reverse order, then
+    /// absorbed in unit order, write exactly the bytes of one report recorded
+    /// sequentially.
+    #[test]
+    fn fragments_absorbed_in_unit_order_write_the_sequential_report() {
+        fn record_unit(report: &mut AuditReport, index: usize) {
+            let file = format!("unit{index}.c");
+            match index % 3 {
+                0 => {
+                    report.record(
+                        "test",
+                        &file,
+                        &["a".into(), "b".into()],
+                        &two_function_result(),
+                        None,
+                    );
+                }
+                1 => report.record_data_only("test", &file, None),
+                _ => report.record_unknown(
+                    "test",
+                    &file,
+                    &["c".into()],
+                    &UnitRefusal::environment(format!("unit {index} unreadable")),
+                ),
+            }
+            report.record_configuration(json!({ "unit": index }));
+        }
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-report-fragments-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        fs::create_dir_all(&directory).unwrap();
+        let mut sequential = AuditReport::new("revision");
+        for index in 0..12 {
+            record_unit(&mut sequential, index);
+        }
+        sequential
+            .write(&directory.join("sequential.json"))
+            .unwrap();
+        for jobs in [1, 4, 12] {
+            let mut folded = AuditReport::new("revision");
+            let template = AuditReport::new("revision");
+            crate::parallel::run_ordered(
+                (0..12).collect::<Vec<usize>>(),
+                jobs,
+                Some((0..12).rev().collect()),
+                |index| {
+                    std::thread::sleep(std::time::Duration::from_millis((12 - index as u64) * 3));
+                    let mut fragment = template.fragment();
+                    record_unit(&mut fragment, index);
+                    fragment
+                },
+                |fragment| folded.absorb(fragment),
+            )
+            .unwrap();
+            let path = directory.join(format!("folded-{jobs}.json"));
+            folded.write(&path).unwrap();
+            assert_eq!(
+                fs::read(&path).unwrap(),
+                fs::read(directory.join("sequential.json")).unwrap(),
+                "jobs = {jobs}"
+            );
+        }
+        fs::remove_dir_all(&directory).ok();
+    }
+
+    #[test]
+    fn a_fragment_of_another_revision_is_refused() {
+        let mut report = AuditReport::new("revision");
+        let mut other = AuditReport::new("other");
+        other.record_data_only("test", "unit.c", None);
+        assert!(report.absorb(other).is_err());
+        assert!(report.units.is_empty());
+        let mut evidence = report.fragment();
+        evidence.set_source_contracts(json!({}));
+        assert!(report.absorb(evidence).is_err());
     }
 
     #[test]

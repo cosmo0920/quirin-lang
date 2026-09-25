@@ -1,0 +1,1300 @@
+{
+  "run_total_s": 522.1,
+  "process_wall_s": 522.212,
+  "units": 185,
+  "unit_sum_s": 518.59,
+  "unit_clang_s": 67.624,
+  "unit_in_process_s": 450.967,
+  "sequential": {
+    "run_prelude": {
+      "inputs": 0.11,
+      "summary_profiles": 0.002,
+      "contracts_sidecar": 0.025
+    },
+    "library_preludes": {
+      "cmetrics": 0.0,
+      "ctraces": 0.0,
+      "librdkafka": 0.0,
+      "chunkio": 1.944,
+      "fluent-bit-chunk": 0.0,
+      "monkey-libevent": 0.0
+    },
+    "library_postludes": {
+      "cmetrics": 0.0,
+      "ctraces": 0.0,
+      "librdkafka": 0.0,
+      "chunkio": 0.023,
+      "fluent-bit-chunk": 0.0,
+      "monkey-libevent": 0.0
+    },
+    "monkey_gate": {
+      "libevent_contract": 0.008,
+      "verify_copy": 0.001,
+      "callback_source": 1.309
+    },
+    "serialization": 0.082
+  },
+  "sequential_total_s": 3.504,
+  "unaccounted_s": 0.006,
+  "critical_path": {
+    "unit": "librdkafka/rdkafka_admin.c",
+    "wall_s": 46.396,
+    "clang_s": 0.648,
+    "in_process_s": 45.747
+  },
+  "top_units": [
+    {
+      "unit": "librdkafka/rdkafka_admin.c",
+      "wall_s": 46.396,
+      "clang_s": 0.648,
+      "in_process_s": 45.747
+    },
+    {
+      "unit": "librdkafka/rdkafka.c",
+      "wall_s": 20.064,
+      "clang_s": 0.536,
+      "in_process_s": 19.528
+    },
+    {
+      "unit": "librdkafka/rdkafka_partition.c",
+      "wall_s": 19.675,
+      "clang_s": 0.409,
+      "in_process_s": 19.266
+    },
+    {
+      "unit": "librdkafka/rdkafka_cgrp.c",
+      "wall_s": 19.12,
+      "clang_s": 0.716,
+      "in_process_s": 18.404
+    },
+    {
+      "unit": "librdkafka/rdkafka_request.c",
+      "wall_s": 17.881,
+      "clang_s": 0.853,
+      "in_process_s": 17.028
+    },
+    {
+      "unit": "librdkafka/rdkafka_broker.c",
+      "wall_s": 16.412,
+      "clang_s": 0.45,
+      "in_process_s": 15.962
+    },
+    {
+      "unit": "librdkafka/rdkafka_mock.c",
+      "wall_s": 15.798,
+      "clang_s": 0.454,
+      "in_process_s": 15.343
+    },
+    {
+      "unit": "librdkafka/rdkafka_mock_handlers.c",
+      "wall_s": 12.882,
+      "clang_s": 0.679,
+      "in_process_s": 12.203
+    },
+    {
+      "unit": "fluent-bit-chunk/flb_input_chunk.c",
+      "wall_s": 12.625,
+      "clang_s": 6.822,
+      "in_process_s": 5.803
+    },
+    {
+      "unit": "librdkafka/rdkafka_fetcher.c",
+      "wall_s": 9.805,
+      "clang_s": 0.495,
+      "in_process_s": 9.31
+    },
+    {
+      "unit": "librdkafka/rdkafka_conf.c",
+      "wall_s": 8.978,
+      "clang_s": 0.685,
+      "in_process_s": 8.293
+    },
+    {
+      "unit": "librdkafka/rdkafka_msg.c",
+      "wall_s": 8.235,
+      "clang_s": 0.399,
+      "in_process_s": 7.836
+    },
+    {
+      "unit": "librdkafka/rdkafka_txnmgr.c",
+      "wall_s": 7.924,
+      "clang_s": 0.34,
+      "in_process_s": 7.583
+    },
+    {
+      "unit": "librdkafka/rdkafka_sticky_assignor.c",
+      "wall_s": 6.937,
+      "clang_s": 0.348,
+      "in_process_s": 6.589
+    },
+    {
+      "unit": "librdkafka/rdkafka_queue.c",
+      "wall_s": 6.882,
+      "clang_s": 0.395,
+      "in_process_s": 6.486
+    },
+    {
+      "unit": "librdkafka/rdkafka_mock_cgrp.c",
+      "wall_s": 6.784,
+      "clang_s": 0.405,
+      "in_process_s": 6.379
+    },
+    {
+      "unit": "librdkafka/rdhttp.c",
+      "wall_s": 6.133,
+      "clang_s": 0.709,
+      "in_process_s": 5.424
+    },
+    {
+      "unit": "librdkafka/rdkafka_telemetry_decode.c",
+      "wall_s": 5.907,
+      "clang_s": 0.649,
+      "in_process_s": 5.258
+    },
+    {
+      "unit": "librdkafka/rdkafka_metadata.c",
+      "wall_s": 5.818,
+      "clang_s": 0.435,
+      "in_process_s": 5.383
+    },
+    {
+      "unit": "librdkafka/rdkafka_topic.c",
+      "wall_s": 5.391,
+      "clang_s": 0.299,
+      "in_process_s": 5.092
+    }
+  ],
+  "subprocesses": {
+    "clang": {
+      "count": 2652,
+      "summed_wall_s": 70.672
+    },
+    "git": {
+      "count": 4,
+      "summed_wall_s": 0.021
+    },
+    "prof-audit": {
+      "count": 1,
+      "summed_wall_s": 522.137
+    },
+    "provider": {
+      "count": 3,
+      "summed_wall_s": 0.046
+    }
+  },
+  "clang_union_s": 70.672,
+  "peak_audit_rss_kib": 0,
+  "peak_tree_rss_kib": 220816,
+  "all_units": [
+    {
+      "unit": "cmetrics/cmetrics.c",
+      "wall_s": 0.521,
+      "clang_s": 0.21,
+      "in_process_s": 0.311
+    },
+    {
+      "unit": "cmetrics/cmt_atomic_clang.c",
+      "wall_s": 0.266,
+      "clang_s": 0.146,
+      "in_process_s": 0.12
+    },
+    {
+      "unit": "cmetrics/cmt_cat.c",
+      "wall_s": 1.398,
+      "clang_s": 0.232,
+      "in_process_s": 1.166
+    },
+    {
+      "unit": "cmetrics/cmt_counter.c",
+      "wall_s": 0.67,
+      "clang_s": 0.319,
+      "in_process_s": 0.351
+    },
+    {
+      "unit": "cmetrics/cmt_decode_msgpack.c",
+      "wall_s": 4.497,
+      "clang_s": 0.356,
+      "in_process_s": 4.142
+    },
+    {
+      "unit": "cmetrics/cmt_decode_opentelemetry.c",
+      "wall_s": 3.299,
+      "clang_s": 0.371,
+      "in_process_s": 2.928
+    },
+    {
+      "unit": "cmetrics/cmt_decode_prometheus_remote_write.c",
+      "wall_s": 1.215,
+      "clang_s": 0.343,
+      "in_process_s": 0.872
+    },
+    {
+      "unit": "cmetrics/cmt_decode_statsd.c",
+      "wall_s": 1.006,
+      "clang_s": 0.219,
+      "in_process_s": 0.786
+    },
+    {
+      "unit": "cmetrics/cmt_encode_cloudwatch_emf.c",
+      "wall_s": 0.826,
+      "clang_s": 0.241,
+      "in_process_s": 0.585
+    },
+    {
+      "unit": "cmetrics/cmt_encode_influx.c",
+      "wall_s": 0.648,
+      "clang_s": 0.218,
+      "in_process_s": 0.43
+    },
+    {
+      "unit": "cmetrics/cmt_encode_msgpack.c",
+      "wall_s": 1.09,
+      "clang_s": 0.223,
+      "in_process_s": 0.867
+    },
+    {
+      "unit": "cmetrics/cmt_encode_opentelemetry.c",
+      "wall_s": 5.117,
+      "clang_s": 0.342,
+      "in_process_s": 4.775
+    },
+    {
+      "unit": "cmetrics/cmt_encode_opentelemetry_batch.c",
+      "wall_s": 1.186,
+      "clang_s": 0.315,
+      "in_process_s": 0.871
+    },
+    {
+      "unit": "cmetrics/cmt_encode_prometheus.c",
+      "wall_s": 1.202,
+      "clang_s": 0.343,
+      "in_process_s": 0.859
+    },
+    {
+      "unit": "cmetrics/cmt_encode_prometheus_remote_write.c",
+      "wall_s": 2.281,
+      "clang_s": 0.33,
+      "in_process_s": 1.951
+    },
+    {
+      "unit": "cmetrics/cmt_encode_splunk_hec.c",
+      "wall_s": 1.306,
+      "clang_s": 0.324,
+      "in_process_s": 0.982
+    },
+    {
+      "unit": "cmetrics/cmt_encode_text.c",
+      "wall_s": 1.02,
+      "clang_s": 0.216,
+      "in_process_s": 0.804
+    },
+    {
+      "unit": "cmetrics/cmt_exp_histogram.c",
+      "wall_s": 0.658,
+      "clang_s": 0.333,
+      "in_process_s": 0.325
+    },
+    {
+      "unit": "cmetrics/cmt_filter.c",
+      "wall_s": 0.543,
+      "clang_s": 0.223,
+      "in_process_s": 0.321
+    },
+    {
+      "unit": "cmetrics/cmt_gauge.c",
+      "wall_s": 0.766,
+      "clang_s": 0.324,
+      "in_process_s": 0.442
+    },
+    {
+      "unit": "cmetrics/cmt_histogram.c",
+      "wall_s": 0.9,
+      "clang_s": 0.336,
+      "in_process_s": 0.565
+    },
+    {
+      "unit": "cmetrics/cmt_label.c",
+      "wall_s": 0.596,
+      "clang_s": 0.316,
+      "in_process_s": 0.281
+    },
+    {
+      "unit": "cmetrics/cmt_log.c",
+      "wall_s": 0.32,
+      "clang_s": 0.234,
+      "in_process_s": 0.086
+    },
+    {
+      "unit": "cmetrics/cmt_map.c",
+      "wall_s": 2.071,
+      "clang_s": 0.347,
+      "in_process_s": 1.724
+    },
+    {
+      "unit": "cmetrics/cmt_metric.c",
+      "wall_s": 1.515,
+      "clang_s": 0.224,
+      "in_process_s": 1.291
+    },
+    {
+      "unit": "cmetrics/cmt_metric_histogram.c",
+      "wall_s": 0.797,
+      "clang_s": 0.216,
+      "in_process_s": 0.581
+    },
+    {
+      "unit": "cmetrics/cmt_mpack_utils.c",
+      "wall_s": 0.592,
+      "clang_s": 0.224,
+      "in_process_s": 0.368
+    },
+    {
+      "unit": "cmetrics/cmt_opts.c",
+      "wall_s": 0.336,
+      "clang_s": 0.223,
+      "in_process_s": 0.114
+    },
+    {
+      "unit": "cmetrics/cmt_summary.c",
+      "wall_s": 0.968,
+      "clang_s": 0.334,
+      "in_process_s": 0.634
+    },
+    {
+      "unit": "cmetrics/cmt_time.c",
+      "wall_s": 0.191,
+      "clang_s": 0.123,
+      "in_process_s": 0.069
+    },
+    {
+      "unit": "cmetrics/cmt_untyped.c",
+      "wall_s": 0.558,
+      "clang_s": 0.312,
+      "in_process_s": 0.246
+    },
+    {
+      "unit": "ctraces/ctr_attributes.c",
+      "wall_s": 0.658,
+      "clang_s": 0.23,
+      "in_process_s": 0.428
+    },
+    {
+      "unit": "ctraces/ctr_decode_msgpack.c",
+      "wall_s": 2.975,
+      "clang_s": 0.229,
+      "in_process_s": 2.746
+    },
+    {
+      "unit": "ctraces/ctr_decode_opentelemetry.c",
+      "wall_s": 1.087,
+      "clang_s": 0.242,
+      "in_process_s": 0.845
+    },
+    {
+      "unit": "ctraces/ctr_encode_msgpack.c",
+      "wall_s": 1.12,
+      "clang_s": 0.248,
+      "in_process_s": 0.873
+    },
+    {
+      "unit": "ctraces/ctr_encode_opentelemetry.c",
+      "wall_s": 3.987,
+      "clang_s": 0.368,
+      "in_process_s": 3.619
+    },
+    {
+      "unit": "ctraces/ctr_encode_text.c",
+      "wall_s": 1.094,
+      "clang_s": 0.242,
+      "in_process_s": 0.852
+    },
+    {
+      "unit": "ctraces/ctr_id.c",
+      "wall_s": 0.696,
+      "clang_s": 0.242,
+      "in_process_s": 0.454
+    },
+    {
+      "unit": "ctraces/ctr_link.c",
+      "wall_s": 0.603,
+      "clang_s": 0.225,
+      "in_process_s": 0.378
+    },
+    {
+      "unit": "ctraces/ctr_log.c",
+      "wall_s": 0.306,
+      "clang_s": 0.228,
+      "in_process_s": 0.078
+    },
+    {
+      "unit": "ctraces/ctr_mpack_utils.c",
+      "wall_s": 0.782,
+      "clang_s": 0.182,
+      "in_process_s": 0.601
+    },
+    {
+      "unit": "ctraces/ctr_random.c",
+      "wall_s": 0.433,
+      "clang_s": 0.332,
+      "in_process_s": 0.101
+    },
+    {
+      "unit": "ctraces/ctr_resource.c",
+      "wall_s": 0.802,
+      "clang_s": 0.34,
+      "in_process_s": 0.463
+    },
+    {
+      "unit": "ctraces/ctr_scope.c",
+      "wall_s": 0.604,
+      "clang_s": 0.219,
+      "in_process_s": 0.384
+    },
+    {
+      "unit": "ctraces/ctr_span.c",
+      "wall_s": 1.91,
+      "clang_s": 0.23,
+      "in_process_s": 1.68
+    },
+    {
+      "unit": "ctraces/ctr_utils.c",
+      "wall_s": 0.082,
+      "clang_s": 0.08,
+      "in_process_s": 0.002
+    },
+    {
+      "unit": "ctraces/ctr_version.c",
+      "wall_s": 0.331,
+      "clang_s": 0.197,
+      "in_process_s": 0.134
+    },
+    {
+      "unit": "ctraces/ctraces.c",
+      "wall_s": 0.489,
+      "clang_s": 0.246,
+      "in_process_s": 0.243
+    },
+    {
+      "unit": "librdkafka/cJSON.c",
+      "wall_s": 4.741,
+      "clang_s": 0.2,
+      "in_process_s": 4.541
+    },
+    {
+      "unit": "librdkafka/crc32c.c",
+      "wall_s": 0.77,
+      "clang_s": 0.218,
+      "in_process_s": 0.553
+    },
+    {
+      "unit": "librdkafka/lz4.c",
+      "wall_s": 3.044,
+      "clang_s": 0.177,
+      "in_process_s": 2.867
+    },
+    {
+      "unit": "librdkafka/lz4frame.c",
+      "wall_s": 2.186,
+      "clang_s": 0.176,
+      "in_process_s": 2.009
+    },
+    {
+      "unit": "librdkafka/lz4hc.c",
+      "wall_s": 2.403,
+      "clang_s": 0.177,
+      "in_process_s": 2.225
+    },
+    {
+      "unit": "librdkafka/nanopb/pb_common.c",
+      "wall_s": 0.547,
+      "clang_s": 0.167,
+      "in_process_s": 0.379
+    },
+    {
+      "unit": "librdkafka/nanopb/pb_decode.c",
+      "wall_s": 1.597,
+      "clang_s": 0.189,
+      "in_process_s": 1.408
+    },
+    {
+      "unit": "librdkafka/nanopb/pb_encode.c",
+      "wall_s": 1.225,
+      "clang_s": 0.146,
+      "in_process_s": 1.079
+    },
+    {
+      "unit": "librdkafka/opentelemetry/common.pb.c",
+      "wall_s": 0.096,
+      "clang_s": 0.092,
+      "in_process_s": 0.004
+    },
+    {
+      "unit": "librdkafka/opentelemetry/metrics.pb.c",
+      "wall_s": 0.118,
+      "clang_s": 0.113,
+      "in_process_s": 0.005
+    },
+    {
+      "unit": "librdkafka/opentelemetry/resource.pb.c",
+      "wall_s": 0.098,
+      "clang_s": 0.094,
+      "in_process_s": 0.004
+    },
+    {
+      "unit": "librdkafka/rdaddr.c",
+      "wall_s": 0.416,
+      "clang_s": 0.21,
+      "in_process_s": 0.206
+    },
+    {
+      "unit": "librdkafka/rdavl.c",
+      "wall_s": 1.389,
+      "clang_s": 0.38,
+      "in_process_s": 1.009
+    },
+    {
+      "unit": "librdkafka/rdbase64.c",
+      "wall_s": 0.65,
+      "clang_s": 0.307,
+      "in_process_s": 0.343
+    },
+    {
+      "unit": "librdkafka/rdbuf.c",
+      "wall_s": 2.971,
+      "clang_s": 0.315,
+      "in_process_s": 2.656
+    },
+    {
+      "unit": "librdkafka/rdcrc32.c",
+      "wall_s": 0.25,
+      "clang_s": 0.194,
+      "in_process_s": 0.056
+    },
+    {
+      "unit": "librdkafka/rddl.c",
+      "wall_s": 0.481,
+      "clang_s": 0.202,
+      "in_process_s": 0.278
+    },
+    {
+      "unit": "librdkafka/rdfnv1a.c",
+      "wall_s": 0.284,
+      "clang_s": 0.192,
+      "in_process_s": 0.092
+    },
+    {
+      "unit": "librdkafka/rdgz.c",
+      "wall_s": 0.305,
+      "clang_s": 0.205,
+      "in_process_s": 0.1
+    },
+    {
+      "unit": "librdkafka/rdhdrhistogram.c",
+      "wall_s": 1.951,
+      "clang_s": 0.253,
+      "in_process_s": 1.698
+    },
+    {
+      "unit": "librdkafka/rdhttp.c",
+      "wall_s": 6.133,
+      "clang_s": 0.709,
+      "in_process_s": 5.424
+    },
+    {
+      "unit": "librdkafka/rdkafka.c",
+      "wall_s": 20.064,
+      "clang_s": 0.536,
+      "in_process_s": 19.528
+    },
+    {
+      "unit": "librdkafka/rdkafka_admin.c",
+      "wall_s": 46.396,
+      "clang_s": 0.648,
+      "in_process_s": 45.747
+    },
+    {
+      "unit": "librdkafka/rdkafka_assignment.c",
+      "wall_s": 2.989,
+      "clang_s": 0.612,
+      "in_process_s": 2.377
+    },
+    {
+      "unit": "librdkafka/rdkafka_assignor.c",
+      "wall_s": 4.853,
+      "clang_s": 0.413,
+      "in_process_s": 4.439
+    },
+    {
+      "unit": "librdkafka/rdkafka_aux.c",
+      "wall_s": 3.258,
+      "clang_s": 0.395,
+      "in_process_s": 2.863
+    },
+    {
+      "unit": "librdkafka/rdkafka_background.c",
+      "wall_s": 1.53,
+      "clang_s": 0.407,
+      "in_process_s": 1.123
+    },
+    {
+      "unit": "librdkafka/rdkafka_broker.c",
+      "wall_s": 16.412,
+      "clang_s": 0.45,
+      "in_process_s": 15.962
+    },
+    {
+      "unit": "librdkafka/rdkafka_buf.c",
+      "wall_s": 3.625,
+      "clang_s": 0.397,
+      "in_process_s": 3.228
+    },
+    {
+      "unit": "librdkafka/rdkafka_cert.c",
+      "wall_s": 1.455,
+      "clang_s": 0.38,
+      "in_process_s": 1.076
+    },
+    {
+      "unit": "librdkafka/rdkafka_cgrp.c",
+      "wall_s": 19.12,
+      "clang_s": 0.716,
+      "in_process_s": 18.404
+    },
+    {
+      "unit": "librdkafka/rdkafka_conf.c",
+      "wall_s": 8.978,
+      "clang_s": 0.685,
+      "in_process_s": 8.293
+    },
+    {
+      "unit": "librdkafka/rdkafka_coord.c",
+      "wall_s": 3.642,
+      "clang_s": 0.387,
+      "in_process_s": 3.254
+    },
+    {
+      "unit": "librdkafka/rdkafka_error.c",
+      "wall_s": 1.67,
+      "clang_s": 0.395,
+      "in_process_s": 1.275
+    },
+    {
+      "unit": "librdkafka/rdkafka_event.c",
+      "wall_s": 3.819,
+      "clang_s": 0.382,
+      "in_process_s": 3.437
+    },
+    {
+      "unit": "librdkafka/rdkafka_feature.c",
+      "wall_s": 1.415,
+      "clang_s": 0.395,
+      "in_process_s": 1.02
+    },
+    {
+      "unit": "librdkafka/rdkafka_fetcher.c",
+      "wall_s": 9.805,
+      "clang_s": 0.495,
+      "in_process_s": 9.31
+    },
+    {
+      "unit": "librdkafka/rdkafka_header.c",
+      "wall_s": 1.77,
+      "clang_s": 0.451,
+      "in_process_s": 1.32
+    },
+    {
+      "unit": "librdkafka/rdkafka_idempotence.c",
+      "wall_s": 3.028,
+      "clang_s": 0.474,
+      "in_process_s": 2.554
+    },
+    {
+      "unit": "librdkafka/rdkafka_interceptor.c",
+      "wall_s": 3.795,
+      "clang_s": 0.399,
+      "in_process_s": 3.397
+    },
+    {
+      "unit": "librdkafka/rdkafka_lz4.c",
+      "wall_s": 1.124,
+      "clang_s": 0.406,
+      "in_process_s": 0.718
+    },
+    {
+      "unit": "librdkafka/rdkafka_metadata.c",
+      "wall_s": 5.818,
+      "clang_s": 0.435,
+      "in_process_s": 5.383
+    },
+    {
+      "unit": "librdkafka/rdkafka_metadata_cache.c",
+      "wall_s": 4.971,
+      "clang_s": 0.394,
+      "in_process_s": 4.578
+    },
+    {
+      "unit": "librdkafka/rdkafka_mock.c",
+      "wall_s": 15.798,
+      "clang_s": 0.454,
+      "in_process_s": 15.343
+    },
+    {
+      "unit": "librdkafka/rdkafka_mock_cgrp.c",
+      "wall_s": 6.784,
+      "clang_s": 0.405,
+      "in_process_s": 6.379
+    },
+    {
+      "unit": "librdkafka/rdkafka_mock_handlers.c",
+      "wall_s": 12.882,
+      "clang_s": 0.679,
+      "in_process_s": 12.203
+    },
+    {
+      "unit": "librdkafka/rdkafka_mock_sharegrp.c",
+      "wall_s": 4.412,
+      "clang_s": 0.445,
+      "in_process_s": 3.967
+    },
+    {
+      "unit": "librdkafka/rdkafka_msg.c",
+      "wall_s": 8.235,
+      "clang_s": 0.399,
+      "in_process_s": 7.836
+    },
+    {
+      "unit": "librdkafka/rdkafka_msgset_reader.c",
+      "wall_s": 4.725,
+      "clang_s": 0.422,
+      "in_process_s": 4.303
+    },
+    {
+      "unit": "librdkafka/rdkafka_msgset_writer.c",
+      "wall_s": 4.622,
+      "clang_s": 0.389,
+      "in_process_s": 4.233
+    },
+    {
+      "unit": "librdkafka/rdkafka_offset.c",
+      "wall_s": 4.854,
+      "clang_s": 0.407,
+      "in_process_s": 4.447
+    },
+    {
+      "unit": "librdkafka/rdkafka_op.c",
+      "wall_s": 4.198,
+      "clang_s": 0.398,
+      "in_process_s": 3.8
+    },
+    {
+      "unit": "librdkafka/rdkafka_partition.c",
+      "wall_s": 19.675,
+      "clang_s": 0.409,
+      "in_process_s": 19.266
+    },
+    {
+      "unit": "librdkafka/rdkafka_pattern.c",
+      "wall_s": 1.615,
+      "clang_s": 0.383,
+      "in_process_s": 1.232
+    },
+    {
+      "unit": "librdkafka/rdkafka_plugin.c",
+      "wall_s": 1.041,
+      "clang_s": 0.371,
+      "in_process_s": 0.67
+    },
+    {
+      "unit": "librdkafka/rdkafka_queue.c",
+      "wall_s": 6.882,
+      "clang_s": 0.395,
+      "in_process_s": 6.486
+    },
+    {
+      "unit": "librdkafka/rdkafka_range_assignor.c",
+      "wall_s": 4.543,
+      "clang_s": 0.516,
+      "in_process_s": 4.027
+    },
+    {
+      "unit": "librdkafka/rdkafka_request.c",
+      "wall_s": 17.881,
+      "clang_s": 0.853,
+      "in_process_s": 17.028
+    },
+    {
+      "unit": "librdkafka/rdkafka_roundrobin_assignor.c",
+      "wall_s": 0.677,
+      "clang_s": 0.402,
+      "in_process_s": 0.275
+    },
+    {
+      "unit": "librdkafka/rdkafka_sasl.c",
+      "wall_s": 3.245,
+      "clang_s": 0.398,
+      "in_process_s": 2.847
+    },
+    {
+      "unit": "librdkafka/rdkafka_sasl_cyrus.c",
+      "wall_s": 2.727,
+      "clang_s": 0.414,
+      "in_process_s": 2.314
+    },
+    {
+      "unit": "librdkafka/rdkafka_sasl_oauthbearer.c",
+      "wall_s": 3.931,
+      "clang_s": 0.391,
+      "in_process_s": 3.54
+    },
+    {
+      "unit": "librdkafka/rdkafka_sasl_oauthbearer_oidc.c",
+      "wall_s": 3.19,
+      "clang_s": 0.498,
+      "in_process_s": 2.692
+    },
+    {
+      "unit": "librdkafka/rdkafka_sasl_plain.c",
+      "wall_s": 0.677,
+      "clang_s": 0.324,
+      "in_process_s": 0.353
+    },
+    {
+      "unit": "librdkafka/rdkafka_sasl_scram.c",
+      "wall_s": 2.254,
+      "clang_s": 0.47,
+      "in_process_s": 1.784
+    },
+    {
+      "unit": "librdkafka/rdkafka_share_acknowledgement.c",
+      "wall_s": 4.908,
+      "clang_s": 0.323,
+      "in_process_s": 4.585
+    },
+    {
+      "unit": "librdkafka/rdkafka_ssl.c",
+      "wall_s": 3.001,
+      "clang_s": 0.291,
+      "in_process_s": 2.709
+    },
+    {
+      "unit": "librdkafka/rdkafka_sticky_assignor.c",
+      "wall_s": 6.937,
+      "clang_s": 0.348,
+      "in_process_s": 6.589
+    },
+    {
+      "unit": "librdkafka/rdkafka_subscription.c",
+      "wall_s": 1.608,
+      "clang_s": 0.349,
+      "in_process_s": 1.259
+    },
+    {
+      "unit": "librdkafka/rdkafka_telemetry.c",
+      "wall_s": 4.613,
+      "clang_s": 0.567,
+      "in_process_s": 4.046
+    },
+    {
+      "unit": "librdkafka/rdkafka_telemetry_decode.c",
+      "wall_s": 5.907,
+      "clang_s": 0.649,
+      "in_process_s": 5.258
+    },
+    {
+      "unit": "librdkafka/rdkafka_telemetry_encode.c",
+      "wall_s": 5.199,
+      "clang_s": 0.35,
+      "in_process_s": 4.849
+    },
+    {
+      "unit": "librdkafka/rdkafka_timer.c",
+      "wall_s": 1.908,
+      "clang_s": 0.288,
+      "in_process_s": 1.62
+    },
+    {
+      "unit": "librdkafka/rdkafka_topic.c",
+      "wall_s": 5.391,
+      "clang_s": 0.299,
+      "in_process_s": 5.092
+    },
+    {
+      "unit": "librdkafka/rdkafka_transport.c",
+      "wall_s": 2.416,
+      "clang_s": 0.303,
+      "in_process_s": 2.114
+    },
+    {
+      "unit": "librdkafka/rdkafka_txnmgr.c",
+      "wall_s": 7.924,
+      "clang_s": 0.34,
+      "in_process_s": 7.583
+    },
+    {
+      "unit": "librdkafka/rdkafka_zstd.c",
+      "wall_s": 1.113,
+      "clang_s": 0.579,
+      "in_process_s": 0.534
+    },
+    {
+      "unit": "librdkafka/rdlist.c",
+      "wall_s": 1.636,
+      "clang_s": 0.204,
+      "in_process_s": 1.432
+    },
+    {
+      "unit": "librdkafka/rdlog.c",
+      "wall_s": 0.716,
+      "clang_s": 0.364,
+      "in_process_s": 0.352
+    },
+    {
+      "unit": "librdkafka/rdmap.c",
+      "wall_s": 1.274,
+      "clang_s": 0.199,
+      "in_process_s": 1.076
+    },
+    {
+      "unit": "librdkafka/rdmurmur2.c",
+      "wall_s": 0.273,
+      "clang_s": 0.185,
+      "in_process_s": 0.088
+    },
+    {
+      "unit": "librdkafka/rdports.c",
+      "wall_s": 0.243,
+      "clang_s": 0.18,
+      "in_process_s": 0.063
+    },
+    {
+      "unit": "librdkafka/rdrand.c",
+      "wall_s": 0.633,
+      "clang_s": 0.237,
+      "in_process_s": 0.396
+    },
+    {
+      "unit": "librdkafka/rdregex.c",
+      "wall_s": 0.388,
+      "clang_s": 0.178,
+      "in_process_s": 0.21
+    },
+    {
+      "unit": "librdkafka/rdstring.c",
+      "wall_s": 0.76,
+      "clang_s": 0.184,
+      "in_process_s": 0.576
+    },
+    {
+      "unit": "librdkafka/rdunittest.c",
+      "wall_s": 0.899,
+      "clang_s": 0.315,
+      "in_process_s": 0.583
+    },
+    {
+      "unit": "librdkafka/rdunittest_acknowledge.c",
+      "wall_s": 2.403,
+      "clang_s": 0.302,
+      "in_process_s": 2.101
+    },
+    {
+      "unit": "librdkafka/rdunittest_fetcher.c",
+      "wall_s": 3.275,
+      "clang_s": 0.311,
+      "in_process_s": 2.965
+    },
+    {
+      "unit": "librdkafka/rdunittest_msgset_errors.c",
+      "wall_s": 2.337,
+      "clang_s": 0.445,
+      "in_process_s": 1.892
+    },
+    {
+      "unit": "librdkafka/rdvarint.c",
+      "wall_s": 0.342,
+      "clang_s": 0.172,
+      "in_process_s": 0.17
+    },
+    {
+      "unit": "librdkafka/rdxxhash.c",
+      "wall_s": 1.279,
+      "clang_s": 0.162,
+      "in_process_s": 1.117
+    },
+    {
+      "unit": "librdkafka/snappy.c",
+      "wall_s": 3.954,
+      "clang_s": 0.473,
+      "in_process_s": 3.481
+    },
+    {
+      "unit": "librdkafka/tinycthread.c",
+      "wall_s": 0.143,
+      "clang_s": 0.132,
+      "in_process_s": 0.011
+    },
+    {
+      "unit": "librdkafka/tinycthread_extra.c",
+      "wall_s": 0.605,
+      "clang_s": 0.17,
+      "in_process_s": 0.435
+    },
+    {
+      "unit": "chunkio/chunkio.c",
+      "wall_s": 0.747,
+      "clang_s": 0.373,
+      "in_process_s": 0.374
+    },
+    {
+      "unit": "chunkio/cio_chunk.c",
+      "wall_s": 4.65,
+      "clang_s": 3.164,
+      "in_process_s": 1.486
+    },
+    {
+      "unit": "chunkio/cio_error.c",
+      "wall_s": 0.252,
+      "clang_s": 0.151,
+      "in_process_s": 0.101
+    },
+    {
+      "unit": "chunkio/cio_file.c",
+      "wall_s": 2.428,
+      "clang_s": 1.24,
+      "in_process_s": 1.188
+    },
+    {
+      "unit": "chunkio/cio_file_unix.c",
+      "wall_s": 1.411,
+      "clang_s": 0.937,
+      "in_process_s": 0.473
+    },
+    {
+      "unit": "chunkio/cio_log.c",
+      "wall_s": 0.213,
+      "clang_s": 0.167,
+      "in_process_s": 0.047
+    },
+    {
+      "unit": "chunkio/cio_memfs.c",
+      "wall_s": 0.418,
+      "clang_s": 0.193,
+      "in_process_s": 0.224
+    },
+    {
+      "unit": "chunkio/cio_meta.c",
+      "wall_s": 0.367,
+      "clang_s": 0.174,
+      "in_process_s": 0.193
+    },
+    {
+      "unit": "chunkio/cio_os.c",
+      "wall_s": 0.255,
+      "clang_s": 0.167,
+      "in_process_s": 0.088
+    },
+    {
+      "unit": "chunkio/cio_scan.c",
+      "wall_s": 0.27,
+      "clang_s": 0.152,
+      "in_process_s": 0.118
+    },
+    {
+      "unit": "chunkio/cio_stats.c",
+      "wall_s": 0.217,
+      "clang_s": 0.148,
+      "in_process_s": 0.069
+    },
+    {
+      "unit": "chunkio/cio_stream.c",
+      "wall_s": 0.802,
+      "clang_s": 0.498,
+      "in_process_s": 0.304
+    },
+    {
+      "unit": "chunkio/cio_utils.c",
+      "wall_s": 0.222,
+      "clang_s": 0.137,
+      "in_process_s": 0.084
+    },
+    {
+      "unit": "fluent-bit-chunk/flb_input_chunk.c",
+      "wall_s": 12.625,
+      "clang_s": 6.822,
+      "in_process_s": 5.803
+    },
+    {
+      "unit": "monkey-libevent/mk_core/mk_event.c",
+      "wall_s": 1.551,
+      "clang_s": 0.224,
+      "in_process_s": 1.326
+    },
+    {
+      "unit": "monkey-libevent/mk_core/mk_file.c",
+      "wall_s": 0.421,
+      "clang_s": 0.233,
+      "in_process_s": 0.189
+    },
+    {
+      "unit": "monkey-libevent/mk_core/mk_iov.c",
+      "wall_s": 0.731,
+      "clang_s": 0.222,
+      "in_process_s": 0.509
+    },
+    {
+      "unit": "monkey-libevent/mk_core/mk_memory.c",
+      "wall_s": 0.567,
+      "clang_s": 0.217,
+      "in_process_s": 0.35
+    },
+    {
+      "unit": "monkey-libevent/mk_core/mk_rconf.c",
+      "wall_s": 1.39,
+      "clang_s": 0.298,
+      "in_process_s": 1.092
+    },
+    {
+      "unit": "monkey-libevent/mk_core/mk_string.c",
+      "wall_s": 1.301,
+      "clang_s": 0.292,
+      "in_process_s": 1.008
+    },
+    {
+      "unit": "monkey-libevent/mk_core/mk_utils.c",
+      "wall_s": 0.575,
+      "clang_s": 0.244,
+      "in_process_s": 0.331
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_cache.c",
+      "wall_s": 0.655,
+      "clang_s": 0.383,
+      "in_process_s": 0.272
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_clock.c",
+      "wall_s": 0.665,
+      "clang_s": 0.219,
+      "in_process_s": 0.446
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_config.c",
+      "wall_s": 1.345,
+      "clang_s": 0.245,
+      "in_process_s": 1.1
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_fifo.c",
+      "wall_s": 1.396,
+      "clang_s": 0.238,
+      "in_process_s": 1.158
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_header.c",
+      "wall_s": 0.757,
+      "clang_s": 0.261,
+      "in_process_s": 0.496
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_http.c",
+      "wall_s": 2.762,
+      "clang_s": 0.256,
+      "in_process_s": 2.506
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_http_parser.c",
+      "wall_s": 1.331,
+      "clang_s": 0.301,
+      "in_process_s": 1.03
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_http_thread.c",
+      "wall_s": 1.028,
+      "clang_s": 0.216,
+      "in_process_s": 0.811
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_kernel.c",
+      "wall_s": 0.386,
+      "clang_s": 0.202,
+      "in_process_s": 0.184
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_lib.c",
+      "wall_s": 1.551,
+      "clang_s": 0.3,
+      "in_process_s": 1.251
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_mimetype.c",
+      "wall_s": 0.707,
+      "clang_s": 0.282,
+      "in_process_s": 0.425
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_net.c",
+      "wall_s": 0.856,
+      "clang_s": 0.274,
+      "in_process_s": 0.582
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_plugin.c",
+      "wall_s": 1.662,
+      "clang_s": 0.273,
+      "in_process_s": 1.389
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_scheduler.c",
+      "wall_s": 1.835,
+      "clang_s": 0.281,
+      "in_process_s": 1.554
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_server.c",
+      "wall_s": 1.038,
+      "clang_s": 0.261,
+      "in_process_s": 0.777
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_socket.c",
+      "wall_s": 0.811,
+      "clang_s": 0.193,
+      "in_process_s": 0.618
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_stream.c",
+      "wall_s": 0.78,
+      "clang_s": 0.178,
+      "in_process_s": 0.602
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_user.c",
+      "wall_s": 0.357,
+      "clang_s": 0.175,
+      "in_process_s": 0.182
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_utils.c",
+      "wall_s": 0.718,
+      "clang_s": 0.187,
+      "in_process_s": 0.531
+    },
+    {
+      "unit": "monkey-libevent/mk_server/mk_vhost.c",
+      "wall_s": 1.214,
+      "clang_s": 0.254,
+      "in_process_s": 0.961
+    },
+    {
+      "unit": "monkey-libevent/mk_server/monkey.c",
+      "wall_s": 0.456,
+      "clang_s": 0.173,
+      "in_process_s": 0.283
+    },
+    {
+      "unit": "monkey-libevent/tls/tls_stub.c",
+      "wall_s": 0.424,
+      "clang_s": 0.133,
+      "in_process_s": 0.291
+    }
+  ]
+}

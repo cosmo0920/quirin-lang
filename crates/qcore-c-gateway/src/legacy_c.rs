@@ -8,7 +8,7 @@
 //! remain unsupported; symbolic resource place spelling is not access proof.
 
 #[path = "legacy_joined_provenance.rs"]
-mod joined_provenance;
+pub(crate) mod joined_provenance;
 
 #[path = "legacy_out_alias.rs"]
 mod out_alias;
@@ -76,7 +76,7 @@ pub(crate) mod cast_return;
 
 #[cfg(feature = "indirect-census")]
 #[path = "legacy_leak_witness.rs"]
-mod leak_witness;
+pub(crate) mod leak_witness;
 
 pub use declared_modes::{
     ModeAgreementRow, ModeOutcome, ModeRefusal, declared_mode_census, mode_contradiction,

@@ -1,0 +1,9 @@
+[
+ {
+  "id": "W44-AUDIT-CRITICAL-UNIT",
+  "title": "One translation unit bounds the parallel corpus arbiter: librdkafka/rdkafka_admin.c takes 84 of 86 s at 16 jobs",
+  "why": "Measured by card W44-AUDIT-PARALLEL-UNITS (docs/reports/w44-audit-parallel-units/README.md): the pinned arbiter now analyses its 185 units concurrently and falls from 424-590 s at one job to 77-87 s at 16, but librdkafka/rdkafka_admin.c alone takes 46.4 s sequentially (9 % of all unit time; 45.7 s of it in-process analysis, 0.65 s Clang) and 83.9 s at 16 jobs, where it is dispatched first and still finishes last; 16 jobs gain only 10-20 % over 8. Unit-level parallelism cannot shorten one unit. DISCHARGE: analyse the functions of one translation unit concurrently, or reduce that unit's analysis cost, with outputs byte-identical to the sequential run, and remeasure the 16-job wall time with the card's profile_run.py and critical-path instrumentation patch; or record a decision that the arbiter's wall time at this bound is acceptable.",
+  "source": "docs/reports/w44-audit-parallel-units/README.md",
+  "recorded_by": "W44-AUDIT-PARALLEL-UNITS"
+ }
+]

@@ -1,0 +1,74 @@
+diff --git a/compiler/examples/support/cycle19_compatibility.rs b/compiler/examples/support/cycle19_compatibility.rs
+index 7db9de0b..57c26f98 100644
+--- a/compiler/examples/support/cycle19_compatibility.rs
++++ b/compiler/examples/support/cycle19_compatibility.rs
+@@ -49,6 +49,24 @@ use qcore_compiler::{
+ /// and that constant agree.
+ use qcore_compiler::PINNED_FLUENT_BIT_REVISION as PINNED_FLUENT_BIT_COMMIT;
+ 
++// TEMPORARY PROFILE INSTRUMENTATION (W44-AUDIT-PARALLEL-UNITS critical path; not committed)
++mod prof {
++    use std::io::Write;
++    use std::sync::Mutex;
++    static LOG: Mutex<Option<std::fs::File>> = Mutex::new(None);
++    pub fn now() -> f64 {
++        std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_secs_f64()
++    }
++    pub fn record(label: &str, start: f64) {
++        let end = now();
++        if let Some(path) = std::env::var_os("QCORE_PROFILE_LOG") {
++            let mut guard = LOG.lock().unwrap();
++            let file = guard.get_or_insert_with(|| std::fs::OpenOptions::new().create(true).append(true).open(path).unwrap());
++            writeln!(file, "{start:.6}\t{end:.6}\t{label}").unwrap();
++        }
++    }
++}
++
+ /// One console line of a unit, prelude or postlude, appended to that step's
+ /// buffer. The buffers are printed in the sequential order (card
+ /// W44-AUDIT-PARALLEL-UNITS), so a `String` sink, which cannot fail, replaces
+@@ -342,6 +360,7 @@ pub fn run(
+         let bytes = serde_json::to_vec_pretty(&inputs).map_err(|e| e.to_string())?;
+         fs::write(&sidecar, bytes).map_err(|e| format!("{}: {e}", sidecar.display()))?;
+     }
++    let t_run = prof::now();
+     let mut failed = false;
+     let selection_path = profile.directory().join("audit.json");
+     // Card W44-AUDIT-PARALLEL-UNITS: plan every selected library first. The
+@@ -417,6 +436,8 @@ pub fn run(
+         Some(dispatch),
+         |step| match step {
+             Step::Prelude(index) => {
++                let t = prof::now();
++                let _record = RecordOnDrop(format!("library_prelude:{}", plans[index].library), t);
+                 let plan = &plans[index];
+                 let mut output = String::new();
+                 // Publishes `None` if the prelude fails or panics, so a unit
+@@ -428,6 +449,8 @@ pub fn run(
+             }
+             Step::Unit(index, entry) => {
+                 let plan = &plans[index];
++                let t = prof::now();
++                let _record = RecordOnDrop(format!("unit_total:{}/{}", plan.library, entry.file.strip_prefix(&plan.source_root).unwrap().display()), t);
+                 let mut output = String::new();
+                 let result = match contexts[index].wait() {
+                     Some(context) => audit_unit(
+@@ -522,6 +545,7 @@ pub fn run(
+             Ok(())
+         },
+     )?;
++    prof::record("steps_total", t_run);
+     if plans.len() == fluent_bit_libraries {
+         println!(
+             "monkey-libevent: source contract checked; pass its forced-libevent \
+@@ -1840,3 +1864,10 @@ fn prefixed_call_symbols(source: &str) -> Vec<String> {
+     symbols.dedup();
+     symbols
+ }
++
++struct RecordOnDrop(String, f64);
++impl Drop for RecordOnDrop {
++    fn drop(&mut self) {
++        prof::record(&self.0, self.1);
++    }
++}

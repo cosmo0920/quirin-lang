@@ -842,6 +842,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w44-assignment-destination-suffix-place](w44-assignment-destination-suffix-place/README.md) | W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: a destination is the whole left-hand side |
 
+| [w44-audit-parallel-units](w44-audit-parallel-units/README.md) | W44-AUDIT-PARALLEL-UNITS: the corpus audit, unit-parallel and byte-identical |
+
 | [w44-branch-condition-calls](w44-branch-condition-calls/README.md) | W44-BRANCH-CONDITION-CALLS: calls in controlling expressions |
 
 | [w44-corpus-callee-summaries](w44-corpus-callee-summaries/README.md) | W44-CORPUS-CALLEE-SUMMARIES: why corpus callees get no summary, and the one route gap closed |

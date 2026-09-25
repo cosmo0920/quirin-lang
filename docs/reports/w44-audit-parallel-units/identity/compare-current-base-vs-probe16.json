@@ -1,0 +1,46 @@
+{
+  "reference": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af93c329e85457c34/private/runs-current/base",
+  "other": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af93c329e85457c34/private/runs-current/probe16",
+  "artifacts": {
+    "resource-diagnostics.json": {
+      "reference_sha256": "7aaa540861a37d533aa24f454b81155c78fa6ef33c3879b057db37c33876a300",
+      "other_sha256": "7aaa540861a37d533aa24f454b81155c78fa6ef33c3879b057db37c33876a300",
+      "byte_identical": true
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "reference_sha256": "b1308037bbad997fa9cae6557305f38c8c3c80a70b6886f238d5677dd8fb6aeb",
+      "other_sha256": "b1308037bbad997fa9cae6557305f38c8c3c80a70b6886f238d5677dd8fb6aeb",
+      "byte_identical": true
+    },
+    "resource-diagnostics.contracts.json": {
+      "reference_sha256": "91aa7c8b985459b744d14f06829875586e8ac611b488626405c2b4773df3097c",
+      "other_sha256": "91aa7c8b985459b744d14f06829875586e8ac611b488626405c2b4773df3097c",
+      "byte_identical": true
+    },
+    "resource-diagnostics.source-effects.json": {
+      "reference_sha256": "b1308037bbad997fa9cae6557305f38c8c3c80a70b6886f238d5677dd8fb6aeb",
+      "other_sha256": "b1308037bbad997fa9cae6557305f38c8c3c80a70b6886f238d5677dd8fb6aeb",
+      "byte_identical": true
+    },
+    "monkey-source.json": {
+      "reference_sha256": "b1308037bbad997fa9cae6557305f38c8c3c80a70b6886f238d5677dd8fb6aeb",
+      "other_sha256": "b1308037bbad997fa9cae6557305f38c8c3c80a70b6886f238d5677dd8fb6aeb",
+      "byte_identical": true
+    },
+    "audit.log": {
+      "reference_sha256": "9e6406ecb6d16e8b6c1f5617124562fe4ef1b27c9abde6e00193fa5e79cad7a8",
+      "other_sha256": "cccaaf9899fd0fb07d2bd80da60978cc999adf4d508685a96522ae89a17db49a",
+      "raw_identical": false,
+      "raw_differing_lines": [
+        1075
+      ],
+      "raw_line_counts": [
+        1075,
+        1075
+      ],
+      "identical_after_run_path_mask": true,
+      "preparation_figures_masked": true
+    }
+  },
+  "identical": true
+}

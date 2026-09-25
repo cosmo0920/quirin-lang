@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af93c329e85457c34/private/bin/prof-audit",
+    "--pinned-evidence",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af93c329e85457c34/private/profile/base-pinned/monkey-source.json",
+    "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af93c329e85457c34/private/profile/base-pinned/resource-diagnostics.json"
+  ],
+  "binary_sha256": "b53be62577687436e5eaa68871b5d7b9ea1d89d739372ce6ead11a37888e7fe4",
+  "start": 1790312210.3021228,
+  "end": 1790312732.5145557,
+  "wall_s": 522.2124328613281,
+  "exit": 0,
+  "peak_audit_rss_kib": 0,
+  "peak_tree_rss_kib": 220816
+}

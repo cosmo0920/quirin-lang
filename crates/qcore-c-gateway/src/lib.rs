@@ -55,6 +55,100 @@ pub use clang::ClangIdentity;
 /// Callers select arguments and remain responsible for subprocess execution.
 pub use clang::command as clang_command;
 
+/// The census streams compiled into this build whose environment variable is
+/// set, by variable name (card **W44-AUDIT-PARALLEL-UNITS**).
+///
+/// Every census sink is a process-global stream written at the moment the
+/// analyzer decides, and two of them number their records from process-global
+/// counters, so record order is analysis order. A caller that could analyse
+/// translation units concurrently must run them one at a time whenever this is
+/// non-empty; that is what keeps a census stream byte-identical to a
+/// sequential run's. Empty in a build without the census features, where no
+/// sink exists.
+pub fn active_census_sinks() -> Vec<&'static str> {
+    let mut variables = census_sink_variables();
+    variables.retain(|variable| std::env::var_os(variable).is_some());
+    variables
+}
+
+/// Every census stream variable compiled into this build, set or not; the
+/// population [`active_census_sinks`] filters. A guard test checks it against
+/// the sinks declared in this crate's sources.
+pub fn census_sink_variables() -> Vec<&'static str> {
+    #[allow(unused_mut)]
+    let mut variables: Vec<&'static str> = Vec::new();
+    #[cfg(feature = "indirect-census")]
+    variables.extend([
+        indirect_census::CENSUS_PATH_VARIABLE,
+        indirect_census::RECORD_CENSUS_PATH_VARIABLE,
+        indirect_census::RETURN_CENSUS_PATH_VARIABLE,
+        indirect_census::STATEMENT_CENSUS_PATH_VARIABLE,
+        indirect_census::DERIVED_CENSUS_PATH_VARIABLE,
+        traversal_census::TRAVERSAL_CENSUS_PATH,
+        indirect_chain_census::CHAIN_CENSUS_PATH,
+        condition_call_census::CONDITION_CALL_CENSUS_PATH,
+        legacy_c::callee_scope::census::CALLEE_SCOPE_CENSUS_PATH_VARIABLE,
+        // Added at the W44-AUDIT-PARALLEL-UNITS integration: the leak-witness
+        // stream (W44-LEAK-PIN-AUDIT) numbers invocations from a global
+        // counter and the destination-suffix stream
+        // (W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE) is process-global, so
+        // either forces one job like the others.
+        legacy_c::leak_witness::LEAK_WITNESS_PATH_VARIABLE,
+        destination_suffix_census::DESTINATION_SUFFIX_CENSUS_PATH,
+    ]);
+    #[cfg(feature = "provenance-rounds-census")]
+    variables.push(legacy_c::joined_provenance::provenance_rounds::CENSUS_PATH_VARIABLE);
+    variables
+}
+
+#[cfg(all(test, feature = "indirect-census"))]
+mod census_sink_inventory {
+    /// Every source file that declares a process-global stream sink must have
+    /// its path variable in [`super::census_sink_variables`], or a parallel
+    /// audit would interleave that stream (integration of
+    /// W44-AUDIT-PARALLEL-UNITS found two sinks missing).
+    #[test]
+    fn every_declared_sink_forces_one_job() {
+        let listed = super::census_sink_variables();
+        let source = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src");
+        let mut missing = Vec::new();
+        for entry in std::fs::read_dir(&source).unwrap() {
+            let path = entry.unwrap().path();
+            if path.extension().is_none_or(|extension| extension != "rs") {
+                continue;
+            }
+            let text = std::fs::read_to_string(&path).unwrap();
+            if !text.contains("BufWriter<File>>>> = Mutex::new(None)") {
+                continue;
+            }
+            if path.ends_with("provenance_rounds.rs") && !cfg!(feature = "provenance-rounds-census")
+            {
+                continue;
+            }
+            for line in text.lines() {
+                let line = line.trim();
+                let Some(rest) = line.strip_prefix("pub const ") else {
+                    continue;
+                };
+                let Some((_, literal)) = rest.split_once("&str = \"") else {
+                    continue;
+                };
+                let variable = literal.trim_end_matches("\";");
+                if variable.starts_with("QCORE_")
+                    && !variable.ends_with("_CAP")
+                    && !listed.contains(&variable)
+                {
+                    missing.push(format!("{}: {variable}", path.display()));
+                }
+            }
+        }
+        assert!(
+            missing.is_empty(),
+            "census sinks that do not force one job: {missing:?}"
+        );
+    }
+}
+
 #[cfg(test)]
 pub(crate) mod test_support {
     use std::io::Write;

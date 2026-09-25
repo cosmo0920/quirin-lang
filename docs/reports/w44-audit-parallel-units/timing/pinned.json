@@ -1,0 +1,121 @@
+[
+  {
+    "run": "base-binary-j1",
+    "wall_s": 590.54,
+    "user_s": 554.49,
+    "system_s": 24.53,
+    "cpu_percent": "98%",
+    "peak_rss_kib": 173152,
+    "exit_status": 0
+  },
+  {
+    "run": "branch-j1",
+    "wall_s": 424.16,
+    "user_s": 402.19,
+    "system_s": 22.25,
+    "cpu_percent": "100%",
+    "peak_rss_kib": 174800,
+    "exit_status": 0,
+    "load_1min_before": 11.43
+  },
+  {
+    "run": "branch-j4",
+    "wall_s": 128.87,
+    "user_s": 485.93,
+    "system_s": 25.6,
+    "cpu_percent": "396%",
+    "peak_rss_kib": 362732,
+    "exit_status": 0,
+    "load_1min_before": 16.18
+  },
+  {
+    "run": "branch-j8",
+    "wall_s": 96.17,
+    "user_s": 719.28,
+    "system_s": 35.92,
+    "cpu_percent": "785%",
+    "peak_rss_kib": 496968,
+    "exit_status": 0,
+    "load_1min_before": 21.75
+  },
+  {
+    "run": "branch-j16-a",
+    "wall_s": 86.96,
+    "user_s": 876.15,
+    "system_s": 43.72,
+    "cpu_percent": "1057%",
+    "peak_rss_kib": 763576,
+    "exit_status": 0,
+    "load_1min_before": 7.19
+  },
+  {
+    "run": "branch-j16-b",
+    "wall_s": 86.92,
+    "user_s": 868.61,
+    "system_s": 44.18,
+    "cpu_percent": "1050%",
+    "peak_rss_kib": 768016,
+    "exit_status": 0,
+    "load_1min_before": 4.66
+  },
+  {
+    "run": "branch-j16-c",
+    "wall_s": 76.97,
+    "user_s": 870.19,
+    "system_s": 44.03,
+    "cpu_percent": "1187%",
+    "peak_rss_kib": 758152,
+    "exit_status": 0,
+    "load_1min_before": 17.7
+  },
+  {
+    "run": "branch-j16-d",
+    "wall_s": 76.72,
+    "user_s": 869.21,
+    "system_s": 44.34,
+    "cpu_percent": "1190%",
+    "peak_rss_kib": 760988,
+    "exit_status": 0,
+    "load_1min_before": 19.93
+  },
+  {
+    "run": "census-branch-j1",
+    "wall_s": 625.33,
+    "user_s": 594.32,
+    "system_s": 25.23,
+    "cpu_percent": "99%",
+    "peak_rss_kib": 174832,
+    "exit_status": 0,
+    "load_1min_before": 19.22
+  },
+  {
+    "run": "census-branch-j16-forced-sequential",
+    "wall_s": 661.14,
+    "user_s": 588.62,
+    "system_s": 27.91,
+    "cpu_percent": "93%",
+    "peak_rss_kib": 174668,
+    "exit_status": 0,
+    "load_1min_before": 6.32
+  },
+  {
+    "run": "final-binary-j16-confirmation",
+    "wall_s": 154.9,
+    "user_s": 854.13,
+    "system_s": 43.49,
+    "cpu_percent": "579%",
+    "peak_rss_kib": 751684,
+    "exit_status": 0,
+    "load_1min_before": 27.41
+  },
+  {
+    "run": "final-binary-j1-confirmation",
+    "wall_s": 1029.3,
+    "user_s": 760.06,
+    "system_s": 37.54,
+    "cpu_percent": "77%",
+    "peak_rss_kib": 171620,
+    "exit_status": 0,
+    "load_1min_before": 32.56
+  }
+]
