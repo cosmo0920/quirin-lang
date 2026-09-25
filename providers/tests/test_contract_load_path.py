@@ -7,6 +7,11 @@ CONTRACT-INHERIT-QCORE-PROVIDER-NAMING) `qcore-provider-*` crate's
 `providers/package.py build` installs the pinned texts, which `verify`
 accepts. Synthetic trees exercise every refusal; one test reads the real
 workspace.
+
+Card W44-PROVIDER-RESOURCE-VIEW: each crate record carries its
+`resource_view`, the owned modules the resource-contract loader accepts.
+Synthetic trees use a stand-in for the loader (`loader_like`); the real
+workspace test runs the loader itself, through the probe example.
 """
 import hashlib
 import importlib.util
@@ -33,6 +38,24 @@ PARENT = ("module contract;\nextern fn free(ptr: ptr<mut, u8>) -> unit\ncontract
           "    ensures normal resource_return_none();\n};\n")
 CHILD = ('module contract;\n#include "quirin-provider-libc:libc/memory.qcore";\n'
          "extern fn wrap_free(p: ptr<mut, u8>) -> unit contract inherit libc::free;\n")
+
+
+# A module written for another checker: the stand-in loader refuses it, as the
+# resource loader refuses lifecycle and observation vocabularies.
+POLICY = ("module contract;\nextern fn policy_step(p: ptr<mut, u8>) -> unit\ncontract {\n"
+          "    requires lifecycle_policy_fact;\n};\n")
+
+
+def loader_like(root, load_path_file):
+    """A stand-in for `contracts.loader_resource_views`: every owned module is
+    accepted unless it requires `lifecycle_policy_fact`."""
+    load_path_file = Path(load_path_file)
+    manifest = json.loads(load_path_file.read_text())
+    return {record["name"]: [
+        module for module in record["modules"]
+        if "lifecycle_policy_fact" not in
+        (load_path_file.parent / record["contracts"] / module).read_text()]
+        for record in manifest["crates"]}
 
 
 def lib_rs(namespace, published):
@@ -164,17 +187,93 @@ class LoadPathManifest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             tree = Tree(temporary)
             metadata = tree.metadata()
-            contracts.maintain_load_path(tree.root, sync=True, metadata=metadata)
-            contracts.maintain_load_path(tree.root, metadata=metadata)
+            contracts.maintain_load_path(tree.root, sync=True, metadata=metadata,
+                                         views=loader_like)
+            contracts.maintain_load_path(tree.root, metadata=metadata, views=loader_like)
             (tree.root / "quirin-provider-libc/contracts/libc/memory.qcore").write_text(
                 PARENT.replace("nullable", "nonnull"))
             with self.assertRaisesRegex(ValueError, "stale"):
-                contracts.maintain_load_path(tree.root, metadata=metadata)
+                contracts.maintain_load_path(tree.root, metadata=metadata, views=loader_like)
+
+    def test_resource_views_are_generated_by_sync_and_checked(self):
+        """A view is the loader's, never a hand list: `sync` writes it, and
+        `check` refuses a view that declares a module the loader refuses,
+        omits one it accepts, or is missing."""
+        with tempfile.TemporaryDirectory() as temporary:
+            tree = Tree(temporary)
+            tree.crate("quirin-provider-app", "app", [], {"app/policy.qcore": POLICY})
+            metadata = tree.metadata()
+            written = contracts.maintain_load_path(tree.root, sync=True, metadata=metadata,
+                                                   views=loader_like)
+            views = {c["name"]: c["resource_view"] for c in written["crates"]}
+            self.assertEqual(views, {"qcore-provider-exe": ["exe/wrap.qcore"],
+                                     "quirin-provider-app": ["app/wrap.qcore"],
+                                     "quirin-provider-libc": ["libc/memory.qcore"]})
+            load_path_file = tree.root / "contract-load-path.json"
+            self.assertEqual(json.loads(load_path_file.read_text()), written)
+            contracts.maintain_load_path(tree.root, metadata=metadata, views=loader_like)
+            good = load_path_file.read_bytes()
+
+            def declare(view):
+                manifest = json.loads(good)
+                for record in manifest["crates"]:
+                    if record["name"] == "quirin-provider-app":
+                        if view is None:
+                            del record["resource_view"]
+                        else:
+                            record["resource_view"] = view
+                load_path_file.write_text(json.dumps(manifest, indent=2) + "\n")
+
+            cases = [
+                (["app/policy.qcore", "app/wrap.qcore"],
+                 r"quirin-provider-app declares modules the resource loader refuses: "
+                 r"\['app/policy.qcore'\]"),
+                ([], r"quirin-provider-app omits modules the resource loader accepts: "
+                     r"\['app/wrap.qcore'\]"),
+                (None, "quirin-provider-app declares no resource view"),
+            ]
+            for view, message in cases:
+                with self.subTest(view=view):
+                    declare(view)
+                    with self.assertRaisesRegex(ValueError, message):
+                        contracts.maintain_load_path(tree.root, metadata=metadata,
+                                                     views=loader_like)
+            # Restored by rewriting the bytes; the round trip is exact.
+            load_path_file.write_bytes(good)
+            self.assertEqual(load_path_file.read_bytes(), good)
+            contracts.maintain_load_path(tree.root, metadata=metadata, views=loader_like)
+
+    def test_a_probe_failure_or_an_unowned_view_is_an_error_not_an_empty_view(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            tree = Tree(temporary)
+            metadata = tree.metadata()
+            # No repository workspace above this tree: the probe cannot run.
+            with self.assertRaisesRegex(ValueError, "resource view probe failed"):
+                contracts.maintain_load_path(tree.root, sync=True, metadata=metadata)
+
+            def unowned(root, load_path_file):
+                views = loader_like(root, load_path_file)
+                views["quirin-provider-libc"] = ["libc/absent.qcore"]
+                return views
+
+            with self.assertRaisesRegex(ValueError, "not sorted, unique and owned"):
+                contracts.maintain_load_path(tree.root, sync=True, metadata=metadata,
+                                             views=unowned)
+
+            def partial(root, load_path_file):
+                views = loader_like(root, load_path_file)
+                del views["quirin-provider-libc"]
+                return views
+
+            with self.assertRaisesRegex(ValueError, "not the load path's"):
+                contracts.maintain_load_path(tree.root, sync=True, metadata=metadata,
+                                             views=partial)
 
     def test_include_pins_install_and_verify(self):
         with tempfile.TemporaryDirectory() as temporary:
             tree = Tree(temporary)
-            load_path = contracts.maintain_load_path(tree.root, sync=True, metadata=tree.metadata())
+            load_path = contracts.maintain_load_path(tree.root, sync=True, metadata=tree.metadata(),
+                                                     views=loader_like)
             provider = {"app/wrap.qcore": tree.root / "quirin-provider-app/contracts/app/wrap.qcore"}
             pins = contracts.include_pins(provider, load_path, tree.root)
             key = "quirin-provider-libc:libc/memory.qcore"
@@ -218,6 +317,12 @@ class LoadPathManifest(unittest.TestCase):
             self.assertIn("quirin-provider-libc", edges[name])
         namespaces = [c["namespace"] for c in manifest["crates"]]
         self.assertEqual(len(namespaces), len(set(namespaces)))
+        # Card W44-PROVIDER-RESOURCE-VIEW: the loader's views, 47 modules in
+        # all (the Cycle 19 manifest's); the shared bundle has none.
+        views = {c["name"]: c["resource_view"] for c in manifest["crates"]}
+        self.assertEqual(sum(len(view) for view in views.values()), 47)
+        self.assertEqual(views["quirin-provider-shared"], [])
+        self.assertEqual(len(views["quirin-provider-libc"]), 16)
         # The real inventories: exactly the two crates that inherit carry pins.
         rows = {row["crate"]: row["includes"] for row in contracts.maintain(load_path=manifest)}
         self.assertEqual(rows, {"qcore-provider-chunkio": 0, "qcore-provider-cmetrics": 0,
