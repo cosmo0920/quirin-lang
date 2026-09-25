@@ -3,11 +3,19 @@
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::sync::{Mutex, PoisonError};
 
 const INSTALL_HELP: &str = "Existing-C analysis requires Clang (MSVC cl.exe cannot provide the required AST). Install LLVM or Visual Studio's optional 'C++ Clang tools for Windows', then set QCORE_CLANG to the full compiler executable path if discovery fails. QCORE_CLANG is a path, not a command with arguments. QCore check/emit do not require Clang.";
 
 pub fn command() -> Result<Command, String> {
-    let path = resolve(std::env::var_os("QCORE_CLANG"), discovery_candidates, probe)?;
+    let path = resolved_once(
+        &RESOLVED,
+        ResolutionKey {
+            explicit: std::env::var_os("QCORE_CLANG"),
+            search_path: std::env::var_os("PATH"),
+        },
+        |explicit| resolve(explicit, discovery_candidates, probe),
+    )?;
     let mut command = Command::new(path);
     // Visual Studio may supply clang-cl.exe. Use the GNU-style driver arguments
     // expected by our preprocessing and JSON AST transports in either case.
@@ -93,6 +101,47 @@ impl ClangIdentity {
     pub fn target(&self) -> &str {
         &self.target
     }
+}
+
+/// The environment a resolution was made under: the explicit override and the
+/// search path the default `clang` is looked up on.
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct ResolutionKey {
+    explicit: Option<OsString>,
+    search_path: Option<OsString>,
+}
+
+type ResolutionCache = Mutex<Option<(ResolutionKey, PathBuf)>>;
+
+/// The last successful resolution in this process.
+static RESOLVED: ResolutionCache = Mutex::new(None);
+
+/// Resolve and probe the executable once per [`ResolutionKey`] per process.
+///
+/// Every gateway run used to re-run discovery, which launches `clang --version`
+/// before the real Clang run; that probe was over half of all Clang launches in
+/// the heaviest test binaries (card W44-TEST-SUITE-WALL-TIME). Reusing a
+/// successful resolution changes no verdict: the executable is already trusted
+/// to stay stable while in use (see [`ClangIdentity`]), a later run still fails
+/// closed if it cannot be launched or its output does not parse, a changed
+/// `QCORE_CLANG` or `PATH` is resolved afresh, and a failed resolution is never
+/// cached, so an unavailable Clang is re-examined on every call.
+fn resolved_once(
+    cache: &ResolutionCache,
+    key: ResolutionKey,
+    resolve: impl FnOnce(Option<OsString>) -> Result<PathBuf, String>,
+) -> Result<PathBuf, String> {
+    if let Some((cached, path)) = cache
+        .lock()
+        .unwrap_or_else(PoisonError::into_inner)
+        .as_ref()
+        && *cached == key
+    {
+        return Ok(path.clone());
+    }
+    let path = resolve(key.explicit.clone())?;
+    *cache.lock().unwrap_or_else(PoisonError::into_inner) = Some((key, path.clone()));
+    Ok(path)
 }
 
 fn resolve(
@@ -254,6 +303,63 @@ fn visual_studio_candidates(root: &Path) -> Vec<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn key(explicit: Option<&str>, search_path: &str) -> ResolutionKey {
+        ResolutionKey {
+            explicit: explicit.map(OsString::from),
+            search_path: Some(search_path.into()),
+        }
+    }
+
+    #[test]
+    fn a_successful_resolution_is_reused_only_under_the_same_environment() {
+        let cache = ResolutionCache::new(None);
+        let mut calls = 0;
+        let mut resolve = |explicit: Option<OsString>| {
+            calls += 1;
+            Ok(PathBuf::from(explicit.unwrap_or_else(|| "clang".into())))
+        };
+        let first = resolved_once(&cache, key(Some("/a/clang"), "/bin"), &mut resolve).unwrap();
+        let again = resolved_once(&cache, key(Some("/a/clang"), "/bin"), &mut resolve).unwrap();
+        assert_eq!((first.clone(), again), (PathBuf::from("/a/clang"), first));
+        let other = resolved_once(&cache, key(Some("/b/clang"), "/bin"), &mut resolve).unwrap();
+        assert_eq!(other, PathBuf::from("/b/clang"));
+        let searched = resolved_once(&cache, key(None, "/bin"), &mut resolve).unwrap();
+        let moved = resolved_once(&cache, key(None, "/opt/bin"), &mut resolve).unwrap();
+        assert_eq!(
+            (searched, moved),
+            (PathBuf::from("clang"), PathBuf::from("clang"))
+        );
+        assert_eq!(
+            calls, 4,
+            "one probe per distinct environment, none for the repeat"
+        );
+    }
+
+    #[test]
+    fn a_failed_resolution_is_never_cached_or_masked() {
+        let cache = ResolutionCache::new(None);
+        resolved_once(&cache, key(Some("/good"), "/bin"), |_| Ok("/good".into())).unwrap();
+        // A different override that fails reports its own failure, never the
+        // earlier success.
+        let error = resolved_once(&cache, key(Some("missing"), "/bin"), |_| {
+            Err("QCORE_CLANG `missing` is unavailable".into())
+        })
+        .unwrap_err();
+        assert!(error.contains("missing"));
+        // A failure is re-examined on the next call rather than remembered.
+        let mut calls = 0;
+        for _ in 0..2 {
+            assert!(
+                resolved_once(&cache, key(None, "/empty"), |_| {
+                    calls += 1;
+                    Err("Clang unavailable".into())
+                })
+                .is_err()
+            );
+        }
+        assert_eq!(calls, 2);
+    }
 
     #[test]
     fn explicit_path_with_spaces_is_authoritative() {
