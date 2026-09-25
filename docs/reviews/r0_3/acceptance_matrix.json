@@ -6731,7 +6731,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W45-SUB-OBJECT-STORES on merge 7de5edf6 (onto main 400063c5, after W45-RETURN-EXPRESSION-FAMILIES and W45-CALLEE-SUMMARY-CASCADE), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5720 core Rust passed / 0 failed / 11 ignored over 304 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 193 Lean audits; 351 root Python tests after regenerating this section (08-python exit 1 before regeneration); 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w45-callee-summary-cascade/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
+  "note": "Integration gate for FB-SYSTEM-AUDIT-CARDS on merge 2a2a33f4 (onto main 582cff1f, after all first-iteration wave-45 cards), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5720 core Rust passed / 0 failed / 11 ignored over 304 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 193 Lean audits; 351 root Python tests; 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The merge adds docs-only Fluent Bit system audit investigation records (source/build coverage, retry-lifetime candidates, backlog accounting) and must not move the configured corpus: the arbiter ran at the default job count (QCORE_AUDIT_JOBS unset) in 77 s and baseline_identity.py against docs/reports/w45-sub-object-stores/integration/artifacts exits 0 with verdict_bearing_identical true, so the baseline does not move.",
   "workspace_tests": 5720,
   "provider_tests": 124,
   "python_evidence_validator_tests": 351,
@@ -6937,7 +6937,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w45-sub-object-stores/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/fb-system-audit-cards/integration/gate.json)"
  },
  "named_followups": [
   {

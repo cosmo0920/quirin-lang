@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate for FB-SYSTEM-AUDIT-CARDS on merge 2a2a33f4 (onto main 582cff1f, after all first-iteration wave-45 cards), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5720 core Rust passed / 0 failed / 11 ignored over 304 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 193 Lean audits; 351 root Python tests; 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The merge adds docs-only Fluent Bit system audit investigation records (source/build coverage, retry-lifetime candidates, backlog accounting) and must not move the configured corpus: the arbiter ran at the default job count (QCORE_AUDIT_JOBS unset) in 77 s and baseline_identity.py against docs/reports/w45-sub-object-stores/integration/artifacts exits 0 with verdict_bearing_identical true, so the baseline does not move.",
+ "workspace_tests": 5720,
+ "provider_tests": 124,
+ "python_evidence_validator_tests": 351,
+ "lean_audits": 193,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
