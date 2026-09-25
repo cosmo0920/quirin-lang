@@ -5,8 +5,9 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 use qcore_compiler::contract_loader::{
-    FUNCTION_POINTER_ABI_TYPE, POINTER_ABI_TYPES, SCALAR_ABI_TYPES, check_source_assumptions,
-    load_resource_contract_files, load_resource_contract_manifest, load_resource_contract_sources,
+    FUNCTION_POINTER_ABI_TYPE, POINTER_ABI_TYPES, SCALAR_ABI_TYPES, VA_LIST_ABI_TYPE,
+    check_source_assumptions, load_resource_contract_files, load_resource_contract_manifest,
+    load_resource_contract_sources,
 };
 use qcore_compiler::{
     AnalysisStatus, C11TranslationUnit, DerivedExtent, ResourceApiKind, ResourceContracts,
@@ -888,6 +889,37 @@ fn every_abi_scalar_is_a_borrowed_only_projection() {
         ] {
             assert!(load(&bad).is_err(), "accepted {bad}");
         }
+    }
+    // Card W44-LIBC-RESIDUALS added the projection of the compiler's
+    // `__builtin_va_list`, under the same condition: glibc's `vsnprintf`, which
+    // 25 functions of the pinned corpus call. Like `fnptr` it is not a `ptr`
+    // spelling, so every custody mode on it is rejected; unlike `fnptr` it is a
+    // parameter type only, so no result of it loads at all.
+    assert_eq!(VA_LIST_ABI_TYPE, "va_list");
+    assert!(!POINTER_ABI_TYPES.contains(&VA_LIST_ABI_TYPE));
+    assert!(!SCALAR_ABI_TYPES.contains(&VA_LIST_ABI_TYPE));
+    assert!(!VA_LIST_ABI_TYPE.starts_with("ptr"));
+    let argument = format!(
+        "module contract;
+        extern fn probe(p: ptr<mut, u8>, ap: {VA_LIST_ABI_TYPE}) -> i32 contract {{
+            requires resource_contract_v1;
+            ensures normal resource_borrowed(p);
+            ensures normal resource_borrowed(ap);
+            ensures normal resource_return_none();
+        }};"
+    );
+    let contracts = load(&argument).unwrap_or_else(|e| panic!("va_list argument: {e}"));
+    assert_eq!(
+        contracts.contract("probe").unwrap(),
+        &ResourceFunctionContract::new([P::Borrowed, P::Borrowed], R::None),
+    );
+    for bad in [
+        argument.replace("resource_borrowed(ap)", "resource_owned(ap, nonnull)"),
+        argument.replace("resource_borrowed(ap)", "resource_released(ap, nonnull)"),
+        argument.replace("resource_borrowed(ap)", "resource_out(ap, nonnull)"),
+        argument.replace("-> i32", &format!("-> {VA_LIST_ABI_TYPE}")),
+    ] {
+        assert!(load(&bad).is_err(), "accepted {bad}");
     }
     // Types outside the table stay rejected: `unit` is a result type only, and
     // a pointer spelling the pointer table does not carry is not a projection

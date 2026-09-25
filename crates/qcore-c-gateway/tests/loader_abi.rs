@@ -624,6 +624,68 @@ const ROWS: &[Row] = &[
         c: "void k_use(char *__restrict p[__restrict], int n);",
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
+    // -- GNU builtin words (card W44-LIBC-RESIDUALS) ----------------------
+    Row {
+        label: "`__extension__` carries no type (glibc `__bswap_64`)",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "__extension__ static __inline void k_use(void *p, int n) { }",
+        outcome: None,
+    },
+    Row {
+        label: "`__builtin_va_list` behind glibc's two typedefs is `va_list` (`vsnprintf`)",
+        declared: "p: ptr<mut, u8>, n: va_list",
+        c: "typedef __builtin_va_list __gnuc_va_list;\ntypedef __gnuc_va_list va_list;\n\
+            void k_use(void *p, __gnuc_va_list n);",
+        outcome: None,
+    },
+    Row {
+        label: "so is the builtin written directly",
+        declared: "p: ptr<mut, u8>, n: va_list",
+        c: "void k_use(void *p, __builtin_va_list n);",
+        outcome: None,
+    },
+    Row {
+        label: "an unnamed `va_list` parameter reads the same way",
+        declared: "p: ptr<mut, u8>, n: va_list",
+        c: "typedef __builtin_va_list va_list;\nvoid k_use(void *p, va_list);",
+        outcome: None,
+    },
+    Row {
+        label: "a `va_list` is not the x86-64 object pointer it decays to: no target is assumed",
+        declared: "p: ptr<mut, u8>, n: ptr<mut, u8>",
+        c: "typedef __builtin_va_list __gnuc_va_list;\nvoid k_use(void *p, __gnuc_va_list n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "nor an integer",
+        declared: "p: ptr<mut, u8>, n: usize",
+        c: "typedef __builtin_va_list __gnuc_va_list;\nvoid k_use(void *p, __gnuc_va_list n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "and `va_list` is refused for an object pointer",
+        declared: "p: ptr<mut, u8>, n: va_list",
+        c: "void k_use(void *p, void *n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "a pointer to a `va_list` still refuses",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "typedef __builtin_va_list va_list;\nvoid k_use(va_list *p, int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "an array of `va_list` is a pointer to one, and still refuses",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "typedef __builtin_va_list va_list;\nvoid k_use(va_list p[], int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "a unit that typedefs the builtin name is read through its own typedef",
+        declared: "p: ptr<mut, u8>, n: va_list",
+        c: "typedef int __builtin_va_list;\nvoid k_use(void *p, __builtin_va_list n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
     // -- arity -------------------------------------------------------------
     Row {
         label: "a C declaration with more parameters disagrees",
@@ -729,6 +791,55 @@ contract {
             "{c}"
         );
     }
+}
+
+/// Card W44-LIBC-RESIDUALS: the two GNU words at a *result*. `__extension__`
+/// is discarded there exactly as at a parameter's specifiers, so glibc's
+/// `__bswap_64` reads `u64 (u64)`. A `va_list` result has no spelling: the
+/// loader's result vocabulary leaves `va_list` out, and the reader never reads
+/// the builtin at a result, so such a declaration is unreadable rather than
+/// compared against some other spelling.
+#[test]
+fn the_gnu_builtin_words_at_a_result() {
+    let contracts = load(
+        "\
+extern fn k_swap(x: u64) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(x);
+    ensures normal resource_return_none();
+};
+",
+    );
+    for (c, expected) in [
+        (
+            "typedef unsigned long int __uint64_t;\n\
+             __extension__ static __inline __uint64_t k_swap (__uint64_t __bsx) { return __bsx; }",
+            AbiOutcome::Agreed,
+        ),
+        (
+            "typedef __builtin_va_list __gnuc_va_list;\n__gnuc_va_list k_swap(unsigned long x);",
+            AbiOutcome::Withdrawn(AbiRefusal::UnreadableDeclaration),
+        ),
+    ] {
+        let source = format!("{c}\nvoid w(void) {{ }}");
+        assert_eq!(
+            declared_abi_census(&source, &contracts)
+                .iter()
+                .map(|row| row.outcome)
+                .collect::<Vec<_>>(),
+            [expected],
+            "{c}"
+        );
+    }
+    let result = load_resource_contract_sources(&BTreeMap::from([(
+        "k_api.qcore".to_owned(),
+        "module contract;\n\nextern fn k_list(x: u64) -> va_list\ncontract {\n    \
+         requires resource_contract_v1;\n    ensures normal resource_borrowed(x);\n    \
+         ensures normal resource_return_none();\n};\n"
+            .to_owned(),
+    )]));
+    assert!(result.is_err(), "a `va_list` result must not load");
 }
 
 /// A zero-parameter contract against an unspecified C list is admitted, on a

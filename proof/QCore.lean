@@ -78,6 +78,7 @@ import QCore.SymbolicClassAdmission
 import QCore.DeclaredAbiAgreement
 import QCore.TypedefProjection
 import QCore.PointerQualifierReader
+import QCore.GnuBuiltinReader
 import QCore.DerivedResult
 import QCore.DerivedResultInference
 import QCore.KindedCustody
