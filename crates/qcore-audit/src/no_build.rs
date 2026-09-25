@@ -325,7 +325,10 @@ impl AssumedConfiguration {
         include_dirs: Vec<PathBuf>,
         defines: Vec<String>,
     ) -> Result<Self, String> {
-        let (std, std_source) = std.unwrap_or_else(|| (DEFAULT_STD.to_owned(), "default"));
+        let (std, std_source) = std.map_or_else(
+            || (DEFAULT_STD.to_owned(), "default"),
+            |(std, _)| (std, "declared"),
+        );
         let dialect = parse_dialect(&std)?;
         let mut canonical = Vec::new();
         for dir in include_dirs {
@@ -1031,6 +1034,10 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         (None, Some(value)) => Some((value, "configuration")),
         (None, None) => None,
     };
+    // Which form declared the dialect is invocation provenance; the report and
+    // the sidecar record only whether it is the stated default, so a run is
+    // described identically by either form.
+    let std_form = std.as_ref().map_or("default", |(_, form)| *form);
     let assumed = AssumedConfiguration::new(std, include_dirs, defines)?;
     let report = one("report", command_line.report, configuration.report)?;
     let contract_manifest = one(
@@ -1102,6 +1109,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
             "source_root": root,
             "selection": selection,
             "assumed_configuration": assumed.record(),
+            "std_form": std_form,
             "contracts": {
                 "source": contract_source,
                 "selection": contracts.provider_record().map(|record| record["selection"].clone()),
