@@ -153,7 +153,9 @@ Implementation `ca84f6b9`; frozen forecast `054c554c`
 `run_audit.py … --jobs 16`, exit 0. A census run of the same rules
 ([census/after-census-run.json](census/after-census-run.json), with the
 census-only `QCORE_RETURN_FAMILY_CENSUS` stream the next commit adds)
-reproduces all five AFTER artifacts byte for byte. Against the baseline
+reproduces all five AFTER artifacts byte for byte, and so does a confirmation
+run at the records tip `09b81459` ([confirmation-run.json](confirmation-run.json),
+`--jobs 16`, exit 0). Against the baseline
 ([after-identity.json](after-identity.json)) only the diagnostics differ;
 chunk-contracts and the Monkey source are byte-identical, and contracts and
 source-effects are byte-identical to the same-checkout BEFORE.
