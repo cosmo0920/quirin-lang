@@ -1,0 +1,127 @@
+[
+ {
+  "function": "rd_kafka_AlterConsumerGroupOffsets_new",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Combined-only, refusal for refusal, the function stays Unknown. On the combined tree W44-COLLECTION-ALLOCATION binds the `x = rd_calloc(1, sizeof(*x) + ...)`/`rd_malloc(sizeof(*x) + ...)` allocation to an identity; the next statement, a member store through `x` that the lexical gate refuses (constraint 5i), names `x`, so W44-LEAK-PIN-AUDIT's refused hand-on rule leaves `x` unresolved; the following call argument that W44-INDIRECT-CALL-ARGUMENT-ACCESS admits as a typed read of `x->field` then reports unknown_alias on that unresolved identity instead of being admitted. On either card alone `x` was never bound (collection card absent) or the call argument stayed refused (call-argument card absent)."
+ },
+ {
+  "function": "rd_kafka_ConfigResource_new",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Same mechanism as rd_kafka_AlterConsumerGroupOffsets_new."
+ },
+ {
+  "function": "rd_kafka_DeleteConsumerGroupOffsets_new",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Same mechanism as rd_kafka_AlterConsumerGroupOffsets_new."
+ },
+ {
+  "function": "rd_kafka_DeleteGroup_new",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Same mechanism as rd_kafka_AlterConsumerGroupOffsets_new."
+ },
+ {
+  "function": "rd_kafka_DeleteTopic_new",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Same mechanism as rd_kafka_AlterConsumerGroupOffsets_new."
+ },
+ {
+  "function": "rd_kafka_ListConsumerGroupOffsets_new",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Same mechanism as rd_kafka_AlterConsumerGroupOffsets_new."
+ },
+ {
+  "function": "rd_kafka_NewPartitions_new",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Same mechanism as rd_kafka_AlterConsumerGroupOffsets_new."
+ },
+ {
+  "function": "rd_kafka_group_result_new",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Same mechanism as rd_kafka_AlterConsumerGroupOffsets_new."
+ },
+ {
+  "function": "rd_kafka_topic_result_new",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Same mechanism as rd_kafka_AlterConsumerGroupOffsets_new."
+ },
+ {
+  "function": "rd_kafka_error_copy",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Same mechanism as rd_kafka_AlterConsumerGroupOffsets_new."
+ },
+ {
+  "function": "rd_kafka_error_new_v",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Same mechanism as rd_kafka_AlterConsumerGroupOffsets_new."
+ },
+ {
+  "function": "rd_kafka_lwtopic_new",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Same mechanism as rd_kafka_AlterConsumerGroupOffsets_new."
+ },
+ {
+  "function": "rd_regex_comp",
+  "description_prefix": "unresolved resource identity",
+  "removal_optional": true,
+  "added_prefixes": [
+   "unresolved resource identity"
+  ],
+  "why": "Same mechanism as rd_kafka_AlterConsumerGroupOffsets_new."
+ },
+ {
+  "function": "rd_kafka_ApiVersion_check",
+  "description_prefix": "call to uncontracted function `_Generic`",
+  "added_prefixes": [
+   "call to uncontracted function `bsearch`"
+  ],
+  "why": "On the card's base (before W44-C11-GENERIC-SELECTION) the collection card's admission at rdkafka_feature.c:374 exchanged a sizeof refusal for `call to uncontracted function `_Generic``. On the combined tree glibc's const-generic `bsearch` selection is read, so the same position reports `call to uncontracted function `bsearch`` (registered W44-BSEARCH-UNDECLARED) instead."
+ }
+]

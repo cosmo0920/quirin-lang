@@ -1,0 +1,29 @@
+{
+ "note": "W44-INDIRECT-CALL-ARGUMENT-ACCESS integration, 2026-09-25. The card (measured against docs/reports/w44-libc-residuals/integration/artifacts) composed onto the combined tree docs/reports/w44-c11-generic-selection/integration/artifacts: the integration run's leaf/function/unit delta equals the card's own delta exactly (removed 195 added 38 functions 2 units 1); functions moved (combined): [('cio_file_hash_print', ('Unknown', 'Safe')), ('mk_rconf_read', ('Unknown', 'Unsafe'))]. overlap (already removed by earlier integrations): 0 [] complementary Unknown->Safe (card cleared the last blocker): [] Two verdicts moved on the card's base: cio_file_hash_print Unknown -> Safe, and mk_rconf_read (unit mk_core/mk_rconf.c) Unknown -> provisional Unsafe from one class-(c) premise-gap leak (Borrowed mk_list_add declaration, registered as MK-LIST-ADD-BORROWED-PUBLICATION), not an upstream defect claim. Provisional Unsafe is not an upstream defect claim. Previous row preserved in docs/reports/w44-indirect-call-argument-access/integration/previous-corpus-row.json.",
+ "units": 185,
+ "safe": 3,
+ "provisional_unsafe": 9,
+ "unknown": 169,
+ "data_only": 4,
+ "projected_functions": 4834,
+ "leak_diagnostics": 35,
+ "process_sidecar": "3 checked function contracts / 93 Unknown",
+ "baseline": "docs/reports/w44-indirect-call-argument-access/integration/artifacts/",
+ "source": "docs/reports/w44-indirect-call-argument-access/integration/integration-confirmation.md; preceding baseline docs/reports/w44-c11-generic-selection/integration/artifacts",
+ "unknown_alias_diagnostics": 3392,
+ "unsupported_diagnostics": 43674,
+ "double_release_diagnostics": 0,
+ "function_statuses": {
+  "safe": 302,
+  "provisional_unsafe": 10,
+  "unknown": 4522
+ },
+ "source_definitions": 4921,
+ "unprojected_definitions": 87,
+ "unit_reason_codes": {
+  "unsupported-syntax": 168,
+  "none": 16,
+  "incomplete-obligation-coverage": 1
+ },
+ "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+}
