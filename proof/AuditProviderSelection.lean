@@ -24,3 +24,10 @@ import QCore.ProviderSelection
 #print axioms QCore.ProviderSelection.contractsOnly_admits_only_contracts
 #print axioms QCore.ProviderSelection.contractsOnly_mixed_refused
 #print axioms QCore.ProviderSelection.admitRun_never_narrows
+#print axioms QCore.ProviderSelection.jobs_flag_first
+#print axioms QCore.ProviderSelection.jobs_config_second
+#print axioms QCore.ProviderSelection.jobs_environment_third
+#print axioms QCore.ProviderSelection.jobs_default_capped
+#print axioms QCore.ProviderSelection.jobs_positive
+#print axioms QCore.ProviderSelection.jobs_zero_flag_refused
+#print axioms QCore.ProviderSelection.jobs_zero_config_refused

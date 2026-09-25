@@ -30,7 +30,12 @@ contracts-only run admits. This module models:
   default provider set);
 * contracts-only: such a run admits contract evidence only, and a request that
   also names package, verifier-host, plugin, native or pinned evidence
-  refuses rather than being narrowed.
+  refuses rather than being narrowed;
+* the job count (`qcore_audit::parallel::jobs_with_precedence`): the flag,
+  then the configuration, then the environment, then the host default capped
+  at 16; a zero from any consulted source refuses, and an admitted count is
+  positive. That the count cannot change an output is the ordered fold's
+  property (card W44-AUDIT-PARALLEL-UNITS), not modelled here.
 
 Names and modules are modelled as natural numbers (interned identifiers).
 Correspondence with the Rust implementation is maintained by review; it is not
@@ -63,6 +68,7 @@ inductive Refusal where
   | twoDeclarations
   | mixedEvidence
   | exhausted
+  | zeroJobs
   deriving DecidableEq, Repr
 
 /-- The crate with this name on the load path (the load path itself has
@@ -539,5 +545,54 @@ theorem admitRun_never_narrows {mode : Mode} {requested admitted : List Evidence
     split at h
     · cases h; rfl
     · cases h
+
+/-! ## 9. The job count -/
+
+def cap : Nat := 16
+
+def jobsWithPrecedence (flag config env : Option Nat) (host : Nat) : Except Refusal Nat :=
+  match flag, config with
+  | some 0, _ => .error .zeroJobs
+  | some n, _ => .ok n
+  | none, some 0 => .error .zeroJobs
+  | none, some n => .ok n
+  | none, none =>
+    match env with
+    | some 0 => .error .zeroJobs
+    | some n => .ok n
+    | none => .ok (max 1 (min host cap))
+
+theorem jobs_flag_first {n : Nat} (config env : Option Nat) (host : Nat) (h : n ≠ 0) :
+    jobsWithPrecedence (some n) config env host = .ok n := by
+  cases n with
+  | zero => exact absurd rfl h
+  | succ k => rfl
+
+theorem jobs_config_second {n : Nat} (env : Option Nat) (host : Nat) (h : n ≠ 0) :
+    jobsWithPrecedence none (some n) env host = .ok n := by
+  cases n with
+  | zero => exact absurd rfl h
+  | succ k => rfl
+
+theorem jobs_environment_third {n : Nat} (host : Nat) (h : n ≠ 0) :
+    jobsWithPrecedence none none (some n) host = .ok n := by
+  cases n with
+  | zero => exact absurd rfl h
+  | succ k => rfl
+
+theorem jobs_default_capped (host : Nat) :
+    jobsWithPrecedence none none none host = .ok (max 1 (min host cap)) := rfl
+
+theorem jobs_positive {flag config env : Option Nat} {host n : Nat}
+    (h : jobsWithPrecedence flag config env host = .ok n) : 0 < n := by
+  rcases flag with _ | ⟨_ | f⟩ <;> rcases config with _ | ⟨_ | c⟩ <;>
+    rcases env with _ | ⟨_ | e⟩ <;>
+    simp [jobsWithPrecedence, cap] at h <;> omega
+
+theorem jobs_zero_flag_refused (config env : Option Nat) (host : Nat) :
+    jobsWithPrecedence (some 0) config env host = .error .zeroJobs := rfl
+
+theorem jobs_zero_config_refused (env : Option Nat) (host : Nat) :
+    jobsWithPrecedence none (some 0) env host = .error .zeroJobs := rfl
 
 end QCore.ProviderSelection

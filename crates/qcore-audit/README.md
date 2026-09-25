@@ -199,6 +199,27 @@ must agree. For providers, agreeing means resolving to the same modules in the
 same order. If they disagree, the command refuses; nothing is merged or
 overridden.
 
+**Parallel units.** The job count is the one exception to that rule, because
+it changes wall time only. Its sources, in order of precedence:
+
+1. `--jobs N` on the command line;
+2. the configuration's `"jobs": N`;
+3. `QCORE_AUDIT_JOBS`;
+4. the host's available parallelism, capped at 16.
+
+A zero from any source is an error, not a fallback, and `N = 1` is the
+sequential loop. Both routes analyse units with W44-AUDIT-PARALLEL-UNITS's
+ordered fold (`qcore_audit::parallel`): results are folded in unit order, the
+first error in unit order is the one reported, and an active census sink
+forces one job. So the report, the sidecars and every console line except the
+`preparation:` timing sums are byte-identical at any count. The plain route's
+source-contract step, which may dispatch a process provider, runs in the fold,
+one unit at a time.
+
+The requested count, the effective count and the source of the count are
+recorded in `<report>.invocation.json`. They are not recorded in the
+assumption sidecar, which is part of what stays identical across job counts.
+
 A worked command line: the Fluent Bit libraries with libc, the
 Fluent Bit wrappers and ChunkIO's residency contract, over a prepared build
 (`$out` as below):
@@ -245,8 +266,9 @@ cycle19-resource-contracts.json` prints the 47 entries equal to the Cycle 19
 manifest. Its `--config OUT.json KEY=VALUE...` form writes them into such a
 configuration.
 
-The plain `quirin-audit CONFIG.json` route takes the same `providers`,
-`load_path` and `quirin_providers_only` fields.
+The plain `quirin-audit [--jobs N] CONFIG.json` route takes the same
+`providers`, `load_path`, `quirin_providers_only`, `mode` and `jobs` fields, and
+writes the same kind of invocation record.
 
 ### Contracts only
 

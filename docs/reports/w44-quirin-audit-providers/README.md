@@ -270,7 +270,41 @@ package is. Exactly one of the two fields is required. This was cheap: one
 function in `source_contract.rs` and two tests. `load_with_packages` and every
 existing configuration are unchanged.
 
-### 2.8 Dependency rule
+### 2.8 Parallel units on every route
+
+The user required parallel execution on every unit-analysing route, as the
+retired script's `--jobs` gave. Both routes use W44-AUDIT-PARALLEL-UNITS's
+`qcore_audit::parallel` without reimplementing it: `run_ordered`, the unit-order
+fold, first-error-in-unit-order, `effective_jobs` (an active census sink forces
+one job) and `heaviest_first` dispatch.
+
+- `quirin-audit current` already used them through the moved route.
+- `quirin-audit CONFIG.json` (`run_config`) was sequential and now folds the
+  same way. Each unit records into its own report fragment, tally and console
+  buffer, and source identities and compile tasks are folded in unit order. The
+  source-contract step may dispatch a process provider, so it stays in the
+  fold, one unit at a time, at the loop's position.
+
+The count comes from these sources, in order of precedence:
+
+1. `--jobs N` (the plain route takes `quirin-audit [--jobs N] CONFIG.json`);
+2. the configuration's `"jobs": N`;
+3. `QCORE_AUDIT_JOBS`;
+4. the host's available parallelism, capped at 16.
+
+`parallel::jobs_with_precedence` implements this, next to `resolve_jobs`. A
+zero is an error, not a fallback. This precedence is the one exception to the
+both-forms rule of §2.3: the job count changes wall time only, so a flag
+overriding a configuration cannot change a run's meaning.
+
+The requested count, the effective count and the source of the count are
+recorded in `<report>.invocation.json`, on both routes. The brief asked for the
+count "in the sidecar". It is kept out of the assumption sidecar deliberately:
+that sidecar is part of what must be byte-identical across job counts, as it
+has been since W44-AUDIT-PARALLEL-UNITS. The invocation record is the
+provenance sidecar written next to it.
+
+### 2.9 Dependency rule
 
 `qcore-audit`'s normal dependency closure, as `cargo metadata` resolves it,
 contains no `qcore-compiler`, `qcorec`, `qcore-provider-*` or
@@ -351,9 +385,31 @@ Against the manifest run of §3.1, the same holds with lines 1–2 equal.
 
 ### 3.4 Confirmation on the final binaries, and the README examples
 
-TODO-SERIES2
+Series 1 used the first branch binaries. Series 2 repeated all five runs on
+the binaries built from `7d9c8efa`: example `5e138998…` and quirin-audit
+`1c8ba761…`. All six comparisons gave the same result as in series 1, exit 0.
+These are the five against the base plus manifest-against-contracts-only
+(`identity/compare-*2.json`).
 
-### 3.5 The pinned arbiter
+The README's two examples ran on the same build:
+
+| Example | Units | Contract modules | Closure |
+|---|---|---|---|
+| CLI (libc whole + 2 modules) | 3 Safe / 3 provisional Unsafe / 176 Unknown / 4 data-only over 186 configurations | 18 | libc, fluent-bit and chunkio selected; cfl, mpack, msgpack and shared recorded as dependencies |
+| JSON (contracts-only, `quirin_providers_only`, no Monkey database) | 2 Safe / 1 provisional Unsafe / 150 Unknown / 4 data-only over 157 configurations | 18 | libc, mpack and msgpack |
+
+With fewer contracts, verdicts move towards Unknown (10 provisional Unsafe
+against 3), not towards Safe. An undeclared callee is Unknown, never assumed.
+
+### 3.5 Jobs
+
+Late in the card, the user required `--jobs` on every unit-analysing route.
+Both routes now fold with `qcore_audit::parallel` (§2.8). Identity at 1 and 16
+jobs on the real corpus:
+
+TODO-JOBS
+
+### 3.6 The pinned arbiter
 
 `run_audit.py private/arbiter 7d9c8efa --jobs 16` ran on the final example
 binary (`5e138998…`) and exited 0. `baseline_identity.py` against
@@ -409,9 +465,18 @@ module is keyed by the path as reached, and those keys feed the
 `resource_contract_sources` digest and every compile-task identity.
 
 The identities of §3 therefore depend on spelling the load path as the example
-spells its manifest's location. With the natural spelling,
-`--load-path providers/contract-load-path.json`, the same selection gives the
-same verdicts under different digests. TODO-NATURAL
+spells its manifest's location. The same 47-module selection was run with the
+natural spelling, `--load-path <worktree>/providers/contract-load-path.json`
+([leaf buckets](identity/leaf-buckets-base-vs-natural-report.json)). The report
+then differs from the base in exactly 558 leaves:
+
+- 372 are `resource_contract_sources` digests, two per configuration: the
+  dependency map and the compile-task identity;
+- 186 are `inventory_sha256` digests.
+
+Every verdict, row and count is equal, and the lowered manifest's own digest
+is equal. The sidecar differs only in the path spelling of its `contracts`
+keys and in the new `provider_selection` key.
 
 ## 5. Tests and Lean
 
