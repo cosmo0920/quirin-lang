@@ -6731,7 +6731,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for FB-SYSTEM-AUDIT-CARDS on merge 2a2a33f4 (onto main 582cff1f, after all first-iteration wave-45 cards), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5720 core Rust passed / 0 failed / 11 ignored over 304 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 193 Lean audits; 351 root Python tests; 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The merge adds docs-only Fluent Bit system audit investigation records (source/build coverage, retry-lifetime candidates, backlog accounting) and must not move the configured corpus: the arbiter ran at the default job count (QCORE_AUDIT_JOBS unset) in 77 s and baseline_identity.py against docs/reports/w45-sub-object-stores/integration/artifacts exits 0 with verdict_bearing_identical true, so the baseline does not move.",
+  "note": "Integration gate for W45-FB-BACKLOG-FAULT-INJECTION on merge 1e40ca36 (onto main 6bd9b383, after all first-iteration wave-45 cards and the FB-SYSTEM-AUDIT-CARDS records), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5720 core Rust passed / 0 failed / 11 ignored over 304 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 193 Lean audits; 351 root Python tests; 15 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The merge adds docs-only native fault-injection observation records (Clang Debug/ASan builds of Fluent Bit under gdb-injected faults and controls, for the two priority-1 backlog candidates) and must not move the configured corpus: the arbiter ran at the default job count (QCORE_AUDIT_JOBS unset) in 76 s and baseline_identity.py against docs/reports/w45-sub-object-stores/integration/artifacts exits 0 with verdict_bearing_identical true, so the baseline does not move.",
   "workspace_tests": 5720,
   "provider_tests": 124,
   "python_evidence_validator_tests": 351,
@@ -6937,7 +6937,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/fb-system-audit-cards/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w45-fb-backlog-fault-injection/integration/gate.json)"
  },
  "named_followups": [
   {
