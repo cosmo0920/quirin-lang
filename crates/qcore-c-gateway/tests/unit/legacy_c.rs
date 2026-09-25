@@ -1210,7 +1210,10 @@ fn c11_memory_read_projection_and_certificate_recheck_fail_closed() {
         // `*p` is now a typed read whose base was released on the reaching
         // path, so it is a `use_after_release` candidate (provisional
         // `Unsafe`) rather than a bare refusal. Never `Safe` either way.
-        if tail.starts_with("if") {
+        // Deliberate pin update, card W45-RETURN-EXPRESSION-FAMILIES: `return
+        // *p;` in a function returning `int` is that card's scalar-result read,
+        // whose one dereference of the bound `p` keeps the same obligation.
+        if tail.starts_with("if") || tail == "return *p;" {
             let UnrestrictedLegacyResult::Unsafe(summary) = &result else {
                 panic!("{tail}: {result:?}");
             };

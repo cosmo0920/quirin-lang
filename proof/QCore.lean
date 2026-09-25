@@ -215,6 +215,7 @@ import QCore.SocketFootprint
 import QCore.SocketCellRoute
 import QCore.ReturnCallCustody
 import QCore.ReturnRefusedCallLowering
+import QCore.ReturnExpressionFamilies
 import QCore.ConstantDoWhile
 import QCore.ScalarRouteExitEdge
 import QCore.JoinedProvenanceCycles

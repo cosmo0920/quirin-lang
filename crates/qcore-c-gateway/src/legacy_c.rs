@@ -80,6 +80,12 @@ pub(crate) mod refused_operands;
 #[path = "legacy_cast_return.rs"]
 pub(crate) mod cast_return;
 
+// Card W45-RETURN-EXPRESSION-FAMILIES: the scalar-result read and the cast of
+// a whole call in `return` position. Everything the card adds lives there;
+// this file only carries the hooks marked with the card's name.
+#[path = "legacy_return_family.rs"]
+pub(crate) mod return_family;
+
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
 // a body is parsed; every other selection is left as it was.
@@ -2653,6 +2659,8 @@ fn build_function_cfg_with(
     } else {
         descriptor_custody::declared_callees(contracts)
     };
+    // Card W45-RETURN-EXPRESSION-FAMILIES: read before the model moves.
+    let return_facts = return_family::FunctionFacts::read(tokens, function, &typed_model);
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -2679,6 +2687,7 @@ fn build_function_cfg_with(
         admit_derived_returns,
         argument_probe: call_argument_access::ArgumentProbe::default(),
         desugar: condition_desugar::DesugarState::new(function),
+        return_facts,
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -4016,6 +4025,9 @@ struct Parser<'a> {
     /// Card **W44-BRANCH-CONDITION-CALLS**: the enclosing function and the
     /// unit call graph the condition desugaring reads lazily.
     desugar: condition_desugar::DesugarState,
+    /// Card **W45-RETURN-EXPRESSION-FAMILIES**: the enclosing function's
+    /// declared result carrier, read once from its definition.
+    return_facts: return_family::FunctionFacts,
 }
 
 impl Parser<'_> {
@@ -5589,7 +5601,9 @@ impl Parser<'_> {
         if return_call::lowers_refused_whole_call(expression, &texts, refused) {
             return Some((instruction, false));
         }
-        None
+        // Card W45-RETURN-EXPRESSION-FAMILIES. Asked last, after every route
+        // above has declined; see `return_family`.
+        self.return_family_instruction(expression, &texts, line)
     }
 
     /// Classify one complete statement, then apply card
