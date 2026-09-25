@@ -1,0 +1,177 @@
+store records (deduplicated): 10490
+gate-refused store records: 7337
+  of which in Unknown functions: 6088
+sole-blocked (gate-only) Unknown functions: 387
+  freed if every gate-refused store were admitted: 57
+  freed if the rule admits every store its reader reads (clear+flow): 5
+  freed on clear stores alone: 5
+
+by forecast (records in Unknown functions / functions / freed alone):
+    6020   1365     0  refused
+      41     31     5  flow
+      27     19     5  clear
+
+by reader (records in Unknown functions / functions / freed alone):
+    2141    605     7  destination:member
+    1101    116     2  destination:declarations-unreadable
+    1101    443     8  destination:chain
+     521    171    24  destination:root-untyped
+     335    148     4  destination:prefix
+     307    152     1  value:value-not-scalar
+     231    126     0  comparison
+     185    119     0  read:Pointer:call
+      98     70     1  value:value-shape
+      68     50     5  read:Pointer:name
+
+by shape (records in Unknown functions / functions / freed alone):
+    2404    839    19  plain:->
+     879     98     0  paren:->
+     511    197     7  plain:->.
+     383    152     4  plain:->..
+     364    158     2  other:
+     285    110    12  plain:.
+     258     74     0  addr:->
+     231    126     0  comparison
+     134     12     0  plain:[]
+     123     52     0  paren:->.
+      96     56     0  plain:->->
+      58     49     0  paren:->.->.
+      58     20     1  plain:->[].
+      55     17     0  plain:[].
+      25     14     0  plain:..
+      23      3     0  plain:->[].[].
+      21      7     1  plain:->->.
+      18      8     0  plain:...
+      18     12     0  paren:.
+      17     13     0  plain:->...
+      15      7     0  plain:->[]
+      12     10     0  addr:->[]
+      11      4     0  deref:->
+      10      3     0  plain:->.[].
+      10      5     0  plain:->.[]
+       7      6     0  plain:->->->
+       6      2     0  plain:.[].
+       5      3     0  plain:[]->
+       5      2     0  plain:.[]
+       5      4     0  plain:....
+       5      1     0  deref:->.
+       5      1     0  deref:->..
+       4      1     0  plain:.[].[].
+       4      1     0  plain:->->[]
+       3      3     2  cast:->
+       2      2     0  plain:->....
+       2      1     0  plain:->..->
+       2      1     0  deref:->....
+       2      1     0  deref:->...
+       2      1     0  plain:[]->.
+       1      1     0  plain:->->[]->[]->
+       1      1     0  plain:.->
+       1      1     0  plain:->->..
+       1      1     0  plain:->->...
+       1      1     0  plain:->.....
+       1      1     0  plain:.....
+       1      1     0  plain:[]->..
+       1      1     0  plain:[]->....
+       1      1     0  plain:[]->...
+       1      1     0  plain:->->->->
+
+by base (records in Unknown functions / functions / freed alone):
+    1424    405    17  formal:record_pointer
+    1249    387     0  local:record_pointer
+    1141    341    15  local:opaque
+     782    103     4  unresolved
+     504    214    17  formal:opaque
+     364    158     2  none
+     309     27     0  formal:untyped
+     231    126     0  -
+      84     33     1  local:record
+
+by member (records in Unknown functions / functions / freed alone):
+    5115   1139    47  Unresolved
+     237     45     0  NoMember
+     231    126     0  -
+     144     89     3  SinglePointer
+     102     79     2  RecordPointer
+      89     51     0  Scalar
+      76     38     2  AggregateValued
+      61     48     0  OtherPointer
+      33     19     0  VoidPointer
+
+by value (records in Unknown functions / functions / freed alone):
+    1938    544    13  scalar
+     859    378    13  access
+     707    391     3  call:uncontracted
+     603    326     0  null
+     553    364     6  pointer-may-bind
+     302    194     1  call:owned
+     231    126     0  -
+     210     94     0  call:none
+     191     45     0  literal
+     187     75     0  pointer-untracked
+     146     77     0  owned-or-derived
+      54     43     0  other
+      54     22     0  address
+      52     26     0  name-unresolved
+       1      1     0  call:derived
+
+by shape x base x member x value (top 60):
+     668  paren:->       formal:record_pointer    Unresolved       scalar
+     231  comparison     -                        -                -
+     144  addr:->        local:opaque             Unresolved       call:none
+     132  plain:->       local:opaque             Unresolved       scalar
+     118  paren:->       formal:untyped           Unresolved       scalar
+     115  plain:[]       unresolved               NoMember         literal
+     107  other:         none                     Unresolved       access
+     100  plain:->       local:opaque             Unresolved       access
+      99  plain:->       local:record_pointer     Unresolved       call:uncontracted
+      98  plain:->       local:record_pointer     Unresolved       scalar
+      92  plain:->       local:record_pointer     Unresolved       pointer-untracked
+      87  plain:->..     local:record_pointer     Unresolved       scalar
+      84  plain:->       local:opaque             Unresolved       call:uncontracted
+      81  plain:->.      formal:record_pointer    Unresolved       scalar
+      81  plain:->       formal:opaque            Unresolved       null
+      73  plain:->       formal:opaque            Unresolved       scalar
+      68  plain:->       formal:record_pointer    Unresolved       scalar
+      65  other:         none                     Unresolved       owned-or-derived
+      64  plain:->       formal:record_pointer    Unresolved       null
+      63  plain:->       unresolved               Unresolved       pointer-may-bind
+      63  other:         none                     Unresolved       scalar
+      62  plain:->       local:opaque             Unresolved       null
+      61  paren:->       local:record_pointer     Unresolved       scalar
+      60  plain:->       local:opaque             Unresolved       pointer-may-bind
+      58  plain:->       formal:opaque            Unresolved       call:uncontracted
+      55  plain:->       formal:opaque            Unresolved       access
+      54  plain:->       unresolved               Unresolved       call:uncontracted
+      53  plain:->       local:opaque             Unresolved       call:owned
+      52  plain:->       local:record_pointer     SinglePointer    call:owned
+      49  plain:->       formal:record_pointer    Unresolved       access
+      47  plain:->       local:record_pointer     Unresolved       pointer-may-bind
+      46  plain:->.      formal:record_pointer    Unresolved       null
+      46  plain:->..     local:record_pointer     Unresolved       pointer-may-bind
+      46  other:         none                     Unresolved       call:uncontracted
+      44  plain:->       local:record_pointer     Unresolved       access
+      41  plain:->       formal:opaque            Unresolved       pointer-may-bind
+      39  plain:->       local:record_pointer     Unresolved       null
+      38  plain:->       unresolved               Unresolved       access
+      38  plain:.        local:opaque             Unresolved       access
+      35  plain:->.      local:record_pointer     Unresolved       scalar
+      35  plain:->       unresolved               Unresolved       name-unresolved
+      33  plain:->       formal:untyped           Unresolved       scalar
+      33  plain:->       unresolved               Unresolved       null
+      33  plain:->..     local:record_pointer     Unresolved       call:uncontracted
+      30  plain:.        local:opaque             Unresolved       scalar
+      30  plain:->..     formal:record_pointer    Unresolved       null
+      29  plain:->..     local:record_pointer     Unresolved       access
+      29  paren:->.      local:opaque             Unresolved       access
+      28  plain:->       local:record_pointer     RecordPointer    call:uncontracted
+      28  plain:->       formal:record_pointer    Unresolved       call:uncontracted
+      27  plain:->..     formal:record_pointer    Unresolved       scalar
+      27  paren:->       unresolved               Unresolved       scalar
+      26  plain:->       formal:record_pointer    AggregateValued  scalar
+      23  plain:->.      local:record_pointer     Unresolved       call:uncontracted
+      23  plain:->       formal:untyped           Unresolved       null
+      23  plain:->       formal:record_pointer    Unresolved       pointer-may-bind
+      23  plain:->       formal:untyped           Unresolved       call:uncontracted
+      23  plain:->       formal:opaque            Unresolved       call:owned
+      23  paren:->.->.   formal:opaque            Unresolved       access
+      23  plain:->..     local:record_pointer     Unresolved       call:owned

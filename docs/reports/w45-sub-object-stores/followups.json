@@ -1,0 +1,51 @@
+[
+ {
+  "id": "W45-SUB-OBJECT-STORE-MEMBER-UNRESOLVED",
+  "title": "Sub-object stores whose member the record reader does not resolve: 2,141 statements on 605 Unknown functions, 7 functions freed by them alone",
+  "why": "Card W45-SUB-OBJECT-STORES admits a sub-object store only into a scalar or single-pointer member of a complete, unambiguous, non-union struct. `read_record_body` is total-or-reject, so one function-pointer, bitfield, union or unread member refuses every member of the record: `(reply)->rkbuf_err = E` (880 parenthesised librdkafka stores, rd_kafka_buf_s), `otel_span->kind = ENUM` (an enum typedef member reads as aggregate-valued). Measured at the card's AFTER census (docs/reports/w45-sub-object-stores/census/residual-after.txt, reader class destination:member; the freed count is for this class alone with every other gate refusal of the function also in it). DISCHARGE: a per-member record reader (a member classified by its own declaration, with the record's layout premises stated) or typedef-enum members read as scalar, each with Lean parity for the reader and a measured re-pin of this rule.",
+  "source": "docs/reports/w45-sub-object-stores/README.md",
+  "recorded_by": "W45-SUB-OBJECT-STORES"
+ },
+ {
+  "id": "W45-SUB-OBJECT-STORE-CHAIN",
+  "title": "Sub-object stores through a chain or a nested aggregate: 1,101 statements on 443 Unknown functions, 8 freed alone",
+  "why": "The rule reads exactly one member selection (after an optional subscript). `rk->rk_conf.log_level = level`, `ctx->options.log_level = level`, `a->b->f = v` keep the gate refusal: the model has no tag for a record-valued member, and W44-INDIRECT-CHAIN-ACCESS's chains end at a scalar and carry no pointer store. Measured at the AFTER census (reader class destination:chain). DISCHARGE: a record-valued-member tag in the declaration reader and the chain obligations of W44-INDIRECT-CHAIN-ACCESS composed with this rule's store effect, with Lean parity and a measured re-pin.",
+  "source": "docs/reports/w45-sub-object-stores/README.md",
+  "recorded_by": "W45-SUB-OBJECT-STORES"
+ },
+ {
+  "id": "W45-SUB-OBJECT-STORE-ROOT-UNRESOLVED",
+  "title": "Sub-object stores whose root resolves to no struct tag: 521 statements on 171 Unknown functions, 24 freed alone",
+  "why": "RecordRoots resolves `struct TAG`, typedef chains to it and a typedef that defines its own tagged struct. Untagged `typedef struct { ... } T;`, pointer typedefs, disagreeing redeclarations, multi-star and other declarators, and undeclared (file-scope) roots keep the refusal; a file-scope root is also CTWIN-PUBLISH's publication. The 24 freed-alone functions are mostly cJSON/rdbuf/rdkafka helpers over untagged or pointer typedefs. Measured at the AFTER census (reader class destination:root-untyped). DISCHARGE: an untagged-aggregate identity for typedefs in the declaration reader (a synthetic tag per definition) and pointer-typedef roots, each with Lean parity for the reader and a measured re-pin; file-scope roots stay CTWIN-PUBLISH's.",
+  "source": "docs/reports/w45-sub-object-stores/README.md",
+  "recorded_by": "W45-SUB-OBJECT-STORES"
+ },
+ {
+  "id": "W45-SUB-OBJECT-STORE-FORMAL-VALUE",
+  "title": "A formal's pointer stored into a record keeps its refusal: 68 statements on 50 Unknown functions, 5 freed alone",
+  "why": "Card W45-SUB-OBJECT-STORES's first AFTER run admitted `next->prev = new` (an unbound formal: custody-neutral for the body itself) and measured the consequence: `__cfl_list_add`/`cfl_list_add` and `mk_list_init` validated as W4 summaries with the stored formal Borrowed, so callers (`cmt_labels_add_kv`, `mk_server_listen_init`) exposed leaks of objects the callee had linked into a list: 3 artifact leaks, 2 functions provisional Unsafe. A stored formal hands the caller's object to a record, which no summary mode states (the Stored mode names a declared container, not a derived one). The rule refuses a formal value (`a_formal_pointer_stored_into_a_member_keeps_its_refusal`; Lean a_formal_value_keeps_the_refusal). Measured at the final AFTER census: 68 statements, 50 Unknown functions, 5 freed alone (cJSON suffix_object, two ctr_encode_opentelemetry setters, ctr_link_set_attributes, snappy init_snappy_decompressor). DISCHARGE: a derived summary mode for a formal stored into another formal's record (a derived Stored), validated like the other inferred modes, after which the store can be admitted for the body and the mode recorded for callers; measured, with Lean parity.",
+  "source": "docs/reports/w45-sub-object-stores/README.md",
+  "recorded_by": "W45-SUB-OBJECT-STORES"
+ },
+ {
+  "id": "W45-SUB-OBJECT-STORE-OWNED-VALUE",
+  "title": "A tracked identity stored into a record keeps its refusal: at most 70 lowered statements on 52 Unknown functions still refuse in the flow, and every owned call result keeps the gate",
+  "why": "Card W45-SUB-OBJECT-STORES first modelled an owned identity stored through a formal the caller reaches as an escape. The standing suite refused it: O04-B08's `a_store_into_a_borrowed_in_aggregate_is_never_admitted` and W44-LEAK-PIN-AUDIT's `a_refused_store_of_the_identity_withdraws_the_leak` pin that such a store keeps the refusal, because it moves an obligation to the caller that no summary mode states (a caller's Safe would rest on a transfer it cannot see); the escape model also produced `release_after_escape` and `custody_conflict` artifacts in `cio_file_open`. The rule therefore admits only stores of values carrying no tracked identity; a value bound to any target falls back to the gate's refusal, which hands it on (no leak claimed), and an owned call result is never read. Measured at the final AFTER census: 70 lowered named-pointer stores on 52 Unknown functions sit on lines that keep a gate refusal (an upper bound on the flow fallbacks); the first AFTER run's escape model would have moved 6 cmt_decode_msgpack `create_*_instance` functions and `create_metric_instance` to Safe. DISCHARGE: a summary mode for an owned result stored into a formal's record (the caller's record gains a child it must release), inferred and validated like the other W4 modes and honoured at call sites, after which the escape can be admitted; measured, with Lean parity.",
+  "source": "docs/reports/w45-sub-object-stores/README.md",
+  "recorded_by": "W45-SUB-OBJECT-STORES"
+ },
+ {
+  "id": "W45-SUB-OBJECT-STORE-VALUE-SHAPES",
+  "title": "Sub-object stores whose value the rule does not read or whose call it declines: 590 statements on 285 Unknown functions",
+  "why": "Measured at the final AFTER census: a non-scalar value into a scalar member or a value that reads memory (value:value-not-scalar 307 / 152, e.g. `w->op_limit = w->op + len`, `x->f = y->g`), other value shapes (value:value-shape 98 / 70: address-of, arithmetic on a call), and a whole call the classifier declines (read:Pointer:call 185 / 119: an uncontracted callee, a non-Borrowed parameter, a result carrying custody (owned, derived, reallocated), or a call whose own reclassification refuses; 14 call-result stores with a `None` result are lowered). Overlaps W44-CALL-RESULT-INDIRECT-DESTINATION for the call part. DISCHARGE: typed pointer reads as stored values (W44-INDIRECT-CALL-ARGUMENT-ACCESS's pointer-read recogniser) with the value's custody decided as this rule decides a name, and the call routes' contracts or summaries for the declined callees; measured, with Lean parity.",
+  "source": "docs/reports/w45-sub-object-stores/README.md",
+  "recorded_by": "W45-SUB-OBJECT-STORES"
+ },
+ {
+  "id": "W45-SUB-OBJECT-STORE-PREFIX",
+  "title": "Sub-object stores through a cast, a dereference or a member address: 335 statements on 148 Unknown functions, 4 freed alone",
+  "why": "`((LZ4_unalign *) p)->u16 = v` (a union: refused anyway), `(*map)->opts = calloc(...)`, `(&rk->rk_coord_reqs)->tqh_first = NULL` keep the gate refusal: the rule reads `N`, `( N )` and `( & N )` roots only. Measured at the AFTER census (reader class destination:prefix). DISCHARGE: a cast root checked against the pointer's declared type (or its object's effective type), a `( * PP )` root through a `T **` base with its own obligation, and a member-address root as a chain; each measured, with Lean parity.",
+  "source": "docs/reports/w45-sub-object-stores/README.md",
+  "recorded_by": "W45-SUB-OBJECT-STORES"
+ }
+]
