@@ -11,7 +11,7 @@ Run before claiming any change complete:
 
 ```sh
 git submodule update --init --recursive   # every fresh checkout, worktrees included
-cargo test --workspace --no-fail-fast
+python3 scripts/run_test_binaries.py      # parallel form of: cargo test --workspace --no-fail-fast
 cargo fmt --all -- --check
 cargo clippy --all-targets -- -D warnings
 cargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0
@@ -35,6 +35,31 @@ after it in crate order — a wave-26 card's first run ended at
 `examples_cli.rs` included, making the number that run printed a lower bound
 rather than a measurement. A flake must not be able to shrink the suite it is
 reported against.
+
+**The Rust suite runs through `scripts/run_test_binaries.py` as of wave 44
+(`W44-TEST-SUITE-WALL-TIME`); `cargo test --workspace --no-fail-fast` stays
+the equivalent reference command** and the arbiter when the two disagree.
+`cargo test` runs its test executables one after another; the runner builds
+exactly what that command builds (`--no-run`), records cargo's own launch of
+every test executable (argv, cwd = package root and the complete environment,
+through a capturing `target.<host>.runner`, so nothing is recomputed), then runs
+them several at a time, longest first (`--jobs`, default half the CPUs), with
+one `cargo test --doc` unit for the doc-tests. Binaries in its `EXCLUSIVE`
+table — constraint 16's load-sensitive rows and every other binary that
+launches a process provider under a declared timeout — run afterwards, one at
+a time, with nothing else of the runner's running; a stale entry fails the run.
+It is fail-closed like `--no-fail-fast`: every unit runs, and a unit passes
+only on exit 0 with at least one libtest summary, every summary clean; a build
+failure, a crash or signal, a missing executable, a built-but-unlaunched binary
+or an unparsable result fails the run (exit 101). Report its totals line
+(`test binaries: N units, M summaries; P passed; F failed; I ignored; ...`),
+which sums the same summaries `cargo test` prints, and its log directory
+(`private/test-binaries/<stamp>/`, one stdout/stderr log per unit plus
+`summary.json`). Constraint 16's instruction is unchanged: a load-sensitive row
+that fails is verified in isolation, never weakened. The provider workspace is
+not covered — its conformance binaries launch process providers throughout —
+and keeps plain `cargo test`; the runner refuses any workspace but the root.
+[Report](../reports/w44-test-suite-wall-time/README.md).
 
 A delegated card's worktree is a **fresh checkout**, so the submodule step above
 is due every time and nothing forces it: wave 33 lost two runs to a missing
