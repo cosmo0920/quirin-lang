@@ -1,0 +1,40 @@
+{
+ "clear": {
+  "leaves_by_status": {
+   "Unknown": 106,
+   "Safe": 0,
+   "Unsafe": 0
+  },
+  "leaves": 106,
+  "movers": [
+   "cJSON.c::suffix_object",
+   "ctr_encode_opentelemetry.c::destroy_id",
+   "ctr_encode_opentelemetry.c::otel_span_set_name",
+   "ctr_encode_opentelemetry.c::otel_span_set_trace_state",
+   "ctr_link.c::ctr_link_set_attributes",
+   "snappy.c::init_snappy_decompressor"
+  ]
+ },
+ "upper": {
+  "leaves_by_status": {
+   "Unknown": 435,
+   "Safe": 0,
+   "Unsafe": 2
+  },
+  "leaves": 437,
+  "movers": [
+   "cJSON.c::suffix_object",
+   "cmt_decode_msgpack.c::create_counter_instance",
+   "cmt_decode_msgpack.c::create_exp_histogram_instance",
+   "cmt_decode_msgpack.c::create_gauge_instance",
+   "cmt_decode_msgpack.c::create_histogram_instance",
+   "cmt_decode_msgpack.c::create_summary_instance",
+   "cmt_decode_msgpack.c::create_untyped_instance",
+   "ctr_encode_opentelemetry.c::destroy_id",
+   "ctr_encode_opentelemetry.c::otel_span_set_name",
+   "ctr_encode_opentelemetry.c::otel_span_set_trace_state",
+   "ctr_link.c::ctr_link_set_attributes",
+   "snappy.c::init_snappy_decompressor"
+  ]
+ }
+}

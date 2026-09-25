@@ -158,6 +158,7 @@ import QCore.CallArgumentAccess
 import QCore.SizeofOperand
 import QCore.IndirectChainAccess
 import QCore.AssignmentDestinationSuffix
+import QCore.SubObjectStore
 import QCore.GenericSelection
 import QCore.AtomicPublication
 import QCore.BoundFieldRead
