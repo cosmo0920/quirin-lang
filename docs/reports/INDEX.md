@@ -304,6 +304,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [fb-system-audit-cards](fb-system-audit-cards/README.md) | Fluent Bit system audit investigation cards |
+
 | [fluent-bit-contracts-2026-09-05](fluent-bit-contracts-2026-09-05/README.md) | QCore contracts against actual Fluent Bit source — 2026-09-05 |
 
 | [fluent-bit-moving-revisions](fluent-bit-moving-revisions/README.md) | Moving Fluent Bit revisions — 2026-09-07 |

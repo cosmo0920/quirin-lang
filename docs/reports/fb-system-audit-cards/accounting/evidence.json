@@ -1,0 +1,40 @@
+{
+  "card": "FB-AUDIT-03-BACKPRESSURE-ACCOUNTING",
+  "kind": "source_review_only",
+  "report_base": "9a38004529180498c3d28532c2feb718ca198e7a",
+  "source_checkout": "/home/cosmo/Documents/GitHub/fluent-bit",
+  "source_revision": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "archived_build_revision_not_used": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_clean_tracked_tree": true,
+  "source_sha256": {
+    "plugins/in_storage_backlog/sb.c": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04",
+    "src/flb_input_chunk.c": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+    "src/flb_storage.c": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+    "include/fluent-bit/flb_output.h": "815dc3774c93718b95b5b9474f93d790accb2c0bb9d0c45a15cb40c8649cd51d",
+    "include/fluent-bit/flb_input_chunk.h": "fc456c464b52cdcb9e59d6b5782d34e928c47c052b42e08a3e56c1904ac01b64",
+    "lib/chunkio/src/cio_file.c": "1c3eb285307108deb2b22c68cf282c0121619a35bbe36adc216f276d51925257",
+    "lib/chunkio/src/cio_chunk.c": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+    "lib/chunkio/src/cio_stream.c": "5226efb40578e3fc78de3c57cdb9e9e6adfa17b5d3aa2252c9545a7b777a2634",
+    "lib/chunkio/src/cio_file_unix.c": "29a392dbf68676bea741d579f8b4cc6c5bcfc0ba3b3e8b3a11fb185443a07fb0"
+  },
+  "claims": [
+    {"id": "per-output-wrapper-ledger", "basis": ["plugins/in_storage_backlog/sb.c:35-46", "plugins/in_storage_backlog/sb.c:214-289", "plugins/in_storage_backlog/sb.c:317-354"], "state": "source-derived, conditional on no saturation or mismatched removal"},
+    {"id": "per-output-mapped-ledger", "basis": ["src/flb_input_chunk.c:66-92", "src/flb_input_chunk.c:815-845", "src/flb_input_chunk.c:1749-1779", "src/flb_input_chunk.c:2704-2741", "src/flb_input_chunk.c:3918-3967"], "state": "source-derived, conditional on valid real-size and no saturation"},
+    {"id": "admission-inequality", "basis": ["src/flb_input_chunk.c:988-1097", "src/flb_input_chunk.c:1173-1255", "src/flb_input_chunk.c:1299-1316"], "state": "source-derived arithmetic only"},
+    {"id": "collector-zero-progress-candidate", "basis": ["plugins/in_storage_backlog/sb.c:601-651", "plugins/in_storage_backlog/sb.c:675-724", "lib/chunkio/src/cio_chunk.c:538-604", "lib/chunkio/src/cio_file.c:816-850", "lib/chunkio/src/cio_file.c:1377-1387"], "state": "conditional on persistent native-open CIO_ERROR; not reproduced; CIO_RETRY reachability not shown"},
+    {"id": "partial-fanout-candidate", "basis": ["plugins/in_storage_backlog/sb.c:262-289", "plugins/in_storage_backlog/sb.c:341-350", "plugins/in_storage_backlog/sb.c:435-475", "lib/chunkio/src/cio_chunk.c:111-138"], "state": "conditional stale reference after free, not reproduced"}
+  ],
+  "commands": [
+    {"cmd": "sed -n '1,240p' docs/agents/operations.md", "cwd": "/home/cosmo/Documents/GitHub/qcore-c", "exit": 0},
+    {"cmd": "python3 scripts/task_context.py --base 9a38004529180498c3d28532c2feb718ca198e7a --topic evidence --path docs/reports/fb-system-audit-cards/accounting/README.md", "cwd": "/home/cosmo/Documents/GitHub/qcore-c", "exit": 2, "note": "Invalid topic, corrected below"},
+    {"cmd": "python3 scripts/task_context.py --base 9a38004529180498c3d28532c2feb718ca198e7a --topic docs --path docs/reports/fb-system-audit-cards/accounting/README.md --render", "cwd": "/home/cosmo/Documents/GitHub/qcore-c", "exit": 0},
+    {"cmd": "git rev-parse HEAD && git status --short", "cwd": "/home/cosmo/Documents/GitHub/fluent-bit", "exit": 0},
+    {"cmd": "rg -n 'fs_backlog_chunks_size|fs_chunks_size' src plugins/in_storage_backlog | head -100", "cwd": "/home/cosmo/Documents/GitHub/fluent-bit", "exit": 0, "note": "Discovery only; targeted numbered sed reads followed"},
+    {"cmd": "sha256sum plugins/in_storage_backlog/sb.c src/flb_input_chunk.c src/flb_storage.c include/fluent-bit/flb_output.h include/fluent-bit/flb_input_chunk.h", "cwd": "/home/cosmo/Documents/GitHub/fluent-bit", "exit": 0},
+    {"cmd": "sha256sum lib/chunkio/src/cio_file.c lib/chunkio/src/cio_chunk.c lib/chunkio/src/cio_stream.c lib/chunkio/src/cio_file_unix.c", "cwd": "/home/cosmo/Documents/GitHub/fluent-bit", "exit": 0},
+    {"cmd": "python3 /tmp/fb-accounting-card/verify_sources.py /home/cosmo/Documents/GitHub/fluent-bit", "cwd": "/tmp", "exit": 0, "note": "All nine SHA-256 matches, matching HEAD, clean tracked tree"}
+  ],
+  "gate": {"run": false, "reason": "Parent runs combined standing gate; investigation only"},
+  "native_tests": {"run": false, "reason": "Candidate failure paths need a separately pinned fault harness"},
+  "private_logs": {"path": "/tmp/fb-accounting-card/source-pin.log", "exit_path": "/tmp/fb-accounting-card/source-pin.exit", "scope": "Read-only revision, tracked-tree, and hash verification only; prior short source reads remain in tool transcript"}
+}

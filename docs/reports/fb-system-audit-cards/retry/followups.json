@@ -1,0 +1,11 @@
+{
+  "card": "FB-AUDIT-02-RETRY-LIFETIME",
+  "does_not_close": "FB-RETRY-LIFETIME",
+  "followups": [
+    {"id":"FB-RETRY-TIMER-ALLOC-FAULT", "candidate":"C1", "next":"Fail scheduler request allocation after timer creation; assert timer list baseline before shutdown.", "priority":"focused reproduction"},
+    {"id":"FB-SINGLEPLEX-QUEUE-ALLOC-FAULT", "candidate":"C2", "next":"Fail synchronous queue-node allocation in first dispatch and retry; assert users and map occupancy after caller return.", "priority":"focused reproduction"},
+    {"id":"FB-SINGLEPLEX-RETRY-FLUSH-FAULT", "candidate":"C3", "next":"Place retry behind active synchronous flush, fail queued flush creation or pipe write, check zero-user task reaping.", "priority":"focused reproduction"},
+    {"id":"FB-STALE-COMPLETION-REACHABILITY", "candidate":"C4", "next":"Trace an actual accepted delayed/duplicate event through id recycle before calling the missing generation a defect.", "priority":"reachability proof"},
+    {"id":"FB-RETRY-LIFETIME", "candidate":"semantic implementation", "next":"Retain separate semantic card for model, Lean, production route and controls; no status change from this audit.", "priority":"open"}
+  ]
+}

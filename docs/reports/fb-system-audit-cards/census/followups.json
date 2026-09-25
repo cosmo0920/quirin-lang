@@ -1,0 +1,15 @@
+{
+  "card": "FB-AUDIT-01-COVERAGE",
+  "followups": [
+    {
+      "id": "FB-SYSTEM-CURRENT-BUILD-SELECTION",
+      "status": "open",
+      "discharge": "Prepare and bind the selected current-revision build; publish full file/function denominator and audit results, including preparation refusals."
+    },
+    {
+      "id": "FB-SYSTEM-SYNCHRONIZATION-INVENTORY",
+      "status": "open",
+      "discharge": "Enumerate selected production callback and worker handoff edges with source/build binding; distinguish unresolved synchronization premises."
+    }
+  ]
+}

@@ -38,6 +38,7 @@ They are not interchangeable.
 | Registered open work | `named_followups` in the [acceptance matrix](reviews/r0_3/acceptance_matrix.json), then the named card's report |
 | Architecture and W0–W7 direction | [Generalization plan](GENERALIZATION_PLAN.md) |
 | Prospective backlog, retry and engine cards | [Fluent Bit system coverage queue](plans/fluent-bit-system-coverage/README.md) |
+| Executed system audit investigations and resume queue | [Three Fluent Bit investigation cards](reports/fb-system-audit-cards/README.md) |
 | Broader workstreams | [Post-Cycle-9 roadmap](ROADMAP_AFTER_CYCLE_9.md) |
 | Restart/context tooling plan | [Resume plan](plans/resume-2026-09-13/README.md) (dated checkpoint; revalidate old blockers) |
 

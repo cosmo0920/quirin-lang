@@ -9,17 +9,24 @@
     {
       "id": "FB-AUDIT-01-COVERAGE",
       "path": "census",
-      "state": "running"
+      "state": "measurement-complete",
+      "result": "8 files / 15 historical compile records / 15 successful preprocesses; only 1 file present in archived generic corpus"
     },
     {
       "id": "FB-AUDIT-02-RETRY-LIFETIME",
       "path": "retry",
-      "state": "running"
+      "state": "source-investigation-and-isolated-experiment-complete"
     },
     {
       "id": "FB-AUDIT-03-BACKPRESSURE-ACCOUNTING",
       "path": "accounting",
-      "state": "running"
+      "state": "source-investigation-complete",
+      "escalation": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "scope": "conditional no-progress experiment on original cb_queue_chunks function",
+        "state": "tool-rejected-before-evidence"
+      }
     }
   ],
   "scope": "source investigation and measurements; semantic cards remain open"

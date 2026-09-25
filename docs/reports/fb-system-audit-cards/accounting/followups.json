@@ -1,0 +1,12 @@
+{
+  "card": "FB-AUDIT-03-BACKPRESSURE-ACCOUNTING",
+  "status": "investigation_only",
+  "source_revision": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "followups": [
+    {"id": "FB-AUDIT-03-ZERO-PROGRESS", "priority": 1, "question": "Can repeated CIO_ERROR from a persistent native-open failure keep cb_queue_chunks in its while loop without a yield?", "next_evidence": "Fault-injected native callback timeout and valid-head control; measure state each pass", "source": ["plugins/in_storage_backlog/sb.c:611", "plugins/in_storage_backlog/sb.c:649", "lib/chunkio/src/cio_file.c:844"]},
+    {"id": "FB-AUDIT-03-PARTIAL-FANOUT", "priority": 1, "question": "Does failure on a later output wrapper leave an earlier wrapper charged after the underlying chunk is closed?", "next_evidence": "Fault second flb_calloc; inspect wrapper ledger and ChunkIO lifetime", "source": ["plugins/in_storage_backlog/sb.c:341", "plugins/in_storage_backlog/sb.c:435"]},
+    {"id": "FB-AUDIT-03-LEDGER-BOUND", "priority": 2, "question": "What bound survives real-size errors, saturation, truncation, signed conversion, and overshoot?", "next_evidence": "Boundary-size and failure traces for F+B+P=L/L+1, SIZE_MAX, SSIZE_MAX, map truncation", "source": ["plugins/in_storage_backlog/sb.c:317", "src/flb_input_chunk.c:1173", "src/flb_input_chunk.c:1115"]},
+    {"id": "FB-AUDIT-03-CROSS-OUTPUT-EVICTION", "priority": 2, "question": "Is eviction of all wrappers for one output's budget an intended policy, and is the full projected increment deliberately released?", "next_evidence": "Two-output eviction trace and policy review", "source": ["plugins/in_storage_backlog/sb.c:567", "src/flb_input_chunk.c:1237"]}
+  ],
+  "does_not_close": ["FB-BACKLOG-CUSTODY", "FB-BACKLOG-ACCOUNTING", "FB-ENGINE-PROGRESS"]
+}
