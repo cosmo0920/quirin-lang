@@ -50,6 +50,39 @@ pub fn resolve_jobs(flag: Option<&str>) -> Result<usize, String> {
     )
 }
 
+/// The job count of a route that takes both a `--jobs` flag and a
+/// configuration `jobs` field (card W44-QUIRIN-AUDIT-PROVIDERS): the flag,
+/// else the configuration, else [`JOBS_VARIABLE`], else the capped host
+/// parallelism. A zero from either source is an error. The count changes wall
+/// time only, so a flag overriding a configuration is not a conflict.
+pub fn jobs_with_precedence(
+    flag: Option<usize>,
+    configuration: Option<usize>,
+) -> Result<usize, String> {
+    let environment = std::env::var_os(JOBS_VARIABLE);
+    jobs_with_precedence_from(
+        flag,
+        configuration,
+        environment.as_ref().map(|value| value.to_str()),
+        std::thread::available_parallelism().ok(),
+    )
+}
+
+fn jobs_with_precedence_from(
+    flag: Option<usize>,
+    configuration: Option<usize>,
+    environment: Option<Option<&str>>,
+    available: Option<NonZeroUsize>,
+) -> Result<usize, String> {
+    match (flag, configuration) {
+        (Some(0), _) => Err("--jobs must be a positive integer job count, not `0`".into()),
+        (Some(jobs), _) => Ok(jobs),
+        (None, Some(0)) => Err("configuration `jobs` must be a positive integer, not 0".into()),
+        (None, Some(jobs)) => Ok(jobs),
+        (None, None) => resolve_jobs_from(None, environment, available),
+    }
+}
+
 fn resolve_jobs_from(
     flag: Option<&str>,
     environment: Option<Option<&str>>,
@@ -221,6 +254,38 @@ mod tests {
     use super::*;
     use std::sync::atomic::AtomicUsize;
     use std::time::Duration;
+
+    /// Card W44-QUIRIN-AUDIT-PROVIDERS: flag over configuration over
+    /// environment over the capped host default.
+    #[test]
+    fn a_configured_route_prefers_flag_then_configuration_then_environment() {
+        let host = NonZeroUsize::new(32);
+        let env = Some(Some("5"));
+        assert_eq!(
+            jobs_with_precedence_from(Some(3), Some(7), env, host),
+            Ok(3)
+        );
+        assert_eq!(jobs_with_precedence_from(None, Some(7), env, host), Ok(7));
+        assert_eq!(jobs_with_precedence_from(None, None, env, host), Ok(5));
+        assert_eq!(
+            jobs_with_precedence_from(None, None, None, host),
+            Ok(DEFAULT_JOBS_CAP)
+        );
+        assert_eq!(
+            jobs_with_precedence_from(None, None, None, NonZeroUsize::new(4)),
+            Ok(4)
+        );
+        assert_eq!(jobs_with_precedence_from(Some(1), None, env, host), Ok(1));
+        // A zero is an error from either source, and a bad environment value
+        // is an error only when it is the source consulted.
+        assert!(jobs_with_precedence_from(Some(0), Some(7), env, host).is_err());
+        assert!(jobs_with_precedence_from(None, Some(0), env, host).is_err());
+        assert_eq!(
+            jobs_with_precedence_from(None, Some(2), Some(Some("x")), host),
+            Ok(2)
+        );
+        assert!(jobs_with_precedence_from(None, None, Some(Some("x")), host).is_err());
+    }
 
     #[test]
     fn job_count_prefers_the_flag_then_the_environment_then_the_capped_host() {

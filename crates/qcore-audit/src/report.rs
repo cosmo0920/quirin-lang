@@ -119,6 +119,10 @@ pub struct AuditReport {
     units: Vec<Value>,
     diagnostic_counts: BTreeMap<String, usize>,
     source_contracts: Option<Value>,
+    /// Card W44-QUIRIN-AUDIT-PROVIDERS: a contracts-only run's evidence mode
+    /// and the contract modules its verdicts rest on. Absent otherwise, so
+    /// every other report keeps its shape.
+    evidence: Option<Value>,
 }
 
 impl AuditReport {
@@ -128,6 +132,7 @@ impl AuditReport {
             units: Vec::new(),
             diagnostic_counts: BTreeMap::new(),
             source_contracts: None,
+            evidence: None,
         }
     }
 
@@ -155,6 +160,7 @@ impl AuditReport {
             units,
             diagnostic_counts,
             source_contracts,
+            evidence,
         } = fragment;
         if revision != self.revision {
             return Err(format!(
@@ -165,6 +171,9 @@ impl AuditReport {
         if source_contracts.is_some() {
             return Err("a per-unit report fragment carries no source-contract evidence".into());
         }
+        if evidence.is_some() {
+            return Err("a per-unit report fragment carries no evidence-mode record".into());
+        }
         self.units.extend(units);
         for (category, count) in diagnostic_counts {
             *self.diagnostic_counts.entry(category).or_default() += count;
@@ -174,6 +183,11 @@ impl AuditReport {
 
     pub(crate) fn set_source_contracts(&mut self, evidence: Value) {
         self.source_contracts = Some(evidence);
+    }
+
+    /// Record the evidence mode of the whole run (card W44-QUIRIN-AUDIT-PROVIDERS).
+    pub(crate) fn set_evidence(&mut self, evidence: Value) {
+        self.evidence = Some(evidence);
     }
 
     /// Retain a selected configuration whose source/build premises could not
@@ -388,6 +402,9 @@ impl AuditReport {
         });
         if let Some(evidence) = &self.source_contracts {
             report["source_contracts"] = evidence.clone();
+        }
+        if let Some(evidence) = &self.evidence {
+            report["evidence"] = evidence.clone();
         }
         let mut bytes = serde_json::to_vec_pretty(&report).map_err(|error| error.to_string())?;
         bytes.push(b'\n');
@@ -793,9 +810,10 @@ mod tests {
     #[test]
     fn a_missing_clang_is_recorded_as_an_environment_failure_not_a_source_defect() {
         let reason = "audit requires the configured Clang executable (/usr/bin/clang); \
-                      compilation database selects /usr/bin/cc. Generate an explicit \
-                      Clang build with scripts/prepare_cycle19_clang_audit.py --run; \
-                      GCC compiler equivalence is unproven";
+                      compilation database selects /usr/bin/cc. Prepare an explicit \
+                      Clang build (scripts/prepare_cmetrics_clang_audit.py, \
+                      scripts/prepare_cycle19_monkey.py) and run quirin-audit current \
+                      over it; GCC compiler equivalence is unproven";
         let mut report = AuditReport::new("revision");
         report.record_unknown(
             "test",

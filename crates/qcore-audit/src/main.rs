@@ -5,8 +5,24 @@ fn main() -> ExitCode {
     let mut arguments = std::env::args_os().skip(1);
     let Some(path) = arguments.next() else {
         eprintln!("usage: quirin-audit CONFIG.json");
+        eprintln!("       {}", qcore_audit::current_cli::USAGE);
         return ExitCode::FAILURE;
     };
+    if path == "current" {
+        // Card W44-QUIRIN-AUDIT-PROVIDERS: the configured current-revision
+        // route, with contracts selected by provider crate or manifest.
+        let mut rest = Vec::new();
+        for argument in arguments {
+            match argument.into_string() {
+                Ok(argument) => rest.push(argument),
+                Err(argument) => {
+                    eprintln!("non-UTF-8 argument {argument:?}");
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
+        return qcore_audit::current_cli::main(rest);
+    }
     if path == "callback-task-handoff" {
         let Some(config) = arguments.next() else {
             eprintln!("usage: quirin-audit callback-task-handoff CONFIG.json");
@@ -203,11 +219,31 @@ fn main() -> ExitCode {
             }
         };
     }
-    if arguments.next().is_some() {
-        eprintln!("usage: quirin-audit CONFIG.json");
+    // Card W44-QUIRIN-AUDIT-PROVIDERS: `quirin-audit [--jobs N] CONFIG.json`
+    // (or `CONFIG.json --jobs N`); the flag takes precedence over the
+    // configuration's `jobs` and over QCORE_AUDIT_JOBS.
+    let mut rest = std::iter::once(path).chain(arguments).collect::<Vec<_>>();
+    let mut jobs = None;
+    if let Some(position) = rest.iter().position(|argument| argument == "--jobs") {
+        let Some(count) = rest.get(position + 1).and_then(|count| count.to_str()) else {
+            eprintln!("--jobs requires a positive integer");
+            return ExitCode::FAILURE;
+        };
+        match qcore_audit::parallel::resolve_jobs(Some(count)) {
+            Ok(count) => jobs = Some(count),
+            Err(error) => {
+                eprintln!("{error}");
+                return ExitCode::FAILURE;
+            }
+        }
+        rest.drain(position..=position + 1);
+    }
+    if rest.len() != 1 {
+        eprintln!("usage: quirin-audit [--jobs N] CONFIG.json");
         return ExitCode::FAILURE;
     }
-    match qcore_audit::run_config(&PathBuf::from(path)) {
+    let path = rest.remove(0);
+    match qcore_audit::run_config_with_jobs(&PathBuf::from(path), jobs) {
         Ok(counts) => {
             println!(
                 "{} units: {} Safe / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures",

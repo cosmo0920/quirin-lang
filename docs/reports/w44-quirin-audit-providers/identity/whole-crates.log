@@ -1,0 +1,2 @@
+current audit rejected (Unknown): /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab16a94e01ece061d/providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qcore: Chunk at byte 144: resource modules accept only extern functions
+exit=1

@@ -6,6 +6,9 @@ use qcore_audit::compile_db::{
     CompileEntry, CompilerOptions, compile_entries,
     compiler_options_compatibility as compiler_options,
 };
+use qcore_audit::current_route::{
+    is_monkey_unit, monkey_source_root, source_weight, verify_monkey_source_copy,
+};
 use qcore_audit::parallel::run_ordered;
 use qcore_audit::projection::{AuditCounts, project_unit_into};
 use qcore_audit::report::AuditReport;
@@ -60,17 +63,14 @@ macro_rules! say {
     }};
 }
 
-/// One configured-route compilation configuration, in selection order.
-struct ConfiguredTask<'a> {
-    group: usize,
-    library: &'a str,
-    expected_source: Result<PathBuf, String>,
-    entry: &'a CompileEntry,
-    unresolved: Option<&'a str>,
-}
-
 /// The user-facing command defaults to a current-revision inventory. Historical
 /// source/native evidence remains behind the explicit --pinned-evidence route.
+///
+/// Card W44-QUIRIN-AUDIT-PROVIDERS: the route itself lives in
+/// `qcore_audit::current_route` and is what `quirin-audit current` runs; this
+/// wrapper keeps the example's flags and positional arguments and supplies the
+/// Fluent Bit source-set profile, its declared contract manifest (or the given
+/// one) and the pinned revision the Unknown sidecars name.
 #[allow(clippy::too_many_arguments)]
 pub fn run_current(
     root: &Path,
@@ -82,185 +82,28 @@ pub fn run_current(
     compile_database: Option<&Path>,
     jobs: usize,
 ) -> Result<bool, String> {
-    use qcore_audit::current::{CurrentAudit, distinct_configurations, select_configurations};
-    let root = root.canonicalize().map_err(|error| error.to_string())?;
+    use qcore_audit::current_route::{CurrentRoute, run_current_route};
     let profile = load_profile(FLUENT_BIT_SOURCE_SET).map_err(|error| error.to_string())?;
     let default_manifest = profile.resource_contract_manifest_path();
     let manifest = contract_manifest
         .or(default_manifest.as_deref())
         .ok_or("source-set profile supplies no resource contracts")?;
-    let mut audit = CurrentAudit::new(&root, &profile, manifest)?;
-    let revision = audit.revision().to_owned();
-    println!("Fluent Bit {revision} (current checkout)");
-    println!(
-        "Historical source/native/provider evidence: Unknown; use --pinned-evidence for historical replay"
-    );
-    let default_database = root.join("build/compile_commands.json");
-    let entries = compile_entries(
-        &fs::read_to_string(compile_database.unwrap_or(&default_database))
-            .map_err(|error| error.to_string())?,
-    )?;
-    // Select all groups before auditing; missing groups cannot disappear from
-    // the denominator. Different commands for one file remain separate tasks.
-    let mut groups = Vec::new();
-    for selection in qcore_audit::load_library_selections(&profile.directory().join("audit.json"))?
-    {
-        let library = profile
-            .library(&selection.library)
-            .ok_or("selected library is absent from profile")?;
-        let selected = select_configurations(&entries, &root, library);
-        if selected.is_empty() {
-            return Err(format!(
-                "compile database contains no selected {} sources",
-                selection.library
-            ));
-        }
-        for entry in &selected {
-            qcore_audit::compile_db::require_clang_driver(entry)?;
-        }
-        let unresolved = (!library.required_evidence.is_empty()).then_some("selected library requires evidence unavailable in current-revision resource projection");
-        groups.push((
-            selection.label.unwrap_or(selection.library),
-            selected,
-            unresolved,
-        ));
-    }
-    let monkey = monkey_database
-        .map(|path| {
-            let entries =
-                compile_entries(&fs::read_to_string(path).map_err(|error| error.to_string())?)?;
-            let source_root = monkey_source_root(&entries)?;
-            let selected = distinct_configurations(
-                entries
-                    .into_iter()
-                    .filter(|entry| is_monkey_unit(&source_root, &entry.file)),
-            );
-            if selected.is_empty() {
-                return Err("no compiled Monkey sources selected".into());
-            }
-            for entry in &selected {
-                qcore_audit::compile_db::require_clang_driver(entry)?;
-            }
-            // The copy may have been prepared at an older revision. It is usable
-            // only where its actual source and adapter/header bytes still match.
-            let unresolved =
-                verify_monkey_source_copy(&root.join("lib/monkey"), &source_root, &selected).err();
-            Ok::<_, String>((source_root, selected, unresolved))
-        })
-        .transpose()?;
-    // Card W44-AUDIT-PARALLEL-UNITS: every selected configuration is one task,
-    // in exactly the order the sequential loops visited them. Tasks may be
-    // analysed concurrently; their console lines, report rows and tallies are
-    // folded strictly in this order, and a group's header is printed just
-    // before its first configuration's lines, where the loops printed it.
-    let mut headers = Vec::new();
-    let mut tasks = Vec::new();
-    for (library, selected, unresolved) in &groups {
-        headers.push(format!(
-            "{library}: {} selected compilation configuration(s)",
-            selected.len()
-        ));
-        for entry in selected {
-            tasks.push(ConfiguredTask {
-                group: headers.len() - 1,
-                library: library.as_str(),
-                expected_source: Ok(entry.file.clone()),
-                entry,
-                unresolved: *unresolved,
-            });
-        }
-    }
-    if let Some((source_root, entries, unresolved)) = &monkey {
-        headers.push(format!(
-            "monkey-libevent: {} selected compilation configuration(s)",
-            entries.len()
-        ));
-        for entry in entries {
-            let expected_source = entry
-                .file
-                .strip_prefix(source_root)
-                .map(|relative| root.join("lib/monkey").join(relative))
-                .map_err(|_| "Monkey source outside compiled root".to_owned());
-            tasks.push(ConfiguredTask {
-                group: headers.len() - 1,
-                library: "monkey-libevent",
-                expected_source,
-                entry,
-                unresolved: unresolved.as_deref(),
-            });
-        }
-    }
-    let mut printed_headers = 0;
-    let mut products = Vec::with_capacity(tasks.len());
-    let dispatch = qcore_audit::parallel::heaviest_first(
-        &tasks
-            .iter()
-            .map(|task| source_weight(task.entry))
-            .collect::<Vec<_>>(),
-    );
-    run_ordered(
-        tasks,
+    let contracts = qcore_audit::providers::ContractInput::manifest(manifest)?;
+    run_current_route(&CurrentRoute {
+        checkout: root,
+        profile: &profile,
+        contracts: &contracts,
+        mode: qcore_audit::evidence::EvidenceMode::Configured,
+        compile_database,
+        monkey_database,
+        monkey_source_report,
+        diagnostic_report,
+        binding_directory,
+        label: "Fluent Bit",
+        historical_note: "Historical source/native/provider evidence: Unknown; use --pinned-evidence for historical replay",
+        historical_reference_revision: PINNED_FLUENT_BIT_COMMIT,
         jobs,
-        Some(dispatch),
-        |task| {
-            let group = task.group;
-            let outcome = match &task.expected_source {
-                Ok(expected_source) => {
-                    audit.evaluate_entry(task.library, expected_source, task.entry, task.unresolved)
-                }
-                Err(error) => qcore_audit::current::EntryOutcome {
-                    output: String::new(),
-                    result: Err(error.clone()),
-                },
-            };
-            (group, outcome)
-        },
-        |(group, outcome)| {
-            for header in &headers[printed_headers..=group] {
-                println!("{header}");
-            }
-            printed_headers = printed_headers.max(group + 1);
-            print!("{}", outcome.output);
-            products.push(outcome.result?);
-            Ok::<(), String>(())
-        },
-    )?;
-    for header in &headers[printed_headers..] {
-        println!("{header}");
-    }
-    for entry in products {
-        audit.absorb_entry(entry)?;
-    }
-    let counts = audit.finish(diagnostic_report)?;
-    // Replace old sidecars explicitly: success must not leave old Checked
-    // evidence adjacent to a new-revision resource inventory at the same paths.
-    let unknown = serde_json::json!({
-        "schema_version": 1, "source_revision": revision, "status": "Unknown",
-        "reason": "historical source/native/provider evidence is not admitted by the current-revision resource audit",
-        "historical_reference_revision": PINNED_FLUENT_BIT_COMMIT,
-        "results": [], "callbacks": [], "wrappers": [], "backend_teardown": [],
-    });
-    let write = |path: &Path| -> Result<(), String> {
-        if let Some(parent) = path.parent() {
-            fs::create_dir_all(parent).map_err(|error| error.to_string())?;
-        }
-        fs::write(
-            path,
-            serde_json::to_vec_pretty(&unknown).map_err(|error| error.to_string())?,
-        )
-        .map_err(|error| error.to_string())
-    };
-    if let Some(path) = diagnostic_report {
-        write(&path.with_extension("chunk-contracts.json"))?;
-        write(&path.with_extension("source-effects.json"))?;
-    }
-    if let Some(path) = monkey_source_report {
-        write(path)?;
-    }
-    if let Some(path) = binding_directory {
-        write(&path.join("monkey_binding_result.json"))?;
-    }
-    Ok(counts.gateway_failures != 0)
+    })
 }
 
 pub fn run(
@@ -612,13 +455,6 @@ fn select_exact_unit(entries: &[CompileEntry], source: &Path) -> Vec<CompileEntr
         .cloned()
         .into_iter()
         .collect()
-}
-
-/// A unit's scheduling weight: its source size in bytes, which ranks analysis
-/// time closely on the pinned corpus. An unreadable file weighs nothing here;
-/// reading it fails in its own unit, at its own position.
-fn source_weight(entry: &CompileEntry) -> u64 {
-    fs::metadata(&entry.file).map_or(0, |metadata| metadata.len())
 }
 
 /// One selected library, planned before any of its units is analysed.
@@ -1675,90 +1511,6 @@ fn audit_monkey_callback_source(
             serde_json::to_string_pretty(&output).map_err(|error| error.to_string())? + "\n",
         )
         .map_err(|error| format!("could not write {}: {error}", report.display()))?;
-    }
-    Ok(())
-}
-
-fn monkey_source_root(entries: &[CompileEntry]) -> Result<PathBuf, String> {
-    let event_entry = entries
-        .iter()
-        .find(|entry| entry.file.ends_with("mk_core/mk_event.c"))
-        .ok_or("Monkey compile database has no mk_core/mk_event.c entry")?;
-    let options = compiler_options(event_entry)?;
-    if !options
-        .definitions
-        .iter()
-        .any(|definition| definition == "MK_EVENT_LOOP_LIBEVENT")
-    {
-        return Err("Monkey mk_event.c was not compiled with -DMK_EVENT_LOOP_LIBEVENT".into());
-    }
-    event_entry
-        .file
-        .parent()
-        .and_then(Path::parent)
-        .map(Path::to_path_buf)
-        .ok_or_else(|| {
-            format!(
-                "could not derive Monkey source root from {}",
-                event_entry.file.display()
-            )
-        })
-}
-
-fn is_monkey_unit(source_root: &Path, file: &Path) -> bool {
-    let Ok(relative) = file.strip_prefix(source_root) else {
-        return false;
-    };
-    if file.extension().is_none_or(|extension| extension != "c") {
-        return false;
-    }
-    let relative = relative.to_string_lossy();
-    (relative.starts_with("mk_core/") && !relative.starts_with("mk_core/deps/"))
-        || relative.starts_with("mk_server/")
-        || relative.starts_with("tls/")
-}
-
-fn verify_monkey_source_copy(
-    canonical_root: &Path,
-    compiled_root: &Path,
-    entries: &[CompileEntry],
-) -> Result<(), String> {
-    for entry in entries {
-        let relative = entry
-            .file
-            .strip_prefix(compiled_root)
-            .map_err(|_| format!("source is outside Monkey root: {}", entry.file.display()))?;
-        let canonical = canonical_root.join(relative);
-        let compiled = fs::read(&entry.file)
-            .map_err(|error| format!("could not read {}: {error}", entry.file.display()))?;
-        let expected = fs::read(&canonical)
-            .map_err(|error| format!("could not read {}: {error}", canonical.display()))?;
-        if compiled != expected {
-            return Err(format!(
-                "compiled Monkey source differs from pinned Fluent Bit source: {}",
-                relative.display()
-            ));
-        }
-    }
-    // The adapter is textually included, so it is absent from the standalone
-    // command list. Bind its body, layout and core macro headers explicitly.
-    for relative in [
-        "mk_core/mk_event_libevent.c",
-        "include/monkey/mk_core/mk_event.h",
-        "include/monkey/mk_core/mk_event_libevent.h",
-        "include/monkey/mk_core/mk_macros.h",
-        "include/monkey/mk_core/mk_memory.h",
-        "include/monkey/mk_core/mk_limits.h",
-        "include/monkey/mk_core/mk_list.h",
-    ] {
-        let compiled = fs::read(compiled_root.join(relative)).map_err(|error| error.to_string())?;
-        let expected =
-            fs::read(canonical_root.join(relative)).map_err(|error| error.to_string())?;
-        if compiled != expected {
-            return Err(format!(
-                "compiled Monkey callback source/layout differs from pinned source: {relative}"
-            ));
-        }
     }
     Ok(())
 }

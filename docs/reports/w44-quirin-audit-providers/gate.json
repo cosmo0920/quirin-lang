@@ -1,0 +1,13 @@
+{
+  "note": "W44-QUIRIN-AUDIT-PROVIDERS: standing gate plus provider gate measured on 04fee19a with CARGO_INCREMENTAL=0; later commits change the report, ledger, matrix and evidence only. Rust suite through scripts/run_test_binaries.py: the first run gave 5624 passed / 1 failed / 11 ignored over 298 summaries; the one failure was compiler/tests/std_socket_inet.rs this_card_reserves_no_word_and_its_address_rule_collides_with_nothing, which walks the worktree for .qcore examples and found a measurement copy of the base tree this card had extracted under the ignored private/base-src (to build the base quirin-audit). The copy was removed and the full step rerun: 5625 passed / 0 failed / 11 ignored over 298 summaries (288 units), with one single-job configured audit running beside it (load average 2.97 at start); the failed attempt is kept at measure/gate/test.log. cargo clean --profile dev after each test step. fmt clean; clippy --all-targets and clippy --workspace --all-targets -D warnings clean; reevaluation_probe exit 0; reevaluation_followup exit 0; 189 Lean audits passed (QCore.ProviderSelection, 31 theorems, audited in AuditProviderSelection.lean); cargo build --offline --workspace exit 0 (no dependency added). Root Python tests: 351 run before the matrix regeneration, of which the two matrix self-consistency tests failed as they must until regeneration (named_followups 391 -> 392, lean_audits 188 -> 189), and all pass after it (see the report). Provider gate: providers/package.py build and verify of all five packages exit 0; provider workspace 124 passed / 0 failed / 0 ignored over 39 summaries; provider fmt and clippy clean; providers/contracts.py check exit 0 (no provider data changed). Step exits: {'submodules': 0, 'clang': 0, 'test': 101, 'test-rerun': 0, 'clean': 0, 'fmt': 0, 'clippy': 0, 'clippy-workspace': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'python': 1, 'build-offline': 0, 'package-build': 0, 'package-verify x5': 0, 'provider-test': 0, 'provider-fmt': 0, 'provider-clippy': 0, 'contracts-check': 0}. Logs: worktree-private measure/gate of agent-ab16a94e01ece061d. Clang recorded in this checkout. Corpus: nothing moves; the pinned arbiter's diagnostics are byte-identical to the w44-collection-allocation integration baseline.",
+  "workspace_tests": 5625,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 351,
+  "lean_audits": 189,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

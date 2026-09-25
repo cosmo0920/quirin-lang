@@ -118,7 +118,9 @@ rows, sidecar results, counts and console lines in unit order. Every archived
 artifact and `audit.log` are byte-identical at every job count, and
 `--jobs 1` is the sequential loop; the first error in unit order is the one
 reported (`W44-AUDIT-PARALLEL-UNITS`). The configured route (no
-`--pinned-evidence`) takes the same flag. Two limits:
+`--pinned-evidence`) takes the same flag, and so do `quirin-audit current` and
+`quirin-audit CONFIG.json`: `--jobs`, then a configuration `jobs`, then the
+variable ([W44-QUIRIN-AUDIT-PROVIDERS](../reports/w44-quirin-audit-providers/README.md)). Two limits:
 
 - A census run always analyses one unit at a time, whatever `N` says: any
   census variable set in a census-feature build forces it, because census

@@ -1,0 +1,30 @@
+{
+  "base": "private/runs/manifest2",
+  "run": "private/runs/contracts-only2",
+  "results": {
+    "resource-diagnostics.json": "identical-after-removing ['evidence']",
+    "resource-diagnostics.contracts.json": "identical-after-removing ['provider_selection', 'evidence']",
+    "resource-diagnostics.chunk-contracts.json": "identical",
+    "resource-diagnostics.source-effects.json": "identical",
+    "monkey-source.json": "identical",
+    "audit.log": {
+      "identical_after_masking": true,
+      "lines": 1076,
+      "inserted_lines": [
+        {
+          "run_line": 3,
+          "text": "evidence: contracts-only (resource projection from the selected contract modules; no package, verifier-host, plugin, native or pinned evidence)"
+        }
+      ],
+      "differing_lines": [
+        {
+          "line": 1075,
+          "base": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 19505569 us / syntax 35872204 us / line markers 20801434 us",
+          "run": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 18106841 us / syntax 33532272 us / line markers 18695114 us"
+        }
+      ]
+    },
+    "only_in_run": []
+  },
+  "ok": true
+}

@@ -1,0 +1,42 @@
+{
+  "base": "private/runs/base",
+  "run": "private/runs/contracts-only1",
+  "results": {
+    "resource-diagnostics.json": "identical-after-removing ['evidence']",
+    "resource-diagnostics.contracts.json": "identical-after-removing ['provider_selection', 'evidence']",
+    "resource-diagnostics.chunk-contracts.json": "identical",
+    "resource-diagnostics.source-effects.json": "identical",
+    "monkey-source.json": "identical",
+    "audit.log": {
+      "identical_after_masking": true,
+      "lines": 1076,
+      "inserted_lines": [
+        {
+          "run_line": 3,
+          "text": "evidence: contracts-only (resource projection from the selected contract modules; no package, verifier-host, plugin, native or pinned evidence)"
+        }
+      ],
+      "differing_lines": [
+        {
+          "line": 1,
+          "base": "Fluent Bit d1ab8abff6cbaee89cee5efeeeb2667d1910ac52 (current checkout)",
+          "run": "fluent-bit d1ab8abff6cbaee89cee5efeeeb2667d1910ac52 (current checkout)"
+        },
+        {
+          "line": 2,
+          "base": "Historical source/native/provider evidence: Unknown; use --pinned-evidence for historical replay",
+          "run": "Historical source/native/provider evidence: Unknown; the pinned replay is cycle19_fluent_bit_libraries_audit --pinned-evidence"
+        },
+        {
+          "line": 1075,
+          "base": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 18026797 us / syntax 34692999 us / line markers 19659513 us",
+          "run": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 19161060 us / syntax 35696249 us / line markers 20657811 us"
+        }
+      ]
+    },
+    "only_in_run": [
+      "resource-diagnostics.invocation.json"
+    ]
+  },
+  "ok": true
+}

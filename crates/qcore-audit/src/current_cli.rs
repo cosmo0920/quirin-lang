@@ -1,0 +1,493 @@
+//! `quirin-audit current` (card **W44-QUIRIN-AUDIT-PROVIDERS**): the configured
+//! current-revision route, driven by flags, by a JSON configuration
+//! (`--config FILE`), or both.
+//!
+//! **One rule for both forms.** Every setting may be given on the command
+//! line, in the configuration, or in both; when both give it, the two must
+//! declare the same value — for providers, the same resolved module selection
+//! — or the command refuses. Nothing is merged or overridden, so a run is
+//! described completely by either form, and the record names which forms
+//! declared the provider selection. The one exception is the job count, which
+//! changes wall time only: `--jobs` over the configuration's `jobs` over
+//! `QCORE_AUDIT_JOBS` over the capped host default
+//! ([`crate::parallel::jobs_with_precedence`]).
+//!
+//! **Contracts.** Exactly one source: a provider selection (`--provider` /
+//! `providers`, resolved on `--load-path` / `load_path`), an explicit manifest
+//! (`--contract-manifest` / `contract_manifest`), or, when neither is given,
+//! the manifest the source profile declares. A provider selection supersedes
+//! that profile default (recorded as not read); a provider selection together
+//! with an explicit manifest is two declarations of one input and refuses.
+//! There is no default provider set: no selection, no manifest and a profile
+//! that declares none refuses.
+
+use std::path::{Path, PathBuf};
+use std::process::ExitCode;
+
+use qcore_contract::profile_loader::{load_profile_directory, sha256_hex};
+use serde::Deserialize;
+use serde_json::{Value, json};
+
+use crate::current_route::{CurrentRoute, historical_reference_revision, run_current_route};
+use crate::evidence::EvidenceMode;
+use crate::providers::{ContractInput, SelectionSource, agree, resolve_providers};
+
+/// Usage text of `quirin-audit current`.
+pub const USAGE: &str = "usage: quirin-audit current [--config FILE] [--checkout DIR] \
+[--profile-directory DIR] [--compile-database PATH] [--monkey-database PATH] [--report PATH] \
+[--monkey-source-report PATH] [--binding-directory DIR] [--provider NAME[:MODULE]]... \
+[--load-path PATH] [--contract-manifest PATH] [--contracts-only] [--quirin-providers-only] \
+[--jobs N]";
+
+/// The JSON configuration of `quirin-audit current`. Relative paths resolve
+/// against the configuration file's directory.
+#[derive(Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CurrentConfig {
+    schema_version: u32,
+    #[serde(default)]
+    checkout: Option<PathBuf>,
+    #[serde(default)]
+    profile_directory: Option<PathBuf>,
+    #[serde(default)]
+    compile_database: Option<PathBuf>,
+    #[serde(default)]
+    monkey_database: Option<PathBuf>,
+    #[serde(default)]
+    report: Option<PathBuf>,
+    #[serde(default)]
+    monkey_source_report: Option<PathBuf>,
+    #[serde(default)]
+    binding_directory: Option<PathBuf>,
+    #[serde(default)]
+    providers: Option<Vec<String>>,
+    #[serde(default)]
+    load_path: Option<PathBuf>,
+    #[serde(default)]
+    contract_manifest: Option<PathBuf>,
+    #[serde(default)]
+    mode: Option<EvidenceMode>,
+    #[serde(default)]
+    quirin_providers_only: Option<bool>,
+    #[serde(default)]
+    jobs: Option<usize>,
+    /// Named only to be refused with a reason: this route admits no process
+    /// package or source-contract evidence.
+    #[serde(default)]
+    source_contracts: Option<Value>,
+    #[serde(default)]
+    packages: Option<Value>,
+}
+
+/// The settings of one form, paths already anchored.
+#[derive(Debug, Default)]
+struct Settings {
+    checkout: Option<PathBuf>,
+    profile_directory: Option<PathBuf>,
+    compile_database: Option<PathBuf>,
+    monkey_database: Option<PathBuf>,
+    report: Option<PathBuf>,
+    monkey_source_report: Option<PathBuf>,
+    binding_directory: Option<PathBuf>,
+    providers: Option<Vec<String>>,
+    load_path: Option<PathBuf>,
+    contract_manifest: Option<PathBuf>,
+    mode: Option<EvidenceMode>,
+    quirin_providers_only: Option<bool>,
+    jobs: Option<usize>,
+}
+
+fn anchor(base: &Path, path: PathBuf) -> PathBuf {
+    if path.is_absolute() {
+        path
+    } else {
+        base.join(path)
+    }
+}
+
+fn parse_command_line(
+    arguments: &[String],
+    cwd: &Path,
+) -> Result<(Settings, Option<PathBuf>), String> {
+    let mut settings = Settings::default();
+    let mut config = None;
+    let mut providers = Vec::new();
+    let mut index = 0;
+    let set_path = |slot: &mut Option<PathBuf>, flag: &str, value: Option<&String>| {
+        let value = value.ok_or_else(|| format!("{flag} requires a value"))?;
+        if slot.is_some() {
+            return Err(format!("{flag} is given twice"));
+        }
+        *slot = Some(anchor(cwd, PathBuf::from(value)));
+        Ok::<(), String>(())
+    };
+    while index < arguments.len() {
+        let flag = arguments[index].as_str();
+        let value = arguments.get(index + 1);
+        let mut takes_value = true;
+        match flag {
+            "--config" => set_path(&mut config, flag, value)?,
+            "--checkout" => set_path(&mut settings.checkout, flag, value)?,
+            "--profile-directory" => set_path(&mut settings.profile_directory, flag, value)?,
+            "--compile-database" => set_path(&mut settings.compile_database, flag, value)?,
+            "--monkey-database" => set_path(&mut settings.monkey_database, flag, value)?,
+            "--report" => set_path(&mut settings.report, flag, value)?,
+            "--monkey-source-report" => {
+                set_path(&mut settings.monkey_source_report, flag, value)?;
+            }
+            "--binding-directory" => set_path(&mut settings.binding_directory, flag, value)?,
+            "--load-path" => set_path(&mut settings.load_path, flag, value)?,
+            "--contract-manifest" => set_path(&mut settings.contract_manifest, flag, value)?,
+            "--provider" => {
+                providers.push(
+                    value
+                        .ok_or("--provider requires a provider crate name")?
+                        .clone(),
+                );
+            }
+            "--jobs" => {
+                let text = value.ok_or("--jobs requires a positive integer")?;
+                if settings.jobs.is_some() {
+                    return Err("--jobs is given twice".into());
+                }
+                settings.jobs = Some(crate::parallel::resolve_jobs(Some(text))?);
+            }
+            "--contracts-only" => {
+                settings.mode = Some(EvidenceMode::ContractsOnly);
+                takes_value = false;
+            }
+            "--quirin-providers-only" => {
+                settings.quirin_providers_only = Some(true);
+                takes_value = false;
+            }
+            other => return Err(format!("unknown argument `{other}`\n{USAGE}")),
+        }
+        index += if takes_value { 2 } else { 1 };
+    }
+    if !providers.is_empty() {
+        settings.providers = Some(providers);
+    }
+    Ok((settings, config))
+}
+
+fn read_config(path: &Path) -> Result<(Settings, Vec<u8>), String> {
+    let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let config: CurrentConfig =
+        serde_json::from_slice(&bytes).map_err(|error| format!("{}: {error}", path.display()))?;
+    if config.schema_version != 1 {
+        return Err(format!(
+            "{}: unsupported current-audit configuration version {}",
+            path.display(),
+            config.schema_version
+        ));
+    }
+    if config.source_contracts.is_some() || config.packages.is_some() {
+        return Err(format!(
+            "{}: the current route admits no process packages or source-contract checks, and a \
+             contracts-only run never does; `source_contracts` belongs to `quirin-audit \
+             CONFIG.json`",
+            path.display()
+        ));
+    }
+    let base = path
+        .parent()
+        .ok_or("configuration has no parent directory")?;
+    let anchor_all = |path: Option<PathBuf>| path.map(|path| anchor(base, path));
+    Ok((
+        Settings {
+            checkout: anchor_all(config.checkout),
+            profile_directory: anchor_all(config.profile_directory),
+            compile_database: anchor_all(config.compile_database),
+            monkey_database: anchor_all(config.monkey_database),
+            report: anchor_all(config.report),
+            monkey_source_report: anchor_all(config.monkey_source_report),
+            binding_directory: anchor_all(config.binding_directory),
+            providers: config.providers,
+            load_path: anchor_all(config.load_path),
+            contract_manifest: anchor_all(config.contract_manifest),
+            mode: config.mode,
+            quirin_providers_only: config.quirin_providers_only,
+            jobs: config.jobs,
+        },
+        bytes,
+    ))
+}
+
+/// A setting given by both forms must be equal.
+fn one<T: PartialEq + std::fmt::Debug>(
+    name: &str,
+    command_line: Option<T>,
+    configuration: Option<T>,
+) -> Result<Option<T>, String> {
+    match (command_line, configuration) {
+        (Some(left), Some(right)) if left != right => Err(format!(
+            "`{name}` conflicts: the command line gives {left:?} and the configuration gives \
+             {right:?}"
+        )),
+        (Some(value), _) | (None, Some(value)) => Ok(Some(value)),
+        (None, None) => Ok(None),
+    }
+}
+
+/// Parse, resolve and run. Returns the process exit code.
+#[must_use]
+pub fn main(arguments: Vec<String>) -> ExitCode {
+    match run(&arguments) {
+        Ok(false) => ExitCode::SUCCESS,
+        Ok(true) => ExitCode::FAILURE,
+        Err(error) => {
+            eprintln!("current audit rejected (Unknown): {error}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+fn run(arguments: &[String]) -> Result<bool, String> {
+    let cwd = std::env::current_dir().map_err(|error| error.to_string())?;
+    let (command_line, config_path) = parse_command_line(arguments, &cwd)?;
+    let (configuration, config_bytes) = match &config_path {
+        Some(path) => {
+            let (settings, bytes) = read_config(path)?;
+            (settings, Some(bytes))
+        }
+        None => (Settings::default(), None),
+    };
+    let checkout = one("checkout", command_line.checkout, configuration.checkout)?
+        .ok_or_else(|| format!("a checkout is required (--checkout DIR)\n{USAGE}"))?;
+    let profile_directory = one(
+        "profile_directory",
+        command_line.profile_directory,
+        configuration.profile_directory,
+    )?
+    .ok_or_else(|| format!("a source profile is required (--profile-directory DIR)\n{USAGE}"))?;
+    let compile_database = one(
+        "compile_database",
+        command_line.compile_database,
+        configuration.compile_database,
+    )?;
+    let monkey_database = one(
+        "monkey_database",
+        command_line.monkey_database,
+        configuration.monkey_database,
+    )?;
+    let report = one("report", command_line.report, configuration.report)?;
+    let monkey_source_report = one(
+        "monkey_source_report",
+        command_line.monkey_source_report,
+        configuration.monkey_source_report,
+    )?;
+    let binding_directory = one(
+        "binding_directory",
+        command_line.binding_directory,
+        configuration.binding_directory,
+    )?;
+    let load_path = one("load_path", command_line.load_path, configuration.load_path)?;
+    let contract_manifest = one(
+        "contract_manifest",
+        command_line.contract_manifest,
+        configuration.contract_manifest,
+    )?;
+    let mode = one("mode", command_line.mode, configuration.mode)?.unwrap_or_default();
+    let quirin_providers_only = one(
+        "quirin_providers_only",
+        command_line.quirin_providers_only,
+        configuration.quirin_providers_only,
+    )?
+    .unwrap_or(false);
+    let jobs_source = if command_line.jobs.is_some() {
+        "command_line"
+    } else if configuration.jobs.is_some() {
+        "configuration"
+    } else if std::env::var_os(crate::parallel::JOBS_VARIABLE).is_some() {
+        "environment"
+    } else {
+        "default"
+    };
+    let jobs = crate::parallel::jobs_with_precedence(command_line.jobs, configuration.jobs)?;
+    let effective_jobs = crate::parallel::effective_jobs(jobs);
+    let profile = load_profile_directory(&profile_directory).map_err(|error| error.to_string())?;
+    let profile_manifest = profile.resource_contract_manifest_path();
+    let has_providers = command_line.providers.is_some() || configuration.providers.is_some();
+    if !has_providers && load_path.is_some() {
+        return Err("a contract load path is given but no provider is selected".into());
+    }
+    if !has_providers && quirin_providers_only {
+        return Err(
+            "--quirin-providers-only guards a provider selection; select providers with \
+             --provider"
+                .into(),
+        );
+    }
+    let (contracts, contract_source) = if has_providers {
+        if contract_manifest.is_some() {
+            return Err(
+                "a provider selection and an explicit contract manifest are two declarations of \
+                 one input; give one"
+                    .into(),
+            );
+        }
+        let load_path = load_path.as_deref().ok_or(
+            "a provider selection needs the contract load path (--load-path \
+             providers/contract-load-path.json)",
+        )?;
+        let resolve = |entries: &Option<Vec<String>>, source| {
+            entries
+                .as_ref()
+                .map(|entries| resolve_providers(load_path, entries, quirin_providers_only, source))
+                .transpose()
+        };
+        let resolved = match (
+            resolve(&command_line.providers, SelectionSource::CommandLine)?,
+            resolve(&configuration.providers, SelectionSource::Configuration)?,
+        ) {
+            (Some(left), Some(right)) => agree(left, right)?,
+            (Some(only), None) | (None, Some(only)) => only,
+            (None, None) => unreachable!("a provider selection was given"),
+        };
+        (
+            ContractInput::providers(&resolved, profile_manifest.as_deref()),
+            "providers",
+        )
+    } else if let Some(manifest) = &contract_manifest {
+        (ContractInput::manifest(manifest)?, "manifest")
+    } else if let Some(manifest) = &profile_manifest {
+        (ContractInput::manifest(manifest)?, "profile_manifest")
+    } else {
+        return Err(
+            "no resource contracts selected: name providers (--provider NAME / \"providers\") or \
+             a manifest (--contract-manifest PATH); there is no default provider set, and the \
+             source profile declares no manifest"
+                .into(),
+        );
+    };
+    let historical = historical_reference_revision(&profile)?;
+    let source_set = profile_directory
+        .file_name()
+        .map(|name| name.to_string_lossy().into_owned())
+        .unwrap_or_else(|| "source set".into());
+    let failures = run_current_route(&CurrentRoute {
+        checkout: &checkout,
+        profile: &profile,
+        contracts: &contracts,
+        mode,
+        compile_database: compile_database.as_deref(),
+        monkey_database: monkey_database.as_deref(),
+        monkey_source_report: monkey_source_report.as_deref(),
+        diagnostic_report: report.as_deref(),
+        binding_directory: binding_directory.as_deref(),
+        label: &source_set,
+        historical_note: "Historical source/native/provider evidence: Unknown; the pinned replay is cycle19_fluent_bit_libraries_audit --pinned-evidence",
+        historical_reference_revision: &historical,
+        jobs: effective_jobs,
+    })?;
+    if let Some(report) = &report {
+        let digest = |path: &Option<PathBuf>| -> Result<Value, String> {
+            path.as_ref()
+                .map(|path| {
+                    std::fs::read(path)
+                        .map(|bytes| json!(sha256_hex(&bytes)))
+                        .map_err(|error| format!("{}: {error}", path.display()))
+                })
+                .transpose()
+                .map(|value| value.unwrap_or(Value::Null))
+        };
+        let default_database = checkout.join("build/compile_commands.json");
+        let database = compile_database.clone().unwrap_or(default_database);
+        let invocation = json!({
+            "schema_version": 1,
+            "tool": "quirin-audit current",
+            "tool_version": env!("CARGO_PKG_VERSION"),
+            "build_profile": if cfg!(debug_assertions) { "dev" } else { "release" },
+            "argv": std::iter::once("quirin-audit".to_owned()).chain(std::iter::once("current".to_owned())).chain(arguments.iter().cloned()).collect::<Vec<_>>(),
+            "cwd": cwd,
+            "configuration": config_path,
+            "configuration_sha256": config_bytes.as_deref().map(sha256_hex),
+            "source_revision": crate::checkout_head(&checkout.canonicalize().map_err(|error| error.to_string())?)?,
+            "checkout": checkout,
+            "profile_directory": profile_directory,
+            "compile_database": database,
+            "compile_database_sha256": digest(&Some(database.clone()))?,
+            "monkey_database": monkey_database,
+            "monkey_database_sha256": digest(&monkey_database)?,
+            "reports": {
+                "report": report, "monkey_source_report": monkey_source_report,
+                "binding_directory": binding_directory,
+            },
+            "contracts": {
+                "source": contract_source,
+                "manifest": contracts.manifest_path(),
+                "manifest_sha256": sha256_hex(contracts.manifest_text().as_bytes()),
+            },
+            "mode": mode,
+            "jobs": {"requested": jobs, "effective": effective_jobs, "source": jobs_source},
+            "environment": {
+                "QCORE_CLANG": std::env::var("QCORE_CLANG").ok(),
+                "QCORE_AUDIT_JOBS": std::env::var(crate::parallel::JOBS_VARIABLE).ok(),
+            },
+            "clang": qcore_c_gateway::ClangIdentity::capture()?,
+            "gateway_failures": failures,
+            "scope": "invocation provenance of this run; not an input to any verdict. Preparation (the Clang CMake build and the Monkey inputs, including the C++ compiler) is recorded by scripts/prepare_cmetrics_clang_audit.py and scripts/prepare_cycle19_monkey.py beside their outputs; resource analysis does not establish GCC equivalence or whole-library safety",
+        });
+        crate::current_route::write_invocation(report, &invocation)?;
+    }
+    Ok(failures)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn args(values: &[&str]) -> Vec<String> {
+        values.iter().map(|value| (*value).to_owned()).collect()
+    }
+
+    #[test]
+    fn command_line_flags_anchor_to_the_working_directory_and_repeat_providers() {
+        let (settings, config) = parse_command_line(
+            &args(&[
+                "--checkout",
+                "src",
+                "--provider",
+                "quirin-provider-libc",
+                "--provider",
+                "quirin-provider-cfl:cfl/time.qcore",
+                "--contracts-only",
+                "--jobs",
+                "3",
+                "--config",
+                "/abs/config.json",
+            ]),
+            Path::new("/work"),
+        )
+        .unwrap();
+        assert_eq!(settings.checkout, Some(PathBuf::from("/work/src")));
+        assert_eq!(
+            settings.providers,
+            Some(args(&[
+                "quirin-provider-libc",
+                "quirin-provider-cfl:cfl/time.qcore"
+            ]))
+        );
+        assert_eq!(settings.mode, Some(EvidenceMode::ContractsOnly));
+        assert_eq!(settings.jobs, Some(3));
+        assert_eq!(config, Some(PathBuf::from("/abs/config.json")));
+    }
+
+    #[test]
+    fn a_repeated_single_value_flag_or_an_unknown_flag_refuses() {
+        let cwd = Path::new("/work");
+        assert!(parse_command_line(&args(&["--checkout", "a", "--checkout", "b"]), cwd).is_err());
+        assert!(parse_command_line(&args(&["--checkout"]), cwd).is_err());
+        assert!(parse_command_line(&args(&["--frobnicate"]), cwd).is_err());
+        assert!(parse_command_line(&args(&["--jobs", "0"]), cwd).is_err());
+    }
+
+    #[test]
+    fn a_setting_given_by_both_forms_must_agree() {
+        assert_eq!(one("x", Some(1), None).unwrap(), Some(1));
+        assert_eq!(one("x", None, Some(2)).unwrap(), Some(2));
+        assert_eq!(one("x", Some(3), Some(3)).unwrap(), Some(3));
+        assert!(one("x", Some(3), Some(4)).is_err());
+        assert_eq!(one::<u8>("x", None, None).unwrap(), None);
+    }
+}

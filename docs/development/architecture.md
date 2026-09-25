@@ -34,10 +34,10 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization. Of the 36 modules under `crates/qcore-c-gateway/src/`, **ten** are named by a standing constraint: `legacy_c.rs` (generic unrestricted-C checker — Clang gateway, CFG, resource abstract interpretation, certificate recheck; contracts enter via `ResourceContracts`), `legacy_summary.rs` (W4 interprocedural custody summary inference: SCC-ordered derivation, validation by re-analysis, declared-contract precedence — constraint 4), `typed_source.rs` (opaque typed C path import and source def/use), `legacy_location.rs` (wave 27, the presentation-only preprocessed → original `file:line` map — constraint 12a), `legacy_neutral.rs` (C03-NFR, the neutral-element route for undeclared recursive components — constraint 4), `legacy_joined_provenance.rs` (wave 31, the conditional-provenance pre-pass, extended to cyclic CFGs by a greatest fixed point at wave 35 — constraint 10b) with `provenance_rounds.rs` (wave 37, that pre-pass's proved round bound — constraint 10b), `legacy_declared_abi.rs` and `legacy_declared_modes.rs` (the two declared-contract-versus-C readers constraint 8 forbids moving), and `legacy_return_call.rs` (wave 34, the modeled call in return position — constraint 5b). This list is derived from the constraints, not from the directory: a module the constraints do not name is not thereby unimportant |
 | `crates/qcore-verifier-host/` | L2 generic registry (0.4.0), source-scope resolution, bounded process transport, execution profiles, v1/v2 firewall and composition; depends only on frontend/schemas workspace crates |
 | `crates/qcore-verification/` | Trusted adapter (0.4.0): explicit-registry source driver, generic model/source imports, core-derived obligations, lifecycle/observation witness replay and scope dispatch; depends on core/frontend/contract/schemas/gateway/host, never providers |
-| `crates/qcore-audit/` | L3 configured audit driver: compile-database ingestion, compile-task identity, source selection, per-unit projection and reports over W2 profiles/W1 contracts. Links no provider module |
+| `crates/qcore-audit/` | L3 configured audit driver: compile-database ingestion, compile-task identity, source selection, per-unit projection and reports over W2 profiles/W1 contracts; the configured current-revision route (`current_route.rs`, `current_cli.rs`), contract selection by provider crate on the published load path (`providers.rs`) and the contracts-only evidence mode (`evidence.rs`). Links no provider module |
 | `crates/qcorec/` | CLI binary `quirin` (crate `qcorec`) plus its process-level tests |
 | `compiler/src/` facades | `compiler/src/verifier_plugin.rs` is the compatibility facade for the host and first-party adapters; `compiler/src/verifier_plugins/{libevent,chunkio}/` are the in-process first-party providers (Libevent/Monkey, ChunkIO); `compiler/src/external_{integration,source}.rs` are compatibility facades plus Monkey-specific composition |
-| `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
+| `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | The pinned Fluent Bit corpus arbiter (`--pinned-evidence`); its configured route is a thin wrapper over `qcore_audit::current_route` |
 | `providers/` | Separate twelve-member Cargo workspace (five `qcore-provider-*` packages, six `quirin-provider-*` libraries and the `conformance` harness), excluded from the core workspace. Artifact crates depend only on `qcore-schemas`, serialization and `quirin-provider-shared`. Each provider owns its supplied `.qcore` files in `contracts/`; `providers/package.py` builds, verifies and archives the executable and contract bundle |
 | `providers/quirin-provider-*/`, `contract/corpus.json` | Shared library crates: `quirin-provider-{libc,cfl,mpack,msgpack,fluent-bit}` each own one library's shared contracts (data only; libc only in `-libc`); `quirin-provider-shared` (lib `quirin_provider_shared`) holds the providers' protocol runtime, schemas-only capability evaluators and projection fixtures, the `language/`/`library/` policies, and re-exports the five as one bundle. The providers depend on it; no core crate may depend on any of them. Shared contracts and the validation index of shared/provider-owned sources; [current counts](../STATUS.md) are pinned by `compiler/tests/qcore_contract_corpus.rs`. No duplicate provider contracts |
 | `cycle19-resource-contracts.json` | Repository-root resource selection; all module paths remain relative without traversal |
@@ -59,9 +59,13 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
   `quirin emit -o out.c <file>`,
   `quirin plugins list|inspect <id>|verify <package>|enable|disable`.
 - Configured audits: `quirin-audit CONFIG.json` — the binary of crate
-  `qcore-audit`, whose package and library names are unchanged. Inputs are
-  prepared by `scripts/prepare_cycle19_clang_audit.py`,
-  `scripts/prepare_cmetrics_clang_audit.py` and
+  `qcore-audit`, whose package and library names are unchanged — and
+  `quirin-audit current`, the configured current-revision route, with resource
+  contracts selected by provider crate (`--provider NAME[:MODULE]` or a JSON
+  `providers` array) or by manifest, and an opt-in contracts-only mode
+  (`crates/qcore-audit/README.md`). Inputs are prepared by
+  `scripts/prepare_cmetrics_clang_audit.py` (the Clang CMake build),
+  `scripts/prepare_cycle19_monkey.py` (the Monkey inputs) and
   `scripts/prepare_libevent_core_audit.py`.
 - Bounded native composition: `quirin-audit observed-wait CONFIG.json` joins
   selected Monkey QCore contracts, imported C source, independently loaded
