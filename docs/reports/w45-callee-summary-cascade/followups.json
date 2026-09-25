@@ -1,0 +1,30 @@
+[
+  {
+    "id": "W45-MEMBER-RELEASE-UNTYPED-DECLARATIONS",
+    "title": "254 member actuals at a Released position stay refused because the typed declaration reader cannot type them (typedef record pointers, typedef pointer members, unread declarations)",
+    "why": "Card W45-CALLEE-SUMMARY-CASCADE admits a typed pointer read at a Released { nullable } position (gateway constraint 5j). Its census of the W44 call-argument sink at base b160d765 (docs/reports/w45-callee-summary-cascade/census/release-positions.json) counts 490 distinct refused actuals at Released positions: 138 recognised pointer reads (135 admitted by the card, 3 still refused: 2 free, 1 non-null ctr_destroy), and 352 the recogniser refuses: untyped-base 112 (a base declared through a typedef of a record pointer, e.g. `rd_kafka_Node_t *node` in rd_kafka_Node_destroy), unreadable 75 (the function's declarations were not all read), untyped-member 67 (a member declared through a typedef of a pointer, e.g. `cfl_sds_t buf` in ctr_id_destroy and destroy_label), chain 89, cast 6, other 2, scalar 1. These hold the next destructor bodies of the cascade (ctr_id_destroy, rd_kafka_Node_destroy, rd_kafka_acl_result_destroy's sibling shapes, destroy_label, destroy_chunk_raw). Discharge condition: the typed declaration reader resolves typedef names of record pointers and pointer members (TypedAccessModel / FunctionTypes, shared by every typed route, so re-measured across all of them), with Lean parity for any changed premise and a measured arbiter; chains are W45-MEMBER-RELEASE-CHAINS.",
+    "source": "docs/reports/w45-callee-summary-cascade/README.md",
+    "recorded_by": "W45-CALLEE-SUMMARY-CASCADE"
+  },
+  {
+    "id": "W45-MEMBER-RELEASE-CHAINS",
+    "title": "89 member-chain actuals (`a->b->c`) at a Released position keep the refusal",
+    "why": "Card W45-CALLEE-SUMMARY-CASCADE's rule 1 reuses the W44-INDIRECT-CALL-ARGUMENT-ACCESS recogniser, which refuses a member chain of depth two or more; 89 distinct refused actuals at Released positions are chains (census/release-positions.json). A chain's intermediate links are reads through untracked pointers whose per-link obligations W44-INDIRECT-CHAIN-ACCESS already states. Discharge condition: admit a chain actual at a nullable release with every link's chain_resolves obligation and the ArgumentReads second obligation on the last base, with Lean parity and a measured arbiter.",
+    "source": "docs/reports/w45-callee-summary-cascade/README.md",
+    "recorded_by": "W45-CALLEE-SUMMARY-CASCADE"
+  },
+  {
+    "id": "AGGREGATE-NULL-TEST-AFTER-RELEASE",
+    "title": "The O04-B08 aggregate member null test reads through a released body-acquired base without an obligation (fixture certifies Safe)",
+    "why": "Found by card W45-CALLEE-SUMMARY-CASCADE while testing its member null test (outside its scope, not changed by it). For `struct node *n = q_alloc(); q_free(n); if (n->buf) return;` the condition is lowered by the pre-existing aggregate null condition (Parser::aggregate_null_condition, card O04-B08) to BranchOnNull { source: \"n->buf\" }, and the function is Safe: the member is read through a released identity and no use_after_release candidate or refusal is reported. The same test over a formal base, which the new rule 2 lowers, refuses with UnknownAlias (tests/unit/legacy_member_release.rs). Corpus reach not measured. Discharge condition: the aggregate null condition carries the base's dereference obligation (live, known, non-null, as the typed read requires) or refuses; measured arbiter; Lean parity for the obligation.",
+    "source": "docs/reports/w45-callee-summary-cascade/README.md",
+    "recorded_by": "W45-CALLEE-SUMMARY-CASCADE"
+  },
+  {
+    "id": "W45-CALLEE-CASCADE-RESIDUAL",
+    "title": "411 Unknown functions remain blocked only by uncontracted calls; the cascade census ranks what would unblock them",
+    "why": "Card W45-CALLEE-SUMMARY-CASCADE built the call graph of uncontracted-call leaves on Unknown functions (census/cascade-base.json, cascade-after.json; scripts/cascade.py). After the card: 4,507 Unknown functions, 2,612 with 9,193 uncontracted-call leaves, 411 blocked by nothing else, 299 by exactly one callee. Single-callee leverage is small (at most 12 functions, LZ4_decompress_generic); a cross-unit route over existing Safe home bodies would unblock 2 (not built); removing the indirect-access family from callee bodies would unblock 199 (up from 186 before the card), the return-expression family 37, branch conditions 11. Of the 412 roots at base, 253 need a callee with no same-unit body. Discharge condition: none by one route; each card that models a callee-body family re-runs scripts/cascade.py and reports the move of this figure.",
+    "source": "docs/reports/w45-callee-summary-cascade/README.md",
+    "recorded_by": "W45-CALLEE-SUMMARY-CASCADE"
+  }
+]

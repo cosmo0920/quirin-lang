@@ -1,0 +1,15 @@
+{
+ "statements_with_a_recognised_released_pointer": 138,
+ "still_refused_after": 3,
+ "admitted_after": 135,
+ "still_refused_by_callee": [
+  [
+   "free",
+   2
+  ],
+  [
+   "ctr_destroy",
+   1
+  ]
+ ]
+}

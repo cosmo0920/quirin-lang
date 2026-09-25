@@ -330,6 +330,33 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     through a misnamed store is withdrawn with it (`mk_iov_init`).
     [Report](../reports/w44-assignment-destination-suffix-place/README.md).
 
+<a id="constraint-5j"></a>
+
+5j. **A released member is outside the projection, and a summary that
+    releases one is guarded at its callers.** W45-CALLEE-SUMMARY-CASCADE
+    (`legacy_member_release.rs`) admits a typed pointer read (`B->F`, `B[I]`,
+    `*B`, never `S.F` or an address) at a `Released { nullable: true }`
+    position only, lowered with that position `Borrowed` after the unchanged
+    W44-INDIRECT-CALL-ARGUMENT-ACCESS reads; and a controlling expression that
+    null-tests one pointer member lowers to the typed read of its base, with
+    no refinement. A W4 summary of such a body releases objects reachable
+    through its formals that no mode states, so before every call to a
+    function the unit defines, the environment does not declare, and whose
+    body (or a body it calls, to a fixed point) hands a pointer read to a
+    call, `ArgumentReads` refuses a plain-name actual whose target owns
+    sub-custody. **Keep all three premises.** Do not admit a non-null
+    release (nothing establishes an untracked member non-null) or a member
+    address (an interior pointer). Do not drop the guard or narrow its lexical
+    selection below the bodies that may use rule 1. Do not widen it to declared
+    callees (the first arbiter run did, and `flb_input_chunk_create` left
+    `Safe` over the declared `static inline` `flb_free`) or to every undeclared
+    one (the callers of validated `Removed` wrappers own sub-custody by
+    construction and refused). The route rests on
+    premise 4 of W44-INDIRECT-CALL-ARGUMENT-ACCESS (a stored pointer is tracked
+    only through a bound place or sub-custody); a card that stores a tracked
+    identity into a member without recording either must refuse this read.
+    `QCore.MemberRelease`; [report](../reports/w45-callee-summary-cascade/README.md).
+
 <a id="constraint-6"></a>
 
 <!-- preserved:constraint-6:start -->

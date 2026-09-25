@@ -1,0 +1,130 @@
+{
+ "before": {
+  "functions": {
+   "Unknown": 4516,
+   "Safe": 306,
+   "Unsafe": 12
+  },
+  "units": {
+   "Unknown": 168,
+   "Safe": 3,
+   "Unsafe": 10,
+   "data_only": 4
+  },
+  "data_only_units": 5,
+  "diagnostic_counts": {
+   "leak": 37,
+   "summary_conflict": 1,
+   "unknown_alias": 3507,
+   "unsupported": 43590
+  },
+  "uncontracted_call_leaves": 9200,
+  "unknown_with_call_leaves": 2614,
+  "only_calls": 412,
+  "only_one_callee": 300
+ },
+ "after": {
+  "functions": {
+   "Unknown": 4507,
+   "Safe": 314,
+   "Unsafe": 13
+  },
+  "units": {
+   "Unknown": 166,
+   "Safe": 4,
+   "Unsafe": 11,
+   "data_only": 4
+  },
+  "data_only_units": 5,
+  "diagnostic_counts": {
+   "leak": 38,
+   "summary_conflict": 1,
+   "unknown_alias": 3566,
+   "unsupported": 43196
+  },
+  "uncontracted_call_leaves": 9170,
+  "unknown_with_call_leaves": 2611,
+  "only_calls": 411,
+  "only_one_callee": 299
+ },
+ "function_moves": [
+  {
+   "unit": "chunkio/cio_error.c",
+   "function": "cio_error_set",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "cmetrics/cmt_histogram.c",
+   "function": "cmt_histogram_buckets_destroy",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "fluent-bit-chunk/flb_input_chunk.c",
+   "function": "flb_input_chunk_create",
+   "before": "Safe",
+   "after": "Unknown"
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupListing_destroy",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "librdkafka/rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupListing_free",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "librdkafka/rdkafka_cgrp.c",
+   "function": "rd_kafka_consumer_group_metadata_destroy",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "librdkafka/rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_partition_clear",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareGroupHeartbeat",
+   "before": "Unknown",
+   "after": "Unsafe"
+  },
+  {
+   "unit": "librdkafka/rdkafka_queue.c",
+   "function": "rd_kafka_q_consumer_propagate",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "librdkafka/snappy.c",
+   "function": "rd_kafka_snappy_free_env",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "monkey-libevent/mk_server/mk_config.c",
+   "function": "mk_config_sanity_check",
+   "before": "Unknown",
+   "after": "Safe"
+  }
+ ],
+ "unit_moves": [
+  {
+   "unit": "chunkio/cio_error.c",
+   "before": "Unknown",
+   "after": "Safe"
+  },
+  {
+   "unit": "librdkafka/rdkafka_mock_handlers.c",
+   "before": "Unknown",
+   "after": "Unsafe"
+  }
+ ]
+}
