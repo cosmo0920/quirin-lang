@@ -1,0 +1,13 @@
+{
+  "note": "W44-LIBC-RESIDUALS (route b, on main 5355998d): core Rust test measured on db1205fa (route b's code, pins and Lean; the later commit c9337006 and the records commit change documents, the ledger, report scripts and evidence only), then cargo clean --profile dev; fmt, clippy (--workspace), probes, Lean and the provider gate ran after c9337006 on an identical non-doc tree. 5435 core Rust passed / 0 failed / 11 ignored over 288 summaries (main's W44-CORPUS-CALLEE-SUMMARIES integration gate recorded 5432; this card adds two test functions); 181 Lean audits (179 on main plus AuditGnuBuiltinReader and AuditLiteralTailActual); root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. CARGO_INCREMENTAL=0. Logs: worktree-private measure/gate2 and measure/provider-gate2 of agent-a12a2b7db791da414. Clang recorded in this checkout. Corpus: 3 functions Unknown -> Safe (ut_put_be16/32/64) through validated W4 summaries of glibc header bodies, 0 unit moves, leak 271, 0 violation candidates.",
+  "workspace_tests": 5435,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 330,
+  "lean_audits": 181,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

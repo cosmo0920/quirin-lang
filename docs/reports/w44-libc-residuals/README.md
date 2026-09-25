@@ -621,7 +621,71 @@ exchange, so its accuracy is not independent evidence.
 
 ## 8. Validation
 
-GATE-TABLE-PLACEHOLDER
+Measured in this worktree (`agent-a12a2b7db791da414`) by
+[`scripts/run_gate.py`](scripts/run_gate.py). That is W43-LIBC-RESULT-ALIAS'
+runner with two additions: `CARGO_INCREMENTAL=0` and a `docsindex` step. It
+sets `CARGO_BUILD_JOBS=6` and `RUST_TEST_THREADS=2`, turns debug info off, and
+captures every exit to a file, never through a pipe.
+
+The core `cargo test` step ran on `db1205fa`, which is route (b)'s code, pins
+and Lean. `cargo clean --profile dev` followed once it was recorded (6.3 GiB
+removed). The remaining core steps and the whole provider gate ran after
+`c9337006`, which changed only documents, the ledger, report scripts and
+evidence. The generator input is [gate.json](gate.json), with the
+[Clang recording](clang-version.txt) taken in this checkout beside it. Logs are
+worktree-private under `measure/gate2/` and `measure/provider-gate2/`. At least
+40G was free before each long build: 182G before the stage builds, 197G after
+the clean.
+
+| Command | Exit | Result | Log |
+|---|---:|---|---|
+| `git submodule update --init --recursive` | 0 | libevent at `d82464a2…` | `measure/gate2/submodules.log` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 | `measure/gate2/clang.log` |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,435 passed / 0 failed / 11 ignored**, 288 summaries | `measure/gate2/test.log` |
+| `cargo clean --profile dev` | 0 | 2,278 files, 6.3 GiB | `measure/logs/clean-dev.log` |
+| `cargo fmt --all -- --check` | 0 | clean | `measure/gate2/fmt.log` |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean | `measure/gate2/clippy.log` |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | | `measure/gate2/probe.log` |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | | `measure/gate2/followup.log` |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **181** audits | `measure/gate2/lean.log` |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w44-libc-residuals/gate.json` | 0 | 356 follow-ups, 111 contract modules, 181 Lean audits | `measure/logs/build-matrix.log` |
+| `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | index regenerated and matching | `measure/logs/docs-index-check.log` |
+| `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **330** tests | `measure/logs/python-final.log` |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **124 passed / 0 failed / 0 ignored**, 39 summaries | `measure/provider-gate2/ptest.log` |
+| `… -p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations … -- --exact --test-threads=1` | 0 | 1 passed (isolated, constraint 16) | `measure/provider-gate2/pisolated.log` |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean | `measure/provider-gate2/pfmt.log` |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean | `measure/provider-gate2/pclippy.log` |
+| `python3 providers/contracts.py check` | 0 | inventories and load path unchanged against main | `measure/provider-gate2/pcontracts.log` |
+| `python3 providers/package.py build --output measure/provider-gate2/packages` | 0 | 5 packages | `measure/provider-gate2/pbuild.log` |
+| `python3 providers/package.py verify …/<id>` (×5: chunkio, cmetrics, ctraces, libevent, librdkafka) | 0 ×5 | | `measure/provider-gate2/pverify.log` |
+| `python3 -m unittest discover -s providers/tests` | 0 | 13 tests | `measure/provider-gate2/ppython.log` |
+
+**Counts against main.** Main's W44-CORPUS-CALLEE-SUMMARIES integration gate
+records 5,432 core tests, 124 provider tests, 330 Python tests and 179 Lean
+audits.
+
+* **Core tests:** this card adds two test functions,
+  `a_va_list_result_has_no_spelling` (`loader_abi.rs`) and
+  `a_literal_tail_is_data_even_where_the_closure_marked_literals_risky`
+  (`variadic_nested`). It renames four re-pinned ones, which count unchanged.
+  The third test of the +3 difference was not traced.
+* **Lean audits:** it adds two, `AuditGnuBuiltinReader` and
+  `AuditLiteralTailActual`.
+* **Load-sensitive tests:** no failure occurred.
+  `vp04_vp07_vp08_process_lifecycle_and_payload_budgets` passed in the full
+  run, so no isolated rerun was needed.
+
+**Attempts that are not the gate, disclosed.**
+
+* **Route (a)'s gate** (`measure/gate-stopped-route-b/`) was stopped by hand
+  during its `cargo test` step, when the item-1 route changed. It has no
+  recorded exit and is not evidence.
+* **Focused runs** before the gate are measurements, not gate steps. Each
+  passed: `legacy_callee_scope` (13), `loader_abi` (15), `contract_loader`
+  (10), `qcore_contract_corpus` (4), the re-pinned gateway tests, and
+  `test_contract_corpus` (7).
+* **Stage binaries:** four were built by checking later analyzer files out
+  from main, and each file was restored from git afterwards. §6 records this.
 
 ## 9. Ledger and status
 

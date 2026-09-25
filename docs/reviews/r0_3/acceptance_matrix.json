@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 358
+  "named_followups": 356
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W44-CORPUS-CALLEE-SUMMARIES on merge a6deb69f (onto main b4430a14, after W44-INDIRECT-CHAIN-ACCESS), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5432 core Rust passed / 1 failed / 11 ignored over 290 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 179 Lean audits; 330 root Python tests after regenerating this section (08-python exit 1 before regeneration); 13 package Python tests. The core test step exited 101 on one failure, vp04_vp07_vp08_process_lifecycle_and_payload_budgets (compiler/tests/cycle20_verifier_plugins.rs), a load-sensitive process-budget row: it passed 3/3 isolated reruns (vp04-isolated-reruns.txt); the exit is recorded, not replaced. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w44-indirect-chain-access/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
-  "workspace_tests": 5432,
+  "note": "W44-LIBC-RESIDUALS (route b, on main 5355998d): core Rust test measured on db1205fa (route b's code, pins and Lean; the later commit c9337006 and the records commit change documents, the ledger, report scripts and evidence only), then cargo clean --profile dev; fmt, clippy (--workspace), probes, Lean and the provider gate ran after c9337006 on an identical non-doc tree. 5435 core Rust passed / 0 failed / 11 ignored over 288 summaries (main's W44-CORPUS-CALLEE-SUMMARIES integration gate recorded 5432; this card adds two test functions); 181 Lean audits (179 on main plus AuditGnuBuiltinReader and AuditLiteralTailActual); root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0}. Provider workspace: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed; provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. CARGO_INCREMENTAL=0. Logs: worktree-private measure/gate2 and measure/provider-gate2 of agent-a12a2b7db791da414. Clang recorded in this checkout. Corpus: 3 functions Unknown -> Safe (ut_put_be16/32/64) through validated W4 summaries of glibc header bodies, 0 unit moves, leak 271, 0 violation candidates.",
+  "workspace_tests": 5435,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 179,
+  "lean_audits": 181,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6814,6 +6814,7 @@
    "AuditFixedScalarQuery.lean",
    "AuditFrameHelperTask.lean",
    "AuditGenericNames.lean",
+   "AuditGnuBuiltinReader.lean",
    "AuditHttpComputedLength.lean",
    "AuditIndexTraversal.lean",
    "AuditIndexedCollection.lean",
@@ -6825,6 +6826,7 @@
    "AuditKindedCustody.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditLiteralArgumentPremise.lean",
+   "AuditLiteralTailActual.lean",
    "AuditLoopBudget.lean",
    "AuditLoopSwitchCallEvaluation.lean",
    "AuditLoopWindows.lean",
@@ -6923,7 +6925,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w44-corpus-callee-summaries/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-libc-residuals/gate.json)"
  },
  "named_followups": [
   {
