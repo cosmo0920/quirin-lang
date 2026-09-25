@@ -844,6 +844,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w44-corpus-callee-summaries](w44-corpus-callee-summaries/README.md) | W44-CORPUS-CALLEE-SUMMARIES: why corpus callees get no summary, and the one route gap closed |
 
+| [w44-indirect-call-argument-access](w44-indirect-call-argument-access/README.md) | W44-INDIRECT-CALL-ARGUMENT-ACCESS: typed indirect reads in call actuals |
+
 | [w44-indirect-chain-access](w44-indirect-chain-access/README.md) | W44-INDIRECT-CHAIN-ACCESS: typed record-pointer member chains |
 
 | [w44-leak-pin-audit](w44-leak-pin-audit/README.md) | W44-LEAK-PIN-AUDIT: every leak leaf classified; no leak claimed through a refused hand-on |

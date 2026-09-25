@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 377
+  "named_followups": 384
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6731,11 +6731,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate for W44-LIBC-RESIDUALS on merge ed36b895 (onto main 94502987, after W44-BRANCH-CONDITION-CALLS, W44-LEAK-PIN-AUDIT and W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE), measured by the integrator in its own worktree with CARGO_INCREMENTAL=0; every exit captured to a file, not piped. 5505 core Rust passed / 0 failed / 11 ignored over 294 summaries; 124 provider Rust passed / 0 / 0 over 39 summaries; 185 Lean audits; 330 root Python tests after regenerating this section (08-python exit 1 before regeneration); 13 package Python tests. fmt/clippy (core and provider), both reevaluation examples, the docs index, providers/contracts.py check, the isolated package mutation control, and all five package builds and verifications exit 0. The byte-identity step against docs/reports/w44-assignment-destination-suffix-place/integration/artifacts exits 1 by design when the card moves the corpus; the composition check shows the combined run's delta equals the card's own delta exactly. The combined run is archived as the new baseline in integration/artifacts/.",
-  "workspace_tests": 5505,
+  "note": "W44-INDIRECT-CALL-ARGUMENT-ACCESS on the combined tree: core Rust, fmt, clippy (--workspace), probes, Lean and the census-feature step measured on the merge 9c8b7809 of main 70ce6b44 (later commits change documents, evidence, report scripts and the ledger only), with CARGO_INCREMENTAL=0; the dev profile was reclaimed (cargo clean --profile dev) after the test step and before the provider gate. 5540 core Rust passed / 0 failed / 11 ignored over 293 summaries (the card adds the 25-test call_argument_access.rs binary and 9 unit tests of legacy_call_argument_access.rs, moved nine pins on its base and re-pinned four of its own fixtures at the merge); 186 Lean audits (AuditCallArgumentAccess, 26 theorems); census step: clippy -p qcore-c-gateway --features indirect-census --all-targets clean and 513 feature-on library tests passed; root Python tests counted after the final matrix regeneration (see the report). Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'census': 0}. Provider workspace on the same tree: 124 passed / 0 failed / 0 ignored over 39 summaries; isolated package mutation control passed (1 test); provider fmt and clippy clean; providers/contracts.py check exit 0; five package builds and verifications exit 0; 13 package Python tests. Logs: worktree-private private/gate and private/provider-gate of agent-a833cb615fbcb8088 (the card-base gate on dbef7720 is kept as private/gate-premerge-dbef7720 and private/provider-gate-premerge-dbef7720, superseded). Clang recorded in this checkout. Corpus against the W44-LIBC-RESIDUALS integration baseline: 195 leaves removed and 38 added, all attributed; functions 1 Unknown -> Safe and 1 Unknown -> provisional Unsafe; units 1 Unknown -> provisional Unsafe; leak 19 -> 20 (one class (c) leaf, MK-LIST-ADD-BORROWED-PUBLICATION); 0 use_after_release.",
+  "workspace_tests": 5540,
   "provider_tests": 124,
   "python_evidence_validator_tests": 330,
-  "lean_audits": 185,
+  "lean_audits": 186,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6752,6 +6752,7 @@
    "AuditBucketTally.lean",
    "AuditCGatewayRefinements.lean",
    "AuditCProgram.lean",
+   "AuditCallArgumentAccess.lean",
    "AuditCallUseAdmission.lean",
    "AuditCallbackTaskHandoff.lean",
    "AuditCalleeSummaryScope.lean",
@@ -6929,7 +6930,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w44-libc-residuals/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w44-indirect-call-argument-access/gate.json)"
  },
  "named_followups": [
   {
