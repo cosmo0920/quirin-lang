@@ -181,6 +181,13 @@ impl AuditReport {
         Ok(())
     }
 
+    /// Every unit row recorded so far, in order (card
+    /// W45-CONTRACT-DEFERRED-REVIEW: read by the pending-review inventory).
+    #[must_use]
+    pub fn unit_rows(&self) -> &[Value] {
+        &self.units
+    }
+
     pub(crate) fn set_source_contracts(&mut self, evidence: Value) {
         self.source_contracts = Some(evidence);
     }

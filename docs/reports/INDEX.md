@@ -874,6 +874,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-callee-summary-cascade](w45-callee-summary-cascade/README.md) | W45-CALLEE-SUMMARY-CASCADE: which callee bodies unblock whom, and the destructor body modeled |
 
+| [w45-contract-deferred-review](w45-contract-deferred-review/README.md) | W45-CONTRACT-DEFERRED-REVIEW: contracts whose evaluation is postponed to a human |
+
 | [w45-return-expression-families](w45-return-expression-families/README.md) | W45-RETURN-EXPRESSION-FAMILIES — the refused return expressions that block functions alone |
 
 | [w45-sub-object-stores](w45-sub-object-stores/README.md) | W45-SUB-OBJECT-STORES: stores into a sub-object through a resolved base |

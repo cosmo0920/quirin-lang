@@ -169,6 +169,7 @@ impl PointerResults<'_> {
             .map(|(_, name)| name)
             .or_else(|| declared_modes::withdrawn_callee(callee).map(|(_, name)| name))
             .or_else(|| super::literal_premise::unmet_callee(callee))
+            .or_else(|| super::review_hold::held_callee(callee))
             .unwrap_or(callee);
         if let Some(answer) = self.read.get(name) {
             return *answer;

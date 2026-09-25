@@ -263,8 +263,8 @@ use qcore_frontend::frontend::{
 };
 use qcore_frontend::lexer::{Symbol, TokenKind, lex};
 use qcore_schemas::contract::{
-    DerivedExtent, ResourceContracts, ResourceFunctionContract, ResourceKind,
-    ResourceParameterMode, ResourceReturnMode,
+    ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
+    ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewScope,
 };
 
 /// Opaque C ABI scalar projections. Borrowed only: they carry sizes, counts,
@@ -412,6 +412,9 @@ struct LoadedDeclaration {
     variadic_data_tail: bool,
     literal_arguments: Vec<DeclaredLiteralArgument>,
     abi: DeclaredAbiSignature,
+    /// Card W45-CONTRACT-DEFERRED-REVIEW: every review marker, in clause
+    /// order. Nonempty withholds the whole contract.
+    review: Vec<ReviewDeferral>,
 }
 
 /// The parameter vocabulary: every scalar, every pointer, `fnptr` and
@@ -570,6 +573,7 @@ pub fn load_resource_contract_sources(
         return Err("no resource contract inputs selected".into());
     }
     let mut contracts = ResourceContracts::default();
+    let mut pending = BTreeMap::new();
     for (path, source) in sources {
         reject_retired_premise_directive(path, source)?;
         reject_unresolved_inclusion(path, source)?;
@@ -580,14 +584,31 @@ pub fn load_resource_contract_sources(
         for declaration in parsed.declarations {
             let decl = &declaration.value;
             let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            if contracts.contract(&decl.name).is_some() {
+            if contracts.contract(&decl.name).is_some() || pending.contains_key(&decl.name) {
                 return Err(format!("{context}: duplicate function contract"));
             }
             let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            contracts.insert_contract(&decl.name, loaded.contract);
+            // Card W45-CONTRACT-DEFERRED-REVIEW: a declaration carrying a
+            // review marker is validated in full above and then withheld. It
+            // is never an entry of the function map, so a consumer that knows
+            // nothing of the marker sees an uncontracted callee.
+            if loaded.review.is_empty() {
+                contracts.insert_contract(&decl.name, loaded.contract);
+            } else {
+                pending.insert(
+                    decl.name.clone(),
+                    PendingHumanReview {
+                        trust: ContractTrust::PendingHumanReview,
+                        module: path.clone(),
+                        contract: loaded.contract,
+                        deferrals: loaded.review,
+                    },
+                );
+            }
         }
     }
     contracts.set_source_assumptions(sources.clone());
+    contracts.set_pending_review(pending);
     Ok(contracts)
 }
 
@@ -750,7 +771,9 @@ pub fn declared_variadic_data_tails(
 pub fn check_source_assumptions(contracts: &ResourceContracts) -> Result<(), String> {
     if !contracts.source_assumptions().is_empty() {
         let loaded = load_resource_contract_sources(contracts.source_assumptions())?;
-        if loaded.functions() != contracts.functions() {
+        if loaded.functions() != contracts.functions()
+            || loaded.pending_review() != contracts.pending_review()
+        {
             return Err("resource contracts differ from their declared source assumptions".into());
         }
     }
@@ -907,6 +930,7 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
             || child_loaded.variadic_data_tail != parent_loaded.variadic_data_tail
             || child_loaded.literal_arguments != parent_loaded.literal_arguments
             || child_loaded.abi != parent_loaded.abi
+            || !review_inherited(&child_loaded.review, &parent_loaded.review)
         {
             return Err(refuse(format!(
                 "`{child_name}` would not mean what its parent `{}` means under the resource-v1 \
@@ -1006,8 +1030,34 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             .copied()
             .ok_or_else(|| format!("unknown parameter {name}"))
     };
+    let mut review: Vec<ReviewDeferral> = Vec::new();
     for clause in clauses {
-        let expression = &clause.value.expression_source;
+        let written = &clause.value.expression_source;
+        // Card W45-CONTRACT-DEFERRED-REVIEW: a review marker, contract-level
+        // (a requirement) or clause-level (wrapping one `ensures normal`
+        // clause, which is then read exactly as if written bare).
+        let requires = clause.value.kind == SourceContractClauseKind::Requires;
+        let unwrapped = review_marker(requires, written)?;
+        let expression: &str = match &unwrapped {
+            None => written,
+            Some(ReviewMarker::Contract(deferral)) => {
+                if !review.is_empty() {
+                    return Err(DUPLICATE_REVIEW_MARKER.into());
+                }
+                review.push(deferral.clone());
+                continue;
+            }
+            Some(ReviewMarker::Clause { inner, deferral }) => {
+                if review
+                    .iter()
+                    .any(|earlier| earlier.scope == ReviewScope::Contract)
+                {
+                    return Err(DUPLICATE_REVIEW_MARKER.into());
+                }
+                review.push(deferral.clone());
+                inner
+            }
+        };
         if clause.value.kind == SourceContractClauseKind::Requires {
             if token_kinds(expression)? == token_kinds("resource_contract_v1")? {
                 if marker {
@@ -1259,7 +1309,188 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             result: return_type.to_owned(),
             variadic_data_tail,
         },
+        review,
     })
+}
+
+/// The clause introducer of a review marker (card W45-CONTRACT-DEFERRED-REVIEW).
+pub const REVIEW_MARKER: &str = "resource_review_pending";
+
+/// A second contract-level marker, or a contract-level marker beside a
+/// clause-level one: the contract-level marker already defers every clause.
+const DUPLICATE_REVIEW_MARKER: &str =
+    "duplicate review marker: a contract-level marker defers every clause, so it stands alone";
+
+/// One review marker, parsed.
+enum ReviewMarker {
+    /// `requires resource_review_pending("REASON"[, "OWNER"]);`
+    Contract(ReviewDeferral),
+    /// `ensures normal resource_review_pending(CLAUSE, "REASON"[, "OWNER"]);`
+    /// with `inner` the wrapped clause's expression text.
+    Clause {
+        inner: String,
+        deferral: ReviewDeferral,
+    },
+}
+
+/// Read one clause expression as a review marker, if it is one.
+///
+/// `None` means the clause is not a marker and is read as written. Every
+/// malformed marker is an error, so total-or-reject refuses the whole module:
+/// a missing or empty reason, a reason or owner that is not one plain string
+/// literal, a contract-level marker under `ensures`, a clause-level marker
+/// under `requires` (neither the resource-v1 selector nor a literal-argument
+/// premise can be deferred on its own — the whole contract can), and a marker
+/// wrapping a marker.
+fn review_marker(requires: bool, expression: &str) -> Result<Option<ReviewMarker>, String> {
+    let lexed = lex(expression).map_err(|e| e.to_string())?;
+    let tokens = lexed
+        .iter()
+        .filter(|token| token.kind != TokenKind::Eof)
+        .collect::<Vec<_>>();
+    if !matches!(
+        tokens.first().map(|t| &t.kind),
+        Some(TokenKind::Word(word)) if word == REVIEW_MARKER
+    ) {
+        return Ok(None);
+    }
+    let malformed = || {
+        format!(
+            "malformed review marker `{expression}`: write `requires {REVIEW_MARKER}(\"REASON\"[, \
+             \"OWNER\"]);` or `ensures normal {REVIEW_MARKER}(CLAUSE, \"REASON\"[, \"OWNER\"]);`"
+        )
+    };
+    let missing_reason =
+        || format!("review marker `{expression}` gives no reason; a reason is mandatory");
+    if tokens.len() < 3
+        || tokens[1].kind != TokenKind::Symbol(Symbol::LeftParen)
+        || tokens[tokens.len() - 1].kind != TokenKind::Symbol(Symbol::RightParen)
+    {
+        return Err(malformed());
+    }
+    let arguments = &tokens[2..tokens.len() - 1];
+    // A wrapped clause is a balanced `NAME(...)` prefix of the arguments.
+    let (inner, strings) = match arguments.first().map(|t| &t.kind) {
+        Some(TokenKind::Word(name)) => {
+            if name == REVIEW_MARKER {
+                return Err(format!(
+                    "a review marker cannot wrap another review marker: `{expression}`"
+                ));
+            }
+            let mut depth = 0usize;
+            let mut close = None;
+            for (index, token) in arguments.iter().enumerate() {
+                match token.kind {
+                    TokenKind::Symbol(Symbol::LeftParen) => depth += 1,
+                    TokenKind::Symbol(Symbol::RightParen) => {
+                        depth = depth.checked_sub(1).ok_or_else(malformed)?;
+                        if depth == 0 {
+                            close = Some(index);
+                            break;
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            let close = close.ok_or_else(malformed)?;
+            let text = &expression[arguments[0].span.start..arguments[close].span.end];
+            let Some((first, rest)) = arguments[close + 1..].split_first() else {
+                return Err(missing_reason());
+            };
+            if first.kind != TokenKind::Symbol(Symbol::Comma) {
+                return Err(malformed());
+            }
+            (
+                Some(text.split_whitespace().collect::<Vec<_>>().join(" ")),
+                rest,
+            )
+        }
+        _ => (None, arguments),
+    };
+    let mut literals = Vec::new();
+    for (index, token) in strings.iter().enumerate() {
+        match (index % 2, &token.kind) {
+            (0, TokenKind::StringLiteral(text)) => literals.push(text.clone()),
+            (1, TokenKind::Symbol(Symbol::Comma)) => {}
+            _ => return Err(malformed()),
+        }
+    }
+    if !strings.is_empty() && strings.len() % 2 == 0 {
+        return Err(malformed());
+    }
+    let (reason, owner) = match literals.as_slice() {
+        [] => return Err(missing_reason()),
+        [reason] => (reason.clone(), None),
+        [reason, owner] => (reason.clone(), Some(owner.clone())),
+        _ => return Err(malformed()),
+    };
+    let plain = |text: &str, what: &str| -> Result<(), String> {
+        if text.trim().is_empty() {
+            return Err(format!("review marker `{expression}` has an empty {what}"));
+        }
+        if text.contains('\\') || text.chars().any(char::is_control) {
+            return Err(format!(
+                "review marker `{expression}`: the {what} is one plain line with no escapes"
+            ));
+        }
+        Ok(())
+    };
+    plain(&reason, "reason")?;
+    if let Some(owner) = &owner {
+        plain(owner, "owner")?;
+    }
+    match (inner, requires) {
+        (None, true) => Ok(Some(ReviewMarker::Contract(ReviewDeferral {
+            scope: ReviewScope::Contract,
+            reason,
+            owner,
+        }))),
+        (None, false) => Err(format!(
+            "a contract-level review marker is a requirement: write `requires {expression};`"
+        )),
+        (Some(_), true) => Err(format!(
+            "unsupported review marker `{expression}`: a clause-level marker wraps an `ensures \
+             normal` clause; the resource-v1 selector and a literal-argument premise cannot be \
+             deferred on their own, so defer the whole contract instead"
+        )),
+        (Some(inner), false) => {
+            let name = inner.split('(').next().unwrap_or_default().trim();
+            if name == "resource_contract_v1" || name == "resource_literal_argument" {
+                return Err(format!(
+                    "unsupported review marker `{expression}`: only an `ensures normal` \
+                     resource-v1 clause can be deferred"
+                ));
+            }
+            Ok(Some(ReviewMarker::Clause {
+                deferral: ReviewDeferral {
+                    scope: ReviewScope::Clause {
+                        clause: format!("ensures normal {inner}"),
+                    },
+                    reason,
+                    owner,
+                },
+                inner,
+            }))
+        }
+    }
+}
+
+/// Card W45-CONTRACT-DEFERRED-REVIEW, contract spec §C15: an inherited
+/// declaration carries exactly its parent's review markers. Elaboration copies
+/// the parent's clauses with each parameter renamed by position, so a
+/// clause-level marker's recorded clause text is compared after that renaming
+/// rather than byte for byte; the scope kind, reason and owner must be equal.
+fn review_inherited(child: &[ReviewDeferral], parent: &[ReviewDeferral]) -> bool {
+    child.len() == parent.len()
+        && child.iter().zip(parent).all(|(child, parent)| {
+            child.reason == parent.reason
+                && child.owner == parent.owner
+                && matches!(
+                    (&child.scope, &parent.scope),
+                    (ReviewScope::Contract, ReviewScope::Contract)
+                        | (ReviewScope::Clause { .. }, ReviewScope::Clause { .. })
+                )
+        })
 }
 
 /// `resource_literal_argument(PARAM, LITERAL)`, exactly (card HASH-CLAUSE).

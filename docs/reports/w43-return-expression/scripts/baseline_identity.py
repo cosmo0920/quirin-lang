@@ -10,6 +10,15 @@ is rewritten to its CANONICAL spelling (a checkout-path-only difference); that
 normalised answer is a disclosure, never a substitute for the raw comparison.
 Exits 0 only when every verdict-bearing artifact (the diagnostics) is
 byte-identical.
+
+`--additive-field ARTIFACT:KEY` (card W45-CONTRACT-DEFERRED-REVIEW) names one
+top-level key a later card added to a sidecar artifact. For a non-identical
+ARTIFACT it additionally reports whether the difference is exactly that key:
+the key is present in the run, absent from the baseline, and the run with it
+removed (after any root alias) equals the baseline both as JSON and byte for
+byte when re-serialized in the writer's pretty form. Like the root alias, it is
+a disclosure beside the raw comparison, never a substitute for it, and it
+cannot name the verdict-bearing diagnostics artifact.
 """
 
 import gzip
@@ -17,6 +26,23 @@ import hashlib
 import json
 import pathlib
 import sys
+
+
+def without_additive_fields(data, archived, keys):
+    """Whether `data` differs from `archived` in exactly the top-level `keys`:
+    each present in `data` and absent from `archived`, and the rest equal both
+    as JSON and byte for byte in the writer's two-space pretty form."""
+    run, baseline = json.loads(data), json.loads(archived)
+    if not isinstance(run, dict) or not isinstance(baseline, dict):
+        return {"json_equal": False, "bytes_equal": False, "keys_present": False}
+    present = all(key in run and key not in baseline for key in keys)
+    stripped = {key: value for key, value in run.items() if key not in keys}
+    return {
+        "keys_present": present,
+        "json_equal": present and stripped == baseline,
+        "bytes_equal": present
+        and json.dumps(stripped, indent=2, ensure_ascii=False).encode() == archived,
+    }
 
 NAMES = {
     "diagnostics": "resource-diagnostics.json",
@@ -32,11 +58,18 @@ def main() -> int:
     baseline = pathlib.Path(sys.argv[2])
     aliases = []
     references = []
+    additive = {}
     arguments = sys.argv[3:]
     while arguments:
         if arguments[0] == "--root-alias":
             root, canonical = arguments[1].split("=", 1)
             aliases.append((root.encode(), canonical.encode()))
+            arguments = arguments[2:]
+        elif arguments[0] == "--additive-field":
+            label, key = arguments[1].split(":", 1)
+            if label not in NAMES or label == "diagnostics" or not key:
+                raise SystemExit(f"--additive-field names a sidecar and a key, not {arguments[1]!r}")
+            additive.setdefault(label, []).append(key)
             arguments = arguments[2:]
         elif arguments[0] == "--reference":
             # A later same-source raw checkpoint (for example the canonical
@@ -70,6 +103,14 @@ def main() -> int:
             for root, canonical in aliases:
                 normalised = normalised.replace(root, canonical)
             entry["identical_after_root_alias"] = normalised == archived
+        if not entry["byte_identical"] and label in additive:
+            normalised = data
+            for root, canonical in aliases:
+                normalised = normalised.replace(root, canonical)
+            entry["additive_fields"] = additive[label]
+            entry["identical_ignoring_additive_fields"] = without_additive_fields(
+                normalised, archived, additive[label]
+            )
         for reference in references:
             other = (reference / name).read_bytes()
             normalised = data

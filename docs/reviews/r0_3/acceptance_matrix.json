@@ -170,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "14.0.0",
+  "qcore_schemas_rust_api": "15.0.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Every later major (5.0.0 through 13.0.0) is the same policy applied to a further source-incompatible Rust API addition as a transported vocabulary landed; 13.0.0 is P04-COMPOSE-FS's three enum variants plus CompositionFamilyInput::nested() returning a vector because that family has two nested questions and one slot could not publish both. Existing wire bytes are unchanged at every step and pinned by crates/qcore-schemas/tests/counter_request_wire.rs and crates/qcore-schemas/tests/composition_request_wire.rs; COMPOSITION_SOURCE_INPUT_VERSION stays 2, so no existing task digest moved; 14.0.0 is P04-COMPOSE-UNSUPPORTED's three enum variants for the fifth and last reachable composition family, with COMPOSITION_SOURCE_INPUT_VERSION still 2 and no accessor changing shape, because P04-COMPOSE-FS had already paid that cost.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 405
+  "named_followups": 410
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6735,7 +6735,7 @@
   "workspace_tests": 5720,
   "provider_tests": 124,
   "python_evidence_validator_tests": 351,
-  "lean_audits": 193,
+  "lean_audits": 194,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6774,6 +6774,7 @@
    "AuditConnectives.lean",
    "AuditConstantDoWhile.lean",
    "AuditContractBundle.lean",
+   "AuditContractDeferredReview.lean",
    "AuditContractInherit.lean",
    "AuditContractViewProjection.lean",
    "AuditCt01OwnedTransfer.lean",
@@ -6937,7 +6938,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/fb-system-audit-cards/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -9714,6 +9715,41 @@
    "why": "`((LZ4_unalign *) p)->u16 = v` (a union: refused anyway), `(*map)->opts = calloc(...)`, `(&rk->rk_coord_reqs)->tqh_first = NULL` keep the gate refusal: the rule reads `N`, `( N )` and `( & N )` roots only. Measured at the AFTER census (reader class destination:prefix). DISCHARGE: a cast root checked against the pointer's declared type (or its object's effective type), a `( * PP )` root through a `T **` base with its own obligation, and a member-address root as a chain; each measured, with Lean parity.",
    "source": "docs/reports/w45-sub-object-stores/README.md",
    "recorded_by": "W45-SUB-OBJECT-STORES"
+  },
+  {
+   "id": "W45-REVIEW-POSITION-PRECISE-HOLD",
+   "title": "A clause-level review marker holds every call site of its declaration, not only those where the deferred clause decides the call",
+   "why": "Card W45-CONTRACT-DEFERRED-REVIEW withholds the whole contract for a clause-level marker (contract spec C06.1): a v1 contract is applied as one conjunction and no consumer applies part of one, so dropping only the deferred clause would let the remaining, possibly weaker, clauses decide. The consequence is that deferring a clause that does not decide a given call (a `resource_borrowed` scalar, say) still holds that call Unknown; the gateway test `a_deferred_clause_is_never_silently_dropped` pins this. DISCHARGE: a partial-application semantics that applies the undeferred clauses at a call site only when the deferred position provably carries no tracked identity there, with a Lean proof that the deferred clause cannot then decide the call, and a measured corpus re-pin showing no verdict moves towards Safe or Unsafe because of a deferred clause.",
+   "source": "docs/reports/w45-contract-deferred-review/README.md",
+   "recorded_by": "W45-CONTRACT-DEFERRED-REVIEW"
+  },
+  {
+   "id": "W45-REVIEW-HELD-CALL-SITE-COUNT",
+   "title": "The pending-review section counts recorded held-call refusals, a lower bound on textual call sites",
+   "why": "The `pending_human_review` section's `held_call_sites` counts the held-call refusals the analysis recorded. The analysis of a path stops at its first refused statement, so a second call to the same pending callee later on that path records no refusal of its own (measured in `qcore-audit`'s `every_marker_is_listed_with_its_digest_and_what_it_holds`: three textual call sites, two recorded). The section's `meaning` says so. DISCHARGE: count the call sites the gateway's hold rewrite (`review_hold::hold_call_sites`) rewrites per unit, publish them beside the recorded refusals, and pin the two counts on a fixture with a repeated call.",
+   "source": "docs/reports/w45-contract-deferred-review/README.md",
+   "recorded_by": "W45-CONTRACT-DEFERRED-REVIEW"
+  },
+  {
+   "id": "W45-REVIEW-CONFIG-ROUTE-SECTION",
+   "title": "The configured `quirin-audit CONFIG.json` route does not yet publish the pending-review section",
+   "why": "Card W45-CONTRACT-DEFERRED-REVIEW publishes `pending_human_review` and its console tally on `quirin-audit current`, `quirin-audit contracts` and the corpus arbiter, as its brief named; the configured route (`crates/qcore-audit/src/lib.rs`, the `.assumptions.json` sidecar) was left alone because a concurrent card was editing that file. Its unit rows already carry the `awaiting-human-review` reason code, since the gateway's unit reason carries it. DISCHARGE: add `qcore_audit::pending_review::section` to that route's assumptions sidecar and its tally to its console, with a configured-route test.",
+   "source": "docs/reports/w45-contract-deferred-review/README.md",
+   "recorded_by": "W45-CONTRACT-DEFERRED-REVIEW"
+  },
+  {
+   "id": "W45-REVIEW-HELD-DIAGNOSTIC-CATEGORY",
+   "title": "A held call is published under the diagnostic category `unsupported`",
+   "why": "The gateway refuses a held call through the existing unmodelled-statement channel, so `diagnostics.json` lists it under `category: unsupported` and counts it in `diagnostic_counts.unsupported`, exactly as it lists a withdrawn declaration (LOADER-ABI, LOADER-ABI-MODES). The unit reason counts held calls apart and the unit `reason_code` is `awaiting-human-review`, but the per-diagnostic category does not say so. No corpus unit carries one today. DISCHARGE: a dedicated `LegacyDiagnosticKind` for a held call with its own report category, which moves the verdict-bearing artifact's schema and so needs a deliberate re-pin of the archived baseline; the withdrawn-declaration refusals could move with it.",
+   "source": "docs/reports/w45-contract-deferred-review/README.md",
+   "recorded_by": "W45-CONTRACT-DEFERRED-REVIEW"
+  },
+  {
+   "id": "W45-REVIEW-INHERIT-OWN-MARKER",
+   "title": "An inheriting declaration cannot be deferred on its own",
+   "why": "Contract inheritance (C15) admits no clause after `contract inherit PARENT;`, so a child inherits exactly its parent's markers: a deferred parent defers every child, but a child of an undeferred parent can be deferred only by writing its contract out by hand with a marker. DISCHARGE: admit exactly one contract-level review marker after `inherit PARENT` (e.g. `contract inherit PARENT requires resource_review_pending(\"REASON\");`), elaborated as a marker on the inherited contract, with the inherited-declaration agreement check comparing everything but that marker, the C15 and G05a grammar updated, and Lean parity for the propagation rule.",
+   "source": "docs/reports/w45-contract-deferred-review/README.md",
+   "recorded_by": "W45-CONTRACT-DEFERRED-REVIEW"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

@@ -48,7 +48,7 @@ pub enum ReasonSubject {
     Environment,
 }
 
-/// The closed seven-category vocabulary of §L21.1.
+/// The closed eight-category vocabulary of §L21.1.
 ///
 /// The wire spelling is the spec's kebab-case spelling; it is part of the
 /// schema surface and moving it is a compatibility event.
@@ -80,13 +80,19 @@ pub enum ReasonCategory {
     /// The analysis could not run because a required tool, build tree or
     /// configuration input was missing or mismatched. Subject: the environment.
     EnvironmentUnavailable,
+    /// Card W45-CONTRACT-DEFERRED-REVIEW: a declared contract the row depends
+    /// on is marked as awaiting human review (`resource_review_pending`,
+    /// contract spec §C06), so it discharges nothing and accuses nothing.
+    /// Subject: the analyser — the row says nothing about the analysed source
+    /// and never contributes to a provisional `Unsafe`.
+    AwaitingHumanReview,
 }
 
 impl ReasonCategory {
     /// Every category, in declaration order. The vocabulary is closed: adding a
     /// member is a compatibility event, and the totality tests enumerate this
     /// array rather than a hand-written list.
-    pub const ALL: [Self; 7] = [
+    pub const ALL: [Self; 8] = [
         Self::UnsupportedSyntax,
         Self::MissingPremise,
         Self::IncompleteObligationCoverage,
@@ -94,6 +100,7 @@ impl ReasonCategory {
         Self::ProviderFailure,
         Self::ResidualCustody,
         Self::EnvironmentUnavailable,
+        Self::AwaitingHumanReview,
     ];
 
     /// The spec spelling, identical to the serde representation.
@@ -107,6 +114,7 @@ impl ReasonCategory {
             Self::ProviderFailure => "provider-failure",
             Self::ResidualCustody => "residual-custody",
             Self::EnvironmentUnavailable => "environment-unavailable",
+            Self::AwaitingHumanReview => "awaiting-human-review",
         }
     }
 
@@ -118,7 +126,8 @@ impl ReasonCategory {
             Self::MissingPremise
             | Self::IncompleteObligationCoverage
             | Self::StaleEvidence
-            | Self::ProviderFailure => ReasonSubject::Analyser,
+            | Self::ProviderFailure
+            | Self::AwaitingHumanReview => ReasonSubject::Analyser,
             Self::EnvironmentUnavailable => ReasonSubject::Environment,
         }
     }
@@ -167,12 +176,27 @@ impl ReasonCategory {
         // speak about the analysed source; an unparseable count is refused.
         if let Some(rest) = reason.strip_prefix(PROJECTION_UNRESOLVED_PREFIX) {
             let unsupported = rest.split(' ').next().and_then(|n| n.parse::<u64>().ok());
-            return match unsupported {
+            // Card W45-CONTRACT-DEFERRED-REVIEW: the summary names its calls
+            // held for a pending review only when there is at least one, so
+            // every summary written before the card classifies as it did.
+            let held = match rest.split_once(PROJECTION_HELD_SEPARATOR) {
+                None => Some(0),
+                Some((_, tail)) => tail
+                    .strip_suffix(PROJECTION_HELD_SUFFIX)
+                    .and_then(|n| n.parse::<u64>().ok())
+                    .filter(|n| *n > 0),
+            };
+            return match (held, unsupported) {
+                (None, _) | (_, None) => Err(UnclassifiedReason),
+                // A call held for review withholds a declared contract, and
+                // whatever the projection then leaves open downstream of it
+                // is not a statement about the source: the held premise is
+                // named first, so no held row reaches a source category.
+                (Some(held), Some(_)) if held > 0 => Ok(Self::AwaitingHumanReview),
                 // No unmodeled operation: the model ran and left custody open.
-                Some(0) => Ok(Self::ResidualCustody),
+                (Some(_), Some(0)) => Ok(Self::ResidualCustody),
                 // At least one construct the model does not cover.
-                Some(_) => Ok(Self::UnsupportedSyntax),
-                None => Err(UnclassifiedReason),
+                (Some(_), Some(_)) => Ok(Self::UnsupportedSyntax),
             };
         }
         for (marker, category) in REASON_RULES {
@@ -186,6 +210,13 @@ impl ReasonCategory {
 
 /// `qcore_c_gateway::legacy_c`'s resource-projection summary prefix.
 const PROJECTION_UNRESOLVED_PREFIX: &str = "resource projection unresolved: ";
+
+/// The separator before the optional held-call component of that summary
+/// (card W45-CONTRACT-DEFERRED-REVIEW).
+const PROJECTION_HELD_SEPARATOR: &str = "custody summary conflict(s), ";
+
+/// The held-call component's suffix.
+const PROJECTION_HELD_SUFFIX: &str = " call(s) held awaiting human review";
 
 /// The ordered, documented string → category rules used by
 /// [`ReasonCategory::classify`].
@@ -351,6 +382,12 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
     ),
     ("provider package", ReasonCategory::ProviderFailure),
     ("selected provider", ReasonCategory::ProviderFailure),
+    // ---- awaiting human review (card W45-CONTRACT-DEFERRED-REVIEW): a
+    // declared contract marked `resource_review_pending` was withheld. Matched
+    // before every source-subject rule: the phrase describes a declared
+    // premise, never the analysed source. Sites: `qcore_c_gateway::legacy_c`'s
+    // held-call statement, `qcore_verification::driver`'s extern-call route.
+    ("awaits human review", ReasonCategory::AwaitingHumanReview),
     // ---- missing premise: a declared assumption or trusted contract input
     // the analysis requires was refused or is unusable. The subject is the
     // declared premise, not the analysed source.
@@ -622,7 +659,7 @@ impl FromStr for ReasonCategory {
     }
 }
 
-/// The text is not one of the seven closed category spellings.
+/// The text is not one of the eight closed category spellings.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct UnknownReasonCategory;
 

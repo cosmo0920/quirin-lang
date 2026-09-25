@@ -19,8 +19,9 @@ pub mod reason;
 pub mod witness;
 
 pub use contract::{
-    ContractTrust, DerivedExtent, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
-    ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
+    ContractTrust, DerivedExtent, PendingHumanReview, ResourceApiKind, ResourceContracts,
+    ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
+    ReviewDeferral, ReviewScope,
 };
 pub use digest::{CANONICAL_SERIALIZER, sha256_hex};
 pub use identity::ExternalSourceBundle;

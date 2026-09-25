@@ -4883,6 +4883,21 @@ fn admit_extern_callees(
         }
         let (Some(contract), Some(signature)) = (contracts.contract(name), signatures.get(name))
         else {
+            // Card W45-CONTRACT-DEFERRED-REVIEW: a declaration awaiting human
+            // review is withheld by the loader, so the callee is exactly as
+            // uncontracted as an undeclared one; the refusal names the review.
+            if let Some(message) =
+                qcore_contract::extern_bridge::pending_review_refusal(name, contracts)
+            {
+                diagnostics.push(map_raw_diagnostic(
+                    "Q023",
+                    SemanticPass::ExternCall,
+                    *span,
+                    message,
+                    ranges,
+                ));
+                continue;
+            }
             diagnostics.push(map_raw_diagnostic(
                 "Q023",
                 SemanticPass::ExternCall,

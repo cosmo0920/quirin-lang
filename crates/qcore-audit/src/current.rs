@@ -381,6 +381,11 @@ impl CurrentAudit {
             self.counts.syntax_validation_elapsed_us,
             self.counts.line_marked_preprocessing_elapsed_us,
         );
+        // Card W45-CONTRACT-DEFERRED-REVIEW: pending reviews, tallied and
+        // published beside the contract sources they are read from.
+        let pending = crate::pending_review::section(&self.contracts, &self.report);
+        println!("{}", crate::pending_review::tally(&pending));
+        self.assumptions["pending_human_review"] = pending;
         if let Some(path) = path {
             if let Some(parent) = path.parent() {
                 fs::create_dir_all(parent).map_err(|error| error.to_string())?;
