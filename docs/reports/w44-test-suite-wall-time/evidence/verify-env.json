@@ -1,0 +1,60 @@
+{
+ "verify-env-schemas": {
+  "problems": [],
+  "env_vars_compared": 114,
+  "argv_equal": true,
+  "observed_cwd": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-acff4043083a47401/crates/qcore-schemas",
+  "captured_cwd": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-acff4043083a47401/crates/qcore-schemas",
+  "cargo_set_variables": [
+   "CARGO",
+   "CARGO_HOME",
+   "CARGO_INCREMENTAL",
+   "CARGO_MANIFEST_DIR",
+   "CARGO_MANIFEST_PATH",
+   "CARGO_PKG_AUTHORS",
+   "CARGO_PKG_DESCRIPTION",
+   "CARGO_PKG_HOMEPAGE",
+   "CARGO_PKG_LICENSE",
+   "CARGO_PKG_LICENSE_FILE",
+   "CARGO_PKG_NAME",
+   "CARGO_PKG_README",
+   "CARGO_PKG_REPOSITORY",
+   "CARGO_PKG_RUST_VERSION",
+   "CARGO_PKG_VERSION",
+   "CARGO_PKG_VERSION_MAJOR",
+   "CARGO_PKG_VERSION_MINOR",
+   "CARGO_PKG_VERSION_PATCH",
+   "CARGO_PKG_VERSION_PRE",
+   "LD_LIBRARY_PATH"
+  ]
+ },
+ "verify-env-compiler": {
+  "problems": [],
+  "env_vars_compared": 114,
+  "argv_equal": true,
+  "observed_cwd": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-acff4043083a47401/compiler",
+  "captured_cwd": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-acff4043083a47401/compiler",
+  "cargo_set_variables": [
+   "CARGO",
+   "CARGO_HOME",
+   "CARGO_INCREMENTAL",
+   "CARGO_MANIFEST_DIR",
+   "CARGO_MANIFEST_PATH",
+   "CARGO_PKG_AUTHORS",
+   "CARGO_PKG_DESCRIPTION",
+   "CARGO_PKG_HOMEPAGE",
+   "CARGO_PKG_LICENSE",
+   "CARGO_PKG_LICENSE_FILE",
+   "CARGO_PKG_NAME",
+   "CARGO_PKG_README",
+   "CARGO_PKG_REPOSITORY",
+   "CARGO_PKG_RUST_VERSION",
+   "CARGO_PKG_VERSION",
+   "CARGO_PKG_VERSION_MAJOR",
+   "CARGO_PKG_VERSION_MINOR",
+   "CARGO_PKG_VERSION_PATCH",
+   "CARGO_PKG_VERSION_PRE",
+   "LD_LIBRARY_PATH"
+  ]
+ }
+}

@@ -1,0 +1,74 @@
+[
+ {
+  "round": "build-opts",
+  "option": "b0-base",
+  "exit": 0,
+  "build_seconds": 112.6,
+  "peak_rss_kib": 2230760,
+  "target_bytes": 62378811903,
+  "load_before": "17.45, 34.36, 40.27"
+ },
+ {
+  "round": "build-opts",
+  "option": "b1-line-tables",
+  "exit": 0,
+  "build_seconds": 102.93,
+  "peak_rss_kib": 1514892,
+  "target_bytes": 20978712847,
+  "load_before": "41.59, 37.96, 40.84"
+ },
+ {
+  "round": "build-opts",
+  "option": "b2-debug0",
+  "exit": 0,
+  "build_seconds": 63.19,
+  "peak_rss_kib": 1181396,
+  "target_bytes": 5599220725,
+  "load_before": "46.80, 40.30, 41.29"
+ },
+ {
+  "round": "build-opts",
+  "option": "b3-opt1-line-tables",
+  "exit": 0,
+  "build_seconds": 199.54,
+  "peak_rss_kib": 1531828,
+  "target_bytes": 22128977348,
+  "load_before": "35.04, 37.97, 40.41"
+ },
+ {
+  "round": "build-opts-2",
+  "option": "b0-base",
+  "exit": 0,
+  "build_seconds": 148.72,
+  "peak_rss_kib": 2235520,
+  "target_bytes": 62378811903,
+  "load_before": "37.82, 33.78, 37.17"
+ },
+ {
+  "round": "build-opts-2",
+  "option": "b1-line-tables",
+  "exit": 0,
+  "build_seconds": 69.39,
+  "peak_rss_kib": 1539040,
+  "target_bytes": 20978712847,
+  "load_before": "32.11, 32.53, 37.10"
+ },
+ {
+  "round": "build-opts-2",
+  "option": "b2-debug0",
+  "exit": 0,
+  "build_seconds": 62.28,
+  "peak_rss_kib": 1220852,
+  "target_bytes": 5599220725,
+  "load_before": "23.36, 32.72, 37.87"
+ },
+ {
+  "round": "build-opts-2",
+  "option": "b4-line-tables-deps0",
+  "exit": 0,
+  "build_seconds": 66.47,
+  "peak_rss_kib": 1563040,
+  "target_bytes": 20820274821,
+  "load_before": "28.72, 32.45, 37.42"
+ }
+]
