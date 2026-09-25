@@ -237,10 +237,12 @@ package.
 | capture | `6379af44…` | the same, through the tee wrapper | 0 | private; §1 |
 | AFTER | `5e174728…` | `791fc5fd` | 0 | [after-run.json](after-run.json), [after-diff.json](after-diff.json), [artifacts/](artifacts/) |
 | CENSUS | `735a43cb…` | `791fc5fd` + `indirect-census` | 0 | [census-run.json](census-run.json); its five artifacts are byte-identical to AFTER |
+| AFTER (confirmation) | `583faba8…` | `c4338703` (the clippy `matches!` rewrite) | 0 | [after-confirmation-run.json](after-confirmation-run.json); all five artifacts byte-identical to AFTER |
 
-Every later commit changes only Lean, documents, the ledger and evidence.
-No Rust source changed after `791fc5fd`, so the measured analyzer is the
-branch tip's.
+The only Rust change after `791fc5fd` is `c4338703`, which rewrites one
+`match` as `matches!` for clippy. The confirmation run on it is byte-identical
+in all five artifacts. Every other later commit changes only Lean, documents,
+the ledger and evidence.
 
 * **BEFORE against the baseline**
   (`w43-indexed-resource-collections/integration/artifacts/`,
@@ -408,7 +410,48 @@ W43-INDEXED-RESOURCE-COLLECTIONS' runner, with `CARGO_INCREMENTAL=0`. Every
 exit is captured to a file. Logs are in `private/gate/` and
 `private/provider-gate/`, and the generator input is [gate.json](gate.json).
 
-GATE-TABLE
+The core gate was measured on `c4338703`, the final Rust source, in
+`private/gate2`. The Lean step was measured on `bcdc9c06` in `private/gate`;
+no Lean source changed after it. At least 70G stayed free on `/home`.
+
+An earlier core gate on `bcdc9c06` (`private/gate`) had clippy exit **101**:
+`match_like_matches_macro` in `sizeof_operand.rs`, with the census step failing
+for the same reason. It was fixed in `c4338703`, and the test step and every
+Rust step were re-run. Its test step had also passed, with 5,413 tests.
+
+| Command | Exit | Result |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | libevent `d82464a2…` |
+| `clang --version` | 0 | Ubuntu clang 21.1.8 ([recording](clang-version.txt)) |
+| `cargo test --workspace --no-fail-fast` | 0 | **5,413 passed / 0 failed / 11 ignored**, 288 summaries |
+| `cargo clean --profile dev` | 0 | reclaimed after the test step |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --workspace --all-targets -- -D warnings` | 0 | clean (101 on `bcdc9c06`, see above) |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| `python3 scripts/check_lean_audits.py --jobs 4` | 0 | **178** audits |
+| `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings` and `cargo test -p qcore-c-gateway --features indirect-census --lib` | 0 | clean; 457 passed |
+| `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w44-collection-allocation/gate.json` | 0 | 348 follow-ups, 111 contract modules, 178 Lean audits |
+| `python3 -m unittest discover -s scripts/tests` (after the final regeneration) | 0 | **330** tests |
+| `python3 scripts/build_docs_index.py`, then `--check` | 0 / 0 | regenerated and matching |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **124 passed / 0 failed / 0 ignored**, 39 summaries |
+| `… -p qcore-provider-conformance --test packages real_packages_preserve_unknown_and_reject_mutations … -- --exact --test-threads=1` | 0 | 1 passed (isolated) |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | clean |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | clean |
+| `python3 providers/contracts.py check` | 0 | inventories unchanged |
+| `python3 providers/package.py build --output private/provider-gate/packages` | 0 | 5 packages |
+| `python3 providers/package.py verify …/<id>` (×5) | 0 ×5 | chunkio, cmetrics, ctraces, libevent, librdkafka |
+| `python3 -m unittest discover -s providers/tests` | 0 | 13 tests |
+
+**Counts.** This card adds:
+* the 16-test `sizeof_operand.rs` binary;
+* 7 unit tests of `sizeof_operand.rs`;
+* one Lean audit.
+
+No existing pin moved. The base's figures come from the matrix's validation
+section, the W43-DESCRIPTOR-NATIVE-CHECK integration gate: 5,390 tests and 177
+audits. So the card accounts for exactly 5,390 + 23 = 5,413 tests and 177 + 1
+audits. They were not remeasured on this tree.
 
 ## 7. Ledger
 
