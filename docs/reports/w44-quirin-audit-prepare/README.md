@@ -303,8 +303,29 @@ crates.
 
 ## 5. Gate
 
-See `gate.json` (measured on this card's final code; commands in
-`scripts/harness/gate.sh`, logs in the worktree-private `private/gate/`).
+The gate was measured on `394e1497`, the final code. The later commit adds
+only this report, the increment paragraph, the reports index and the gate
+record. Commands are in `scripts/harness/gate.sh`; every exit went to a file,
+and the logs are in the worktree-private `private/gate/`. Every step exited 0.
+
+| Step | Result |
+|---|---|
+| Rust suite (`scripts/run_test_binaries.py`) | 289 units, 299 summaries: 5,636 passed, 0 failed, 11 ignored |
+| `cargo fmt --check`, `cargo clippy --all-targets -D warnings` | Clean |
+| `reevaluation_probe`, `reevaluation_followup` | Exit 0 and exit 0 |
+| Lean audits | 189 passed |
+| Root Python tests | 351, OK |
+| `cargo build --offline --workspace` | Exit 0 |
+| Provider packages | Build and verify ×5, exit 0 |
+| Provider workspace tests | 124 passed over 39 summaries |
+| Provider `fmt` and `clippy` | Clean |
+| `providers/contracts.py check` | Exit 0 |
+| `scripts/build_docs_index.py --check` | Exit 0 |
+
+The base suite had 5,625 passing Rust tests. The 11 new ones are the 5 CLI
+tests in `prepare_cli.rs` and 6 unit tests in `prepare.rs` and
+`prepare_json.rs`. The rest of the record is in `gate.json`, and the Clang
+recording is in `clang-version.txt`.
 
 ## 6. Follow-ons
 

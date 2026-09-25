@@ -1,0 +1,13 @@
+{
+  "note": "W44-QUIRIN-AUDIT-PREPARE: standing gate plus provider gate measured on 394e1497 with CARGO_INCREMENTAL=0 (scripts/harness/gate.sh); the later commit adds the report, increment paragraph, reports index and this record only. Rust suite through scripts/run_test_binaries.py: test binaries: 289 units, 299 summaries; 5636 passed; 0 failed; 11 ignored (base 5625: +11 new tests, 5 in crates/qcore-audit/tests/prepare_cli.rs and 6 unit tests in prepare.rs/prepare_json.rs); log directory private/test-binaries/20260925T125742Z-1760722. cargo clean --profile dev after the test step. fmt clean; clippy --all-targets -D warnings clean; reevaluation_probe exit 0; reevaluation_followup exit 0; 189 Lean audits passed (no Lean change); root Python tests 351 run, OK (test_retired_scripts now covers three names; the matrix needed no regeneration); cargo build --offline --workspace exit 0 (no dependency added). Provider gate: providers/package.py build and verify of all five packages exit 0; provider workspace 124 passed / 0 failed / 0 ignored over 39 summaries; provider fmt and clippy clean; providers/contracts.py check exit 0. scripts/build_docs_index.py --check exit 0 after regeneration. Step exits: {'submodules': 0, 'clang': 0, 'test': 0, 'clean': 0, 'fmt': 0, 'clippy': 0, 'probe': 0, 'followup': 0, 'lean': 0, 'python': 0, 'build-offline': 0, 'package-build': 0, 'package-verify x5': 0, 'provider-test': 0, 'provider-fmt': 0, 'provider-clippy': 0, 'contracts-check': 0}. Logs: worktree-private private/gate of agent-a0ab5a53f8a82118c. Clang recorded in this checkout by the gate's own clang step. Corpus: nothing moves; no analyzer change.",
+  "workspace_tests": 5636,
+  "provider_tests": 124,
+  "python_evidence_validator_tests": 351,
+  "lean_audits": 189,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
