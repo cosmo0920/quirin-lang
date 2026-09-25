@@ -110,3 +110,26 @@ the 100 W43-LIBC-PRINTF-FAMILY measured: later wave-43 cards moved 11.
 * `unknown_alias` 4,358 within ±30. Leak 271 (range 271–275).
 * Violation candidates (`double_release`, `invalid_release`,
   `use_after_release`): **0**.
+
+## Addendum, frozen before the route (b) stage runs were read (2026-09-25)
+
+Item 1 moved from declaring the header-inline helpers to admitting their
+validated bodies, after W44-CORPUS-CALLEE-SUMMARIES measured that glibc's
+`__bswap_*` bodies validate under W4 as `Borrowed -> None` and are held back
+only by its reserved-name filter. The arbiter is re-run on main `5355998d`
+against `docs/reports/w44-corpus-callee-summaries/integration/artifacts/`
+(functions 296 / 85 / 4,453). Committed before any route (b) stage output was
+read; the runs were already in flight.
+
+* **BEFORE** reproduces that baseline's diagnostics byte for byte.
+* **Stage 0** (the `va_list` reader and spelling only; the `__extension__`
+  widening is reverted): all five artifacts byte-identical to BEFORE.
+* **Stage 1** (T6): removes 950–990 tail refusals, adds 0; no function moves.
+* **Stage 2** (reserved-name scope lift): the 599 header-inline callee leaves
+  go (range 590–599) with about 27 newly-safe-callee leaves and 0–10 added;
+  exactly `ut_put_be16/32/64` move Unknown → Safe. No other reserved-name
+  body is admitted with a summary that decides a leaf.
+* **Stage 3** (`vsnprintf`, `vprintf`): −26 / +1, no move. **Stage 4**
+  (`strerror`): −2, no move.
+* **Totals**: functions 296 / 85 / 4,453 → **299 / 85 / 4,450**; units,
+  leak 271 and `unknown_alias` unchanged; no violation candidate.
