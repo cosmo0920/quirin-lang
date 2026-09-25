@@ -17,6 +17,8 @@ pub mod call_use_source;
 mod clang;
 pub mod cleanup_replay_source;
 pub mod composition_source;
+#[cfg(feature = "indirect-census")]
+pub mod condition_call_census;
 pub mod counter_source;
 mod index_traversal;
 pub mod indexed_collection;

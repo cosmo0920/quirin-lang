@@ -59,6 +59,13 @@ pub(crate) mod descriptor_custody;
 
 pub use descriptor_custody::ValidityFact;
 
+// Card W44-BRANCH-CONDITION-CALLS: the desugaring of a refused call-bearing
+// controlling expression into calls and branch edges. Every hook below that
+// names `condition_desugar` is consulted only where the position's existing
+// lowering is its refusal.
+#[path = "legacy_condition_desugar.rs"]
+mod condition_desugar;
+
 pub use declared_modes::{
     ModeAgreementRow, ModeOutcome, ModeRefusal, declared_mode_census, mode_contradiction,
 };
@@ -2588,6 +2595,7 @@ fn build_function_cfg_with(
         #[cfg(feature = "indirect-census")]
         census_bindings: census_body_bindings(tokens, body_start, contracts),
         admit_derived_returns,
+        desugar: condition_desugar::DesugarState::new(function),
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -3640,6 +3648,9 @@ enum Statement {
         /// refused condition expresses, when its premises hold. Consulted only
         /// when the condition is otherwise refused.
         element_condition: Option<(String, crate::indexed_collection::IndexSpelling, bool)>,
+        /// Card **W44-BRANCH-CONDITION-CALLS**: the desugared calls and
+        /// branch edges of a call-bearing condition every route above refused.
+        condition_plan: Option<Box<condition_desugar::ConditionPlan>>,
         then_body: Vec<Statement>,
         else_body: Vec<Statement>,
     },
@@ -3656,6 +3667,9 @@ enum Statement {
         condition_access: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
+        /// Card **W44-BRANCH-CONDITION-CALLS**: the desugared calls and
+        /// branch edges of a call-bearing condition every route above refused.
+        condition_plan: Option<Box<condition_desugar::ConditionPlan>>,
         body: Vec<Statement>,
     },
     For {
@@ -3676,6 +3690,9 @@ enum Statement {
         condition_access: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
+        /// Card **W44-BRANCH-CONDITION-CALLS**: the desugared calls and
+        /// branch edges of a call-bearing condition every route above refused.
+        condition_plan: Option<Box<condition_desugar::ConditionPlan>>,
         increment: Option<Box<(LegacyInstruction, usize)>>,
         body: Vec<Statement>,
     },
@@ -3698,6 +3715,9 @@ enum Statement {
         condition_is_literal_zero: bool,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
+        /// Card **W44-BRANCH-CONDITION-CALLS**: the desugared calls and
+        /// branch edges of a call-bearing condition every route above refused.
+        condition_plan: Option<Box<condition_desugar::ConditionPlan>>,
         body: Vec<Statement>,
     },
     Switch {
@@ -3712,6 +3732,9 @@ enum Statement {
         /// existing lowering would have been the refusal.
         expression_access: Option<Box<LegacyInstruction>>,
         writes: RefusedWrites,
+        /// Card **W44-BRANCH-CONDITION-CALLS**: the desugared calls of a
+        /// call-bearing switch expression every route above refused.
+        expression_plan: Option<Box<condition_desugar::ConditionPlan>>,
         body: Vec<Statement>,
     },
     Case {
@@ -3864,6 +3887,9 @@ struct Parser<'a> {
     /// (see [`return_call::NULL_RETURN_PLACE`]). `false` for every other CFG,
     /// which therefore keeps the W43-LIBC-RESULT-ALIAS refusal byte for byte.
     admit_derived_returns: bool,
+    /// Card **W44-BRANCH-CONDITION-CALLS**: the enclosing function and the
+    /// unit call graph the condition desugaring reads lazily.
+    desugar: condition_desugar::DesugarState,
 }
 
 impl Parser<'_> {
@@ -4583,6 +4609,19 @@ impl Parser<'_> {
                     #[cfg(feature = "indirect-census")]
                     self.census_element_condition(line, &condition, _base);
                 }
+                // Card W44-BRANCH-CONDITION-CALLS: asked only where every
+                // route above refused the condition.
+                let condition_plan = self.planned_condition(
+                    line,
+                    &condition,
+                    condition_desugar::Position::Branch,
+                    !condition_supported
+                        && condition_call.is_none()
+                        && condition_access.is_none()
+                        && element_condition.is_none()
+                        && self.null_condition(&condition).is_none()
+                        && self.distinct_condition(&condition).is_none(),
+                );
                 let then_body = self.parse_statement_body()?;
                 let else_body = if self.text() == Some("else") {
                     self.cursor += 1;
@@ -4599,6 +4638,7 @@ impl Parser<'_> {
                     null_condition: self.null_condition(&condition),
                     distinct_condition: self.distinct_condition(&condition),
                     element_condition,
+                    condition_plan,
                     then_body,
                     else_body,
                 })
@@ -4624,6 +4664,16 @@ impl Parser<'_> {
                         && condition_call.is_none()
                         && self.null_condition(&condition).is_none(),
                 );
+                // Card W44-BRANCH-CONDITION-CALLS.
+                let condition_plan = self.planned_condition(
+                    line,
+                    &condition,
+                    condition_desugar::Position::Loop,
+                    !condition_supported
+                        && condition_call.is_none()
+                        && condition_access.is_none()
+                        && self.null_condition(&condition).is_none(),
+                );
                 let body = self.parse_statement_body()?;
                 Ok(Statement::While {
                     line,
@@ -4632,6 +4682,7 @@ impl Parser<'_> {
                     condition_call,
                     condition_access,
                     null_condition: self.null_condition(&condition),
+                    condition_plan,
                     body,
                 })
             }
@@ -4677,6 +4728,16 @@ impl Parser<'_> {
                     &condition,
                     !condition_supported
                         && condition_call.is_none()
+                        && self.null_condition(&condition).is_none(),
+                );
+                // Card W44-BRANCH-CONDITION-CALLS.
+                let condition_plan = self.planned_condition(
+                    line,
+                    &condition,
+                    condition_desugar::Position::ForLoop,
+                    !condition_supported
+                        && condition_call.is_none()
+                        && condition_access.is_none()
                         && self.null_condition(&condition).is_none(),
                 );
                 let body = self.parse_statement_body()?;
@@ -4725,6 +4786,7 @@ impl Parser<'_> {
                     condition_call,
                     condition_access,
                     null_condition: self.null_condition(&condition),
+                    condition_plan,
                     increment,
                     body,
                 })
@@ -4759,6 +4821,17 @@ impl Parser<'_> {
                         && condition_call.is_none()
                         && self.null_condition(&condition).is_none(),
                 );
+                // Card W44-BRANCH-CONDITION-CALLS. The body was parsed first,
+                // as C writes it; its sites precede the condition's.
+                let condition_plan = self.planned_condition(
+                    line,
+                    &condition,
+                    condition_desugar::Position::DoWhile,
+                    !condition_supported
+                        && condition_call.is_none()
+                        && condition_access.is_none()
+                        && self.null_condition(&condition).is_none(),
+                );
                 Ok(Statement::DoWhile {
                     line,
                     writes: self.expression_writes(&condition),
@@ -4767,6 +4840,7 @@ impl Parser<'_> {
                     condition_access,
                     condition_is_literal_zero: condition_is_literal_zero(&condition),
                     null_condition: self.null_condition(&condition),
+                    condition_plan,
                     body,
                 })
             }
@@ -4789,6 +4863,15 @@ impl Parser<'_> {
                     &expression,
                     !expression_supported && expression_call.is_none(),
                 );
+                // Card W44-BRANCH-CONDITION-CALLS.
+                let expression_plan = self.planned_condition(
+                    line,
+                    &expression,
+                    condition_desugar::Position::Switch,
+                    !expression_supported
+                        && expression_call.is_none()
+                        && expression_access.is_none(),
+                );
                 let body = self.parse_statement_body()?;
                 Ok(Statement::Switch {
                     line,
@@ -4796,6 +4879,7 @@ impl Parser<'_> {
                     expression_supported,
                     expression_call,
                     expression_access,
+                    expression_plan,
                     body,
                 })
             }
@@ -7295,11 +7379,17 @@ impl CfgBuilder {
                 null_condition,
                 distinct_condition,
                 element_condition,
+                condition_plan,
                 then_body,
                 else_body,
             } => {
                 let then_entry = self.compile_sequence(then_body, continuation);
                 let else_entry = self.compile_sequence(else_body, continuation);
+                // Card W44-BRANCH-CONDITION-CALLS: present only where the arm
+                // below would have pushed the refusal.
+                if let Some(plan) = condition_plan {
+                    return self.compile_planned_if(plan, *line, then_entry, else_entry);
+                }
                 let instruction = if let Some((base, index, true_is_null)) = element_condition {
                     // W43-INDEXED-RESOURCE-COLLECTIONS: the condition was
                     // refused (see its parse), so the fallback is exactly the
@@ -7353,8 +7443,13 @@ impl CfgBuilder {
                 condition_call,
                 condition_access,
                 null_condition,
+                condition_plan,
                 body,
             } => {
+                // Card W44-BRANCH-CONDITION-CALLS.
+                if let Some(plan) = condition_plan {
+                    return self.compile_planned_while(plan, *line, body, continuation);
+                }
                 let instruction = if let Some(condition) = null_condition {
                     condition.branch()
                 } else if let Some(call) = condition_call {
@@ -7393,9 +7488,22 @@ impl CfgBuilder {
                 condition_call,
                 condition_access,
                 null_condition,
+                condition_plan,
                 increment,
                 body,
             } => {
+                // Card W44-BRANCH-CONDITION-CALLS. A counted loop requires a
+                // supported condition, so it never carries a plan.
+                if let Some(plan) = condition_plan {
+                    return self.compile_planned_for(
+                        plan,
+                        *line,
+                        init.as_deref(),
+                        increment.as_deref(),
+                        body,
+                        continuation,
+                    );
+                }
                 let instruction = condition_call.as_ref().map_or_else(
                     || {
                         branch_instruction(
@@ -7458,8 +7566,14 @@ impl CfgBuilder {
                 condition_access,
                 condition_is_literal_zero,
                 null_condition,
+                condition_plan,
                 body,
             } => {
+                // Card W44-BRANCH-CONDITION-CALLS. A call-bearing condition is
+                // never the literal `0`, so the constant rule never applies.
+                if let Some(plan) = condition_plan {
+                    return self.compile_planned_do_while(plan, *line, body, continuation);
+                }
                 let instruction = condition_call.as_ref().map_or_else(
                     || {
                         branch_instruction(
@@ -7505,8 +7619,13 @@ impl CfgBuilder {
                 expression_supported,
                 expression_call,
                 expression_access,
+                expression_plan,
                 body,
             } => {
+                // Card W44-BRANCH-CONDITION-CALLS.
+                if let Some(plan) = expression_plan {
+                    return self.compile_planned_switch(plan, *line, body, continuation);
+                }
                 self.break_targets.push(continuation);
                 self.switch_cases.push(SwitchTargets::default());
                 let _body_entry = self.compile_sequence(body, continuation);
