@@ -1994,7 +1994,11 @@ fn a_destination_is_the_whole_left_hand_side_or_a_declared_object() {
         ("char * a , * name", "name"),
         ("int a [ 3 ]", "a[3]"),
     ] {
-        assert_eq!(named(source), (Some(expected.to_owned()), false), "{source}");
+        assert_eq!(
+            named(source),
+            (Some(expected.to_owned()), false),
+            "{source}"
+        );
     }
     for source in [
         "recs [ i ] . name",
