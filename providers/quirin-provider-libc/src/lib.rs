@@ -2,10 +2,8 @@
 //! memory, `pthread_mutex`, (card W43-DESCRIPTOR-RESOURCE-TRACKING) `<dirent.h>`, and
 //! (card W43-LIBC-CONTRACTS) `<dlfcn.h>`, `<math.h>`,
 //! process/regex/rlimit helpers, sockets, `<stdio.h>`, `<stdlib.h>`, `<string.h>`,
-//! `<sys/stat.h>`, threads and signals, `<time.h>` and `<unistd.h>`, (card
-//! W43-LIBC-RESTRICT-PROTOTYPES) `<regex.h>`, and (card W44-LIBC-RESIDUALS)
-//! glibc's header-inline `<bits/byteswap.h>` and `<bits/uintn-identity.h>`
-//! helpers.
+//! `<sys/stat.h>`, threads and signals, `<time.h>` and `<unistd.h>`, and (card
+//! W43-LIBC-RESTRICT-PROTOTYPES) `<regex.h>`.
 //!
 //! The `.qcore` sources under this crate's `contracts/` are canonical: the
 //! corpus index `contract/corpus.json` names that directory as one of its
@@ -37,10 +35,6 @@ pub const PUBLISHED: &[&str] = &["libc/memory.qcore", "libc/string.qcore"];
 /// sorted by logical path. The logical path is relative to `contracts/`, which
 /// is the name `contract/corpus.json` resolves (for example `libc/errno.qcore`).
 pub const CONTRACTS: &[(&str, &str)] = &[
-    (
-        "libc/byteswap.qcore",
-        include_str!("../contracts/libc/byteswap.qcore"),
-    ),
     (
         "libc/dirent.qcore",
         include_str!("../contracts/libc/dirent.qcore"),

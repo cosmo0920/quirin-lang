@@ -29,12 +29,23 @@
 //!    refused, because an `inline` definition of external linkage may be
 //!    bypassed for the external definition at any call (C11 6.7.4p7) and an
 //!    ordinary external definition may be interposed; either way the body
-//!    analysed here need not be the body the call runs;
-//! 3. **not implementation-reserved**: a name beginning `__` or `_` and an
-//!    uppercase letter (reserved in every context, C11 7.1.3) is a C library or
-//!    compiler header body such as `__bswap_32`,
-//!    whose checked-or-declared treatment is the libc provider's decision
-//!    (card W44-LIBC-RESIDUALS owns `__bswap_*`), so this route leaves it alone.
+//!    analysed here need not be the body the call runs.
+//!
+//! Card W44-CORPUS-CALLEE-SUMMARIES added a third condition, **not
+//! implementation-reserved** (a name beginning `__` or `_` and an uppercase
+//! letter, C11 7.1.3), leaving a C library header body such as `__bswap_32` to
+//! the libc provider's decision. Card **W44-LIBC-RESIDUALS** made that
+//! decision: a reserved-name definition is admitted on exactly the two
+//! conditions above, so glibc's `static __inline` `__bswap_16/32/64` and
+//! `__uint16/32/64_identity` bodies are *checked*, not declared. The reason the
+//! filter existed was ownership, not soundness: the linkage premise is what
+//! makes every call run the analysed body, and the name's reservation changes
+//! nothing about that. The filter is lifted only where the unit carries the
+//! body: a candidate is a definition in this unit's token stream whose
+//! internal linkage is read off that definition, so a reserved name the unit
+//! only declares, or calls without defining, is never a candidate and its calls
+//! stay uncontracted. `quirin-provider-libc` declares none of these names, so no
+//! declared contract and no derived summary both apply to one of them.
 //!
 //! Nothing else changes. A definition admitted to the scope is offered to the
 //! **unchanged** W4 derivation: its summary is published only after
@@ -53,9 +64,10 @@
 //!
 //! # Lean
 //!
-//! `QCore.CalleeSummaryScope` models the scope, the linkage and reserved-name
-//! premises and call resolution. It proves that every scope member is selected
-//! or an unreserved internal-linkage definition, that the calls to a newly
+//! `QCore.CalleeSummaryScope` models the scope, the linkage premise and call
+//! resolution. It proves that every scope member is selected or an
+//! internal-linkage definition the unit carries, that a name the unit does
+//! not define is never admitted, that reservation is not read, that the calls to a newly
 //! admitted callee run only the body analysed here, that a declared contract is
 //! never overridden and an inferred one is installed exactly as validated, and
 //! that a summary derived before the widening survives it unchanged. As with
@@ -81,12 +93,11 @@ pub(crate) fn derivation_scope(
         return selected.to_vec();
     }
     let chosen = selected.iter().cloned().collect::<BTreeSet<_>>();
-    // (1)+(2)+(3) The candidates: unselected definitions of internal linkage
-    // whose names are not reserved for the implementation.
+    // (1)+(2) The candidates: unselected definitions of internal linkage,
+    // reserved names included (card W44-LIBC-RESIDUALS).
     let candidates = definitions
         .iter()
         .filter(|name| !chosen.contains(*name))
-        .filter(|name| !is_reserved_identifier(name))
         .filter(|name| has_internal_linkage(tokens, name))
         .cloned()
         .collect::<BTreeSet<_>>();
@@ -107,24 +118,6 @@ pub(crate) fn derivation_scope(
     let mut scope = selected.to_vec();
     scope.extend(admitted);
     scope
-}
-
-/// (3) Whether `name` begins with two underscores or an underscore and an
-/// uppercase letter: C11 7.1.3 reserves every such identifier for the
-/// implementation in every context, so a body carrying one is a C library or
-/// compiler header body (`__bswap_32`, `__uint64_identity`), never a corpus
-/// definition. Those stay outside this route: whether a header-inline library
-/// body is checked or declared is the libc provider's decision
-/// (W43-LIBC-CONTRACTS refused `__bswap_*` as `header-inline-body`, and card
-/// W44-LIBC-RESIDUALS owns them). A name with one underscore and a lowercase
-/// letter is reserved only at file scope, which corpus code does use
-/// (`_mk_event_init`), so it is not excluded by this rule.
-pub(crate) fn is_reserved_identifier(name: &str) -> bool {
-    let mut characters = name.chars();
-    characters.next() == Some('_')
-        && characters
-            .next()
-            .is_some_and(|second| second == '_' || second.is_ascii_uppercase())
 }
 
 /// Whether `function`'s definition carries `static` and not `extern` among the

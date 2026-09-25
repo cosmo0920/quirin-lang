@@ -18,7 +18,6 @@
     "providers/quirin-provider-libc/contracts/libc/time.qcore",
     "providers/quirin-provider-libc/contracts/libc/unistd.qcore",
     "providers/quirin-provider-libc/contracts/libc/dirent.qcore",
-    "providers/quirin-provider-libc/contracts/libc/byteswap.qcore",
     "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qcore",
     "providers/quirin-provider-cfl/contracts/cfl/time.qcore",
     "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qcore",

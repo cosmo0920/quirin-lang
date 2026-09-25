@@ -1,33 +1,20 @@
 import QCore.GnuBuiltinReader
 
-/-! Card **W44-LIBC-RESIDUALS**: two words the declared-ABI reader stopped at.
-`__extension__`, a GNU keyword carrying no type, is now a discarded specifier,
-so glibc's header-inline `__bswap_64` reads as `u64 (u64)`; and the compiler's
-`__builtin_va_list`, which `__gnuc_va_list` names, projects to the loader's
-parameter-only `va_list` spelling, so glibc's `vsnprintf` and `vprintf` agree.
+/-! Card **W44-LIBC-RESIDUALS**: the compiler's `__builtin_va_list`, which
+`__gnuc_va_list` names, projects to the loader's parameter-only `va_list`
+spelling, so glibc's `vsnprintf` and `vprintf` agree.
 
-Five directions are audited. **Conservativity**: both widenings only add, and
-a prefix without `__extension__` or a chain that does not reach the builtin
-reads exactly as before. **Exactness**: the builtin admits `va_list` and
+Five directions are audited. **Conservativity**: the widening only adds, and
+a chain that does not reach the builtin reads exactly as before. **Exactness**: the builtin admits `va_list` and
 nothing else, no earlier reading admits `va_list`, and a result or a pointer
 still refuses. **Shadowing**: a unit that `typedef`s the builtin name is read
 through its own typedef. **Custody**: `va_list` is not a `ptr` spelling, so
 `Borrowed` is the only mode on it, and it is not a result spelling.
-**Non-vacuity**: the measured `__bswap_64` prefix and `vsnprintf` signature,
-unreadable before, are read now.
+**Non-vacuity**: the measured `vsnprintf` signature, unreadable before, is
+read now.
 
 What this is not: a model of the token reader. That the words are the ones the
 token stream carries is trust boundary 28's extraction premise. -/
-
--- `__extension__`: conservativity and the rule as an equation.
-#print axioms QCore.GnuBuiltinReader.the_core_now_ignores_extension
-#print axioms QCore.GnuBuiltinReader.extension_is_invisible
-#print axioms QCore.GnuBuiltinReader.the_two_cores_agree_without_extension
-#print axioms QCore.GnuBuiltinReader.a_prefix_without_extension_is_unchanged
-#print axioms QCore.GnuBuiltinReader.the_core_before_refuses_extension
-#print axioms QCore.GnuBuiltinReader.a_prefix_with_extension_was_unreadable
-#print axioms QCore.GnuBuiltinReader.the_extension_widening_only_adds
-#print axioms QCore.GnuBuiltinReader.the_bswap64_result_was_unreadable_and_is_now_read
 
 -- `__builtin_va_list`: conservativity, exactness and where it still refuses.
 #print axioms QCore.GnuBuiltinReader.the_va_list_widening_only_adds

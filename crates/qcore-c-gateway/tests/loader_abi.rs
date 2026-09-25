@@ -626,12 +626,6 @@ const ROWS: &[Row] = &[
     },
     // -- GNU builtin words (card W44-LIBC-RESIDUALS) ----------------------
     Row {
-        label: "`__extension__` carries no type (glibc `__bswap_64`)",
-        declared: "p: ptr<mut, u8>, n: i32",
-        c: "__extension__ static __inline void k_use(void *p, int n) { }",
-        outcome: None,
-    },
-    Row {
         label: "`__builtin_va_list` behind glibc's two typedefs is `va_list` (`vsnprintf`)",
         declared: "p: ptr<mut, u8>, n: va_list",
         c: "typedef __builtin_va_list __gnuc_va_list;\ntypedef __gnuc_va_list va_list;\n\
@@ -793,14 +787,12 @@ contract {
     }
 }
 
-/// Card W44-LIBC-RESIDUALS: the two GNU words at a *result*. `__extension__`
-/// is discarded there exactly as at a parameter's specifiers, so glibc's
-/// `__bswap_64` reads `u64 (u64)`. A `va_list` result has no spelling: the
-/// loader's result vocabulary leaves `va_list` out, and the reader never reads
-/// the builtin at a result, so such a declaration is unreadable rather than
+/// Card W44-LIBC-RESIDUALS: a `va_list` result has no spelling. The loader's
+/// result vocabulary leaves `va_list` out, and the reader never reads the
+/// builtin at a result, so such a declaration is unreadable rather than
 /// compared against some other spelling.
 #[test]
-fn the_gnu_builtin_words_at_a_result() {
+fn a_va_list_result_has_no_spelling() {
     let contracts = load(
         "\
 extern fn k_swap(x: u64) -> u64
@@ -813,14 +805,10 @@ contract {
     );
     for (c, expected) in [
         (
-            "typedef unsigned long int __uint64_t;\n\
-             __extension__ static __inline __uint64_t k_swap (__uint64_t __bsx) { return __bsx; }",
-            AbiOutcome::Agreed,
-        ),
-        (
             "typedef __builtin_va_list __gnuc_va_list;\n__gnuc_va_list k_swap(unsigned long x);",
             AbiOutcome::Withdrawn(AbiRefusal::UnreadableDeclaration),
         ),
+        ("unsigned long k_swap(unsigned long x);", AbiOutcome::Agreed),
     ] {
         let source = format!("{c}\nvoid w(void) {{ }}");
         assert_eq!(

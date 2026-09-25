@@ -168,13 +168,10 @@
 //!
 //! # What card W44-LIBC-RESIDUALS widened
 //!
-//! Two words the reader stopped at. `__extension__`, a GNU keyword carrying no
-//! type, is a discarded specifier, so glibc's
-//! `__extension__ static __inline __uint64_t __bswap_64 (__uint64_t __bsx)`
-//! reads as `u64 (u64)`. And `__builtin_va_list`, the compiler's
-//! variable-argument list type that `__gnuc_va_list` names, projects to the
-//! loader's parameter-only `va_list` spelling (see [`BUILTIN_VA_LIST`]).
-//! `QCore.GnuBuiltinReader` models both steps.
+//! `__builtin_va_list`, the compiler's variable-argument list type that
+//! glibc's `__gnuc_va_list` names, projects to the loader's parameter-only
+//! `va_list` spelling (see [`BUILTIN_VA_LIST`]). `QCore.GnuBuiltinReader`
+//! models the step.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -700,12 +697,6 @@ const DISCARDED_SPECIFIERS: &[&str] = &[
     "auto",
     "_Noreturn",
     "typedef",
-    // Card W44-LIBC-RESIDUALS: a GNU keyword that suppresses pedantic
-    // diagnostics for the declaration it introduces and carries no type. glibc
-    // spells `__extension__ static __inline __uint64_t __bswap_64 (…)`, which
-    // was unreadable in every unit because of it. The typed-field and
-    // return-call readers already discard it.
-    "__extension__",
 ];
 
 /// Qualifiers that do not change the ABI projection of the type they qualify.

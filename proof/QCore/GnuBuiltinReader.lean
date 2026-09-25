@@ -1,40 +1,33 @@
 import QCore.TypedefProjection
 
 /-!
-# Two GNU words the declared-ABI reader stopped at
+# `__builtin_va_list` in the declared-ABI reader
 
-Card **W44-LIBC-RESIDUALS**. `QCore.DeclaredAbiAgreement` models the
-comparison of a declared contract's ABI spellings against the analysed unit's
-C declaration, `QCore.TypedefProjection` how a typedef name is followed, and
-`QCore.PointerQualifierReader` how a parameter declarator's words are read.
-This module models the two steps this card changed in
+Card **W44-LIBC-RESIDUALS** (`LIBC-PRINTF-VA-LIST`). `QCore.DeclaredAbiAgreement`
+models the comparison of a declared contract's ABI spellings against the
+analysed unit's C declaration, `QCore.TypedefProjection` how a typedef name is
+followed, and `QCore.PointerQualifierReader` how a parameter declarator's words
+are read. This module models the one step this card changed in
 `crates/qcore-c-gateway/src/legacy_declared_abi.rs`.
-
-## `__extension__` (the header-inline `__bswap_64`)
-
-glibc defines `__extension__ static __inline __uint64_t __bswap_64 (…)`.
-`__extension__` is a GNU keyword that only suppresses pedantic diagnostics; it
-carries no type. The reader did not list it among the discarded specifiers, so
-the specifier core was `__extension__ __uint64_t`, which projects to nothing,
-and a declaration of `__bswap_64` was withdrawn with
-`abi-unreadable-declaration` in all 174 units that define it. It is now
-discarded like `static` and `__inline`.
-
-## `__builtin_va_list` (the `va_list` printf members)
 
 glibc's `vsnprintf`, `vprintf`, `vfprintf` and `vsprintf` end in
 `__gnuc_va_list __arg`, with `typedef __builtin_va_list __gnuc_va_list;`. The
 builtin itself is the compiler's and is never a typedef in the token stream,
-so resolution stopped there. It now projects to the loader's `va_list`
-spelling, at a **parameter** of pointer depth zero only. The spelling names the
-type rather than its target-dependent representation, so no target is assumed.
+so resolution stopped there and every such declaration was withdrawn as
+unreadable. It now projects to the loader's `va_list` spelling, at a
+**parameter** of pointer depth zero only. The spelling names the type rather
+than its target-dependent representation, so no target is assumed.
+
+(An earlier revision of this card also discarded GNU `__extension__` among a
+declaration's specifiers, for a declaration of glibc's header-inline
+`__bswap_64`. That declaration was dropped in favour of W4's validated
+summary of the header body, nothing else needed the widening, and it was
+reverted together with its model.)
 
 ## What is proved
 
-* **Both widenings only add**: every reading the earlier reader committed to is
-  unchanged, and each widening is strict, with the measured witness.
-* **`__extension__` is invisible**: a specifier list reads exactly as it does
-  with every `__extension__` removed, and a list without one reads as before.
+* **The widening only adds**: every reading the earlier reader committed to is
+  unchanged, and the widening is strict, with the measured witness.
 * **`va_list` is its own projection, in both directions**: at a parameter the
   builtin admits `va_list` and nothing else — not the x86-64 object pointer it
   decays to, not an integer — and no earlier reading admits `va_list`.
@@ -53,150 +46,14 @@ type rather than its target-dependent representation, so no target is assumed.
 
 A model of a **decision**, as its neighbours are. That the words are the ones
 the token stream carries is trust boundary 28's extraction premise; that
-`__extension__` carries no type and that `__builtin_va_list` is the type
-`va_list` names are C and GNU C facts supplied from outside. Nothing here says
-a declaration is faithful to a C body.
+`__builtin_va_list` is the type `va_list` names is a GNU C fact supplied from
+outside. Nothing here says a declaration is faithful to a C body.
 -/
 
 namespace QCore.GnuBuiltinReader
 
 open QCore.DeclaredAbiAgreement
 open QCore.TypedefProjection
-
-/-! ## `__extension__` in the specifier prefix -/
-
-/-- One word of a declaration's specifier prefix. `storage` stands for every
-word the reader already discarded (`static`, `extern`, `inline`, `__inline`,
-`__inline__`, `register`, `auto`, `_Noreturn`, `typedef`); `typeWord w` for a
-word that contributes to the type. -/
-inductive SpecWord where
-  | extension
-  | storage
-  | typeWord (w : Nat)
-  deriving DecidableEq, Repr
-
-/-- The discarded-specifier table before this card. -/
-def discardedBefore : SpecWord → Bool
-  | .storage => true
-  | _ => false
-
-/-- The table now: `__extension__` joins it. -/
-def discardedNow : SpecWord → Bool
-  | .storage => true
-  | .extension => true
-  | _ => false
-
-/-- The specifier core: the type words left once the discarded words are
-dropped. A kept word that is not a type word — `__extension__` before this
-card — makes the core unreadable. -/
-def core (discard : SpecWord → Bool) : List SpecWord → Option (List Nat)
-  | [] => some []
-  | w :: ws =>
-      if discard w then core discard ws
-      else
-        match w, core discard ws with
-        | .typeWord t, some ts => some (t :: ts)
-        | _, _ => none
-
-/-- Project a specifier prefix through a discarded table, given the reading `r`
-of a list of type words (the arithmetic multiset and typedef resolution,
-modelled elsewhere and abstract here). -/
-def projectPrefix (discard : SpecWord → Bool) (r : List Nat → Projection)
-    (ws : List SpecWord) : Projection :=
-  match core discard ws with
-  | some ts => r ts
-  | none => none
-
-/-- The prefix with every `__extension__` removed. -/
-def dropExtension : List SpecWord → List SpecWord
-  | [] => []
-  | .extension :: ws => dropExtension ws
-  | w :: ws => w :: dropExtension ws
-
-/-- Whether a prefix carries `__extension__`. -/
-def hasExtension : List SpecWord → Bool
-  | [] => false
-  | .extension :: _ => true
-  | _ :: ws => hasExtension ws
-
-theorem the_core_now_ignores_extension (ws : List SpecWord) :
-    core discardedNow ws = core discardedNow (dropExtension ws) := by
-  induction ws with
-  | nil => rfl
-  | cons w ws ih =>
-    cases w <;> simp [core, dropExtension, discardedNow, ih]
-
-/-- `__extension__` is invisible: a prefix reads exactly as it does with every
-`__extension__` removed. -/
-theorem extension_is_invisible (r : List Nat → Projection) (ws : List SpecWord) :
-    projectPrefix discardedNow r ws = projectPrefix discardedNow r (dropExtension ws) := by
-  simp [projectPrefix, the_core_now_ignores_extension ws]
-
-theorem the_two_cores_agree_without_extension (ws : List SpecWord)
-    (h : hasExtension ws = false) :
-    core discardedNow ws = core discardedBefore ws := by
-  induction ws with
-  | nil => rfl
-  | cons w ws ih =>
-    cases w with
-    | extension => simp [hasExtension] at h
-    | storage =>
-      simp [hasExtension] at h
-      simp [core, discardedNow, discardedBefore, ih h]
-    | typeWord v =>
-      simp [hasExtension] at h
-      simp [core, discardedNow, discardedBefore, ih h]
-
-/-- A prefix without `__extension__` reads exactly as before. -/
-theorem a_prefix_without_extension_is_unchanged (r : List Nat → Projection)
-    (ws : List SpecWord) (h : hasExtension ws = false) :
-    projectPrefix discardedNow r ws = projectPrefix discardedBefore r ws := by
-  simp [projectPrefix, the_two_cores_agree_without_extension ws h]
-
-theorem the_core_before_refuses_extension (ws : List SpecWord)
-    (h : hasExtension ws = true) : core discardedBefore ws = none := by
-  induction ws with
-  | nil => simp [hasExtension] at h
-  | cons w ws ih =>
-    cases w with
-    | extension => simp [core, discardedBefore]
-    | storage =>
-      simp [hasExtension] at h
-      simp [core, discardedBefore, ih h]
-    | typeWord v =>
-      simp [hasExtension] at h
-      simp [core, discardedBefore, ih h]
-
-/-- Before, a prefix carrying `__extension__` was unreadable, whatever else it
-held. -/
-theorem a_prefix_with_extension_was_unreadable (r : List Nat → Projection)
-    (ws : List SpecWord) (h : hasExtension ws = true) :
-    projectPrefix discardedBefore r ws = none := by
-  simp [projectPrefix, the_core_before_refuses_extension ws h]
-
-/-- The widening only adds: every prefix read before is read identically. -/
-theorem the_extension_widening_only_adds (r : List Nat → Projection)
-    (ws : List SpecWord) {x : List AbiType}
-    (h : projectPrefix discardedBefore r ws = some x) :
-    projectPrefix discardedNow r ws = some x := by
-  cases he : hasExtension ws
-  · rw [a_prefix_without_extension_is_unchanged r ws he]; exact h
-  · rw [a_prefix_with_extension_was_unreadable r ws he] at h
-    exact absurd h (by simp)
-
-
-/-- The measured witness: `__extension__ static __inline __uint64_t`, with
-`__uint64_t` read as the LP64 eight-byte unsigned reading. -/
-def uint64Reading : List Nat → Projection
-  | [64] => some [.u64, .usize]
-  | _ => none
-
-def bswap64Prefix : List SpecWord := [.extension, .storage, .storage, .typeWord 64]
-
-theorem the_bswap64_result_was_unreadable_and_is_now_read :
-    projectPrefix discardedBefore uint64Reading bswap64Prefix = none
-      ∧ projectPrefix discardedNow uint64Reading bswap64Prefix = some [.u64, .usize] := by
-  decide
 
 /-! ## `__builtin_va_list` -/
 
