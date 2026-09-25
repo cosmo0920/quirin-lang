@@ -1,0 +1,77 @@
+MATCH src/flb_task.c 6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d
+MATCH src/flb_scheduler.c 5e2c36c2d741689e4a9a2e5b3bffdd40fee422e84c280a87129895091b242f49
+MATCH src/flb_engine.c 8a941d363c5cbc083addb8e1792fa817f39ba67396812824862ea45dec1d7f33
+MATCH src/flb_engine_dispatch.c b2e362ca4b25c78e9deb10eb42d7b0c1ec5d902e8e5118d08529a099e21c00f3
+MATCH src/flb_output.c 2f6cde94c61380243e5a3f183bac01894763468d9f61539f90acdd983d2cc819
+MATCH include/fluent-bit/flb_task.h 0d3ff44d5a0f15234c2ea2e2a62975b67caac7ebf392852624fe66734e4cc75d
+MATCH src/flb_input.c 2056b5856e4c2405ed959bf72f211c5d03fe7cc520f5ed174837ffd5d329ebd7
+MATCH src/flb_config.c 1b7cc310ce3e3758a3df774ae5eb76584c11668dfcbae68a8f5eec56f77b3560
+ANCHOR_MATCH src/flb_task.c:274
+ANCHOR_MATCH src/flb_task.c:297
+ANCHOR_MATCH src/flb_task.c:303
+ANCHOR_MATCH src/flb_task.c:304
+ANCHOR_MATCH src/flb_task.c:331
+ANCHOR_MATCH src/flb_task.c:350
+ANCHOR_MATCH src/flb_task.c:467
+ANCHOR_MATCH src/flb_task.c:909
+ANCHOR_MATCH src/flb_task.c:929
+ANCHOR_MATCH src/flb_task.c:936
+ANCHOR_MATCH src/flb_scheduler.c:276
+ANCHOR_MATCH src/flb_scheduler.c:282
+ANCHOR_MATCH src/flb_scheduler.c:283
+ANCHOR_MATCH src/flb_scheduler.c:285
+ANCHOR_MATCH src/flb_scheduler.c:319
+ANCHOR_MATCH src/flb_scheduler.c:364
+ANCHOR_MATCH src/flb_scheduler.c:382
+ANCHOR_MATCH src/flb_scheduler.c:599
+ANCHOR_MATCH src/flb_scheduler.c:603
+ANCHOR_MATCH src/flb_scheduler.c:969
+ANCHOR_MATCH src/flb_engine.c:601
+ANCHOR_MATCH src/flb_engine.c:680
+ANCHOR_MATCH src/flb_engine.c:686
+ANCHOR_MATCH src/flb_engine.c:687
+ANCHOR_MATCH src/flb_engine.c:729
+ANCHOR_MATCH src/flb_engine.c:730
+ANCHOR_MATCH src/flb_engine.c:781
+ANCHOR_MATCH src/flb_engine.c:784
+ANCHOR_MATCH src/flb_engine.c:801
+ANCHOR_MATCH src/flb_engine.c:802
+ANCHOR_MATCH src/flb_engine.c:1648
+ANCHOR_MATCH src/flb_engine.c:1650
+ANCHOR_MATCH src/flb_engine_dispatch.c:108
+ANCHOR_MATCH src/flb_engine_dispatch.c:135
+ANCHOR_MATCH src/flb_engine_dispatch.c:136
+ANCHOR_MATCH src/flb_engine_dispatch.c:145
+ANCHOR_MATCH src/flb_engine_dispatch.c:163
+ANCHOR_MATCH src/flb_engine_dispatch.c:170
+ANCHOR_MATCH src/flb_engine_dispatch.c:172
+ANCHOR_MATCH src/flb_output.c:288
+ANCHOR_MATCH src/flb_output.c:292
+ANCHOR_MATCH src/flb_output.c:293
+ANCHOR_MATCH src/flb_output.c:325
+ANCHOR_MATCH src/flb_output.c:329
+ANCHOR_MATCH src/flb_output.c:335
+ANCHOR_MATCH src/flb_output.c:337
+ANCHOR_MATCH src/flb_output.c:368
+ANCHOR_MATCH src/flb_output.c:371
+ANCHOR_MATCH src/flb_output.c:373
+ANCHOR_MATCH src/flb_output.c:423
+ANCHOR_MATCH src/flb_output.c:428
+ANCHOR_MATCH src/flb_output.c:446
+ANCHOR_MATCH src/flb_output.c:452
+ANCHOR_MATCH include/fluent-bit/flb_task.h:47
+ANCHOR_MATCH include/fluent-bit/flb_task.h:48
+ANCHOR_MATCH include/fluent-bit/flb_task.h:49
+ANCHOR_MATCH include/fluent-bit/flb_task.h:173
+ANCHOR_MATCH include/fluent-bit/flb_task.h:174
+ANCHOR_MATCH include/fluent-bit/flb_task.h:181
+ANCHOR_MATCH include/fluent-bit/flb_task.h:190
+ANCHOR_MATCH include/fluent-bit/flb_task.h:192
+ANCHOR_MATCH src/flb_input.c:1231
+ANCHOR_MATCH src/flb_config.c:686
+DB_COPY_MATCH src/flb_task.c 6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d
+DB_COPY_MATCH src/flb_scheduler.c 5e2c36c2d741689e4a9a2e5b3bffdd40fee422e84c280a87129895091b242f49
+DB_COPY_MATCH src/flb_engine.c 8a941d363c5cbc083addb8e1792fa817f39ba67396812824862ea45dec1d7f33
+DB_COPY_MATCH src/flb_engine_dispatch.c b2e362ca4b25c78e9deb10eb42d7b0c1ec5d902e8e5118d08529a099e21c00f3
+SOURCE_REVISION 864c3d97f3589515285a19396ed8dfc85cda08ae
+EXTRACTED_FUNCTION_MATCH

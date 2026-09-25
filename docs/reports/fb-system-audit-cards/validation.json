@@ -1,0 +1,137 @@
+{
+  "state": "passed",
+  "implementation_base": "9a38004529180498c3d28532c2feb718ca198e7a",
+  "report_checkpoint": "0ada8983",
+  "environment": {
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_BUILD_JOBS": "4",
+    "rust_test_jobs": 4,
+    "lean_jobs": 4
+  },
+  "submodule_exit": 0,
+  "completed_steps": [
+    {
+      "step": "clang",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.08,
+      "log": "/home/cosmo/.codex/worktrees/fb-system-audit-cards/qcore-c/private/fb-system-audit-cards/gate/clang.log"
+    },
+    {
+      "step": "rust",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 488.56,
+      "log": "/home/cosmo/.codex/worktrees/fb-system-audit-cards/qcore-c/private/fb-system-audit-cards/gate/rust.log"
+    },
+    {
+      "step": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 2.33,
+      "log": "/home/cosmo/.codex/worktrees/fb-system-audit-cards/qcore-c/private/fb-system-audit-cards/gate/fmt.log"
+    },
+    {
+      "step": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 19.7,
+      "log": "/home/cosmo/.codex/worktrees/fb-system-audit-cards/qcore-c/private/fb-system-audit-cards/gate/clippy.log"
+    },
+    {
+      "step": "probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.07,
+      "log": "/home/cosmo/.codex/worktrees/fb-system-audit-cards/qcore-c/private/fb-system-audit-cards/gate/probe.log"
+    },
+    {
+      "step": "followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.35,
+      "log": "/home/cosmo/.codex/worktrees/fb-system-audit-cards/qcore-c/private/fb-system-audit-cards/gate/followup.log"
+    },
+    {
+      "step": "lean",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 66.98,
+      "log": "/home/cosmo/.codex/worktrees/fb-system-audit-cards/qcore-c/private/fb-system-audit-cards/gate/lean.log"
+    },
+    {
+      "step": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 20.44,
+      "log": "/home/cosmo/.codex/worktrees/fb-system-audit-cards/qcore-c/private/fb-system-audit-cards/gate/python.log"
+    }
+  ],
+  "rust_totals": {
+    "units": 291,
+    "summaries": 301,
+    "passed": 5676,
+    "failed": 0,
+    "ignored": 11
+  },
+  "test_binary_summary": "/home/cosmo/.codex/worktrees/fb-system-audit-cards/qcore-c/private/test-binaries/20260925T162214Z-3864512/summary.json",
+  "scope": "unchanged analyzer implementation at base; documentation, source investigation and supplementary harnesses only",
+  "new_lean_modules": 0,
+  "semantic_cards_closed": 0,
+  "lean_audits": 191,
+  "python_tests": 351,
+  "provider_gate": "not applicable: no provider changes",
+  "measurement_notes": [
+    "The gate ran while report-only files were being finalized; compiler/crates/proof/contracts/providers/scripts are unchanged from the implementation base.",
+    "Python suite prints its intentional invalid-revision negative control; the suite exits 0 with 351 tests.",
+    "Delegated task-context topic errors (exit 2) were corrected and disclosed in card reports.",
+    "Optional Astra callback experiment was tool-rejected before execution evidence; not a passed experiment."
+  ]
+}

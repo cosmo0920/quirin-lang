@@ -1,0 +1,12 @@
+{
+  "note": "Combined documentation/investigation gate on codex/fb-system-audit-cards; implementation unchanged from 9a380045. All commands/exits/timings/private paths in validation.json. No provider changes; no corpus remeasurement or verdict promotion.",
+  "workspace_tests": 5676,
+  "python_evidence_validator_tests": 351,
+  "lean_audits": 191,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

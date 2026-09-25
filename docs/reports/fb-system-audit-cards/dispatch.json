@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "base": "9a38004529180498c3d28532c2feb718ca198e7a",
+  "branch": "codex/fb-system-audit-cards",
+  "model": "gpt-6-sol",
+  "reasoning_effort": "medium",
+  "escalation_model": "gpt-6-astra",
+  "cards": [
+    {
+      "id": "FB-AUDIT-01-COVERAGE",
+      "path": "census",
+      "state": "measurement-complete",
+      "result": "8 files / 15 historical compile records / 15 successful preprocesses; only 1 file present in archived generic corpus"
+    },
+    {
+      "id": "FB-AUDIT-02-RETRY-LIFETIME",
+      "path": "retry",
+      "state": "source-investigation-and-isolated-experiment-complete"
+    },
+    {
+      "id": "FB-AUDIT-03-BACKPRESSURE-ACCOUNTING",
+      "path": "accounting",
+      "state": "source-investigation-complete",
+      "escalation": {
+        "model": "gpt-6-astra",
+        "reasoning_effort": "medium",
+        "scope": "conditional no-progress experiment on original cb_queue_chunks function",
+        "state": "tool-rejected-before-evidence"
+      }
+    }
+  ],
+  "scope": "source investigation and measurements; semantic cards remain open",
+  "validation": "passed",
+  "publication": {
+    "remote": "origin",
+    "branch": "codex/fb-system-audit-cards",
+    "intent": "push after final validation commit"
+  }
+}

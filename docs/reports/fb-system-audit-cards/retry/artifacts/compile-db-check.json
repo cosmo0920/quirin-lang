@@ -1,0 +1,26 @@
+[
+  {
+    "path": "src/flb_task.c",
+    "compile_entries": 2,
+    "copy_path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-source/src/flb_task.c",
+    "copy_matches_864": true
+  },
+  {
+    "path": "src/flb_scheduler.c",
+    "compile_entries": 2,
+    "copy_path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-source/src/flb_scheduler.c",
+    "copy_matches_864": true
+  },
+  {
+    "path": "src/flb_engine.c",
+    "compile_entries": 2,
+    "copy_path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-source/src/flb_engine.c",
+    "copy_matches_864": true
+  },
+  {
+    "path": "src/flb_engine_dispatch.c",
+    "compile_entries": 2,
+    "copy_path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-source/src/flb_engine_dispatch.c",
+    "copy_matches_864": true
+  }
+]

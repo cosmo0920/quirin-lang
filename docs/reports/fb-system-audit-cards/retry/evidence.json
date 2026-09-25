@@ -1,0 +1,564 @@
+{
+  "card": "FB-AUDIT-02-RETRY-LIFETIME",
+  "scope": "read-only source investigation; not FB-RETRY-LIFETIME semantic implementation",
+  "source_revision": "864c3d97f3589515285a19396ed8dfc85cda08ae",
+  "source_files": [
+    {
+      "path": "src/flb_task.c",
+      "sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+      "lines": 980
+    },
+    {
+      "path": "src/flb_scheduler.c",
+      "sha256": "5e2c36c2d741689e4a9a2e5b3bffdd40fee422e84c280a87129895091b242f49",
+      "lines": 1010
+    },
+    {
+      "path": "src/flb_engine.c",
+      "sha256": "8a941d363c5cbc083addb8e1792fa817f39ba67396812824862ea45dec1d7f33",
+      "lines": 1717
+    },
+    {
+      "path": "src/flb_engine_dispatch.c",
+      "sha256": "b2e362ca4b25c78e9deb10eb42d7b0c1ec5d902e8e5118d08529a099e21c00f3",
+      "lines": 437
+    },
+    {
+      "path": "src/flb_output.c",
+      "sha256": "2f6cde94c61380243e5a3f183bac01894763468d9f61539f90acdd983d2cc819",
+      "lines": 2009
+    },
+    {
+      "path": "include/fluent-bit/flb_task.h",
+      "sha256": "0d3ff44d5a0f15234c2ea2e2a62975b67caac7ebf392852624fe66734e4cc75d",
+      "lines": 399
+    },
+    {
+      "path": "src/flb_input.c",
+      "sha256": "2056b5856e4c2405ed959bf72f211c5d03fe7cc520f5ed174837ffd5d329ebd7",
+      "lines": 3354
+    },
+    {
+      "path": "src/flb_config.c",
+      "sha256": "1b7cc310ce3e3758a3df774ae5eb76584c11668dfcbae68a8f5eec56f77b3560",
+      "lines": 1688
+    }
+  ],
+  "build_database": {
+    "path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-production/compile_commands.json",
+    "provenance": "older 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 build; not used as source-wide evidence",
+    "selected_file_match": [
+      {
+        "path": "src/flb_task.c",
+        "compile_entries": 2,
+        "copy_path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-source/src/flb_task.c",
+        "copy_matches_864": true
+      },
+      {
+        "path": "src/flb_scheduler.c",
+        "compile_entries": 2,
+        "copy_path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-source/src/flb_scheduler.c",
+        "copy_matches_864": true
+      },
+      {
+        "path": "src/flb_engine.c",
+        "compile_entries": 2,
+        "copy_path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-source/src/flb_engine.c",
+        "copy_matches_864": true
+      },
+      {
+        "path": "src/flb_engine_dispatch.c",
+        "compile_entries": 2,
+        "copy_path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/fluent-bit-clang-source/src/flb_engine_dispatch.c",
+        "copy_matches_864": true
+      }
+    ]
+  },
+  "commands": [
+    {
+      "command": "git -C /home/cosmo/Documents/GitHub/fluent-bit rev-parse HEAD",
+      "exit": 0,
+      "private_log": "private/source-revision.log"
+    },
+    {
+      "command": "git -C /home/cosmo/Documents/GitHub/fluent-bit status --short",
+      "exit": 0,
+      "private_log": "private/source-status.log"
+    },
+    {
+      "command": "SHA-256 over eight 864 checkout source files",
+      "exit": 0,
+      "private_log": "private/source-hashes.log"
+    },
+    {
+      "command": "Python compile_commands.json selected-file hash comparison",
+      "exit": 0,
+      "private_log": "private/compile-db-check.json"
+    },
+    {
+      "command": "python3 build_c1_harness.py",
+      "exit": 0,
+      "private_log": "private/c1-build.log"
+    },
+    {
+      "command": "clang -std=gnu17 -Wall -Wextra -Wno-unused-function -o private/c1-harness private/c1-harness.c",
+      "exit": 0,
+      "private_log": "private/c1-compile.stdout.log; private/c1-compile.stderr.log; private/c1-compile.exit"
+    },
+    {
+      "command": "private/c1-harness",
+      "exit": 0,
+      "private_log": "private/c1-run.stdout.log; private/c1-run.stderr.log; private/c1-run.exit"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "T1",
+      "identity": "task id, input chunk ic, per-output route",
+      "source": [
+        "src/flb_task.c:445-473",
+        "src/flb_task.c:899-947"
+      ],
+      "observation": "task_alloc claims map id and initializes users=0; destroy clears map, routes, chunk, retries, event chunk"
+    },
+    {
+      "id": "T2",
+      "identity": "task/retry/output instance",
+      "source": [
+        "src/flb_engine.c:729-785",
+        "src/flb_task.c:317-383"
+      ],
+      "observation": "FLB_RETRY creates or reuses one per-output retry, decrements active user without release, and schedules request holding retry pointer"
+    },
+    {
+      "id": "T3",
+      "identity": "scheduler request/timer/retry pointer",
+      "source": [
+        "src/flb_scheduler.c:268-325",
+        "src/flb_scheduler.c:354-387",
+        "src/flb_scheduler.c:593-605"
+      ],
+      "observation": "schedule creates timer/request; immediate failure frees both; wait request owns timer; invalidate searches both lists by retry pointer; fired event dispatches before request destroy on success"
+    },
+    {
+      "id": "T4",
+      "identity": "retry/task/chunk",
+      "source": [
+        "src/flb_engine_dispatch.c:95-175",
+        "src/flb_task.c:291-315"
+      ],
+      "observation": "retry dispatch raises chunk, reads buffer, reschedules on unavailable data; failed reschedule destroys retry and may destroy task if no users/retries"
+    },
+    {
+      "id": "T5",
+      "identity": "queued_task/retry/task temporary user",
+      "source": [
+        "src/flb_output.c:280-344",
+        "src/flb_output.c:351-382",
+        "src/flb_output.c:415-463"
+      ],
+      "observation": "singleplex enqueue increments task user; queue flush removes temporary user then starts actual output flush; queued failure destroys retry"
+    },
+    {
+      "id": "T6",
+      "identity": "task id/out id completion",
+      "source": [
+        "include/fluent-bit/flb_task.h:47-52",
+        "src/flb_engine.c:579-608",
+        "src/flb_engine.c:680-687",
+        "src/flb_engine.c:780-803"
+      ],
+      "observation": "completion decodes task/out IDs, looks up current task map entry, cleans retry and decrements user on success, or schedules retry; no generation field in encoded key"
+    },
+    {
+      "id": "T7",
+      "identity": "output instance/task/retry",
+      "source": [
+        "src/flb_engine.c:1629-1650",
+        "src/flb_output.c:565-595",
+        "src/flb_input.c:1230-1231",
+        "src/flb_config.c:684-686"
+      ],
+      "observation": "shutdown exits outputs before input instance task destruction; task destruction invalidates retries while config scheduler remains allocated"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "C1",
+      "status": "source-supported failure-path defect candidate; no runtime fault-injection validation",
+      "source": [
+        "src/flb_scheduler.c:275-285",
+        "src/flb_scheduler.c:868-891",
+        "src/flb_scheduler.c:904-912",
+        "src/flb_scheduler.c:965-970"
+      ],
+      "claim": "If request allocation fails after timer allocation in flb_sched_request_create, return -1 leaves timer linked to sched->timers until scheduler teardown; retry_now performs the missing timer destroy on the analogous branch.",
+      "contrary_guard": "sched_destroy eventually releases linked timers; this is transient retention across a recoverable allocation failure, not an unbounded leak demonstrated in this card.",
+      "reproduce": "Inject failure into request flb_malloc after successful flb_sched_timer_create, assert sched->timers returns to baseline before teardown, then compare retry_now branch."
+    },
+    {
+      "id": "C2",
+      "status": "source-supported ownership defect candidate; no runtime fault-injection validation",
+      "source": [
+        "src/flb_output.c:288-295",
+        "src/flb_output.c:360-374",
+        "include/fluent-bit/flb_task.h:171-193"
+      ],
+      "claim": "singleplex_enqueue increments task->users before queue allocation; allocation failure destroys retry if present but returns without decrementing the temporary user, leaving task artificially live.",
+      "contrary_guard": "normal queue flush decrements the temporary user at flb_output.c:325-329; that path is not reached when enqueue allocation fails. Shutdown destroys input tasks regardless of users.",
+      "reproduce": "In a synchronous output test, fail queued_task allocation, inspect users before/after and task map occupancy after the caller handles -1; run both first-dispatch and retry cases."
+    },
+    {
+      "id": "C3",
+      "status": "source-supported orphan candidate; requires fault injection and queue-state validation",
+      "source": [
+        "src/flb_output.c:325-341",
+        "src/flb_output.c:415-463",
+        "include/fluent-bit/flb_task.h:171-193",
+        "src/flb_engine_dispatch.c:157-167"
+      ],
+      "claim": "When queued retry is popped, temporary user is decremented without release; if output task flush fails and retry is destroyed, a zero-user, zero-retry task can remain until shutdown.",
+      "contrary_guard": "another active output user or retry retains task; the first-dispatch path may be reaped by other engine cleanup only when routes are empty, so isolate one route and inspect.",
+      "reproduce": "Queue a retry behind an in-progress synchronous flush, then fail flush creation or self-pipe write at flush_one; assert task map and input tasks empty after in-progress completion."
+    },
+    {
+      "id": "C4",
+      "status": "unvalidated identity hazard hypothesis",
+      "source": [
+        "include/fluent-bit/flb_task.h:47-52",
+        "src/flb_engine.c:579-608",
+        "src/flb_task.c:42-77",
+        "src/flb_task.c:899-909"
+      ],
+      "claim": "Encoded completion carries task id/out id without a task generation and the handler dereferences the current map entry; a delayed or duplicate completion after id reuse could target a new task.",
+      "contrary_guard": "normal completion holds an active user until processed and shutdown/event-loop ordering may exclude delayed events; no reachable stale event demonstrated.",
+      "reproduce": "Instrument completion enqueue/dequeue and task map recycling; prove an accepted stale event through a real output route before alleging a defect."
+    }
+  ],
+  "line_anchors": [
+    {
+      "path": "src/flb_task.c",
+      "line": 274,
+      "text": "    ret = flb_sched_request_invalidate(retry->parent->config, retry);"
+    },
+    {
+      "path": "src/flb_task.c",
+      "line": 297,
+      "text": "    seconds = flb_sched_request_create(config, retry, retry->attempts);"
+    },
+    {
+      "path": "src/flb_task.c",
+      "line": 303,
+      "text": "        flb_task_retry_destroy(retry);"
+    },
+    {
+      "path": "src/flb_task.c",
+      "line": 304,
+      "text": "        if (task->users == 0 && mk_list_size(&task->retries) == 0) {"
+    },
+    {
+      "path": "src/flb_task.c",
+      "line": 331,
+      "text": "                flb_task_retry_destroy(retry);"
+    },
+    {
+      "path": "src/flb_task.c",
+      "line": 350,
+      "text": "        mk_list_add(&retry->_head, &task->retries);"
+    },
+    {
+      "path": "src/flb_task.c",
+      "line": 467,
+      "text": "    task->users     = 0;"
+    },
+    {
+      "path": "src/flb_task.c",
+      "line": 909,
+      "text": "    map_free_task_id(task->id, task->config);"
+    },
+    {
+      "path": "src/flb_task.c",
+      "line": 929,
+      "text": "        flb_input_chunk_destroy(task->ic, del);"
+    },
+    {
+      "path": "src/flb_task.c",
+      "line": 936,
+      "text": "        flb_task_retry_destroy(retry);"
+    },
+    {
+      "path": "src/flb_scheduler.c",
+      "line": 276,
+      "text": "    timer = flb_sched_timer_create(config->sched);"
+    },
+    {
+      "path": "src/flb_scheduler.c",
+      "line": 282,
+      "text": "    request = flb_malloc(sizeof(struct flb_sched_request));"
+    },
+    {
+      "path": "src/flb_scheduler.c",
+      "line": 283,
+      "text": "    if (!request) {"
+    },
+    {
+      "path": "src/flb_scheduler.c",
+      "line": 285,
+      "text": "        return -1;"
+    },
+    {
+      "path": "src/flb_scheduler.c",
+      "line": 319,
+      "text": "            flb_sched_timer_destroy(timer);"
+    },
+    {
+      "path": "src/flb_scheduler.c",
+      "line": 364,
+      "text": "        if (request->data == data) {"
+    },
+    {
+      "path": "src/flb_scheduler.c",
+      "line": 382,
+      "text": "            flb_sched_request_destroy(request);"
+    },
+    {
+      "path": "src/flb_scheduler.c",
+      "line": 599,
+      "text": "        ret = flb_engine_dispatch_retry(req->data, config);"
+    },
+    {
+      "path": "src/flb_scheduler.c",
+      "line": 603,
+      "text": "            flb_sched_request_destroy(req);"
+    },
+    {
+      "path": "src/flb_scheduler.c",
+      "line": 969,
+      "text": "        flb_sched_timer_destroy(timer);"
+    },
+    {
+      "path": "src/flb_engine.c",
+      "line": 601,
+      "text": "    task = config->task_map[task_id].task;"
+    },
+    {
+      "path": "src/flb_engine.c",
+      "line": 680,
+      "text": "        flb_input_chunk_release_route(task->ic, ins);"
+    },
+    {
+      "path": "src/flb_engine.c",
+      "line": 686,
+      "text": "        flb_task_retry_clean(task, ins);"
+    },
+    {
+      "path": "src/flb_engine.c",
+      "line": 687,
+      "text": "        flb_task_users_dec(task, FLB_TRUE);"
+    },
+    {
+      "path": "src/flb_engine.c",
+      "line": 729,
+      "text": "        /* Create a Task-Retry */"
+    },
+    {
+      "path": "src/flb_engine.c",
+      "line": 730,
+      "text": "        retry = flb_task_retry_create(task, ins);"
+    },
+    {
+      "path": "src/flb_engine.c",
+      "line": 781,
+      "text": "        flb_task_users_dec(task, FLB_FALSE);"
+    },
+    {
+      "path": "src/flb_engine.c",
+      "line": 784,
+      "text": "        retry_seconds = flb_sched_request_create(config,"
+    },
+    {
+      "path": "src/flb_engine.c",
+      "line": 801,
+      "text": "            flb_task_retry_destroy(retry);"
+    },
+    {
+      "path": "src/flb_engine.c",
+      "line": 802,
+      "text": "            flb_task_users_release(task);"
+    },
+    {
+      "path": "src/flb_engine.c",
+      "line": 1648,
+      "text": "    flb_output_exit(config);"
+    },
+    {
+      "path": "src/flb_engine.c",
+      "line": 1650,
+      "text": "    flb_input_exit_all(config);"
+    },
+    {
+      "path": "src/flb_engine_dispatch.c",
+      "line": 108,
+      "text": "        ret = flb_task_retry_reschedule(retry, config);"
+    },
+    {
+      "path": "src/flb_engine_dispatch.c",
+      "line": 135,
+      "text": "            flb_task_retry_destroy(retry);"
+    },
+    {
+      "path": "src/flb_engine_dispatch.c",
+      "line": 136,
+      "text": "            flb_task_users_release(task);"
+    },
+    {
+      "path": "src/flb_engine_dispatch.c",
+      "line": 145,
+      "text": "        ret = flb_task_retry_reschedule(retry, config);"
+    },
+    {
+      "path": "src/flb_engine_dispatch.c",
+      "line": 163,
+      "text": "        ret = flb_output_task_singleplex_enqueue(retry->o_ins->singleplex_queue, retry,"
+    },
+    {
+      "path": "src/flb_engine_dispatch.c",
+      "line": 170,
+      "text": "        ret = flb_output_task_flush(task, retry->o_ins, config);"
+    },
+    {
+      "path": "src/flb_engine_dispatch.c",
+      "line": 172,
+      "text": "            flb_task_retry_destroy(retry);"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 288,
+      "text": "    queued_task = flb_malloc(sizeof(struct flb_task_enqueued));"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 292,
+      "text": "            flb_task_retry_destroy(retry);"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 293,
+      "text": "        }"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 325,
+      "text": "    /*"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 329,
+      "text": "    flb_task_users_dec(queued_task->task, FLB_FALSE);"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 335,
+      "text": "    if (ret == -1) {"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 337,
+      "text": "            flb_task_retry_destroy(queued_task->retry);"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 368,
+      "text": "    flb_task_users_inc(task);"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 371,
+      "text": "    ret = flb_output_task_queue_enqueue(queue, retry, task, out_ins, config);"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 373,
+      "text": "        return -1;"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 423,
+      "text": "        flb_task_users_inc(task);"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 428,
+      "text": "            flb_task_users_dec(task, FLB_FALSE);"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 446,
+      "text": "        flb_task_users_inc(task);"
+    },
+    {
+      "path": "src/flb_output.c",
+      "line": 452,
+      "text": "            flb_task_users_dec(task, FLB_FALSE);"
+    },
+    {
+      "path": "include/fluent-bit/flb_task.h",
+      "line": 47,
+      "text": "#define FLB_TASK_RET(val)  (val >> 28)"
+    },
+    {
+      "path": "include/fluent-bit/flb_task.h",
+      "line": 48,
+      "text": "#define FLB_TASK_ID(val)   (uint32_t) (val & 0xfffc000) >> 14"
+    },
+    {
+      "path": "include/fluent-bit/flb_task.h",
+      "line": 49,
+      "text": "#define FLB_TASK_OUT(val)  (val & 0x3fff)"
+    },
+    {
+      "path": "include/fluent-bit/flb_task.h",
+      "line": 173,
+      "text": "    if (task->users == 0 && mk_list_size(&task->retries) == 0) {"
+    },
+    {
+      "path": "include/fluent-bit/flb_task.h",
+      "line": 174,
+      "text": "        flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+      "path": "include/fluent-bit/flb_task.h",
+      "line": 181,
+      "text": "    task->users++;"
+    },
+    {
+      "path": "include/fluent-bit/flb_task.h",
+      "line": 190,
+      "text": "    task->users--;"
+    },
+    {
+      "path": "include/fluent-bit/flb_task.h",
+      "line": 192,
+      "text": "        flb_task_users_release(task);"
+    },
+    {
+      "path": "src/flb_input.c",
+      "line": 1231,
+      "text": "    flb_engine_destroy_tasks(&ins->tasks);"
+    },
+    {
+      "path": "src/flb_config.c",
+      "line": 686,
+      "text": "        flb_sched_destroy(config->sched);"
+    }
+  ],
+  "experiment": {
+    "id": "C1-isolated-stubbed",
+    "extraction_script": "build_c1_harness.py",
+    "extracted_function_sha256": "7d65c645bd2b5ecb0b275d357689b7c83cbc20e0ab63595599dc109758becc44",
+    "source": "src/flb_scheduler.c:268-326",
+    "compiler": "clang -std=gnu17 -Wall -Wextra -Wno-unused-function",
+    "result": "return -1; live timer count 1 before simulated teardown, 0 after",
+    "limitations": "Exact function bytes with stubs: not a production Fluent Bit process, no actual scheduler/event loop or allocator fault injection in full binary."
+  }
+}

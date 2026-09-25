@@ -1,0 +1,8 @@
+{
+  "model": "gpt-6-astra",
+  "reasoning_effort": "medium",
+  "status": "tool-rejected-before-evidence",
+  "message": "This content was flagged for possible cybersecurity risk.",
+  "native_result": null,
+  "followup": "No execution evidence; preserve source-level hypothesis."
+}
