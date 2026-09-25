@@ -368,6 +368,15 @@ same pin, Clang 21.1.8 and ChunkIO package as the baseline.
 * `contracts` is identical once the checkout root is aliased;
 * `source-effects` carries the checkout-path digests the brief lists.
 
+AFTER was built from `9243680e`. The later code commits do not touch the
+analyzer's decisions:
+
+* `21d76be9` changes test files only;
+* `a23efc93` is rustfmt only;
+* `6e0bced6` changes the aggregate probe example and adds a test.
+
+The archived artifacts are therefore the tip's.
+
 **AFTER against BEFORE** (same checkout, [after-vs-before.json](after-vs-before.json)):
 chunk-contracts, contracts, source-effects and source are byte-identical. Only
 the diagnostics move, by the leaves below. The scope string is unchanged.
