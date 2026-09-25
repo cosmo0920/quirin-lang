@@ -2659,6 +2659,9 @@ fn build_function_cfg_with(
     } else {
         descriptor_custody::declared_callees(contracts)
     };
+    // Card W45-CALLEE-SUMMARY-CASCADE: rule 1's lexical premises, read once.
+    let member_releases =
+        member_release::AdmissibleReleases::read(tokens, body_start, &formal_parameters, contracts);
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -2684,6 +2687,7 @@ fn build_function_cfg_with(
         census_bindings: census_body_bindings(tokens, body_start, contracts),
         admit_derived_returns,
         argument_probe: call_argument_access::ArgumentProbe::default(),
+        member_releases,
         desugar: condition_desugar::DesugarState::new(function),
     };
     #[cfg(feature = "indirect-census")]
@@ -2719,6 +2723,10 @@ fn build_function_cfg_with(
     // Card W45-CALLEE-SUMMARY-CASCADE: the sub-custody guard before every call
     // to a function this unit defines (`member_release`, rule 3).
     member_release::guard_unit_callees(&mut cfg, tokens, contracts);
+    // Card W45-CALLEE-SUMMARY-CASCADE (`AGGREGATE-NULL-TEST-AFTER-RELEASE`):
+    // a null test of a member place keeps the dereference obligation of
+    // every pointer it reads through.
+    member_release::oblige_member_null_tests(&mut cfg);
     Ok(cfg)
 }
 
@@ -4022,6 +4030,9 @@ struct Parser<'a> {
     /// argument rule admitted while it classifies one statement again. Empty
     /// otherwise, which makes every hook reading it the identity.
     argument_probe: call_argument_access::ArgumentProbe,
+    /// Card W45-CALLEE-SUMMARY-CASCADE: the member places rule 1 of
+    /// `member_release` may admit in this body (its lexical premises).
+    member_releases: member_release::AdmissibleReleases,
     /// Card **W44-BRANCH-CONDITION-CALLS**: the enclosing function and the
     /// unit call graph the condition desugaring reads lazily.
     desugar: condition_desugar::DesugarState,

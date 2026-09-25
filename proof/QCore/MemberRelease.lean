@@ -31,7 +31,16 @@ The abstract rules implemented by `legacy_member_release.rs` and its hooks in
   actual's sub-custody (`ReachableOnlyThroughSubCustody`), by the same
   construction.
 * Faithful C token/type extraction and the Rust correspondence are review
-  premises (trust boundary 28). Untracked liveness is outside the property.
+  premises (trust boundary 28).
+* **Review repair.** A member release is custody, not a read: the first
+  version admitted it wherever the read obligations held and certified a
+  double release. It is now admitted only under the lexical premises P1–P4 of
+  `AdmissibleReleases` (the base is a formal never copied; one release of the
+  place and, before it, only null tests; no loop around it and no `goto`; the
+  base released afterwards on every path). `Admissible`, `ForwardAfter` and
+  `ReleasedAfter` below state their consequences; that the Rust reader
+  establishes them is a review premise. Distinct members own distinct objects
+  (the destructor's ownership premise).
 -/
 
 namespace QCore.MemberRelease
@@ -165,6 +174,148 @@ theorem a_linked_owner_refuses_the_release (f : Facts) (base place : Nat)
 theorem a_bound_place_refuses_the_release (f : Facts) (base place : Nat)
     (h : f.placeBound place = true) : refusedReads f [] [base] [place] ≠ [] := by
   simp [refusedReads, h]
+
+/-! ## Rule 1's admission premises (review repair)
+
+An occurrence of the place `B->F` in the body, with its token position. P1
+makes the list complete: the base is never copied, so every access of the
+place is spelled `B->F` and listed. -/
+
+inductive Use where
+  | release
+  | nullTest
+  | other
+  deriving DecidableEq, Repr
+
+structure Occurrence where
+  position : Nat
+  use : Use
+  deriving DecidableEq, Repr
+
+/-- P2: the release at `r`, and every other occurrence a null test before it. -/
+def Admissible (occurrences : List Occurrence) (r : Nat) : Prop :=
+  ∀ o ∈ occurrences, (o.use = .release ∧ o.position = r) ∨ (o.use = .nullTest ∧ o.position < r)
+
+/-- P3's consequence (no loop around the release, no `goto`): on a path
+`pre ++ r :: post`, everything executed after the release is later in token
+order. -/
+def ForwardAfter (post : List Nat) (r : Nat) : Prop := ∀ p ∈ post, r < p
+
+/-- **An admitted member release is never followed by a second release or any
+access of the same place**: no occurrence of the place executes after it. -/
+theorem an_admitted_release_is_the_last_use_of_its_place (occurrences : List Occurrence)
+    (r : Nat) (post : List Nat) (admissible : Admissible occurrences r)
+    (forward : ForwardAfter post r) (o : Occurrence) (ho : o ∈ occurrences) :
+    o.position ∉ post := by
+  intro hp
+  have hlt := forward _ hp
+  rcases admissible o ho with ⟨_, heq⟩ | ⟨_, hlt'⟩ <;> omega
+
+/-- In particular no second release of the place follows it. -/
+theorem no_second_release_follows (occurrences : List Occurrence) (r : Nat) (post : List Nat)
+    (admissible : Admissible occurrences r) (forward : ForwardAfter post r) :
+    ∀ o ∈ occurrences, o.use = .release → o.position ∉ post :=
+  fun o ho _ => an_admitted_release_is_the_last_use_of_its_place occurrences r post admissible
+    forward o ho
+
+/-- The premises refuse the review's counterexample: two releases of one place. -/
+theorem two_releases_are_not_admissible (r₁ r₂ : Nat) (h : r₁ ≠ r₂) (r : Nat) :
+    ¬ Admissible [⟨r₁, .release⟩, ⟨r₂, .release⟩] r := by
+  intro ha
+  have h1 := ha ⟨r₁, .release⟩ (by simp)
+  have h2 := ha ⟨r₂, .release⟩ (by simp)
+  simp at h1 h2
+  omega
+
+/-- ... and any use after the release. -/
+theorem a_use_after_the_release_is_not_admissible (r p : Nat) (u : Use) (h : r < p) :
+    ¬ Admissible [⟨r, .release⟩, ⟨p, u⟩] r := by
+  intro ha
+  have h2 := ha ⟨p, u⟩ (by simp)
+  rcases h2 with ⟨_, heq⟩ | ⟨_, hlt⟩ <;> simp at * <;> omega
+
+/-! ## Rule 1's summaries: the formal is released
+
+P4: every path through the member release (at `r`) also runs the base
+release (at `q`). W4 publishes a mode for the formal only when every exit
+agrees; so a validated summary of such a body says `released`. A body that
+releases through its formal without releasing the formal gets no rule 1. -/
+
+inductive Disposition where
+  | released
+  | live
+  deriving DecidableEq, Repr
+
+def disposition (path : List Nat) (q : Nat) : Disposition :=
+  if q ∈ path then .released else .live
+
+/-- The formal's mode W4 publishes over the body's exit paths, if they agree. -/
+def summaryMode (paths : List (List Nat)) (q : Nat) : Option Disposition :=
+  match paths.map (fun path => disposition path q) with
+  | [] => none
+  | d :: ds => if ds.all (· == d) then some d else none
+
+def ReleasedAfter (paths : List (List Nat)) (r q : Nat) : Prop :=
+  ∀ path ∈ paths, r ∈ path → q ∈ path
+
+theorem a_member_releasing_summary_releases_its_formal (paths : List (List Nat)) (r q : Nat)
+    (through : ∃ path ∈ paths, r ∈ path) (released : ReleasedAfter paths r q)
+    (d : Disposition) (h : summaryMode paths q = some d) : d = .released := by
+  obtain ⟨p, hp, hr⟩ := through
+  have hfp : disposition p q = .released := by simp [disposition, released p hp hr]
+  have hmem : disposition p q ∈ paths.map (fun path => disposition path q) :=
+    List.mem_map.mpr ⟨p, hp, rfl⟩
+  unfold summaryMode at h
+  split at h
+  · simp at h
+  · rename_i d0 ds heq
+    rw [heq] at hmem
+    split at h
+    · rename_i hall
+      simp only [Option.some.injEq] at h
+      subst h
+      rcases List.mem_cons.mp hmem with h1 | h1
+      · rw [← h1, hfp]
+      · have := List.all_eq_true.mp hall _ h1
+        simp only [beq_iff_eq] at this
+        rw [← this, hfp]
+    · simp at h
+
+/-! ## The aggregate null test after release (`AGGREGATE-NULL-TEST-AFTER-RELEASE`)
+
+The O04-B08 aggregate null test lowered `b->item == 0` to a bare branch, with
+no obligation on `b`. It now lowers to the typed read of every pointer the
+place reads through, then the branch. -/
+
+inductive TestInstr where
+  | typedRead (bases : List Nat)
+  | branchOnNull (source : Nat)
+  deriving DecidableEq, Repr
+
+def lowerNullTestPlace (prefixes : List Nat) (source : Nat) : List TestInstr :=
+  if prefixes.isEmpty then [.branchOnNull source] else [.typedRead prefixes, .branchOnNull source]
+
+theorem a_dereferencing_null_test_obliges_its_bases (prefixes : List Nat) (source : Nat)
+    (h : prefixes ≠ []) :
+    lowerNullTestPlace prefixes source = [.typedRead prefixes, .branchOnNull source] := by
+  simp [lowerNullTestPlace, h]
+
+/-- A null test through a released base is never `Safe`: the read before the
+branch refuses. -/
+theorem an_aggregate_null_test_over_a_released_base_is_not_safe
+    (s : QCore.IndirectScalarAccess.State) (prefixes : List Nat) (base : Nat)
+    (b : QCore.IndirectScalarAccess.Binding) (site : Nat) (flags : QCore.IndirectScalarAccess.Flags)
+    (hmem : base ∈ prefixes) (hb : s.binding base = some b) (ht : b.targets = [site])
+    (hs : s.status site = some flags) (hr : flags.released = true) :
+    QCore.IndirectScalarAccess.safe
+      (QCore.IndirectScalarAccess.transfer s ⟨prefixes, none, none⟩).2 = false := by
+  have hres := QCore.IndirectScalarAccess.a_released_base_refuses s base b site flags hb ht hs hr
+  simp only [QCore.IndirectScalarAccess.safe, QCore.IndirectScalarAccess.transfer,
+    QCore.IndirectScalarAccess.refusals, List.isEmpty_eq_false_iff]
+  intro hnil
+  rw [List.map_eq_nil_iff, List.filter_eq_nil_iff] at hnil
+  have := hnil base hmem
+  simp [hres] at this
 
 /-! ## Rule 2: a member null test is a read -/
 
@@ -306,6 +457,13 @@ theorem the_witness_admissions :
       admitsRelease (some .releasedNonnull) true [5] = false ∧
       admitsRelease (some .releasedNullable) true [] = false := by
   decide
+
+/-- The destructor: one release at 5, a null test at 3 before it. -/
+theorem the_witness_destructor_is_admissible :
+    Admissible [⟨3, .nullTest⟩, ⟨5, .release⟩] 5 := by
+  intro o ho
+  simp at ho
+  rcases ho with rfl | rfl <;> simp
 
 /-- A two-node graph `0 → 1` guarded at `1`: `0 → 2 → 1`. -/
 theorem the_witness_insertion : insertGuard [[1], []] 1 = [[2], [], [1]] := by decide

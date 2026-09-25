@@ -745,7 +745,8 @@ impl Parser<'_> {
             // nullable release is admitted too (`member_release`, rule 1).
             let release = matches!(&answer, Some(Ok(read))
                 if !position.admits()
-                    && super::member_release::admits_release(contract, index, read));
+                    && super::member_release::admits_release(contract, index, read)
+                    && self.member_releases.admits(argument));
             if let Some(Ok(read)) = &answer
                 && (position.admits() || release)
             {

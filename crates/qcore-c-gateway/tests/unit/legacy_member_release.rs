@@ -18,11 +18,21 @@ fn contracts() -> ResourceContracts {
             "q_nullable.qcore".to_owned(),
             include_str!("../fixtures/contracts/q_nullable.qcore").to_owned(),
         ),
+        ("q_peek.qcore".to_owned(), Q_PEEK.to_owned()),
     ]
     .into_iter()
     .collect();
     crate::contract_loader::load_resource_contract_sources(&sources).unwrap()
 }
+
+/// A borrowing reader, local to these tests.
+const Q_PEEK: &str = "module contract;\n\
+     extern fn q_peek(p: ptr<mut, u8>) -> unit\n\
+     contract {\n\
+         requires resource_contract_v1;\n\
+         ensures normal resource_borrowed(p);\n\
+         ensures normal resource_return_none();\n\
+     };\n";
 
 const RECORD: &str = "struct inner { int n; };\n\
      struct node { void *buf; struct node *next; struct inner in; int n; };\n";
@@ -66,27 +76,262 @@ fn a_destructor_body_validates_and_its_caller_certifies() {
 }
 
 #[test]
-fn without_the_release_the_caller_leaks() {
-    // Not weaker than the body: a destructor that forgets its formal gives the
-    // caller's acquisition nowhere to go.
+fn a_body_that_keeps_its_formal_gets_no_member_release() {
+    // P4: a body that releases through a formal without releasing the formal
+    // gets no rule 1, so no summary its caller could rely on.
     let summary = analyze(
         "static void node_clear(struct node *n) { q_nullable_free(n->buf); }\n\
          void subject(void) { struct node *n = q_alloc(); node_clear(n); }\n",
     );
-    assert_eq!(status(&summary, "node_clear"), AnalysisStatus::Safe);
-    assert_eq!(status(&summary, "subject"), AnalysisStatus::Unsafe);
-    assert!(has(&summary, "subject", "Leak"));
+    assert_ne!(status(&summary, "node_clear"), AnalysisStatus::Safe);
+    assert!(has(&summary, "node_clear", "indirect memory access"));
+    assert_ne!(status(&summary, "subject"), AnalysisStatus::Safe);
 }
 
 #[test]
 fn the_released_formal_is_still_released_exactly_once() {
     // The member release touches no tracked identity: releasing the formal
-    // twice is still a violation.
+    // twice is still not Safe.
     let summary = analyze(
-        "void subject(void) { struct node *n = q_alloc(); q_nullable_free(n->buf); \
+        "void subject(struct node *n) { q_nullable_free(n->buf); \
          q_nullable_free(n); q_nullable_free(n); }\n",
     );
-    assert_eq!(status(&summary, "subject"), AnalysisStatus::Unsafe);
+    assert_ne!(status(&summary, "subject"), AnalysisStatus::Safe);
+}
+
+/// The integration review's counterexamples, and their neighbours: none may be
+/// `Safe`.
+#[test]
+fn no_second_use_of_a_released_member_is_safe() {
+    let cases: &[(&str, &str)] = &[
+        (
+            "a second release on the same path",
+            "void subject(struct node *n) { q_nullable_free(n->buf); q_nullable_free(n->buf); \
+             q_nullable_free(n); }\n",
+        ),
+        (
+            "a release in a branch arm, then again after it",
+            "void subject(struct node *n) { if (n->next) { q_nullable_free(n->buf); } \
+             q_nullable_free(n->buf); q_nullable_free(n); }\n",
+        ),
+        (
+            "a release in both arms, then again after them",
+            "void subject(struct node *n) { if (n->next) q_nullable_free(n->buf); \
+             else q_nullable_free(n->buf); q_nullable_free(n->buf); q_nullable_free(n); }\n",
+        ),
+        (
+            "a release in a for loop",
+            "void subject(struct node *n, int k) { int i; for (i = 0; i < k; i++) \
+             q_nullable_free(n->buf); q_nullable_free(n); }\n",
+        ),
+        (
+            "a release in a while loop",
+            "void subject(struct node *n) { while (n->next) { q_nullable_free(n->buf); } \
+             q_nullable_free(n); }\n",
+        ),
+        (
+            "a release in a do loop that is not do-while(0)",
+            "void subject(struct node *n, int k) { do { q_nullable_free(n->buf); } while (k); \
+             q_nullable_free(n); }\n",
+        ),
+        (
+            "a null test after the release",
+            "void subject(struct node *n) { q_nullable_free(n->buf); if (n->buf) n->n = 1; \
+             q_nullable_free(n); }\n",
+        ),
+        (
+            "a read after the release",
+            "void subject(struct node *n) { q_nullable_free(n->buf); q_peek(n->buf); \
+             q_nullable_free(n); }\n",
+        ),
+        (
+            "a copy of the base",
+            "void subject(struct node *n) { struct node *m = n; q_nullable_free(n->buf); \
+             q_nullable_free(m->buf); q_nullable_free(n); }\n",
+        ),
+        (
+            "a re-read of the member into a local",
+            "void subject(struct node *n) { void *p = n->buf; q_nullable_free(n->buf); \
+             q_nullable_free(p); q_nullable_free(n); }\n",
+        ),
+        (
+            "the member copied into another member",
+            "void subject(struct node *n) { n->next = n->buf; q_nullable_free(n->buf); \
+             q_nullable_free(n->next); q_nullable_free(n); }\n",
+        ),
+        (
+            "a goto in the body",
+            "void subject(struct node *n) { again: q_nullable_free(n->buf); \
+             if (n->next) goto again; q_nullable_free(n); }\n",
+        ),
+        (
+            "a return between the member and the base release",
+            "void subject(struct node *n) { q_nullable_free(n->buf); if (n->next) return; \
+             q_nullable_free(n); }\n",
+        ),
+        (
+            "the base released only conditionally",
+            "void subject(struct node *n) { q_nullable_free(n->buf); if (n->next) \
+             q_nullable_free(n); }\n",
+        ),
+    ];
+    for (reason, body) in cases {
+        let summary = analyze(body);
+        assert_ne!(
+            status(&summary, "subject"),
+            AnalysisStatus::Safe,
+            "{reason}: {:?}",
+            summary.functions["subject"].diagnostics
+        );
+    }
+}
+
+/// The summary route: a callee that releases the member, then the caller.
+#[test]
+fn a_callee_release_is_never_followed_safely_by_the_caller() {
+    let partial = "static void d(struct node *n) { q_nullable_free(n->buf); }\n";
+    let cases: &[(&str, String)] = &[
+        (
+            "the review's case: a callee that keeps the base",
+            format!(
+                "{partial}void subject(struct node *n) {{ d(n); q_nullable_free(n->buf); \
+                 q_nullable_free(n); }}\n"
+            ),
+        ),
+        (
+            "a full destructor, then the caller releases the member",
+            format!(
+                "{DESTROY}void subject(struct node *n) {{ node_destroy(n); \
+                 q_nullable_free(n->buf); }}\n"
+            ),
+        ),
+        (
+            "a full destructor, then the caller null-tests the member",
+            format!(
+                "{DESTROY}void subject(struct node *n) {{ node_destroy(n); if (n->buf) return; }}\n"
+            ),
+        ),
+        (
+            "a full destructor, then the caller reads the member",
+            format!(
+                "{DESTROY}void subject(struct node *n) {{ node_destroy(n); q_peek(n->buf); }}\n"
+            ),
+        ),
+        (
+            "a full destructor, then the caller passes the base",
+            format!(
+                "{DESTROY}void subject(struct node *n) {{ node_destroy(n); node_destroy(n); }}\n"
+            ),
+        ),
+        (
+            "the caller copied the member first",
+            format!(
+                "{DESTROY}void subject(struct node *n) {{ void *p = n->buf; node_destroy(n); \
+                 q_nullable_free(p); }}\n"
+            ),
+        ),
+        (
+            "an acquired base, destroyed, then its member released",
+            format!(
+                "{DESTROY}void subject(void) {{ struct node *n = q_alloc(); node_destroy(n); \
+                 q_nullable_free(n->buf); }}\n"
+            ),
+        ),
+    ];
+    for (reason, source) in cases {
+        let summary = analyze(source);
+        assert_ne!(
+            status(&summary, "subject"),
+            AnalysisStatus::Safe,
+            "{reason}: {:?}",
+            summary.functions["subject"].diagnostics
+        );
+    }
+}
+
+/// The destructor shapes that must keep working: distinct members, then the
+/// base, on every path.
+#[test]
+fn destructor_shapes_still_certify() {
+    let cases: &[(&str, &str)] = &[
+        (
+            "two members and the base",
+            "static void d(struct node *n) { if (n->buf) q_nullable_free(n->buf); \
+             q_nullable_free(n->next); q_nullable_free(n); }\n",
+        ),
+        (
+            "the RD_IF_FREE shape (do-while(0) is not a loop)",
+            "static void d(struct node *n) { do { if ((n->buf)) q_nullable_free(n->buf); } \
+             while (0); q_nullable_free(n); }\n",
+        ),
+        (
+            "a __builtin_expect null test",
+            "static void d(struct node *n) { if (__builtin_expect((n->buf != ((void *)0)), 1)) \
+             q_nullable_free(n->buf); q_nullable_free(n); }\n",
+        ),
+        (
+            "a scalar member written before the releases",
+            "static void d(struct node *n) { n->n = 0; q_nullable_free(n->buf); \
+             q_nullable_free(n); }\n",
+        ),
+    ];
+    for (reason, body) in cases {
+        let summary = analyze(&format!(
+            "{body}void subject(void) {{ struct node *n = q_alloc(); d(n); }}\n"
+        ));
+        assert_eq!(
+            status(&summary, "d"),
+            AnalysisStatus::Safe,
+            "{reason}: {:?}",
+            summary.functions["d"].diagnostics
+        );
+        assert_eq!(
+            status(&summary, "subject"),
+            AnalysisStatus::Safe,
+            "{reason}: {:?}",
+            summary.functions["subject"].diagnostics
+        );
+    }
+}
+
+/// `AGGREGATE-NULL-TEST-AFTER-RELEASE`: the O04-B08 aggregate null test now
+/// carries its base's dereference obligation.
+#[test]
+fn an_aggregate_null_test_after_release_is_not_safe() {
+    let base = |condition: &str| {
+        format!(
+            "void subject(void) {{ struct node *n = q_alloc(); if (n == 0) return; \
+             q_free(n); if ({condition}) return; }}\n"
+        )
+    };
+    for condition in ["n->buf", "n->buf == 0", "!n->buf", "n->next != ((void *)0)"] {
+        let summary = analyze(&base(condition));
+        assert_ne!(
+            status(&summary, "subject"),
+            AnalysisStatus::Safe,
+            "{condition}: {:?}",
+            summary.functions["subject"].diagnostics
+        );
+    }
+    // Before the release the same test is admitted.
+    let summary = analyze(
+        "void subject(void) { struct node *n = q_alloc(); if (n == 0) return; \
+         if (n->buf) { q_free(n); return; } q_free(n); }\n",
+    );
+    assert_eq!(
+        status(&summary, "subject"),
+        AnalysisStatus::Safe,
+        "{:?}",
+        summary.functions["subject"].diagnostics
+    );
+}
+
+#[test]
+fn a_place_obliges_every_pointer_it_reads_through() {
+    assert_eq!(super::dereferenced_prefixes("b->item"), vec!["b"]);
+    assert_eq!(super::dereferenced_prefixes("a->b->c"), vec!["a", "a->b"]);
+    assert!(super::dereferenced_prefixes("s.f").is_empty());
+    assert_eq!(super::dereferenced_prefixes("s.f->g"), vec!["s.f"]);
 }
 
 #[test]
