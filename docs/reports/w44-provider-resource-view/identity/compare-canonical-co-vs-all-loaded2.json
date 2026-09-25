@@ -1,0 +1,25 @@
+{
+  "base": "private/runs/canonical-co2",
+  "run": "private/runs/all-loaded2",
+  "results": {
+    "resource-diagnostics.json": "identical",
+    "resource-diagnostics.contracts.json": "identical-after-removing ['provider_selection']",
+    "resource-diagnostics.chunk-contracts.json": "identical",
+    "resource-diagnostics.source-effects.json": "identical",
+    "monkey-source.json": "identical",
+    "audit.log": {
+      "identical_after_masking": true,
+      "lines": 1076,
+      "inserted_lines": [],
+      "differing_lines": [
+        {
+          "line": 1076,
+          "base": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 30119807 us / syntax 51350683 us / line markers 32401581 us",
+          "run": "preparation: 186 unit(s), 558 Clang invocation(s); -E -P 29263713 us / syntax 51886933 us / line markers 33633931 us"
+        }
+      ]
+    },
+    "only_in_run": []
+  },
+  "ok": true
+}

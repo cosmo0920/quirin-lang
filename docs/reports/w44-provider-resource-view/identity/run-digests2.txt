@@ -1,0 +1,7 @@
+manifest2 b0d30f58bfbc8dfeae6352017670e1802e0c94bf9bd6c86dd0dbccfe9449ff8d current revision: 185 source file(s), 186 configuration(s): 3 Safe / 10 provisional Unsafe / 169 Unknown / 4 data-only / 0 gateway failures
+whole2 6756e40054d73d88336a58ca328a26e8444aaddc110c307710845eccb296116d current revision: 185 source file(s), 186 configuration(s): 3 Safe / 10 provisional Unsafe / 169 Unknown / 4 data-only / 0 gateway failures
+canonical2 6756e40054d73d88336a58ca328a26e8444aaddc110c307710845eccb296116d current revision: 185 source file(s), 186 configuration(s): 3 Safe / 10 provisional Unsafe / 169 Unknown / 4 data-only / 0 gateway failures
+all-loaded2 882d6d43bc3534cb4e5c03634c1961d914592bd8e4c4a93df693eb0ed479418f current revision: 185 source file(s), 186 configuration(s): 3 Safe / 10 provisional Unsafe / 169 Unknown / 4 data-only / 0 gateway failures
+canonical-co2 882d6d43bc3534cb4e5c03634c1961d914592bd8e4c4a93df693eb0ed479418f current revision: 185 source file(s), 186 configuration(s): 3 Safe / 10 provisional Unsafe / 169 Unknown / 4 data-only / 0 gateway failures
+manifest-co2 20b8aa8cc75804e9d27b2ce1699e800f33d37efbed5935dc9ef690049f14b147 current revision: 185 source file(s), 186 configuration(s): 3 Safe / 10 provisional Unsafe / 169 Unknown / 4 data-only / 0 gateway failures
+base2 b0d30f58bfbc8dfeae6352017670e1802e0c94bf9bd6c86dd0dbccfe9449ff8d current revision: 185 source file(s), 186 configuration(s): 3 Safe / 10 provisional Unsafe / 169 Unknown / 4 data-only / 0 gateway failures
