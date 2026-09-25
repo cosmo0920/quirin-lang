@@ -474,7 +474,9 @@ impl Parser<'_> {
         position: Position,
         refused: bool,
     ) -> Option<Box<ConditionPlan>> {
-        if !refused {
+        // Card W45-PARENTHESISED-CALLEE: a callee that is not a name is never
+        // desugared.
+        if !refused || self.opaque_callee(condition) {
             return None;
         }
         if !contains_call(condition) {

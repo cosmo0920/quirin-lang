@@ -203,7 +203,15 @@ fn nested_parentheses_and_a_cast_to_void_are_normalised() {
             &format!("{prefix}{parenthesised} }}"),
             &format!("{prefix}{plain} }}"),
         );
-        assert_eq!(subject(&run).status, AnalysisStatus::Safe);
+        if parenthesised.starts_with("(void)") {
+            // The plain spelling's own refusal, kept exactly.
+            assert_eq!(
+                unsupported(subject(&run)),
+                ["resource call with a formal embedded in an unmodeled expression"]
+            );
+        } else {
+            assert_eq!(subject(&run).status, AnalysisStatus::Safe, "{parenthesised}");
+        }
     }
 }
 
@@ -428,10 +436,17 @@ fn a_callee_expression_refuses_in_every_expression_position() {
 /// was already refused.
 #[test]
 fn a_for_clause_call_is_never_a_no_op() {
-    let run = body("void *p = q_alloc(); int i; for (i = 0; i < 1; q_free(p)) { i = 1; }");
+    // The init clause always runs: before the card its release vanished and
+    // the acquisition was reported leaked.
+    let run = body("void *p = q_alloc(); if (p == 0) return; for (q_free(p); c; ) { }");
     let result = subject(&run);
     assert_eq!(result.status, AnalysisStatus::Unknown, "{result:#?}");
-    assert!(unsupported(result).contains(&FOR_CLAUSE.to_owned()));
+    assert_eq!(unsupported(result), [FOR_CLAUSE]);
+    // The increment clause is refused too (the zero-iteration path keeps its
+    // own leak, which the refusal does not reach).
+    let run = body("void *p = q_alloc(); int i; for (i = 0; i < 1; q_free(p)) { i = 1; }");
+    assert!(unsupported(subject(&run)).contains(&FOR_CLAUSE.to_owned()));
+    assert_ne!(subject(&run).status, AnalysisStatus::Safe);
     let run = body("void *p; int i; for (p = q_alloc(); p != 0; ) { q_free(p); p = 0; }");
     assert_eq!(subject(&run).status, AnalysisStatus::Unknown);
     // Clauses without grouping keep their exact classification.

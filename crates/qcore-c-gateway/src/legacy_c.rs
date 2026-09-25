@@ -62,6 +62,12 @@ pub mod review_hold;
 
 pub use review_hold::{AWAITING_HUMAN_REVIEW, held_call, hold_description};
 
+// Card W45-PARENTHESISED-CALLEE: `(f)(x)` is `f(x)`, and any other callee
+// that is not a name refuses. Everything the card adds lives there; this file
+// only carries the hooks marked with the card's name.
+#[path = "legacy_parenthesised_callee.rs"]
+pub(crate) mod parenthesised_callee;
+
 #[path = "legacy_descriptor_custody.rs"]
 pub(crate) mod descriptor_custody;
 
@@ -1842,6 +1848,10 @@ fn analyze_legacy_c_tokens(
     // the environment that pass already withdrew from — which is also why the
     // gate is not repeated per function, where re-reading every declared
     // module would cost one parse per body.
+    // Card W45-PARENTHESISED-CALLEE: `(f)(x)` is `f(x)` before anything,
+    // the hold included, reads a call.
+    let normalised = parenthesised_callee::normalise_tokens(tokens);
+    let tokens = normalised.as_deref().unwrap_or(tokens);
     // Card W45-CONTRACT-DEFERRED-REVIEW: held before anything reads a call.
     let held_tokens = review_hold::hold_call_sites(tokens, contracts);
     let tokens = held_tokens.as_deref().unwrap_or(tokens);
@@ -2376,6 +2386,8 @@ pub(crate) fn recursive_component_census(
     selected_functions: Option<&[String]>,
 ) -> Vec<crate::legacy_census::NeutralComponentCensus> {
     let (tokens, conditionals) = tokenize_with_conditionals(source);
+    // Card W45-PARENTHESISED-CALLEE: the same stream the analysis reads.
+    let (tokens, conditionals) = parenthesised_callee::normalise_owned(tokens, conditionals);
     // Card W45-CONTRACT-DEFERRED-REVIEW: held before anything reads a call.
     let tokens = review_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
     let agreement = declared_abi::AbiAgreement::read(&tokens, contracts);
@@ -2418,6 +2430,10 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     selected_functions: Option<&[String]>,
 ) -> Result<PartialTranslationUnitAnalysis, LegacyCError> {
     let (tokens, conditionals) = tokenize_with_conditionals(source);
+    // Card W45-PARENTHESISED-CALLEE: every body's `(f)(x)` is rewritten to
+    // `f(x)` first, so the hold, both withdrawals, W4 and every classifier
+    // position below read the call C evaluates.
+    let (tokens, conditionals) = parenthesised_callee::normalise_owned(tokens, conditionals);
     // Card W45-CONTRACT-DEFERRED-REVIEW: a declaration awaiting human review
     // is already absent from the environment (the loader withholds it); its
     // call sites are rewritten here, before the ABI gate and everything else
@@ -2691,6 +2707,18 @@ fn build_function_cfg_with(
             &variadic_tails,
         );
     let alias_classes = crate::may_alias::MayAliasClasses::read(&typed_types);
+    // Card W45-PARENTHESISED-CALLEE: the type names a cast may spell, over
+    // this function's parameters and body.
+    let callee_types = {
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let start = function_parameter_range(tokens, function, body_start)
+            .map_or(body_start, |(open, _)| open);
+        let end = matching(tokens, body_start, "{", "}").map_or(tokens.len(), |end| end + 1);
+        parenthesised_callee::TypeNames::read(&typed_model, &texts, start..end)
+    };
     let collection_types = collection_types(tokens, function, body_start, &typed_model);
     // Card W44-COLLECTION-ALLOCATION: names whose `sizeof` dereference operand
     // is unevaluated, from the same declarator reader.
@@ -2768,6 +2796,7 @@ fn build_function_cfg_with(
         desugar: condition_desugar::DesugarState::new(function),
         return_facts,
         sub_object_roots,
+        callee_types,
     };
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
@@ -4121,6 +4150,9 @@ struct Parser<'a> {
     /// Card **W45-SUB-OBJECT-STORES**: the record-typed roots
     /// ([`sub_object_store::RecordRoots`]).
     sub_object_roots: sub_object_store::RecordRoots,
+    /// Card **W45-PARENTHESISED-CALLEE**: the typedef names this function
+    /// trusts as types ([`parenthesised_callee::TypeNames`]).
+    callee_types: parenthesised_callee::TypeNames,
 }
 
 impl Parser<'_> {
@@ -4774,6 +4806,11 @@ impl Parser<'_> {
     /// of the access-chain family reads the difference; every other family
     /// decides identically in both roles.
     fn supported_expression(&self, tokens: &[Token], role: ExpressionRole) -> bool {
+        // Card W45-PARENTHESISED-CALLEE: a call through a callee expression
+        // that is not a name is never neutral.
+        if self.opaque_callee(tokens) {
+            return false;
+        }
         // Expression-position writes need an evaluation model. In particular
         // a condition must not erase an increment into a neutral CFG node.
         if tokens.windows(2).any(|pair| {
@@ -4823,6 +4860,10 @@ impl Parser<'_> {
     /// site numbering and certificate identity for every expression this rule
     /// keeps refused.
     fn condition_call_instruction(&mut self, condition: &[Token]) -> Option<LegacyInstruction> {
+        // Card W45-PARENTHESISED-CALLEE.
+        if self.opaque_callee(condition) {
+            return None;
+        }
         let texts = condition
             .iter()
             .map(|token| token.text.as_str())
@@ -4874,7 +4915,8 @@ impl Parser<'_> {
     /// keep their dereference obligation at the header. Bounds are not
     /// decided.
     fn condition_access(&self, condition: &[Token]) -> Option<Box<LegacyInstruction>> {
-        if contains_call(condition) || contains_braces(condition) {
+        // Card W45-PARENTHESISED-CALLEE: `self.opaque_callee`.
+        if contains_call(condition) || contains_braces(condition) || self.opaque_callee(condition) {
             return None;
         }
         let texts = condition
@@ -4929,6 +4971,10 @@ impl Parser<'_> {
     /// field of an admitted aggregate base is read here, and only when the
     /// condition carries no call, no braces and no other unmodeled access.
     fn null_condition(&self, condition: &[Token]) -> Option<PointerNullCondition> {
+        // Card W45-PARENTHESISED-CALLEE.
+        if self.opaque_callee(condition) {
+            return None;
+        }
         // Card W43-DESCRIPTOR-RESOURCE-TRACKING: a test of a descriptor name is
         // a validity test, never a null test — descriptor `0` is valid, so a
         // null-shaped test of one (`if (fd)`) must not remove its site.
@@ -5022,7 +5068,8 @@ impl Parser<'_> {
     /// member access, a call, a cast, a comparison against a constant — yields
     /// `None`, and the branch keeps the shape it has today.
     fn distinct_condition(&self, condition: &[Token]) -> Option<PointerDistinctCondition> {
-        if !supported_neutral_expression(condition) {
+        // Card W45-PARENTHESISED-CALLEE: `self.opaque_callee`.
+        if !supported_neutral_expression(condition) || self.opaque_callee(condition) {
             return None;
         }
         let texts = condition
@@ -5311,11 +5358,18 @@ impl Parser<'_> {
                 );
                 let body = self.parse_statement_body()?;
                 let body_end = self.cursor;
-                let init =
-                    (!init.is_empty()).then(|| Box::new((self.classify_simple(&init), line)));
+                // Card W45-PARENTHESISED-CALLEE: a clause whose stripped
+                // spelling lost its groups is never admitted from it.
+                let original = parenthesised_callee::for_clauses(&clauses);
+                let init = (!init.is_empty()).then(|| {
+                    let original = original.as_ref().map(|clauses| clauses[0].as_slice());
+                    Box::new((self.classify_for_clause(&init, original), line))
+                });
                 let increment_clause = increment.clone();
-                let increment = (!increment.is_empty())
-                    .then(|| Box::new((self.classify_simple(&increment), line)));
+                let increment = (!increment.is_empty()).then(|| {
+                    let original = original.as_ref().map(|clauses| clauses[2].as_slice());
+                    Box::new((self.classify_for_clause(&increment, original), line))
+                });
                 let counted = (self.element_lowerings > lowered_before
                     && condition_supported
                     && condition_call.is_none()
@@ -5768,6 +5822,10 @@ impl Parser<'_> {
         expression: &[Token],
         line: usize,
     ) -> Option<(LegacyInstruction, bool)> {
+        // Card W45-PARENTHESISED-CALLEE.
+        if self.opaque_callee(expression) {
+            return None;
+        }
         if let Some(call) = self.return_call_instruction(expression, line) {
             return Some((call, true));
         }
@@ -5855,7 +5913,16 @@ impl Parser<'_> {
     /// handed to a callee no declaration covers is refused. With no descriptor
     /// name in the body the guard is skipped, so every heap-only body keeps
     /// exactly the classification it had.
+    ///
+    /// Card **W45-PARENTHESISED-CALLEE** wraps it: an admitted statement that
+    /// applies a call to a callee expression that is not a name refuses.
     fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {
+        let saved = (self.next_site, self.element_lowerings);
+        let instruction = self.classify_simple_descriptors(tokens);
+        self.refuse_opaque_call(tokens, instruction, saved)
+    }
+
+    fn classify_simple_descriptors(&mut self, tokens: &[Token]) -> LegacyInstruction {
         let instruction = self.classify_simple_unguarded(tokens);
         if self.descriptor_names.is_empty() {
             return instruction;
@@ -6497,6 +6564,10 @@ impl Parser<'_> {
         &self,
         condition: &[Token],
     ) -> Option<(String, crate::indexed_collection::IndexSpelling, bool)> {
+        // Card W45-PARENTHESISED-CALLEE.
+        if self.opaque_callee(condition) {
+            return None;
+        }
         let texts = condition
             .iter()
             .map(|token| token.text.as_str())
