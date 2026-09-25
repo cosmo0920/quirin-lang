@@ -312,17 +312,46 @@ fn an_uncontracted_callee_never_admits_a_member_address() {
 }
 
 /// The premise card C02 §2 had to add after a read through a released pointer
-/// turned an honest `Unknown` into `Safe` (`AGENTS.md` constraint 5), kept
-/// unchanged here: a base this body may bind to a tracked identity, and that the
-/// aggregate-store rule does not accept, is never an admitted base.
+/// turned an honest `Unknown` into `Safe` (`AGENTS.md` constraint 5): a base
+/// this body may bind to a tracked identity is never admitted by **this**
+/// card's syntactic premise.
+///
+/// Card W44-INDIRECT-CALL-ARGUMENT-ACCESS moves this pin deliberately. Its call
+/// argument rule admits `&hold->lock` at a `Borrowed` position under the
+/// flow-sensitive dereference obligation of W43-INDIRECT-ACCESS-GENERAL
+/// instead: `hold` is unbound on every reaching path, and the only statement
+/// that could have released it, the uncontracted call, is itself refused. So
+/// the load-bearing half holds — the body never certifies and stays `Unknown`
+/// on the uncontracted call's own diagnostic — while the member address's
+/// `indirect memory access` leaf is withdrawn. A base released by a *modeled*
+/// statement is refused and accused: `call_argument_access.rs`
+/// `a_member_address_after_release_is_accused`.
 #[test]
 fn a_base_this_body_may_bind_is_never_admitted() {
     if !clang_available() {
         return;
     }
-    refused(
-        "the base occupies an argument of an uncontracted call",
+    let result = analyze(
         "void w(struct a_holder *hold) { a_untracked(hold); a_borrow(&hold->lock); }",
+        "w",
+    );
+    assert!(
+        !matches!(result, UnrestrictedLegacyResult::Safe(_)),
+        "a base an uncontracted callee received must never certify"
+    );
+    let w = function(program(&result), "w");
+    assert_eq!(w.status, AnalysisStatus::Unknown);
+    let descriptions = w
+        .diagnostics
+        .iter()
+        .map(|diagnostic| match &diagnostic.kind {
+            LegacyDiagnosticKind::Unsupported { description } => description.clone(),
+            other => format!("{other:?}"),
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(
+        descriptions,
+        vec!["call to uncontracted function `a_untracked`".to_owned()]
     );
 }
 

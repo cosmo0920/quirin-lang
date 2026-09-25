@@ -56,6 +56,15 @@
 //!    else `UnknownAlias`; a base settled on a released identity is a
 //!    `use_after_release` candidate. C evaluates every actual before the call
 //!    (C11 6.5.2.2p10), so the reads are checked before the call's effects.
+//! 4. **The second obligation** (`LegacyInstruction::ArgumentReads`,
+//!    [`refused_reads`]), after the typed read and before the call: a name the
+//!    actuals read that is bound to an identity carried by an integer refuses
+//!    (a tracked descriptor is custody, never data); a pointer-valued actual
+//!    read through a base whose target owns sub-custody (a field link, a
+//!    contained child, an indexed collection) refuses, because the pointer read
+//!    may be a tracked object the read does not name; and a pointer-valued
+//!    actual whose own place (`p->f`) is bound refuses. Neither read node
+//!    changes any map, so the call sees the state it saw before this card.
 //!
 //! Bounds, alignment and the liveness of objects the projection does not track
 //! are outside the property, exactly as for the typed scalar route.
@@ -607,22 +616,77 @@ impl Parser<'_> {
     }
 
     /// The rule. Consulted by the statement walker for a simple statement the
-    /// classifier refused; `None` keeps the refusal.
+    /// classifier refused; `None` keeps the refusal. `Some` is the block the
+    /// statement lowers to: the typed read of every base the used actuals
+    /// dereference, their second obligation, then the call.
     pub(super) fn call_argument_access(
         &mut self,
         tokens: &[Token],
         instruction: &LegacyInstruction,
     ) -> Option<Vec<LegacyInstruction>> {
-        if !cfg!(feature = "indirect-census") {
-            return None;
-        }
-        // Census only at this commit: the probe is classified, recorded and
-        // discarded, so the analysis is exactly the base tree's.
         let probe = self.probe_call_arguments(tokens, instruction)?;
-        let _ = (&probe.result, &probe.used);
-        self.next_site = probe.saved_site;
-        self.element_lowerings = probe.saved_elements;
-        None
+        let mut bases = Vec::<String>::new();
+        let mut record_bases = Vec::<String>::new();
+        let mut names = Vec::<String>::new();
+        let mut pointer_bases = Vec::<String>::new();
+        let mut pointer_places = Vec::<String>::new();
+        let push = |list: &mut Vec<String>, name: &str| {
+            if !list.iter().any(|known| known == name) {
+                list.push(name.to_owned());
+            }
+        };
+        for entry in &probe.used {
+            for base in &entry.read.bases {
+                push(&mut bases, base);
+            }
+            for base in &entry.read.record_bases {
+                push(&mut record_bases, base);
+            }
+            let texts = entry.texts.iter().map(String::as_str).collect::<Vec<_>>();
+            for (index, text) in texts.iter().enumerate() {
+                let member = index >= 1
+                    && (texts[index - 1] == "."
+                        || (texts[index - 1] == ">" && index >= 2 && texts[index - 2] == "-"));
+                if is_name(text)
+                    && !member
+                    && texts.get(index + 1) != Some(&"(")
+                    && !self.typed_model.is_enum_constant(text)
+                {
+                    push(&mut names, text);
+                }
+            }
+            if entry.read.pointer_valued {
+                for base in &entry.read.bases {
+                    push(&mut pointer_bases, base);
+                }
+                // The place as the recogniser read it: `(p)->f` is `p->f`.
+                let place = unparenthesise_names(&texts, &self.typed_types);
+                if let Some(place) = super::canonical_place(&place) {
+                    push(&mut pointer_places, &place);
+                }
+            }
+        }
+        let mut sequence = Vec::new();
+        if !bases.is_empty() {
+            sequence.push(LegacyInstruction::IndirectScalarAccess {
+                alias_reads: record_bases
+                    .iter()
+                    .filter_map(|base| self.read_alias(Some(base)))
+                    .collect(),
+                bases,
+                destination: None,
+                frame: None,
+            });
+        }
+        if !names.is_empty() || !pointer_bases.is_empty() || !pointer_places.is_empty() {
+            sequence.push(LegacyInstruction::ArgumentReads {
+                names,
+                pointer_bases,
+                pointer_places,
+            });
+        }
+        sequence.push(probe.result);
+        Some(sequence)
     }
 
     /// The candidate actuals of one refused statement. Also returns, for the
@@ -740,22 +804,59 @@ impl Parser<'_> {
             self.element_lowerings = saved_elements;
             return None;
         }
-        Some(Probe {
-            result,
-            used,
-            saved_site,
-            saved_elements,
-        })
+        Some(Probe { result, used })
     }
 }
 
-/// One accepted probe: the classification with the admitted actuals, the
-/// actuals it used, and the counters before it.
+/// One accepted probe: the classification with the admitted actuals and the
+/// actuals it used. The counters it advanced stay advanced: the call is kept.
 pub(super) struct Probe {
     pub(super) result: LegacyInstruction,
     pub(super) used: Vec<AdmittedArgument>,
-    saved_site: usize,
-    saved_elements: usize,
+}
+
+/// The names [`LegacyInstruction::ArgumentReads`] refuses in `state`: a name
+/// bound to an identity carried by an integer, a pointer base bound to a target
+/// that owns sub-custody (a field link, a contained child or an indexed
+/// collection), and a bound pointer place. Reads nothing else and writes
+/// nothing.
+pub(super) fn refused_reads(
+    state: &super::AbstractState,
+    kinds: &std::collections::BTreeMap<usize, qcore_schemas::contract::ResourceKind>,
+    names: &[String],
+    pointer_bases: &[String],
+    pointer_places: &[String],
+) -> Vec<String> {
+    let mut refused = Vec::new();
+    for name in names {
+        if super::carries_integer_identity(state, name, kinds) {
+            refused.push(name.clone());
+        }
+    }
+    for base in pointer_bases {
+        let owns_sub_custody = state.pointers.get(base).is_some_and(|pointer| {
+            pointer.targets.iter().any(|site| {
+                state
+                    .field_links
+                    .get(site)
+                    .is_some_and(|links| links.values().any(|children| !children.is_empty()))
+                    || state
+                        .contained
+                        .get(site)
+                        .is_some_and(|children| !children.is_empty())
+                    || state.collections.contains_key(site)
+            })
+        });
+        if owns_sub_custody && !refused.contains(base) {
+            refused.push(base.clone());
+        }
+    }
+    for place in pointer_places {
+        if state.pointers.contains_key(place) && !refused.contains(place) {
+            refused.push(place.clone());
+        }
+    }
+    refused
 }
 
 /// One actual of a probed call, for the census.
@@ -1064,6 +1165,112 @@ mod tests {
     fn an_unreadable_function_recognises_nothing() {
         let facts = facts(PARAMETERS, "void ( * hook ) ( int ) ;");
         assert_eq!(answer(&facts, "p -> len"), Err(Refusal::Unreadable));
+    }
+
+    /// A state binding `p` to site 1 and `n` to site 2, both live.
+    fn bound_state() -> super::super::AbstractState {
+        let mut state = super::super::AbstractState::default();
+        for (name, site) in [("p", 1usize), ("n", 2usize)] {
+            state.pointers.insert(
+                name.to_owned(),
+                super::super::AbstractPointer {
+                    targets: std::collections::BTreeSet::from([site]),
+                    unknown: false,
+                    may_be_null: false,
+                    derivation: super::super::Derivation::Identity,
+                },
+            );
+            state.resources.insert(site, super::super::LIVE);
+        }
+        state
+    }
+
+    fn strings(names: &[&str]) -> Vec<String> {
+        names.iter().map(|name| (*name).to_owned()).collect()
+    }
+
+    #[test]
+    fn the_second_obligation_refuses_only_what_it_names() {
+        use qcore_schemas::contract::ResourceKind;
+        let kinds = std::collections::BTreeMap::new();
+        let state = bound_state();
+        // Heap identities, no sub-custody, no bound place: nothing refuses.
+        assert!(
+            refused_reads(
+                &state,
+                &kinds,
+                &strings(&["p", "n", "i"]),
+                &strings(&["p"]),
+                &strings(&["p->f"])
+            )
+            .is_empty()
+        );
+        // A name bound to an integer-carried identity is custody, never data.
+        let kinds = std::collections::BTreeMap::from([(2usize, ResourceKind::Descriptor)]);
+        assert_eq!(
+            refused_reads(&state, &kinds, &strings(&["p", "n"]), &[], &[]),
+            strings(&["n"])
+        );
+        let kinds = std::collections::BTreeMap::new();
+        // A pointer read through an owner of a field link refuses its base.
+        let mut linked = bound_state();
+        linked
+            .field_links
+            .entry(1)
+            .or_default()
+            .insert("f".to_owned(), std::collections::BTreeSet::from([3]));
+        assert_eq!(
+            refused_reads(&linked, &kinds, &strings(&["p"]), &strings(&["p"]), &[]),
+            strings(&["p"])
+        );
+        // ... and so does one through an owner of a contained child or of an
+        // indexed collection.
+        let mut contained = bound_state();
+        contained
+            .contained
+            .insert(1, std::collections::BTreeSet::from([3]));
+        assert_eq!(
+            refused_reads(&contained, &kinds, &[], &strings(&["p"]), &[]),
+            strings(&["p"])
+        );
+        let mut collection = bound_state();
+        collection
+            .collections
+            .insert(1, crate::indexed_collection::Collection::Unknown);
+        assert_eq!(
+            refused_reads(&collection, &kinds, &[], &strings(&["p"]), &[]),
+            strings(&["p"])
+        );
+        // A scalar read through the same owner is not a pointer read.
+        assert!(refused_reads(&linked, &kinds, &strings(&["p"]), &[], &[]).is_empty());
+        // A bound place refuses.
+        let mut place = bound_state();
+        place.pointers.insert(
+            "p->f".to_owned(),
+            super::super::AbstractPointer {
+                targets: std::collections::BTreeSet::from([3]),
+                unknown: false,
+                may_be_null: false,
+                derivation: super::super::Derivation::Identity,
+            },
+        );
+        assert_eq!(
+            refused_reads(&place, &kinds, &[], &[], &strings(&["p->f"])),
+            strings(&["p->f"])
+        );
+        // An unbound name is never refused here: its obligation is the typed
+        // read's.
+        let empty = super::super::AbstractState::default();
+        assert!(
+            refused_reads(
+                &empty,
+                &kinds,
+                &strings(&["q"]),
+                &strings(&["q"]),
+                &strings(&["q->f"])
+            )
+            .is_empty()
+        );
     }
 
     #[test]

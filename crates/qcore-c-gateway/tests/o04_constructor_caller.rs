@@ -713,6 +713,22 @@ fn ambiguous_actual_shapes_keep_their_unknown() {
         let result = analyze_generic(body, "w");
         let w = function(program(&result), "w");
         assert_eq!(w.status, AnalysisStatus::Unknown, "{label}");
+        // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS moves this row deliberately:
+        // its call argument rule reads `conf->ctx` and `conf->pool` at
+        // `Borrowed` positions under `conf`'s dereference obligation, which
+        // refuses the consumed base (`UnknownAlias` of `conf`) in place of the
+        // gate's diagnostic. The body stays `Unknown`.
+        if label == "a base the projection may bind is never admitted" {
+            assert!(
+                w.diagnostics.iter().any(|diagnostic| matches!(
+                    &diagnostic.kind,
+                    LegacyDiagnosticKind::UnknownAlias { variable } if variable == "conf"
+                )),
+                "{label}: the base's obligation must refuse, got {:?}",
+                w.diagnostics
+            );
+            continue;
+        }
         assert!(
             w.diagnostics.iter().any(|diagnostic| matches!(
                 &diagnostic.kind,

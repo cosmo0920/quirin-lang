@@ -285,12 +285,16 @@ fn every_non_conforming_tail_shape_keeps_its_refusal() {
         return;
     }
     const INDIRECT: &str = "indirect memory access is outside the resource projection";
-    let rows: [(&str, &str); 12] = [
+    // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS moved one row out of this table:
+    // `storage->flag + 1` is a scalar value over one typed access, which its
+    // call argument rule admits in a declared tail under the base's
+    // dereference obligation (pinned in
+    // `a_scalar_value_in_a_tail_is_admitted_by_the_call_argument_rule`).
+    let rows: [(&str, &str); 11] = [
         // The chain is not the whole actual.
         ("&storage->leaf->label", INDIRECT),
         ("storage->leaf->label[0]", INDIRECT),
         ("*storage->leaf->label", INDIRECT),
-        ("storage->flag + 1", INDIRECT),
         ("storage->flag = 1", INDIRECT),
         // A link the reader did not fully type.
         ("uh->view->leaf", INDIRECT),
@@ -362,7 +366,24 @@ fn a_released_base_is_never_read_through_in_a_tail() {
     );
 }
 
-/// **A body-acquired aggregate base is refused in a tail, and deliberately so.**
+/// Card **W44-INDIRECT-CALL-ARGUMENT-ACCESS**: a scalar value over one typed
+/// access in a declared tail is admitted, with the base's dereference
+/// obligation, where this card's chain predicate refused it as "not the whole
+/// actual".
+#[test]
+fn a_scalar_value_in_a_tail_is_admitted_by_the_call_argument_rule() {
+    if !clang_available() {
+        return;
+    }
+    let result = analyze(&probe_body("storage->flag + 1"), "y_probe");
+    let UnrestrictedLegacyResult::Safe(certificate) = result else {
+        panic!("the admitted tail read must reach Safe: {result:?}");
+    };
+    check_legacy_safety_certificate(&certificate).expect("the certificate rechecks");
+}
+
+/// **A body-acquired aggregate base is refused in a tail by this card, and
+/// deliberately so.**
 /// Card O04-READ-BOUND admits a member read through a base *this body bound*, at
 /// a declared position, with the linked children's liveness required
 /// flow-sensitively. That route reads `contract.parameters.get(position)` and so
@@ -370,6 +391,14 @@ fn a_released_base_is_never_read_through_in_a_tail() {
 /// This card did not extend it, so the shape where a field could hold a tracked
 /// identity this body stored there simply does not arise on the tail route — it
 /// is refused by premise (4), because a call-bound base is risky.
+///
+/// Card **W44-INDIRECT-CALL-ARGUMENT-ACCESS** moves this pin deliberately: its
+/// call argument rule admits the *scalar* member read `m->flag` in the tail
+/// because `m` resolves here to one live, non-null identity this body acquired
+/// (the dereference obligation replaces premise (4) for that rule). A pointer
+/// member that could hold a linked identity still refuses there
+/// (`call_argument_access.rs`, `a_pointer_read_through_a_linked_owner_refuses`),
+/// and the same read after the release is refused and accused below.
 #[test]
 fn a_body_acquired_aggregate_base_is_refused_in_a_tail() {
     if !clang_available() {
@@ -382,15 +411,30 @@ fn a_body_acquired_aggregate_base_is_refused_in_a_tail() {
          y_log(\"held %d\", m->flag); \
          y_close(m); \
      }";
-    let summary = summary(body, "y_probe");
+    let UnrestrictedLegacyResult::Safe(certificate) = analyze(body, "y_probe") else {
+        panic!("a scalar read through a live acquired base is admitted by W44");
+    };
+    check_legacy_safety_certificate(&certificate).expect("the certificate rechecks");
+    let released = "void y_probe(void) { \
+         struct y_mid *m; \
+         m = y_open(8); \
+         if (!m) { return; } \
+         y_close(m); \
+         y_log(\"held %d\", m->flag); \
+     }";
+    let result = analyze(released, "y_probe");
     assert!(
-        !unsupported(&summary).is_empty(),
-        "a body-acquired aggregate base must refuse in a tail: {:?}",
-        summary.diagnostics
+        matches!(result, UnrestrictedLegacyResult::Unsafe(_)),
+        "a read through the released base is refused and accused: {result:?}"
     );
+    let summary = summary(released, "y_probe");
     assert!(
-        !matches!(analyze(body, "y_probe"), UnrestrictedLegacyResult::Safe(_)),
-        "a body-acquired aggregate base must never reach Safe on this route"
+        summary.diagnostics.iter().any(|diagnostic| matches!(
+            diagnostic.kind,
+            LegacyDiagnosticKind::UseAfterRelease { .. }
+        )),
+        "the settled state accuses the read: {:?}",
+        summary.diagnostics
     );
 }
 

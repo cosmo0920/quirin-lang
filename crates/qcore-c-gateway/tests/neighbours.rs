@@ -650,9 +650,16 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
         "flb_input_chunk_create",
     )
     .clone();
+    // **Deliberate pin update, card W44-INDIRECT-CALL-ARGUMENT-ACCESS.** This
+    // count was 31. In the before-state (the replaced declarations withdrawn)
+    // the call argument rule admits typed reads at `Borrowed` and tail
+    // positions of the calls that remain contracted, so 11 fewer diagnostics
+    // remain; the rule was measured off and on in one tree, and off it
+    // reproduces 31. The load-bearing half, below, is unchanged: the
+    // before-state still names every uncontracted callee.
     assert_eq!(
         before.diagnostics.len(),
-        31,
+        20,
         "the before-state diagnostic count moved: {:?}",
         before.diagnostics
     );

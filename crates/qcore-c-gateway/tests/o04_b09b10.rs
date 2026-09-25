@@ -886,15 +886,34 @@ fn the_constructor_boundary_is_unchanged() {
     // below by name: `backend` is itself declared `void *`, so it is not a
     // declared record pointer and the opaque member's value premise refuses it.
     // That is the load-bearing half of this row.
+    //
+    // **Deliberate pin update, card W44-INDIRECT-CALL-ARGUMENT-ACCESS.** This
+    // count was 6. Three `mk_list_add(&ch->…, &st->…)` statements (L167, L185,
+    // L188) hand two sub-object addresses to `Borrowed` positions; the call
+    // argument rule admits them under the dereference obligation of `ch` and
+    // `st`. At L167 both resolve and the call is modeled; at L185 and L188 the
+    // obligation refuses `ch` (`UnknownAlias`), asserted below. The rule was
+    // measured off and on in one tree: nothing else in the vector moved.
     assert_eq!(
         unsupported(constructor)
             .iter()
             .filter(|description| **description == INDIRECT)
             .count(),
-        6,
-        "the constructor keeps its six indirect refusals: {:?}",
+        3,
+        "the constructor keeps three indirect refusals: {:?}",
         constructor.diagnostics
     );
+    for line in [185, 188] {
+        assert!(
+            constructor.diagnostics.iter().any(|diagnostic| {
+                diagnostic.line == line
+                    && matches!(&diagnostic.kind,
+                        LegacyDiagnosticKind::UnknownAlias { variable } if variable == "ch")
+            }),
+            "L{line}: the base's obligation refuses `ch`: {:?}",
+            constructor.diagnostics
+        );
+    }
     assert!(
         constructor.diagnostics.iter().any(|diagnostic| {
             diagnostic.line == 182

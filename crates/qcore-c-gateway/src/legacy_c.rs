@@ -363,6 +363,26 @@ pub enum LegacyInstruction {
         source: String,
         offset: StepOffset,
     },
+    /// Card **W44-INDIRECT-CALL-ARGUMENT-ACCESS**: the second half of the
+    /// obligation of the call actuals the call argument rule admitted, checked
+    /// before the call at the same line, after the typed read
+    /// ([`Self::IndirectScalarAccess`]) of every base they dereference.
+    ///
+    /// It is custody-neutral and changes no map. It records `UnknownAlias` for
+    /// every name in `names` bound to an identity carried by an integer (a
+    /// tracked descriptor is custody, never data), every base in
+    /// `pointer_bases` bound to a target that owns sub-custody (a field link, a
+    /// contained child or an indexed collection: the pointer read out of it may
+    /// be a tracked object the read does not name), and every place in
+    /// `pointer_places` (`p->f`, `s.f`) that is itself bound.
+    ArgumentReads {
+        /// Every name the admitted actuals read.
+        names: Vec<String>,
+        /// The bases a pointer-valued actual is read through.
+        pointer_bases: Vec<String>,
+        /// The places a pointer-valued actual spells, when it spells one.
+        pointer_places: Vec<String>,
+    },
     /// A store into an admitted field of an aggregate this function tracks
     /// whose stored value carries no tracked identity (O00 blocker B08): a
     /// scalar expression into a scalar member, or a declared pointer this
@@ -10949,6 +10969,29 @@ fn transfer_base(
         // incoming frame and keep later residual/double-release evidence.
         return state;
     }
+    // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: the second half of an admitted
+    // call actual's obligation. Custody-neutral: it only reports.
+    if let LegacyInstruction::ArgumentReads {
+        names,
+        pointer_bases,
+        pointer_places,
+    } = &node.instruction
+    {
+        for variable in call_argument_access::refused_reads(
+            &state,
+            &context.site_kinds,
+            names,
+            pointer_bases,
+            pointer_places,
+        ) {
+            diagnostics.insert(LegacyDiagnostic {
+                function: function.to_owned(),
+                line: node.line,
+                kind: LegacyDiagnosticKind::UnknownAlias { variable },
+            });
+        }
+        return state;
+    }
     // W43-INDIRECT-ACCESS-GENERAL: every base the typed scalar statement
     // dereferences must pass the dereference obligation here, after the
     // may-alias obligations above. A slot an out-parameter contract sanctions
@@ -11358,6 +11401,8 @@ fn transfer_base(
         LegacyInstruction::ScalarMemberStore { .. } => {}
         // Handled completely before this match: they return there.
         LegacyInstruction::IndirectScalarAccess { .. } | LegacyInstruction::PointerStep { .. } => {}
+        // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: handled before this match too.
+        LegacyInstruction::ArgumentReads { .. } => {}
         LegacyInstruction::AggregateStore { place } => {
             // The stored value carries no tracked identity, so the member binds
             // nothing. Whatever it previously linked is unlinked below, which
