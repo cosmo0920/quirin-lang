@@ -393,3 +393,31 @@ fn a_collection_filled_from_a_caller_array_certifies() {
         &[],
     );
 }
+
+#[test]
+fn a_misnamed_destination_keeps_the_refusal() {
+    expect(
+        "`recs[i].name = x_dup(names[i])`: the classifier names the destination `name`, a \
+         suffix of the left-hand side, so the admitted actual must not admit the statement",
+        "void w(char **names, int i) { struct x_rec recs[4]; char *name = 0; \
+         recs[i].name = x_dup(names[i]); x_free(name); }",
+        "Unknown",
+        &[GATE, "unknown_alias:name"],
+    );
+}
+
+/// `W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE`, measured at the base and not
+/// repaired by this card: with an actual no rule refuses, the classifier
+/// names `recs[i].name`'s destination `name` and certifies a body whose
+/// `x_free(name)` releases a different object. Pinned so the repair is a
+/// deliberate re-pin.
+#[test]
+fn the_pre_existing_suffix_destination_hole_is_pinned() {
+    expect(
+        "`recs[i].name = x_dup(s)` binds the local `name`",
+        "void w(const char *s, int i) { struct x_rec recs[4]; char *name = 0; \
+         recs[i].name = x_dup(s); x_free(name); }",
+        "Safe",
+        &[],
+    );
+}

@@ -786,7 +786,9 @@ impl Parser<'_> {
             .collect::<Vec<_>>();
         let admitted_call = !used.is_empty()
             && match &result {
-                LegacyInstruction::ContractCall { .. } => true,
+                LegacyInstruction::ContractCall { destination, .. } => {
+                    destination_is_exact(&texts, destination.as_deref())
+                }
                 LegacyInstruction::ElementStore { call, .. } => call.is_some(),
                 _ => false,
             };
@@ -806,6 +808,33 @@ impl Parser<'_> {
         }
         Some(Probe { result, used })
     }
+}
+
+/// Whether the destination the classifier named for this statement is exactly
+/// its left-hand side.
+///
+/// `direct_assignment_destination` names the *first suffix* of the left-hand
+/// side that spells a place, so `result [ index ] . label = CALL ( … )` is
+/// named `label`. Before this card such a statement was refused whenever an
+/// actual read memory; admitting the actual must not also admit a destination
+/// the classifier misnamed (measured: `flb_input_chunk_get_direct_routes`).
+/// The accepted left-hand sides are those with no memory access at all (a
+/// plain name or a declaration), `* name` (the out-slot place `*name`, which
+/// transfer sanctions or refuses), and one whose whole spelling is the named
+/// place (the admitted aggregate store `p->f`). Everything else keeps the
+/// refusal. `W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE` records the classifier's
+/// own naming.
+fn destination_is_exact(texts: &[&str], destination: Option<&str>) -> bool {
+    let Some(destination) = destination else {
+        return true;
+    };
+    let Some(equal) = texts.iter().position(|text| *text == "=") else {
+        return false;
+    };
+    let left = &texts[..equal];
+    !super::contains_unmodeled_access(left)
+        || matches!(left, ["*", name] if destination.strip_prefix('*') == Some(*name))
+        || super::canonical_place(left).as_deref() == Some(destination)
 }
 
 /// One accepted probe: the classification with the admitted actuals and the
