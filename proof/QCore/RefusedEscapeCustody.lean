@@ -34,9 +34,13 @@ of "an unmodelled action may have discharged it".
 
 ## What this is not
 
-A proof about the Rust (trust boundary 28), or about what an unmodelled callee
-does: an identity handed to an uncontracted **call** is deliberately not
-withdrawn, and the accusation there rests on a premise about that callee
+A proof about the Rust (trust boundary 28), or about the reader that computes
+`handed` from a statement's tokens (the value side of a store or `return`,
+outside call arguments, excluding a store into a record object of the function
+itself); that the reader extracts what C hands on is an extraction premise. Nor
+is it about what an unmodelled callee does: an identity handed to an
+uncontracted **call** is deliberately not withdrawn, and the accusation there
+rests on a premise about that callee
 (`REFUSED-CALL-ARGUMENT-PREMISE`). Every remaining leak is a provisional
 candidate, never a validated upstream defect.
 -/

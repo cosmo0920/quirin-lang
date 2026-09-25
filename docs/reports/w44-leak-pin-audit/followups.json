@@ -1,0 +1,65 @@
+[
+ {
+  "id": "REFUSED-CALL-ARGUMENT-PREMISE",
+  "title": "81 provisional leak leaves rest on an uncontracted callee neither releasing nor retaining the identity handed to it; reading shows the premise false for every one",
+  "why": "Card W44-LEAK-PIN-AUDIT classified all 271 baseline leak leaves (docs/reports/w44-leak-pin-audit/classification.json). 81 class (c) leaves in 43 functions have a witness path that avoids every refused store or return of the leaked identity but passes it, as a value or an interior address, to a call the projection refuses; the accusation assumes that call neither releases nor retains it. Source reading finds the premise false for each: 44 leaves in 15 functions follow an uncontracted destructor that frees the object (destroy_metric 15, cmt_histogram_destroy 4, cio_destroy 3, cmt_summary_destroy 3, and cmt_counter_destroy, cmt_gauge_destroy, cmt_exp_histogram_destroy, cmt_untyped_destroy, cmt_map_destroy, destroy_resource_metrics, cmt_encode_opentelemetry_destroy_batches, destroy_chunk_raw 2 each, ctr_resource_destroy, destroy_metrics_data, mk_rconf_free 1 each); 37 leaves in 28 functions follow a call that retains it (cfl_list_add 14 in 9 functions, rd_kafka_buf_new_shadow 9 at the RD_UT_PASS exits of the rdunittest_msgset_errors.c tests, pthread_setspecific via MK_TLS_SET 8, and rd_kafka_OffsetFetchRequest's opaque, rb_tree_insert, mk_iov_add, flb_ring_buffer_write, pthread_create and a refused mk_list_add 1 each). The card deliberately did not withdraw these by rule: what a call does is a fact about the callee, not about the statement's syntax. Discharge condition: per callee, a faithful declared contract or a validated W4 summary (release, Stored/escape, or retention into its argument) measured by an arbiter that attributes each withdrawn leaf; W44-CORPUS-CALLEE-SUMMARIES is the likely route for the corpus-defined destructors.",
+  "source": "docs/reports/w44-leak-pin-audit/README.md",
+  "recorded_by": "W44-LEAK-PIN-AUDIT"
+ },
+ {
+  "id": "MK-LIST-ADD-BORROWED-PUBLICATION",
+  "title": "mk_list_add is declared borrowed on both positions, so a Monkey object linked into a caller-reachable list is still accused at the next exit (8 leaves)",
+  "why": "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qcore declares mk_list_add(entry, head) resource_borrowed on both parameters. Linking `&obj->_head` into a list reachable from the caller publishes `obj`, which a borrowed position does not state, so card W44-LEAK-PIN-AUDIT's audit found 8 class (c) leak leaves in 7 functions whose accusation rests on that silence (mk_rconf_meta_add, mk_rconf_read, mk_rconf_section_entry_add, mk_sched_worker_cb_add, mk_vhost_set_property, mk_vhost_set_single 2, mk_vhost_create 1); reading shows each object linked into its caller's configuration, server or host. Discharge condition: a vocabulary or contract that states an intrusive insertion's publication of the containing object (the v1 `resource_stored` relation over an interior address, or an equivalent), with gateway and Lean parity, and an arbiter attributing each withdrawn leaf.",
+  "source": "docs/reports/w44-leak-pin-audit/README.md",
+  "recorded_by": "W44-LEAK-PIN-AUDIT"
+ },
+ {
+  "id": "LEAK-PATH-SCALAR-CORRELATION",
+  "title": "7 provisional leak leaves ride a branch combination no execution takes (a flag, a pass counter, a re-validation of the same bytes)",
+  "why": "The custody projection does not correlate branches on scalar values. Card W44-LEAK-PIN-AUDIT's audit found 7 class (c) leaves whose only witness combines branch outcomes no execution combines: decode_histogram_points (cmt_decode_prometheus_remote_write.c) 4, whose witness skips the `static_metric_detected == CMT_FALSE` cleanup arm although the leaked metric exists only on that flag value, and rd_kafka_snappy_java_uncompress (snappy.c) 3, two of whose pass-2 failure arms re-check bytes pass 1 accepted and one of which needs outbuf allocated before its own pass-1 allocation. They stay provisional Unsafe. Discharge condition: a path-sensitivity or relational-scalar refinement with gateway and Lean parity that decides these arms, measured by an arbiter; or a recorded decision that such leaves stay provisional.",
+  "source": "docs/reports/w44-leak-pin-audit/README.md",
+  "recorded_by": "W44-LEAK-PIN-AUDIT"
+ },
+ {
+  "id": "LEAK-UNDECIDED-NULL-TEST",
+  "title": "2 provisional leak leaves sit on the null arm of a null test the projection could not decide",
+  "why": "Card W44-LEAK-PIN-AUDIT found 2 class (c) leaves whose exit is the arm on which the allocation failed, but whose null test the projection did not refine: mk_sched_add_connection (mk_scheduler.c:210, `if (!conn)`, undecided because the other arm's refused cast copy `conn = (struct mk_sched_conn *) data;` poisoned the joined binding) and rd_kafka_snappy_java_uncompress (snappy.c:1712, `unlikely(!outbuf)` inside a refused __builtin_expect call). Discharge condition: a refinement that keeps a null edge's site withdrawal when the test is undecided only through a poisoned join, or admits the __builtin_expect wrapper as the test it wraps, each with Lean parity and a measured arbiter.",
+  "source": "docs/reports/w44-leak-pin-audit/README.md",
+  "recorded_by": "W44-LEAK-PIN-AUDIT"
+ },
+ {
+  "id": "DESTINATION-SUFFIX-PLACE-SPELLING",
+  "title": "direct_assignment_destination spells `(*map)->opts = …` as the place `opts`, conflating a caller-reachable member with a local-looking name",
+  "why": "legacy_c::direct_assignment_destination returns the first suffix of the destination tokens that canonical_place spells, so `(*map)->opts = calloc(...)` binds the acquisition to the place `opts`. Card W44-LEAK-PIN-AUDIT found it behind 2 class (c) leak leaves of unpack_basic_type (cmt_decode_msgpack.c:1759 and :1814), where the object is stored into the caller's `*map`. The same reading is a hazard in the discharging direction: a body with a real local `opts` would have the member's identity bound to it, so a release of the local could be credited to the member's acquisition. Discharge condition: refuse (or spell faithfully) a destination whose leading tokens are not a declaration's specifiers, measured by an arbiter, with any verdict movement attributed.",
+  "source": "docs/reports/w44-leak-pin-audit/README.md",
+  "recorded_by": "W44-LEAK-PIN-AUDIT"
+ },
+ {
+  "id": "CHAINED-ASSIGNMENT-INNER-DESTINATION",
+  "title": "`d = safe = rd_malloc(n)` binds the call's result to `d` only; the inner destination is dropped, not refused",
+  "why": "Card W44-LEAK-PIN-AUDIT found rd_kafka_sasl_safe_string's one leak (rdkafka_sasl_scram.c:249) to rest on the parser binding a chained assignment's call result to its outer destination only: `safe`, which the function returns, stays unbound, so `return safe;` escapes nothing. A dropped write that is neither modelled nor refused is a precision loss in the accusing direction here and, symmetrically, could leave a release through the inner name unmatched. Discharge condition: model or refuse a chained assignment's inner destinations, measured by an arbiter.",
+  "source": "docs/reports/w44-leak-pin-audit/README.md",
+  "recorded_by": "W44-LEAK-PIN-AUDIT"
+ },
+ {
+  "id": "W44-DLOPEN-DECLARATION-REMEASURE",
+  "title": "dlopen/dlclose stay undeclared after the cast-return repair; declaring them needs a library-handle kind",
+  "why": "RETURN-CAST-PLACE-NOT-ESCAPED's gateway half is discharged by card W44-LEAK-PIN-AUDIT: `return (rd_dl_hnd_t *) handle;` is now decided as `return handle;` (crates/qcore-c-gateway/tests/leak_pin_audit.rs). Its second half, re-measuring the dlopen/dlclose declarations W43-DESCRIPTOR-RESOURCE-TRACKING withdrew (5 leaves in 4 functions: mk_plugin_load_dynamic, rd_dl_open0, mk_plugin_load, rd_dl_close; each callee sole-blocking one function), is not done: the declarations need the `dynamic_library` kind that card withdrew with them, a vocabulary addition in providers/quirin-provider-libc. Discharge condition: the kind and the two declarations with loader, gateway and Lean parity, measured by an arbiter that attributes every moved leaf.",
+  "source": "docs/reports/w44-leak-pin-audit/README.md",
+  "recorded_by": "W44-LEAK-PIN-AUDIT"
+ },
+ {
+  "id": "CAST-RETURN-UNCOMMITTED-OPERAND",
+  "title": "A non-pointer cast of a returned name the declaration reader does not commit to keeps the place-less exit rather than a refusal",
+  "why": "Card W44-LEAK-PIN-AUDIT's cast-return rule refuses an integer cast of a name the reader commits to as a pointer and any cast of a possible descriptor other than (int), but a non-pointer cast (`(long) h`, `(my_handle_t) h`) of a name whose declared type the reader does not commit to (a pointer typedef, an unreadable declaration) keeps the pre-card place-less exit: never an escape, and the accusing direction if `h` holds an identity, but not the refusal a pointer-to-integer crossing should be. It moved no corpus leaf. Discharge condition: a typedef-resolving pointer test for the operand, or a flow-sensitive refusal that fires when the operand is bound to a tracked identity, with Lean parity and a measured arbiter.",
+  "source": "docs/reports/w44-leak-pin-audit/README.md",
+  "recorded_by": "W44-LEAK-PIN-AUDIT"
+ },
+ {
+  "id": "REFUSED-ESCAPE-LINE-GRANULARITY",
+  "title": "The refused-escape rule reads hand-ons per preprocessed line, and its unresolved effect joins by union",
+  "why": "Card W44-LEAK-PIN-AUDIT's rule (legacy_refused_operands.rs) keys the places a statement's value side hands on by preprocessed line, because a CFG node carries its line and not its tokens; a macro expanding several statements onto one line unions them, and the unresolved effect it adds joins by union, so a clean path to an exit joined with a refused escape of the same site loses its accusation (QCore.RefusedEscapeCustody.the_union_join_withdraws_a_clean_path). Both approximations only withdraw, never accuse or discharge; the arbiter measured 0 collateral withdrawals (every removed leak is one of the 30 class (b) refused-escape leaves). Discharge condition: statement-granular hand-on sets carried on the refused node and a path-precise withdrawal (a status bit rather than a union-joined set), with Lean parity and a measured re-pin; or a recorded decision that the approximation stands.",
+  "source": "docs/reports/w44-leak-pin-audit/README.md",
+  "recorded_by": "W44-LEAK-PIN-AUDIT"
+ }
+]
