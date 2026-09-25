@@ -7,6 +7,27 @@
 > [STATUS.md](../../STATUS.md); each report owns its evidence. The preceding
 > [record](wave-43.md) holds the wave-43 paragraphs and stays unchanged.
 
+**`W44-AGENT-GUIDANCE-OPUS55` (2026-09-25).** The agent-loop guides now follow
+Anthropic's Opus 5 and 5.5 prompting guidance. `AGENTS.md`, `CLAUDE.md`, the
+rule router, `operations.md`, `validation.md` and the topic-page headers lose
+nine kinds of scaffolding: repeated reading instructions (the "read every
+applicable rule" header was in 11 copies), bold emphasis stacking and duplicated
+tool mechanics. Ten embedded incident histories move verbatim to a new
+[checkpoint](structure-checkpoints/agent-cycle-guidance.md). Operations gains a
+scope statement, a verification boundary (the gates are the verification), a
+subagent delegation policy, report length calibration and a one-screen
+card-brief standard. The standard covers completion conditions, legitimate
+stops, continuation of unattended cards and time budgets. `task_context.py` lists rule history
+on demand for agent-guidance paths instead of reading it; `--topic rationale`,
+unknown paths and empty scope still read it. All 59 rule anchors and the
+hard-invariant block are byte-identical to the base, and every unnumbered
+requirement keeps its force. Injected startup falls 6,538 → 5,817 bytes and an
+agent-guidance packet 47,747 → 23,788. Gateway and provider packets move −0.3%,
+since the numbered bodies they read were out of scope. An integration packet
+grows 4.4% for the brief standard. Source bytes, not tokens. No pin, count or
+ledger entry moves; three task-context tests are added.
+[Report](../../reports/w44-agent-guidance-opus55/README.md).
+
 **`W44-LIBC-RESIDUALS` (2026-09-25).** Worked the four libc-side residuals beside the largest libc leaf masses, measuring each before building it, and re-measured on main `5355998d` after merging W44-INDIRECT-CHAIN-ACCESS and W44-CORPUS-CALLEE-SUMMARIES. glibc's header-inline `__bswap_16/32/64` and `__uint16/32/64_identity` are **checked, not declared**: W44-CORPUS-CALLEE-SUMMARIES measured that their `static __inline` bodies validate under W4, so this card lifted that card's reserved-name filter in `legacy_callee_scope.rs`. A reserved-name `static` definition the unit carries enters the derivation scope on the linkage premise alone, and a name the unit only declares never does (Lean `QCore.CalleeSummaryScope`: `reservation_is_not_read`, `an_undefined_name_is_never_in_scope`). An earlier revision declared them in a `libc/byteswap.qcore` and taught the reader `__extension__`; both were dropped, and that route's arbiter is kept under the report's `route-a/`. The declared-ABI reader projects `__builtin_va_list` at a parameter to a new parameter-only, borrowed-only loader spelling `va_list` that names the type rather than its x86-64 or AArch64 layout (Lean `QCore.GnuBuiltinReader`; `AbiType` gains `vaList`); it moves 0 of 13,101 manifest census rows. A new tail premise, T6 (`variadic_nested::is_literal_or_predefined_actual`, Lean `QCore.LiteralTailActual`), admits a tail actual that is only literals and C11 6.4.2.2 predefined identifiers whatever the function's declarations or C02-P's closure say; the closure had marked literals risky where one reached `__assert_fail`. Declared in `providers/quirin-provider-libc`: `vsnprintf` and `vprintf` (`libc/stdio.qcore`, 168/168 units agree) and `strerror` (`libc/errno.qcore`, 181 units; kept out of the published `libc/string.qcore`). Staged arbiter, every leaf attributed and the stages composing exactly: T6 −974, header bodies −627/+5, `va_list` −26/+1, `strerror` −2; 1,629 removed and 6 added. Functions 296 / 85 / 4,453 → **299 / 85 / 4,450** (`ut_put_be16/32/64`); units, leak 271 and `unknown_alias` 4,420 unchanged; `unsupported` 45,721 → 44,098; no violation candidate. Retired `W43-LIBC-HEADER-INLINE-BODIES`, `W44-CALLEE-SCOPE-RESERVED-BODIES`, `LIBC-PRINTF-VA-LIST`, `LIBC-PRINTF-TAIL-ACTUALS` and `LIBC-PRINTF-NESTED-TAIL-CALLEES`; registered `W44-TAIL-NAME-ACTUALS` (226), `W44-PRINTF-NESTED-INNER-CALLEES` (87) and `W44-VA-START-END-BUILTINS` (127 in 51 functions); 358 → 356. [Report](../../reports/w44-libc-residuals/README.md).
 
 **2026-09-25 — W44-ASSIGNMENT-DESTINATION-SUFFIX-PLACE: a destination is the whole left-hand side.**

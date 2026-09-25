@@ -70,3 +70,26 @@ class TaskContextTests(unittest.TestCase):
         with patch.object(context, 'read_source', side_effect=missing):
             with self.assertRaises(ValueError):
                 context.packet(ROOT, {'docs/README.md'}, [])
+
+    def test_agent_guidance_paths_list_history_on_demand(self):
+        packet = context.packet(ROOT, {'docs/agents/operations.md'}, [])
+        read = [x['path'] for x in packet['readings']]
+        self.assertFalse(set(context.HISTORY) & set(read))
+        self.assertEqual([x['path'] for x in packet['on_demand']], context.HISTORY)
+        self.assertIn('maintenance', packet['topics'])
+
+    def test_rationale_topic_and_unknown_scope_read_history(self):
+        for paths, topics in [({'docs/agents/operations.md'}, ['rationale']),
+                              ({'unclassified/new.rs'}, []), (set(), [])]:
+            packet = context.packet(ROOT, paths, topics)
+            read = [x['path'] for x in packet['readings']]
+            self.assertTrue(set(context.HISTORY) <= set(read))
+            self.assertEqual(packet['on_demand'], [])
+
+    def test_integration_selects_card_brief_standard(self):
+        packet = context.packet(ROOT, {'docs/STATUS.md'}, ['integration'])
+        lines = (ROOT/'docs/agents/operations.md').read_text(encoding='utf-8').splitlines()
+        headings = [lines[r['start']-1] for r in packet['readings']
+                    if r['path'] == 'docs/agents/operations.md']
+        self.assertIn('## Card briefs and delegation', headings)
+        self.assertIn('## Integration and reconciliation', headings)

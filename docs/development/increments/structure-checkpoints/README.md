@@ -9,6 +9,8 @@ explains exact reconstruction; current rules start at [AGENTS.md](../../../../AG
 - [Constraint preambles](constraint-preambles.md)
 - [Former public overview](public-overview.md)
 - [Former development index](development-index.md)
+- [Agent-cycle guidance, 2026-09-25](agent-cycle-guidance.md): paragraphs
+  W44-AGENT-GUIDANCE-OPUS55 removed or reworded in the agent loop's guides
 
 Standing rules and operational policy were moved into live topic references,
 not duplicated in this archive. The migration manifest maps every source span.

@@ -1,0 +1,797 @@
+{
+  "after": {
+    "operative_file_bytes": {
+      "AGENTS.md": 5306,
+      "CLAUDE.md": 511,
+      "docs/agents/README.md": 9400,
+      "docs/agents/operations.md": 11302,
+      "docs/agents/validation.md": 4563
+    },
+    "operative_markers": {
+      "all_caps_emphasis": 0,
+      "bold_spans": 6,
+      "self_check_phrases": 0,
+      "wave_or_incident_mentions": 3
+    },
+    "revision": "337b15b197414786ef8c0b8c33e6b1069e03a03f",
+    "startup_injected_bytes": 5817,
+    "tasks": {
+      "agent-guidance edit": {
+        "files": {
+          "AGENTS.md:1-110": 5306,
+          "docs/agents/evidence.md:1-125": 7177,
+          "docs/agents/operations.md:10-48": 2624,
+          "docs/agents/operations.md:144-167": 1485,
+          "docs/agents/operations.md:168-181": 902,
+          "docs/agents/operations.md:49-73": 1731,
+          "docs/agents/validation.md:1-82": 4563
+        },
+        "on_demand": [
+          "docs/reports/task-context-contract-bundle/operations-before.txt",
+          "docs/development/increments/structure-checkpoints/agent-cycle-guidance.md"
+        ],
+        "operations_sections": [
+          "Maintenance cadence",
+          "Task reading protocol",
+          "Working rules",
+          "Worktree and measurement hygiene"
+        ],
+        "reading_bytes": 23788,
+        "required_commands": [
+          "git submodule update --init --recursive   # every fresh checkout, worktrees included\ncargo test --workspace --no-fail-fast\ncargo fmt --all -- --check\ncargo clippy --all-targets -- -D warnings\ncargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0\ncargo run -p qcore-compiler --example reevaluation_followup   # expect exit 0\npython3 scripts/check_lean_audits.py\npython3 -m unittest discover -s scripts/tests\n"
+        ],
+        "rule_ids": [
+          "constraint-21",
+          "constraint-22",
+          "constraint-23",
+          "constraint-24",
+          "constraint-25",
+          "constraint-28"
+        ],
+        "topics": [
+          "docs",
+          "maintenance"
+        ]
+      },
+      "gateway change": {
+        "files": {
+          "AGENTS.md:1-110": 5306,
+          "docs/agents/diagnostics.md:1-233": 34348,
+          "docs/agents/evidence.md:1-125": 7177,
+          "docs/agents/gateway.md:1-598": 40218,
+          "docs/agents/operations.md:10-48": 2624,
+          "docs/agents/operations.md:168-181": 902,
+          "docs/agents/operations.md:49-73": 1731,
+          "docs/agents/source-identity.md:1-97": 5874,
+          "docs/agents/validation.md:1-82": 4563
+        },
+        "on_demand": [],
+        "operations_sections": [
+          "Task reading protocol",
+          "Working rules",
+          "Worktree and measurement hygiene"
+        ],
+        "reading_bytes": 102743,
+        "required_commands": [
+          "git submodule update --init --recursive   # every fresh checkout, worktrees included\ncargo test --workspace --no-fail-fast\ncargo fmt --all -- --check\ncargo clippy --all-targets -- -D warnings\ncargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0\ncargo run -p qcore-compiler --example reevaluation_followup   # expect exit 0\npython3 scripts/check_lean_audits.py\npython3 -m unittest discover -s scripts/tests\n"
+        ],
+        "rule_ids": [
+          "constraint-1",
+          "constraint-10",
+          "constraint-10a",
+          "constraint-10b",
+          "constraint-11",
+          "constraint-12",
+          "constraint-12a",
+          "constraint-2",
+          "constraint-21",
+          "constraint-22",
+          "constraint-23",
+          "constraint-24",
+          "constraint-25",
+          "constraint-28",
+          "constraint-3",
+          "constraint-4",
+          "constraint-4a",
+          "constraint-5",
+          "constraint-5a",
+          "constraint-5b",
+          "constraint-5c",
+          "constraint-5d",
+          "constraint-5e",
+          "constraint-5f",
+          "constraint-5g",
+          "constraint-5h",
+          "constraint-5i",
+          "constraint-6",
+          "constraint-7",
+          "constraint-8",
+          "constraint-9"
+        ],
+        "topics": [
+          "gateway"
+        ]
+      },
+      "integration record": {
+        "files": {
+          "AGENTS.md:1-110": 5306,
+          "docs/STATUS.md:1-196": 24548,
+          "docs/agents/evidence.md:1-125": 7177,
+          "docs/agents/operations.md:10-48": 2624,
+          "docs/agents/operations.md:113-143": 1797,
+          "docs/agents/operations.md:168-181": 902,
+          "docs/agents/operations.md:49-73": 1731,
+          "docs/agents/operations.md:74-112": 2280,
+          "docs/agents/validation.md:1-82": 4563
+        },
+        "on_demand": [],
+        "operations_sections": [
+          "Card briefs and delegation",
+          "Integration and reconciliation",
+          "Task reading protocol",
+          "Working rules",
+          "Worktree and measurement hygiene"
+        ],
+        "reading_bytes": 50928,
+        "required_commands": [
+          "git submodule update --init --recursive   # every fresh checkout, worktrees included\ncargo test --workspace --no-fail-fast\ncargo fmt --all -- --check\ncargo clippy --all-targets -- -D warnings\ncargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0\ncargo run -p qcore-compiler --example reevaluation_followup   # expect exit 0\npython3 scripts/check_lean_audits.py\npython3 -m unittest discover -s scripts/tests\n"
+        ],
+        "rule_ids": [
+          "constraint-21",
+          "constraint-22",
+          "constraint-23",
+          "constraint-24",
+          "constraint-25",
+          "constraint-28"
+        ],
+        "topics": [
+          "docs",
+          "integration",
+          "status"
+        ]
+      },
+      "provider contract change": {
+        "files": {
+          "AGENTS.md:1-110": 5306,
+          "docs/agents/diagnostics.md:1-233": 34348,
+          "docs/agents/evidence.md:1-125": 7177,
+          "docs/agents/gateway.md:1-598": 40218,
+          "docs/agents/operations.md:10-48": 2624,
+          "docs/agents/operations.md:168-181": 902,
+          "docs/agents/operations.md:49-73": 1731,
+          "docs/agents/providers.md:1-196": 12155,
+          "docs/agents/source-identity.md:1-97": 5874,
+          "docs/agents/validation.md:1-82": 4563
+        },
+        "on_demand": [],
+        "operations_sections": [
+          "Task reading protocol",
+          "Working rules",
+          "Worktree and measurement hygiene"
+        ],
+        "reading_bytes": 114898,
+        "required_commands": [
+          "git submodule update --init --recursive   # every fresh checkout, worktrees included\ncargo test --workspace --no-fail-fast\ncargo fmt --all -- --check\ncargo clippy --all-targets -- -D warnings\ncargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0\ncargo run -p qcore-compiler --example reevaluation_followup   # expect exit 0\npython3 scripts/check_lean_audits.py\npython3 -m unittest discover -s scripts/tests\n",
+          "python3 providers/package.py build --output /tmp/qcore-packages\npython3 providers/package.py verify /tmp/qcore-packages/qcore.libevent\ncargo test --manifest-path providers/Cargo.toml --workspace --locked --offline\ncargo fmt --manifest-path providers/Cargo.toml --all -- --check\ncargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings\n"
+        ],
+        "rule_ids": [
+          "constraint-1",
+          "constraint-10",
+          "constraint-10a",
+          "constraint-10b",
+          "constraint-11",
+          "constraint-12",
+          "constraint-12a",
+          "constraint-16",
+          "constraint-17",
+          "constraint-18",
+          "constraint-19",
+          "constraint-2",
+          "constraint-20",
+          "constraint-21",
+          "constraint-22",
+          "constraint-23",
+          "constraint-24",
+          "constraint-25",
+          "constraint-26",
+          "constraint-28",
+          "constraint-3",
+          "constraint-4",
+          "constraint-4a",
+          "constraint-5",
+          "constraint-5a",
+          "constraint-5b",
+          "constraint-5c",
+          "constraint-5d",
+          "constraint-5e",
+          "constraint-5f",
+          "constraint-5g",
+          "constraint-5h",
+          "constraint-5i",
+          "constraint-6",
+          "constraint-7",
+          "constraint-8",
+          "constraint-9"
+        ],
+        "topics": [
+          "contracts",
+          "providers"
+        ]
+      }
+    }
+  },
+  "before": {
+    "operative_file_bytes": {
+      "AGENTS.md": 5848,
+      "CLAUDE.md": 690,
+      "docs/agents/README.md": 9987,
+      "docs/agents/operations.md": 7708,
+      "docs/agents/validation.md": 5337
+    },
+    "operative_markers": {
+      "all_caps_emphasis": 0,
+      "bold_spans": 13,
+      "self_check_phrases": 1,
+      "wave_or_incident_mentions": 11
+    },
+    "revision": "94502987472c25567d87fc873615ea5de1667603",
+    "startup_injected_bytes": 6538,
+    "tasks": {
+      "agent-guidance edit": {
+        "files": {
+          "AGENTS.md:1-118": 5848,
+          "docs/agents/evidence.md:1-126": 7246,
+          "docs/agents/operations.md:112-122": 715,
+          "docs/agents/operations.md:31-57": 1832,
+          "docs/agents/operations.md:89-111": 1456,
+          "docs/agents/operations.md:9-30": 1451,
+          "docs/agents/validation.md:1-95": 5337,
+          "docs/reports/task-context-contract-bundle/operations-before.txt:1-338": 23862
+        },
+        "on_demand": [],
+        "operations_sections": [
+          "Maintenance cadence",
+          "Task reading protocol",
+          "Working rules",
+          "Worktree and measurement hygiene"
+        ],
+        "reading_bytes": 47747,
+        "required_commands": [
+          "git submodule update --init --recursive   # every fresh checkout, worktrees included\ncargo test --workspace --no-fail-fast\ncargo fmt --all -- --check\ncargo clippy --all-targets -- -D warnings\ncargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0\ncargo run -p qcore-compiler --example reevaluation_followup   # expect exit 0\npython3 scripts/check_lean_audits.py\npython3 -m unittest discover -s scripts/tests\n"
+        ],
+        "rule_ids": [
+          "constraint-21",
+          "constraint-22",
+          "constraint-23",
+          "constraint-24",
+          "constraint-25",
+          "constraint-28"
+        ],
+        "topics": [
+          "docs",
+          "maintenance",
+          "rationale"
+        ]
+      },
+      "gateway change": {
+        "files": {
+          "AGENTS.md:1-118": 5848,
+          "docs/agents/diagnostics.md:1-234": 34417,
+          "docs/agents/evidence.md:1-126": 7246,
+          "docs/agents/gateway.md:1-599": 40287,
+          "docs/agents/operations.md:112-122": 715,
+          "docs/agents/operations.md:31-57": 1832,
+          "docs/agents/operations.md:9-30": 1451,
+          "docs/agents/source-identity.md:1-98": 5943,
+          "docs/agents/validation.md:1-95": 5337
+        },
+        "on_demand": [],
+        "operations_sections": [
+          "Task reading protocol",
+          "Working rules",
+          "Worktree and measurement hygiene"
+        ],
+        "reading_bytes": 103076,
+        "required_commands": [
+          "git submodule update --init --recursive   # every fresh checkout, worktrees included\ncargo test --workspace --no-fail-fast\ncargo fmt --all -- --check\ncargo clippy --all-targets -- -D warnings\ncargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0\ncargo run -p qcore-compiler --example reevaluation_followup   # expect exit 0\npython3 scripts/check_lean_audits.py\npython3 -m unittest discover -s scripts/tests\n"
+        ],
+        "rule_ids": [
+          "constraint-1",
+          "constraint-10",
+          "constraint-10a",
+          "constraint-10b",
+          "constraint-11",
+          "constraint-12",
+          "constraint-12a",
+          "constraint-2",
+          "constraint-21",
+          "constraint-22",
+          "constraint-23",
+          "constraint-24",
+          "constraint-25",
+          "constraint-28",
+          "constraint-3",
+          "constraint-4",
+          "constraint-4a",
+          "constraint-5",
+          "constraint-5a",
+          "constraint-5b",
+          "constraint-5c",
+          "constraint-5d",
+          "constraint-5e",
+          "constraint-5f",
+          "constraint-5g",
+          "constraint-5h",
+          "constraint-5i",
+          "constraint-6",
+          "constraint-7",
+          "constraint-8",
+          "constraint-9"
+        ],
+        "topics": [
+          "gateway"
+        ]
+      },
+      "integration record": {
+        "files": {
+          "AGENTS.md:1-118": 5848,
+          "docs/STATUS.md:1-196": 24548,
+          "docs/agents/evidence.md:1-126": 7246,
+          "docs/agents/operations.md:112-122": 715,
+          "docs/agents/operations.md:31-57": 1832,
+          "docs/agents/operations.md:58-88": 1797,
+          "docs/agents/operations.md:9-30": 1451,
+          "docs/agents/validation.md:1-95": 5337
+        },
+        "on_demand": [],
+        "operations_sections": [
+          "Integration and reconciliation",
+          "Task reading protocol",
+          "Working rules",
+          "Worktree and measurement hygiene"
+        ],
+        "reading_bytes": 48774,
+        "required_commands": [
+          "git submodule update --init --recursive   # every fresh checkout, worktrees included\ncargo test --workspace --no-fail-fast\ncargo fmt --all -- --check\ncargo clippy --all-targets -- -D warnings\ncargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0\ncargo run -p qcore-compiler --example reevaluation_followup   # expect exit 0\npython3 scripts/check_lean_audits.py\npython3 -m unittest discover -s scripts/tests\n"
+        ],
+        "rule_ids": [
+          "constraint-21",
+          "constraint-22",
+          "constraint-23",
+          "constraint-24",
+          "constraint-25",
+          "constraint-28"
+        ],
+        "topics": [
+          "docs",
+          "integration",
+          "status"
+        ]
+      },
+      "provider contract change": {
+        "files": {
+          "AGENTS.md:1-118": 5848,
+          "docs/agents/diagnostics.md:1-234": 34417,
+          "docs/agents/evidence.md:1-126": 7246,
+          "docs/agents/gateway.md:1-599": 40287,
+          "docs/agents/operations.md:112-122": 715,
+          "docs/agents/operations.md:31-57": 1832,
+          "docs/agents/operations.md:9-30": 1451,
+          "docs/agents/providers.md:1-197": 12224,
+          "docs/agents/source-identity.md:1-98": 5943,
+          "docs/agents/validation.md:1-95": 5337
+        },
+        "on_demand": [],
+        "operations_sections": [
+          "Task reading protocol",
+          "Working rules",
+          "Worktree and measurement hygiene"
+        ],
+        "reading_bytes": 115300,
+        "required_commands": [
+          "git submodule update --init --recursive   # every fresh checkout, worktrees included\ncargo test --workspace --no-fail-fast\ncargo fmt --all -- --check\ncargo clippy --all-targets -- -D warnings\ncargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0\ncargo run -p qcore-compiler --example reevaluation_followup   # expect exit 0\npython3 scripts/check_lean_audits.py\npython3 -m unittest discover -s scripts/tests\n",
+          "python3 providers/package.py build --output /tmp/qcore-packages\npython3 providers/package.py verify /tmp/qcore-packages/qcore.libevent\ncargo test --manifest-path providers/Cargo.toml --workspace --locked --offline\ncargo fmt --manifest-path providers/Cargo.toml --all -- --check\ncargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings\n"
+        ],
+        "rule_ids": [
+          "constraint-1",
+          "constraint-10",
+          "constraint-10a",
+          "constraint-10b",
+          "constraint-11",
+          "constraint-12",
+          "constraint-12a",
+          "constraint-16",
+          "constraint-17",
+          "constraint-18",
+          "constraint-19",
+          "constraint-2",
+          "constraint-20",
+          "constraint-21",
+          "constraint-22",
+          "constraint-23",
+          "constraint-24",
+          "constraint-25",
+          "constraint-26",
+          "constraint-28",
+          "constraint-3",
+          "constraint-4",
+          "constraint-4a",
+          "constraint-5",
+          "constraint-5a",
+          "constraint-5b",
+          "constraint-5c",
+          "constraint-5d",
+          "constraint-5e",
+          "constraint-5f",
+          "constraint-5g",
+          "constraint-5h",
+          "constraint-5i",
+          "constraint-6",
+          "constraint-7",
+          "constraint-8",
+          "constraint-9"
+        ],
+        "topics": [
+          "contracts",
+          "providers"
+        ]
+      }
+    }
+  },
+  "checks": {
+    "agent-guidance edit": {
+      "commands_identical": true,
+      "operations_sections_added": [],
+      "operations_sections_kept": true,
+      "reading_bytes": [
+        47747,
+        23788
+      ],
+      "rule_ids_kept": true,
+      "rule_ids_lost": []
+    },
+    "constraints": {
+      "byte_identical": 60,
+      "count": 60,
+      "missing_after": []
+    },
+    "gateway change": {
+      "commands_identical": true,
+      "operations_sections_added": [],
+      "operations_sections_kept": true,
+      "reading_bytes": [
+        103076,
+        102743
+      ],
+      "rule_ids_kept": true,
+      "rule_ids_lost": []
+    },
+    "integration record": {
+      "commands_identical": true,
+      "operations_sections_added": [
+        "Card briefs and delegation"
+      ],
+      "operations_sections_kept": true,
+      "reading_bytes": [
+        48774,
+        50928
+      ],
+      "rule_ids_kept": true,
+      "rule_ids_lost": []
+    },
+    "provider contract change": {
+      "commands_identical": true,
+      "operations_sections_added": [],
+      "operations_sections_kept": true,
+      "reading_bytes": [
+        115300,
+        114898
+      ],
+      "rule_ids_kept": true,
+      "rule_ids_lost": []
+    }
+  },
+  "constraints": {
+    "constraint-1": {
+      "after": "docs/agents/diagnostics.md",
+      "before": "docs/agents/diagnostics.md",
+      "byte_identical": true
+    },
+    "constraint-10": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-10a": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-10b": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-11": {
+      "after": "docs/agents/source-identity.md",
+      "before": "docs/agents/source-identity.md",
+      "byte_identical": true
+    },
+    "constraint-12": {
+      "after": "docs/agents/source-identity.md",
+      "before": "docs/agents/source-identity.md",
+      "byte_identical": true
+    },
+    "constraint-12a": {
+      "after": "docs/agents/source-identity.md",
+      "before": "docs/agents/source-identity.md",
+      "byte_identical": true
+    },
+    "constraint-13": {
+      "after": "docs/agents/source-routes.md",
+      "before": "docs/agents/source-routes.md",
+      "byte_identical": true
+    },
+    "constraint-14": {
+      "after": "docs/agents/source-routes.md",
+      "before": "docs/agents/source-routes.md",
+      "byte_identical": true
+    },
+    "constraint-14-amendments": {
+      "after": "docs/agents/source-routes.md",
+      "before": "docs/agents/source-routes.md",
+      "byte_identical": true
+    },
+    "constraint-15": {
+      "after": "docs/agents/source-routes.md",
+      "before": "docs/agents/source-routes.md",
+      "byte_identical": true
+    },
+    "constraint-15a": {
+      "after": "docs/agents/source-routes.md",
+      "before": "docs/agents/source-routes.md",
+      "byte_identical": true
+    },
+    "constraint-15b": {
+      "after": "docs/agents/source-routes.md",
+      "before": "docs/agents/source-routes.md",
+      "byte_identical": true
+    },
+    "constraint-15c": {
+      "after": "docs/agents/io.md",
+      "before": "docs/agents/io.md",
+      "byte_identical": true
+    },
+    "constraint-15d": {
+      "after": "docs/agents/io.md",
+      "before": "docs/agents/io.md",
+      "byte_identical": true
+    },
+    "constraint-15e": {
+      "after": "docs/agents/io.md",
+      "before": "docs/agents/io.md",
+      "byte_identical": true
+    },
+    "constraint-15f": {
+      "after": "docs/agents/io.md",
+      "before": "docs/agents/io.md",
+      "byte_identical": true
+    },
+    "constraint-15g": {
+      "after": "docs/agents/io.md",
+      "before": "docs/agents/io.md",
+      "byte_identical": true
+    },
+    "constraint-15h": {
+      "after": "docs/agents/buffers-records.md",
+      "before": "docs/agents/buffers-records.md",
+      "byte_identical": true
+    },
+    "constraint-15i": {
+      "after": "docs/agents/io.md",
+      "before": "docs/agents/io.md",
+      "byte_identical": true
+    },
+    "constraint-15j": {
+      "after": "docs/agents/effects.md",
+      "before": "docs/agents/effects.md",
+      "byte_identical": true
+    },
+    "constraint-15k": {
+      "after": "docs/agents/buffers-records.md",
+      "before": "docs/agents/buffers-records.md",
+      "byte_identical": true
+    },
+    "constraint-15k-amendments": {
+      "after": "docs/agents/buffers-records.md",
+      "before": "docs/agents/buffers-records.md",
+      "byte_identical": true
+    },
+    "constraint-15l": {
+      "after": "docs/agents/effects.md",
+      "before": "docs/agents/effects.md",
+      "byte_identical": true
+    },
+    "constraint-15m": {
+      "after": "docs/agents/effects.md",
+      "before": "docs/agents/effects.md",
+      "byte_identical": true
+    },
+    "constraint-15n": {
+      "after": "docs/agents/concurrency.md",
+      "before": "docs/agents/concurrency.md",
+      "byte_identical": true
+    },
+    "constraint-15o": {
+      "after": "docs/agents/concurrency.md",
+      "before": "docs/agents/concurrency.md",
+      "byte_identical": true
+    },
+    "constraint-15p": {
+      "after": "docs/agents/io.md",
+      "before": "docs/agents/io.md",
+      "byte_identical": true
+    },
+    "constraint-16": {
+      "after": "docs/agents/providers.md",
+      "before": "docs/agents/providers.md",
+      "byte_identical": true
+    },
+    "constraint-17": {
+      "after": "docs/agents/providers.md",
+      "before": "docs/agents/providers.md",
+      "byte_identical": true
+    },
+    "constraint-18": {
+      "after": "docs/agents/providers.md",
+      "before": "docs/agents/providers.md",
+      "byte_identical": true
+    },
+    "constraint-19": {
+      "after": "docs/agents/providers.md",
+      "before": "docs/agents/providers.md",
+      "byte_identical": true
+    },
+    "constraint-2": {
+      "after": "docs/agents/diagnostics.md",
+      "before": "docs/agents/diagnostics.md",
+      "byte_identical": true
+    },
+    "constraint-20": {
+      "after": "docs/agents/providers.md",
+      "before": "docs/agents/providers.md",
+      "byte_identical": true
+    },
+    "constraint-21": {
+      "after": "docs/agents/evidence.md",
+      "before": "docs/agents/evidence.md",
+      "byte_identical": true
+    },
+    "constraint-22": {
+      "after": "docs/agents/evidence.md",
+      "before": "docs/agents/evidence.md",
+      "byte_identical": true
+    },
+    "constraint-23": {
+      "after": "docs/agents/evidence.md",
+      "before": "docs/agents/evidence.md",
+      "byte_identical": true
+    },
+    "constraint-24": {
+      "after": "docs/agents/evidence.md",
+      "before": "docs/agents/evidence.md",
+      "byte_identical": true
+    },
+    "constraint-25": {
+      "after": "docs/agents/evidence.md",
+      "before": "docs/agents/evidence.md",
+      "byte_identical": true
+    },
+    "constraint-26": {
+      "after": "docs/agents/providers.md",
+      "before": "docs/agents/providers.md",
+      "byte_identical": true
+    },
+    "constraint-27": {
+      "after": "docs/agents/concurrency.md",
+      "before": "docs/agents/concurrency.md",
+      "byte_identical": true
+    },
+    "constraint-28": {
+      "after": "docs/agents/evidence.md",
+      "before": "docs/agents/evidence.md",
+      "byte_identical": true
+    },
+    "constraint-3": {
+      "after": "docs/agents/diagnostics.md",
+      "before": "docs/agents/diagnostics.md",
+      "byte_identical": true
+    },
+    "constraint-4": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-4a": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-5": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-5a": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-5b": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-5c": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-5d": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-5e": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-5f": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-5g": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-5h": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-5i": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-6": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-7": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-8": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "constraint-9": {
+      "after": "docs/agents/gateway.md",
+      "before": "docs/agents/gateway.md",
+      "byte_identical": true
+    },
+    "hard-invariants": {
+      "after": "AGENTS.md",
+      "before": "AGENTS.md",
+      "byte_identical": true
+    }
+  },
+  "note": "Source bytes of an explicit reading packet; not runtime telemetry or token billing."
+}

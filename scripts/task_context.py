@@ -21,11 +21,15 @@ TOPICS = {
     'concurrency': ['concurrency', 'buffers-records', 'source-routes'],
     'status': [], 'integration': [], 'maintenance': [], 'rationale': [],
 }
+# Rule history is read on demand: an explicit `rationale` topic, or the
+# conservative fallback, reads it; agent-guidance paths list it as a pointer.
+HISTORY = ['docs/reports/task-context-contract-bundle/operations-before.txt',
+           'docs/development/increments/structure-checkpoints/agent-cycle-guidance.md']
 # Match ALL applicable entries. Broad shared implementation paths deliberately
 # select all topics; narrower rules never cancel broader obligations.
 ROUTES = [
     (['AGENTS.md', 'CLAUDE.md', 'docs/agents/*', 'scripts/task_context.py',
-      'scripts/tests/test_task_context.py'], ['docs', 'maintenance', 'rationale']),
+      'scripts/tests/test_task_context.py'], ['docs', 'maintenance']),
     (['README.md', 'DEVELOPMENT.md', 'docs/README.md', 'docs/reports/*',
       'docs/development/*'], ['docs']),
     (['docs/STATUS.md', 'docs/reviews/*', 'docs/reevaluation/*'], ['docs', 'status']),
@@ -106,7 +110,7 @@ def packet(root, paths, topics):
     reasons, unknown = select(paths, topics)
     ops = ['Working rules', 'Worktree and measurement hygiene', 'Task reading protocol']
     if 'integration' in reasons:
-        ops.append('Integration and reconciliation')
+        ops += ['Card briefs and delegation', 'Integration and reconciliation']
     if 'maintenance' in reasons:
         ops.append('Maintenance cadence')
     selected = {'AGENTS.md': None, 'docs/agents/operations.md': ops,
@@ -120,10 +124,14 @@ def packet(root, paths, topics):
     if 'status' in reasons:
         selected['docs/STATUS.md'] = None
         why['docs/STATUS.md'] = reasons['status']
+    on_demand = []
     if 'rationale' in reasons:
-        path = 'docs/reports/task-context-contract-bundle/operations-before.txt'
-        selected[path] = None
-        why[path] = ['rule changes require the preserved rationale; this is historical text']
+        for path in HISTORY:
+            selected[path] = None
+            why[path] = ['rule changes require the preserved rationale; this is historical text']
+    elif 'maintenance' in reasons:
+        on_demand = [{'path': path, 'when': 'changing a rule or investigating its rationale; '
+                      'pass --topic rationale to read it'} for path in HISTORY]
     readings = []
     for path, sections in selected.items():
         for span in spans(path, read_source(root/path), sections):
@@ -149,7 +157,7 @@ def packet(root, paths, topics):
     candidates = [value for value in entries
                   if any(path in json.dumps(value) for path in paths)]
     return {'paths': sorted(paths), 'topics': sorted(reasons), 'unknown_paths': unknown,
-            'readings': readings, 'required_commands': commands,
+            'readings': readings, 'on_demand': on_demand, 'required_commands': commands,
             'additional_validation': 'Read provider rule 18 and validation.md for package gates when applicable.',
             'followups': {'source': 'docs/reviews/r0_3/acceptance_matrix.json#named_followups',
                           'exact_path_candidates': candidates,
@@ -189,6 +197,8 @@ def main():
                 rules = ', '.join(item['rule_ids']) or 'operative section / reference'
                 print(f"- {item['path']}:{item['start']}-{item['end']} ({item['bytes']} bytes; {rules})")
                 print('  Why: ' + '; '.join(why))
+            for item in result['on_demand']:
+                print(f"- on demand: {item['path']} ({item['when']})")
             if result['unknown_paths']:
                 print('Unknown paths select every topic: ' + json.dumps(result['unknown_paths']))
             print('Required commands (additional conditional requirements remain in the selected rules):')

@@ -1,8 +1,7 @@
 # Buffers Records rules
 
-Current reference, routed by [AGENTS.md](../../AGENTS.md). Rule numbers are stable.
-Paths in backticks are repository-relative. Read every applicable rule,
-including cross-topic rules, before editing; the index is not a substitute.
+Current rule text, routed by the [rule router](README.md), which says what to
+read. Rule numbers and anchors are stable; backticked paths are repository-relative.
 
 <a id="constraint-15h"></a>
 
